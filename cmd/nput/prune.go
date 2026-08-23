@@ -73,7 +73,9 @@ func newPruneCmd() *cobra.Command {
 			"Before deleting, the root paths of every series are listed and confirmed (--yes skips the prompt; a " +
 			"non-TTY without --yes aborts). That listing is the only guard against an out-of-store root — one on a " +
 			"removable disk or a network mount — being taken for a deleted one while it is unmounted (see ADR-0034).\n" +
-			"--dryrun shows the same series with zero side effects and exits (no confirm / flock).",
+			"--dryrun shows the same series with zero side effects and exits (no confirm / flock).\n\n" +
+			"Alongside the user state base a system base is scanned (see ADR-0036 §3). " + systemBaseEnv +
+			" points that one elsewhere (for tests / isolated harnesses, not a way to target a base).",
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			run := beginPruneRun(cmd.Name())
@@ -175,15 +177,30 @@ func prunePrompt(preview *engine.PruneResult) (bool, error) {
 // no seam because runPrune takes interactivity as an argument.
 var pruneFn = engine.Prune
 
-// pruneOptions builds the engine options for one prune run. The scan bases are left at their
-// defaults (the user state base and /nix/var/nix/profiles/nput · → ADR-0036 §3): only the engine's
-// own tests point them elsewhere. Warnf is left nil so the engine's own default (stderr, one line
-// per warning) is used — the same thing runReset does, and duplicating the formatting here would
-// give the same knowledge two places to drift apart.
+// systemBaseEnv overrides the system scan base for one run. It exists so a test harness can point
+// prune's second base at a throwaway directory: the user state base follows XDG_STATE_HOME, but
+// the system base is an absolute path (/nix/var/nix/profiles/nput · → ADR-0036 §3) that no
+// isolation of $HOME can move, so without this seam an E2E run of the destructive path would scan
+// — and delete from — the machine's real shared state. Same escape-hatch shape as init's
+// NPUT_TEMPLATE_REF.
+//
+// It is for tests and isolation, not a supported way to prune a different base: prune takes no
+// base argument by design (it discovers, it does not target).
+const systemBaseEnv = "NPUT_SYSTEM_PROFILE_BASE"
+
+// pruneOptions builds the engine options for one prune run. StateDir is left at its default so the
+// engine resolves it (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1 の層分け). SystemDir likewise
+// defaults to the engine's, unless systemBaseEnv names another base — passed through verbatim,
+// because SystemDir is the finished base and must not go through paths.Base().
+//
+// Warnf is left nil so the engine's own default (stderr, one line per warning) is used — the same
+// thing runReset does, and duplicating the formatting here would give the same knowledge two
+// places to drift apart.
 func pruneOptions(dryrun bool, confirm func(*engine.PruneResult) (bool, error)) engine.PruneOptions {
 	return engine.PruneOptions{
-		DryRun:  dryrun,
-		Confirm: confirm,
+		DryRun:    dryrun,
+		Confirm:   confirm,
+		SystemDir: os.Getenv(systemBaseEnv),
 	}
 }
 

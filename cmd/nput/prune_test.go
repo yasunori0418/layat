@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -583,6 +584,10 @@ func TestPruneJSONEnvelopeInfoAbsentBeforeScan(t *testing.T) {
 // options it builds carry DryRun and no Confirm, so nothing can prompt or delete
 // (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed の副作用ゼロ).
 func TestPruneDryrunDoesNotDelete(t *testing.T) {
+	// The seam below defaults the system base from the environment, so an inherited value would
+	// make the "left to the engine" assertions depend on the caller's env.
+	t.Setenv(systemBaseEnv, "")
+
 	opts := pruneOptions(true, nil)
 	if !opts.DryRun {
 		t.Error("the dryrun path must set DryRun")
@@ -590,8 +595,9 @@ func TestPruneDryrunDoesNotDelete(t *testing.T) {
 	if opts.Confirm != nil {
 		t.Error("the dryrun path must pass no Confirm (a preview never asks)")
 	}
-	// The scan bases stay at their defaults: the CLI names neither, so a run cannot be pointed at
-	// a base the engine did not resolve itself (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1 の層分け).
+	// With the override unset the scan bases stay at their defaults: the CLI names neither, so a
+	// run cannot be pointed at a base the engine did not resolve itself
+	// (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1 の層分け).
 	if opts.StateDir != "" || opts.SystemDir != "" {
 		t.Errorf("the CLI must leave the scan bases to the engine, got %+v", opts)
 	}
@@ -606,5 +612,45 @@ func TestPruneDryrunDoesNotDelete(t *testing.T) {
 	}
 	if real.StateDir != "" || real.SystemDir != "" {
 		t.Errorf("the CLI must leave the scan bases to the engine, got %+v", real)
+	}
+}
+
+// TestPruneSystemBaseEnvOverridesTheScanBase pins the isolation seam: with systemBaseEnv set, that
+// value reaches PruneOptions.SystemDir verbatim, so a harness can keep prune off the machine's
+// real /nix/var/nix/profiles/nput. The user state base is not touched by the override — it follows
+// XDG_STATE_HOME through the engine, and conflating the two would send prune to
+// <system base>/nix/profiles/nput (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1: SystemDir is the
+// finished base and does not go through paths.Base()).
+//
+// This is what stops the destructive e2e path from reaching shared state: without the seam the
+// system base is an absolute path that isolating $HOME / XDG_STATE_HOME cannot move.
+func TestPruneSystemBaseEnvOverridesTheScanBase(t *testing.T) {
+	isolated := filepath.Join(t.TempDir(), "system")
+	t.Setenv(systemBaseEnv, isolated)
+
+	for _, c := range []struct {
+		name string
+		opts engine.PruneOptions
+	}{
+		{"dryrun", pruneOptions(true, nil)},
+		{"destructive", pruneOptions(false, func(*engine.PruneResult) (bool, error) { return true, nil })},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			if c.opts.SystemDir != isolated {
+				t.Errorf("SystemDir = %q, want the override %q", c.opts.SystemDir, isolated)
+			}
+			// Passed through verbatim: any massaging here would desynchronize from the engine,
+			// which takes SystemDir as the finished base.
+			if c.opts.StateDir != "" {
+				t.Errorf("StateDir = %q, want it left to the engine", c.opts.StateDir)
+			}
+		})
+	}
+
+	// An empty value is not an override: it must fall back to the engine's default rather than
+	// pointing the scan at "" (which paths would resolve relative to the cwd).
+	t.Setenv(systemBaseEnv, "")
+	if got := pruneOptions(false, nil).SystemDir; got != "" {
+		t.Errorf("SystemDir = %q with the override unset, want the engine default", got)
 	}
 }
