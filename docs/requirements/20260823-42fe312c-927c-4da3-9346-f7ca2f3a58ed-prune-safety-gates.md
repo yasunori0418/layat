@@ -2,6 +2,8 @@
 id: "REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed"
 type: requirement
 name: "prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る"
+derives_from:
+  - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
   `nput prune --dryrun` SHALL have no side effect and SHALL write the series it would
   delete — the `<roothash>`, the root path, and the `<name>` profiles under it — to stdout.
@@ -21,8 +23,6 @@ specification_ja: |
   取れない系列は warning を出して skip しなければならない。lock の解放を待っては
   ならない。`nput prune --json` は `--yes` を必須とし、無ければ `status:"error"` +
   非ゼロで fail fast しなければならない。
-derives_from:
-  - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 ---
 # REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed: prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る
 
