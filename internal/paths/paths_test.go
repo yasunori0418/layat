@@ -308,8 +308,8 @@ func TestListRootHashSeries(t *testing.T) {
 		if s.Root != "/home/me/other" {
 			t.Errorf("h2 Root = %q, want %q", s.Root, "/home/me/other")
 		}
-		if len(s.Names) != 0 {
-			t.Errorf("h2 Names = %v, want empty", s.Names)
+		if s.Names != nil {
+			t.Errorf("h2 Names = %v, want nil", s.Names)
 		}
 		if s.BackrefErr != nil {
 			t.Errorf("h2 BackrefErr = %v, want nil", s.BackrefErr)
@@ -380,8 +380,17 @@ func TestListRootHashSeriesReportsUnstatableBackref(t *testing.T) {
 	if len(byHash) != 2 {
 		t.Fatalf("got %d series (%v), want 2 (the healthy one must survive)", len(byHash), byHash)
 	}
-	if byHash["broken"].BackrefErr == nil {
+	broke := byHash["broken"]
+	if broke.BackrefErr == nil {
 		t.Error("broken BackrefErr = nil, want non-nil")
+	}
+	// A directory that cannot be traversed cannot be listed either, so both
+	// reasons are set — neither one short-circuits the other.
+	if broke.NamesErr == nil {
+		t.Error("broken NamesErr = nil, want non-nil")
+	}
+	if broke.Names != nil {
+		t.Errorf("broken Names = %v, want nil", broke.Names)
 	}
 	if byHash["ok"].Root != "/home/me/proj" {
 		t.Errorf("ok Root = %q, want %q", byHash["ok"].Root, "/home/me/proj")

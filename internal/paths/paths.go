@@ -85,9 +85,11 @@ type RootHashSeries struct {
 	RootHash string
 	// Root is the absolute root path the backref .root records. Empty when BackrefErr is set.
 	Root string
-	// Names are the <name> profileDirs under the series, sorted by name
-	// (os.ReadDir). Nil for a series that holds nothing but the backref, and for
-	// one whose NamesErr is set.
+	// Names are the <name> profileDirs under the series, in whatever order
+	// os.ReadDir returned them; nothing here depends on that order. Nil for a
+	// series that holds nothing but the backref, and for one whose NamesErr is set
+	// (Names being empty therefore does not by itself mean the series has no
+	// <name> profile — check NamesErr first).
 	Names []string
 	// BackrefErr is the reason the backref could not be turned into a root path.
 	// The series is still returned so the caller can report it rather than
