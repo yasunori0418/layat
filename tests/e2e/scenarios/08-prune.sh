@@ -105,13 +105,19 @@ GONE_SERIES="$(series_dir_of "$GONE_ROOT")" || { e2e_fail "孤児にする系列
 LIVE_SERIES="$(series_dir_of "$LIVE_ROOT")" || { e2e_fail "生存させる系列の backref が見つからない"; exit 1; }
 e2e_log "gone=$GONE_SERIES live=$LIVE_SERIES"
 
-e2e_step "system 基底が隔離先へ向いている（バイナリが env を実際に走査基底として使う）"
-# 隔離先の system 基底へ孤児系列を手で置く。実 apply では system mode の系列を作れないので
-# ディレクトリと backref で組む（判定の入力は .root と root の実在だけ → DSG-096dc893）。
-# これが走査に載れば、nput が NPUT_SYSTEM_PROFILE_BASE を読んでいることが実挙動で決まる。
+e2e_step "隔離先の system 基底へ孤児系列を仕込む（隔離が効いているかの観測点）"
+# 実 apply では system mode の系列を作れないので、ディレクトリと backref で組む（判定の入力は
+# .root と root の実在だけ → DSG-096dc893）。これが走査に載れば、nput が
+# NPUT_SYSTEM_PROFILE_BASE を読んでいることが実挙動で決まる。判定は下の --dryrun / --yes で行う。
+#
+# 系列名は paths.RootHash の出力（sha256 hex の先頭 32 文字）に桁数を合わせてあるが、列挙は
+# `.root` の有無だけで決まり名前を検証しない（→ paths.ListRootHashSeries）ので、桁数は
+# 実物らしさのためであって依存ではない。
 SYS_ORPHAN="$SYSTEM_BASE/deadbeefdeadbeefdeadbeefdeadbeef"
+SYS_ORPHAN_ROOT="$E2E_WORK/never-existed"
 mkdir -p "$SYS_ORPHAN"
-printf '%s\n' "$E2E_WORK/never-existed" >"$SYS_ORPHAN/.root"
+printf '%s\n' "$SYS_ORPHAN_ROOT" >"$SYS_ORPHAN/.root"
+e2e_log "system 孤児系列: $SYS_ORPHAN (root=$SYS_ORPHAN_ROOT)"
 
 e2e_step "apply が作ったレイアウト（backref・profile・世代リンク）"
 assert_exists "$GONE_SERIES/.root"
@@ -155,7 +161,7 @@ else
 	e2e_pass "dryrun は生存系列を挙げない"
 fi
 # 隔離先の system 基底に置いた孤児系列も載る = バイナリが NPUT_SYSTEM_PROFILE_BASE を読んでいる。
-if plan_lists_root "$DRYRUN_OUT" "$E2E_WORK/never-existed"; then
+if plan_lists_root "$DRYRUN_OUT" "$SYS_ORPHAN_ROOT"; then
 	e2e_pass "隔離した system 基底の孤児系列も走査対象に載る"
 else
 	e2e_fail "system 基底が隔離先へ向いていない（env が効いていない）: $(cat "$DRYRUN_OUT")"
@@ -172,10 +178,12 @@ assert_json "$ENV_DRYRUN" "removed に孤児系列が root / names 付きで載�
 	"[.info.removed[] | select(.root == \"$GONE_ROOT\")] | (length == 1) and (.[0].names == [\"docs\"])"
 assert_json "$ENV_DRYRUN" "生存系列は removed に載らない" \
 	"[.info.removed[] | select(.root == \"$LIVE_ROOT\")] | length == 0"
-# 隔離側に想定外の skip が無いこと。skipped を見ないと、系列が backref 読み取り失敗などで
-# skip 側へ落ちても removed に孤児が居る限り通ってしまう。
-assert_json "$ENV_DRYRUN" "隔離した state 基底の系列は 1 件も skip されていない" \
-	"[.info.skipped[] | select(.series.dir | startswith(\"$BASE/\"))] | length == 0"
+# 想定外の skip が無いこと。skipped を見ないと、系列が backref 読み取り失敗などで skip 側へ
+# 落ちても removed に孤児が居る限り通ってしまう（dryrun の Removed は candidates で、skip 済みは
+# そこに入らないため、載っている側の確認では代替できない）。走査基底は 2 つとも隔離下にあり、
+# 素性の分かる系列しか置いていないので、基底で絞らず全件 0 で固定する。
+assert_json "$ENV_DRYRUN" "隔離した 2 基底のどの系列も skip されていない" \
+	'.info.skipped == []'
 
 e2e_step "prune --yes: 孤児系列が丸ごと消え、生存系列は残る"
 nput prune --yes -v
