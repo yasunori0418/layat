@@ -6,7 +6,8 @@ derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
   `nput prune` SHALL scan the user state base `<state>/nix/profiles/nput/` and the system
-  base `/nix/var/nix/profiles/nput/`, and under each SHALL consider only the directories
+  base `/nix/var/nix/profiles/nput/` (or the base named by `NPUT_SYSTEM_PROFILE_BASE`, an
+  isolation seam for tests), and under each SHALL consider only the directories
   that hold a backref file `.root`. It SHALL delete a series only when the absolute root
   path that `.root` records does not exist on the filesystem. A series whose root does
   exist SHALL be left alone, whatever other sign of disuse it carries. A series it does
@@ -25,7 +26,8 @@ specification: |
   a series it keeps.
 specification_ja: |
   `nput prune` はユーザー state 基底 `<state>/nix/profiles/nput/` と system 基底
-  `/nix/var/nix/profiles/nput/` を走査しなければならず、各基底の直下では backref ファイル
+  `/nix/var/nix/profiles/nput/`（または `NPUT_SYSTEM_PROFILE_BASE` が名指しする基底。
+  テスト用の隔離口）を走査しなければならず、各基底の直下では backref ファイル
   `.root` を持つディレクトリだけを対象としなければならない。`.root` が記録する root の
   絶対パスが FS 上に実在しないときにのみ、その系列を削除しなければならない。root が実在
   する系列は、他にどのような不使用の兆候があっても対象にしてはならない。削除する系列は
@@ -58,6 +60,11 @@ root = `/`）は、判定すべき root パスが導けないため構造的に�
 その基底の系列 0 件として黙って続ける。基底があるのに列挙できないときだけ報告する — 見に
 行けなかったのか、見て何も無かったのかが区別できないと、非 root 実行で system 基底が読めない
 状況が「孤児なし」と同じ見た目になる。
+
+system 基底の位置は環境変数 `NPUT_SYSTEM_PROFILE_BASE` で差し替えられる。state 基底は
+`XDG_STATE_HOME` を移せば動くのに対し system 基底は絶対パスで、口が無いと破壊的な prune を
+実機で駆動するテストがランナーの実共有状態を走査・削除しうるため（→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1）。
+隔離・テスト用であって「別の基底を prune する」機能ではない（prune は基底を引数に取らない）。
 
 **判定条件** — 「`.root` が記録する root 絶対パスが FS 上に実在しない」の 1 条件のみ。root が
 実在する系列は、entrypoint の消失など「もう使っていない」兆候があっても対象にしない
