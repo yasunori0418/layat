@@ -11,9 +11,12 @@ specification: |
   it is about to delete and SHALL ask for confirmation, which `--yes` SHALL skip. On a
   non-TTY without `--yes`, it SHALL abort rather than delete. Each series SHALL be locked
   with a try-lock before deletion; a series whose lock cannot be taken SHALL be skipped
-  with a warning, and `nput prune` SHALL NOT wait for a lock to be released. `nput prune
-  --json` SHALL require `--yes`, and SHALL fail fast with `status:"error"` and a non-zero
-  exit when it is absent.
+  with a warning, and `nput prune` SHALL NOT wait for a lock to be released. A series whose
+  deletion began and did not finish SHALL be reported as an error and SHALL NOT be counted
+  as deleted nor as skipped, the series being neither gone nor untouched; the series
+  deleted before that failure SHALL still be reported as deleted. `nput prune --json` SHALL
+  require `--yes`, and SHALL fail fast with `status:"error"` and a non-zero exit when it is
+  absent.
 specification_ja: |
   `nput prune --dryrun` は副作用を持ってはならず、削除予定の系列（`<roothash>`・root
   パス・配下の `<name>` profile 一覧）を stdout へ出力しなければならない。実削除の前に
@@ -21,7 +24,10 @@ specification_ja: |
   `--yes` はこれをスキップしなければならない。非 TTY で `--yes` が無いときは削除せず
   中止しなければならない。各系列は削除前に try-lock で lock しなければならず、lock を
   取れない系列は warning を出して skip しなければならない。lock の解放を待っては
-  ならない。`nput prune --json` は `--yes` を必須とし、無ければ `status:"error"` +
+  ならない。削除に着手して完了しなかった系列はエラーとして報告しなければならず、削除済み
+  としても skip としても扱ってはならない（その系列は消えてもいなければ無傷でもないため）。
+  その失敗より前に削除し終えた系列は削除済みとして報告しなければならない。
+  `nput prune --json` は `--yes` を必須とし、無ければ `status:"error"` +
   非ゼロで fail fast しなければならない。
 ---
 # REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed: prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る
@@ -48,10 +54,20 @@ warning を出して skip する。lock が取れない = その系列で engine
 即 `status:"error"` + 非ゼロで fail fast する（`reset --json` の REQ-2a613337-7646-4ced-8807-e43bca18acf3 と同型）。
 `--json` 出力が stdout を専有することは REQ-2353259f-5878-452a-8e11-3445de69abc2 の担当。
 
+**削除に着手して完了しなかった系列** — エラーとして報告し、削除済みとしても skip としても
+扱わない。系列の削除は複数の実体を順に消す作業なので、途中で失敗した系列は「消えた」でも
+「手を付けなかった」でもない第 3 の状態にある。どちらかに丸めると、実際には半端に壊れている
+ものが無傷だと読める報告になる。その失敗より前に削除し終えた系列は削除済みとして報告する
+（結果ごと破棄すると、既に消えた系列が結果に現れず、何が消えて何が残ったか分からないまま
+部分削除された FS を渡すことになる）。権限が無くて着手すらできなかった系列は「残した」側で、
+REQ-c44433a1-7ee7-459a-9aae-7cc42166876f の担当。
+
 > 何を削除対象とみなすかは REQ-c44433a1-7ee7-459a-9aae-7cc42166876f が持つ。本 item は
-> 「対象と判定したものを実際に消してよいか」を守るゲートだけを述べる。
+> 「対象と判定したものを実際に消してよいか」と「消し切れなかったことがどう届くか」を述べる。
 
 ## 出典
 
 決定の実体は ADR-0034 §2「安全機構 = dryrun・確認プロンプト・flock・アンマウント caveat」。
-`--json` の `--yes` 必須は同 §2 末尾の `--json` 対応と ADR-0043 §8 の帰結。
+`--json` の `--yes` 必須は同 §2 末尾の `--json` 対応と ADR-0043 §8 の帰結。削除に着手して完了
+しなかった系列の扱いは、同 §2 が挙げる安全機構に明示が無い部分を、削除が系列単位の複数実体に
+及ぶという ADR-0025 §4 のレイアウトから導いたもの。

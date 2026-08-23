@@ -17,9 +17,9 @@ specification: |
   symlink SHALL count as not existing. Where the root path cannot be decided — the backref
   being unreadable, empty or not absolute, or the stat of the root failing for a reason
   other than non-existence — the series SHALL be kept and the reason SHALL be reported as
-  a warning; a series that cannot be deleted for want of privilege SHALL be kept the same
-  way. A base that does not exist SHALL be treated as holding no series and SHALL NOT be
-  reported; a base that exists but cannot be listed SHALL be reported as a warning naming
+  a warning; a series whose deletion cannot even begin for want of privilege SHALL be kept
+  the same way. A base that does not exist SHALL be treated as holding no series and
+  SHALL NOT be reported; a base that exists but cannot be listed SHALL be reported as a warning naming
   it, so that a run which could not look is distinguishable from one that found nothing.
   `nput prune` SHALL NOT touch any placed artifact, and SHALL NOT thin the generations of
   a series it keeps.
@@ -35,7 +35,7 @@ specification_ja: |
   しなければならない。dangling symlink 越しの root は不在として扱わなければならない。
   root パスを決められないとき（backref が読めない・空・絶対パスでない、あるいは root の
   stat が不在以外の理由で失敗した）は系列を残し、その理由を warning として報告しなければ
-  ならない。権限が足りず削除できない系列も同じく残さなければならない。基底が存在しない
+  ならない。権限が足りず削除に着手すらできない系列も同じく残さなければならない。基底が存在しない
   ときはその基底に系列が無いものとして扱わなければならず、報告してはならない。基底が存在
   するのに列挙できないときは、その基底を名指しした warning として報告しなければならない
   （見に行けなかった実行と、見た結果何も無かった実行を区別できるようにするため）。
@@ -68,10 +68,15 @@ root = `/`）は、判定すべき root パスが導けないため構造的に�
 以外の理由（権限等）で失敗する、のいずれも「削除しない + warning」に倒す。判定材料が欠けた
 ときに削除へ倒す経路を持たない。
 
-**削除段で安全側へ倒す場合** — 削除すると決めた系列でも、実行する権限が無ければ残して warning
-を出す（→ ADR-0036 §3。system 基底の系列を非 root で実行したときに起きる）。判定段の条件が
-「削除するか決められない」なのに対し、こちらは「削除すると決めたが実行できない」で発生する段が
-違う。どちらも残す点は同じで、1 系列を残したことが他の系列の処理を止めることもない。
+**削除段で安全側へ倒す場合** — 削除すると決めた系列でも、権限が無くて**削除に着手すらできない**
+ときは残して warning を出す（→ ADR-0036 §3。system 基底の系列を非 root で実行したときに起きる）。
+判定段の条件が「削除するか決められない」なのに対し、こちらは「削除すると決めたが 1 つも消せ
+なかった」で発生する段が違う。どちらも残す点は同じで、1 系列を残したことが他の系列の処理を
+止めることもない。
+
+着手した後で失敗した系列は「残した」に含めない。その系列は無傷ではなく半端に壊れているので、
+残した系列と同じ扱いにすると実態と食い違う報告になる。この場合の扱いは
+REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed が持つ。
 
 **削除の単位** — 対象になった系列は `<roothash>` ディレクトリごと消す。配下に世代が 1 つも無く
 `.pending` と `.root` だけが残っている系列も同じく対象になる。
