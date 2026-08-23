@@ -18,8 +18,11 @@ specification: |
   being unreadable, empty or not absolute, or the stat of the root failing for a reason
   other than non-existence — the series SHALL be kept and the reason SHALL be reported as
   a warning; a series that cannot be deleted for want of privilege SHALL be kept the same
-  way. `nput prune` SHALL NOT touch any placed artifact, and SHALL NOT thin the
-  generations of a series it keeps.
+  way. A base that does not exist SHALL be treated as holding no series and SHALL NOT be
+  reported; a base that exists but cannot be listed SHALL be reported as a warning naming
+  it, so that a run which could not look is distinguishable from one that found nothing.
+  `nput prune` SHALL NOT touch any placed artifact, and SHALL NOT thin the generations of
+  a series it keeps.
 specification_ja: |
   `nput prune` はユーザー state 基底 `<state>/nix/profiles/nput/` と system 基底
   `/nix/var/nix/profiles/nput/` を走査しなければならず、各基底の直下では backref ファイル
@@ -32,8 +35,11 @@ specification_ja: |
   しなければならない。dangling symlink 越しの root は不在として扱わなければならない。
   root パスを決められないとき（backref が読めない・空・絶対パスでない、あるいは root の
   stat が不在以外の理由で失敗した）は系列を残し、その理由を warning として報告しなければ
-  ならない。権限が足りず削除できない系列も同じく残さなければならない。`nput prune` は
-  配置物に一切触れてはならず、残す系列の世代を間引いてもならない。
+  ならない。権限が足りず削除できない系列も同じく残さなければならない。基底が存在しない
+  ときはその基底に系列が無いものとして扱わなければならず、報告してはならない。基底が存在
+  するのに列挙できないときは、その基底を名指しした warning として報告しなければならない
+  （見に行けなかった実行と、見た結果何も無かった実行を区別できるようにするため）。
+  `nput prune` は配置物に一切触れてはならず、残す系列の世代を間引いてもならない。
 ---
 # REQ-c44433a1-7ee7-459a-9aae-7cc42166876f: prune は backref の root が実在しない roothash 系列だけを系列ごと削除する
 
@@ -47,6 +53,11 @@ profile 状態が `/nix/var/nix/profiles/nput/` に住み（→ ADR-0036 §3）�
 `.root` を持たない `<name>` 直キーの系列（home mode の root = `$HOME`・system mode の
 root = `/`）は、判定すべき root パスが導けないため構造的に対象外になる。system mode でも
 `--root` を明示した系列は `<roothash>` キー + backref になるので、通常の判定に乗る。
+
+基底そのものが無いのは正常（system mode を使ったことがない環境では system 基底が無い）で、
+その基底の系列 0 件として黙って続ける。基底があるのに列挙できないときだけ報告する — 見に
+行けなかったのか、見て何も無かったのかが区別できないと、非 root 実行で system 基底が読めない
+状況が「孤児なし」と同じ見た目になる。
 
 **判定条件** — 「`.root` が記録する root 絶対パスが FS 上に実在しない」の 1 条件のみ。root が
 実在する系列は、entrypoint の消失など「もう使っていない」兆候があっても対象にしない
