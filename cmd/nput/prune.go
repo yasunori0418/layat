@@ -77,7 +77,7 @@ func newPruneCmd() *cobra.Command {
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			run := beginPruneRun(cmd.Name())
-			return runPrune(run, flagDryrun)
+			return runPrune(run, flagDryrun, isInteractive())
 		},
 	}
 	cmd.Flags().BoolVar(&flagDryrun, "dryrun", false,
@@ -94,8 +94,10 @@ func newPruneCmd() *cobra.Command {
 //
 // dryrun must be flagDryrun's value (RunE passes exactly that, as reset's does): the envelope's
 // own dryRun field is captured from the flag by nifaceRun.begin, so passing anything else here
-// would emit a document whose dryRun disagrees with what the run did.
-func runPrune(run *pruneRun, dryrun bool) error {
+// would emit a document whose dryRun disagrees with what the run did. interactive comes in the
+// same way — the TTY check is the caller's, so the policy stays unit-testable without one
+// (→ confirmPolicy, which reset feeds the same way).
+func runPrune(run *pruneRun, dryrun, interactive bool) error {
 	// --dryrun: a side-effect-free preview (no flock / confirm). It stays available under --json
 	// without --yes — the refusal below guards the deletion, and a preview deletes nothing.
 	if dryrun {
@@ -112,7 +114,7 @@ func runPrune(run *pruneRun, dryrun bool) error {
 	// refuse) from --yes and TTY state, before anything is scanned: under --json the refusal is
 	// the fail-fast path, and its envelope must not carry an inventory that reads as a completed
 	// scan (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed, ADR-0043 §8).
-	needPrompt, err := confirmPolicy(flagYes, prunePromptAllowed(pruneInteractive(), flagJSON), "prune")
+	needPrompt, err := confirmPolicy(flagYes, prunePromptAllowed(interactive, flagJSON), "prune")
 	if err != nil {
 		return err
 	}
@@ -125,10 +127,15 @@ func runPrune(run *pruneRun, dryrun bool) error {
 	}
 
 	res, err := pruneFn(pruneOptions(false, confirm))
-	if res != nil {
+	if res != nil && !res.Aborted {
 		// Also on a mid-deletion failure: the partial result keeps the series completed before it,
 		// so the envelope says what is already gone rather than dropping it (→ engine.Prune の契約,
 		// REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
+		//
+		// An aborted run is the exception: nothing was deleted, so nothing may be reported as
+		// deleted. Removed is empty in the engine as it stands, but the CLI does not lean on that
+		// — an inventory built from a declined run's result is a report of a deletion that did
+		// not happen (→ resetPayload, which drops its changes on Aborted for the same reason).
 		run.setEnvelopeInfo(pruneInfoFrom(res))
 	}
 	if err != nil {
@@ -156,14 +163,11 @@ func prunePrompt(preview *engine.PruneResult) (bool, error) {
 	return promptYesNo("This will delete the above profile series. Continue?")
 }
 
-// pruneFn / pruneInteractive are the two seams runPrune's orchestration hangs on, indirected so
-// the CLI's own decisions (which preview reaches the prompt, what an aborted run prints, what the
-// envelope ends up carrying) are testable: without them the interactive branch is unreachable
-// under `go test`, whose stdin is never a TTY. Production never reassigns either.
-var (
-	pruneFn          = engine.Prune
-	pruneInteractive = isInteractive
-)
+// pruneFn is the engine entry point runPrune drives, indirected so the CLI's own decisions (which
+// preview reaches the prompt, what an aborted run reports, what the envelope ends up carrying)
+// are observable without a state dir on disk. Production never reassigns it; the TTY side needs
+// no seam because runPrune takes interactivity as an argument.
+var pruneFn = engine.Prune
 
 // pruneOptions builds the engine options for one prune run. The scan bases are left at their
 // defaults (the user state base and /nix/var/nix/profiles/nput · → ADR-0036 §3): only the engine's

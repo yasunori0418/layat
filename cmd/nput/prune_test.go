@@ -10,6 +10,19 @@ import (
 	"github.com/yasunori0418/nput/internal/engine"
 )
 
+// pruneTestState snapshots the package-level state prune's tests reach into — the engine seam and
+// the flags the run reads — and restores it when t finishes. Each subtest calls it before overwriting
+// anything, so a case added later cannot leak its overrides into the ones after it.
+func pruneTestState(t *testing.T) {
+	t.Helper()
+	fn := pruneFn
+	yes, jsonMode, verbose := flagYes, flagJSON, flagVerbose
+	t.Cleanup(func() {
+		pruneFn = fn
+		flagYes, flagJSON, flagVerbose = yes, jsonMode, verbose
+	})
+}
+
 // pruneFixture is the two-series result the output tests drive: one series under the user state
 // base and one under the system base, so an assertion about "every root path" cannot be
 // satisfied by a single line (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed の root パス一覧).
@@ -101,9 +114,8 @@ func TestPruneOutputStreams(t *testing.T) {
 	res := pruneFixture()
 
 	t.Run("printPrunePlan owns stdout exclusively", func(t *testing.T) {
-		origJSON := flagJSON
+		pruneTestState(t)
 		flagJSON = false
-		defer func() { flagJSON = origJSON }()
 
 		out, errOut := captureOutErr(t, func() { printPrunePlan(res) })
 		for _, want := range []string{
@@ -120,9 +132,8 @@ func TestPruneOutputStreams(t *testing.T) {
 	})
 
 	t.Run("printPrunePlan is silent under --json", func(t *testing.T) {
-		origJSON := flagJSON
+		pruneTestState(t)
 		flagJSON = true
-		defer func() { flagJSON = origJSON }()
 
 		out, _ := captureOutErr(t, func() { printPrunePlan(res) })
 		if out != "" {
@@ -134,8 +145,7 @@ func TestPruneOutputStreams(t *testing.T) {
 		// The empty quadrants of the contract: stdout stays empty under both contracts (nothing
 		// to list), while the stderr notice survives --json — human diagnostics coexist with the
 		// envelope (→ ADR-0043 §2).
-		origJSON := flagJSON
-		defer func() { flagJSON = origJSON }()
+		pruneTestState(t)
 
 		for _, jsonMode := range []bool{false, true} {
 			flagJSON = jsonMode
@@ -228,25 +238,33 @@ func TestPruneConfirmShowsThePreview(t *testing.T) {
 // value reaches the prompt, and what an aborted run does. The stub stands in for the state dir so
 // the CLI's decisions are observable without one on disk.
 func TestPruneRunDrivesTheEngine(t *testing.T) {
-	origFn, origInteractive := pruneFn, pruneInteractive
-	origYes, origJSON, origVerbose := flagYes, flagJSON, flagVerbose
-	defer func() {
-		pruneFn, pruneInteractive = origFn, origInteractive
-		flagYes, flagJSON, flagVerbose = origYes, origJSON, origVerbose
-	}()
+	// Every subtest reassigns some of these, so each one restores its own state through
+	// pruneTestState below; this is the outer net for whatever a subtest leaves behind.
+	pruneTestState(t)
 	flagJSON, flagVerbose = false, false
-	// go test's stdin is never a TTY, so the interactive branch is only reachable through the
-	// seam. The TTY判定 itself is TestIsInteractiveNonTTY's (reset_test.go) subject.
-	pruneInteractive = func() bool { return true }
+	// go test's stdin is never a TTY, so interactivity is passed in rather than detected. The
+	// TTY判定 itself is TestIsInteractiveNonTTY's (reset_test.go) subject.
+	const interactive = true
 
-	t.Run("the prompt sees the preview, not the result", func(t *testing.T) {
+	// The two values the CLI must keep apart. The preview is what the engine hands the callback
+	// (the judged candidates); the returned result is what the run actually did. They are given
+	// disjoint series here so no assertion can be satisfied by the wrong one: a prompt that
+	// listed the returned result would show the deleted-root, and an envelope built from the
+	// preview would report the candidate-root as deleted.
+	previewRoot, resultRoot := "/home/u/src/candidate", "/home/u/src/deleted"
+	preview := &engine.PruneResult{Removed: []engine.PruneSeries{
+		{RootHash: "cand", Root: previewRoot, Dir: "/state/nix/profiles/nput/cand"},
+	}}
+	result := &engine.PruneResult{Removed: []engine.PruneSeries{
+		{RootHash: "done", Root: resultRoot, Dir: "/state/nix/profiles/nput/done"},
+	}}
+
+	t.Run("the prompt sees the preview and the envelope sees the result", func(t *testing.T) {
+		pruneTestState(t)
 		flagYes = false
 		restore := withStdin(t, "y\n")
 		defer restore()
 
-		// What the engine hands the callback (the judged candidates) and what it returns after the
-		// deletion are different values; only the former may reach the prompt.
-		preview := pruneFixture()
 		pruneFn = func(opts engine.PruneOptions) (*engine.PruneResult, error) {
 			if opts.Confirm == nil {
 				t.Fatal("a run without --yes must pass a confirmation callback")
@@ -254,49 +272,116 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 			if _, err := opts.Confirm(preview); err != nil {
 				return nil, err
 			}
-			return &engine.PruneResult{Removed: preview.Removed}, nil
+			return result, nil
 		}
 
-		run, _ := newPruneTestRun()
-		var errOut string
-		_, errOut = captureOutErr(t, func() {
-			if err := runPrune(run, false); err != nil {
+		run, buf := newPruneTestRun()
+		_, errOut := captureOutErr(t, func() {
+			if err := runPrune(run, false, interactive); err != nil {
 				t.Errorf("runPrune: %v", err)
 			}
 		})
-		if !strings.Contains(errOut, "/home/u/src/gone") || !strings.Contains(errOut, "/mnt/removable/proj") {
-			t.Errorf("the prompt did not list the preview's roots: %q", errOut)
+		if !strings.Contains(errOut, previewRoot) {
+			t.Errorf("the prompt did not list the preview's root: %q", errOut)
+		}
+		if strings.Contains(errOut, resultRoot) {
+			t.Errorf("the prompt listed the returned result instead of the preview: %q", errOut)
+		}
+		// The inventory is the other way round: it reports what was deleted, not what was judged.
+		if err := run.emit(nil); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		info := decodeEnvelope(t, buf)["info"].(map[string]any)
+		removed := info["removed"].([]any)
+		if len(removed) != 1 || removed[0].(map[string]any)["root"] != resultRoot {
+			t.Errorf("info.removed = %v, want the one series the run deleted", removed)
 		}
 	})
 
 	t.Run("--yes passes no callback", func(t *testing.T) {
+		pruneTestState(t)
 		flagYes = true
 		var sawConfirm bool
 		pruneFn = func(opts engine.PruneOptions) (*engine.PruneResult, error) {
 			sawConfirm = opts.Confirm != nil
-			return &engine.PruneResult{}, nil
+			return result, nil
 		}
 		run, _ := newPruneTestRun()
-		_, _ = captureOutErr(t, func() {
-			if err := runPrune(run, false); err != nil {
+		_, errOut := captureOutErr(t, func() {
+			if err := runPrune(run, false, interactive); err != nil {
 				t.Errorf("runPrune: %v", err)
 			}
 		})
 		if sawConfirm {
 			t.Error("--yes must skip the prompt entirely (no callback)")
 		}
+		// Skipping the prompt skips the listing with it (→ ADR-0034 §2), and silent-on-success
+		// keeps the run quiet without -v.
+		if strings.Contains(errOut, resultRoot) {
+			t.Errorf("--yes must not print the series listing: %q", errOut)
+		}
 	})
 
-	t.Run("an aborted run reports on stderr and succeeds", func(t *testing.T) {
+	t.Run("--verbose reports what was deleted", func(t *testing.T) {
+		pruneTestState(t)
 		flagYes = true
+		pruneFn = func(engine.PruneOptions) (*engine.PruneResult, error) { return result, nil }
+
+		flagVerbose = true
+		run, _ := newPruneTestRun()
+		out, errOut := captureOutErr(t, func() {
+			if err := runPrune(run, false, interactive); err != nil {
+				t.Errorf("runPrune: %v", err)
+			}
+		})
+		if out != "" {
+			t.Errorf("the -v report pollutes stdout: %q", out)
+		}
+		if !strings.Contains(errOut, resultRoot) {
+			t.Errorf("-v must report the deleted series: %q", errOut)
+		}
+	})
+
+	t.Run("a refused policy never reaches the engine", func(t *testing.T) {
+		// Non-interactive without --yes: the refusal has to happen before the scan, so no state
+		// dir is read and nothing is deleted (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
+		pruneTestState(t)
+		flagYes = false
+
+		var called bool
 		pruneFn = func(engine.PruneOptions) (*engine.PruneResult, error) {
-			// What the engine returns when the callback declined: nothing deleted, Aborted set on
-			// the returned value (never on the preview · → engine.PruneOptions.Confirm).
-			return &engine.PruneResult{Aborted: true}, nil
+			called = true
+			return result, nil
 		}
 		run, buf := newPruneTestRun()
 		var runErr error
-		out, errOut := captureOutErr(t, func() { runErr = runPrune(run, false) })
+		_, _ = captureOutErr(t, func() { runErr = runPrune(run, false, false) })
+		if runErr == nil {
+			t.Fatal("a non-interactive run without --yes must fail")
+		}
+		if called {
+			t.Error("the refusal must come before the engine is driven")
+		}
+		// Nothing was scanned, so the envelope must not carry an inventory that reads as a
+		// completed scan that found nothing.
+		if err := run.emit(runErr); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		assertNoInfoKeys(t, decodeEnvelope(t, buf))
+	})
+
+	t.Run("an aborted run reports on stderr and succeeds", func(t *testing.T) {
+		pruneTestState(t)
+		flagYes = true
+		pruneFn = func(engine.PruneOptions) (*engine.PruneResult, error) {
+			// A declined run as the engine reports it: Aborted on the returned value, and the
+			// judged candidates left behind in Removed. The CLI must not turn those candidates
+			// into a report of what was deleted — that is what the abort branch is for.
+			return &engine.PruneResult{Removed: preview.Removed, Aborted: true}, nil
+		}
+		run, buf := newPruneTestRun()
+		var runErr error
+		out, errOut := captureOutErr(t, func() { runErr = runPrune(run, false, interactive) })
 		if runErr != nil {
 			// Declining is not a failure: the exit code stays 0 (→ reset's aborted path).
 			t.Errorf("an aborted run must not fail: %v", runErr)
@@ -307,15 +392,21 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 		if !strings.Contains(errOut, "prune aborted") {
 			t.Errorf("the abort notice is missing from stderr: %q", errOut)
 		}
-		// The envelope says nothing was deleted. A declined run whose removed still carried the
-		// judged candidates would read as a deletion that happened.
+		// The -v report is the thing that must not run: an aborted run that fell through to it
+		// would print "removed-series" for series that are still on disk.
+		if strings.Contains(errOut, "removed-series") {
+			t.Errorf("an aborted run reported deletions: %q", errOut)
+		}
 		if err := run.emit(nil); err != nil {
 			t.Fatalf("emit: %v", err)
 		}
-		info := decodeEnvelope(t, buf)["info"].(map[string]any)
-		if removed := info["removed"].([]any); len(removed) != 0 {
-			t.Errorf("info.removed = %v, want [] for an aborted run", removed)
+		doc := decodeEnvelope(t, buf)
+		if doc["status"] != "success" {
+			t.Errorf("status = %v, want success (declining is not an error)", doc["status"])
 		}
+		// Nothing was deleted, so no inventory is emitted at all: an envelope carrying the judged
+		// candidates in removed would report a deletion the user declined.
+		assertNoInfoKeys(t, doc)
 	})
 }
 
@@ -482,5 +573,8 @@ func TestPruneDryrunDoesNotDelete(t *testing.T) {
 	}
 	if real.Confirm == nil {
 		t.Error("the non-dryrun path must pass the confirmation callback through")
+	}
+	if real.StateDir != "" || real.SystemDir != "" {
+		t.Errorf("the CLI must leave the scan bases to the engine, got %+v", real)
 	}
 }
