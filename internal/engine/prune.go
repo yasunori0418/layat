@@ -67,8 +67,9 @@ type PruneOptions struct {
 	// lock, and changes nothing (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
 	DryRun bool
 	// Confirm is the confirmation callback before deletion (nil = --yes path).
-	// It is handed the judged result — the root paths the CLI presents are in
-	// it — and returning false aborts with PruneResult.Aborted set.
+	// It is handed a preview of the verdict — the root paths the CLI presents
+	// are in its Removed — which is a separate value from what Prune returns:
+	// Aborted is set on the returned result, never on the preview.
 	Confirm func(*PruneResult) (bool, error)
 	// Warnf is the warning output sink (nil = stderr). Every skipped series is
 	// reported through it.
@@ -175,6 +176,9 @@ func Prune(opts PruneOptions) (*PruneResult, error) {
 	// object the callback still holds would empty a list the CLI captured to
 	// display (→ ADR-0034 §2 の root パス一覧).
 	if opts.Confirm != nil {
+		// Skipped is shared rather than copied: from here on it only ever
+		// grows by append, so the callback's view stays the snapshot it was
+		// handed. An in-place update to an existing entry would break that.
 		preview := &PruneResult{Removed: candidates, Skipped: res.Skipped}
 		ok, err := opts.Confirm(preview)
 		if err != nil {

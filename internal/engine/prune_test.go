@@ -649,11 +649,14 @@ func TestPruneConfirmReceivesRootPaths(t *testing.T) {
 	first := orphanSeries(t, base, "aaaa", "cfg")
 	second := orphanSeries(t, base, "bbbb", "cfg")
 
-	var seen []PruneSeries
+	// The preview is held, not copied: a CLI that captures it to display after
+	// Prune returns must still find the candidates there, so Prune must not go
+	// on to reuse the object it handed over.
+	var seen *PruneResult
 	var w warnRecorder
 	opts := pruneOpts(state, system, &w)
 	opts.Confirm = func(res *PruneResult) (bool, error) {
-		seen = append([]PruneSeries(nil), res.Removed...)
+		seen = res
 		return true, nil
 	}
 	if _, err := Prune(opts); err != nil {
@@ -662,12 +665,15 @@ func TestPruneConfirmReceivesRootPaths(t *testing.T) {
 
 	mustNotExist(t, first, "the first orphan series")
 	mustNotExist(t, second, "the second orphan series")
+	if seen == nil {
+		t.Fatal("Confirm was never called")
+	}
 	// The CLI builds its root path list from what Confirm receives, so every
 	// candidate must carry a non-empty Root.
-	if len(seen) != 2 {
-		t.Fatalf("Confirm saw %d series, want 2", len(seen))
+	if len(seen.Removed) != 2 {
+		t.Fatalf("Confirm saw %d series, want 2", len(seen.Removed))
 	}
-	for _, s := range seen {
+	for _, s := range seen.Removed {
 		if s.Root == "" {
 			t.Errorf("Confirm saw series %q with an empty Root", s.RootHash)
 		}
@@ -838,6 +844,12 @@ func TestPruneHoldsLocksWhileDeleting(t *testing.T) {
 	// RISK-2b17fefb-6e92-4513-9e7c-de21897c9cfe). The probe reports whether it
 	// ever got inside the window, so "no lock taken" cannot be confused with
 	// "never looked".
+	//
+	// Only "second" is probed. The window is defined by "first" being gone, so
+	// by then "first" has no lock key left to test — a variant releasing each
+	// <name> right after its own RemoveAll is outside what this shape can
+	// catch. What it does catch is a release that comes before the removals,
+	// which is the form the DSG's "hold them across the removal" rules out.
 	probed := make(chan probe, 1)
 	go func() {
 		var p probe
@@ -1006,6 +1018,13 @@ func TestPruneErrorsWhenDeletionFailsForANonPermissionReason(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(partial, "stray"), []byte("x"), 0o644); err != nil {
 		t.Fatal(err)
 	}
+	// A healthy orphan sorting after the failing one. Without it, an
+	// implementation that carries on past a broken series instead of stopping
+	// would pass every assertion below, the failing series always being the
+	// last one processed. This lives here rather than on the permission cases
+	// so the coverage survives a run as root
+	// (→ TP-deb05610-44bc-4962-8939-952392e5fbd0 の横断規約).
+	later := orphanSeries(t, base, "cccc", "cfg")
 
 	var w warnRecorder
 	res, err := Prune(pruneOpts(state, system, &w))
@@ -1032,6 +1051,10 @@ func TestPruneErrorsWhenDeletionFailsForANonPermissionReason(t *testing.T) {
 	}
 	mustNotExist(t, completed, "the series completed before the failure")
 	mustExist(t, partial, "the series that could not be removed")
+	// The run stops at the broken series; the ones after it are untouched.
+	// (Removed holding only "aaaa" is already asserted above, so this is the
+	// FS-side half of the same claim.)
+	mustExist(t, later, "the orphan series after the failing one")
 }
 
 func TestPruneErrorsWhenDeletionFailsPartway(t *testing.T) {
@@ -1064,11 +1087,6 @@ func TestPruneErrorsWhenDeletionFailsPartway(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { _ = os.Chmod(filepath.Join(partial, "second"), 0o755) })
-	// A healthy orphan sorting after the failing one. Without it, an
-	// implementation that carries on past a half-deleted series instead of
-	// stopping would pass every assertion below, the failing series always
-	// being the last one processed.
-	later := orphanSeries(t, base, "cccc", "cfg")
 
 	var w warnRecorder
 	res, err := Prune(pruneOpts(state, system, &w))
@@ -1095,13 +1113,6 @@ func TestPruneErrorsWhenDeletionFailsPartway(t *testing.T) {
 	// .root survives so the series is still reachable on a re-run.
 	mustExist(t, filepath.Join(partial, ".root"), "the backref of the failed series")
 	mustNotExist(t, filepath.Join(partial, "first"), "the <name> removed before the failure")
-	// The run stops at the broken series; the ones after it are untouched.
-	mustExist(t, later, "the orphan series after the failing one")
-	for _, s := range res.Removed {
-		if s.RootHash == "cccc" {
-			t.Error("Removed holds a series processed after the failure, want the run to stop there")
-		}
-	}
 }
 
 func TestPruneErrorsWhenDeletionFailsPartwayOnPermission(t *testing.T) {
