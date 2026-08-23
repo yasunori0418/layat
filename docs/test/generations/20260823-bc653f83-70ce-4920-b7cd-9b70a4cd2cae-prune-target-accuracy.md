@@ -92,3 +92,7 @@ TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9 の担当。
   （`ListRootHashSeries`）と backref 読み取り（`ReadBackref`）そのものを名指しで覆う。
   `.root` の有無による振り分け・基底が「無い」と「読めない」の区別・系列単位の
   `BackrefErr` / `NamesErr` はこちらが持ち、`Prune` 経由の結合は上の CASE が見る
+- CASE-b19188cb-e3f0-4c52-8c92-6db96bbbb45a（`tests/e2e/scenarios/08-prune.sh`）— 実 nix の
+  apply が置いたレイアウトで孤児と生存の振り分けが効くことを見る。分岐の網羅は上の 2 件が持ち、
+  こちらは手組み fixture では再現しない実機の形（`.pending` / 世代リンク / indirect gcroot）が
+  対象になることだけを担保する
