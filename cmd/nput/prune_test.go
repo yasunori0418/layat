@@ -130,17 +130,191 @@ func TestPruneOutputStreams(t *testing.T) {
 		}
 	})
 
+	t.Run("printPrunePlan keeps the stderr notice with nothing to delete", func(t *testing.T) {
+		// The empty quadrants of the contract: stdout stays empty under both contracts (nothing
+		// to list), while the stderr notice survives --json — human diagnostics coexist with the
+		// envelope (→ ADR-0043 §2).
+		origJSON := flagJSON
+		defer func() { flagJSON = origJSON }()
+
+		for _, jsonMode := range []bool{false, true} {
+			flagJSON = jsonMode
+			out, errOut := captureOutErr(t, func() { printPrunePlan(&engine.PruneResult{}) })
+			if out != "" {
+				t.Errorf("flagJSON=%v: stdout = %q, want empty for an empty plan", jsonMode, out)
+			}
+			if !strings.Contains(errOut, "nothing to delete") {
+				t.Errorf("flagJSON=%v: stderr = %q, want the nothing-to-delete notice", jsonMode, errOut)
+			}
+		}
+	})
+
 	t.Run("reportPruneTargets lists every root path on stderr", func(t *testing.T) {
 		out, errOut := captureOutErr(t, func() { reportPruneTargets(res) })
 		if out != "" {
 			t.Errorf("the confirmation listing pollutes stdout: %q", out)
 		}
 		// The root path list is the only guard against an unmounted root being taken for a
-		// deleted one (→ ADR-0034 §2), so every one of them has to be shown.
-		for _, s := range res.Removed {
-			if !strings.Contains(errOut, s.Root) {
-				t.Errorf("root %q missing from the confirmation listing: %q", s.Root, errOut)
+		// deleted one (→ ADR-0034 §2), so every one of them has to be shown. The expectations are
+		// literals rather than a loop over res.Removed: reading the wanted roots back out of the
+		// value under test would pass for any listing that agreed with itself.
+		for _, root := range []string{"/home/u/src/gone", "/mnt/removable/proj"} {
+			if !strings.Contains(errOut, root) {
+				t.Errorf("root %q missing from the confirmation listing: %q", root, errOut)
 			}
+		}
+		// The count in the header has to match what is actually listed: a listing that showed one
+		// series while announcing two would still contain both roots if the header carried them.
+		if got := strings.Count(errOut, "  root "); got != 2 {
+			t.Errorf("root lines = %d, want 2: %q", got, errOut)
+		}
+		if !strings.Contains(errOut, "delete 2 orphan profile series") {
+			t.Errorf("the header does not announce the 2 series it listed: %q", errOut)
+		}
+	})
+
+	t.Run("reportPruneResult owns stderr exclusively", func(t *testing.T) {
+		out, errOut := captureOutErr(t, func() { reportPruneResult(res) })
+		if out != "" {
+			t.Errorf("the result report pollutes stdout: %q", out)
+		}
+		if !strings.Contains(errOut, "removed-series") || !strings.Contains(errOut, "/home/u/src/gone") {
+			t.Errorf("result report not emitted to stderr: %q", errOut)
+		}
+
+		// A run that deleted nothing says so rather than reporting an empty list.
+		out, errOut = captureOutErr(t, func() { reportPruneResult(&engine.PruneResult{}) })
+		if out != "" {
+			t.Errorf("the empty result report pollutes stdout: %q", out)
+		}
+		if !strings.Contains(errOut, "no-op") {
+			t.Errorf("an empty result must report no-op: %q", errOut)
+		}
+	})
+}
+
+// TestPruneConfirmShowsThePreview pins the wiring TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9 left to
+// the cli-json 区分: the callback runPrune hands the engine lists the *preview* it is given. The
+// engine's preview is a separate value from the result Prune returns (whose Removed means
+// "actually deleted", and is empty on an abort), so a callback that reported the returned result
+// instead would show "0 series" to the user about to confirm a deletion — the root path list that
+// ADR-0034 §2 calls the only guard would be blank while the deletion still went ahead.
+func TestPruneConfirmShowsThePreview(t *testing.T) {
+	restore := withStdin(t, "y\n")
+	defer restore()
+
+	preview := pruneFixture()
+	var errOut string
+	var ok bool
+	var err error
+	_, errOut = captureOutErr(t, func() { ok, err = prunePrompt(preview) })
+	if err != nil {
+		t.Fatalf("prunePrompt: %v", err)
+	}
+	if !ok {
+		t.Error("an explicit yes must confirm")
+	}
+	for _, root := range []string{"/home/u/src/gone", "/mnt/removable/proj"} {
+		if !strings.Contains(errOut, root) {
+			t.Errorf("root %q of the preview missing from the prompt: %q", root, errOut)
+		}
+	}
+	if !strings.Contains(errOut, "Continue?") {
+		t.Errorf("the prompt itself is missing: %q", errOut)
+	}
+}
+
+// TestPruneRunDrivesTheEngine pins runPrune's own orchestration against a stubbed engine: which
+// value reaches the prompt, and what an aborted run does. The stub stands in for the state dir so
+// the CLI's decisions are observable without one on disk.
+func TestPruneRunDrivesTheEngine(t *testing.T) {
+	origFn, origInteractive := pruneFn, pruneInteractive
+	origYes, origJSON, origVerbose := flagYes, flagJSON, flagVerbose
+	defer func() {
+		pruneFn, pruneInteractive = origFn, origInteractive
+		flagYes, flagJSON, flagVerbose = origYes, origJSON, origVerbose
+	}()
+	flagJSON, flagVerbose = false, false
+	// go test's stdin is never a TTY, so the interactive branch is only reachable through the
+	// seam. The TTY判定 itself is TestIsInteractiveNonTTY's (reset_test.go) subject.
+	pruneInteractive = func() bool { return true }
+
+	t.Run("the prompt sees the preview, not the result", func(t *testing.T) {
+		flagYes = false
+		restore := withStdin(t, "y\n")
+		defer restore()
+
+		// What the engine hands the callback (the judged candidates) and what it returns after the
+		// deletion are different values; only the former may reach the prompt.
+		preview := pruneFixture()
+		pruneFn = func(opts engine.PruneOptions) (*engine.PruneResult, error) {
+			if opts.Confirm == nil {
+				t.Fatal("a run without --yes must pass a confirmation callback")
+			}
+			if _, err := opts.Confirm(preview); err != nil {
+				return nil, err
+			}
+			return &engine.PruneResult{Removed: preview.Removed}, nil
+		}
+
+		run, _ := newPruneTestRun()
+		var errOut string
+		_, errOut = captureOutErr(t, func() {
+			if err := runPrune(run, false); err != nil {
+				t.Errorf("runPrune: %v", err)
+			}
+		})
+		if !strings.Contains(errOut, "/home/u/src/gone") || !strings.Contains(errOut, "/mnt/removable/proj") {
+			t.Errorf("the prompt did not list the preview's roots: %q", errOut)
+		}
+	})
+
+	t.Run("--yes passes no callback", func(t *testing.T) {
+		flagYes = true
+		var sawConfirm bool
+		pruneFn = func(opts engine.PruneOptions) (*engine.PruneResult, error) {
+			sawConfirm = opts.Confirm != nil
+			return &engine.PruneResult{}, nil
+		}
+		run, _ := newPruneTestRun()
+		_, _ = captureOutErr(t, func() {
+			if err := runPrune(run, false); err != nil {
+				t.Errorf("runPrune: %v", err)
+			}
+		})
+		if sawConfirm {
+			t.Error("--yes must skip the prompt entirely (no callback)")
+		}
+	})
+
+	t.Run("an aborted run reports on stderr and succeeds", func(t *testing.T) {
+		flagYes = true
+		pruneFn = func(engine.PruneOptions) (*engine.PruneResult, error) {
+			// What the engine returns when the callback declined: nothing deleted, Aborted set on
+			// the returned value (never on the preview · → engine.PruneOptions.Confirm).
+			return &engine.PruneResult{Aborted: true}, nil
+		}
+		run, buf := newPruneTestRun()
+		var runErr error
+		out, errOut := captureOutErr(t, func() { runErr = runPrune(run, false) })
+		if runErr != nil {
+			// Declining is not a failure: the exit code stays 0 (→ reset's aborted path).
+			t.Errorf("an aborted run must not fail: %v", runErr)
+		}
+		if out != "" {
+			t.Errorf("the abort notice pollutes stdout: %q", out)
+		}
+		if !strings.Contains(errOut, "prune aborted") {
+			t.Errorf("the abort notice is missing from stderr: %q", errOut)
+		}
+		// The envelope says nothing was deleted. A declined run whose removed still carried the
+		// judged candidates would read as a deletion that happened.
+		if err := run.emit(nil); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		info := decodeEnvelope(t, buf)["info"].(map[string]any)
+		if removed := info["removed"].([]any); len(removed) != 0 {
+			t.Errorf("info.removed = %v, want [] for an aborted run", removed)
 		}
 	})
 }
@@ -295,8 +469,10 @@ func TestPruneDryrunDoesNotDelete(t *testing.T) {
 	if opts.Confirm != nil {
 		t.Error("the dryrun path must pass no Confirm (a preview never asks)")
 	}
-	if opts.Warnf == nil {
-		t.Error("Warnf must be wired so a skipped series is reported even in dryrun")
+	// The scan bases stay at their defaults: the CLI names neither, so a run cannot be pointed at
+	// a base the engine did not resolve itself (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1 の層分け).
+	if opts.StateDir != "" || opts.SystemDir != "" {
+		t.Errorf("the CLI must leave the scan bases to the engine, got %+v", opts)
 	}
 
 	confirm := func(*engine.PruneResult) (bool, error) { return true, nil }

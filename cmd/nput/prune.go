@@ -42,11 +42,13 @@ type pruneSeriesRow struct {
 // pruneSkippedRow is one series left alone. reason is the engine's own vocabulary verbatim
 // (locked / backref-unreadable / series-unreadable / root-stat-failed / permission-denied ·
 // → DSG-096dc893-21f4-45e3-9347-986e9275b4d1): a CLI-side re-spelling would drift from the
-// engine's. detail carries the underlying failure, which the reason alone does not name.
+// engine's. detail carries the underlying failure, which the reason alone does not name — it is
+// always present (the engine records a skip only with the cause that produced it), so it is not
+// omitempty: a consumer never has to handle its absence.
 type pruneSkippedRow struct {
 	Series pruneSeriesRow `json:"series"`
 	Reason string         `json:"reason"`
-	Detail string         `json:"detail,omitempty"`
+	Detail string         `json:"detail"`
 }
 
 // pruneRun is prune's concrete run instantiation, threaded from RunE into runPrune.
@@ -89,11 +91,15 @@ func newPruneCmd() *cobra.Command {
 //
 // prune registers no subject: it names no config, so its inventory rides in the envelope-wide
 // info and results stays [] (the init shape · niface ADR-0018, → issue #164).
+//
+// dryrun must be flagDryrun's value (RunE passes exactly that, as reset's does): the envelope's
+// own dryRun field is captured from the flag by nifaceRun.begin, so passing anything else here
+// would emit a document whose dryRun disagrees with what the run did.
 func runPrune(run *pruneRun, dryrun bool) error {
 	// --dryrun: a side-effect-free preview (no flock / confirm). It stays available under --json
 	// without --yes — the refusal below guards the deletion, and a preview deletes nothing.
 	if dryrun {
-		res, err := engine.Prune(pruneOptions(true, nil))
+		res, err := pruneFn(pruneOptions(true, nil))
 		if err != nil {
 			return err
 		}
@@ -106,23 +112,19 @@ func runPrune(run *pruneRun, dryrun bool) error {
 	// refuse) from --yes and TTY state, before anything is scanned: under --json the refusal is
 	// the fail-fast path, and its envelope must not carry an inventory that reads as a completed
 	// scan (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed, ADR-0043 §8).
-	needPrompt, err := confirmPolicy(flagYes, prunePromptAllowed(isInteractive(), flagJSON), "prune")
+	needPrompt, err := confirmPolicy(flagYes, prunePromptAllowed(pruneInteractive(), flagJSON), "prune")
 	if err != nil {
 		return err
 	}
 
-	// Pass confirm only when a prompt is needed. What it shows is the engine's preview — a value
-	// distinct from the result Prune returns, so the listing the user just read cannot be emptied
-	// by the deletion stage (→ engine.PruneOptions.Confirm).
+	// Pass confirm only when a prompt is needed (--yes skips the listing along with the prompt ·
+	// → ADR-0034 §2).
 	var confirm func(*engine.PruneResult) (bool, error)
 	if needPrompt {
-		confirm = func(preview *engine.PruneResult) (bool, error) {
-			reportPruneTargets(preview)
-			return promptYesNo("This will delete the above profile series. Continue?")
-		}
+		confirm = prunePrompt
 	}
 
-	res, err := engine.Prune(pruneOptions(false, confirm))
+	res, err := pruneFn(pruneOptions(false, confirm))
 	if res != nil {
 		// Also on a mid-deletion failure: the partial result keeps the series completed before it,
 		// so the envelope says what is already gone rather than dropping it (→ engine.Prune の契約,
@@ -133,6 +135,10 @@ func runPrune(run *pruneRun, dryrun bool) error {
 		return err
 	}
 	if res.Aborted {
+		// Unreachable under --json today: that path requires --yes (above), which leaves Confirm
+		// nil so nothing can decline. Were the --yes requirement ever relaxed, the envelope would
+		// need a way to say "declined" — as it stands, a declined run and a run that found no
+		// orphan both emit status success with an empty removed.
 		fmt.Fprintln(os.Stderr, "nput: prune aborted")
 		return nil
 	}
@@ -142,17 +148,32 @@ func runPrune(run *pruneRun, dryrun bool) error {
 	return nil
 }
 
+// prunePrompt is the confirmation callback handed to the engine. What it lists is the engine's
+// preview — a value distinct from the result Prune returns, so the listing the user just read
+// cannot be emptied by the deletion stage (→ engine.PruneOptions.Confirm).
+func prunePrompt(preview *engine.PruneResult) (bool, error) {
+	reportPruneTargets(preview)
+	return promptYesNo("This will delete the above profile series. Continue?")
+}
+
+// pruneFn / pruneInteractive are the two seams runPrune's orchestration hangs on, indirected so
+// the CLI's own decisions (which preview reaches the prompt, what an aborted run prints, what the
+// envelope ends up carrying) are testable: without them the interactive branch is unreachable
+// under `go test`, whose stdin is never a TTY. Production never reassigns either.
+var (
+	pruneFn          = engine.Prune
+	pruneInteractive = isInteractive
+)
+
 // pruneOptions builds the engine options for one prune run. The scan bases are left at their
 // defaults (the user state base and /nix/var/nix/profiles/nput · → ADR-0036 §3): only the engine's
-// own tests point them elsewhere. Warnf is wired on both paths — a series left alone is reported
-// whether or not anything was going to be deleted.
+// own tests point them elsewhere. Warnf is left nil so the engine's own default (stderr, one line
+// per warning) is used — the same thing runReset does, and duplicating the formatting here would
+// give the same knowledge two places to drift apart.
 func pruneOptions(dryrun bool, confirm func(*engine.PruneResult) (bool, error)) engine.PruneOptions {
 	return engine.PruneOptions{
 		DryRun:  dryrun,
 		Confirm: confirm,
-		Warnf: func(format string, args ...any) {
-			fmt.Fprintf(os.Stderr, format+"\n", args...)
-		},
 	}
 }
 

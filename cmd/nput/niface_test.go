@@ -365,6 +365,7 @@ func TestJSONSuppressesLineOrientedStdout(t *testing.T) {
 	resetRes := &engine.ResetResult{RemovedSymlinks: []string{"s"}, RemovedCopies: []string{"c"}, KeptForeign: []string{"k"}}
 	gens := []engine.Generation{{Number: 1, Date: "2026-07-19", Current: true}}
 	targets := []string{".claude/skills"}
+	pruneRes := &engine.PruneResult{Removed: []engine.PruneSeries{{RootHash: "aaaa", Root: "/gone"}}}
 
 	printers := []struct {
 		name  string
@@ -374,6 +375,7 @@ func TestJSONSuppressesLineOrientedStdout(t *testing.T) {
 		{"printResetPlan", func() { printResetPlan(resetRes) }},
 		{"printGenerations", func() { printGenerations(gens) }},
 		{"printGitignore", func() { printGitignore(targets) }},
+		{"printPrunePlan", func() { printPrunePlan(pruneRes) }},
 	}
 	for _, p := range printers {
 		t.Run(p.name, func(t *testing.T) {
