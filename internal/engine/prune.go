@@ -75,8 +75,9 @@ type PruneOptions struct {
 	Warnf func(format string, args ...any)
 }
 
-// PruneSeries is one <roothash> series. The three fields are the ones --dryrun
-// prints and the confirmation prompt lists (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
+// PruneSeries is one <roothash> series. RootHash / Root / Names are the fields
+// --dryrun prints and the confirmation prompt lists
+// (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
 type PruneSeries struct {
 	// RootHash is the series directory name.
 	RootHash string
@@ -84,10 +85,13 @@ type PruneSeries struct {
 	Root string
 	// Names are the <name> profileDirs under the series.
 	Names []string
-
-	// dir is the absolute series directory. Unexported: it is Prune's own
-	// working state, not part of what the CLI reports.
-	dir string
+	// Dir is the absolute series directory, and so the only field that says
+	// which base the series came from. The <roothash> is a hash of the root
+	// path (→ paths.RootHash), so the same root reached in project mode and in
+	// system mode with an explicit --root puts the same directory name under
+	// both bases; without Dir, neither a Removed entry nor a warning would say
+	// which one it meant.
+	Dir string
 }
 
 // PruneSkipped is a series left alone and why.
@@ -143,7 +147,9 @@ func Prune(opts PruneOptions) (*PruneResult, error) {
 	for _, base := range []string{paths.Base(stateDir), systemDir} {
 		found, err := pruneJudgeBase(base, res, warnf)
 		if err != nil {
-			warnf("nput: prune: cannot list profile base (%s): %v", base, err)
+			// paths.ListRootHashSeries already names the base in its own wrap,
+			// so this only tags the warning as prune's.
+			warnf("nput: prune: %v", err)
 			continue
 		}
 		candidates = append(candidates, found...)
@@ -160,7 +166,10 @@ func Prune(opts PruneOptions) (*PruneResult, error) {
 	if opts.Confirm != nil {
 		ok, err := opts.Confirm(res)
 		if err != nil {
-			return res, err
+			// Nothing has been deleted, so there is no partial result to hand
+			// back; returning res here would carry the judged candidates in
+			// Removed and read as "these were deleted" (→ Reset does the same).
+			return nil, err
 		}
 		if !ok {
 			res.Aborted = true
@@ -205,9 +214,9 @@ func pruneJudgeBase(base string, res *PruneResult, warnf func(string, ...any)) (
 		return nil, err
 	}
 
-	// Enumeration order follows os.ReadDir, which is sorted; sorting the
-	// series keeps the deletion order (and so what lands in Removed before a
-	// failure) the same across bases.
+	// paths.ListRootHashSeries promises no order (→ its RootHashSeries doc), so
+	// the deletion order — and with it what lands in Removed before a failure —
+	// is fixed here rather than left to the enumeration.
 	sort.Slice(listed, func(i, j int) bool { return listed[i].RootHash < listed[j].RootHash })
 
 	var candidates []PruneSeries
@@ -216,8 +225,11 @@ func pruneJudgeBase(base string, res *PruneResult, warnf func(string, ...any)) (
 			RootHash: l.RootHash,
 			Root:     l.Root,
 			Names:    l.Names,
-			dir:      filepath.Join(base, l.RootHash),
+			Dir:      filepath.Join(base, l.RootHash),
 		}
+		// Load-bearing: the lock loop below takes the profileDirs in this order,
+		// so a series that ends up skipped releases a deterministic prefix
+		// (TestPruneReleasesLocksTakenBeforeASkip depends on it).
 		sort.Strings(s.Names)
 
 		// The backref could not be turned into a root path, so there is
@@ -255,13 +267,11 @@ func pruneJudgeBase(base string, res *PruneResult, warnf func(string, ...any)) (
 // pruneSkip records a skipped series and warns. Every reason warns: leaving one
 // of them silent would break the "report the reason as a warning" rule
 // (→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f).
+// The series is named by its directory rather than by the <roothash> alone: the
+// same <roothash> can stand under both bases (→ PruneSeries.Dir).
 func pruneSkip(res *PruneResult, warnf func(string, ...any), s PruneSeries, reason PruneSkipReason, cause error) {
 	res.Skipped = append(res.Skipped, PruneSkipped{Series: s, Reason: reason, Detail: cause.Error()})
-	warnPruneSkip(warnf, s, reason, cause)
-}
-
-func warnPruneSkip(warnf func(string, ...any), s PruneSeries, reason PruneSkipReason, cause error) {
-	warnf("nput: prune: skipped series %s (%s): %v", s.RootHash, reason, cause)
+	warnf("nput: prune: skipped series %s (%s): %v", s.Dir, reason, cause)
 }
 
 // pruneRemoveSeries deletes one series, locks and all. On failure it returns
@@ -283,15 +293,18 @@ func pruneRemoveSeries(s PruneSeries) (PruneSkipReason, error) {
 		}
 	}
 	for _, n := range s.Names {
-		dir := filepath.Join(s.dir, n)
-		l, lerr := lock.Acquire(dir, false)
+		dir := filepath.Join(s.Dir, n)
+		// The same acquire-and-wrap point Apply / Rollback / Reset share, so
+		// the flock failure wording stays single-sourced in the engine. It
+		// wraps with %w, so ErrLocked stays distinguishable below.
+		l, lerr := acquireProfileLock(dir, false)
 		if lerr != nil {
 			// ErrLocked means another process holds the profileDir; any other
 			// acquisition failure leaves the lock state undecided. Neither is
 			// allowed to fall through to deletion, so both skip the series
 			// whole and release what was already taken.
 			releaseAll()
-			return PruneSkipLocked, pruneLockSkip(s, dir, lerr)
+			return PruneSkipLocked, pruneLockSkip(dir, lerr)
 		}
 		locks = append(locks, l)
 	}
@@ -313,31 +326,35 @@ func pruneRemoveSeries(s PruneSeries) (PruneSkipReason, error) {
 		return ""
 	}
 	for _, n := range s.Names {
-		target := filepath.Join(s.dir, n)
+		target := filepath.Join(s.Dir, n)
 		if rerr := os.RemoveAll(target); rerr != nil {
 			return removalReason(rerr),
 				fmt.Errorf("nput: cannot remove profile directory of series %s (%s): %w", s.RootHash, target, rerr)
 		}
 		removedAny = true
 	}
-	backref := filepath.Join(s.dir, ".root")
+	backref := filepath.Join(s.Dir, ".root")
 	if rerr := os.Remove(backref); rerr != nil && !errors.Is(rerr, fs.ErrNotExist) {
 		return removalReason(rerr),
 			fmt.Errorf("nput: cannot remove backref of series %s (%s): %w", s.RootHash, backref, rerr)
 	}
-	removedAny = true
-	if rerr := os.Remove(s.dir); rerr != nil {
-		return "", fmt.Errorf("nput: cannot remove series %s (%s): %w", s.RootHash, s.dir, rerr)
+	// Past this point the backref is gone, so the series is definitely no
+	// longer untouched and the rmdir below can only fail as an error — hence
+	// the "" rather than another removalReason call.
+	if rerr := os.Remove(s.Dir); rerr != nil {
+		return "", fmt.Errorf("nput: cannot remove series %s (%s): %w", s.RootHash, s.Dir, rerr)
 	}
 	return "", nil
 }
 
 // pruneLockSkip turns a failed acquisition into the error carried by a locked
-// skip. The caller maps it to PruneSkipLocked; it is separate only so the
-// message names the profileDir the lock keys on.
-func pruneLockSkip(s PruneSeries, dir string, cause error) error {
+// skip. acquireProfileLock already names the profileDir and wraps the cause, so
+// this only says which of the two conditions held: another process owns the
+// profileDir, or the lock state could not be decided at all. Both keep the
+// series (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1 の lock 規律).
+func pruneLockSkip(dir string, cause error) error {
 	if errors.Is(cause, lock.ErrLocked) {
-		return fmt.Errorf("nput: profile directory of series %s is locked by another process (%s)", s.RootHash, dir)
+		return fmt.Errorf("nput: profile directory is locked by another process (%s): %w", dir, cause)
 	}
-	return fmt.Errorf("nput: cannot lock profile directory of series %s (%s): %w", s.RootHash, dir, cause)
+	return cause
 }
