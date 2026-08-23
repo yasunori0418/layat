@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/yasunori0418/nput/internal/manifest"
 )
@@ -67,6 +68,92 @@ type Profile struct {
 	BackrefDir string
 	// Backref is the backref file recording the original root's absolute path. Empty for home.
 	Backref string
+}
+
+// RootHashSeries is one <roothash> series found under a profile base: the
+// series directory, the root its backref records, and the <name> profileDirs
+// under it.
+type RootHashSeries struct {
+	// RootHash is the series directory name (<roothash>).
+	RootHash string
+	// Root is the absolute root path the backref .root records. Empty when BackrefErr is set.
+	Root string
+	// Names are the <name> profileDirs under the series. Empty for a series that
+	// holds nothing but .root.
+	Names []string
+	// BackrefErr is the reason the backref could not be turned into a root path.
+	// The series is still returned so the caller can report it rather than
+	// silently drop it.
+	BackrefErr error
+}
+
+// ReadBackref reads the backref <hashDir>/.root and returns the absolute root
+// path it records. The engine writes it as root + "\n" (→ engine.go), so the
+// surrounding whitespace is trimmed: the verdict on a root must not depend on a
+// trailing newline. A backref that is missing, empty, or not an absolute path
+// is an error — no root path can be decided from it, and a relative path would
+// otherwise resolve against the cwd (→ ADR-0034, DSG-096dc893-21f4-45e3-9347-986e9275b4d1).
+func ReadBackref(hashDir string) (string, error) {
+	backref := filepath.Join(hashDir, ".root")
+	b, err := os.ReadFile(backref)
+	if err != nil {
+		return "", fmt.Errorf("nput: cannot read backref (%s): %w", backref, err)
+	}
+	root := strings.TrimSpace(string(b))
+	if root == "" {
+		return "", fmt.Errorf("nput: backref is empty (%s)", backref)
+	}
+	if !filepath.IsAbs(root) {
+		return "", fmt.Errorf("nput: backref is not an absolute path (%s): %q", backref, root)
+	}
+	return root, nil
+}
+
+// ListRootHashSeries lists the <roothash> series directly under base — the
+// directories that hold a backref .root, that is the series of project mode,
+// fixed root, and --root override (→ ADR-0024, ADR-0034). A directory without
+// .root is the <name>-keyed profileDir of home mode and system mode and is not
+// a series, so it is not returned.
+//
+// A series whose backref cannot be read is returned with BackrefErr set rather
+// than dropped, so the caller can report the reason. This is the plain FS read
+// both nput prune (→ #133) and nput status (→ #198) enumerate with; it applies
+// no policy of its own beyond the .root test.
+//
+// base is a finished profile base — Base(stateDir) for the user state, or the
+// system base as-is (it does not go through Base()).
+func ListRootHashSeries(base string) ([]RootHashSeries, error) {
+	entries, err := os.ReadDir(base)
+	if err != nil {
+		return nil, fmt.Errorf("nput: cannot list profile base (%s): %w", base, err)
+	}
+
+	var series []RootHashSeries
+	for _, e := range entries {
+		if !e.IsDir() {
+			continue
+		}
+		hashDir := filepath.Join(base, e.Name())
+		if _, err := os.Lstat(filepath.Join(hashDir, ".root")); err != nil {
+			// No backref: a <name>-keyed profileDir, not a series.
+			continue
+		}
+
+		s := RootHashSeries{RootHash: e.Name()}
+		s.Root, s.BackrefErr = ReadBackref(hashDir)
+
+		names, err := os.ReadDir(hashDir)
+		if err != nil {
+			return nil, fmt.Errorf("nput: cannot list series (%s): %w", hashDir, err)
+		}
+		for _, n := range names {
+			if n.IsDir() {
+				s.Names = append(s.Names, n.Name())
+			}
+		}
+		series = append(series, s)
+	}
+	return series, nil
 }
 
 // Resolve determines the profile layout from the state base, config name,
