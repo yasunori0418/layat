@@ -10,10 +10,10 @@ import (
 	"github.com/yasunori0418/nput/internal/engine"
 )
 
-// pruneTestState snapshots the package-level state prune's tests reach into — the engine seam and
-// the flags the run reads — and restores it when t finishes. Each subtest calls it before overwriting
-// anything, so a case added later cannot leak its overrides into the ones after it.
-func pruneTestState(t *testing.T) {
+// withPruneTestState snapshots the package-level state prune's tests reach into — the engine seam
+// and the flags the run reads — and restores it when t finishes. Each subtest calls it before
+// overwriting anything, so a case added later cannot leak its overrides into the ones after it.
+func withPruneTestState(t *testing.T) {
 	t.Helper()
 	fn := pruneFn
 	yes, jsonMode, verbose := flagYes, flagJSON, flagVerbose
@@ -114,7 +114,7 @@ func TestPruneOutputStreams(t *testing.T) {
 	res := pruneFixture()
 
 	t.Run("printPrunePlan owns stdout exclusively", func(t *testing.T) {
-		pruneTestState(t)
+		withPruneTestState(t)
 		flagJSON = false
 
 		out, errOut := captureOutErr(t, func() { printPrunePlan(res) })
@@ -132,7 +132,7 @@ func TestPruneOutputStreams(t *testing.T) {
 	})
 
 	t.Run("printPrunePlan is silent under --json", func(t *testing.T) {
-		pruneTestState(t)
+		withPruneTestState(t)
 		flagJSON = true
 
 		out, _ := captureOutErr(t, func() { printPrunePlan(res) })
@@ -145,7 +145,7 @@ func TestPruneOutputStreams(t *testing.T) {
 		// The empty quadrants of the contract: stdout stays empty under both contracts (nothing
 		// to list), while the stderr notice survives --json — human diagnostics coexist with the
 		// envelope (→ ADR-0043 §2).
-		pruneTestState(t)
+		withPruneTestState(t)
 
 		for _, jsonMode := range []bool{false, true} {
 			flagJSON = jsonMode
@@ -235,12 +235,13 @@ func TestPruneConfirmShowsThePreview(t *testing.T) {
 }
 
 // TestPruneRunDrivesTheEngine pins runPrune's own orchestration against a stubbed engine: which
-// value reaches the prompt, and what an aborted run does. The stub stands in for the state dir so
-// the CLI's decisions are observable without one on disk.
+// value reaches the prompt, which one reaches the envelope, when the confirmation callback is
+// passed at all, what -v reports, and what the refused and declined runs do. The stub stands in
+// for the state dir so the CLI's decisions are observable without one on disk.
 func TestPruneRunDrivesTheEngine(t *testing.T) {
 	// Every subtest reassigns some of these, so each one restores its own state through
-	// pruneTestState below; this is the outer net for whatever a subtest leaves behind.
-	pruneTestState(t)
+	// withPruneTestState below; this is the outer net for whatever a subtest leaves behind.
+	withPruneTestState(t)
 	flagJSON, flagVerbose = false, false
 	// go test's stdin is never a TTY, so interactivity is passed in rather than detected. The
 	// TTY判定 itself is TestIsInteractiveNonTTY's (reset_test.go) subject.
@@ -260,7 +261,7 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 	}}
 
 	t.Run("the prompt sees the preview and the envelope sees the result", func(t *testing.T) {
-		pruneTestState(t)
+		withPruneTestState(t)
 		flagYes = false
 		restore := withStdin(t, "y\n")
 		defer restore()
@@ -299,7 +300,7 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 	})
 
 	t.Run("--yes passes no callback", func(t *testing.T) {
-		pruneTestState(t)
+		withPruneTestState(t)
 		flagYes = true
 		var sawConfirm bool
 		pruneFn = func(opts engine.PruneOptions) (*engine.PruneResult, error) {
@@ -323,7 +324,7 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 	})
 
 	t.Run("--verbose reports what was deleted", func(t *testing.T) {
-		pruneTestState(t)
+		withPruneTestState(t)
 		flagYes = true
 		pruneFn = func(engine.PruneOptions) (*engine.PruneResult, error) { return result, nil }
 
@@ -342,10 +343,39 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 		}
 	})
 
+	t.Run("a mid-deletion failure still reports what is already gone", func(t *testing.T) {
+		// The other arm of the same guard: a run that failed partway is not an aborted run — the
+		// series completed before the failure are gone from disk, so dropping them would hand the
+		// user a partially deleted state with no record of it
+		// (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
+		withPruneTestState(t)
+		flagYes = true
+		failure := errors.New("nput: cannot remove series done")
+		pruneFn = func(engine.PruneOptions) (*engine.PruneResult, error) { return result, failure }
+
+		run, buf := newPruneTestRun()
+		var runErr error
+		_, _ = captureOutErr(t, func() { runErr = runPrune(run, false, interactive) })
+		if runErr == nil {
+			t.Fatal("a mid-deletion failure must surface as an error")
+		}
+		if err := run.emit(runErr); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		doc := decodeEnvelope(t, buf)
+		if doc["status"] != "error" {
+			t.Errorf("status = %v, want error", doc["status"])
+		}
+		removed := doc["info"].(map[string]any)["removed"].([]any)
+		if len(removed) != 1 || removed[0].(map[string]any)["root"] != resultRoot {
+			t.Errorf("info.removed = %v, want the series deleted before the failure", removed)
+		}
+	})
+
 	t.Run("a refused policy never reaches the engine", func(t *testing.T) {
 		// Non-interactive without --yes: the refusal has to happen before the scan, so no state
 		// dir is read and nothing is deleted (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
-		pruneTestState(t)
+		withPruneTestState(t)
 		flagYes = false
 
 		var called bool
@@ -371,7 +401,7 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 	})
 
 	t.Run("an aborted run reports on stderr and succeeds", func(t *testing.T) {
-		pruneTestState(t)
+		withPruneTestState(t)
 		flagYes = true
 		pruneFn = func(engine.PruneOptions) (*engine.PruneResult, error) {
 			// A declined run as the engine reports it: Aborted on the returned value, and the

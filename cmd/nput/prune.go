@@ -94,9 +94,11 @@ func newPruneCmd() *cobra.Command {
 //
 // dryrun must be flagDryrun's value (RunE passes exactly that, as reset's does): the envelope's
 // own dryRun field is captured from the flag by nifaceRun.begin, so passing anything else here
-// would emit a document whose dryRun disagrees with what the run did. interactive comes in the
-// same way — the TTY check is the caller's, so the policy stays unit-testable without one
-// (→ confirmPolicy, which reset feeds the same way).
+// would emit a document whose dryRun disagrees with what the run did.
+//
+// interactive carries no such constraint — it is the seam the TTY check comes in through, so the
+// policy stays exercisable without a terminal, and a caller passing something other than
+// isInteractive() simply gets that policy (→ confirmPolicy, which reset feeds the same way).
 func runPrune(run *pruneRun, dryrun, interactive bool) error {
 	// --dryrun: a side-effect-free preview (no flock / confirm). It stays available under --json
 	// without --yes — the refusal below guards the deletion, and a preview deletes nothing.
@@ -136,6 +138,9 @@ func runPrune(run *pruneRun, dryrun, interactive bool) error {
 		// deleted. Removed is empty in the engine as it stands, but the CLI does not lean on that
 		// — an inventory built from a declined run's result is a report of a deletion that did
 		// not happen (→ resetPayload, which drops its changes on Aborted for the same reason).
+		// The skipped series go with it rather than being kept the way resetPayload keeps its
+		// items: a declined run judged them but acted on nothing, and the engine has already put
+		// every skip on stderr as a warning, so nothing is lost by leaving the document empty.
 		run.setEnvelopeInfo(pruneInfoFrom(res))
 	}
 	if err != nil {
@@ -143,9 +148,9 @@ func runPrune(run *pruneRun, dryrun, interactive bool) error {
 	}
 	if res.Aborted {
 		// Unreachable under --json today: that path requires --yes (above), which leaves Confirm
-		// nil so nothing can decline. Were the --yes requirement ever relaxed, the envelope would
-		// need a way to say "declined" — as it stands, a declined run and a run that found no
-		// orphan both emit status success with an empty removed.
+		// nil so nothing can decline. Were the --yes requirement ever relaxed, the two outcomes
+		// would already be distinguishable in the document — a declined run carries no info at
+		// all (above), while a run that found no orphan carries an empty removed.
 		fmt.Fprintln(os.Stderr, "nput: prune aborted")
 		return nil
 	}
