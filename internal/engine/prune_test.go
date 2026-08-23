@@ -685,9 +685,13 @@ func TestPruneConfirmFalseAborts(t *testing.T) {
 	base := paths.Base(state)
 	hashDir := orphanSeries(t, base, "aaaa", "cfg")
 
+	var seen *PruneResult
 	var w warnRecorder
 	opts := pruneOpts(state, system, &w)
-	opts.Confirm = func(*PruneResult) (bool, error) { return false, nil }
+	opts.Confirm = func(res *PruneResult) (bool, error) {
+		seen = res
+		return false, nil
+	}
 	res, err := Prune(opts)
 	if err != nil {
 		t.Fatalf("Prune: %v", err)
@@ -705,6 +709,18 @@ func TestPruneConfirmFalseAborts(t *testing.T) {
 	// Nothing was deleted, so the judged candidates must not read as removed.
 	if len(res.Removed) != 0 {
 		t.Errorf("Removed = %v, want empty on abort", hashes(res.Removed))
+	}
+	// The abort side of the preview contract: Aborted is raised on what Prune
+	// returns, never on what the callback was handed, and the preview keeps
+	// the candidates a CLI may still want to list.
+	if seen == nil {
+		t.Fatal("Confirm was never called")
+	}
+	if seen.Aborted {
+		t.Error("the preview handed to Confirm has Aborted set, want it only on the returned result")
+	}
+	if len(seen.Removed) != 1 {
+		t.Errorf("preview Removed = %v, want the judged candidate kept", hashes(seen.Removed))
 	}
 }
 
@@ -1023,7 +1039,9 @@ func TestPruneErrorsWhenDeletionFailsForANonPermissionReason(t *testing.T) {
 	// would pass every assertion below, the failing series always being the
 	// last one processed. This lives here rather than on the permission cases
 	// so the coverage survives a run as root
-	// (→ TP-deb05610-44bc-4962-8939-952392e5fbd0 の横断規約).
+	// (→ TP-deb05610-44bc-4962-8939-952392e5fbd0 の横断規約). What detects the
+	// carry-on is the exact-match check on Removed further down plus the
+	// mustExist on this series — loosening either leaves this fixture idle.
 	later := orphanSeries(t, base, "cccc", "cfg")
 
 	var w warnRecorder
