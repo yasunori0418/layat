@@ -94,5 +94,6 @@ TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9 の担当。
   `BackrefErr` / `NamesErr` はこちらが持ち、`Prune` 経由の結合は上の CASE が見る
 - CASE-b19188cb-e3f0-4c52-8c92-6db96bbbb45a（`tests/e2e/scenarios/08-prune.sh`）— 実 nix の
   apply が置いたレイアウトで孤児と生存の振り分けが効くことを見る。分岐の網羅は上の 2 件が持ち、
-  こちらは手組み fixture では再現しない実機の形（`.pending` / 世代リンク / indirect gcroot）が
-  対象になることだけを担保する
+  こちらは手組み fixture が再現しない実機の形（`nix-env --set` が `/nix/var/nix/gcroots/auto`
+  経由で張る indirect gcroot と、CLI の実経路）が対象になることだけを担保する。`.pending` は
+  逆にユニット側だけが持つ形で、apply 成功後は `cleanupPending` が消すため e2e には現れない
