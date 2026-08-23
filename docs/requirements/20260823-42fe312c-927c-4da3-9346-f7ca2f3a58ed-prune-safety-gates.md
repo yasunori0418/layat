@@ -14,9 +14,10 @@ specification: |
   with a warning, and `nput prune` SHALL NOT wait for a lock to be released. A series whose
   deletion began and did not finish SHALL be reported as an error and SHALL NOT be counted
   as deleted nor as skipped, the series being neither gone nor untouched; the series
-  deleted before that failure SHALL still be reported as deleted. `nput prune --json` SHALL
-  require `--yes`, and SHALL fail fast with `status:"error"` and a non-zero exit when it is
-  absent.
+  deleted before that failure SHALL still be reported as deleted. A `nput prune --json` that
+  deletes — that is, one without `--dryrun` — SHALL require `--yes`, and SHALL fail fast with
+  `status:"error"` and a non-zero exit when it is absent; `--dryrun --json` deletes nothing
+  and SHALL NOT require it.
 specification_ja: |
   `nput prune --dryrun` は副作用を持ってはならず、削除予定の系列（`<roothash>`・root
   パス・配下の `<name>` profile 一覧）を stdout へ出力しなければならない。実削除の前に
@@ -27,8 +28,9 @@ specification_ja: |
   ならない。削除に着手して完了しなかった系列はエラーとして報告しなければならず、削除済み
   としても skip としても扱ってはならない（その系列は消えてもいなければ無傷でもないため）。
   その失敗より前に削除し終えた系列は削除済みとして報告しなければならない。
-  `nput prune --json` は `--yes` を必須とし、無ければ `status:"error"` +
-  非ゼロで fail fast しなければならない。
+  削除を行う `nput prune --json`（すなわち `--dryrun` を伴わないもの）は `--yes` を必須とし、
+  無ければ `status:"error"` + 非ゼロで fail fast しなければならない。`--dryrun --json` は
+  何も削除しないため `--yes` を要求してはならない。
 ---
 # REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed: prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る
 
@@ -52,6 +54,12 @@ warning を出して skip する。lock が取れない = その系列で engine
 
 **`--json`** — 確認プロンプトは機械消費で扱えないため、`--json` は `--yes` を必須とし、無ければ
 即 `status:"error"` + 非ゼロで fail fast する（`reset --json` の REQ-2a613337-7646-4ced-8807-e43bca18acf3 と同型）。
+
+必須になるのは**削除を行う実行だけ**で、`--dryrun --json` は対象外。`--yes` を要求する理由は
+「削除の同意を機械消費の経路で取れない」ことにあり、副作用ゼロの preview には取るべき同意が無い
+（`reset` も dryrun 経路が確認ポリシーの手前で返るのと同じ構造）。ここを限定しないと、削除しない
+実行にまで同意フラグを要求する読み方ができてしまう。
+
 `--json` 出力が stdout を専有することは REQ-2353259f-5878-452a-8e11-3445de69abc2 の担当。
 
 **削除に着手して完了しなかった系列** — エラーとして報告し、削除済みとしても skip としても

@@ -426,6 +426,8 @@ nput list-generations <name>   # list generations (home mode only)
 nput list-generations --all    # list generations for all home-mode configs
 nput gitignore <name>          # print placement targets for .gitignore to stdout (no writes; project mode only)
 nput gitignore --all           # sorted + deduped targets for all projectRoot configs
+nput prune                     # delete the orphan profile series whose recorded root is gone (no name; lists the roots and confirms)
+nput prune --dryrun            # show the series that would be deleted; zero side effects
 nput init <template>           # wrapper over `nix flake init -t github:yasunori0418/nput#<template>`
 ```
 
@@ -441,7 +443,7 @@ nput init <template>           # wrapper over `nix flake init -t github:yasunori
 --project-root      # --all qualifier: only projectRoot configs (also --home-root / --system-root)
 --recopy            # apply qualifier: overwrite every copy target from src
 --manifest <path>   # apply only: apply a pre-built link-farm directly
--y, --yes           # skip reset's confirmation prompt (for scripts / CI)
+-y, --yes           # skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)
 ```
 
 ### Output and exit codes
@@ -522,7 +524,7 @@ package layers would be delegated to or combined with system-manager, while nput
 
 | Area | Status |
 |---|---|
-| Standalone CLI (`apply` / `reset` / `rollback` / `list-generations` / `gitignore` / `init`) | implemented (core) |
+| Standalone CLI (`apply` / `reset` / `rollback` / `list-generations` / `gitignore` / `prune` / `init`) | implemented (core) |
 | project mode (`projectRoot`) | implemented (core) |
 | home mode (`homeRoot`) | implemented |
 | home-manager module | implemented — single profile (fixed name `default`); no role separation |
@@ -541,7 +543,8 @@ package layers would be delegated to or combined with system-manager, while nput
 - Boot / init / filesystem / partition layers are not nput's domain.
 - Removing a clone leaves an orphan profile directory under
   `<state>/nix/profiles/nput/` (the store is freed by `nix-collect-garbage`, but the
-  profile directory remains). There is no `prune` command in the MVP; remove it manually.
+  profile directory remains). `nput prune` deletes the series whose recorded root no longer
+  exists; it lists the root paths and asks before deleting anything.
 - The home-manager module cannot separate roles into multiple profiles in the MVP — use the
   standalone CLI for that.
 
