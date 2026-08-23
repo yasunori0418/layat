@@ -138,6 +138,7 @@ func runPrune(run *pruneRun, dryrun, interactive bool) error {
 		// deleted. Removed is empty in the engine as it stands, but the CLI does not lean on that
 		// — an inventory built from a declined run's result is a report of a deletion that did
 		// not happen (→ resetPayload, which drops its changes on Aborted for the same reason).
+		//
 		// The skipped series go with it rather than being kept the way resetPayload keeps its
 		// items: a declined run judged them but acted on nothing, and the engine has already put
 		// every skip on stderr as a warning, so nothing is lost by leaving the document empty.
