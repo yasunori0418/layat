@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -119,7 +120,13 @@ func (w *warnRecorder) warnf(format string, args ...any) {
 	w.msgs = append(w.msgs, fmt.Sprintf(format, args...))
 }
 
-func (w *warnRecorder) count() int { return len(w.msgs) }
+// wantNoWarning requires that nothing was warned at all, showing what was.
+func (w *warnRecorder) wantNoWarning(t *testing.T) {
+	t.Helper()
+	if len(w.msgs) != 0 {
+		t.Errorf("warnings %q, want none", w.msgs)
+	}
+}
 
 // wantWarning requires exactly one recorded warning containing every substring.
 func (w *warnRecorder) wantWarning(t *testing.T, parts ...string) {
@@ -279,9 +286,7 @@ func TestPruneKeepsLiveSeries(t *testing.T) {
 	if len(res.Skipped) != 0 {
 		t.Errorf("Skipped = %v, want empty", skipHashes(res.Skipped))
 	}
-	if w.count() != 0 {
-		t.Errorf("Warnf called %d times, want 0", w.count())
-	}
+	w.wantNoWarning(t)
 }
 
 func TestPruneIgnoresDirWithoutBackref(t *testing.T) {
@@ -338,9 +343,7 @@ func TestPruneTreatsMissingBaseAsEmpty(t *testing.T) {
 	if len(res.Removed) != 0 || len(res.Skipped) != 0 {
 		t.Errorf("Removed = %v, Skipped = %v, want both empty", hashes(res.Removed), skipHashes(res.Skipped))
 	}
-	if w.count() != 0 {
-		t.Errorf("Warnf called %d times for absent bases, want 0", w.count())
-	}
+	w.wantNoWarning(t)
 }
 
 func TestPruneWarnsOnUnlistableBase(t *testing.T) {
@@ -366,8 +369,10 @@ func TestPruneWarnsOnUnlistableBase(t *testing.T) {
 	if got := hashes(res.Removed); len(got) != 1 || got[0] != "aaaa" {
 		t.Errorf("Removed = %v, want [aaaa]", got)
 	}
-	// The TC requires the warning to name the base it could not read.
-	w.wantWarning(t, system)
+	// The TC requires the warning to name the base it could not read. The
+	// "profile base" wording separates it from a series warning, which would
+	// also contain the base path as a prefix of the series directory.
+	w.wantWarning(t, system, "profile base")
 	// A base-level failure names no series, so it cannot be a Skipped entry.
 	if len(res.Skipped) != 0 {
 		t.Errorf("Skipped = %v, want empty (a base failure names no series)", skipHashes(res.Skipped))
@@ -838,6 +843,10 @@ func TestPruneHoldsLocksWhileDeleting(t *testing.T) {
 		var p probe
 		deadline := time.Now().Add(30 * time.Second)
 		for time.Now().Before(deadline) {
+			// Hand the P back each pass: a tight spin starves Prune on a
+			// single-processor run, and this probe is only useful while Prune
+			// is making progress.
+			runtime.Gosched()
 			// The window opens when the first <name> is gone.
 			if _, err := os.Lstat(first); !errors.Is(err, fs.ErrNotExist) {
 				continue
@@ -848,8 +857,19 @@ func TestPruneHoldsLocksWhileDeleting(t *testing.T) {
 			}
 			p.windowHit = true
 			p.attempts++
-			if l, err := lock.Acquire(second, false); err == nil {
-				_ = l.Release()
+			l, err := lock.Acquire(second, false)
+			if err != nil {
+				continue
+			}
+			// lock.Acquire is open-then-flock, and a flock on an already
+			// unlinked fd always succeeds: being preempted between the two
+			// syscalls long enough for Prune to finish would otherwise look
+			// exactly like an early release. Re-check that the profileDir is
+			// still there, which it is only if the lock was genuinely free
+			// while the series stood.
+			_, stillThere := os.Lstat(second)
+			_ = l.Release()
+			if stillThere == nil {
 				p.tookLock = true
 				break
 			}
@@ -1044,6 +1064,11 @@ func TestPruneErrorsWhenDeletionFailsPartway(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { _ = os.Chmod(filepath.Join(partial, "second"), 0o755) })
+	// A healthy orphan sorting after the failing one. Without it, an
+	// implementation that carries on past a half-deleted series instead of
+	// stopping would pass every assertion below, the failing series always
+	// being the last one processed.
+	later := orphanSeries(t, base, "cccc", "cfg")
 
 	var w warnRecorder
 	res, err := Prune(pruneOpts(state, system, &w))
@@ -1070,6 +1095,13 @@ func TestPruneErrorsWhenDeletionFailsPartway(t *testing.T) {
 	// .root survives so the series is still reachable on a re-run.
 	mustExist(t, filepath.Join(partial, ".root"), "the backref of the failed series")
 	mustNotExist(t, filepath.Join(partial, "first"), "the <name> removed before the failure")
+	// The run stops at the broken series; the ones after it are untouched.
+	mustExist(t, later, "the orphan series after the failing one")
+	for _, s := range res.Removed {
+		if s.RootHash == "cccc" {
+			t.Error("Removed holds a series processed after the failure, want the run to stop there")
+		}
+	}
 }
 
 func TestPruneErrorsWhenDeletionFailsPartwayOnPermission(t *testing.T) {

@@ -104,8 +104,10 @@ type PruneSkipped struct {
 // PruneResult is the result of Prune (in dryrun, the preview).
 type PruneResult struct {
 	// Removed holds the series deleted — in dryrun, the ones that would be.
-	// On an error it holds the series completed before the failure, so the
-	// caller can tell what is already gone (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
+	// When the deletion stage fails it holds the series completed before that
+	// failure, so the caller can tell what is already gone
+	// (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed). That is the only error for
+	// which a result comes back at all — see Prune's own contract.
 	Removed []PruneSeries
 	// Skipped holds the series left alone, with the reason.
 	Skipped []PruneSkipped
@@ -117,6 +119,12 @@ type PruneResult struct {
 // under the user state base and the system base. The field name Removed rather
 // than Pruned is deliberate: Result.Pruned already means the empty ancestor
 // directories rmdir-ed after a removal (→ REQ-8409db86-a1ba-4053-86dc-588985cc1ca7).
+//
+// On error the result is nil except when the deletion stage itself failed: only
+// then is anything already gone, and the partial result comes back alongside
+// the error so the caller can report it. Everything before that stage —
+// resolving the state dir, the confirmation callback — fails with nothing
+// deleted, so there is no partial state to describe.
 func Prune(opts PruneOptions) (*PruneResult, error) {
 	warnf := opts.Warnf
 	if warnf == nil {
@@ -154,33 +162,35 @@ func Prune(opts PruneOptions) (*PruneResult, error) {
 		}
 		candidates = append(candidates, found...)
 	}
-	res.Removed = candidates
 
 	// 2. dryrun stops at the verdict: no lock is taken and nothing is removed.
+	// Here the candidates are the answer, so they go straight into Removed.
 	if opts.DryRun {
+		res.Removed = candidates
 		return res, nil
 	}
 
-	// 3. confirm before deleting. The judged result carries the root paths the
-	// CLI presents (→ ADR-0034 §2).
+	// 3. confirm before deleting. The preview handed to Confirm is a separate
+	// value: res.Removed goes on to mean "actually deleted", and mutating the
+	// object the callback still holds would empty a list the CLI captured to
+	// display (→ ADR-0034 §2 の root パス一覧).
 	if opts.Confirm != nil {
-		ok, err := opts.Confirm(res)
+		preview := &PruneResult{Removed: candidates, Skipped: res.Skipped}
+		ok, err := opts.Confirm(preview)
 		if err != nil {
 			// Nothing has been deleted, so there is no partial result to hand
-			// back; returning res here would carry the judged candidates in
-			// Removed and read as "these were deleted" (→ Reset does the same).
+			// back; a result carrying the judged candidates in Removed would
+			// read as "these were deleted" (→ Reset does the same).
 			return nil, err
 		}
 		if !ok {
 			res.Aborted = true
-			res.Removed = nil
 			return res, nil
 		}
 	}
 
-	// 4. delete. Removed is rebuilt as series actually complete, so a failure
-	// partway leaves it holding only what finished before it.
-	res.Removed = nil
+	// 4. delete. Removed only ever holds series that completed, so a failure
+	// partway leaves it holding what finished before it.
 	for _, s := range candidates {
 		reason, err := pruneRemoveSeries(s)
 		if err != nil {
@@ -214,9 +224,9 @@ func pruneJudgeBase(base string, res *PruneResult, warnf func(string, ...any)) (
 		return nil, err
 	}
 
-	// paths.ListRootHashSeries promises no order (→ its RootHashSeries doc), so
-	// the deletion order — and with it what lands in Removed before a failure —
-	// is fixed here rather than left to the enumeration.
+	// ListRootHashSeries makes no promise about the order of the series it
+	// returns, so the deletion order — and with it what lands in Removed
+	// before a failure — is fixed here rather than left to the enumeration.
 	sort.Slice(listed, func(i, j int) bool { return listed[i].RootHash < listed[j].RootHash })
 
 	var candidates []PruneSeries
@@ -227,9 +237,9 @@ func pruneJudgeBase(base string, res *PruneResult, warnf func(string, ...any)) (
 			Names:    l.Names,
 			Dir:      filepath.Join(base, l.RootHash),
 		}
-		// Load-bearing: the lock loop below takes the profileDirs in this order,
-		// so a series that ends up skipped releases a deterministic prefix
-		// (TestPruneReleasesLocksTakenBeforeASkip depends on it).
+		// Load-bearing: the lock loop below takes the profileDirs in this
+		// order, so the prefix a skipped series has to release is
+		// deterministic rather than whatever the enumeration happened to give.
 		sort.Strings(s.Names)
 
 		// The backref could not be turned into a root path, so there is
@@ -295,16 +305,18 @@ func pruneRemoveSeries(s PruneSeries) (PruneSkipReason, error) {
 	for _, n := range s.Names {
 		dir := filepath.Join(s.Dir, n)
 		// The same acquire-and-wrap point Apply / Rollback / Reset share, so
-		// the flock failure wording stays single-sourced in the engine. It
-		// wraps with %w, so ErrLocked stays distinguishable below.
+		// the flock failure wording stays single-sourced in the engine.
 		l, lerr := acquireProfileLock(dir, false)
 		if lerr != nil {
-			// ErrLocked means another process holds the profileDir; any other
-			// acquisition failure leaves the lock state undecided. Neither is
-			// allowed to fall through to deletion, so both skip the series
-			// whole and release what was already taken.
+			// Either another process holds the profileDir (lock.ErrLocked) or
+			// the lock state could not be decided at all. Neither is allowed
+			// to fall through to deletion, so both skip the series whole and
+			// release what was already taken. The two need no telling apart
+			// here — acquireProfileLock has named the profileDir and carried
+			// ErrLocked's own wording, and pruneSkip prefixes the series and
+			// the reason, so the error goes back as it came.
 			releaseAll()
-			return PruneSkipLocked, pruneLockSkip(dir, lerr)
+			return PruneSkipLocked, lerr
 		}
 		locks = append(locks, l)
 	}
@@ -345,16 +357,4 @@ func pruneRemoveSeries(s PruneSeries) (PruneSkipReason, error) {
 		return "", fmt.Errorf("nput: cannot remove series %s (%s): %w", s.RootHash, s.Dir, rerr)
 	}
 	return "", nil
-}
-
-// pruneLockSkip turns a failed acquisition into the error carried by a locked
-// skip. acquireProfileLock already names the profileDir and wraps the cause, so
-// this only says which of the two conditions held: another process owns the
-// profileDir, or the lock state could not be decided at all. Both keep the
-// series (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1 の lock 規律).
-func pruneLockSkip(dir string, cause error) error {
-	if errors.Is(cause, lock.ErrLocked) {
-		return fmt.Errorf("nput: profile directory is locked by another process (%s): %w", dir, cause)
-	}
-	return cause
 }
