@@ -234,7 +234,7 @@ stale 除去は前世代 manifest の記録通りを指す symlink だけに限�
 - [REQ-0e341430-17f0-498b-9439-65491652163a](requirements/20260802-0e341430-17f0-498b-9439-65491652163a-rollback-refit-then-pointer.md) — rollback は FS を先に収束させてから profile ポインタを最後に移す
 - [REQ-844ee375-919f-4341-81e1-a5f89fd32840](requirements/20260802-844ee375-919f-4341-81e1-a5f89fd32840-module-mode-profile-internal.md) — module 時は rollback を host へ一本化し、nput profile は前進のみで追従する
 - [REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0](requirements/20260802-46fccb80-4bae-4d37-bc19-dded88e9a9c0-project-mode-generation-skip.md) — project mode は世代を非公開にし、derivation 同一なら世代を積まず lstat ドリフト修復だけ行う
-- [REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4](requirements/20260802-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4-project-mode-orphan-profile.md) — 孤児 profile は backref で逆引き可能なまま放置許容とし、MVP では cleanup コマンドを持たない
+- [REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4](requirements/20260802-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4-project-mode-orphan-profile.md) — 孤児 profile は backref で逆引き可能なまま放置許容とし、`nput prune` が root 不在の系列を削除する
 - [REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693](requirements/20260802-fc1118b1-b0e8-4ddf-80f6-c70956651693-cross-config-target-oscillation.md) — 同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める
 
 ---
