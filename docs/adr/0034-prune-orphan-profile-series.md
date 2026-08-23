@@ -21,6 +21,7 @@ references:
 - 関連: ADR-0013 §7, ADR-0021, ADR-0025 §4, ADR-0033, `docs/spec.md`
 - 改訂対象: ADR-0024 §11 の「cleanup コマンドは MVP 非対応・将来 `nput prune` の seam を残す（消費側の要求が出た時点で追加）」を、本 ADR で実装決定へ進める。seam の設計（backref `.root` による逆引き）自体は不変
 - 起点: 次期マイルストーン計画の grilling（2026-07-04）。公開後の実運用（プロジェクトのクローン削除・`--root` 使い分け）で孤児系列が実際に蓄積し始めたことを「消費側の要求」と判断した
+- 実装時の注記（2026-08-23）: 本 ADR より後の ADR-0036 §3 が system mode の profile 基底を定めた結果、走査対象は §1 が挙げるユーザー state 基底に加えて system 基底 `/nix/var/nix/profiles/nput/` の 2 つになり（§1 は system mode の実装決定より前で、root = `/` の常在だけを理由に対象外としていた。`--root` 明示の系列は `<roothash>` キー + backref になる）、非 root 実行で削除権限が無い系列は warning 付きで skip する安全機構が §2 に加わる。本 ADR の決定自体は変えない（規範は REQ-c44433a1-7ee7-459a-9aae-7cc42166876f / REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed）
 
 ## 背景
 
