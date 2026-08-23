@@ -647,8 +647,8 @@ func TestPruneSystemBaseEnvOverridesTheScanBase(t *testing.T) {
 		})
 	}
 
-	// An empty value is not an override: it must fall back to the engine's default rather than
-	// pointing the scan at "" (which paths would resolve relative to the cwd).
+	// An empty value is not an override: it must reach the engine as an empty SystemDir so the
+	// engine's own default applies. Treating "" as a base to scan would be the bug here.
 	t.Setenv(systemBaseEnv, "")
 	if got := pruneOptions(false, nil).SystemDir; got != "" {
 		t.Errorf("SystemDir = %q with the override unset, want the engine default", got)
