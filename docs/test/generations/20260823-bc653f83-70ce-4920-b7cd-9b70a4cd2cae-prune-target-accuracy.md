@@ -54,6 +54,16 @@ warning が出て、もう一方の基底の処理は続く。**「基底が無�
 root の stat が不在以外の理由で失敗する系列も同様に残り、`root-stat-failed` になる。判定材料が
 欠けたときに削除へ倒れないことの担保。
 
+**系列単位の判定段失敗** — 列挙が系列ごとに載せる失敗（`BackrefErr` / `NamesErr` →
+`internal/paths` の `RootHashSeries`）は、どちらも基底全体を落とさず、その系列だけを残して
+理由付きで `Skipped` に載せる。`BackrefErr` は `backref-unreadable`、`NamesErr` は
+`series-unreadable`（→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1）。同じ基底の健全な孤児系列は
+変わらず削除されることを併せて見る。**`NamesErr` の系列を独立に置くのが要点**で、この系列は
+`Names` が nil のまま返るため、`NamesErr` を見ずに nil だけで分岐する実装では「`<name>` を
+持たない `.root` 単独の系列」と区別が付かず、lock を取らずに削除する経路へ落ちる。削除されず
+`series-unreadable` になることまで固定する。誘発は権限を落として行うため root 実行では skip
+する（→ TP-deb05610-44bc-4962-8939-952392e5fbd0 の横断規約）。
+
 **dangling symlink の root** — symlink 越しにしか辿れず、その先が存在しない root は不在として
 扱われ、系列が削除される。
 
@@ -64,7 +74,8 @@ root の stat が不在以外の理由で失敗する系列も同様に残り、
 **配置物** — root が実在する系列の配置先も、削除対象系列とは無関係な FS 上のファイルも、
 `Prune` の前後で変わらない。
 
-**warning** — `Skipped` に入るケース（`backref-unreadable` / `root-stat-failed`）では、`Skipped`
+**warning** — `Skipped` に入るケース（`backref-unreadable` / `series-unreadable` /
+`root-stat-failed`）では、`Skipped`
 への計上だけでなく **`Warnf` が理由付きで呼ばれる**ことも各ケースで見る。DSG が「`Skipped` に
 入る全ケースで `Warnf` を呼ぶ」を規律にしているのに `locked` だけ warning を確かめる形にすると、
 検証の側が禁じられた不揃いと同じ形になる。
@@ -75,4 +86,9 @@ TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9 の担当。
 
 ## 対応する CASE
 
-未着手（テスト資産と同じコミットで起こす）。
+- CASE-49ac6d68-ed29-41aa-b939-dcfdc8711082（`internal/engine/prune_test.go`）— `Prune` を
+  tmpdir の state dir / system 基底で駆動し、この TC の判定分岐を覆う主戦力
+- CASE-ff4a842e-dd25-4c75-82ef-185507781d02（`internal/paths/paths_test.go`）— 列挙
+  （`ListRootHashSeries`）と backref 読み取り（`ReadBackref`）そのものを名指しで覆う。
+  `.root` の有無による振り分け・基底が「無い」と「読めない」の区別・系列単位の
+  `BackrefErr` / `NamesErr` はこちらが持ち、`Prune` 経由の結合は上の CASE が見る
