@@ -76,6 +76,9 @@ func newGitignoreTestRun() (*gitignoreRun, *bytes.Buffer) {
 func newInitTestRun() (*initRun, *bytes.Buffer) {
 	return newTestRun[*struct{}, *initInfo]("init")
 }
+func newPruneTestRun() (*pruneRun, *bytes.Buffer) {
+	return newTestRun[*struct{}, *pruneInfo]("prune")
+}
 
 // decodeEnvelope asserts buf holds exactly one JSON document with a trailing newline and
 // returns it decoded (UseNumber, so nothing degrades to float64).
@@ -423,10 +426,10 @@ func TestResetPromptAllowed(t *testing.T) {
 		}
 	}
 	// The composed contract: --json without --yes refuses; --json with --yes runs promptless.
-	if _, err := confirmPolicy(false, resetPromptAllowed(true, true)); err == nil {
+	if _, err := confirmPolicy(false, resetPromptAllowed(true, true), "reset"); err == nil {
 		t.Error("reset --json without --yes must refuse (fail fast)")
 	}
-	if needPrompt, err := confirmPolicy(true, resetPromptAllowed(true, true)); err != nil || needPrompt {
+	if needPrompt, err := confirmPolicy(true, resetPromptAllowed(true, true), "reset"); err != nil || needPrompt {
 		t.Errorf("reset --json --yes: needPrompt=%v err=%v, want promptless success", needPrompt, err)
 	}
 }
@@ -449,6 +452,7 @@ func TestBeginRunPublishesEveryCommand(t *testing.T) {
 		"list-generations": func(c string) emitter { return beginListGenerationsRun(c) },
 		"gitignore":        func(c string) emitter { return beginGitignoreRun(c) },
 		"init":             func(c string) emitter { return beginInitRun(c) },
+		"prune":            func(c string) emitter { return beginPruneRun(c) },
 	}
 	for command, begin := range begins {
 		t.Run(command, func(t *testing.T) {
