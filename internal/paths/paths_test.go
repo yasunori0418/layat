@@ -172,17 +172,21 @@ func TestReadBackrefTrimsTrailingNewline(t *testing.T) {
 }
 
 func TestReadBackrefRejectsEmpty(t *testing.T) {
-	// A .root holding nothing but whitespace decides no root path.
+	// A .root holding nothing but whitespace decides no root path. The three
+	// inputs take the same branch but are distinct equivalence classes, so an
+	// implementation that only trims "\n" is caught by the third.
 	for _, content := range []string{"", "\n", "  \n\t"} {
-		dir := t.TempDir()
-		writeBackref(t, dir, content)
-		got, err := ReadBackref(dir)
-		if err == nil {
-			t.Errorf("ReadBackref() with %q error = nil, want non-nil (got %q)", content, got)
-		}
-		if got != "" {
-			t.Errorf("ReadBackref() with %q = %q on error, want empty string", content, got)
-		}
+		t.Run(fmt.Sprintf("%q", content), func(t *testing.T) {
+			dir := t.TempDir()
+			writeBackref(t, dir, content)
+			got, err := ReadBackref(dir)
+			if err == nil {
+				t.Fatalf("ReadBackref() error = nil, want non-nil (got %q)", got)
+			}
+			if got != "" {
+				t.Errorf("ReadBackref() = %q on error, want empty string", got)
+			}
+		})
 	}
 }
 
@@ -211,43 +215,52 @@ func TestReadBackrefErrorsWhenMissing(t *testing.T) {
 	}
 }
 
-func TestListRootHashSeries(t *testing.T) {
-	// A base holding: a full series (two <name> profiles), a <name>-keyed dir
-	// without .root (home / system mode), a series with .root alone, and a
-	// series whose .root is empty.
+// mkdirAll / writeFile keep the fixture building in the FS-backed tests short.
+func mkdirAll(t *testing.T, path string) {
+	t.Helper()
+	if err := os.MkdirAll(path, 0o755); err != nil {
+		t.Fatalf("MkdirAll(%q) error = %v", path, err)
+	}
+}
+
+func writeFile(t *testing.T, path string) {
+	t.Helper()
+	if err := os.WriteFile(path, []byte("x"), 0o644); err != nil {
+		t.Fatalf("WriteFile(%q) error = %v", path, err)
+	}
+}
+
+// listRootHashSeriesFixture builds a base holding every shape the enumeration
+// has to tell apart, and returns the result keyed by <roothash>.
+//
+//   - h1: a series with two <name> profiles — one holding only .pending (no
+//     generation link at all), one holding a generation link — plus a stray
+//     file directly under the series
+//   - home-name: a <name>-keyed profileDir with no backref (home / system mode)
+//   - h2: a series holding nothing but .root
+//   - h3: a series whose .root records a relative path
+func listRootHashSeriesFixture(t *testing.T) map[string]RootHashSeries {
+	t.Helper()
 	base := t.TempDir()
 
 	h1 := filepath.Join(base, "h1")
 	writeBackref(t, h1, "/home/me/proj\n")
-	if err := os.MkdirAll(filepath.Join(h1, "a"), 0o755); err != nil {
-		t.Fatalf("MkdirAll error = %v", err)
-	}
-	if err := os.WriteFile(filepath.Join(h1, "a", ".pending"), []byte("x"), 0o644); err != nil {
-		t.Fatalf("WriteFile error = %v", err)
-	}
-	if err := os.MkdirAll(filepath.Join(h1, "b"), 0o755); err != nil {
-		t.Fatalf("MkdirAll error = %v", err)
-	}
-	if err := os.WriteFile(filepath.Join(h1, "b", "profile-1-link"), []byte("x"), 0o644); err != nil {
-		t.Fatalf("WriteFile error = %v", err)
-	}
+	mkdirAll(t, filepath.Join(h1, "a"))
+	writeFile(t, filepath.Join(h1, "a", ".pending"))
+	mkdirAll(t, filepath.Join(h1, "b"))
+	writeFile(t, filepath.Join(h1, "b", "profile-1-link"))
+	// A non-dir entry directly under the series is not a <name> profile.
+	writeFile(t, filepath.Join(h1, "stray"))
 
-	// home / system mode keys on <name> directly and has no .root.
-	if err := os.MkdirAll(filepath.Join(base, "home-name"), 0o755); err != nil {
-		t.Fatalf("MkdirAll error = %v", err)
-	}
+	mkdirAll(t, filepath.Join(base, "home-name"))
 
-	h2 := filepath.Join(base, "h2")
-	writeBackref(t, h2, "/home/me/other\n")
-
-	h3 := filepath.Join(base, "h3")
-	writeBackref(t, h3, "\n")
+	writeBackref(t, filepath.Join(base, "h2"), "/home/me/other\n")
+	writeBackref(t, filepath.Join(base, "h3"), "proj/sub\n")
 
 	got, err := ListRootHashSeries(base)
 	if err != nil {
 		t.Fatalf("ListRootHashSeries() error = %v", err)
 	}
-
 	byHash := map[string]RootHashSeries{}
 	for _, s := range got {
 		if _, dup := byHash[s.RootHash]; dup {
@@ -255,50 +268,93 @@ func TestListRootHashSeries(t *testing.T) {
 		}
 		byHash[s.RootHash] = s
 	}
-	if len(byHash) != 3 {
-		t.Fatalf("ListRootHashSeries() returned %d series (%v), want 3", len(byHash), byHash)
-	}
-	if _, ok := byHash["home-name"]; ok {
-		t.Error("a dir without .root must not be returned")
-	}
+	return byHash
+}
 
-	s1 := byHash["h1"]
-	if s1.Root != "/home/me/proj" {
-		t.Errorf("h1 Root = %q, want %q", s1.Root, "/home/me/proj")
-	}
-	if s1.BackrefErr != nil {
-		t.Errorf("h1 BackrefErr = %v, want nil", s1.BackrefErr)
-	}
-	names := append([]string(nil), s1.Names...)
-	sort.Strings(names)
-	if len(names) != 2 || names[0] != "a" || names[1] != "b" {
-		t.Errorf("h1 Names = %v, want [a b]", s1.Names)
-	}
+func TestListRootHashSeries(t *testing.T) {
+	byHash := listRootHashSeriesFixture(t)
 
-	s2 := byHash["h2"]
-	if s2.Root != "/home/me/other" {
-		t.Errorf("h2 Root = %q, want %q", s2.Root, "/home/me/other")
-	}
-	if len(s2.Names) != 0 {
-		t.Errorf("h2 Names = %v, want empty", s2.Names)
-	}
-	if s2.BackrefErr != nil {
-		t.Errorf("h2 BackrefErr = %v, want nil", s2.BackrefErr)
-	}
+	t.Run("only .root-bearing dirs are series", func(t *testing.T) {
+		if len(byHash) != 3 {
+			t.Errorf("got %d series (%v), want 3", len(byHash), byHash)
+		}
+		if _, ok := byHash["home-name"]; ok {
+			t.Error("a dir without .root must not be returned")
+		}
+	})
 
-	// An unreadable backref is reported on the series, not dropped from it.
-	s3 := byHash["h3"]
-	if s3.BackrefErr == nil {
-		t.Error("h3 BackrefErr = nil, want non-nil (empty .root)")
+	t.Run("names are the <name> profileDirs", func(t *testing.T) {
+		// Both <name> dirs come back regardless of what they hold, and the
+		// stray file under the series does not.
+		names := append([]string(nil), byHash["h1"].Names...)
+		sort.Strings(names)
+		if len(names) != 2 || names[0] != "a" || names[1] != "b" {
+			t.Errorf("h1 Names = %v, want [a b]", byHash["h1"].Names)
+		}
+	})
+
+	t.Run("root comes from the backref", func(t *testing.T) {
+		s := byHash["h1"]
+		if s.Root != "/home/me/proj" {
+			t.Errorf("h1 Root = %q, want %q", s.Root, "/home/me/proj")
+		}
+		if s.BackrefErr != nil {
+			t.Errorf("h1 BackrefErr = %v, want nil", s.BackrefErr)
+		}
+	})
+
+	t.Run("a series of .root alone has no names", func(t *testing.T) {
+		s := byHash["h2"]
+		if s.Root != "/home/me/other" {
+			t.Errorf("h2 Root = %q, want %q", s.Root, "/home/me/other")
+		}
+		if len(s.Names) != 0 {
+			t.Errorf("h2 Names = %v, want empty", s.Names)
+		}
+		if s.BackrefErr != nil {
+			t.Errorf("h2 BackrefErr = %v, want nil", s.BackrefErr)
+		}
+	})
+
+	t.Run("an unreadable backref is reported, not dropped", func(t *testing.T) {
+		s := byHash["h3"]
+		if s.BackrefErr == nil {
+			t.Error("h3 BackrefErr = nil, want non-nil (relative .root)")
+		}
+		if s.Root != "" {
+			t.Errorf("h3 Root = %q, want empty string", s.Root)
+		}
+	})
+}
+
+func TestListRootHashSeriesWithBackrefDir(t *testing.T) {
+	// A .root that is a directory still marks a series, but it is not a <name>
+	// profile: letting it into Names would have the engine lock and remove it
+	// as one, breaking the <name> → .root deletion order.
+	base := t.TempDir()
+	h := filepath.Join(base, "h")
+	mkdirAll(t, filepath.Join(h, ".root"))
+	mkdirAll(t, filepath.Join(h, "a"))
+
+	got, err := ListRootHashSeries(base)
+	if err != nil {
+		t.Fatalf("ListRootHashSeries() error = %v", err)
 	}
-	if s3.Root != "" {
-		t.Errorf("h3 Root = %q, want empty string", s3.Root)
+	if len(got) != 1 {
+		t.Fatalf("got %d series (%v), want 1", len(got), got)
+	}
+	if len(got[0].Names) != 1 || got[0].Names[0] != "a" {
+		t.Errorf("Names = %v, want [a]", got[0].Names)
+	}
+	if got[0].BackrefErr == nil {
+		t.Error("BackrefErr = nil, want non-nil (.root is a directory)")
 	}
 }
 
 func TestListRootHashSeriesOnMissingBase(t *testing.T) {
-	// A base that was never created holds no series; that is not an error here
-	// (the caller decides whether a missing base is normal).
+	// A base that was never created comes back as an fs.ErrNotExist error, not
+	// an empty listing: whether that is normal is the caller's call, and it has
+	// to stay distinguishable from a base that could not be listed.
 	got, err := ListRootHashSeries(filepath.Join(t.TempDir(), "absent"))
 	if err == nil {
 		t.Fatalf("ListRootHashSeries() error = nil, want non-nil (got %v)", got)
@@ -308,12 +364,26 @@ func TestListRootHashSeriesOnMissingBase(t *testing.T) {
 	}
 }
 
+func TestListRootHashSeriesOnUnlistableBase(t *testing.T) {
+	// A base that exists but cannot be listed (here a regular file, so ENOTDIR)
+	// must not look like a missing one — the caller reports this and stays
+	// silent about the missing case.
+	base := filepath.Join(t.TempDir(), "notadir")
+	writeFile(t, base)
+
+	got, err := ListRootHashSeries(base)
+	if err == nil {
+		t.Fatalf("ListRootHashSeries() error = nil, want non-nil (got %v)", got)
+	}
+	if errors.Is(err, fs.ErrNotExist) {
+		t.Errorf("ListRootHashSeries() error = %v, want an error that is not fs.ErrNotExist", err)
+	}
+}
+
 func TestListRootHashSeriesIgnoresFiles(t *testing.T) {
 	// Only directories can be a series; a stray file under the base is skipped.
 	base := t.TempDir()
-	if err := os.WriteFile(filepath.Join(base, "stray"), []byte("x"), 0o644); err != nil {
-		t.Fatalf("WriteFile error = %v", err)
-	}
+	writeFile(t, filepath.Join(base, "stray"))
 	got, err := ListRootHashSeries(base)
 	if err != nil {
 		t.Fatalf("ListRootHashSeries() error = %v", err)

@@ -10,7 +10,9 @@ package paths
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,6 +24,11 @@ import (
 // FS-safe; → ADR-0013). It matches the digit count of lib.mkManifest's anchorName
 // (the first 32 hex of sha256).
 const rootHashLen = 32
+
+// backrefName is the file at the <roothash> level recording the original
+// root's absolute path (→ ADR-0013). Its presence is what makes a directory
+// under the base a <roothash> series rather than a <name>-keyed profileDir.
+const backrefName = ".root"
 
 // StateDir returns the base <state> for the profiles. $XDG_STATE_HOME if set,
 // otherwise $HOME/.local/state (consistent with nix's own profile default; → ADR-0022).
@@ -78,8 +85,8 @@ type RootHashSeries struct {
 	RootHash string
 	// Root is the absolute root path the backref .root records. Empty when BackrefErr is set.
 	Root string
-	// Names are the <name> profileDirs under the series. Empty for a series that
-	// holds nothing but .root.
+	// Names are the <name> profileDirs under the series, in the order ReadDir
+	// returned them. Nil for a series that holds nothing but the backref.
 	Names []string
 	// BackrefErr is the reason the backref could not be turned into a root path.
 	// The series is still returned so the caller can report it rather than
@@ -94,7 +101,7 @@ type RootHashSeries struct {
 // is an error — no root path can be decided from it, and a relative path would
 // otherwise resolve against the cwd (→ ADR-0034, DSG-096dc893-21f4-45e3-9347-986e9275b4d1).
 func ReadBackref(hashDir string) (string, error) {
-	backref := filepath.Join(hashDir, ".root")
+	backref := filepath.Join(hashDir, backrefName)
 	b, err := os.ReadFile(backref)
 	if err != nil {
 		return "", fmt.Errorf("nput: cannot read backref (%s): %w", backref, err)
@@ -122,6 +129,11 @@ func ReadBackref(hashDir string) (string, error) {
 //
 // base is a finished profile base — Base(stateDir) for the user state, or the
 // system base as-is (it does not go through Base()).
+//
+// A base that does not exist is an error matching fs.ErrNotExist, not an empty
+// listing: whether a missing base is normal is the caller's call, and swallowing
+// it here would make a base that could not be listed indistinguishable from one
+// holding no series (→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f).
 func ListRootHashSeries(base string) ([]RootHashSeries, error) {
 	entries, err := os.ReadDir(base)
 	if err != nil {
@@ -134,9 +146,14 @@ func ListRootHashSeries(base string) ([]RootHashSeries, error) {
 			continue
 		}
 		hashDir := filepath.Join(base, e.Name())
-		if _, err := os.Lstat(filepath.Join(hashDir, ".root")); err != nil {
+		backref := filepath.Join(hashDir, backrefName)
+		switch _, err := os.Lstat(backref); {
+		case errors.Is(err, fs.ErrNotExist):
 			// No backref: a <name>-keyed profileDir, not a series.
 			continue
+		case err != nil:
+			// Whether this is a series cannot be decided; do not drop it silently.
+			return nil, fmt.Errorf("nput: cannot stat backref (%s): %w", backref, err)
 		}
 
 		s := RootHashSeries{RootHash: e.Name()}
@@ -147,7 +164,8 @@ func ListRootHashSeries(base string) ([]RootHashSeries, error) {
 			return nil, fmt.Errorf("nput: cannot list series (%s): %w", hashDir, err)
 		}
 		for _, n := range names {
-			if n.IsDir() {
+			// The backref is not a <name> profile even where it is a directory.
+			if n.IsDir() && n.Name() != backrefName {
 				s.Names = append(s.Names, n.Name())
 			}
 		}
@@ -183,6 +201,6 @@ func Resolve(stateDir, name, rootKind, absRoot string, rootOverride bool) Profil
 		Profile:    filepath.Join(dir, "profile"),
 		Pending:    filepath.Join(dir, ".pending"),
 		BackrefDir: hashDir,
-		Backref:    filepath.Join(hashDir, ".root"),
+		Backref:    filepath.Join(hashDir, backrefName),
 	}
 }
