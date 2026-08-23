@@ -152,7 +152,7 @@ func writeBackref(t *testing.T, hashDir, content string) {
 	if err := os.MkdirAll(hashDir, 0o755); err != nil {
 		t.Fatalf("MkdirAll(%q) error = %v", hashDir, err)
 	}
-	if err := os.WriteFile(filepath.Join(hashDir, ".root"), []byte(content), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(hashDir, backrefName), []byte(content), 0o644); err != nil {
 		t.Fatalf("WriteFile(%q/.root) error = %v", hashDir, err)
 	}
 }
@@ -333,7 +333,7 @@ func TestListRootHashSeriesWithBackrefDir(t *testing.T) {
 	// as one, breaking the <name> → .root deletion order.
 	base := t.TempDir()
 	h := filepath.Join(base, "h")
-	mkdirAll(t, filepath.Join(h, ".root"))
+	mkdirAll(t, filepath.Join(h, backrefName))
 	mkdirAll(t, filepath.Join(h, "a"))
 
 	got, err := ListRootHashSeries(base)
@@ -348,6 +348,79 @@ func TestListRootHashSeriesWithBackrefDir(t *testing.T) {
 	}
 	if got[0].BackrefErr == nil {
 		t.Error("BackrefErr = nil, want non-nil (.root is a directory)")
+	}
+}
+
+func TestListRootHashSeriesReportsUnstatableBackref(t *testing.T) {
+	// A directory the backref cannot even be stat'd under is neither "no backref"
+	// nor a decided one, so it must come back carrying the reason — and the
+	// healthy series beside it must still be listed rather than lost with it.
+	// The only induction available is dropping traversal on the directory, since
+	// a non-directory entry never reaches the backref check at all.
+	if os.Geteuid() == 0 {
+		t.Skip("running as root: a non-traversable directory is still traversable")
+	}
+	base := t.TempDir()
+	broken := filepath.Join(base, "broken")
+	writeBackref(t, broken, "/home/me/gone\n")
+	if err := os.Chmod(broken, 0o000); err != nil {
+		t.Fatalf("Chmod error = %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chmod(broken, 0o755) })
+	writeBackref(t, filepath.Join(base, "ok"), "/home/me/proj\n")
+
+	got, err := ListRootHashSeries(base)
+	if err != nil {
+		t.Fatalf("ListRootHashSeries() error = %v", err)
+	}
+	byHash := map[string]RootHashSeries{}
+	for _, s := range got {
+		byHash[s.RootHash] = s
+	}
+	if len(byHash) != 2 {
+		t.Fatalf("got %d series (%v), want 2 (the healthy one must survive)", len(byHash), byHash)
+	}
+	if byHash["broken"].BackrefErr == nil {
+		t.Error("broken BackrefErr = nil, want non-nil")
+	}
+	if byHash["ok"].Root != "/home/me/proj" {
+		t.Errorf("ok Root = %q, want %q", byHash["ok"].Root, "/home/me/proj")
+	}
+}
+
+func TestListRootHashSeriesReportsUnlistableSeries(t *testing.T) {
+	// A series whose contents cannot be listed is still reported, with Names left
+	// nil and NamesErr saying why. Unlike the base and the backref, this failure
+	// has no ENOTDIR construction — a readable backref needs a traversable series
+	// directory — so it is induced by dropping read permission on it.
+	if os.Geteuid() == 0 {
+		t.Skip("running as root: an unreadable directory is still listable")
+	}
+	base := t.TempDir()
+	h := filepath.Join(base, "h")
+	writeBackref(t, h, "/home/me/proj\n")
+	if err := os.Chmod(h, 0o300); err != nil { // -wx: traversable, not listable
+		t.Fatalf("Chmod error = %v", err)
+	}
+	t.Cleanup(func() { _ = os.Chmod(h, 0o755) })
+
+	got, err := ListRootHashSeries(base)
+	if err != nil {
+		t.Fatalf("ListRootHashSeries() error = %v", err)
+	}
+	if len(got) != 1 {
+		t.Fatalf("got %d series (%v), want 1", len(got), got)
+	}
+	if got[0].NamesErr == nil {
+		t.Error("NamesErr = nil, want non-nil")
+	}
+	if got[0].Names != nil {
+		t.Errorf("Names = %v, want nil", got[0].Names)
+	}
+	// The backref is still readable through the traversable directory, so the
+	// root is decided even though the <name> profiles are not known.
+	if got[0].Root != "/home/me/proj" {
+		t.Errorf("Root = %q, want %q", got[0].Root, "/home/me/proj")
 	}
 }
 

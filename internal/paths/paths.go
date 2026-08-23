@@ -85,13 +85,17 @@ type RootHashSeries struct {
 	RootHash string
 	// Root is the absolute root path the backref .root records. Empty when BackrefErr is set.
 	Root string
-	// Names are the <name> profileDirs under the series, in the order ReadDir
-	// returned them. Nil for a series that holds nothing but the backref.
+	// Names are the <name> profileDirs under the series, sorted by name
+	// (os.ReadDir). Nil for a series that holds nothing but the backref, and for
+	// one whose NamesErr is set.
 	Names []string
 	// BackrefErr is the reason the backref could not be turned into a root path.
 	// The series is still returned so the caller can report it rather than
 	// silently drop it.
 	BackrefErr error
+	// NamesErr is the reason the <name> profileDirs could not be listed. The
+	// series is returned the same way, with Names left nil.
+	NamesErr error
 }
 
 // ReadBackref reads the backref <hashDir>/.root and returns the absolute root
@@ -122,10 +126,13 @@ func ReadBackref(hashDir string) (string, error) {
 // .root is the <name>-keyed profileDir of home mode and system mode and is not
 // a series, so it is not returned.
 //
-// A series whose backref cannot be read is returned with BackrefErr set rather
-// than dropped, so the caller can report the reason. This is the plain FS read
-// both nput prune (→ #133) and nput status (→ #198) enumerate with; it applies
-// no policy of its own beyond the .root test.
+// A series whose backref cannot be read is returned with BackrefErr set, and one
+// whose contents cannot be listed with NamesErr set, rather than dropped: the
+// caller reports the reason per series and the rest of the base still comes back
+// (→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f). Only a failure of the base itself
+// is returned as an error. This is the plain FS read both nput prune (→ #133) and
+// nput status (→ #198) enumerate with; it applies no policy of its own beyond the
+// .root test.
 //
 // base is a finished profile base — Base(stateDir) for the user state, or the
 // system base as-is (it does not go through Base()).
@@ -147,26 +154,29 @@ func ListRootHashSeries(base string) ([]RootHashSeries, error) {
 		}
 		hashDir := filepath.Join(base, e.Name())
 		backref := filepath.Join(hashDir, backrefName)
+		s := RootHashSeries{RootHash: e.Name()}
 		switch _, err := os.Lstat(backref); {
 		case errors.Is(err, fs.ErrNotExist):
 			// No backref: a <name>-keyed profileDir, not a series.
 			continue
 		case err != nil:
-			// Whether this is a series cannot be decided; do not drop it silently.
-			return nil, fmt.Errorf("nput: cannot stat backref (%s): %w", backref, err)
+			// Whether there is a backref cannot be decided. Return the directory
+			// as a series carrying the reason rather than dropping it silently or
+			// abandoning the rest of the base.
+			s.BackrefErr = fmt.Errorf("nput: cannot stat backref (%s): %w", backref, err)
+		default:
+			s.Root, s.BackrefErr = ReadBackref(hashDir)
 		}
 
-		s := RootHashSeries{RootHash: e.Name()}
-		s.Root, s.BackrefErr = ReadBackref(hashDir)
-
-		names, err := os.ReadDir(hashDir)
-		if err != nil {
-			return nil, fmt.Errorf("nput: cannot list series (%s): %w", hashDir, err)
-		}
-		for _, n := range names {
-			// The backref is not a <name> profile even where it is a directory.
-			if n.IsDir() && n.Name() != backrefName {
-				s.Names = append(s.Names, n.Name())
+		if names, err := os.ReadDir(hashDir); err != nil {
+			// The series is still reported; only its <name> profiles are unknown.
+			s.NamesErr = fmt.Errorf("nput: cannot list series (%s): %w", hashDir, err)
+		} else {
+			for _, n := range names {
+				// The backref is not a <name> profile even where it is a directory.
+				if n.IsDir() && n.Name() != backrefName {
+					s.Names = append(s.Names, n.Name())
+				}
 			}
 		}
 		series = append(series, s)
