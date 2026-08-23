@@ -2,12 +2,13 @@ package engine
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
-	"sync"
 	"testing"
+	"time"
 
 	"github.com/yasunori0418/nput/internal/lock"
 	"github.com/yasunori0418/nput/internal/paths"
@@ -105,23 +106,40 @@ func liveSeries(t *testing.T, base, hash string, names ...string) (hashDir, root
 	return hashDir, root
 }
 
-// warnRecorder collects the warnings Prune emits.
+// warnRecorder collects the warnings Prune emits, formatted: every skip goes
+// through one shared format string, so recording the format alone would make
+// every assertion "was anything warned" and let a warning that names the wrong
+// series or the wrong reason pass (the TCs require the reason and the base name
+// to be in the warning).
 type warnRecorder struct {
-	mu   sync.Mutex
 	msgs []string
 }
 
 func (w *warnRecorder) warnf(format string, args ...any) {
-	w.mu.Lock()
-	defer w.mu.Unlock()
-	w.msgs = append(w.msgs, format)
-	_ = args
+	w.msgs = append(w.msgs, fmt.Sprintf(format, args...))
 }
 
-func (w *warnRecorder) count() int {
-	w.mu.Lock()
-	defer w.mu.Unlock()
-	return len(w.msgs)
+func (w *warnRecorder) count() int { return len(w.msgs) }
+
+// wantWarning requires exactly one recorded warning containing every substring.
+func (w *warnRecorder) wantWarning(t *testing.T, parts ...string) {
+	t.Helper()
+	matches := 0
+	for _, m := range w.msgs {
+		hit := true
+		for _, p := range parts {
+			if !strings.Contains(m, p) {
+				hit = false
+				break
+			}
+		}
+		if hit {
+			matches++
+		}
+	}
+	if matches != 1 {
+		t.Errorf("warnings %q: want exactly one mentioning all of %q, got %d", w.msgs, parts, matches)
+	}
 }
 
 // pruneOpts builds options driving both tmpdir bases with a warning recorder.
@@ -348,9 +366,8 @@ func TestPruneWarnsOnUnlistableBase(t *testing.T) {
 	if got := hashes(res.Removed); len(got) != 1 || got[0] != "aaaa" {
 		t.Errorf("Removed = %v, want [aaaa]", got)
 	}
-	if w.count() == 0 {
-		t.Error("Warnf not called for the unlistable base, want a warning naming it")
-	}
+	// The TC requires the warning to name the base it could not read.
+	w.wantWarning(t, system)
 	// A base-level failure names no series, so it cannot be a Skipped entry.
 	if len(res.Skipped) != 0 {
 		t.Errorf("Skipped = %v, want empty (a base failure names no series)", skipHashes(res.Skipped))
@@ -391,9 +408,7 @@ func TestPruneKeepsSeriesWithUnusableBackref(t *testing.T) {
 			if got := findSkipped(t, res, "aaaa").Reason; got != PruneSkipBackrefUnreadable {
 				t.Errorf("Reason = %q, want %q", got, PruneSkipBackrefUnreadable)
 			}
-			if w.count() == 0 {
-				t.Error("Warnf not called for the skipped series")
-			}
+			w.wantWarning(t, hashDir, string(PruneSkipBackrefUnreadable))
 		})
 	}
 }
@@ -456,9 +471,7 @@ func TestPruneKeepsSeriesWithUnstatableRoot(t *testing.T) {
 	if got := findSkipped(t, res, "aaaa").Reason; got != PruneSkipRootStatFailed {
 		t.Errorf("Reason = %q, want %q", got, PruneSkipRootStatFailed)
 	}
-	if w.count() == 0 {
-		t.Error("Warnf not called for the skipped series")
-	}
+	w.wantWarning(t, hashDir, string(PruneSkipRootStatFailed))
 }
 
 func TestPruneRemovesSeriesWithDanglingSymlinkRoot(t *testing.T) {
@@ -539,9 +552,7 @@ func TestPruneKeepsSeriesWhoseNamesCannotBeListed(t *testing.T) {
 	if got := findSkipped(t, res, "bbbb").Reason; got != PruneSkipSeriesUnreadable {
 		t.Errorf("Reason = %q, want %q", got, PruneSkipSeriesUnreadable)
 	}
-	if w.count() == 0 {
-		t.Error("Warnf not called for the skipped series")
-	}
+	w.wantWarning(t, unlistable, string(PruneSkipSeriesUnreadable))
 	// One failing series does not stop the rest of the base.
 	mustNotExist(t, healthy, "the healthy orphan series")
 	if got := hashes(res.Removed); len(got) != 1 || got[0] != "aaaa" {
@@ -671,9 +682,18 @@ func TestPruneConfirmFalseAborts(t *testing.T) {
 		t.Fatalf("Prune: %v", err)
 	}
 
+	// The series directory standing is not enough: an implementation that
+	// removes the <name> and .root and only stops before the rmdir would pass
+	// on the directory alone.
 	mustExist(t, hashDir, "the orphan series after an aborted confirmation")
+	mustExist(t, filepath.Join(hashDir, "cfg"), "the <name> profileDir after an aborted confirmation")
+	mustExist(t, filepath.Join(hashDir, ".root"), "the backref after an aborted confirmation")
 	if !res.Aborted {
 		t.Error("Aborted = false, want true")
+	}
+	// Nothing was deleted, so the judged candidates must not read as removed.
+	if len(res.Removed) != 0 {
+		t.Errorf("Removed = %v, want empty on abort", hashes(res.Removed))
 	}
 }
 
@@ -686,8 +706,14 @@ func TestPruneConfirmErrorPropagates(t *testing.T) {
 	var w warnRecorder
 	opts := pruneOpts(state, system, &w)
 	opts.Confirm = func(*PruneResult) (bool, error) { return false, sentinel }
-	if _, err := Prune(opts); !errors.Is(err, sentinel) {
+	res, err := Prune(opts)
+	if !errors.Is(err, sentinel) {
 		t.Errorf("Prune error = %v, want it to wrap the confirm error", err)
+	}
+	// Nothing was deleted, so there is no partial result to report; a result
+	// carrying the judged candidates in Removed would read as "these are gone".
+	if res != nil {
+		t.Errorf("Prune result = %+v, want nil alongside the confirm error", res)
 	}
 	mustExist(t, hashDir, "the orphan series after a failed confirmation")
 }
@@ -717,9 +743,7 @@ func TestPruneSkipsLockedSeries(t *testing.T) {
 	if got := findSkipped(t, res, "aaaa").Reason; got != PruneSkipLocked {
 		t.Errorf("Reason = %q, want %q", got, PruneSkipLocked)
 	}
-	if w.count() == 0 {
-		t.Error("Warnf not called for the locked series")
-	}
+	w.wantWarning(t, locked, string(PruneSkipLocked))
 	// One locked series does not stop the others.
 	mustNotExist(t, free, "the unlocked orphan series")
 	if got := hashes(res.Removed); len(got) != 1 || got[0] != "bbbb" {
@@ -776,9 +800,7 @@ func TestPruneSkipsSeriesWhoseLockCannotBeAcquired(t *testing.T) {
 	if got := findSkipped(t, res, "aaaa").Reason; got != PruneSkipLocked {
 		t.Errorf("Reason = %q, want %q", got, PruneSkipLocked)
 	}
-	if w.count() == 0 {
-		t.Error("Warnf not called for the skipped series")
-	}
+	w.wantWarning(t, hashDir, string(PruneSkipLocked))
 }
 
 func TestPruneHoldsLocksWhileDeleting(t *testing.T) {
@@ -792,28 +814,47 @@ func TestPruneHoldsLocksWhileDeleting(t *testing.T) {
 	hashDir := orphanSeries(t, base, "aaaa", "first", "second")
 	first := filepath.Join(hashDir, "first")
 	second := filepath.Join(hashDir, "second")
+	// The window is one RemoveAll wide, which for an empty directory is too
+	// short to sample reliably. Filling "second" with enough entries widens it
+	// to something a poller actually lands inside.
+	for i := 0; i < 2000; i++ {
+		if err := os.WriteFile(filepath.Join(second, fmt.Sprintf("f%04d", i)), nil, 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
 
-	// An implementation that releases before removing would let another
-	// process take the lock on the <name> still standing (→ the same harm as
-	// RISK-2b17fefb-6e92-4513-9e7c-de21897c9cfe).
-	tookLockMidDeletion := make(chan bool, 1)
+	type probe struct {
+		tookLock  bool // acquired the lock while "second" still stood
+		attempts  int  // acquisitions attempted inside the window
+		windowHit bool
+	}
+	// An implementation that releases before removing would let another holder
+	// take the lock on the <name> still standing (→ the same harm as
+	// RISK-2b17fefb-6e92-4513-9e7c-de21897c9cfe). The probe reports whether it
+	// ever got inside the window, so "no lock taken" cannot be confused with
+	// "never looked".
+	probed := make(chan probe, 1)
 	go func() {
-		for {
-			// Wait for the window to open: the first <name> gone.
+		var p probe
+		deadline := time.Now().Add(30 * time.Second)
+		for time.Now().Before(deadline) {
+			// The window opens when the first <name> is gone.
 			if _, err := os.Lstat(first); !errors.Is(err, fs.ErrNotExist) {
 				continue
 			}
-			// The window closes when the second <name> goes too.
+			// It closes when the second one goes too.
 			if _, err := os.Lstat(second); errors.Is(err, fs.ErrNotExist) {
-				tookLockMidDeletion <- false
-				return
+				break
 			}
+			p.windowHit = true
+			p.attempts++
 			if l, err := lock.Acquire(second, false); err == nil {
 				_ = l.Release()
-				tookLockMidDeletion <- true
-				return
+				p.tookLock = true
+				break
 			}
 		}
+		probed <- p
 	}()
 
 	var w warnRecorder
@@ -822,8 +863,14 @@ func TestPruneHoldsLocksWhileDeleting(t *testing.T) {
 		t.Fatalf("Prune: %v", err)
 	}
 
-	if <-tookLockMidDeletion {
+	p := <-probed
+	if p.tookLock {
 		t.Error("another holder took the lock on a <name> still standing, want the locks held through the deletion")
+	}
+	// Without this the test passes vacuously whenever the poller misses the
+	// window entirely, which is exactly how an early-release bug would slip by.
+	if !p.windowHit {
+		t.Fatalf("the deletion window was never observed (%d acquisition attempts); the assertion above proved nothing", p.attempts)
 	}
 	mustNotExist(t, hashDir, "the orphan series")
 	if got := hashes(res.Removed); len(got) != 1 {
@@ -905,9 +952,7 @@ func TestPruneSkipsSeriesItCannotBeginToDelete(t *testing.T) {
 	if got := findSkipped(t, res, "aaaa").Reason; got != PruneSkipPermissionDenied {
 		t.Errorf("Reason = %q, want %q", got, PruneSkipPermissionDenied)
 	}
-	if w.count() == 0 {
-		t.Error("Warnf not called for the skipped series")
-	}
+	w.wantWarning(t, blocked, string(PruneSkipPermissionDenied))
 	// Other series keep going.
 	mustNotExist(t, free, "the deletable orphan series")
 	if got := hashes(res.Removed); len(got) != 1 || got[0] != "bbbb" {
@@ -921,11 +966,18 @@ func TestPruneErrorsWhenDeletionFailsForANonPermissionReason(t *testing.T) {
 	completed := orphanSeries(t, base, "aaaa", "cfg")
 	// A stray regular file in the series directory: every <name> and .root is
 	// removed, and the final rmdir of the <roothash> then fails with
-	// ENOTEMPTY. That is not a permission error, so it must not be folded
-	// into Skipped{permission-denied} — an implementation that skips on any
-	// pre-progress failure, or one that maps every failure to the permission
-	// reason, would report "fix the permissions and it will go" for a series
-	// that will never go. root cannot bypass ENOTEMPTY, so no Geteuid guard.
+	// ENOTEMPTY. root cannot bypass ENOTEMPTY, so no Geteuid guard.
+	//
+	// What this fixes is that a non-permission failure is never folded into
+	// Skipped{permission-denied} — an implementation mapping every failure to
+	// the permission reason would report "fix the permissions and it will go"
+	// for a series that will never go. It does NOT exercise the "nothing
+	// removed" side of the 2×2: by the time the rmdir runs, removedAny is
+	// already true. That cell has no root-proof static inducement at all
+	// (→ TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9 の当該セルの但し書き); what
+	// keeps prune.go's `!removedAny &&` guard honest is the permission pair —
+	// TestPruneSkipsSeriesItCannotBeginToDelete and
+	// TestPruneErrorsWhenDeletionFailsPartwayOnPermission.
 	partial := writeSeries(t, base, seriesSpec{
 		hash:    "bbbb",
 		backref: filepath.Join(realTempDir(t), "gone"),
@@ -978,7 +1030,12 @@ func TestPruneErrorsWhenDeletionFailsPartway(t *testing.T) {
 	})
 	// "first" is removable; "second" holds an entry that cannot be unlinked
 	// because "second" itself is read-only, so its RemoveAll fails after
-	// "first" is already gone.
+	// "first" is already gone. The inducement is EACCES, the same errno as
+	// TestPruneErrorsWhenDeletionFailsPartwayOnPermission — what this case
+	// fixes is not the errno but the reporting: Removed keeps the series
+	// completed before the failure, .root survives, and the broken series is
+	// absent from both Removed and Skipped. The non-permission side of the
+	// 2×2 rests on the ENOTEMPTY case above, which root cannot bypass.
 	inner := filepath.Join(partial, "second", "inner")
 	if err := os.MkdirAll(inner, 0o755); err != nil {
 		t.Fatal(err)
@@ -1064,7 +1121,10 @@ func TestPruneRemovesNamesBeforeBackref(t *testing.T) {
 	state, system := pruneBases(t)
 	base := paths.Base(state)
 	// A series that fails partway must still be reachable afterwards, which
-	// only holds when .root outlives the <name> profiles.
+	// only holds when .root outlives the <name> profiles. That .root survives
+	// a failure is also asserted by TestPruneErrorsWhenDeletionFailsPartway;
+	// what is unique here is the consequence — a second run finds the same
+	// series again, which is the whole point of the removal order.
 	partial := writeSeries(t, base, seriesSpec{
 		hash:    "aaaa",
 		backref: filepath.Join(realTempDir(t), "gone"),
