@@ -28,8 +28,8 @@ var version = "dev"
 
 // renameNotice is the rename announcement printed to stderr on every subcommand
 // (→ ADR-0054 §6, issue #387). It duplicates modules/common.nix's `renameNotice` because a
-// Go const cannot read a Nix expression; checks.notice-parity (flake.nix) fails the build if
-// the two ever drift, so edit them together until the rename PR (→ issue #388) deletes both.
+// Go const cannot read a Nix expression; checks.notice-parity (flake.nix) fails in CI if the
+// two ever drift, so edit them together until the rename PR (→ issue #388) deletes both.
 // The date is a lower bound ("on or after"): the rename lands when both the notice period and
 // the prune epic have completed, whichever is later.
 const renameNotice = "nput will be renamed to layat on or after 2026-09-22. " +

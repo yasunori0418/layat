@@ -110,24 +110,24 @@ func TestRenameNoticeAbsentFromVersionFlags(t *testing.T) {
 }
 
 // TestRenameNoticeMatchesNixSource pins the byte-equality of the two copies of the notice: the
-// Go const above and modules/common.nix's `renameNotice`. Nothing else holds them together — a
-// date bumped on one side only would ship a CLI that contradicts the module warning. Rather
-// than shelling out to `nix eval` (this suite is stdlib-only and must run without nix), it
-// reconstructs the string from the Nix source's literal concatenation. Both copies go away
-// with the rename PR (→ issue #388), and so does this test.
+// Go const above and modules/common.nix's `renameNotice`. A date bumped on one side only would
+// ship a CLI that contradicts the module warning. checks.notice-parity (flake.nix) is the
+// primary guard in CI, since this test skips inside the nix build sandbox; it is repeated here
+// so a plain `go test` catches the drift too. Rather than shelling out to `nix eval` (this
+// suite is stdlib-only and must run without nix), it reconstructs the string from the Nix
+// source's literal concatenation. Both copies go away with the rename PR (→ issue #388), and
+// so does this test.
 func TestRenameNoticeMatchesNixSource(t *testing.T) {
 	// The nix build's goSrc is go.mod / go.sum / internal / cmd only, so modules/ is absent
 	// when `go test` runs inside the sandbox. Skip there rather than widening the package's
 	// source closure for a temporary check; checks.notice-parity (flake.nix) enforces the same
 	// pairing in an environment where both files exist, so the contract is never unguarded.
-	// Skip only where the whole modules/ tree is absent — that is the nix sandbox. A missing
-	// file inside an existing modules/ means it moved or was deleted, which must fail loudly
-	// rather than pass as a silent skip.
+	// Skip only where the whole modules/ tree is absent — that is the nix sandbox, whose goSrc
+	// carries go.mod / go.sum / internal / cmd and nothing else. A missing file inside an
+	// existing modules/ means it moved or was deleted, and must fail loudly instead.
 	src, err := os.ReadFile(filepath.Join("..", "..", "modules", "common.nix"))
-	if errors.Is(err, fs.ErrNotExist) {
-		if _, dirErr := os.Stat(filepath.Join("..", "..", "modules")); errors.Is(dirErr, fs.ErrNotExist) {
-			t.Skip("modules/ is out of tree (nix build sandbox); checks.notice-parity covers this")
-		}
+	if _, dirErr := os.Stat(filepath.Join("..", "..", "modules")); errors.Is(dirErr, fs.ErrNotExist) {
+		t.Skip("modules/ is out of tree (nix build sandbox); checks.notice-parity covers this")
 	}
 	if err != nil {
 		t.Fatalf("read modules/common.nix: %v", err)
