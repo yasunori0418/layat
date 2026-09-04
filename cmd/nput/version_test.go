@@ -1,11 +1,13 @@
 package main
 
 import (
+	"errors"
+	"io/fs"
+	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
-
-	"github.com/spf13/cobra"
 )
 
 // TestVersionDefault pins the ldflags-unset default. A plain `go build` (no -X main.version=...)
@@ -57,52 +59,81 @@ func TestVersionSubcommandAbsent(t *testing.T) {
 	}
 }
 
-// TestRenameNoticeOnSubcommand drives a subcommand through Execute and asserts the rename
-// notice reaches stderr exactly once (→ ADR-0054 §6, issue #387). `gitignore` is used because
-// it is a real subcommand whose RunE fails fast without an entrypoint, so the run reaches
-// PersistentPreRun and returns without touching the filesystem.
+// TestRenameNoticeOnSubcommand drives a real subcommand through Execute and asserts the rename
+// notice reaches stderr exactly once (→ ADR-0054 §6, issue #387). `gitignore` with no argument
+// passes cobra's Args check (MaximumNArgs(1)) and then returns from RunE's arity branch, so the
+// run reaches PersistentPreRun and stops before any entrypoint discovery or filesystem access.
+// SilenceErrors keeps cobra from printing that error, so stderr holds the notice and nothing
+// else — which lets this assert the exact bytes rather than mere containment.
 func TestRenameNoticeOnSubcommand(t *testing.T) {
 	root := newRootCmd()
-	root.SetArgs([]string{"gitignore", "--file", filepath.Join(t.TempDir(), "absent.nix")})
+	root.SetArgs([]string{"gitignore"})
 	errOut := captureStderr(t, func() {
-		// The command itself is expected to fail (no entrypoint); only the notice matters here.
+		// The command itself is expected to fail on arity; only the notice matters here.
 		_ = root.Execute()
 	})
-	if got := strings.Count(errOut, "will be renamed to layat"); got != 1 {
-		t.Errorf("rename notice appeared %d times on stderr, want exactly 1; stderr = %q", got, errOut)
-	}
-	if !strings.Contains(errOut, renameNotice) {
-		t.Errorf("stderr does not carry the full notice; stderr = %q, want it to contain %q", errOut, renameNotice)
+	if want := renameNotice + "\n"; errOut != want {
+		t.Errorf("stderr = %q, want exactly the notice %q", errOut, want)
 	}
 }
 
-// TestRenameNoticeSkippedForCompletion pins the one exemption: cobra's completion request must
-// not carry the notice, or it would land inside a completion script's output (→ ADR-0054 §6).
-func TestRenameNoticeSkippedForCompletion(t *testing.T) {
-	for _, name := range []string{cobra.ShellCompRequestCmd, cobra.ShellCompNoDescRequestCmd} {
-		t.Run(name, func(t *testing.T) {
+// TestRenameNoticeAbsentFromVersionFlags pins that `--version` and `--help` never reach
+// PersistentPreRun: cobra returns inside execute() before it runs. The notice is a *stderr*
+// line, so stderr is what has to be observed — asserting on stdout could not fail even if the
+// hook did fire, and TestVersionFlagOutput already pins stdout exactly. Regressing this would
+// break flake.nix's installCheckPhase, which matches `nput --version` output exactly
+// (→ ADR-0042, ADR-0054 §6).
+func TestRenameNoticeAbsentFromVersionFlags(t *testing.T) {
+	for _, flag := range []string{"--version", "--help"} {
+		t.Run(flag, func(t *testing.T) {
+			root := newRootCmd()
+			root.SetArgs([]string{flag})
+			// --help writes to stdout; discard it so only stderr is under test.
 			errOut := captureStderr(t, func() {
-				printRenameNotice(&cobra.Command{Use: name})
+				_ = captureStdout(t, func() {
+					if err := root.Execute(); err != nil {
+						t.Fatalf("Execute(%s): %v", flag, err)
+					}
+				})
 			})
 			if errOut != "" {
-				t.Errorf("printRenameNotice(%q) wrote %q to stderr, want nothing", name, errOut)
+				t.Errorf("`nput %s` wrote %q to stderr, want nothing (PersistentPreRun must not run)", flag, errOut)
 			}
 		})
 	}
 }
 
-// TestRenameNoticeAbsentFromVersionOutput guards the contract the nix installCheckPhase relies on:
-// `nput --version` must print the cobra template to stdout and nothing else, since the phase
-// matches the output exactly (→ ADR-0042, flake.nix installCheckPhase).
-func TestRenameNoticeAbsentFromVersionOutput(t *testing.T) {
-	root := newRootCmd()
-	root.SetArgs([]string{"--version"})
-	out := captureStdout(t, func() {
-		if err := root.Execute(); err != nil {
-			t.Fatalf("Execute(--version): %v", err)
-		}
-	})
-	if strings.Contains(out, "will be renamed to layat") {
-		t.Errorf("`nput --version` stdout carries the rename notice: %q", out)
+// TestRenameNoticeMatchesNixSource pins the byte-equality of the two copies of the notice: the
+// Go const above and modules/common.nix's `renameNotice`. Nothing else holds them together — a
+// date bumped on one side only would ship a CLI that contradicts the module warning. Rather
+// than shelling out to `nix eval` (this suite is stdlib-only and must run without nix), it
+// reconstructs the string from the Nix source's literal concatenation. Both copies go away
+// with the rename PR (→ issue #388), and so does this test.
+func TestRenameNoticeMatchesNixSource(t *testing.T) {
+	// The nix build's goSrc is go.mod / go.sum / internal / cmd only, so modules/ is absent
+	// when `go test` runs inside the sandbox. Skip there rather than widening the package's
+	// source closure for a temporary check; checks.notice-parity (flake.nix) enforces the same
+	// pairing in an environment where both files exist, so the contract is never unguarded.
+	src, err := os.ReadFile(filepath.Join("..", "..", "modules", "common.nix"))
+	if errors.Is(err, fs.ErrNotExist) {
+		t.Skip("modules/common.nix is out of tree (nix build sandbox); checks.notice-parity covers this")
+	}
+	if err != nil {
+		t.Fatalf("read modules/common.nix: %v", err)
+	}
+
+	// Take everything from `renameNotice =` to the terminating `;`, then concatenate the
+	// string literals it is built from.
+	body := regexp.MustCompile(`(?s)renameNotice =(.*?);\n`).FindStringSubmatch(string(src))
+	if body == nil {
+		t.Fatalf("no renameNotice binding found in modules/common.nix")
+	}
+	var got string
+	for _, part := range regexp.MustCompile(`"((?:[^"\\]|\\.)*)"`).FindAllStringSubmatch(body[1], -1) {
+		got += strings.ReplaceAll(part[1], `\"`, `"`)
+	}
+
+	if got != renameNotice {
+		t.Errorf("Nix and Go copies of the rename notice differ:\n nix = %q\n  go = %q", got, renameNotice)
 	}
 }
