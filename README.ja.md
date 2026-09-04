@@ -441,12 +441,9 @@ nput init <template>           # `nix flake init -t github:yasunori0418/nput#<te
 
 ## nput からの移行
 
-nput は **2026-09-22 以降**に **layat** へ改名される。「n」は *nix* を指していたが、manifest の
-生成は nix でなくてもよく、engine は manifest の通りに配置しているだけなので、「n」が指すものが
-無くなった。新しい名前は "**lay** \<src\> **at** \<target\>" の圧縮。理由・棄却候補・予告期間の
-方針の全記録は [`docs/adr/0054-rename-nput-to-layat.md`](docs/adr/0054-rename-nput-to-layat.md)。
-
-改名は破壊的変更で、**互換シムは提供しない**。
+nput は **2026-09-22 以降**に **layat** へ改名される。改名は破壊的変更で、**互換シムは提供しない**。
+改名の理由・棄却候補・予告期間の方針の全記録は
+[`docs/adr/0054-rename-nput-to-layat.md`](docs/adr/0054-rename-nput-to-layat.md)。
 
 ### 旧名で留まる
 

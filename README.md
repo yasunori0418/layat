@@ -558,14 +558,10 @@ package layers would be delegated to or combined with system-manager, while nput
 
 ## Migrating from nput
 
-nput is being renamed to **layat** on or after **2026-09-22**. The name "n" stood for *nix*,
-but manifest generation never had to go through nix and the engine only places what the
-manifest says, so the "n" no longer describes anything. The new name is a compression of
-"**lay** \<src\> **at** \<target\>". The full reasoning, the rejected candidates and the
+nput is being renamed to **layat** on or after **2026-09-22**. The rename is a breaking change
+and **no compatibility shim is provided**. Why the name changed, the rejected candidates and the
 policy behind the notice period are recorded in
 [`docs/adr/0054-rename-nput-to-layat.md`](docs/adr/0054-rename-nput-to-layat.md).
-
-The rename is a breaking change and **no compatibility shim is provided**.
 
 ### Staying on the old name
 

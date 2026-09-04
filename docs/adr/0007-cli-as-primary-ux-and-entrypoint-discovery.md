@@ -70,7 +70,7 @@ references:
 > **2026-07-04 改訂注記（ADR-0040）**: 本 ADR の 3 root マーカー（projectRoot / homeRoot / systemRoot）に**関数適用形
 > `homeRoot { subdir = ".config"; }`** を追加した（`__functor` により単体使用は不変）。実体は root を動かさず
 > `normalizeManifest` が全 target に `subdir` を前置する eval 時糖衣で、engine / manifest スキーマは変わらない（→ ADR-0040）。
-
+>
 > **2026-09-05 改訂注記（ADR-0054）**: 本 ADR §3（`nput` CLI を一次 UX へ昇格）・§4（アドレッシング =
 > 専用 `nput` 名前空間・`nput.<name>`）・§6（`nput init` によるテンプレート展開）の決定はいずれも不変だが、
 > **ツール名が `nput` から `layat` へ改名された**。CLI 名は `layat`、名前空間は `layat.<name>`
