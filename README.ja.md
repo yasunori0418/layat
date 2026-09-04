@@ -1,5 +1,11 @@
 # nput
 
+> ⚠️ **nput は 2026-09-22 以降に `layat` へ改名される。** リポジトリ・Go module path・
+> バイナリ名・flake 属性・モジュールのオプション名前空間・`--json` のエラーコードが一斉に
+> 変わり、互換シムは提供しない。書き換えの内容と、旧名で留まる場合の
+> `github:yasunori0418/nput/legacy-nput` への pin 手順は
+> [nput からの移行](#nput-からの移行)を参照。
+
 > フェッチ済みの git リポジトリを、symlink または copy で任意のパスへ配置する。
 
 *この文書は英語版 [`README.md`](README.md) の日本語訳。仕様・用語の一次参照は英語版とし、両者に差異があれば英語版が優先する。*
@@ -430,6 +436,59 @@ nput init <template>           # `nix flake init -t github:yasunori0418/nput#<te
 - boot / init / filesystem / partition 層は nput のドメインではない。
 - クローンを削除すると `<state>/nix/profiles/nput/` 下に orphan な profile ディレクトリが残る(store は `nix-collect-garbage` で解放されるが、profile ディレクトリは残る)。MVP に `prune` コマンドは無い——手で消す。
 - home-manager モジュールは MVP では役割を複数 profile に分けられない——その用途には standalone CLI を使う。
+
+---
+
+## nput からの移行
+
+nput は **2026-09-22 以降**に **layat** へ改名される。「n」は *nix* を指していたが、manifest の
+生成は nix でなくてもよく、engine は manifest の通りに配置しているだけなので、「n」が指すものが
+無くなった。新しい名前は "**lay** \<src\> **at** \<target\>" の圧縮。理由・棄却候補・予告期間の
+方針の全記録は [`docs/adr/0054-rename-nput-to-layat.md`](docs/adr/0054-rename-nput-to-layat.md)。
+
+改名は破壊的変更で、**互換シムは提供しない**。
+
+### 旧名で留まる
+
+まだ移行したくない場合は、nput 名の最後の状態に pin する。
+
+```nix
+inputs.nput.url = "github:yasunori0418/nput/legacy-nput";
+```
+
+`legacy-nput` は予告 PR のマージコミットに打った annotated tag で、GitHub Release ではない。改名後も
+GitHub が旧リポジトリ URL のリダイレクトを維持するため、この pin は解決し続ける。
+
+### 書き換えが要るもの
+
+| 変更前 | 変更後 |
+|---|---|
+| `github:yasunori0418/nput` | `github:yasunori0418/layat` |
+| モジュールオプション `nput.*`（`nput.enable`・`nput.entries`・`nput.backup.*`）| `layat.*` |
+| `home.activation.nput` | `home.activation.layat` |
+| `perSystem.nput.<name>` / `#nput.<system>.<name>` | `perSystem.layat.<name>` / `#layat.<system>.<name>` |
+| `packages.nput` / `nput` バイナリ | `packages.layat` / `layat` バイナリ |
+| `--json` の `E_NPUT_*` / `W_NPUT_*`・`tool.name = "nput"` | `E_LAYAT_*` / `W_LAYAT_*`・`tool.name = "layat"` |
+| `<target>.nput-backup` | `<target>.layat-backup` |
+
+`--json` のコードだけは消費者が無視できない。niface が `E_<TOOL>_<NAME>` の形を要求するため、
+接頭辞はツール名と一緒に動く。
+
+### 改名後の初回 `layat apply` の挙動
+
+layat は新しいディレクトリ(`<state>/nix/profiles/layat/`)に状態を書き、nput が何を置いたかを
+知らない。したがって初回実行は、全ての target が他人によって置かれたかのように振る舞う。
+
+- **symlink entry は後勝ちで上書きされる**。`W_LAYAT_FOREIGN_SYMLINK` 警告が出るが、実行は
+  失敗しない。
+- **copy entry は skip される**。target に実ファイルが既にあるため。既存ファイルを退避して
+  copy を配置するには `--backup` を渡す。
+- **旧 nput の世代にのみあった target はそのまま残る**。stale 除去には前世代の manifest が要り、
+  layat はそれを持たないため。
+- **`<state>/nix/profiles/nput/` と `<target>.nput-backup` は残る**。新しい配置に納得したら手で
+  消す。
+
+世代は移行されない。`layat apply` を実行して世代 1 を新たに作り直す形で進める。
 
 ---
 
