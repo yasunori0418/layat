@@ -158,11 +158,11 @@ sara の item ID はツール名を含まない（フル UUIDv4・→ ADR-0053�
 - **文面には旧名で留まる選択肢を含める**。`github:yasunori0418/nput/legacy-nput` への pin を案内する（次項）
 - CLI 層の予告は cobra の補完リクエスト（`__complete`）では出さない。補完スクリプトの出力を汚さないため
 
-### 7. 旧名で留まる利用者向けに plain tag `legacy-nput` を打つ
+### 7. 旧名で留まる利用者向けに annotated tag `legacy-nput` を打つ
 
 改名予告 PR（#387）の**マージコミットに annotated tag `legacy-nput` を打つ**。GitHub Release は作らない。
 
-- **Release ではなくタグにする**理由: VERSION 0.1.0 の実装フェーズであり、リリースを名乗れる成熟度に達していない。タグは「この時点の状態を指す名前」以上の意味を持たない
+- **GitHub Release ではなく git のタグにする**理由: VERSION 0.1.0 の実装フェーズであり、リリースを名乗れる成熟度に達していない。タグは「この時点の状態を指す名前」以上の意味を持たない
 - **非 semver 名にする**理由: release workflow（→ ADR-0042）が `v0.1.0` 形式のタグを扱うため、名前空間を分ける
 - 旧名で留まりたい利用者は flake input を `github:yasunori0418/nput/legacy-nput` へ pin する。GitHub のリポジトリ改名は旧 URL のリダイレクトを維持するため、改名後もこの参照は解決する（#388 の当日チェックリストで実地確認する）
 
