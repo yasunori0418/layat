@@ -15,9 +15,6 @@
 # `nput.__internal.<name>` (→ #71, #289).
 let
   internal = import ./__internal.nix;
-  # Rename notice (→ ADR-0054 §6, Issue #387). Removed together with ./rename-notice.nix
-  # by the rename PR (→ Issue #388).
-  renameNotice = import ./rename-notice.nix;
 
   normalizeManifest =
     {
@@ -115,27 +112,19 @@ let
       anchorLines = internal.anchorLines lib farmEntries;
     in
     # The derivation contains manifest.json (the engine's input contract) + a symlink farm to the store src (GC anchors) (→ ADR-0006).
-    # `lib.warn` wraps the whole derivation so the notice fires wherever mkManifest's result
-    # is forced: a direct lib user, and the module evaluations behind `home-manager switch`
-    # / `nixos-rebuild`. Under the CLI it fires too, but runNixCapture discards nix's stderr
-    # on success, so the CLI's own stderr layer (cmd/nput/main.go) — not this one — is what
-    # reaches a CLI user. It wraps only mkManifest, not normalizeManifest, so the nix-unit /
-    # namaka assertions on pure data stay quiet (→ ADR-0054 §6, Issue #387).
-    lib.warn renameNotice.message (
-      pkgs.runCommandLocal "nput-manifest"
-        {
-          # The CLI reads this via `nix eval … .rootKind` before build (→ ADR-0023).
-          passthru = {
-            inherit (norm.root) rootKind;
-          }
-          // lib.optionalAttrs (norm.root ? root) { inherit (norm.root) root; };
+    pkgs.runCommandLocal "nput-manifest"
+      {
+        # The CLI reads this via `nix eval … .rootKind` before build (→ ADR-0023).
+        passthru = {
+          inherit (norm.root) rootKind;
         }
-        ''
-          mkdir -p "$out"
-          cp ${manifestJson} "$out/manifest.json"
-          ${anchorLines}
-        ''
-    );
+        // lib.optionalAttrs (norm.root ? root) { inherit (norm.root) root; };
+      }
+      ''
+        mkdir -p "$out"
+        cp ${manifestJson} "$out/manifest.json"
+        ${anchorLines}
+      '';
 in
 {
   inherit normalizeManifest mkManifest;

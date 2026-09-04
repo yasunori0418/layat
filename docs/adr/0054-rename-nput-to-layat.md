@@ -58,21 +58,15 @@ nput の「n」は **nix** を指していた。設計の中心が「nix 側で�
 
 ### 2. 命名条件
 
-エコシステム全体（本ツールに限らない）に適用する条件を次に固定する。
+本改名に適用する条件を次に固定する。
 
 1. **日本語由来の語は避ける**。一度検討したが方針転換で除外した（下の「棄却した候補」の日本語ローマ字系を参照）
 2. **既存英単語に限らず、造語・アルファベット表記の他言語も可**
 3. **UNIX 哲学に沿った短いコマンド名**（3〜6 字を目安）
 4. **既存プロダクトと被らないこと。必ず調査で確認する**
 
-条件 4 の検証は次の 4 レジストリで行う（→ Issue #386 が手順と実施記録を持つ）。
-
-| レジストリ | 照会 | 合格条件 |
-|---|---|---|
-| GitHub Search API | `/search/repositories?q=<name>+in:name` | `name` の完全一致が 0 件（部分文字列ヒットはノイズとして許容）|
-| npm | `https://registry.npmjs.org/<name>` | 404 |
-| crates.io | `https://crates.io/api/v1/crates/<name>`（**User-Agent ヘッダ必須**）| 未登録 |
-| PyPI | `https://pypi.org/pypi/<name>/json` | 404 |
+条件 4 の検証は GitHub Search API / npm / crates.io / PyPI の 4 レジストリで行う。**照会手順と実施記録は
+Issue #386 が持つ**（本 ADR では二重管理しない）。
 
 `layat` は 2026-08-25 の初回調査・2026-09-05 の再確認（→ #386）ともに 4 レジストリすべてで空きだった。GitHub の部分一致 69 件は全て LayaAir ゲームエンジン系（`layaTree` ★17 等）と無関係な人名・テスト用リポジトリで、完全一致は 0 件。
 
@@ -142,13 +136,18 @@ sara の item ID はツール名を含まない（フル UUIDv4・→ ADR-0053�
 
 旧名でのエイリアス・互換 module path・旧オプション名の `mkRenamedOptionModule` などの**互換シムは一切提供しない**。VERSION 0.1.0 の実装フェーズで利用者が限られ、シムの維持コストが便益を上回るためである。
 
-代わりに、改名 PR（#388）のマージまでに **2 週間以上の改名予告期間**を置く。予告は次の 3 層で出す。
+代わりに、改名 PR（#388）のマージまでに **2 週間以上の改名予告期間**を置く。予告は次の 2 層で出す。
 
 | 層 | 実装 | 届く相手 |
 |---|---|---|
-| `lib/manifest.nix` の `mkManifest` | `lib.warn` | `lib` を直接使う利用者（モジュールを経由しない経路）|
-| `modules/common.nix` | `config.warnings` | home-manager / NixOS / nix-darwin モジュール利用者 |
+| `modules/common.nix` | `config.warnings` | home-manager / NixOS / nix-darwin モジュール利用者（host の warning チャネル）|
 | `cmd/nput/main.go` の `PersistentPreRun` | stderr 1 行 | CLI 利用者（全サブコマンド共通）|
+
+**`mkManifest` の `lib.warn` は層として設けない**。当初は「`lib` を直接使う利用者にも届ける」ために
+3 層目として検討したが、固有の受け手を持たないため採らなかった。CLI 経由では `runNixCapture` が
+成功時に nix の stderr を捨てるので届かず、モジュール経由では `config.warnings` と同じ文面が二重に
+出るだけになる。`lib` 直接利用者は `mkManifest` の結果を自分でビルドする経路であり、その経路は
+いずれ CLI かモジュールを通るため、上の 2 層で到達する。
 
 予告の設計規約:
 
@@ -156,7 +155,8 @@ sara の item ID はツール名を含まない（フル UUIDv4・→ ADR-0053�
 - **`--json` の envelope には入れない**。envelope は niface 仕様に適合した機械可読の契約面であり、ツールの都合の告知を混ぜない（→ ADR-0043）。`--json` 指定時も予告は stderr にだけ出し、stdout の JSON を汚さない
 - **日付は "will be renamed on or after YYYY-MM-DD" の下限表記**にする。改名の着手条件は「予告 + 14 日」と「prune epic #127 の完了」の遅い方であり、上限を約束すると #127 が遅れたときに警告文が嘘になる
 - **文面には旧名で留まる選択肢を含める**。`github:yasunori0418/nput/legacy-nput` への pin を案内する（次項）
-- CLI 層の予告は cobra の補完リクエスト（`__complete`）では出さない。補完スクリプトの出力を汚さないため
+- CLI 層の予告はサブコマンドを選ばず一律に出す。cobra が生成する補完スクリプトは bash / zsh / fish の
+  いずれも `__complete` の stderr を捨てるため、補完リクエストを特別扱いする必要が無い
 
 ### 7. 旧名で留まる利用者向けに annotated tag `legacy-nput` を打つ
 
@@ -198,7 +198,7 @@ sara の item ID はツール名を含まない（フル UUIDv4・→ ADR-0053�
 - **`docs/adr/README.md`**: 改訂注記の追記対象として ADR-0007 / 0024 / 0025 / 0029 / 0042 / 0043 / 0045 の 7 本に本 ADR の blockquote を積む（本 ADR と同じ変更の中で実施）
 - **`README.md` / `README.ja.md`**: 改名予告バナーと "Migrating from nput" 節を追加する（#387）。改名後に自己記述文へ書き直す（#390）
 - **`docs/concept.md` / `docs/glossary.md` / `docs/glossary.ja.md`**: 命名の由来と本 ADR への索引を追加する（#390）
-- **`lib/` / `modules/` / `cmd/`**: 予告の 3 層を追加する（#387）。改名当日に予告を撤去し、機械的全置換を行う（#388）
+- **`modules/` / `cmd/`**: 予告の 2 層を追加する（#387）。改名当日に予告を撤去し、機械的全置換を行う（#388）
 - **隣接リポジトリ**: dotfiles / niface の dev shell / skills の dev shell の flake input と参照を差し替える（#391）。niface の仕様側（`E_<TOOL>_` の例示・conformance fixture・ecosystem docs）は**対象外**とする
 
 ## 棄却した案

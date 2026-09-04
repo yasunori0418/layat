@@ -42,12 +42,10 @@ const renameNotice = "nput will be renamed to layat on or after 2026-09-22. " +
 // printRenameNotice writes the rename announcement to stderr, once per invocation. It is
 // deliberately stderr-only: the --json envelope is a niface-conformant machine contract and
 // must not carry a tool-side announcement, so stdout stays undisturbed even under --json
-// (→ ADR-0043, ADR-0054 §6). The shell-completion request is exempt so the notice never
-// lands in a completion script's output.
-func printRenameNotice(cmd *cobra.Command) {
-	if cmd.Name() == cobra.ShellCompRequestCmd || cmd.Name() == cobra.ShellCompNoDescRequestCmd {
-		return
-	}
+// (→ ADR-0043, ADR-0054 §6). No command is exempt: cobra's generated completion scripts
+// already discard __complete's stderr in every shell they emit (bash / zsh / fish), so the
+// notice cannot leak into a completion listing.
+func printRenameNotice() {
 	fmt.Fprintln(os.Stderr, renameNotice)
 }
 
@@ -126,11 +124,11 @@ func newRootCmd() *cobra.Command {
 	// cannot tell them apart robustly (→ issue #130, docs/spec.md).
 	//
 	// The rename notice, unlike the envelope, is a fixed stderr line that no command needs to
-	// type, so PersistentPreRun is the right seam for it: one line for every subcommand, with
-	// only the completion request excluded (→ ADR-0054 §6, issue #387). `--version` and
-	// `--help` return inside cobra's execute() before this runs, so neither the
-	// installCheckPhase's `nput --version` assertion nor TestVersionFlagOutput sees the line.
-	root.PersistentPreRun = func(cmd *cobra.Command, _ []string) { printRenameNotice(cmd) }
+	// type, so PersistentPreRun is the right seam for it: one line for every subcommand
+	// (→ ADR-0054 §6, issue #387). `--version` and `--help` return inside cobra's execute()
+	// before this runs, so neither the installCheckPhase's `nput --version` assertion nor
+	// TestVersionFlagOutput sees the line.
+	root.PersistentPreRun = func(_ *cobra.Command, _ []string) { printRenameNotice() }
 	pf := root.PersistentFlags()
 	pf.StringVarP(&flagFile, "file", "f", "", "Specify the entrypoint explicitly (overrides autodiscovery)")
 	pf.StringVar(&flagRoot, "root", "", "Override the resolved root explicitly (all modes)")

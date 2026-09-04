@@ -14,16 +14,25 @@
 { config, lib, ... }:
 let
   nputTypes = import ../lib/types.nix lib;
-  # Rename notice (→ ADR-0054 §6, Issue #387). Shared with lib/manifest.nix's lib.warn so
-  # the date lives in one literal on the Nix side. Removed by the rename PR (→ #388).
-  renameNotice = import ../lib/rename-notice.nix;
+  # Rename notice (→ ADR-0054 §6, Issue #387). The CLI (cmd/nput/main.go) carries its own copy
+  # because a Go const cannot read a Nix expression; version_test.go pins the two byte-for-byte.
+  # The date is a LOWER BOUND ("on or after"): the rename lands when both the notice period and
+  # the prune epic have completed, whichever is later. Removed by the rename PR (→ #388).
+  renameNotice =
+    "nput will be renamed to layat on or after 2026-09-22. "
+    + "The flake input URL, the `nput.*` module options, `home.activation.nput` and "
+    + "`#nput.<system>.<name>` will all change, and `--json` consumers will see "
+    + "`E_LAYAT_*` / `W_LAYAT_*` codes and `tool.name = \"layat\"`. "
+    + "See the \"Migrating from nput\" section of "
+    + "https://github.com/yasunori0418/nput#migrating-from-nput . "
+    + "To stay on the old name, pin `github:yasunori0418/nput/legacy-nput`.";
 in
 {
   # Announce the rename to module users (home-manager / NixOS / nix-darwin alike). It is
   # gated on `enable` so a module merely imported but not turned on stays silent, and it
   # rides the host's own warning channel rather than a second output stream
   # (→ ADR-0054 §6).
-  config.warnings = lib.optional config.nput.enable renameNotice.message;
+  config.warnings = lib.optional config.nput.enable renameNotice;
 
   options.nput = {
     enable = lib.mkEnableOption "nput (symlink / copy placement of fetched git repositories)";
