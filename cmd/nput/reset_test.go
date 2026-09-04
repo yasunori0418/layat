@@ -26,7 +26,7 @@ func TestConfirmPolicy(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			gotPrompt, err := confirmPolicy(c.yes, c.interactive)
+			gotPrompt, err := confirmPolicy(c.yes, c.interactive, "reset")
 			if (err != nil) != c.wantErr {
 				t.Fatalf("err = %v, wantErr = %v", err, c.wantErr)
 			}

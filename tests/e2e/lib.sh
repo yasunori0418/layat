@@ -142,6 +142,11 @@ e2e_isolate() {
 	export HOME="$E2E_WORK/home"
 	export XDG_STATE_HOME="$E2E_WORK/state"
 	mkdir -p "$HOME" "$XDG_STATE_HOME"
+	# prune が state 基底と並べて走査する system 基底（→ ADR-0036 §3）を隔離先へ向ける。
+	# こちらは絶対パス（/nix/var/nix/profiles/nput）なので $HOME / XDG_STATE_HOME の差し替えでは
+	# 動かせず、これが無いと破壊的な prune がランナーの実状態を触りうる（→ cmd/nput/prune.go の
+	# NPUT_SYSTEM_PROFILE_BASE）。dir は作らない（基底の不在は正常系）。
+	export NPUT_SYSTEM_PROFILE_BASE="$E2E_WORK/system"
 	# 一時 HOME には nix の設定が無いため、ランナーの実設定（experimental-features 等）を引き継ぐ。
 	export NIX_CONFIG="${NIX_CONFIG:-}
 experimental-features = nix-command flakes"

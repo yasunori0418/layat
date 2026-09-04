@@ -76,6 +76,9 @@ func newGitignoreTestRun() (*gitignoreRun, *bytes.Buffer) {
 func newInitTestRun() (*initRun, *bytes.Buffer) {
 	return newTestRun[*struct{}, *initInfo]("init")
 }
+func newPruneTestRun() (*pruneRun, *bytes.Buffer) {
+	return newTestRun[*struct{}, *pruneInfo]("prune")
+}
 
 // decodeEnvelope asserts buf holds exactly one JSON document with a trailing newline and
 // returns it decoded (UseNumber, so nothing degrades to float64).
@@ -362,6 +365,7 @@ func TestJSONSuppressesLineOrientedStdout(t *testing.T) {
 	resetRes := &engine.ResetResult{RemovedSymlinks: []string{"s"}, RemovedCopies: []string{"c"}, KeptForeign: []string{"k"}}
 	gens := []engine.Generation{{Number: 1, Date: "2026-07-19", Current: true}}
 	targets := []string{".claude/skills"}
+	pruneRes := &engine.PruneResult{Removed: []engine.PruneSeries{{RootHash: "aaaa", Root: "/gone"}}}
 
 	printers := []struct {
 		name  string
@@ -371,6 +375,7 @@ func TestJSONSuppressesLineOrientedStdout(t *testing.T) {
 		{"printResetPlan", func() { printResetPlan(resetRes) }},
 		{"printGenerations", func() { printGenerations(gens) }},
 		{"printGitignore", func() { printGitignore(targets) }},
+		{"printPrunePlan", func() { printPrunePlan(pruneRes) }},
 	}
 	for _, p := range printers {
 		t.Run(p.name, func(t *testing.T) {
@@ -423,10 +428,10 @@ func TestResetPromptAllowed(t *testing.T) {
 		}
 	}
 	// The composed contract: --json without --yes refuses; --json with --yes runs promptless.
-	if _, err := confirmPolicy(false, resetPromptAllowed(true, true)); err == nil {
+	if _, err := confirmPolicy(false, resetPromptAllowed(true, true), "reset"); err == nil {
 		t.Error("reset --json without --yes must refuse (fail fast)")
 	}
-	if needPrompt, err := confirmPolicy(true, resetPromptAllowed(true, true)); err != nil || needPrompt {
+	if needPrompt, err := confirmPolicy(true, resetPromptAllowed(true, true), "reset"); err != nil || needPrompt {
 		t.Errorf("reset --json --yes: needPrompt=%v err=%v, want promptless success", needPrompt, err)
 	}
 }
@@ -449,6 +454,7 @@ func TestBeginRunPublishesEveryCommand(t *testing.T) {
 		"list-generations": func(c string) emitter { return beginListGenerationsRun(c) },
 		"gitignore":        func(c string) emitter { return beginGitignoreRun(c) },
 		"init":             func(c string) emitter { return beginInitRun(c) },
+		"prune":            func(c string) emitter { return beginPruneRun(c) },
 	}
 	for command, begin := range begins {
 		t.Run(command, func(t *testing.T) {

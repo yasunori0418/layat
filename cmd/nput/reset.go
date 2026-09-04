@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -86,7 +85,7 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 	}
 
 	// Non-dryrun is a destructive operation. Decide the confirmation policy (skip / prompt / refuse) from --yes and TTY state.
-	needPrompt, err := confirmPolicy(flagYes, resetPromptAllowed(isInteractive(), flagJSON))
+	needPrompt, err := confirmPolicy(flagYes, resetPromptAllowed(isInteractive(), flagJSON), "reset")
 	if err != nil {
 		return err
 	}
@@ -193,18 +192,21 @@ func resetPromptAllowed(interactive, jsonMode bool) bool {
 	return interactive && !jsonMode
 }
 
-// confirmPolicy decides the confirmation policy for a destructive reset from --yes and TTY state (→ ADR-0025 §5).
+// confirmPolicy decides the confirmation policy for a destructive command from --yes and TTY state (→ ADR-0025 §5).
 //   - --yes: skip confirmation (needPrompt=false, err=nil)
 //   - no --yes + interactive environment: require a confirmation prompt (needPrompt=true)
 //   - no --yes + non-interactive environment: error immediately to prevent a hang / accidental deletion on empty input (refuse)
 //
-// runReset passes in the result of isInteractive() to use it (a nix-independent, unit-testable seam).
-func confirmPolicy(yes, interactive bool) (needPrompt bool, err error) {
+// operation is the subcommand the refusal names ("reset" / "prune"): the policy is shared, but a
+// refusal that named the wrong command would send the reader to the wrong flag.
+// runReset / runPrune pass in the result of isInteractive() to use it (a nix-independent,
+// unit-testable seam).
+func confirmPolicy(yes, interactive bool, operation string) (needPrompt bool, err error) {
 	if yes {
 		return false, nil
 	}
 	if !interactive {
-		return false, errors.New("nput: refusing destructive reset without --yes in a non-interactive context")
+		return false, fmt.Errorf("nput: refusing destructive %s without --yes in a non-interactive context", operation)
 	}
 	return true, nil
 }

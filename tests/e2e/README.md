@@ -16,7 +16,9 @@ nix develop '.?dir=dev#ci' -c tests/e2e/run.sh
 
 `run.sh` は `scenarios/*.sh` を辞書順に独立プロセスで実行し、1 つでも失敗すれば非ゼロ終了する。
 各シナリオは隔離した一時 `$HOME` / `$XDG_STATE_HOME`（`mktemp -d`）下で動き、ランナーの実
-profile / home を汚さない（`tests/e2e/lib.sh` の `e2e_isolate`）。偽 src は fixture flake
+profile / home を汚さない（`tests/e2e/lib.sh` の `e2e_isolate`）。`prune` が state 基底と並べて
+走査する system 基底（→ ADR-0036 §3）は絶対パスで `$HOME` の差し替えでは動かないため、
+`e2e_isolate` が `NPUT_SYSTEM_PROFILE_BASE` で隔離先へ向ける（→ `cmd/nput/prune.go`）。偽 src は fixture flake
 ディレクトリ内の相対パス（eval 時に store へコピー）か、out-of-store 用の live ディレクトリで用意する。
 fixture flake は `nput` を `path:<repo>` input で参照し、`nixpkgs` / `home-manager` は nput の
 `flake.lock` pin に `follows` させてオフライン評価する。
@@ -32,6 +34,7 @@ fixture flake は `nput` を `path:<repo>` input で参照し、`nixpkgs` / `hom
 | `05-hm`      | HM module。home-manager standalone configuration を非 NixOS で評価・activate し、activation が engine を起動して配置すること |
 | `06-init-templates` | init + templates。`nput init <t>` で standalone / project テンプレを展開し、展開後 flake が `nix flake check`（nput を局所 override）を通ること |
 | `07-legacy`  | legacy entrypoint（shell.nix・passthru canonical 形・→ ADR-0032）。`NIX_PATH` を flake.lock の nixpkgs に pin し、`nput apply` / `apply --all` / 素の `nix-shell` 互換を検証 |
+| `08-prune`   | prune（→ ADR-0034）。apply した 2 系列の一方の root を消して孤児にし、`--dryrun` の非破壊性・`--yes` の系列ごと削除・生存系列と配置物の不変・`print-roots` から gcroot が外れることを検証 |
 
 ## 将来拡張
 

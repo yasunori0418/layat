@@ -111,6 +111,8 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6](requirements/20260802-31f2882e-d2e3-4e3b-b783-feb627d73ac6-reset-fs-only-teardown.md) — reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す
 - [REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4](requirements/20260802-a8edc58f-4adc-4637-b888-ab8ccc7e73e4-reset-named-only-and-flock.md) — reset は名指し必須で profileDir 単位の blocking flock を取る
 - [REQ-6a950d6d-c191-4235-a1b4-73ffc7c2bb38](requirements/20260802-6a950d6d-c191-4235-a1b4-73ffc7c2bb38-reset-dryrun-no-side-effect.md) — reset --dryrun は副作用ゼロで削除対象を表示して終了する
+- [REQ-c44433a1-7ee7-459a-9aae-7cc42166876f](requirements/20260823-c44433a1-7ee7-459a-9aae-7cc42166876f-prune-target-selection.md) — prune は backref の root が実在しない roothash 系列だけを系列ごと削除する
+- [REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed](requirements/20260823-42fe312c-927c-4da3-9346-f7ca2f3a58ed-prune-safety-gates.md) — prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る
 - [REQ-05abce3e-9797-432b-b93f-37c55d09afde](requirements/20260802-05abce3e-9797-432b-b93f-37c55d09afde-rollback-list-generations-home-only.md) — rollback と list-generations は home mode 限定にする
 - [REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796](requirements/20260802-89c7baf9-9be0-417b-bd2d-b2e4edabe796-rollback-named-only.md) — rollback は名指し必須で --all に対応しない
 - [REQ-a480c183-40ce-4201-93b5-65a7a59c1b9e](requirements/20260802-a480c183-40ce-4201-93b5-65a7a59c1b9e-gitignore-anchored-output.md) — gitignore は配置 target を stdout へ列挙するだけでファイルを書き込まない
@@ -232,7 +234,7 @@ stale 除去は前世代 manifest の記録通りを指す symlink だけに限�
 - [REQ-0e341430-17f0-498b-9439-65491652163a](requirements/20260802-0e341430-17f0-498b-9439-65491652163a-rollback-refit-then-pointer.md) — rollback は FS を先に収束させてから profile ポインタを最後に移す
 - [REQ-844ee375-919f-4341-81e1-a5f89fd32840](requirements/20260802-844ee375-919f-4341-81e1-a5f89fd32840-module-mode-profile-internal.md) — module 時は rollback を host へ一本化し、nput profile は前進のみで追従する
 - [REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0](requirements/20260802-46fccb80-4bae-4d37-bc19-dded88e9a9c0-project-mode-generation-skip.md) — project mode は世代を非公開にし、derivation 同一なら世代を積まず lstat ドリフト修復だけ行う
-- [REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4](requirements/20260802-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4-project-mode-orphan-profile.md) — 孤児 profile は backref で逆引き可能なまま放置許容とし、MVP では cleanup コマンドを持たない
+- [REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4](requirements/20260802-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4-project-mode-orphan-profile.md) — 孤児 profile は backref で逆引き可能なまま放置許容とし、`nput prune` が root 不在の系列を削除する
 - [REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693](requirements/20260802-fc1118b1-b0e8-4ddf-80f6-c70956651693-cross-config-target-oscillation.md) — 同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める
 
 ---

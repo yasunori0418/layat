@@ -35,8 +35,8 @@ var (
 	flagJSON        bool   // --json: write a niface envelope (single JSON document) to stdout at command completion (→ ADR-0043, issue #130)
 	flagDebug       bool   // --debug: disclose the internally run nix commands on stderr (→ ADR-0031)
 	flagRecopy      bool   // --recopy: apply modifier; unconditionally re-copy every copy target from src, overwriting
-	flagYes         bool   // -y/--yes: skip reset's confirmation prompt (for scripts / CI)
-	flagDryrun      bool   // --dryrun: apply / reset modifier; show the plan with zero side effects
+	flagYes         bool   // -y/--yes: skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)
+	flagDryrun      bool   // --dryrun: apply / reset / prune modifier; show the plan with zero side effects
 	flagProjectRoot bool   // --project-root: apply --all modifier; apply only projectRoot configs
 	flagHomeRoot    bool   // --home-root: apply --all modifier; apply only homeRoot configs
 	flagSystemRoot  bool   // --system-root: apply --all modifier; apply only systemRoot configs (future seam)
@@ -106,7 +106,7 @@ func newRootCmd() *cobra.Command {
 	pf.BoolVarP(&flagVerbose, "verbose", "v", false, "Print the placement report (summary + per-target lines); silent on success by default (see ADR-0031)")
 	pf.BoolVar(&flagJSON, "json", false, "Write a niface-conformant JSON envelope to stdout (machine-readable; orthogonal to -v; see ADR-0043)")
 	pf.BoolVar(&flagDebug, "debug", false, "Disclose the internal nix commands on stderr (see ADR-0031)")
-	pf.BoolVarP(&flagYes, "yes", "y", false, "Skip reset's confirmation prompt (for scripts / CI)")
+	pf.BoolVarP(&flagYes, "yes", "y", false, "Skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)")
 	pf.BoolVar(&flagProjectRoot, "project-root", false, "Modifier for apply --all: apply only projectRoot configs")
 	pf.BoolVar(&flagHomeRoot, "home-root", false, "Modifier for apply --all: apply only homeRoot configs")
 	pf.BoolVar(&flagSystemRoot, "system-root", false, "Modifier for apply --all: apply only systemRoot configs (system mode not yet implemented)")
@@ -117,6 +117,7 @@ func newRootCmd() *cobra.Command {
 	root.AddCommand(newRollbackCmd())
 	root.AddCommand(newListGenerationsCmd())
 	root.AddCommand(newGitignoreCmd())
+	root.AddCommand(newPruneCmd())
 	return root
 }
 
