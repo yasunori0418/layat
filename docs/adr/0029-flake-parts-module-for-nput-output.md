@@ -24,6 +24,12 @@ references:
 - 関連: ADR-0007（`nput.<name>` アドレッシング・専用 namespace）, ADR-0015（`nix flake check` の unknown output warning）, ADR-0006（lib は nixpkgs.lib のみ依存）, ADR-0023（passthru.rootKind）
 - 起点 Issue: #26
 
+> **2026-09-05 改訂注記（ADR-0054）**: 本 ADR が定めた flake-parts module の
+> `mkTransposedPerSystemModule { name = "nput"; ... }` は、**ツール名の改名により `name = "layat"` へ変わる**。
+> consumer の記述は `perSystem.layat.<name>` となり、転置先は `flake.layat.<system>.<name>` になる。
+> `mkTransposedPerSystemModule` を再利用する決定・option 型（`lazyAttrsOf package`）・`flakeModules.default`
+> として公開する決定はいずれも不変で、変わるのは転置される attr 名だけである（→ ADR-0054）。
+
 ## 背景
 
 `flake.nix` の dogfood 用 `nput.<system>.<name>` output は、top-level の `flake` ブロックで `inputs.nixpkgs.lib.genAttrs systems (system: ...)` を使い、`inputs.nixpkgs.legacyPackages.${system}` を直書きして `mkManifest` の `pkgs` 引数に渡していた。

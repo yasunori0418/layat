@@ -42,6 +42,13 @@ references:
 > `.pending`・backref `.root`）は不変。ただし system mode の実装に伴い、`rootKind = "system"` のときの state 基底が
 > **`/nix/var/nix/profiles/nput`** に切り替わる行がレイアウト表に加わった（ユーザー state 基底の home / project / fixed は不変・
 > → ADR-0036）。
+>
+> **2026-09-05 改訂注記（ADR-0054）**: 本 ADR §3（`nput init` が参照する固定 flake ref
+> `github:yasunori0418/nput`）と §4（profile 専用ディレクトリレイアウトの基底 `<state>/nix/profiles/nput/`）が
+> 固定した字句が、**ツール名の改名により `layat init` / `github:yasunori0418/layat` /
+> `<state>/nix/profiles/layat/` へ変わる**。固定 ref をバイナリへハードコードするという決定・専用ディレクトリ
+> レイアウトの構造（`profile` リンク・`profile-N-link`・`.pending`・backref `.root`・flock キー）はいずれも
+> 不変である（→ ADR-0054）。
 
 ## 背景
 
