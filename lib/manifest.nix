@@ -15,6 +15,9 @@
 # `nput.__internal.<name>` (→ #71, #289).
 let
   internal = import ./__internal.nix;
+  # Rename notice (→ ADR-0054 §6, Issue #387). Removed together with ./rename-notice.nix
+  # by the rename PR (→ Issue #388).
+  renameNotice = import ./rename-notice.nix;
 
   normalizeManifest =
     {
@@ -112,19 +115,26 @@ let
       anchorLines = internal.anchorLines lib farmEntries;
     in
     # The derivation contains manifest.json (the engine's input contract) + a symlink farm to the store src (GC anchors) (→ ADR-0006).
-    pkgs.runCommandLocal "nput-manifest"
-      {
-        # The CLI reads this via `nix eval … .rootKind` before build (→ ADR-0023).
-        passthru = {
-          inherit (norm.root) rootKind;
+    # `lib.warn` wraps the whole derivation so the notice fires for every consumer of
+    # mkManifest — the modules, the flake-parts path and a direct lib user alike — on the
+    # `nix eval`/`nix build` the CLI runs. It reaches only mkManifest, not
+    # normalizeManifest, so the nix-unit / namaka assertions on pure data stay quiet
+    # (→ ADR-0054 §6, Issue #387).
+    lib.warn renameNotice.message (
+      pkgs.runCommandLocal "nput-manifest"
+        {
+          # The CLI reads this via `nix eval … .rootKind` before build (→ ADR-0023).
+          passthru = {
+            inherit (norm.root) rootKind;
+          }
+          // lib.optionalAttrs (norm.root ? root) { inherit (norm.root) root; };
         }
-        // lib.optionalAttrs (norm.root ? root) { inherit (norm.root) root; };
-      }
-      ''
-        mkdir -p "$out"
-        cp ${manifestJson} "$out/manifest.json"
-        ${anchorLines}
-      '';
+        ''
+          mkdir -p "$out"
+          cp ${manifestJson} "$out/manifest.json"
+          ${anchorLines}
+        ''
+    );
 in
 {
   inherit normalizeManifest mkManifest;
