@@ -11,11 +11,20 @@
 # > Via the HM module, the MVP is limited to a single nput.entries = 1 profile (fixed name default),
 # > and role separation (multiple profiles) is not possible. Users who need role separation use the
 # > standalone CLI path (entrypoint's nput.<name>). Multiple profiles are a future seam (→ ADR-0024, ADR-0025).
-{ lib, ... }:
+{ config, lib, ... }:
 let
   nputTypes = import ../lib/types.nix lib;
+  # Rename notice (→ ADR-0054 §6, Issue #387). Shared with lib/manifest.nix's lib.warn so
+  # the date lives in one literal on the Nix side. Removed by the rename PR (→ #388).
+  renameNotice = import ../lib/rename-notice.nix;
 in
 {
+  # Announce the rename to module users (home-manager / NixOS / nix-darwin alike). It is
+  # gated on `enable` so a module merely imported but not turned on stays silent, and it
+  # rides the host's own warning channel rather than a second output stream
+  # (→ ADR-0054 §6).
+  config.warnings = lib.optional config.nput.enable renameNotice.message;
+
   options.nput = {
     enable = lib.mkEnableOption "nput (symlink / copy placement of fetched git repositories)";
 
