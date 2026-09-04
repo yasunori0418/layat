@@ -73,7 +73,7 @@ references:
 >
 > **2026-09-05 改訂注記（ADR-0054）**: 本 ADR §3（`nput` CLI を一次 UX へ昇格）・§4（アドレッシング =
 > 専用 `nput` 名前空間・`nput.<name>`）・§6（`nput init` によるテンプレート展開）の決定はいずれも不変だが、
-> **ツール名が `nput` から `layat` へ改名された**。CLI 名は `layat`、名前空間は `layat.<name>`
+> **ツール名の改名により、CLI 名・名前空間・サブコマンドの字句が `layat` へ変わる**。CLI 名は `layat`、名前空間は `layat.<name>`
 > （flake 出力 `layat.<system>.<name>`）、サブコマンドは `layat init` になる。一次 UX を CLI に置くという
 > 決定・entrypoint 発見の優先順・root 明示必須のモデルは字句以外に変更が無い（→ ADR-0054）。
 

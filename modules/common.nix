@@ -15,7 +15,9 @@
 let
   nputTypes = import ../lib/types.nix lib;
   # Rename notice (→ ADR-0054 §6, Issue #387). The CLI (cmd/nput/main.go) carries its own copy
-  # because a Go const cannot read a Nix expression; version_test.go pins the two byte-for-byte.
+  # because a Go const cannot read a Nix expression. checks.notice-parity (flake.nix) is what
+  # holds the two byte-for-byte in CI; version_test.go runs the same comparison but skips
+  # inside the nix build sandbox, where modules/ is out of tree — so do not drop that check.
   # The date is a LOWER BOUND ("on or after"): the rename lands when both the notice period and
   # the prune epic have completed, whichever is later. Removed by the rename PR (→ #388).
   renameNotice =

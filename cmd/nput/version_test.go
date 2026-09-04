@@ -66,6 +66,12 @@ func TestVersionSubcommandAbsent(t *testing.T) {
 // SilenceErrors keeps cobra from printing that error, so stderr holds the notice and nothing
 // else — which lets this assert the exact bytes rather than mere containment.
 func TestRenameNoticeOnSubcommand(t *testing.T) {
+	// gitignore's RunE calls beginGitignoreRun before its arity check, so the run reaches
+	// the package-global nifaceReport. Save and restore it as niface_test.go does, so this
+	// test leaves no state behind for whatever runs next.
+	origReport := nifaceReport
+	defer func() { nifaceReport = origReport }()
+
 	root := newRootCmd()
 	root.SetArgs([]string{"gitignore"})
 	errOut := captureStderr(t, func() {
@@ -114,9 +120,14 @@ func TestRenameNoticeMatchesNixSource(t *testing.T) {
 	// when `go test` runs inside the sandbox. Skip there rather than widening the package's
 	// source closure for a temporary check; checks.notice-parity (flake.nix) enforces the same
 	// pairing in an environment where both files exist, so the contract is never unguarded.
+	// Skip only where the whole modules/ tree is absent — that is the nix sandbox. A missing
+	// file inside an existing modules/ means it moved or was deleted, which must fail loudly
+	// rather than pass as a silent skip.
 	src, err := os.ReadFile(filepath.Join("..", "..", "modules", "common.nix"))
 	if errors.Is(err, fs.ErrNotExist) {
-		t.Skip("modules/common.nix is out of tree (nix build sandbox); checks.notice-parity covers this")
+		if _, dirErr := os.Stat(filepath.Join("..", "..", "modules")); errors.Is(dirErr, fs.ErrNotExist) {
+			t.Skip("modules/ is out of tree (nix build sandbox); checks.notice-parity covers this")
+		}
 	}
 	if err != nil {
 		t.Fatalf("read modules/common.nix: %v", err)
