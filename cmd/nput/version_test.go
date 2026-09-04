@@ -86,9 +86,10 @@ func TestRenameNoticeOnSubcommand(t *testing.T) {
 // TestRenameNoticeAbsentFromVersionFlags pins that `--version` and `--help` never reach
 // PersistentPreRun: cobra returns inside execute() before it runs. The notice is a *stderr*
 // line, so stderr is what has to be observed — asserting on stdout could not fail even if the
-// hook did fire, and TestVersionFlagOutput already pins stdout exactly. Regressing this would
-// break flake.nix's installCheckPhase, which matches `nput --version` output exactly
-// (→ ADR-0042, ADR-0054 §6).
+// hook did fire, and TestVersionFlagOutput already pins stdout exactly. Nothing else covers
+// this: flake.nix's installCheckPhase captures only stdout (`got=$(... --version)`), so a
+// notice leaking onto stderr there would go unnoticed. Informational flags staying silent is
+// a property of their own (→ ADR-0042, ADR-0054 §6).
 func TestRenameNoticeAbsentFromVersionFlags(t *testing.T) {
 	for _, flag := range []string{"--version", "--help"} {
 		t.Run(flag, func(t *testing.T) {
