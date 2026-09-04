@@ -115,11 +115,12 @@ let
       anchorLines = internal.anchorLines lib farmEntries;
     in
     # The derivation contains manifest.json (the engine's input contract) + a symlink farm to the store src (GC anchors) (→ ADR-0006).
-    # `lib.warn` wraps the whole derivation so the notice fires for every consumer of
-    # mkManifest — the modules, the flake-parts path and a direct lib user alike — on the
-    # `nix eval`/`nix build` the CLI runs. It reaches only mkManifest, not
-    # normalizeManifest, so the nix-unit / namaka assertions on pure data stay quiet
-    # (→ ADR-0054 §6, Issue #387).
+    # `lib.warn` wraps the whole derivation so the notice fires wherever mkManifest's result
+    # is forced: a direct lib user, and the module evaluations behind `home-manager switch`
+    # / `nixos-rebuild`. Under the CLI it fires too, but runNixCapture discards nix's stderr
+    # on success, so the CLI's own stderr layer (cmd/nput/main.go) — not this one — is what
+    # reaches a CLI user. It wraps only mkManifest, not normalizeManifest, so the nix-unit /
+    # namaka assertions on pure data stay quiet (→ ADR-0054 §6, Issue #387).
     lib.warn renameNotice.message (
       pkgs.runCommandLocal "nput-manifest"
         {
