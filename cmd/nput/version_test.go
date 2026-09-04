@@ -120,11 +120,9 @@ func TestRenameNoticeAbsentFromVersionFlags(t *testing.T) {
 func TestRenameNoticeMatchesNixSource(t *testing.T) {
 	// The nix build's goSrc is go.mod / go.sum / internal / cmd only, so modules/ is absent
 	// when `go test` runs inside the sandbox. Skip there rather than widening the package's
-	// source closure for a temporary check; checks.notice-parity (flake.nix) enforces the same
-	// pairing in an environment where both files exist, so the contract is never unguarded.
-	// Skip only where the whole modules/ tree is absent — that is the nix sandbox, whose goSrc
-	// carries go.mod / go.sum / internal / cmd and nothing else. A missing file inside an
-	// existing modules/ means it moved or was deleted, and must fail loudly instead.
+	// source closure for a temporary check. Key the skip on the whole modules/ tree being
+	// gone: a file missing from an existing modules/ means it moved or was deleted, and must
+	// fail loudly instead.
 	src, err := os.ReadFile(filepath.Join("..", "..", "modules", "common.nix"))
 	if _, dirErr := os.Stat(filepath.Join("..", "..", "modules")); errors.Is(dirErr, fs.ErrNotExist) {
 		t.Skip("modules/ is out of tree (nix build sandbox); checks.notice-parity covers this")
