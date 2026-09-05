@@ -590,11 +590,63 @@ keeps redirecting the old repository URL after the rename, so this pin keeps res
 The `--json` codes are the one change consumers cannot ignore: niface requires the
 `E_<TOOL>_<NAME>` shape, so the prefix moves with the tool name.
 
-### What the first `layat apply` does
+### Old generations: migrate or drop
 
-layat writes its state to a new directory (`<state>/nix/profiles/layat/`) and knows nothing
-about what nput placed. The first run therefore behaves as if every target were placed by a
-stranger:
+> The commands in this subsection are for **after** the rename. Until then `layat` does not
+> exist yet — read them as what to run on the day you switch.
+
+nput's generations live in `<state>/nix/profiles/nput/`; layat reads
+`<state>/nix/profiles/layat/`. Nothing is migrated for you: layat neither moves that directory
+nor reads it. Decide which of the two you want **before the first `layat apply`** — the
+migration below moves the whole directory into place and assumes
+`<state>/nix/profiles/layat/` does not exist yet. Check that it doesn't, and move it aside if it
+does: `mv` into an existing directory does not fail — it silently nests `nput/` inside it and
+exits 0. Whichever you pick, any `<target>.nput-backup` files are left behind; remove them by
+hand once you are satisfied with the new placement.
+
+#### Migrate the generations
+
+Moving the directory alone is not enough. The generation links are protected from the Nix
+garbage collector by *indirect roots* under `/nix/var/nix/gcroots/auto/` that point at the
+**old absolute paths**; after a plain `mv` every one of them dangles and the next GC removes
+them, taking the moved link farms — including the previous generation's `manifest.json` —
+with it. Re-register a root per generation link in the same step as the `mv`, so that no GC runs
+in between. The re-registration recreates every link and resets its mtime; if the original
+generation dates matter to you, copy the old directory aside first (`cp -a` preserves symlink
+timestamps) and restore the moved links from that copy with `touch -h -r` afterwards.
+
+```sh
+old="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/nput"
+new="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/layat"
+mv "$old" "$new" && find "$new" -name 'profile-*-link' -type l \
+  -exec sh -c 'nix-store --add-root "$1" --indirect -r "$(readlink "$1")" >/dev/null' _ {} \;
+```
+
+The old roots — the ones still pointing into `<state>/nix/profiles/nput/` — are left alone;
+they disappear at the next GC.
+
+Check the result with `layat list-generations <name>` — home mode only, as with `nput`
+(`default` under home-manager; if you applied the config with `--root`, pass the same `--root`).
+The old generations should be listed.
+
+The previous generation's manifest came along, so the first `layat apply` after a migration is
+an ordinary apply — no foreign warnings, and stale removal keeps working.
+
+#### Drop the generations
+
+If you do not care about the history, remove the old state directory:
+
+```sh
+rm -rf "${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/nput"
+```
+
+**Delete it rather than leaving it behind.** As long as the generation links exist, their
+indirect roots keep the old store paths alive and the garbage collector will never reclaim
+them. Once the links are gone the `gcroots/auto/` entries are pruned at the next GC and the
+store paths become collectable.
+
+With no previous generation to read, the first `layat apply` starts at generation 1 and behaves
+as if every target had been placed by a stranger:
 
 - **symlink entries are overwritten**, last-write-wins, with a `W_LAYAT_FOREIGN_SYMLINK`
   warning. The run does not fail.
@@ -602,11 +654,6 @@ stranger:
   `--backup` to move the existing file aside and place the copy.
 - **targets that existed only in an old nput generation are left in place.** Stale removal
   needs the previous generation's manifest, and layat has none.
-- **`<state>/nix/profiles/nput/` and any `<target>.nput-backup` files remain.** Remove them by
-  hand once you are satisfied with the new placement.
-
-Generations are not migrated. Roll forward by running `layat apply` and letting it build
-generation 1 anew.
 
 ---
 
