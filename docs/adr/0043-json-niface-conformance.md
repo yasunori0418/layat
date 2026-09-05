@@ -36,6 +36,14 @@ references:
 - 改訂対象: ADR-0033 §1-3（独自エンベロープ `{"version":1,...}` を niface エンベロープ準拠へ）/ ADR-0023 §2（「エラーは stdout に畳み込まず stderr 専有」を再改訂）。ストリーム規律の骨子（stdout=機械可読専有・warning/error 常時 stderr）と終了コード表 0/1/2 は不変
 - 起点: nput の niface 準拠化 grilling（2026-07-06）と、それを受けた niface 側 grilling による niface#1 の方針確定（batch エンベロープ + subject + §5 参照キー規約の 3 層化）。2026-07-07 に niface 側の正式成果物（`spec/v1/spec.md`・`schema/v1/envelope.schema.json`・`go` module・`testdata/v1` 適合ベクタ）が確定し、**エンベロープは single / batch を問わずトップレベル常時 `results[]` に統一**された。さらに同日の niface ADR-0013 で **`mode` 判別子は全廃・`SubjectResult.subject` は常時必須**へ改訂された（実行形態を切り替える判別子フィールドは持たない）。本 ADR は確定仕様に合わせて記述する
 
+> **2026-09-05 改訂注記（ADR-0054）**: 本 ADR §6 が定めたツール別エラー / 警告コードの接頭辞
+> `E_NPUT_*` / `W_NPUT_*` と、エンベロープの `tool.name` の値 `"nput"` は、**ツール名の改名により
+> `E_LAYAT_*` / `W_LAYAT_*` と `"layat"` へ変わる**（niface 仕様が `E_<TOOL>_<NAME>` を要求するため、改名は
+> 選択ではなく必須）。これは `--json` 消費者にとって破壊的変更である。二層命名（共通コードは `E_LOCK` /
+> `E_IO` 等をそのまま再利用）・参照キー 3 つ組 `(tool.name, subject, id)`・JSON 出力の niface 準拠を恒常原則と
+> する決定はいずれも不変。また改名予告の警告は **`--json` のエンベロープには入れず stderr にのみ出す**
+> （機械可読の契約面にツールの都合の告知を混ぜない・→ ADR-0054 §6）。
+
 ## 背景
 
 ADR-0033 は `--json` を「全サブコマンド一律のグローバルフラグ・stdout に単一 JSON オブジェクト（`{"version":1,"command":...}`）」として導入する決定をした。これは nput 単独の独自エンベロープであり、当時は外部規格が存在しなかった。

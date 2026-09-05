@@ -21,6 +21,12 @@ references:
 - 改訂対象: なし（新規領域）
 - 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。参照実装として同作者の cryoflow リポジトリのリリース自動化（bump workflow + release workflow）を採用する
 
+> **2026-09-05 改訂注記（ADR-0054）**: 本 ADR §1 が定めた `nput --version` の出力書式
+> （cobra 既定テンプレートによる `nput version X.Y.Z`）は、**ツール名の改名により `layat version X.Y.Z` へ
+> 変わる**。VERSION ファイルを一次情報とし ldflags（`-X main.version`）で埋め込む決定・bump PR 起点の
+> リリース自動化・タグ書式 `vX.Y.Z` はいずれも不変である。なお改名予告のために打つ annotated tag `legacy-nput` は
+> 非 semver 名で、本 ADR の release workflow が扱うタグとは名前空間が分かれている（→ ADR-0054 §7）。
+
 ## 背景
 
 現状リリースの機構が無く、利用者は flake ref（ブランチ / rev）で pin するしかない。バージョン付き GitHub Release があれば、変更履歴の共有（自動生成ノート）と安定 ref（タグ）を提供できる。

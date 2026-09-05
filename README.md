@@ -1,5 +1,11 @@
 # nput
 
+> ⚠️ **nput is being renamed to `layat`, on or after 2026-09-22.** The repository, the Go
+> module path, the binary, the flake attributes, the module option namespace and the `--json`
+> error codes all change at once, and there is no compatibility shim. See
+> [Migrating from nput](#migrating-from-nput) for what to change — and for how to stay on the
+> old name by pinning `github:yasunori0418/nput/legacy-nput`.
+
 *Read this in [Japanese (日本語)](README.ja.md).*
 
 > Place fetched git repositories at arbitrary paths via symlink or copy.
@@ -547,6 +553,60 @@ package layers would be delegated to or combined with system-manager, while nput
   exists; it lists the root paths and asks before deleting anything.
 - The home-manager module cannot separate roles into multiple profiles in the MVP — use the
   standalone CLI for that.
+
+---
+
+## Migrating from nput
+
+nput is being renamed to **layat** on or after **2026-09-22**. The rename is a breaking change
+and **no compatibility shim is provided**. Why the name changed, the rejected candidates and the
+policy behind the notice period are recorded in
+[`docs/adr/0054-rename-nput-to-layat.md`](docs/adr/0054-rename-nput-to-layat.md).
+
+### Staying on the old name
+
+If you would rather not migrate yet, pin the last nput-named state:
+
+```nix
+inputs.nput.url = "github:yasunori0418/nput/legacy-nput";
+```
+
+`legacy-nput` is an annotated git tag on the merge commit of the notice PR — a tag, not a GitHub
+Release. GitHub
+keeps redirecting the old repository URL after the rename, so this pin keeps resolving.
+
+### What you have to change
+
+| Before | After |
+|---|---|
+| `github:yasunori0418/nput` | `github:yasunori0418/layat` |
+| `nput.*` module options (`nput.enable`, `nput.entries`, `nput.backup.*`) | `layat.*` |
+| `home.activation.nput` | `home.activation.layat` |
+| `perSystem.nput.<name>` / `#nput.<system>.<name>` | `perSystem.layat.<name>` / `#layat.<system>.<name>` |
+| `packages.nput` / the `nput` binary | `packages.layat` / the `layat` binary |
+| `--json`: `E_NPUT_*` / `W_NPUT_*`, `tool.name = "nput"` | `E_LAYAT_*` / `W_LAYAT_*`, `tool.name = "layat"` |
+| `<target>.nput-backup` | `<target>.layat-backup` |
+
+The `--json` codes are the one change consumers cannot ignore: niface requires the
+`E_<TOOL>_<NAME>` shape, so the prefix moves with the tool name.
+
+### What the first `layat apply` does
+
+layat writes its state to a new directory (`<state>/nix/profiles/layat/`) and knows nothing
+about what nput placed. The first run therefore behaves as if every target were placed by a
+stranger:
+
+- **symlink entries are overwritten**, last-write-wins, with a `W_LAYAT_FOREIGN_SYMLINK`
+  warning. The run does not fail.
+- **copy entries are skipped**, because a real file already occupies the target. Pass
+  `--backup` to move the existing file aside and place the copy.
+- **targets that existed only in an old nput generation are left in place.** Stale removal
+  needs the previous generation's manifest, and layat has none.
+- **`<state>/nix/profiles/nput/` and any `<target>.nput-backup` files remain.** Remove them by
+  hand once you are satisfied with the new placement.
+
+Generations are not migrated. Roll forward by running `layat apply` and letting it build
+generation 1 anew.
 
 ---
 

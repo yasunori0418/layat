@@ -52,6 +52,12 @@ references:
 > **2026-07-04 改訂注記（ADR-0038）**: 本 ADR §8 の `--all` 一括 eval（config 名 → rootKind マップを 1 回で取得）を、
 > **rootKind に加えて正規化後 target 一覧も同じ 1 回の eval で取得**するよう拡張した。取得した target は build 前の
 > cross-config 衝突検査（rootKind バケット単位・検出時 error 停止）に使う。build が config ごと N 回である点は不変（→ ADR-0038）。
+>
+> **2026-09-05 改訂注記（ADR-0054）**: 本 ADR §2 の profileDir キーイング表が記す on-disk パス
+> `<state>/nix/profiles/nput/...` は、**ツール名の改名により `<state>/nix/profiles/layat/...` へ変わる**。
+> キーイングの規則（home は `<name>` 直キー・project / fixed は `<roothash>/<name>`・backref `.root` は
+> roothash 階層）は不変で、変わるのは基底ディレクトリ名だけである。旧 `<state>/nix/profiles/nput/` からの
+> 自動移行は行わない（→ ADR-0054 §8）。
 
 ## 背景
 
