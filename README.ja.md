@@ -471,10 +471,60 @@ GitHub が旧リポジトリ URL のリダイレクトを維持するため、�
 `--json` のコードだけは消費者が無視できない。niface が `E_<TOOL>_<NAME>` の形を要求するため、
 接頭辞はツール名と一緒に動く。
 
-### 改名後の初回 `layat apply` の挙動
+### 旧世代: 移行するか、捨てるか
 
-layat は新しいディレクトリ(`<state>/nix/profiles/layat/`)に状態を書き、nput が何を置いたかを
-知らない。したがって初回実行は、全ての target が他人によって置かれたかのように振る舞う。
+> この小節のコマンドは**改名後**に実行するもの。それまで `layat` はまだ存在しないので、
+> 切り替える日に何を実行するかとして読む。
+
+nput の世代は `<state>/nix/profiles/nput/` にあり、layat は `<state>/nix/profiles/layat/` を
+読む。移行は自動では行われない。layat はそのディレクトリを移動もしなければ読みもしない。
+どちらにするかは**初回 `layat apply` より前に**決めること。下記の移行はディレクトリごと
+移動するもので、`<state>/nix/profiles/layat/` がまだ存在しないことを前提としている。無いことを
+確認し、あるなら先に退避すること。既存ディレクトリへの `mv` は失敗せず、黙って `nput/` をその
+中へ入れ子にして exit 0 で終わる。
+どちらを選んでも `<target>.nput-backup` は残るので、新しい配置に納得したら手で消す。
+
+#### 世代を移行する
+
+ディレクトリを移動するだけでは足りない。世代リンクは `/nix/var/nix/gcroots/auto/` 配下の
+*間接 root* によって Nix の GC から保護されているが、その root は**旧絶対パス**を指している。
+素の `mv` の後は全ての root がぶら下がった状態になり、次の GC で除去され、移した link farm
+——前世代の `manifest.json` を含む——ごと回収される。世代リンクごとの root 再登録は、`mv` に
+続けて 1 ステップで行う(間に GC を挟まないため)。再登録は各リンクを作り直すので mtime が
+リセットされる。元の世代の日付を保ちたい場合は、先に旧ディレクトリのコピーを取り
+(`cp -a` は symlink のタイムスタンプを保つ)、後からそのコピーを参照して `touch -h -r` で
+移動後のリンクへ復元する。
+
+```sh
+old="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/nput"
+new="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/layat"
+mv "$old" "$new" && find "$new" -name 'profile-*-link' -type l \
+  -exec sh -c 'nix-store --add-root "$1" --indirect -r "$(readlink "$1")" >/dev/null' _ {} \;
+```
+
+旧 root——まだ `<state>/nix/profiles/nput/` を指しているもの——は放置してよい。次の GC で消える。
+
+結果は `layat list-generations <name>` で確認する——`nput` と同じく home mode 限定
+(home-manager なら `default`。`--root` を付けて apply した config には同じ `--root` を渡す)。
+旧世代が並べば成功。
+
+前世代の manifest は一緒に移っているので、移行後の初回 `layat apply` は通常の apply と
+変わらない——foreign 警告は出ず、stale 除去も継続して働く。
+
+#### 世代を捨てる
+
+履歴が要らなければ、旧状態ディレクトリを削除する。
+
+```sh
+rm -rf "${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/nput"
+```
+
+**放置せず削除すること。** 世代リンクが残っている限り、その間接 root が旧 store path を
+生かし続け、GC は永久に回収しない。リンクが消えれば `gcroots/auto/` の項目は次の GC で
+除去され、store path が回収対象になる。
+
+読むべき前世代が無いため、初回 `layat apply` は世代 1 から始まり、全ての target が他人に
+よって置かれたかのように振る舞う。
 
 - **symlink entry は後勝ちで上書きされる**。`W_LAYAT_FOREIGN_SYMLINK` 警告が出るが、実行は
   失敗しない。
@@ -482,10 +532,6 @@ layat は新しいディレクトリ(`<state>/nix/profiles/layat/`)に状態を�
   copy を配置するには `--backup` を渡す。
 - **旧 nput の世代にのみあった target はそのまま残る**。stale 除去には前世代の manifest が要り、
   layat はそれを持たないため。
-- **`<state>/nix/profiles/nput/` と `<target>.nput-backup` は残る**。新しい配置に納得したら手で
-  消す。
-
-世代は移行されない。`layat apply` を実行して世代 1 を新たに作り直す形で進める。
 
 ---
 
