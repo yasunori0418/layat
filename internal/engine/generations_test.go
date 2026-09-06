@@ -340,6 +340,194 @@ func TestRollbackAncestorMigration(t *testing.T) {
 	}
 }
 
+// TestRollbackAncestorMigrationCopyChild is TestRollbackAncestorMigration with one of the per-file
+// children being a copy entry: rolling back from the whole-tree ancestor symlink generation (N) to
+// the per-file generation (N-1) must materialize the copy child into the real directory PreRemove
+// cleared, through Rollback's own materializeCopies stage (→ issue #178). Before the fix, Rollback
+// executed plan.Place but dropped plan.Copies, so the copy child was never created.
+func TestRollbackAncestorMigrationCopyChild(t *testing.T) {
+	root := realTempDir(t)
+	state := realTempDir(t)
+	srcOld := realTempDir(t)
+	for _, name := range []string{"foo", "bar"} {
+		if err := os.WriteFile(filepath.Join(srcOld, name), []byte("old"), 0o444); err != nil {
+			t.Fatal(err)
+		}
+	}
+	srcNew := realTempDir(t)
+	for _, name := range []string{"foo", "bar"} {
+		if err := os.WriteFile(filepath.Join(srcNew, name), []byte("new"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	prof := paths.Resolve(state, "c", manifest.RootKindHome, root, true)
+	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	// gen1 (N-1): per-file children — foo as a place-once copy, bar as a symlink.
+	lf1 := writeLinkFarm(t, homeManifest(
+		copyEntry(srcOld, "foo", ".claude/skills/foo"),
+		storeEntry(srcOld, "bar", ".claude/skills/bar"),
+	))
+	// gen2 (N, current): migrated to a whole-tree ancestor symlink at .claude/skills → srcNew.
+	lf2 := writeLinkFarm(t, homeManifest(storeEntry(srcNew, ".", ".claude/skills")))
+
+	if err := os.Symlink(lf1, paths.GenerationLink(prof.Profile, 1)); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(lf2, paths.GenerationLink(prof.Profile, 2)); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(lf2, prof.Profile); err != nil {
+		t.Fatal(err)
+	}
+
+	// Current FS = gen2: .claude/skills is a whole-tree symlink to srcNew.
+	if err := os.MkdirAll(filepath.Join(root, ".claude"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(srcNew, filepath.Join(root, ".claude", "skills")); err != nil {
+		t.Fatal(err)
+	}
+
+	var switched int
+	var warns []string
+	res, err := Rollback(RollbackOptions{
+		Name: "c", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state,
+		ListGenerations: func(string) ([]Generation, error) {
+			return []Generation{{Number: 1}, {Number: 2, Current: true}}, nil
+		},
+		SwitchGeneration: func(_ string, gen int) error { switched = gen; return nil },
+		Warnf:            collectWarnings(&warns),
+	})
+	if err != nil {
+		t.Fatalf("Rollback: %v", err)
+	}
+	if switched != 1 {
+		t.Errorf("switched generation = %d, want 1", switched)
+	}
+	if len(warns) != 0 {
+		t.Errorf("rollback migration emitted warnings, want none: %v", warns)
+	}
+
+	// .claude/skills is a real directory again, holding the copy child as a regular file with
+	// gen1's content and owner-write added (copyTree's 0444 → 0644), next to the symlink child.
+	info, err := os.Lstat(filepath.Join(root, ".claude", "skills"))
+	if err != nil {
+		t.Fatalf(".claude/skills lstat: %v", err)
+	}
+	if info.Mode()&os.ModeSymlink != 0 {
+		t.Errorf(".claude/skills is still a symlink after rollback, want a real directory")
+	}
+	fooAbs := filepath.Join(root, ".claude", "skills", "foo")
+	fi, err := os.Lstat(fooAbs)
+	if err != nil {
+		t.Fatalf("copy child foo lstat: %v (copy child was not materialized by rollback)", err)
+	}
+	if !fi.Mode().IsRegular() {
+		t.Errorf("copy child foo mode = %v, want a regular file", fi.Mode())
+	}
+	if fi.Mode().Perm()&0o200 == 0 {
+		t.Errorf("copy child foo perm = %o, want owner-write added", fi.Mode().Perm())
+	}
+	if got, err := os.ReadFile(fooAbs); err != nil || string(got) != "old" {
+		t.Errorf("copy child foo content = %q, err %v; want %q", got, err, "old")
+	}
+	if got, err := os.Readlink(filepath.Join(root, ".claude", "skills", "bar")); err != nil || got != filepath.Join(srcOld, "bar") {
+		t.Errorf("symlink child bar → %q, err %v; want %q", got, err, filepath.Join(srcOld, "bar"))
+	}
+	if len(res.Copied) != 1 || res.Copied[0] != ".claude/skills/foo" {
+		t.Errorf("Copied = %v, want [.claude/skills/foo]", res.Copied)
+	}
+	if len(res.Placed) != 1 || res.Placed[0] != ".claude/skills/bar" {
+		t.Errorf("Placed = %v, want [.claude/skills/bar]", res.Placed)
+	}
+	if len(res.Removed) != 1 || res.Removed[0] != ".claude/skills" {
+		t.Errorf("Removed = %v, want [.claude/skills]", res.Removed)
+	}
+}
+
+// TestRollbackMethodChangeRestoresCopy covers the flat (non-nested) shape of issue #178: gen N-1
+// placed a copy at a target that gen N turned into a symlink (method change copy→symlink). Rolling
+// back reverses it: the planner's classifyCopy schedules PreRemove of the self-recorded symlink
+// plus a fresh place-once CopyAction, and Rollback must execute the latter so the target ends up
+// as a regular file holding N-1's content. (A copy kept as copy across both generations is a
+// place-once no-op on rollback by design — the planner emits no CopyAction for a recorded
+// occupant — so a bare content edit is not a rollback-observable case.)
+func TestRollbackMethodChangeRestoresCopy(t *testing.T) {
+	root := realTempDir(t)
+	state := realTempDir(t)
+	srcOld := realTempDir(t)
+	if err := os.WriteFile(filepath.Join(srcOld, "tool.conf"), []byte("old"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	srcNew := realTempDir(t)
+	if err := os.WriteFile(filepath.Join(srcNew, "tool.conf"), []byte("new"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	prof := paths.Resolve(state, "c", manifest.RootKindHome, root, true)
+	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	lf1 := writeLinkFarm(t, homeManifest(copyEntry(srcOld, "tool.conf", "tool.conf")))
+	lf2 := writeLinkFarm(t, homeManifest(storeEntry(srcNew, "tool.conf", "tool.conf")))
+	if err := os.Symlink(lf1, paths.GenerationLink(prof.Profile, 1)); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(lf2, paths.GenerationLink(prof.Profile, 2)); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(lf2, prof.Profile); err != nil {
+		t.Fatal(err)
+	}
+
+	// Current FS = gen2: tool.conf is the symlink gen2 recorded.
+	if err := os.Symlink(filepath.Join(srcNew, "tool.conf"), filepath.Join(root, "tool.conf")); err != nil {
+		t.Fatal(err)
+	}
+
+	var switched int
+	var warns []string
+	res, err := Rollback(RollbackOptions{
+		Name: "c", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state,
+		ListGenerations: func(string) ([]Generation, error) {
+			return []Generation{{Number: 1}, {Number: 2, Current: true}}, nil
+		},
+		SwitchGeneration: func(_ string, gen int) error { switched = gen; return nil },
+		Warnf:            collectWarnings(&warns),
+	})
+	if err != nil {
+		t.Fatalf("Rollback: %v", err)
+	}
+	if switched != 1 {
+		t.Errorf("switched generation = %d, want 1", switched)
+	}
+	if len(warns) != 0 {
+		t.Errorf("rollback emitted warnings, want none: %v", warns)
+	}
+
+	fi, err := os.Lstat(filepath.Join(root, "tool.conf"))
+	if err != nil {
+		t.Fatalf("tool.conf lstat: %v (copy was not materialized by rollback)", err)
+	}
+	if !fi.Mode().IsRegular() {
+		t.Errorf("tool.conf mode = %v, want a regular file (copy), not the gen2 symlink", fi.Mode())
+	}
+	if got, err := os.ReadFile(filepath.Join(root, "tool.conf")); err != nil || string(got) != "old" {
+		t.Errorf("tool.conf content = %q, err %v; want gen1's %q", got, err, "old")
+	}
+	if len(res.Removed) != 1 || res.Removed[0] != "tool.conf" {
+		t.Errorf("Removed = %v, want [tool.conf] (PreRemove of the gen2 symlink)", res.Removed)
+	}
+	if len(res.Copied) != 1 || res.Copied[0] != "tool.conf" {
+		t.Errorf("Copied = %v, want [tool.conf]", res.Copied)
+	}
+}
+
 // TestRollbackMidBatchFailureRollsBackPreRemoveMigration verifies Rollback's own undo-journal
 // wiring (→ ADR-0044, issue #168): same ancestor-migration setup as TestRollbackAncestorMigration
 // (PreRemove unlinks the whole-tree symlink so the per-file child can be placed), plus an
@@ -421,6 +609,102 @@ func TestRollbackMidBatchFailureRollsBackPreRemoveMigration(t *testing.T) {
 	got, rerr := os.Readlink(filepath.Join(claudeDir, "skills"))
 	if rerr != nil || got != srcNew {
 		t.Errorf("restored ancestor readlink = %q, err %v; want %q", got, rerr, srcNew)
+	}
+	foundRollbackMsg := false
+	for _, w := range warns {
+		if strings.Contains(w, "rolled back this run's filesystem changes") {
+			foundRollbackMsg = true
+		}
+	}
+	if !foundRollbackMsg {
+		t.Errorf("warns = %v, want a rollback-reported message", warns)
+	}
+}
+
+// TestRollbackCopyFailureUnwindsPlacedSymlink verifies that Rollback's materializeCopies stage is
+// wired into the same undo journal as its other stages (→ ADR-0044, issue #178): a symlink placed
+// by the preceding place stage is removed again when the copy placement that follows it fails.
+// The copy's parent directory denies write access, so ensureParentDir passes (the directory
+// exists) and copyFile's OpenFile is what fails. The profile pointer must stay put.
+func TestRollbackCopyFailureUnwindsPlacedSymlink(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("permission-denied copy placement cannot be induced as root")
+	}
+	root := realTempDir(t)
+	state := realTempDir(t)
+	srcA := makeSrc(t, "x")
+	srcKeep := makeSrc(t, "x")
+	copySrc := makeSrc(t, "tool.conf")
+
+	prof := paths.Resolve(state, "c", manifest.RootKindHome, root, true)
+	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	blockWrite(t, filepath.Join(root, "ro"))
+
+	// gen1 (N-1, rollback target): a symlink to place first, then a copy whose parent denies
+	// write access. gen2 (N, current/baseline): only the entry kept across both generations.
+	lf1 := writeLinkFarm(t, homeManifest(
+		storeEntry(srcKeep, ".", "keep"),
+		storeEntry(srcA, ".", "a"),
+		copyEntry(copySrc, "tool.conf", "ro/leaf"),
+	))
+	lf2 := writeLinkFarm(t, homeManifest(storeEntry(srcKeep, ".", "keep")))
+	if err := os.Symlink(lf1, paths.GenerationLink(prof.Profile, 1)); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(lf2, paths.GenerationLink(prof.Profile, 2)); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(lf2, prof.Profile); err != nil {
+		t.Fatal(err)
+	}
+	// Current FS = gen2.
+	if err := os.Symlink(srcKeep, filepath.Join(root, "keep")); err != nil {
+		t.Fatal(err)
+	}
+
+	var switched int
+	var warns []string
+	res, err := Rollback(RollbackOptions{
+		Name: "c", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state,
+		ListGenerations: func(string) ([]Generation, error) {
+			return []Generation{{Number: 1}, {Number: 2, Current: true}}, nil
+		},
+		SwitchGeneration: func(_ string, gen int) error { switched = gen; return nil },
+		Warnf:            collectFormatted(&warns),
+	})
+	if err == nil {
+		t.Fatal("expected an error from the permission-denied copy placement, got nil")
+	}
+	if switched != 0 {
+		t.Errorf("SwitchGeneration was called (switched=%d), want it skipped when copy placement fails", switched)
+	}
+
+	// The symlink placed before the failing copy is unwound; the copy target never landed.
+	if _, lerr := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(lerr) {
+		t.Errorf("symlink a placed before the copy failure must be unwound, lstat err = %v", lerr)
+	}
+	if _, lerr := os.Lstat(filepath.Join(root, "ro", "leaf")); !os.IsNotExist(lerr) {
+		t.Errorf("failed copy target ro/leaf must be absent, lstat err = %v", lerr)
+	}
+	if got, rerr := os.Readlink(filepath.Join(root, "keep")); rerr != nil || got != srcKeep {
+		t.Errorf("kept entry must be untouched: readlink=%q, err=%v", got, rerr)
+	}
+
+	// Partial result: same stage-failure contract as Apply (→ issue #130).
+	if res == nil {
+		t.Fatal("partial RollbackResult must be returned alongside the error")
+	}
+	if !res.Unwound {
+		t.Error("Unwound = false, want true")
+	}
+	if res.FailedTarget != "ro/leaf" {
+		t.Errorf("FailedTarget = %q, want %q", res.FailedTarget, "ro/leaf")
+	}
+	if res.From != 2 || res.To != 2 || res.GenAfter == nil || *res.GenAfter != 2 {
+		t.Errorf("From/To/GenAfter = %d/%d/%v, want 2/2/2 (pointer unmoved)", res.From, res.To, res.GenAfter)
 	}
 	foundRollbackMsg := false
 	for _, w := range warns {

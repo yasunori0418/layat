@@ -204,11 +204,11 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	// are already identified above, and the pointer only moves at step 7 (→ issue #130, niface
 	// ADR-0015). GenAfter is set after the pointer move below.
 
-	// 6. reflect the plan onto the real FS: same PreRemove-first ordering as Apply (unlink
-	//    self-recorded stale ancestor symlinks so nested children land in a real dir · →
-	//    engine.go, ADR-0046), then new/re-link, then stale removal last (→ ADR-0006). Unlike
-	//    Apply, Rollback has no materializeCopies step, so copy entries in plan.Copies are not
-	//    reflected onto the FS (pre-existing gap, out of scope here · → issue #178).
+	// 6. reflect the plan onto the real FS in the same four stages as Apply: PreRemove first
+	//    (unlink self-recorded stale ancestor symlinks so nested children land in a real dir · →
+	//    engine.go, ADR-0046), then new/re-link symlinks, then place-once copies (recopy has no
+	//    Rollback equivalent, so it is always off · → issue #178), then stale removal last
+	//    (→ ADR-0006). Apply's Backup stage is absent: Rollback has no --backup (→ ADR-0045).
 	a := &applier{opts: Options{Warnf: warnf}, result: &Result{Root: root, ProfileDir: prof.Dir, Profile: prof.Profile}}
 	a.profile = prof
 	a.root = root
@@ -216,7 +216,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	// Full inventory = the generation being rolled back to (its entries are the FS end state · → issue #130).
 	a.result.Entries = target.Entries
 	a.recordRemovalPlan(plan)
-	// Each stage journals its own FS writes; a failure in any of the three unwinds everything
+	// Each stage journals its own FS writes; a failure in any of the four unwinds everything
 	// this Rollback call has done so far before returning (→ ADR-0044, same shape as Apply).
 	// Mirroring Apply's stage-failure contract, the partial result is returned alongside the
 	// error, with GenAfter pinned at the unmoved current generation (→ issue #130 到達状態).
@@ -236,6 +236,9 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		return fail(err)
 	}
 	if err := a.runJournaled(func() error { return a.place(plan.Place) }); err != nil {
+		return fail(err)
+	}
+	if err := a.runJournaled(func() error { return a.materializeCopies(plan, false) }); err != nil {
 		return fail(err)
 	}
 	if err := a.runJournaled(func() error { return a.removeStale(plan.Remove) }); err != nil {
