@@ -96,10 +96,13 @@ func reportRollback(res *engine.RollbackResult, name string) {
 	for _, t := range res.Replaced {
 		fmt.Fprintf(os.Stderr, "  replaced %s\n", t)
 	}
+	for _, t := range res.Copied {
+		fmt.Fprintf(os.Stderr, "  copied   %s\n", t)
+	}
 	for _, t := range res.Removed {
 		fmt.Fprintf(os.Stderr, "  removed  %s\n", t)
 	}
-	if len(res.Placed)+len(res.Replaced)+len(res.Removed) == 0 {
+	if len(res.Placed)+len(res.Replaced)+len(res.Copied)+len(res.Removed) == 0 {
 		fmt.Fprintln(os.Stderr, "  no-op")
 	}
 }
