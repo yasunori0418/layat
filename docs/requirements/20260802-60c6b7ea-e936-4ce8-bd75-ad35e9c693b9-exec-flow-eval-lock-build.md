@@ -113,7 +113,7 @@ nput apply <name> [-f <ep>] [--root <p>]
      d. project mode かつ新 link-farm が前世代と同一なら新世代は積まない（世代スキップ）。ただし各 target を lstat 検査し、
         ドリフトした entry だけ再張りする（完全 no-op にしない）
      e. manifest.json を新旧 diff → 配置を塞ぐ自己記録 stale（祖先 symlink・実 dir target・method 変更）を配置前除去
-        （PreRemove・migration）→ 新規/張替を配置 → 保守的 stale 除去（ネイティブ FS）
+        （PreRemove・migration）→ 新規/張替を配置 → copy 反映 → 保守的 stale 除去（ネイティブ FS）
         ※ e の 4 段（PreRemove / 配置 / copy 反映 / stale 除去）のいずれかが途中失敗すると、この run が行った
            FS 変更を全てインメモリ undo ジャーナルで巻き戻し pre-apply 状態へ戻す
      f. nix-env --profile <profileDir>/profile --set <link-farm>（サブプロセス・コミット点）
@@ -132,6 +132,9 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 >   ドリフト修復の詳細 → REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0
 > - 配置前除去（PreRemove）→ REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575 / REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26 / REQ-2b48620a-abaa-43df-a106-954bbba3de56、保守的 stale
 >   除去 → REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2、undo ジャーナル → REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940
+> - `--backup` の退避段（PreRemove の後・配置の前）→ REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 /
+>   REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b。同段はフラグ有効時のみ走るため、**本 item は e の段数に含めない**
+>   （undo ジャーナルの対象段としては REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 が退避を含む 5 段で数える）
 > - root 解決の各モードの規範 → 「root の解決」節の担当（#209-PR5）
 > - `apply --manifest` の契約（引数・併用エラー・entrypoint 発見と eval / build を
 >   行わないこと・rootKind を link-farm 内 `manifest.json` から読むこと）→ REQ-dec58330-6dad-47f7-8f56-2402764a89c7。
