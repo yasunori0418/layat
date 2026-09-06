@@ -96,13 +96,23 @@ esac
 
 ```sh
 result=$(nput apply myconfig --json)
-if printf '%s' "$result" | jq -e '.results[].result.changes | length > 0' >/dev/null; then
+if printf '%s' "$result" | jq -e '
+      .status == "success"
+      and ([.results[].result.changes // [] | length] | add > 0)
+    ' >/dev/null; then
   ./post.sh
 fi
 ```
 
+- **`status` を先に見る**。途中失敗した run は undo ジャーナルで巻き戻されるが、`changes` は
+  失敗時点までに生じた差分の記録として残る（subject に `W_NPUT_UNWOUND` が付く）。
+  `changes` だけで分岐すると、**ディスク上に何も残っていない run でも後処理が走る**
+- **`results[]` は全 subject を畳んでから判定する**。`.results[].result.changes | length > 0` は
+  subject ごとに真偽値を 1 個ずつ出すため、`jq -e` の終了コードが最後の 1 個で決まる
+  （`--all` で「先頭は変化あり・末尾は no-op」だと変化なしと判定される）
+
 `--json` は stdout に niface エンベロープを 1 文書だけ出す opt-in の第 2 契約で、
-`results[]` の要素配下に `items` / `changes` / `info` が入る
+`items` / `changes` / `info` は各 `results[i].result` 配下に入る
 （→ REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead）。`status` は終了コード表に連動する
 （exit 0 → `success`、exit 1・2 → `error`）。この経路は engine から見れば
 「実行して結果を返しただけ」で、後続の判断は全て呼び出し側にある。
