@@ -34,9 +34,10 @@ specification: |
   only the drifted entries rather than making it a complete no-op; (e) diff the old and
   new `manifest.json`, remove before placement the self-recorded stale entries that block
   placement (ancestor symlink, real directory target, method change), place the new and
-  re-linked ones, and then perform conservative stale removal with native filesystem
-  operations, any mid-way failure among these four stages unwinding every filesystem
-  change made by this run via the in-memory undo journal back to the pre-apply state;
+  re-linked ones, reflect the copy entries, and then perform conservative stale removal
+  with native filesystem operations, any mid-way failure among these four stages unwinding
+  every filesystem change made by this run via the in-memory undo journal back to the
+  pre-apply state;
   (f) run `nix-env --profile <profileDir>/profile --set <link-farm>` as a subprocess, the
   commit point; and (g) delete `<profileDir>/.pending` after `--set` succeeds, the
   generation link taking over the gcroot.
@@ -67,9 +68,9 @@ specification_ja: |
   (d) project mode かつ新 link-farm が前世代と同一なら新世代は積まない。ただし各 target を
   lstat 検査し、ドリフトした entry だけ再張りする（完全 no-op にしない）。(e)
   `manifest.json` を新旧 diff し、配置を塞ぐ自己記録 stale（祖先 symlink・実 dir target・
-  method 変更）を配置前除去し、新規 / 張替を配置し、保守的 stale 除去（ネイティブ FS）を
-  行う。この 4 段のいずれかが途中失敗すると、この run が行った FS 変更を全てインメモリ
-  undo ジャーナルで巻き戻し pre-apply 状態へ戻す。(f)
+  method 変更）を配置前除去し、新規 / 張替を配置し、copy 反映を行い、保守的 stale 除去
+  （ネイティブ FS）を行う。この 4 段のいずれかが途中失敗すると、この run が行った FS 変更を
+  全てインメモリ undo ジャーナルで巻き戻し pre-apply 状態へ戻す。(f)
   `nix-env --profile <profileDir>/profile --set <link-farm>`（サブプロセス・コミット点）。
   (g) `--set` 成功後に `<profileDir>/.pending` を削除する（世代リンクが gcroot を引き継ぐ）。
 
