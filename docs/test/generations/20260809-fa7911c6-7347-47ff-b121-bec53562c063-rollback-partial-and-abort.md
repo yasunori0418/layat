@@ -17,7 +17,7 @@ TC-36ea3609-d52e-42d4-975c-40fb89b23919 の正常系に対し、`Rollback` の�
 のまま「次の冪等な再実行が収束する」に頼ってはならない（→ ADR-0044、issue #168）。
 
 **ポインタ移動の失敗は巻き戻さない** — `SwitchGeneration` が失敗した時点では
-PreRemove / place / removeStale の全 FS 書き込みが成功している。ここは apply の commit
+PreRemove / place / materializeCopies / removeStale の全 FS 書き込みが成功している。ここは apply の commit
 失敗と同じ非対称性で、巻き戻さない。部分の `RollbackResult` は「遷移は起きなかった（From == To ==
 現世代）」「ポインタは動いていない」「失敗は entry スコープではない」を表し、既に置いた
 配置・除去済みの stale はそのまま残る。

@@ -15,7 +15,8 @@ level: high
 nput は profile ディレクトリ自体ではなく任意 root へ配置するため、profile ポインタを
 戻しただけでは FS は何も変わらない。`rollback` は「現世代 N の manifest を baseline、
 戻る世代 N-1 を target」として planner を回し、apply と同順（配置前除去 → 配置 / 張替え →
-stale 除去）で FS を収束させてから、最後にポインタを移す（→ REQ-0e341430-17f0-498b-9439-65491652163a）。
+copy 反映 → stale 除去）で FS を収束させてから、最後にポインタを移す
+（→ REQ-0e341430-17f0-498b-9439-65491652163a）。
 
 この収束が欠けると、`list-generations` は N-1 を current と表示するのに FS には N の
 配置が残る、という嘘の状態になる。ポインタを先に動かすと更に悪く、次の apply が baseline を
