@@ -55,9 +55,9 @@ specification_ja: |
 
 ## 仕様
 
-apply / rollback が PreRemove・Backup（`--backup`）・配置（symlink / copy）・stale 除去の
-いずれかの段で途中失敗すると、その run が行った FS 変更を**全て**巻き戻し、pre-apply 状態へ
-復元する（「失敗した apply は FS に痕跡を残さない」）。フラグなし・常時有効。
+apply / rollback が PreRemove・Backup（`--backup`）・配置（symlink / copy）・copy 反映・
+stale 除去のいずれかの段で途中失敗すると、その run が行った FS 変更を**全て**巻き戻し、
+pre-apply 状態へ復元する（「失敗した apply は FS に痕跡を残さない」）。フラグなし・常時有効。
 
 ```
 各段（PreRemove / Backup / place / copy 反映 / stale 除去）の FS 書き込みごとに、インメモリの
@@ -78,9 +78,10 @@ undo ジャーナルへ逆操作を 1 件記録する:
 - **クラッシュ（SIGKILL・電源断）は対象外**。undo ジャーナルはプロセスメモリ上にのみ存在し、
   永続 WAL は持たない。この場合は変わらず「世代未コミット + 冪等再実行で収束」が保証を担う
 - 世代スキップ経路の drift 修復（repairDrift）も同じ機構で巻き戻される
-- `rollback` も apply と同じ機構（PreRemove → place → stale 除去）で途中失敗時に巻き戻す。
-  プロファイルポインタ移動（`--switch-generation`）はこの時点で全 FS 変更が成功済みのため
-  巻き戻し対象外。`rollback` に `--backup` 相当のフラグはなく、Backup ステージは常に空
+- `rollback` も apply と同じ機構（PreRemove → place → copy 反映 → stale 除去）で途中失敗時に
+  巻き戻す。プロファイルポインタ移動（`--switch-generation`）はこの時点で全 FS 変更が
+  成功済みのため巻き戻し対象外。`rollback` に `--backup` 相当のフラグはなく、Backup ステージは
+  常に空
 
 > **上は原文の写しで、規範は frontmatter が正**。巻き戻し自体が失敗したときの続行と報告は
 > REQ-9fca28c9-d3b1-4ad7-8f24-13b2ec7aeab2、drift 修復経路で Backup 段だけが残ることは REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 の担当。
