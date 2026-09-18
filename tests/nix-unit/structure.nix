@@ -75,7 +75,8 @@ in
             src = nput.mkOutOfStoreSymlink "/home/me/dotfiles/nvim";
           };
         }).entries
-      ) ? _nputMarker;
+      )
+        ? _nputMarker;
     expected = false;
   };
 }
