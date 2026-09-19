@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/yasunori0418/nput/internal/manifest"
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // applyForReset commits one generation as a precondition for reset tests (prof.Profile points at the link-farm).

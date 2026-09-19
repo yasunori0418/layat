@@ -12,8 +12,8 @@ import (
 	"strings"
 )
 
-// entrypointKind distinguishes a flake entrypoint (`nput.<system>.<name>`, addressed via `<flakeRef>#...`)
-// from a legacy entrypoint (`nput.<name>`, addressed via `nix ... -f <path> ...`; → ADR-0007, ADR-0032).
+// entrypointKind distinguishes a flake entrypoint (`layat.<system>.<name>`, addressed via `<flakeRef>#...`)
+// from a legacy entrypoint (`layat.<name>`, addressed via `nix ... -f <path> ...`; → ADR-0007, ADR-0032).
 type entrypointKind int
 
 const (
@@ -26,7 +26,7 @@ const (
 var legacyEntrypointNames = []string{"shell.nix", "default.nix"}
 
 // entrypoint is a discovered entrypoint: a flake (flake.nix) or a legacy file (shell.nix / default.nix).
-// Legacy has no per-system dimension (unlike the flake's `nput.<system>.<name>`; → ADR-0032).
+// Legacy has no per-system dimension (unlike the flake's `layat.<system>.<name>`; → ADR-0032).
 type entrypoint struct {
 	kind entrypointKind
 	// flakeRef is the flake ref passed to `nix build`/`nix eval` (the absolute path of the directory containing flake.nix).
@@ -41,11 +41,11 @@ func discoverEntrypoint(fileFlag string) (*entrypoint, error) {
 	if fileFlag != "" {
 		abs, err := filepath.Abs(fileFlag)
 		if err != nil {
-			return nil, fmt.Errorf("nput: cannot resolve the -f path (%s): %w", fileFlag, err)
+			return nil, fmt.Errorf("layat: cannot resolve the -f path (%s): %w", fileFlag, err)
 		}
 		info, err := os.Stat(abs)
 		if err != nil {
-			return nil, fmt.Errorf("nput: -f path not found (%s): %w", fileFlag, err)
+			return nil, fmt.Errorf("layat: -f path not found (%s): %w", fileFlag, err)
 		}
 		if info.IsDir() {
 			if fileExists(filepath.Join(abs, "flake.nix")) {
@@ -56,7 +56,7 @@ func discoverEntrypoint(fileFlag string) (*entrypoint, error) {
 					return &entrypoint{kind: entrypointLegacy, legacyPath: p}, nil
 				}
 			}
-			return nil, fmt.Errorf("nput: no flake.nix / shell.nix / default.nix in the -f directory (%s)", abs)
+			return nil, fmt.Errorf("layat: no flake.nix / shell.nix / default.nix in the -f directory (%s)", abs)
 		}
 		switch filepath.Base(abs) {
 		case "flake.nix":
@@ -64,13 +64,13 @@ func discoverEntrypoint(fileFlag string) (*entrypoint, error) {
 		case "shell.nix", "default.nix":
 			return &entrypoint{kind: entrypointLegacy, legacyPath: abs}, nil
 		default:
-			return nil, fmt.Errorf("nput: -f must point to a flake.nix, shell.nix, or default.nix (%s)", abs)
+			return nil, fmt.Errorf("layat: -f must point to a flake.nix, shell.nix, or default.nix (%s)", abs)
 		}
 	}
 
 	cwd, err := os.Getwd()
 	if err != nil {
-		return nil, fmt.Errorf("nput: cannot get the current working directory: %w", err)
+		return nil, fmt.Errorf("layat: cannot get the current working directory: %w", err)
 	}
 	if fileExists(filepath.Join(cwd, "flake.nix")) {
 		return &entrypoint{kind: entrypointFlake, flakeRef: cwd}, nil
@@ -80,7 +80,7 @@ func discoverEntrypoint(fileFlag string) (*entrypoint, error) {
 			return &entrypoint{kind: entrypointLegacy, legacyPath: p}, nil
 		}
 	}
-	return nil, errors.New("nput: no entrypoint found (no flake.nix / shell.nix / default.nix in the CWD; specify one with -f)")
+	return nil, errors.New("layat: no entrypoint found (no flake.nix / shell.nix / default.nix in the CWD; specify one with -f)")
 }
 
 func fileExists(p string) bool {
@@ -89,7 +89,7 @@ func fileExists(p string) bool {
 }
 
 // currentSystem returns the nix system name of the runtime environment (e.g. aarch64-darwin).
-// Because the flake has a system dimension in `nput.<system>.<name>`, the CLI injects the current system (→ ADR-0007).
+// Because the flake has a system dimension in `layat.<system>.<name>`, the CLI injects the current system (→ ADR-0007).
 // Legacy entrypoints have no system dimension and ignore it (→ ADR-0032).
 func currentSystem() (string, error) {
 	var arch string
@@ -99,50 +99,50 @@ func currentSystem() (string, error) {
 	case "arm64":
 		arch = "aarch64"
 	default:
-		return "", fmt.Errorf("nput: unsupported GOARCH: %s", runtime.GOARCH)
+		return "", fmt.Errorf("layat: unsupported GOARCH: %s", runtime.GOARCH)
 	}
 	switch runtime.GOOS {
 	case "linux", "darwin":
 		return arch + "-" + runtime.GOOS, nil
 	default:
-		return "", fmt.Errorf("nput: unsupported GOOS: %s", runtime.GOOS)
+		return "", fmt.Errorf("layat: unsupported GOOS: %s", runtime.GOOS)
 	}
 }
 
-// installableArgs returns the nix args that select `nput.<name><suffix>` for this entrypoint, to be appended
+// installableArgs returns the nix args that select `layat.<name><suffix>` for this entrypoint, to be appended
 // right after the `eval`/`build` subcommand name. A flake entrypoint yields a single
-// "<flakeRef>#nput.<system>.<name><suffix>" installable; a legacy entrypoint (shell.nix / default.nix) has no
-// per-system dimension and yields "-f <legacyPath> nput.<name><suffix>" (→ ADR-0032, docs/spec.md addressing).
+// "<flakeRef>#layat.<system>.<name><suffix>" installable; a legacy entrypoint (shell.nix / default.nix) has no
+// per-system dimension and yields "-f <legacyPath> layat.<name><suffix>" (→ ADR-0032, docs/spec.md addressing).
 func (e *entrypoint) installableArgs(system, name, suffix string) []string {
 	if e.kind == entrypointLegacy {
-		return []string{"-f", e.legacyPath, "nput." + name + suffix}
+		return []string{"-f", e.legacyPath, "layat." + name + suffix}
 	}
-	return []string{fmt.Sprintf("%s#nput.%s.%s%s", e.flakeRef, system, name, suffix)}
+	return []string{fmt.Sprintf("%s#layat.%s.%s%s", e.flakeRef, system, name, suffix)}
 }
 
-// namespaceArgs returns the nix args that select the `nput.<system>` (flake) or `nput` (legacy) namespace,
+// namespaceArgs returns the nix args that select the `layat.<system>` (flake) or `layat` (legacy) namespace,
 // used for the batch eval of apply --all / gitignore --all (→ ADR-0024, ADR-0032).
 func (e *entrypoint) namespaceArgs(system string) []string {
 	if e.kind == entrypointLegacy {
-		return []string{"-f", e.legacyPath, "nput"}
+		return []string{"-f", e.legacyPath, "layat"}
 	}
-	return []string{fmt.Sprintf("%s#nput.%s", e.flakeRef, system)}
+	return []string{fmt.Sprintf("%s#layat.%s", e.flakeRef, system)}
 }
 
 // label renders a human-readable attr path for error messages (→ wrapEvalErr).
 func (e *entrypoint) label(system, name string) string {
 	if e.kind == entrypointLegacy {
-		return "nput." + name
+		return "layat." + name
 	}
-	return fmt.Sprintf("nput.%s.%s", system, name)
+	return fmt.Sprintf("layat.%s.%s", system, name)
 }
 
 // namespaceLabel renders a human-readable namespace path for error messages (→ wrapEvalAllErr).
 func (e *entrypoint) namespaceLabel(system string) string {
 	if e.kind == entrypointLegacy {
-		return "nput"
+		return "layat"
 	}
-	return fmt.Sprintf("nput.%s", system)
+	return fmt.Sprintf("layat.%s", system)
 }
 
 // rootInfo is one config's root info (the value from the batch eval). It has Root only when fixed.
@@ -155,7 +155,7 @@ type rootInfo struct {
 // in a single `nix eval` (fixing eval process launches at N→1; → docs/spec.md execution flow, ADR-0024).
 // It is a cheap eval that does no build and reads only the passthru rootKind (+ root for fixed).
 func evalAllRoots(e *entrypoint, system string) (map[string]rootInfo, error) {
-	// Extract only rootKind (+ root if fixed) from each config under nput.<system>.
+	// Extract only rootKind (+ root if fixed) from each config under layat.<system>.
 	apply := `cs: builtins.mapAttrs (_: c: { rootKind = c.rootKind; } // (if c ? root then { root = c.root; } else {})) cs`
 	args := append([]string{"eval"}, e.namespaceArgs(system)...)
 	args = append(args, "--apply", apply, "--json")
@@ -165,7 +165,7 @@ func evalAllRoots(e *entrypoint, system string) (map[string]rootInfo, error) {
 	}
 	var roots map[string]rootInfo
 	if err := json.Unmarshal([]byte(out), &roots); err != nil {
-		return nil, fmt.Errorf("nput: cannot parse the batch eval result for %s: %w", e.namespaceLabel(system), err)
+		return nil, fmt.Errorf("layat: cannot parse the batch eval result for %s: %w", e.namespaceLabel(system), err)
 	}
 	return roots, nil
 }
@@ -182,7 +182,7 @@ func buildManifestStorePath(e *entrypoint, system, name string) (string, error) 
 	}
 	store := strings.TrimSpace(out)
 	if store == "" {
-		return "", fmt.Errorf("nput: cannot obtain the build output path for %s", e.label(system, name))
+		return "", fmt.Errorf("layat: cannot obtain the build output path for %s", e.label(system, name))
 	}
 	return store, nil
 }
@@ -220,7 +220,7 @@ func buildFunc(e *entrypoint, system, name string) func(pending string) (string,
 		}
 		store, err := os.Readlink(pending)
 		if err != nil {
-			return "", fmt.Errorf("nput: cannot read the build output out-link (%s): %w", pending, err)
+			return "", fmt.Errorf("layat: cannot read the build output out-link (%s): %w", pending, err)
 		}
 		return store, nil
 	}
@@ -239,7 +239,7 @@ func dryBuildFunc(e *entrypoint, system, name string) func(pending string) (stri
 		}
 		store := strings.TrimSpace(out)
 		if store == "" {
-			return "", fmt.Errorf("nput: nix build --print-out-paths was empty (%s)", e.label(system, name))
+			return "", fmt.Errorf("layat: nix build --print-out-paths was empty (%s)", e.label(system, name))
 		}
 		// --print-out-paths may return multiple lines (multi-output). The link-farm is a single output, so take the last line.
 		lines := strings.Split(store, "\n")
@@ -258,7 +258,7 @@ func (e *nixCmdError) Unwrap() error { return e.err }
 // runNixCapture captures and returns nix's stdout (for machine-readable output such as eval).
 func runNixCapture(args ...string) (string, error) {
 	if flagDebug {
-		fmt.Fprintf(os.Stderr, "nput: + nix %s\n", strings.Join(args, " "))
+		fmt.Fprintf(os.Stderr, "layat: + nix %s\n", strings.Join(args, " "))
 	}
 	cmd := exec.Command("nix", args...)
 	var stdout, stderr bytes.Buffer
@@ -274,13 +274,13 @@ func runNixCapture(args ...string) (string, error) {
 // eval succeeded before build = nix-command/flakes are already enabled, so experimental detection is unnecessary.
 func runNixStream(args ...string) error {
 	if flagDebug {
-		fmt.Fprintf(os.Stderr, "nput: + nix %s\n", strings.Join(args, " "))
+		fmt.Fprintf(os.Stderr, "layat: + nix %s\n", strings.Join(args, " "))
 	}
 	cmd := exec.Command("nix", args...)
 	cmd.Stdout = os.Stderr
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
-		return &nixCmdError{fmt.Errorf("nput: nix %s failed: %w", args[0], err)}
+		return &nixCmdError{fmt.Errorf("layat: nix %s failed: %w", args[0], err)}
 	}
 	return nil
 }
@@ -293,9 +293,9 @@ func nixError(args []string, stderr string, runErr error) error {
 	}
 	trimmed := strings.TrimSpace(stderr)
 	if trimmed == "" {
-		return fmt.Errorf("nput: nix %s failed: %w", args[0], runErr)
+		return fmt.Errorf("layat: nix %s failed: %w", args[0], runErr)
 	}
-	return fmt.Errorf("nput: nix %s failed:\n%s", args[0], trimmed)
+	return fmt.Errorf("layat: nix %s failed:\n%s", args[0], trimmed)
 }
 
 // isExperimentalDisabled detects the nix-command / flakes not-enabled error (→ ADR-0025 §1).
@@ -308,7 +308,7 @@ func isExperimentalDisabled(stderr string) bool {
 // experimentalGuidance builds an error that guides the prerequisites and how to enable them (attaching the raw nix error too).
 // The CLI does not add --extra-experimental-features automatically (it will not silently override environment settings; → ADR-0025 §1).
 func experimentalGuidance(stderr string) error {
-	return fmt.Errorf(`nput: nix's experimental-features are not enabled.
+	return fmt.Errorf(`layat: nix's experimental-features are not enabled.
 This command internally uses `+"`nix eval`"+` / `+"`nix build`"+` (the new CLI) and flakes,
 so experimental-features = nix-command flakes is required.
 
@@ -318,30 +318,30 @@ How to enable (either one):
   - Temporarily via an environment variable:
       export NIX_CONFIG="experimental-features = nix-command flakes"
 
-nput does not add --extra-experimental-features automatically (it will not override your environment settings).
+layat does not add --extra-experimental-features automatically (it will not override your environment settings).
 
 Original nix error:
 %s`, strings.TrimSpace(stderr))
 }
 
-// wrapEvalErr makes the "nput.<name> does not exist" case of an eval failure clearer
+// wrapEvalErr makes the "layat.<name> does not exist" case of an eval failure clearer
 // (experimental etc. are passed through as-is) (→ docs/spec.md error spec). The original
 // error is wrapped (%w), keeping the nixCmdError marker reachable for --json classification.
 func wrapEvalErr(err error, label string) error {
 	msg := err.Error()
 	if strings.Contains(msg, "does not provide attribute") ||
 		(strings.Contains(msg, "attribute") && strings.Contains(msg, "missing")) {
-		return fmt.Errorf("nput: %s not found in the entrypoint (check the config name)\n%w", label, err)
+		return fmt.Errorf("layat: %s not found in the entrypoint (check the config name)\n%w", label, err)
 	}
 	return err
 }
 
-// wrapEvalAllErr makes the "nput.<system> does not exist" case of a batch eval failure clearer.
+// wrapEvalAllErr makes the "layat.<system> does not exist" case of a batch eval failure clearer.
 func wrapEvalAllErr(err error, label string) error {
 	msg := err.Error()
 	if strings.Contains(msg, "does not provide attribute") ||
 		(strings.Contains(msg, "attribute") && strings.Contains(msg, "missing")) {
-		return fmt.Errorf("nput: %s not found in the entrypoint (no configs found)\n%w", label, err)
+		return fmt.Errorf("layat: %s not found in the entrypoint (no configs found)\n%w", label, err)
 	}
 	return err
 }

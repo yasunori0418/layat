@@ -1,14 +1,14 @@
-# nput の project mode config（dogfood）を flake-parts module として切り出す（→ ADR-0029）。
-# root flake が公開する flakeModules.default（perSystem.nput.<name> を flake.nput.<system>.<name>
-# へ転置する機構）を前提に、perSystem.nput.skills へ mattpocock/skills の manifest を宣言する。
+# layat の project mode config（dogfood）を flake-parts module として切り出す（→ ADR-0029）。
+# root flake が公開する flakeModules.default（perSystem.layat.<name> を flake.layat.<system>.<name>
+# へ転置する機構）を前提に、perSystem.layat.skills へ mattpocock/skills の manifest を宣言する。
 # dev/flake.nix の imports に並べて読み込む。
 #
-# `nput apply skills -f <dev flake>` でビルドし、各 skill を .claude/skills/<name> へ
+# `layat apply skills -f <dev flake>` でビルドし、各 skill を .claude/skills/<name> へ
 # store-symlink 配置する。root = projectRoot（git toplevel）なので配置先は repo root 配下。
 # 配置物は .gitignore 済み（.claude/skills/*）の ephemeral。
 { inputs, ... }:
 let
-  nputLib = inputs.root.lib;
+  layatLib = inputs.root.lib;
 
   # 展開する skill を明示列挙する（mattpocock/skills の skills/ 配下の相対パス）。
   # 本来は skills/<category> を builtins.readDir で動的列挙したい（既 realise の store パス /
@@ -35,11 +35,11 @@ in
   perSystem =
     { pkgs, ... }:
     {
-      # perSystem.nput.skills → flake.nput.<system>.skills へ自動転置される（root flakeModule）。
-      # pkgs は perSystem 由来（= nixpkgs.legacyPackages.<system>）で packages.nput と一貫する。
-      nput.skills = nputLib.mkManifest {
+      # perSystem.layat.skills → flake.layat.<system>.skills へ自動転置される（root flakeModule）。
+      # pkgs は perSystem 由来（= nixpkgs.legacyPackages.<system>）で packages.layat と一貫する。
+      layat.skills = layatLib.mkManifest {
         inherit pkgs;
-        root = nputLib.projectRoot;
+        root = layatLib.projectRoot;
         entries = skillEntries;
       };
     };

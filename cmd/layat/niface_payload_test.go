@@ -19,9 +19,9 @@ import (
 	niface "github.com/yasunori0418/niface/go"
 	"github.com/yasunori0418/niface/go/conformance"
 
-	"github.com/yasunori0418/nput/internal/engine"
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 func ip(n int) *int { return &n }
@@ -37,7 +37,7 @@ func mustItemID(t *testing.T, target string) string {
 }
 
 // findItem returns the item whose info.target matches, failing when absent.
-func findItem(t *testing.T, items []nputItem, target string) nputItem {
+func findItem(t *testing.T, items []layatItem, target string) layatItem {
 	t.Helper()
 	for _, it := range items {
 		if it.Info != nil && it.Info.Target == target {
@@ -45,14 +45,14 @@ func findItem(t *testing.T, items []nputItem, target string) nputItem {
 		}
 	}
 	t.Fatalf("no item for target %q in %+v", target, items)
-	return nputItem{}
+	return layatItem{}
 }
 
 // changesFor returns every change whose itemId belongs to target.
-func changesFor(t *testing.T, changes []nputChange, target string) []nputChange {
+func changesFor(t *testing.T, changes []layatChange, target string) []layatChange {
 	t.Helper()
 	id := mustItemID(t, target)
-	var out []nputChange
+	var out []layatChange
 	for _, c := range changes {
 		if c.ItemID == id {
 			out = append(out, c)
@@ -149,7 +149,7 @@ func TestMutationSeatInfoKeysStayAbsent(t *testing.T) {
 	t.Run("apply without payload", func(t *testing.T) {
 		r, buf := newApplyTestRun()
 		r.beginSubject("default")
-		if err := r.emit(errors.New("nput: no entrypoint found")); err != nil {
+		if err := r.emit(errors.New("layat: no entrypoint found")); err != nil {
 			t.Fatalf("emit: %v", err)
 		}
 		assertNoInfoKeys(t, decodeEnvelope(t, buf))
@@ -172,7 +172,7 @@ func subjectResultOf(t *testing.T, doc map[string]any) map[string]any {
 // omitted · → issue #131).
 func TestMutationPayloadFullInventory(t *testing.T) {
 	res := &engine.Result{
-		Profile: "/state/nput/default/profile",
+		Profile: "/state/layat/default/profile",
 		Entries: []manifest.Entry{
 			{SrcKind: "store", Src: "/nix/store/aaa", Subpath: "conf", Target: ".config/tool", Method: "symlink"},
 			{SrcKind: "store", Src: "/nix/store/bbb", Target: ".config/relinked", Method: "symlink"},
@@ -385,7 +385,7 @@ func TestMutationPayloadRollbackGeneration(t *testing.T) {
 
 	// A failed rollback pins the pointer at the unmoved current generation.
 	rr.GenBefore, rr.GenAfter = ip(5), ip(5)
-	p, err = mutationPayload[*rollbackResultInfo](&rr.Result, errors.New("nput: failed to move the profile pointer"))
+	p, err = mutationPayload[*rollbackResultInfo](&rr.Result, errors.New("layat: failed to move the profile pointer"))
 	if err != nil {
 		t.Fatalf("mutationPayload: %v", err)
 	}
@@ -503,7 +503,7 @@ func TestMutationPayloadSubjectBorneFailure(t *testing.T) {
 		Placed:   []string{"a"},
 		GenAfter: ip(2), GenBefore: ip(2),
 	}
-	cmdErr := errors.New("nput: generation commit (nix-env --set) failed: exit status 1")
+	cmdErr := errors.New("layat: generation commit (nix-env --set) failed: exit status 1")
 	p, err := mutationPayload[*applyResultInfo](res, cmdErr)
 	if err != nil {
 		t.Fatalf("mutationPayload: %v", err)
@@ -544,7 +544,7 @@ func TestMutationPayloadConflicts(t *testing.T) {
 		},
 		Unreached: []string{"b"},
 	}
-	cmdErr := errors.New("nput: 1 conflict(s) detected; stopped without placing (see above)")
+	cmdErr := errors.New("layat: 1 conflict(s) detected; stopped without placing (see above)")
 	p, err := mutationPayload[*applyResultInfo](res, cmdErr)
 	if err != nil {
 		t.Fatalf("mutationPayload: %v", err)
@@ -804,7 +804,7 @@ func TestJSONEndToEndApplyAndResetPayload(t *testing.T) {
 // before / after keys (nil pointers must marshal away, never as 0 or null).
 func TestDryrunPayloadFirstPlanOmitsGenerationNumbers(t *testing.T) {
 	res := &engine.Result{
-		Profile: "/state/nix/profiles/nput/home/profile",
+		Profile: "/state/nix/profiles/layat/home/profile",
 		DryRun:  true,
 		Entries: []manifest.Entry{{SrcKind: "store", Src: "/nix/store/z", Target: ".zshrc", Method: "symlink"}},
 		Placed:  []string{".zshrc"},
@@ -832,7 +832,7 @@ func TestDryrunPayloadFirstPlanOmitsGenerationNumbers(t *testing.T) {
 // error, dryRun true, and no subject-level duplication of the item-borne error.
 func TestDryrunPayloadConflictKeepsEnvelopeBesideExit2(t *testing.T) {
 	res := &engine.Result{
-		Profile: "/state/nix/profiles/nput/home/profile",
+		Profile: "/state/nix/profiles/layat/home/profile",
 		DryRun:  true,
 		Entries: []manifest.Entry{
 			{SrcKind: "store", Src: "/nix/store/a", Target: ".zshrc", Method: "symlink"},
@@ -881,15 +881,15 @@ func TestDryrunPayloadConflictKeepsEnvelopeBesideExit2(t *testing.T) {
 	}
 }
 
-// mustDecodeItems re-decodes a subjectResult's items into typed nputItem values so the typed
+// mustDecodeItems re-decodes a subjectResult's items into typed layatItem values so the typed
 // helpers (findItem) work on emitted documents too.
-func mustDecodeItems(t *testing.T, sr map[string]any) []nputItem {
+func mustDecodeItems(t *testing.T, sr map[string]any) []layatItem {
 	t.Helper()
 	raw, err := json.Marshal(sr["result"].(map[string]any)["items"])
 	if err != nil {
 		t.Fatalf("re-marshal items: %v", err)
 	}
-	var items []nputItem
+	var items []layatItem
 	if err := json.Unmarshal(raw, &items); err != nil {
 		t.Fatalf("decode items: %v", err)
 	}
@@ -903,7 +903,7 @@ func mustDecodeItems(t *testing.T, sr map[string]any) []nputItem {
 // (→ TestMutationPayloadNoopRelinkSuppressed).
 func TestDryrunPayloadRelinkNotSuppressed(t *testing.T) {
 	res := &engine.Result{
-		Profile:  "/state/nix/profiles/nput/home/profile",
+		Profile:  "/state/nix/profiles/layat/home/profile",
 		DryRun:   true,
 		Entries:  []manifest.Entry{{SrcKind: "store", Src: "/nix/store/same", Target: ".same", Method: "symlink"}},
 		Replaced: []string{".same"},

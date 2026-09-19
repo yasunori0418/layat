@@ -97,7 +97,7 @@ func (a *applier) journalRemovedEmptyDir(path string, mode os.FileMode) {
 // here rather than left to linger — a warning-only best-effort, since the fresh copy already
 // landed successfully and a leftover aside file is cosmetic, not a correctness issue. An
 // apply --backup aside (undoRestoreBackup) is deliberately excluded from this sweep: the backup is
-// user-owned and stays on disk indefinitely, not cleaned up by nput (reset does not restore it
+// user-owned and stays on disk indefinitely, not cleaned up by layat (reset does not restore it
 // either · → ADR-0045, issue #169).
 func (a *applier) discardJournal() {
 	for _, op := range a.journal {
@@ -105,7 +105,7 @@ func (a *applier) discardJournal() {
 			continue
 		}
 		if err := os.RemoveAll(op.tmpPath); err != nil && !os.IsNotExist(err) {
-			a.opts.Warnf("nput: could not remove recopy aside file (%s): %v", op.tmpPath, err)
+			a.opts.Warnf("layat: could not remove recopy aside file (%s): %v", op.tmpPath, err)
 		}
 	}
 	a.journal = nil
@@ -123,7 +123,7 @@ func (a *applier) unwind(origErr error) {
 	journal := a.journal
 	a.journal = nil
 	if len(journal) == 0 {
-		a.opts.Warnf("nput: apply failed; no filesystem changes had been made yet: %v", origErr)
+		a.opts.Warnf("layat: apply failed; no filesystem changes had been made yet: %v", origErr)
 		return
 	}
 
@@ -134,13 +134,13 @@ func (a *applier) unwind(origErr error) {
 		}
 	}
 
-	a.opts.Warnf("nput: apply failed; rolled back this run's filesystem changes: %v", origErr)
+	a.opts.Warnf("layat: apply failed; rolled back this run's filesystem changes: %v", origErr)
 	if len(failed) == 0 {
 		return
 	}
-	a.opts.Warnf("nput: %d item(s) could not be restored during rollback:", len(failed))
+	a.opts.Warnf("layat: %d item(s) could not be restored during rollback:", len(failed))
 	for _, f := range failed {
-		a.opts.Warnf("nput:   → %s", f)
+		a.opts.Warnf("layat:   → %s", f)
 	}
 }
 
@@ -175,6 +175,6 @@ func undoOne(op undoOp) error {
 		}
 		return os.Mkdir(op.path, mode)
 	default:
-		return fmt.Errorf("nput: internal error: unknown undo kind %d", op.kind)
+		return fmt.Errorf("layat: internal error: unknown undo kind %d", op.kind)
 	}
 }

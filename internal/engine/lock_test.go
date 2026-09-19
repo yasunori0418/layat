@@ -25,9 +25,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yasunori0418/nput/internal/lock"
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/paths"
+	"github.com/yasunori0418/layat/internal/lock"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/paths"
 )
 
 // lockTest_blockedGrace is the window a held-lock operation is given to (not) make progress
@@ -77,18 +77,18 @@ func TestLockApplyNoWaitSkipsWhenHeld(t *testing.T) {
 // reachable via errors.Is after fmt.Errorf("%w") wrapping (single and nested). This is the
 // watchdog for #90: adding context to the error must not sever sentinel identity.
 func TestLockErrSkippedIsTransparentThroughWrapping(t *testing.T) {
-	single := fmt.Errorf("nput: apply skipped: %w", ErrSkipped)
+	single := fmt.Errorf("layat: apply skipped: %w", ErrSkipped)
 	if !errors.Is(single, ErrSkipped) {
 		t.Errorf("single wrap: errors.Is(%v, ErrSkipped) = false, want true", single)
 	}
 
-	nested := fmt.Errorf("nput: outer: %w", fmt.Errorf("nput: inner: %w", ErrSkipped))
+	nested := fmt.Errorf("layat: outer: %w", fmt.Errorf("layat: inner: %w", ErrSkipped))
 	if !errors.Is(nested, ErrSkipped) {
 		t.Errorf("nested wrap: errors.Is(%v, ErrSkipped) = false, want true", nested)
 	}
 
 	// A wrapped *unrelated* error must not masquerade as ErrSkipped.
-	other := fmt.Errorf("nput: unrelated: %w", errors.New("boom"))
+	other := fmt.Errorf("layat: unrelated: %w", errors.New("boom"))
 	if errors.Is(other, ErrSkipped) {
 		t.Errorf("unrelated wrap: errors.Is(%v, ErrSkipped) = true, want false", other)
 	}

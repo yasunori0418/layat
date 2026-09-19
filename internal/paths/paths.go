@@ -17,7 +17,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/yasunori0418/nput/internal/manifest"
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // rootHashLen is the hex character count of the roothash (128 bit; fixed length;
@@ -38,7 +38,7 @@ func StateDir() (string, error) {
 	}
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return "", fmt.Errorf("nput: cannot resolve $HOME: %w", err)
+		return "", fmt.Errorf("layat: cannot resolve $HOME: %w", err)
 	}
 	return filepath.Join(home, ".local", "state"), nil
 }
@@ -49,11 +49,11 @@ func RootHash(absRoot string) string {
 	return hex.EncodeToString(sum[:])[:rootHashLen]
 }
 
-// Base returns the base <state>/nix/profiles/nput for the profiles. The home
+// Base returns the base <state>/nix/profiles/layat for the profiles. The home
 // (no --root) profileDir is <name> directly under it; the roothash series is
 // <roothash>/<name> (→ ADR-0024).
 func Base(stateDir string) string {
-	return filepath.Join(stateDir, "nix", "profiles", "nput")
+	return filepath.Join(stateDir, "nix", "profiles", "layat")
 }
 
 // GenerationLink returns the path of the generation link
@@ -110,14 +110,14 @@ func ReadBackref(hashDir string) (string, error) {
 	backref := filepath.Join(hashDir, backrefName)
 	b, err := os.ReadFile(backref)
 	if err != nil {
-		return "", fmt.Errorf("nput: cannot read backref (%s): %w", backref, err)
+		return "", fmt.Errorf("layat: cannot read backref (%s): %w", backref, err)
 	}
 	root := strings.TrimSpace(string(b))
 	if root == "" {
-		return "", fmt.Errorf("nput: backref is empty (%s)", backref)
+		return "", fmt.Errorf("layat: backref is empty (%s)", backref)
 	}
 	if !filepath.IsAbs(root) {
-		return "", fmt.Errorf("nput: backref is not an absolute path (%s): %q", backref, root)
+		return "", fmt.Errorf("layat: backref is not an absolute path (%s): %q", backref, root)
 	}
 	return root, nil
 }
@@ -132,8 +132,8 @@ func ReadBackref(hashDir string) (string, error) {
 // whose contents cannot be listed with NamesErr set, rather than dropped: the
 // caller reports the reason per series and the rest of the base still comes back
 // (→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f). Only a failure of the base itself
-// is returned as an error. This is the plain FS read both nput prune (→ #133) and
-// nput status (→ #198) enumerate with; it applies no policy of its own beyond the
+// is returned as an error. This is the plain FS read both layat prune (→ #133) and
+// layat status (→ #198) enumerate with; it applies no policy of its own beyond the
 // .root test.
 //
 // base is a finished profile base — Base(stateDir) for the user state, or the
@@ -146,7 +146,7 @@ func ReadBackref(hashDir string) (string, error) {
 func ListRootHashSeries(base string) ([]RootHashSeries, error) {
 	entries, err := os.ReadDir(base)
 	if err != nil {
-		return nil, fmt.Errorf("nput: cannot list profile base (%s): %w", base, err)
+		return nil, fmt.Errorf("layat: cannot list profile base (%s): %w", base, err)
 	}
 
 	var series []RootHashSeries
@@ -165,14 +165,14 @@ func ListRootHashSeries(base string) ([]RootHashSeries, error) {
 			// Whether there is a backref cannot be decided. Return the directory
 			// as a series carrying the reason rather than dropping it silently or
 			// abandoning the rest of the base.
-			s.BackrefErr = fmt.Errorf("nput: cannot stat backref (%s): %w", backref, err)
+			s.BackrefErr = fmt.Errorf("layat: cannot stat backref (%s): %w", backref, err)
 		default:
 			s.Root, s.BackrefErr = ReadBackref(hashDir)
 		}
 
 		if names, err := os.ReadDir(hashDir); err != nil {
 			// The series is still reported; only its <name> profiles are unknown.
-			s.NamesErr = fmt.Errorf("nput: cannot list series (%s): %w", hashDir, err)
+			s.NamesErr = fmt.Errorf("layat: cannot list series (%s): %w", hashDir, err)
 		} else {
 			for _, n := range names {
 				// The backref is not a <name> profile even where it is a directory.
@@ -190,8 +190,8 @@ func ListRootHashSeries(base string) ([]RootHashSeries, error) {
 // rootKind, resolved absolute root, and whether --root was overridden
 // (→ docs/spec.md "root resolution" table; ADR-0024, ADR-0025).
 //
-//   - home (no --root)               : <state>/nix/profiles/nput/<name> (no backref)
-//   - project / fixed / --root override : <state>/nix/profiles/nput/<roothash>/<name>
+//   - home (no --root)               : <state>/nix/profiles/layat/<name> (no backref)
+//   - project / fixed / --root override : <state>/nix/profiles/layat/<roothash>/<name>
 //     (backref .root at the <roothash> level)
 func Resolve(stateDir, name, rootKind, absRoot string, rootOverride bool) Profile {
 	base := Base(stateDir)

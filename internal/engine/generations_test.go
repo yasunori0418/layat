@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/paths"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/paths"
 )
 
 func homeManifest(entries ...manifest.Entry) manifest.Manifest {

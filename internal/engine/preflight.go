@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // checkOutOfStore checks, just before placement, that the link target of out-of-store symlink
@@ -25,9 +25,9 @@ func (a *applier) checkOutOfStore() error {
 		dest := planner.LinkDest(e)
 		if _, err := os.Lstat(dest); err != nil {
 			if os.IsNotExist(err) {
-				return fmt.Errorf("nput: out-of-store link target does not exist (target: %s -> %s); will not create a dangling symlink (→ ADR-0001)", e.Target, dest)
+				return fmt.Errorf("layat: out-of-store link target does not exist (target: %s -> %s); will not create a dangling symlink (→ ADR-0001)", e.Target, dest)
 			}
-			return fmt.Errorf("nput: cannot check out-of-store link target (target: %s -> %s): %w", e.Target, dest, err)
+			return fmt.Errorf("layat: cannot check out-of-store link target (target: %s -> %s): %w", e.Target, dest, err)
 		}
 	}
 	return nil

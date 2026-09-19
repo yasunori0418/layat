@@ -17,7 +17,7 @@ import (
 
 // ErrSchemaVersionUnsupported indicates that a manifest newer than the engine's supported version (SchemaVersion) was read.
 // A sentinel so the caller (CLI) can detect schemaVersion skew between CLI/flake pin via errors.Is and add guidance (→ ADR-0006).
-var ErrSchemaVersionUnsupported = errors.New("nput: schemaVersion is newer than the engine supports")
+var ErrSchemaVersionUnsupported = errors.New("layat: schemaVersion is newer than the engine supports")
 
 // SchemaVersion is the latest manifest.json version the engine can interpret (→ ADR-0013).
 // The MVP accepts only v1 and rejects any newer version (→ ADR-0006, ADR-0015).
@@ -26,7 +26,7 @@ const SchemaVersion = 1
 // FileName is the fixed manifest name embedded in the link-farm derivation.
 const FileName = "manifest.json"
 
-// Clean enums for src kind and placement method (_nputMarker does not leak into the manifest; → ADR-0010).
+// Clean enums for src kind and placement method (_layatMarker does not leak into the manifest; → ADR-0010).
 const (
 	SrcKindStore      = "store"
 	SrcKindOutOfStore = "outOfStore"
@@ -73,18 +73,18 @@ func Load(linkFarm string) (*Manifest, error) {
 func LoadFile(path string) (*Manifest, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("nput: cannot read manifest.json: %w", err)
+		return nil, fmt.Errorf("layat: cannot read manifest.json: %w", err)
 	}
 
 	var m Manifest
 	dec := json.NewDecoder(bytes.NewReader(data))
 	dec.DisallowUnknownFields()
 	if err := dec.Decode(&m); err != nil {
-		return nil, fmt.Errorf("nput: cannot parse manifest.json (%s): %w", path, err)
+		return nil, fmt.Errorf("layat: cannot parse manifest.json (%s): %w", path, err)
 	}
 
 	if err := m.validate(); err != nil {
-		return nil, fmt.Errorf("nput: invalid manifest.json (%s): %w", path, err)
+		return nil, fmt.Errorf("layat: invalid manifest.json (%s): %w", path, err)
 	}
 	return &m, nil
 }

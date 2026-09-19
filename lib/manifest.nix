@@ -12,7 +12,7 @@
 #
 # Private helpers (escapesBase / pathChecks / anchorName / resolveEntry / farmEntries /
 # anchorLines) live in ./__internal.nix so they stay unit-test reachable via
-# `nput.__internal.<name>` (→ #71, #289).
+# `layat.__internal.<name>` (→ #71, #289).
 let
   internal = import ./__internal.nix;
 
@@ -64,23 +64,23 @@ let
         # systemRoot is not implemented (→ ADR-0013).
         (lib.optional (
           rootInfo.rootKind == "system"
-        ) "nput: root = systemRoot (system mode) is not implemented (→ ADR-0013)")
+        ) "layat: root = systemRoot (system mode) is not implemented (→ ADR-0013)")
         # method = "copy" combined with an out-of-store marker is a contradiction of intent (→ ADR-0013).
         (map (
           e:
-          "nput: method = \"copy\" cannot be combined with an out-of-store marker (target: ${e.target}; → ADR-0013)"
+          "layat: method = \"copy\" cannot be combined with an out-of-store marker (target: ${e.target}; → ADR-0013)"
         ) (lib.filter (e: e.method == "copy" && e.srcKind == "outOfStore") normEntries))
         # Collision from explicitly overriding target to the same value under a different key (→ ADR-0024).
         (lib.optional (
           lib.length targets != lib.length (lib.unique targets)
-        ) "nput: multiple entries resolve to the same target (→ ADR-0024)")
+        ) "layat: multiple entries resolve to the same target (→ ADR-0024)")
         # Reject absolute paths / `..` escapes in target / subpath (→ ADR-0019).
         (map (
-          e: "nput: invalid target (absolute path or escapes root via `..`): ${e.target} (→ ADR-0019)"
+          e: "layat: invalid target (absolute path or escapes root via `..`): ${e.target} (→ ADR-0019)"
         ) (lib.filter (e: checks.isUnsafe e.target) normEntries))
         (map (
           e:
-          "nput: invalid subpath (absolute path or escapes src via `..`): ${e.subpath} (target: ${e.target}; → ADR-0019)"
+          "layat: invalid subpath (absolute path or escapes src via `..`): ${e.subpath} (target: ${e.target}; → ADR-0019)"
         ) (lib.filter (e: checks.isUnsafe e.subpath) normEntries))
       ];
 
@@ -112,7 +112,7 @@ let
       anchorLines = internal.anchorLines lib farmEntries;
     in
     # The derivation contains manifest.json (the engine's input contract) + a symlink farm to the store src (GC anchors) (→ ADR-0006).
-    pkgs.runCommandLocal "nput-manifest"
+    pkgs.runCommandLocal "layat-manifest"
       {
         # The CLI reads this via `nix eval … .rootKind` before build (→ ADR-0023).
         passthru = {

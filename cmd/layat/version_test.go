@@ -24,8 +24,8 @@ func TestRootCmdVersionWired(t *testing.T) {
 	}
 }
 
-// TestVersionFlagOutput drives `nput --version` end-to-end and observes the actual stdout, not just
-// the wired field. ADR-0042 requires cobra's default template ("nput version X.Y.Z\n") unchanged, so
+// TestVersionFlagOutput drives `layat --version` end-to-end and observes the actual stdout, not just
+// the wired field. ADR-0042 requires cobra's default template ("layat version X.Y.Z\n") unchanged, so
 // this catches drift the field-equality check can't — e.g. an errant SetVersionTemplate. cobra prints
 // the version via OutOrStdout(), which falls back to os.Stdout, so captureStdout observes it.
 func TestVersionFlagOutput(t *testing.T) {
@@ -36,13 +36,13 @@ func TestVersionFlagOutput(t *testing.T) {
 			t.Fatalf("Execute(--version): %v", err)
 		}
 	})
-	want := "nput version " + version + "\n"
+	want := "layat version " + version + "\n"
 	if out != want {
-		t.Errorf("`nput --version` output = %q, want %q (cobra default template)", out, want)
+		t.Errorf("`layat --version` output = %q, want %q (cobra default template)", out, want)
 	}
 }
 
-// TestVersionSubcommandAbsent locks in that `nput version` is NOT a command: cobra's Version field
+// TestVersionSubcommandAbsent locks in that `layat version` is NOT a command: cobra's Version field
 // adds a --version flag only, never a `version` subcommand. This pins the actual UX so a comment or
 // doc claiming otherwise can't drift back in (→ diff-review must finding).
 func TestVersionSubcommandAbsent(t *testing.T) {

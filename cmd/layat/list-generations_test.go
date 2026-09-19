@@ -7,7 +7,7 @@ import (
 
 	"github.com/yasunori0418/niface/go/conformance"
 
-	"github.com/yasunori0418/nput/internal/engine"
+	"github.com/yasunori0418/layat/internal/engine"
 )
 
 // TestListGenerationsJSONInfoGenerations pins list-generations' --json shape (→ issue #132,
@@ -67,7 +67,7 @@ func TestListGenerationsJSONInfoGenerations(t *testing.T) {
 func TestListGenerationsJSONInfoAbsentWithoutListing(t *testing.T) {
 	r, buf := newListGenerationsTestRun()
 	r.beginSubject("home")
-	if err := r.emit(errors.New("nput: list-generations is home mode only")); err != nil {
+	if err := r.emit(errors.New("layat: list-generations is home mode only")); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	assertNoInfoKeys(t, decodeEnvelope(t, buf))

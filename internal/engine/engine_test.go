@@ -9,9 +9,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/yasunori0418/nput/internal/lock"
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/paths"
+	"github.com/yasunori0418/layat/internal/lock"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/paths"
 )
 
 // profileDirFor returns the profileDir for the --root override (roothash key) case.
@@ -172,8 +172,8 @@ func TestApplyFirstPlacementProjectMode(t *testing.T) {
 		t.Errorf("symlink dest = %q, want %q", dest, want)
 	}
 
-	// The profileDir layout is created at <state>/nix/profiles/nput/<roothash>/<name>.
-	if !strings.HasPrefix(res.ProfileDir, filepath.Join(state, "nix", "profiles", "nput")) {
+	// The profileDir layout is created at <state>/nix/profiles/layat/<roothash>/<name>.
+	if !strings.HasPrefix(res.ProfileDir, filepath.Join(state, "nix", "profiles", "layat")) {
 		t.Errorf("ProfileDir = %q, not under state base", res.ProfileDir)
 	}
 	if fi, err := os.Stat(res.ProfileDir); err != nil || !fi.IsDir() {
@@ -1049,7 +1049,7 @@ func TestResolveRootFixedWithoutPath(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected an error for rootKind=fixed without a root path, got nil")
 	}
-	if want := "nput: rootKind=fixed but no root path provided"; err.Error() != want {
+	if want := "layat: rootKind=fixed but no root path provided"; err.Error() != want {
 		t.Errorf("error = %q, want %q", err.Error(), want)
 	}
 }
@@ -1071,12 +1071,12 @@ func TestResolveRootInvalidKinds(t *testing.T) {
 		{
 			name:     "undetermined",
 			rootKind: "",
-			want:     "nput: rootKind is undetermined (eval prefetch or a manifest is required)",
+			want:     "layat: rootKind is undetermined (eval prefetch or a manifest is required)",
 		},
 		{
 			name:     "unknown",
 			rootKind: "bogus",
-			want:     `nput: unknown rootKind: "bogus"`,
+			want:     `layat: unknown rootKind: "bogus"`,
 		},
 	}
 	for _, tt := range tests {

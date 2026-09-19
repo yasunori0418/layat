@@ -46,7 +46,7 @@ func TestGitignoreJSONInfoPaths(t *testing.T) {
 
 	r, buf := newGitignoreTestRun()
 	r.beginSubject("docs").setPayload(&nifacePayload[*gitignoreInfo]{info: &gitignoreInfo{
-		Paths: gitignoreAnchors([]string{".claude/skills/nix", ".nput-out/docs"}),
+		Paths: gitignoreAnchors([]string{".claude/skills/nix", ".layat-out/docs"}),
 	}})
 	if err := r.emit(nil); err != nil {
 		t.Fatalf("emit: %v", err)
@@ -68,7 +68,7 @@ func TestGitignoreJSONInfoPaths(t *testing.T) {
 		t.Errorf("items = %v, want empty (the enumeration is info, not items)", items)
 	}
 	paths := res["info"].(map[string]any)["paths"].([]any)
-	if len(paths) != 2 || paths[0] != "/.claude/skills/nix" || paths[1] != "/.nput-out/docs" {
+	if len(paths) != 2 || paths[0] != "/.claude/skills/nix" || paths[1] != "/.layat-out/docs" {
 		t.Errorf("info.paths = %v, want the anchor-form targets", paths)
 	}
 }
@@ -82,7 +82,7 @@ func TestGitignoreJSONInfoPaths(t *testing.T) {
 func TestGitignoreJSONInfoAbsentWithoutEnumeration(t *testing.T) {
 	r, buf := newGitignoreTestRun()
 	r.beginSubject("docs")
-	if err := r.emit(errors.New("nput: gitignore is project mode only")); err != nil {
+	if err := r.emit(errors.New("layat: gitignore is project mode only")); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	assertNoInfoKeys(t, decodeEnvelope(t, buf))

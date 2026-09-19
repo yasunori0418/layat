@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/paths"
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/paths"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // fixedManifest is a rootKind=fixed manifest (no git dependency, root passed explicitly).

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/yasunori0418/nput/internal/engine"
+	"github.com/yasunori0418/layat/internal/engine"
 )
 
 // confirmPolicy decides the confirmation policy from --yes / TTY state (→ ADR-0025 §5).

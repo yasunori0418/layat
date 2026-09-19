@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // --- staleremove unit-test helpers (branch prefix: staleErr_) ----------------
@@ -534,7 +534,7 @@ func TestRemoveStalePruneFailureIsWarnedNotFatal(t *testing.T) {
 
 // TestRemoveStaleLeavesForeignFileNonEmptyAncestorInPlace covers the same conservative
 // residency as TestRemoveStaleLeavesNonEmptyAncestorInPlace, but for a directory made
-// non-empty by a file nput never placed (a user's own file), not by another entry's
+// non-empty by a file layat never placed (a user's own file), not by another entry's
 // placement — the boundary case for "never touch what the removal did not empty" (→ Issue
 // #174).
 func TestRemoveStaleLeavesForeignFileNonEmptyAncestorInPlace(t *testing.T) {
@@ -549,7 +549,7 @@ func TestRemoveStaleLeavesForeignFileNonEmptyAncestorInPlace(t *testing.T) {
 		t.Fatalf("first Apply: %v", err)
 	}
 
-	// A file nput never recorded, dropped into "a/" out-of-band (e.g. by the user).
+	// A file layat never recorded, dropped into "a/" out-of-band (e.g. by the user).
 	foreign := filepath.Join(root, "a", "user-notes.txt")
 	if err := os.WriteFile(foreign, []byte("keep me"), 0o644); err != nil {
 		t.Fatal(err)

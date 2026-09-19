@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // ensureParentDir creates targetAbs's parent directory (ancestor symlinks are already
@@ -24,7 +24,7 @@ import (
 // a cosmetic leftover with no data-loss risk.
 func ensureParentDir(targetAbs string) error {
 	if err := os.MkdirAll(filepath.Dir(targetAbs), 0o755); err != nil {
-		return fmt.Errorf("nput: cannot create parent directory (%s): %w", filepath.Dir(targetAbs), err)
+		return fmt.Errorf("layat: cannot create parent directory (%s): %w", filepath.Dir(targetAbs), err)
 	}
 	return nil
 }
@@ -48,10 +48,10 @@ func (a *applier) place(actions []planner.PlaceAction) error {
 			// The foreign-overwrite warning is already emitted via planner.Warnings by emitWarnings (→ ADR-0015).
 			prevDest, err := os.Readlink(act.TargetAbs)
 			if err != nil {
-				return a.entryFailed(act.Entry.Target, fmt.Errorf("nput: cannot read existing symlink before re-link (%s): %w", act.TargetAbs, err))
+				return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: cannot read existing symlink before re-link (%s): %w", act.TargetAbs, err))
 			}
 			if err := os.Remove(act.TargetAbs); err != nil {
-				return a.entryFailed(act.Entry.Target, fmt.Errorf("nput: cannot remove existing symlink (%s): %w", act.TargetAbs, err))
+				return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: cannot remove existing symlink (%s): %w", act.TargetAbs, err))
 			}
 			// Journaled immediately after the unlink, before the re-symlink: if the symlink
 			// creation below fails, undoRelinkOld's own os.Remove tolerates the target already
@@ -59,7 +59,7 @@ func (a *applier) place(actions []planner.PlaceAction) error {
 			// when this run never got as far as writing the new symlink (→ ADR-0044).
 			a.journalRelinkedSymlink(act.TargetAbs, prevDest)
 			if err := os.Symlink(act.Dest, act.TargetAbs); err != nil {
-				return a.entryFailed(act.Entry.Target, fmt.Errorf("nput: cannot create symlink (%s -> %s): %w", act.TargetAbs, act.Dest, err))
+				return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: cannot create symlink (%s -> %s): %w", act.TargetAbs, act.Dest, err))
 			}
 			a.result.Replaced = append(a.result.Replaced, act.Entry.Target)
 			a.recordReplacedDest(act.Entry.Target, prevDest)
@@ -69,10 +69,10 @@ func (a *applier) place(actions []planner.PlaceAction) error {
 		// Only PlaceNew reaches here; assert it so a future PlaceKind cannot silently fall
 		// through to a fresh-symlink creation it was never classified for.
 		if act.Kind != planner.PlaceNew {
-			return a.entryFailed(act.Entry.Target, fmt.Errorf("nput: internal: unhandled place kind %d (target: %s)", act.Kind, act.Entry.Target))
+			return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: internal: unhandled place kind %d (target: %s)", act.Kind, act.Entry.Target))
 		}
 		if err := os.Symlink(act.Dest, act.TargetAbs); err != nil {
-			return a.entryFailed(act.Entry.Target, fmt.Errorf("nput: cannot create symlink (%s -> %s): %w", act.TargetAbs, act.Dest, err))
+			return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: cannot create symlink (%s -> %s): %w", act.TargetAbs, act.Dest, err))
 		}
 		a.journalPlacedSymlink(act.TargetAbs)
 		a.result.Placed = append(a.result.Placed, act.Entry.Target)

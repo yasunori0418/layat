@@ -7,9 +7,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/yasunori0418/nput/internal/engine"
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/paths"
+	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/paths"
 )
 
 // generationsInfo is list-generations' result.info: the read-only generation inventory
@@ -47,12 +47,12 @@ func newListGenerationsCmd() *cobra.Command {
 			run := beginListGenerationsRun(cmd.Name())
 			if all {
 				if len(args) > 0 {
-					return fmt.Errorf("nput: list-generations cannot combine <name> with --all")
+					return fmt.Errorf("layat: list-generations cannot combine <name> with --all")
 				}
 				return runListAllGenerations(run)
 			}
 			if len(args) != 1 {
-				return fmt.Errorf("nput: list-generations requires <name> or --all")
+				return fmt.Errorf("layat: list-generations requires <name> or --all")
 			}
 			return runListGenerations(run, args[0])
 		},
@@ -80,7 +80,7 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 		return err
 	}
 	if rootKind != manifest.RootKindHome {
-		return fmt.Errorf("nput: list-generations is home mode only (nput.%s has rootKind=%q)", name, rootKind)
+		return fmt.Errorf("layat: list-generations is home mode only (layat.%s has rootKind=%q)", name, rootKind)
 	}
 
 	prof, _, err := engine.ProfileFor(engine.ProfileOptions{
@@ -129,7 +129,7 @@ func generationRows(gens []engine.Generation) []generationRow {
 	return rows
 }
 
-// runListAllGenerations scans the home profiles directly under <state>/nix/profiles/nput (the <name>
+// runListAllGenerations scans the home profiles directly under <state>/nix/profiles/layat (the <name>
 // directories that hold a profile link directly under them) and lists each config's generations. No entrypoint eval is needed (disk scan only).
 // The roothash family (project / fixed / --root) has a <roothash>/<name> structure with no profile directly under it, so it is naturally excluded.
 //
@@ -148,7 +148,7 @@ func runListAllGenerations(run *listGenerationsRun) error {
 		if os.IsNotExist(err) {
 			return nil // no profile created yet = empty listing.
 		}
-		return fmt.Errorf("nput: cannot read the profile base (%s): %w", base, err)
+		return fmt.Errorf("layat: cannot read the profile base (%s): %w", base, err)
 	}
 
 	var names []string

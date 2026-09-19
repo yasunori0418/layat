@@ -14,7 +14,7 @@ import (
 
 // ErrLocked is returned by a non-blocking acquisition (try-lock) when another holder is active.
 // Used for the skip decision on the shellHook path (--no-wait) (→ ADR-0013).
-var ErrLocked = errors.New("nput: profileDir is locked by another process")
+var ErrLocked = errors.New("layat: profileDir is locked by another process")
 
 // Lock is an exclusive flock acquired on a profileDir.
 type Lock struct {

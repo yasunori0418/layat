@@ -1,5 +1,5 @@
 {
-  description = "nput development environment";
+  description = "layat development environment";
 
   inputs = {
     root.url = "path:../";
@@ -8,7 +8,7 @@
 
     # Claude Code 用スキル集（mattpocock/skills）。
     # 従来は vercel の skills コマンド + skills-lock.json で .claude/skills/ に展開していたが、
-    # nput のドッグフーディングとして project mode の nput apply で配置する（flake.lock が rev を pin）。
+    # layat のドッグフーディングとして project mode の layat apply で配置する（flake.lock が rev を pin）。
     matt-skills = {
       url = "github:mattpocock/skills";
       flake = false;
@@ -26,7 +26,7 @@
     # devShell に載せるために引く。nixpkgs は follows で寄せない：NUR 側 CI がビルドして
     # yasunori0418.cachix.org に push した store path をそのまま引くためで、寄せると
     # store path が変わり devShell 構築のたびに Rust をローカルビルドすることになる。
-    # sara は nput のビルド・ライブラリに一切絡まない独立した CLI なので nixpkgs を
+    # sara は layat のビルド・ライブラリに一切絡まない独立した CLI なので nixpkgs を
     # 揃える整合性上の必要もない（代償は flake.lock に nixpkgs がもう一本増えること）。
     nur = {
       url = "github:yasunori0418/nur-packages";
@@ -47,8 +47,8 @@
       inherit systems;
       imports = [
         inputs.root.flakeModules.default
-        # nput dogfood config（perSystem.nput.skills）を flake-parts module として切り出す。
-        ./nput.nix
+        # layat dogfood config（perSystem.layat.skills）を flake-parts module として切り出す。
+        ./layat.nix
       ];
       perSystem =
         { inputs', pkgs, ... }:
@@ -222,10 +222,10 @@
               statix
               nixd
               inputs'.root.formatter
-              inputs'.root.packages.nput
+              inputs'.root.packages.layat
               # アーキテクチャ文書・要求をナレッジグラフとして扱う CLI（NUR 由来）。
               # CONTEXT.md / docs/adr の設計文書運用を補助する開発時ツールで、
-              # nput のビルド・テスト経路には関与しない。
+              # layat のビルド・テスト経路には関与しない。
               inputs'.nur.packages.sara
               # item 起票ラッパー（sara init + 規約どおりの rename）。定義は上の
               # let 束縛を参照。sara は runtimeInputs で wrapper の PATH に前置される。
@@ -243,7 +243,7 @@
               gopls
               # ローカルでカバレッジ計測する coverage ツール（go test -coverprofile + go tool cover）。
               # func サマリを出し、HTML を見たい場合のコマンドを案内する（閾値ゲートは持たない）。
-              (writeShellScriptBin "nput-coverage" ''
+              (writeShellScriptBin "layat-coverage" ''
                 set -euo pipefail
                 profile="cover.out"
                 go test -coverprofile="$profile" ./...
@@ -255,10 +255,10 @@
               export REPO_ROOT=$(git rev-parse --show-superproject-working-tree --show-toplevel)
               # mattpocock/skills を .claude/skills/ に dogfood 配置する（project mode）。
               # 競合時は待たず skip（--no-wait）し、no-op
-              nput apply skills -f "$REPO_ROOT/dev" --no-wait
+              layat apply skills -f "$REPO_ROOT/dev" --no-wait
 
               # dev/skills/（このリポジトリで開発中のスキル正本）を .claude/skills/ へ
-              # 相対 symlink で配置する。上の nput 配置（store 経由）にしないのは、
+              # 相対 symlink で配置する。上の layat 配置（store 経由）にしないのは、
               # store コピーだと編集の即時反映が効かず、git add 前のファイルが store に
               # 入らず不可視になり、スキルの開発ループと両立しないため（path/self とも
               # lib/__internal.nix で store へ潰れる）。mkOutOfStoreSymlink も使えない:
@@ -439,8 +439,8 @@
                 touch "$out"
               '';
 
-          # CI の sara check 専用シェル。default devShell は nput のビルドと
-          # dogfood の shellHook（nput apply skills）を伴うため、docs 変更だけの PR で
+          # CI の sara check 専用シェル。default devShell は layat のビルドと
+          # dogfood の shellHook（layat apply skills）を伴うため、docs 変更だけの PR で
           # それらを走らせないよう sara 単体に絞る。NUR 由来の store path を
           # yasunori0418.cachix.org から引くだけで済む。
           # CI からは sara check・dev/tests/sara-new.sh・dev/tests/test-doc-map.sh・
@@ -472,12 +472,12 @@
 
           # 非 NixOS E2E ハーネス（tests/e2e/run.sh）専用の最小 CI シェル（→ ADR-0012 §2）。
           # dev 専用ツール（statix / nixd / gopls 等）と dogfood の shellHook を持たず、
-          # ハーネスが要する nput バイナリ + bash / git / jq / coreutils だけを提供する。
+          # ハーネスが要する layat バイナリ + bash / git / jq / coreutils だけを提供する。
           # nix / nix-env は install-nix-action が入れた ambient nix を使う（pkgs.nix を載せて
           # 上書きしない）。TERM=dumb で対話 UI を抑える。
           devShells.ci = pkgs.mkShell {
             packages = with pkgs; [
-              inputs'.root.packages.nput
+              inputs'.root.packages.layat
               bash
               git
               jq

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // copy_test.go covers the error-return paths of copy.go that the high-level Apply

@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/yasunori0418/nput/internal/manifest"
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // gitignoreInfo is gitignore's result.info: the anchor-form target enumeration (→ issue #132,
@@ -34,7 +34,7 @@ func newGitignoreCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "gitignore [name]",
 		Short: "Print placement targets for .gitignore to stdout (project mode only; no writes)",
-		Long: "List the placement targets of nput.<name> for .gitignore on stdout (writes no file). " +
+		Long: "List the placement targets of layat.<name> for .gitignore on stdout (writes no file). " +
 			"Output is the root-relative target with a leading / in anchor form (e.g. /.claude/skills/nix), one per line, " +
 			"covering every target regardless of method (symlink / copy). project mode only; " +
 			"--all sorts and de-duplicates the targets of all projectRoot configs into this one listing " +
@@ -46,12 +46,12 @@ func newGitignoreCmd() *cobra.Command {
 			run := beginGitignoreRun(cmd.Name())
 			if all {
 				if len(args) > 0 {
-					return fmt.Errorf("nput: gitignore cannot combine <name> with --all")
+					return fmt.Errorf("layat: gitignore cannot combine <name> with --all")
 				}
 				return runGitignoreAll(run)
 			}
 			if len(args) != 1 {
-				return fmt.Errorf("nput: gitignore requires <name> or --all")
+				return fmt.Errorf("layat: gitignore requires <name> or --all")
 			}
 			return runGitignore(run, args[0])
 		},
@@ -82,7 +82,7 @@ func runGitignore(run *gitignoreRun, name string) error {
 		return err
 	}
 	if rootKind != manifest.RootKindProject {
-		return fmt.Errorf("nput: gitignore is project mode only (nput.%s has rootKind=%q; the .gitignore anchor is meaningless for home / fixed)", name, rootKind)
+		return fmt.Errorf("layat: gitignore is project mode only (layat.%s has rootKind=%q; the .gitignore anchor is meaningless for home / fixed)", name, rootKind)
 	}
 
 	targets, err := configTargets(ep, system, name)
@@ -215,7 +215,7 @@ func dedupeSorted(in []string) []string {
 }
 
 // printGitignore prints targets to stdout in /-anchor form (leading /, no trailing /), one per line
-// (→ docs/spec.md, ADR-0013). It is pipe-safe by the stdout-ownership principle (`nput gitignore <name> >> .gitignore`).
+// (→ docs/spec.md, ADR-0013). It is pipe-safe by the stdout-ownership principle (`layat gitignore <name> >> .gitignore`).
 // Under --json it prints nothing: stdout belongs to the niface envelope alone, gated here — the
 // single chokepoint for every call site (→ ADR-0043 §2, issue #130).
 func printGitignore(targets []string) {

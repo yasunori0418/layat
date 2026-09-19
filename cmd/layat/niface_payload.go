@@ -13,9 +13,9 @@ import (
 
 	niface "github.com/yasunori0418/niface/go"
 
-	"github.com/yasunori0418/nput/internal/engine"
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // nifaceEntryInfo is the item.info DTO for an entry item: the entry's declarative identity
@@ -40,8 +40,8 @@ type nifaceChangeInfo struct {
 // mutation commands and folded into the SubjectResult at emit time (→ nifaceRun.emit).
 // TInfo is the owning command's result.info type (→ issue #196).
 type nifacePayload[TInfo any] struct {
-	items      []nputItem
-	changes    []nputChange
+	items      []layatItem
+	changes    []layatChange
 	generation *niface.Generation
 	warnings   []niface.Warning // subject-level (not item-borne) warnings
 	// info is the per-subject tool info (result.info): the read-only enumeration inventories
@@ -62,7 +62,7 @@ type nifacePayload[TInfo any] struct {
 func attachMutationPayload[TInfo any](s *nifaceSubject[TInfo], res *engine.Result, cmdErr error) {
 	p, err := mutationPayload[TInfo](res, cmdErr)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "nput: could not build the --json payload: %v\n", err)
+		fmt.Fprintf(os.Stderr, "layat: could not build the --json payload: %v\n", err)
 		return
 	}
 	s.setPayload(p)
@@ -72,7 +72,7 @@ func attachMutationPayload[TInfo any](s *nifaceSubject[TInfo], res *engine.Resul
 func attachResetPayload[TInfo any](s *nifaceSubject[TInfo], res *engine.ResetResult, cmdErr error) {
 	p, err := resetPayload[TInfo](res, cmdErr)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "nput: could not build the --json payload: %v\n", err)
+		fmt.Fprintf(os.Stderr, "layat: could not build the --json payload: %v\n", err)
 		return
 	}
 	s.setPayload(p)
@@ -126,13 +126,13 @@ func newItemStatuses(failedTarget string, unreached []string, conflicts []planne
 }
 
 // entryItem renders one manifest entry as a niface item under the status partition.
-func entryItem(e manifest.Entry, statuses *itemStatuses) (nputItem, error) {
+func entryItem(e manifest.Entry, statuses *itemStatuses) (layatItem, error) {
 	id, err := entryItemID(e.Target)
 	if err != nil {
-		return nputItem{}, err
+		return layatItem{}, err
 	}
 	status, itemErr := statuses.statusFor(e.Target)
-	return nputItem{
+	return layatItem{
 		ID:     id,
 		Kind:   "entry",
 		Label:  e.Target,
@@ -143,12 +143,12 @@ func entryItem(e manifest.Entry, statuses *itemStatuses) (nputItem, error) {
 }
 
 // entryChange renders one change for an entry item, deriving the itemId from the target.
-func entryChange(target string, kind niface.ChangeKind, reversible bool, info *nifaceChangeInfo) (nputChange, error) {
+func entryChange(target string, kind niface.ChangeKind, reversible bool, info *nifaceChangeInfo) (layatChange, error) {
 	id, err := entryItemID(target)
 	if err != nil {
-		return nputChange{}, err
+		return layatChange{}, err
 	}
-	return nputChange{Kind: kind, ItemID: id, Reversible: reversible, Info: info}, nil
+	return layatChange{Kind: kind, ItemID: id, Reversible: reversible, Info: info}, nil
 }
 
 // changeInfoOrNil packs old/new into a change info, or nil when both are unknowable.
@@ -272,7 +272,7 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*nifacePayloa
 	if err := place(res.Copied, false, true, false); err != nil {
 		return nil, err
 	}
-	// A recopy overwrite discards content nput never tracked: irreversible, no old value
+	// A recopy overwrite discards content layat never tracked: irreversible, no old value
 	// (→ ADR-0020, ADR-0043 §4). Not a noop even when content happens to match — the
 	// overwrite itself happened and the pre-state is unknowable.
 	if err := place(res.Recopied, true, false, false); err != nil {
@@ -331,7 +331,7 @@ func resetPayload[TInfo any](res *engine.ResetResult, cmdErr error) (*nifacePayl
 			p.changes = append(p.changes, c)
 		}
 		for _, t := range res.RemovedCopies {
-			// No info: what a copy deletion destroys is the on-disk content, which nput does
+			// No info: what a copy deletion destroys is the on-disk content, which layat does
 			// not track (the recorded src is not what was lost · → ADR-0020).
 			c, err := entryChange(t, niface.ChangeRemove, false, nil)
 			if err != nil {
@@ -349,7 +349,7 @@ func resetPayload[TInfo any](res *engine.ResetResult, cmdErr error) (*nifacePayl
 // target is an inventory item lands in that item's warnings, anything else (a target outside
 // the inventory — e.g. a kept stale symlink or a copy orphan whose entry left the config) is
 // returned as a subject-level warning (→ niface ADR-0019). items is mutated in place.
-func attachWarnings(items []nputItem, warnings []planner.Warning) []niface.Warning {
+func attachWarnings(items []layatItem, warnings []planner.Warning) []niface.Warning {
 	itemIdx := map[string]int{}
 	for i, it := range items {
 		itemIdx[it.Info.Target] = i
@@ -368,7 +368,7 @@ func attachWarnings(items []nputItem, warnings []planner.Warning) []niface.Warni
 
 // nifaceWarning translates one planner warning into the niface warning vocabulary
 // (tool-specific W_NPUT_* codes · niface §6 two-layer naming). The messages mirror the
-// stderr text (→ engine.emitWarnings) without the "nput: " prefix and target suffix — the
+// stderr text (→ engine.emitWarnings) without the "layat: " prefix and target suffix — the
 // target rides in detail (and in the carrying item) instead.
 func nifaceWarning(w planner.Warning) niface.Warning {
 	var code, msg string

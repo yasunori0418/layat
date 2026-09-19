@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // reset is an FS-only teardown that reverts placed entities to a not-placed state (→ ADR-0020,
@@ -22,7 +22,7 @@ import (
 //     on the next apply (transient).
 //
 // The source of teardown-target entries is the **previous generation's manifest (the manifest.json
-// of the link-farm that profileDir/profile points at)**. This is "the truth of what nput actually
+// of the link-farm that profileDir/profile points at)**. This is "the truth of what layat actually
 // placed (recorded)" and matches the conservative invariant's "recorded dest" (rebuilding the
 // config would diverge from the recorded dest under src drift and misjudge, so the recorded
 // previous generation is used). The CLI handles the rootKind pre-resolution eval (fixing profileDir),
@@ -111,7 +111,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 		if os.IsNotExist(err) {
 			return res, nil
 		}
-		return nil, fmt.Errorf("nput: cannot check profile (%s): %w", prof.Profile, err)
+		return nil, fmt.Errorf("layat: cannot check profile (%s): %w", prof.Profile, err)
 	}
 
 	// Observe the generation once: the FS-only teardown never moves the profile pointer, so the
@@ -134,7 +134,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	// 3. read the previous generation's manifest (the recorded truth) and narrow the target entries.
 	prev, err := manifest.Load(prof.Profile)
 	if err != nil {
-		return nil, fmt.Errorf("nput: cannot read the previous generation's manifest (%s): %w", prof.Profile, err)
+		return nil, fmt.Errorf("layat: cannot read the previous generation's manifest (%s): %w", prof.Profile, err)
 	}
 	entries, err := selectResetEntries(prev.Entries, opts.Targets)
 	if err != nil {
@@ -166,7 +166,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 			copyTargets = append(copyTargets, targetAbs)
 			res.RemovedCopies = append(res.RemovedCopies, e.Target)
 		} else if !os.IsNotExist(err) {
-			return nil, fmt.Errorf("nput: cannot lstat copy target (%s): %w", targetAbs, err)
+			return nil, fmt.Errorf("layat: cannot lstat copy target (%s): %w", targetAbs, err)
 		}
 	}
 
@@ -225,11 +225,11 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 			res.Pruned = a.result.Pruned
 			res.FailedTarget = plannedCopies[i]
 			res.Unreached = plannedCopies[i+1:]
-			return res, fmt.Errorf("nput: cannot remove copy target (%s): %w", targetAbs, err)
+			return res, fmt.Errorf("layat: cannot remove copy target (%s): %w", targetAbs, err)
 		}
 		removedCopies = append(removedCopies, plannedCopies[i])
 		if err := a.pruneEmptyAncestors(targetAbs); err != nil {
-			a.opts.Warnf("nput: could not prune an empty ancestor directory: %v", err)
+			a.opts.Warnf("layat: could not prune an empty ancestor directory: %v", err)
 		}
 	}
 	res.RemovedCopies = removedCopies
@@ -261,7 +261,7 @@ func resetUnreached(planned []planner.RemoveAction, removed []string, failed str
 }
 
 // selectResetEntries narrows the previous generation's manifest entries by Targets (empty = all entries).
-// If a specified target does not exist in the previous generation, it is an error (a target nput did not place is not a teardown target).
+// If a specified target does not exist in the previous generation, it is an error (a target layat did not place is not a teardown target).
 func selectResetEntries(entries []manifest.Entry, targets []string) ([]manifest.Entry, error) {
 	if len(targets) == 0 {
 		return entries, nil
@@ -282,7 +282,7 @@ func selectResetEntries(entries []manifest.Entry, targets []string) ([]manifest.
 		out = append(out, e)
 	}
 	if len(unknown) > 0 {
-		return nil, fmt.Errorf("nput: reset target not found in the previous generation's manifest (not a target nput placed): %v", unknown)
+		return nil, fmt.Errorf("layat: reset target not found in the previous generation's manifest (not a target layat placed): %v", unknown)
 	}
 	return out, nil
 }

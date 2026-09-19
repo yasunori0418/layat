@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // Tests for apply's end-to-end undo journal (→ ADR-0044, issue #168): a mid-run failure in any
@@ -195,7 +195,7 @@ func TestApplyPreRemoveMidBatchFailureRollsBackUnlink(t *testing.T) {
 }
 
 // TestApplyRecopyMidBatchFailureRestoresAsideFile verifies --recopy's rename-aside is rolled back
-// (rename back, not left as a stray .nput-recopy-aside file) when a later placement in the same
+// (rename back, not left as a stray .layat-recopy-aside file) when a later placement in the same
 // batch fails, and that the fresh recopy content is discarded in favor of the pre-apply content.
 func TestApplyRecopyMidBatchFailureRestoresAsideFile(t *testing.T) {
 	root := realTempDir(t)
@@ -232,7 +232,7 @@ func TestApplyRecopyMidBatchFailureRestoresAsideFile(t *testing.T) {
 	if rerr != nil || string(data) != "locally-edited" {
 		t.Errorf("recopy target must be restored to its pre-apply (locally-edited) content: data=%q, err=%v", data, rerr)
 	}
-	if _, lerr := os.Lstat(filepath.Join(root, "tool.conf.nput-recopy-aside")); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(filepath.Join(root, "tool.conf.layat-recopy-aside")); !os.IsNotExist(lerr) {
 		t.Errorf("aside file must not be left behind after a rolled-back recopy, lstat err = %v", lerr)
 	}
 }
@@ -345,7 +345,7 @@ func TestApplyCommitFailureLeavesRecopyAsideFile(t *testing.T) {
 	if rerr != nil || string(data) != "content" {
 		t.Errorf("the fresh recopy must survive a commit failure: data=%q, err=%v", data, rerr)
 	}
-	if _, lerr := os.Lstat(filepath.Join(root, "tool.conf.nput-recopy-aside")); lerr != nil {
+	if _, lerr := os.Lstat(filepath.Join(root, "tool.conf.layat-recopy-aside")); lerr != nil {
 		t.Errorf("the aside file must survive (neither cleaned up nor renamed back) after a commit failure, lstat err = %v", lerr)
 	}
 }

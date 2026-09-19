@@ -1,4 +1,4 @@
-# Summary of the nput lib public API (→ docs/design.md "flake.nix outputs design").
+# Summary of the layat lib public API (→ docs/design.md "flake.nix outputs design").
 #
 # Depends on nixpkgs.lib only (no dependency on home-manager / NixOS / nix-darwin・→ ADR-0006).
 # The markers are pure attrset constructors with no dependencies. mkManifest takes `pkgs`
@@ -12,7 +12,7 @@ in
   # Private helpers (escapesBase / pathChecks / anchorName / resolveEntry / farmEntries /
   # anchorLines) exposed solely as a unit-test seam (→ #71, #289). NOT a stable public API;
   # the `__internal` name marks intent.
-  # Each helper takes nixpkgs.lib explicitly (the nput lib attrset is unparameterized).
+  # Each helper takes nixpkgs.lib explicitly (the layat lib attrset is unparameterized).
   __internal = import ./__internal.nix;
 
   # lib.mkManifest { pkgs, root, entries } -> derivation (manifest.json + symlink farm・→ ADR-0006, ADR-0023)

@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/paths"
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/paths"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // Generation operations are unified under the `nix-env --profile <profileDir>/profile`
@@ -154,7 +154,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 
 	// If profileDir is absent, apply has never run → no generation to roll back to.
 	if _, err := os.Stat(prof.Dir); err != nil {
-		return nil, fmt.Errorf("nput: no profile (apply has never run): %s", prof.Dir)
+		return nil, fmt.Errorf("layat: no profile (apply has never run): %s", prof.Dir)
 	}
 
 	// 2. serialize with concurrent apply / rollback via a blocking flock (→ ADR-0013).
@@ -176,10 +176,10 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		}
 	}
 	if curIdx < 0 {
-		return nil, fmt.Errorf("nput: cannot identify the current generation (profile: %s)", prof.Profile)
+		return nil, fmt.Errorf("layat: cannot identify the current generation (profile: %s)", prof.Profile)
 	}
 	if curIdx == 0 {
-		return nil, fmt.Errorf("nput: no previous generation (this is the oldest generation, cannot rollback)")
+		return nil, fmt.Errorf("layat: no previous generation (this is the oldest generation, cannot rollback)")
 	}
 	cur := gens[curIdx]
 	prev := gens[curIdx-1]
@@ -187,11 +187,11 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	// 4. baseline = current generation N's manifest (current FS state) / target = previous generation N-1's manifest.
 	baseline, err := manifest.Load(prof.Profile)
 	if err != nil {
-		return nil, fmt.Errorf("nput: cannot read the current generation's manifest: %w", err)
+		return nil, fmt.Errorf("layat: cannot read the current generation's manifest: %w", err)
 	}
 	target, err := manifest.Load(paths.GenerationLink(prof.Profile, prev.Number))
 	if err != nil {
-		return nil, fmt.Errorf("nput: cannot read the previous generation's manifest (generation %d): %w", prev.Number, err)
+		return nil, fmt.Errorf("layat: cannot read the previous generation's manifest (generation %d): %w", prev.Number, err)
 	}
 
 	// 5. compute the plan for N∖N-1 stale removal · N-1 entry re-placement with the planner (reusing the apply engine with (baseline, target) substituted).
@@ -251,7 +251,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	if err := switchFn(prof.Profile, prev.Number); err != nil {
 		// Every planned FS action already succeeded, so the failure is not entry-scoped
 		// (FailedTarget / Unreached stay empty) — but the partial result is still returned.
-		return fail(fmt.Errorf("nput: failed to move the profile pointer (--switch-generation %d): %w", prev.Number, err))
+		return fail(fmt.Errorf("layat: failed to move the profile pointer (--switch-generation %d): %w", prev.Number, err))
 	}
 	a.discardJournal()
 	a.result.GenAfter = intPtr(prev.Number)
@@ -272,9 +272,9 @@ func nixEnvListGenerations(profileLink string) ([]Generation, error) {
 	if err := cmd.Run(); err != nil {
 		trimmed := strings.TrimSpace(stderr.String())
 		if trimmed != "" {
-			return nil, fmt.Errorf("nput: nix-env --list-generations failed: %w\n%s", err, trimmed)
+			return nil, fmt.Errorf("layat: nix-env --list-generations failed: %w\n%s", err, trimmed)
 		}
-		return nil, fmt.Errorf("nput: nix-env --list-generations failed: %w", err)
+		return nil, fmt.Errorf("layat: nix-env --list-generations failed: %w", err)
 	}
 	return parseGenerations(stdout.String())
 }
@@ -302,7 +302,7 @@ func parseGenerations(out string) ([]Generation, error) {
 		}
 		n, err := strconv.Atoi(fields[0])
 		if err != nil {
-			return nil, fmt.Errorf("nput: cannot parse a line of the generation list: %q", line)
+			return nil, fmt.Errorf("layat: cannot parse a line of the generation list: %q", line)
 		}
 		g := Generation{Number: n}
 		end := len(fields)

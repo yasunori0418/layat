@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/yasunori0418/nput/internal/engine"
-	"github.com/yasunori0418/nput/internal/manifest"
+	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // rollbackResultInfo / rollbackEnvInfo are rollback's niface info slots (→ issue #196): empty
@@ -31,7 +31,7 @@ func beginRollbackRun(command string) *rollbackRun {
 func newRollbackCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "rollback <name>",
-		Short: "Roll nput.<name> back to the previous generation (home mode only; name required)",
+		Short: "Roll layat.<name> back to the previous generation (home mode only; name required)",
 		Long: "Roll the home mode profile back one generation. Because moving the profile pointer alone does not change the FS at an arbitrary root, " +
 			"it re-converges the FS (treating current generation N as baseline and previous generation N-1 as target: conservatively stale-removes N∖N-1 and re-places N-1) " +
 			"before moving the profile pointer. A name is required (no --all); errors out if there is no previous generation.",
@@ -62,7 +62,7 @@ func runRollback(run *rollbackRun, name string) error {
 		return err
 	}
 	if rootKind != manifest.RootKindHome {
-		return fmt.Errorf("nput: rollback is home mode only (nput.%s has rootKind=%q; project / fixed do not expose generations)", name, rootKind)
+		return fmt.Errorf("layat: rollback is home mode only (layat.%s has rootKind=%q; project / fixed do not expose generations)", name, rootKind)
 	}
 
 	res, err := engine.Rollback(engine.RollbackOptions{
@@ -89,7 +89,7 @@ func runRollback(run *rollbackRun, name string) error {
 
 // reportRollback prints the generation transition and placement diff to stderr (stdout is reserved for machine-readable output; → ADR-0023).
 func reportRollback(res *engine.RollbackResult, name string) {
-	fmt.Fprintf(os.Stderr, "nput: rollback %s done (generation %d → %d, root=%s)\n", name, res.From, res.To, res.Root)
+	fmt.Fprintf(os.Stderr, "layat: rollback %s done (generation %d → %d, root=%s)\n", name, res.From, res.To, res.Root)
 	for _, t := range res.Placed {
 		fmt.Fprintf(os.Stderr, "  placed   %s\n", t)
 	}

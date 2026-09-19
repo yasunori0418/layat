@@ -8,7 +8,7 @@ import (
 
 	"github.com/yasunori0418/niface/go/conformance"
 
-	"github.com/yasunori0418/nput/internal/engine"
+	"github.com/yasunori0418/layat/internal/engine"
 )
 
 // withPruneTestState snapshots the package-level state prune's tests reach into — the engine seam
@@ -34,13 +34,13 @@ func pruneFixture() *engine.PruneResult {
 				RootHash: "aaaa",
 				Root:     "/home/u/src/gone",
 				Names:    []string{"default", "docs"},
-				Dir:      "/state/nix/profiles/nput/aaaa",
+				Dir:      "/state/nix/profiles/layat/aaaa",
 			},
 			{
 				RootHash: "bbbb",
 				Root:     "/mnt/removable/proj",
 				Names:    nil,
-				Dir:      "/nix/var/nix/profiles/nput/bbbb",
+				Dir:      "/nix/var/nix/profiles/layat/bbbb",
 			},
 		},
 		Skipped: []engine.PruneSkipped{
@@ -49,10 +49,10 @@ func pruneFixture() *engine.PruneResult {
 					RootHash: "cccc",
 					Root:     "/home/u/src/busy",
 					Names:    []string{"default"},
-					Dir:      "/state/nix/profiles/nput/cccc",
+					Dir:      "/state/nix/profiles/layat/cccc",
 				},
 				Reason: engine.PruneSkipLocked,
-				Detail: "nput: profile directory is locked by another process",
+				Detail: "layat: profile directory is locked by another process",
 			},
 		},
 	}
@@ -255,10 +255,10 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 	// preview would report the candidate-root as deleted.
 	previewRoot, resultRoot := "/home/u/src/candidate", "/home/u/src/deleted"
 	preview := &engine.PruneResult{Removed: []engine.PruneSeries{
-		{RootHash: "cand", Root: previewRoot, Dir: "/state/nix/profiles/nput/cand"},
+		{RootHash: "cand", Root: previewRoot, Dir: "/state/nix/profiles/layat/cand"},
 	}}
 	result := &engine.PruneResult{Removed: []engine.PruneSeries{
-		{RootHash: "done", Root: resultRoot, Dir: "/state/nix/profiles/nput/done"},
+		{RootHash: "done", Root: resultRoot, Dir: "/state/nix/profiles/layat/done"},
 	}}
 
 	t.Run("the prompt sees the preview and the envelope sees the result", func(t *testing.T) {
@@ -351,7 +351,7 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 		// (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
 		withPruneTestState(t)
 		flagYes = true
-		failure := errors.New("nput: cannot remove series done")
+		failure := errors.New("layat: cannot remove series done")
 		pruneFn = func(engine.PruneOptions) (*engine.PruneResult, error) { return result, failure }
 
 		run, buf := newPruneTestRun()
@@ -453,7 +453,7 @@ func TestPruneInfoShape(t *testing.T) {
 	}
 	first := info.Removed[0]
 	if first.RootHash != "aaaa" || first.Root != "/home/u/src/gone" ||
-		first.Dir != "/state/nix/profiles/nput/aaaa" {
+		first.Dir != "/state/nix/profiles/layat/aaaa" {
 		t.Errorf("removed[0] = %+v, want the state-base series", first)
 	}
 	if len(first.Names) != 2 || first.Names[0] != "default" || first.Names[1] != "docs" {
@@ -574,7 +574,7 @@ func TestPruneJSONEmptyResultKeepsArrays(t *testing.T) {
 // reads as "scanned, found nothing".
 func TestPruneJSONEnvelopeInfoAbsentBeforeScan(t *testing.T) {
 	r, buf := newPruneTestRun()
-	if err := r.emit(errors.New("nput: refusing destructive prune without --yes in a non-interactive context")); err != nil {
+	if err := r.emit(errors.New("layat: refusing destructive prune without --yes in a non-interactive context")); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	assertNoInfoKeys(t, decodeEnvelope(t, buf))
@@ -617,9 +617,9 @@ func TestPruneDryrunDoesNotDelete(t *testing.T) {
 
 // TestPruneSystemBaseEnvOverridesTheScanBase pins the isolation seam: with systemBaseEnv set, that
 // value reaches PruneOptions.SystemDir verbatim, so a harness can keep prune off the machine's
-// real /nix/var/nix/profiles/nput. The user state base is not touched by the override — it follows
+// real /nix/var/nix/profiles/layat. The user state base is not touched by the override — it follows
 // XDG_STATE_HOME through the engine, and conflating the two would send prune to
-// <system base>/nix/profiles/nput (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1: SystemDir is the
+// <system base>/nix/profiles/layat (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1: SystemDir is the
 // finished base and does not go through paths.Base()).
 //
 // This is what stops the destructive e2e path from reaching shared state: without the seam the
