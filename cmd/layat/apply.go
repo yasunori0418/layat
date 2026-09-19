@@ -181,7 +181,7 @@ func runApply(run *applyRun, name string) error {
 		// The dryrun rides the same payload builder as the real apply, so parity is
 		// structural — same schema by construction, only the observed values differ
 		// (→ issue #132). cmdErr is nil here: a conflict is item-borne (failed item +
-		// E_NPUT_COLLISION inside the payload) and the exit-2 decision comes below,
+		// E_LAYAT_COLLISION inside the payload) and the exit-2 decision comes below,
 		// after the plan is printed — the envelope still carries the payload alongside.
 		attachMutationPayload(subject, res, nil)
 		printApplyPlan(res)
@@ -408,7 +408,7 @@ func aggregateApply(run *applyRun, selected []string, applyFn func(name string) 
 //
 // Like aggregateApply it settles one niface subject per config, riding the same payload builder as
 // the real apply so the dryrun's SubjectResult is the same shape by construction (→ issue #164). A
-// conflict is item-borne — the conflicting entry is a failed item carrying E_NPUT_COLLISION — and
+// conflict is item-borne — the conflicting entry is a failed item carrying E_LAYAT_COLLISION — and
 // still puts that subject in error, symmetric with the named apply --dryrun (→ layat ADR-0043 §6,
 // niface ADR-0002).
 func aggregateDryRun(run *applyRun, selected []string, applyDry func(name string) (*engine.Result, error)) int {
@@ -429,7 +429,7 @@ func aggregateDryRun(run *applyRun, selected []string, applyDry func(name string
 			anyConflict = true
 		}
 		// No subject-level error either way: a conflict is already failed items carrying
-		// E_NPUT_COLLISION, and the payload's item-borne mark is what puts this subject in error
+		// E_LAYAT_COLLISION, and the payload's item-borne mark is what puts this subject in error
 		// (→ nifaceSubject.itemBorne) — the same mechanism aggregateApply relies on for an
 		// entry-scoped failure, so both settle a config the one way.
 		subject.finish(nil)

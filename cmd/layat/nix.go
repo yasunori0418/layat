@@ -248,7 +248,7 @@ func dryBuildFunc(e *entrypoint, system, name string) func(pending string) (stri
 }
 
 // nixCmdError marks a failed internal nix invocation (eval / build), so the --json error
-// classification can map it to E_NPUT_BUILD without string matching (→ issue #131, ADR-0043 §8).
+// classification can map it to E_LAYAT_BUILD without string matching (→ issue #131, ADR-0043 §8).
 // It wraps transparently: Error/Unwrap keep the existing message and chain untouched.
 type nixCmdError struct{ err error }
 

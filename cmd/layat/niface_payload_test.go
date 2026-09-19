@@ -238,8 +238,8 @@ func TestMutationPayloadFullInventory(t *testing.T) {
 	assertChange(".config/old", niface.ChangeRemove, true, "/nix/store/old/sub", "")
 
 	relinked := findItem(t, p.items, ".config/relinked")
-	if len(relinked.Warnings) != 1 || relinked.Warnings[0].Code != "W_NPUT_FOREIGN_SYMLINK" {
-		t.Errorf("relinked item warnings = %+v, want one W_NPUT_FOREIGN_SYMLINK", relinked.Warnings)
+	if len(relinked.Warnings) != 1 || relinked.Warnings[0].Code != "W_LAYAT_FOREIGN_SYMLINK" {
+		t.Errorf("relinked item warnings = %+v, want one W_LAYAT_FOREIGN_SYMLINK", relinked.Warnings)
 	}
 	if len(p.warnings) != 0 {
 		t.Errorf("subject warnings = %+v, want none (the warned target is an item)", p.warnings)
@@ -341,8 +341,8 @@ func TestMutationPayloadOrphanSubjectWarning(t *testing.T) {
 	if err != nil {
 		t.Fatalf("mutationPayload: %v", err)
 	}
-	if len(p.warnings) != 1 || p.warnings[0].Code != "W_NPUT_COPY_ORPHAN" || p.warnings[0].Detail["target"] != ".gone/copy" {
-		t.Fatalf("subject warnings = %+v, want one W_NPUT_COPY_ORPHAN carrying the target", p.warnings)
+	if len(p.warnings) != 1 || p.warnings[0].Code != "W_LAYAT_COPY_ORPHAN" || p.warnings[0].Detail["target"] != ".gone/copy" {
+		t.Fatalf("subject warnings = %+v, want one W_LAYAT_COPY_ORPHAN carrying the target", p.warnings)
 	}
 	if it := findItem(t, p.items, "a"); len(it.Warnings) != 0 {
 		t.Errorf("item warnings = %+v, want none (the orphan is not this item's)", it.Warnings)
@@ -394,19 +394,19 @@ func TestMutationPayloadRollbackGeneration(t *testing.T) {
 	}
 }
 
-// TestNifaceWarningMapping pins every planner WarnKind → W_NPUT_* code pair, plus the
+// TestNifaceWarningMapping pins every planner WarnKind → W_LAYAT_* code pair, plus the
 // defensive fallback for an unknown kind.
 func TestNifaceWarningMapping(t *testing.T) {
 	cases := []struct {
 		kind planner.WarnKind
 		code string
 	}{
-		{planner.WarnForeignReplace, "W_NPUT_FOREIGN_SYMLINK"},
-		{planner.WarnStaleMismatch, "W_NPUT_STALE_MISMATCH"},
-		{planner.WarnStaleNonSymlink, "W_NPUT_STALE_NON_SYMLINK"},
-		{planner.WarnCopyOrphan, "W_NPUT_COPY_ORPHAN"},
-		{planner.WarnCopyForeign, "W_NPUT_COPY_FOREIGN"},
-		{planner.WarnKind(99), "W_NPUT_WARNING"},
+		{planner.WarnForeignReplace, "W_LAYAT_FOREIGN_SYMLINK"},
+		{planner.WarnStaleMismatch, "W_LAYAT_STALE_MISMATCH"},
+		{planner.WarnStaleNonSymlink, "W_LAYAT_STALE_NON_SYMLINK"},
+		{planner.WarnCopyOrphan, "W_LAYAT_COPY_ORPHAN"},
+		{planner.WarnCopyForeign, "W_LAYAT_COPY_FOREIGN"},
+		{planner.WarnKind(99), "W_LAYAT_WARNING"},
 	}
 	for _, c := range cases {
 		w := nifaceWarning(planner.Warning{Kind: c.kind, Target: "t"})
@@ -425,7 +425,7 @@ func TestNifaceWarningMapping(t *testing.T) {
 // TestMutationPayloadPartialFailure pins the reached-state partition (niface ADR-0016 /
 // ADR-0020): the failed entry carries the classified command error, unreached entries are
 // skipped (and only those), completed entries stay success with their changes, the unwound
-// run carries W_NPUT_UNWOUND at the subject, and the item-borne failure is NOT duplicated
+// run carries W_LAYAT_UNWOUND at the subject, and the item-borne failure is NOT duplicated
 // into subjectResult.errors[] (niface §2).
 func TestMutationPayloadPartialFailure(t *testing.T) {
 	res := &engine.Result{
@@ -466,12 +466,12 @@ func TestMutationPayloadPartialFailure(t *testing.T) {
 	}
 	var unwound bool
 	for _, w := range p.warnings {
-		if w.Code == "W_NPUT_UNWOUND" {
+		if w.Code == "W_LAYAT_UNWOUND" {
 			unwound = true
 		}
 	}
 	if !unwound {
-		t.Errorf("subject warnings = %+v, want W_NPUT_UNWOUND for the unwound run", p.warnings)
+		t.Errorf("subject warnings = %+v, want W_LAYAT_UNWOUND for the unwound run", p.warnings)
 	}
 
 	doc := emitPayloadDoc(t, newApplyTestRun, p, cmdErr)
@@ -520,7 +520,7 @@ func TestMutationPayloadSubjectBorneFailure(t *testing.T) {
 	if !ok || len(errList) != 1 {
 		t.Fatalf("subjectResult.errors = %v, want exactly one subject-borne error", sr["errors"])
 	}
-	if code := errList[0].(map[string]any)["code"]; code != "E_NPUT_FAILED" {
+	if code := errList[0].(map[string]any)["code"]; code != "E_LAYAT_FAILED" {
 		t.Errorf("error code = %v, want the generic fallback for a commit failure", code)
 	}
 	items := sr["result"].(map[string]any)["items"].([]any)
@@ -530,7 +530,7 @@ func TestMutationPayloadSubjectBorneFailure(t *testing.T) {
 }
 
 // TestMutationPayloadConflicts pins the conflict mapping: each conflicted entry is a failed
-// item with E_NPUT_COLLISION and the planner reason, everything else planned is skipped, and
+// item with E_LAYAT_COLLISION and the planner reason, everything else planned is skipped, and
 // the aggregate command error is not duplicated at the subject layer (→ ADR-0043 §6).
 func TestMutationPayloadConflicts(t *testing.T) {
 	res := &engine.Result{
@@ -554,8 +554,8 @@ func TestMutationPayloadConflicts(t *testing.T) {
 	}
 	conflicted := findItem(t, p.items, "a")
 	if conflicted.Status != niface.ItemFailed || conflicted.Error == nil ||
-		conflicted.Error.Code != "E_NPUT_COLLISION" || conflicted.Error.Message != "a regular file occupies the symlink target" {
-		t.Errorf("conflicted item = %+v error %+v, want failed + E_NPUT_COLLISION with the planner reason", conflicted, conflicted.Error)
+		conflicted.Error.Code != "E_LAYAT_COLLISION" || conflicted.Error.Message != "a regular file occupies the symlink target" {
+		t.Errorf("conflicted item = %+v error %+v, want failed + E_LAYAT_COLLISION with the planner reason", conflicted, conflicted.Error)
 	}
 	if it := findItem(t, p.items, "b"); it.Status != niface.ItemSkipped {
 		t.Errorf("non-conflicted item status = %s, want skipped (nothing ran)", it.Status)
@@ -573,7 +573,7 @@ func TestMutationPayloadConflicts(t *testing.T) {
 // TestResetPayload pins reset's mapping: items = the selected teardown entries, symlink
 // removals are reversible remove changes with the recorded dest, copy deletions are
 // irreversible removes without info, a kept-foreign target stays success with the
-// W_NPUT_STALE_MISMATCH warning on its item, and no generation slot is emitted (reset never
+// W_LAYAT_STALE_MISMATCH warning on its item, and no generation slot is emitted (reset never
 // moves the profile pointer · → issue #131).
 func TestResetPayload(t *testing.T) {
 	res := &engine.ResetResult{
@@ -600,8 +600,8 @@ func TestResetPayload(t *testing.T) {
 		}
 	}
 	kept := findItem(t, p.items, "s2")
-	if len(kept.Warnings) != 1 || kept.Warnings[0].Code != "W_NPUT_STALE_MISMATCH" {
-		t.Errorf("kept item warnings = %+v, want one W_NPUT_STALE_MISMATCH", kept.Warnings)
+	if len(kept.Warnings) != 1 || kept.Warnings[0].Code != "W_LAYAT_STALE_MISMATCH" {
+		t.Errorf("kept item warnings = %+v, want one W_LAYAT_STALE_MISMATCH", kept.Warnings)
 	}
 	if cs := changesFor(t, p.changes, "s1"); len(cs) != 1 || cs[0].Kind != niface.ChangeRemove ||
 		!cs[0].Reversible || cs[0].Info == nil || cs[0].Info.Old != "/nix/store/s1" {
@@ -828,7 +828,7 @@ func TestDryrunPayloadFirstPlanOmitsGenerationNumbers(t *testing.T) {
 // TestDryrunPayloadConflictKeepsEnvelopeBesideExit2 pins the dryrun conflict contract
 // (→ issue #132 acceptance): the CLI attaches the payload with cmdErr nil (the exit-2
 // exitError is decided after the plan is printed), the conflicted entry is a failed item with
-// E_NPUT_COLLISION, and the envelope emitted alongside exit 2 stays conformant with status
+// E_LAYAT_COLLISION, and the envelope emitted alongside exit 2 stays conformant with status
 // error, dryRun true, and no subject-level duplication of the item-borne error.
 func TestDryrunPayloadConflictKeepsEnvelopeBesideExit2(t *testing.T) {
 	res := &engine.Result{
@@ -876,8 +876,8 @@ func TestDryrunPayloadConflictKeepsEnvelopeBesideExit2(t *testing.T) {
 		t.Errorf("subjectResult.errors = %v, want absent (the failed item carries the collision)", errList)
 	}
 	item := findItem(t, mustDecodeItems(t, sr), ".zshrc")
-	if item.Status != niface.ItemFailed || item.Error == nil || item.Error.Code != "E_NPUT_COLLISION" {
-		t.Errorf("conflicted item = %+v, want failed with E_NPUT_COLLISION", item)
+	if item.Status != niface.ItemFailed || item.Error == nil || item.Error.Code != "E_LAYAT_COLLISION" {
+		t.Errorf("conflicted item = %+v, want failed with E_LAYAT_COLLISION", item)
 	}
 }
 
@@ -924,7 +924,7 @@ func TestDryrunPayloadRelinkNotSuppressed(t *testing.T) {
 // TestMutationPayloadKeptStaleSubjectWarning pins the apply-side routing of the conservative
 // keep warnings (→ issue #132 review follow-up): a kept-stale target (record mismatch / not a
 // symlink) is neither in the new manifest nor in the removal plan, so no item exists for it —
-// its W_NPUT_STALE_* warning lands on the subject, self-contained via detail.target.
+// its W_LAYAT_STALE_* warning lands on the subject, self-contained via detail.target.
 func TestMutationPayloadKeptStaleSubjectWarning(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
@@ -940,8 +940,8 @@ func TestMutationPayloadKeptStaleSubjectWarning(t *testing.T) {
 		t.Fatalf("mutationPayload: %v", err)
 	}
 	want := []struct{ code, target string }{
-		{"W_NPUT_STALE_MISMATCH", ".config/drifted"},
-		{"W_NPUT_STALE_NON_SYMLINK", ".config/solidified"},
+		{"W_LAYAT_STALE_MISMATCH", ".config/drifted"},
+		{"W_LAYAT_STALE_NON_SYMLINK", ".config/solidified"},
 	}
 	if len(p.warnings) != len(want) {
 		t.Fatalf("subject warnings = %+v, want the %d kept-stale warnings", p.warnings, len(want))
@@ -985,7 +985,7 @@ func TestMutationPayloadConflictWithWarningStaysConformant(t *testing.T) {
 
 // TestMutationPayloadCopyForeignItemWarning completes the warning kind × in/out-of-inventory
 // table (→ issue #132 review follow-up): the place-once copy skip is the one copy-family
-// warning whose entry stays in the manifest, so W_NPUT_COPY_FOREIGN rides on its item — not
+// warning whose entry stays in the manifest, so W_LAYAT_COPY_FOREIGN rides on its item — not
 // the subject.
 func TestMutationPayloadCopyForeignItemWarning(t *testing.T) {
 	res := &engine.Result{
@@ -999,8 +999,8 @@ func TestMutationPayloadCopyForeignItemWarning(t *testing.T) {
 		t.Fatalf("mutationPayload: %v", err)
 	}
 	it := findItem(t, p.items, ".config/copydir")
-	if len(it.Warnings) != 1 || it.Warnings[0].Code != "W_NPUT_COPY_FOREIGN" {
-		t.Errorf("item warnings = %+v, want W_NPUT_COPY_FOREIGN on the inventory item", it.Warnings)
+	if len(it.Warnings) != 1 || it.Warnings[0].Code != "W_LAYAT_COPY_FOREIGN" {
+		t.Errorf("item warnings = %+v, want W_LAYAT_COPY_FOREIGN on the inventory item", it.Warnings)
 	}
 	if len(p.warnings) != 0 {
 		t.Errorf("subject warnings = %+v, want none", p.warnings)

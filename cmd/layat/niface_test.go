@@ -122,13 +122,13 @@ func TestNifaceEnvelopeConformance(t *testing.T) {
 		{name: "success with subject", subject: "default", wantStatus: "success", wantResults: 1},
 		{name: "success without subject", wantStatus: "success", wantResults: 0},
 		{name: "pre-subject failure", cmdErr: errors.New("layat: no entrypoint found"),
-			wantStatus: "error", wantResults: 0, wantTopErrs: true, wantCode: "E_NPUT_FAILED"},
+			wantStatus: "error", wantResults: 0, wantTopErrs: true, wantCode: "E_LAYAT_FAILED"},
 		{name: "subject-borne failure", subject: "web", cmdErr: errors.New("layat: build failed"),
-			wantStatus: "error", wantResults: 1, wantCode: "E_NPUT_FAILED"},
+			wantStatus: "error", wantResults: 1, wantCode: "E_LAYAT_FAILED"},
 		{name: "lock failure", subject: "web", cmdErr: lock.ErrLocked,
 			wantStatus: "error", wantResults: 1, wantCode: "E_LOCK"},
 		{name: "dryrun conflict", subject: "default", cmdErr: &exitError{code: 2},
-			wantStatus: "error", wantResults: 1, wantCode: "E_NPUT_COLLISION"},
+			wantStatus: "error", wantResults: 1, wantCode: "E_LAYAT_COLLISION"},
 	}
 
 	for _, c := range cases {
@@ -313,7 +313,7 @@ func TestEntryItemIDMatchesVectors(t *testing.T) {
 }
 
 // TestClassifyErrorCodes pins the classifyError table directly, one case per code (the #131
-// refinement): the nixCmdError marker → E_NPUT_BUILD, including its survival through
+// refinement): the nixCmdError marker → E_LAYAT_BUILD, including its survival through
 // wrapEvalErr / wrapEvalAllErr's re-wraps (the %w chain is the classification's lifeline);
 // the specific fs sentinels beating the generic E_IO shape check; and the residual-I/O and
 // fallback arms.
@@ -323,22 +323,22 @@ func TestClassifyErrorCodes(t *testing.T) {
 		err  error
 		want string
 	}{
-		{"nix invocation failure", &nixCmdError{err: errors.New("layat: nix build failed")}, "E_NPUT_BUILD"},
+		{"nix invocation failure", &nixCmdError{err: errors.New("layat: nix build failed")}, "E_LAYAT_BUILD"},
 		{"marker survives wrapEvalErr attr-missing rewrap",
 			wrapEvalErr(&nixCmdError{err: errors.New("error: flake does not provide attribute layat")}, "layat.x86_64-linux.web"),
-			"E_NPUT_BUILD"},
+			"E_LAYAT_BUILD"},
 		{"marker survives wrapEvalErr passthrough",
 			wrapEvalErr(&nixCmdError{err: errors.New("error: something else")}, "layat.x86_64-linux.web"),
-			"E_NPUT_BUILD"},
+			"E_LAYAT_BUILD"},
 		{"marker survives wrapEvalAllErr attr-missing rewrap",
 			wrapEvalAllErr(&nixCmdError{err: errors.New("error: flake does not provide attribute layat")}, "layat.x86_64-linux"),
-			"E_NPUT_BUILD"},
+			"E_LAYAT_BUILD"},
 		{"lock sentinel", lock.ErrLocked, "E_LOCK"},
 		{"not-found beats the IO shape", &fs.PathError{Op: "stat", Path: "/x", Err: fs.ErrNotExist}, "E_NOTFOUND"},
 		{"permission beats the IO shape", &fs.PathError{Op: "open", Path: "/x", Err: fs.ErrPermission}, "E_PERMISSION"},
 		{"residual IO PathError", &fs.PathError{Op: "rmdir", Path: "/x", Err: syscall.ENOTEMPTY}, "E_IO"},
 		{"residual IO LinkError", &os.LinkError{Op: "symlink", Old: "/a", New: "/b", Err: syscall.EEXIST}, "E_IO"},
-		{"unclassified fallback", errors.New("layat: generation commit (nix-env --set) failed"), "E_NPUT_FAILED"},
+		{"unclassified fallback", errors.New("layat: generation commit (nix-env --set) failed"), "E_LAYAT_FAILED"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {

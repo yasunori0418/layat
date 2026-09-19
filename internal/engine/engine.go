@@ -101,7 +101,7 @@ type Result struct {
 	// Conflicts are the planner-detected conflicts, in structured form. Populated on the dryrun
 	// path (the CLI decides exit 2 · → ADR-0006) and on the non-dryrun conflict stop, where the
 	// partial Result is returned alongside the aggregate error so the CLI can map each conflict
-	// onto a failed niface item (E_NPUT_COLLISION · → issue #131, ADR-0043 §6).
+	// onto a failed niface item (E_LAYAT_COLLISION · → issue #131, ADR-0043 §6).
 	Conflicts []planner.Conflict
 	// GenerationSkipped indicates that the project-mode generation skip committed no new
 	// generation (omitted --set). The path where the new link-farm equals the previous

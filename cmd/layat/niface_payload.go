@@ -80,7 +80,7 @@ func attachResetPayload[TInfo any](s *nifaceSubject[TInfo], res *engine.ResetRes
 
 // itemStatuses is the reached-state partition shared by the builders (→ niface ADR-0016 /
 // ADR-0020): the failed entry, the planned-but-never-attempted entries (skipped — the only
-// use of skipped), and per-target conflicts (failed + E_NPUT_COLLISION). Everything else is
+// use of skipped), and per-target conflicts (failed + E_LAYAT_COLLISION). Everything else is
 // success — including policy inaction (a kept stale target, a place-once copy skip), which
 // carries warnings instead of a non-success status.
 type itemStatuses struct {
@@ -93,7 +93,7 @@ type itemStatuses struct {
 // statusFor resolves one target's item status and error under the partition.
 func (s *itemStatuses) statusFor(target string) (niface.ItemStatus, *niface.Error) {
 	if c, ok := s.conflicts[target]; ok {
-		return niface.ItemFailed, &niface.Error{Code: "E_NPUT_COLLISION", Message: c.Reason}
+		return niface.ItemFailed, &niface.Error{Code: "E_LAYAT_COLLISION", Message: c.Reason}
 	}
 	if target == s.failed {
 		return niface.ItemFailed, s.failedErr
@@ -172,7 +172,7 @@ func changeInfoOrNil(old, new string) *nifaceChangeInfo {
 //     ADR-0015). The first apply has no before; a failed run observes an unmoved pointer.
 //   - warnings = the planner's structured warnings, attached to the warned target's item when
 //     it is in the inventory and to the subject otherwise (→ niface ADR-0019). An unwound run
-//     (→ ADR-0044) additionally carries W_NPUT_UNWOUND at the subject level: the changes list
+//     (→ ADR-0044) additionally carries W_LAYAT_UNWOUND at the subject level: the changes list
 //     stays the record of what happened up to the failure, and the warning tells consumers
 //     those diffs were rolled back rather than left on disk.
 func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*nifacePayload[TInfo], error) {
@@ -294,7 +294,7 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*nifacePayloa
 	p.warnings = attachWarnings(p.items, res.Warnings)
 	if res.Unwound {
 		p.warnings = append(p.warnings, niface.Warning{
-			Code:    "W_NPUT_UNWOUND",
+			Code:    "W_LAYAT_UNWOUND",
 			Message: "the undo journal rolled this run's filesystem changes back after the failure; the listed changes did not survive on disk",
 		})
 	}
@@ -367,26 +367,26 @@ func attachWarnings(items []layatItem, warnings []planner.Warning) []niface.Warn
 }
 
 // nifaceWarning translates one planner warning into the niface warning vocabulary
-// (tool-specific W_NPUT_* codes · niface §6 two-layer naming). The messages mirror the
+// (tool-specific W_LAYAT_* codes · niface §6 two-layer naming). The messages mirror the
 // stderr text (→ engine.emitWarnings) without the "layat: " prefix and target suffix — the
 // target rides in detail (and in the carrying item) instead.
 func nifaceWarning(w planner.Warning) niface.Warning {
 	var code, msg string
 	switch w.Kind {
 	case planner.WarnForeignReplace:
-		code, msg = "W_NPUT_FOREIGN_SYMLINK", "overwriting an unrecorded symlink (foreign; last-wins)"
+		code, msg = "W_LAYAT_FOREIGN_SYMLINK", "overwriting an unrecorded symlink (foreign; last-wins)"
 	case planner.WarnStaleMismatch:
-		code, msg = "W_NPUT_STALE_MISMATCH", "keeping stale symlink because it mismatches the record"
+		code, msg = "W_LAYAT_STALE_MISMATCH", "keeping stale symlink because it mismatches the record"
 	case planner.WarnStaleNonSymlink:
-		code, msg = "W_NPUT_STALE_NON_SYMLINK", "keeping stale target because it is not a symlink"
+		code, msg = "W_LAYAT_STALE_NON_SYMLINK", "keeping stale target because it is not a symlink"
 	case planner.WarnCopyOrphan:
-		code, msg = "W_NPUT_COPY_ORPHAN", "copy entry vanished but the target is not removed (orphan; clear it with reset)"
+		code, msg = "W_LAYAT_COPY_ORPHAN", "copy entry vanished but the target is not removed (orphan; clear it with reset)"
 	case planner.WarnCopyForeign:
-		code, msg = "W_NPUT_COPY_FOREIGN", "skipped copy because a real file already exists at the copy target (foreign; place-once)"
+		code, msg = "W_LAYAT_COPY_FOREIGN", "skipped copy because a real file already exists at the copy target (foreign; place-once)"
 	default:
 		// Unreachable today — the switch covers every planner.WarnKind. Kept as a defensive
 		// fallback so a future kind surfaces visibly instead of being silently mis-coded.
-		code, msg = "W_NPUT_WARNING", "unclassified planner warning"
+		code, msg = "W_LAYAT_WARNING", "unclassified planner warning"
 	}
 	return niface.Warning{Code: code, Message: msg, Detail: map[string]any{"target": w.Target}}
 }

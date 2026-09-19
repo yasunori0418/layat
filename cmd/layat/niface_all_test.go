@@ -316,7 +316,7 @@ func TestApplyAllEmptySelectionEmitsEmptyResults(t *testing.T) {
 
 // TestApplyAllDryRunConflictIsItemBorne is issue #164's third acceptance criterion and the
 // symmetry requirement against the named apply --dryrun: a conflicting config's entry becomes a
-// failed item carrying E_NPUT_COLLISION (item-borne, so it must NOT be repeated in that
+// failed item carrying E_LAYAT_COLLISION (item-borne, so it must NOT be repeated in that
 // SubjectResult's errors[] · niface §2), the subject's status is error (niface ADR-0002: a failed
 // item makes the result error), the aggregate is error, and the exit code stays what
 // applyAllExitCode decides — conflict 2, not the error 1 (→ layat ADR-0043 §6, ADR-0024).
@@ -380,8 +380,8 @@ func TestApplyAllDryRunConflictIsItemBorne(t *testing.T) {
 	if !ok {
 		t.Fatalf("conflicting item = %v, want an error object", item)
 	}
-	if itemErr["code"] != "E_NPUT_COLLISION" {
-		t.Errorf("conflicting item error code = %v, want E_NPUT_COLLISION", itemErr["code"])
+	if itemErr["code"] != "E_LAYAT_COLLISION" {
+		t.Errorf("conflicting item error code = %v, want E_LAYAT_COLLISION", itemErr["code"])
 	}
 }
 
@@ -431,8 +431,8 @@ func TestApplyAllDryRunMixedErrorAndConflict(t *testing.T) {
 	if status != "error" || len(errs) != 1 {
 		t.Fatalf("failed subject = (%s, %v), want (error, exactly one subject-borne error)", status, errs)
 	}
-	if got := errs[0].(map[string]any)["code"]; got != "E_NPUT_FAILED" {
-		t.Errorf("failed subject error code = %v, want E_NPUT_FAILED (the build error is unclassified here)", got)
+	if got := errs[0].(map[string]any)["code"]; got != "E_LAYAT_FAILED" {
+		t.Errorf("failed subject error code = %v, want E_LAYAT_FAILED (the build error is unclassified here)", got)
 	}
 	// The conflict is item-borne: same error status, but errors[] stays empty (niface §2).
 	status, errs = statusAndErrors(t, byName["clashing"])
