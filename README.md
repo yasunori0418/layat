@@ -1,4 +1,4 @@
-# nput
+# layat
 
 > ⚠️ **nput is being renamed to `layat`, on or after 2026-09-22.** The repository, the Go
 > module path, the binary, the flake attributes, the module option namespace and the `--json`
@@ -10,7 +10,7 @@
 
 > Place fetched git repositories at arbitrary paths via symlink or copy.
 
-nput is a Nix library and module set that **places the contents of an already-fetched
+layat is a Nix library and module set that **places the contents of an already-fetched
 Nix store path at a `root`-relative target** — as a symlink or a copy. It does **not**
 generate configuration. It puts a repository's contents where you ask, untouched.
 
@@ -27,7 +27,7 @@ is chosen explicitly with the `projectRoot` / `homeRoot` / `systemRoot` markers 
 
 ---
 
-## Why nput
+## Why layat
 
 Nix can *fetch* a repository (`fetchFromGitHub`, `fetchGit`, flake inputs, npins, …) but
 *placing* its contents onto the filesystem is a separate problem. The usual answers all
@@ -45,18 +45,18 @@ have costs:
   takes the control of "what goes where, and how" out of your hands and duplicates
   behavior per layer.
 
-nput separates **fetching** (Nix evaluation: `src` is a store path) from **placement**
+layat separates **fetching** (Nix evaluation: `src` is a store path) from **placement**
 (a fixed runtime engine), and keeps placement behavior in a **single core** that you drive
 explicitly:
 
-- **No configuration generation.** nput never translates module options into config
+- **No configuration generation.** layat never translates module options into config
   files. It places what the repository already contains.
-- **Independent units.** Each placement config (`nput.<name>`) is its own Nix profile.
+- **Independent units.** Each placement config (`layat.<name>`) is its own Nix profile.
   Update and apply each role independently — one update never ripples to another.
 - **No home-manager dependency.** The `lib/` core depends only on nixpkgs. It runs
   standalone; module integrations (home-manager, devShell, future NixOS/nix-darwin) are
   thin wiring that only *kick* the engine — they never place files themselves.
-- **A self-recorded manifest, not readlink pattern-matching.** nput's placement engine
+- **A self-recorded manifest, not readlink pattern-matching.** layat's placement engine
   tracks what it placed in a manifest from the previous generation, so it can safely
   auto-migrate cases home-manager's `home.file` (as of 2026-07) cannot — e.g. a per-file
   target becoming a directory symlink. See [`docs/concept.md`](docs/concept.md#home-manager-homefile-との配置意味論の差)
@@ -66,10 +66,10 @@ explicitly:
 
 ## How it works
 
-nput has two layers:
+layat has two layers:
 
 ```
-[nput CLI]  packages.nput — on PATH, the primary UX
+[layat CLI]  packages.layat — on PATH, the primary UX
   · discovers an entrypoint (flake.nix / shell.nix / default.nix)
   · runs `nix build` / `nix eval` internally to obtain a named manifest
   · drives the engine to place, prune stale links, and swap the profile
@@ -84,7 +84,7 @@ nput has two layers:
 - `lib.mkManifest` is a **pure function** that produces a link-farm derivation
   (`manifest.json` + a symlink farm). It has no side effects.
 - An **entrypoint** is the Nix file the CLI reads (`flake.nix`, `shell.nix`, or
-  `default.nix`); it exposes a named manifest under `nput.<name>`. The config is still
+  `default.nix`); it exposes a named manifest under `layat.<name>`. The config is still
   written in Nix and evaluated by `nix build`.
 
 ---
@@ -93,7 +93,7 @@ nput has two layers:
 
 - **Nix** with experimental features enabled in your environment:
   `experimental-features = nix-command` (and `flakes` for flake entrypoints).
-  nput does **not** silently inject `--extra-experimental-features`; if a feature is not
+  layat does **not** silently inject `--extra-experimental-features`; if a feature is not
   enabled it stops with a clear message explaining the prerequisite and how to enable it.
 - **git** on `PATH` (used to resolve the project root in project mode).
 
@@ -103,36 +103,36 @@ nput has two layers:
 
 ### Standalone (home mode)
 
-Install the CLI globally so `nput` is on `PATH`:
+Install the CLI globally so `layat` is on `PATH`:
 
 ```bash
-nix profile install github:yasunori0418/nput
+nix profile install github:yasunori0418/layat
 ```
 
-To avoid `schemaVersion` skew, align the CLI and the `nput` your flake pins to the **same
-input** (the global CLI and your flake's `nput.lib` are otherwise separate inputs that can
+To avoid `schemaVersion` skew, align the CLI and the `layat` your flake pins to the **same
+input** (the global CLI and your flake's `layat.lib` are otherwise separate inputs that can
 drift; the engine rejects a `schemaVersion` newer than its own).
 
 ### Project mode (canonical: pin in the devShell)
 
-For project mode, the canonical form is to **bundle a pinned `nput`** in the project's
-devShell so the CLI and `nput.lib` come from the same flake input (locked by `flake.lock`):
+For project mode, the canonical form is to **bundle a pinned `layat`** in the project's
+devShell so the CLI and `layat.lib` come from the same flake input (locked by `flake.lock`):
 
 ```nix
 devShells.${system}.default = pkgs.mkShell {
-  packages  = [ nput.packages.${system}.nput ];   # pinned nput on PATH
-  shellHook = "nput apply <name> --no-wait";        # placed on `nix develop` / direnv entry
+  packages  = [ layat.packages.${system}.layat ];   # pinned layat on PATH
+  shellHook = "layat apply <name> --no-wait";        # placed on `nix develop` / direnv entry
 };
 ```
 
 ### Scaffold a new project
 
-`nput init` is a transparent wrapper over `nix flake init -t`; nput itself generates
+`layat init` is a transparent wrapper over `nix flake init -t`; layat itself generates
 nothing, and existing files are never overwritten:
 
 ```bash
-nput init standalone   # homeRoot example
-nput init project      # projectRoot example + devShell wiring + .gitignore guide
+layat init standalone   # homeRoot example
+layat init project      # projectRoot example + devShell wiring + .gitignore guide
 ```
 
 ---
@@ -143,35 +143,35 @@ nput init project      # projectRoot example + devShell wiring + .gitignore guid
 
 In **project mode** the root is the project root (the git toplevel). Placements are
 **ephemeral** — regenerated on each clone, never committed — so activation never touches
-git state. This is the central way to use nput: embed it in a repo and place store paths
+git state. This is the central way to use layat: embed it in a repo and place store paths
 at arbitrary in-repo paths, kicked from a devShell.
 
 ```nix
 # flake.nix — entering the repo places .claude/skills/nix from a fetched store path
 {
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-  inputs.nput.url    = "github:yasunori0418/nput";
+  inputs.layat.url    = "github:yasunori0418/layat";
 
   inputs.claude-skills.url   = "github:someone/claude-skills";
   inputs.claude-skills.flake = false;
 
-  outputs = { self, nixpkgs, nput, ... }@inputs:
+  outputs = { self, nixpkgs, layat, ... }@inputs:
     let
       system = "x86_64-linux";
       pkgs   = nixpkgs.legacyPackages.${system};
     in
     {
-      nput.${system}.skills = nput.lib.mkManifest {
+      layat.${system}.skills = layat.lib.mkManifest {
         inherit pkgs;
-        root = nput.lib.projectRoot;        # resolves to the git toplevel at runtime
+        root = layat.lib.projectRoot;        # resolves to the git toplevel at runtime
         entries = {
           ".claude/skills/nix" = { src = inputs.claude-skills; subpath = "skills/nix"; };
         };
       };
 
       devShells.${system}.default = pkgs.mkShell {
-        packages  = [ nput.packages.${system}.nput ];   # pinned nput (canonical)
-        shellHook = "nput apply skills --no-wait";       # place on shell entry
+        packages  = [ layat.packages.${system}.layat ];   # pinned layat (canonical)
+        shellHook = "layat apply skills --no-wait";       # place on shell entry
       };
     };
 }
@@ -182,15 +182,15 @@ at arbitrary in-repo paths, kicked from a devShell.
 nix develop          # or: direnv allow
 
 # List the targets the project owner should add to .gitignore (stdout only; no writes)
-nput gitignore skills >> .gitignore
+layat gitignore skills >> .gitignore
 ```
 
 - `--root <path>` overrides the resolved root in any mode (escape hatch for git-less
   trees, debugging, etc.).
 - Generations are an internal mechanism here; `rollback` / `list-generations` are **not**
   exposed in project mode (rollback is meaningless for ephemeral placements).
-- In a devShell, use a **named apply** (`nput apply skills`) or
-  `nput apply --all --project-root`. A bare `--all` would also place any home-mode configs
+- In a devShell, use a **named apply** (`layat apply skills`) or
+  `layat apply --all --project-root`. A bare `--all` would also place any home-mode configs
   into `$HOME` — a footgun in mixed entrypoints.
 
 ### Home mode (standalone, roles as separate profiles)
@@ -200,19 +200,19 @@ profile, committed every apply, with user-facing `rollback`.
 
 ```nix
 # flake.nix — each role is a named manifest = an independent profile
-outputs.nput.${system} = {
-  vim-plugins = nput.lib.mkManifest {
+outputs.layat.${system} = {
+  vim-plugins = layat.lib.mkManifest {
     inherit pkgs;
-    root = nput.lib.homeRoot;
+    root = layat.lib.homeRoot;
     entries = {
       ".local/share/nvim/site/pack/foo/start/foo" = { src = inputs.vim-foo; };
       ".local/share/nvim/site/pack/bar/start/bar" = { src = inputs.vim-bar; };
     };
   };
 
-  zsh-plugins = nput.lib.mkManifest {
+  zsh-plugins = layat.lib.mkManifest {
     inherit pkgs;
-    root = nput.lib.homeRoot;
+    root = layat.lib.homeRoot;
     entries = {
       ".zsh/plugins/autosuggestions"     = { src = inputs.zsh-autosuggestions; };
       ".zsh/plugins/syntax-highlighting" = { src = inputs.zsh-syntax-highlighting; };
@@ -223,10 +223,10 @@ outputs.nput.${system} = {
 
 ```bash
 # Update / apply / roll back each role independently (separate profiles)
-nput apply vim-plugins
-nput rollback vim-plugins          # home mode only
-nput apply zsh-plugins
-nput list-generations vim-plugins
+layat apply vim-plugins
+layat rollback vim-plugins          # home mode only
+layat apply zsh-plugins
+layat list-generations vim-plugins
 ```
 
 After updating a `src` (a flake input update, `npins update`, …), re-apply only the
@@ -235,14 +235,14 @@ affected config to keep the change from touching any other tool.
 ### home-manager module
 
 The module pins `root = homeRoot` (you do not re-specify `root`). It kicks the engine from
-`home.activation` via `nput apply --manifest <link-farm>` — it never delegates to
-`home.file`. nput keeps its own profile as an **internal mechanism**; user-facing rollback
+`home.activation` via `layat apply --manifest <link-farm>` — it never delegates to
+`home.file`. layat keeps its own profile as an **internal mechanism**; user-facing rollback
 is unified on the host (`home-manager --rollback`).
 
 ```nix
-imports = [ inputs.nput.homeManagerModules.default ];
+imports = [ inputs.layat.homeManagerModules.default ];
 
-nput = {
+layat = {
   enable = true;
   entries = {
     # external repo (store link)
@@ -250,45 +250,45 @@ nput = {
     # theme as a copy (place-once, then user-managed)
     ".local/share/themes/dark" = { src = inputs.themes; subpath = "dark"; method = "copy"; };
     # live editing of local dotfiles via out-of-store symlink
-    ".config/nvim" = { src = nput.lib.mkOutOfStoreSymlink "/home/me/dotfiles"; subpath = "home/.config/nvim"; };
+    ".config/nvim" = { src = layat.lib.mkOutOfStoreSymlink "/home/me/dotfiles"; subpath = "home/.config/nvim"; };
   };
 };
 ```
 
 > The home-manager module is a **single manifest = one profile** (fixed name `default`) in
 > the MVP — it has no `<name>` dimension, so **role separation is not available through the
-> module**. Use the standalone CLI path (`nput.<name>` entrypoints) for multiple
+> module**. Use the standalone CLI path (`layat.<name>` entrypoints) for multiple
 > independent profiles.
 
-### Adding nput to an existing flake
+### Adding layat to an existing flake
 
-`nput init` is for new projects. To retrofit an existing `flake.nix`, do these four steps
-by hand (nput never auto-merges your flake — "do not generate configuration"):
+`layat init` is for new projects. To retrofit an existing `flake.nix`, do these four steps
+by hand (layat never auto-merges your flake — "do not generate configuration"):
 
-1. **Add the input**: `inputs.nput.url = "github:yasunori0418/nput";`
+1. **Add the input**: `inputs.layat.url = "github:yasunori0418/layat";`
 2. **Expose a manifest**:
-   `outputs.nput.<system>.<name> = nput.lib.mkManifest { root = nput.lib.projectRoot; entries = { ... }; };`
-3. **Bundle pinned nput in the devShell**: `packages = [ nput.packages.${system}.nput ];`
-4. **Wire a named apply**: `shellHook = "nput apply <name> --no-wait";`
+   `outputs.layat.<system>.<name> = layat.lib.mkManifest { root = layat.lib.projectRoot; entries = { ... }; };`
+3. **Bundle pinned layat in the devShell**: `packages = [ layat.packages.${system}.layat ];`
+4. **Wire a named apply**: `shellHook = "layat apply <name> --no-wait";`
 
 If the repo uses **flake-parts**, write step 2 via the flake module instead (keeps `pkgs`
 consistent with `perSystem`):
 
 ```nix
-imports = [ inputs.nput.flakeModules.default ];
+imports = [ inputs.layat.flakeModules.default ];
 perSystem = { pkgs, ... }: {
-  nput.<name> = inputs.nput.lib.mkManifest {
+  layat.<name> = inputs.layat.lib.mkManifest {
     inherit pkgs;
-    root = inputs.nput.lib.projectRoot;
+    root = inputs.layat.lib.projectRoot;
     entries = { ... };
   };
 };
-# flake-parts transposes this to flake.nput.<system>.<name> — the CLI addressing is unchanged.
+# flake-parts transposes this to flake.layat.<system>.<name> — the CLI addressing is unchanged.
 ```
 
-> `nix flake check` reports `warning: unknown flake output 'nput'` but exits 0 (harmless,
-> expected — the `nput` namespace keeps manifests out of `packages`). Verify artifacts with
-> `nix build .#nput.<system>.<name>`.
+> `nix flake check` reports `warning: unknown flake output 'layat'` but exits 0 (harmless,
+> expected — the `layat` namespace keeps manifests out of `packages`). Verify artifacts with
+> `nix build .#layat.<system>.<name>`.
 
 ---
 
@@ -323,13 +323,13 @@ guarantees reproducibility). Out-of-store is opt-in via an explicit marker.
 | `path` (e.g. `inputs.myrepo`) | Nix store (immutable) | version-pinned external repo |
 | `builtins.path { path = /home/...; name = "..."; }` | Nix store (local copied in) | a local tree via the store |
 | `set` (e.g. `pkgs.fetchFromGitHub { ... }`) | Nix store (immutable) | version-pinned external repo |
-| `marker` (`nput.lib.mkOutOfStoreSymlink "/abs/path"`) | local FS (live) | local dotfiles under development |
+| `marker` (`layat.lib.mkOutOfStoreSymlink "/abs/path"`) | local FS (live) | local dotfiles under development |
 
 ```nix
 src = inputs.myrepo;                                    # store link
 src = pkgs.fetchFromGitHub { owner = "..."; repo = "..."; rev = "..."; hash = "..."; };
 src = builtins.path { path = /path/to/dotfiles; name = "dotfiles"; };
-src = nput.lib.mkOutOfStoreSymlink "/path/to/dotfiles"; # out-of-store (live), explicit
+src = layat.lib.mkOutOfStoreSymlink "/path/to/dotfiles"; # out-of-store (live), explicit
 
 # Removed: passing a bare string for implicit out-of-store is not supported.
 # src = "/path/to/dotfiles";   # error
@@ -366,12 +366,12 @@ Selects the placement kind:
 | `"copy"` | path / set | **place-once** copy (writable, user-managed) | **no** |
 | `"copy"` | marker | evaluation-time error (contradictory) | — |
 
-**copy is place-once and user-managed.** Once materialized, nput does not touch the target.
+**copy is place-once and user-managed.** Once materialized, layat does not touch the target.
 The store's read-only mode (`0444` / `0555`) is preserved but owner-write is added so the
-copy is editable. To follow an upstream `src` update, use `nput apply --recopy` (overwrites
-all copy targets unconditionally) or `nput reset` then re-apply. Copies are not generation-
+copy is editable. To follow an upstream `src` update, use `layat apply --recopy` (overwrites
+all copy targets unconditionally) or `layat reset` then re-apply. Copies are not generation-
 managed and are never rolled back. If a foreign real file already occupies a copy target,
-nput skips it but emits a **warning** (it never overwrites your file).
+layat skips it but emits a **warning** (it never overwrites your file).
 
 ### Generating entries dynamically
 
@@ -381,9 +381,9 @@ not from `baseNameOf src` (a store path resolves to `/nix/store/<hash>-source`, 
 
 ```nix
 let plugins = [ "telescope" "treesitter" "cmp" ]; in
-nput.lib.mkManifest {
+layat.lib.mkManifest {
   inherit pkgs;
-  root = nput.lib.homeRoot;
+  root = layat.lib.homeRoot;
   entries = builtins.listToAttrs (map (n: {
     name  = ".local/share/nvim/site/pack/plugins/start/${n}";  # key = target
     value = { src = inputs.${n}; };
@@ -400,9 +400,9 @@ let
   skills = builtins.readDir "${inputs.claude-skills}/skills";
   names  = builtins.attrNames (nixpkgs.lib.filterAttrs (_: t: t == "directory") skills);
 in
-nput.lib.mkManifest {
+layat.lib.mkManifest {
   inherit pkgs;
-  root = nput.lib.homeRoot;
+  root = layat.lib.homeRoot;
   entries = builtins.listToAttrs (map (n: {
     name  = ".claude/skills/${n}";
     value = { src = inputs.claude-skills; subpath = "skills/${n}"; };
@@ -415,26 +415,26 @@ nput.lib.mkManifest {
 ## Command reference
 
 The CLI discovers the entrypoint in the CWD (`flake.nix` → `shell.nix` → `default.nix`),
-overridable with `-f`. Each `nput.<name>` is an independent profile; `<name> = default` is
-resolved by `nput apply` when the name is omitted.
+overridable with `-f`. Each `layat.<name>` is an independent profile; `<name> = default` is
+resolved by `layat apply` when the name is omitted.
 
 ```bash
-nput apply [<name>]            # apply nput.<name> (omitted = nput.default); builds, commits a new generation, places
-nput apply <name> --dryrun     # read-only plan: place/replace/remove/conflict/no-op, zero side effects
-nput apply <name> --recopy     # also overwrite every copy target from its src unconditionally
-nput apply --manifest <farm>   # apply a pre-built link-farm directly (no entrypoint discovery / eval / build)
-nput apply --all               # apply every nput.* in lexicographic order; continues past failures
-nput apply --all --project-root # apply only projectRoot configs (also --home-root / --system-root)
-nput reset <name> [target...]  # tear down placements (no profile change); target omitted = all entries
-nput reset <name> --dryrun     # show what would be removed; zero side effects
-nput rollback <name>           # roll back to the previous generation (home mode only; name required)
-nput list-generations <name>   # list generations (home mode only)
-nput list-generations --all    # list generations for all home-mode configs
-nput gitignore <name>          # print placement targets for .gitignore to stdout (no writes; project mode only)
-nput gitignore --all           # sorted + deduped targets for all projectRoot configs
-nput prune                     # delete the orphan profile series whose recorded root is gone (no name; lists the roots and confirms)
-nput prune --dryrun            # show the series that would be deleted; zero side effects
-nput init <template>           # wrapper over `nix flake init -t github:yasunori0418/nput#<template>`
+layat apply [<name>]            # apply layat.<name> (omitted = layat.default); builds, commits a new generation, places
+layat apply <name> --dryrun     # read-only plan: place/replace/remove/conflict/no-op, zero side effects
+layat apply <name> --recopy     # also overwrite every copy target from its src unconditionally
+layat apply --manifest <farm>   # apply a pre-built link-farm directly (no entrypoint discovery / eval / build)
+layat apply --all               # apply every layat.* in lexicographic order; continues past failures
+layat apply --all --project-root # apply only projectRoot configs (also --home-root / --system-root)
+layat reset <name> [target...]  # tear down placements (no profile change); target omitted = all entries
+layat reset <name> --dryrun     # show what would be removed; zero side effects
+layat rollback <name>           # roll back to the previous generation (home mode only; name required)
+layat list-generations <name>   # list generations (home mode only)
+layat list-generations --all    # list generations for all home-mode configs
+layat gitignore <name>          # print placement targets for .gitignore to stdout (no writes; project mode only)
+layat gitignore --all           # sorted + deduped targets for all projectRoot configs
+layat prune                     # delete the orphan profile series whose recorded root is gone (no name; lists the roots and confirms)
+layat prune --dryrun            # show the series that would be deleted; zero side effects
+layat init <template>           # wrapper over `nix flake init -t github:yasunori0418/layat#<template>`
 ```
 
 ### Global flags
@@ -444,7 +444,7 @@ nput init <template>           # wrapper over `nix flake init -t github:yasunori
 --root <path>       # override the resolved root in any mode
 --no-wait           # on lock contention, skip instead of waiting (for shellHook; explicit apply blocks by default)
 -v, --verbose       # print the placement report (summary + per-target lines); default is silent on success
---version           # print the embedded version and exit (cobra default format `nput version X.Y.Z`; no short flag, since -v is --verbose)
+--version           # print the embedded version and exit (cobra default format `layat version X.Y.Z`; no short flag, since -v is --verbose)
 --debug             # reveal the internal nix commands on stderr (for troubleshooting)
 --project-root      # --all qualifier: only projectRoot configs (also --home-root / --system-root)
 --recopy            # apply qualifier: overwrite every copy target from src
@@ -465,7 +465,7 @@ nput init <template>           # wrapper over `nix flake init -t github:yasunori
   `SubjectResult` per config. `reset --dryrun` is the one path still on the minimal shape).
 - **Stream discipline**: stdout is reserved for machine-readable output (`gitignore`
   listings, `apply --dryrun` plans) — printed even at the default verbosity, so
-  `nput gitignore <name> >> .gitignore` and `nput apply <name> --dryrun | ...` pipe safely.
+  `layat gitignore <name> >> .gitignore` and `layat apply <name> --dryrun | ...` pipe safely.
   **Warnings (e.g. foreign symlinks) and errors always go to stderr** and are never
   silenced.
 
@@ -477,19 +477,19 @@ nput init <template>           # wrapper over `nix flake init -t github:yasunori
 
 ### Behavior notes
 
-- **Idempotent.** Re-applying converges to the same result. For symlinks, nput
+- **Idempotent.** Re-applying converges to the same result. For symlinks, layat
   conservatively removes only the stale links it recorded as placing that still point where
-  the record says — it never touches your real files or foreign links. Existing nput
+  the record says — it never touches your real files or foreign links. Existing layat
   symlinks are replaced; a foreign symlink is replaced with a warning; a real file or
   directory at the target is an error (no overwrite).
-- **Generations** ride on nput's own Nix profile (`nix-env --profile <dir>`). Switch to an
+- **Generations** ride on layat's own Nix profile (`nix-env --profile <dir>`). Switch to an
   arbitrary generation, prune, and GC via the standard `nix-env` / `nix-collect-garbage`
   against the profile path. project mode skips committing a new generation when the
   link-farm is unchanged (but still repairs drifted entries via `lstat`).
 - **`apply --all`** applies each config independently (each is atomic on its own profile),
   continues past failures, and exits non-zero if any failed. It is **not** atomic as a
   whole.
-- **`reset`** is a filesystem-only teardown: it removes nput-managed symlinks
+- **`reset`** is a filesystem-only teardown: it removes layat-managed symlinks
   (conservatively) **and** deletes copy targets (the only explicit way to remove a copy). It
   requires a name (`--all` is not supported), requires confirmation or `-y`, and leaves the
   profile/generations untouched — entries still in the config are re-placed on the next
@@ -502,26 +502,26 @@ nput init <template>           # wrapper over `nix flake init -t github:yasunori
 The axis is not "feature presence" but **"hide placement behind a module abstraction, or
 expose it as a pure function you control."**
 
-| Tool | Role | Approach | Difference from nput |
+| Tool | Role | Approach | Difference from layat |
 |---|---|---|---|
-| npins / niv | source version pinning | — | does not place files (orthogonal — compose with nput) |
+| npins / niv | source version pinning | — | does not place files (orthogonal — compose with layat) |
 | home-manager `home.file` | file placement + generations | module (generate / declare) | requires HM; whole-environment model; the file module cannot be extracted standalone |
-| `mkOutOfStoreSymlink` (HM) | out-of-store symlink | helper inside a module | HM-only; nput provides an equivalent as a dependency-free explicit function |
-| nixpkgs `linkFarm` / `symlinkJoin` | store-internal symlink trees | pure function | output stays *inside* the store; never placed at an arbitrary out-of-store path (nput uses it internally) |
-| `nix profile` | generation management | — | placement target is fixed at `~/.nix-profile`; no arbitrary-path placement (nput rides on it) |
+| `mkOutOfStoreSymlink` (HM) | out-of-store symlink | helper inside a module | HM-only; layat provides an equivalent as a dependency-free explicit function |
+| nixpkgs `linkFarm` / `symlinkJoin` | store-internal symlink trees | pure function | output stays *inside* the store; never placed at an arbitrary out-of-store path (layat uses it internally) |
+| `nix profile` | generation management | — | placement target is fixed at `~/.nix-profile`; no arbitrary-path placement (layat rides on it) |
 | `systemd.tmpfiles` (`L`) | declarative symlink to an arbitrary path | module (NixOS) | low-level, NixOS-only, no copy / generations / fetch abstraction |
 | numtide/system-manager | non-NixOS `/etc` + systemd + packages | module (`lib.evalModules`) | overlapping domain but the **opposite** approach; no arbitrary-path placement, HOME dotfiles, or subdirectory extraction |
 | `git clone` (shell) | clone and place | imperative | no reproducibility or Nix integration |
-| **nput** | independent placement of fetched sources + generations + explicit out-of-store | **pure function, user-managed** | — |
+| **layat** | independent placement of fetched sources + generations + explicit out-of-store | **pure function, user-managed** | — |
 
 No single existing tool is nearly identical. The building blocks (symlink farm, nix
-profile, out-of-store, arbitrary-path symlink) all exist, but nput is the only one that
+profile, out-of-store, arbitrary-path symlink) all exist, but layat is the only one that
 bundles them as "fetch-agnostic + non-generating + per-entry application + HM-independent
 pure-function core + cross-platform shared schema + arbitrary-path placement × generation
-management." In particular nput does **not** compete with system-manager: the domains
+management." In particular layat does **not** compete with system-manager: the domains
 (packages / systemd / `/etc`) overlap, but the philosophy ("hide in a module" vs. "expose
 as a pure function") differs at the design level. For a real distro base, system / service /
-package layers would be delegated to or combined with system-manager, while nput stays a
+package layers would be delegated to or combined with system-manager, while layat stays a
 **granular arbitrary-path placement primitive**.
 
 ---
@@ -546,10 +546,10 @@ package layers would be delegated to or combined with system-manager, while nput
 
 - The function-based "package install + PATH" mechanism for the distro north-star is
   undefined and out of scope.
-- Boot / init / filesystem / partition layers are not nput's domain.
+- Boot / init / filesystem / partition layers are not layat's domain.
 - Removing a clone leaves an orphan profile directory under
-  `<state>/nix/profiles/nput/` (the store is freed by `nix-collect-garbage`, but the
-  profile directory remains). `nput prune` deletes the series whose recorded root no longer
+  `<state>/nix/profiles/layat/` (the store is freed by `nix-collect-garbage`, but the
+  profile directory remains). `layat prune` deletes the series whose recorded root no longer
   exists; it lists the root paths and asks before deleting anything.
 - The home-manager module cannot separate roles into multiple profiles in the MVP — use the
   standalone CLI for that.

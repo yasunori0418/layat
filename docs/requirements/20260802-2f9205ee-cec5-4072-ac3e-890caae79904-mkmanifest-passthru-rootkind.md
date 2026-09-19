@@ -11,13 +11,13 @@ specification: |
   path string in `passthru.root`. `rootKind` SHALL be determined at evaluation time
   (resolving the concrete path remains the engine's runtime work), so that the CLI can
   determine profileDir *before* building via
-  `nix eval <ep>#nput.<system>.<name>.rootKind` and proceed in flock-then-build order.
+  `nix eval <ep>#layat.<system>.<name>.rootKind` and proceed in flock-then-build order.
 specification_ja: |
   `lib.mkManifest` の返り値 derivation は `passthru.rootKind`（`"project"` / `"home"` /
   `"system"` / `"fixed"`）を持たなければならない。`fixed` のときは `passthru.root` に
   絶対パス文字列を持たなければならない。`rootKind` は eval 時に確定しなければならず
   （実体パス解決は engine 実行時）、CLI がビルド前に
-  `nix eval <ep>#nput.<system>.<name>.rootKind` で profileDir を確定して flock → build の
+  `nix eval <ep>#layat.<system>.<name>.rootKind` で profileDir を確定して flock → build の
   順に進められるようにする。
 ---
 # REQ-2f9205ee-cec5-4072-ac3e-890caae79904: mkManifest の返り値は passthru で root kind を露出する
@@ -27,7 +27,7 @@ specification_ja: |
 返り値 derivation は `passthru.rootKind`（`"project"` / `"home"` / `"system"` /
 `"fixed"`、`fixed` のときは `passthru.root` に絶対パス文字列）を持つ。
 
-CLI が**ビルド前に** `nix eval <ep>#nput.<system>.<name>.rootKind` で profileDir を
+CLI が**ビルド前に** `nix eval <ep>#layat.<system>.<name>.rootKind` で profileDir を
 確定し、flock → build の順に進める実行フロー（`docs/spec.md`「実行フロー」）を
 成立させるため。
 

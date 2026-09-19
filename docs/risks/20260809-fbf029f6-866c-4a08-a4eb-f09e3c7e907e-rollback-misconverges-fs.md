@@ -12,7 +12,7 @@ level: high
 
 ## リスク
 
-nput は profile ディレクトリ自体ではなく任意 root へ配置するため、profile ポインタを
+layat は profile ディレクトリ自体ではなく任意 root へ配置するため、profile ポインタを
 戻しただけでは FS は何も変わらない。`rollback` は「現世代 N の manifest を baseline、
 戻る世代 N-1 を target」として planner を回し、apply と同順（配置前除去 → 配置 / 張替え →
 copy 反映 → stale 除去）で FS を収束させてから、最後にポインタを移す

@@ -1,4 +1,4 @@
-# nput
+# layat
 
 フェッチ済み git リポジトリを、ユーザー環境の任意パスへ symlink / copy で配置する Nix ライブラリ・モジュール群の用語集。設定生成は行わない。
 
@@ -9,23 +9,23 @@
 ### 配置の中心抽象
 
 **配置プリミティブ (placement primitive)**:
-nput のコア。「nix store のパスを root 相対の target に配置する」純粋関数。モジュール抽象で隠さず、ユーザーが合成して使う（→ ADR-0004）。
+layat のコア。「nix store のパスを root 相対の target に配置する」純粋関数。モジュール抽象で隠さず、ユーザーが合成して使う（→ ADR-0004）。
 _Avoid_: 「配置フレームワーク」「設定管理」（設定は生成しない）
 
-**engine (nput エンジン)**:
-配置（**ネイティブ FS 操作**）と stale 除去を一手に所有する**配置コア**。`manifest.json` を入力に取り `nix`（profile）/ `git`（toplevel）のみ叩く Go **ライブラリ**として実装し、**nput CLI** が import して駆動する（→ ADR-0003, ADR-0006, ADR-0007）。config ごとに bash を生成しない。「ライブラリ」は **`internal/` のバイナリ内層分離**であって公開 import 可能な再利用モジュールではない（安定面は `manifest.json` 契約に閉じる）。**stdlib-only 厳守**（`syscall.Flock` / `filepath.WalkDir` ベースのコピー / `encoding/json`）。CLI が link-farm を `nix build --out-link <profileDir>/.pending` で取得し、配置〜`nix-env --set` の **GC 窓**を indirect gcroot で塞ぐ（`profileDir` は config 専用ディレクトリで profile リンクは `<profileDir>/profile`・世代 `profile-N-link`・backref `.root` は `<roothash>` 階層・→ ADR-0011, ADR-0025）。実行順は **eval 先行 → flock → build**で、`mkManifest` が passthru する `rootKind` を安価 eval で先取りして profileDir を確定し、flock を取ってから build を**ロック内**で行う（profileDir 未確定の循環と out-link 競合を同時に解消・→ ADR-0023）。非 build コマンド（`reset` / `rollback` / `list-generations`）も profileDir 確定のため rootKind eval を先行し、`apply --all` は rootKind を 1 回の一括 eval で取る（→ ADR-0024）。並行実行は**解決後 profileDir 単位**の flock で直列化する（明示 apply は blocking wait / shellHook は try-lock skip・同一 profileDir 衝突はユーザー責任で後勝ち・→ ADR-0013）。配置前に target の祖先 component を lstat walk し、symlink ならネスト不可で error 停止する。target に foreign symlink（自身の前世代 manifest に記録の無い・別 config / 別ツール / 手動）があれば warning を出して後勝ちで置換する（→ ADR-0015）。
+**engine (layat エンジン)**:
+配置（**ネイティブ FS 操作**）と stale 除去を一手に所有する**配置コア**。`manifest.json` を入力に取り `nix`（profile）/ `git`（toplevel）のみ叩く Go **ライブラリ**として実装し、**layat CLI** が import して駆動する（→ ADR-0003, ADR-0006, ADR-0007）。config ごとに bash を生成しない。「ライブラリ」は **`internal/` のバイナリ内層分離**であって公開 import 可能な再利用モジュールではない（安定面は `manifest.json` 契約に閉じる）。**stdlib-only 厳守**（`syscall.Flock` / `filepath.WalkDir` ベースのコピー / `encoding/json`）。CLI が link-farm を `nix build --out-link <profileDir>/.pending` で取得し、配置〜`nix-env --set` の **GC 窓**を indirect gcroot で塞ぐ（`profileDir` は config 専用ディレクトリで profile リンクは `<profileDir>/profile`・世代 `profile-N-link`・backref `.root` は `<roothash>` 階層・→ ADR-0011, ADR-0025）。実行順は **eval 先行 → flock → build**で、`mkManifest` が passthru する `rootKind` を安価 eval で先取りして profileDir を確定し、flock を取ってから build を**ロック内**で行う（profileDir 未確定の循環と out-link 競合を同時に解消・→ ADR-0023）。非 build コマンド（`reset` / `rollback` / `list-generations`）も profileDir 確定のため rootKind eval を先行し、`apply --all` は rootKind を 1 回の一括 eval で取る（→ ADR-0024）。並行実行は**解決後 profileDir 単位**の flock で直列化する（明示 apply は blocking wait / shellHook は try-lock skip・同一 profileDir 衝突はユーザー責任で後勝ち・→ ADR-0013）。配置前に target の祖先 component を lstat walk し、symlink ならネスト不可で error 停止する。target に foreign symlink（自身の前世代 manifest に記録の無い・別 config / 別ツール / 手動）があれば warning を出して後勝ちで置換する（→ ADR-0015）。
 _Avoid_: 「config ごとに生成される bash スクリプト」「各層がネイティブ機構へ翻訳する」「層ごとの配置ロジック」「CLI と一体の平らな単一実装」「engine を公開 Go モジュールとして外部から import する」（エンジンは `manifest.json` in 契約を保つ `internal/` 層）
 
-**nput CLI**:
-ユーザーが叩く一次 UX。PATH に常駐する `packages.nput`。**entrypoint** を発見（CWD 既定 / `-f` で上書き）し、内部で `nix build` / `eval` を回して named manifest を得て **engine** に配置させる。`apply [<name>]`（省略時は `nput.default`）/ `apply --all` / `reset`（配置物を無い状態へ戻す。名指し必須・→ ADR-0020, ADR-0021）/ `rollback`（home mode 限定）/ `list-generations`（home mode 限定）/ `gitignore`（project mode 限定・→ ADR-0023）/ `prune`（root が実在しない孤児 profile 系列を削除する。名指し不要・entrypoint 発見も nix eval / build もしない・→ ADR-0034, ADR-0036 §3）/ `init` のサブコマンドを持つ。**`apply` の manifest 取得元は 2 つ**: entrypoint を build する（標準）か、ビルド済み link-farm を `--manifest` で直接渡す（`apply --manifest`・module / host activation の engine kick・取得後の挙動は同一・→ ADR-0026）。内部で叩く nix コマンドは `--help` で開示する（→ ADR-0007）。
+**layat CLI**:
+ユーザーが叩く一次 UX。PATH に常駐する `packages.layat`。**entrypoint** を発見（CWD 既定 / `-f` で上書き）し、内部で `nix build` / `eval` を回して named manifest を得て **engine** に配置させる。`apply [<name>]`（省略時は `layat.default`）/ `apply --all` / `reset`（配置物を無い状態へ戻す。名指し必須・→ ADR-0020, ADR-0021）/ `rollback`（home mode 限定）/ `list-generations`（home mode 限定）/ `gitignore`（project mode 限定・→ ADR-0023）/ `prune`（root が実在しない孤児 profile 系列を削除する。名指し不要・entrypoint 発見も nix eval / build もしない・→ ADR-0034, ADR-0036 §3）/ `init` のサブコマンドを持つ。**`apply` の manifest 取得元は 2 つ**: entrypoint を build する（標準）か、ビルド済み link-farm を `--manifest` で直接渡す（`apply --manifest`・module / host activation の engine kick・取得後の挙動は同一・→ ADR-0026）。内部で叩く nix コマンドは `--help` で開示する（→ ADR-0007）。
 _Avoid_: config ごとの `nix run .#x` ラッパーを一次 UX と説明すること（per-config ラッパー `mkActivationScript` は廃止 → ADR-0007）、`apply` を「常に entrypoint を build する」と説明すること（`--manifest` でビルド済み link-farm も適用する・→ ADR-0026）
 
 **entrypoint**:
-nput CLI が読む nix の config ファイル。`flake.nix` / `shell.nix` / `default.nix` のいずれか。**`nput.<name>`** に named manifest（`mkManifest` の結果）を公開する。config は依然 Nix で書き `nix build` で評価される（→ ADR-0007）。
-_Avoid_: 「nput が CWD から config 内容そのものを発見する」と説明すること（発見するのは entrypoint *ファイル*。config は Nix 評価で確定する）
+layat CLI が読む nix の config ファイル。`flake.nix` / `shell.nix` / `default.nix` のいずれか。**`layat.<name>`** に named manifest（`mkManifest` の結果）を公開する。config は依然 Nix で書き `nix build` で評価される（→ ADR-0007）。
+_Avoid_: 「layat が CWD から config 内容そのものを発見する」と説明すること（発見するのは entrypoint *ファイル*。config は Nix 評価で確定する）
 
 **module (モジュール / 配線)**:
-standalone・home-manager・将来の NixOS・devShell `shellHook` といった統合層。エンジンを起動する**配線**に徹し、自身では配置しない。`home.file` / `systemd.tmpfiles` へは翻訳しない（→ ADR-0003, ADR-0005）。**kick 方法は 2 クラス**（→ ADR-0026）: **entrypoint 駆動**（standalone / devShell は `nput.<name>` を公開し `nput apply <name>` で build→配置）と、**ビルド済み manifest**（home-manager・将来 NixOS/darwin はモジュール評価時に `mkManifest` でビルドした link-farm を `nput apply --manifest <link-farm>` で配置）。配置〜世代コミットは両クラスで同一エンジン経路。HM モジュールは MVP では単一 `nput.entries` = 1 profile（固定名 `default`）で**役割分離は不可**。複数 profile（役割分離・個別 rollback）は standalone CLI の `nput.<name>` 経路のみで、HM の複数化は将来 seam（→ ADR-0024, ADR-0025）。
+standalone・home-manager・将来の NixOS・devShell `shellHook` といった統合層。エンジンを起動する**配線**に徹し、自身では配置しない。`home.file` / `systemd.tmpfiles` へは翻訳しない（→ ADR-0003, ADR-0005）。**kick 方法は 2 クラス**（→ ADR-0026）: **entrypoint 駆動**（standalone / devShell は `layat.<name>` を公開し `layat apply <name>` で build→配置）と、**ビルド済み manifest**（home-manager・将来 NixOS/darwin はモジュール評価時に `mkManifest` でビルドした link-farm を `layat apply --manifest <link-farm>` で配置）。配置〜世代コミットは両クラスで同一エンジン経路。HM モジュールは MVP では単一 `layat.entries` = 1 profile（固定名 `default`）で**役割分離は不可**。複数 profile（役割分離・個別 rollback）は standalone CLI の `layat.<name>` 経路のみで、HM の複数化は将来 seam（→ ADR-0024, ADR-0025）。
 _Avoid_: 「モジュールがファイルを配置する」「モジュールがネイティブ機構へ変換する」
 
 ### 配置の入出力
@@ -80,22 +80,22 @@ _Avoid_: 「vendoring」「成果物をコミットする配置」と混同す�
 _Avoid_: out-of-store symlink と混同すること、「コピー」と呼ぶこと
 
 **out-of-store symlink**:
-ローカル絶対パスへのライブ symlink。`nput.lib.mkOutOfStoreSymlink "/abs/path"` でのみ opt-in する明示的退避路（開発中 dotfiles のライブ編集用）。第一級機能ではない（→ ADR-0001）。
+ローカル絶対パスへのライブ symlink。`layat.lib.mkOutOfStoreSymlink "/abs/path"` でのみ opt-in する明示的退避路（開発中 dotfiles のライブ編集用）。第一級機能ではない（→ ADR-0001）。
 _Avoid_: デフォルト挙動として扱うこと、`src` の型による暗黙分岐で生むこと
 
 ### 状態管理
 
 **generation (世代)**:
-ロールバック単位。nput 自身の nix profile（`nix-env --profile <dir>` 式）に乗せて管理する（→ ADR-0002）。コミット（`--set`）・rollback（`--rollback`）・任意世代切替（`--switch-generation`）・一覧（`--list-generations`）・間引き（`--delete-generations`）は**全て `nix-env --profile <dir>` 系で統一**し、store GC のみ `nix-collect-garbage`（→ ADR-0015）。`rollback` は profile dir ≠ 配置先のため再配置が必須で、stale 除去は baseline=離れる世代・ポインタ移動は最後（→ ADR-0015）。
+ロールバック単位。layat 自身の nix profile（`nix-env --profile <dir>` 式）に乗せて管理する（→ ADR-0002）。コミット（`--set`）・rollback（`--rollback`）・任意世代切替（`--switch-generation`）・一覧（`--list-generations`）・間引き（`--delete-generations`）は**全て `nix-env --profile <dir>` 系で統一**し、store GC のみ `nix-collect-garbage`（→ ADR-0015）。`rollback` は profile dir ≠ 配置先のため再配置が必須で、stale 除去は baseline=離れる世代・ポインタ移動は最後（→ ADR-0015）。
 _Avoid_: 「stateless スクリプト」前提の語り（初期方針からは覆っている）、`nix profile`（新CLI: `list` / `wipe-history` / `rollback`）で管理すること（profile-manifest を要求し `nix-env --set` 製 profile では動かない・→ ADR-0015）
 
 **store マニフェスト (store manifest)**:
-「nput が配置した」記録を持つ世代由来のデータ。実体は link-farm derivation 内の **`manifest.json`**（`schemaVersion` 付き）で、Nix（`lib.mkManifest`）が生成し Go エンジンが読む **Nix↔Go の契約**。GC 参照は併存する symlink farm が明示的に張る。エンジンの保守的 stale 除去（記録通りを指す nput 管理 symlink だけ削除し、ユーザーの実ファイルには触れない）の不変条件を支える（→ ADR-0002, ADR-0003, ADR-0006）。
+「layat が配置した」記録を持つ世代由来のデータ。実体は link-farm derivation 内の **`manifest.json`**（`schemaVersion` 付き）で、Nix（`lib.mkManifest`）が生成し Go エンジンが読む **Nix↔Go の契約**。GC 参照は併存する symlink farm が明示的に張る。エンジンの保守的 stale 除去（記録通りを指す layat 管理 symlink だけ削除し、ユーザーの実ファイルには触れない）の不変条件を支える（→ ADR-0002, ADR-0003, ADR-0006）。
 
 ### エラー処理
 
 **エラー wrap 規約 (error-wrap convention)**:
-`internal/engine/` のエラーは**発生源（syscall / exec / parse に最も近い箇所）で 1 回だけ** `fmt.Errorf("nput: cannot <op> (<target>): %w", ...)` の形で op（何をしようとしたか）と対象パスを付けて wrap する。呼び出し元は素通し（bare `return err`）が既定で、伝搬経路での再 wrap は `nput: ...: nput: ...` の二重 context ノイズと既存のエラー文字列 assert 破壊を招くため行わない。sentinel エラー（`ErrSkipped` = `lock.ErrLocked` 等）は常に `%w` で透過させ、呼び出し元が `errors.Is` で判定できる状態を保つ。監査の判定基準は「ユーザーに見える失敗が op＋対象を少なくとも 1 回含むか」であり、含まれていれば伝搬経路の途中に op＋対象が無くても規約違反ではない。
+`internal/engine/` のエラーは**発生源（syscall / exec / parse に最も近い箇所）で 1 回だけ** `fmt.Errorf("layat: cannot <op> (<target>): %w", ...)` の形で op（何をしようとしたか）と対象パスを付けて wrap する。呼び出し元は素通し（bare `return err`）が既定で、伝搬経路での再 wrap は `layat: ...: layat: ...` の二重 context ノイズと既存のエラー文字列 assert 破壊を招くため行わない。sentinel エラー（`ErrSkipped` = `lock.ErrLocked` 等）は常に `%w` で透過させ、呼び出し元が `errors.Is` で判定できる状態を保つ。監査の判定基準は「ユーザーに見える失敗が op＋対象を少なくとも 1 回含むか」であり、含まれていれば伝搬経路の途中に op＋対象が無くても規約違反ではない。
 _Avoid_: 境界を跨ぐたびに context を積み増すこと、sentinel を wrap で握り潰し `errors.Is` を辿れなくすること
 
 ## Flagged ambiguities
@@ -105,7 +105,7 @@ _Avoid_: 境界を跨ぐたびに context を積み増すこと、sentinel を w
 - **project mode の配置物は untracked が前提**。**ephemeral placement** を「コミットする vendoring」と取り違えない。`.gitignore` への列挙は専用コマンドの stdout 出力から得る（activation は `.gitignore` に触れない）。
 - **`src` と `subpath` は別概念**。`src` = どの物（store パス / リポジトリ）、`subpath` = その中のどのパス。名前が似ているが直交する。旧名 `source`（= 現 `subpath`）は使わない（→ ADR-0008）。
 - **「standalone」は配置モードではなく起動形態**。standalone（= CLI を直接叩く起動形態）と配置モード（home / project / system）は直交する。standalone から project mode も home mode も使える。「standalone = home mode」と短絡しない（配置モードは `root` マーカーが決める）。
-- **project mode の `nput` は devShell 同梱が canonical**。`templates/project` の devShell `packages` に pin 版 `nput` を入れ、CLI と `nput.lib`（manifest `schemaVersion`）を同一 flake 入力で一致させる。グローバル install は standalone（home mode）の利便（→ ADR-0015）。
+- **project mode の `layat` は devShell 同梱が canonical**。`templates/project` の devShell `packages` に pin 版 `layat` を入れ、CLI と `layat.lib`（manifest `schemaVersion`）を同一 flake 入力で一致させる。グローバル install は standalone（home mode）の利便（→ ADR-0015）。
 - **entry の配置種別フィールドは `method`**（旧名 `mode`）。unix file mode との誤読を避ける改名（→ ADR-0015）。
 
 ## 会話例
@@ -116,8 +116,8 @@ _Avoid_: 境界を跨ぐたびに context を積み増すこと、sentinel を w
 >
 > **Dev**: 配置自体は home-manager のときは `home.file` に変換されるの？
 >
-> **Maintainer**: しない。全層で nput **エンジン**が**ネイティブ FS 操作**で配置する。home-manager **モジュール**はエンジンを起動する**配線**でしかない。だから振る舞いは層を跨いで同じ。
+> **Maintainer**: しない。全層で layat **エンジン**が**ネイティブ FS 操作**で配置する。home-manager **モジュール**はエンジンを起動する**配線**でしかない。だから振る舞いは層を跨いで同じ。
 >
 > **Dev**: 前の **世代** に戻したら、消える symlink がユーザーの実ファイルを巻き込んだりは？
 >
-> **Maintainer**: しない。**store マニフェスト**が「nput が置いた」と記録した symlink だけをエンジンが消す。**target** に元からある実ファイルには触れない。
+> **Maintainer**: しない。**store マニフェスト**が「layat が置いた」と記録した symlink だけをエンジンが消す。**target** に元からある実ファイルには触れない。

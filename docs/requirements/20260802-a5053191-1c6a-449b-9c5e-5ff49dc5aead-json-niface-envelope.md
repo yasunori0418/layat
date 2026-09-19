@@ -17,7 +17,7 @@ specification: |
   structured into the envelope while the human-facing text on stderr SHALL always
   coexist. The exit code table SHALL be unchanged, and the niface `status` SHALL follow it:
   exit 0 maps to `success`, exit 1 and 2 map to `error`. `tool.version` SHALL be the
-  ldflags-embedded `main.version`. The JSON output of nput SHALL conform to the niface
+  ldflags-embedded `main.version`. The JSON output of layat SHALL conform to the niface
   convention, both now and for future features.
 specification_ja: |
   `--json` 指定時、CLI は stdout に niface エンベロープを 1 文書だけ出さなければならない。
@@ -30,7 +30,7 @@ specification_ja: |
   エラーはエンベロープに構造化しつつ、stderr の人間向けテキストを常時併存させなければ
   ならない。終了コード表は不変でなければならず、niface `status` は exit 0 → `success` /
   1・2 → `error` に連動させなければならない。`tool.version` は ldflags 埋め込みの
-  `main.version` としなければならない。nput の JSON 出力は現在も将来の機能も niface
+  `main.version` としなければならない。layat の JSON 出力は現在も将来の機能も niface
   規約に準拠しなければならない。
 ---
 # REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead: --json は niface 規約準拠のエンベロープを出す第 2 契約とする
@@ -59,7 +59,7 @@ specification_ja: |
 read-only 列挙（`list-generations` の世代・`gitignore` のパス）は
 `results[i].result.info` のツール固有インベントリに置き id 導出 item にはしない。
 
-**nput の JSON 出力は現在も将来の機能も niface 規約に準拠する**（エコシステム合成の
+**layat の JSON 出力は現在も将来の機能も niface 規約に準拠する**（エコシステム合成の
 北極星要件）。
 
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する次の点は本 item の

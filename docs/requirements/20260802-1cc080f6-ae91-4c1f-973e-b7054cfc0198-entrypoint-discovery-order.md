@@ -7,11 +7,11 @@ derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
   The CLI SHALL discover an entrypoint file, that is, a nix file exposing a named manifest
-  at `nput.<name>`. By default it SHALL search the current working directory in the
+  at `layat.<name>`. By default it SHALL search the current working directory in the
   priority order `flake.nix` → `shell.nix` → `default.nix`. The `-f` / `--file <path>`
   flag SHALL specify the entrypoint explicitly and SHALL override the automatic search.
 specification_ja: |
-  CLI は entrypoint ファイル（`nput.<name>` に named manifest を公開する nix ファイル）を
+  CLI は entrypoint ファイル（`layat.<name>` に named manifest を公開する nix ファイル）を
   発見しなければならない。既定では CWD を `flake.nix` → `shell.nix` → `default.nix` の
   優先順で探さなければならない。`-f` / `--file <path>` は entrypoint を明示指定し、自動探索を
   上書きしなければならない。
@@ -20,7 +20,7 @@ specification_ja: |
 
 ## 仕様
 
-CLI は **entrypoint ファイル**（`nput.<name>` に named manifest を公開する nix ファイル）を
+CLI は **entrypoint ファイル**（`layat.<name>` に named manifest を公開する nix ファイル）を
 発見する。
 
 | 方法 | 挙動 |

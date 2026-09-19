@@ -1,8 +1,8 @@
-# sara カスタムモデルスキーマ（nput）
+# sara カスタムモデルスキーマ（layat）
 #
 # sara（https://github.com/cledouarec/sara）が docs/ をナレッジグラフとして
 # 検証するための型定義。`sara schema -o` で吐いた組み込みモデルを起点に、
-# nput の文書構造へ全面的に置き換えたもの（カスタムスキーマは組み込みを
+# layat の文書構造へ全面的に置き換えたもの（カスタムスキーマは組み込みを
 # 完全置換する仕様で、部分マージはされない）。
 #
 # 設計の出典: epic GitHub Issue #203（grilling 2026-07-31 / 2026-08-01 で確定）、
@@ -29,15 +29,15 @@
 # ## 組み込みから落とした型
 #
 # hardware_requirement / hardware_detailed_design / scenario / system_architecture は
-# 定義しない。nput にハードウェアは無く、Scenario / SystemArchitecture に対応する
+# 定義しない。layat にハードウェアは無く、Scenario / SystemArchitecture に対応する
 # 実体（use_case と requirement の中間層・requirement と design の中間層）も持たない。
 # 組み込みの system_requirement / software_requirement / software_detailed_design は
 # 汎用名の requirement / design へ寄せた。
 #
 # ## 型名・フィールド名の方針
 #
-# 型名・フィールド名は汎用のまま保ち、nput 固有の語彙を混ぜない。この model.yaml は
-# 当面 nput 内に置くが、型が安定したら skills リポジトリか専用リポジトリへ切り出して
+# 型名・フィールド名は汎用のまま保ち、layat 固有の語彙を混ぜない。この model.yaml は
+# 当面 layat 内に置くが、型が安定したら skills リポジトリか専用リポジトリへ切り出して
 # 他プロジェクトへ横展開する前提のため（→ #203「model.yaml の置き場所」）。
 #
 # ## ID 形式（フル UUIDv4）
@@ -62,7 +62,7 @@
 item_types:
   # ---- 仕様の系統（solution → use_case → requirement → design）----
 
-  # 根。nput というプロダクトが何であるかの 1 件。docs/solution/。
+  # 根。layat というプロダクトが何であるかの 1 件。docs/solution/。
   - id: solution
     display_name: Solution
     prefix: SOL
@@ -125,7 +125,7 @@ item_types:
         display_name: Specification (ja)
         field_type: text
         required: true
-        placeholder: nput は <要求> を満たさなければならない。
+        placeholder: layat は <要求> を満たさなければならない。
     allowed_targets:
       - relation: derives_from
         targets:
@@ -181,7 +181,7 @@ item_types:
         display_name: Specification (ja)
         field_type: text
         required: true
-        placeholder: nput は <品質方針> を満たさなければならない。
+        placeholder: layat は <品質方針> を満たさなければならない。
     allowed_targets:
       - relation: derives_from
         targets:
@@ -482,7 +482,7 @@ relations:
   # ---- 独自定義: ADR 間の peer 関係 ----
   #
   # 組み込みの supersedes / superseded_by は当面定義しない（恒久的な排除ではない）。
-  # supersedes は「文書丸ごとの失効」を意味するが、nput の ADR 改訂は全て節単位の
+  # supersedes は「文書丸ごとの失効」を意味するが、layat の ADR 改訂は全て節単位の
   # 部分改訂で、丸ごと失効した実例が無い（改訂実態の調査 2026-08-01: 最も近い
   # ADR-0033 ← ADR-0043 でも、タイトルになった決定自体は存続している）。
   # 実例の無い関係を先に定義すると、部分改訂に supersedes を誤用して「旧 ADR は

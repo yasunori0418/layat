@@ -16,7 +16,7 @@ level: high
 
 ## リスク
 
-nput は flake の entrypoint と legacy の非 flake entrypoint という 2 つの入口を持ち、
+layat は flake の entrypoint と legacy の非 flake entrypoint という 2 つの入口を持ち、
 project mode ではさらに git から root を解決する。入口が増えるほど「同じ配置のはずなのに
 入口によって結果が違う」という食い違いが入り込む。
 
@@ -29,7 +29,7 @@ project mode ではさらに git から root を解決する。入口が増え�
   立つ必要がある。分岐が attr path の組み立てを越えて広がると、入口ごとに別実装を抱えること
   になる（この分岐の閉じ込め方は設計上の選択であり、別の設計を採れば消える risk なので
   design にも張る）
-- **既存の利用体験の破壊** — legacy の入口へ nput のための属性を足したことで、素の nix-shell
+- **既存の利用体験の破壊** — legacy の入口へ layat のための属性を足したことで、素の nix-shell
   としての利用が壊れる
 - **store 化の差の取り違え** — flake 経路では相対パスの配置元が store へ入るのに対し、
   legacy の impure な評価では作業木のパスのまま解決される。この差は意図されたものであり、

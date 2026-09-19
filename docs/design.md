@@ -1,4 +1,4 @@
-# nput 設計書
+# layat 設計書
 
 要求（requirement）とテスト計画（test_plan）を「どう実現するか」の全体像と、個別設計
 （design item）への索引。
@@ -32,7 +32,7 @@ symlink または copy で配置する Nix ライブラリ・モジュール群�
 動作しつつ、HM / NixOS / nix-darwin のモジュールとも統合できる。ただし統合層は配置ロジックを
 持たず、エンジンを起動する薄い配線に徹する（→ ADR-0003）。
 
-nput が何であるか・何のために作るかは solution / use_case の領分。→ `docs/concept.md`。
+layat が何であるか・何のために作るかは solution / use_case の領分。→ `docs/concept.md`。
 
 ---
 
@@ -47,7 +47,7 @@ design item が持つ**。ここは軸の名前と着眼点だけを並べ、満
 | 独立性 | home-manager 不在の環境で単体で動くか |
 | 統合性 | 既存のモジュールシステムから起動できるか |
 | 柔軟性 | モジュールシステムを介さずに使えるか |
-| 取得手段非依存 | 取得方法の変化が nput の変更を要求しないか |
+| 取得手段非依存 | 取得方法の変化が layat の変更を要求しないか |
 | 粒度 | リポジトリ全体・サブディレクトリ・単一ファイルを同じ扱いにできるか |
 | 更新の独立性 | 1 つの更新が他の配置単位へ波及しないか |
 | 非生成 | ファイルの内容に関与していないか |
@@ -64,7 +64,7 @@ design item が持つ**。ここは軸の名前と着眼点だけを並べ、満
 
 - [DSG-1361df1a-31c4-46ed-a6ce-92938f94ac02](design/20260802-1361df1a-31c4-46ed-a6ce-92938f94ac02-repo-layout.md) — リポジトリを lib / cmd / internal / templates / modules のトップレベル 5 ディレクトリへ分ける
 - [DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5](design/20260802-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5-lib-module-split.md) — lib は公開 API・型定義・manifest 生成・マーカー構築子の 4 ファイルへ分割する
-- [DSG-7d354fe0-a333-495b-9f4b-14bba316dc47](design/20260802-7d354fe0-a333-495b-9f4b-14bba316dc47-go-package-split.md) — Go 側は cmd/nput に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする
+- [DSG-7d354fe0-a333-495b-9f4b-14bba316dc47](design/20260802-7d354fe0-a333-495b-9f4b-14bba316dc47-go-package-split.md) — Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする
 - [DSG-aeb5e219-4784-4950-845c-35f9bab9179c](design/20260802-aeb5e219-4784-4950-845c-35f9bab9179c-modules-file-split.md) — modules は common.nix に共通オプションを集約し、統合層ごとに 1 ファイルへ分ける
 - [DSG-4a84f282-76ea-47c9-aede-deac12ff5257](design/20260802-4a84f282-76ea-47c9-aede-deac12ff5257-implementation-scope.md) — 実装スコープを standalone CLI + project mode + home mode に限り、system mode とモジュール 2 層は将来拡張に置く
 
@@ -82,11 +82,11 @@ CLI / engine / lib / `common.nix` / 統合層の 5 段に積み、依存は呼�
 
 ## flake.nix outputs 設計
 
-nput 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統。
-ユーザーの entrypoint 側は `nput.<name>` に named manifest を公開し、直書きと flake-parts の
+layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統。
+ユーザーの entrypoint 側は `layat.<name>` に named manifest を公開し、直書きと flake-parts の
 2 経路が同一の derivation を生む（→ ADR-0007, ADR-0029, ADR-0032）。
 
-- [DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58](design/20260802-16373ec2-3496-4b12-b3b1-ef74e0435b58-flake-outputs-attrs.md) — nput 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する
+- [DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58](design/20260802-16373ec2-3496-4b12-b3b1-ef74e0435b58-flake-outputs-attrs.md) — layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する
 - [DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda](design/20260802-0e186e89-c8c6-4bca-9daa-03855e8d5cda-module-stubs.md) — NixOS / nix-darwin モジュールは中身を将来拡張としたままスタブとして公開する
 - [DSG-d2e17f4f-0d32-45c1-8125-17e589664c85](design/20260802-d2e17f4f-0d32-45c1-8125-17e589664c85-lib-no-dynamic-entries.md) — 動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す
 - [DSG-92f54490-872a-42ac-bbd7-d06e9ee381c6](design/20260802-92f54490-872a-42ac-bbd7-d06e9ee381c6-legacy-nix-invocation-reuse.md) — legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する
@@ -123,7 +123,7 @@ nput 自身の flake outputs は packages / templates / 各モジュール / fla
 ## 使用パターン
 
 → `docs/concept.md`「想定する使われ方」（use_case 7 件）。個々の設定の書き方はテンプレート
-（`nput init`）と `templates/` の実物を参照する。
+（`layat init`）と `templates/` の実物を参照する。
 
 ---
 

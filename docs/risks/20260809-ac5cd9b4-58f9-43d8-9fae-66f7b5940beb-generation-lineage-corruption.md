@@ -14,7 +14,7 @@ level: high
 
 ## リスク
 
-`profileDir` の解決規則か、そこに並ぶ世代リンクの読み取りが誤ると、nput は「前世代」に
+`profileDir` の解決規則か、そこに並ぶ世代リンクの読み取りが誤ると、layat は「前世代」に
 別 config の manifest を読む。前世代 manifest は stale 除去の入力そのものなので、
 取り違えた瞬間に「別 config が置いた symlink を、この config の stale として消す」という
 誤削除に直結する。

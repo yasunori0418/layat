@@ -33,7 +33,7 @@ ENOTDIR で落ち、「バッチ途中の失敗」にならない）。root で�
   dir symlink の配置が、後続の無関係な配置失敗でまとめて巻き戻る。実ディレクトリと
   配下の leaf symlink が元どおりになり、half-migrated で残らない
 - `--recopy` の rename 退避が rename で戻り、新しい copy 内容ではなく pre-apply の
-  （ローカル編集済み）内容が残る。stray な `.nput-recopy-aside` を残さない
+  （ローカル編集済み）内容が残る。stray な `.layat-recopy-aside` を残さない
 
 **commit 失敗の非対称性**（TC-e048211f-0844-4446-9957-fb444c1da4e5）
 

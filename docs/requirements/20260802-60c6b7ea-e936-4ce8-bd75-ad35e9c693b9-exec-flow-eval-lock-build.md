@@ -92,10 +92,10 @@ specification_ja: |
 pending out-link は `<profileDir>/.pending`。
 
 ```
-nput apply <name> [-f <ep>] [--root <p>]
+layat apply <name> [-f <ep>] [--root <p>]
   0. entrypoint 発見（-f 上書き）
   1. root kind を先取り eval:
-     nix eval <ep>#nput.<system>.<name>.rootKind（legacy は per-system 次元なし: nix eval -f <ep> nput.<name>.rootKind）
+     nix eval <ep>#layat.<system>.<name>.rootKind（legacy は per-system 次元なし: nix eval -f <ep> layat.<name>.rootKind）
      → root 解決（kind: project=git rev-parse / home=$HOME / system=/ / 固定パス、--root 上書き）
      → profileDir 確定（home: <name> / project: <roothash>/<name>。--root 明示時は全モード <roothash>/<name>）
        ※ rootKind は mkManifest の passthru として eval 時に確定（git toplevel / $HOME の実体解決は engine 実行時）
@@ -103,10 +103,10 @@ nput apply <name> [-f <ep>] [--root <p>]
      a. flock を取得（キー = 確定 profileDir）。
         明示 apply / rollback は blocking（LOCK_EX・取得まで待ち「他の apply 完了待ち」を表示）。
         shellHook 経路（--no-wait）は try-lock（LOCK_NB）で保持中ならスキップし、stderr に1行通知する
-        （例: `nput: another apply in progress, skipped (run \`nput apply\` manually)`・シェル入室はブロックしない）。
+        （例: `layat: another apply in progress, skipped (run \`layat apply\` manually)`・シェル入室はブロックしない）。
         同一 profileDir への同時実行はユーザー責任で衝突時は後勝ち
-     b. ロック内で nix build <ep>#nput.<system>.<name> --out-link <profileDir>/.pending
-        （legacy は nix build -f <ep> nput.<name> --out-link <profileDir>/.pending）
+     b. ロック内で nix build <ep>#layat.<system>.<name> --out-link <profileDir>/.pending
+        （legacy は nix build -f <ep> layat.<name> --out-link <profileDir>/.pending）
         → os.Readlink で link-farm store path を得る。out-link が indirect gcroot を張り
           配置〜--set の GC 窓を塞ぐ。build がロック内なので out-link 競合は構造的に起きない
      c. profileDir の前世代 manifest.json を読む（無ければ初回 = 削除対象ゼロ）

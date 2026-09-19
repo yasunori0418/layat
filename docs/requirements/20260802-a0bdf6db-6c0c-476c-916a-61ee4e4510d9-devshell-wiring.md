@@ -35,7 +35,7 @@ specification_ja: |
 ```nix
 devShells.default = pkgs.mkShell {
   shellHook = ''
-    nput apply skills --no-wait
+    layat apply skills --no-wait
   '';
 };
 ```
@@ -48,7 +48,7 @@ devShells.default = pkgs.mkShell {
 > **上は原文の写しで、規範は frontmatter が正**。世代スキップ短絡そのもの（derivation 同一なら
 > 世代を積まず lstat ドリフト修復だけ行う）は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、project mode の root 解決は
 > REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e、モジュールと devShell が一律配線であることは REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9、`--no-wait` の
-> try-lock 挙動は REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461 の担当。上のコードブロックの `nput apply skills --no-wait` は
+> try-lock 挙動は REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461 の担当。上のコードブロックの `layat apply skills --no-wait` は
 > 使用例であり、devShell が `--all --project-root` を使うべきであることは REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b、
 > devShell への CLI 同梱が project mode の canonical であることは REQ-14f0aec9-abae-4621-82f3-40536a1ad904 が規定する。
 

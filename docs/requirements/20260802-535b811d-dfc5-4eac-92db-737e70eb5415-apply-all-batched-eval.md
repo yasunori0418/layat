@@ -7,16 +7,16 @@ derives_from:
 specification: |
   `apply --all` SHALL obtain the rootKinds in a single batched eval: a map from config
   name to rootKind SHALL be obtained at once with
-  `nix eval <ep>#nput.<system> --apply 'cs: builtins.mapAttrs (_: c: c.rootKind) cs' --json`
+  `nix eval <ep>#layat.<system> --apply 'cs: builtins.mapAttrs (_: c: c.rootKind) cs' --json`
   (for a legacy entrypoint, which has no per-system dimension,
-  `nix eval -f <ep> nput --apply 'cs: …' --json`), and each `profileDir` SHALL be
+  `nix eval -f <ep> layat --apply 'cs: …' --json`), and each `profileDir` SHALL be
   determined from it. Filters such as `--project-root` SHALL also be dispatched from this
   result. Only the build SHALL be performed N times, once per config, for the sake of
   atomicity. This SHALL fix the eval process startup cost at 1 rather than N.
 specification_ja: |
   `apply --all` は rootKind を 1 回の一括 eval で取らなければならない。
-  `nix eval <ep>#nput.<system> --apply 'cs: builtins.mapAttrs (_: c: c.rootKind) cs' --json`
-  （legacy は per-system 次元なし: `nix eval -f <ep> nput --apply 'cs: …' --json`）で
+  `nix eval <ep>#layat.<system> --apply 'cs: builtins.mapAttrs (_: c: c.rootKind) cs' --json`
+  （legacy は per-system 次元なし: `nix eval -f <ep> layat --apply 'cs: …' --json`）で
   config 名 → rootKind マップを 1 回で取得し、各 profileDir を確定しなければならない。
   `--project-root` 等のフィルタもこの結果で振り分けなければならない。build だけは
   atomic 性のため config ごと N 回行わなければならない。eval プロセス起動コストを
@@ -27,8 +27,8 @@ specification_ja: |
 ## 仕様
 
 **`apply --all` は rootKind を 1 回の一括 eval で取る**。
-`nix eval <ep>#nput.<system> --apply 'cs: builtins.mapAttrs (_: c: c.rootKind) cs' --json`
-（legacy は per-system 次元なし: `nix eval -f <ep> nput --apply 'cs: …' --json`）で
+`nix eval <ep>#layat.<system> --apply 'cs: builtins.mapAttrs (_: c: c.rootKind) cs' --json`
+（legacy は per-system 次元なし: `nix eval -f <ep> layat --apply 'cs: …' --json`）で
 config 名 → rootKind マップを 1 回で取得し、各 profileDir を確定する。`--project-root` 等の
 フィルタもこの結果で振り分ける。build だけは atomic 性のため config ごと N 回。
 eval プロセス起動コストを N→1 に固定する。

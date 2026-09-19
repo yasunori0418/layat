@@ -1,7 +1,7 @@
 ---
 id: "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
 type: requirement
-name: "世代は link farm derivation を nput 自前 profile へコミットして積み、前世代 manifest から stale を除去する"
+name: "世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から stale を除去する"
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -16,12 +16,12 @@ specification: |
   new generation so as to determine which entries have disappeared; place the symlinks,
   out-of-store symlinks and place-once copies, doing the new placements and replacements
   first and the stale removal last; and only once everything has succeeded, commit by
-  updating the nput nix profile through `nix-env --profile <profileDir>/profile --set
+  updating the layat nix profile through `nix-env --profile <profileDir>/profile --set
   <link-farm-drv>`, that being the commit point in every mode, so that a partial failure
   never reaches the commit and the previous generation is preserved. The previous
-  generation SHALL be read from the previous generation of nput's own profile in every
+  generation SHALL be read from the previous generation of layat's own profile in every
   mode, standalone and module alike, and SHALL NOT depend on the host's `oldGenPath`.
-  nput SHALL hold its own profile in every mode: in standalone it SHALL serve
+  layat SHALL hold its own profile in every mode: in standalone it SHALL serve
   user-facing rollback, whereas in a module (home-manager / NixOS / nix-darwin) it SHALL
   be confined to an internal mechanism holding the previous-generation manifest and stale
   tracking. One profile SHALL correspond to one config, each config being atomic.
@@ -33,15 +33,15 @@ specification_ja: |
   engine は実行時に、解決後 `profileDir` 単位の flock を取得し、前世代の store マニフェストと
   新世代を diff して消えた entry を判定し、symlink / out-of-store symlink / place-once copy を
   配置し（新規・張替を先に、stale 除去を最後に）、全て成功してから
-  `nix-env --profile <profileDir>/profile --set <link-farm-drv>` で nput の nix
+  `nix-env --profile <profileDir>/profile --set <link-farm-drv>` で layat の nix
   profile を更新しなければならない。この `--set` が全モード共通のコミット点であり、途中失敗は
-  そこへ到達せず前世代を保つ。前世代は standalone / module を問わず全モード共通で nput 自身の
-  profile の前世代から読み、ホストの `oldGenPath` に依存してはならない。nput は全モードで自前
+  そこへ到達せず前世代を保つ。前世代は standalone / module を問わず全モード共通で layat 自身の
+  profile の前世代から読み、ホストの `oldGenPath` に依存してはならない。layat は全モードで自前
   profile を持たなければならず、standalone ではユーザー向け rollback に使い、module
   （HM / NixOS / darwin）では前世代マニフェストと stale 追跡のための内部機構に留めなければ
   ならない。1 profile は 1 config に対応しなければならず、config 単位で atomic とする。
 ---
-# REQ-1be4d678-959c-44d7-a346-44bfd95af56e: 世代は link farm derivation を nput 自前 profile へコミットして積み、前世代 manifest から stale を除去する
+# REQ-1be4d678-959c-44d7-a346-44bfd95af56e: 世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から stale を除去する
 
 ## 仕様
 
@@ -52,20 +52,20 @@ specification_ja: |
   0. 解決後 `profileDir` 単位の flock を取得
   1. **前世代の store マニフェスト**（`manifest.json`）と新世代を diff し、消えた entry の
      **symlink を除去**（stale 除去）
-     - 前世代は **全モード共通で nput 自身の profile の前世代**から読む（standalone も module も
+     - 前世代は **全モード共通で layat 自身の profile の前世代**から読む（standalone も module も
        同一。ホストの oldGenPath には依存しない）
   2. symlink / out-of-store / place-once copy を配置（新規・張替を先に、stale 除去を最後に）
-  3. 全て成功してから `nix-env --profile <profileDir>/profile --set <link-farm-drv>` で nput の
+  3. 全て成功してから `nix-env --profile <profileDir>/profile --set <link-farm-drv>` で layat の
      nix profile を更新（コミット点・全モード）。途中失敗は 3 に到達せず前世代を保つ
 
-**nput は全モードで自前 profile を持つ**。standalone では profile をユーザー向け rollback に
+**layat は全モードで自前 profile を持つ**。standalone では profile をユーザー向け rollback に
 使い、module（HM/NixOS/darwin）では profile を**内部機構**（前世代マニフェスト + stale 追跡）に
 留める。
 
 | 機構 | 役割 | 適用層 | 位置 |
 |---|---|---|---|
 | 世代由来の store マニフェスト | stale 除去のための前回状態（不変・GC-root 済み）| 全層共通 | `manifest.json` として link farm derivation 内に埋め込み |
-| nput の nix profile | 前世代の保持・世代番号・GC root | 全モード（standalone はユーザー向け / module は内部）| `profileDir` |
+| layat の nix profile | 前世代の保持・世代番号・GC root | 全モード（standalone はユーザー向け / module は内部）| `profileDir` |
 
 > **上は原文の写しで、規範は frontmatter が正**。原文が参照する次の規範は本 item の
 > 担当ではない。
@@ -93,7 +93,7 @@ REQ-c2d44626-d8f4-446a-a80a-319a500129b4 と、これを論拠として引く RE
 ## 出典
 
 `docs/spec.md`「世代管理仕様」→「機構」節の箇条書きと機構表、および同節の
-「nput は全モードで自前 profile を持つ」段落。atomic 性のみ同「CLI 仕様」→
+「layat は全モードで自前 profile を持つ」段落。atomic 性のみ同「CLI 仕様」→
 「サブコマンド体系」の `apply` の箇条書き（上の注記を参照）。
 
 決定の実体は ADR-0002「世代管理を nix profile に乗せる（全モード自前 profile / rollback は

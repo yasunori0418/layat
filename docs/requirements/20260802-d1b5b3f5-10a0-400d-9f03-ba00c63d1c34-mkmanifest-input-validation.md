@@ -8,7 +8,7 @@ derives_from:
 specification: |
   `lib.mkManifest` SHALL itself run `lib.evalModules` internally to validate and normalize
   `entries` and `root`. Declaring the types only on module options would make validation
-  effective on the module path (`nput.entries`) alone, so `mkManifest` SHALL own the
+  effective on the module path (`layat.entries`) alone, so `mkManifest` SHALL own the
   validation in order to cover the CLI / entrypoint path (a direct `mkManifest` call) as
   well. The entry type definition (the submodule in `lib/types.nix`) SHALL be shared with
   `attrsOf (submodule …)` in `modules/common.nix`, and the resulting double validation on
@@ -16,7 +16,7 @@ specification: |
 specification_ja: |
   `lib.mkManifest` は内部で `lib.evalModules` を回して `entries` / `root` を検査・
   正規化しなければならない。型をモジュールオプションに書くだけでは検査がモジュール経路
-  （`nput.entries`）でしか効かないため、CLI / entrypoint 経路（`mkManifest` 直呼び）でも
+  （`layat.entries`）でしか効かないため、CLI / entrypoint 経路（`mkManifest` 直呼び）でも
   検査を効かせる目的で `mkManifest` 自身が検査を持たなければならない。entry の型定義
   （`lib/types.nix` の submodule）は `modules/common.nix` の `attrsOf (submodule …)` と
   共有しなければならず、モジュール経路での二重検査は純粋・冪等であるため許容される。
@@ -27,7 +27,7 @@ specification_ja: |
 
 `mkManifest` は内部で `lib.evalModules` を回して `entries` / `root` を検査・正規化する。
 
-- 型をオプションに書くだけだと検査が効くのはモジュール経路（`nput.entries`）のみだが、
+- 型をオプションに書くだけだと検査が効くのはモジュール経路（`layat.entries`）のみだが、
   コアである CLI / entrypoint 経路（`mkManifest` 直呼び）でも検査を効かせるため
   `mkManifest` 自身が `evalModules` を回す。
 - `lib.types` / `mkOption` / `evalModules` は `nixpkgs.lib` のコアなので「lib は

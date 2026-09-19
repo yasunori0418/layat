@@ -10,7 +10,7 @@ specification: |
   `normalizeManifest { lib, root, entries } -> attrset` SHALL be a pure data function that
   performs `evalModules` validation, applies defaults (`subpath` → `"."`, `method` →
   `"symlink"`, `target` → the attribute key), and converts the internal marker tag
-  (`_nputMarker`) into the clean enums (`srcKind` / `rootKind`).
+  (`_layatMarker`) into the clean enums (`srcKind` / `rootKind`).
   `normalizeManifest` SHALL be a unit-test target for the Nix evaluation tests (nix-unit /
   namaka). `mkManifest = args: derivation` SHALL write the output of `normalizeManifest`
   into `manifest.json` and assemble the symlink farm. The lib layer SHALL be
@@ -19,7 +19,7 @@ specification: |
 specification_ja: |
   入力検査の実装は 2 段に分かれなければならない。`normalizeManifest { lib, root, entries }
   -> attrset` は `evalModules` 検査・デフォルト適用（`subpath` → `"."` / `method` →
-  `"symlink"` / `target` → 属性キー）・内部 marker タグ（`_nputMarker`）から clean enum
+  `"symlink"` / `target` → 属性キー）・内部 marker タグ（`_layatMarker`）から clean enum
   （`srcKind` / `rootKind`）への変換を行う純データ関数とし、Nix 評価テスト
   （nix-unit / namaka）の単体対象としなければならない。`mkManifest = args:
   derivation` は `normalizeManifest` の出力を `manifest.json` に書き symlink farm を
@@ -39,7 +39,7 @@ specification_ja: |
   nix-unit / namaka の単体対象。
   - `evalModules` 検査
   - デフォルト適用: `subpath` → `"."` / `method` → `"symlink"` / `target` → 属性キー
-  - 内部 marker タグ（`_nputMarker`）→ clean enum（`srcKind` / `rootKind`）変換
+  - 内部 marker タグ（`_layatMarker`）→ clean enum（`srcKind` / `rootKind`）変換
 - **`mkManifest = args: derivation`**: `normalizeManifest` の出力を `manifest.json` に
   書き symlink farm を組む。
 

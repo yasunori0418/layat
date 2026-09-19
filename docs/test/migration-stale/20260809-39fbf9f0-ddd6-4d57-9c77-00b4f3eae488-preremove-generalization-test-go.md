@@ -28,7 +28,7 @@ stale な FS オブジェクト全般」へ一般化されたこと（実ディ�
 - **移行の全か無か**: 移行可能な記録済み symlink の兄弟に foreign 実ファイルが 1 つ混ざる
   だけで conflict 停止し、移行可能な兄弟が一つも除去されないこと。非空サブディレクトリが
   plan 段階で conflict になること
-- **空サブツリー**: 多階層の空サブツリー（nput が作ったものでなくても可）が移行対象になること、
+- **空サブツリー**: 多階層の空サブツリー（layat が作ったものでなくても可）が移行対象になること、
   root 直下の実 dir target も移行されること
 - **method 変更**: symlink → copy は自動移行（記録済み symlink を配置前除去して place-once
   copy を配置）、copy → symlink は通常の上書き拒否 conflict のまま copy を保持、記録済み

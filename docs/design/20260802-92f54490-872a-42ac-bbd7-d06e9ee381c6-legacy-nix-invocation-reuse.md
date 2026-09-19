@@ -16,8 +16,8 @@ nix コマンドの形が異なる。
 
 | entrypoint | build | rootKind eval |
 |---|---|---|
-| flake | `nix build <ep>#nput.<system>.<name>` | `nix eval <ep>#nput.<system>.<name>.rootKind` |
-| legacy | `nix build -f <ep> nput.<name>` | `nix eval -f <ep> nput.<name>.rootKind` |
+| flake | `nix build <ep>#layat.<system>.<name>` | `nix eval <ep>#layat.<system>.<name>.rootKind` |
+| legacy | `nix build -f <ep> layat.<name>` | `nix eval -f <ep> layat.<name>.rootKind` |
 
 **CLI 内部でこの差を吸収するのは attr path（およびフラグ）の組み立て 1 箇所だけ**とし、
 実際の nix 実行を担うヘルパ（`runNixCapture` / `runNixStream`）とエラー処理は
@@ -26,7 +26,7 @@ nix コマンドの形が異なる。
 経路ごとにコマンド実行から書き下ろすのではなく組み立てだけを分岐させる理由は次の 2 つ。
 
 - **REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da が「passthru 形とトップレベル attrset 形の間で実装を分岐させない」**
-  ことを定めている（`nput.<name>` の attr path はどちらの形でも同一）。legacy 経路の
+  ことを定めている（`layat.<name>` の attr path はどちらの形でも同一）。legacy 経路の
   分岐が attr path の組み立て 1 箇所に閉じていれば、その内側で形の違いによる分岐が
   生じる余地がそもそも無くなる。実行系まで経路ごとに書き下ろすと、形ごとの差が
   紛れ込む面が増える

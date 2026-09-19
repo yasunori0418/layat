@@ -1,9 +1,9 @@
 ---
 id: "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 type: solution
-name: "nput は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る"
+name: "layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る"
 ---
-# SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e: nput は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る
+# SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e: layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る
 
 ## 解決したい課題
 
@@ -30,7 +30,7 @@ home-manager / NixOS / nix-darwin / system-manager はいずれも Nix モジュ
 
 ## 解決策の核心
 
-nput は **配置プリミティブ**である。フレームワークではなく、「nix store のパス（リポジトリ
+layat は **配置プリミティブ**である。フレームワークではなく、「nix store のパス（リポジトリ
 全体・サブディレクトリ・単一ファイル）を、root 相対の任意パスへ symlink または copy で置く」
 という単一の責務を、テスト可能な純粋関数として提供する。
 
@@ -45,7 +45,7 @@ nput は **配置プリミティブ**である。フレームワークではな�
 home-manager モデル:
   Nix モジュールオプション → 設定ファイルを生成 → 配置
 
-nput モデル:
+layat モデル:
   リポジトリの内容 → そのまま配置（生成・変換なし）
 ```
 
@@ -55,7 +55,7 @@ nput モデル:
 home-manager モデル:
   [全設定] → switch → 全てが一括で更新される
 
-nput モデル:
+layat モデル:
   [vim-plugins]    → 任意のタイミングで独立更新
   [zsh-plugins]    → 任意のタイミングで独立更新
   [claude-skills]  → 任意のタイミングで独立更新
@@ -73,12 +73,12 @@ nput モデル:
 
 positioning は **project-first**。中心的な使い方はプロジェクト内に組み込んで repo 内の
 任意パスへ配置する project mode であり、`$HOME` 配置・system 配置は明示マーカーで opt-in
-する例外として位置づける（→ ADR-0007）。ユーザーは PATH 常駐の `nput` CLI を叩き、CLI が
+する例外として位置づける（→ ADR-0007）。ユーザーは PATH 常駐の `layat` CLI を叩き、CLI が
 entrypoint（`flake.nix` / `shell.nix` / `default.nix`）を発見して配置する。
 
 配置先のデフォルトは常に Nix ストアへの symlink であり、再現性を担保する（→ ADR-0001）。
 手元の dotfiles を直接参照してライブ編集したい場合に限り、明示関数
-`nput.lib.mkOutOfStoreSymlink "/abs/path"` で Nix ストアを経由しない退避路を選べる。
+`layat.lib.mkOutOfStoreSymlink "/abs/path"` で Nix ストアを経由しない退避路を選べる。
 
 ## 出典
 

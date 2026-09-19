@@ -8,7 +8,7 @@ derives_from:
 specification: |
   The envelope SHALL be written to stdout exactly once, at command completion (one
   document plus a trailing newline, with nothing else on stdout). It SHALL be emitted only
-  for an execution of a nput subcommand proper, that is, one that passed flag parsing and
+  for an execution of a layat subcommand proper, that is, one that passed flag parsing and
   argument validation and reached RunE. `--help` / `--version` and the cobra-generated
   `help` / `completion` SHALL NOT emit an envelope, since their own text occupies stdout.
   A failure of flag parsing or argument validation SHALL likewise emit no envelope,
@@ -18,7 +18,7 @@ specification: |
   that a missing document is not read as success.
 specification_ja: |
   エンベロープはコマンド完了時に stdout へ 1 回だけ書かなければならない（1 文書 +
-  末尾改行・それ以外 stdout には何も出さない）。emit するのは nput 自身のサブコマンド
+  末尾改行・それ以外 stdout には何も出さない）。emit するのは layat 自身のサブコマンド
   実行（フラグ解析・引数検証を通過して RunE に到達したもの）のみでなければならない。`--help` /
   `--version`・cobra 自動生成の `help` / `completion` はエンベロープを出してはならない
   （それぞれのテキストが stdout を使うため）。フラグ解析・引数検証の失敗もエンベロープ
@@ -32,7 +32,7 @@ specification_ja: |
 ## 仕様
 
 **emit タイミングと成立条件**: エンベロープは**コマンド完了時に 1 回だけ** stdout へ書く
-（1 文書 + 末尾改行・それ以外 stdout には何も出ない）。emit するのは nput 自身の
+（1 文書 + 末尾改行・それ以外 stdout には何も出ない）。emit するのは layat 自身の
 サブコマンド実行（フラグ解析・引数検証を通過して RunE に到達したもの）のみ。
 `--help` / `--version`・cobra 自動生成の `help` / `completion` はエンベロープを出さない
 （それぞれのテキストが stdout を使う）。フラグ解析・引数検証の失敗もエンベロープなし

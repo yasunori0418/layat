@@ -51,7 +51,7 @@ manifest の copy entry を直接走査する（配置の可否は plan の conf
 ### DSG-7d354fe0-a333-495b-9f4b-14bba316dc47 / DSG-17db0831-d7da-446d-ba3e-404df64c582d とのスコープの違い
 
 本 item が述べるのは **`internal/` の内部をどう割るか**であり、既存の 2 item とは扱う境界が違う。
-DSG-7d354fe0-a333-495b-9f4b-14bba316dc47 は `cmd/nput`（CLI 面）と `internal/`（配置ロジック）の 2 パッケージ境界を定める
+DSG-7d354fe0-a333-495b-9f4b-14bba316dc47 は `cmd/layat`（CLI 面）と `internal/`（配置ロジック）の 2 パッケージ境界を定める
 もので、`internal/` の中身には踏み込まない。DSG-17db0831-d7da-446d-ba3e-404df64c582d は CLI / engine / lib / `common.nix` /
 統合層という言語横断の 5 段と、その間の依存の向きを定めるもので、同じく engine を 1 段として
 扱い内部を割らない。本 item はその engine 1 段の内側に planner / engine の境界を引く。

@@ -12,7 +12,7 @@ specification: |
   separate entrypoints, machines or tools) cannot be detected at eval time and SHALL
   instead be handled at engine runtime as last-writer-wins plus a foreign symlink warning.
   The two SHALL remain separate paths. Where several configs do ride on a single
-  evaluation, as the `nput.configs` of one module configuration do, static detection is
+  evaluation, as the `layat.configs` of one module configuration do, static detection is
   possible and SHALL NOT be precluded by this; that case is stated by REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 and is
   not restated here.
 specification_ja: |
@@ -22,7 +22,7 @@ specification_ja: |
   別ツールに跨る場合）の同一 target 衝突は eval では検出できず、engine 実行時の後勝ち +
   foreign symlink warning として扱わなければならない。両者は別経路として保たなければ
   ならない。単一の eval に載る複数 config
-  （1 つのモジュール config の `nput.configs` など）については静的検出が可能であり、
+  （1 つのモジュール config の `layat.configs` など）については静的検出が可能であり、
   本 item はそれを妨げない。その場合の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の担当で、本 item では
   規定しない。
 ---
@@ -39,7 +39,7 @@ cross-config（別 profile・別 manifest）の同一 target 衝突は eval で�
 
 > **上は原文の写しで、規範は frontmatter が正**。原文が「cross-config」を無条件に「eval では
 > 検出不可」とするのに対し、規範文では**単一の eval に載らない場合**（別 entrypoint・別マシン・
-> 別ツール）へ限定した。**ADR-0035 §4 が、1 つのモジュール config 内の `nput.configs.<A>` と
+> 別ツール）へ限定した。**ADR-0035 §4 が、1 つのモジュール config 内の `layat.configs.<A>` と
 > `<B>` は全 config が同一のモジュール eval に載るため正規化後 target の衝突を静的に検出でき、
 > eval 時 assertion で停止すると決定済み**で、原文の無条件な言い切りはこれを否定してしまう
 > （原文が ADR-0035 に未追従・REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 / REQ-16faf428-77f3-492f-b858-222c5274cbf7 で ADR-0036 由来の未追従を扱ったのと
@@ -53,5 +53,5 @@ cross-config（別 profile・別 manifest）の同一 target 衝突は eval で�
 
 決定の実体は同一 manifest 内の target 衝突を eval 時に検出すると定めた ADR-0024
 「実装前残セマンティクス第6巡」§5 で、cross-config を「単一の eval に載らない場合」へ限定した
-のは ADR-0035「HM モジュールに `nput.configs.<name>` を導入し複数 profile（役割分離）を
+のは ADR-0035「HM モジュールに `layat.configs.<name>` を導入し複数 profile（役割分離）を
 可能にする」§4（単一のモジュール eval に載る config 間は静的検出が可能）。

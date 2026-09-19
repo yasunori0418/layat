@@ -86,7 +86,7 @@ Stated as a discriminator per type:
 
 | Type | The norm binds | Parent | Signature test |
 |---|---|---|---|
-| `requirement` | The product's behaviour and contracts. Observable by a user who never reads this repo. | `use_case` | Some way of *using* nput would change if it were dropped. |
+| `requirement` | The product's behaviour and contracts. Observable by a user who never reads this repo. | `use_case` | Some way of *using* layat would change if it were dropped. |
 | `quality` | The development process, conventions and governance. Cuts across the work rather than attaching to a feature, and is not itself about verifying anything. | `solution` | Only contributors would notice it being dropped; the shipped artifact is unchanged, and no verification is lost. |
 | `test_plan` | The scope, levels and approach of testing, including access to what is under test. | `solution` | The reason it exists at all is that something has to be verified. |
 
@@ -112,12 +112,12 @@ stability and backward compatibility. Where a surface exists solely so that some
 be tested, and disclaims the guarantees a contract would carry, testability dominates and
 the item is a `test_plan`.
 
-**A norm about how nput is built.** Constraints such as "the engine is stdlib-only", "the
+**A norm about how layat is built.** Constraints such as "the engine is stdlib-only", "the
 CLI's third-party dependencies are limited to cobra and pinned by vendorHash", "`lib`
 depends on nixpkgs.lib alone" look like process rules, but they stay `requirement`. They
 are architectural boundaries the user meets: `lib` depending on nixpkgs.lib alone is what
 lets a user import it into any Nix environment without dragging in home-manager. The
-discriminator is the signature test — drop the norm and a way of using nput changes. A
+discriminator is the signature test — drop the norm and a way of using layat changes. A
 genuine `quality` counterpart would be a rule about *how the repo works* (a review
 convention, a CI obligation) that no consumer can observe.
 
@@ -145,10 +145,10 @@ version — without changing what the product emits or accepts — would be `qua
 **A norm about a nix-level workflow.** These are `requirement` whenever the workflow they
 bind is the *consumer's*. "`nix flake check` warns `unknown flake output` and this is
 accepted; primary verification is `nix build`" binds what the consumer's own flake emits —
-a property of the output namespace nput asks users to adopt. "A flake entrypoint evaluates
+a property of the output namespace layat asks users to adopt. "A flake entrypoint evaluates
 purely and a legacy one may evaluate impurely at the user's own risk" and
 "`experimental-features` is a precondition the CLI will not paper over" bind what the
-consumer's nix environment must supply for nput to work at all. Had any of them been a rule
+consumer's nix environment must supply for layat to work at all. Had any of them been a rule
 about this repository's own CI, it would be `quality` (or `infrastructure`, if it were about
 the pipeline that runs it rather than the norm it upholds).
 
@@ -221,7 +221,7 @@ the test suite is `high`; stable code already covered by a mechanical check is `
 
 This axis asks one question only: **how recoverable is it once someone notices?** Whether
 anyone *would* notice is deliberately not scored (→ ADR-0052). Silence is real and worth
-recording, but nearly every threat in nput is silent — placement drifts without announcing
+recording, but nearly every threat in layat is silent — placement drifts without announcing
 itself — so scoring it saturates the scale and ranks nothing. Say it in the item's prose
 instead, where it stays legible without pretending to sort the corpus. The `medium` row
 spells out "silently or not" for the same reason: an earlier version of this scale sent

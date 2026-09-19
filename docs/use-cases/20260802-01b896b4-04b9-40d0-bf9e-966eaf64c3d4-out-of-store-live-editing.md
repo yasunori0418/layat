@@ -10,11 +10,11 @@ refines:
 ## 使われ方
 
 手元の dotfiles リポジトリを開発している最中は、編集のたびに flake を更新して再適用するのは
-回り道になる。この場合に限り、明示関数 `nput.lib.mkOutOfStoreSymlink "/abs/path"` で Nix
+回り道になる。この場合に限り、明示関数 `layat.lib.mkOutOfStoreSymlink "/abs/path"` で Nix
 ストアを経由しない symlink を張り、ファイル編集と同時に反映させる。
 
 ```nix
-".config/nvim" = { src = nput.lib.mkOutOfStoreSymlink "/home/user/dotfiles/nvim"; };
+".config/nvim" = { src = layat.lib.mkOutOfStoreSymlink "/home/user/dotfiles/nvim"; };
 ```
 
 これは headline 機能ではなく**明示的な退避路**である。配置先のデフォルトは常に Nix ストアへの

@@ -12,7 +12,7 @@ specification: |
   differ. Its `items` SHALL be the full inventory of every entry of the new manifest plus
   the old entries in the stale removal plan, in the same item shape as apply. Because a
   dryrun executes nothing, the skipped state SHALL NOT appear. A conflicting entry SHALL
-  be `item.status:"failed"` with `error.code:"E_NPUT_COLLISION"`; the JSON output and exit
+  be `item.status:"failed"` with `error.code:"E_LAYAT_COLLISION"`; the JSON output and exit
   2 SHALL coexist, and the item-caused error SHALL NOT be duplicated into
   `results[i].errors[]`.
 
@@ -53,7 +53,7 @@ specification_ja: |
   ならない。`items` は新 manifest の全 entry + stale 除去計画に載った旧 entry のフルイン
   ベントリとし、item 形は apply と同一としなければならない。dryrun は何も実行しないため
   skipped 区分は現れてはならない。
-  conflict の entry は `item.status:"failed"` + `error.code:"E_NPUT_COLLISION"` とし、
+  conflict の entry は `item.status:"failed"` + `error.code:"E_LAYAT_COLLISION"` とし、
   JSON 出力と exit 2 は両立させ、item 起因エラーを `results[i].errors[]` へ二重化しては
   ならない。
 
@@ -95,7 +95,7 @@ specification_ja: |
   `items` = 新 manifest の全 entry + stale 除去計画に載った旧 entry（フルインベントリ・
   item 形は変更系と同一〔`info={target, method, subpath}`〕）。dryrun は何も実行しないため
   skipped 区分は現れない。conflict の entry は `item.status:"failed"` +
-  `error.code:"E_NPUT_COLLISION"`（message は planner の理由）で、**JSON 出力と exit 2 は
+  `error.code:"E_LAYAT_COLLISION"`（message は planner の理由）で、**JSON 出力と exit 2 は
   両立**し、item 起因エラーは `results[i].errors[]` へ二重化しない。
 - **`apply --dryrun` の changes**: 予定差分のみ（place / copy 新規 → `add`・
   replace → `modify`・除去 → `remove`。同一 target の unlink + 再配置〔method 変更〕は

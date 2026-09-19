@@ -9,9 +9,9 @@ specification: |
   every re-entry of the `shellHook` — A places it, B detects it as foreign and takes it,
   A takes it back — which is an active oscillation rather than a single instance of the
   last writer winning. Not aiming at the same target from several configs SHALL be the
-  responsibility of the user, and nput SHALL make the situation visible through the
+  responsibility of the user, and layat SHALL make the situation visible through the
   foreign symlink warning and SHALL NOT hold any mechanism that detects and stops it at
-  engine runtime. Where several configs ride on a single evaluation, as the `nput.configs`
+  engine runtime. Where several configs ride on a single evaluation, as the `layat.configs`
   of one module configuration do, a static detection at eval time is possible and SHALL
   NOT be precluded by this; that case is stated by REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 and is not restated here.
   The foreign warning during an oscillation will keep appearing under the high frequency
@@ -23,9 +23,9 @@ specification: |
 specification_ja: |
   別 config が同一 target を狙うと、ドリフト修復が「A が置く → B が foreign 検知して奪う →
   A が再奪取」と `shellHook` 再入のたびに振動しうる（単発の後勝ちではなく能動的オシレーション）。
-  「同一 target を複数 config で狙わない」はユーザー責任とし、nput は foreign symlink warning で
+  「同一 target を複数 config で狙わない」はユーザー責任とし、layat は foreign symlink warning で
   可視化するに留め、engine 実行時に検知して止める機構を持ってはならない。単一の eval に載る
-  複数 config（1 つのモジュール config の `nput.configs` など）については eval 時の静的検出が
+  複数 config（1 つのモジュール config の `layat.configs` など）については eval 時の静的検出が
   可能であり、本 item はそれを妨げない。その場合の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の担当で、本 item
   では規定しない。振動中の foreign warning は
   `shellHook` の高頻度実行で出続けるが、これは設定ミスのシグナルとして正しいものと
@@ -52,7 +52,7 @@ specification_ja: |
 > 評価時に検出することは REQ-5c6b07da-3d06-414d-8770-4f438234b322 の担当（本 item は config をまたぐ場合を扱う）。
 >
 > **「検知して止める機構を持たない」を engine 実行時へ限定した理由**: **ADR-0035 §4 が、
-> 1 つのモジュール config 内の `nput.configs.<A>` と `<B>` は全 config が同一のモジュール eval に
+> 1 つのモジュール config 内の `layat.configs.<A>` と `<B>` は全 config が同一のモジュール eval に
 > 載るため正規化後 target の衝突を静的に検出でき、eval 時 assertion で停止すると決定済み**で、
 > 原文の無条件な言い切りはこれを否定してしまう（原文が ADR-0035 に未追従・REQ-5c6b07da-3d06-414d-8770-4f438234b322 と
 > 同じ扱い）。本 item は静的検出が可能な場合を妨げないことまでを規範とし、その場合に実際に
@@ -67,5 +67,5 @@ specification_ja: |
 決定の実体は ADR-0023「実装前残セマンティクス第5巡」（cross-config 同一 target をユーザー責任と
 すること）と ADR-0024「実装前残セマンティクス第6巡」（振動 warning を抑制しないこと）。
 「検知して止める機構を持たない」を engine 実行時へ限定したのは ADR-0035「HM モジュールに
-`nput.configs.<name>` を導入し複数 profile（役割分離）を可能にする」§4（単一のモジュール eval に
+`layat.configs.<name>` を導入し複数 profile（役割分離）を可能にする」§4（単一のモジュール eval に
 載る config 間は静的検出が可能）。

@@ -15,14 +15,14 @@ symlink は read-only で編集できないため、この用途には copy を�
 具体例は「カラーテーマリポジトリから特定テーマだけを `~/.local/share/themes` に配置して
 手元で色を調整する」。
 
-copy は **place-once**（初回マテリアライズしたら以後 nput は触らない）。target が既に在れば
+copy は **place-once**（初回マテリアライズしたら以後 layat は触らない）。target が既に在れば
 上書きせず、編集済みの内容は不可触である。`src` 側の更新を反映したいときは
-`nput apply --recopy`（全 copy target を src から無条件上書き）か、`nput reset` で撤去して
+`layat apply --recopy`（全 copy target を src から無条件上書き）か、`layat reset` で撤去して
 再 apply する（→ ADR-0020）。
 
 ```bash
-nput apply <name> --recopy   # copy target を src から無条件に上書き再コピー
-nput reset <name> [target]   # 配置物を撤去（copy も削除・確認あり）
+layat apply <name> --recopy   # copy target を src から無条件に上書き再コピー
+layat reset <name> [target]   # 配置物を撤去（copy も削除・確認あり）
 ```
 
 copy は世代管理の対象外であり、ロールバックされない。entry が消えても copy target は自動
@@ -38,7 +38,7 @@ copy は世代管理の対象外であり、ロールバックされない。ent
   撤去には専用の手段が要る。その手段（`reset`）は copy を消す唯一の明示手段だが、reset 自体は
   copy 専用ではなく symlink を含む配置物を home / project の両モードで撤去する
   （→ UC-f2436d68-91ff-4c48-b1df-47acefe4f464 / UC-19a90989-0ae3-438f-8a75-4e1e2637f81c）
-- nput が置いていない実ファイルが target に在るとき、黙って skip せず可視化されること
+- layat が置いていない実ファイルが target に在るとき、黙って skip せず可視化されること
 - src ツリー内の symlink が deref されず構造が保たれること
 
 ## 出典

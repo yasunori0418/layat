@@ -6,11 +6,11 @@ derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
 specification: |
   The NixOS and nix-darwin modules SHALL take, in addition to the common options, a
-  required `nput.user :: string` used to identify the user placement is for. In the
+  required `layat.user :: string` used to identify the user placement is for. In the
   home-manager module and standalone, `user` SHALL NOT be required, both referring to
   `$HOME`.
 specification_ja: |
-  NixOS / nix-darwin モジュールは共通オプションに加えて `nput.user :: string` を必須で
+  NixOS / nix-darwin モジュールは共通オプションに加えて `layat.user :: string` を必須で
   取らなければならない（配置先ユーザーの特定に使用する）。home-manager と standalone は
   `$HOME` を参照するため、`user` を必須としてはならない。
 ---
@@ -19,7 +19,7 @@ specification_ja: |
 ## 仕様
 
 ```
-nput.user :: string       # 必須（配置先ユーザーの特定に使用）
+layat.user :: string       # 必須（配置先ユーザーの特定に使用）
 ```
 
 home-manager と standalone は `$HOME` を参照するため `user` は不要。
@@ -33,6 +33,6 @@ home-manager と standalone は `$HOME` を参照するため `user` は不要�
 
 `docs/spec.md`「モジュールオプション仕様」→「NixOS / nix-darwin 追加オプション（将来拡張）」節。
 
-決定の実体は ADR-0003「配置ロジックは全層 nput エンジンが所有し、モジュールは配線に徹する」で、
+決定の実体は ADR-0003「配置ロジックは全層 layat エンジンが所有し、モジュールは配線に徹する」で、
 各層が root（NixOS なら `config.users.users.<user>.home`）を供給する配線に徹すると定めている。
 配置先ユーザーを特定する `user` オプションは、その供給に host が `<user>` を要することから来る。

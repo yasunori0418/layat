@@ -5,12 +5,12 @@ name: "rollback と list-generations は home mode 限定にする"
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
 specification: |
-  `nput rollback` and `nput list-generations` SHALL be restricted to home mode. In project
+  `layat rollback` and `layat list-generations` SHALL be restricted to home mode. In project
   mode generations SHALL be kept as an internal mechanism and SHALL NOT be exposed to the
   user. `list-generations --all` SHALL list the generations of every home mode config and
   SHALL be read-only.
 specification_ja: |
-  `nput rollback` と `nput list-generations` は home mode 限定でなければならない。
+  `layat rollback` と `layat list-generations` は home mode 限定でなければならない。
   project mode では世代を内部機構に留め、ユーザーに公開してはならない。
   `list-generations --all` は home mode の全 config の世代を一覧しなければならず、
   読み取り専用でなければならない。
@@ -20,9 +20,9 @@ specification_ja: |
 ## 仕様
 
 ```bash
-nput rollback <name>           # 前世代へ戻す（home mode 限定・名指し必須）
-nput list-generations <name>   # 世代一覧を表示（home mode 限定）
-nput list-generations --all    # home mode の全 config の世代を一覧
+layat rollback <name>           # 前世代へ戻す（home mode 限定・名指し必須）
+layat list-generations <name>   # 世代一覧を表示（home mode 限定）
+layat list-generations --all    # home mode の全 config の世代を一覧
 ```
 
 `rollback` / `list-generations` は **home mode 限定**。project mode は世代を内部機構に
@@ -31,7 +31,7 @@ nput list-generations --all    # home mode の全 config の世代を一覧
 
 `rollback` が名指し必須である点は REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796 の担当。
 
-> **原文「standalone（CLI）」節の残る規範の所在**: 同節の第 1 文（`nput apply <name>` の
+> **原文「standalone（CLI）」節の残る規範の所在**: 同節の第 1 文（`layat apply <name>` の
 > 明示実行と、CLI による entrypoint 発見・manifest ビルド・エンジン駆動）は REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 /
 > REQ-1cc080f6-ae91-4c1f-973e-b7054cfc0198、世代管理の機構そのものは REQ-1be4d678-959c-44d7-a346-44bfd95af56e の担当。
 

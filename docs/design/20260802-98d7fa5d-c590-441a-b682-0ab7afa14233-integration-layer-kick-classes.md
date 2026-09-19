@@ -18,15 +18,15 @@ satisfies:
 
 | クラス | 該当層 | link-farm の取得 |
 |---|---|---|
-| **entrypoint 駆動** | standalone CLI / devShell | ユーザーが `nput.<name>` を entrypoint に公開し、CLI が発見 → `nix eval`（rootKind 先取り）→ `nix build` |
-| **ビルド済み manifest** | home-manager（将来の NixOS / nix-darwin）| モジュール評価時に `mkManifest` でビルドした link-farm を、activation から `nput apply --manifest <link-farm>` へ渡す |
+| **entrypoint 駆動** | standalone CLI / devShell | ユーザーが `layat.<name>` を entrypoint に公開し、CLI が発見 → `nix eval`（rootKind 先取り）→ `nix build` |
+| **ビルド済み manifest** | home-manager（将来の NixOS / nix-darwin）| モジュール評価時に `mkManifest` でビルドした link-farm を、activation から `layat apply --manifest <link-farm>` へ渡す |
 
 層ごとのクラス割り当てと起動方法は次の通り。
 
 | 層 | クラス | 起動方法 |
 |---|---|---|
-| standalone（CLI）| entrypoint 駆動 | `nput apply <name>` を明示実行 |
-| devShell | entrypoint 駆動 | `shellHook` から `nput apply <name>` |
+| standalone（CLI）| entrypoint 駆動 | `layat apply <name>` を明示実行 |
+| devShell | entrypoint 駆動 | `shellHook` から `layat apply <name>` |
 | home-manager | ビルド済み manifest | `home.activation` から `apply --manifest` |
 | NixOS（将来）| ビルド済み manifest | `system.activationScripts` から `apply --manifest` |
 | nix-darwin（将来）| ビルド済み manifest | `system.activationScripts` から `apply --manifest` |
@@ -40,7 +40,7 @@ rollback を公開する層は REQ-05abce3e-9797-432b-b93f-37c55d09afde / REQ-84
 - **REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 が求める「各層は engine をキックするだけの配線」**を、層の数（5）ではなく
   クラスの数（2）で担保できる。層を増やしても新しい engine 経路が増えず、
   既存 2 クラスのどちらかへ割り当てるだけで済む
-- **クラスの分かれ目が「entrypoint を持つか」に一致する**。モジュールの `nput.configs` は
+- **クラスの分かれ目が「entrypoint を持つか」に一致する**。モジュールの `layat.configs` は
   モジュール config 内にあり flake output に現れないため、entrypoint 発見では到達できない。
   そこで REQ-dec58330-6dad-47f7-8f56-2402764a89c7 の `apply --manifest` と REQ-8085f194-c903-4ecb-abd8-c719fe7b3292 の activation kick が
   必要になる。逆に entrypoint 駆動側（REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9 の devShell 含む）は
@@ -56,5 +56,5 @@ rollback を公開する層は REQ-05abce3e-9797-432b-b93f-37c55d09afde / REQ-84
 
 なお同原文の統合層テーブルは home-manager 行に「MVP は profile `<name>` =
 `default` 固定の 1 profile・役割分離は不可」と書いているが、本 item はこれを採らない。
-ADR-0035 が `nput.configs.<name>` を導入し、REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a が HM 経由でも役割分離した
+ADR-0035 が `layat.configs.<name>` を導入し、REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a が HM 経由でも役割分離した
 独立 profile を取れることを規範化しているため。

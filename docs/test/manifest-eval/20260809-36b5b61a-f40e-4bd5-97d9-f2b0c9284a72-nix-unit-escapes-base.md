@@ -10,7 +10,7 @@ covers:
 
 ## 対象
 
-`tests/nix-unit/escapes-base.nix`（TP-403c55c7-d996-4951-8e6b-c3a7dddd387c のテスト seam `nput.__internal` 経由で private
+`tests/nix-unit/escapes-base.nix`（TP-403c55c7-d996-4951-8e6b-c3a7dddd387c のテスト seam `layat.__internal` 経由で private
 helper `escapesBase` / `pathChecks.isUnsafe` を直接叩く）
 
 ## 検証内容

@@ -5,7 +5,7 @@ name: "apply --recopy は config 内の全 copy target を src から無条件�
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
 specification: |
-  In addition to an ordinary apply, `nput apply <name> --recopy` SHALL unconditionally
+  In addition to an ordinary apply, `layat apply <name> --recopy` SHALL unconditionally
   overwrite and re-copy every copy target in the config from its current `src` / `subpath`.
   Because copies live outside generations and are not hash-tracked, no difference check
   SHALL be performed and the overwrite SHALL be unconditional. The overwritten targets
@@ -15,7 +15,7 @@ specification: |
   commit behaviour of the symlink part SHALL be unchanged, and copies SHALL NOT add a
   generation.
 specification_ja: |
-  `nput apply <name> --recopy` は通常 apply に加えて、config 内の全 copy target を現在の
+  `layat apply <name> --recopy` は通常 apply に加えて、config 内の全 copy target を現在の
   `src` / `subpath` から無条件に上書き再コピーしなければならない。copy は世代外で hash 追跡
   しないため差分判定をしてはならず、上書きは無条件でなければならない。上書きした target は
   レポート表示しなければならず、フラグ自体が opt-in なので確認を出してはならない。したがって
@@ -27,7 +27,7 @@ specification_ja: |
 ## 仕様
 
 ```bash
-nput apply <name> --recopy     # 通常 apply に加え config 内の全 copy target を src から無条件上書き再コピー
+layat apply <name> --recopy     # 通常 apply に加え config 内の全 copy target を src から無条件上書き再コピー
 ```
 
 `apply <name> --recopy` は通常 apply に加え **config 内の全 copy target を現 `src`/`subpath`
@@ -43,4 +43,4 @@ nput apply <name> --recopy     # 通常 apply に加え config 内の全 copy ta
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply <name> --recopy` の箇条書き。
 
 決定の実体は ADR-0020「copy の明示上書き（`apply --recopy`）と配置物のリセット
-（`nput reset`）を追加する」。
+（`layat reset`）を追加する」。

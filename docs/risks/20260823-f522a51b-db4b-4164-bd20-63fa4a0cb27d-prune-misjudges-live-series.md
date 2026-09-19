@@ -12,7 +12,7 @@ level: high
 
 ## リスク
 
-`nput prune` は「root が実在しない」の 1 条件だけで系列を丸ごと消す（→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f）。
+`layat prune` は「root が実在しない」の 1 条件だけで系列を丸ごと消す（→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f）。
 判定を誤ると、消してはいけない系列が消える。削除は `<roothash>` ディレクトリごとで、世代
 リンクも `.pending` も `.root` も一度に失われるため、後から戻す手段が無い。
 
@@ -23,7 +23,7 @@ level: high
 **`.root` を持たない系列への波及** — home mode / system mode の `<name>` 直キー系列は判定すべき
 root パスを持たないため構造的に対象外だが、列挙が `.root` の有無ではなくディレクトリの形で
 行われると、`$HOME` の profile 系列が走査に混ざる。走査基底が 2 つある（ユーザー state 基底と
-system 基底 `/nix/var/nix/profiles/nput/` → ADR-0036 §3）ぶん、基底ごとに列挙条件がずれる余地も
+system 基底 `/nix/var/nix/profiles/layat/` → ADR-0036 §3）ぶん、基底ごとに列挙条件がずれる余地も
 ある。
 
 **system 基底が権限で読めない場合** — 非 root 実行では system 基底の列挙そのものが失敗しうる。
@@ -43,7 +43,7 @@ system 基底 `/nix/var/nix/profiles/nput/` → ADR-0036 §3）ぶん、基底�
 
 **likelihood: high** — 変更頻度の側では、判定が依存する profile レイアウト（`<roothash>` 階層・
 backref `.root` の位置・走査基底）が ADR-0025 / ADR-0034 / ADR-0036 と繰り返し動いてきた領域で、
-`nput status`（→ #198）が同じ列挙に相乗りする予定もあるため、この先も触られる。検証ゲートの
+`layat status`（→ #198）が同じ列挙に相乗りする予定もあるため、この先も触られる。検証ゲートの
 側では、判定ロジックが新規で既存の配置系ゲート（planner の分類・stale 除去の保守的不変条件
 → RISK-e3d42a21-1f43-4ac6-835e-a5caf8d86363）のどれにも乗らず、blind spot にあたる。両軸とも
 高いので high。

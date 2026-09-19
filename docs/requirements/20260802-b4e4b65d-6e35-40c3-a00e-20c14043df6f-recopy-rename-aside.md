@@ -42,7 +42,7 @@ config 内の各 copy entry について:
 
 ## 出典
 
-`docs/spec.md`「配置動作仕様」→「recopy（`apply --recopy`）・reset（`nput reset`）」節の
+`docs/spec.md`「配置動作仕様」→「recopy（`apply --recopy`）・reset（`layat reset`）」節の
 recopy コードブロックと、同節箇条書き第 3 項。
 
 決定の実体は ADR-0044「apply 途中失敗の完全巻き戻し — インメモリ undo ジャーナル」（rename

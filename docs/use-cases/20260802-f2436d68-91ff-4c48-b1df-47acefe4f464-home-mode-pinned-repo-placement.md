@@ -9,9 +9,9 @@ refines:
 
 ## 使われ方
 
-ユーザーが `root = nput.lib.homeRoot` を明示した config を書き、外部リポジトリの内容
+ユーザーが `root = layat.lib.homeRoot` を明示した config を書き、外部リポジトリの内容
 （リポジトリ全体・サブディレクトリ・単一ファイル）をバージョン固定した状態で `$HOME` 配下の
-任意パスへ配置する。`nput apply <name>` で適用し、`src` の更新（flake input の更新 /
+任意パスへ配置する。`layat apply <name>` で適用し、`src` の更新（flake input の更新 /
 npins update 等）後に再適用すると新しい内容へ切り替わる。
 
 具体例は次の 3 つで、いずれも「取得済みのストアパスを `$HOME` 配下の決まった場所へ置く」
@@ -45,7 +45,7 @@ npins update 等）後に再適用すると新しい内容へ切り替わる。
 
 ## この使われ方が要求すること
 
-- config を Nix で書き、`nput` CLI が entrypoint を発見して評価・適用すること
+- config を Nix で書き、`layat` CLI が entrypoint を発見して評価・適用すること
 - `src` にストアパスを取り、`subpath` でリポジトリ内の一部だけを選べること。リポジトリ全体は
   `subpath` の省略で表せること
 - 配置先が `$HOME` 配下として解決されること（`root = homeRoot` の明示・暗黙デフォルトなし）
@@ -61,7 +61,7 @@ npins update 等）後に再適用すると新しい内容へ切り替わる。
 
 あわせて「設計の哲学」の「home-manager に依存しない」節も本 item が引き受ける。同節が述べる
 「HM 不在の環境でも同じ設定定義で動く」ことを体現するのは統合ではなく standalone の使われ方で、
-本 item と UC-19a90989-0ae3-438f-8a75-4e1e2637f81c がそれにあたる。本 item では「config を Nix で書き `nput` CLI が
+本 item と UC-19a90989-0ae3-438f-8a75-4e1e2637f81c がそれにあたる。本 item では「config を Nix で書き `layat` CLI が
 entrypoint を発見して評価・適用すること」が同節に対応する要求になる。
 
 Issue #211 の素材リストはこの 3 例を別々に挙げるが、3 例とも紐づく requirement 群が重なる

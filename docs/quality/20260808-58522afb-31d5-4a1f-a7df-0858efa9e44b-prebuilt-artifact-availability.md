@@ -6,13 +6,13 @@ derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 specification: |
   The build outputs of the latest `main` SHALL be published to a public binary cache for
-  every supported platform, so that a consumer that takes nput as a flake input can obtain
+  every supported platform, so that a consumer that takes layat as a flake input can obtain
   them without building from source. Publication SHALL be driven by the changes that
   determine those outputs, and SHALL NOT be tied to release tags, so that the cache tracks
   `main` rather than the release cadence.
 specification_ja: |
   最新 main のビルド成果物は、サポート対象の全プラットフォームについて公開バイナリ
-  キャッシュへ投入されなければならない（nput を flake input として取り込む消費側が、
+  キャッシュへ投入されなければならない（layat を flake input として取り込む消費側が、
   ソースからビルドせずに取得できるようにするため）。投入は成果物の内容を決める変更に
   よって駆動されなければならず、リリースタグに紐づけてはならない（キャッシュがリリースの
   頻度ではなく main に追従するようにするため）。
@@ -21,7 +21,7 @@ specification_ja: |
 
 ## 仕様
 
-nput は flake input として消費されるツールであり、消費側の CI やローカル環境が nput を使う
+layat は flake input として消費されるツールであり、消費側の CI やローカル環境が layat を使う
 たびにソースからビルドするのは実用上のコストになる。最新 main の成果物を公開キャッシュから
 引ける状態を保つ。
 
@@ -33,7 +33,7 @@ nput は flake input として消費されるツールであり、消費側の C
 > 払う消費側であり、`docs/agents/sara-graph.md` の quality の signature test（落ちて気づくのは
 > contributor だけ）とは張力がある。それでも quality に置くのは、落としても **shipped artifact も
 > 検証も変わらない**（同一 derivation をキャッシュから引くか実ビルドするかの差でしかない）ため。
-> requirement の signature test「nput の使い方が変わるか」は成立せず、対応する use_case も無い。
+> requirement の signature test「layat の使い方が変わるか」は成立せず、対応する use_case も無い。
 
 ## 出典
 

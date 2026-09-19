@@ -36,7 +36,7 @@ specification: |
 
   `apply --all --dryrun` SHALL go through the same payload builder as a real apply, so its
   structural parity is that of the single `--dryrun`. A config with a conflict has the
-  entry as `item.status:"failed"` with `error.code:"E_NPUT_COLLISION"`, so that subject
+  entry as `item.status:"failed"` with `error.code:"E_LAYAT_COLLISION"`, so that subject
   SHALL be `status:"error"` and therefore the aggregate SHALL also be `status:"error"`.
   `status` SHALL strictly observe only "non-zero iff error", the priority among the exit
   codes themselves being stated elsewhere and not restated here.
@@ -89,7 +89,7 @@ specification_ja: |
 
   `apply --all --dryrun` は本 apply と同一の payload builder を通さなければならず、構造
   parity は単一 `--dryrun` と同じとする。conflict のある config は該当 entry が
-  `item.status:"failed"` + `error.code:"E_NPUT_COLLISION"` となり、その subject は
+  `item.status:"failed"` + `error.code:"E_LAYAT_COLLISION"` となり、その subject は
   `status:"error"`、したがって集約も `status:"error"` としなければならない。`status` は
   「非 0 ⇔ error」だけを厳守しなければならない。終了コード同士の優先度は別 item の担当で、
   本 item では規定しない。
@@ -147,7 +147,7 @@ warnings / info）の写像規則は単一 config と同一で、`--all` 固有�
   対称に、その subject を `status:"success"` として扱う（skip は失敗ではない）。
 - **`apply --all --dryrun`**: 本 apply と同一の payload builder を通すため構造 parity は
   単一 `--dryrun` と同じ。conflict のある config は該当 entry が `item.status:"failed"` +
-  `error.code:"E_NPUT_COLLISION"`（item 起因）で、その **subject は `status:"error"`**、
+  `error.code:"E_LAYAT_COLLISION"`（item 起因）で、その **subject は `status:"error"`**、
   したがって**集約も `status:"error"`**。終了コードは `error(1) > conflict(2) > 0` の
   優先度で不変であり、`status` は「非 0 ⇔ error」だけを厳守する（1 と 2 の内訳は exit code が
   語る）。単一 `apply --dryrun` の conflict と完全対称。

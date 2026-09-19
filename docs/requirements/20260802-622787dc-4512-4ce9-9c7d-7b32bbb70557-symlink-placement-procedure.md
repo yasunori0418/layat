@@ -10,7 +10,7 @@ specification: |
   (equivalent to `mkdir -p`), then handle an existing symlink at the target: one recorded
   by the entry's own previous-generation manifest SHALL be replaced without a warning,
   falling under the ordinary output discipline of the placement report, whereas an
-  unrecorded (foreign) symlink — belonging to another nput profile, another tool, or
+  unrecorded (foreign) symlink — belonging to another layat profile, another tool, or
   placed by hand — SHALL be replaced as well but SHALL emit a warning, the last writer
   thereby winning. It SHALL then create a symlink at `<root>/<target>` pointing at
   `<placement source>/<subpath>`, the placement source being the Nix store path for a
@@ -23,7 +23,7 @@ specification_ja: |
   symlink の配置にあたり engine は、まず target の親ディレクトリを作成し（`mkdir -p` 相当）、
   次に target の既存 symlink を扱わなければならない。当該 entry 自身の前世代 manifest が記録
   した symlink は warning を出さずに置き換え（配置レポートの通常の出力規律に従う）、記録の無い
-  （foreign な）symlink——他 nput profile / 他ツール / 手動——も置き換えるが warning を出す
+  （foreign な）symlink——他 layat profile / 他ツール / 手動——も置き換えるが warning を出す
   （後勝ち）。そのうえで `<配置元>/<subpath>` を
   指す symlink を `<root>/<target>` に作成しなければならない。配置元は store link では Nix
   ストアパス、out-of-store symlink では marker の絶対パスでなければならない。subpath が
@@ -40,7 +40,7 @@ specification_ja: |
 1. target の親ディレクトリを作成（mkdir -p 相当。緩和対象の祖先 symlink / 実 dir target は PreRemove 除去済み・foreign は 0 で弾き済み）
 2. target が既存 symlink のとき:
    - 自身の前世代 manifest が記録した symlink → そのまま置き換える（silent）
-   - 記録の無い symlink（foreign = 他 nput profile / 他ツール / 手動）→ warning を出して置き換える（後勝ち）
+   - 記録の無い symlink（foreign = 他 layat profile / 他ツール / 手動）→ warning を出して置き換える（後勝ち）
 3. <配置元>/<subpath> を指す symlink を <root>/<target> に作成（os.Symlink）
    - store link:        配置元 = Nix ストアパス
    - out-of-store:      配置元 = marker の絶対パス
