@@ -6,7 +6,7 @@ body:
     id: problem
     attributes:
       label: 背景 / 解決したい課題
-      description: なぜこれが必要か。今の nput で何ができないか。
+      description: なぜこれが必要か。今の layat で何ができないか。
     validations:
       required: true
   - type: textarea

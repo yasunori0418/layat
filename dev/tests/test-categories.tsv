@@ -18,5 +18,5 @@ copy	copytree / copy、e2e 04-copy
 migration-stale	preremove_generalization / staleremove、e2e 03-stale
 atomicity	undo / undo_journal / backup、engine の lock + internal/lock
 generations	generations / reset / result_extensions / drift / prune、internal/paths、e2e 02-home / 08-prune
-cli-json	cmd/nput/ の全テストファイル
+cli-json	cmd/layat/ の全テストファイル
 integration	checks.hm-module、e2e 01/05/06/07、internal/gitutil、internal/manifest

@@ -91,15 +91,15 @@ jobs:
         with:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - name: Build nput (runs go test with coverage)
-        run: nix build '.#nput' -L
+      - name: Build layat (runs go test with coverage)
+        run: nix build '.#layat' -L
 
       - name: Report coverage
         run: |
           {
             echo '## Go test coverage'
             echo '```'
-            cat result/share/nput/coverage/coverage-func.txt
+            cat result/share/layat/coverage/coverage-func.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -169,7 +169,7 @@ jobs:
       # sara is a Rust CLI from the personal NUR, pulled straight from
       # yasunori0418.cachix.org (dev/flake.nix keeps nixpkgs unfollowed for
       # exactly this reason → 2c9f9fa). The dedicated `sara` devShell avoids
-      # building nput and running the dogfood shellHook.
+      # building layat and running the dogfood shellHook.
       - name: Run sara check
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c sara check
@@ -220,7 +220,7 @@ jobs:
     if: needs.changes.outputs.run == 'true' && github.event_name != 'push'
     # Non-NixOS (ubuntu-latest) E2E. Verifies the "works as long as nix is present"
     # claim with real nix (→ ADR-0012). Runs tests/e2e/run.sh inside the ci devShell
-    # (nput / git / jq / coreutils).
+    # (layat / git / jq / coreutils).
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -297,7 +297,7 @@ jobs:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       # The default dev devShell, not `sara`: generation needs go + jq + yq-go +
-      # sara together. Its shellHook dogfoods `nput apply skills`, which is
+      # sara together. Its shellHook dogfoods `layat apply skills`, which is
       # harmless here (it places into the checkout and is allowed to no-op).
       - name: Generate correspondence table
         if: steps.filter.outputs.relevant != 'false'
