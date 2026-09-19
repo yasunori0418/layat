@@ -87,7 +87,6 @@ FLAKE_CHECKS=(
   checks.hm-module
   checks.namaka
   checks.nix-unit
-  checks.notice-parity
   checks.nput
   checks.treefmt
   dev:checks.risk-matrix

@@ -19,7 +19,6 @@ checks.go-vet	静的解析（ビルド健全性）。テスト資産ではなく
 checks.golangci-lint	静的 lint。テスト資産ではなく quality の担当
 checks.nput	buildGoModule のビルド + go test 実行。個々の *_test.go を CASE が持つ
 checks.treefmt	フォーマッタ検査（treefmt-nix が自動生成）。quality の担当
-checks.notice-parity	改名予告（→ ADR-0054 §6）の Nix ⇔ Go 文面一致の契約テスト。#388 で予告ごと撤去する一時的な検査で、nput の振る舞いではなく告知文の二重管理を守るため TC / CASE へ展開しない
 checks.namaka	namaka アグリゲータ。leaf の tests/namaka/<name>/ を CASE が持つ
 checks.nix-unit	nix-unit アグリゲータ。leaf の tests/nix-unit/*.nix を CASE が持ち、固有ロジック（重複検査）は tests/nix-unit/aggregator-merge.nix の CASE が検証する
 dev:checks.risk-matrix	risk の level 導出マトリクス整合の契約テスト。検査対象は nput の振る舞いではなく docs のスコアリング規約なので TC / CASE へ展開しない

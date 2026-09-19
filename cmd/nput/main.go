@@ -26,30 +26,6 @@ var version = "dev"
 
 // Note: cobra's Version field adds only a `--version` flag, not a `version` subcommand.
 
-// renameNotice is the rename announcement printed to stderr on every subcommand
-// (→ ADR-0054 §6, issue #387). It duplicates modules/common.nix's `renameNotice` because a
-// Go const cannot read a Nix expression; checks.notice-parity (flake.nix) fails in CI if the
-// two ever drift, so edit them together until the rename PR (→ issue #388) deletes both.
-// The date is a lower bound ("on or after"): the rename lands when both the notice period and
-// the prune epic have completed, whichever is later.
-const renameNotice = "nput will be renamed to layat on or after 2026-09-22. " +
-	"The flake input URL, the `nput.*` module options, `home.activation.nput` and " +
-	"`#nput.<system>.<name>` will all change, and `--json` consumers will see " +
-	"`E_LAYAT_*` / `W_LAYAT_*` codes and `tool.name = \"layat\"`. " +
-	"See the \"Migrating from nput\" section of " +
-	"https://github.com/yasunori0418/nput#migrating-from-nput . " +
-	"To stay on the old name, pin `github:yasunori0418/nput/legacy-nput`."
-
-// printRenameNotice writes the rename announcement to stderr, once per invocation. It is
-// deliberately stderr-only: the --json envelope is a niface-conformant machine contract and
-// must not carry a tool-side announcement, so stdout stays undisturbed even under --json
-// (→ ADR-0043, ADR-0054 §6). No command is exempt: cobra's generated completion scripts
-// already discard __complete's stderr in every shell they emit (bash / zsh / fish), so the
-// notice cannot leak into a completion listing.
-func printRenameNotice() {
-	fmt.Fprintln(os.Stderr, renameNotice)
-}
-
 // Global flags (→ docs/spec.md "global flags").
 var (
 	flagFile        string // -f/--file: specify the entrypoint explicitly
@@ -123,13 +99,6 @@ func newRootCmd() *cobra.Command {
 	// PersistentPreRun: cobra's auto-added utility commands (help / completion / __complete)
 	// own stdout with their own text and must never emit an envelope, and PersistentPreRun
 	// cannot tell them apart robustly (→ issue #130, docs/spec.md).
-	//
-	// The rename notice, unlike the envelope, is a fixed stderr line that no command needs to
-	// type, so PersistentPreRun is the right seam for it: one line for every subcommand
-	// (→ ADR-0054 §6, issue #387). `--version` and `--help` return inside cobra's execute()
-	// before this runs, so neither the installCheckPhase's `nput --version` assertion nor
-	// TestVersionFlagOutput sees the line.
-	root.PersistentPreRun = func(_ *cobra.Command, _ []string) { printRenameNotice() }
 	pf := root.PersistentFlags()
 	pf.StringVarP(&flagFile, "file", "f", "", "Specify the entrypoint explicitly (overrides autodiscovery)")
 	pf.StringVar(&flagRoot, "root", "", "Override the resolved root explicitly (all modes)")

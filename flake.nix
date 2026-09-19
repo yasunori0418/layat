@@ -195,43 +195,6 @@
             programs.gofmt.enable = true;
           };
 
-          # 改名予告（→ ADR-0054 §6・Issue #387）の Nix 側と Go 側の文面がバイト一致すること。
-          # 日付リテラルが modules/common.nix と cmd/nput/main.go の 2 箇所に独立して存在し、
-          # 片側だけ直すと CLI とモジュール警告が食い違う。go test 側の同名検査は nix sandbox の
-          # goSrc に modules/ が無いため skip されるので、両方が見えるここで担保する。
-          # #388 が予告を撤去するとき、この check ごと落とす。
-          checks.notice-parity = pkgs.runCommandLocal "nput-notice-parity" { } ''
-            # 両ソースは同じ形（`"..." + "..." + ...` の連結）で文面を持つ。各行の最初の `"` から
-            # 最後の `"` までを取り、エスケープされた `\"` を戻してから連結する。python3 を使うのは
-            # sed / grep では `\"` を含む文字列リテラルを正しく取り出せないため（素朴な
-            # `grep -o '"[^"]*"'` はエスケープ位置で切れ、両側が同じように壊れて比較が骨抜きになる）。
-            extract() {
-              ${pkgs.python3}/bin/python3 - "$1" "$2" <<'EOF'
-            import re, sys
-            src = open(sys.argv[1], encoding="utf-8").read()
-            body = re.search(sys.argv[2], src, re.S)
-            if not body:
-                sys.exit("binding not found")
-            parts = re.findall(r'"((?:[^"\\]|\\.)*)"', body.group(1))
-            sys.stdout.write("".join(p.replace('\\"', '"') for p in parts))
-            EOF
-            }
-
-            nix_msg=$(extract ${./modules/common.nix} 'renameNotice =(.*?);\n')
-            go_msg=$(extract ${./cmd/nput/main.go} 'const renameNotice = (.*?)\n\n')
-
-            test -n "$nix_msg" || { echo "FAIL: modules/common.nix から予告文を抽出できません"; exit 1; }
-            test -n "$go_msg"  || { echo "FAIL: cmd/nput/main.go から予告文を抽出できません"; exit 1; }
-
-            if [ "$nix_msg" != "$go_msg" ]; then
-              echo "FAIL: 改名予告の Nix 側と Go 側が食い違っています"
-              echo "  nix: $nix_msg"
-              echo "  go : $go_msg"
-              exit 1
-            fi
-            touch "$out"
-          '';
-
           # 静的解析を flake check に載せる（→ ADR-0025）。stdlib-only ゆえ依存検出は軽い。
           checks.go-vet = pkgs.runCommandLocal "nput-go-vet" { nativeBuildInputs = [ pkgs.go ]; } ''
             ${goToolEnv}
@@ -322,10 +285,6 @@
               };
               # home.activation の dag entry の生スクリプト。
               activationScript = pkgs.writeText "nput-activation" hm.config.home.activation.nput.data;
-              # 改名予告（→ ADR-0054 §6・Issue #387）の warnings 層を検査対象へ載せる。
-              # activationScript だけでは config.warnings が force されず、modules/common.nix の
-              # warnings 行を丸ごと消しても CI が green のまま通ってしまう。#388 で予告ごと撤去する。
-              warningsFile = pkgs.writeText "nput-warnings" (lib.concatStringsSep "\n" hm.config.warnings);
             in
             pkgs.runCommandLocal "nput-hm-module-check" { } ''
               script=${activationScript}
@@ -349,11 +308,6 @@
               #     （→ ADR-0045, issue #169）。
               grep -q -- '--backup=nput-backup' "$script" \
                 || { echo "FAIL: activation が --backup=<suffix> を配線していません"; cat "$script"; exit 1; }
-
-              # (5) 改名予告が config.warnings に載ること（→ ADR-0054 §6・Issue #387）。
-              #     #388 が予告を撤去するとき、この検査も一緒に落とす。
-              grep -q 'will be renamed to layat' ${warningsFile} \
-                || { echo "FAIL: 改名予告が config.warnings に出ていません"; cat ${warningsFile}; exit 1; }
 
               touch "$out"
             '';
