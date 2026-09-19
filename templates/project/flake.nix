@@ -1,13 +1,13 @@
 {
-  description = "nput project config: symlink / copy fetched git repositories under the repo";
+  description = "layat project config: symlink / copy fetched git repositories under the repo";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    # The nput library / CLI. Make nixpkgs follow so that mkManifest's pkgs and
-    # the build inputs of the nput CLI placed on the devShell are aligned (schemaVersion consistency).
-    nput = {
-      url = "github:yasunori0418/nput";
+    # The layat library / CLI. Make nixpkgs follow so that mkManifest's pkgs and
+    # the build inputs of the layat CLI placed on the devShell are aligned (schemaVersion consistency).
+    layat = {
+      url = "github:yasunori0418/layat";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -23,7 +23,7 @@
     {
       self,
       nixpkgs,
-      nput,
+      layat,
       ...
     }:
     let
@@ -36,36 +36,36 @@
       ];
     in
     {
-      # nput.<system>.<name> namespace. `nput apply <name>` builds and places this config.
+      # layat.<system>.<name> namespace. `layat apply <name>` builds and places this config.
       # Since it is not a standard flake output, `nix flake check` emits
-      # `warning: unknown flake output 'nput'` (exit 0, harmless).
-      nput = forAllSystems (
+      # `warning: unknown flake output 'layat'` (exit 0, harmless).
+      layat = forAllSystems (
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
         in
         {
-          # The config name example signals "rename me". Place it with `nput apply example`.
-          example = nput.lib.mkManifest {
+          # The config name example signals "rename me". Place it with `layat apply example`.
+          example = layat.lib.mkManifest {
             inherit pkgs;
 
             # Take the repo (git toplevel) tree as root (target is relative to the repo root).
-            root = nput.lib.projectRoot;
+            root = layat.lib.projectRoot;
 
-            # Attribute key = placement target (root-relative target). Here, nput's own docs/ is shown as an example.
+            # Attribute key = placement target (root-relative target). Here, layat's own docs/ is shown as an example.
             # In practice, swap src to the my-repo input above and subpath to the subdirectory you want to place.
             #
             # The placed artifacts are ephemeral (assumed regenerated, not git-managed). An ignore pattern is already
-            # added to the .gitignore below. If you change target, update it with the output of `nput gitignore example`.
-            entries.".nput/docs" = {
-              src = nput;
+            # added to the .gitignore below. If you change target, update it with the output of `layat gitignore example`.
+            entries.".layat/docs" = {
+              src = layat;
               subpath = "docs";
             };
           };
         }
       );
 
-      # devShell. On `nix develop` / direnv entry, put the pinned nput CLI on PATH
+      # devShell. On `nix develop` / direnv entry, put the pinned layat CLI on PATH
       # and auto-place the config in shellHook. No .envrc is bundled (adopting direnv is the user's call・ADR-0018).
       # If you use direnv, run `echo 'use flake' > .envrc && direnv allow` in the repo.
       devShells = forAllSystems (
@@ -75,13 +75,13 @@
         in
         {
           default = pkgs.mkShell {
-            packages = [ nput.packages.${system}.nput ];
+            packages = [ layat.packages.${system}.layat ];
 
             # Place example on entry. With --no-wait, on flock contention skip without waiting (concurrent entries do not hang).
             # To place multiple configs at once:
-            #   nput apply --all --project-root --no-wait
+            #   layat apply --all --project-root --no-wait
             shellHook = ''
-              nput apply example --no-wait
+              layat apply example --no-wait
             '';
           };
         }

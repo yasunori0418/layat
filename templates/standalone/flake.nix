@@ -1,12 +1,12 @@
 {
-  description = "nput standalone config: symlink / copy fetched git repositories under home";
+  description = "layat standalone config: symlink / copy fetched git repositories under home";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    # The nput library / CLI. Make nixpkgs follow to align the pkgs that mkManifest uses.
-    nput = {
-      url = "github:yasunori0418/nput";
+    # The layat library / CLI. Make nixpkgs follow to align the pkgs that mkManifest uses.
+    layat = {
+      url = "github:yasunori0418/layat";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -22,7 +22,7 @@
     {
       self,
       nixpkgs,
-      nput,
+      layat,
       ...
     }:
     let
@@ -35,26 +35,26 @@
       ];
     in
     {
-      # nput.<system>.<name> namespace. `nput apply <name>` builds and places this config.
+      # layat.<system>.<name> namespace. `layat apply <name>` builds and places this config.
       # Since it is not a standard flake output, `nix flake check` emits
-      # `warning: unknown flake output 'nput'` (exit 0, harmless).
-      nput = forAllSystems (
+      # `warning: unknown flake output 'layat'` (exit 0, harmless).
+      layat = forAllSystems (
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
         in
         {
-          # The config name example signals "rename me". Place it with `nput apply example`.
-          example = nput.lib.mkManifest {
+          # The config name example signals "rename me". Place it with `layat apply example`.
+          example = layat.lib.mkManifest {
             inherit pkgs;
 
             # Take the home tree as root (target is relative to $HOME).
-            root = nput.lib.homeRoot;
+            root = layat.lib.homeRoot;
 
-            # Attribute key = placement target (root-relative target). Here, nput's own docs/ is shown as an example.
+            # Attribute key = placement target (root-relative target). Here, layat's own docs/ is shown as an example.
             # In practice, swap src to the my-repo input above and subpath to the subdirectory you want to place.
-            entries.".config/nput-docs" = {
-              src = nput;
+            entries.".config/layat-docs" = {
+              src = layat;
               subpath = "docs";
             };
 
@@ -72,7 +72,7 @@
             #
             # out-of-store symlink = symlink directly to a local absolute path instead of the store:
             #   entries.".config/live" = {
-            #     src = nput.lib.mkOutOfStoreSymlink "/abs/path/to/dir";
+            #     src = layat.lib.mkOutOfStoreSymlink "/abs/path/to/dir";
             #   };
             #
             # Multiple entries = just add more attributes:
