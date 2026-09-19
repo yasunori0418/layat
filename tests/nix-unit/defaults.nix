@@ -3,19 +3,19 @@
 #
 # store パスの hash 揺れを避けるため src には toString が安定する fake な flake-input 相当
 # （`{ outPath = …; }`）を使う。これは srcType の store-backed 判定（`? outPath`）を通る正当な test double。
-{ lib, nput }:
+{ lib, layat }:
 let
   fakeSrc = {
     outPath = "/nix/store/00000000000000000000000000000000-fake-src";
   };
-  norm = root: entries: nput.normalizeManifest { inherit lib root entries; };
+  norm = root: entries: layat.normalizeManifest { inherit lib root entries; };
 in
 {
   # ---- デフォルト適用（subpath="." / target=属性キー / method="symlink"）-----
   testDefaultsApplied = {
     expr =
       builtins.head
-        (norm nput.projectRoot {
+        (norm layat.projectRoot {
           ".config/foo" = {
             src = fakeSrc;
           };
@@ -33,7 +33,7 @@ in
   testExplicitOverrides = {
     expr =
       builtins.head
-        (norm nput.projectRoot {
+        (norm layat.projectRoot {
           "label" = {
             src = fakeSrc;
             target = ".config/bar";
@@ -54,7 +54,7 @@ in
   testEntriesSortedByTarget = {
     expr =
       map (e: e.target)
-        (norm nput.projectRoot {
+        (norm layat.projectRoot {
           "b" = {
             src = fakeSrc;
           };

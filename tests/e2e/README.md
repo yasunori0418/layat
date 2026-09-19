@@ -1,6 +1,6 @@
-# nput E2E ハーネス（非 NixOS）
+# layat E2E ハーネス（非 NixOS）
 
-実 nix を使って `nput` を end-to-end に駆動し、**「非 NixOS でも nix さえあれば動く」**という
+実 nix を使って `layat` を end-to-end に駆動し、**「非 NixOS でも nix さえあれば動く」**という
 主張を検証する bash ハーネス（→ `docs/design.md`「テスト戦略」・ADR-0012）。
 
 `lib`（nix-unit / namaka の評価テスト）や配置エンジン（Go の tmpdir 統合テスト）が
@@ -10,7 +10,7 @@
 ## 実行
 
 ```bash
-# CI（ubuntu-latest）と同じ起動方法。ci devShell が nput / git / jq / coreutils を提供する。
+# CI（ubuntu-latest）と同じ起動方法。ci devShell が layat / git / jq / coreutils を提供する。
 nix develop '.?dir=dev#ci' -c tests/e2e/run.sh
 ```
 
@@ -18,22 +18,22 @@ nix develop '.?dir=dev#ci' -c tests/e2e/run.sh
 各シナリオは隔離した一時 `$HOME` / `$XDG_STATE_HOME`（`mktemp -d`）下で動き、ランナーの実
 profile / home を汚さない（`tests/e2e/lib.sh` の `e2e_isolate`）。`prune` が state 基底と並べて
 走査する system 基底（→ ADR-0036 §3）は絶対パスで `$HOME` の差し替えでは動かないため、
-`e2e_isolate` が `NPUT_SYSTEM_PROFILE_BASE` で隔離先へ向ける（→ `cmd/nput/prune.go`）。偽 src は fixture flake
+`e2e_isolate` が `LAYAT_SYSTEM_PROFILE_BASE` で隔離先へ向ける（→ `cmd/layat/prune.go`）。偽 src は fixture flake
 ディレクトリ内の相対パス（eval 時に store へコピー）か、out-of-store 用の live ディレクトリで用意する。
-fixture flake は `nput` を `path:<repo>` input で参照し、`nixpkgs` / `home-manager` は nput の
+fixture flake は `layat` を `path:<repo>` input で参照し、`nixpkgs` / `home-manager` は layat の
 `flake.lock` pin に `follows` させてオフライン評価する。
 
 ## シナリオ範囲
 
 | シナリオ | 検証内容 |
 |---|---|
-| `01-project` | project mode。一時 git repo で `nput apply` → git toplevel 配下に store symlink 配置・再 apply の冪等性 |
-| `02-home`    | home mode。仮 `$HOME` で apply → `$HOME` 配下配置 + profile 世代コミット、entry 入替で世代を進め `nput rollback` で前世代へ復帰 |
+| `01-project` | project mode。一時 git repo で `layat apply` → git toplevel 配下に store symlink 配置・再 apply の冪等性 |
+| `02-home`    | home mode。仮 `$HOME` で apply → `$HOME` 配下配置 + profile 世代コミット、entry 入替で世代を進め `layat rollback` で前世代へ復帰 |
 | `03-stale`   | stale 除去。entry を config から削除 → 再 apply で旧 symlink が消える（保守的不変条件） |
 | `04-copy`    | copy place-once / out-of-store。copy が通常ファイル（書込可）・place-once 冪等（ローカル編集を破棄しない）・out-of-store の live symlink |
 | `05-hm`      | HM module。home-manager standalone configuration を非 NixOS で評価・activate し、activation が engine を起動して配置すること |
-| `06-init-templates` | init + templates。`nput init <t>` で standalone / project テンプレを展開し、展開後 flake が `nix flake check`（nput を局所 override）を通ること |
-| `07-legacy`  | legacy entrypoint（shell.nix・passthru canonical 形・→ ADR-0032）。`NIX_PATH` を flake.lock の nixpkgs に pin し、`nput apply` / `apply --all` / 素の `nix-shell` 互換を検証 |
+| `06-init-templates` | init + templates。`layat init <t>` で standalone / project テンプレを展開し、展開後 flake が `nix flake check`（layat を局所 override）を通ること |
+| `07-legacy`  | legacy entrypoint（shell.nix・passthru canonical 形・→ ADR-0032）。`NIX_PATH` を flake.lock の nixpkgs に pin し、`layat apply` / `apply --all` / 素の `nix-shell` 互換を検証 |
 | `08-prune`   | prune（→ ADR-0034）。apply した 2 系列の一方の root を消して孤児にし、`--dryrun` の非破壊性・`--yes` の系列ごと削除・生存系列と配置物の不変・`print-roots` から gcroot が外れることを検証 |
 
 ## 将来拡張

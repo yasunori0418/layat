@@ -2,22 +2,22 @@
 # E2E ハーネス共通ライブラリ（→ docs/design.md「テスト戦略」・ADR-0012）。
 #
 # 各シナリオはこのファイルを source し、隔離した一時 HOME / XDG_STATE_HOME 下で
-# 実 nix を使って `nput` を駆動し、FS / profile / 世代の結果をアサートする。
+# 実 nix を使って `layat` を駆動し、FS / profile / 世代の結果をアサートする。
 # 偽 src は fixture flake ディレクトリ内の相対パス（eval 時に store へコピー）か、
 # out-of-store の live ディレクトリ（store 外）として用意する。
 
 # 多重 source を防ぐ。
-if [ -n "${_NPUT_E2E_LIB:-}" ]; then return 0; fi
-_NPUT_E2E_LIB=1
+if [ -n "${_LAYAT_E2E_LIB:-}" ]; then return 0; fi
+_LAYAT_E2E_LIB=1
 
 # lib.sh の位置からリポジトリルートを解決する（cwd に依存しない）。
 _E2E_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$_E2E_LIB_DIR/../.." && pwd)"
 export REPO_ROOT
 
-# nput バイナリ。CI では ci devShell が PATH に載せる。NPUT で上書き可能。
-NPUT="${NPUT:-nput}"
-export NPUT
+# layat バイナリ。CI では ci devShell が PATH に載せる。LAYAT で上書き可能。
+LAYAT="${LAYAT:-layat}"
+export LAYAT
 
 # 実行環境の nix system 名（fixture flake の system 次元・HM activationPackage の選択に使う）。
 E2E_SYSTEM="$(nix eval --impure --raw --expr 'builtins.currentSystem')"
@@ -101,18 +101,18 @@ assert_writable() {
 
 # ---- niface エンベロープ検証（--json・→ issue #132） -------------------------
 
-# nput を --json 付きで実行してエンベロープを保存し、終了コードの一致を確認したうえで
+# layat を --json 付きで実行してエンベロープを保存し、終了コードの一致を確認したうえで
 # niface-validate（-schema 省略 = embed 正本 schema〔format assertion 込み〕+ lint MUST）に
 # 掛ける。トップレベル results[] の常在・subject 必須などの一様形は schema 側が強制する。
-run_json() { # $1: 期待 exit code, $2: エンベロープ保存先, $3...: nput 引数
+run_json() { # $1: 期待 exit code, $2: エンベロープ保存先, $3...: layat 引数
 	local want="$1" out="$2"
 	shift 2
 	local code=0
-	nput "$@" --json >"$out" || code=$?
+	layat "$@" --json >"$out" || code=$?
 	if [ "$code" -eq "$want" ]; then
-		e2e_pass "exit $code: nput $* --json"
+		e2e_pass "exit $code: layat $* --json"
 	else
-		e2e_fail "exit $code (期待 $want): nput $* --json"
+		e2e_fail "exit $code (期待 $want): layat $* --json"
 	fi
 	local findings
 	if findings="$(niface-validate "$out" 2>&1)"; then
@@ -143,10 +143,10 @@ e2e_isolate() {
 	export XDG_STATE_HOME="$E2E_WORK/state"
 	mkdir -p "$HOME" "$XDG_STATE_HOME"
 	# prune が state 基底と並べて走査する system 基底（→ ADR-0036 §3）を隔離先へ向ける。
-	# こちらは絶対パス（/nix/var/nix/profiles/nput）なので $HOME / XDG_STATE_HOME の差し替えでは
-	# 動かせず、これが無いと破壊的な prune がランナーの実状態を触りうる（→ cmd/nput/prune.go の
-	# NPUT_SYSTEM_PROFILE_BASE）。dir は作らない（基底の不在は正常系）。
-	export NPUT_SYSTEM_PROFILE_BASE="$E2E_WORK/system"
+	# こちらは絶対パス（/nix/var/nix/profiles/layat）なので $HOME / XDG_STATE_HOME の差し替えでは
+	# 動かせず、これが無いと破壊的な prune がランナーの実状態を触りうる（→ cmd/layat/prune.go の
+	# LAYAT_SYSTEM_PROFILE_BASE）。dir は作らない（基底の不在は正常系）。
+	export LAYAT_SYSTEM_PROFILE_BASE="$E2E_WORK/system"
 	# 一時 HOME には nix の設定が無いため、ランナーの実設定（experimental-features 等）を引き継ぐ。
 	export NIX_CONFIG="${NIX_CONFIG:-}
 experimental-features = nix-command flakes"
@@ -155,31 +155,31 @@ experimental-features = nix-command flakes"
 	e2e_log "work=$E2E_WORK home=$HOME state=$XDG_STATE_HOME"
 }
 
-# fixture flake の inputs 定義を出力する（nput を REPO_ROOT の path: input で参照し、
-# nixpkgs / home-manager は nput の flake.lock pin に follows させてオフライン評価する）。
+# fixture flake の inputs 定義を出力する（layat を REPO_ROOT の path: input で参照し、
+# nixpkgs / home-manager は layat の flake.lock pin に follows させてオフライン評価する）。
 # 引数: $1 = 追加 input 行（任意・例: home-manager follows）
 e2e_flake_inputs() {
-	printf '  inputs.nput.url = "path:%s";\n' "$REPO_ROOT"
-	printf '  inputs.nixpkgs.follows = "nput/nixpkgs";\n'
+	printf '  inputs.layat.url = "path:%s";\n' "$REPO_ROOT"
+	printf '  inputs.nixpkgs.follows = "layat/nixpkgs";\n'
 	if [ "${1:-}" = "with-hm" ]; then
-		printf '  inputs.home-manager.follows = "nput/home-manager";\n'
+		printf '  inputs.home-manager.follows = "layat/home-manager";\n'
 	fi
 }
 
-# nput を実行する（dirty git tree 警告など stderr ノイズは通すが、結果はアサーションで判定）。
-nput() { command "$NPUT" "$@"; }
+# layat を実行する（dirty git tree 警告など stderr ノイズは通すが、結果はアサーションで判定）。
+layat() { command "$LAYAT" "$@"; }
 
 # legacy（shell.nix / default.nix）シナリオ用: flake.lock がピン留めした nixpkgs の store path を
 # NIX_PATH にエクスポートする（legacy entrypoint は `<nixpkgs>` を NIX_PATH 経由で解決する best-effort
 # impure eval のため・→ ADR-0007 §5, ADR-0032）。使い捨ての probe flake で他 fixture と同じ
-# `inputs.nixpkgs.follows = "nput/nixpkgs"` pin を再利用し、offline で解決する。
+# `inputs.nixpkgs.follows = "layat/nixpkgs"` pin を再利用し、offline で解決する。
 e2e_pin_nix_path() {
 	local probe="$E2E_WORK/nixpkgs-probe"
 	mkdir -p "$probe"
 	cat >"$probe/flake.nix" <<EOF
 {
 $(e2e_flake_inputs)
-  outputs = { self, nixpkgs, nput }: { nixpkgsPath = nixpkgs.outPath; };
+  outputs = { self, nixpkgs, layat }: { nixpkgsPath = nixpkgs.outPath; };
 }
 EOF
 	local path

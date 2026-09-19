@@ -1,15 +1,15 @@
 # nix-unit: resolveEntry の src 文字列化・marker→enum 変換と types の marker 判別をアサートする
 # （→ ADR-0001, ADR-0010, ADR-0013）。
 #
-# #71 が unit-test seam として露出した `nput.__internal.resolveEntry` と、`lib/types.nix` の
+# #71 が unit-test seam として露出した `layat.__internal.resolveEntry` と、`lib/types.nix` の
 # `isRootMarker` / `isOutOfStoreMarker` を直接突く。resolveEntry は manifest 全体を介さず
 # 単一 entry の src 種別判定・文字列化のみを検証できる最小の境界。
 #
 # store パスの hash 揺れを避けるため src には toString が安定する fake な flake-input 相当
 # （`{ outPath = …; }`）を使う。これは srcType の store-backed 判定（`? outPath`）を通る正当な test double。
-{ lib, nput }:
+{ lib, layat }:
 let
-  inherit (nput.__internal) resolveEntry;
+  inherit (layat.__internal) resolveEntry;
   types = import ../../lib/types.nix lib;
   inherit (types) isRootMarker isOutOfStoreMarker;
 
@@ -29,7 +29,7 @@ let
 
   # out-of-store marker → srcKind="outOfStore" / src=marker の path。
   outOfStoreEntry = resolve {
-    src = nput.mkOutOfStoreSymlink "/home/me/dotfiles/nvim";
+    src = layat.mkOutOfStoreSymlink "/home/me/dotfiles/nvim";
     subpath = "lua";
     target = ".config/nvim";
     method = "copy";
@@ -47,7 +47,7 @@ in
     expected = "/nix/store/00000000000000000000000000000000-fake-src";
   };
 
-  # store entry の exact 形状。余分なキー（_nputMarker 等）が残れば exact 一致で fail する。
+  # store entry の exact 形状。余分なキー（_layatMarker 等）が残れば exact 一致で fail する。
   testResolveMarkerStoreEntryShape = {
     expr = storeEntry;
     expected = {
@@ -81,26 +81,26 @@ in
     };
   };
 
-  # ---- _nputMarker 判別タグが出力に漏れないこと（Go contract は clean enum・→ ADR-0010）----
+  # ---- _layatMarker 判別タグが出力に漏れないこと（Go contract は clean enum・→ ADR-0010）----
   testResolveMarkerNoTagLeakStore = {
-    expr = storeEntry ? _nputMarker;
+    expr = storeEntry ? _layatMarker;
     expected = false;
   };
 
   testResolveMarkerNoTagLeakOutOfStore = {
-    expr = outOfStoreEntry ? _nputMarker;
+    expr = outOfStoreEntry ? _layatMarker;
     expected = false;
   };
 
   # ---- isOutOfStoreMarker の判別 -------------------------------------------------------
   testResolveMarkerIsOutOfStoreTrue = {
-    expr = isOutOfStoreMarker (nput.mkOutOfStoreSymlink "/home/me/x");
+    expr = isOutOfStoreMarker (layat.mkOutOfStoreSymlink "/home/me/x");
     expected = true;
   };
 
   # root marker は outOfStore ではない（タグ値で判別）。
   testResolveMarkerIsOutOfStoreFalseOnRoot = {
-    expr = isOutOfStoreMarker nput.projectRoot;
+    expr = isOutOfStoreMarker layat.projectRoot;
     expected = false;
   };
 
@@ -112,23 +112,23 @@ in
 
   # ---- isRootMarker の判別 -------------------------------------------------------------
   testResolveMarkerIsRootTrueProject = {
-    expr = isRootMarker nput.projectRoot;
+    expr = isRootMarker layat.projectRoot;
     expected = true;
   };
 
   testResolveMarkerIsRootTrueHome = {
-    expr = isRootMarker nput.homeRoot;
+    expr = isRootMarker layat.homeRoot;
     expected = true;
   };
 
   testResolveMarkerIsRootTrueSystem = {
-    expr = isRootMarker nput.systemRoot;
+    expr = isRootMarker layat.systemRoot;
     expected = true;
   };
 
   # out-of-store marker は root ではない。
   testResolveMarkerIsRootFalseOnOutOfStore = {
-    expr = isRootMarker (nput.mkOutOfStoreSymlink "/home/me/x");
+    expr = isRootMarker (layat.mkOutOfStoreSymlink "/home/me/x");
     expected = false;
   };
 

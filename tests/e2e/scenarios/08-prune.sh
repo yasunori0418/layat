@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# prune: 実 nix で apply した project mode の系列から root（git toplevel）を消し、`nput prune` が
+# prune: 実 nix で apply した project mode の系列から root（git toplevel）を消し、`layat prune` が
 # その <roothash> 系列だけを丸ごと削除することをアサートする（→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1・
 # ADR-0034）。engine のユニットは tmpdir に手で組んだ fixture で判定分岐を覆っているので、ここが見るのは
 # 「実 apply が置いた本物のレイアウト（実 nix-env --set が張る世代リンクと indirect gcroot）を
@@ -14,19 +14,19 @@
 #
 # 走査基底は 2 つある（ユーザー state 基底と system 基底 → ADR-0036 §3）。system 基底は絶対パス
 # なので $HOME / XDG_STATE_HOME の差し替えでは動かせず、`e2e_isolate` が
-# NPUT_SYSTEM_PROFILE_BASE で隔離先へ向けている（→ cmd/nput/prune.go）。これにより破壊的な
-# `prune --yes` も実機の /nix/var/nix/profiles/nput には触れない。
+# LAYAT_SYSTEM_PROFILE_BASE で隔離先へ向けている（→ cmd/layat/prune.go）。これにより破壊的な
+# `prune --yes` も実機の /nix/var/nix/profiles/layat には触れない。
 #
 # その隔離が効いていること自体を、隔離先へ置いた孤児系列が走査に載ることで確かめる（env の値を
 # 見比べるだけだと、export が消えていないことしか分からず、バイナリがその env を実際に読むかは
-# 観測できない。`nput` は run.sh の NPUT で差し替え可能なので、seam を持たないバイナリを指した
+# 観測できない。`layat` は run.sh の LAYAT で差し替え可能なので、seam を持たないバイナリを指した
 # 実行が緑のまま実基底を走査する形になる）。
 set -euo pipefail
 source "$(dirname "$0")/../lib.sh"
 e2e_isolate
 
-BASE="$XDG_STATE_HOME/nix/profiles/nput"
-SYSTEM_BASE="$NPUT_SYSTEM_PROFILE_BASE"
+BASE="$XDG_STATE_HOME/nix/profiles/layat"
+SYSTEM_BASE="$LAYAT_SYSTEM_PROFILE_BASE"
 
 # 1 つの project を書き出して apply する。root（git toplevel）ごとに独立した <roothash> 系列が
 # 立つので、消す側と残す側を別ディレクトリで作る。
@@ -37,11 +37,11 @@ make_project() { # $1: プロジェクト dir 名, $2: entry の target
 	cat >"$proj/flake.nix" <<EOF
 {
 $(e2e_flake_inputs)
-  outputs = { self, nixpkgs, nput }: {
-    nput = nixpkgs.lib.genAttrs $E2E_SYSTEMS (system: {
-      docs = nput.lib.mkManifest {
+  outputs = { self, nixpkgs, layat }: {
+    layat = nixpkgs.lib.genAttrs $E2E_SYSTEMS (system: {
+      docs = layat.lib.mkManifest {
         pkgs = nixpkgs.legacyPackages.\${system};
-        root = nput.lib.projectRoot;
+        root = layat.lib.projectRoot;
         entries."$2" = { src = ./srcrepo; subpath = "d"; };
       };
     });
@@ -51,9 +51,9 @@ EOF
 	(
 		cd "$proj"
 		git init -q
-		git -c user.email=e2e@nput.test -c user.name=e2e add -A
-		git -c user.email=e2e@nput.test -c user.name=e2e commit -qm init
-		nput apply docs
+		git -c user.email=e2e@layat.test -c user.name=e2e add -A
+		git -c user.email=e2e@layat.test -c user.name=e2e commit -qm init
+		layat apply docs
 	)
 }
 
@@ -81,7 +81,7 @@ refresh_print_roots() {
 		return 1
 	fi
 	if [ ! -s "$PRINT_ROOTS_CACHE" ]; then
-		e2e_fail "print-roots が空（この環境には最低でも nput 自身の gcroot がある前提）"
+		e2e_fail "print-roots が空（この環境には最低でも layat 自身の gcroot がある前提）"
 		return 1
 	fi
 	return 0
@@ -96,8 +96,8 @@ gcroot_count_under() { # $1: 系列ディレクトリ
 }
 
 e2e_step "2 つの project を apply（一方を孤児にし、他方は生存させる）"
-make_project gone ".nput-out/gone"
-make_project live ".nput-out/live"
+make_project gone ".layat-out/gone"
+make_project live ".layat-out/live"
 
 GONE_ROOT="$E2E_WORK/gone"
 LIVE_ROOT="$E2E_WORK/live"
@@ -107,8 +107,8 @@ e2e_log "gone=$GONE_SERIES live=$LIVE_SERIES"
 
 e2e_step "隔離先の system 基底へ孤児系列を仕込む（隔離が効いているかの観測点）"
 # 実 apply では system mode の系列を作れないので、ディレクトリと backref で組む（判定の入力は
-# .root と root の実在だけ → DSG-096dc893）。これが走査に載れば、nput が
-# NPUT_SYSTEM_PROFILE_BASE を読んでいることが実挙動で決まる。判定は下の --dryrun / --yes で行う。
+# .root と root の実在だけ → DSG-096dc893）。これが走査に載れば、layat が
+# LAYAT_SYSTEM_PROFILE_BASE を読んでいることが実挙動で決まる。判定は下の --dryrun / --yes で行う。
 #
 # 系列名は paths.RootHash の出力（sha256 hex の先頭 32 文字）に桁数を合わせてあるが、列挙は
 # `.root` の有無だけで決まり名前を検証しない（→ paths.ListRootHashSeries）ので、桁数は
@@ -139,8 +139,8 @@ assert_absent "$GONE_ROOT"
 
 e2e_step "prune --dryrun: 孤児系列を挙げるが FS は変えない（→ ADR-0034 §2）"
 DRYRUN_OUT="$E2E_WORK/prune-dryrun.out"
-nput prune --dryrun >"$DRYRUN_OUT"
-# 行の形は `remove-series\t<roothash>\t<root>\t<names>`（→ cmd/nput/prune.go の printPrunePlan）。
+layat prune --dryrun >"$DRYRUN_OUT"
+# 行の形は `remove-series\t<roothash>\t<root>\t<names>`（→ cmd/layat/prune.go の printPrunePlan）。
 # 照合は awk のフィールド等値で行う。grep のパターンにパスを埋めると、tmpdir が必ず持つ `.` が
 # BRE のワイルドカードとして効き（`/tmp/tmp.XXXX` の形）、別のパスに false match しうる。
 plan_has_root() { # $1: plan ファイル, $2: 期待する root, $3: 期待する names フィールド
@@ -160,7 +160,7 @@ if plan_lists_root "$DRYRUN_OUT" "$LIVE_ROOT"; then
 else
 	e2e_pass "dryrun は生存系列を挙げない"
 fi
-# 隔離先の system 基底に置いた孤児系列も載る = バイナリが NPUT_SYSTEM_PROFILE_BASE を読んでいる。
+# 隔離先の system 基底に置いた孤児系列も載る = バイナリが LAYAT_SYSTEM_PROFILE_BASE を読んでいる。
 if plan_lists_root "$DRYRUN_OUT" "$SYS_ORPHAN_ROOT"; then
 	e2e_pass "隔離した system 基底の孤児系列も走査対象に載る"
 else
@@ -186,7 +186,7 @@ assert_json "$ENV_DRYRUN" "隔離した 2 基底のどの系列も skip され�
 	'.info.skipped == []'
 
 e2e_step "prune --yes: 孤児系列が丸ごと消え、生存系列は残る"
-nput prune --yes -v
+layat prune --yes -v
 assert_absent "$GONE_SERIES"
 # 隔離先の system 基底の孤児も消える（走査だけでなく削除まで隔離先へ向いている）。
 assert_absent "$SYS_ORPHAN"
@@ -194,8 +194,8 @@ assert_exists "$LIVE_SERIES/.root"
 assert_symlink "$LIVE_SERIES/docs/profile"
 
 e2e_step "生存 root の配置物は prune で変わらない"
-assert_symlink "$LIVE_ROOT/.nput-out/live"
-assert_file_eq "$LIVE_ROOT/.nput-out/live/file" "live"
+assert_symlink "$LIVE_ROOT/.layat-out/live"
+assert_file_eq "$LIVE_ROOT/.layat-out/live/file" "live"
 
 e2e_step "GC 回収可能になった（print-roots に系列配下の gcroot が出ない）"
 # refresh_print_roots が print-roots の取得失敗・空出力を fail にするので、下の -eq 0 は
@@ -214,7 +214,7 @@ fi
 
 e2e_step "再実行は no-op（孤児が無ければ何も消さない）"
 RERUN_ERR="$E2E_WORK/prune-rerun.err"
-nput prune --yes -v 2>"$RERUN_ERR"
+layat prune --yes -v 2>"$RERUN_ERR"
 # 削除 0 件だけでなく skip 0 件まで見る。skip 側へ落ちた系列も Removed は空なので `no-op` は出る。
 # 件数まで固定しないと「正しく生存と判定して残した」と「判定できずに残した」が区別できない。
 if grep -qF 'prune done (0 series deleted, 0 skipped)' "$RERUN_ERR"; then

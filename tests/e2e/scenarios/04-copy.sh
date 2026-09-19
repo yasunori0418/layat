@@ -16,14 +16,14 @@ echo "ORIG" >"$PROJ/srcrepo/data/conf"
 cat >"$PROJ/flake.nix" <<EOF
 {
 $(e2e_flake_inputs)
-  outputs = { self, nixpkgs, nput }: {
-    nput = nixpkgs.lib.genAttrs $E2E_SYSTEMS (system: {
-      home = nput.lib.mkManifest {
+  outputs = { self, nixpkgs, layat }: {
+    layat = nixpkgs.lib.genAttrs $E2E_SYSTEMS (system: {
+      home = layat.lib.mkManifest {
         pkgs = nixpkgs.legacyPackages.\${system};
-        root = nput.lib.homeRoot;
+        root = layat.lib.homeRoot;
         entries = {
           ".cfg/copied" = { src = ./srcrepo; subpath = "data"; method = "copy"; };
-          ".cfg/live"   = { src = nput.lib.mkOutOfStoreSymlink "$LIVE"; };
+          ".cfg/live"   = { src = layat.lib.mkOutOfStoreSymlink "$LIVE"; };
         };
       };
     });
@@ -33,11 +33,11 @@ EOF
 
 cd "$PROJ"
 git init -q
-git -c user.email=e2e@nput.test -c user.name=e2e add -A
-git -c user.email=e2e@nput.test -c user.name=e2e commit -qm init
+git -c user.email=e2e@layat.test -c user.name=e2e add -A
+git -c user.email=e2e@layat.test -c user.name=e2e commit -qm init
 
 e2e_step "apply（copy + out-of-store）"
-nput apply home
+layat apply home
 
 e2e_step "copy: store symlink ではなく通常ディレクトリ・書込可・内容コピー"
 assert_real_dir "$HOME/.cfg/copied"
@@ -58,7 +58,7 @@ assert_json "$ENV_RERUN" "copy entry は change なし・symlink は再リンク
 
 e2e_step "place-once 冪等: copy したファイルを編集 → 再 apply で編集が残る（上書きされない）"
 echo "EDITED" >"$HOME/.cfg/copied/conf"
-nput apply home
+layat apply home
 assert_file_eq "$HOME/.cfg/copied/conf" "EDITED"
 
 e2e_step "out-of-store は live: src 側の変更が target からそのまま見える"

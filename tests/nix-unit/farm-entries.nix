@@ -8,12 +8,12 @@
 #
 # store パスの hash 揺れを避けるため src には toString が安定する fake な flake-input 相当
 # （`{ outPath = …; }`）を使う。これは srcType の store-backed 判定（`? outPath`）を通る正当な test double。
-{ lib, nput }:
+{ lib, layat }:
 let
   fakeSrc = {
     outPath = "/nix/store/00000000000000000000000000000000-fake-src";
   };
-  norm = root: entries: nput.normalizeManifest { inherit lib root entries; };
+  norm = root: entries: layat.normalizeManifest { inherit lib root entries; };
 
   # store×symlink（採用）/ store×copy（除外）/ out-of-store×symlink（除外）が混在する manifest。
   # 抽出テストと配線テストが同じ入力を見ていることを構文で保つため、entries は 1 箇所で宣言し
@@ -24,7 +24,7 @@ let
       method = "copy";
     };
     ".config/out" = {
-      src = nput.mkOutOfStoreSymlink "/home/me/dotfiles/x";
+      src = layat.mkOutOfStoreSymlink "/home/me/dotfiles/x";
     };
     ".config/sym" = {
       src = fakeSrc;
@@ -36,9 +36,9 @@ let
 
   # normalizeManifest は target 辞書順で配列化するため mixed.entries の順は
   # [".config/copy", ".config/out", ".config/sym", ".config/sym2"]。
-  mixed = norm nput.projectRoot mixedEntries;
+  mixed = norm layat.projectRoot mixedEntries;
 
-  farm = nput.__internal.farmEntries lib mixed.entries;
+  farm = layat.__internal.farmEntries lib mixed.entries;
 
   # copy しか無い manifest（アンカー対象が皆無になる入力）。
   copyOnlyEntries = {
@@ -63,9 +63,9 @@ let
 
   buildCommandOf =
     entries:
-    (nput.mkManifest {
+    (layat.mkManifest {
       pkgs = fakePkgs;
-      root = nput.projectRoot;
+      root = layat.projectRoot;
       inherit entries;
     }).buildCommand;
 in
@@ -82,14 +82,14 @@ in
   # store×symlink が皆無なら farmEntries は空（copy / out-of-store だけではアンカーを持たない）。
   testFarmEntriesEmptyWhenNoStoreSymlink = {
     expr =
-      nput.__internal.farmEntries lib
-        (norm nput.projectRoot {
+      layat.__internal.farmEntries lib
+        (norm layat.projectRoot {
           ".config/copy" = {
             src = fakeSrc;
             method = "copy";
           };
           ".config/out" = {
-            src = nput.mkOutOfStoreSymlink "/home/me/dotfiles/x";
+            src = layat.mkOutOfStoreSymlink "/home/me/dotfiles/x";
           };
         }).entries;
     expected = [ ];
@@ -97,7 +97,7 @@ in
 
   # GC アンカー名は target の sha256 短縮 hex（32 文字・固定長・FS-safe・衝突回避・→ ADR-0016）。
   testAnchorNameSha256ShortHex = {
-    expr = nput.__internal.anchorName lib ".config/sym";
+    expr = layat.__internal.anchorName lib ".config/sym";
     expected = "029f105e76667554409c2422b0f61f1c";
   };
 
@@ -108,7 +108,7 @@ in
   # 1 行の形は `ln -s <escapeShellArg src> "$out/<anchorName target>"`。src は escapeShellArg
   # を通るので、clean なストアパスは素通りし、空白・記号を含むパスは quote される。
   testAnchorLinesSingleEntry = {
-    expr = nput.__internal.anchorLines lib [
+    expr = layat.__internal.anchorLines lib [
       {
         src = "/nix/store/00000000000000000000000000000000-fake-src";
         target = ".config/sym";
@@ -119,7 +119,7 @@ in
 
   # 複数エントリは改行連結（末尾に改行は付かない）。target ごとに anchor 名が変わる。
   testAnchorLinesJoinsWithNewline = {
-    expr = nput.__internal.anchorLines lib [
+    expr = layat.__internal.anchorLines lib [
       {
         src = "/nix/store/00000000000000000000000000000000-fake-src";
         target = ".config/sym";
@@ -136,7 +136,7 @@ in
 
   # src 側は escapeShellArg を通る。空白・記号を含むパスが shell へ素通りしないこと。
   testAnchorLinesEscapesSrc = {
-    expr = nput.__internal.anchorLines lib [
+    expr = layat.__internal.anchorLines lib [
       {
         src = "/nix/store/x y & z";
         target = ".config/sym";
@@ -147,7 +147,7 @@ in
 
   # アンカー対象が皆無なら空文字列（埋め込み後の整形がどうなるかはここでは見ない）。
   testAnchorLinesEmptyWhenNoEntries = {
-    expr = nput.__internal.anchorLines lib [ ];
+    expr = layat.__internal.anchorLines lib [ ];
     expected = "";
   };
 
@@ -162,7 +162,7 @@ in
     expected = ''
       mkdir -p "$out"
       cp /nix/store/fake-manifest.json "$out/manifest.json"
-      ${nput.__internal.anchorLines lib farm}
+      ${layat.__internal.anchorLines lib farm}
     '';
   };
 

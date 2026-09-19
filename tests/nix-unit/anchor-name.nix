@@ -6,9 +6,9 @@
 #
 # 期待 hash は `lib.substring 0 32 (builtins.hashString "sha256" target)` を nix で評価した実値を
 # 直書きする（関数の再実装ではなく外部に固定した ground-truth との一致を見る）。
-{ lib, nput }:
+{ lib, layat }:
 let
-  an = nput.__internal.anchorName lib;
+  an = layat.__internal.anchorName lib;
 
   # cyrillic / 日本語 / 空白 / 記号（& * " |）を含む target。FS 名として直に使えない文字を含んでも
   # sha256 経由で安定した hex に潰れることを確認する。

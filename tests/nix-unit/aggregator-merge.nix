@@ -9,9 +9,9 @@
 # 名前と値の対応を取り違えていないか見分けられるよう全て違う値を置く（`//` の後勝ちが
 # 選ぶ側は検証できない。衝突する入力は必ず throw するので到達しない）。
 #
-# `nput` は使わない（検証対象がスイートの組み立てで、manifest 生成関数ではないため）が、
-# アグリゲータが全 leaf を `{ lib, nput }` で import するのでシグネチャは他ファイルに揃える。
-{ lib, nput }:
+# `layat` は使わない（検証対象がスイートの組み立てで、manifest 生成関数ではないため）が、
+# アグリゲータが全 leaf を `{ lib, layat }` で import するのでシグネチャは他ファイルに揃える。
+{ lib, layat }:
 let
   inherit (import ../nix-unit-lib.nix { inherit lib; }) mergeTests;
 

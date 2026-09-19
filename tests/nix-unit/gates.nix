@@ -4,18 +4,18 @@
 #
 # store パスの hash 揺れを避けるため src には toString が安定する fake な flake-input 相当
 # （`{ outPath = …; }`）を使う。これは srcType の store-backed 判定（`? outPath`）を通る正当な test double。
-{ lib, nput }:
+{ lib, layat }:
 let
   fakeSrc = {
     outPath = "/nix/store/00000000000000000000000000000000-fake-src";
   };
-  norm = root: entries: nput.normalizeManifest { inherit lib root entries; };
+  norm = root: entries: layat.normalizeManifest { inherit lib root entries; };
 in
 {
   # systemRoot は未実装（→ ADR-0013）。
   testSystemRootUnimplemented = {
     expr =
-      (norm nput.systemRoot {
+      (norm layat.systemRoot {
         "x" = {
           src = fakeSrc;
         };
@@ -27,9 +27,9 @@ in
   # method = "copy" かつ out-of-store marker は意図矛盾（→ ADR-0013）。
   testCopyOutOfStoreRejected = {
     expr =
-      (norm nput.projectRoot {
+      (norm layat.projectRoot {
         ".config/x" = {
-          src = nput.mkOutOfStoreSymlink "/home/me/dots";
+          src = layat.mkOutOfStoreSymlink "/home/me/dots";
           method = "copy";
         };
       }).entries;
@@ -40,7 +40,7 @@ in
   # target が絶対パス（→ ADR-0019）。
   testAbsoluteTargetRejected = {
     expr =
-      (norm nput.projectRoot {
+      (norm layat.projectRoot {
         "/etc/x" = {
           src = fakeSrc;
         };
@@ -52,7 +52,7 @@ in
   # target が `..` で root の外（→ ADR-0019）。
   testEscapingTargetRejected = {
     expr =
-      (norm nput.projectRoot {
+      (norm layat.projectRoot {
         "../../etc/x" = {
           src = fakeSrc;
         };
@@ -64,7 +64,7 @@ in
   # subpath が `..` で src の外（→ ADR-0019）。
   testEscapingSubpathRejected = {
     expr =
-      (norm nput.projectRoot {
+      (norm layat.projectRoot {
         ".config/x" = {
           src = fakeSrc;
           subpath = "../escape";
@@ -77,7 +77,7 @@ in
   # 別キーで target を同値に明示上書きした衝突（→ ADR-0024）。
   testDuplicateTargetRejected = {
     expr =
-      (norm nput.projectRoot {
+      (norm layat.projectRoot {
         "a" = {
           src = fakeSrc;
           target = ".config/same";
@@ -94,7 +94,7 @@ in
   # 未知キー（タイポ / 旧名）は submodule strict で弾く（→ ADR-0008, ADR-0010）。
   testUnknownKeyRejected = {
     expr =
-      (norm nput.projectRoot {
+      (norm layat.projectRoot {
         ".config/x" = {
           src = fakeSrc;
           source = "skills/nix"; # 旧名（正しくは subpath）
@@ -107,7 +107,7 @@ in
   # 素の文字列 src は拒否（out-of-store は marker で opt-in・→ ADR-0001）。
   testStringSrcRejected = {
     expr =
-      (norm nput.projectRoot {
+      (norm layat.projectRoot {
         ".config/x" = {
           src = "/home/me/dots";
         };
