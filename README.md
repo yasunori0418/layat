@@ -554,7 +554,7 @@ package layers would be delegated to or combined with system-manager, while laya
 
 ## Migrating from nput
 
-nput is being renamed to **layat** on or after **2026-09-22**. The rename is a breaking change
+nput has been renamed to **layat**. The rename is a breaking change
 and **no compatibility shim is provided**. Why the name changed, the rejected candidates and the
 policy behind the notice period are recorded in
 [`docs/adr/0054-rename-nput-to-layat.md`](docs/adr/0054-rename-nput-to-layat.md).
@@ -587,9 +587,6 @@ The `--json` codes are the one change consumers cannot ignore: niface requires t
 `E_<TOOL>_<NAME>` shape, so the prefix moves with the tool name.
 
 ### Old generations: migrate or drop
-
-> The commands in this subsection are for **after** the rename. Until then `layat` does not
-> exist yet — read them as what to run on the day you switch.
 
 nput's generations live in `<state>/nix/profiles/nput/`; layat reads
 `<state>/nix/profiles/layat/`. Nothing is migrated for you: layat neither moves that directory
