@@ -1,14 +1,10 @@
 # layat
 
-> ⚠️ **nput is being renamed to `layat`, on or after 2026-09-22.** The repository, the Go
-> module path, the binary, the flake attributes, the module option namespace and the `--json`
-> error codes all change at once, and there is no compatibility shim. See
-> [Migrating from nput](#migrating-from-nput) for what to change — and for how to stay on the
-> old name by pinning `github:yasunori0418/nput/legacy-nput`.
-
 *Read this in [Japanese (日本語)](README.ja.md).*
 
-> Place fetched git repositories at arbitrary paths via symlink or copy.
+> **layat** — lays contents at root-relative targets, as the manifest says.
+
+*Formerly **nput** — see [Migrating from nput](#migrating-from-nput).*
 
 layat is a Nix library and module set that **places the contents of an already-fetched
 Nix store path at a `root`-relative target** — as a symlink or a copy. It does **not**

@@ -1,12 +1,9 @@
 # layat
 
-> ⚠️ **nput は 2026-09-22 以降に `layat` へ改名される。** リポジトリ・Go module path・
-> バイナリ名・flake 属性・モジュールのオプション名前空間・`--json` のエラーコードが一斉に
-> 変わり、互換シムは提供しない。書き換えの内容と、旧名で留まる場合の
-> `github:yasunori0418/nput/legacy-nput` への pin 手順は
-> [nput からの移行](#nput-からの移行)を参照。
+> **layat** — lays contents at root-relative targets, as the manifest says.
+> （manifest の言うとおりに、内容を root 相対の target へ置く。）
 
-> フェッチ済みの git リポジトリを、symlink または copy で任意のパスへ配置する。
+*旧名 **nput** — 書き換えの内容は [nput からの移行](#nput-からの移行) を参照。*
 
 *この文書は英語版 [`README.md`](README.md) の日本語訳。仕様・用語の一次参照は英語版とし、両者に差異があれば英語版が優先する。*
 
