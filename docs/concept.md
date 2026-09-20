@@ -163,6 +163,22 @@ home-manager に存在しないため比較の対象外。
 上記に挙げていない ADR は実装確定に伴う詳細な意味論整備（CI・型検査・flock・root 解決の細部等）。
 個々の内容は `docs/adr/` を参照。
 
+### 名前の由来
+
+旧名 **nput** の「n」は **nix** を指していた。nix 側で manifest を構築し store 経由で固定した
+ファイルを配置することが主用途だと見込んでいたためである。しかし engine が受け取る契約は
+`manifest.json` 1 本で、その生成者を engine は問わない（`lib/` は生成系のひとつにすぎない）。
+作者自身の運用も `mkOutOfStoreSymlink` による可変 symlink で store を介していない。結果として
+「n」が指すものが曖昧になった。
+
+現名 **layat** は "**lay** \<src\> **at** \<target\>" の圧縮造語で、manifest の通りに src を
+target へ置くという動作を一語で自己記述する。`chroot`（change root）・`getopt`（get options）と
+同じ、動詞句の圧縮という UNIX コマンドの伝統的造語法に従う。解決しているペインは「フェッチ済みの
+内容を、manifest の通りに root 相対の target へ置く」ことであって、その内容を誰がどうフェッチ
+したかではない——**nix に縛られない、ペインを体現する名前**への改名である。
+
+- [ADR-0054](adr/0054-rename-nput-to-layat.md) — nput を layat へ改名し、2 週間の改名予告期間を挟む（命名条件・棄却した候補・移行方針）
+
 ---
 
 ## 関連文書
