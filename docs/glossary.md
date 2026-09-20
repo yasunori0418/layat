@@ -14,6 +14,10 @@ The core of layat: a pure function that places a Nix store path at a `root`-rela
 The placement core that owns both placement (native filesystem operations) and stale removal. It takes `manifest.json` as input, invokes only `nix` (profile) and `git` (toplevel), and is implemented as a Go library driven by the **layat CLI**. It does not generate a bash script per config. "Library" here means internal in-binary layering under `internal/`, not a publicly importable, reusable module — the stable surface is the `manifest.json` contract. The engine is stdlib-only.
 - **Avoid**: "per-config generated bash script", "per-layer placement logic", "a single flat implementation fused with the CLI", "importing the engine as a public Go module".
 
+### layat
+The name of the tool itself. A compressed coinage of "**lay** \<src\> **at** \<target\>": it places src at target, as the manifest says. It follows the traditional UNIX way of compressing a verb phrase into a command name, as `chroot` (change root) and `getopt` (get options) do. The tool was formerly named **nput**, whose "n" stood for *nix*; that prefix stopped describing the tool once the engine's only contract became `manifest.json`, regardless of who generates it (→ [ADR-0054](adr/0054-rename-nput-to-layat.md)). Spell it lowercase, including at the start of a sentence.
+- **Avoid**: "nput" for anything other than the old name in migration context; "Layat" / "LayAt" / "layAt"; reading the name as nix-specific.
+
 ### layat CLI
 The primary user-facing UX; the `packages.layat` binary on `PATH`. It discovers an **entrypoint**, runs `nix build` / `eval` internally to obtain a named manifest, and has the engine place it. Subcommands include `apply [<name>]`, `apply --all`, `reset`, `rollback`, `list-generations`, `gitignore`, `prune`, and `init`.
 - **Avoid**: describing a per-config `nix run .#x` wrapper as the primary UX; describing `apply` as "always builds the entrypoint" (a built link-farm can be applied with `--manifest`).

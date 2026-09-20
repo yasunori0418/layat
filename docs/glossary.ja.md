@@ -14,6 +14,10 @@ layat のコア。`root` 相対の `target` に Nix store のパスを配置す�
 配置（ネイティブなファイルシステム操作）と stale 除去の両方を一手に所有する配置コア。`manifest.json` を入力に取り、`nix`（profile）と `git`（toplevel）のみを叩く。**layat CLI** が駆動する Go ライブラリとして実装される。config ごとに bash スクリプトを生成しない。ここでの「ライブラリ」は `internal/` 配下のバイナリ内部の層分離を指し、公開 import 可能な再利用モジュールではない——安定面は `manifest.json` 契約に閉じる。エンジンは stdlib-only。
 - **Avoid**: 「per-config generated bash script（config ごとに生成される bash スクリプト）」「per-layer placement logic（層ごとの配置ロジック）」「a single flat implementation fused with the CLI（CLI と一体の平らな単一実装）」「importing the engine as a public Go module（engine を公開 Go モジュールとして import する）」。
 
+### layat
+ツールそのものの名前。"**lay** \<src\> **at** \<target\>"（manifest の言うとおりに src を target へ置く）の圧縮造語。`chroot`（change root）・`getopt`（get options）と同じ、動詞句をコマンド名へ圧縮する UNIX の伝統的な造語法に従う。旧名は **nput** で、その「n」は *nix* を指していたが、engine の契約が生成者を問わない `manifest.json` 1 本へ収束した時点でツールを記述しなくなった（→ [ADR-0054](adr/0054-rename-nput-to-layat.md)）。文頭でも小文字で表記する。
+- **Avoid**: 移行文脈の旧名以外で「nput」を使うこと、「Layat」「LayAt」「layAt」と書くこと、名前を nix 固有のものと読むこと。
+
 ### layat CLI
 ユーザーが直接触れる一次 UX。`PATH` 上の `packages.layat` バイナリ。**entrypoint** を発見し、内部で `nix build` / `eval` を回して named manifest を取得し、エンジンに配置させる。サブコマンドは `apply [<name>]`・`apply --all`・`reset`・`rollback`・`list-generations`・`gitignore`・`prune`・`init`。
 - **Avoid**: config ごとの `nix run .#x` ラッパーを一次 UX と説明すること、`apply` を「常に entrypoint を build する」と説明すること（ビルド済み link-farm は `--manifest` で適用できる）。
