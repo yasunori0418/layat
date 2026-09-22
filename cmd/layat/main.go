@@ -11,10 +11,12 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 
 	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/paths"
 )
 
 // version is the layat version, wired to cobra's Version field and shown by `layat --version`
@@ -25,6 +27,52 @@ import (
 var version = "dev"
 
 // Note: cobra's Version field adds only a `--version` flag, not a `version` subcommand.
+
+// legacyStateDirHintFmt is the one-line notice printed to stderr when the pre-rename state
+// directory is still around (→ ADR-0054 §8, issue #389). nput's generations are not carried
+// over — layat starts at generation 1 in its own base — and the old directory keeps its
+// generation links out of the Nix garbage collector's reach until it is gone, so leaving it
+// alone forever quietly pins store paths nothing reads any more. The README section it points
+// at holds both routes (migrate with gcroot re-registration, or delete). The two %s take the
+// resolved absolute paths, as every other stderr line of this CLI does (→ reportResetTargets):
+// the reader is being asked to move or delete that directory by hand, so the line names it
+// rather than making them expand <state> themselves. The wording is English, like the rest of
+// the CLI's output. Removed in the next minor (→ issue #392).
+const legacyStateDirHintFmt = "layat: found the pre-rename state directory %s. " +
+	"Its generations are not carried over: layat keeps its own under %s " +
+	"and starts from generation 1. Migrate or delete it by hand — see the \"Migrating from nput\" " +
+	"section of https://github.com/yasunori0418/layat#migrating-from-nput . " +
+	"Until it is gone, the Nix garbage collector cannot collect the old generations it still roots."
+
+// legacyStateDir returns the pre-rename profile base <state>/nix/profiles/nput, the sibling
+// of paths.Base's <state>/nix/profiles/layat (→ ADR-0024).
+func legacyStateDir(stateDir string) string {
+	return filepath.Join(stateDir, "nix", "profiles", "nput")
+}
+
+// printLegacyStateDirHint writes the hint to stderr when <state>/nix/profiles/nput is a
+// directory. It is a single os.Stat and nothing else: no migration, no suppression flag
+// (→ ADR-0054 §8). Like the rename notice it replaces, it is deliberately stderr-only, so the
+// --json envelope on stdout stays a clean niface contract (→ ADR-0043, ADR-0054 §6). Anything
+// that is not a directory is passed over: the line calls what it found a state directory and
+// describes the generations inside it, so a stray file of that name would be told a story
+// about itself that is not true. os.Stat follows symlinks, so a symlink to the old profile
+// base still gets the hint — the generations it points at are exactly what the hint is about.
+// A state base that cannot be resolved ($HOME unset and no $XDG_STATE_HOME) or a stat that
+// fails for any other reason stays silent too — a hint about a directory whose presence is
+// unknown would be worse than none, and nothing here may affect the command's own outcome.
+func printLegacyStateDirHint() {
+	stateDir, err := paths.StateDir()
+	if err != nil {
+		return
+	}
+	legacy := legacyStateDir(stateDir)
+	fi, err := os.Stat(legacy)
+	if err != nil || !fi.IsDir() {
+		return
+	}
+	fmt.Fprintf(os.Stderr, legacyStateDirHintFmt+"\n", legacy, paths.Base(stateDir))
+}
 
 // Global flags (→ docs/spec.md "global flags").
 var (
@@ -99,6 +147,13 @@ func newRootCmd() *cobra.Command {
 	// PersistentPreRun: cobra's auto-added utility commands (help / completion / __complete)
 	// own stdout with their own text and must never emit an envelope, and PersistentPreRun
 	// cannot tell them apart robustly (→ issue #130, docs/spec.md).
+	//
+	// The legacy state directory hint, unlike the envelope, is a fixed stderr line that no
+	// command needs to type, so PersistentPreRun is the right seam for it: one line for every
+	// subcommand (→ ADR-0054 §8, issue #389). `--version` and `--help` return inside cobra's
+	// execute() before this runs, so neither the installCheckPhase's `layat --version`
+	// assertion nor TestVersionFlagOutput sees the line.
+	root.PersistentPreRun = func(_ *cobra.Command, _ []string) { printLegacyStateDirHint() }
 	pf := root.PersistentFlags()
 	pf.StringVarP(&flagFile, "file", "f", "", "Specify the entrypoint explicitly (overrides autodiscovery)")
 	pf.StringVar(&flagRoot, "root", "", "Override the resolved root explicitly (all modes)")
