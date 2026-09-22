@@ -1,14 +1,10 @@
 # layat
 
-> ⚠️ **nput is being renamed to `layat`, on or after 2026-09-22.** The repository, the Go
-> module path, the binary, the flake attributes, the module option namespace and the `--json`
-> error codes all change at once, and there is no compatibility shim. See
-> [Migrating from nput](#migrating-from-nput) for what to change — and for how to stay on the
-> old name by pinning `github:yasunori0418/nput/legacy-nput`.
-
 *Read this in [Japanese (日本語)](README.ja.md).*
 
-> Place fetched git repositories at arbitrary paths via symlink or copy.
+> **layat** — lays contents at root-relative targets, as the manifest says.
+
+*Formerly **nput** — see [Migrating from nput](#migrating-from-nput).*
 
 layat is a Nix library and module set that **places the contents of an already-fetched
 Nix store path at a `root`-relative target** — as a symlink or a copy. It does **not**
@@ -558,7 +554,7 @@ package layers would be delegated to or combined with system-manager, while laya
 
 ## Migrating from nput
 
-nput is being renamed to **layat** on or after **2026-09-22**. The rename is a breaking change
+nput has been renamed to **layat**. The rename is a breaking change
 and **no compatibility shim is provided**. Why the name changed, the rejected candidates and the
 policy behind the notice period are recorded in
 [`docs/adr/0054-rename-nput-to-layat.md`](docs/adr/0054-rename-nput-to-layat.md).
@@ -591,9 +587,6 @@ The `--json` codes are the one change consumers cannot ignore: niface requires t
 `E_<TOOL>_<NAME>` shape, so the prefix moves with the tool name.
 
 ### Old generations: migrate or drop
-
-> The commands in this subsection are for **after** the rename. Until then `layat` does not
-> exist yet — read them as what to run on the day you switch.
 
 nput's generations live in `<state>/nix/profiles/nput/`; layat reads
 `<state>/nix/profiles/layat/`. Nothing is migrated for you: layat neither moves that directory

@@ -109,7 +109,7 @@ type exitError struct {
 func (e *exitError) Error() string { return e.msg }
 
 // rootCmdLong discloses the internally run nix commands in --help (for transparency; selectively runnable by hand; → ADR-0007).
-const rootCmdLong = `layat places fetched git repositories at arbitrary paths in your environment via symlink or copy.
+const rootCmdLong = `layat lays contents at root-relative targets, as the manifest says.
 It does not generate configuration (configuration is written in Nix and evaluated by nix build).
 
 Internal nix commands (disclosed for transparency; you can run them by hand selectively):
@@ -131,7 +131,7 @@ Pass --debug to print the actual nix commands to stderr as they run.`
 func newRootCmd() *cobra.Command {
 	root := &cobra.Command{
 		Use:   "layat",
-		Short: "Place fetched git repositories at arbitrary paths via symlink or copy.",
+		Short: "Lays contents at root-relative targets, as the manifest says.",
 		Long:  rootCmdLong,
 		// `layat --version` prints the embedded version (a flag only — cobra does not add a `version`
 		// subcommand). Leave SetVersionTemplate unset: cobra's default template ("layat version X.Y.Z\n")

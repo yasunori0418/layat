@@ -1,12 +1,9 @@
 # layat
 
-> ⚠️ **nput は 2026-09-22 以降に `layat` へ改名される。** リポジトリ・Go module path・
-> バイナリ名・flake 属性・モジュールのオプション名前空間・`--json` のエラーコードが一斉に
-> 変わり、互換シムは提供しない。書き換えの内容と、旧名で留まる場合の
-> `github:yasunori0418/nput/legacy-nput` への pin 手順は
-> [nput からの移行](#nput-からの移行)を参照。
+> **layat** — lays contents at root-relative targets, as the manifest says.
+> （manifest の言うとおりに、内容を root 相対の target へ置く。）
 
-> フェッチ済みの git リポジトリを、symlink または copy で任意のパスへ配置する。
+*旧名 **nput** — 書き換えの内容は [nput からの移行](#nput-からの移行) を参照。*
 
 *この文書は英語版 [`README.md`](README.md) の日本語訳。仕様・用語の一次参照は英語版とし、両者に差異があれば英語版が優先する。*
 
@@ -441,7 +438,7 @@ layat init <template>           # `nix flake init -t github:yasunori0418/layat#<
 
 ## nput からの移行
 
-nput は **2026-09-22 以降**に **layat** へ改名される。改名は破壊的変更で、**互換シムは提供しない**。
+nput は **layat** へ改名された。改名は破壊的変更で、**互換シムは提供しない**。
 改名の理由・棄却候補・予告期間の方針の全記録は
 [`docs/adr/0054-rename-nput-to-layat.md`](docs/adr/0054-rename-nput-to-layat.md)。
 
@@ -472,9 +469,6 @@ GitHub が旧リポジトリ URL のリダイレクトを維持するため、�
 接頭辞はツール名と一緒に動く。
 
 ### 旧世代: 移行するか、捨てるか
-
-> この小節のコマンドは**改名後**に実行するもの。それまで `layat` はまだ存在しないので、
-> 切り替える日に何を実行するかとして読む。
 
 nput の世代は `<state>/nix/profiles/nput/` にあり、layat は `<state>/nix/profiles/layat/` を
 読む。移行は自動では行われない。layat はそのディレクトリを移動もしなければ読みもしない。

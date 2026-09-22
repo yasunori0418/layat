@@ -1,5 +1,5 @@
 {
-  description = "Place fetched git repositories at arbitrary paths via symlink or copy.";
+  description = "Lays contents at root-relative targets, as the manifest says.";
 
   # layat 自体を clone して nix develop / build / flake check する際に cachix からビルド済み
   # バイナリを引くための設定（trusted-user / accept-flake-config 前提）。flake の nixConfig は
@@ -164,7 +164,7 @@
               runHook postInstallCheck
             '';
             meta = {
-              description = "Place fetched git repositories at arbitrary paths via symlink or copy.";
+              description = "Lays contents at root-relative targets, as the manifest says.";
               mainProgram = "layat";
             };
           };
