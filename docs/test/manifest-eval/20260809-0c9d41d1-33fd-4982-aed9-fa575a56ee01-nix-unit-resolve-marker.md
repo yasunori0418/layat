@@ -10,7 +10,7 @@ covers:
 
 ## 対象
 
-`tests/nix-unit/resolve-marker.nix`（TP-403c55c7-d996-4951-8e6b-c3a7dddd387c のテスト seam `nput.__internal.resolveEntry`
+`tests/nix-unit/resolve-marker.nix`（TP-403c55c7-d996-4951-8e6b-c3a7dddd387c のテスト seam `layat.__internal.resolveEntry`
 と `lib/types.nix` の `isRootMarker` / `isOutOfStoreMarker` を直接叩く。manifest 全体を介さず
 単一 entry の src 種別判定・文字列化だけを見る最小の境界）
 
@@ -24,7 +24,7 @@ store / out-of-store それぞれに重ねて置く。どの段で落ちたか�
   5 フィールドに exact 一致
 - **out-of-store marker**: `srcKind = "outOfStore"`、`src` が marker の絶対パス、entry 全体が
   exact 一致（`method = "copy"` を明示した形で）
-- **判別タグの非漏洩**: store / out-of-store のどちらの解決結果にも `_nputMarker` が無いこと
+- **判別タグの非漏洩**: store / out-of-store のどちらの解決結果にも `_layatMarker` が無いこと
 - **`isOutOfStoreMarker`**: out-of-store marker には true、root マーカー・store-backed な
   attrset には false
 - **`isRootMarker`**: projectRoot / homeRoot / systemRoot には true、out-of-store marker と

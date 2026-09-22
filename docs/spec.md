@@ -1,6 +1,6 @@
-# nput 仕様書
+# layat 仕様書
 
-nput が「何を満たすべきか」の全体像と、個別仕様（requirement item）・品質方針
+layat が「何を満たすべきか」の全体像と、個別仕様（requirement item）・品質方針
 （quality item）・テスト計画（test_plan item）への索引。
 
 規範的な仕様は **すべて `docs/requirements/` の item が持ち**、開発プロセスと規約に関する
@@ -36,12 +36,12 @@ nput が「何を満たすべきか」の全体像と、個別仕様（requireme
 
 ## アーキテクチャ概要
 
-nput は **CLI とエンジンの 2 層**で構成する（→ ADR-0006, ADR-0007）。CLI は entrypoint
+layat は **CLI とエンジンの 2 層**で構成する（→ ADR-0006, ADR-0007）。CLI は entrypoint
 （`flake.nix` / `shell.nix` / `default.nix`）を発見して `nix build` / `nix eval` を回し、得た
 manifest をエンジンへ渡す。エンジンは `manifest.json` を唯一の入力とし、ネイティブ FS 操作で
 配置・stale 除去・profile swap を行う。層の境界は `manifest.json` だけ。
 
-- [REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645](requirements/20260802-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645-two-layer-architecture.md) — nput は CLI とエンジンの 2 層で構成する
+- [REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645](requirements/20260802-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645-two-layer-architecture.md) — layat は CLI とエンジンの 2 層で構成する
 - [REQ-1767b250-b475-4276-a551-20dc79e75a30](requirements/20260802-1767b250-b475-4276-a551-20dc79e75a30-config-written-in-nix.md) — config は Nix で書き nix build で評価する
 - [REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564](requirements/20260802-6c4e174a-4d16-477a-96ff-17cb4eb5b564-engine-external-command-constraint.md) — engine が叩く外部コマンドは nix と git のみに限る
 
@@ -83,17 +83,17 @@ manifest をエンジンへ渡す。エンジンは `manifest.json` を唯一の
 
 ## CLI 仕様（一次 UX）
 
-`nput` CLI は PATH に常駐する一次 UX（→ ADR-0007）。entrypoint を発見し、rootKind を先取り
+`layat` CLI は PATH に常駐する一次 UX（→ ADR-0007）。entrypoint を発見し、rootKind を先取り
 eval して root を解決し、flock を取ってから `nix build` をロック内で回してエンジンを駆動する。
 
-- [REQ-14f0aec9-abae-4621-82f3-40536a1ad904](requirements/20260802-14f0aec9-abae-4621-82f3-40536a1ad904-cli-primary-ux-installation.md) — nput CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする
+- [REQ-14f0aec9-abae-4621-82f3-40536a1ad904](requirements/20260802-14f0aec9-abae-4621-82f3-40536a1ad904-cli-primary-ux-installation.md) — layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする
 - [REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6](requirements/20260802-f9920c87-8551-4aa3-bf03-26fdf4191ed6-nix-experimental-features-prerequisite.md) — nix experimental-features は前提条件とし、CLI は自動付与せず案内エラーで停止する
 
 ### entrypoint の発見・アドレッシング
 
 - [REQ-1cc080f6-ae91-4c1f-973e-b7054cfc0198](requirements/20260802-1cc080f6-ae91-4c1f-973e-b7054cfc0198-entrypoint-discovery-order.md) — entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする
-- [REQ-496b1a07-5b74-416b-9e5f-3952b4c03737](requirements/20260802-496b1a07-5b74-416b-9e5f-3952b4c03737-named-manifest-addressing.md) — entrypoint は nput.\<name\> に named manifest を公開し CLI は形ごとの attr path で build する
-- [REQ-205d744d-5a53-4511-bc09-892ba01d4e6f](requirements/20260802-205d744d-5a53-4511-bc09-892ba01d4e6f-default-config-name-and-namespace.md) — config 名 default を慣例の解決先とし専用 nput 名前空間で packages を汚さない
+- [REQ-496b1a07-5b74-416b-9e5f-3952b4c03737](requirements/20260802-496b1a07-5b74-416b-9e5f-3952b4c03737-named-manifest-addressing.md) — entrypoint は layat.\<name\> に named manifest を公開し CLI は形ごとの attr path で build する
+- [REQ-205d744d-5a53-4511-bc09-892ba01d4e6f](requirements/20260802-205d744d-5a53-4511-bc09-892ba01d4e6f-default-config-name-and-namespace.md) — config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない
 - [REQ-c50df875-2cb0-4e72-8a21-858359a11cae](requirements/20260802-c50df875-2cb0-4e72-8a21-858359a11cae-flake-parts-module-path.md) — flake-parts 経路は直書きと同一の derivation を生み CLI のアドレッシングを変えない
 - [REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da](requirements/20260802-c890ce4a-6528-4ab3-ac86-23d7aebff7da-legacy-entrypoint-passthru-canonical.md) — legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない
 - [REQ-da253cab-34d4-4d6e-96f0-de99e012b376](requirements/20260802-da253cab-34d4-4d6e-96f0-de99e012b376-legacy-src-not-auto-stored.md) — legacy entrypoint では相対 path の src が自動で store 化されない
@@ -119,7 +119,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9](requirements/20260802-eaa8c0df-af44-4f52-9603-cd2bc22a67e9-gitignore-project-mode-only.md) — gitignore は project mode 限定で非 project config を指定したらエラーで停止する
 - [REQ-60787ed2-4176-4bdd-800f-1600c0315551](requirements/20260802-60787ed2-4176-4bdd-800f-1600c0315551-gitignore-includes-copy-targets.md) — gitignore は method を区別せず copy target も含めて全 target を列挙する
 - [REQ-1f128917-4424-4e37-8a88-e0bb23a09da7](requirements/20260802-1f128917-4424-4e37-8a88-e0bb23a09da7-gitignore-all-dedup.md) — gitignore --all は projectRoot の全 config の target をソート + 重複除去して出力する
-- [REQ-6be1cbf1-6c6e-498b-8acb-7f4b80037169](requirements/20260802-6be1cbf1-6c6e-498b-8acb-7f4b80037169-init-template-wrapper.md) — nput init は nix flake init -t への透明なラッパーとしファイルを生成しない
+- [REQ-6be1cbf1-6c6e-498b-8acb-7f4b80037169](requirements/20260802-6be1cbf1-6c6e-498b-8acb-7f4b80037169-init-template-wrapper.md) — layat init は nix flake init -t への透明なラッパーとしファイルを生成しない
 - [REQ-cbd61281-64b0-4487-a4b7-ce76e70dc4f9](requirements/20260802-cbd61281-64b0-4487-a4b7-ce76e70dc4f9-init-fixed-flake-ref.md) — init のテンプレート参照はバイナリにハードコードした固定 flake ref とする
 - [REQ-196ddabf-6569-4303-942e-050872972501](requirements/20260802-196ddabf-6569-4303-942e-050872972501-init-template-contents.md) — template は動く example を 1 config だけ置きバリエーションはコメントで示す
 - [REQ-61c05e09-0bde-4f74-9a96-03185f9df606](requirements/20260802-61c05e09-0bde-4f74-9a96-03185f9df606-root-override-flag.md) — --root は全モード共通で解決 root を明示上書きする
@@ -159,7 +159,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 ### 再現性スタンス
 
 - [REQ-67095391-eab2-45d2-b75b-b428d481bcc2](requirements/20260802-67095391-eab2-45d2-b75b-b428d481bcc2-reproducibility-stance.md) — flake は pure eval で flake.lock が固定し legacy は impure を許容しユーザー責任とする
-- [REQ-d0aef5af-e922-400b-b250-ca38719c480b](requirements/20260802-d0aef5af-e922-400b-b250-ca38719c480b-flake-check-unknown-output.md) — nput カスタム output は nix flake check の unknown 警告を許容し主検証は nix build で行う
+- [REQ-d0aef5af-e922-400b-b250-ca38719c480b](requirements/20260802-d0aef5af-e922-400b-b250-ca38719c480b-flake-check-unknown-output.md) — layat カスタム output は nix flake check の unknown 警告を許容し主検証は nix build で行う
 
 ---
 
@@ -223,18 +223,18 @@ symlink は配置前除去 → 配置 → stale 除去の順で進み、途中�
 
 ## 世代管理仕様
 
-世代は link farm derivation を nput 自前の profile へコミットして積む（→ ADR-0002, ADR-0025）。
+世代は link farm derivation を layat 自前の profile へコミットして積む（→ ADR-0002, ADR-0025）。
 stale 除去は前世代 manifest の記録通りを指す symlink だけに限る保守的な操作。
 
-- [REQ-1be4d678-959c-44d7-a346-44bfd95af56e](requirements/20260802-1be4d678-959c-44d7-a346-44bfd95af56e-generation-mechanism-link-farm-manifest.md) — 世代は link farm derivation を nput 自前 profile へコミットして積み、前世代 manifest から stale を除去する
+- [REQ-1be4d678-959c-44d7-a346-44bfd95af56e](requirements/20260802-1be4d678-959c-44d7-a346-44bfd95af56e-generation-mechanism-link-farm-manifest.md) — 世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から stale を除去する
 - [REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3](requirements/20260802-2aa3abbc-90b2-486e-92de-d785554bdeb3-profile-on-disk-layout.md) — profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる
 - [REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2](requirements/20260802-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2-stale-removal-invariants.md) — stale 除去は前世代の記録通りを指す symlink のみに限り、copy は消さず orphan を警告する
 - [REQ-8409db86-a1ba-4053-86dc-588985cc1ca7](requirements/20260802-8409db86-a1ba-4053-86dc-588985cc1ca7-empty-parent-dir-pruning.md) — target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する
 - [REQ-706de717-4e47-471a-a1c0-448635be159c](requirements/20260802-706de717-4e47-471a-a1c0-448635be159c-generation-gc.md) — 世代操作は nix-env --profile 系で統一し、GC root の間引きと store 解放を分けて行う
 - [REQ-0e341430-17f0-498b-9439-65491652163a](requirements/20260802-0e341430-17f0-498b-9439-65491652163a-rollback-refit-then-pointer.md) — rollback は FS を先に収束させてから profile ポインタを最後に移す
-- [REQ-844ee375-919f-4341-81e1-a5f89fd32840](requirements/20260802-844ee375-919f-4341-81e1-a5f89fd32840-module-mode-profile-internal.md) — module 時は rollback を host へ一本化し、nput profile は前進のみで追従する
+- [REQ-844ee375-919f-4341-81e1-a5f89fd32840](requirements/20260802-844ee375-919f-4341-81e1-a5f89fd32840-module-mode-profile-internal.md) — module 時は rollback を host へ一本化し、layat profile は前進のみで追従する
 - [REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0](requirements/20260802-46fccb80-4bae-4d37-bc19-dded88e9a9c0-project-mode-generation-skip.md) — project mode は世代を非公開にし、derivation 同一なら世代を積まず lstat ドリフト修復だけ行う
-- [REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4](requirements/20260802-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4-project-mode-orphan-profile.md) — 孤児 profile は backref で逆引き可能なまま放置許容とし、`nput prune` が root 不在の系列を削除する
+- [REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4](requirements/20260802-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4-project-mode-orphan-profile.md) — 孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する
 - [REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693](requirements/20260802-fc1118b1-b0e8-4ddf-80f6-c70956651693-cross-config-target-oscillation.md) — 同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める
 
 ---
@@ -259,7 +259,7 @@ root は評価時にパスへ展開せず、マーカーが運ぶ kind をエン
 
 - [REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10](requirements/20260802-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10-module-common-options.md) — 全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する
 - [REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a](requirements/20260802-c6891aeb-13c0-4ae7-9ad1-5c343735266a-hm-named-configs-profiles.md) — HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる
-- [REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3](requirements/20260802-e1e1114b-ba07-4d57-8e04-6e30e39a5da3-backup-wiring-layer.md) — nput.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない
+- [REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3](requirements/20260802-e1e1114b-ba07-4d57-8e04-6e30e39a5da3-backup-wiring-layer.md) — layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない
 - [REQ-c2654ca5-62c2-4e4b-ad67-ffc5468f429b](requirements/20260802-c2654ca5-62c2-4e4b-ad67-ffc5468f429b-module-user-option.md) — NixOS / nix-darwin モジュールは配置先ユーザーを特定する user オプションを必須で取る
 - [REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9](requirements/20260802-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9-modules-are-engine-wiring.md) — 全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない
 - [REQ-8085f194-c903-4ecb-abd8-c719fe7b3292](requirements/20260802-8085f194-c903-4ecb-abd8-c719fe7b3292-hm-activation-contract.md) — home-manager モジュールの engine kick 1 回は activation からビルド済み link-farm を渡し、失敗で switch を止める
@@ -332,7 +332,7 @@ test_plan は requirement とは別系統で、use_case を経由せず solution
 
 ## 設定の書き方（本文書の対象外）
 
-実際に動く設定例は本文書では扱わない。`templates/`（`nput init` が展開する実物）と README の
+実際に動く設定例は本文書では扱わない。`templates/`（`layat init` が展開する実物）と README の
 コード例を参照する。本文書が扱うのは「何を満たすべきか」であり、書き方の例ではない。
 
 ---

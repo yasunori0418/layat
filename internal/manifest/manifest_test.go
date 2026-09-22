@@ -95,7 +95,7 @@ func TestLoadSchemaVersionBoundary(t *testing.T) {
 			}
 			// Below the minimum is a broken document, not version skew, so it must not wrap
 			// the skew sentinel — otherwise the CLI emits a misleading "flake and CLI differ"
-			// hint for it (→ TC-172548ea, cmd/nput: ErrSchemaVersionUnsupported branch).
+			// hint for it (→ TC-172548ea, cmd/layat: ErrSchemaVersionUnsupported branch).
 			if errors.Is(err, ErrSchemaVersionUnsupported) {
 				t.Errorf("error should not wrap ErrSchemaVersionUnsupported, got %v", err)
 			}

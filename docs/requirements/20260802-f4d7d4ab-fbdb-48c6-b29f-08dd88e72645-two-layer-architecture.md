@@ -1,12 +1,12 @@
 ---
 id: "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
 type: requirement
-name: "nput は CLI とエンジンの 2 層で構成する"
+name: "layat は CLI とエンジンの 2 層で構成する"
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
-  nput SHALL be composed of two layers: the nput CLI (`packages.nput`, the primary UX
+  layat SHALL be composed of two layers: the layat CLI (`packages.layat`, the primary UX
   installed on PATH) and the engine (a Go library). The CLI SHALL discover an entrypoint,
   run `nix build` / `nix eval` internally to obtain the store path of the named manifest,
   and import the engine to drive placement, stale removal and profile swap. The engine
@@ -16,7 +16,7 @@ specification: |
   and how the engine carries out placement is stated by REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564; neither is
   restated here.
 specification_ja: |
-  nput は nput CLI（`packages.nput`・PATH 常駐の一次 UX）と engine（Go ライブラリ）の
+  layat は layat CLI（`packages.layat`・PATH 常駐の一次 UX）と engine（Go ライブラリ）の
   2 層で構成しなければならない。CLI は entrypoint を発見し、内部で `nix build` /
   `nix eval` を回して named manifest の store path を得て、engine を import して配置・
   stale 除去・profile swap を駆動しなければならない。engine は `manifest.json` を入力に
@@ -25,14 +25,14 @@ specification_ja: |
   しなければならない。どのファイルを entrypoint として発見するかは CLI 仕様の担当、
   engine がどう配置を行うかは REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564 の担当で、いずれも本 item では規定しない。
 ---
-# REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645: nput は CLI とエンジンの 2 層で構成する
+# REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645: layat は CLI とエンジンの 2 層で構成する
 
 ## 仕様
 
-nput は **2 層**で構成する。
+layat は **2 層**で構成する。
 
 ```
-[nput CLI]  packages.nput（PATH 常駐・一次 UX）
+[layat CLI]  packages.layat（PATH 常駐・一次 UX）
   ・entrypoint(flake.nix/shell.nix/default.nix)を発見（CWD 既定 / -f 上書き）
   ・内部で nix build/eval を回し named manifest(manifest.json + symlink farm)の store path を得る
   ・engine(ライブラリ)を import して配置・stale 除去・profile swap を駆動

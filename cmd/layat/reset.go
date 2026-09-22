@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/yasunori0418/nput/internal/engine"
+	"github.com/yasunori0418/layat/internal/engine"
 )
 
 // resetResultInfo / resetEnvInfo are reset's niface info slots (→ issue #196): empty seat types
@@ -33,8 +33,8 @@ func newResetCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "reset <name> [target...]",
 		Short: "Tear placements back down to nothing (FS-only teardown; name required; no --all)",
-		Long: "Teardown that returns nput.<name>'s placements to nothing. Omitting target tears down every entry; specifying targets tears down only those entries. " +
-			"Symlinks are removed under the conservative invariant (only nput-managed, only as recorded) and foreign ones are kept. copy targets are deleted (confirmed due to the data-loss risk). " +
+		Long: "Teardown that returns layat.<name>'s placements to nothing. Omitting target tears down every entry; specifying targets tears down only those entries. " +
+			"Symlinks are removed under the conservative invariant (only layat-managed, only as recorded) and foreign ones are kept. copy targets are deleted (confirmed due to the data-loss risk). " +
 			"It does not touch the profile or generations (FS-only). A name is required (no --all). " +
 			"--dryrun shows the removal targets with zero side effects and exits (no confirm / flock).",
 		Args: cobra.MinimumNArgs(1),
@@ -117,7 +117,7 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 		return err
 	}
 	if res.Aborted {
-		fmt.Fprintln(os.Stderr, "nput: reset aborted")
+		fmt.Fprintln(os.Stderr, "layat: reset aborted")
 		return nil
 	}
 	if flagVerbose {
@@ -143,13 +143,13 @@ func printResetPlan(res *engine.ResetResult) {
 		}
 	}
 	if len(res.RemovedSymlinks)+len(res.RemovedCopies)+len(res.KeptForeign) == 0 {
-		fmt.Fprintln(os.Stderr, "nput: reset --dryrun: nothing to remove")
+		fmt.Fprintln(os.Stderr, "layat: reset --dryrun: nothing to remove")
 	}
 }
 
 // reportResetTargets prints the planned removals to stderr before the confirmation prompt (treated as progress; stdout is reserved for machine-readable output).
 func reportResetTargets(res *engine.ResetResult, name string) {
-	fmt.Fprintf(os.Stderr, "nput: reset %s removal targets (root=%s):\n", name, res.Root)
+	fmt.Fprintf(os.Stderr, "layat: reset %s removal targets (root=%s):\n", name, res.Root)
 	for _, t := range res.RemovedSymlinks {
 		fmt.Fprintf(os.Stderr, "  symlink %s\n", t)
 	}
@@ -166,7 +166,7 @@ func reportResetTargets(res *engine.ResetResult, name string) {
 
 // reportResetResult prints the actual removal result to stderr (stdout is reserved for machine-readable output; → ADR-0023).
 func reportResetResult(res *engine.ResetResult, name string) {
-	fmt.Fprintf(os.Stderr, "nput: reset %s done (root=%s)\n", name, res.Root)
+	fmt.Fprintf(os.Stderr, "layat: reset %s done (root=%s)\n", name, res.Root)
 	for _, t := range res.RemovedSymlinks {
 		fmt.Fprintf(os.Stderr, "  removed-symlink %s\n", t)
 	}
@@ -206,7 +206,7 @@ func confirmPolicy(yes, interactive bool, operation string) (needPrompt bool, er
 		return false, nil
 	}
 	if !interactive {
-		return false, fmt.Errorf("nput: refusing destructive %s without --yes in a non-interactive context", operation)
+		return false, fmt.Errorf("layat: refusing destructive %s without --yes in a non-interactive context", operation)
 	}
 	return true, nil
 }

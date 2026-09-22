@@ -7,7 +7,7 @@ derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
-  `nput reset` SHALL require an explicitly named config and SHALL NOT support `--all`,
+  `layat reset` SHALL require an explicitly named config and SHALL NOT support `--all`,
   because removing everything at once is a destructive footgun, consistently with the
   rejection of `rollback --all`; removing several configs SHALL be done by naming each of
   them in turn. `reset` SHALL acquire a blocking flock keyed on the resolved `profileDir`
@@ -15,7 +15,7 @@ specification: |
   preliminary stage common to the non-building commands, `reset` SHALL additionally
   evaluate the entrypoint in order to read the entries.
 specification_ja: |
-  `nput reset` は名指し必須とし、`--all` に対応してはならない（一斉撤去は破壊的な
+  `layat reset` は名指し必須とし、`--all` に対応してはならない（一斉撤去は破壊的な
   footgun であり、`rollback --all` の却下と一貫させるため）。複数撤去は名指しを複数回
   行わなければならない。`reset` は解決後 `profileDir` 単位の blocking flock を取得して、
   並行する apply / reset と直列化しなければならない。非 build コマンド共通の eval 先行

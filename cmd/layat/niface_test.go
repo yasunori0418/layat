@@ -19,8 +19,8 @@ import (
 	niface "github.com/yasunori0418/niface/go"
 	"github.com/yasunori0418/niface/go/conformance"
 
-	"github.com/yasunori0418/nput/internal/engine"
-	"github.com/yasunori0418/nput/internal/lock"
+	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/lock"
 )
 
 // fixedClock returns a clock that yields t0 and advances one second per call, so
@@ -121,14 +121,14 @@ func TestNifaceEnvelopeConformance(t *testing.T) {
 	}{
 		{name: "success with subject", subject: "default", wantStatus: "success", wantResults: 1},
 		{name: "success without subject", wantStatus: "success", wantResults: 0},
-		{name: "pre-subject failure", cmdErr: errors.New("nput: no entrypoint found"),
-			wantStatus: "error", wantResults: 0, wantTopErrs: true, wantCode: "E_NPUT_FAILED"},
-		{name: "subject-borne failure", subject: "web", cmdErr: errors.New("nput: build failed"),
-			wantStatus: "error", wantResults: 1, wantCode: "E_NPUT_FAILED"},
+		{name: "pre-subject failure", cmdErr: errors.New("layat: no entrypoint found"),
+			wantStatus: "error", wantResults: 0, wantTopErrs: true, wantCode: "E_LAYAT_FAILED"},
+		{name: "subject-borne failure", subject: "web", cmdErr: errors.New("layat: build failed"),
+			wantStatus: "error", wantResults: 1, wantCode: "E_LAYAT_FAILED"},
 		{name: "lock failure", subject: "web", cmdErr: lock.ErrLocked,
 			wantStatus: "error", wantResults: 1, wantCode: "E_LOCK"},
 		{name: "dryrun conflict", subject: "default", cmdErr: &exitError{code: 2},
-			wantStatus: "error", wantResults: 1, wantCode: "E_NPUT_COLLISION"},
+			wantStatus: "error", wantResults: 1, wantCode: "E_LAYAT_COLLISION"},
 	}
 
 	for _, c := range cases {
@@ -154,8 +154,8 @@ func TestNifaceEnvelopeConformance(t *testing.T) {
 				t.Fatalf("results length = %d, want %d", len(results), c.wantResults)
 			}
 			tool := doc["tool"].(map[string]any)
-			if tool["name"] != "nput" || tool["version"] != version {
-				t.Errorf("tool = %v, want name=nput version=%s (main.version)", tool, version)
+			if tool["name"] != "layat" || tool["version"] != version {
+				t.Errorf("tool = %v, want name=layat version=%s (main.version)", tool, version)
 			}
 			if doc["command"] != "apply" {
 				t.Errorf("command = %v, want apply", doc["command"])
@@ -256,7 +256,7 @@ func TestNifaceTimestampOffset(t *testing.T) {
 // TestEntryItemIDMatchesVectors verifies the id derivation against niface's embedded id-vectors
 // (decoded with UseNumber — the niface godoc input contract; issue #130 acceptance): every vector
 // must reproduce its expected id through niface.DeriveID, and the entry-kind vectors must equally
-// reproduce through nput's entryItemID seam (pinning nput's identity shape: kind="entry",
+// reproduce through layat's entryItemID seam (pinning layat's identity shape: kind="entry",
 // key={target} · → ADR-0043 §3).
 func TestEntryItemIDMatchesVectors(t *testing.T) {
 	var doc struct {
@@ -294,7 +294,7 @@ func TestEntryItemIDMatchesVectors(t *testing.T) {
 			t.Errorf("vector %d (%s): id = %s, want %s", i, v.Identity.Kind, got, v.Expected)
 		}
 
-		// The entry-kind, single-target-key vectors must also reproduce through nput's seam.
+		// The entry-kind, single-target-key vectors must also reproduce through layat's seam.
 		if m, ok := key.(map[string]any); ok && v.Identity.Kind == "entry" && len(m) == 1 {
 			if target, ok := m["target"].(string); ok {
 				entryVectors++
@@ -308,12 +308,12 @@ func TestEntryItemIDMatchesVectors(t *testing.T) {
 		}
 	}
 	if entryVectors == 0 {
-		t.Error("no entry-kind vectors exercised nput's entryItemID seam")
+		t.Error("no entry-kind vectors exercised layat's entryItemID seam")
 	}
 }
 
 // TestClassifyErrorCodes pins the classifyError table directly, one case per code (the #131
-// refinement): the nixCmdError marker → E_NPUT_BUILD, including its survival through
+// refinement): the nixCmdError marker → E_LAYAT_BUILD, including its survival through
 // wrapEvalErr / wrapEvalAllErr's re-wraps (the %w chain is the classification's lifeline);
 // the specific fs sentinels beating the generic E_IO shape check; and the residual-I/O and
 // fallback arms.
@@ -323,22 +323,22 @@ func TestClassifyErrorCodes(t *testing.T) {
 		err  error
 		want string
 	}{
-		{"nix invocation failure", &nixCmdError{err: errors.New("nput: nix build failed")}, "E_NPUT_BUILD"},
+		{"nix invocation failure", &nixCmdError{err: errors.New("layat: nix build failed")}, "E_LAYAT_BUILD"},
 		{"marker survives wrapEvalErr attr-missing rewrap",
-			wrapEvalErr(&nixCmdError{err: errors.New("error: flake does not provide attribute nput")}, "nput.x86_64-linux.web"),
-			"E_NPUT_BUILD"},
+			wrapEvalErr(&nixCmdError{err: errors.New("error: flake does not provide attribute layat")}, "layat.x86_64-linux.web"),
+			"E_LAYAT_BUILD"},
 		{"marker survives wrapEvalErr passthrough",
-			wrapEvalErr(&nixCmdError{err: errors.New("error: something else")}, "nput.x86_64-linux.web"),
-			"E_NPUT_BUILD"},
+			wrapEvalErr(&nixCmdError{err: errors.New("error: something else")}, "layat.x86_64-linux.web"),
+			"E_LAYAT_BUILD"},
 		{"marker survives wrapEvalAllErr attr-missing rewrap",
-			wrapEvalAllErr(&nixCmdError{err: errors.New("error: flake does not provide attribute nput")}, "nput.x86_64-linux"),
-			"E_NPUT_BUILD"},
+			wrapEvalAllErr(&nixCmdError{err: errors.New("error: flake does not provide attribute layat")}, "layat.x86_64-linux"),
+			"E_LAYAT_BUILD"},
 		{"lock sentinel", lock.ErrLocked, "E_LOCK"},
 		{"not-found beats the IO shape", &fs.PathError{Op: "stat", Path: "/x", Err: fs.ErrNotExist}, "E_NOTFOUND"},
 		{"permission beats the IO shape", &fs.PathError{Op: "open", Path: "/x", Err: fs.ErrPermission}, "E_PERMISSION"},
 		{"residual IO PathError", &fs.PathError{Op: "rmdir", Path: "/x", Err: syscall.ENOTEMPTY}, "E_IO"},
 		{"residual IO LinkError", &os.LinkError{Op: "symlink", Old: "/a", New: "/b", Err: syscall.EEXIST}, "E_IO"},
-		{"unclassified fallback", errors.New("nput: generation commit (nix-env --set) failed"), "E_NPUT_FAILED"},
+		{"unclassified fallback", errors.New("layat: generation commit (nix-env --set) failed"), "E_LAYAT_FAILED"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {

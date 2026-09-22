@@ -25,7 +25,7 @@ body:
     id: repro
     attributes:
       label: 再現手順
-      description: entries の定義・実行コマンド（nput / --rollback など）を含めて、最小再現を書く。
+      description: entries の定義・実行コマンド（layat / --rollback など）を含めて、最小再現を書く。
       value: |
         1.
         2.

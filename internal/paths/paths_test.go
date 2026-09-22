@@ -9,7 +9,7 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/yasunori0418/nput/internal/manifest"
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 func TestStateDirUsesXDGStateHome(t *testing.T) {
@@ -54,7 +54,7 @@ func TestStateDirErrorsWhenHomeUnresolvable(t *testing.T) {
 }
 
 func TestGenerationLinkFormat(t *testing.T) {
-	profileLink := filepath.Join("/state", "nix", "profiles", "nput", "vim", "profile")
+	profileLink := filepath.Join("/state", "nix", "profiles", "layat", "vim", "profile")
 	for _, gen := range []int{0, 1, 42} {
 		got := GenerationLink(profileLink, gen)
 		want := fmt.Sprintf("%s-%d-link", profileLink, gen)
@@ -89,7 +89,7 @@ func TestResolveProjectUsesRootHash(t *testing.T) {
 	root := "/home/me/proj"
 	p := Resolve(state, "skills", manifest.RootKindProject, root, false)
 
-	wantDir := filepath.Join(state, "nix", "profiles", "nput", RootHash(root), "skills")
+	wantDir := filepath.Join(state, "nix", "profiles", "layat", RootHash(root), "skills")
 	if p.Dir != wantDir {
 		t.Errorf("Dir = %q, want %q", p.Dir, wantDir)
 	}
@@ -99,7 +99,7 @@ func TestResolveProjectUsesRootHash(t *testing.T) {
 	if p.Pending != filepath.Join(wantDir, ".pending") {
 		t.Errorf("Pending = %q", p.Pending)
 	}
-	wantBackref := filepath.Join(state, "nix", "profiles", "nput", RootHash(root), ".root")
+	wantBackref := filepath.Join(state, "nix", "profiles", "layat", RootHash(root), ".root")
 	if p.Backref != wantBackref {
 		t.Errorf("Backref = %q, want %q", p.Backref, wantBackref)
 	}
@@ -108,7 +108,7 @@ func TestResolveProjectUsesRootHash(t *testing.T) {
 func TestResolveHomeUsesNameKey(t *testing.T) {
 	state := "/state"
 	p := Resolve(state, "vim", manifest.RootKindHome, "/home/me", false)
-	wantDir := filepath.Join(state, "nix", "profiles", "nput", "vim")
+	wantDir := filepath.Join(state, "nix", "profiles", "layat", "vim")
 	if p.Dir != wantDir {
 		t.Errorf("Dir = %q, want %q", p.Dir, wantDir)
 	}
@@ -122,7 +122,7 @@ func TestResolveHomeWithOverrideUsesRootHash(t *testing.T) {
 	state := "/state"
 	root := "/tmp/sandbox"
 	p := Resolve(state, "vim", manifest.RootKindHome, root, true)
-	wantDir := filepath.Join(state, "nix", "profiles", "nput", RootHash(root), "vim")
+	wantDir := filepath.Join(state, "nix", "profiles", "layat", RootHash(root), "vim")
 	if p.Dir != wantDir {
 		t.Errorf("Dir = %q, want %q", p.Dir, wantDir)
 	}
@@ -139,7 +139,7 @@ func TestResolveFixedUsesRootHash(t *testing.T) {
 	if p.Backref == "" {
 		t.Error("fixed root should produce a backref")
 	}
-	wantDir := filepath.Join(state, "nix", "profiles", "nput", RootHash(root), "c")
+	wantDir := filepath.Join(state, "nix", "profiles", "layat", RootHash(root), "c")
 	if p.Dir != wantDir {
 		t.Errorf("Dir = %q, want %q", p.Dir, wantDir)
 	}

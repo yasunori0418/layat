@@ -20,19 +20,19 @@ func TestFlakeInitArgs(t *testing.T) {
 			name:     "default ref",
 			template: "project",
 			ref:      defaultTemplateRef,
-			want:     []string{"flake", "init", "-t", "github:yasunori0418/nput#project"},
+			want:     []string{"flake", "init", "-t", "github:yasunori0418/layat#project"},
 		},
 		{
 			name:     "standalone",
 			template: "standalone",
 			ref:      defaultTemplateRef,
-			want:     []string{"flake", "init", "-t", "github:yasunori0418/nput#standalone"},
+			want:     []string{"flake", "init", "-t", "github:yasunori0418/layat#standalone"},
 		},
 		{
 			name:     "env override ref (path: local reference)",
 			template: "project",
-			ref:      "path:/tmp/nput",
-			want:     []string{"flake", "init", "-t", "path:/tmp/nput#project"},
+			ref:      "path:/tmp/layat",
+			want:     []string{"flake", "init", "-t", "path:/tmp/layat#project"},
 		},
 	}
 	for _, tc := range cases {
@@ -67,7 +67,7 @@ func TestIsValidTemplate(t *testing.T) {
 // conformance checker would still accept.
 func TestInitJSONEnvelopeInfoAbsentOnRejectedTemplate(t *testing.T) {
 	r, buf := newInitTestRun()
-	if err := r.emit(errors.New(`nput: unknown template: "nosuch"`)); err != nil {
+	if err := r.emit(errors.New(`layat: unknown template: "nosuch"`)); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	assertNoInfoKeys(t, decodeEnvelope(t, buf))

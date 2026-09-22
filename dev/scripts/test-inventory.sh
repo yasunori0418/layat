@@ -87,8 +87,7 @@ FLAKE_CHECKS=(
   checks.hm-module
   checks.namaka
   checks.nix-unit
-  checks.notice-parity
-  checks.nput
+  checks.layat
   checks.treefmt
   dev:checks.risk-matrix
   dev:checks.sara-gap
@@ -216,7 +215,7 @@ while IFS= read -r name; do
 done < "$work/go-names" > "$work/go-rows"
 
 # nix-unit: per-file の attrNames。アグリゲータ（tests/nix-unit.nix）は各ファイルを
-# `{ lib, nput }` で import し、マージ前にファイル横断の名前衝突を検査してから
+# `{ lib, layat }` で import し、マージ前にファイル横断の名前衝突を検査してから
 # `//` マージする（→ Issue #287）。ここが要るのは per-file の名前一覧だけなので、
 # 検査を経ずに同じシグネチャで leaf を直接呼ぶ。衝突の検出は評価時に
 # `nix flake check` の checks.nix-unit が担い、ここでは二重に持たない
@@ -228,9 +227,9 @@ while IFS= read -r file; do
     let
       flake = builtins.getFlake (builtins.toString ./.);
       lib = flake.inputs.nixpkgs.lib;
-      nput = import ./lib;
+      layat = import ./lib;
     in
-    builtins.attrNames (import ./$file { inherit lib nput; })
+    builtins.attrNames (import ./$file { inherit lib layat; })
   " 2>/dev/null | jq -r '.[]')
   if [ -z "$names" ]; then
     echo "test-inventory.sh: 警告: $file から nix-unit のテスト名を採れなかった" >&2

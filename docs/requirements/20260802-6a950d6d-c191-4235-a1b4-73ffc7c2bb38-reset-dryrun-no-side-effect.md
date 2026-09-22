@@ -7,12 +7,12 @@ derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
-  `nput reset <name> --dryrun` SHALL display the deletion targets (symlinks / copy
+  `layat reset <name> --dryrun` SHALL display the deletion targets (symlinks / copy
   targets) with zero side effects and then exit, performing neither filesystem deletion,
   nor the confirmation prompt, nor the flock, symmetrically with `apply --dryrun`. Its
   exit code SHALL be 0 regardless of whether there are targets to delete.
 specification_ja: |
-  `nput reset <name> --dryrun` は副作用ゼロで削除対象（symlink / copy target）を表示して
+  `layat reset <name> --dryrun` は副作用ゼロで削除対象（symlink / copy target）を表示して
   終了しなければならない（FS 削除・confirm・flock のいずれも行わない・`apply --dryrun` と
   対称）。終了コードは削除対象の有無に依らず 0 でなければならない。
 ---
@@ -21,7 +21,7 @@ specification_ja: |
 ## 仕様
 
 ```bash
-nput reset <name> --dryrun     # 副作用ゼロで削除対象（symlink / copy target）を表示して exit（confirm/flock なし）
+layat reset <name> --dryrun     # 副作用ゼロで削除対象（symlink / copy target）を表示して exit（confirm/flock なし）
 ```
 
 `reset <name> --dryrun` は**副作用ゼロ**で削除対象（symlink / copy target）を表示して

@@ -12,7 +12,7 @@ satisfies:
 ## 設計
 
 ```
-nput CLI (packages.nput)      ← 一次 UX。entrypoint 発見 + nix build/eval + エンジン駆動
+layat CLI (packages.layat)      ← 一次 UX。entrypoint 発見 + nix build/eval + エンジン駆動
         │ import
 配置エンジン (internal/ Go ライブラリ)  ← 配置・stale 除去・profile swap の単一の源（manifest.json in）
         ↑ manifest.json を渡して起動
@@ -22,7 +22,7 @@ modules/common.nix            ← options 型定義（nixpkgs.lib のみ依存�
         ↑
 ┌───────┼──────────────────┐
 HM   NixOS  darwin  devShell  standalone(CLI)
-（root と activation hook を供給して nput エンジンを起動する薄い配線のみ）
+（root と activation hook を供給して layat エンジンを起動する薄い配線のみ）
 ```
 
 **依存は呼ぶ側から呼ばれる側への一方向に限り、逆流させない**ことを層構造の規約とする。

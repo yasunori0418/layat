@@ -5,7 +5,7 @@ name: "gitignore は配置 target を stdout へ列挙するだけでファイ�
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
-  `nput gitignore <name>` SHALL only enumerate the placed targets for use in `.gitignore`
+  `layat gitignore <name>` SHALL only enumerate the placed targets for use in `.gitignore`
   and write them to stdout; it SHALL NOT write the file, the responsibility for updating
   it remaining with the project administrator. The output SHALL be in the anchored form of
   a root-relative target prefixed with `/` (for example `/.claude/skills/nix`), one entry
@@ -13,7 +13,7 @@ specification: |
   the leading `/` anchors correctly and SHALL NOT mistakenly ignore an identically named
   path at another level. Neither directories nor files SHALL carry a trailing `/`.
 specification_ja: |
-  `nput gitignore <name>` は配置 target を `.gitignore` 向けに列挙して stdout へ出力する
+  `layat gitignore <name>` は配置 target を `.gitignore` 向けに列挙して stdout へ出力する
   だけでなければならず、ファイルを書き込んではならない（更新責務はプロジェクト管理者）。
   出力は root 相対 target に先頭 `/` を付けたアンカー形式（例: `/.claude/skills/nix`）で
   1 行 1 件でなければならない。project mode の root = git toplevel = `.gitignore` の
@@ -25,7 +25,7 @@ specification_ja: |
 ## 仕様
 
 ```bash
-nput gitignore <name>          # 配置 target を .gitignore 向けに stdout 出力（書き込みなし）
+layat gitignore <name>          # 配置 target を .gitignore 向けに stdout 出力（書き込みなし）
 ```
 
 `gitignore <name>` は配置 target を `.gitignore` 向けに列挙して stdout に出力するだけで、

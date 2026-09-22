@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // backup applies the planner's Backup actions: rename each occupying foreign filesystem object
@@ -25,19 +25,19 @@ import (
 func (a *applier) backup(actions []planner.BackupAction) error {
 	for _, act := range actions {
 		if _, err := os.Lstat(act.BackupAbs); err == nil {
-			return a.entryFailed(act.Entry.Target, fmt.Errorf("nput: backup destination already exists (%s); cannot safely back up %s; re-run apply to converge", act.BackupAbs, act.TargetAbs))
+			return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: backup destination already exists (%s); cannot safely back up %s; re-run apply to converge", act.BackupAbs, act.TargetAbs))
 		} else if !os.IsNotExist(err) {
-			return a.entryFailed(act.Entry.Target, fmt.Errorf("nput: cannot lstat backup destination (%s): %w", act.BackupAbs, err))
+			return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: cannot lstat backup destination (%s): %w", act.BackupAbs, err))
 		}
 		if err := os.Rename(act.TargetAbs, act.BackupAbs); err != nil {
-			return a.entryFailed(act.Entry.Target, fmt.Errorf("nput: cannot rename aside for backup (%s -> %s): %w", act.TargetAbs, act.BackupAbs, err))
+			return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: cannot rename aside for backup (%s -> %s): %w", act.TargetAbs, act.BackupAbs, err))
 		}
 		// Journaled immediately after the rename, before placement lands: if a later stage fails,
 		// undoRestoreBackup's os.RemoveAll tolerates TargetAbs being absent/partial and still
 		// renames BackupAbs back, restoring the pre-apply content (→ ADR-0044).
 		a.journalBackedUp(act.TargetAbs, act.BackupAbs)
 		a.result.BackedUp = append(a.result.BackedUp, act.Entry.Target)
-		a.opts.Warnf("nput: backed up existing target before placement: %s -> %s", act.TargetAbs, act.BackupAbs)
+		a.opts.Warnf("layat: backed up existing target before placement: %s -> %s", act.TargetAbs, act.BackupAbs)
 	}
 	return nil
 }

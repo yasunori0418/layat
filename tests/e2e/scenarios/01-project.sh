@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# project mode: 一時 git repo で `nput apply` → git toplevel 配下に store symlink 配置されることをアサート。
+# project mode: 一時 git repo で `layat apply` → git toplevel 配下に store symlink 配置されることをアサート。
 set -euo pipefail
 source "$(dirname "$0")/../lib.sh"
 e2e_isolate
@@ -13,16 +13,16 @@ echo "SKILLBODY" >"$PROJ/srcrepo/skills/nix/SKILL.md"
 cat >"$PROJ/flake.nix" <<EOF
 {
 $(e2e_flake_inputs)
-  outputs = { self, nixpkgs, nput }: {
-    nput = nixpkgs.lib.genAttrs $E2E_SYSTEMS (system: {
-      docs = nput.lib.mkManifest {
+  outputs = { self, nixpkgs, layat }: {
+    layat = nixpkgs.lib.genAttrs $E2E_SYSTEMS (system: {
+      docs = layat.lib.mkManifest {
         pkgs = nixpkgs.legacyPackages.\${system};
-        root = nput.lib.projectRoot;
-        entries.".nput-out/docs" = { src = ./srcrepo; subpath = "skills/nix"; };
+        root = layat.lib.projectRoot;
+        entries.".layat-out/docs" = { src = ./srcrepo; subpath = "skills/nix"; };
       };
-      idvec = nput.lib.mkManifest {
+      idvec = layat.lib.mkManifest {
         pkgs = nixpkgs.legacyPackages.\${system};
-        root = nput.lib.projectRoot;
+        root = layat.lib.projectRoot;
         entries.".zshrc" = { src = ./srcrepo; subpath = "skills/nix"; };
       };
     });
@@ -32,8 +32,8 @@ EOF
 
 cd "$PROJ"
 git init -q
-git -c user.email=e2e@nput.test -c user.name=e2e add -A
-git -c user.email=e2e@nput.test -c user.name=e2e commit -qm init
+git -c user.email=e2e@layat.test -c user.name=e2e add -A
+git -c user.email=e2e@layat.test -c user.name=e2e commit -qm init
 
 e2e_step "apply --dryrun --json: 初回 plan（add のみ・generation 番号なし・→ issue #132）"
 ENV_DRYRUN="$E2E_WORK/dryrun.json"
@@ -66,17 +66,17 @@ ENV_CONFLICT="$E2E_WORK/conflict.json"
 run_json 2 "$ENV_CONFLICT" apply idvec --dryrun
 assert_json "$ENV_CONFLICT" "status=error・dryRun=true" \
 	'.status == "error" and .dryRun == true'
-assert_json "$ENV_CONFLICT" "conflict entry は failed item + E_NPUT_COLLISION" \
-	'[.results[0].result.items[] | select(.status == "failed" and .error.code == "E_NPUT_COLLISION")] | length == 1'
+assert_json "$ENV_CONFLICT" "conflict entry は failed item + E_LAYAT_COLLISION" \
+	'[.results[0].result.items[] | select(.status == "failed" and .error.code == "E_LAYAT_COLLISION")] | length == 1'
 assert_json "$ENV_CONFLICT" "item 起因エラーは subject errors[] に二重化しない" \
 	'.results[0] | has("errors") | not'
 rm "$PROJ/.zshrc"
 
-e2e_step "nput apply docs（project mode）"
-nput apply docs
+e2e_step "layat apply docs（project mode）"
+layat apply docs
 
 e2e_step "git toplevel 配下に配置されたか"
-TARGET="$PROJ/.nput-out/docs"
+TARGET="$PROJ/.layat-out/docs"
 assert_symlink "$TARGET"
 assert_file_eq "$TARGET/SKILL.md" "SKILLBODY"
 # store symlink であること（/nix/store を指す）。
@@ -86,7 +86,7 @@ case "$(readlink "$TARGET")" in
 esac
 
 e2e_step "再 apply は冪等（配置が壊れない）"
-nput apply docs
+layat apply docs
 assert_symlink "$TARGET"
 assert_file_eq "$TARGET/SKILL.md" "SKILLBODY"
 
@@ -94,15 +94,15 @@ e2e_step "gitignore --json: result.info.paths（anchor 形・items=[]・→ issu
 ENV_GITIGNORE="$E2E_WORK/gitignore.json"
 run_json 0 "$ENV_GITIGNORE" gitignore docs
 assert_json "$ENV_GITIGNORE" "info.paths が anchor 形の全 target" \
-	'.results[0].result.info.paths == ["/.nput-out/docs"]'
+	'.results[0].result.info.paths == ["/.layat-out/docs"]'
 assert_json "$ENV_GITIGNORE" "items=[]・dryRun=false" \
 	'.results[0].result.items == [] and .dryRun == false'
 
 e2e_step "gitignore はフラグ無しで従来の行出力（既存消費の互換・→ issue #132 受け入れ基準）"
-if [ "$(nput gitignore docs)" = "/.nput-out/docs" ]; then
+if [ "$(layat gitignore docs)" = "/.layat-out/docs" ]; then
 	e2e_pass "行指向出力は不変"
 else
-	e2e_fail "行指向出力が変化: $(nput gitignore docs)"
+	e2e_fail "行指向出力が変化: $(layat gitignore docs)"
 fi
 
 # ここから --all の複数 SubjectResult（→ issue #164）。この flake は projectRoot の
@@ -116,17 +116,17 @@ assert_json "$ENV_GI_ALL" "status=success・results は選択順（辞書順）�
 # 変わらないため恒真アサートになる）。docs / idvec が「自 config のパスだけ」を持つことと、
 # 共有パス /.zshrc が dedup されず idvec 側に残ることを両方固定する。
 assert_json "$ENV_GI_ALL" "docs は自 config のパスだけを info.paths に持つ" \
-	'first(.results[] | select(.subject.name == "docs")).result.info.paths == ["/.nput-out/docs"]'
+	'first(.results[] | select(.subject.name == "docs")).result.info.paths == ["/.layat-out/docs"]'
 assert_json "$ENV_GI_ALL" "idvec も自 config のパスだけを持つ（cross-config dedup なし）" \
 	'first(.results[] | select(.subject.name == "idvec")).result.info.paths == ["/.zshrc"]'
 assert_json "$ENV_GI_ALL" "items=[] は単一実行と同一・トップ errors[] なし" \
 	'([.results[] | select(.result.items == [])] | length) == 2 and (has("errors") | not)'
 
 e2e_step "gitignore --all はフラグ無しで従来の dedup+sort テキスト（ADR-0018 不変・→ issue #164）"
-if [ "$(nput gitignore --all)" = "$(printf '/.nput-out/docs\n/.zshrc')" ]; then
+if [ "$(layat gitignore --all)" = "$(printf '/.layat-out/docs\n/.zshrc')" ]; then
 	e2e_pass "テキスト集約 / JSON per-config の非対称を保つ"
 else
-	e2e_fail "テキスト行出力が変化: $(nput gitignore --all)"
+	e2e_fail "テキスト行出力が変化: $(layat gitignore --all)"
 fi
 
 e2e_step "apply --all --dryrun --json: 全 config が clean なら status=success（→ issue #164）"
@@ -145,8 +145,8 @@ assert_json "$ENV_ALL_CONFLICT" "集約 status=error（conflict は 1 件でも 
 	'.status == "error"'
 assert_json "$ENV_ALL_CONFLICT" "conflict の無い docs は success のまま残る（部分失敗で成功分を失わない）" \
 	'[.results[] | select(.subject.name == "docs")] | .[0].status == "success" and (.[0].result.items | length) > 0'
-assert_json "$ENV_ALL_CONFLICT" "idvec は failed item + E_NPUT_COLLISION で subject status=error" \
-	'[.results[] | select(.subject.name == "idvec")] | .[0].status == "error" and ([.[0].result.items[] | select(.status == "failed" and .error.code == "E_NPUT_COLLISION")] | length) == 1'
+assert_json "$ENV_ALL_CONFLICT" "idvec は failed item + E_LAYAT_COLLISION で subject status=error" \
+	'[.results[] | select(.subject.name == "idvec")] | .[0].status == "error" and ([.[0].result.items[] | select(.status == "failed" and .error.code == "E_LAYAT_COLLISION")] | length) == 1'
 assert_json "$ENV_ALL_CONFLICT" "item 起因は subject errors[] にもトップ errors[] にも重ねない" \
 	'([.results[] | select(has("errors"))] | length) == 0 and (has("errors") | not)'
 rm "$PROJ/.zshrc"
@@ -172,31 +172,31 @@ cp "$PROJ/flake.nix" "$E2E_WORK/flake.nix.bak"
 cat >"$PROJ/flake.nix" <<EOF
 {
 $(e2e_flake_inputs)
-  outputs = { self, nixpkgs, nput }: {
-    nput = nixpkgs.lib.genAttrs $E2E_SYSTEMS (system: {
-      docs = nput.lib.mkManifest {
+  outputs = { self, nixpkgs, layat }: {
+    layat = nixpkgs.lib.genAttrs $E2E_SYSTEMS (system: {
+      docs = layat.lib.mkManifest {
         pkgs = nixpkgs.legacyPackages.\${system};
-        root = nput.lib.projectRoot;
-        entries.".nput-out/docs" = { src = ./srcrepo; subpath = "skills/nix"; };
+        root = layat.lib.projectRoot;
+        entries.".layat-out/docs" = { src = ./srcrepo; subpath = "skills/nix"; };
       };
-      idvec = nput.lib.mkManifest {
+      idvec = layat.lib.mkManifest {
         pkgs = nixpkgs.legacyPackages.\${system};
-        root = nput.lib.projectRoot;
+        root = layat.lib.projectRoot;
         entries.".zshrc" = { src = ./srcrepo; subpath = "skills/nix"; };
       };
-      broken = nput.lib.mkManifest {
+      broken = layat.lib.mkManifest {
         pkgs = nixpkgs.legacyPackages.\${system};
-        root = nput.lib.projectRoot;
-        entries.".nput-out/broken" = { src = ./srcrepo; subpath = "skills/nix"; };
+        root = layat.lib.projectRoot;
+        entries.".layat-out/broken" = { src = ./srcrepo; subpath = "skills/nix"; };
       };
     });
   };
 }
 EOF
-git -c user.email=e2e@nput.test -c user.name=e2e add -A
+git -c user.email=e2e@layat.test -c user.name=e2e add -A
 # broken の target を実ファイルで塞ぐ（foreign entity → conflict で engine が停止する）。
-mkdir -p "$PROJ/.nput-out"
-echo "foreign" >"$PROJ/.nput-out/broken"
+mkdir -p "$PROJ/.layat-out"
+echo "foreign" >"$PROJ/.layat-out/broken"
 ENV_ALL_PARTIAL="$E2E_WORK/apply-all-partial.json"
 run_json 1 "$ENV_ALL_PARTIAL" apply --all
 assert_json "$ENV_ALL_PARTIAL" "集約 status=error（1 config でも失敗すれば error）" \
@@ -204,14 +204,14 @@ assert_json "$ENV_ALL_PARTIAL" "集約 status=error（1 config でも失敗す�
 assert_json "$ENV_ALL_PARTIAL" "選択した 3 config すべてが results に載る（続行して全部処理する）" \
 	'[.results[].subject.name] == ["broken", "docs", "idvec"]'
 assert_json "$ENV_ALL_PARTIAL" "失敗した broken だけが error・conflict は item 起因で errors[] に重ねない" \
-	'first(.results[] | select(.subject.name == "broken")) | .status == "error" and (.errors | not) and ([.result.items[] | select(.status == "failed" and .error.code == "E_NPUT_COLLISION")] | length) == 1'
+	'first(.results[] | select(.subject.name == "broken")) | .status == "error" and (.errors | not) and ([.result.items[] | select(.status == "failed" and .error.code == "E_LAYAT_COLLISION")] | length) == 1'
 assert_json "$ENV_ALL_PARTIAL" "成功した docs / idvec は success のまま items を保つ" \
 	'all(.results[] | select(.subject.name != "broken"); .status == "success" and (.errors | not) and (.result.items | length) == 1)'
 assert_json "$ENV_ALL_PARTIAL" "集約エラーをトップ errors[] へ重ねない（各 subject が既に持つ）" \
 	'has("errors") | not'
 cp "$E2E_WORK/flake.nix.bak" "$PROJ/flake.nix"
-git -c user.email=e2e@nput.test -c user.name=e2e add -A
-rm -f "$PROJ/.zshrc" "$PROJ/.nput-out/broken"
+git -c user.email=e2e@layat.test -c user.name=e2e add -A
+rm -f "$PROJ/.zshrc" "$PROJ/.layat-out/broken"
 
 e2e_step "apply --all --json: フィルタが 0 件でも results:[] + status=success（→ issue #164 受け入れ基準）"
 ENV_ALL_EMPTY="$E2E_WORK/apply-all-empty.json"
@@ -228,11 +228,11 @@ for cmd in rollback list-generations; do
 	reject_err="$E2E_WORK/reject-$cmd.err"
 	reject_out="$E2E_WORK/reject-$cmd.out"
 	reject_code=0
-	nput "$cmd" docs >"$reject_out" 2>"$reject_err" || reject_code=$?
+	layat "$cmd" docs >"$reject_out" 2>"$reject_err" || reject_code=$?
 	if [ "$reject_code" -eq 1 ]; then
-		e2e_pass "exit 1: nput $cmd docs"
+		e2e_pass "exit 1: layat $cmd docs"
 	else
-		e2e_fail "exit $reject_code (期待 1): nput $cmd docs"
+		e2e_fail "exit $reject_code (期待 1): layat $cmd docs"
 	fi
 	# home mode を要する旨は文言に閉じず語の出現で見る（system mode の追加でモード名が
 	# 増える改訂が控える・→ ADR-0036）。一方 rootKind の値表現はその改訂の対象外なので、

@@ -1,6 +1,6 @@
-// Command nput is the primary-UX CLI that drives the placement engine (internal/engine) (→ ADR-0007, ADR-0011).
+// Command layat is the primary-UX CLI that drives the placement engine (internal/engine) (→ ADR-0007, ADR-0011).
 //
-// This slice (#7) is scoped to getting project mode's `nput apply [<name>]` end-to-end through a flake
+// This slice (#7) is scoped to getting project mode's `layat apply [<name>]` end-to-end through a flake
 // entrypoint. The execution order follows docs/spec.md "execution flow":
 // "eval first (rootKind) → flock → in-lock build → place → --set → remove .pending"; the engine owns
 // flock through build, placement, and commit, while the CLI handles the orchestration of entrypoint
@@ -14,10 +14,10 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/yasunori0418/nput/internal/manifest"
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
-// version is the nput version, wired to cobra's Version field and shown by `nput --version`
+// version is the layat version, wired to cobra's Version field and shown by `layat --version`
 // (→ ADR-0042). The nix build injects the VERSION file's value via ldflags (-X main.version=...);
 // a plain `go build` without ldflags leaves it "dev" so the CLI still works out of tree. The
 // variable name (main.version) is a fixed contract: #130 reads it through a DTO as the source of
@@ -25,30 +25,6 @@ import (
 var version = "dev"
 
 // Note: cobra's Version field adds only a `--version` flag, not a `version` subcommand.
-
-// renameNotice is the rename announcement printed to stderr on every subcommand
-// (→ ADR-0054 §6, issue #387). It duplicates modules/common.nix's `renameNotice` because a
-// Go const cannot read a Nix expression; checks.notice-parity (flake.nix) fails in CI if the
-// two ever drift, so edit them together until the rename PR (→ issue #388) deletes both.
-// The date is a lower bound ("on or after"): the rename lands when both the notice period and
-// the prune epic have completed, whichever is later.
-const renameNotice = "nput will be renamed to layat on or after 2026-09-22. " +
-	"The flake input URL, the `nput.*` module options, `home.activation.nput` and " +
-	"`#nput.<system>.<name>` will all change, and `--json` consumers will see " +
-	"`E_LAYAT_*` / `W_LAYAT_*` codes and `tool.name = \"layat\"`. " +
-	"See the \"Migrating from nput\" section of " +
-	"https://github.com/yasunori0418/nput#migrating-from-nput . " +
-	"To stay on the old name, pin `github:yasunori0418/nput/legacy-nput`."
-
-// printRenameNotice writes the rename announcement to stderr, once per invocation. It is
-// deliberately stderr-only: the --json envelope is a niface-conformant machine contract and
-// must not carry a tool-side announcement, so stdout stays undisturbed even under --json
-// (→ ADR-0043, ADR-0054 §6). No command is exempt: cobra's generated completion scripts
-// already discard __complete's stderr in every shell they emit (bash / zsh / fish), so the
-// notice cannot leak into a completion listing.
-func printRenameNotice() {
-	fmt.Fprintln(os.Stderr, renameNotice)
-}
 
 // Global flags (→ docs/spec.md "global flags").
 var (
@@ -66,7 +42,7 @@ var (
 	flagSystemRoot  bool   // --system-root: apply --all modifier; apply only systemRoot configs (future seam)
 	flagManifest    string // --manifest: apply a pre-built manifest (link-farm) directly (for module activation)
 	// flagBackup / flagBackupEnabled are --backup[=suffix] (apply modifier; → ADR-0045, issue #169): a
-	// cobra optional-value flag (NoOptDefVal = "nput-backup"). Bare --backup sets flagBackup to the
+	// cobra optional-value flag (NoOptDefVal = "layat-backup"). Bare --backup sets flagBackup to the
 	// default suffix; --backup=<suffix> (the "=" form only — cobra's NoOptDefVal treats a bare next
 	// token as a positional arg, not a space-separated value) sets it to <suffix>. flagBackupEnabled
 	// distinguishes "flag absent" from "flag present" (flagBackup alone can't: its value is never empty
@@ -85,32 +61,32 @@ type exitError struct {
 func (e *exitError) Error() string { return e.msg }
 
 // rootCmdLong discloses the internally run nix commands in --help (for transparency; selectively runnable by hand; → ADR-0007).
-const rootCmdLong = `nput places fetched git repositories at arbitrary paths in your environment via symlink or copy.
+const rootCmdLong = `layat places fetched git repositories at arbitrary paths in your environment via symlink or copy.
 It does not generate configuration (configuration is written in Nix and evaluated by nix build).
 
 Internal nix commands (disclosed for transparency; you can run them by hand selectively):
   init <template>   nix flake init -t <ref>#<template>
-  apply <name>      nix eval <ep>#nput.<system>.<name>.rootKind --raw
-                    nix build <ep>#nput.<system>.<name> --out-link <profileDir>/.pending
-  apply --all       nix eval <ep>#nput.<system> --apply '<rootKind map>' --json
-                    nix build <ep>#nput.<system>.<name> (per config)
-  gitignore <name>  nix eval <ep>#nput.<system>.<name>.rootKind --raw
-                    nix build <ep>#nput.<system>.<name> --no-link --print-out-paths
-  rollback /        nix eval <ep>#nput.<system>.<name>.rootKind --raw
+  apply <name>      nix eval <ep>#layat.<system>.<name>.rootKind --raw
+                    nix build <ep>#layat.<system>.<name> --out-link <profileDir>/.pending
+  apply --all       nix eval <ep>#layat.<system> --apply '<rootKind map>' --json
+                    nix build <ep>#layat.<system>.<name> (per config)
+  gitignore <name>  nix eval <ep>#layat.<system>.<name>.rootKind --raw
+                    nix build <ep>#layat.<system>.<name> --no-link --print-out-paths
+  rollback /        nix eval <ep>#layat.<system>.<name>.rootKind --raw
   list-generations
 
 For a legacy entrypoint (shell.nix / default.nix; no per-system dimension; see ADR-0032), the
-above take the -f form instead: nix eval -f <ep> nput.<name>.rootKind / nix build -f <ep> nput.<name> ...
+above take the -f form instead: nix eval -f <ep> layat.<name>.rootKind / nix build -f <ep> layat.<name> ...
 
 Pass --debug to print the actual nix commands to stderr as they run.`
 
 func newRootCmd() *cobra.Command {
 	root := &cobra.Command{
-		Use:   "nput",
+		Use:   "layat",
 		Short: "Place fetched git repositories at arbitrary paths via symlink or copy.",
 		Long:  rootCmdLong,
-		// `nput --version` prints the embedded version (a flag only — cobra does not add a `version`
-		// subcommand). Leave SetVersionTemplate unset: cobra's default template ("nput version X.Y.Z\n")
+		// `layat --version` prints the embedded version (a flag only — cobra does not add a `version`
+		// subcommand). Leave SetVersionTemplate unset: cobra's default template ("layat version X.Y.Z\n")
 		// is exactly what we want (→ ADR-0042). No `-v` shorthand: -v is already --verbose (below), and
 		// cobra skips the shorthand on that collision.
 		Version: version,
@@ -123,13 +99,6 @@ func newRootCmd() *cobra.Command {
 	// PersistentPreRun: cobra's auto-added utility commands (help / completion / __complete)
 	// own stdout with their own text and must never emit an envelope, and PersistentPreRun
 	// cannot tell them apart robustly (→ issue #130, docs/spec.md).
-	//
-	// The rename notice, unlike the envelope, is a fixed stderr line that no command needs to
-	// type, so PersistentPreRun is the right seam for it: one line for every subcommand
-	// (→ ADR-0054 §6, issue #387). `--version` and `--help` return inside cobra's execute()
-	// before this runs, so neither the installCheckPhase's `nput --version` assertion nor
-	// TestVersionFlagOutput sees the line.
-	root.PersistentPreRun = func(_ *cobra.Command, _ []string) { printRenameNotice() }
 	pf := root.PersistentFlags()
 	pf.StringVarP(&flagFile, "file", "f", "", "Specify the entrypoint explicitly (overrides autodiscovery)")
 	pf.StringVar(&flagRoot, "root", "", "Override the resolved root explicitly (all modes)")
@@ -172,7 +141,7 @@ func main() {
 	// envelope's status mirrors, never replaces, the exit code · → ADR-0043 §6, issue #130).
 	if flagJSON && nifaceReport.began() {
 		if emitErr := nifaceReport.emit(err); emitErr != nil {
-			fmt.Fprintf(os.Stderr, "nput: cannot write the --json envelope: %v\n", emitErr)
+			fmt.Fprintf(os.Stderr, "layat: cannot write the --json envelope: %v\n", emitErr)
 			if err == nil {
 				// The command itself succeeded but the machine channel is broken; the consumer
 				// must not read the missing/partial document as success.
@@ -196,9 +165,9 @@ func main() {
 		// The engine rejects a schemaVersion skew between the CLI and the flake pin (→ manifest.validate).
 		// Detect it at the top level and supplement the cause and the fix (→ docs/spec.md "manifest.json schema").
 		if errors.Is(err, manifest.ErrSchemaVersionUnsupported) {
-			fmt.Fprintln(os.Stderr, "\nnput: the nput version pinned by the CLI (engine) and by the flake may be out of sync.\n"+
-				"  The flake's nput input is generating a manifest newer than the CLI.\n"+
-				"  Update the CLI, or lower the flake's nput input to match the CLI so both versions align.")
+			fmt.Fprintln(os.Stderr, "\nlayat: the layat version pinned by the CLI (engine) and by the flake may be out of sync.\n"+
+				"  The flake's layat input is generating a manifest newer than the CLI.\n"+
+				"  Update the CLI, or lower the flake's layat input to match the CLI so both versions align.")
 		}
 		// An error carrying an exit code (such as apply --all's aggregate) exits with that code (→ docs/spec.md, ADR-0024).
 		var ec exitCodeX

@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yasunori0418/nput/internal/manifest"
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // --- fake FS (fake lstat/readlink to table-test the pure planner without a real FS) ---
@@ -418,7 +418,7 @@ func TestComputeTableDriven(t *testing.T) {
 			},
 		},
 		{
-			// entries = {} (empty manifest): conservatively remove all previous-generation nput symlinks (no warning).
+			// entries = {} (empty manifest): conservatively remove all previous-generation layat symlinks (no warning).
 			name: "empty manifest → remove all recorded (no warning)",
 			prev: mani(sl(srcA, "a"), sl(srcA, "b")),
 			next: mani(),
@@ -437,7 +437,7 @@ func TestComputeTableDriven(t *testing.T) {
 			want: want{warns: []WarnKind{WarnStaleMismatch}},
 		},
 		{
-			// stale target is a regular file: kept as non-nput-managed, warning.
+			// stale target is a regular file: kept as non-layat-managed, warning.
 			name: "stale non-symlink (regular file) → keep + warn",
 			prev: mani(sl(srcA, ".config/foo")),
 			next: mani(),
@@ -540,7 +540,7 @@ func TestComputeTableDriven(t *testing.T) {
 		{
 			// Real directory containing only an empty subdirectory (no leaf entries at all): empty
 			// dirs are migratable regardless of provenance, since rmdir only ever succeeds when empty
-			// (data-loss-free even for dirs nput never created · → ADR-0047 D2).
+			// (data-loss-free even for dirs layat never created · → ADR-0047 D2).
 			name: "real dir target, empty subdir of unknown provenance → migrate (rmdir only)",
 			prev: nil,
 			next: mani(sl(srcB, ".claude/hooks")),
@@ -668,14 +668,14 @@ func TestComputeTableDriven(t *testing.T) {
 		},
 		{
 			// apply --backup with a custom suffix: the backup destination is "<target>.<suffix>", not
-			// the default "<target>.nput-backup" — proven by pre-populating the DEFAULT-suffix path
+			// the default "<target>.layat-backup" — proven by pre-populating the DEFAULT-suffix path
 			// with a foreign entity the plan must never touch, while the custom-suffix path stays free.
 			name: "backup enabled, custom suffix",
 			prev: nil,
 			next: mani(sl(srcB, ".config/foo")),
 			fs: fakeFS{
-				abs(".config/foo"):             reg(),
-				abs(".config/foo.nput-backup"): reg(), // must be left alone; custom suffix is used instead
+				abs(".config/foo"):              reg(),
+				abs(".config/foo.layat-backup"): reg(), // must be left alone; custom suffix is used instead
 			},
 			opts: Options{Backup: true, Suffix: "bak"},
 			want: want{placeNew: []string{".config/foo"}, backup: []string{".config/foo"}},
@@ -687,8 +687,8 @@ func TestComputeTableDriven(t *testing.T) {
 			prev: nil,
 			next: mani(sl(srcB, ".config/foo")),
 			fs: fakeFS{
-				abs(".config/foo"):             reg(),
-				abs(".config/foo.nput-backup"): reg(),
+				abs(".config/foo"):              reg(),
+				abs(".config/foo.layat-backup"): reg(),
 			},
 			opts: Options{Backup: true},
 			want: want{conflicts: 1, conflictKinds: []ConflictKind{ConflictBackupTargetExists}},

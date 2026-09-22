@@ -6,24 +6,24 @@ derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
-  `nput apply <name> --backup[=<suffix>]` SHALL rename an existing *unrecorded* entity
+  `layat apply <name> --backup[=<suffix>]` SHALL rename an existing *unrecorded* entity
   that blocks placement — such as a foreign regular file / directory, a copy structure
   mismatch, a foreign real file under a copy, or a method change from copy to symlink, the
   extension of the subjects being settled by REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 — aside to
   `<target>.<suffix>` before placing, as an escape hatch out of a conflict. Omitting the
-  value SHALL mean the suffix `nput-backup`. Because of the cobra `NoOptDefVal`
+  value SHALL mean the suffix `layat-backup`. Because of the cobra `NoOptDefVal`
   constraint, specifying a suffix SHALL require the `=` form (`--backup=bak`); the
   space-separated form SHALL NOT be interpreted as a suffix. An ancestor symlink conflict
   SHALL remain out of scope, being a structural problem that renaming aside does not
   resolve. A rename aside SHALL always be reported on stderr at warning level. When the
   destination `<target>.<suffix>` already exists, the command SHALL stop with a conflict
   and SHALL NOT silently overwrite it. A rename aside SHALL also be subject to the undo
-  journal on mid-run failure. `nput reset` SHALL NOT restore the entities set aside.
+  journal on mid-run failure. `layat reset` SHALL NOT restore the entities set aside.
 specification_ja: |
-  `nput apply <name> --backup[=<suffix>]` は、配置を塞ぐ既存の記録外実体（例: foreign な
+  `layat apply <name> --backup[=<suffix>]` は、配置を塞ぐ既存の記録外実体（例: foreign な
   通常ファイル / ディレクトリ・copy 構造不一致・copy foreign 実ファイル・method 変更
   copy→symlink。対象の外延は REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 が定める）を `<target>.<suffix>` へ rename 退避して
-  から配置しなければならない（conflict の脱出ハッチ）。値なしは suffix `nput-backup` を
+  から配置しなければならない（conflict の脱出ハッチ）。値なしは suffix `layat-backup` を
   意味しなければならない。cobra `NoOptDefVal` の制約により suffix 指定は `=` 区切り必須と
   しなければならず（`--backup=bak`）、スペース区切りは suffix として扱ってはならない。
   祖先 symlink conflict は対象外のままでなければならない
@@ -31,21 +31,21 @@ specification_ja: |
   出さなければならない。退避先 `<target>.<suffix>` が既に存在するときは conflict で停止
   しなければならず、黙って上書きしてはならない。退避も途中失敗時の undo ジャーナルの
   対象としなければならない。
-  `nput reset` は退避物を復元してはならない。
+  `layat reset` は退避物を復元してはならない。
 ---
 # REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b: apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する
 
 ## 仕様
 
 ```bash
-nput apply <name> --backup           # 既存の記録外実体を <target>.nput-backup へ rename 退避してから配置（既定 suffix）
-nput apply <name> --backup=<suffix>  # 退避 suffix を明示（"=" 区切り必須・スペース区切り不可）
+layat apply <name> --backup           # 既存の記録外実体を <target>.layat-backup へ rename 退避してから配置（既定 suffix）
+layat apply <name> --backup=<suffix>  # 退避 suffix を明示（"=" 区切り必須・スペース区切り不可）
 ```
 
 `apply <name> --backup[=<suffix>]` は、配置を塞ぐ既存の**記録外**実体（foreign な通常
 ファイル / ディレクトリ・copy 構造不一致・copy foreign 実ファイル・method 変更
 copy→symlink）を `<target>.<suffix>` へ rename 退避してから配置する、conflict の脱出
-ハッチ。値なし = suffix `nput-backup`。suffix 指定は cobra `NoOptDefVal` の制約で
+ハッチ。値なし = suffix `layat-backup`。suffix 指定は cobra `NoOptDefVal` の制約で
 **`=` 区切り必須**（`--backup=bak`。スペース区切り `--backup bak` は次の位置引数として
 扱われ suffix にならない）。**祖先 symlink conflict は対象外のまま**（構造問題であり
 退避では解消しない）。退避発動は warning 級で**常時 stderr** に出す。退避先

@@ -10,20 +10,22 @@ let
   inherit (lib.options) mergeEqualOption;
   inherit (builtins) isAttrs isString;
 
-  # Marker discrimination (distinguished by the `_nputMarker` tag attached by `out-of-store.nix`).
-  isOutOfStoreMarker = x: isAttrs x && (x._nputMarker or null) == "outOfStore";
-  isRootMarker = x: isAttrs x && (x._nputMarker or null) == "root";
+  # Marker discrimination (distinguished by the `_layatMarker` tag attached by `out-of-store.nix`).
+  isOutOfStoreMarker = x: isAttrs x && (x._layatMarker or null) == "outOfStore";
+  isRootMarker = x: isAttrs x && (x._layatMarker or null) == "root";
 
   # store-backed src: collapse path / derivation / flake input (`{ outPath = …; }`) into a single branch.
   # Reject bare strings and forbid the implicit out-of-store branch at the type level (→ ADR-0001).
   # path and set behave identically (both are store links), so they are not split at the type level (→ ADR-0010).
   isStoreBacked =
     x:
-    lib.isPath x || lib.isDerivation x || (isAttrs x && x ? outPath && (x._nputMarker or null) == null);
+    lib.isPath x
+    || lib.isDerivation x
+    || (isAttrs x && x ? outPath && (x._layatMarker or null) == null);
 
   # srcType = either storeBacked outOfStoreMarker (→ ADR-0010).
   srcType = types.mkOptionType {
-    name = "nputSrc";
+    name = "layatSrc";
     description = "store-backed source (path / derivation / flake input) or out-of-store marker";
     check = x: isStoreBacked x || isOutOfStoreMarker x;
     merge = mergeEqualOption;
@@ -32,7 +34,7 @@ let
   # rootType = either str rootMarker (→ ADR-0010). Used only by `mkManifest`, not shared with modules
   # (modules pin root・→ ADR-0003).
   rootType = types.mkOptionType {
-    name = "nputRoot";
+    name = "layatRoot";
     description = "absolute path string or root marker (projectRoot / homeRoot / systemRoot)";
     check = x: isString x || isRootMarker x;
     merge = mergeEqualOption;

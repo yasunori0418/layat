@@ -8,12 +8,12 @@
 #
 # store パスの hash 揺れを避けるため src には toString が安定する fake な flake-input 相当
 # （`{ outPath = …; }`）を使う。これは srcType の store-backed 判定（`? outPath`）を通る正当な test double。
-{ lib, nput }:
+{ lib, layat }:
 let
   fakeSrc = {
     outPath = "/nix/store/00000000000000000000000000000000-fake-src";
   };
-  norm = root: entries: nput.normalizeManifest { inherit lib root entries; };
+  norm = root: entries: layat.normalizeManifest { inherit lib root entries; };
 
   fixed = norm "/srv/deploy" {
     ".config/foo" = {
@@ -48,14 +48,14 @@ in
   # entries は上と同条件に揃え、差分がパス値の 1 軸だけになるようにする。
   testFixedRootPathVerbatim = {
     expr =
-      (norm "/opt/nput" {
+      (norm "/opt/layat" {
         ".config/foo" = {
           src = fakeSrc;
         };
       }).root;
     expected = {
       rootKind = "fixed";
-      root = "/opt/nput";
+      root = "/opt/layat";
     };
   };
 
@@ -68,7 +68,7 @@ in
   testFixedRootEntryUnaffected = {
     expr = fixed.entries;
     expected =
-      (norm nput.projectRoot {
+      (norm layat.projectRoot {
         ".config/foo" = {
           src = fakeSrc;
         };
@@ -79,7 +79,7 @@ in
   # （project 分は structure.nix が見る。ここは fixed 判定が marker へ誤って広がらないことの
   # 担保）。exact 一致なので `root` フィールドの不在まで見る。
   testFixedRootHomeMarkerShape = {
-    expr = (norm nput.homeRoot { }).root;
+    expr = (norm layat.homeRoot { }).root;
     expected = {
       rootKind = "home";
     };

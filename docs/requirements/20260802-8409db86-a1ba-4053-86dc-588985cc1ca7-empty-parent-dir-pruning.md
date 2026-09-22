@@ -9,7 +9,7 @@ derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
 specification: |
   After a target has been removed, the chain of its parent directories SHALL be pruned
-  conservatively towards the root, because nput creates parent directories automatically
+  conservatively towards the root, because layat creates parent directories automatically
   when placing but does not record them in the manifest, so that without pruning empty
   directories would pile up whenever the entry hierarchy changes and would become a source
   of conflicts blocking later placements. A directory SHALL be removed only while it is
@@ -34,7 +34,7 @@ specification: |
   `reset` SHALL leave the directory in place with a warning.
 specification_ja: |
   target を除去した後、その親ディレクトリチェーンを root 方向へ保守的に剪定しなければならない。
-  nput は配置時に親 dir を自動作成するが manifest には記録しないため、剪定しないと entry 階層を
+  layat は配置時に親 dir を自動作成するが manifest には記録しないため、剪定しないと entry 階層を
   変更するたびに空 dir が積もり、後続配置を塞ぐ conflict の温床になるためである。剪定は空の
   ときだけ rmdir しなければならない。rmdir は空ディレクトリでしか成功しないため、非空
   （`ENOTEMPTY`。一部実装では `EEXIST`）は成功扱いとして黙って残さなければならない
@@ -58,7 +58,7 @@ specification_ja: |
 ## 仕様
 
 target を除去した後、その親ディレクトリチェーンを root 方向へ保守的に剪定する
-（HM の `rmdir -p --ignore-fail-on-non-empty` 対称）。nput は配置時に親 dir を `mkdir -p` 相当で
+（HM の `rmdir -p --ignore-fail-on-non-empty` 対称）。layat は配置時に親 dir を `mkdir -p` 相当で
 自動作成するが manifest には記録しないため、剪定しないと entry 階層を変更するたびに空 dir が
 積もり、後続配置を塞ぐ conflict の温床になる。
 

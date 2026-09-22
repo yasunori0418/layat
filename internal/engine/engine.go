@@ -15,11 +15,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/yasunori0418/nput/internal/gitutil"
-	"github.com/yasunori0418/nput/internal/lock"
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/paths"
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/gitutil"
+	"github.com/yasunori0418/layat/internal/lock"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/paths"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // CommitFunc is the commit point that records a generation after a successful placement
@@ -32,7 +32,7 @@ type CommitFunc func(profileLink, linkFarm string) error
 // (→ docs/spec.md execution flow 2b · ADR-0011, ADR-0023). The pending argument is the
 // out-link destination (<profileDir>/.pending). The return value is the built link-farm's
 // store path (after os.Readlink resolution). The CLI injects
-// `nix build <ep>#nput.<system>.<name> --out-link <pending>`. When nil, opts.LinkFarm is
+// `nix build <ep>#layat.<system>.<name> --out-link <pending>`. When nil, opts.LinkFarm is
 // used as pre-built (tmpdir test path).
 type BuildFunc func(pending string) (linkFarm string, err error)
 
@@ -44,7 +44,7 @@ type Options struct {
 	// LinkFarm is the link-farm directory containing manifest.json and the GC anchor symlink farm.
 	// Pre-built link-farm used only on the path that does not pass Build (tmpdir tests) (→ ADR-0011).
 	LinkFarm string
-	// Name is the config name (uniquely identifies a profile; derived from the entrypoint's nput.<name>).
+	// Name is the config name (uniquely identifies a profile; derived from the entrypoint's layat.<name>).
 	Name string
 	// RootKind is the root kind obtained via eval pre-resolution (→ docs/spec.md execution flow 1 · ADR-0023).
 	// Required on the Build path since the manifest is not yet built. When empty, obtained from LinkFarm's manifest.
@@ -67,7 +67,7 @@ type Options struct {
 	// (or a copy foreign skip) is renamed aside to "<target>.<BackupSuffix>" and the entry placed
 	// fresh, instead of stopping (→ ADR-0045, issue #169).
 	Backup bool
-	// BackupSuffix is the apply --backup rename suffix. Empty defaults to "nput-backup" (→ ADR-0045).
+	// BackupSuffix is the apply --backup rename suffix. Empty defaults to "layat-backup" (→ ADR-0045).
 	BackupSuffix string
 	// DryRun is a side-effect-free read-only preview (apply --dryrun · → ADR-0006, ADR-0023).
 	// When true it runs the planner read-only, packs the plan into Result and returns,
@@ -101,7 +101,7 @@ type Result struct {
 	// Conflicts are the planner-detected conflicts, in structured form. Populated on the dryrun
 	// path (the CLI decides exit 2 · → ADR-0006) and on the non-dryrun conflict stop, where the
 	// partial Result is returned alongside the aggregate error so the CLI can map each conflict
-	// onto a failed niface item (E_NPUT_COLLISION · → issue #131, ADR-0043 §6).
+	// onto a failed niface item (E_LAYAT_COLLISION · → issue #131, ADR-0043 §6).
 	Conflicts []planner.Conflict
 	// GenerationSkipped indicates that the project-mode generation skip committed no new
 	// generation (omitted --set). The path where the new link-farm equals the previous
@@ -160,7 +160,7 @@ var ErrSkipped = lock.ErrLocked
 func acquireProfileLock(dir string, wait bool) (*lock.Lock, error) {
 	l, err := lock.Acquire(dir, wait)
 	if err != nil {
-		return nil, fmt.Errorf("nput: failed to acquire flock (%s): %w", dir, err)
+		return nil, fmt.Errorf("layat: failed to acquire flock (%s): %w", dir, err)
 	}
 	return l, nil
 }
@@ -185,7 +185,7 @@ func Apply(opts Options) (*Result, error) {
 	if opts.Build == nil {
 		m, err := manifest.Load(opts.LinkFarm)
 		if err != nil {
-			return nil, fmt.Errorf("nput: cannot read the link-farm's manifest (%s): %w", opts.LinkFarm, err)
+			return nil, fmt.Errorf("layat: cannot read the link-farm's manifest (%s): %w", opts.LinkFarm, err)
 		}
 		a.manifest = m
 		if rootKind == "" {
@@ -250,7 +250,7 @@ func Apply(opts Options) (*Result, error) {
 		}
 		m, err := manifest.Load(linkFarm)
 		if err != nil {
-			return nil, fmt.Errorf("nput: cannot read the built link-farm's manifest (%s): %w", linkFarm, err)
+			return nil, fmt.Errorf("layat: cannot read the built link-farm's manifest (%s): %w", linkFarm, err)
 		}
 		a.opts.LinkFarm = linkFarm
 		a.manifest = m
@@ -291,7 +291,7 @@ func Apply(opts Options) (*Result, error) {
 		same, err := generationUnchanged(a.profile.Profile, a.opts.LinkFarm)
 		if err != nil {
 			// When the previous generation's link-farm cannot be resolved, fall back to the safe side: normal apply (commit a new generation).
-			a.opts.Warnf("nput: could not resolve the previous generation's link-farm; recommitting without a generation skip: %v", err)
+			a.opts.Warnf("layat: could not resolve the previous generation's link-farm; recommitting without a generation skip: %v", err)
 		} else if same {
 			// The drift repair's re-links are journaled the same as normal placement (→ ADR-0044); this
 			// path commits no generation, so there is no commit success to discard the journal on —
@@ -347,7 +347,7 @@ func Apply(opts Options) (*Result, error) {
 		// Not entry-scoped (every planned FS action already succeeded), so no FailedTarget /
 		// Unreached — but the partial Result is still returned so the CLI can see what landed
 		// without a generation advancing (→ issue #130 到達状態).
-		return a.result, fmt.Errorf("nput: generation commit (nix-env --set) failed: %w", err)
+		return a.result, fmt.Errorf("layat: generation commit (nix-env --set) failed: %w", err)
 	}
 	a.discardJournal()
 
@@ -364,7 +364,7 @@ func (a *applier) cleanupPending() {
 		return
 	}
 	if err := os.Remove(a.profile.Pending); err != nil && !os.IsNotExist(err) {
-		a.opts.Warnf("nput: could not remove the .pending out-link (%s): %v", a.profile.Pending, err)
+		a.opts.Warnf("layat: could not remove the .pending out-link (%s): %v", a.profile.Pending, err)
 	}
 }
 
@@ -500,7 +500,7 @@ func (a *applier) dryRun() (*Result, error) {
 		}
 		m, err := manifest.Load(linkFarm)
 		if err != nil {
-			return nil, fmt.Errorf("nput: cannot read the built link-farm's manifest (%s): %w", linkFarm, err)
+			return nil, fmt.Errorf("layat: cannot read the built link-farm's manifest (%s): %w", linkFarm, err)
 		}
 		a.opts.LinkFarm = linkFarm
 		a.manifest = m
@@ -560,7 +560,7 @@ func resolveRoot(rootKind, fixedRoot, rootOverride, workDir string, git GitFunc)
 		if dir == "" {
 			cwd, err := os.Getwd()
 			if err != nil {
-				return "", fmt.Errorf("nput: cannot get cwd: %w", err)
+				return "", fmt.Errorf("layat: cannot get cwd: %w", err)
 			}
 			dir = cwd
 		}
@@ -571,34 +571,34 @@ func resolveRoot(rootKind, fixedRoot, rootOverride, workDir string, git GitFunc)
 	case manifest.RootKindHome:
 		home, err := os.UserHomeDir()
 		if err != nil {
-			return "", fmt.Errorf("nput: cannot resolve $HOME: %w", err)
+			return "", fmt.Errorf("layat: cannot resolve $HOME: %w", err)
 		}
 		return home, nil
 	case manifest.RootKindFixed:
 		if fixedRoot == "" {
-			return "", fmt.Errorf("nput: rootKind=fixed but no root path provided")
+			return "", fmt.Errorf("layat: rootKind=fixed but no root path provided")
 		}
 		return filepath.Abs(fixedRoot)
 	case manifest.RootKindSystem:
-		return "", fmt.Errorf("nput: root = systemRoot (system mode) is not implemented (→ ADR-0013)")
+		return "", fmt.Errorf("layat: root = systemRoot (system mode) is not implemented (→ ADR-0013)")
 	case "":
-		return "", fmt.Errorf("nput: rootKind is undetermined (eval prefetch or a manifest is required)")
+		return "", fmt.Errorf("layat: rootKind is undetermined (eval prefetch or a manifest is required)")
 	default:
-		return "", fmt.Errorf("nput: unknown rootKind: %q", rootKind)
+		return "", fmt.Errorf("layat: unknown rootKind: %q", rootKind)
 	}
 }
 
 func (a *applier) ensureProfileDir() error {
 	if err := os.MkdirAll(a.profile.Dir, 0o755); err != nil {
-		return fmt.Errorf("nput: cannot create profileDir (%s): %w", a.profile.Dir, err)
+		return fmt.Errorf("layat: cannot create profileDir (%s): %w", a.profile.Dir, err)
 	}
 	// Place backref .root at the <roothash> level (reverse-lookup seam for orphan profiles · → ADR-0013).
 	if a.profile.Backref != "" {
 		if err := os.MkdirAll(a.profile.BackrefDir, 0o755); err != nil {
-			return fmt.Errorf("nput: cannot create backref directory (%s): %w", a.profile.BackrefDir, err)
+			return fmt.Errorf("layat: cannot create backref directory (%s): %w", a.profile.BackrefDir, err)
 		}
 		if err := os.WriteFile(a.profile.Backref, []byte(a.root+"\n"), 0o644); err != nil {
-			return fmt.Errorf("nput: cannot write backref (%s): %w", a.profile.Backref, err)
+			return fmt.Errorf("layat: cannot write backref (%s): %w", a.profile.Backref, err)
 		}
 	}
 	return nil
@@ -614,7 +614,7 @@ func (a *applier) loadPrevManifest() *manifest.Manifest {
 	m, err := manifest.Load(a.profile.Profile)
 	if err != nil {
 		// Even if the previous generation cannot be read, do not block new placement (just give up stale removal).
-		a.opts.Warnf("nput: could not read the previous generation's manifest; skipping stale removal: %v", err)
+		a.opts.Warnf("layat: could not read the previous generation's manifest; skipping stale removal: %v", err)
 		return nil
 	}
 	return m
@@ -627,10 +627,10 @@ func (a *applier) loadPrevManifest() *manifest.Manifest {
 // longer stop at the first conflict only.
 func reportConflicts(warnf func(format string, args ...any), conflicts []planner.Conflict) error {
 	for _, c := range conflicts {
-		warnf("nput: conflict: %s (target: %s)", c.Reason, c.Entry.Target)
-		warnf("nput:   → %s", conflictGuidance(c.Kind))
+		warnf("layat: conflict: %s (target: %s)", c.Reason, c.Entry.Target)
+		warnf("layat:   → %s", conflictGuidance(c.Kind))
 	}
-	return fmt.Errorf("nput: %d conflict(s) detected; stopped without placing (see above)", len(conflicts))
+	return fmt.Errorf("layat: %d conflict(s) detected; stopped without placing (see above)", len(conflicts))
 }
 
 // conflictGuidance returns the one-line remediation hint for a conflict kind (→ docs/spec.md
@@ -665,18 +665,18 @@ func (a *applier) emitWarnings(ws []planner.Warning, recopy bool) {
 	for _, w := range ws {
 		switch w.Kind {
 		case planner.WarnForeignReplace:
-			a.opts.Warnf("nput: overwriting an unrecorded symlink (foreign; last-wins): %s", w.Target)
+			a.opts.Warnf("layat: overwriting an unrecorded symlink (foreign; last-wins): %s", w.Target)
 		case planner.WarnStaleMismatch:
-			a.opts.Warnf("nput: keeping stale symlink because it mismatches the record: %s", w.Target)
+			a.opts.Warnf("layat: keeping stale symlink because it mismatches the record: %s", w.Target)
 		case planner.WarnStaleNonSymlink:
-			a.opts.Warnf("nput: keeping stale target because it is not a symlink: %s", w.Target)
+			a.opts.Warnf("layat: keeping stale target because it is not a symlink: %s", w.Target)
 		case planner.WarnCopyOrphan:
-			a.opts.Warnf("nput: copy entry vanished but the target is not removed (orphan; clear it with reset): %s", w.Target)
+			a.opts.Warnf("layat: copy entry vanished but the target is not removed (orphan; clear it with reset): %s", w.Target)
 		case planner.WarnCopyForeign:
 			if recopy {
 				continue
 			}
-			a.opts.Warnf("nput: skipped copy because a real file already exists at the copy target (foreign; place-once): %s", w.Target)
+			a.opts.Warnf("layat: skipped copy because a real file already exists at the copy target (foreign; place-once): %s", w.Target)
 		}
 		a.result.Warnings = append(a.result.Warnings, w)
 	}

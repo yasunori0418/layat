@@ -5,30 +5,30 @@ name: "prune は dryrun・root 一覧付き確認・try-lock skip・--json の -
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
-  `nput prune --dryrun` SHALL have no side effect and SHALL write the series it would
+  `layat prune --dryrun` SHALL have no side effect and SHALL write the series it would
   delete — the `<roothash>`, the root path, and the `<name>` profiles under it — to stdout.
-  Before deleting for real, `nput prune` SHALL always present the root paths of the series
+  Before deleting for real, `layat prune` SHALL always present the root paths of the series
   it is about to delete and SHALL ask for confirmation, which `--yes` SHALL skip. On a
   non-TTY without `--yes`, it SHALL abort rather than delete. Each series SHALL be locked
   with a try-lock before deletion; a series whose lock cannot be taken SHALL be skipped
-  with a warning, and `nput prune` SHALL NOT wait for a lock to be released. A series whose
+  with a warning, and `layat prune` SHALL NOT wait for a lock to be released. A series whose
   deletion began and did not finish SHALL be reported as an error and SHALL NOT be counted
   as deleted nor as skipped, the series being neither gone nor untouched; the series
-  deleted before that failure SHALL still be reported as deleted. A `nput prune --json` that
+  deleted before that failure SHALL still be reported as deleted. A `layat prune --json` that
   deletes — that is, one without `--dryrun` — SHALL require `--yes`, and SHALL fail fast with
   `status:"error"` and a non-zero exit when it is absent; `--dryrun --json` deletes nothing
   and SHALL NOT require it.
 specification_ja: |
-  `nput prune --dryrun` は副作用を持ってはならず、削除予定の系列（`<roothash>`・root
+  `layat prune --dryrun` は副作用を持ってはならず、削除予定の系列（`<roothash>`・root
   パス・配下の `<name>` profile 一覧）を stdout へ出力しなければならない。実削除の前に
-  `nput prune` は削除対象の root パス一覧を必ず提示して確認を求めなければならず、
+  `layat prune` は削除対象の root パス一覧を必ず提示して確認を求めなければならず、
   `--yes` はこれをスキップしなければならない。非 TTY で `--yes` が無いときは削除せず
   中止しなければならない。各系列は削除前に try-lock で lock しなければならず、lock を
   取れない系列は warning を出して skip しなければならない。lock の解放を待っては
   ならない。削除に着手して完了しなかった系列はエラーとして報告しなければならず、削除済み
   としても skip としても扱ってはならない（その系列は消えてもいなければ無傷でもないため）。
   その失敗より前に削除し終えた系列は削除済みとして報告しなければならない。
-  削除を行う `nput prune --json`（すなわち `--dryrun` を伴わないもの）は `--yes` を必須とし、
+  削除を行う `layat prune --json`（すなわち `--dryrun` を伴わないもの）は `--yes` を必須とし、
   無ければ `status:"error"` + 非ゼロで fail fast しなければならない。`--dryrun --json` は
   何も削除しないため `--yes` を要求してはならない。
 ---

@@ -9,11 +9,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/yasunori0418/nput/internal/engine"
-	"github.com/yasunori0418/nput/internal/manifest"
+	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
-var flagApplyAll bool // --all: apply all of nput.* in lexical order (narrowable by root filter)
+var flagApplyAll bool // --all: apply all of layat.* in lexical order (narrowable by root filter)
 
 // applyResultInfo / applyEnvInfo are apply's niface info slots (→ issue #196). apply's record
 // lives entirely in items / changes, so both are empty seat types held as nil pointers: the
@@ -51,10 +51,10 @@ func beginApplyRun(command string) *applyRun {
 func newApplyCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "apply [name]",
-		Short: "Build nput.<name>, create a new generation, and apply it (defaults to nput.default)",
-		Long: "Build and place the entrypoint's nput.<name>. " +
-			"Omitting name applies nput.default (the flake default convention; an error if undefined). " +
-			"--all applies all of nput.* in lexical order; --project-root / --home-root / --system-root narrow by root mode.",
+		Short: "Build layat.<name>, create a new generation, and apply it (defaults to layat.default)",
+		Long: "Build and place the entrypoint's layat.<name>. " +
+			"Omitting name applies layat.default (the flake default convention; an error if undefined). " +
+			"--all applies all of layat.* in lexical order; --project-root / --home-root / --system-root narrow by root mode.",
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// beginApplyRun also publishes the run to nifaceReport, so main emits the envelope
@@ -63,7 +63,7 @@ func newApplyCmd() *cobra.Command {
 			flagBackupEnabled = cmd.Flags().Changed("backup")
 			if flagApplyAll {
 				if len(args) > 0 {
-					return fmt.Errorf("nput: apply cannot combine <name> with --all")
+					return fmt.Errorf("layat: apply cannot combine <name> with --all")
 				}
 				return runApplyAll(run)
 			}
@@ -77,7 +77,7 @@ func newApplyCmd() *cobra.Command {
 			return runApply(run, name)
 		},
 	}
-	cmd.Flags().BoolVar(&flagApplyAll, "all", false, "Apply all of nput.* in lexical order (continues on partial failure; exits non-zero if any fails)")
+	cmd.Flags().BoolVar(&flagApplyAll, "all", false, "Apply all of layat.* in lexical order (continues on partial failure; exits non-zero if any fails)")
 	cmd.Flags().BoolVar(&flagRecopy, "recopy", false,
 		"Unconditionally re-copy every copy target from src, overwriting (discards local edits; see ADR-0020)")
 	cmd.Flags().BoolVar(&flagDryrun, "dryrun", false,
@@ -85,8 +85,8 @@ func newApplyCmd() *cobra.Command {
 	cmd.Flags().StringVar(&flagManifest, "manifest", "",
 		"Apply a pre-built manifest (link-farm path) directly (host/module activation seam; no entrypoint discovery or nix eval/build; see ADR-0026)")
 	cmd.Flags().StringVar(&flagBackup, "backup", "",
-		"Back up an occupying foreign entity to \"<target>.<suffix>\" before placing, instead of stopping on conflict (bare --backup uses suffix \"nput-backup\"; \"=\" form required for a custom suffix, e.g. --backup=bak; see ADR-0045)")
-	cmd.Flags().Lookup("backup").NoOptDefVal = "nput-backup"
+		"Back up an occupying foreign entity to \"<target>.<suffix>\" before placing, instead of stopping on conflict (bare --backup uses suffix \"layat-backup\"; \"=\" form required for a custom suffix, e.g. --backup=bak; see ADR-0045)")
+	cmd.Flags().Lookup("backup").NoOptDefVal = "layat-backup"
 	return cmd
 }
 
@@ -97,7 +97,7 @@ func newApplyCmd() *cobra.Command {
 func runApplyManifest(subject *applySubject, name string) error {
 	linkFarm, err := filepath.Abs(flagManifest)
 	if err != nil {
-		return fmt.Errorf("nput: cannot resolve the --manifest path (%s): %w", flagManifest, err)
+		return fmt.Errorf("layat: cannot resolve the --manifest path (%s): %w", flagManifest, err)
 	}
 
 	res, err := engine.Apply(engine.Options{
@@ -117,7 +117,7 @@ func runApplyManifest(subject *applySubject, name string) error {
 	if err != nil {
 		if errors.Is(err, engine.ErrSkipped) {
 			if flagVerbose {
-				fmt.Fprintln(os.Stderr, "nput: skipped because another apply is in progress (run nput apply manually)")
+				fmt.Fprintln(os.Stderr, "layat: skipped because another apply is in progress (run layat apply manually)")
 			}
 			return nil
 		}
@@ -142,7 +142,7 @@ func runApply(run *applyRun, name string) error {
 		// --manifest fixes the source to a link-farm, so it conflicts in meaning with the
 		// entrypoint discovery flags (the positional name is orthogonal as a profile selector and coexists; → ADR-0026).
 		if flagFile != "" {
-			return errors.New("nput: --manifest cannot be combined with -f (--manifest fixes the source to a pre-built link-farm)")
+			return errors.New("layat: --manifest cannot be combined with -f (--manifest fixes the source to a pre-built link-farm)")
 		}
 		return runApplyManifest(subject, name)
 	}
@@ -181,7 +181,7 @@ func runApply(run *applyRun, name string) error {
 		// The dryrun rides the same payload builder as the real apply, so parity is
 		// structural — same schema by construction, only the observed values differ
 		// (→ issue #132). cmdErr is nil here: a conflict is item-borne (failed item +
-		// E_NPUT_COLLISION inside the payload) and the exit-2 decision comes below,
+		// E_LAYAT_COLLISION inside the payload) and the exit-2 decision comes below,
 		// after the plan is printed — the envelope still carries the payload alongside.
 		attachMutationPayload(subject, res, nil)
 		printApplyPlan(res)
@@ -203,7 +203,7 @@ func runApply(run *applyRun, name string) error {
 		if errors.Is(err, engine.ErrSkipped) {
 			// A try-lock skip is a normal skip (exit 0; → docs/spec.md exit code table).
 			if flagVerbose {
-				fmt.Fprintln(os.Stderr, "nput: skipped because another apply is in progress (run nput apply manually)")
+				fmt.Fprintln(os.Stderr, "layat: skipped because another apply is in progress (run layat apply manually)")
 			}
 			return nil
 		}
@@ -261,7 +261,7 @@ func applyOne(ep *entrypoint, system, name, rootKind, fixedRoot string) (*engine
 	})
 }
 
-// runApplyAll applies all of the entrypoint's nput.* in lexical order (→ docs/spec.md execution flow, ADR-0016, ADR-0024).
+// runApplyAll applies all of the entrypoint's layat.* in lexical order (→ docs/spec.md execution flow, ADR-0016, ADR-0024).
 // rootKind is taken in a single batch eval (collapsing process launches N→1); build is per config for atomicity.
 // It continues with the rest on a partial failure, shows an aggregate at the end, and exits non-zero if any one fails.
 // Each selected config becomes one SubjectResult in results[], the same shape a named apply
@@ -301,7 +301,7 @@ func runApplyAll(run *applyRun) error {
 	}
 	if len(selected) == 0 {
 		if flagVerbose {
-			fmt.Fprintln(os.Stderr, "nput: apply --all: no matching configs")
+			fmt.Fprintln(os.Stderr, "layat: apply --all: no matching configs")
 		}
 		return nil
 	}
@@ -321,7 +321,7 @@ func runApplyAll(run *applyRun) error {
 
 	// 4. Aggregate report and exit code (priority error(1) > conflict(2) > 0; → docs/spec.md, ADR-0024).
 	if flagVerbose {
-		fmt.Fprintf(os.Stderr, "nput: apply --all done (applied %d / skipped %d / failed %d / selected %d)\n",
+		fmt.Fprintf(os.Stderr, "layat: apply --all done (applied %d / skipped %d / failed %d / selected %d)\n",
 			applied, skipped, failures, len(selected))
 	}
 	// conflict(2) arises only on the --dryrun (#13) read-only path. Non-dryrun --all yields only error/0.
@@ -329,7 +329,7 @@ func runApplyAll(run *applyRun) error {
 	if code == 0 {
 		return nil
 	}
-	return &exitCodeError{code: code, msg: fmt.Sprintf("nput: apply --all: %d config(s) failed", failures)}
+	return &exitCodeError{code: code, msg: fmt.Sprintf("layat: apply --all: %d config(s) failed", failures)}
 }
 
 // runApplyAllDryRun drives apply --all --dryrun. It builds each selected config read-only and
@@ -390,12 +390,12 @@ func aggregateApply(run *applyRun, selected []string, applyFn func(name string) 
 			subjectErr = nil
 			skipped++
 			if flagVerbose {
-				fmt.Fprintf(os.Stderr, "nput: skipped apply %s (another apply is in progress)\n", name)
+				fmt.Fprintf(os.Stderr, "layat: skipped apply %s (another apply is in progress)\n", name)
 			}
 		default:
 			failures++
 			// Do not swallow partial failures; print to stderr and continue (→ docs/spec.md "continue on partial failure").
-			fmt.Fprintf(os.Stderr, "nput: apply %s failed: %v\n", name, err)
+			fmt.Fprintf(os.Stderr, "layat: apply %s failed: %v\n", name, err)
 		}
 		subject.finish(subjectErr)
 	}
@@ -408,8 +408,8 @@ func aggregateApply(run *applyRun, selected []string, applyFn func(name string) 
 //
 // Like aggregateApply it settles one niface subject per config, riding the same payload builder as
 // the real apply so the dryrun's SubjectResult is the same shape by construction (→ issue #164). A
-// conflict is item-borne — the conflicting entry is a failed item carrying E_NPUT_COLLISION — and
-// still puts that subject in error, symmetric with the named apply --dryrun (→ nput ADR-0043 §6,
+// conflict is item-borne — the conflicting entry is a failed item carrying E_LAYAT_COLLISION — and
+// still puts that subject in error, symmetric with the named apply --dryrun (→ layat ADR-0043 §6,
 // niface ADR-0002).
 func aggregateDryRun(run *applyRun, selected []string, applyDry func(name string) (*engine.Result, error)) int {
 	var anyError, anyConflict bool
@@ -419,7 +419,7 @@ func aggregateDryRun(run *applyRun, selected []string, applyDry func(name string
 		if err != nil {
 			anyError = true
 			// Do not swallow partial failures; print to stderr and continue (→ docs/spec.md "continue on partial failure").
-			fmt.Fprintf(os.Stderr, "nput: apply %s --dryrun failed: %v\n", name, err)
+			fmt.Fprintf(os.Stderr, "layat: apply %s --dryrun failed: %v\n", name, err)
 			subject.finish(err)
 			continue
 		}
@@ -429,7 +429,7 @@ func aggregateDryRun(run *applyRun, selected []string, applyDry func(name string
 			anyConflict = true
 		}
 		// No subject-level error either way: a conflict is already failed items carrying
-		// E_NPUT_COLLISION, and the payload's item-borne mark is what puts this subject in error
+		// E_LAYAT_COLLISION, and the payload's item-borne mark is what puts this subject in error
 		// (→ nifaceSubject.itemBorne) — the same mechanism aggregateApply relies on for an
 		// entry-scoped failure, so both settle a config the one way.
 		subject.finish(nil)
@@ -465,7 +465,7 @@ func selectedRootFilter() (string, error) {
 		modes = append(modes, manifest.RootKindSystem)
 	}
 	if len(modes) > 1 {
-		return "", fmt.Errorf("nput: --project-root / --home-root / --system-root may be specified only one at a time")
+		return "", fmt.Errorf("layat: --project-root / --home-root / --system-root may be specified only one at a time")
 	}
 	if len(modes) == 0 {
 		return "", nil
@@ -477,14 +477,14 @@ func selectedRootFilter() (string, error) {
 // (the filter is a modifier for --all; in a named apply <name> pins a single config, so it is meaningless; → ADR-0017).
 func ensureNoRootFilter(modifier string) error {
 	if flagProjectRoot || flagHomeRoot || flagSystemRoot {
-		return fmt.Errorf("nput: --project-root / --home-root / --system-root are modifiers for %s", modifier)
+		return fmt.Errorf("layat: --project-root / --home-root / --system-root are modifiers for %s", modifier)
 	}
 	return nil
 }
 
 // reportResult prints the placement report to stderr (stdout is reserved for machine-readable output; → ADR-0023).
 func reportResult(res *engine.Result, name string) {
-	fmt.Fprintf(os.Stderr, "nput: apply %s done (root=%s)\n", name, res.Root)
+	fmt.Fprintf(os.Stderr, "layat: apply %s done (root=%s)\n", name, res.Root)
 	for _, t := range res.Placed {
 		fmt.Fprintf(os.Stderr, "  placed   %s\n", t)
 	}

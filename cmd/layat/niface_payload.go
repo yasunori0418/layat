@@ -13,9 +13,9 @@ import (
 
 	niface "github.com/yasunori0418/niface/go"
 
-	"github.com/yasunori0418/nput/internal/engine"
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // nifaceEntryInfo is the item.info DTO for an entry item: the entry's declarative identity
@@ -40,8 +40,8 @@ type nifaceChangeInfo struct {
 // mutation commands and folded into the SubjectResult at emit time (→ nifaceRun.emit).
 // TInfo is the owning command's result.info type (→ issue #196).
 type nifacePayload[TInfo any] struct {
-	items      []nputItem
-	changes    []nputChange
+	items      []layatItem
+	changes    []layatChange
 	generation *niface.Generation
 	warnings   []niface.Warning // subject-level (not item-borne) warnings
 	// info is the per-subject tool info (result.info): the read-only enumeration inventories
@@ -62,7 +62,7 @@ type nifacePayload[TInfo any] struct {
 func attachMutationPayload[TInfo any](s *nifaceSubject[TInfo], res *engine.Result, cmdErr error) {
 	p, err := mutationPayload[TInfo](res, cmdErr)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "nput: could not build the --json payload: %v\n", err)
+		fmt.Fprintf(os.Stderr, "layat: could not build the --json payload: %v\n", err)
 		return
 	}
 	s.setPayload(p)
@@ -72,7 +72,7 @@ func attachMutationPayload[TInfo any](s *nifaceSubject[TInfo], res *engine.Resul
 func attachResetPayload[TInfo any](s *nifaceSubject[TInfo], res *engine.ResetResult, cmdErr error) {
 	p, err := resetPayload[TInfo](res, cmdErr)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "nput: could not build the --json payload: %v\n", err)
+		fmt.Fprintf(os.Stderr, "layat: could not build the --json payload: %v\n", err)
 		return
 	}
 	s.setPayload(p)
@@ -80,7 +80,7 @@ func attachResetPayload[TInfo any](s *nifaceSubject[TInfo], res *engine.ResetRes
 
 // itemStatuses is the reached-state partition shared by the builders (→ niface ADR-0016 /
 // ADR-0020): the failed entry, the planned-but-never-attempted entries (skipped — the only
-// use of skipped), and per-target conflicts (failed + E_NPUT_COLLISION). Everything else is
+// use of skipped), and per-target conflicts (failed + E_LAYAT_COLLISION). Everything else is
 // success — including policy inaction (a kept stale target, a place-once copy skip), which
 // carries warnings instead of a non-success status.
 type itemStatuses struct {
@@ -93,7 +93,7 @@ type itemStatuses struct {
 // statusFor resolves one target's item status and error under the partition.
 func (s *itemStatuses) statusFor(target string) (niface.ItemStatus, *niface.Error) {
 	if c, ok := s.conflicts[target]; ok {
-		return niface.ItemFailed, &niface.Error{Code: "E_NPUT_COLLISION", Message: c.Reason}
+		return niface.ItemFailed, &niface.Error{Code: "E_LAYAT_COLLISION", Message: c.Reason}
 	}
 	if target == s.failed {
 		return niface.ItemFailed, s.failedErr
@@ -126,13 +126,13 @@ func newItemStatuses(failedTarget string, unreached []string, conflicts []planne
 }
 
 // entryItem renders one manifest entry as a niface item under the status partition.
-func entryItem(e manifest.Entry, statuses *itemStatuses) (nputItem, error) {
+func entryItem(e manifest.Entry, statuses *itemStatuses) (layatItem, error) {
 	id, err := entryItemID(e.Target)
 	if err != nil {
-		return nputItem{}, err
+		return layatItem{}, err
 	}
 	status, itemErr := statuses.statusFor(e.Target)
-	return nputItem{
+	return layatItem{
 		ID:     id,
 		Kind:   "entry",
 		Label:  e.Target,
@@ -143,12 +143,12 @@ func entryItem(e manifest.Entry, statuses *itemStatuses) (nputItem, error) {
 }
 
 // entryChange renders one change for an entry item, deriving the itemId from the target.
-func entryChange(target string, kind niface.ChangeKind, reversible bool, info *nifaceChangeInfo) (nputChange, error) {
+func entryChange(target string, kind niface.ChangeKind, reversible bool, info *nifaceChangeInfo) (layatChange, error) {
 	id, err := entryItemID(target)
 	if err != nil {
-		return nputChange{}, err
+		return layatChange{}, err
 	}
-	return nputChange{Kind: kind, ItemID: id, Reversible: reversible, Info: info}, nil
+	return layatChange{Kind: kind, ItemID: id, Reversible: reversible, Info: info}, nil
 }
 
 // changeInfoOrNil packs old/new into a change info, or nil when both are unknowable.
@@ -172,7 +172,7 @@ func changeInfoOrNil(old, new string) *nifaceChangeInfo {
 //     ADR-0015). The first apply has no before; a failed run observes an unmoved pointer.
 //   - warnings = the planner's structured warnings, attached to the warned target's item when
 //     it is in the inventory and to the subject otherwise (→ niface ADR-0019). An unwound run
-//     (→ ADR-0044) additionally carries W_NPUT_UNWOUND at the subject level: the changes list
+//     (→ ADR-0044) additionally carries W_LAYAT_UNWOUND at the subject level: the changes list
 //     stays the record of what happened up to the failure, and the warning tells consumers
 //     those diffs were rolled back rather than left on disk.
 func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*nifacePayload[TInfo], error) {
@@ -272,7 +272,7 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*nifacePayloa
 	if err := place(res.Copied, false, true, false); err != nil {
 		return nil, err
 	}
-	// A recopy overwrite discards content nput never tracked: irreversible, no old value
+	// A recopy overwrite discards content layat never tracked: irreversible, no old value
 	// (→ ADR-0020, ADR-0043 §4). Not a noop even when content happens to match — the
 	// overwrite itself happened and the pre-state is unknowable.
 	if err := place(res.Recopied, true, false, false); err != nil {
@@ -294,7 +294,7 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*nifacePayloa
 	p.warnings = attachWarnings(p.items, res.Warnings)
 	if res.Unwound {
 		p.warnings = append(p.warnings, niface.Warning{
-			Code:    "W_NPUT_UNWOUND",
+			Code:    "W_LAYAT_UNWOUND",
 			Message: "the undo journal rolled this run's filesystem changes back after the failure; the listed changes did not survive on disk",
 		})
 	}
@@ -331,7 +331,7 @@ func resetPayload[TInfo any](res *engine.ResetResult, cmdErr error) (*nifacePayl
 			p.changes = append(p.changes, c)
 		}
 		for _, t := range res.RemovedCopies {
-			// No info: what a copy deletion destroys is the on-disk content, which nput does
+			// No info: what a copy deletion destroys is the on-disk content, which layat does
 			// not track (the recorded src is not what was lost · → ADR-0020).
 			c, err := entryChange(t, niface.ChangeRemove, false, nil)
 			if err != nil {
@@ -349,7 +349,7 @@ func resetPayload[TInfo any](res *engine.ResetResult, cmdErr error) (*nifacePayl
 // target is an inventory item lands in that item's warnings, anything else (a target outside
 // the inventory — e.g. a kept stale symlink or a copy orphan whose entry left the config) is
 // returned as a subject-level warning (→ niface ADR-0019). items is mutated in place.
-func attachWarnings(items []nputItem, warnings []planner.Warning) []niface.Warning {
+func attachWarnings(items []layatItem, warnings []planner.Warning) []niface.Warning {
 	itemIdx := map[string]int{}
 	for i, it := range items {
 		itemIdx[it.Info.Target] = i
@@ -367,26 +367,26 @@ func attachWarnings(items []nputItem, warnings []planner.Warning) []niface.Warni
 }
 
 // nifaceWarning translates one planner warning into the niface warning vocabulary
-// (tool-specific W_NPUT_* codes · niface §6 two-layer naming). The messages mirror the
-// stderr text (→ engine.emitWarnings) without the "nput: " prefix and target suffix — the
+// (tool-specific W_LAYAT_* codes · niface §6 two-layer naming). The messages mirror the
+// stderr text (→ engine.emitWarnings) without the "layat: " prefix and target suffix — the
 // target rides in detail (and in the carrying item) instead.
 func nifaceWarning(w planner.Warning) niface.Warning {
 	var code, msg string
 	switch w.Kind {
 	case planner.WarnForeignReplace:
-		code, msg = "W_NPUT_FOREIGN_SYMLINK", "overwriting an unrecorded symlink (foreign; last-wins)"
+		code, msg = "W_LAYAT_FOREIGN_SYMLINK", "overwriting an unrecorded symlink (foreign; last-wins)"
 	case planner.WarnStaleMismatch:
-		code, msg = "W_NPUT_STALE_MISMATCH", "keeping stale symlink because it mismatches the record"
+		code, msg = "W_LAYAT_STALE_MISMATCH", "keeping stale symlink because it mismatches the record"
 	case planner.WarnStaleNonSymlink:
-		code, msg = "W_NPUT_STALE_NON_SYMLINK", "keeping stale target because it is not a symlink"
+		code, msg = "W_LAYAT_STALE_NON_SYMLINK", "keeping stale target because it is not a symlink"
 	case planner.WarnCopyOrphan:
-		code, msg = "W_NPUT_COPY_ORPHAN", "copy entry vanished but the target is not removed (orphan; clear it with reset)"
+		code, msg = "W_LAYAT_COPY_ORPHAN", "copy entry vanished but the target is not removed (orphan; clear it with reset)"
 	case planner.WarnCopyForeign:
-		code, msg = "W_NPUT_COPY_FOREIGN", "skipped copy because a real file already exists at the copy target (foreign; place-once)"
+		code, msg = "W_LAYAT_COPY_FOREIGN", "skipped copy because a real file already exists at the copy target (foreign; place-once)"
 	default:
 		// Unreachable today — the switch covers every planner.WarnKind. Kept as a defensive
 		// fallback so a future kind surfaces visibly instead of being silently mis-coded.
-		code, msg = "W_NPUT_WARNING", "unclassified planner warning"
+		code, msg = "W_LAYAT_WARNING", "unclassified planner warning"
 	}
 	return niface.Warning{Code: code, Message: msg, Detail: map[string]any{"target": w.Target}}
 }

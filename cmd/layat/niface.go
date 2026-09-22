@@ -1,5 +1,5 @@
 // niface.go is the --json machine-readable output foundation (→ ADR-0043, issue #130): the
-// nput instantiation of the niface envelope (specVersion 1), the item-id derivation seam, and
+// layat instantiation of the niface envelope (specVersion 1), the item-id derivation seam, and
 // the emit helper that writes exactly one envelope document to stdout at command completion.
 //
 // The CLI output contract is closed inside the cmd layer: engine results are never marshaled
@@ -18,15 +18,15 @@ import (
 
 	niface "github.com/yasunori0418/niface/go"
 
-	"github.com/yasunori0418/nput/internal/lock"
+	"github.com/yasunori0418/layat/internal/lock"
 )
 
-// nifaceSpecVersion is the niface output-spec version nput produces. Independent of both the
-// manifest.json schemaVersion (engine input contract) and tool.version (nput release)
+// nifaceSpecVersion is the niface output-spec version layat produces. Independent of both the
+// manifest.json schemaVersion (engine input contract) and tool.version (layat release)
 // (→ ADR-0043 §2).
 const nifaceSpecVersion = 1
 
-// The nput instantiation of the niface generic envelope. The four type parameters are the
+// The layat instantiation of the niface generic envelope. The four type parameters are the
 // tool-specific info slots (item / change / per-subject result / envelope-wide). The item /
 // change slots are pinned to the concrete mutation DTOs shared by every command (pointers, so
 // an absent info is omitted · #131); the per-subject result (TInfo) and envelope-wide
@@ -36,11 +36,11 @@ const nifaceSpecVersion = 1
 // These stay aliases (parameterized aliases, Go 1.24+), so the emitted values remain niface's
 // own types and keep niface's MarshalJSON — the required-array normalization must not be lost.
 type (
-	nputEnvelope[TInfo, TEnvInfo any] = niface.Envelope[*nifaceEntryInfo, *nifaceChangeInfo, TInfo, TEnvInfo]
-	nputSubjectResult[TInfo any]      = niface.SubjectResult[*nifaceEntryInfo, *nifaceChangeInfo, TInfo]
-	nputResult[TInfo any]             = niface.Result[*nifaceEntryInfo, *nifaceChangeInfo, TInfo]
-	nputItem                          = niface.Item[*nifaceEntryInfo]
-	nputChange                        = niface.Change[*nifaceChangeInfo]
+	layatEnvelope[TInfo, TEnvInfo any] = niface.Envelope[*nifaceEntryInfo, *nifaceChangeInfo, TInfo, TEnvInfo]
+	layatSubjectResult[TInfo any]      = niface.SubjectResult[*nifaceEntryInfo, *nifaceChangeInfo, TInfo]
+	layatResult[TInfo any]             = niface.Result[*nifaceEntryInfo, *nifaceChangeInfo, TInfo]
+	layatItem                          = niface.Item[*nifaceEntryInfo]
+	layatChange                        = niface.Change[*nifaceChangeInfo]
 )
 
 // entryItemID derives the niface item id for a placement entry: identity kind="entry",
@@ -57,7 +57,7 @@ func entryItemID(target string) (string, error) {
 // ADR-0025's format assertion).
 func nifaceTimestamp(t time.Time) string { return t.Format(time.RFC3339) }
 
-// nifaceRun accumulates what the --json envelope needs across one command invocation. Each nput
+// nifaceRun accumulates what the --json envelope needs across one command invocation. Each layat
 // subcommand's RunE builds it first thing and begins it (command name + start time — flag parsing
 // and cobra's argument validation have succeeded by then, and cobra's utility commands help /
 // completion / __complete never reach a RunE of ours, so they keep stdout for their own text),
@@ -202,12 +202,12 @@ func (r *nifaceRun[TInfo, TEnvInfo]) beginSubject(name string) *nifaceSubject[TI
 // the single place its outcome is decided, so reading this result never requires knowing what the
 // caller passed in (→ issue #164). finishedAt is the run's single finish timestamp, shared by every
 // result. emit is the only caller and settles every subject immediately before rendering it.
-func (s *nifaceSubject[TInfo]) subjectResult(finishedAt string) nputSubjectResult[TInfo] {
+func (s *nifaceSubject[TInfo]) subjectResult(finishedAt string) layatSubjectResult[TInfo] {
 	status := niface.StatusSuccess
 	if s.failed() {
 		status = niface.StatusError
 	}
-	sr := nputSubjectResult[TInfo]{
+	sr := layatSubjectResult[TInfo]{
 		Subject:    niface.Subject{Name: s.name},
 		Status:     status,
 		StartedAt:  nifaceTimestamp(s.started),
@@ -216,7 +216,7 @@ func (s *nifaceSubject[TInfo]) subjectResult(finishedAt string) nputSubjectResul
 	if p := s.payload; p != nil {
 		sr.Generation = p.generation
 		sr.Warnings = p.warnings
-		sr.Result = nputResult[TInfo]{Items: p.items, Changes: p.changes, Info: p.info}
+		sr.Result = layatResult[TInfo]{Items: p.items, Changes: p.changes, Info: p.info}
 	}
 	// A failure the items already carry stays out of errors[] (→ itemBorne). Everything else that
 	// failed with the subject established is subject-borne (build / lock / commit ...) and lands
@@ -240,9 +240,9 @@ func (s *nifaceSubject[TInfo]) subjectResult(finishedAt string) nputSubjectResul
 func (r *nifaceRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 	finished := nifaceTimestamp(r.now())
 
-	env := nputEnvelope[TInfo, TEnvInfo]{
+	env := layatEnvelope[TInfo, TEnvInfo]{
 		SpecVersion: nifaceSpecVersion,
-		Tool:        niface.Tool{Name: "nput", Version: version},
+		Tool:        niface.Tool{Name: "layat", Version: version},
 		Command:     r.command,
 		Status:      niface.StatusSuccess,
 		DryRun:      r.dryRun,
@@ -285,13 +285,13 @@ func (r *nifaceRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 }
 
 // classifyError maps a command-level failure onto a niface error object (two-layer code naming ·
-// niface §6, ADR-0043 §8): tool-specific E_NPUT_COLLISION (dryrun conflict exit) / E_NPUT_BUILD
+// niface §6, ADR-0043 §8): tool-specific E_LAYAT_COLLISION (dryrun conflict exit) / E_LAYAT_BUILD
 // (internal nix eval / build invocation, via the nixCmdError marker), and the common registry
 // codes E_LOCK / E_NOTFOUND / E_PERMISSION / E_IO. Specific sentinels win over the generic
-// E_IO shape check, so a not-found PathError stays E_NOTFOUND. E_NPUT_FAILED is the
+// E_IO shape check, so a not-found PathError stays E_NOTFOUND. E_LAYAT_FAILED is the
 // tool-generic fallback for a command failure not otherwise classified.
 func classifyError(err error) niface.Error {
-	code := "E_NPUT_FAILED"
+	code := "E_LAYAT_FAILED"
 	message := err.Error()
 	var ee *exitError
 	var ne *nixCmdError
@@ -299,14 +299,14 @@ func classifyError(err error) niface.Error {
 	case errors.As(err, &ee) && ee.code == 2:
 		// exit 2 is apply --dryrun's conflict detection (→ docs/spec.md exit code table). Its
 		// exitError deliberately carries no message (the plan went to stdout), so supply one.
-		code = "E_NPUT_COLLISION"
+		code = "E_LAYAT_COLLISION"
 		if message == "" {
 			message = "conflict(s) detected in dryrun"
 		}
 	case errors.Is(err, lock.ErrLocked):
 		code = "E_LOCK"
 	case errors.As(err, &ne):
-		code = "E_NPUT_BUILD"
+		code = "E_LAYAT_BUILD"
 	case errors.Is(err, fs.ErrNotExist):
 		code = "E_NOTFOUND"
 	case errors.Is(err, fs.ErrPermission):

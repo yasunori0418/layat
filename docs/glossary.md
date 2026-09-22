@@ -1,26 +1,26 @@
 # Glossary
 
-Canonical English terms for nput. This is the authoritative spelling reference for README text, code comments, and command output. When a concept appears in prose or output, use the **canonical term** defined here and avoid the listed alternatives so wording stays consistent across the project.
+Canonical English terms for layat. This is the authoritative spelling reference for README text, code comments, and command output. When a concept appears in prose or output, use the **canonical term** defined here and avoid the listed alternatives so wording stays consistent across the project.
 
 Each entry fixes one canonical spelling. Definitions are intentionally short; for full rationale see the requirement items under `docs/requirements/` (reachable through the index in `docs/spec.md`) and `docs/adr/` (design decisions). The Japanese-language counterpart lives in `docs/glossary.ja.md`.
 
 ## Core placement abstraction
 
 ### placement primitive
-The core of nput: a pure function that places a Nix store path at a `root`-relative `target`. It is not hidden behind a module abstraction — users compose it directly.
-- **Avoid**: "placement framework", "configuration management" (nput does not generate configuration).
+The core of layat: a pure function that places a Nix store path at a `root`-relative `target`. It is not hidden behind a module abstraction — users compose it directly.
+- **Avoid**: "placement framework", "configuration management" (layat does not generate configuration).
 
 ### engine
-The placement core that owns both placement (native filesystem operations) and stale removal. It takes `manifest.json` as input, invokes only `nix` (profile) and `git` (toplevel), and is implemented as a Go library driven by the **nput CLI**. It does not generate a bash script per config. "Library" here means internal in-binary layering under `internal/`, not a publicly importable, reusable module — the stable surface is the `manifest.json` contract. The engine is stdlib-only.
+The placement core that owns both placement (native filesystem operations) and stale removal. It takes `manifest.json` as input, invokes only `nix` (profile) and `git` (toplevel), and is implemented as a Go library driven by the **layat CLI**. It does not generate a bash script per config. "Library" here means internal in-binary layering under `internal/`, not a publicly importable, reusable module — the stable surface is the `manifest.json` contract. The engine is stdlib-only.
 - **Avoid**: "per-config generated bash script", "per-layer placement logic", "a single flat implementation fused with the CLI", "importing the engine as a public Go module".
 
-### nput CLI
-The primary user-facing UX; the `packages.nput` binary on `PATH`. It discovers an **entrypoint**, runs `nix build` / `eval` internally to obtain a named manifest, and has the engine place it. Subcommands include `apply [<name>]`, `apply --all`, `reset`, `rollback`, `list-generations`, `gitignore`, `prune`, and `init`.
+### layat CLI
+The primary user-facing UX; the `packages.layat` binary on `PATH`. It discovers an **entrypoint**, runs `nix build` / `eval` internally to obtain a named manifest, and has the engine place it. Subcommands include `apply [<name>]`, `apply --all`, `reset`, `rollback`, `list-generations`, `gitignore`, `prune`, and `init`.
 - **Avoid**: describing a per-config `nix run .#x` wrapper as the primary UX; describing `apply` as "always builds the entrypoint" (a built link-farm can be applied with `--manifest`).
 
 ### entrypoint
-The Nix config file the nput CLI reads: one of `flake.nix`, `shell.nix`, or `default.nix`. It exposes a named manifest under `nput.<name>`. The config is still written in Nix and evaluated by `nix build`.
-- **Avoid**: saying "nput discovers the config contents from the CWD" — it discovers the entrypoint *file*; the config is fixed by Nix evaluation.
+The Nix config file the layat CLI reads: one of `flake.nix`, `shell.nix`, or `default.nix`. It exposes a named manifest under `layat.<name>`. The config is still written in Nix and evaluated by `nix build`.
+- **Avoid**: saying "layat discovers the config contents from the CWD" — it discovers the entrypoint *file*; the config is fixed by Nix evaluation.
 
 ### module
 An integration layer such as standalone, home-manager, a future NixOS module, or a devShell `shellHook`. It is purely the wiring that kicks the engine; it never places files itself and never translates to `home.file` or `systemd.tmpfiles`.
@@ -81,17 +81,17 @@ The core, default placement: a symlink whose destination is a Nix store path. Th
 - **Avoid**: confusing it with out-of-store symlink; calling it a "copy".
 
 ### out-of-store symlink
-A live symlink to a local absolute path, opted into only via `nput.lib.mkOutOfStoreSymlink "/abs/path"` (for live editing of dotfiles under development). An explicit escape hatch, not a first-class feature.
+A live symlink to a local absolute path, opted into only via `layat.lib.mkOutOfStoreSymlink "/abs/path"` (for live editing of dotfiles under development). An explicit escape hatch, not a first-class feature.
 - **Avoid**: treating it as default behavior; producing it via implicit branching on the type of `src`.
 
 ## State management
 
 ### generation
-The unit of rollback, managed on nput's own Nix profile (the `nix-env --profile <dir>` style). Commit (`--set`), rollback, switching to an arbitrary generation, listing, and pruning are all unified under the `nix-env --profile <dir>` family; only store GC uses `nix-collect-garbage`.
+The unit of rollback, managed on layat's own Nix profile (the `nix-env --profile <dir>` style). Commit (`--set`), rollback, switching to an arbitrary generation, listing, and pruning are all unified under the `nix-env --profile <dir>` family; only store GC uses `nix-collect-garbage`.
 - **Avoid**: narrating it under a "stateless script" premise (reversed since the initial direction); managing it with the new `nix profile` CLI (which requires a profile-manifest and does not work on `nix-env --set` profiles).
 
 ### store manifest
-The generation-derived record of "what nput placed". Concretely the `manifest.json` (carrying a `schemaVersion`) inside the link-farm derivation, generated by Nix (`lib.mkManifest`) and read by the Go engine — the Nix↔Go contract. It underpins the engine's conservative stale removal (it deletes only nput-managed symlinks that point where the record says, and never touches the user's real files).
+The generation-derived record of "what layat placed". Concretely the `manifest.json` (carrying a `schemaVersion`) inside the link-farm derivation, generated by Nix (`lib.mkManifest`) and read by the Go engine — the Nix↔Go contract. It underpins the engine's conservative stale removal (it deletes only layat-managed symlinks that point where the record says, and never touches the user's real files).
 
 ### method
 The entry field that selects the placement kind (renamed from the old `mode`). Renamed to avoid misreading it as a unix file mode.

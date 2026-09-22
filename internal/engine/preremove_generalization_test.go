@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // Tests for PreRemove's generalization from "self-recorded stale ancestor symlink" (ADR-0046)
@@ -18,7 +18,7 @@ import (
 // per-file layout `<name>/main.sh` migrating to a whole-tree dir symlink `<name>`, where the new
 // generation's dir symlink target shares its leaf name with the old per-file target
 // (`.claude/hooks/foo/main.sh` → `.claude/hooks` as a dir symlink). This is exactly the case a
-// naive readlink-pattern cleanup (home-manager's) misjudges; nput's manifest-recorded classification
+// naive readlink-pattern cleanup (home-manager's) misjudges; layat's manifest-recorded classification
 // must migrate it cleanly with a single apply (→ issue #172 background, ADR-0047).
 func TestApplyPerFileToDirSymlinkMigratesSameNamedLeaf(t *testing.T) {
 	root := realTempDir(t)
@@ -169,7 +169,7 @@ func TestApplyDirMigrationEmptySubdirsAtMultipleDepths(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
 
-	// A multi-level empty subtree nput never created, occupying a root-level target directly.
+	// A multi-level empty subtree layat never created, occupying a root-level target directly.
 	if err := os.MkdirAll(filepath.Join(root, "hooks", "a", "b", "c"), 0o755); err != nil {
 		t.Fatal(err)
 	}

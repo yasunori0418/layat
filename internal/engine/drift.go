@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // Generation skip + lstat drift repair (project mode only · → ADR-0005, ADR-0017,
@@ -64,7 +64,7 @@ func (a *applier) repairDrift(plan planner.Plan, recopy bool) error {
 	// non-empty PreRemove. If that ever breaks, silently dropping the pre-removal would let place
 	// nest/place through stale content still occupying the target — fail loudly instead (→ ADR-0046, ADR-0047).
 	if len(plan.PreRemove) > 0 {
-		return fmt.Errorf("nput: internal invariant violated: generation-skip drift repair received %d pre-removal(s) (→ ADR-0046, ADR-0047)", len(plan.PreRemove))
+		return fmt.Errorf("layat: internal invariant violated: generation-skip drift repair received %d pre-removal(s) (→ ADR-0046, ADR-0047)", len(plan.PreRemove))
 	}
 	if err := a.backup(plan.Backup); err != nil {
 		return err

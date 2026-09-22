@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/yasunori0418/nput/internal/engine"
+	"github.com/yasunori0418/layat/internal/engine"
 )
 
 // pruneInfo is prune's envelope-wide info: the series it deleted (in --dryrun, would delete) and
@@ -154,7 +154,7 @@ func runPrune(run *pruneRun, dryrun, interactive bool) error {
 		// nil so nothing can decline. Were the --yes requirement ever relaxed, the two outcomes
 		// would already be distinguishable in the document — a declined run carries no info at
 		// all (above), while a run that found no orphan carries an empty removed.
-		fmt.Fprintln(os.Stderr, "nput: prune aborted")
+		fmt.Fprintln(os.Stderr, "layat: prune aborted")
 		return nil
 	}
 	if flagVerbose {
@@ -179,14 +179,14 @@ var pruneFn = engine.Prune
 
 // systemBaseEnv overrides the system scan base for one run. It exists so a test harness can point
 // prune's second base at a throwaway directory: the user state base follows XDG_STATE_HOME, but
-// the system base is an absolute path (/nix/var/nix/profiles/nput · → ADR-0036 §3) that no
+// the system base is an absolute path (/nix/var/nix/profiles/layat · → ADR-0036 §3) that no
 // isolation of $HOME can move, so without this seam an E2E run of the destructive path would scan
 // — and delete from — the machine's real shared state. Same escape-hatch shape as init's
-// NPUT_TEMPLATE_REF.
+// LAYAT_TEMPLATE_REF.
 //
 // It is for tests and isolation, not a supported way to prune a different base: prune takes no
 // base argument by design (it discovers, it does not target).
-const systemBaseEnv = "NPUT_SYSTEM_PROFILE_BASE"
+const systemBaseEnv = "LAYAT_SYSTEM_PROFILE_BASE"
 
 // pruneOptions builds the engine options for one prune run. StateDir is left at its default so the
 // engine resolves it (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1 の層分け). SystemDir likewise
@@ -228,7 +228,7 @@ func printPrunePlan(res *engine.PruneResult) {
 		}
 	}
 	if len(res.Removed) == 0 {
-		fmt.Fprintln(os.Stderr, "nput: prune --dryrun: nothing to delete")
+		fmt.Fprintln(os.Stderr, "layat: prune --dryrun: nothing to delete")
 	}
 }
 
@@ -237,7 +237,7 @@ func printPrunePlan(res *engine.PruneResult) {
 // appears: it is the only guard against an out-of-store root being taken for a deleted one while
 // it is unmounted (→ ADR-0034 §2, REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
 func reportPruneTargets(res *engine.PruneResult) {
-	fmt.Fprintf(os.Stderr, "nput: prune will delete %d orphan profile series:\n", len(res.Removed))
+	fmt.Fprintf(os.Stderr, "layat: prune will delete %d orphan profile series:\n", len(res.Removed))
 	for _, s := range res.Removed {
 		fmt.Fprintf(os.Stderr, "  root %s\n", s.Root)
 		fmt.Fprintf(os.Stderr, "    series %s\n", s.Dir)
@@ -254,7 +254,7 @@ func reportPruneTargets(res *engine.PruneResult) {
 // machine-readable output; → ADR-0023). The skipped series are already on stderr as warnings from
 // the engine, so they are not repeated here.
 func reportPruneResult(res *engine.PruneResult) {
-	fmt.Fprintf(os.Stderr, "nput: prune done (%d series deleted, %d skipped)\n", len(res.Removed), len(res.Skipped))
+	fmt.Fprintf(os.Stderr, "layat: prune done (%d series deleted, %d skipped)\n", len(res.Removed), len(res.Skipped))
 	for _, s := range res.Removed {
 		fmt.Fprintf(os.Stderr, "  removed-series %s (root=%s)\n", s.Dir, s.Root)
 	}

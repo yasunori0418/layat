@@ -19,17 +19,17 @@ E2E に置く。
 | 項目 | 内容 |
 |---|---|
 | entrypoint | `shell.nix`（passthru 形）|
-| 検証する経路 | `nput apply` / `nput apply --all` / 素の `nix-shell` 互換 |
+| 検証する経路 | `layat apply` / `layat apply --all` / 素の `nix-shell` 互換 |
 | nixpkgs の供給 | `NIX_PATH` を flake.lock の nixpkgs に pin |
 
 **このシナリオを足す理由**は、legacy entrypoint が flake 経路とは**別の実行パスを通る**
 ことにある。REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da が canonical と定める `mkShell` passthru 形は、
-`nix build -f <ep> nput.<name>` という flake とは異なる attr path 解決を経る
+`nix build -f <ep> layat.<name>` という flake とは異なる attr path 解決を経る
 （内部の共通化は DSG-92f54490-872a-42ac-bbd7-d06e9ee381c6）。attr path の同一性を CLI 内部で保っていても、
 実際に nix が解決できるかは実 nix で叩かないと分からない。
 
 **素の `nix-shell` 互換まで検証範囲に含める**のは、passthru 形を canonical にした
-狙いが「`shell.nix` が mkShell を兼ねられる」ことだからである。`nput` を通さない
+狙いが「`shell.nix` が mkShell を兼ねられる」ことだからである。`layat` を通さない
 素の `nix-shell` が壊れていたら、passthru 形を選んだ意味が失われる。
 
 **`NIX_PATH` を flake.lock の nixpkgs に pin する**のは、legacy entrypoint が

@@ -95,7 +95,7 @@ func TestUndoOneRemovesCopy(t *testing.T) {
 func TestUndoOneRestoresRename(t *testing.T) {
 	dir := realTempDir(t)
 	target := filepath.Join(dir, "tool.conf")
-	aside := target + ".nput-recopy-aside"
+	aside := target + ".layat-recopy-aside"
 	if err := os.WriteFile(aside, []byte("original"), 0o644); err != nil {
 		t.Fatal(err)
 	}
@@ -237,7 +237,7 @@ func TestUnwindNoJournalReportsOrigErrOnly(t *testing.T) {
 func TestDiscardJournalRemovesRecopyAsideFiles(t *testing.T) {
 	dir := realTempDir(t)
 	target := filepath.Join(dir, "tool.conf")
-	aside := target + ".nput-recopy-aside"
+	aside := target + ".layat-recopy-aside"
 	if err := os.WriteFile(aside, []byte("old"), 0o644); err != nil {
 		t.Fatal(err)
 	}

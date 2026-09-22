@@ -10,7 +10,7 @@ covers:
 
 ## 対象
 
-`tests/nix-unit/anchor-name.nix`（TP-403c55c7-d996-4951-8e6b-c3a7dddd387c のテスト seam `nput.__internal.anchorName` を
+`tests/nix-unit/anchor-name.nix`（TP-403c55c7-d996-4951-8e6b-c3a7dddd387c のテスト seam `layat.__internal.anchorName` を
 直接叩く）
 
 ## 検証内容

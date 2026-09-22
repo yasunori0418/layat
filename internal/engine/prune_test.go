@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/yasunori0418/nput/internal/lock"
-	"github.com/yasunori0418/nput/internal/paths"
+	"github.com/yasunori0418/layat/internal/lock"
+	"github.com/yasunori0418/layat/internal/paths"
 )
 
 // --- fixture helpers -------------------------------------------------------

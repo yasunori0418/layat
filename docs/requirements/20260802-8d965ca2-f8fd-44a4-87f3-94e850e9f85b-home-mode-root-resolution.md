@@ -38,7 +38,7 @@ specification_ja: |
 
 > **上は原文の写しで、規範は frontmatter が正**。`homeRoot` が marker であり kind を運ぶこと
 > （実体パス解決は engine の実行時責務）は REQ-3f541d39-da41-4ef8-858b-707f54cf6a29 / REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66、`--root` による全モード
-> 共通の上書きは REQ-61c05e09-0bde-4f74-9a96-03185f9df606、`cfg.user` を持つ `nput.user` オプション自体は REQ-c2654ca5-62c2-4e4b-ad67-ffc5468f429b、
+> 共通の上書きは REQ-61c05e09-0bde-4f74-9a96-03185f9df606、`cfg.user` を持つ `layat.user` オプション自体は REQ-c2654ca5-62c2-4e4b-ad67-ffc5468f429b、
 > home mode の profileDir キーは REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81 の担当。**モジュールが `homeRoot` を pin する
 > こと自体は REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 の担当**で、本 item の規範に現れる「モジュールが `homeRoot` を
 > pin する」は、HM の `$HOME` が standalone の `$HOME` と供給経路として異なる（HM が内部
@@ -51,6 +51,6 @@ specification_ja: |
 `docs/spec.md`「root の解決」→「home mode（`root = homeRoot`）」節の表。
 
 決定の実体は root を 3 マーカーへ昇格し `$HOME` を `homeRoot` としたうえで各層が root を
-供給すると定めた ADR-0007「汎用 nput CLI を一次 UX に昇格し、entrypoint 発見＋root 明示
+供給すると定めた ADR-0007「汎用 layat CLI を一次 UX に昇格し、entrypoint 発見＋root 明示
 モデルへ移行する」と、各層を配線に徹させ root と activation タイミングだけを供給させる
 ADR-0003。

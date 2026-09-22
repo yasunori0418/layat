@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/yasunori0418/nput/internal/manifest"
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // tmpdir integration tests for generation skip + lstat drift repair (real FS · no nix · fakeCommit path).

@@ -37,7 +37,7 @@ mkOutOfStoreSymlink :: string -> marker
   `config.lib.file.mkOutOfStoreSymlink` 等）へは委譲しない。
 
 ```nix
-src = nput.lib.mkOutOfStoreSymlink "/home/me/dotfiles";
+src = layat.lib.mkOutOfStoreSymlink "/home/me/dotfiles";
 ```
 
 **制約**: 引数は Nix 評価時に確定する絶対パスの文字列。シェルの `$HOME` は使えない。

@@ -12,7 +12,7 @@ mitigates:
 `apply --backup` の rename 退避が、発動条件・退避先の命名・run 終了後の扱いのそれぞれで
 契約どおりに振る舞うことを検証する。
 
-**発動と非発動** — 配置を塞ぐ記録外の通常ファイルは `<target>.nput-backup` へ退避されて
+**発動と非発動** — 配置を塞ぐ記録外の通常ファイルは `<target>.layat-backup` へ退避されて
 配置が進み、退避した target が `Result.BackedUp` に載る。`--backup` 無しの既定では同じ
 配置が conflict で停止する（opt-in であることの裏取り）。`--backup=<suffix>` で退避先の
 suffix が変わる。

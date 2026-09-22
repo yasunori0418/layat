@@ -6,7 +6,7 @@ derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 specification: |
-  The `home.activation.nput` of the home-manager module SHALL walk `nput.configs` and kick
+  The `home.activation.layat` of the home-manager module SHALL walk `layat.configs` and kick
   the engine once per config, so that each profile takes its own engine invocation. The
   order of execution SHALL be the lexical order of `<name>`, so that the run is
   deterministic and its log reproducible. A failure of one profile SHALL NOT stop the
@@ -19,7 +19,7 @@ specification: |
   continuing past a partial failure and aggregating it is common with the `apply --all` of
   the standalone path stated by REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af.
 specification_ja: |
-  home-manager モジュールの `home.activation.nput` は `nput.configs` を走査し、config
+  home-manager モジュールの `home.activation.layat` は `layat.configs` を走査し、config
   ごとに 1 回ずつ engine を起動しなければならない（profile ごとに独立した engine 起動を
   取るため）。実行順は `<name>` の辞書順としなければならない（実行を決定的にしログを
   再現可能にするため）。1 profile の失敗は後続の profile を止めてはならず、失敗は最後に
@@ -34,8 +34,8 @@ specification_ja: |
 
 ## 仕様
 
-- `home.activation.nput` は `configs` を走査し、**profile ごとに 1 回ずつ**
-  `nput apply --manifest <link-farm-N> <name>` を実行する
+- `home.activation.layat` は `configs` を走査し、**profile ごとに 1 回ずつ**
+  `layat apply --manifest <link-farm-N> <name>` を実行する
 - 各起動は profileDir 単位の flock・前世代 diff・保守的 stale 除去・`nix-env --set` が
   **profile ごとに独立して**走る
 - 実行順は `<name>` の**辞書順**で決定的にする（Nix の attrset 走査順と一致・ログの
@@ -53,9 +53,9 @@ specification_ja: |
 > `apply --manifest` でビルド済み link-farm を渡すこと・activation が `nix eval` /
 > `build` を行わないこと・engine error が非 0 終了で switch を止めること）は
 > REQ-8085f194-c903-4ecb-abd8-c719fe7b3292。1 config = 1 profile = 1 manifest の対応と `<name>` 次元そのものは
-> REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a。`nput.configs` オプションの定義は REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10。`apply --manifest` と
+> REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a。`layat.configs` オプションの定義は REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10。`apply --manifest` と
 > 位置引数 `name` の直交・両立は REQ-dec58330-6dad-47f7-8f56-2402764a89c7 / REQ-c2d44626-d8f4-446a-a80a-319a500129b4。profileDir 単位の flock は
-> REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461、profileDir のキーは REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81。世代が nput 自前 profile に積まれる
+> REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461、profileDir のキーは REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81。世代が layat 自前 profile に積まれる
 > ことは REQ-1be4d678-959c-44d7-a346-44bfd95af56e、module 経路で rollback を host へ一本化することは REQ-844ee375-919f-4341-81e1-a5f89fd32840。
 > 辞書順・部分失敗続行・最後に集約という姿勢を standalone の `apply --all` について
 > 定めるのは REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af。本 item は同じ姿勢を HM activation の configs ループについて
@@ -70,7 +70,7 @@ specification_ja: |
 
 ## 出典
 
-ADR-0035「HM モジュールに `nput.configs.<name>` を導入し複数 profile（役割分離）を
+ADR-0035「HM モジュールに `layat.configs.<name>` を導入し複数 profile（役割分離）を
 可能にする」§3「activation は profile ごとに独立した engine 起動」。
 
 `docs/spec.md` には対応記述が無いため、原文の写しは持たない（規範は frontmatter が正で、

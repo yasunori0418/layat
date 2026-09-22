@@ -8,7 +8,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // removeStale applies the planner's Remove actions, re-verifying the conservative
@@ -25,16 +25,16 @@ import (
 func (a *applier) removeStale(actions []planner.RemoveAction) error {
 	for _, act := range actions {
 		if !reverifyStale(act) {
-			a.opts.Warnf("nput: keeping stale symlink because it drifted after planning: %s", act.Entry.Target)
+			a.opts.Warnf("layat: keeping stale symlink because it drifted after planning: %s", act.Entry.Target)
 			continue
 		}
 		if err := os.Remove(act.TargetAbs); err != nil {
-			return a.entryFailed(act.Entry.Target, fmt.Errorf("nput: cannot remove stale symlink (%s): %w", act.TargetAbs, err))
+			return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: cannot remove stale symlink (%s): %w", act.TargetAbs, err))
 		}
 		a.result.Removed = append(a.result.Removed, act.Entry.Target)
 		a.journalRelinkedSymlink(act.TargetAbs, planner.LinkDest(act.Entry))
 		if err := a.pruneEmptyAncestors(act.TargetAbs); err != nil {
-			a.opts.Warnf("nput: could not prune an empty ancestor directory: %v", err)
+			a.opts.Warnf("layat: could not prune an empty ancestor directory: %v", err)
 		}
 	}
 	return nil
@@ -94,16 +94,16 @@ func (a *applier) preRemove(actions []planner.RemoveAction) error {
 			case os.IsNotExist(err):
 				// already absent; the Rmdir's goal is met, nothing to report.
 			case errors.Is(err, syscall.ENOTEMPTY), errors.Is(err, syscall.EEXIST):
-				return fmt.Errorf("nput: directory gained content after planning; cannot migrate this placement target safely (%s); re-run apply to converge", act.TargetAbs)
+				return fmt.Errorf("layat: directory gained content after planning; cannot migrate this placement target safely (%s); re-run apply to converge", act.TargetAbs)
 			default:
-				return fmt.Errorf("nput: cannot remove empty directory for migration (%s): %w", act.TargetAbs, err)
+				return fmt.Errorf("layat: cannot remove empty directory for migration (%s): %w", act.TargetAbs, err)
 			}
 		default: // planner.RemoveUnlink
 			if !reverifyStale(act) {
-				return a.entryFailed(act.Entry.Target, fmt.Errorf("nput: recorded symlink changed after planning; cannot migrate this placement target safely (%s); re-run apply to converge", act.Entry.Target))
+				return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: recorded symlink changed after planning; cannot migrate this placement target safely (%s); re-run apply to converge", act.Entry.Target))
 			}
 			if err := os.Remove(act.TargetAbs); err != nil {
-				return a.entryFailed(act.Entry.Target, fmt.Errorf("nput: cannot remove recorded symlink for migration (%s): %w", act.TargetAbs, err))
+				return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: cannot remove recorded symlink for migration (%s): %w", act.TargetAbs, err))
 			}
 			a.result.Removed = append(a.result.Removed, act.Entry.Target)
 			a.journalRelinkedSymlink(act.TargetAbs, planner.LinkDest(act.Entry))
@@ -158,7 +158,7 @@ func (a *applier) pruneEmptyAncestors(removedAbs string) error {
 			if errors.Is(err, syscall.ENOTEMPTY) || errors.Is(err, syscall.EEXIST) {
 				return nil
 			}
-			return fmt.Errorf("nput: cannot remove empty ancestor directory (%s): %w", dir, err)
+			return fmt.Errorf("layat: cannot remove empty ancestor directory (%s): %w", dir, err)
 		}
 		a.result.Pruned = append(a.result.Pruned, dir)
 		a.journalRemovedEmptyDir(dir, mode)
@@ -173,7 +173,7 @@ func (a *applier) pruneEmptyAncestors(removedAbs string) error {
 func pathHasSymlinkComponent(root, dir string) (bool, error) {
 	rel, err := filepath.Rel(root, dir)
 	if err != nil {
-		return false, fmt.Errorf("nput: cannot resolve %q relative to root (%s): %w", dir, root, err)
+		return false, fmt.Errorf("layat: cannot resolve %q relative to root (%s): %w", dir, root, err)
 	}
 	cur := root
 	for _, comp := range strings.Split(rel, string(filepath.Separator)) {
@@ -186,7 +186,7 @@ func pathHasSymlinkComponent(root, dir string) (bool, error) {
 			if os.IsNotExist(err) {
 				return false, nil
 			}
-			return false, fmt.Errorf("nput: cannot lstat ancestor directory (%s): %w", cur, err)
+			return false, fmt.Errorf("layat: cannot lstat ancestor directory (%s): %w", cur, err)
 		}
 		if info.Mode()&os.ModeSymlink != 0 {
 			return true, nil

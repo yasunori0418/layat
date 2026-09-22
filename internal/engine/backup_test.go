@@ -6,14 +6,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // Tests for apply --backup (→ ADR-0045, issue #169): renaming an occupying foreign filesystem
 // object aside to "<target>.<suffix>" before placement, instead of stopping on conflict.
 
 // TestApplyBackupRenamesForeignFileAndPlaces verifies the basic flow: a regular file occupying a
-// symlink placement target is renamed aside to "<target>.nput-backup" (the default suffix) and the
+// symlink placement target is renamed aside to "<target>.layat-backup" (the default suffix) and the
 // entry is placed fresh, with the target reported in Result.BackedUp.
 func TestApplyBackupRenamesForeignFileAndPlaces(t *testing.T) {
 	root := realTempDir(t)
@@ -37,7 +37,7 @@ func TestApplyBackupRenamesForeignFileAndPlaces(t *testing.T) {
 	if rerr != nil || got != filepath.Join(src, "foo") {
 		t.Errorf("readlink(foo) = %q, err %v; want %q", got, rerr, filepath.Join(src, "foo"))
 	}
-	backupPath := target + ".nput-backup"
+	backupPath := target + ".layat-backup"
 	data, berr := os.ReadFile(backupPath)
 	if berr != nil || string(data) != "pre-existing" {
 		t.Errorf("backup file content = %q, err = %v; want %q", data, berr, "pre-existing")
@@ -48,7 +48,7 @@ func TestApplyBackupRenamesForeignFileAndPlaces(t *testing.T) {
 }
 
 // TestApplyBackupCustomSuffix verifies apply --backup=<suffix> uses the given suffix instead of
-// the default "nput-backup".
+// the default "layat-backup".
 func TestApplyBackupCustomSuffix(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -70,7 +70,7 @@ func TestApplyBackupCustomSuffix(t *testing.T) {
 	if _, err := os.Lstat(target + ".bak"); err != nil {
 		t.Errorf("backup with custom suffix must exist at foo.bak: %v", err)
 	}
-	if _, err := os.Lstat(target + ".nput-backup"); !os.IsNotExist(err) {
+	if _, err := os.Lstat(target + ".layat-backup"); !os.IsNotExist(err) {
 		t.Errorf("default-suffix path must not exist when a custom suffix is given, lstat err = %v", err)
 	}
 }
@@ -95,7 +95,7 @@ func TestApplyBackupSurvivesCommit(t *testing.T) {
 		t.Fatalf("Apply: %v", err)
 	}
 
-	if _, err := os.Lstat(target + ".nput-backup"); err != nil {
+	if _, err := os.Lstat(target + ".layat-backup"); err != nil {
 		t.Errorf("backup file must survive a successful commit: %v", err)
 	}
 }
@@ -130,7 +130,7 @@ func TestApplyBackupMidBatchFailureRestoresBackup(t *testing.T) {
 	if rerr != nil || string(data) != "pre-existing" {
 		t.Errorf("target must be restored to its pre-apply content: data=%q, err=%v", data, rerr)
 	}
-	if _, lerr := os.Lstat(target + ".nput-backup"); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(target + ".layat-backup"); !os.IsNotExist(lerr) {
 		t.Errorf("backup aside path must not be left behind after a rolled-back backup, lstat err = %v", lerr)
 	}
 }
@@ -147,7 +147,7 @@ func TestApplyBackupDestinationExistsConflict(t *testing.T) {
 	if err := os.WriteFile(target, []byte("pre-existing"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(target+".nput-backup", []byte("earlier backup"), 0o644); err != nil {
+	if err := os.WriteFile(target+".layat-backup", []byte("earlier backup"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 
@@ -163,7 +163,7 @@ func TestApplyBackupDestinationExistsConflict(t *testing.T) {
 	if rerr != nil || string(data) != "pre-existing" {
 		t.Errorf("target must be untouched on conflict: data=%q, err=%v", data, rerr)
 	}
-	data, rerr = os.ReadFile(target + ".nput-backup")
+	data, rerr = os.ReadFile(target + ".layat-backup")
 	if rerr != nil || string(data) != "earlier backup" {
 		t.Errorf("earlier backup must be untouched on conflict: data=%q, err=%v", data, rerr)
 	}
@@ -203,7 +203,7 @@ func TestApplyDryRunBackupNoConflictNoSideEffects(t *testing.T) {
 	if rerr != nil || string(data) != "pre-existing" {
 		t.Errorf("target must be untouched by dryrun: data=%q, err=%v", data, rerr)
 	}
-	if _, lerr := os.Lstat(target + ".nput-backup"); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(target + ".layat-backup"); !os.IsNotExist(lerr) {
 		t.Errorf("no backup file must be created by dryrun, lstat err = %v", lerr)
 	}
 }
@@ -267,7 +267,7 @@ func TestApplyBackupDirTargetDoesNotWarnAboutSiblingRecordedLeaf(t *testing.T) {
 	if rerr != nil || got != srcNew {
 		t.Errorf("readlink(.claude/hooks) = %q, err %v; want %q", got, rerr, srcNew)
 	}
-	if _, lerr := os.Lstat(filepath.Join(root, ".claude", "hooks.nput-backup", "safe.sh")); lerr != nil {
+	if _, lerr := os.Lstat(filepath.Join(root, ".claude", "hooks.layat-backup", "safe.sh")); lerr != nil {
 		t.Errorf("backed-up dir must retain safe.sh: %v", lerr)
 	}
 }
@@ -315,7 +315,7 @@ func TestApplyGenerationSkipBackupRepairsForeignFile(t *testing.T) {
 	if rerr != nil || got != src {
 		t.Errorf("readlink(.config/foo) = %q, err %v; want %q", got, rerr, src)
 	}
-	data, berr := os.ReadFile(tgt + ".nput-backup")
+	data, berr := os.ReadFile(tgt + ".layat-backup")
 	if berr != nil || string(data) != "foreign content" {
 		t.Errorf("backup file content = %q, err = %v; want %q", data, berr, "foreign content")
 	}
@@ -340,7 +340,7 @@ func TestApplyWithoutBackupStillConflicts(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected a conflict error without --backup, got nil")
 	}
-	if _, lerr := os.Lstat(target + ".nput-backup"); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(target + ".layat-backup"); !os.IsNotExist(lerr) {
 		t.Errorf("no backup file must be created without --backup, lstat err = %v", lerr)
 	}
 }
@@ -354,7 +354,7 @@ func TestApplyWithoutBackupStillConflicts(t *testing.T) {
 func TestApplierBackupReverifiesDestinationImmediatelyBeforeRename(t *testing.T) {
 	root := realTempDir(t)
 	target := filepath.Join(root, "foo")
-	backupAbs := target + ".nput-backup"
+	backupAbs := target + ".layat-backup"
 	if err := os.WriteFile(target, []byte("pre-existing"), 0o644); err != nil {
 		t.Fatal(err)
 	}

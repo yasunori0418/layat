@@ -17,10 +17,10 @@ import (
 
 	"github.com/yasunori0418/niface/go/conformance"
 
-	"github.com/yasunori0418/nput/internal/engine"
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/paths"
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/paths"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // checkConformance fails the test unless buf holds a document niface's checker accepts (schema
@@ -66,10 +66,10 @@ func statusAndErrors(t *testing.T, sr map[string]any) (string, []any) {
 // placedResult is one config's successful apply: a single placed entry, so its SubjectResult
 // carries a real inventory rather than an empty one (a succeeded config surviving a sibling's
 // failure has to be observable as more than a bare status). Each config has its own profile —
-// what makes --all N separate atomic runs rather than one (→ nput ADR-0002).
+// what makes --all N separate atomic runs rather than one (→ layat ADR-0002).
 func placedResult(name string) *engine.Result {
 	return &engine.Result{
-		Profile: "/state/nix/profiles/nput/" + name + "/profile",
+		Profile: "/state/nix/profiles/layat/" + name + "/profile",
 		Entries: []manifest.Entry{{Target: "t/" + name}},
 		Placed:  []string{"t/" + name},
 	}
@@ -93,7 +93,7 @@ func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 		t.Fatalf("counts = (%d, %d, %d), want (2, 0, 1)", applied, skipped, failures)
 	}
 	// main emits with the aggregate error the exit-code path builds from the same counts.
-	cmdErr := &exitCodeError{code: applyAllExitCode(failures > 0, false), msg: "nput: apply --all: 1 config(s) failed"}
+	cmdErr := &exitCodeError{code: applyAllExitCode(failures > 0, false), msg: "layat: apply --all: 1 config(s) failed"}
 	if err := run.emit(cmdErr); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
@@ -144,7 +144,7 @@ func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 // covers the failures that precede any engine result (a pre-flight eval / lock rejection).
 func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 	run, buf := newApplyTestRun()
-	failure := errors.New("nput: symlink t/b: permission denied")
+	failure := errors.New("layat: symlink t/b: permission denied")
 	_, _, failures := aggregateApply(run, []string{"a", "b", "c"}, func(name string) (*engine.Result, error) {
 		if name == "b" {
 			// The engine's partial result: the entry it stopped on, plus the planned entry it
@@ -161,7 +161,7 @@ func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 	if failures != 1 {
 		t.Fatalf("failures = %d, want 1", failures)
 	}
-	if err := run.emit(&exitCodeError{code: 1, msg: "nput: apply --all: 1 config(s) failed"}); err != nil {
+	if err := run.emit(&exitCodeError{code: 1, msg: "layat: apply --all: 1 config(s) failed"}); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	checkConformance(t, buf)
@@ -316,10 +316,10 @@ func TestApplyAllEmptySelectionEmitsEmptyResults(t *testing.T) {
 
 // TestApplyAllDryRunConflictIsItemBorne is issue #164's third acceptance criterion and the
 // symmetry requirement against the named apply --dryrun: a conflicting config's entry becomes a
-// failed item carrying E_NPUT_COLLISION (item-borne, so it must NOT be repeated in that
+// failed item carrying E_LAYAT_COLLISION (item-borne, so it must NOT be repeated in that
 // SubjectResult's errors[] · niface §2), the subject's status is error (niface ADR-0002: a failed
 // item makes the result error), the aggregate is error, and the exit code stays what
-// applyAllExitCode decides — conflict 2, not the error 1 (→ nput ADR-0043 §6, ADR-0024).
+// applyAllExitCode decides — conflict 2, not the error 1 (→ layat ADR-0043 §6, ADR-0024).
 func TestApplyAllDryRunConflictIsItemBorne(t *testing.T) {
 	run, buf := newApplyTestRun()
 	run.dryRun = true
@@ -380,8 +380,8 @@ func TestApplyAllDryRunConflictIsItemBorne(t *testing.T) {
 	if !ok {
 		t.Fatalf("conflicting item = %v, want an error object", item)
 	}
-	if itemErr["code"] != "E_NPUT_COLLISION" {
-		t.Errorf("conflicting item error code = %v, want E_NPUT_COLLISION", itemErr["code"])
+	if itemErr["code"] != "E_LAYAT_COLLISION" {
+		t.Errorf("conflicting item error code = %v, want E_LAYAT_COLLISION", itemErr["code"])
 	}
 }
 
@@ -392,7 +392,7 @@ func TestApplyAllDryRunConflictIsItemBorne(t *testing.T) {
 func TestApplyAllDryRunMixedErrorAndConflict(t *testing.T) {
 	run, buf := newApplyTestRun()
 	run.dryRun = true
-	buildFailure := errors.New("nput: nix build failed")
+	buildFailure := errors.New("layat: nix build failed")
 	var code int
 	captureStdout(t, func() {
 		code = aggregateDryRun(run, []string{"broken", "clashing", "clean"}, func(name string) (*engine.Result, error) {
@@ -431,8 +431,8 @@ func TestApplyAllDryRunMixedErrorAndConflict(t *testing.T) {
 	if status != "error" || len(errs) != 1 {
 		t.Fatalf("failed subject = (%s, %v), want (error, exactly one subject-borne error)", status, errs)
 	}
-	if got := errs[0].(map[string]any)["code"]; got != "E_NPUT_FAILED" {
-		t.Errorf("failed subject error code = %v, want E_NPUT_FAILED (the build error is unclassified here)", got)
+	if got := errs[0].(map[string]any)["code"]; got != "E_LAYAT_FAILED" {
+		t.Errorf("failed subject error code = %v, want E_LAYAT_FAILED (the build error is unclassified here)", got)
 	}
 	// The conflict is item-borne: same error status, but errors[] stays empty (niface §2).
 	status, errs = statusAndErrors(t, byName["clashing"])
@@ -482,7 +482,7 @@ func TestApplyAllSingleConfigMatchesNamedApply(t *testing.T) {
 // that config's error and hands emit an aggregate error it must not re-apply. Both must still land
 // on the same document — the invariant behind emit's first-wins finish (→ issue #164).
 func TestApplyAllSingleConfigFailureMatchesNamedApply(t *testing.T) {
-	failure := errors.New("nput: generation commit (nix-env --set) failed")
+	failure := errors.New("layat: generation commit (nix-env --set) failed")
 	// A commit failure: the engine returns a result but no failed target, so it is subject-borne
 	// (not item-borne) and has to appear in the SubjectResult's errors[] on both paths.
 	newRes := func() *engine.Result {
@@ -501,7 +501,7 @@ func TestApplyAllSingleConfigFailureMatchesNamedApply(t *testing.T) {
 	aggregateApply(all, []string{"default"}, func(string) (*engine.Result, error) { return newRes(), failure })
 	// --all reports its own aggregate error, whose text differs from the config's; the subject is
 	// already settled, so this must not reach it.
-	if err := all.emit(&exitCodeError{code: 1, msg: "nput: apply --all: 1 config(s) failed"}); err != nil {
+	if err := all.emit(&exitCodeError{code: 1, msg: "layat: apply --all: 1 config(s) failed"}); err != nil {
 		t.Fatalf("emit all: %v", err)
 	}
 
@@ -537,7 +537,7 @@ func stubNixEnvListGenerations(t *testing.T, failFor string) {
 }
 
 // makeHomeProfiles creates the on-disk shape runListAllGenerations scans for: a <name> directory
-// holding a "profile" link directly under <state>/nix/profiles/nput (the home-mode layout; the
+// holding a "profile" link directly under <state>/nix/profiles/layat (the home-mode layout; the
 // roothash family nests one level deeper and is skipped · → paths.Resolve, ADR-0024).
 func makeHomeProfiles(t *testing.T, names ...string) {
 	t.Helper()
@@ -639,7 +639,7 @@ func TestGitignoreAllWiring(t *testing.T) {
 
 	t.Run("every selected config becomes its own SubjectResult", func(t *testing.T) {
 		run, buf := newGitignoreTestRun()
-		shared := ".nput-out/shared"
+		shared := ".layat-out/shared"
 		err := enumerateGitignoreAll(run, []string{"docs", "web"}, func(name string) ([]string, error) {
 			if name == "docs" {
 				return []string{".claude/skills/nix", shared}, nil
@@ -669,12 +669,12 @@ func TestGitignoreAllWiring(t *testing.T) {
 
 	t.Run("a mid-enumeration failure lands on its own subject", func(t *testing.T) {
 		run, buf := newGitignoreTestRun()
-		failure := errors.New("nput: nix build failed")
+		failure := errors.New("layat: nix build failed")
 		err := enumerateGitignoreAll(run, []string{"docs", "broken", "later"}, func(name string) ([]string, error) {
 			if name == "broken" {
 				return nil, failure
 			}
-			return []string{".nput-out/" + name}, nil
+			return []string{".layat-out/" + name}, nil
 		})
 		if err == nil {
 			t.Fatal("enumerateGitignoreAll must propagate the config's failure")

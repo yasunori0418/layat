@@ -8,18 +8,18 @@ derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
 specification: |
   Removal SHALL be conservative. Only a symlink that the previous-generation manifest
-  records as having been placed by nput, and that still points at the destination so
+  records as having been placed by layat, and that still points at the destination so
   recorded — the store path of that generation, or the recorded out-of-store path — SHALL
-  be removed. Regular files and links not managed by nput SHALL NOT be touched. Where the
+  be removed. Regular files and links not managed by layat SHALL NOT be touched. Where the
   record and the actual entity disagree, the engine SHALL NOT remove it and SHALL warn.
   On a first run, or where there is no record, nothing SHALL be removed. When an entry
   disappears, a symlink — whether a store link or an out-of-store one — SHALL be removed
   under those invariants, whereas a copy SHALL NOT be removed, being data owned by the
   user, and its being orphaned SHALL be notified by a warning.
 specification_ja: |
-  削除は保守的に行わなければならない。前世代マニフェストが「nput が配置した」と記録し、かつ
+  削除は保守的に行わなければならない。前世代マニフェストが「layat が配置した」と記録し、かつ
   現状もその記録通りの先（その世代の store パス / 記録された out-of-store パス）を指す symlink
-  のみを削除しなければならない。通常ファイルや nput 非管理の link には触れてはならない。
+  のみを削除しなければならない。通常ファイルや layat 非管理の link には触れてはならない。
   記録と実体が不一致なら削除してはならず、警告しなければならない。初回 / 記録なしでは何も
   消してはならない。entry が消えたとき、symlink（store / out-of-store）は上記の不変条件を
   満たすもののみ除去しなければならず、copy は除去してはならない（ユーザー所有データの
@@ -29,9 +29,9 @@ specification_ja: |
 
 ## 仕様
 
-削除は保守的に行う。前世代マニフェストが「nput が配置した」と記録し、**かつ現状もその記録通りの
+削除は保守的に行う。前世代マニフェストが「layat が配置した」と記録し、**かつ現状もその記録通りの
 先（その世代の store パス／記録された out-of-store パス）を指す symlink** のみ削除する。
-通常ファイルや nput 非管理の link には触れない。記録と実体が不一致なら削除せず警告する。
+通常ファイルや layat 非管理の link には触れない。記録と実体が不一致なら削除せず警告する。
 初回／記録なしは何も消さない。
 
 | 配置種別 | entry が消えたとき |

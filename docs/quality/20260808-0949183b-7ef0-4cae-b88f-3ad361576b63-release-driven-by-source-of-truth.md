@@ -7,13 +7,13 @@ derives_from:
 depends_on:
   - "QA-a5f7f088-a459-4bb2-9674-82b1a4a52053"
 specification: |
-  The version of nput SHALL have a single source of truth in the repository, from which
+  The version of layat SHALL have a single source of truth in the repository, from which
   every other place that states the version SHALL be derived rather than maintained by
   hand. Releasing SHALL be driven by a change to that source of truth reaching `main`, and
   the tag, the release notes and the GitHub Release SHALL be produced automatically from
   it; no manual tagging or hand-written changelog SHALL be part of the release path.
 specification_ja: |
-  nput のバージョンはリポジトリ内に唯一の一次情報を持たなければならず、バージョンを述べる
+  layat のバージョンはリポジトリ内に唯一の一次情報を持たなければならず、バージョンを述べる
   他のすべての箇所はそこから導出されなければならない（手で二重管理してはならない）。
   リリースはその一次情報の変更が main へ到達することで駆動されなければならず、タグ・
   リリースノート・GitHub Release はそこから自動的に生成されなければならない。手動での

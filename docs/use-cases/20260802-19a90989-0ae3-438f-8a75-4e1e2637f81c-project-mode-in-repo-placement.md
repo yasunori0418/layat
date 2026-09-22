@@ -9,9 +9,9 @@ refines:
 
 ## 使われ方
 
-nput の**中心的な配置モード**。任意のプロジェクトに nput を組み込み、root をプロジェクト
+layat の**中心的な配置モード**。任意のプロジェクトに layat を組み込み、root をプロジェクト
 ルートに解決して repo 内の任意パスへ nix store の物を配置する（→ ADR-0005 / ADR-0007）。
-新規プロジェクトは `nput init project`、既に `flake.nix` がある既存 repo へは手動で組み込む
+新規プロジェクトは `layat init project`、既に `flake.nix` がある既存 repo へは手動で組み込む
 （→ ADR-0024）。
 
 具体例:
@@ -20,34 +20,34 @@ nput の**中心的な配置モード**。任意のプロジェクトに nput �
 - project-local な tool 設定・hook をバージョン固定で repo 内へ配置する
 - 社内共有の設定リポジトリから特定ディレクトリだけを取り出してプロジェクトへ配置する
 
-主トリガは devShell。`devShells.<name>` の `shellHook` から nput をキックし、`nix develop` /
+主トリガは devShell。`devShells.<name>` の `shellHook` から layat をキックし、`nix develop` /
 direnv でプロジェクトに入った瞬間に配置される。CLI 本体は devShell の `packages` に pin 版
-`nput` を同梱するのが canonical（→ ADR-0015）。
+`layat` を同梱するのが canonical（→ ADR-0015）。
 
 ```nix
-# entrypoint(flake.nix)が manifest を公開し、devShell で nput apply する
-nput.${system}.skills = nput.lib.mkManifest {
+# entrypoint(flake.nix)が manifest を公開し、devShell で layat apply する
+layat.${system}.skills = layat.lib.mkManifest {
   inherit pkgs;
-  root = nput.lib.projectRoot;
+  root = layat.lib.projectRoot;
   entries = {
     ".claude/skills/nix" = { src = inputs.claude-skills; subpath = "skills/nix"; };
   };
 };
 devShells.${system}.default = pkgs.mkShell {
-  packages  = [ nput.packages.${system}.nput ];   # pin 版 nput を PATH へ
-  shellHook = "nput apply skills --no-wait";
+  packages  = [ layat.packages.${system}.layat ];   # pin 版 layat を PATH へ
+  shellHook = "layat apply skills --no-wait";
 };
 ```
 
 > **上は分割時点の `docs/concept.md`（原文）からの写し**（コメントの出典注記は省いた）。
 > use_case は使われ方を述べる層で規範を持たないため、この例が示す各要素の規範は
 > requirement 側にある
-> （devShell 同梱 → REQ-14f0aec9-abae-4621-82f3-40536a1ad904、`nput.<name>` のアドレッシング → REQ-496b1a07-5b74-416b-9e5f-3952b4c03737、
+> （devShell 同梱 → REQ-14f0aec9-abae-4621-82f3-40536a1ad904、`layat.<name>` のアドレッシング → REQ-496b1a07-5b74-416b-9e5f-3952b4c03737、
 > devShell からの engine 起動 → REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9）。
 
 配置物は per-clone で再生成される前提の **ephemeral** であり、プロジェクトにはコミットされ
 ない。したがって activation は git 状態に干渉せず、`.gitignore` に入れるべき target は専用
-コマンド `nput gitignore` で列挙してプロジェクト管理者が一度登録する。
+コマンド `layat gitignore` で列挙してプロジェクト管理者が一度登録する。
 
 ## この使われ方が要求すること
 

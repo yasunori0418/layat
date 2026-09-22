@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/yasunori0418/nput/internal/manifest"
-	"github.com/yasunori0418/nput/internal/paths"
-	"github.com/yasunori0418/nput/internal/planner"
+	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/paths"
+	"github.com/yasunori0418/layat/internal/planner"
 )
 
 // fixedManifest is a rootKind=fixed manifest (no git dependency, root passed explicitly).
@@ -353,7 +353,7 @@ func TestResetResultGenerationAndWarnings(t *testing.T) {
 
 // TestApplyConflictPartialResult verifies the non-dryrun conflict stop returns the partial
 // Result (not nil): the full inventory, the structured conflicts, and every planned action in
-// Unreached, so the CLI can map failed (E_NPUT_COLLISION) vs skipped items (→ issue #131).
+// Unreached, so the CLI can map failed (E_LAYAT_COLLISION) vs skipped items (→ issue #131).
 func TestApplyConflictPartialResult(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)

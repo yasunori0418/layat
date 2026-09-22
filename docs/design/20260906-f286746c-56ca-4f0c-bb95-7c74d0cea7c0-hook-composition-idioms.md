@@ -24,19 +24,19 @@ engine 側に置かない理由は 2 つの要求に対応する。
   任意スクリプトの実行は、サブプロセスの失敗・出力・タイムアウトという新しい失敗モード群を
   engine の意味論へ持ち込む。外部コマンドを 2 つに閉じる制約と両立しない
 
-後処理コマンドの中身（`systemctl` / 通知コマンド等）は OS の機構であり nput の関心外
+後処理コマンドの中身（`systemctl` / 通知コマンド等）は OS の機構であり layat の関心外
 （→ REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9）。以下の例は後処理を `./post.sh` と置く。
 
 ### 1. devShell — `shellHook` で前後に並べる
 
-`shellHook` は shell script なので、`nput apply` の前後に任意のコマンドをそのまま並べられる
+`shellHook` は shell script なので、`layat apply` の前後に任意のコマンドをそのまま並べられる
 （devShell が engine を `shellHook` からキックすること自体は
 REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9）。
 
 ```nix
 devShells.default = pkgs.mkShell {
   shellHook = ''
-    nput apply skills --no-wait && ./post.sh
+    layat apply skills --no-wait && ./post.sh
   '';
 };
 ```
@@ -48,22 +48,22 @@ devShells.default = pkgs.mkShell {
   「配置をスキップした」ときにも `./post.sh` を走らせる。配置が実際に変化したときだけ
   後処理したいなら idiom 4 を使う
 
-### 2. home-manager — activation DAG で `nput` の後に並べる
+### 2. home-manager — activation DAG で `layat` の後に並べる
 
-home-manager モジュールは `home.activation.nput` から engine をキックする
+home-manager モジュールは `home.activation.layat` から engine をキックする
 （`lib.hm.dag.entryAfter [ "writeBoundary" ]` → REQ-8085f194-c903-4ecb-abd8-c719fe7b3292）。
-後処理は同じ DAG に `nput` の後続として置く。
+後処理は同じ DAG に `layat` の後続として置く。
 
 ```nix
-home.activation.postNput = lib.hm.dag.entryAfter [ "nput" ] ''
+home.activation.postLayat = lib.hm.dag.entryAfter [ "layat" ] ''
   run ./post.sh
 '';
 ```
 
-- 依存先は `"nput"` — nput モジュール自身が使う activation 名。ここを `"writeBoundary"` に
-  すると nput との順序が決まらない
+- 依存先は `"layat"` — layat モジュール自身が使う activation 名。ここを `"writeBoundary"` に
+  すると layat との順序が決まらない
 - `run` で包むのは home-manager の activation ヘルパで、`home-manager switch --dry-run` を
-  尊重させるため（nput モジュール自身も同じ形で engine を起動している）
+  尊重させるため（layat モジュール自身も同じ形で engine を起動している）
 
 ### 3. standalone — shell 合成 + 終了コードで分岐する
 
@@ -73,14 +73,14 @@ REQ-2c5a10d8-112b-4f96-947a-aba7164779c4（0 = 成功 / no-op / `--no-wait` の 
 
 ```sh
 # 成否での分岐（0 / 1 の 2 値。apply に exit 2 は無い）
-nput apply myconfig && ./post.sh
+layat apply myconfig && ./post.sh
 ```
 
 ```sh
 # CI の事前 gate。conflict（2）とエラー（1）を区別する
-nput apply myconfig --dryrun
+layat apply myconfig --dryrun
 case $? in
-  0) nput apply myconfig && ./post.sh ;;
+  0) layat apply myconfig && ./post.sh ;;
   2) echo 'conflict detected — aborting' >&2; exit 2 ;;
   *) exit 1 ;;
 esac
@@ -95,7 +95,7 @@ esac
 （no-op も成功も exit 0）。この場合は `--json` を消費して外部がオーケストレーションする。
 
 ```sh
-result=$(nput apply myconfig --json)
+result=$(layat apply myconfig --json)
 if printf '%s' "$result" | jq -e '
       .status == "success"
       and ([.results[].result.changes // [] | length] | add > 0)
@@ -105,7 +105,7 @@ fi
 ```
 
 - **`status` を先に見る**。途中失敗した run は undo ジャーナルで巻き戻されるが、`changes` は
-  失敗時点までに生じた差分の記録として残る（subject に `W_NPUT_UNWOUND` が付く）。
+  失敗時点までに生じた差分の記録として残る（subject に `W_LAYAT_UNWOUND` が付く）。
   `changes` だけで分岐すると、**ディスク上に何も残っていない run でも後処理が走る**
 - **`results[]` は全 subject を畳んでから判定する**。`.results[].result.changes | length > 0` は
   subject ごとに真偽値を 1 個ずつ出すため、`jq -e` の終了コードが最後の 1 個で決まる

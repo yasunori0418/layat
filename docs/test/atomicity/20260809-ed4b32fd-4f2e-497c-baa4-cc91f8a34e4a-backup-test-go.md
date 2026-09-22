@@ -21,7 +21,7 @@ covers:
 
 **発動・命名・非発動**（TC-ed4992c0-8513-4383-be0a-e45acbbc229f）
 
-- 配置を塞ぐ通常ファイルが `<target>.nput-backup`（既定 suffix）へ退避され、entry が
+- 配置を塞ぐ通常ファイルが `<target>.layat-backup`（既定 suffix）へ退避され、entry が
   新規配置され、target が `Result.BackedUp` に載る
 - `--backup=<suffix>` が既定に代えて指定 suffix を使う
 - `--backup` 無し（既定）では同じ配置が conflict で停止する

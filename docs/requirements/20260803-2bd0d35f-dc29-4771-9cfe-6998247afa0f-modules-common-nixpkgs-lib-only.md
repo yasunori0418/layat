@@ -32,7 +32,7 @@ specification_ja: |
 | `modules/common.nix` | nixpkgs.lib のみ |
 
 > **上は原文の写しで、規範は frontmatter が正**。同ファイルが定義する共通オプション集合
-> （`enable` / `configs`（`entries` を含む）/ `backup.*` と `nput.entries` の糖衣）は
+> （`enable` / `configs`（`entries` を含む）/ `backup.*` と `layat.entries` の糖衣）は
 > REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、entry submodule の型定義を `lib/types.nix` と共有することは REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34、
 > `lib` が nixpkgs.lib のみに依存する純データ生成器であることは REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51、engine が
 > stdlib-only であることは REQ-b74a118a-1272-44eb-944c-7725163211c6 の担当。統合層ごとのファイルが engine を起動する

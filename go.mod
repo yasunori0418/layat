@@ -1,4 +1,4 @@
-module github.com/yasunori0418/nput
+module github.com/yasunori0418/layat
 
 go 1.26
 

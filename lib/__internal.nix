@@ -1,7 +1,7 @@
 # Private helpers extracted from manifest.nix for unit-test reachability (→ #71).
 #
-# NOT part of the public API. Reached via `nput.__internal.<name>` and used internally by
-# manifest.nix. Each helper takes nixpkgs.lib explicitly because the nput lib attrset is
+# NOT part of the public API. Reached via `layat.__internal.<name>` and used internally by
+# manifest.nix. Each helper takes nixpkgs.lib explicitly because the layat lib attrset is
 # unparameterized (`import ./lib` with no args), so we cannot pre-bind lib at this layer.
 let
   # Determine whether following `..` makes the depth go negative (escapes outside base) (→ ADR-0019).

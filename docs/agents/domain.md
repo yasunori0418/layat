@@ -24,7 +24,7 @@ don't skim it as an index.
 
 | Directory | Type | Prefix | Holds |
 |---|---|---|---|
-| `docs/solution/` | solution | `SOL` | What nput is and what it solves |
+| `docs/solution/` | solution | `SOL` | What layat is and what it solves |
 | `docs/use-cases/` | use_case | `UC` | How it gets used |
 | `docs/requirements/` | requirement | `REQ` | What must hold of the product (normative, RFC2119) |
 | `docs/design/` | design | `DSG` | How a requirement or a test_plan is realised |

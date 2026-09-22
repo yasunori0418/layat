@@ -45,9 +45,9 @@ level: high
 経由の配置へ戻すので medium に留まるが、最も重い「翻訳への退化」はそうではない。engine を
 呼ばず統合先の native な配置機構へ entry を流し込むと、配置も撤去も engine の外で行われ、
 home-manager の readlink パターンによる cleanup が記録外の実体を消す経路が開く（この取り違えを
-避けるために nput が manifest 記録による分類を採っていることは RISK-e3d42a21-1f43-4ac6-835e-a5caf8d86363 が述べる。ただし
+避けるために layat が manifest 記録による分類を採っていることは RISK-e3d42a21-1f43-4ac6-835e-a5caf8d86363 が述べる。ただし
 同 item の射程は engine 自身の除去実装で、engine を経由しない配置は射程外なので、この経路の
-impact は本 item が持つ）。消えるのは nput の記録に無い実体なので再 activation では戻らない。
+impact は本 item が持つ）。消えるのは layat の記録に無い実体なので再 activation では戻らない。
 規約の最重方向則に従い impact を high とする。home-manager 経路が主要な利用導線でありながら
 崩れても単体では動いてしまい、保証を失ったことに利用者が気づく手段が乏しい点は沈黙性として
 残る。

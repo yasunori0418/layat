@@ -1,9 +1,9 @@
 {
   description = "Place fetched git repositories at arbitrary paths via symlink or copy.";
 
-  # nput 自体を clone して nix develop / build / flake check する際に cachix からビルド済み
+  # layat 自体を clone して nix develop / build / flake check する際に cachix からビルド済み
   # バイナリを引くための設定（trusted-user / accept-flake-config 前提）。flake の nixConfig は
-  # input に伝播しないため、nput を flake input として消費する側のキャッシュ取得には効かない。
+  # input に伝播しないため、layat を flake input として消費する側のキャッシュ取得には効かない。
   nixConfig = {
     extra-substituters = [
       "https://cache.nixos.org/"
@@ -56,7 +56,7 @@
     inputs@{ flake-parts, ... }:
     let
       # flake output（lib）とテスト入力で同一実体を共有する（self 参照を避ける）。
-      nputLib = import ./lib;
+      layatLib = import ./lib;
       # バージョンの一次情報はリポジトリ直下の VERSION（semver 1 行・→ ADR-0042）。
       # flake / Go バイナリの双方をこの単一ソースから導出し二重管理しない。
       # 末尾改行を落として semver 文字列だけを取り出す（nixos-unstable の lib.strings.trim）。
@@ -72,7 +72,7 @@
       imports = [
         inputs.treefmt-nix.flakeModule
         inputs.nix-unit.modules.flake.default
-        # nput output を perSystem へ集約する flake-parts module（→ ADR-0029）。
+        # layat output を perSystem へ集約する flake-parts module（→ ADR-0029）。
         # 循環参照回避のため、公開（flake.flakeModules.default）も import も同一パスを参照する。
         # self.flakeModules.default 経由の self-import にはしない（ADR 決定4）。
         ./modules/flake-parts.nix
@@ -110,21 +110,21 @@
             export GOPROXY=off
             mkdir -p build && cd build
             cp -r --no-preserve=mode ${goSrc}/. .
-            cp -r --no-preserve=mode ${config.packages.nput.goModules} vendor
+            cp -r --no-preserve=mode ${config.packages.layat.goModules} vendor
           '';
         in
         {
-          # nput CLI（cmd/nput）+ 配置エンジン（internal/）を含む Go モジュール（→ ADR-0006, ADR-0011）。
+          # layat CLI（cmd/layat）+ 配置エンジン（internal/）を含む Go モジュール（→ ADR-0006, ADR-0011）。
           # CLI 層が cobra に依存するため vendorHash 文字列を pin する（依存変更時に更新）。
           # doCheck で go test（engine の unit + tmpdir 統合テスト）を回す。
-          packages.nput = pkgs.buildGoModule {
-            pname = "nput";
+          packages.layat = pkgs.buildGoModule {
+            pname = "layat";
             inherit version;
             src = goSrc;
             vendorHash = "sha256-0f+MDJBF3bFSUuXMoSJpnnNRzkJqY/eT/EPdChWseiw=";
             doCheck = true;
             env.GOTOOLCHAIN = "local";
-            # VERSION の値を cmd/nput の main.version へ埋め込む（→ ADR-0042）。ldflags 未設定の
+            # VERSION の値を cmd/layat の main.version へ埋め込む（→ ADR-0042）。ldflags 未設定の
             # 素の go build では main.version は "dev" のまま（後続 #130 が tool.version の供給源として読む）。
             ldflags = [
               "-X"
@@ -145,8 +145,8 @@
             # coverprofile / func レポートを成果物へ同梱する。CI は cache hit でも $out から決定論的に
             # 取り出して Step Summary に出せる（build ログ依存だと cache hit で消えるため）。
             postInstall = ''
-              install -Dm644 "$TMPDIR/cover.out" "$out/share/nput/coverage/cover.out"
-              install -Dm644 "$TMPDIR/coverage-func.txt" "$out/share/nput/coverage/coverage-func.txt"
+              install -Dm644 "$TMPDIR/cover.out" "$out/share/layat/coverage/cover.out"
+              install -Dm644 "$TMPDIR/coverage-func.txt" "$out/share/layat/coverage/coverage-func.txt"
             '';
             # ldflags 経由の埋め込み配線（VERSION → main.version → バイナリ）を build 内で smoke する
             # （→ ADR-0042）。go test は ldflags 未設定で走る（上記 checkPhase）ため埋め込みを観測できず、
@@ -156,30 +156,30 @@
             doInstallCheck = true;
             installCheckPhase = ''
               runHook preInstallCheck
-              got=$("$out/bin/nput" --version)
+              got=$("$out/bin/layat" --version)
               case "$got" in
-                "nput version ${version}") : ;;
-                *) echo "FAIL: nput --version = '$got', want 'nput version ${version}'"; exit 1 ;;
+                "layat version ${version}") : ;;
+                *) echo "FAIL: layat --version = '$got', want 'layat version ${version}'"; exit 1 ;;
               esac
               runHook postInstallCheck
             '';
             meta = {
               description = "Place fetched git repositories at arbitrary paths via symlink or copy.";
-              mainProgram = "nput";
+              mainProgram = "layat";
             };
           };
 
           # ドッグフーディング用の project mode config（→ Issue #7・AC e2e 経路・ADR-0029）。
-          # `nput apply default` で git toplevel 配下の .nput-example/docs に本 repo（self）の
+          # `layat apply default` で git toplevel 配下の .layat-example/docs に本 repo（self）の
           # docs を store-symlink 配置する最小 example。flake-parts module（imports）が
-          # perSystem.nput.default を flake.nput.<system>.default へ転置する。pkgs は perSystem
-          # 由来になり packages.nput と一貫する（legacyPackages.${system} 直書きの二重解決が消える）。
-          # `nput.<system>.<name>` は標準 flake output ではないため `nix flake check` で
-          # `warning: unknown flake output 'nput'`（exit 0・想定内）が残る（→ docs/spec.md, ADR-0029 影響節）。
-          nput.default = nputLib.mkManifest {
+          # perSystem.layat.default を flake.layat.<system>.default へ転置する。pkgs は perSystem
+          # 由来になり packages.layat と一貫する（legacyPackages.${system} 直書きの二重解決が消える）。
+          # `layat.<system>.<name>` は標準 flake output ではないため `nix flake check` で
+          # `warning: unknown flake output 'layat'`（exit 0・想定内）が残る（→ docs/spec.md, ADR-0029 影響節）。
+          layat.default = layatLib.mkManifest {
             inherit pkgs;
-            root = nputLib.projectRoot;
-            entries.".nput-example/docs" = {
+            root = layatLib.projectRoot;
+            entries.".layat-example/docs" = {
               src = inputs.self;
               subpath = "docs";
             };
@@ -195,51 +195,14 @@
             programs.gofmt.enable = true;
           };
 
-          # 改名予告（→ ADR-0054 §6・Issue #387）の Nix 側と Go 側の文面がバイト一致すること。
-          # 日付リテラルが modules/common.nix と cmd/nput/main.go の 2 箇所に独立して存在し、
-          # 片側だけ直すと CLI とモジュール警告が食い違う。go test 側の同名検査は nix sandbox の
-          # goSrc に modules/ が無いため skip されるので、両方が見えるここで担保する。
-          # #388 が予告を撤去するとき、この check ごと落とす。
-          checks.notice-parity = pkgs.runCommandLocal "nput-notice-parity" { } ''
-            # 両ソースは同じ形（`"..." + "..." + ...` の連結）で文面を持つ。各行の最初の `"` から
-            # 最後の `"` までを取り、エスケープされた `\"` を戻してから連結する。python3 を使うのは
-            # sed / grep では `\"` を含む文字列リテラルを正しく取り出せないため（素朴な
-            # `grep -o '"[^"]*"'` はエスケープ位置で切れ、両側が同じように壊れて比較が骨抜きになる）。
-            extract() {
-              ${pkgs.python3}/bin/python3 - "$1" "$2" <<'EOF'
-            import re, sys
-            src = open(sys.argv[1], encoding="utf-8").read()
-            body = re.search(sys.argv[2], src, re.S)
-            if not body:
-                sys.exit("binding not found")
-            parts = re.findall(r'"((?:[^"\\]|\\.)*)"', body.group(1))
-            sys.stdout.write("".join(p.replace('\\"', '"') for p in parts))
-            EOF
-            }
-
-            nix_msg=$(extract ${./modules/common.nix} 'renameNotice =(.*?);\n')
-            go_msg=$(extract ${./cmd/nput/main.go} 'const renameNotice = (.*?)\n\n')
-
-            test -n "$nix_msg" || { echo "FAIL: modules/common.nix から予告文を抽出できません"; exit 1; }
-            test -n "$go_msg"  || { echo "FAIL: cmd/nput/main.go から予告文を抽出できません"; exit 1; }
-
-            if [ "$nix_msg" != "$go_msg" ]; then
-              echo "FAIL: 改名予告の Nix 側と Go 側が食い違っています"
-              echo "  nix: $nix_msg"
-              echo "  go : $go_msg"
-              exit 1
-            fi
-            touch "$out"
-          '';
-
           # 静的解析を flake check に載せる（→ ADR-0025）。stdlib-only ゆえ依存検出は軽い。
-          checks.go-vet = pkgs.runCommandLocal "nput-go-vet" { nativeBuildInputs = [ pkgs.go ]; } ''
+          checks.go-vet = pkgs.runCommandLocal "layat-go-vet" { nativeBuildInputs = [ pkgs.go ]; } ''
             ${goToolEnv}
             go vet ./...
             touch "$out"
           '';
           checks.golangci-lint =
-            pkgs.runCommandLocal "nput-golangci-lint"
+            pkgs.runCommandLocal "layat-golangci-lint"
               {
                 nativeBuildInputs = [
                   pkgs.go
@@ -253,7 +216,7 @@
                 touch "$out"
               '';
           # go test（unit + tmpdir 統合テスト）も flake check で回す。
-          checks.nput = config.packages.nput;
+          checks.layat = config.packages.layat;
 
           # nix-unit: デフォルト適用・manifest 構造の不変条件をアサート（→ ADR-0006, ADR-0010）。
           # flake-parts モジュールが checks 派生を組み `nix flake check` に載せる。
@@ -271,7 +234,7 @@
           };
           nix-unit.tests = import ./tests/nix-unit.nix {
             inherit (pkgs) lib;
-            nput = nputLib;
+            layat = layatLib;
           };
 
           # namaka: manifest.json 全体（= normalizeManifest 出力）のスナップショット回帰（→ ADR-0006）。
@@ -281,14 +244,14 @@
             src = ./tests/namaka;
             inputs = {
               inherit (pkgs) lib;
-              nput = nputLib;
+              layat = layatLib;
             };
-          }) (pkgs.runCommandLocal "nput-namaka-snapshots" { } "touch \"$out\"");
+          }) (pkgs.runCommandLocal "layat-namaka-snapshots" { } "touch \"$out\"");
 
           # HM モジュール統合の評価アサート（→ Issue #17 AC・NixOS VM / 実 activate は #19 E2E）。
           # standalone な homeManagerConfiguration を評価し、(1) activation が home.file へ翻訳せず
-          # `nput apply --manifest` で engine を起動する配線であること、(2) 渡す manifest が
-          # root=homeRoot を pin すること、(3) nput.entries が manifest に流れることをアサートする。
+          # `layat apply --manifest` で engine を起動する配線であること、(2) 渡す manifest が
+          # root=homeRoot を pin すること、(3) layat.entries が manifest に流れることをアサートする。
           # 実 activate（nix-env --set・FS 配置）は build sandbox では行えないため E2E（#19）へ回す。
           checks.hm-module =
             let
@@ -301,93 +264,84 @@
                 modules = [
                   ./modules/home-manager.nix
                   {
-                    # ラッパー（flake.homeManagerModules.default）と同じく pin 版 nput を注入する。
-                    _module.args.nputPackage = config.packages.nput;
-                    home.username = "nput-test";
-                    home.homeDirectory = "/home/nput-test";
+                    # ラッパー（flake.homeManagerModules.default）と同じく pin 版 layat を注入する。
+                    _module.args.layatPackage = config.packages.layat;
+                    home.username = "layat-test";
+                    home.homeDirectory = "/home/layat-test";
                     home.stateVersion = "24.05";
                     # nixpkgs=unstable と HM=master の release 文字列ずれによる無害な
                     # warning を抑制する（packages は nixpkgs follows で一致・→ #17 レビュー）。
                     home.enableNixpkgsReleaseCheck = false;
-                    nput.enable = true;
-                    nput.entries.".claude/skills/nix" = {
+                    layat.enable = true;
+                    layat.entries.".claude/skills/nix" = {
                       src = fakeSrc;
                       subpath = "skills/nix";
                     };
-                    # nput.backup.enable の wiring 確認（→ ADR-0045, issue #169）。suffix 省略時は
-                    # submodule 既定値 "nput-backup" が activation に渡ることを検証する。
-                    nput.backup.enable = true;
+                    # layat.backup.enable の wiring 確認（→ ADR-0045, issue #169）。suffix 省略時は
+                    # submodule 既定値 "layat-backup" が activation に渡ることを検証する。
+                    layat.backup.enable = true;
                   }
                 ];
               };
               # home.activation の dag entry の生スクリプト。
-              activationScript = pkgs.writeText "nput-activation" hm.config.home.activation.nput.data;
-              # 改名予告（→ ADR-0054 §6・Issue #387）の warnings 層を検査対象へ載せる。
-              # activationScript だけでは config.warnings が force されず、modules/common.nix の
-              # warnings 行を丸ごと消しても CI が green のまま通ってしまう。#388 で予告ごと撤去する。
-              warningsFile = pkgs.writeText "nput-warnings" (lib.concatStringsSep "\n" hm.config.warnings);
+              activationScript = pkgs.writeText "layat-activation" hm.config.home.activation.layat.data;
             in
-            pkgs.runCommandLocal "nput-hm-module-check" { } ''
+            pkgs.runCommandLocal "layat-hm-module-check" { } ''
               script=${activationScript}
 
               # (1) home.file へ翻訳せず engine を --manifest 経路で起動する配線であること。
               grep -q 'apply --manifest /nix/store/' "$script" \
-                || { echo "FAIL: activation が nput apply --manifest を起動していません"; cat "$script"; exit 1; }
+                || { echo "FAIL: activation が layat apply --manifest を起動していません"; cat "$script"; exit 1; }
 
               # (2) 渡す manifest が root=homeRoot を pin していること（mkManifest が記録）。
-              manifest=$(grep -oE '/nix/store/[a-z0-9]+-nput-manifest' "$script" | head -n1)
+              manifest=$(grep -oE '/nix/store/[a-z0-9]+-layat-manifest' "$script" | head -n1)
               test -n "$manifest" || { echo "FAIL: manifest の store パスを抽出できません"; cat "$script"; exit 1; }
               test -f "$manifest/manifest.json" || { echo "FAIL: $manifest/manifest.json がありません"; exit 1; }
               grep -q '"rootKind":"home"' "$manifest/manifest.json" \
                 || { echo "FAIL: manifest が homeRoot を pin していません"; cat "$manifest/manifest.json"; exit 1; }
 
-              # (3) nput.entries が manifest に流れていること（target = 属性キー）。
+              # (3) layat.entries が manifest に流れていること（target = 属性キー）。
               grep -q '".claude/skills/nix"' "$manifest/manifest.json" \
-                || { echo "FAIL: nput.entries が manifest に反映されていません"; cat "$manifest/manifest.json"; exit 1; }
+                || { echo "FAIL: layat.entries が manifest に反映されていません"; cat "$manifest/manifest.json"; exit 1; }
 
-              # (4) nput.backup.enable が --backup=<既定 suffix> として同じ apply 起動に配線されること
+              # (4) layat.backup.enable が --backup=<既定 suffix> として同じ apply 起動に配線されること
               #     （→ ADR-0045, issue #169）。
-              grep -q -- '--backup=nput-backup' "$script" \
+              grep -q -- '--backup=layat-backup' "$script" \
                 || { echo "FAIL: activation が --backup=<suffix> を配線していません"; cat "$script"; exit 1; }
-
-              # (5) 改名予告が config.warnings に載ること（→ ADR-0054 §6・Issue #387）。
-              #     #388 が予告を撤去するとき、この検査も一緒に落とす。
-              grep -q 'will be renamed to layat' ${warningsFile} \
-                || { echo "FAIL: 改名予告が config.warnings に出ていません"; cat ${warningsFile}; exit 1; }
 
               touch "$out"
             '';
         };
       flake = {
-        lib = nputLib;
+        lib = layatLib;
 
-        # `nput init <template>` / `nix flake init -t <ref>#<template>` で展開する starter テンプレ。
+        # `layat init <template>` / `nix flake init -t <ref>#<template>` で展開する starter テンプレ。
         # default = project（spec が project mode を canonical と明記・最も完備した例を渡す）。
         templates = {
           standalone = {
             path = ./templates/standalone;
-            description = "nput standalone config（homeRoot 例 + バリエーションコメント）";
+            description = "layat standalone config（homeRoot 例 + バリエーションコメント）";
           };
           project = {
             path = ./templates/project;
-            description = "nput project config（projectRoot + devShell + shellHook + .gitignore）";
+            description = "layat project config（projectRoot + devShell + shellHook + .gitignore）";
           };
           default = inputs.self.templates.project;
         };
 
         # flake-parts module を consumer 向けに公開する（→ ADR-0029）。flake-parts を使う repo は
-        # `imports = [ inputs.nput.flakeModules.default ]` してから `perSystem.nput.<name> = ...` を書ける。
+        # `imports = [ inputs.layat.flakeModules.default ]` してから `perSystem.layat.<name> = ...` を書ける。
         # 循環参照回避のため、公開も import（上の imports）も同一パスを参照する（ADR 決定4）。
         flakeModules.default = ./modules/flake-parts.nix;
 
-        # HM モジュール本体（modules/home-manager.nix）は engine をキックするのに pin 版 nput
-        # CLI を要する。利用者システムの packages.nput を _module.args として注入する薄い
+        # HM モジュール本体（modules/home-manager.nix）は engine をキックするのに pin 版 layat
+        # CLI を要する。利用者システムの packages.layat を _module.args として注入する薄い
         # ラッパーで包む（利用者は import するだけ・→ ADR-0007, modules/home-manager.nix）。
         homeManagerModules.default =
           { pkgs, ... }:
           {
             imports = [ ./modules/home-manager.nix ];
-            _module.args.nputPackage = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.nput;
+            _module.args.layatPackage = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.layat;
           };
         nixosModules.default = ./modules/nixos.nix;
         darwinModules.default = ./modules/nix-darwin.nix;

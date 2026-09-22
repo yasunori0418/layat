@@ -41,12 +41,12 @@ specification_ja: |
 ## 仕様
 
 ```
-<state>/nix/profiles/nput/<roothash>/.root              # backref（roothash 階層・複数 <name> で共有）
-<state>/nix/profiles/nput/<roothash>/<name>/             # ← profileDir（flock キー）
-<state>/nix/profiles/nput/<roothash>/<name>/profile        # profile リンク（nix-env --profile <profileDir>/profile の対象）
-<state>/nix/profiles/nput/<roothash>/<name>/profile-N-link # 世代（nix-env が profile の兄弟に作成）
-<state>/nix/profiles/nput/<roothash>/<name>/.pending       # nix build --out-link（profile を貫通しない兄弟）
-# home（--root なし）: <state>/nix/profiles/nput/<name>/{profile, profile-N-link, .pending}
+<state>/nix/profiles/layat/<roothash>/.root              # backref（roothash 階層・複数 <name> で共有）
+<state>/nix/profiles/layat/<roothash>/<name>/             # ← profileDir（flock キー）
+<state>/nix/profiles/layat/<roothash>/<name>/profile        # profile リンク（nix-env --profile <profileDir>/profile の対象）
+<state>/nix/profiles/layat/<roothash>/<name>/profile-N-link # 世代（nix-env が profile の兄弟に作成）
+<state>/nix/profiles/layat/<roothash>/<name>/.pending       # nix build --out-link（profile を貫通しない兄弟）
+# home（--root なし）: <state>/nix/profiles/layat/<name>/{profile, profile-N-link, .pending}
 ```
 
 > profile の基底 `<state>` は **`$XDG_STATE_HOME` があればそれ、無ければ `~/.local/state`**

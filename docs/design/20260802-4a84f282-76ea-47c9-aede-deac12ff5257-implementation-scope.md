@@ -19,9 +19,9 @@ satisfies:
 | NixOS / nix-darwin モジュール | 将来拡張（スタブ公開のみ・→ DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda）|
 | system mode（`systemRoot`）| 将来拡張 |
 
-REQ-14f0aec9-abae-4621-82f3-40536a1ad904 が nput CLI を一次 UX に据え、project mode を devShell 同梱で canonical と
+REQ-14f0aec9-abae-4621-82f3-40536a1ad904 が layat CLI を一次 UX に据え、project mode を devShell 同梱で canonical と
 する以上、**最初に完成させるべきは CLI と project mode**になる。home mode（`homeRoot`）を
-同時に含めるのは、そこが rollback・世代管理という nput 固有機構を通る唯一の経路であり、
+同時に含めるのは、そこが rollback・世代管理という layat 固有機構を通る唯一の経路であり、
 ここを外すと世代機構が実装されないまま残るため。
 
 将来拡張へ置く 2 つは、いずれも「engine 側の追加を必要としない」ことを条件に選んでいる。
@@ -37,7 +37,7 @@ REQ-14f0aec9-abae-4621-82f3-40536a1ad904 が nput CLI を一次 UX に据え、p
 
 **モジュール対応の位置づけ**も同じ線引きから来る。モジュール層は他のモジュールシステムの
 switch と一括で動いてほしいユースケースを拾うために存在するのであって、各モジュールの
-内部事情を nput の設計へ持ち込まない。持ち込むと REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 の「ネイティブ機構へ
+内部事情を layat の設計へ持ち込まない。持ち込むと REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 の「ネイティブ機構へ
 翻訳しない」が層ごとに崩れる。
 
 ## 出典

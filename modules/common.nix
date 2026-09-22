@@ -1,4 +1,4 @@
-# nput option definitions common to all modules (→ ADR-0003, ADR-0007, ADR-0010, ADR-0014).
+# layat option definitions common to all modules (→ ADR-0003, ADR-0007, ADR-0010, ADR-0014).
 #
 # The common options imported by HM / NixOS / nix-darwin. They hold no placement logic and
 # only let the user declare the data (entries) of "what, where, and how to place". Each module
@@ -8,39 +8,19 @@
 # evalModules). This way, unknown keys (typos, old names) become eval errors via the strict submodule,
 # avoiding a duplicate definition of validation (→ ADR-0010, docs/spec.md "module option spec").
 #
-# > Via the HM module, the MVP is limited to a single nput.entries = 1 profile (fixed name default),
+# > Via the HM module, the MVP is limited to a single layat.entries = 1 profile (fixed name default),
 # > and role separation (multiple profiles) is not possible. Users who need role separation use the
-# > standalone CLI path (entrypoint's nput.<name>). Multiple profiles are a future seam (→ ADR-0024, ADR-0025).
+# > standalone CLI path (entrypoint's layat.<name>). Multiple profiles are a future seam (→ ADR-0024, ADR-0025).
 { config, lib, ... }:
 let
-  nputTypes = import ../lib/types.nix lib;
-  # Rename notice (→ ADR-0054 §6, Issue #387). The CLI (cmd/nput/main.go) carries its own copy
-  # because a Go const cannot read a Nix expression. checks.notice-parity (flake.nix) is what
-  # holds the two byte-for-byte in CI; version_test.go runs the same comparison but skips
-  # inside the nix build sandbox, where modules/ is out of tree — so do not drop that check.
-  # The date is a LOWER BOUND ("on or after"): the rename lands when both the notice period and
-  # the prune epic have completed, whichever is later. Removed by the rename PR (→ #388).
-  renameNotice =
-    "nput will be renamed to layat on or after 2026-09-22. "
-    + "The flake input URL, the `nput.*` module options, `home.activation.nput` and "
-    + "`#nput.<system>.<name>` will all change, and `--json` consumers will see "
-    + "`E_LAYAT_*` / `W_LAYAT_*` codes and `tool.name = \"layat\"`. "
-    + "See the \"Migrating from nput\" section of "
-    + "https://github.com/yasunori0418/nput#migrating-from-nput . "
-    + "To stay on the old name, pin `github:yasunori0418/nput/legacy-nput`.";
+  layatTypes = import ../lib/types.nix lib;
 in
 {
-  # Announce the rename to module users (home-manager / NixOS / nix-darwin alike). It is
-  # gated on `enable` so a module merely imported but not turned on stays silent, and it
-  # rides the host's own warning channel rather than a second output stream
-  # (→ ADR-0054 §6).
-  config.warnings = lib.optional config.nput.enable renameNotice;
-
-  options.nput = {
-    enable = lib.mkEnableOption "nput (symlink / copy placement of fetched git repositories)";
+  options.layat = {
+    enable = lib.mkEnableOption "layat (symlink / copy placement of fetched git repositories)";
 
     entries = lib.mkOption {
-      type = nputTypes.entriesType;
+      type = layatTypes.entriesType;
       default = { };
       example = lib.literalExpression ''
         {
@@ -68,7 +48,7 @@ in
           '';
           suffix = lib.mkOption {
             type = lib.types.str;
-            default = "nput-backup";
+            default = "layat-backup";
             description = ''
               The backup rename suffix (activation wires apply --backup=<suffix>). The
               backup destination becomes "<target>.<suffix>" (→ ADR-0045).
@@ -81,7 +61,7 @@ in
         apply --backup wiring: renames an occupying foreign entity aside instead of
         conflicting (→ ADR-0045). This is a placement modifier orthogonal to `entries`
         and does not touch the manifest v1 contract (lib/types.nix) — activation only
-        adds `--backup=<suffix>` to the `nput apply --manifest` invocation when enabled.
+        adds `--backup=<suffix>` to the `layat apply --manifest` invocation when enabled.
       '';
     };
   };

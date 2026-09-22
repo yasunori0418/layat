@@ -7,13 +7,13 @@ derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
-  The confirmation prompt of `nput reset` SHALL be shown only while stdin is a TTY. When
+  The confirmation prompt of `layat reset` SHALL be shown only while stdin is a TTY. When
   stdin is not a TTY — under CI, direnv or a pipe — and neither `-y` nor `--yes` has been
   given, the command SHALL NOT show the prompt and SHALL stop immediately with an error
   and exit code 1, so as to prevent both hanging and an accidental deletion caused by
   empty input.
 specification_ja: |
-  `nput reset` の確認プロンプトは stdin が TTY のときのみ出さなければならない。非 TTY
+  `layat reset` の確認プロンプトは stdin が TTY のときのみ出さなければならない。非 TTY
   （CI / direnv / パイプ）かつ `-y` / `--yes` が未指定なら、プロンプトを出さず即エラー停止
   （exit 1）しなければならない（ハングと空入力による誤削除を防ぐため）。
 ---

@@ -57,7 +57,7 @@ specification_ja: |
 
 ## 仕様
 
-- **profile は解決済み root でキーする**（例: `<state>/nix/profiles/nput/<roothash>/<name>`）。
+- **profile は解決済み root でキーする**（例: `<state>/nix/profiles/layat/<roothash>/<name>`）。
   同一 entrypoint を複数箇所にクローンしても profile が衝突せず、stale 除去が互いのクローンの
   配置を破壊しない。home mode（1 ユーザー 1 つ）では起きない問題。`<roothash>` は **解決後の
   絶対 root パスの sha256 を短縮した hex**（固定長・FS 安全）

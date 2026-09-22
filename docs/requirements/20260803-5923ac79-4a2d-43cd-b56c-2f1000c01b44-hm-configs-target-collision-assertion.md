@@ -58,13 +58,13 @@ specification_ja: |
 > 分ける原則そのものは REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a の担当。
 >
 > **他 item との担当分界**: 正規化後 target 文字列の同値判定と属性キー = target という
-> 識別の体系は REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 / REQ-b232ec98-af3b-41f3-a050-29d417322002、`nput.configs` オプションの定義は
+> 識別の体系は REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 / REQ-b232ec98-af3b-41f3-a050-29d417322002、`layat.configs` オプションの定義は
 > REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、`<name>` 次元と役割分離そのものは REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a、foreign symlink warning
 > と単発の後勝ちは REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557 の担当。
 
 ## 出典
 
-ADR-0035「HM モジュールに `nput.configs.<name>` を導入し複数 profile（役割分離）を
+ADR-0035「HM モジュールに `layat.configs.<name>` を導入し複数 profile（役割分離）を
 可能にする」§4「configs 間の target 衝突は eval 時に検出して停止する」。
 
 `docs/spec.md` には対応記述が無いため、原文の写しは持たない（規範は frontmatter が正で、

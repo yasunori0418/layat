@@ -13,14 +13,14 @@ refines:
 配置された、といった場面で、ユーザーは前の世代へ戻して復旧する。
 
 ```bash
-nput apply <name>            # 新世代を作って適用（name 省略時は nput.default）
-nput rollback <name>         # 前世代へ戻す
-nput list-generations <name> # 世代一覧
+layat apply <name>            # 新世代を作って適用（name 省略時は layat.default）
+layat rollback <name>         # 前世代へ戻す
+layat list-generations <name> # 世代一覧
 ```
 
 世代は nix profile に乗る（→ ADR-0002）。純粋関数 `lib.mkManifest` が link farm derivation
 （`manifest.json` + ストア内の symlink ツリー）を生成し、engine が nix profile に登録する
-ことで、世代番号・GC root・ロールバックを Nix 標準機構から得る。粒度は `nput.<name>`
+ことで、世代番号・GC root・ロールバックを Nix 標準機構から得る。粒度は `layat.<name>`
 単位 = 1 profile なので、役割ごとに独立したロールバック系列を持つ。
 
 ```

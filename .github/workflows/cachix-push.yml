@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-    # nput バイナリの内容を決める入力（nix 定義 + Go ソース）の変更時のみ投入する。
+    # layat バイナリの内容を決める入力（nix 定義 + Go ソース）の変更時のみ投入する。
     paths:
       - "**.nix"
       - "**.go"
@@ -35,7 +35,7 @@ jobs:
         with:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      # nput は単一パッケージなので os マトリクスで各 system をネイティブビルドするだけ。
+      # layat は単一パッケージなので os マトリクスで各 system をネイティブビルドするだけ。
       # cachix-action が authToken 指定でビルド生成パスを自動 push する（cachix yasunori0418）。
-      - name: Build and push nput (${{ matrix.system }})
-        run: nix build ".#packages.${{ matrix.system }}.nput" --print-build-logs
+      - name: Build and push layat (${{ matrix.system }})
+        run: nix build ".#packages.${{ matrix.system }}.layat" --print-build-logs

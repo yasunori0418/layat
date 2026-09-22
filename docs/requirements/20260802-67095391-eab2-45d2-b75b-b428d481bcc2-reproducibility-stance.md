@@ -10,13 +10,13 @@ specification: |
   runtime, so the evaluation stays pure) and its reproducibility SHALL be fixed by
   flake.lock. A `shell.nix` / `default.nix` entrypoint SHALL be allowed to evaluate
   impurely (depending on NIX_PATH / channels), and its reproducibility SHALL be the user's
-  responsibility; pinning nixpkgs, including the nput lib, with npins / fetchTarball /
+  responsibility; pinning nixpkgs, including the layat lib, with npins / fetchTarball /
   flake-compat or similar SHOULD be recommended.
 specification_ja: |
   `flake.nix` entrypoint は pure eval とし（root 解決はエンジン実行時なので eval は
   pure のまま）、再現性は flake.lock で固定しなければならない。
   `shell.nix` / `default.nix` entrypoint は impure eval（NIX_PATH / channels 依存）を
-  許容しなければならず、その再現性はユーザー責任としなければならない。nput lib を含め
+  許容しなければならず、その再現性はユーザー責任としなければならない。layat lib を含め
   nixpkgs を npins / fetchTarball / flake-compat 等で固定することを推奨すべきである。
 ---
 # REQ-67095391-eab2-45d2-b75b-b428d481bcc2: flake は pure eval で flake.lock が固定し legacy は impure を許容しユーザー責任とする
@@ -26,7 +26,7 @@ specification_ja: |
 | entrypoint | eval | 再現性 |
 |---|---|---|
 | `flake.nix` | pure（root 解決はエンジン実行時なので eval は pure のまま）| flake.lock で固定 |
-| `shell.nix` / `default.nix` | impure（NIX_PATH / channels 依存）を許容 | **ユーザー責任**。nput lib を含め nixpkgs を npins / fetchTarball / flake-compat 等で固定することを推奨 |
+| `shell.nix` / `default.nix` | impure（NIX_PATH / channels 依存）を許容 | **ユーザー責任**。layat lib を含め nixpkgs を npins / fetchTarball / flake-compat 等で固定することを推奨 |
 
 legacy entrypoint で `src` が自動で store 化されないことは REQ-da253cab-34d4-4d6e-96f0-de99e012b376 の担当。
 

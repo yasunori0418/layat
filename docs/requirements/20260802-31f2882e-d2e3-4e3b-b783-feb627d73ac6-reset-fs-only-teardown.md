@@ -7,10 +7,10 @@ derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
-  `nput reset <name> [target...]` SHALL be a teardown that returns placed objects to the
+  `layat reset <name> [target...]` SHALL be a teardown that returns placed objects to the
   state of not being present; omitting `target` SHALL select every entry, and specifying
   it SHALL select only those entries. Symlinks SHALL be removed under the same
-  conservative invariants as stale removal (only those managed by nput and matching the
+  conservative invariants as stale removal (only those managed by layat and matching the
   record; foreign ones SHALL be left with a warning), and copy targets SHALL also be
   deleted, `reset` being the only explicit means of deleting a copy. After removing either
   a symlink or a copy, empty-parent-directory pruning SHALL be applied. Because of the
@@ -21,9 +21,9 @@ specification: |
   holds the entry, the next apply SHALL place it again. It SHALL be usable in both home
   and project mode.
 specification_ja: |
-  `nput reset <name> [target...]` は配置物を無い状態へ戻す teardown でなければならない。
+  `layat reset <name> [target...]` は配置物を無い状態へ戻す teardown でなければならない。
   target 省略で全 entry、指定でその entry のみを対象としなければならない。symlink は stale
-  除去と同じ保守的不変条件（nput 管理・記録通りのみ・foreign は warning で残す）で除去し、
+  除去と同じ保守的不変条件（layat 管理・記録通りのみ・foreign は warning で残す）で除去し、
   copy target も削除しなければならない（copy を消す唯一の明示手段）。symlink・copy いずれの
   除去後も空親ディレクトリ剪定を適用しなければならない。データ損失リスクのため確認プロンプトを
   出すか `-y` / `--yes`（スクリプト / CI 用）で同意を要求し、削除 target をレポート表示
@@ -36,11 +36,11 @@ specification_ja: |
 ## 仕様
 
 ```bash
-nput reset <name> [target...]  # 配置物を無い状態へ戻す。target 省略で全 entry、指定でその entry のみ
+layat reset <name> [target...]  # 配置物を無い状態へ戻す。target 省略で全 entry、指定でその entry のみ
 ```
 
 `reset <name> [target...]` は配置物を**無い状態へ戻す** teardown。symlink は stale 除去と
-同じ**保守的不変条件**（nput 管理・記録通りのみ・foreign は warning で残す）で除去し、
+同じ**保守的不変条件**（layat 管理・記録通りのみ・foreign は warning で残す）で除去し、
 **copy target も削除**する（copy を消す唯一の明示手段）。symlink・copy いずれの除去後も
 空親ディレクトリ剪定を適用する。データ損失リスクのため**確認プロンプト**を出すか
 `--yes` で同意を要求し、削除 target をレポート表示する。**profile / 世代は触らない
@@ -71,5 +71,5 @@ home / project 両モード可。
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `reset <name> [target...]` の箇条書きと、
 同節グローバルフラグ表の `-y, --yes`。
 
-決定の実体は ADR-0020「配置物のリセット（`nput reset`）を追加する」で、`-y` / `--yes` に
+決定の実体は ADR-0020「配置物のリセット（`layat reset`）を追加する」で、`-y` / `--yes` に
 よる同意もここで決まっている。

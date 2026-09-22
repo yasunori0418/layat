@@ -29,8 +29,8 @@ func TestApplyBackupFlagParsing(t *testing.T) {
 		if err != nil {
 			t.Fatalf("GetString(backup): %v", err)
 		}
-		if got != "nput-backup" {
-			t.Errorf("bare --backup value = %q, want %q (NoOptDefVal)", got, "nput-backup")
+		if got != "layat-backup" {
+			t.Errorf("bare --backup value = %q, want %q (NoOptDefVal)", got, "layat-backup")
 		}
 		// The bare form must not swallow the next token as its value (space-separated form
 		// rejected by design): "name" must remain a positional arg, not the flag's value.

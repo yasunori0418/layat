@@ -163,28 +163,28 @@ func TestDiscoverEntrypoint_CWD(t *testing.T) {
 	}
 }
 
-// TestEntrypointInstallableArgs locks in the flake `<ep>#nput.<system>.<name><suffix>` form vs. the
-// legacy `-f <ep> nput.<name><suffix>` form (no per-system dimension; → ADR-0032).
+// TestEntrypointInstallableArgs locks in the flake `<ep>#layat.<system>.<name><suffix>` form vs. the
+// legacy `-f <ep> layat.<name><suffix>` form (no per-system dimension; → ADR-0032).
 func TestEntrypointInstallableArgs(t *testing.T) {
 	flakeEp := &entrypoint{kind: entrypointFlake, flakeRef: "/proj"}
-	if got, want := flakeEp.installableArgs("x86_64-linux", "docs", ".rootKind"), []string{"/proj#nput.x86_64-linux.docs.rootKind"}; !reflect.DeepEqual(got, want) {
+	if got, want := flakeEp.installableArgs("x86_64-linux", "docs", ".rootKind"), []string{"/proj#layat.x86_64-linux.docs.rootKind"}; !reflect.DeepEqual(got, want) {
 		t.Errorf("flake installableArgs = %v, want %v", got, want)
 	}
-	if got, want := flakeEp.namespaceArgs("x86_64-linux"), []string{"/proj#nput.x86_64-linux"}; !reflect.DeepEqual(got, want) {
+	if got, want := flakeEp.namespaceArgs("x86_64-linux"), []string{"/proj#layat.x86_64-linux"}; !reflect.DeepEqual(got, want) {
 		t.Errorf("flake namespaceArgs = %v, want %v", got, want)
 	}
-	if got, want := flakeEp.label("x86_64-linux", "docs"), "nput.x86_64-linux.docs"; got != want {
+	if got, want := flakeEp.label("x86_64-linux", "docs"), "layat.x86_64-linux.docs"; got != want {
 		t.Errorf("flake label = %q, want %q", got, want)
 	}
 
 	legacyEp := &entrypoint{kind: entrypointLegacy, legacyPath: "/proj/shell.nix"}
-	if got, want := legacyEp.installableArgs("x86_64-linux", "docs", ".rootKind"), []string{"-f", "/proj/shell.nix", "nput.docs.rootKind"}; !reflect.DeepEqual(got, want) {
+	if got, want := legacyEp.installableArgs("x86_64-linux", "docs", ".rootKind"), []string{"-f", "/proj/shell.nix", "layat.docs.rootKind"}; !reflect.DeepEqual(got, want) {
 		t.Errorf("legacy installableArgs = %v, want %v", got, want)
 	}
-	if got, want := legacyEp.namespaceArgs("x86_64-linux"), []string{"-f", "/proj/shell.nix", "nput"}; !reflect.DeepEqual(got, want) {
+	if got, want := legacyEp.namespaceArgs("x86_64-linux"), []string{"-f", "/proj/shell.nix", "layat"}; !reflect.DeepEqual(got, want) {
 		t.Errorf("legacy namespaceArgs = %v, want %v", got, want)
 	}
-	if got, want := legacyEp.label("x86_64-linux", "docs"), "nput.docs"; got != want {
+	if got, want := legacyEp.label("x86_64-linux", "docs"), "layat.docs"; got != want {
 		t.Errorf("legacy label = %q, want %q", got, want)
 	}
 }

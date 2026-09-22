@@ -10,8 +10,8 @@ covers:
 
 ## 対象
 
-`tests/nix-unit/farm-entries.nix`（TP-403c55c7-d996-4951-8e6b-c3a7dddd387c のテスト seam `nput.__internal.farmEntries` /
-`nput.__internal.anchorName` / `nput.__internal.anchorLines` を直接叩き、加えて `mkManifest` の
+`tests/nix-unit/farm-entries.nix`（TP-403c55c7-d996-4951-8e6b-c3a7dddd387c のテスト seam `layat.__internal.farmEntries` /
+`layat.__internal.anchorName` / `layat.__internal.anchorLines` を直接叩き、加えて `mkManifest` の
 ビルドスクリプトへの配線を fake pkgs 経由で見る。anchorLines は `lib/manifest.nix` が
 `mkManifest` から呼ぶ生成式そのもので、テスト側に複製は持たない → Issue #289）
 

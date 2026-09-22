@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # home mode: 仮 $HOME（+ XDG_STATE_HOME）で apply → $HOME 配下配置 + profile 世代コミットを確認し、
-# 世代をまたいで（entry 入替）`nput rollback` で前世代の配置へ復帰し、最後に `nput reset` が
+# 世代をまたいで（entry 入替）`layat rollback` で前世代の配置へ復帰し、最後に `layat reset` が
 # FS のみを撤去して profile / 世代を動かさないことをアサート。世代を戻す実行と撤去する実行は
 # `--json` のエンベロープも実コマンド経路で検証する（→ issue #285）。
 # 併せて projectRoot の第 2 config を同居させ、`list-generations --all` が home mode の config
@@ -23,17 +23,17 @@ write_flake() {
 	cat >"$PROJ/flake.nix" <<EOF
 {
 $(e2e_flake_inputs)
-  outputs = { self, nixpkgs, nput }: {
-    nput = nixpkgs.lib.genAttrs $E2E_SYSTEMS (system: {
-      home = nput.lib.mkManifest {
+  outputs = { self, nixpkgs, layat }: {
+    layat = nixpkgs.lib.genAttrs $E2E_SYSTEMS (system: {
+      home = layat.lib.mkManifest {
         pkgs = nixpkgs.legacyPackages.\${system};
-        root = nput.lib.homeRoot;
+        root = layat.lib.homeRoot;
         entries."$target" = { src = ./srcrepo; subpath = "$sub"; };
       };
-      proj = nput.lib.mkManifest {
+      proj = layat.lib.mkManifest {
         pkgs = nixpkgs.legacyPackages.\${system};
-        root = nput.lib.projectRoot;
-        entries.".nput-out/proj" = { src = ./srcrepo; subpath = "$sub"; };
+        root = layat.lib.projectRoot;
+        entries.".layat-out/proj" = { src = ./srcrepo; subpath = "$sub"; };
       };
     });
   };
@@ -41,46 +41,46 @@ $(e2e_flake_inputs)
 EOF
 }
 
-# 世代の本数を数える。nput 自体の失敗は非ゼロで返し（末尾の `|| true` が関数の終了コードを
+# 世代の本数を数える。layat 自体の失敗は非ゼロで返し（末尾の `|| true` が関数の終了コードを
 # 決めてしまうため、取得の失敗はその場で return する）、呼び出し側のコマンド置換代入を set -e で
 # 落とす。0 件で非ゼロ終了する grep だけを守り、0 件は「本数が壊れた」観測としてアサートへ渡す。
 gens_count() {
 	local out
-	out="$(nput list-generations home)" || return 1
+	out="$(layat list-generations home)" || return 1
 	printf '%s\n' "$out" | grep -c . || true
 }
 
 cd "$PROJ"
 write_flake ".cfg/a" "a"
 git init -q
-git -c user.email=e2e@nput.test -c user.name=e2e add -A
-git -c user.email=e2e@nput.test -c user.name=e2e commit -qm gen1
+git -c user.email=e2e@layat.test -c user.name=e2e add -A
+git -c user.email=e2e@layat.test -c user.name=e2e commit -qm gen1
 
 e2e_step "世代 1: apply（entry a）→ \$HOME 配下に配置"
-nput apply home
+layat apply home
 assert_symlink "$HOME/.cfg/a"
 assert_file_eq "$HOME/.cfg/a/file" "AAA"
 
 e2e_step "成功時はデフォルト沈黙 / -v で配置レポート（→ ADR-0031）"
-# 同一世代への再 apply（no-op）。nput 自身の配置レポート行は既定で出さず、-v で出す。
-# （nix 自体の dirty-tree warning 等は通るため、nput の "完了" マーカー有無で判定する。）
-silent_err="$(nput apply home 2>&1 >/dev/null || true)"
-if printf '%s' "$silent_err" | grep -q 'nput: apply home done'; then
+# 同一世代への再 apply（no-op）。layat 自身の配置レポート行は既定で出さず、-v で出す。
+# （nix 自体の dirty-tree warning 等は通るため、layat の "完了" マーカー有無で判定する。）
+silent_err="$(layat apply home 2>&1 >/dev/null || true)"
+if printf '%s' "$silent_err" | grep -q 'layat: apply home done'; then
 	e2e_fail "成功時に配置レポートが出てはいけない（既定は沈黙）: '$silent_err'"
 else
 	e2e_pass "成功時は配置レポート無し（既定沈黙）"
 fi
-verbose_err="$(nput apply home -v 2>&1 >/dev/null || true)"
-if printf '%s' "$verbose_err" | grep -q 'nput: apply home done'; then
+verbose_err="$(layat apply home -v 2>&1 >/dev/null || true)"
+if printf '%s' "$verbose_err" | grep -q 'layat: apply home done'; then
 	e2e_pass "-v で配置レポートが出る"
 else
 	e2e_fail "-v で配置レポートが出るべき: '$verbose_err'"
 fi
 
 e2e_step "profile 世代がコミットされたか（home mode の profile レイアウト）"
-PROFILE="$XDG_STATE_HOME/nix/profiles/nput/home/profile"
+PROFILE="$XDG_STATE_HOME/nix/profiles/layat/home/profile"
 assert_symlink "$PROFILE"
-GENS="$(nput list-generations home)"
+GENS="$(layat list-generations home)"
 echo "$GENS"
 if [ "$(printf '%s\n' "$GENS" | grep -c .)" -ge 1 ]; then
 	e2e_pass "list-generations が世代を返す"
@@ -96,21 +96,21 @@ assert_json "$ENV_DRYRUN" "generation が before = after の観測を運ぶ" \
 
 e2e_step "世代 2: entry を b に入替えて apply（a は stale 除去）"
 write_flake ".cfg/b" "b"
-git -c user.email=e2e@nput.test -c user.name=e2e add -A
-git -c user.email=e2e@nput.test -c user.name=e2e commit -qm gen2
-nput apply home
+git -c user.email=e2e@layat.test -c user.name=e2e add -A
+git -c user.email=e2e@layat.test -c user.name=e2e commit -qm gen2
+layat apply home
 assert_symlink "$HOME/.cfg/b"
 assert_file_eq "$HOME/.cfg/b/file" "BBB"
 assert_absent "$HOME/.cfg/a"
 
 e2e_step "2 世代以上あること"
-if [ "$(nput list-generations home | grep -c .)" -ge 2 ]; then
+if [ "$(layat list-generations home | grep -c .)" -ge 2 ]; then
 	e2e_pass "世代が 2 つ以上ある"
 else
 	e2e_fail "世代が 2 つ未満"
 fi
 
-e2e_step "nput rollback --json で前世代（entry a）へ復帰（RunE → emit の実経路・→ issue #285）"
+e2e_step "layat rollback --json で前世代（entry a）へ復帰（RunE → emit の実経路・→ issue #285）"
 # 既定契約（--json 無し）の rollback はここでは通さない。前世代へ戻す実行はこのシナリオでは
 # 一度しか成立せず（世代 1 からは戻せない）、旧版も出力は何もアサートしていなかったため、
 # 一度きりの実行はエンベロープ検証のある --json 側へ寄せる。
@@ -148,14 +148,14 @@ assert_json "$ENV_GENS" "items=[]・generation スロット無し・dryRun=false
 # config が実在する配置でしか意味を持たない（project mode だけの環境では「除外が効いた」と
 # 「元から空」を区別できない）ため、home の profile が既に 2 世代を持つこの位置に置く。
 e2e_step "project mode の proj を apply（--all の除外検証に実体を与える）"
-# proj の profileDir は <state>/nix/profiles/nput/<roothash>/proj で、<roothash> の直下には
+# proj の profileDir は <state>/nix/profiles/layat/<roothash>/proj で、<roothash> の直下には
 # profile リンクが無い。--all はこの構造差だけで除外するので、除外対象を disk 上に実在させる。
-nput apply proj
-assert_symlink "$PROJ/.nput-out/proj"
+layat apply proj
+assert_symlink "$PROJ/.layat-out/proj"
 # 前提は「roothash 階層（base/<roothash>/proj）に profile がある」こと。名前だけを頼りに
 # 1 件目を黙って採ると、想定外の配置が増えてもガードが素通りする。profile リンクごと glob して
 # 一意に 1 件だけ当たることを確かめる。
-PROJ_CONFIG_PROFILES=("$XDG_STATE_HOME"/nix/profiles/nput/*/proj/profile)
+PROJ_CONFIG_PROFILES=("$XDG_STATE_HOME"/nix/profiles/layat/*/proj/profile)
 if [ "${#PROJ_CONFIG_PROFILES[@]}" -eq 1 ] && [ -L "${PROJ_CONFIG_PROFILES[0]}" ]; then
 	e2e_pass "proj の profile が roothash 階層に一意に実在する: ${PROJ_CONFIG_PROFILES[0]#"$XDG_STATE_HOME/"}"
 else
@@ -189,11 +189,11 @@ e2e_step "list-generations --all は読み取り専用（profile も世代も配
 # 「読み取り専用」を profile リンク先・世代の本数・配置の 3 点で見る。前後比較の始点は --json
 # 実行の前（上）で取ってあるので、ここで既定（テキスト）経路も通せば両方の出力経路を挟める。
 ALL_TEXT_CODE=0
-ALL_TEXT="$(nput list-generations --all)" || ALL_TEXT_CODE=$?
+ALL_TEXT="$(layat list-generations --all)" || ALL_TEXT_CODE=$?
 if [ "$ALL_TEXT_CODE" -eq 0 ]; then
-	e2e_pass "exit 0: nput list-generations --all（テキスト経路）"
+	e2e_pass "exit 0: layat list-generations --all（テキスト経路）"
 else
-	e2e_fail "exit $ALL_TEXT_CODE (期待 0): nput list-generations --all"
+	e2e_fail "exit $ALL_TEXT_CODE (期待 0): layat list-generations --all"
 fi
 # テキスト経路は per-config ヘッダ `# <name>` を持つ独自の分岐（--json 経路は印字しない）。
 # 陽性対照と除外を JSON 経路だけで見ると、この分岐が proj を出力する退行を拾えない。
@@ -228,7 +228,7 @@ fi
 assert_symlink "$HOME/.cfg/a"
 assert_file_eq "$HOME/.cfg/a/file" "AAA"
 
-e2e_step "nput reset --json --yes: FS のみを撤去し profile / 世代は動かない（→ issue #285）"
+e2e_step "layat reset --json --yes: FS のみを撤去し profile / 世代は動かない（→ issue #285）"
 # 撤去対象は config（この時点の flake は .cfg/b を宣言している）ではなく、profile が指す世代の
 # manifest 由来（記録された真実）。rollback で世代 1 に戻った後なので .cfg/a が在庫になる。
 PROFILE_BEFORE="$(readlink "$PROFILE")"

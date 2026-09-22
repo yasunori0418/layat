@@ -28,7 +28,7 @@ specification_ja: |
 
 | コンポーネント | 依存 |
 |---|---|
-| `cmd/nput`（CLI = `packages.nput`）| 配置エンジンを import。最小依存を許可（**cobra** = サブコマンド / help）。entrypoint 発見と `nix`（build / eval）オーケストレーションを担う。`buildGoModule` + **vendorHash 文字列**でビルド。Go は nixpkgs の go に pin し `toolchain` ディレクティブ不使用 |
+| `cmd/layat`（CLI = `packages.layat`）| 配置エンジンを import。最小依存を許可（**cobra** = サブコマンド / help）。entrypoint 発見と `nix`（build / eval）オーケストレーションを担う。`buildGoModule` + **vendorHash 文字列**でビルド。Go は nixpkgs の go に pin し `toolchain` ディレクティブ不使用 |
 
 > **上は原文の写しで、規範は frontmatter が正**。CLI が engine を import して配置を駆動
 > すること、および entrypoint 発見と `nix` のオーケストレーションを担う役割分担そのものは
@@ -39,11 +39,11 @@ specification_ja: |
 
 ## 出典
 
-`docs/spec.md`「依存関係」節の表の `cmd/nput` 行。
+`docs/spec.md`「依存関係」節の表の `cmd/layat` 行。
 
 決定の実体は ADR-0011「engine / CLI の技術スタックを確定する」で、CLI に cobra を許可し
 `buildGoModule` + vendorHash・Go の pin でビルドを固定することを定めている。CLI を一次 UX と
-する位置づけは ADR-0007「汎用 nput CLI を一次 UX に昇格し、entrypoint 発見＋root 明示モデルへ
+する位置づけは ADR-0007「汎用 layat CLI を一次 UX に昇格し、entrypoint 発見＋root 明示モデルへ
 移行する」が定めるが、同 ADR は cobra / vendorHash / Go の pin のいずれにも触れておらず、
 この item の規範を決めていないため、側面の根拠として `justifies` は張らない（位置づけそのものの
 帰属は REQ-14f0aec9-abae-4621-82f3-40536a1ad904 / REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 が担当する）。

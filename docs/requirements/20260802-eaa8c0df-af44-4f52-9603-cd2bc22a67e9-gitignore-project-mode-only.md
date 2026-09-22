@@ -5,14 +5,14 @@ name: "gitignore は project mode 限定で非 project config を指定したら
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
-  `nput gitignore` SHALL be restricted to project mode. A bare `gitignore <name>` SHALL
+  `layat gitignore` SHALL be restricted to project mode. A bare `gitignore <name>` SHALL
   accept only a project mode config, and SHALL stop with an error when a non-project
   config (home / fixed) is specified, because the anchored output form presupposes that
   root = git toplevel = the location of `.gitignore`, which is meaningless under home /
   fixed. This is symmetric with `rollback` / `list-generations` being restricted to home
   mode.
 specification_ja: |
-  `nput gitignore` は project mode 限定でなければならない。単体の `gitignore <name>` も
+  `layat gitignore` は project mode 限定でなければならない。単体の `gitignore <name>` も
   project mode の config のみを受理し、非 project config（home / fixed）を指定したら
   エラーで停止しなければならない（出力のアンカー形式が root = git toplevel =
   `.gitignore` の置き場所を前提とし、home / fixed では意味を成さないため）。

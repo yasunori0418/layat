@@ -1,4 +1,4 @@
-# nput 公開ロードマップ
+# layat 公開ロードマップ
 
 リポジトリを public へ公開するための計画。grilling で確定した方針・MVP 検証結果・公開ブロッカー・公開後ワークストリームを 1 箇所に集約する。本書は計画文書であり、確定済みの設計判断は ADR / CONTEXT / spec / design を一次情報とする。
 
@@ -27,7 +27,7 @@
 
 ### 公開 API
 - **`listFilesInSrc` を lib から除去**し、「動的 entry 生成は既 realise の store パス / flake input を `builtins.readDir` せよ（IFD 回避）」を docs の応用 idiom に降格する
-  - 理由: 実体は `builtins.readDir` の薄い wrapper で、実運用ゼロ（dogfood は手動列挙、templates はコメント例のみ、テストのみが叩く）。nput の一仕事は「配置」でありディレクトリ列挙は別仕事。公開後の関数除去は破壊的変更になるため公開前に決定した
+  - 理由: 実体は `builtins.readDir` の薄い wrapper で、実運用ゼロ（dogfood は手動列挙、templates はコメント例のみ、テストのみが叩く）。layat の一仕事は「配置」でありディレクトリ列挙は別仕事。公開後の関数除去は破壊的変更になるため公開前に決定した
 
 ### ドキュメント
 - **README**: 包括的単体（公開時点で唯一の英語 usage 面のため自己完結させる）
@@ -55,7 +55,7 @@
 
 | パッケージ | カバレッジ |
 |---|---|
-| cmd/nput | 14.4% |
+| cmd/layat | 14.4% |
 | internal/engine | 69.9% |
 | internal/gitutil | 86.7% |
 | internal/lock | 84.2% |
@@ -63,7 +63,7 @@
 | internal/paths | 58.8% |
 | internal/planner | 86.3% |
 
-cmd/nput が低いのは nix eval/build + cobra が一体で単体テストしにくい構造的理由による（→ 公開後ワークストリーム）。
+cmd/layat が低いのは nix eval/build + cobra が一体で単体テストしにくい構造的理由による（→ 公開後ワークストリーム）。
 
 > 上表は #59（test(go): Go テスト充実、sub-issue #76-80/#82/#97/#98）完了前の古い実測値。#59 は #81（cmd orchestration 分離、後に #60 配下へ移設）を除く洗い出しを完了済み・CI へのカバレッジ計測導入（#82）も完了しているため、最新のカバレッジは CI 上の計測結果を参照する。
 
@@ -80,13 +80,13 @@ cmd/nput が低いのは nix eval/build + cobra が一体で単体テストし�
 ### ① listFilesInSrc 除去（公開 API 変更）— ✅ 完了
 - `lib/list-files.nix` 削除 / `lib/default.nix` の export 削除
 - `tests/nix-unit.nix` の関連テスト（5 件）削除
-- docs 整理（日本語維持）: spec.md（§132 / §478 応用節 / エラー仕様表）・design.md・CONTEXT.md（subpath 項）・templates コメント・`dev/nput.nix` の stale コメント → 「動的 entry 生成は既 realise store パス / flake input を `builtins.readDir`」idiom 注記へ置換
+- docs 整理（日本語維持）: spec.md（§132 / §478 応用節 / エラー仕様表）・design.md・CONTEXT.md（subpath 項）・templates コメント・`dev/layat.nix` の stale コメント → 「動的 entry 生成は既 realise store パス / flake input を `builtins.readDir`」idiom 注記へ置換
 - コミット: `refactor(lib)!: drop listFilesInSrc, demote to readDir idiom`
 
 ### ② UNIX 出力再設計（CLI 挙動変更）— ✅ 完了
-- `cmd/nput/main.go`: `--quiet` 削除、`-v` / `--verbose` を「配置レポート opt-in」に再定義、`--debug`（nix コマンド開示）追加
-- `cmd/nput/apply.go` / `reset.go` / `rollback.go`: 成功レポートをデフォルト沈黙化し `-v` で gating
-- `cmd/nput/nix.go`: nix コマンド開示を `--debug` gating
+- `cmd/layat/main.go`: `--quiet` 削除、`-v` / `--verbose` を「配置レポート opt-in」に再定義、`--debug`（nix コマンド開示）追加
+- `cmd/layat/apply.go` / `reset.go` / `rollback.go`: 成功レポートをデフォルト沈黙化し `-v` で gating
+- `cmd/layat/nix.go`: nix コマンド開示を `--debug` gating
 - spec.md / design.md の出力規律更新（+ 新 ADR か既存改訂）、e2e の該当箇所更新
 - コミット: `feat(cli)!: silent on success, opt-in report via -v` / `feat(cli): move nix command disclosure to --debug` / `refactor(cli)!: remove --quiet`
 
@@ -123,7 +123,7 @@ cmd/nput が低いのは nix eval/build + cobra が一体で単体テストし�
 - ~~論点: テストのため内部を露出するか、公開面経由で振る舞いテストするか（公開後に決定）~~ → #58 で `lib.__internal` 経由の露出方針に確定し、sub-issue #71〜#75 で実装完了（親 #58 クローズ済み）。詳細は tracking #91 を参照
 
 ### C. Go テスト充実 — ✅ 完了（#59）
-- 最大効果: cmd/nput の orchestration ロジック（flag 検証 / `--all` 集約 / exit code 判定）を nix 呼び出しから分離し、nix インジェクション seam を拡張して単体テスト可能にする（engine は既に `Commit` / `Git` / `Build` を注入できる設計）→ #81 として着手（後に engine リファクタ安定後着手が前提のため #60 配下へ移設・完了）
+- 最大効果: cmd/layat の orchestration ロジック（flag 検証 / `--all` 集約 / exit code 判定）を nix 呼び出しから分離し、nix インジェクション seam を拡張して単体テスト可能にする（engine は既に `Commit` / `Git` / `Build` を注入できる設計）→ #81 として着手（後に engine リファクタ安定後着手が前提のため #60 配下へ移設・完了）
 - 些末な穴: internal/paths の `StateDir()` / `GenerationLink()`（0%・数行で追加可能）→ #76 で対応
 - エラー経路の穴: engine の out-of-store Lstat 非 ENOENT / copy mkdir・chmod 失敗 / resolveRoot の project・fixed 分岐 / cleanupPending 再 flock 失敗 → #77〜#80 で対応
 - ~~CI / devShell へのカバレッジ計測組み込み（現状なし）~~ → #82 で導入済み

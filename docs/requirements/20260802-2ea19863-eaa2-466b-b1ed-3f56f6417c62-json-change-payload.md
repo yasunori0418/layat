@@ -40,12 +40,12 @@ specification: |
   before the failure stays `"success"` and SHALL include all of its corresponding changes.
   Even for an execution unwound by the undo journal, `changes` SHALL be kept as the record
   of the differences produced up to the point of failure, and the subject warning
-  `W_NPUT_UNWOUND` SHALL notify that the differences no longer remain on disk. A failure
+  `W_LAYAT_UNWOUND` SHALL notify that the differences no longer remain on disk. A failure
   independent of an entry (commit / build / lock) SHALL NOT produce an item and SHALL go
   to `results[0].errors[]`.
 
   A non-dryrun conflict stop SHALL mark the entry as `item.status:"failed"` with
-  `error.code:"E_NPUT_COLLISION"`, and the remaining planned entries SHALL be skipped. The
+  `error.code:"E_LAYAT_COLLISION"`, and the remaining planned entries SHALL be skipped. The
   aggregate error SHALL NOT be duplicated into `subjectResult.errors[]`, being caused by
   an item.
 
@@ -57,11 +57,11 @@ specification: |
   emit the generation slot at all, being an FS-only teardown that leaves the profile and
   generations untouched.
 
-  Structured warnings from the planner SHALL be mapped to `W_NPUT_*` and placed in
+  Structured warnings from the planner SHALL be mapped to `W_LAYAT_*` and placed in
   `item.warnings` when the target is within the inventory, or in
   `subjectResult.warnings` when it is outside it. The codes SHALL be
-  `W_NPUT_FOREIGN_SYMLINK`, `W_NPUT_COPY_FOREIGN`, `W_NPUT_STALE_MISMATCH`,
-  `W_NPUT_STALE_NON_SYMLINK`, `W_NPUT_COPY_ORPHAN` and `W_NPUT_UNWOUND`, with
+  `W_LAYAT_FOREIGN_SYMLINK`, `W_LAYAT_COPY_FOREIGN`, `W_LAYAT_STALE_MISMATCH`,
+  `W_LAYAT_STALE_NON_SYMLINK`, `W_LAYAT_COPY_ORPHAN` and `W_LAYAT_UNWOUND`, with
   `detail = {target}`. The human-facing text on stderr SHALL always coexist.
 
   The changes of `reset` SHALL be only what was actually removed. A rename aside by
@@ -93,12 +93,12 @@ specification_ja: |
   `item.error`。前段の失敗で未到達だった entry → `"skipped"`（この用途のみ）。失敗までに
   完了した entry → `"success"`（対応する change を全て含まなければならない）。undo
   ジャーナルが巻き戻した実行でも changes は「失敗時点までに生じた差分」の記録として保た
-  なければならず、subject 警告 `W_NPUT_UNWOUND` で差分がディスク上に残っていないことを
+  なければならず、subject 警告 `W_LAYAT_UNWOUND` で差分がディスク上に残っていないことを
   通知しなければならない。commit / build / lock など entry 非依存の失敗は item を落として
   はならず、`results[0].errors[]` へ載せなければならない。
 
   非 dryrun の conflict 停止は該当 entry を `item.status:"failed"` +
-  `error.code:"E_NPUT_COLLISION"` としなければならず、残りの計画 entry は skipped と
+  `error.code:"E_LAYAT_COLLISION"` としなければならず、残りの計画 entry は skipped と
   しなければならない。集約エラーは item 起因のため `subjectResult.errors[]` へ
   重複させてはならない。
 
@@ -109,11 +109,11 @@ specification_ja: |
   `reset` は generation スロット自体を出してはならない
   （profile / 世代は untouched の FS-only teardown で遷移が存在しないため）。
 
-  planner の構造化 warning は `W_NPUT_*` に写像しなければならず、対象 target が
+  planner の構造化 warning は `W_LAYAT_*` に写像しなければならず、対象 target が
   インベントリ内なら該当 `item.warnings`、外なら `subjectResult.warnings` へ
-  振り分けなければならない。コードは `W_NPUT_FOREIGN_SYMLINK` / `W_NPUT_COPY_FOREIGN` /
-  `W_NPUT_STALE_MISMATCH` / `W_NPUT_STALE_NON_SYMLINK` / `W_NPUT_COPY_ORPHAN` /
-  `W_NPUT_UNWOUND` としなければならず、`detail = {target}` を付けなければならない。
+  振り分けなければならない。コードは `W_LAYAT_FOREIGN_SYMLINK` / `W_LAYAT_COPY_FOREIGN` /
+  `W_LAYAT_STALE_MISMATCH` / `W_LAYAT_STALE_NON_SYMLINK` / `W_LAYAT_COPY_ORPHAN` /
+  `W_LAYAT_UNWOUND` としなければならず、`detail = {target}` を付けなければならない。
   stderr の人間向けテキストは常時併存させなければならない。
 
   `reset` の changes は実際に除去したもののみでなければならない。`--backup` の退避と
@@ -147,10 +147,10 @@ specification_ja: |
   （コードは上記分類）。前段の失敗で未到達だった entry → `"skipped"`（この用途のみ）。
   失敗までに完了した entry → `"success"` + 対応する change を**全て**含む。undo ジャーナルが
   巻き戻した実行でも changes は「失敗時点までに生じた差分」の記録として保ち、subject 警告
-  **`W_NPUT_UNWOUND`** で差分がディスク上に残っていないことを通知する。commit / build /
+  **`W_LAYAT_UNWOUND`** で差分がディスク上に残っていないことを通知する。commit / build /
   lock など entry 非依存の失敗は item を落とさず `results[0].errors[]` へ。
 - **conflict**: 非 dryrun の conflict 停止は該当 entry を `item.status:"failed"` +
-  `error.code:"E_NPUT_COLLISION"`（message = planner の理由）にし、残りの計画 entry は
+  `error.code:"E_LAYAT_COLLISION"`（message = planner の理由）にし、残りの計画 entry は
   skipped（何も実行されていない）。集約エラー（`N conflict(s) detected`）は item 起因の
   ため `subjectResult.errors[]` へ重複させない。exit 1 / 2 は内部意味のまま。
 - **generation**（観測記録）: **`apply` / `rollback` のみ**
@@ -160,14 +160,14 @@ specification_ja: |
   `generation.before/after` が運び、`result.info` には置かない（二重符号化回避）。
   **`reset` は generation スロット自体を出さない**（前世代 manifest を読んで FS を
   除去するだけの FS-only teardown で、profile / 世代は untouched・遷移が存在しない）。
-- **warnings**: planner の構造化 warning を W_NPUT_* に写像し、対象 target がインベントリ内
+- **warnings**: planner の構造化 warning を W_LAYAT_* に写像し、対象 target がインベントリ内
   なら該当 `item.warnings`、外（entry が config を離れた copy orphan 等）なら
-  `subjectResult.warnings` へ。コード: `W_NPUT_FOREIGN_SYMLINK`（foreign symlink 上書き）/
-  `W_NPUT_COPY_FOREIGN`（place-once の copy skip）/ `W_NPUT_STALE_MISMATCH`（記録不一致で
-  残した stale symlink）/ `W_NPUT_STALE_NON_SYMLINK`（symlink でないため残した stale
+  `subjectResult.warnings` へ。コード: `W_LAYAT_FOREIGN_SYMLINK`（foreign symlink 上書き）/
+  `W_LAYAT_COPY_FOREIGN`（place-once の copy skip）/ `W_LAYAT_STALE_MISMATCH`（記録不一致で
+  残した stale symlink）/ `W_LAYAT_STALE_NON_SYMLINK`（symlink でないため残した stale
   target）（後 2 者 = 保守的不変条件による keep・reset の kept-foreign も同じ。当該 item は
-  success のまま = 方針による不作為）/ `W_NPUT_COPY_ORPHAN`（copy orphan・subject 級）/
-  `W_NPUT_UNWOUND`（上記・subject 級）。`detail = {target}`。stderr の人間向けテキストは
+  success のまま = 方針による不作為）/ `W_LAYAT_COPY_ORPHAN`（copy orphan・subject 級）/
+  `W_LAYAT_UNWOUND`（上記・subject 級）。`detail = {target}`。stderr の人間向けテキストは
   常時併存。
 - **`reset` の changes**: 実際に除去したもののみ（symlink remove = `reversible:true` +
   `info.old` = 記録 dest、copy 削除 = `reversible:false`・info なし）。確認プロンプトで
