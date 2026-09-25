@@ -335,7 +335,7 @@ func runApplyAll(run *applyRun) error {
 	// 2.4 Stage 1: realize the selected configs' builds in parallel (read-only: --no-link, no gcroot).
 	//     A config that fails here never reaches stage 2 (→ skipFailedPrebuilds).
 	built := prebuildAll(selected, jobs, func(name string) (string, error) {
-		return dryBuildFunc(ep, system, name)("")
+		return realizeNoLink(ep, system, name, "["+name+"] ")
 	})
 
 	// 2.5 --dryrun is a side-effect-free preview (takes no flock / --set / pending gcroot; runs only build

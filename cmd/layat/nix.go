@@ -233,20 +233,26 @@ func buildFunc(e *entrypoint, system, name string) func(pending string) (string,
 // (dryrun is side-effect-free and creates no pending out-link; → ADR-0011, ADR-0023). The pending argument is unused.
 func dryBuildFunc(e *entrypoint, system, name string) func(pending string) (string, error) {
 	return func(string) (string, error) {
-		args := append([]string{"build"}, e.installableArgs(system, name, "")...)
-		args = append(args, "--no-link", "--print-out-paths")
-		out, err := runNixCapture(args...)
-		if err != nil {
-			return "", err
-		}
-		store := strings.TrimSpace(out)
-		if store == "" {
-			return "", fmt.Errorf("layat: nix build --print-out-paths was empty (%s)", e.label(system, name))
-		}
-		// --print-out-paths may return multiple lines (multi-output). The link-farm is a single output, so take the last line.
-		lines := strings.Split(store, "\n")
-		return strings.TrimSpace(lines[len(lines)-1]), nil
+		return realizeNoLink(e, system, name, "")
 	}
+}
+
+// realizeNoLink is dryBuildFunc's body, also run directly by apply --all's stage 1 with debugPrefix
+// "[<name>] " so its --debug disclosure lines stay attributable while builds run in parallel (→ runNixCapturePrefixed).
+func realizeNoLink(e *entrypoint, system, name, debugPrefix string) (string, error) {
+	args := append([]string{"build"}, e.installableArgs(system, name, "")...)
+	args = append(args, "--no-link", "--print-out-paths")
+	out, err := runNixCapturePrefixed(debugPrefix, args...)
+	if err != nil {
+		return "", err
+	}
+	store := strings.TrimSpace(out)
+	if store == "" {
+		return "", fmt.Errorf("layat: nix build --print-out-paths was empty (%s)", e.label(system, name))
+	}
+	// --print-out-paths may return multiple lines (multi-output). The link-farm is a single output, so take the last line.
+	lines := strings.Split(store, "\n")
+	return strings.TrimSpace(lines[len(lines)-1]), nil
 }
 
 // nixCmdError marks a failed internal nix invocation (eval / build), so the --json error
@@ -259,8 +265,14 @@ func (e *nixCmdError) Unwrap() error { return e.err }
 
 // runNixCapture captures and returns nix's stdout (for machine-readable output such as eval).
 func runNixCapture(args ...string) (string, error) {
+	return runNixCapturePrefixed("", args...)
+}
+
+// runNixCapturePrefixed is runNixCapture with debugPrefix put at the head of the --debug disclosure
+// line (apply --all's stage 1 passes "[<name>] "; → ADR-0039). nix's own stderr is captured either way.
+func runNixCapturePrefixed(debugPrefix string, args ...string) (string, error) {
 	if flagDebug {
-		fmt.Fprintf(os.Stderr, "layat: + nix %s\n", strings.Join(args, " "))
+		fmt.Fprintf(os.Stderr, "%slayat: + nix %s\n", debugPrefix, strings.Join(args, " "))
 	}
 	cmd := exec.Command("nix", args...)
 	var stdout, stderr bytes.Buffer
