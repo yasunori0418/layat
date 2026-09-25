@@ -136,9 +136,17 @@
             # この custom checkPhase は go test へ ldflags を渡さない。TestVersionDefault が
             # main.version="dev" を前提にしているため、default checkPhase へ戻すと（ldflags が test
             # ビルドにも波及し version が埋まって）当該テストが壊れる点に注意（→ ADR-0042）。
+            # -race で回す（apply --all の build / 配置 goroutine と集約のデータ競合を CI で検出する・
+            # → ADR-0039, Issue #155）。checkPhase は packages.layat 自身のものなので、CI（checks.layat）に
+            # 限らず利用者のソースビルドでも -race で走る。計測は x86_64-linux（16 論理 CPU・sandbox 内の
+            # checkPhase の go test 部分）で -race 無し 2.4s に対し -race 付き 9.4s、増分 7s は小さいと判断した。
+            # aarch64-linux / aarch64-darwin は未計測で CI matrix の leg が実走で確かめ、x86_64-darwin は
+            # CI 外。race detector は cgo を要し、x86_64-linux の buildGoModule sandbox では CGO_ENABLED=1 で
+            # 動くことを確認した
+            # （CGO_ENABLED=0 の goToolEnv を使う go-vet / golangci-lint とは別経路）。
             checkPhase = ''
               runHook preCheck
-              go test -coverprofile="$TMPDIR/cover.out" ./...
+              go test -race -coverprofile="$TMPDIR/cover.out" ./...
               go tool cover -func="$TMPDIR/cover.out" | tee "$TMPDIR/coverage-func.txt"
               runHook postCheck
             '';
