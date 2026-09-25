@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -232,29 +234,35 @@ func runApply(run *applyRun, name string) error {
 // printApplyPlan prints the apply --dryrun plan to stdout (it owns the machine-readable output; one action per line;
 // → docs/spec.md stream discipline, ADR-0023, ADR-0024). It is not suppressed even under silent-on-success (the stdout-ownership principle; → ADR-0031).
 // conflict lines are also put on stdout as part of the plan, with the exit code (exit 2) complementing machine discrimination.
-// Under --json it prints nothing: stdout belongs to the niface envelope alone, and gating here —
-// the single chokepoint for every call site — keeps that contract testable (→ ADR-0043 §2, issue #130).
+// Under --json it prints nothing: stdout belongs to the niface envelope alone, and gating in
+// fprintApplyPlan — the single chokepoint for every call site — keeps that contract testable (→ ADR-0043 §2, issue #130).
 func printApplyPlan(res *engine.Result) {
+	fprintApplyPlan(os.Stdout, res)
+}
+
+// fprintApplyPlan is printApplyPlan writing to w, so apply --all can buffer each config's plan while
+// the configs run in parallel and flush them in lexical order (→ ADR-0039).
+func fprintApplyPlan(w io.Writer, res *engine.Result) {
 	if flagJSON {
 		return
 	}
 	for _, t := range res.Placed {
-		fmt.Printf("place\t%s\n", t)
+		_, _ = fmt.Fprintf(w, "place\t%s\n", t)
 	}
 	for _, t := range res.Replaced {
-		fmt.Printf("replace\t%s\n", t)
+		_, _ = fmt.Fprintf(w, "replace\t%s\n", t)
 	}
 	for _, t := range res.Copied {
-		fmt.Printf("copy\t%s\n", t)
+		_, _ = fmt.Fprintf(w, "copy\t%s\n", t)
 	}
 	for _, t := range res.Removed {
-		fmt.Printf("remove\t%s\n", t)
+		_, _ = fmt.Fprintf(w, "remove\t%s\n", t)
 	}
 	for _, t := range res.BackedUp {
-		fmt.Printf("backup\t%s\n", t)
+		_, _ = fmt.Fprintf(w, "backup\t%s\n", t)
 	}
 	for _, c := range res.Conflicts {
-		fmt.Printf("conflict\t%s: %s\n", c.Entry.Target, c.Reason)
+		_, _ = fmt.Fprintf(w, "conflict\t%s: %s\n", c.Entry.Target, c.Reason)
 	}
 }
 
@@ -279,8 +287,9 @@ func applyOne(ep *entrypoint, system, name, rootKind, fixedRoot string) (*engine
 // It runs in two stages (→ ADR-0039): stage 1 realizes every selected config's build ahead of time on a
 // worker pool of --jobs, and stage 2 applies them on a worker pool of the same size, where the engine's
 // in-lock build is then a cache hit (the build stays inside the lock; stage 1 only warms the store).
-// Stage 2's execution order is not deterministic; results[] keeps the lexical order of the subjects,
-// which are registered before any config runs.
+// Stage 2's execution order is not deterministic, but its report and results[] are settled in lexical
+// order once every config is done (the engine's warnings and the in-lock nix build's own output and
+// --debug lines are not buffered; they still stream to stderr as they happen).
 // It continues with the rest on a partial failure, shows an aggregate at the end, and exits non-zero if any one fails.
 // Each selected config becomes one SubjectResult in results[], the same shape a named apply
 // emits with N=1 (→ issue #164); the failures below stay on their own subject, so a partial
@@ -484,6 +493,22 @@ func skipFailedPrebuilds(built map[string]prebuildResult, fn func(name string) (
 	}
 }
 
+// configOutput is one config's CLI output under apply --all: its -v report, dryrun plan and
+// failure / skip lines are buffered while the configs run in parallel, then flushed in lexical
+// order once all of them are done, so the output does not depend on the completion order
+// (→ ADR-0039). What the engine and nix write themselves — the engine's warnings, the in-lock nix
+// build's output and the --debug lines — is not buffered; it still reaches stderr as it happens.
+type configOutput struct {
+	stdout, stderr bytes.Buffer
+}
+
+// flush writes the buffered output to the process streams. It reads os.Stdout / os.Stderr at
+// flush time, so the streams stay where they are when the aggregate is written.
+func (o *configOutput) flush() {
+	_, _ = o.stdout.WriteTo(os.Stdout)
+	_, _ = o.stderr.WriteTo(os.Stderr)
+}
+
 // forEachConfig runs work(i) for every index of selected on a worker pool of min(jobs, len(selected))
 // goroutines and returns once all of them are done (apply --all's stage 2; → ADR-0039). Each work
 // call must touch only its own index's state, so the callers need no lock.
@@ -519,6 +544,7 @@ func beginSubjects(run *applyRun, selected []string) []*applySubject {
 
 // applyOutcome is one config's settled stage-2 outcome under apply --all.
 type applyOutcome struct {
+	out     configOutput
 	skipped bool  // a try-lock skip (a normal skip, not a failure)
 	err     error // the config's failure; nil on success and on a skip
 }
@@ -530,8 +556,8 @@ type applyOutcome struct {
 // way the rest continue (a seam that injects the apply implementation for testability, mirroring aggregateDryRun).
 //
 // The configs run on a worker pool of jobs (→ ADR-0039). Each worker settles only its own config —
-// its subject's payload and outcome — and the counts are gathered after every config is done, so
-// they need no lock.
+// its subject's payload and outcome, and its own output buffer — and the counts and output are
+// gathered in lexical order after every config is done, so neither depends on the completion order.
 //
 // Each config also gets its own niface subject, settled with that config's own outcome (→ issue
 // #164): the counts drive the aggregate exit code as before, while the subjects carry the per-config
@@ -555,23 +581,24 @@ func aggregateApply(run *applyRun, selected []string, jobs int, applyFn func(nam
 		switch {
 		case err == nil:
 			if flagVerbose {
-				reportResult(res, name)
+				fprintResult(&o.out.stderr, res, name)
 			}
 		case errors.Is(err, engine.ErrSkipped):
 			subjectErr = nil
 			o.skipped = true
 			if flagVerbose {
-				fmt.Fprintf(os.Stderr, "layat: skipped apply %s (another apply is in progress)\n", name)
+				fmt.Fprintf(&o.out.stderr, "layat: skipped apply %s (another apply is in progress)\n", name)
 			}
 		default:
 			o.err = err
 			// Do not swallow partial failures; print to stderr and continue (→ docs/spec.md "continue on partial failure").
-			fmt.Fprintf(os.Stderr, "layat: apply %s failed: %v\n", name, err)
+			fmt.Fprintf(&o.out.stderr, "layat: apply %s failed: %v\n", name, err)
 		}
 		subject.finish(subjectErr)
 	})
 	for i := range outcomes {
 		o := &outcomes[i]
+		o.out.flush()
 		switch {
 		case o.skipped:
 			skipped++
@@ -586,6 +613,7 @@ func aggregateApply(run *applyRun, selected []string, jobs int, applyFn func(nam
 
 // dryRunOutcome is one config's settled read-only outcome under apply --all --dryrun.
 type dryRunOutcome struct {
+	out      configOutput
 	err      error // the config's build / eval failure
 	conflict bool  // the plan has at least one conflict
 }
@@ -593,7 +621,8 @@ type dryRunOutcome struct {
 // aggregateDryRun runs each selected config read-only via applyDry, prints the plan to stdout,
 // aggregates error / conflict, and returns the exit code (a seam that injects the apply implementation for testability).
 // It does not swallow a config's build / eval failure (error); it prints to stderr, continues, and reflects it in the final code.
-// Like aggregateApply it runs the configs on a worker pool of jobs (→ ADR-0039).
+// Like aggregateApply it runs the configs on a worker pool of jobs and prints the plans and failures in
+// lexical order once every config is done (→ ADR-0039).
 //
 // Like aggregateApply it settles one niface subject per config, riding the same payload builder as
 // the real apply so the dryrun's SubjectResult is the same shape by construction (→ issue #164). A
@@ -609,12 +638,12 @@ func aggregateDryRun(run *applyRun, selected []string, jobs int, applyDry func(n
 		if err != nil {
 			o.err = err
 			// Do not swallow partial failures; print to stderr and continue (→ docs/spec.md "continue on partial failure").
-			fmt.Fprintf(os.Stderr, "layat: apply %s --dryrun failed: %v\n", name, err)
+			fmt.Fprintf(&o.out.stderr, "layat: apply %s --dryrun failed: %v\n", name, err)
 			subject.finish(err)
 			return
 		}
 		attachMutationPayload(subject, res, nil)
-		printApplyPlan(res)
+		fprintApplyPlan(&o.out.stdout, res)
 		o.conflict = len(res.Conflicts) > 0
 		// No subject-level error either way: a conflict is already failed items carrying
 		// E_LAYAT_COLLISION, and the payload's item-borne mark is what puts this subject in error
@@ -625,6 +654,7 @@ func aggregateDryRun(run *applyRun, selected []string, jobs int, applyDry func(n
 	var anyError, anyConflict bool
 	for i := range outcomes {
 		o := &outcomes[i]
+		o.out.flush()
 		anyError = anyError || o.err != nil
 		anyConflict = anyConflict || o.conflict
 	}
@@ -691,29 +721,35 @@ func ensureNoRootFilter(modifier string) error {
 
 // reportResult prints the placement report to stderr (stdout is reserved for machine-readable output; → ADR-0023).
 func reportResult(res *engine.Result, name string) {
-	fmt.Fprintf(os.Stderr, "layat: apply %s done (root=%s)\n", name, res.Root)
+	fprintResult(os.Stderr, res, name)
+}
+
+// fprintResult is reportResult writing to w, so apply --all can buffer each config's report while
+// the configs run in parallel and flush them in lexical order (→ ADR-0039).
+func fprintResult(w io.Writer, res *engine.Result, name string) {
+	_, _ = fmt.Fprintf(w, "layat: apply %s done (root=%s)\n", name, res.Root)
 	for _, t := range res.Placed {
-		fmt.Fprintf(os.Stderr, "  placed   %s\n", t)
+		_, _ = fmt.Fprintf(w, "  placed   %s\n", t)
 	}
 	for _, t := range res.Replaced {
-		fmt.Fprintf(os.Stderr, "  replaced %s\n", t)
+		_, _ = fmt.Fprintf(w, "  replaced %s\n", t)
 	}
 	for _, t := range res.Copied {
-		fmt.Fprintf(os.Stderr, "  copied   %s\n", t)
+		_, _ = fmt.Fprintf(w, "  copied   %s\n", t)
 	}
 	for _, t := range res.Recopied {
-		fmt.Fprintf(os.Stderr, "  recopied %s\n", t)
+		_, _ = fmt.Fprintf(w, "  recopied %s\n", t)
 	}
 	for _, t := range res.Removed {
-		fmt.Fprintf(os.Stderr, "  removed  %s\n", t)
+		_, _ = fmt.Fprintf(w, "  removed  %s\n", t)
 	}
 	for _, t := range res.Pruned {
-		fmt.Fprintf(os.Stderr, "  pruned   %s\n", t)
+		_, _ = fmt.Fprintf(w, "  pruned   %s\n", t)
 	}
 	for _, t := range res.BackedUp {
-		fmt.Fprintf(os.Stderr, "  backedUp %s\n", t)
+		_, _ = fmt.Fprintf(w, "  backedUp %s\n", t)
 	}
 	if len(res.Placed)+len(res.Replaced)+len(res.Copied)+len(res.Recopied)+len(res.Removed)+len(res.Pruned)+len(res.BackedUp) == 0 {
-		fmt.Fprintln(os.Stderr, "  no-op")
+		_, _ = fmt.Fprintln(w, "  no-op")
 	}
 }
