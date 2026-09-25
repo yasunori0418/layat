@@ -146,17 +146,19 @@ func (e *entrypoint) namespaceLabel(system string) string {
 }
 
 // rootInfo is one config's root info (the value from the batch eval). It has Root only when fixed.
+// Targets is the config's normalized target list, read only by apply --all's conflict preflight (→ ADR-0038).
 type rootInfo struct {
-	RootKind string `json:"rootKind"`
-	Root     string `json:"root"`
+	RootKind string   `json:"rootKind"`
+	Root     string   `json:"root"`
+	Targets  []string `json:"targets"`
 }
 
 // evalAllRoots gets the config name → rootInfo map for `apply --all` / `gitignore --all`
 // in a single `nix eval` (fixing eval process launches at N→1; → docs/spec.md execution flow, ADR-0024).
-// It is a cheap eval that does no build and reads only the passthru rootKind (+ root for fixed).
+// It is a cheap eval that does no build and reads only the passthru rootKind + targets (+ root for fixed; → ADR-0038).
 func evalAllRoots(e *entrypoint, system string) (map[string]rootInfo, error) {
-	// Extract only rootKind (+ root if fixed) from each config under layat.<system>.
-	apply := `cs: builtins.mapAttrs (_: c: { rootKind = c.rootKind; } // (if c ? root then { root = c.root; } else {})) cs`
+	// Extract only rootKind + targets (+ root if fixed) from each config under layat.<system>.
+	apply := `cs: builtins.mapAttrs (_: c: { rootKind = c.rootKind; targets = c.targets; } // (if c ? root then { root = c.root; } else {})) cs`
 	args := append([]string{"eval"}, e.namespaceArgs(system)...)
 	args = append(args, "--apply", apply, "--json")
 	out, err := runNixCapture(args...)

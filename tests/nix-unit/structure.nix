@@ -10,6 +10,23 @@ let
   };
   norm = root: entries: layat.normalizeManifest { inherit lib root entries; };
 
+  # passthru 検証用の fake pkgs（farm-entries.nix と同じイディオム）。runCommandLocal の attrs から
+  # passthru だけを持ち帰り、derivation を組まずに `mkManifest` の passthru を純評価で取り出す。
+  fakePkgs = {
+    inherit lib;
+    writeText = name: _text: "/nix/store/fake-${name}";
+    runCommandLocal =
+      _name: attrs: _script:
+      attrs.passthru;
+  };
+  passthruOf =
+    entries:
+    layat.mkManifest {
+      pkgs = fakePkgs;
+      root = layat.projectRoot;
+      inherit entries;
+    };
+
   basic = norm layat.projectRoot {
     ".claude/skills/nix" = {
       src = fakeSrc;
@@ -78,5 +95,40 @@ in
       )
         ? _layatMarker;
     expected = false;
+  };
+
+  # passthru targets は正規化後 target を attrNames（キー）の辞書順で返す（→ ADR-0038）。
+  testPassthruTargetsLexical = {
+    expr =
+      (passthruOf {
+        "b/two" = {
+          src = fakeSrc;
+        };
+        "a/one" = {
+          src = fakeSrc;
+        };
+      }).targets;
+    expected = [
+      "a/one"
+      "b/two"
+    ];
+  };
+
+  # 明示 target 上書きはキーではなく上書き後の値で現れ、並びはキー順のまま（→ ADR-0038）。
+  testPassthruTargetsOverride = {
+    expr =
+      (passthruOf {
+        a = {
+          src = fakeSrc;
+          target = "zzz/override";
+        };
+        b = {
+          src = fakeSrc;
+        };
+      }).targets;
+    expected = [
+      "zzz/override"
+      "b"
+    ];
   };
 }
