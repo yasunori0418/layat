@@ -110,13 +110,18 @@ let
       farmEntries = internal.farmEntries lib norm.entries;
 
       anchorLines = internal.anchorLines lib farmEntries;
+
+      # Normalized targets in attrNames lexical order, for apply --all's cross-config conflict preflight (→ ADR-0038).
+      targets = map (e: e.target) norm.entries;
     in
     # The derivation contains manifest.json (the engine's input contract) + a symlink farm to the store src (GC anchors) (→ ADR-0006).
     pkgs.runCommandLocal "layat-manifest"
       {
-        # The CLI reads this via `nix eval … .rootKind` before build (→ ADR-0023).
+        # The CLI reads this via `nix eval … .rootKind` before build (→ ADR-0023);
+        # apply --all also reads `targets` in its batch eval (→ ADR-0038).
         passthru = {
           inherit (norm.root) rootKind;
+          inherit targets;
         }
         // lib.optionalAttrs (norm.root ? root) { inherit (norm.root) root; };
       }
