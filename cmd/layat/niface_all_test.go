@@ -83,7 +83,7 @@ func placedResult(name string) *engine.Result {
 // (→ ADR-0043 §6).
 func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 	run, buf := newApplyTestRun()
-	applied, skipped, failures := aggregateApply(run, []string{"a", "b", "c"}, func(name string) (*engine.Result, error) {
+	applied, skipped, failures := aggregateApply(run, []string{"a", "b", "c"}, 4, func(name string) (*engine.Result, error) {
 		if name == "b" {
 			return nil, io.ErrUnexpectedEOF
 		}
@@ -145,7 +145,7 @@ func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 	run, buf := newApplyTestRun()
 	failure := errors.New("layat: symlink t/b: permission denied")
-	_, _, failures := aggregateApply(run, []string{"a", "b", "c"}, func(name string) (*engine.Result, error) {
+	_, _, failures := aggregateApply(run, []string{"a", "b", "c"}, 4, func(name string) (*engine.Result, error) {
 		if name == "b" {
 			// The engine's partial result: the entry it stopped on, plus the planned entry it
 			// never reached (→ niface ADR-0016's reached-state partition).
@@ -216,7 +216,7 @@ func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 func TestApplyAllSharedTargetKeepsItemIDsResultScoped(t *testing.T) {
 	run, buf := newApplyTestRun()
 	shared := manifest.Entry{Target: ".config/shared"}
-	aggregateApply(run, []string{"a", "b"}, func(name string) (*engine.Result, error) {
+	aggregateApply(run, []string{"a", "b"}, 4, func(name string) (*engine.Result, error) {
 		res := placedResult(name)
 		res.Entries = []manifest.Entry{shared}
 		res.Placed = []string{shared.Target}
@@ -257,7 +257,7 @@ func TestApplyAllSharedTargetKeepsItemIDsResultScoped(t *testing.T) {
 // code says otherwise (→ docs/spec.md exit code table).
 func TestApplyAllSkipIsNotAFailure(t *testing.T) {
 	run, buf := newApplyTestRun()
-	applied, skipped, failures := aggregateApply(run, []string{"a", "b"}, func(name string) (*engine.Result, error) {
+	applied, skipped, failures := aggregateApply(run, []string{"a", "b"}, 4, func(name string) (*engine.Result, error) {
 		if name == "b" {
 			// The engine returns its result alongside ErrSkipped (→ engine.apply's try-lock arm
 			// sets Skipped and returns a.result), so a payload is attached here too. The try-lock
@@ -290,7 +290,7 @@ func TestApplyAllSkipIsNotAFailure(t *testing.T) {
 // degrade into an absent key or an error.
 func TestApplyAllEmptySelectionEmitsEmptyResults(t *testing.T) {
 	run, buf := newApplyTestRun()
-	if applied, skipped, failures := aggregateApply(run, nil, func(string) (*engine.Result, error) {
+	if applied, skipped, failures := aggregateApply(run, nil, 4, func(string) (*engine.Result, error) {
 		t.Fatal("apply must not run for an empty selection")
 		return nil, nil
 	}); applied+skipped+failures != 0 {
@@ -325,7 +325,7 @@ func TestApplyAllDryRunConflictIsItemBorne(t *testing.T) {
 	run.dryRun = true
 	var code int
 	captureStdout(t, func() {
-		code = aggregateDryRun(run, []string{"a", "b"}, func(name string) (*engine.Result, error) {
+		code = aggregateDryRun(run, []string{"a", "b"}, 4, func(name string) (*engine.Result, error) {
 			if name == "b" {
 				conflicted := placedResult(name)
 				conflicted.Placed = nil
@@ -395,7 +395,7 @@ func TestApplyAllDryRunMixedErrorAndConflict(t *testing.T) {
 	buildFailure := errors.New("layat: nix build failed")
 	var code int
 	captureStdout(t, func() {
-		code = aggregateDryRun(run, []string{"broken", "clashing", "clean"}, func(name string) (*engine.Result, error) {
+		code = aggregateDryRun(run, []string{"broken", "clashing", "clean"}, 4, func(name string) (*engine.Result, error) {
 			switch name {
 			case "broken":
 				return nil, buildFailure
@@ -465,7 +465,7 @@ func TestApplyAllSingleConfigMatchesNamedApply(t *testing.T) {
 
 	// The --all path at N=1: the same subject, settled by the aggregator itself.
 	all, allBuf := newApplyTestRun()
-	aggregateApply(all, []string{"default"}, func(string) (*engine.Result, error) { return res, nil })
+	aggregateApply(all, []string{"default"}, 4, func(string) (*engine.Result, error) { return res, nil })
 	if err := all.emit(nil); err != nil {
 		t.Fatalf("emit all: %v", err)
 	}
@@ -498,7 +498,7 @@ func TestApplyAllSingleConfigFailureMatchesNamedApply(t *testing.T) {
 	}
 
 	all, allBuf := newApplyTestRun()
-	aggregateApply(all, []string{"default"}, func(string) (*engine.Result, error) { return newRes(), failure })
+	aggregateApply(all, []string{"default"}, 4, func(string) (*engine.Result, error) { return newRes(), failure })
 	// --all reports its own aggregate error, whose text differs from the config's; the subject is
 	// already settled, so this must not reach it.
 	if err := all.emit(&exitCodeError{code: 1, msg: "layat: apply --all: 1 config(s) failed"}); err != nil {
