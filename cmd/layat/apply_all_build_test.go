@@ -75,7 +75,7 @@ func TestPrebuildAllBoundsConcurrency(t *testing.T) {
 // configs stage 2 was actually called for.
 func stagedApply(run *applyRun, selected []string, jobs int, build func(string) (string, error)) (applied, skipped, failures int, stage2 []string) {
 	built := prebuildAll(selected, jobs, build)
-	applied, skipped, failures = aggregateApply(run, selected, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
+	applied, skipped, failures = aggregateApply(run, selected, 1, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
 		stage2 = append(stage2, name)
 		if name == "skip" {
 			return nil, engine.ErrSkipped
@@ -142,7 +142,7 @@ func TestStageOneFailureSkipsDryRunStageTwo(t *testing.T) {
 	var code int
 	captureStdout(t, func() {
 		captureStderr(t, func() {
-			code = aggregateDryRun(run, []string{"a", "b"}, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
+			code = aggregateDryRun(run, []string{"a", "b"}, 1, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
 				stage2 = append(stage2, name)
 				return placedResult(name), nil
 			}))
