@@ -18,7 +18,9 @@ specification: |
   processing SHALL be the same whether the subpath denotes a file or a directory. Two
   different configs (profiles) aiming at the same target SHALL be treated as something not
   meant to happen; the last writer SHALL be tolerated and the overwriting of a foreign
-  symlink SHALL be made visible by the warning.
+  symlink SHALL be made visible by the warning. As an exception, a conflict between configs
+  selected by one `apply --all` of a single entrypoint SHALL be stopped before the build by
+  the preflight of REQ-38506419-c23d-4fce-b167-30715ce6a69d.
 specification_ja: |
   symlink の配置にあたり engine は、まず target の親ディレクトリを作成し（`mkdir -p` 相当）、
   次に target の既存 symlink を扱わなければならない。当該 entry 自身の前世代 manifest が記録
@@ -30,7 +32,9 @@ specification_ja: |
   ファイル・
   ディレクトリのいずれでも処理は同じでなければならない。別 config（別 profile）が同一
   target を狙うことは起きない前提として扱わなければならず、後勝ちを許容しつつ foreign
-  symlink の上書きは warning で可視化しなければならない。
+  symlink の上書きは warning で可視化しなければならない。例外として、同一 entrypoint の
+  `apply --all` で選択された config 間の衝突は REQ-38506419-c23d-4fce-b167-30715ce6a69d の前段検査で build 前に
+  止まらなければならない。
 ---
 # REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557: symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする
 
