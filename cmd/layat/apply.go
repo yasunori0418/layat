@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 
@@ -14,7 +15,10 @@ import (
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
-var flagApplyAll bool // --all: apply all of layat.* in lexical order (narrowable by root filter)
+var (
+	flagApplyAll  bool // --all: apply all of layat.* in lexical order (narrowable by root filter)
+	flagApplyJobs int  // --jobs: apply --all's stage-1 build concurrency (0 = the logical CPU count; → ADR-0039)
+)
 
 // applyResultInfo / applyEnvInfo are apply's niface info slots (→ issue #196). apply's record
 // lives entirely in items / changes, so both are empty seat types held as nil pointers: the
@@ -71,6 +75,11 @@ func newApplyCmd() *cobra.Command {
 			if err := ensureNoRootFilter("apply --all"); err != nil {
 				return err
 			}
+			// Changed, not the value: the default 0 is itself a valid --all setting, so an explicit
+			// --jobs 0 on a named apply must be rejected too.
+			if cmd.Flags().Changed("jobs") {
+				return fmt.Errorf("layat: --jobs is a modifier for apply --all")
+			}
 			name := "default"
 			if len(args) == 1 {
 				name = args[0]
@@ -79,6 +88,8 @@ func newApplyCmd() *cobra.Command {
 		},
 	}
 	cmd.Flags().BoolVar(&flagApplyAll, "all", false, "Apply all of layat.* in lexical order (continues on partial failure; exits non-zero if any fails)")
+	cmd.Flags().IntVar(&flagApplyJobs, "jobs", 0,
+		"With --all, build up to N configs in parallel before placing them in lexical order (0 = the logical CPU count; see ADR-0039)")
 	cmd.Flags().BoolVar(&flagRecopy, "recopy", false,
 		"Unconditionally re-copy every copy target from src, overwriting (discards local edits; see ADR-0020)")
 	cmd.Flags().BoolVar(&flagDryrun, "dryrun", false,
@@ -271,6 +282,9 @@ func applyOne(ep *entrypoint, system, name, rootKind, fixedRoot string) (*engine
 func runApplyAll(run *applyRun) error {
 	filter, err := selectedRootFilter()
 	if err != nil {
+		return err
+	}
+	if _, err := resolveApplyJobs(flagApplyJobs); err != nil {
 		return err
 	}
 	ep, err := discoverEntrypoint(flagFile)
@@ -519,6 +533,19 @@ func selectedRootFilter() (string, error) {
 		return "", nil
 	}
 	return modes[0], nil
+}
+
+// resolveApplyJobs resolves --jobs to apply --all's stage-1 build concurrency: 0 (the default) is
+// the logical CPU count, a positive value is taken as-is, and a negative one is an error (→ ADR-0039).
+func resolveApplyJobs(jobs int) (int, error) {
+	switch {
+	case jobs < 0:
+		return 0, fmt.Errorf("layat: --jobs must be 0 (the logical CPU count) or a positive integer, got %d", jobs)
+	case jobs == 0:
+		return runtime.NumCPU(), nil
+	default:
+		return jobs, nil
+	}
 }
 
 // ensureNoRootFilter errors when a root filter is used outside --all
