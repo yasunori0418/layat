@@ -6,6 +6,7 @@ status: 採用
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。複数 profile / manifest 処理の高速化要望"
 justifies:
   - "REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af"
+  - "REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d"
 revises:
   - "ADR-0016"
 references:
