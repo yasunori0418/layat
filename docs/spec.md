@@ -101,7 +101,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 ### サブコマンド体系
 
 - [REQ-c2d44626-d8f4-446a-a80a-319a500129b4](requirements/20260802-c2d44626-d8f4-446a-a80a-319a500129b4-apply-config-selection.md) — apply の config 選択は name 省略で default・明示で単一・--all で全件
-- [REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af](requirements/20260802-4cbd9a0d-9f94-4747-8881-56020dc6d5af-apply-all-lexical-order-continue.md) — apply --all は辞書順に適用し部分失敗でも続行して最後に集約する
+- [REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af](requirements/20260802-4cbd9a0d-9f94-4747-8881-56020dc6d5af-apply-all-lexical-order-continue.md) — apply --all は選択された config を並列に適用し、集約表示と results[] を辞書順にし、部分失敗でも続行して最後に集約する
 - [REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b](requirements/20260802-d95b814f-aa7a-470e-9320-c14f9c14da7b-apply-all-root-mode-filter.md) — --all は root モードフィルタで対象 config を絞れる
 - [REQ-38506419-c23d-4fce-b167-30715ce6a69d](requirements/20260926-38506419-c23d-4fce-b167-30715ce6a69d-apply-all-cross-config-preflight.md) — apply --all は build 前に選択 config 間の target 衝突を検出して停止する
 - [REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d](requirements/20260926-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d-apply-all-parallel-build-jobs.md) — apply --all は build を --jobs の worker pool で先行並列実行し build 失敗 config を部分失敗として集約する
