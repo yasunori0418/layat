@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"sort"
 	"strings"
+	"sync"
 
 	"github.com/spf13/cobra"
 
@@ -275,6 +276,9 @@ func applyOne(ep *entrypoint, system, name, rootKind, fixedRoot string) (*engine
 
 // runApplyAll applies all of the entrypoint's layat.* in lexical order (→ docs/spec.md execution flow, ADR-0016, ADR-0024).
 // rootKind and targets are taken in a single batch eval (collapsing process launches N→1); build is per config for atomicity.
+// It runs in two stages (→ ADR-0039): stage 1 realizes every selected config's build ahead of time on a
+// worker pool of --jobs, and stage 2 applies them one by one in lexical order, where the engine's
+// in-lock build is then a cache hit (the build stays inside the lock; stage 1 only warms the store).
 // It continues with the rest on a partial failure, shows an aggregate at the end, and exits non-zero if any one fails.
 // Each selected config becomes one SubjectResult in results[], the same shape a named apply
 // emits with N=1 (→ issue #164); the failures below stay on their own subject, so a partial
@@ -284,7 +288,8 @@ func runApplyAll(run *applyRun) error {
 	if err != nil {
 		return err
 	}
-	if _, err := resolveApplyJobs(flagApplyJobs); err != nil {
+	jobs, err := resolveApplyJobs(flagApplyJobs)
+	if err != nil {
 		return err
 	}
 	ep, err := discoverEntrypoint(flagFile)
@@ -327,18 +332,24 @@ func runApplyAll(run *applyRun) error {
 		return err
 	}
 
+	// 2.4 Stage 1: realize the selected configs' builds in parallel (read-only: --no-link, no gcroot).
+	//     A config that fails here never reaches stage 2 (→ skipFailedPrebuilds).
+	built := prebuildAll(selected, jobs, func(name string) (string, error) {
+		return dryBuildFunc(ep, system, name)("")
+	})
+
 	// 2.5 --dryrun is a side-effect-free preview (takes no flock / --set / pending gcroot; runs only build
 	//     read-only). It aggregates each selected config's plan to stdout and decides the exit code by
 	//     priority error(1) > conflict(2) > 0 (→ docs/spec.md, ADR-0024).
 	if flagDryrun {
-		return runApplyAllDryRun(run, ep, system, selected, roots)
+		return runApplyAllDryRun(run, ep, system, selected, roots, built)
 	}
 
-	// 3. Apply each config independently. Continue on partial failure and aggregate failures (each config is independently atomic).
-	applied, skipped, failures := aggregateApply(run, selected, func(name string) (*engine.Result, error) {
+	// 3. Stage 2: apply each config independently. Continue on partial failure and aggregate failures (each config is independently atomic).
+	applied, skipped, failures := aggregateApply(run, selected, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
 		ri := roots[name]
 		return applyOne(ep, system, name, ri.RootKind, ri.Root)
-	})
+	}))
 
 	// 4. Aggregate report and exit code (priority error(1) > conflict(2) > 0; → docs/spec.md, ADR-0024).
 	if flagVerbose {
@@ -398,8 +409,9 @@ func detectCrossConfigConflicts(roots map[string]rootInfo, selected []string, ro
 // aggregates the plan to stdout (taking none of FS writes / flock / --set / pending gcroot; → ADR-0023).
 // It decides the exit code by priority error(1) > conflict(2) > 0 (→ docs/spec.md, ADR-0024) and carries it in an
 // empty-msg exitError (symmetric with the single apply --dryrun conflict=2; main exits with the code alone).
-func runApplyAllDryRun(run *applyRun, ep *entrypoint, system string, selected []string, roots map[string]rootInfo) error {
-	code := aggregateDryRun(run, selected, func(name string) (*engine.Result, error) {
+// Stage 1 (built) is shared with the real apply; a config whose build failed there is not planned.
+func runApplyAllDryRun(run *applyRun, ep *entrypoint, system string, selected []string, roots map[string]rootInfo, built map[string]prebuildResult) error {
+	code := aggregateDryRun(run, selected, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
 		ri := roots[name]
 		return engine.Apply(engine.Options{
 			Name:         name,
@@ -412,11 +424,61 @@ func runApplyAllDryRun(run *applyRun, ep *entrypoint, system string, selected []
 			DryRun:       true,
 			Build:        dryBuildFunc(ep, system, name),
 		})
-	})
+	}))
 	if code == 0 {
 		return nil
 	}
 	return &exitError{code: code}
+}
+
+// prebuildResult is one config's stage-1 outcome: the realized link-farm store path, or the build error.
+type prebuildResult struct {
+	storePath string
+	err       error
+}
+
+// prebuildAll is apply --all's stage 1 (→ ADR-0039): it runs build for every selected config on a
+// worker pool of min(jobs, len(selected)) goroutines and collects config name → outcome. It does not
+// stop on a failure (each config's outcome is independent), and returns only after every build ends.
+// Workers write to their own slot of an index-addressed slice, so the collection needs no lock.
+func prebuildAll(selected []string, jobs int, build func(name string) (string, error)) map[string]prebuildResult {
+	results := make([]prebuildResult, len(selected))
+	queue := make(chan int)
+	var wg sync.WaitGroup
+	for range min(jobs, len(selected)) {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for i := range queue {
+				store, err := build(selected[i])
+				results[i] = prebuildResult{storePath: store, err: err}
+			}
+		}()
+	}
+	for i := range selected {
+		queue <- i
+	}
+	close(queue)
+	wg.Wait()
+
+	built := make(map[string]prebuildResult, len(selected))
+	for i, name := range selected {
+		built[name] = results[i]
+	}
+	return built
+}
+
+// skipFailedPrebuilds wraps stage 2's per-config function so a config whose stage-1 build failed
+// returns that error without being applied. The aggregators then settle it like any other failure —
+// its own subject in selection order, counted, and reported on stderr — so results[] keeps the
+// lexical order of a serial run.
+func skipFailedPrebuilds(built map[string]prebuildResult, fn func(name string) (*engine.Result, error)) func(name string) (*engine.Result, error) {
+	return func(name string) (*engine.Result, error) {
+		if err := built[name].err; err != nil {
+			return nil, err
+		}
+		return fn(name)
+	}
 }
 
 // aggregateApply runs each selected config via applyFn and aggregates applied / skipped / failure counts,
