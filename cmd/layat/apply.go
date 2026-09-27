@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -17,8 +19,8 @@ import (
 )
 
 var (
-	flagApplyAll  bool // --all: apply all of layat.* in lexical order (narrowable by root filter)
-	flagApplyJobs int  // --jobs: apply --all's stage-1 build concurrency (0 = the logical CPU count; → ADR-0039)
+	flagApplyAll  bool // --all: apply all of layat.* in parallel, reported in lexical order (narrowable by root filter)
+	flagApplyJobs int  // --jobs: apply --all's build and placement concurrency (0 = the logical CPU count; → ADR-0039)
 )
 
 // applyResultInfo / applyEnvInfo are apply's niface info slots (→ issue #196). apply's record
@@ -60,7 +62,7 @@ func newApplyCmd() *cobra.Command {
 		Short: "Build layat.<name>, create a new generation, and apply it (defaults to layat.default)",
 		Long: "Build and place the entrypoint's layat.<name>. " +
 			"Omitting name applies layat.default (the flake default convention; an error if undefined). " +
-			"--all applies all of layat.* in lexical order; --project-root / --home-root / --system-root narrow by root mode.",
+			"--all applies all of layat.* in parallel and reports them in lexical order; --project-root / --home-root / --system-root narrow by root mode.",
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// beginApplyRun also publishes the run to nifaceReport, so main emits the envelope
@@ -88,9 +90,9 @@ func newApplyCmd() *cobra.Command {
 			return runApply(run, name)
 		},
 	}
-	cmd.Flags().BoolVar(&flagApplyAll, "all", false, "Apply all of layat.* in lexical order (continues on partial failure; exits non-zero if any fails)")
+	cmd.Flags().BoolVar(&flagApplyAll, "all", false, "Apply all of layat.* in parallel, reporting in lexical order (continues on partial failure; exits non-zero if any fails)")
 	cmd.Flags().IntVar(&flagApplyJobs, "jobs", 0,
-		"With --all, build up to N configs in parallel before placing them in lexical order (0 = the logical CPU count; see ADR-0039)")
+		"With --all, build and then place up to N configs in parallel (0 = the logical CPU count; see ADR-0039)")
 	cmd.Flags().BoolVar(&flagRecopy, "recopy", false,
 		"Unconditionally re-copy every copy target from src, overwriting (discards local edits; see ADR-0020)")
 	cmd.Flags().BoolVar(&flagDryrun, "dryrun", false,
@@ -232,29 +234,35 @@ func runApply(run *applyRun, name string) error {
 // printApplyPlan prints the apply --dryrun plan to stdout (it owns the machine-readable output; one action per line;
 // → docs/spec.md stream discipline, ADR-0023, ADR-0024). It is not suppressed even under silent-on-success (the stdout-ownership principle; → ADR-0031).
 // conflict lines are also put on stdout as part of the plan, with the exit code (exit 2) complementing machine discrimination.
-// Under --json it prints nothing: stdout belongs to the niface envelope alone, and gating here —
-// the single chokepoint for every call site — keeps that contract testable (→ ADR-0043 §2, issue #130).
+// Under --json it prints nothing: stdout belongs to the niface envelope alone, and gating in
+// fprintApplyPlan — the single chokepoint for every call site — keeps that contract testable (→ ADR-0043 §2, issue #130).
 func printApplyPlan(res *engine.Result) {
+	fprintApplyPlan(os.Stdout, res)
+}
+
+// fprintApplyPlan is printApplyPlan writing to w, so apply --all can buffer each config's plan while
+// the configs run in parallel and flush them in lexical order (→ ADR-0039).
+func fprintApplyPlan(w io.Writer, res *engine.Result) {
 	if flagJSON {
 		return
 	}
 	for _, t := range res.Placed {
-		fmt.Printf("place\t%s\n", t)
+		_, _ = fmt.Fprintf(w, "place\t%s\n", t)
 	}
 	for _, t := range res.Replaced {
-		fmt.Printf("replace\t%s\n", t)
+		_, _ = fmt.Fprintf(w, "replace\t%s\n", t)
 	}
 	for _, t := range res.Copied {
-		fmt.Printf("copy\t%s\n", t)
+		_, _ = fmt.Fprintf(w, "copy\t%s\n", t)
 	}
 	for _, t := range res.Removed {
-		fmt.Printf("remove\t%s\n", t)
+		_, _ = fmt.Fprintf(w, "remove\t%s\n", t)
 	}
 	for _, t := range res.BackedUp {
-		fmt.Printf("backup\t%s\n", t)
+		_, _ = fmt.Fprintf(w, "backup\t%s\n", t)
 	}
 	for _, c := range res.Conflicts {
-		fmt.Printf("conflict\t%s: %s\n", c.Entry.Target, c.Reason)
+		_, _ = fmt.Fprintf(w, "conflict\t%s: %s\n", c.Entry.Target, c.Reason)
 	}
 }
 
@@ -274,11 +282,14 @@ func applyOne(ep *entrypoint, system, name, rootKind, fixedRoot string) (*engine
 	})
 }
 
-// runApplyAll applies all of the entrypoint's layat.* in lexical order (→ docs/spec.md execution flow, ADR-0016, ADR-0024).
+// runApplyAll applies all of the entrypoint's layat.* (→ docs/spec.md execution flow, ADR-0024, ADR-0039).
 // rootKind and targets are taken in a single batch eval (collapsing process launches N→1); build is per config for atomicity.
 // It runs in two stages (→ ADR-0039): stage 1 realizes every selected config's build ahead of time on a
-// worker pool of --jobs, and stage 2 applies them one by one in lexical order, where the engine's
+// worker pool of --jobs, and stage 2 applies them on a worker pool of the same size, where the engine's
 // in-lock build is then a cache hit (the build stays inside the lock; stage 1 only warms the store).
+// Stage 2's execution order is not deterministic, but its report and results[] are settled in lexical
+// order once every config is done (the engine's warnings and the in-lock nix build's own output and
+// --debug lines are not buffered; they still stream to stderr as they happen).
 // It continues with the rest on a partial failure, shows an aggregate at the end, and exits non-zero if any one fails.
 // Each selected config becomes one SubjectResult in results[], the same shape a named apply
 // emits with N=1 (→ issue #164); the failures below stay on their own subject, so a partial
@@ -342,11 +353,11 @@ func runApplyAll(run *applyRun) error {
 	//     read-only). It aggregates each selected config's plan to stdout and decides the exit code by
 	//     priority error(1) > conflict(2) > 0 (→ docs/spec.md, ADR-0024).
 	if flagDryrun {
-		return runApplyAllDryRun(run, ep, system, selected, roots, built)
+		return runApplyAllDryRun(run, ep, system, selected, jobs, roots, built)
 	}
 
-	// 3. Stage 2: apply each config independently. Continue on partial failure and aggregate failures (each config is independently atomic).
-	applied, skipped, failures := aggregateApply(run, selected, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
+	// 3. Stage 2: apply the configs in parallel, each independently. Continue on partial failure and aggregate failures (each config is independently atomic).
+	applied, skipped, failures := aggregateApply(run, selected, jobs, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
 		ri := roots[name]
 		return applyOne(ep, system, name, ri.RootKind, ri.Root)
 	}))
@@ -410,8 +421,9 @@ func detectCrossConfigConflicts(roots map[string]rootInfo, selected []string, ro
 // It decides the exit code by priority error(1) > conflict(2) > 0 (→ docs/spec.md, ADR-0024) and carries it in an
 // empty-msg exitError (symmetric with the single apply --dryrun conflict=2; main exits with the code alone).
 // Stage 1 (built) is shared with the real apply; a config whose build failed there is not planned.
-func runApplyAllDryRun(run *applyRun, ep *entrypoint, system string, selected []string, roots map[string]rootInfo, built map[string]prebuildResult) error {
-	code := aggregateDryRun(run, selected, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
+// The read-only applies run on the same --jobs pool as the real apply's stage 2.
+func runApplyAllDryRun(run *applyRun, ep *entrypoint, system string, selected []string, jobs int, roots map[string]rootInfo, built map[string]prebuildResult) error {
+	code := aggregateDryRun(run, selected, jobs, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
 		ri := roots[name]
 		return engine.Apply(engine.Options{
 			Name:         name,
@@ -471,7 +483,7 @@ func prebuildAll(selected []string, jobs int, build func(name string) (string, e
 // skipFailedPrebuilds wraps stage 2's per-config function so a config whose stage-1 build failed
 // returns that error without being applied. The aggregators then settle it like any other failure —
 // its own subject in selection order, counted, and reported on stderr — so results[] keeps the
-// lexical order of a serial run.
+// lexical order.
 func skipFailedPrebuilds(built map[string]prebuildResult, fn func(name string) (*engine.Result, error)) func(name string) (*engine.Result, error) {
 	return func(name string) (*engine.Result, error) {
 		if err := built[name].err; err != nil {
@@ -481,18 +493,80 @@ func skipFailedPrebuilds(built map[string]prebuildResult, fn func(name string) (
 	}
 }
 
+// configOutput is one config's CLI output under apply --all: its -v report, dryrun plan and
+// failure / skip lines are buffered while the configs run in parallel, then flushed in lexical
+// order once all of them are done, so the output does not depend on the completion order
+// (→ ADR-0039). What the engine and nix write themselves — the engine's warnings, the in-lock nix
+// build's output and the --debug lines — is not buffered; it still reaches stderr as it happens.
+type configOutput struct {
+	stdout, stderr bytes.Buffer
+}
+
+// flush writes the buffered output to the process streams. It reads os.Stdout / os.Stderr at
+// flush time, so the streams stay where they are when the aggregate is written.
+func (o *configOutput) flush() {
+	_, _ = o.stdout.WriteTo(os.Stdout)
+	_, _ = o.stderr.WriteTo(os.Stderr)
+}
+
+// forEachConfig runs work(i) for every index of selected on a worker pool of min(jobs, len(selected))
+// goroutines and returns once all of them are done (apply --all's stage 2; → ADR-0039). Each work
+// call must touch only its own index's state, so the callers need no lock.
+func forEachConfig(selected []string, jobs int, work func(i int)) {
+	queue := make(chan int)
+	var wg sync.WaitGroup
+	for range min(jobs, len(selected)) {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for i := range queue {
+				work(i)
+			}
+		}()
+	}
+	for i := range selected {
+		queue <- i
+	}
+	close(queue)
+	wg.Wait()
+}
+
+// beginSubjects registers one niface subject per selected config, in selection (lexical) order,
+// before any config runs: beginSubject appends to the run's subject list, which the workers must
+// not share, and the registration order is results[]'s order whatever order the configs finish in.
+func beginSubjects(run *applyRun, selected []string) []*applySubject {
+	subjects := make([]*applySubject, len(selected))
+	for i, name := range selected {
+		subjects[i] = run.beginSubject(name)
+	}
+	return subjects
+}
+
+// applyOutcome is one config's settled stage-2 outcome under apply --all.
+type applyOutcome struct {
+	out     configOutput
+	skipped bool  // a try-lock skip (a normal skip, not a failure)
+	err     error // the config's failure; nil on success and on a skip
+}
+
 // aggregateApply runs each selected config via applyFn and aggregates applied / skipped / failure counts,
 // continuing on partial failure (each config is independently atomic; → docs/spec.md "continue on partial
 // failure"). It does not swallow ErrSkipped (a try-lock skip is normal) or other errors; a skip is counted
 // and reported to stderr under flagVerbose, a failure is counted and always reported to stderr, and either
-// way the loop continues (a seam that injects the apply implementation for testability, mirroring aggregateDryRun).
+// way the rest continue (a seam that injects the apply implementation for testability, mirroring aggregateDryRun).
+//
+// The configs run on a worker pool of jobs (→ ADR-0039). Each worker settles only its own config —
+// its subject's payload and outcome, and its own output buffer — and the counts and output are
+// gathered in lexical order after every config is done, so neither depends on the completion order.
 //
 // Each config also gets its own niface subject, settled with that config's own outcome (→ issue
 // #164): the counts drive the aggregate exit code as before, while the subjects carry the per-config
 // results — including every succeeded one alongside a partial failure.
-func aggregateApply(run *applyRun, selected []string, applyFn func(name string) (*engine.Result, error)) (applied, skipped, failures int) {
-	for _, name := range selected {
-		subject := run.beginSubject(name)
+func aggregateApply(run *applyRun, selected []string, jobs int, applyFn func(name string) (*engine.Result, error)) (applied, skipped, failures int) {
+	subjects := beginSubjects(run, selected)
+	outcomes := make([]applyOutcome, len(selected))
+	forEachConfig(selected, jobs, func(i int) {
+		name, subject, o := selected[i], subjects[i], &outcomes[i]
 		res, err := applyFn(name)
 		if res != nil {
 			// Also on failure: a partial result carries the reached/unreached item partition and
@@ -506,57 +580,83 @@ func aggregateApply(run *applyRun, selected []string, applyFn func(name string) 
 		subjectErr := err
 		switch {
 		case err == nil:
-			applied++
 			if flagVerbose {
-				reportResult(res, name)
+				fprintResult(&o.out.stderr, res, name)
 			}
 		case errors.Is(err, engine.ErrSkipped):
 			subjectErr = nil
-			skipped++
+			o.skipped = true
 			if flagVerbose {
-				fmt.Fprintf(os.Stderr, "layat: skipped apply %s (another apply is in progress)\n", name)
+				fmt.Fprintf(&o.out.stderr, "layat: skipped apply %s (another apply is in progress)\n", name)
 			}
 		default:
-			failures++
+			o.err = err
 			// Do not swallow partial failures; print to stderr and continue (→ docs/spec.md "continue on partial failure").
-			fmt.Fprintf(os.Stderr, "layat: apply %s failed: %v\n", name, err)
+			fmt.Fprintf(&o.out.stderr, "layat: apply %s failed: %v\n", name, err)
 		}
 		subject.finish(subjectErr)
+	})
+	for i := range outcomes {
+		o := &outcomes[i]
+		o.out.flush()
+		switch {
+		case o.skipped:
+			skipped++
+		case o.err != nil:
+			failures++
+		default:
+			applied++
+		}
 	}
 	return applied, skipped, failures
+}
+
+// dryRunOutcome is one config's settled read-only outcome under apply --all --dryrun.
+type dryRunOutcome struct {
+	out      configOutput
+	err      error // the config's build / eval failure
+	conflict bool  // the plan has at least one conflict
 }
 
 // aggregateDryRun runs each selected config read-only via applyDry, prints the plan to stdout,
 // aggregates error / conflict, and returns the exit code (a seam that injects the apply implementation for testability).
 // It does not swallow a config's build / eval failure (error); it prints to stderr, continues, and reflects it in the final code.
+// Like aggregateApply it runs the configs on a worker pool of jobs and prints the plans and failures in
+// lexical order once every config is done (→ ADR-0039).
 //
 // Like aggregateApply it settles one niface subject per config, riding the same payload builder as
 // the real apply so the dryrun's SubjectResult is the same shape by construction (→ issue #164). A
 // conflict is item-borne — the conflicting entry is a failed item carrying E_LAYAT_COLLISION — and
 // still puts that subject in error, symmetric with the named apply --dryrun (→ layat ADR-0043 §6,
 // niface ADR-0002).
-func aggregateDryRun(run *applyRun, selected []string, applyDry func(name string) (*engine.Result, error)) int {
-	var anyError, anyConflict bool
-	for _, name := range selected {
-		subject := run.beginSubject(name)
+func aggregateDryRun(run *applyRun, selected []string, jobs int, applyDry func(name string) (*engine.Result, error)) int {
+	subjects := beginSubjects(run, selected)
+	outcomes := make([]dryRunOutcome, len(selected))
+	forEachConfig(selected, jobs, func(i int) {
+		name, subject, o := selected[i], subjects[i], &outcomes[i]
 		res, err := applyDry(name)
 		if err != nil {
-			anyError = true
+			o.err = err
 			// Do not swallow partial failures; print to stderr and continue (→ docs/spec.md "continue on partial failure").
-			fmt.Fprintf(os.Stderr, "layat: apply %s --dryrun failed: %v\n", name, err)
+			fmt.Fprintf(&o.out.stderr, "layat: apply %s --dryrun failed: %v\n", name, err)
 			subject.finish(err)
-			continue
+			return
 		}
 		attachMutationPayload(subject, res, nil)
-		printApplyPlan(res)
-		if len(res.Conflicts) > 0 {
-			anyConflict = true
-		}
+		fprintApplyPlan(&o.out.stdout, res)
+		o.conflict = len(res.Conflicts) > 0
 		// No subject-level error either way: a conflict is already failed items carrying
 		// E_LAYAT_COLLISION, and the payload's item-borne mark is what puts this subject in error
 		// (→ nifaceSubject.itemBorne) — the same mechanism aggregateApply relies on for an
 		// entry-scoped failure, so both settle a config the one way.
 		subject.finish(nil)
+	})
+	var anyError, anyConflict bool
+	for i := range outcomes {
+		o := &outcomes[i]
+		o.out.flush()
+		anyError = anyError || o.err != nil
+		anyConflict = anyConflict || o.conflict
 	}
 	return applyAllExitCode(anyError, anyConflict)
 }
@@ -621,29 +721,35 @@ func ensureNoRootFilter(modifier string) error {
 
 // reportResult prints the placement report to stderr (stdout is reserved for machine-readable output; → ADR-0023).
 func reportResult(res *engine.Result, name string) {
-	fmt.Fprintf(os.Stderr, "layat: apply %s done (root=%s)\n", name, res.Root)
+	fprintResult(os.Stderr, res, name)
+}
+
+// fprintResult is reportResult writing to w, so apply --all can buffer each config's report while
+// the configs run in parallel and flush them in lexical order (→ ADR-0039).
+func fprintResult(w io.Writer, res *engine.Result, name string) {
+	_, _ = fmt.Fprintf(w, "layat: apply %s done (root=%s)\n", name, res.Root)
 	for _, t := range res.Placed {
-		fmt.Fprintf(os.Stderr, "  placed   %s\n", t)
+		_, _ = fmt.Fprintf(w, "  placed   %s\n", t)
 	}
 	for _, t := range res.Replaced {
-		fmt.Fprintf(os.Stderr, "  replaced %s\n", t)
+		_, _ = fmt.Fprintf(w, "  replaced %s\n", t)
 	}
 	for _, t := range res.Copied {
-		fmt.Fprintf(os.Stderr, "  copied   %s\n", t)
+		_, _ = fmt.Fprintf(w, "  copied   %s\n", t)
 	}
 	for _, t := range res.Recopied {
-		fmt.Fprintf(os.Stderr, "  recopied %s\n", t)
+		_, _ = fmt.Fprintf(w, "  recopied %s\n", t)
 	}
 	for _, t := range res.Removed {
-		fmt.Fprintf(os.Stderr, "  removed  %s\n", t)
+		_, _ = fmt.Fprintf(w, "  removed  %s\n", t)
 	}
 	for _, t := range res.Pruned {
-		fmt.Fprintf(os.Stderr, "  pruned   %s\n", t)
+		_, _ = fmt.Fprintf(w, "  pruned   %s\n", t)
 	}
 	for _, t := range res.BackedUp {
-		fmt.Fprintf(os.Stderr, "  backedUp %s\n", t)
+		_, _ = fmt.Fprintf(w, "  backedUp %s\n", t)
 	}
 	if len(res.Placed)+len(res.Replaced)+len(res.Copied)+len(res.Recopied)+len(res.Removed)+len(res.Pruned)+len(res.BackedUp) == 0 {
-		fmt.Fprintln(os.Stderr, "  no-op")
+		_, _ = fmt.Fprintln(w, "  no-op")
 	}
 }
