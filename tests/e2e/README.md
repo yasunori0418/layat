@@ -35,6 +35,7 @@ fixture flake は `layat` を `path:<repo>` input で参照し、`nixpkgs` / `ho
 | `06-init-templates` | init + templates。`layat init <t>` で standalone / project テンプレを展開し、展開後 flake が `nix flake check`（layat を局所 override）を通ること |
 | `07-legacy`  | legacy entrypoint（shell.nix・passthru canonical 形・→ ADR-0032）。`NIX_PATH` を flake.lock の nixpkgs に pin し、`layat apply` / `apply --all` / 素の `nix-shell` 互換を検証 |
 | `08-prune`   | prune（→ ADR-0034）。apply した 2 系列の一方の root を消して孤児にし、`--dryrun` の非破壊性・`--yes` の系列ごと削除・生存系列と配置物の不変・`print-roots` から gcroot が外れることを検証 |
+| `09-apply-all` | `apply --all` の並列化（→ ADR-0038 / ADR-0039）。4 つの projectRoot config で `results[]` と `-v` の done 行が辞書順・`--jobs 1` と既定並列度で `results[]` が同一、同じ target を持つ 2 config が `--dryrun` 含め exit 1 で何も置かずに止まり `--json` ではトップ `errors[]` に載る、`--no-wait` 併用の初回 apply で全 config が applied になることを検証 |
 
 ## 将来拡張
 
