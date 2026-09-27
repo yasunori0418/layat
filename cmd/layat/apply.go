@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
+	"sync"
 
 	"github.com/spf13/cobra"
 
@@ -14,7 +16,10 @@ import (
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
-var flagApplyAll bool // --all: apply all of layat.* in lexical order (narrowable by root filter)
+var (
+	flagApplyAll  bool // --all: apply all of layat.* in lexical order (narrowable by root filter)
+	flagApplyJobs int  // --jobs: apply --all's stage-1 build concurrency (0 = the logical CPU count; → ADR-0039)
+)
 
 // applyResultInfo / applyEnvInfo are apply's niface info slots (→ issue #196). apply's record
 // lives entirely in items / changes, so both are empty seat types held as nil pointers: the
@@ -71,6 +76,11 @@ func newApplyCmd() *cobra.Command {
 			if err := ensureNoRootFilter("apply --all"); err != nil {
 				return err
 			}
+			// Changed, not the value: the default 0 is itself a valid --all setting, so an explicit
+			// --jobs 0 on a named apply must be rejected too.
+			if cmd.Flags().Changed("jobs") {
+				return fmt.Errorf("layat: --jobs is a modifier for apply --all")
+			}
 			name := "default"
 			if len(args) == 1 {
 				name = args[0]
@@ -79,6 +89,8 @@ func newApplyCmd() *cobra.Command {
 		},
 	}
 	cmd.Flags().BoolVar(&flagApplyAll, "all", false, "Apply all of layat.* in lexical order (continues on partial failure; exits non-zero if any fails)")
+	cmd.Flags().IntVar(&flagApplyJobs, "jobs", 0,
+		"With --all, build up to N configs in parallel before placing them in lexical order (0 = the logical CPU count; see ADR-0039)")
 	cmd.Flags().BoolVar(&flagRecopy, "recopy", false,
 		"Unconditionally re-copy every copy target from src, overwriting (discards local edits; see ADR-0020)")
 	cmd.Flags().BoolVar(&flagDryrun, "dryrun", false,
@@ -264,12 +276,19 @@ func applyOne(ep *entrypoint, system, name, rootKind, fixedRoot string) (*engine
 
 // runApplyAll applies all of the entrypoint's layat.* in lexical order (→ docs/spec.md execution flow, ADR-0016, ADR-0024).
 // rootKind and targets are taken in a single batch eval (collapsing process launches N→1); build is per config for atomicity.
+// It runs in two stages (→ ADR-0039): stage 1 realizes every selected config's build ahead of time on a
+// worker pool of --jobs, and stage 2 applies them one by one in lexical order, where the engine's
+// in-lock build is then a cache hit (the build stays inside the lock; stage 1 only warms the store).
 // It continues with the rest on a partial failure, shows an aggregate at the end, and exits non-zero if any one fails.
 // Each selected config becomes one SubjectResult in results[], the same shape a named apply
 // emits with N=1 (→ issue #164); the failures below stay on their own subject, so a partial
 // failure still carries every succeeded config's result.
 func runApplyAll(run *applyRun) error {
 	filter, err := selectedRootFilter()
+	if err != nil {
+		return err
+	}
+	jobs, err := resolveApplyJobs(flagApplyJobs)
 	if err != nil {
 		return err
 	}
@@ -313,18 +332,24 @@ func runApplyAll(run *applyRun) error {
 		return err
 	}
 
+	// 2.4 Stage 1: realize the selected configs' builds in parallel (read-only: --no-link, no gcroot).
+	//     A config that fails here never reaches stage 2 (→ skipFailedPrebuilds).
+	built := prebuildAll(selected, jobs, func(name string) (string, error) {
+		return realizeNoLink(ep, system, name, "["+name+"] ")
+	})
+
 	// 2.5 --dryrun is a side-effect-free preview (takes no flock / --set / pending gcroot; runs only build
 	//     read-only). It aggregates each selected config's plan to stdout and decides the exit code by
 	//     priority error(1) > conflict(2) > 0 (→ docs/spec.md, ADR-0024).
 	if flagDryrun {
-		return runApplyAllDryRun(run, ep, system, selected, roots)
+		return runApplyAllDryRun(run, ep, system, selected, roots, built)
 	}
 
-	// 3. Apply each config independently. Continue on partial failure and aggregate failures (each config is independently atomic).
-	applied, skipped, failures := aggregateApply(run, selected, func(name string) (*engine.Result, error) {
+	// 3. Stage 2: apply each config independently. Continue on partial failure and aggregate failures (each config is independently atomic).
+	applied, skipped, failures := aggregateApply(run, selected, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
 		ri := roots[name]
 		return applyOne(ep, system, name, ri.RootKind, ri.Root)
-	})
+	}))
 
 	// 4. Aggregate report and exit code (priority error(1) > conflict(2) > 0; → docs/spec.md, ADR-0024).
 	if flagVerbose {
@@ -384,8 +409,9 @@ func detectCrossConfigConflicts(roots map[string]rootInfo, selected []string, ro
 // aggregates the plan to stdout (taking none of FS writes / flock / --set / pending gcroot; → ADR-0023).
 // It decides the exit code by priority error(1) > conflict(2) > 0 (→ docs/spec.md, ADR-0024) and carries it in an
 // empty-msg exitError (symmetric with the single apply --dryrun conflict=2; main exits with the code alone).
-func runApplyAllDryRun(run *applyRun, ep *entrypoint, system string, selected []string, roots map[string]rootInfo) error {
-	code := aggregateDryRun(run, selected, func(name string) (*engine.Result, error) {
+// Stage 1 (built) is shared with the real apply; a config whose build failed there is not planned.
+func runApplyAllDryRun(run *applyRun, ep *entrypoint, system string, selected []string, roots map[string]rootInfo, built map[string]prebuildResult) error {
+	code := aggregateDryRun(run, selected, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
 		ri := roots[name]
 		return engine.Apply(engine.Options{
 			Name:         name,
@@ -398,11 +424,61 @@ func runApplyAllDryRun(run *applyRun, ep *entrypoint, system string, selected []
 			DryRun:       true,
 			Build:        dryBuildFunc(ep, system, name),
 		})
-	})
+	}))
 	if code == 0 {
 		return nil
 	}
 	return &exitError{code: code}
+}
+
+// prebuildResult is one config's stage-1 outcome: the realized link-farm store path, or the build error.
+type prebuildResult struct {
+	storePath string
+	err       error
+}
+
+// prebuildAll is apply --all's stage 1 (→ ADR-0039): it runs build for every selected config on a
+// worker pool of min(jobs, len(selected)) goroutines and collects config name → outcome. It does not
+// stop on a failure (each config's outcome is independent), and returns only after every build ends.
+// Workers write to their own slot of an index-addressed slice, so the collection needs no lock.
+func prebuildAll(selected []string, jobs int, build func(name string) (string, error)) map[string]prebuildResult {
+	results := make([]prebuildResult, len(selected))
+	queue := make(chan int)
+	var wg sync.WaitGroup
+	for range min(jobs, len(selected)) {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for i := range queue {
+				store, err := build(selected[i])
+				results[i] = prebuildResult{storePath: store, err: err}
+			}
+		}()
+	}
+	for i := range selected {
+		queue <- i
+	}
+	close(queue)
+	wg.Wait()
+
+	built := make(map[string]prebuildResult, len(selected))
+	for i, name := range selected {
+		built[name] = results[i]
+	}
+	return built
+}
+
+// skipFailedPrebuilds wraps stage 2's per-config function so a config whose stage-1 build failed
+// returns that error without being applied. The aggregators then settle it like any other failure —
+// its own subject in selection order, counted, and reported on stderr — so results[] keeps the
+// lexical order of a serial run.
+func skipFailedPrebuilds(built map[string]prebuildResult, fn func(name string) (*engine.Result, error)) func(name string) (*engine.Result, error) {
+	return func(name string) (*engine.Result, error) {
+		if err := built[name].err; err != nil {
+			return nil, err
+		}
+		return fn(name)
+	}
 }
 
 // aggregateApply runs each selected config via applyFn and aggregates applied / skipped / failure counts,
@@ -519,6 +595,19 @@ func selectedRootFilter() (string, error) {
 		return "", nil
 	}
 	return modes[0], nil
+}
+
+// resolveApplyJobs resolves --jobs to apply --all's stage-1 build concurrency: 0 (the default) is
+// the logical CPU count, a positive value is taken as-is, and a negative one is an error (→ ADR-0039).
+func resolveApplyJobs(jobs int) (int, error) {
+	switch {
+	case jobs < 0:
+		return 0, fmt.Errorf("layat: --jobs must be 0 (the logical CPU count) or a positive integer, got %d", jobs)
+	case jobs == 0:
+		return runtime.NumCPU(), nil
+	default:
+		return jobs, nil
+	}
 }
 
 // ensureNoRootFilter errors when a root filter is used outside --all

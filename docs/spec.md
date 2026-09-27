@@ -104,6 +104,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af](requirements/20260802-4cbd9a0d-9f94-4747-8881-56020dc6d5af-apply-all-lexical-order-continue.md) — apply --all は辞書順に適用し部分失敗でも続行して最後に集約する
 - [REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b](requirements/20260802-d95b814f-aa7a-470e-9320-c14f9c14da7b-apply-all-root-mode-filter.md) — --all は root モードフィルタで対象 config を絞れる
 - [REQ-38506419-c23d-4fce-b167-30715ce6a69d](requirements/20260926-38506419-c23d-4fce-b167-30715ce6a69d-apply-all-cross-config-preflight.md) — apply --all は build 前に選択 config 間の target 衝突を検出して停止する
+- [REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d](requirements/20260926-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d-apply-all-parallel-build-jobs.md) — apply --all は build を --jobs の worker pool で先行並列実行し build 失敗 config を部分失敗として集約する
 - [REQ-687e225f-5046-46db-88fb-f9e527a1e97a](requirements/20260802-687e225f-5046-46db-88fb-f9e527a1e97a-apply-modifier-flag-composition.md) — apply 修飾フラグは --all と合成できる
 - [REQ-02a33511-0941-4813-b289-a05eb8e9aa57](requirements/20260802-02a33511-0941-4813-b289-a05eb8e9aa57-apply-dryrun-readonly.md) — apply --dryrun は読み取り専用で conflict 検出時に非ゼロ終了する
 - [REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065](requirements/20260802-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065-apply-recopy.md) — apply --recopy は config 内の全 copy target を src から無条件に上書き再コピーする
