@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -262,7 +263,7 @@ func applyOne(ep *entrypoint, system, name, rootKind, fixedRoot string) (*engine
 }
 
 // runApplyAll applies all of the entrypoint's layat.* in lexical order (→ docs/spec.md execution flow, ADR-0016, ADR-0024).
-// rootKind is taken in a single batch eval (collapsing process launches N→1); build is per config for atomicity.
+// rootKind and targets are taken in a single batch eval (collapsing process launches N→1); build is per config for atomicity.
 // It continues with the rest on a partial failure, shows an aggregate at the end, and exits non-zero if any one fails.
 // Each selected config becomes one SubjectResult in results[], the same shape a named apply
 // emits with N=1 (→ issue #164); the failures below stay on their own subject, so a partial
@@ -281,7 +282,7 @@ func runApplyAll(run *applyRun) error {
 		return err
 	}
 
-	// 1. Get rootKind in a single batch eval (config name → rootInfo map; → ADR-0024).
+	// 1. Get rootKind + targets in a single batch eval (config name → rootInfo map; → ADR-0024, ADR-0038).
 	roots, err := evalAllRoots(ep, system)
 	if err != nil {
 		return err
@@ -304,6 +305,12 @@ func runApplyAll(run *applyRun) error {
 			fmt.Fprintln(os.Stderr, "layat: apply --all: no matching configs")
 		}
 		return nil
+	}
+
+	// 2.3 Stop before any build when two selected configs claim the same normalized target in the
+	//     same root (--dryrun included; a named apply is not checked; → ADR-0038).
+	if err := detectCrossConfigConflicts(roots, selected, flagRoot); err != nil {
+		return err
 	}
 
 	// 2.5 --dryrun is a side-effect-free preview (takes no flock / --set / pending gcroot; runs only build
@@ -330,6 +337,47 @@ func runApplyAll(run *applyRun) error {
 		return nil
 	}
 	return &exitCodeError{code: code, msg: fmt.Sprintf("layat: apply --all: %d config(s) failed", failures)}
+}
+
+// detectCrossConfigConflicts is apply --all's cross-config target conflict preflight (→ ADR-0038).
+// It groups the selected configs into buckets that resolve to the same root — one per rootKind for
+// project / home / system, one per root string value for fixed, and a single bucket for everything
+// when rootOverride (--root) is set — and errors when a normalized target appears in two configs of
+// one bucket. Configs outside selected are ignored. The error is a plain one (exit 1, and
+// E_LAYAT_FAILED on the --json top-level errors[] since no subject is registered yet).
+func detectCrossConfigConflicts(roots map[string]rootInfo, selected []string, rootOverride string) error {
+	bucketOf := func(ri rootInfo) string {
+		switch {
+		case rootOverride != "":
+			return "--root " + rootOverride
+		case ri.RootKind == manifest.RootKindFixed:
+			return "fixed root " + ri.Root
+		default:
+			return ri.RootKind + " root"
+		}
+	}
+	// bucket → target → the first selected config that claimed it.
+	owners := map[string]map[string]string{}
+	var conflicts []string
+	for _, name := range selected {
+		ri := roots[name]
+		bucket := bucketOf(ri)
+		if owners[bucket] == nil {
+			owners[bucket] = map[string]string{}
+		}
+		for _, target := range ri.Targets {
+			if first, dup := owners[bucket][target]; dup {
+				conflicts = append(conflicts, fmt.Sprintf("  %s: claimed by both %s and %s (%s)", target, first, name, bucket))
+				continue
+			}
+			owners[bucket][target] = name
+		}
+	}
+	if len(conflicts) == 0 {
+		return nil
+	}
+	return fmt.Errorf("layat: apply --all: selected configs place the same target in the same root (nothing was built or placed; → ADR-0038):\n%s",
+		strings.Join(conflicts, "\n"))
 }
 
 // runApplyAllDryRun drives apply --all --dryrun. It builds each selected config read-only and
