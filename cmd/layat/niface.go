@@ -16,7 +16,7 @@ import (
 	"os"
 	"time"
 
-	niface "github.com/yasunori0418/niface/go"
+	"github.com/yasunori0418/outturn/go"
 
 	"github.com/yasunori0418/layat/internal/lock"
 )
@@ -36,11 +36,11 @@ const nifaceSpecVersion = 1
 // These stay aliases (parameterized aliases, Go 1.24+), so the emitted values remain niface's
 // own types and keep niface's MarshalJSON — the required-array normalization must not be lost.
 type (
-	layatEnvelope[TInfo, TEnvInfo any] = niface.Envelope[*nifaceEntryInfo, *nifaceChangeInfo, TInfo, TEnvInfo]
-	layatSubjectResult[TInfo any]      = niface.SubjectResult[*nifaceEntryInfo, *nifaceChangeInfo, TInfo]
-	layatResult[TInfo any]             = niface.Result[*nifaceEntryInfo, *nifaceChangeInfo, TInfo]
-	layatItem                          = niface.Item[*nifaceEntryInfo]
-	layatChange                        = niface.Change[*nifaceChangeInfo]
+	layatEnvelope[TInfo, TEnvInfo any] = outturn.Envelope[*nifaceEntryInfo, *nifaceChangeInfo, TInfo, TEnvInfo]
+	layatSubjectResult[TInfo any]      = outturn.SubjectResult[*nifaceEntryInfo, *nifaceChangeInfo, TInfo]
+	layatResult[TInfo any]             = outturn.Result[*nifaceEntryInfo, *nifaceChangeInfo, TInfo]
+	layatItem                          = outturn.Item[*nifaceEntryInfo]
+	layatChange                        = outturn.Change[*nifaceChangeInfo]
 )
 
 // entryItemID derives the niface item id for a placement entry: identity kind="entry",
@@ -49,7 +49,7 @@ type (
 // Shared by the #131 / #132 payload builders; the identity shape is pinned against niface's
 // id-vectors in TestEntryItemIDMatchesVectors.
 func entryItemID(target string) (string, error) {
-	return niface.DeriveID(niface.Identity{Kind: "entry", Key: map[string]any{"target": target}})
+	return outturn.DeriveID(outturn.Identity{Kind: "entry", Key: map[string]any{"target": target}})
 }
 
 // nifaceTimestamp renders t for the envelope's startedAt/finishedAt: RFC 3339, "T" separator,
@@ -203,12 +203,12 @@ func (r *nifaceRun[TInfo, TEnvInfo]) beginSubject(name string) *nifaceSubject[TI
 // caller passed in (→ issue #164). finishedAt is the run's single finish timestamp, shared by every
 // result. emit is the only caller and settles every subject immediately before rendering it.
 func (s *nifaceSubject[TInfo]) subjectResult(finishedAt string) layatSubjectResult[TInfo] {
-	status := niface.StatusSuccess
+	status := outturn.StatusSuccess
 	if s.failed() {
-		status = niface.StatusError
+		status = outturn.StatusError
 	}
 	sr := layatSubjectResult[TInfo]{
-		Subject:    niface.Subject{Name: s.name},
+		Subject:    outturn.Subject{Name: s.name},
 		Status:     status,
 		StartedAt:  nifaceTimestamp(s.started),
 		FinishedAt: finishedAt,
@@ -242,16 +242,16 @@ func (r *nifaceRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 
 	env := layatEnvelope[TInfo, TEnvInfo]{
 		SpecVersion: nifaceSpecVersion,
-		Tool:        niface.Tool{Name: "layat", Version: version},
+		Tool:        outturn.Tool{Name: "layat", Version: version},
 		Command:     r.command,
-		Status:      niface.StatusSuccess,
+		Status:      outturn.StatusSuccess,
 		DryRun:      r.dryRun,
 		StartedAt:   nifaceTimestamp(r.started),
 		FinishedAt:  finished,
 		Info:        r.info,
 	}
 	if cmdErr != nil {
-		env.Status = niface.StatusError
+		env.Status = outturn.StatusError
 	}
 	// Settle whatever the command left unsettled, so every subject's outcome is decided in exactly
 	// one place (finish) before anything is rendered. A single-config command settles nothing —
@@ -262,7 +262,7 @@ func (r *nifaceRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 	for _, s := range r.subjects {
 		s.finish(cmdErr)
 		if s.failed() {
-			env.Status = niface.StatusError
+			env.Status = outturn.StatusError
 		}
 		env.Results = append(env.Results, s.subjectResult(finished))
 	}
@@ -290,7 +290,7 @@ func (r *nifaceRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 // codes E_LOCK / E_NOTFOUND / E_PERMISSION / E_IO. Specific sentinels win over the generic
 // E_IO shape check, so a not-found PathError stays E_NOTFOUND. E_LAYAT_FAILED is the
 // tool-generic fallback for a command failure not otherwise classified.
-func classifyError(err error) niface.Error {
+func classifyError(err error) outturn.Error {
 	code := "E_LAYAT_FAILED"
 	message := err.Error()
 	var ee *exitError
@@ -314,7 +314,7 @@ func classifyError(err error) niface.Error {
 	case isIOError(err):
 		code = "E_IO"
 	}
-	return niface.Error{Code: code, Message: message}
+	return outturn.Error{Code: code, Message: message}
 }
 
 // isIOError reports whether err carries a filesystem / external-I/O failure shape (niface §6

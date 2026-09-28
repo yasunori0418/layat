@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/yasunori0418/niface/go/conformance"
+	"github.com/yasunori0418/outturn/go/conformance"
 )
 
 // flakeInitArgs builds the argv for `nix flake init -t <ref>#<template>` (→ plan 6).

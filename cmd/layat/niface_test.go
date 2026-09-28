@@ -16,8 +16,8 @@ import (
 	"testing"
 	"time"
 
-	niface "github.com/yasunori0418/niface/go"
-	"github.com/yasunori0418/niface/go/conformance"
+	"github.com/yasunori0418/outturn/go"
+	"github.com/yasunori0418/outturn/go/conformance"
 
 	"github.com/yasunori0418/layat/internal/engine"
 	"github.com/yasunori0418/layat/internal/lock"
@@ -255,7 +255,7 @@ func TestNifaceTimestampOffset(t *testing.T) {
 
 // TestEntryItemIDMatchesVectors verifies the id derivation against niface's embedded id-vectors
 // (decoded with UseNumber — the niface godoc input contract; issue #130 acceptance): every vector
-// must reproduce its expected id through niface.DeriveID, and the entry-kind vectors must equally
+// must reproduce its expected id through outturn.DeriveID, and the entry-kind vectors must equally
 // reproduce through layat's entryItemID seam (pinning layat's identity shape: kind="entry",
 // key={target} · → ADR-0043 §3).
 func TestEntryItemIDMatchesVectors(t *testing.T) {
@@ -268,7 +268,7 @@ func TestEntryItemIDMatchesVectors(t *testing.T) {
 			Expected string `json:"expected"`
 		} `json:"vectors"`
 	}
-	dec := json.NewDecoder(bytes.NewReader(niface.IDVectorsV1()))
+	dec := json.NewDecoder(bytes.NewReader(outturn.IDVectorsV1()))
 	dec.UseNumber()
 	if err := dec.Decode(&doc); err != nil {
 		t.Fatalf("decode id-vectors: %v", err)
@@ -285,7 +285,7 @@ func TestEntryItemIDMatchesVectors(t *testing.T) {
 		if err := kd.Decode(&key); err != nil {
 			t.Fatalf("vector %d: decode key: %v", i, err)
 		}
-		got, err := niface.DeriveID(niface.Identity{Kind: v.Identity.Kind, Key: key})
+		got, err := outturn.DeriveID(outturn.Identity{Kind: v.Identity.Kind, Key: key})
 		if err != nil {
 			t.Errorf("vector %d (%s): DeriveID: %v", i, v.Identity.Kind, err)
 			continue
