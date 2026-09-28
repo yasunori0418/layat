@@ -8,7 +8,7 @@ PROJ="$E2E_WORK/proj"
 mkdir -p "$PROJ/srcrepo/skills/nix"
 echo "SKILLBODY" >"$PROJ/srcrepo/skills/nix/SKILL.md"
 
-# idvec は --json 検証専用の第 2 config（apply しない）。target ".zshrc" は niface の
+# idvec は --json 検証専用の第 2 config（apply しない）。target ".zshrc" は outturn の
 # id-vectors に載る entry key で、エンベロープの item.id を適合ベクタと直接突き合わせる。
 cat >"$PROJ/flake.nix" <<EOF
 {
@@ -49,10 +49,10 @@ assert_json "$ENV_DRYRUN" "changes は add のみ・reversible=true" \
 assert_json "$ENV_DRYRUN" "profile 未作成の plan は generation 番号を両省略" \
 	'.results[0].generation | (has("before") or has("after")) | not'
 
-e2e_step "item.id が niface id-vectors と一致（.zshrc・→ issue #132）"
+e2e_step "item.id が outturn id-vectors と一致（.zshrc・→ issue #132）"
 ENV_IDVEC="$E2E_WORK/idvec.json"
 run_json 0 "$ENV_IDVEC" apply idvec --dryrun
-VEC_EXPECTED="$(jq -r '.vectors[] | select(.identity.kind == "entry" and .identity.key == {target: ".zshrc"}) | .expected' "${NIFACE_ID_VECTORS:?NIFACE_ID_VECTORS が未設定（ci devShell 経由で実行してください）}")"
+VEC_EXPECTED="$(jq -r '.vectors[] | select(.identity.kind == "entry" and .identity.key == {target: ".zshrc"}) | .expected' "${OUTTURN_ID_VECTORS:?OUTTURN_ID_VECTORS が未設定（ci devShell 経由で実行してください）}")"
 GOT_ID="$(jq -r '.results[0].result.items[0].id' "$ENV_IDVEC")"
 if [ -n "$VEC_EXPECTED" ] && [ "$GOT_ID" = "$VEC_EXPECTED" ]; then
 	e2e_pass "item.id が適合ベクタと一致: $GOT_ID"

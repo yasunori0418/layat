@@ -34,7 +34,7 @@ for t in standalone project; do
 	fi
 done
 
-e2e_step "init --json: results:[] + トップレベル info（niface ADR-0018・→ issue #132）"
+e2e_step "init --json: results:[] + トップレベル info（outturn ADR-0018・→ issue #132）"
 d="$E2E_WORK/init-json"
 mkdir -p "$d"
 cd "$d"
