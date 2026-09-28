@@ -284,7 +284,7 @@ func (r *outturnRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 	return err
 }
 
-// classifyError maps a command-level failure onto a outturn error object (two-layer code naming ·
+// classifyError maps a command-level failure onto an outturn error object (two-layer code naming ·
 // outturn §6, ADR-0043 §8): tool-specific E_LAYAT_COLLISION (dryrun conflict exit) / E_LAYAT_BUILD
 // (internal nix eval / build invocation, via the nixCmdError marker), and the common registry
 // codes E_LOCK / E_NOTFOUND / E_PERMISSION / E_IO. Specific sentinels win over the generic

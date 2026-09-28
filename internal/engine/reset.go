@@ -66,7 +66,7 @@ type ResetResult struct {
 	// the same data (→ issue #130, outturn ADR-0019).
 	Warnings []planner.Warning
 	// Entries are the selected teardown entries (the previous generation's manifest narrowed by
-	// Targets) — reset's full inventory, so the CLI can list every entry as a outturn item with
+	// Targets) — reset's full inventory, so the CLI can list every entry as an outturn item with
 	// its method/subpath even when it produced no removal (→ issue #131).
 	Entries []manifest.Entry
 	// FailedTarget / Unreached mirror Result's reached-state contract (→ issue #130 到達状態):

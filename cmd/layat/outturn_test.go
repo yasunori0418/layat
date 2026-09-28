@@ -34,7 +34,7 @@ func fixedClock(t0 time.Time) func() time.Time {
 	}
 }
 
-// newTestRun returns a outturnRun with a pinned clock and buffer sink, already begun for command.
+// newTestRun returns an outturnRun with a pinned clock and buffer sink, already begun for command.
 // The info type arguments are the command's own pair (→ issue #196); the command name is a plain
 // string and cannot drive inference, so prefer the per-command wrappers below — they take their
 // arguments from the production run aliases, which keeps the tests from silently exercising a
@@ -498,7 +498,7 @@ func TestJSONFlagRegistered(t *testing.T) {
 }
 
 // TestJSONUtilityCommandsDoNotBegin pins that cobra's auto-added utility commands (help /
-// completion) never begin a outturn run: they own stdout with their own text, so emitting an
+// completion) never begin an outturn run: they own stdout with their own text, so emitting an
 // envelope there would corrupt both contracts (→ issue #130, docs/spec.md).
 func TestJSONUtilityCommandsDoNotBegin(t *testing.T) {
 	for _, args := range [][]string{{"help"}, {"completion", "bash"}} {
@@ -514,7 +514,7 @@ func TestJSONUtilityCommandsDoNotBegin(t *testing.T) {
 			}
 		})
 		if outturnReport.began() {
-			t.Errorf("%v began a outturn run; utility commands must not emit an envelope", args)
+			t.Errorf("%v began an outturn run; utility commands must not emit an envelope", args)
 		}
 		// The gate is began(), but assert the observable contract too, so a future wiring that
 		// writes an envelope past the gate is caught rather than inferred.

@@ -201,7 +201,7 @@ func TestLegacyStateDirHintNonDirectoryIgnored(t *testing.T) {
 }
 
 // TestLegacyStateDirHintNotInJSONEnvelope pins that the hint stays off the --json envelope: it
-// is a outturn-conformant machine contract and must not carry a tool-side announcement, so
+// is an outturn-conformant machine contract and must not carry a tool-side announcement, so
 // stdout holds the document alone while the hint goes to stderr (→ ADR-0043, ADR-0054 §6).
 // outturnReport.emit is called from main, not from Execute (→ main.go), so the emit has to run
 // inside the capture the way TestJSONEndToEndSubjectBorneFailure does it — otherwise no

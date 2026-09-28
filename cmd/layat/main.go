@@ -80,7 +80,7 @@ var (
 	flagRoot        string // --root: explicitly override the resolved root
 	flagNoWait      bool   // --no-wait: skip without waiting on flock contention (for shellHook)
 	flagVerbose     bool   // -v/--verbose: print the placement report (summary + per-target lines); silent on success by default (→ ADR-0031)
-	flagJSON        bool   // --json: write a outturn envelope (single JSON document) to stdout at command completion (→ ADR-0043, issue #130)
+	flagJSON        bool   // --json: write an outturn envelope (single JSON document) to stdout at command completion (→ ADR-0043, issue #130)
 	flagDebug       bool   // --debug: disclose the internally run nix commands on stderr (→ ADR-0031)
 	flagRecopy      bool   // --recopy: apply modifier; unconditionally re-copy every copy target from src, overwriting
 	flagYes         bool   // -y/--yes: skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)
@@ -159,7 +159,7 @@ func newRootCmd() *cobra.Command {
 	pf.StringVar(&flagRoot, "root", "", "Override the resolved root explicitly (all modes)")
 	pf.BoolVar(&flagNoWait, "no-wait", false, "Skip without waiting on flock contention (for shellHook)")
 	pf.BoolVarP(&flagVerbose, "verbose", "v", false, "Print the placement report (summary + per-target lines); silent on success by default (see ADR-0031)")
-	pf.BoolVar(&flagJSON, "json", false, "Write a outturn-conformant JSON envelope to stdout (machine-readable; orthogonal to -v; see ADR-0043)")
+	pf.BoolVar(&flagJSON, "json", false, "Write an outturn-conformant JSON envelope to stdout (machine-readable; orthogonal to -v; see ADR-0043)")
 	pf.BoolVar(&flagDebug, "debug", false, "Disclose the internal nix commands on stderr (see ADR-0031)")
 	pf.BoolVarP(&flagYes, "yes", "y", false, "Skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)")
 	pf.BoolVar(&flagProjectRoot, "project-root", false, "Modifier for apply --all: apply only projectRoot configs")

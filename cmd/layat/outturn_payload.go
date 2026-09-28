@@ -125,7 +125,7 @@ func newItemStatuses(failedTarget string, unreached []string, conflicts []planne
 	return s
 }
 
-// entryItem renders one manifest entry as a outturn item under the status partition.
+// entryItem renders one manifest entry as an outturn item under the status partition.
 func entryItem(e manifest.Entry, statuses *itemStatuses) (layatItem, error) {
 	id, err := entryItemID(e.Target)
 	if err != nil {
