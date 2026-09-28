@@ -23,7 +23,7 @@ import (
 // (→ ADR-0042). The nix build injects the VERSION file's value via ldflags (-X main.version=...);
 // a plain `go build` without ldflags leaves it "dev" so the CLI still works out of tree. The
 // variable name (main.version) is a fixed contract: #130 reads it through a DTO as the source of
-// tool.version for the niface envelope — do not rename.
+// tool.version for the outturn envelope — do not rename.
 var version = "dev"
 
 // Note: cobra's Version field adds only a `--version` flag, not a `version` subcommand.
@@ -53,7 +53,7 @@ func legacyStateDir(stateDir string) string {
 // printLegacyStateDirHint writes the hint to stderr when <state>/nix/profiles/nput is a
 // directory. It is a single os.Stat and nothing else: no migration, no suppression flag
 // (→ ADR-0054 §8). Like the rename notice it replaces, it is deliberately stderr-only, so the
-// --json envelope on stdout stays a clean niface contract (→ ADR-0043, ADR-0054 §6). Anything
+// --json envelope on stdout stays a clean outturn contract (→ ADR-0043, ADR-0054 §6). Anything
 // that is not a directory is passed over: the line calls what it found a state directory and
 // describes the generations inside it, so a stray file of that name would be told a story
 // about itself that is not true. os.Stat follows symlinks, so a symlink to the old profile
@@ -80,7 +80,7 @@ var (
 	flagRoot        string // --root: explicitly override the resolved root
 	flagNoWait      bool   // --no-wait: skip without waiting on flock contention (for shellHook)
 	flagVerbose     bool   // -v/--verbose: print the placement report (summary + per-target lines); silent on success by default (→ ADR-0031)
-	flagJSON        bool   // --json: write a niface envelope (single JSON document) to stdout at command completion (→ ADR-0043, issue #130)
+	flagJSON        bool   // --json: write a outturn envelope (single JSON document) to stdout at command completion (→ ADR-0043, issue #130)
 	flagDebug       bool   // --debug: disclose the internally run nix commands on stderr (→ ADR-0031)
 	flagRecopy      bool   // --recopy: apply modifier; unconditionally re-copy every copy target from src, overwriting
 	flagYes         bool   // -y/--yes: skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)
@@ -142,7 +142,7 @@ func newRootCmd() *cobra.Command {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}
-	// The niface run is built, begun, and published to nifaceReport at each subcommand's RunE
+	// The outturn run is built, begun, and published to outturnReport at each subcommand's RunE
 	// top (→ issue #196: the run is typed by that command's info pair), not via a
 	// PersistentPreRun: cobra's auto-added utility commands (help / completion / __complete)
 	// own stdout with their own text and must never emit an envelope, and PersistentPreRun
@@ -159,7 +159,7 @@ func newRootCmd() *cobra.Command {
 	pf.StringVar(&flagRoot, "root", "", "Override the resolved root explicitly (all modes)")
 	pf.BoolVar(&flagNoWait, "no-wait", false, "Skip without waiting on flock contention (for shellHook)")
 	pf.BoolVarP(&flagVerbose, "verbose", "v", false, "Print the placement report (summary + per-target lines); silent on success by default (see ADR-0031)")
-	pf.BoolVar(&flagJSON, "json", false, "Write a niface-conformant JSON envelope to stdout (machine-readable; orthogonal to -v; see ADR-0043)")
+	pf.BoolVar(&flagJSON, "json", false, "Write a outturn-conformant JSON envelope to stdout (machine-readable; orthogonal to -v; see ADR-0043)")
 	pf.BoolVar(&flagDebug, "debug", false, "Disclose the internal nix commands on stderr (see ADR-0031)")
 	pf.BoolVarP(&flagYes, "yes", "y", false, "Skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)")
 	pf.BoolVar(&flagProjectRoot, "project-root", false, "Modifier for apply --all: apply only projectRoot configs")
@@ -191,11 +191,11 @@ func (e *exitCodeError) ExitCode() int { return e.code }
 func main() {
 	err := newRootCmd().Execute()
 
-	// Emit the niface envelope — exactly one JSON document on stdout, exactly once, after the
+	// Emit the outturn envelope — exactly one JSON document on stdout, exactly once, after the
 	// command has completed — before the exit-code handling below (which is unchanged: the
 	// envelope's status mirrors, never replaces, the exit code · → ADR-0043 §6, issue #130).
-	if flagJSON && nifaceReport.began() {
-		if emitErr := nifaceReport.emit(err); emitErr != nil {
+	if flagJSON && outturnReport.began() {
+		if emitErr := outturnReport.emit(err); emitErr != nil {
 			fmt.Fprintf(os.Stderr, "layat: cannot write the --json envelope: %v\n", emitErr)
 			if err == nil {
 				// The command itself succeeded but the machine channel is broken; the consumer

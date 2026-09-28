@@ -1,7 +1,7 @@
 package main
 
 // Conformance and shape tests for the --all paths' multiple SubjectResult output (→ issue #164
-// acceptance). Every emitted document must pass niface's conformance checker under the same
+// acceptance). Every emitted document must pass outturn's conformance checker under the same
 // schema as a single-config run — the point of the shape being identical is that N=1 and N>1 are
 // not different documents, only different lengths of results[].
 
@@ -23,7 +23,7 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// checkConformance fails the test unless buf holds a document niface's checker accepts (schema
+// checkConformance fails the test unless buf holds a document outturn's checker accepts (schema
 // with format assertions + the schema-external lint MUSTs).
 func checkConformance(t *testing.T, buf *bytes.Buffer) {
 	t.Helper()
@@ -140,7 +140,7 @@ func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 // actually takes: engine.Apply returns its partial result alongside the error (→ engine.apply's
 // "return a.result, err"), so the failing config's subject gets a payload whose failed item already
 // carries the error. That makes the failure item-borne, and its SubjectResult.errors[] must stay
-// empty while the status is still error (niface §2 / ADR-0002). The res == nil variant above only
+// empty while the status is still error (outturn §2 / ADR-0002). The res == nil variant above only
 // covers the failures that precede any engine result (a pre-flight eval / lock rejection).
 func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 	run, buf := newApplyTestRun()
@@ -148,7 +148,7 @@ func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 	_, _, failures := aggregateApply(run, []string{"a", "b", "c"}, 4, func(name string) (*engine.Result, error) {
 		if name == "b" {
 			// The engine's partial result: the entry it stopped on, plus the planned entry it
-			// never reached (→ niface ADR-0016's reached-state partition).
+			// never reached (→ outturn ADR-0016's reached-state partition).
 			res := placedResult(name)
 			res.Placed = nil
 			res.Entries = append(res.Entries, manifest.Entry{Target: "t/" + name + "-later"})
@@ -179,7 +179,7 @@ func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 		t.Errorf("failing subject status = %s, want error (its failed item makes it error)", status)
 	}
 	if len(errs) != 0 {
-		t.Errorf("failing subject errors = %v, want none — the failure is item-borne (niface §2)", errs)
+		t.Errorf("failing subject errors = %v, want none — the failure is item-borne (outturn §2)", errs)
 	}
 	// The reached-state partition has to survive onto the items, not just the status.
 	byTarget := map[string]map[string]any{}
@@ -206,7 +206,7 @@ func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 }
 
 // TestApplyAllSharedTargetKeepsItemIDsResultScoped pins the id-scoping contract the --all shape
-// depends on (→ docs/spec.md, niface §5): item ids derive from the target alone — the config name
+// depends on (→ docs/spec.md, outturn §5): item ids derive from the target alone — the config name
 // is deliberately not part of the identity (→ ADR-0043 §3) — so two configs declaring the same
 // target produce the same item.id in two different results[]. That is legal precisely because
 // references resolve within one SubjectResult (the (tool, subject, id) triple), and the conformance
@@ -317,7 +317,7 @@ func TestApplyAllEmptySelectionEmitsEmptyResults(t *testing.T) {
 // TestApplyAllDryRunConflictIsItemBorne is issue #164's third acceptance criterion and the
 // symmetry requirement against the named apply --dryrun: a conflicting config's entry becomes a
 // failed item carrying E_LAYAT_COLLISION (item-borne, so it must NOT be repeated in that
-// SubjectResult's errors[] · niface §2), the subject's status is error (niface ADR-0002: a failed
+// SubjectResult's errors[] · outturn §2), the subject's status is error (outturn ADR-0002: a failed
 // item makes the result error), the aggregate is error, and the exit code stays what
 // applyAllExitCode decides — conflict 2, not the error 1 (→ layat ADR-0043 §6, ADR-0024).
 func TestApplyAllDryRunConflictIsItemBorne(t *testing.T) {
@@ -366,7 +366,7 @@ func TestApplyAllDryRunConflictIsItemBorne(t *testing.T) {
 		t.Errorf("conflicting subject status = %s, want error", status)
 	}
 	if len(errs) != 0 {
-		t.Errorf("conflicting subject errors = %v, want none — the conflict is item-borne (niface §2)", errs)
+		t.Errorf("conflicting subject errors = %v, want none — the conflict is item-borne (outturn §2)", errs)
 	}
 	items := byName["b"]["result"].(map[string]any)["items"].([]any)
 	if len(items) != 1 {
@@ -434,7 +434,7 @@ func TestApplyAllDryRunMixedErrorAndConflict(t *testing.T) {
 	if got := errs[0].(map[string]any)["code"]; got != "E_LAYAT_FAILED" {
 		t.Errorf("failed subject error code = %v, want E_LAYAT_FAILED (the build error is unclassified here)", got)
 	}
-	// The conflict is item-borne: same error status, but errors[] stays empty (niface §2).
+	// The conflict is item-borne: same error status, but errors[] stays empty (outturn §2).
 	status, errs = statusAndErrors(t, byName["clashing"])
 	if status != "error" {
 		t.Errorf("conflicting subject status = %s, want error", status)

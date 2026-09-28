@@ -1,9 +1,9 @@
 package main
 
-// Tests for the #131 mutation payloads (apply / reset / rollback): the engine-result → niface
-// items/changes/generation/warnings mapping, the partial-failure partition (niface ADR-0016 /
-// ADR-0020), the error-layer placement (item-borne vs subject-borne · niface §2), and
-// conformance of every emitted shape against niface's checker.
+// Tests for the #131 mutation payloads (apply / reset / rollback): the engine-result → outturn
+// items/changes/generation/warnings mapping, the partial-failure partition (outturn ADR-0016 /
+// ADR-0020), the error-layer placement (item-borne vs subject-borne · outturn §2), and
+// conformance of every emitted shape against outturn's checker.
 
 import (
 	"bytes"
@@ -62,12 +62,12 @@ func changesFor(t *testing.T, changes []layatChange, target string) []layatChang
 }
 
 // emitPayloadDoc runs the payload through the real emit path (command + subject + payload),
-// checks the document against niface's conformance checker, and returns it decoded. newRun is
+// checks the document against outturn's conformance checker, and returns it decoded. newRun is
 // the emitting command's test-run constructor (newApplyTestRun, ...), which carries both the
 // command name and its info pair from the production alias — so no call site re-spells the type
 // arguments (→ issue #196). The mutation commands' pairs are empty seat types, so the emitted
 // document carries no info key on either level.
-func emitPayloadDoc[TInfo, TEnvInfo any](t *testing.T, newRun func() (*nifaceRun[TInfo, TEnvInfo], *bytes.Buffer), p *nifacePayload[TInfo], cmdErr error) map[string]any {
+func emitPayloadDoc[TInfo, TEnvInfo any](t *testing.T, newRun func() (*outturnRun[TInfo, TEnvInfo], *bytes.Buffer), p *outturnPayload[TInfo], cmdErr error) map[string]any {
 	t.Helper()
 	checker, err := conformance.NewDefaultChecker()
 	if err != nil {
@@ -295,7 +295,7 @@ func TestMutationPayloadMethodChangeCoalesces(t *testing.T) {
 
 // TestMutationPayloadNoopRelinkSuppressed pins the idempotent-re-apply case: apply
 // mechanically re-links a planned symlink back to its recorded dest, which is not a state
-// transition — such a Replaced target must produce no change (niface §4 noop MUST NOT),
+// transition — such a Replaced target must produce no change (outturn §4 noop MUST NOT),
 // while a re-link to a different dest still does.
 func TestMutationPayloadNoopRelinkSuppressed(t *testing.T) {
 	res := &engine.Result{
@@ -328,7 +328,7 @@ func TestMutationPayloadNoopRelinkSuppressed(t *testing.T) {
 // TestMutationPayloadOrphanSubjectWarning pins attachWarnings' subject-side branch: a
 // planner warning whose target is outside the inventory (a vanished copy entry's orphan —
 // neither a new-manifest entry nor a planned removal) lands in subjectResult.warnings, not
-// on any item (→ niface ADR-0019).
+// on any item (→ outturn ADR-0019).
 func TestMutationPayloadOrphanSubjectWarning(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
@@ -394,9 +394,9 @@ func TestMutationPayloadRollbackGeneration(t *testing.T) {
 	}
 }
 
-// TestNifaceWarningMapping pins every planner WarnKind → W_LAYAT_* code pair, plus the
+// TestOutturnWarningMapping pins every planner WarnKind → W_LAYAT_* code pair, plus the
 // defensive fallback for an unknown kind.
-func TestNifaceWarningMapping(t *testing.T) {
+func TestOutturnWarningMapping(t *testing.T) {
 	cases := []struct {
 		kind planner.WarnKind
 		code string
@@ -409,7 +409,7 @@ func TestNifaceWarningMapping(t *testing.T) {
 		{planner.WarnKind(99), "W_LAYAT_WARNING"},
 	}
 	for _, c := range cases {
-		w := nifaceWarning(planner.Warning{Kind: c.kind, Target: "t"})
+		w := outturnWarning(planner.Warning{Kind: c.kind, Target: "t"})
 		if w.Code != c.code {
 			t.Errorf("kind %v: code = %s, want %s", c.kind, w.Code, c.code)
 		}
@@ -422,11 +422,11 @@ func TestNifaceWarningMapping(t *testing.T) {
 	}
 }
 
-// TestMutationPayloadPartialFailure pins the reached-state partition (niface ADR-0016 /
+// TestMutationPayloadPartialFailure pins the reached-state partition (outturn ADR-0016 /
 // ADR-0020): the failed entry carries the classified command error, unreached entries are
 // skipped (and only those), completed entries stay success with their changes, the unwound
 // run carries W_LAYAT_UNWOUND at the subject, and the item-borne failure is NOT duplicated
-// into subjectResult.errors[] (niface §2).
+// into subjectResult.errors[] (outturn §2).
 func TestMutationPayloadPartialFailure(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
@@ -624,7 +624,7 @@ func TestResetPayload(t *testing.T) {
 
 // TestResetPayloadPartialFailure pins reset's reached-state partition: removed-so-far keeps
 // its changes, the failing target carries the classified error, and the never-attempted rest
-// is skipped (→ issue #131, niface ADR-0020).
+// is skipped (→ issue #131, outturn ADR-0020).
 func TestResetPayloadPartialFailure(t *testing.T) {
 	res := &engine.ResetResult{
 		Entries: []manifest.Entry{
@@ -799,7 +799,7 @@ func TestJSONEndToEndApplyAndResetPayload(t *testing.T) {
 }
 
 // TestDryrunPayloadFirstPlanOmitsGenerationNumbers pins apply --dryrun over a not-yet-created
-// profile (niface ADR-0015 · → issue #132): the dryrun rides mutationPayload, and with neither
+// profile (outturn ADR-0015 · → issue #132): the dryrun rides mutationPayload, and with neither
 // generation number observable the emitted generation carries the profile path alone — no
 // before / after keys (nil pointers must marshal away, never as 0 or null).
 func TestDryrunPayloadFirstPlanOmitsGenerationNumbers(t *testing.T) {

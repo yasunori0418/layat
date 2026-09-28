@@ -23,7 +23,7 @@ var (
 	flagApplyJobs int  // --jobs: apply --all's build and placement concurrency (0 = the logical CPU count; → ADR-0039)
 )
 
-// applyResultInfo / applyEnvInfo are apply's niface info slots (→ issue #196). apply's record
+// applyResultInfo / applyEnvInfo are apply's outturn info slots (→ issue #196). apply's record
 // lives entirely in items / changes, so both are empty seat types held as nil pointers: the
 // omitempty on result.info / the envelope's info keeps them out of the document (a non-pointer
 // struct{} would emit "info":{} and change the output). They exist so a later issue can put
@@ -32,7 +32,7 @@ var (
 //
 // The asymmetry against the read commands is deliberate, not an oversight (→ issue #196 §5):
 // unused slots get a named seat only where information is expected to land later, which is the
-// mutation commands' two slots (ncompose reconstructs "what this run did" from them · niface
+// mutation commands' two slots (ncompose reconstructs "what this run did" from them · outturn
 // ADR-0018). Read commands record no run-scoped state and init registers no subject, so their
 // unused slots stay anonymous *struct{} — a named seat there would promise a future that is
 // not planned. Read "named seat" as "reserved", "*struct{}" as "nothing goes here".
@@ -44,16 +44,16 @@ type (
 // applyRun is apply's concrete run instantiation, threaded from RunE into the run functions.
 // applySubject is one config's handle within it — what the payload builders attach to.
 type (
-	applyRun     = nifaceRun[*applyResultInfo, *applyEnvInfo]
-	applySubject = nifaceSubject[*applyResultInfo]
+	applyRun     = outturnRun[*applyResultInfo, *applyEnvInfo]
+	applySubject = outturnSubject[*applyResultInfo]
 )
 
-// beginApplyRun starts apply's run (→ beginNifaceRun). It is the only production site that
+// beginApplyRun starts apply's run (→ beginOutturnRun). It is the only production site that
 // spells apply's info type pair outside the alias (the tests have one more, newApplyTestRun),
 // and because it returns the alias type, changing applyRun's parameters without updating it is
 // a compile error rather than a stale instantiation.
 func beginApplyRun(command string) *applyRun {
-	return beginNifaceRun[*applyResultInfo, *applyEnvInfo](command)
+	return beginOutturnRun[*applyResultInfo, *applyEnvInfo](command)
 }
 
 func newApplyCmd() *cobra.Command {
@@ -65,7 +65,7 @@ func newApplyCmd() *cobra.Command {
 			"--all applies all of layat.* in parallel and reports them in lexical order; --project-root / --home-root / --system-root narrow by root mode.",
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// beginApplyRun also publishes the run to nifaceReport, so main emits the envelope
+			// beginApplyRun also publishes the run to outturnReport, so main emits the envelope
 			// after Execute returns whichever path below runs.
 			run := beginApplyRun(cmd.Name())
 			flagBackupEnabled = cmd.Flags().Changed("backup")
@@ -126,7 +126,7 @@ func runApplyManifest(subject *applySubject, name string) error {
 	})
 	if res != nil {
 		// Also on failure: a partial result carries the reached/unreached item partition and
-		// the changes that actually happened before the stop (→ issue #131, niface ADR-0020).
+		// the changes that actually happened before the stop (→ issue #131, outturn ADR-0020).
 		attachMutationPayload(subject, res, err)
 	}
 	if err != nil {
@@ -150,7 +150,7 @@ func runApplyManifest(subject *applySubject, name string) error {
 // When --manifest is given it does no entrypoint discovery and no nix eval/build, passing the pre-built link-farm
 // directly to the engine (the module activation path; → docs/spec.md "per-module behavior spec", ADR-0003, ADR-0007).
 func runApply(run *applyRun, name string) error {
-	// The config name is the niface subject; errors from here on are subject-borne (→ issue #130).
+	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
 	// A named apply registers exactly one, so the run's results[] holds N=1 (→ issue #164).
 	subject := run.beginSubject(name)
 	if flagManifest != "" {
@@ -211,7 +211,7 @@ func runApply(run *applyRun, name string) error {
 	res, err := applyOne(ep, system, name, rootKind, fixedRoot)
 	if res != nil {
 		// Also on failure: a partial result carries the reached/unreached item partition and
-		// the changes that actually happened before the stop (→ issue #131, niface ADR-0020).
+		// the changes that actually happened before the stop (→ issue #131, outturn ADR-0020).
 		attachMutationPayload(subject, res, err)
 	}
 	if err != nil {
@@ -234,7 +234,7 @@ func runApply(run *applyRun, name string) error {
 // printApplyPlan prints the apply --dryrun plan to stdout (it owns the machine-readable output; one action per line;
 // → docs/spec.md stream discipline, ADR-0023, ADR-0024). It is not suppressed even under silent-on-success (the stdout-ownership principle; → ADR-0031).
 // conflict lines are also put on stdout as part of the plan, with the exit code (exit 2) complementing machine discrimination.
-// Under --json it prints nothing: stdout belongs to the niface envelope alone, and gating in
+// Under --json it prints nothing: stdout belongs to the outturn envelope alone, and gating in
 // fprintApplyPlan — the single chokepoint for every call site — keeps that contract testable (→ ADR-0043 §2, issue #130).
 func printApplyPlan(res *engine.Result) {
 	fprintApplyPlan(os.Stdout, res)
@@ -531,7 +531,7 @@ func forEachConfig(selected []string, jobs int, work func(i int)) {
 	wg.Wait()
 }
 
-// beginSubjects registers one niface subject per selected config, in selection (lexical) order,
+// beginSubjects registers one outturn subject per selected config, in selection (lexical) order,
 // before any config runs: beginSubject appends to the run's subject list, which the workers must
 // not share, and the registration order is results[]'s order whatever order the configs finish in.
 func beginSubjects(run *applyRun, selected []string) []*applySubject {
@@ -559,7 +559,7 @@ type applyOutcome struct {
 // its subject's payload and outcome, and its own output buffer — and the counts and output are
 // gathered in lexical order after every config is done, so neither depends on the completion order.
 //
-// Each config also gets its own niface subject, settled with that config's own outcome (→ issue
+// Each config also gets its own outturn subject, settled with that config's own outcome (→ issue
 // #164): the counts drive the aggregate exit code as before, while the subjects carry the per-config
 // results — including every succeeded one alongside a partial failure.
 func aggregateApply(run *applyRun, selected []string, jobs int, applyFn func(name string) (*engine.Result, error)) (applied, skipped, failures int) {
@@ -570,7 +570,7 @@ func aggregateApply(run *applyRun, selected []string, jobs int, applyFn func(nam
 		res, err := applyFn(name)
 		if res != nil {
 			// Also on failure: a partial result carries the reached/unreached item partition and
-			// the changes that actually happened before the stop (→ issue #131, niface ADR-0020).
+			// the changes that actually happened before the stop (→ issue #131, outturn ADR-0020).
 			attachMutationPayload(subject, res, err)
 		}
 		// subjectErr is what this config's subject settles on, which is not always err: a try-lock
@@ -624,11 +624,11 @@ type dryRunOutcome struct {
 // Like aggregateApply it runs the configs on a worker pool of jobs and prints the plans and failures in
 // lexical order once every config is done (→ ADR-0039).
 //
-// Like aggregateApply it settles one niface subject per config, riding the same payload builder as
+// Like aggregateApply it settles one outturn subject per config, riding the same payload builder as
 // the real apply so the dryrun's SubjectResult is the same shape by construction (→ issue #164). A
 // conflict is item-borne — the conflicting entry is a failed item carrying E_LAYAT_COLLISION — and
 // still puts that subject in error, symmetric with the named apply --dryrun (→ layat ADR-0043 §6,
-// niface ADR-0002).
+// outturn ADR-0002).
 func aggregateDryRun(run *applyRun, selected []string, jobs int, applyDry func(name string) (*engine.Result, error)) int {
 	subjects := beginSubjects(run, selected)
 	outcomes := make([]dryRunOutcome, len(selected))
@@ -647,7 +647,7 @@ func aggregateDryRun(run *applyRun, selected []string, jobs int, applyDry func(n
 		o.conflict = len(res.Conflicts) > 0
 		// No subject-level error either way: a conflict is already failed items carrying
 		// E_LAYAT_COLLISION, and the payload's item-borne mark is what puts this subject in error
-		// (→ nifaceSubject.itemBorne) — the same mechanism aggregateApply relies on for an
+		// (→ outturnSubject.itemBorne) — the same mechanism aggregateApply relies on for an
 		// entry-scoped failure, so both settle a config the one way.
 		subject.finish(nil)
 	})

@@ -62,11 +62,11 @@ type ResetResult struct {
 	Aborted         bool     // aborted at the confirmation prompt
 
 	// Warnings are the planner's entry-scoped warnings in structured form (kind + target), for
-	// the CLI to map onto niface warnings; KeptForeign above stays the preview-oriented view of
-	// the same data (→ issue #130, niface ADR-0019).
+	// the CLI to map onto outturn warnings; KeptForeign above stays the preview-oriented view of
+	// the same data (→ issue #130, outturn ADR-0019).
 	Warnings []planner.Warning
 	// Entries are the selected teardown entries (the previous generation's manifest narrowed by
-	// Targets) — reset's full inventory, so the CLI can list every entry as a niface item with
+	// Targets) — reset's full inventory, so the CLI can list every entry as a outturn item with
 	// its method/subpath even when it produced no removal (→ issue #131).
 	Entries []manifest.Entry
 	// FailedTarget / Unreached mirror Result's reached-state contract (→ issue #130 到達状態):
@@ -78,7 +78,7 @@ type ResetResult struct {
 	Unreached    []string
 	// GenBefore / GenAfter are the profile generation numbers observed for the run. Reset is an
 	// FS-only teardown that never moves the profile pointer, so before == after; nil when the
-	// profile link is not a parsable generation link (→ issue #130, niface ADR-0015).
+	// profile link is not a parsable generation link (→ issue #130, outturn ADR-0015).
 	GenBefore *int
 	GenAfter  *int
 }
@@ -115,7 +115,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	}
 
 	// Observe the generation once: the FS-only teardown never moves the profile pointer, so the
-	// same observation serves as both before and after (→ issue #130, niface ADR-0015).
+	// same observation serves as both before and after (→ issue #130, outturn ADR-0015).
 	res.GenBefore = observeGeneration(prof.Profile)
 	if res.GenBefore != nil {
 		res.GenAfter = intPtr(*res.GenBefore)
@@ -202,7 +202,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	//    and delete copy targets. Emit warnings for the kept foreign. A mid-teardown failure
 	//    returns the partial ResetResult alongside the error (removed-so-far + the
 	//    FailedTarget/Unreached partition), mirroring Apply's stage-failure contract so the CLI
-	//    can keep changes complete up to the failure point (→ issue #131, niface ADR-0020).
+	//    can keep changes complete up to the failure point (→ issue #131, outturn ADR-0020).
 	a := &applier{opts: Options{Warnf: warnf}, result: &Result{Root: root, ProfileDir: prof.Dir}}
 	a.profile = prof
 	a.root = root
@@ -241,7 +241,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 // resetUnreached lists the planned removals never attempted once a symlink-stage failure
 // stopped the run: the plan's unlink targets that were neither removed nor the failure
 // itself, followed by every planned copy removal (the copy stage runs strictly after the
-// symlink stage · → issue #131, niface ADR-0020). Drift-kept targets before the failure
+// symlink stage · → issue #131, outturn ADR-0020). Drift-kept targets before the failure
 // point are indistinguishable from unattempted ones here and are folded in — the same
 // conservative approximation Apply's fail() makes.
 func resetUnreached(planned []planner.RemoveAction, removed []string, failed string, plannedCopies []string) []string {

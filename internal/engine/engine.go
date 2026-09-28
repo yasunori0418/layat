@@ -88,7 +88,7 @@ type Options struct {
 type Result struct {
 	Root       string   // resolved absolute root path
 	ProfileDir string   // the fixed profileDir
-	Profile    string   // the profile link (<profileDir>/profile) — the niface generation.profile value (→ issue #131)
+	Profile    string   // the profile link (<profileDir>/profile) — the outturn generation.profile value (→ issue #131)
 	Placed     []string // newly placed symlink targets
 	Replaced   []string // targets whose existing symlink was re-linked
 	Copied     []string // copy targets newly copied via place-once
@@ -101,7 +101,7 @@ type Result struct {
 	// Conflicts are the planner-detected conflicts, in structured form. Populated on the dryrun
 	// path (the CLI decides exit 2 · → ADR-0006) and on the non-dryrun conflict stop, where the
 	// partial Result is returned alongside the aggregate error so the CLI can map each conflict
-	// onto a failed niface item (E_LAYAT_COLLISION · → issue #131, ADR-0043 §6).
+	// onto a failed outturn item (E_LAYAT_COLLISION · → issue #131, ADR-0043 §6).
 	Conflicts []planner.Conflict
 	// GenerationSkipped indicates that the project-mode generation skip committed no new
 	// generation (omitted --set). The path where the new link-farm equals the previous
@@ -111,7 +111,7 @@ type Result struct {
 
 	// Entries is the new manifest's full entry inventory, exposed regardless of whether an
 	// entry produced any FS action, so the CLI can list every entry — not just the diff —
-	// as niface items (full-inventory · → issue #130, niface ADR-0016).
+	// as outturn items (full-inventory · → issue #130, outturn ADR-0016).
 	Entries []manifest.Entry
 	// RemovalEntries are the previous-generation manifest entries behind this run's planned
 	// symlink removals (pre-removal migration + stale removal), recorded at plan time regardless
@@ -126,17 +126,17 @@ type Result struct {
 	// carry the old→new transition in change.info (→ issue #131).
 	ReplacedDests map[string]string
 	// Warnings are the planner's entry-scoped warnings in structured form (kind + target),
-	// for the CLI to map onto niface item/subject warnings. The human-readable stderr text
-	// is still emitted through Warnf alongside (→ issue #130, niface ADR-0019).
+	// for the CLI to map onto outturn item/subject warnings. The human-readable stderr text
+	// is still emitted through Warnf alongside (→ issue #130, outturn ADR-0019).
 	Warnings []planner.Warning
 	// FailedTarget is the root-relative target of the entry whose FS action failed, "" when
 	// the failure was not entry-scoped (build / lock / commit ...). When set, this target's
 	// presence in an op list above means the action was attempted, not completed
-	// (→ issue #130 到達状態, niface ADR-0016 / ADR-0020).
+	// (→ issue #130 到達状態, outturn ADR-0016 / ADR-0020).
 	FailedTarget string
 	// Unreached lists the root-relative targets of planned actions never attempted because
-	// an earlier failure stopped the run (the niface "skipped" partition · → issue #130,
-	// niface ADR-0020). Empty on success.
+	// an earlier failure stopped the run (the outturn "skipped" partition · → issue #130,
+	// outturn ADR-0020). Empty on success.
 	Unreached []string
 	// Unwound reports that the undo journal rolled this run's FS writes back after a failure:
 	// the op lists above then describe performed-then-reverted actions, not surviving state
@@ -144,7 +144,7 @@ type Result struct {
 	Unwound bool
 	// GenBefore / GenAfter are the profile generation numbers observed at run start / end.
 	// nil when unobservable — no profile yet (first apply's before), or a profile whose link
-	// does not parse as a generation link (→ issue #130, niface ADR-0015 Generation.Before/After).
+	// does not parse as a generation link (→ issue #130, outturn ADR-0015 Generation.Before/After).
 	// Dryrun observes the same untouched pointer twice, so before == after.
 	GenBefore *int
 	GenAfter  *int
@@ -213,7 +213,7 @@ func Apply(opts Options) (*Result, error) {
 	// 1.2 observe the profile generation at run start, and again on every return path (deferred),
 	//     so Result carries the before/after generation numbers (nil when unobservable — first
 	//     apply, or a test-substituted commit whose profile link is not a generation link ·
-	//     → issue #130, niface ADR-0015). The dryrun / generation-skip / failure paths never move
+	//     → issue #130, outturn ADR-0015). The dryrun / generation-skip / failure paths never move
 	//     the pointer, so they observe before == after without extra branching.
 	a.result.GenBefore = observeGeneration(a.profile.Profile)
 	defer func() { a.result.GenAfter = observeGeneration(a.profile.Profile) }()
@@ -271,7 +271,7 @@ func Apply(opts Options) (*Result, error) {
 	if len(plan.Conflicts) > 0 {
 		// Return the partial Result (full inventory + structured conflicts + everything-unreached
 		// partition via fail), not nil: the CLI needs it to report conflicted entries as failed
-		// items and the rest as skipped (→ issue #131, niface ADR-0016 / ADR-0020).
+		// items and the rest as skipped (→ issue #131, outturn ADR-0016 / ADR-0020).
 		a.result.Conflicts = plan.Conflicts
 		return a.fail(plan, reportConflicts(a.opts.Warnf, plan.Conflicts))
 	}
@@ -318,7 +318,7 @@ func Apply(opts Options) (*Result, error) {
 	//    run has done so far (across all five, not just the failing stage) before returning (→ ADR-0044).
 	//    On a stage failure the partial Result is returned alongside the error, carrying the
 	//    reached/unreached partition (FailedTarget / Unreached / Unwound) so the CLI can report
-	//    how far the run got (→ issue #130 到達状態, niface ADR-0016 / ADR-0020).
+	//    how far the run got (→ issue #130 到達状態, outturn ADR-0016 / ADR-0020).
 	if err := a.runJournaled(func() error { return a.preRemove(plan.PreRemove) }); err != nil {
 		return a.fail(plan, err)
 	}
@@ -435,8 +435,8 @@ func (a *applier) entryFailed(target string, err error) error {
 
 // fail finalizes a mid-run stage failure: it fills result.Unreached with the planned-but-never-
 // attempted targets (everything in the plan that is neither in a completed-op list nor the
-// FailedTarget) and returns the partial Result alongside err, so the CLI can derive the niface
-// success/failed/skipped item partition (→ issue #130 到達状態, niface ADR-0016 / ADR-0020).
+// FailedTarget) and returns the partial Result alongside err, so the CLI can derive the outturn
+// success/failed/skipped item partition (→ issue #130 到達状態, outturn ADR-0016 / ADR-0020).
 // Under --recopy the copy execution source is the manifest, not plan.Copies (→ recopyAll), so
 // the manifest's copy entries are walked as well.
 func (a *applier) fail(plan planner.Plan, err error) (*Result, error) {
@@ -655,7 +655,7 @@ func conflictGuidance(kind planner.ConflictKind) string {
 }
 
 // emitWarnings emits the non-fatal warnings computed by the planner to stderr (opts.Warnf) and
-// records them in structured form on the Result (kind + target · → issue #130, niface ADR-0019),
+// records them in structured form on the Result (kind + target · → issue #130, outturn ADR-0019),
 // so the CLI has the same warnings as data for the machine channel while the human text keeps
 // streaming. Warnings are always emitted, regardless of the silent-on-success default or -v
 // (→ docs/spec.md stream discipline · ADR-0015, ADR-0024, ADR-0031).

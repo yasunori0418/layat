@@ -11,7 +11,7 @@ import (
 )
 
 // pruneInfo is prune's envelope-wide info: the series it deleted (in --dryrun, would delete) and
-// the ones it left alone with the reason (→ issue #134, niface ADR-0018; the init shape). prune
+// the ones it left alone with the reason (→ issue #134, outturn ADR-0018; the init shape). prune
 // names no config, so it registers no subject and its result.info slot stays an anonymous
 // *struct{} left nil — the inventory has nowhere else to ride.
 //
@@ -52,11 +52,11 @@ type pruneSkippedRow struct {
 }
 
 // pruneRun is prune's concrete run instantiation, threaded from RunE into runPrune.
-type pruneRun = nifaceRun[*struct{}, *pruneInfo]
+type pruneRun = outturnRun[*struct{}, *pruneInfo]
 
-// beginPruneRun starts prune's run (→ beginNifaceRun, beginApplyRun).
+// beginPruneRun starts prune's run (→ beginOutturnRun, beginApplyRun).
 func beginPruneRun(command string) *pruneRun {
-	return beginNifaceRun[*struct{}, *pruneInfo](command)
+	return beginOutturnRun[*struct{}, *pruneInfo](command)
 }
 
 func newPruneCmd() *cobra.Command {
@@ -92,10 +92,10 @@ func newPruneCmd() *cobra.Command {
 // path of every series first (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
 //
 // prune registers no subject: it names no config, so its inventory rides in the envelope-wide
-// info and results stays [] (the init shape · niface ADR-0018, → issue #164).
+// info and results stays [] (the init shape · outturn ADR-0018, → issue #164).
 //
 // dryrun must be flagDryrun's value (RunE passes exactly that, as reset's does): the envelope's
-// own dryRun field is captured from the flag by nifaceRun.begin, so passing anything else here
+// own dryRun field is captured from the flag by outturnRun.begin, so passing anything else here
 // would emit a document whose dryRun disagrees with what the run did.
 //
 // interactive carries no such constraint — it is the seam the TTY check comes in through, so the
@@ -265,7 +265,7 @@ func reportPruneResult(res *engine.PruneResult) {
 
 // pruneInfoFrom maps the engine result onto the --json inventory. It is pure data mapping — the
 // same result the -v report reads, so the document and the human report cannot disagree
-// (→ niface_payload.go の単一結果源). Both arrays stay non-nil so a run that deleted nothing still
+// (→ outturn_payload.go の単一結果源). Both arrays stay non-nil so a run that deleted nothing still
 // emits "removed": [] rather than null.
 func pruneInfoFrom(res *engine.PruneResult) *pruneInfo {
 	info := &pruneInfo{

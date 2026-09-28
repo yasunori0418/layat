@@ -26,11 +26,11 @@ type generationsInfo struct {
 }
 
 // listGenerationsRun is list-generations' concrete run instantiation, threaded from RunE.
-type listGenerationsRun = nifaceRun[*generationsInfo, *struct{}]
+type listGenerationsRun = outturnRun[*generationsInfo, *struct{}]
 
-// beginListGenerationsRun starts list-generations' run (→ beginNifaceRun, beginApplyRun).
+// beginListGenerationsRun starts list-generations' run (→ beginOutturnRun, beginApplyRun).
 func beginListGenerationsRun(command string) *listGenerationsRun {
-	return beginNifaceRun[*generationsInfo, *struct{}](command)
+	return beginOutturnRun[*generationsInfo, *struct{}](command)
 }
 
 func newListGenerationsCmd() *cobra.Command {
@@ -42,7 +42,7 @@ func newListGenerationsCmd() *cobra.Command {
 			"Pass <name> for that config, or --all to list every home mode config.",
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// beginListGenerationsRun also publishes the run to nifaceReport, so main emits the
+			// beginListGenerationsRun also publishes the run to outturnReport, so main emits the
 			// envelope after Execute returns whichever path below runs.
 			run := beginListGenerationsRun(cmd.Name())
 			if all {
@@ -63,7 +63,7 @@ func newListGenerationsCmd() *cobra.Command {
 
 // runListGenerations confirms rootKind via eval pre-resolution (home mode only), resolves profileDir, and lists generations.
 func runListGenerations(run *listGenerationsRun, name string) error {
-	// The config name is the niface subject; errors from here on are subject-borne (→ issue #130).
+	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
 	// A named listing registers exactly one, so the run's results[] holds N=1 (→ issue #164).
 	subject := run.beginSubject(name)
 	ep, err := discoverEntrypoint(flagFile)
@@ -107,8 +107,8 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 // generationsPayload wraps a config's listing as its SubjectResult payload — the read-only
 // enumeration rides result.info, shared by the named listing and --all so both produce the same
 // shape by construction (→ issue #132, #164).
-func generationsPayload(gens []engine.Generation) *nifacePayload[*generationsInfo] {
-	return &nifacePayload[*generationsInfo]{info: &generationsInfo{Generations: generationRows(gens)}}
+func generationsPayload(gens []engine.Generation) *outturnPayload[*generationsInfo] {
+	return &outturnPayload[*generationsInfo]{info: &generationsInfo{Generations: generationRows(gens)}}
 }
 
 // generationRow is one generation of the --json inventory (result.info.generations · → issue
@@ -194,7 +194,7 @@ func runListAllGenerations(run *listGenerationsRun) error {
 }
 
 // printGenerations prints the generation list to stdout (the primary output of a read-only command; → ADR-0023).
-// Under --json it prints nothing: stdout belongs to the niface envelope alone, gated here — the
+// Under --json it prints nothing: stdout belongs to the outturn envelope alone, gated here — the
 // single chokepoint for every call site (→ ADR-0043 §2, issue #130). The --all path additionally
 // gates its own per-config header lines at the call site.
 func printGenerations(gens []engine.Generation) {

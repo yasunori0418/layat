@@ -82,10 +82,10 @@ func legacyStateDirFixture(t *testing.T) string {
 // else — which lets this assert the exact bytes rather than mere containment.
 func TestLegacyStateDirHintOnSubcommand(t *testing.T) {
 	// gitignore's RunE calls beginGitignoreRun before its arity check, so the run reaches
-	// the package-global nifaceReport. Save and restore it as niface_test.go does, so this
+	// the package-global outturnReport. Save and restore it as outturn_test.go does, so this
 	// test leaves no state behind for whatever runs next.
-	origReport := nifaceReport
-	defer func() { nifaceReport = origReport }()
+	origReport := outturnReport
+	defer func() { outturnReport = origReport }()
 
 	want := legacyStateDirFixture(t)
 
@@ -127,8 +127,8 @@ func TestLegacyStateDirHintContent(t *testing.T) {
 // temp dir that has no nput profile directory, the run must say nothing. os.Stat is the only
 // filesystem access the hint performs, so an empty state base is the whole condition.
 func TestLegacyStateDirHintAbsentWithoutLegacyDir(t *testing.T) {
-	origReport := nifaceReport
-	defer func() { nifaceReport = origReport }()
+	origReport := outturnReport
+	defer func() { outturnReport = origReport }()
 
 	t.Setenv("XDG_STATE_HOME", t.TempDir())
 
@@ -149,8 +149,8 @@ func TestLegacyStateDirHintAbsentWithoutLegacyDir(t *testing.T) {
 // by whatever happens to sit under the working directory — a hint naming a relative path in a
 // checkout that has one.
 func TestLegacyStateDirHintUnresolvableStateBase(t *testing.T) {
-	origReport := nifaceReport
-	defer func() { nifaceReport = origReport }()
+	origReport := outturnReport
+	defer func() { outturnReport = origReport }()
 
 	t.Setenv("XDG_STATE_HOME", "")
 	t.Setenv("HOME", "")
@@ -178,8 +178,8 @@ func TestLegacyStateDirHintUnresolvableStateBase(t *testing.T) {
 // is said about it. Without the IsDir test the line would tell a stray file a story about
 // generations it does not hold (→ ADR-0054 §8).
 func TestLegacyStateDirHintNonDirectoryIgnored(t *testing.T) {
-	origReport := nifaceReport
-	defer func() { nifaceReport = origReport }()
+	origReport := outturnReport
+	defer func() { outturnReport = origReport }()
 
 	state := t.TempDir()
 	if err := os.MkdirAll(filepath.Dir(legacyStateDir(state)), 0o755); err != nil {
@@ -201,22 +201,22 @@ func TestLegacyStateDirHintNonDirectoryIgnored(t *testing.T) {
 }
 
 // TestLegacyStateDirHintNotInJSONEnvelope pins that the hint stays off the --json envelope: it
-// is a niface-conformant machine contract and must not carry a tool-side announcement, so
+// is a outturn-conformant machine contract and must not carry a tool-side announcement, so
 // stdout holds the document alone while the hint goes to stderr (→ ADR-0043, ADR-0054 §6).
-// nifaceReport.emit is called from main, not from Execute (→ main.go), so the emit has to run
+// outturnReport.emit is called from main, not from Execute (→ main.go), so the emit has to run
 // inside the capture the way TestJSONEndToEndSubjectBorneFailure does it — otherwise no
 // envelope is produced and the stdout assertion passes against an empty string. `gitignore`
 // with no argument fails after beginGitignoreRun has published the run, which is what makes
 // the envelope exist at all. flagJSON is a package global that cobra's flag parsing sets, so
 // it is restored here rather than left set for the next test.
 func TestLegacyStateDirHintNotInJSONEnvelope(t *testing.T) {
-	origReport := nifaceReport
+	origReport := outturnReport
 	origJSON := flagJSON
 	defer func() {
-		nifaceReport = origReport
+		outturnReport = origReport
 		flagJSON = origJSON
 	}()
-	nifaceReport = noopEmitter{}
+	outturnReport = noopEmitter{}
 
 	wantHint := legacyStateDirFixture(t)
 
@@ -227,10 +227,10 @@ func TestLegacyStateDirHintNotInJSONEnvelope(t *testing.T) {
 			root := newRootCmd()
 			root.SetArgs([]string{"--json", "gitignore"})
 			execErr = root.Execute()
-			if !nifaceReport.began() {
+			if !outturnReport.began() {
 				return
 			}
-			emitErr = nifaceReport.emit(execErr)
+			emitErr = outturnReport.emit(execErr)
 		})
 	})
 	if emitErr != nil {
@@ -239,8 +239,8 @@ func TestLegacyStateDirHintNotInJSONEnvelope(t *testing.T) {
 	if execErr == nil {
 		t.Fatal("gitignore without <name> must fail")
 	}
-	if !nifaceReport.began() {
-		t.Fatal("gitignore's RunE did not publish a begun niface run")
+	if !outturnReport.began() {
+		t.Fatal("gitignore's RunE did not publish a begun outturn run")
 	}
 	// The envelope must be the whole of stdout: a leading "{" is what ADR-0043 §2's
 	// stdout ownership amounts to here, and the hint is what must not be inside it.

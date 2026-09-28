@@ -10,7 +10,7 @@ import (
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
-// rollbackResultInfo / rollbackEnvInfo are rollback's niface info slots (→ issue #196): empty
+// rollbackResultInfo / rollbackEnvInfo are rollback's outturn info slots (→ issue #196): empty
 // seat types held as nil pointers, so both info keys stay out of the document exactly as before.
 // The generation transition rides generation.before/after, not info; the seats are here so later
 // mutation run facts arrive as field additions alone (→ applyResultInfo in apply.go for the
@@ -21,11 +21,11 @@ type (
 )
 
 // rollbackRun is rollback's concrete run instantiation, threaded from RunE into runRollback.
-type rollbackRun = nifaceRun[*rollbackResultInfo, *rollbackEnvInfo]
+type rollbackRun = outturnRun[*rollbackResultInfo, *rollbackEnvInfo]
 
-// beginRollbackRun starts rollback's run (→ beginNifaceRun, beginApplyRun).
+// beginRollbackRun starts rollback's run (→ beginOutturnRun, beginApplyRun).
 func beginRollbackRun(command string) *rollbackRun {
-	return beginNifaceRun[*rollbackResultInfo, *rollbackEnvInfo](command)
+	return beginOutturnRun[*rollbackResultInfo, *rollbackEnvInfo](command)
 }
 
 func newRollbackCmd() *cobra.Command {
@@ -45,7 +45,7 @@ func newRollbackCmd() *cobra.Command {
 
 // runRollback confirms rootKind via eval pre-resolution (home mode only) and drives engine.Rollback.
 func runRollback(run *rollbackRun, name string) error {
-	// The config name is the niface subject; errors from here on are subject-borne (→ issue #130).
+	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
 	// rollback is name-required (no --all), so the run always holds exactly this one (→ issue #164).
 	subject := run.beginSubject(name)
 	ep, err := discoverEntrypoint(flagFile)
@@ -73,7 +73,7 @@ func runRollback(run *rollbackRun, name string) error {
 	})
 	if res != nil {
 		// The From→To transition rides generation.before/after (GenBefore/GenAfter), not
-		// result.info — no double encoding (→ issue #131, niface ADR-0015). A stage-failure
+		// result.info — no double encoding (→ issue #131, outturn ADR-0015). A stage-failure
 		// partial result maps the same way, with the pointer pinned at the unmoved generation.
 		attachMutationPayload(subject, &res.Result, err)
 	}

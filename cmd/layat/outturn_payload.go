@@ -1,5 +1,5 @@
-// niface_payload.go maps the mutation commands' engine results (apply / reset / rollback,
-// single config) onto the niface SubjectResult payload: full-inventory items, diff-only
+// outturn_payload.go maps the mutation commands' engine results (apply / reset / rollback,
+// single config) onto the outturn SubjectResult payload: full-inventory items, diff-only
 // changes, the generation observation, and structured warnings (→ issue #131, ADR-0043).
 //
 // The builders read the same engine.Result / engine.ResetResult the -v text report reads, so
@@ -18,28 +18,28 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// nifaceEntryInfo is the item.info DTO for an entry item: the entry's declarative identity
+// outturnEntryInfo is the item.info DTO for an entry item: the entry's declarative identity
 // plus its placement shape ({target, method, subpath} · → issue #131). The volatile src
 // store path stays out — it belongs to change.info (the diff's concrete content), not to
 // the item's identity-adjacent info.
-type nifaceEntryInfo struct {
+type outturnEntryInfo struct {
 	Target  string `json:"target"`
 	Method  string `json:"method,omitempty"`
 	Subpath string `json:"subpath,omitempty"`
 }
 
-// nifaceChangeInfo is the change.info DTO: the transition's concrete old / new values
-// (symlink destinations, copy sources · → issue #131, niface §4). Either side is omitted
+// outturnChangeInfo is the change.info DTO: the transition's concrete old / new values
+// (symlink destinations, copy sources · → issue #131, outturn §4). Either side is omitted
 // when unknowable (a fresh add has no old; a recopy overwrite's old content is untracked).
-type nifaceChangeInfo struct {
+type outturnChangeInfo struct {
 	Old string `json:"old,omitempty"`
 	New string `json:"new,omitempty"`
 }
 
-// nifacePayload is one subject's accumulated result payload, attached to the run by the
-// mutation commands and folded into the SubjectResult at emit time (→ nifaceRun.emit).
+// outturnPayload is one subject's accumulated result payload, attached to the run by the
+// mutation commands and folded into the SubjectResult at emit time (→ outturnRun.emit).
 // TInfo is the owning command's result.info type (→ issue #196).
-type nifacePayload[TInfo any] struct {
+type outturnPayload[TInfo any] struct {
 	items      []layatItem
 	changes    []layatChange
 	generation *outturn.Generation
@@ -51,7 +51,7 @@ type nifacePayload[TInfo any] struct {
 	info TInfo
 	// itemBorne marks that the command error is already represented by a failed item
 	// (entry failure / conflict), so emit must not duplicate it into subjectResult.errors[]
-	// (niface §2: item 起因のエラーを errors[] に置いてはならない).
+	// (outturn §2: item 起因のエラーを errors[] に置いてはならない).
 	itemBorne bool
 }
 
@@ -59,7 +59,7 @@ type nifacePayload[TInfo any] struct {
 // subject it belongs to. A payload-build failure (id derivation — practically impossible for
 // string targets) is reported to stderr and that subject falls back to the minimal #130 shape
 // rather than emitting a half-mapped document.
-func attachMutationPayload[TInfo any](s *nifaceSubject[TInfo], res *engine.Result, cmdErr error) {
+func attachMutationPayload[TInfo any](s *outturnSubject[TInfo], res *engine.Result, cmdErr error) {
 	p, err := mutationPayload[TInfo](res, cmdErr)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "layat: could not build the --json payload: %v\n", err)
@@ -69,7 +69,7 @@ func attachMutationPayload[TInfo any](s *nifaceSubject[TInfo], res *engine.Resul
 }
 
 // attachResetPayload is attachMutationPayload's reset counterpart.
-func attachResetPayload[TInfo any](s *nifaceSubject[TInfo], res *engine.ResetResult, cmdErr error) {
+func attachResetPayload[TInfo any](s *outturnSubject[TInfo], res *engine.ResetResult, cmdErr error) {
 	p, err := resetPayload[TInfo](res, cmdErr)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "layat: could not build the --json payload: %v\n", err)
@@ -78,7 +78,7 @@ func attachResetPayload[TInfo any](s *nifaceSubject[TInfo], res *engine.ResetRes
 	s.setPayload(p)
 }
 
-// itemStatuses is the reached-state partition shared by the builders (→ niface ADR-0016 /
+// itemStatuses is the reached-state partition shared by the builders (→ outturn ADR-0016 /
 // ADR-0020): the failed entry, the planned-but-never-attempted entries (skipped — the only
 // use of skipped), and per-target conflicts (failed + E_LAYAT_COLLISION). Everything else is
 // success — including policy inaction (a kept stale target, a place-once copy skip), which
@@ -125,7 +125,7 @@ func newItemStatuses(failedTarget string, unreached []string, conflicts []planne
 	return s
 }
 
-// entryItem renders one manifest entry as a niface item under the status partition.
+// entryItem renders one manifest entry as a outturn item under the status partition.
 func entryItem(e manifest.Entry, statuses *itemStatuses) (layatItem, error) {
 	id, err := entryItemID(e.Target)
 	if err != nil {
@@ -138,12 +138,12 @@ func entryItem(e manifest.Entry, statuses *itemStatuses) (layatItem, error) {
 		Label:  e.Target,
 		Status: status,
 		Error:  itemErr,
-		Info:   &nifaceEntryInfo{Target: e.Target, Method: e.Method, Subpath: e.Subpath},
+		Info:   &outturnEntryInfo{Target: e.Target, Method: e.Method, Subpath: e.Subpath},
 	}, nil
 }
 
 // entryChange renders one change for an entry item, deriving the itemId from the target.
-func entryChange(target string, kind outturn.ChangeKind, reversible bool, info *nifaceChangeInfo) (layatChange, error) {
+func entryChange(target string, kind outturn.ChangeKind, reversible bool, info *outturnChangeInfo) (layatChange, error) {
 	id, err := entryItemID(target)
 	if err != nil {
 		return layatChange{}, err
@@ -152,32 +152,32 @@ func entryChange(target string, kind outturn.ChangeKind, reversible bool, info *
 }
 
 // changeInfoOrNil packs old/new into a change info, or nil when both are unknowable.
-func changeInfoOrNil(old, new string) *nifaceChangeInfo {
+func changeInfoOrNil(old, new string) *outturnChangeInfo {
 	if old == "" && new == "" {
 		return nil
 	}
-	return &nifaceChangeInfo{Old: old, New: new}
+	return &outturnChangeInfo{Old: old, New: new}
 }
 
-// mutationPayload maps an apply / rollback engine.Result onto the niface payload:
+// mutationPayload maps an apply / rollback engine.Result onto the outturn payload:
 //
 //   - items = full inventory: every new-manifest entry plus the previous-generation entries
 //     behind planned removals (stale-removed old entries), each with the reached-state status
-//     partition applied (→ niface ADR-0016 / ADR-0020).
+//     partition applied (→ outturn ADR-0016 / ADR-0020).
 //   - changes = the diffs that actually happened, in op order: place → add, replace → modify,
 //     new copy → add, recopy → modify (irreversible), stale removal → remove. A target both
 //     unlinked and re-placed in the same run (a symlink→copy method change) coalesces into one
 //     modify — the item's actual old→new transition, not its mechanical op pair.
-//   - generation = the run's before/after observation ({profile, before?, after?} · → niface
+//   - generation = the run's before/after observation ({profile, before?, after?} · → outturn
 //     ADR-0015). The first apply has no before; a failed run observes an unmoved pointer.
 //   - warnings = the planner's structured warnings, attached to the warned target's item when
-//     it is in the inventory and to the subject otherwise (→ niface ADR-0019). An unwound run
+//     it is in the inventory and to the subject otherwise (→ outturn ADR-0019). An unwound run
 //     (→ ADR-0044) additionally carries W_LAYAT_UNWOUND at the subject level: the changes list
 //     stays the record of what happened up to the failure, and the warning tells consumers
 //     those diffs were rolled back rather than left on disk.
-func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*nifacePayload[TInfo], error) {
+func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*outturnPayload[TInfo], error) {
 	statuses := newItemStatuses(res.FailedTarget, res.Unreached, res.Conflicts, cmdErr)
-	p := &nifacePayload[TInfo]{itemBorne: res.FailedTarget != "" || len(res.Conflicts) > 0}
+	p := &outturnPayload[TInfo]{itemBorne: res.FailedTarget != "" || len(res.Conflicts) > 0}
 
 	// Items: the new manifest's inventory first, then the stale-removed old entries not
 	// shadowed by it (a method-change target lives in both; the new entry wins).
@@ -232,7 +232,7 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*nifacePayloa
 		removed[t] = true
 	}
 	rePlaced := map[string]bool{}
-	addChange := func(target string, kind outturn.ChangeKind, reversible bool, info *nifaceChangeInfo) error {
+	addChange := func(target string, kind outturn.ChangeKind, reversible bool, info *outturnChangeInfo) error {
 		c, err := entryChange(target, kind, reversible, info)
 		if err != nil {
 			return err
@@ -254,7 +254,7 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*nifacePayloa
 			if skipNoop && old != "" && old == newDest[t] {
 				// A re-link back to the recorded dest (apply re-links every planned symlink
 				// mechanically) leaves the state identical: a noop, which changes must not
-				// contain (niface §4). The -v report still shows the mechanical op.
+				// contain (outturn §4). The -v report still shows the mechanical op.
 				continue
 			}
 			if err := addChange(t, kind, reversible, changeInfoOrNil(old, newDest[t])); err != nil {
@@ -287,7 +287,7 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*nifacePayloa
 		}
 	}
 
-	// Generation: the run's observation (→ niface ADR-0015). Reset never comes through here —
+	// Generation: the run's observation (→ outturn ADR-0015). Reset never comes through here —
 	// it has its own builder without a generation slot (an FS-only teardown moves nothing).
 	p.generation = &outturn.Generation{Profile: res.Profile, Before: res.GenBefore, After: res.GenAfter}
 
@@ -301,16 +301,16 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*nifacePayloa
 	return p, nil
 }
 
-// resetPayload maps an engine.ResetResult onto the niface payload: items = the selected
+// resetPayload maps an engine.ResetResult onto the outturn payload: items = the selected
 // teardown entries (reset's full inventory), changes = the removals that actually happened
 // (symlink removals reversible, copy deletions irreversible — copy content is untracked ·
 // → ADR-0043 §4), no generation slot (reset is an FS-only teardown: the profile pointer and
 // the generations are untouched, so there is no transition to observe · → issue #131).
 // An aborted run (confirmation declined — unreachable under --json, which never prompts)
 // changed nothing: items stay success, changes stay empty.
-func resetPayload[TInfo any](res *engine.ResetResult, cmdErr error) (*nifacePayload[TInfo], error) {
+func resetPayload[TInfo any](res *engine.ResetResult, cmdErr error) (*outturnPayload[TInfo], error) {
 	statuses := newItemStatuses(res.FailedTarget, res.Unreached, nil, cmdErr)
-	p := &nifacePayload[TInfo]{itemBorne: res.FailedTarget != ""}
+	p := &outturnPayload[TInfo]{itemBorne: res.FailedTarget != ""}
 
 	byTarget := map[string]manifest.Entry{}
 	for _, e := range res.Entries {
@@ -348,7 +348,7 @@ func resetPayload[TInfo any](res *engine.ResetResult, cmdErr error) (*nifacePayl
 // attachWarnings maps the planner's structured warnings onto the payload: a warning whose
 // target is an inventory item lands in that item's warnings, anything else (a target outside
 // the inventory — e.g. a kept stale symlink or a copy orphan whose entry left the config) is
-// returned as a subject-level warning (→ niface ADR-0019). items is mutated in place.
+// returned as a subject-level warning (→ outturn ADR-0019). items is mutated in place.
 func attachWarnings(items []layatItem, warnings []planner.Warning) []outturn.Warning {
 	itemIdx := map[string]int{}
 	for i, it := range items {
@@ -356,7 +356,7 @@ func attachWarnings(items []layatItem, warnings []planner.Warning) []outturn.War
 	}
 	var subject []outturn.Warning
 	for _, w := range warnings {
-		nw := nifaceWarning(w)
+		nw := outturnWarning(w)
 		if i, ok := itemIdx[w.Target]; ok {
 			items[i].Warnings = append(items[i].Warnings, nw)
 			continue
@@ -366,11 +366,11 @@ func attachWarnings(items []layatItem, warnings []planner.Warning) []outturn.War
 	return subject
 }
 
-// nifaceWarning translates one planner warning into the niface warning vocabulary
-// (tool-specific W_LAYAT_* codes · niface §6 two-layer naming). The messages mirror the
+// outturnWarning translates one planner warning into the outturn warning vocabulary
+// (tool-specific W_LAYAT_* codes · outturn §6 two-layer naming). The messages mirror the
 // stderr text (→ engine.emitWarnings) without the "layat: " prefix and target suffix — the
 // target rides in detail (and in the carrying item) instead.
-func nifaceWarning(w planner.Warning) outturn.Warning {
+func outturnWarning(w planner.Warning) outturn.Warning {
 	var code, msg string
 	switch w.Kind {
 	case planner.WarnForeignReplace:

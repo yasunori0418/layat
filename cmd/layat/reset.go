@@ -12,7 +12,7 @@ import (
 	"github.com/yasunori0418/layat/internal/engine"
 )
 
-// resetResultInfo / resetEnvInfo are reset's niface info slots (→ issue #196): empty seat types
+// resetResultInfo / resetEnvInfo are reset's outturn info slots (→ issue #196): empty seat types
 // held as nil pointers, so both info keys stay out of the document exactly as before. Reset's
 // record lives in items / changes; the seats are here so later mutation run facts arrive as
 // field additions alone (→ applyResultInfo in apply.go for the full rationale).
@@ -22,11 +22,11 @@ type (
 )
 
 // resetRun is reset's concrete run instantiation, threaded from RunE into runReset.
-type resetRun = nifaceRun[*resetResultInfo, *resetEnvInfo]
+type resetRun = outturnRun[*resetResultInfo, *resetEnvInfo]
 
-// beginResetRun starts reset's run (→ beginNifaceRun, beginApplyRun).
+// beginResetRun starts reset's run (→ beginOutturnRun, beginApplyRun).
 func beginResetRun(command string) *resetRun {
-	return beginNifaceRun[*resetResultInfo, *resetEnvInfo](command)
+	return beginOutturnRun[*resetResultInfo, *resetEnvInfo](command)
 }
 
 func newResetCmd() *cobra.Command {
@@ -51,7 +51,7 @@ func newResetCmd() *cobra.Command {
 // runReset resolves rootKind (→ profileDir) via eval pre-resolution and drives engine.Reset.
 // --dryrun prints the plan read-only to stdout and exits 0. Non-dryrun requires TTY confirmation / --yes.
 func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
-	// The config name is the niface subject; errors from here on are subject-borne (→ issue #130).
+	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
 	// reset is name-required (no --all), so the run always holds exactly this one (→ issue #164).
 	subject := run.beginSubject(name)
 	ep, err := discoverEntrypoint(flagFile)
@@ -109,7 +109,7 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 	})
 	if res != nil {
 		// Also on a mid-teardown failure: the partial result keeps the changes complete up to
-		// the failure point (→ issue #131, niface ADR-0020). No generation slot — reset never
+		// the failure point (→ issue #131, outturn ADR-0020). No generation slot — reset never
 		// moves the profile pointer (FS-only teardown).
 		attachResetPayload(subject, res, err)
 	}
