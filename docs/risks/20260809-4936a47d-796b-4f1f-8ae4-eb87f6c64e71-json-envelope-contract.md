@@ -1,7 +1,7 @@
 ---
 id: "RISK-4936a47d-796b-4f1f-8ae4-eb87f6c64e71"
 type: risk
-name: "--json のエンベロープが niface 規約から外れ機械可読出力の消費側が壊れる"
+name: "--json のエンベロープが outturn 規約から外れ機械可読出力の消費側が壊れる"
 threatens:
   - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
   - "REQ-5c2e64c3-09a7-4ae8-b60c-4f1ccabce4fd"
@@ -12,7 +12,7 @@ likelihood: low
 impact: medium
 level: low
 ---
-# RISK-4936a47d-796b-4f1f-8ae4-eb87f6c64e71: --json のエンベロープが niface 規約から外れ機械可読出力の消費側が壊れる
+# RISK-4936a47d-796b-4f1f-8ae4-eb87f6c64e71: --json のエンベロープが outturn 規約から外れ機械可読出力の消費側が壊れる
 
 ## リスク
 
@@ -39,5 +39,5 @@ level: low
 なく、エンベロープを規約へ戻したうえでの再実行が正しい文書を返すため。layat 自身は正常終了した
 まま不正な文書を渡し、とくに item id の導出則のずれはパースエラーにすらならず値だけが他実装と
 食い違う——この沈黙性は本 risk の中心だが、気づいた後の回復可能性は下げない。likelihood を
-low に留めるのは、niface の適合チェッカを Go テスト・E2E の双方に置いており、逸脱の大半が
+low に留めるのは、outturn の適合チェッカを Go テスト・E2E の双方に置いており、逸脱の大半が
 機械的に捕まる構造になっているため（→ TP-d3000054-42d9-4bac-912a-dd3abc38d3e9）。

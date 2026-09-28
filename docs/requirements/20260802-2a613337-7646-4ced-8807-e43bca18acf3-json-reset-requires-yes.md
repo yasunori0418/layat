@@ -28,7 +28,7 @@ TTY でもプロンプトを出さず、`--yes` が無ければ即 `status:"erro
 
 ## 出典
 
-`docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「niface 準拠の `--json`
+`docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「`reset --json` は `--yes` 必須」。
 
 決定の実体は ADR-0043 §8。

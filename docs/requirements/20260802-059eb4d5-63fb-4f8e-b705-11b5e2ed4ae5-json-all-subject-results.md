@@ -130,7 +130,7 @@ warnings / info）の写像規則は単一 config と同一で、`--all` 固有�
   profile ディレクトリ走査で見つかった home mode config）を適用したあとの辞書順で並ぶ。
   ただし各 config は独立 atomic なので順序は結果に影響せず、消費側は `subject.name` で
   引くこと（`changes[].itemId` の解決は**同一 `SubjectResult` 内**に閉じる・result 跨ぎ
-  参照は niface lint MUST 違反）。
+  参照は outturn lint MUST 違反）。
 - **集約 `status`**: **1 主体でも `error` なら `error`**、全て成功なら `success`。
   **部分失敗でも成功した config の `SubjectResult` は全て残る**（失敗した config だけが
   `status:"error"` になる）。対象 0 件（フィルタにマッチせず / profile 未作成 /
@@ -188,7 +188,7 @@ warnings / info）の写像規則は単一 config と同一で、`--all` 固有�
 
 ## 出典
 
-`docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「niface 準拠の `--json`
+`docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「`--all` の複数 `SubjectResult`（#164）」とその配下の全項目。
 
 決定の実体は ADR-0043 §7（`--all` の複数 `SubjectResult`）・§6（conflict 1 件でも

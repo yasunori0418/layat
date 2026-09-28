@@ -138,9 +138,9 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [REQ-2c5a10d8-112b-4f96-947a-aba7164779c4](requirements/20260802-2c5a10d8-112b-4f96-947a-aba7164779c4-exit-codes.md) — 終了コードは 0 = 成功 / 1 = 一般エラー / 2 = dryrun の conflict とする
 - [REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32](requirements/20260802-b7bb09d6-74c4-44d6-905f-cb5e8383ea32-apply-all-dryrun-exit-code-priority.md) — apply --all --dryrun の終了コードは error を conflict より優先する
 
-#### niface 準拠の `--json`（第 2 契約・→ ADR-0043）
+#### outturn 準拠の `--json`（第 2 契約・→ ADR-0043）
 
-- [REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead](requirements/20260802-a5053191-1c6a-449b-9c5e-5ff49dc5aead-json-niface-envelope.md) — --json は niface 規約準拠のエンベロープを出す第 2 契約とする
+- [REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead](requirements/20260802-a5053191-1c6a-449b-9c5e-5ff49dc5aead-json-outturn-envelope.md) — --json は outturn 規約準拠のエンベロープを出す第 2 契約とする
 - [REQ-2353259f-5878-452a-8e11-3445de69abc2](requirements/20260802-2353259f-5878-452a-8e11-3445de69abc2-json-stdout-exclusive.md) — --json 指定時は行指向 stdout を出さずエンベロープが stdout を専有する
 - [REQ-5c2e64c3-09a7-4ae8-b60c-4f1ccabce4fd](requirements/20260802-5c2e64c3-09a7-4ae8-b60c-4f1ccabce4fd-json-emit-timing.md) — エンベロープはコマンド完了時に 1 回だけ出し成立条件を満たさない実行では出さない
 - [REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62](requirements/20260802-2ea19863-eaa2-466b-b1ed-3f56f6417c62-json-change-payload.md) — 変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く
@@ -325,7 +325,7 @@ test_plan は requirement とは別系統で、use_case を経由せず solution
 - [TP-36e90d5d-4524-4294-bc72-ee263bb02782](test-plan/20260809-36e90d5d-4524-4294-bc72-ee263bb02782-nix-unit-namaka-split.md) — 評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る
 - [TP-403c55c7-d996-4951-8e6b-c3a7dddd387c](test-plan/20260808-403c55c7-d996-4951-8e6b-c3a7dddd387c-lib-internal-test-seam.md) — lib.\_\_internal は private helper のテスト seam として公開する
 - [TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2](test-plan/20260808-b7f1dc79-0222-4b6e-9e91-0545046e34f2-nixos-vm-test-future.md) — NixOS / nix-darwin モジュール経路の実 activate は E2E ハーネスの対象外とする
-- [TP-d3000054-42d9-4bac-912a-dd3abc38d3e9](test-plan/20260808-d3000054-42d9-4bac-912a-dd3abc38d3e9-json-conformance-verification.md) — エンベロープの niface 適合を Go テストと E2E の両方で検証する
+- [TP-d3000054-42d9-4bac-912a-dd3abc38d3e9](test-plan/20260808-d3000054-42d9-4bac-912a-dd3abc38d3e9-json-conformance-verification.md) — エンベロープの outturn 適合を Go テストと E2E の両方で検証する
 - [TP-d3d06fe4-6940-4df8-b111-bb4096d5444f](test-plan/20260809-d3d06fe4-6940-4df8-b111-bb4096d5444f-eval-test-double.md) — 評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える
 - [TP-deb05610-44bc-4962-8939-952392e5fbd0](test-plan/20260809-deb05610-44bc-4962-8939-952392e5fbd0-fault-injection-atomicity.md) — 原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する
 - [TP-e7c25263-6d2d-4a37-8275-26906889d912](test-plan/20260809-e7c25263-6d2d-4a37-8275-26906889d912-go-test-layering.md) — エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする

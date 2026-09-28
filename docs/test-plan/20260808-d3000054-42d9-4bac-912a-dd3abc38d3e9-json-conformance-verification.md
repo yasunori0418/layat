@@ -1,17 +1,17 @@
 ---
 id: "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 type: test_plan
-name: "エンベロープの niface 適合を Go テストと E2E の両方で検証する"
+name: "エンベロープの outturn 適合を Go テストと E2E の両方で検証する"
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 specification: |
-  A Go test SHALL verify the emitted document against the niface
+  A Go test SHALL verify the emitted document against the outturn
   `conformance.NewDefaultChecker()` (the embedded canonical schema including format
   assertions, plus the out-of-schema lint MUSTs) for every shape: success, with and
   without a subject, a pre-stage error, a subject error, a conflict, and the multiple
   subjects of `--all` (partial failure, zero results, dryrun conflict). The E2E SHALL
-  verify the real output of the scenarios with the `niface-validate` CLI provided by the
-  niface input of the dev flake (omitting `-schema` selects the embedded canonical
+  verify the real output of the scenarios with the `outturn-validate` CLI provided by the
+  outturn input of the dev flake (omitting `-schema` selects the embedded canonical
   schema), and SHALL cross-check the item ids against the `id-vectors.json` testdata of
   the same input. Conformance alone SHALL NOT be the whole of the E2E's `--json`
   verification: since the schema constrains the shape of the envelope but not what it
@@ -24,11 +24,11 @@ specification: |
   by matching the document as text, so that they do not break on formatting or on fields
   they do not concern.
 specification_ja: |
-  Go テストは、emit した文書を niface `conformance.NewDefaultChecker()`（embed 正本
+  Go テストは、emit した文書を outturn `conformance.NewDefaultChecker()`（embed 正本
   schema〔format assertion 込み〕+ schema 外 lint MUST）で全形状について検証しなければ
   ならない（成功 / subject あり・なし / 前段エラー / 主体エラー / conflict / `--all` の
-  複数 subject〔部分失敗・0 件・dryrun conflict〕）。E2E は dev flake の niface input が
-  提供する `niface-validate` CLI（`-schema` 省略 = embed 正本）でシナリオの実出力を検証し、
+  複数 subject〔部分失敗・0 件・dryrun conflict〕）。E2E は dev flake の outturn input が
+  提供する `outturn-validate` CLI（`-schema` 省略 = embed 正本）でシナリオの実出力を検証し、
   item id は同 input の `id-vectors.json` testdata と突き合わせなければならない。適合検証
   だけを E2E の `--json` 検証としてはならない。schema はエンベロープの形は縛るがその内容が
   何を述べているかは縛らないため、E2E は加えて、payload の意味をそれを生んだ実行に照らして
@@ -39,16 +39,16 @@ specification_ja: |
   照合するのではなく抽出したフィールドに対して行わなければならない（書式や当該アサートの
   関知しないフィールドで壊れないようにするため）。
 ---
-# TP-d3000054-42d9-4bac-912a-dd3abc38d3e9: エンベロープの niface 適合を Go テストと E2E の両方で検証する
+# TP-d3000054-42d9-4bac-912a-dd3abc38d3e9: エンベロープの outturn 適合を Go テストと E2E の両方で検証する
 
 ## 仕様
 
-**適合検証**: Go テストが niface `conformance.NewDefaultChecker()`（embed 正本 schema
+**適合検証**: Go テストが outturn `conformance.NewDefaultChecker()`（embed 正本 schema
 〔format assertion 込み〕+ schema 外 lint MUST）で emit 文書を全形状（成功 / subject
 あり・なし / 前段エラー / 主体エラー / conflict / `--all` の複数 subject〔部分失敗・
-0 件・dryrun conflict〕）について検証する。E2E は dev flake の niface input が提供する
-`niface-validate` CLI（`-schema` 省略 = embed 正本）でシナリオ 01–07 の実出力を検証し、
-item id は同 input の `testdata/v1/id-vectors.json`（`NIFACE_ID_VECTORS`）と突き合わせる。
+0 件・dryrun conflict〕）について検証する。E2E は dev flake の outturn input が提供する
+`outturn-validate` CLI（`-schema` 省略 = embed 正本）でシナリオ 01–07 の実出力を検証し、
+item id は同 input の `testdata/v1/id-vectors.json`（`OUTTURN_ID_VECTORS`）と突き合わせる。
 
 > **上は原文の写しで、規範は frontmatter が正**。原文の「シナリオ 01–07」という
 > 具体の本数は E2E 実装の現況であり、規範文では「シナリオの実出力を検証する」に留めた。
@@ -73,19 +73,19 @@ item id の導出規則そのものは REQ-57137302-de29-4f71-a565-034cd5de080b 
 
 ## 出典
 
-`docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「niface 準拠の `--json`
+`docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「適合検証」。
 
 決定の実体は ADR-0043。
 
 > **2026-08-09 追補（→ Issue #273）**: E2E の `--json` 検証範囲を追補した。原文が挙げるのは
-> `niface-validate` による適合検証と id-vectors の突き合わせだけだったが、実装（`tests/e2e/
+> `outturn-validate` による適合検証と id-vectors の突き合わせだけだったが、実装（`tests/e2e/
 > lib.sh` の `run_json` / `assert_json` と各シナリオ）は終了コードの一致に加え、change の
 > 意味論・item インベントリ・エラーコード・世代番号を jq で構造的にアサートしている。適合
 > 検証だけを規範に置くと、この層が退行しても item に照らして検出できないため規範へ引き上げた。
 
 > **本 item は requirement から test_plan へ移設した**（→ Issue #238。旧 ID は
-> `REQ-2381d93a-732e-4437-910b-fac14d398aa0`）。エンベロープを niface 規約準拠にすること自体は REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead が担い、
+> `REQ-2381d93a-732e-4437-910b-fac14d398aa0`）。エンベロープを outturn 規約準拠にすること自体は REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead が担い、
 > そちらは use_case へ紐づく。本 item はその適合をどのテストレベルでどう検証するかを定める
 > テストアプローチの規定であり、ユーザーの使われ方からは導かれないため、use_case を親に
 > 持てず orphan になっていた（当時の判断は Issue #211）。テスト計画の型を新設して solution

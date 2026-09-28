@@ -1,12 +1,12 @@
 ---
 id: "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
 type: requirement
-name: "--json は niface 規約準拠のエンベロープを出す第 2 契約とする"
+name: "--json は outturn 規約準拠のエンベロープを出す第 2 契約とする"
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
-  When `--json` is given, the CLI SHALL write exactly one niface envelope to stdout. Its
+  When `--json` is given, the CLI SHALL write exactly one outturn envelope to stdout. Its
   top level SHALL carry `specVersion` / `tool` / `command` / `status` / `dryRun` /
   `startedAt` / `finishedAt` / `errors[]` / `results[]` in camelCase, with times in
   RFC 3339 using a `T` separator and a mandatory offset (`Z` for UTC). The top level SHALL
@@ -15,12 +15,12 @@ specification: |
   `changes` / `info` SHALL live under each `results[i].result`. The default line-oriented
   stdout SHALL be unchanged, `--json` being an opt-in second contract. Errors SHALL be
   structured into the envelope while the human-facing text on stderr SHALL always
-  coexist. The exit code table SHALL be unchanged, and the niface `status` SHALL follow it:
+  coexist. The exit code table SHALL be unchanged, and the outturn `status` SHALL follow it:
   exit 0 maps to `success`, exit 1 and 2 map to `error`. `tool.version` SHALL be the
-  ldflags-embedded `main.version`. The JSON output of layat SHALL conform to the niface
+  ldflags-embedded `main.version`. The JSON output of layat SHALL conform to the outturn
   convention, both now and for future features.
 specification_ja: |
-  `--json` 指定時、CLI は stdout に niface エンベロープを 1 文書だけ出さなければならない。
+  `--json` 指定時、CLI は stdout に outturn エンベロープを 1 文書だけ出さなければならない。
   トップレベルは `specVersion` / `tool` / `command` / `status` / `dryRun` / `startedAt` /
   `finishedAt` / `errors[]` / `results[]`（camelCase・時刻は RFC 3339・`T` 区切り・
   オフセット必須・UTC は `Z`）を持たなければならない。single / batch を問わずトップレベルは
@@ -28,27 +28,27 @@ specification_ja: |
   ならない。`items` / `changes` / `info` は各 `results[i].result` 配下に置かなければならない。
   デフォルトの行指向 stdout は不変でなければならず、`--json` は opt-in の第 2 契約とする。
   エラーはエンベロープに構造化しつつ、stderr の人間向けテキストを常時併存させなければ
-  ならない。終了コード表は不変でなければならず、niface `status` は exit 0 → `success` /
+  ならない。終了コード表は不変でなければならず、outturn `status` は exit 0 → `success` /
   1・2 → `error` に連動させなければならない。`tool.version` は ldflags 埋め込みの
-  `main.version` としなければならない。layat の JSON 出力は現在も将来の機能も niface
+  `main.version` としなければならない。layat の JSON 出力は現在も将来の機能も outturn
   規約に準拠しなければならない。
 ---
-# REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead: --json は niface 規約準拠のエンベロープを出す第 2 契約とする
+# REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead: --json は outturn 規約準拠のエンベロープを出す第 2 契約とする
 
 ## 仕様
 
-`--json`（機械可読出力）は **niface 規約準拠のエンベロープ**を stdout に出す（opt-in の
-第 2 契約・niface specVersion 1）。デフォルトのテキスト出力 + ストリーム規律は不変で、
-`--json` 時のみ niface エンベロープに切り替わる。
+`--json`（機械可読出力）は **outturn 規約準拠のエンベロープ**を stdout に出す（opt-in の
+第 2 契約・outturn specVersion 1）。デフォルトのテキスト出力 + ストリーム規律は不変で、
+`--json` 時のみ outturn エンベロープに切り替わる。
 
 トップレベルは `specVersion` / `tool` / `command` / `status` / `dryRun` / `startedAt` /
 `finishedAt` / `errors[]` / **`results[]`**（camelCase・時刻 RFC 3339）。**single / batch を
 問わずトップレベルは常に `results[]`**（要素数は 0 以上・実行形態の判別子フィールドは
 持たない）で、`items` / `changes` / `info` は各 `results[i].result` 配下に入る。
 
-エラーは niface エンベロープに構造化（前段の全体エラーはトップ `errors[]`・主体起因は
+エラーは outturn エンベロープに構造化（前段の全体エラーはトップ `errors[]`・主体起因は
 `results[i].errors[]`・item 起因は `item.error`）しつつ **stderr の人間向けテキストも
-常時併存**する。終了コード表 0 / 1 / 2 は不変で、niface `status` は exit 0 → `success` /
+常時併存**する。終了コード表 0 / 1 / 2 は不変で、outturn `status` は exit 0 → `success` /
 1・2 → `error` に連動する。`--all` は `results[]` に config ごとの `SubjectResult` を
 列挙する（形状は単一実行と同一。`subject` は全 `SubjectResult` で常時必須・
 `specVersion` / `tool` / `command` はトップに 1 度だけ）。
@@ -59,7 +59,7 @@ specification_ja: |
 read-only 列挙（`list-generations` の世代・`gitignore` のパス）は
 `results[i].result.info` のツール固有インベントリに置き id 導出 item にはしない。
 
-**layat の JSON 出力は現在も将来の機能も niface 規約に準拠する**（エコシステム合成の
+**layat の JSON 出力は現在も将来の機能も outturn 規約に準拠する**（エコシステム合成の
 北極星要件）。
 
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する次の点は本 item の
@@ -72,9 +72,9 @@ read-only 列挙（`list-generations` の世代・`gitignore` のパス）は
 
 ## 出典
 
-`docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」の「niface 準拠の `--json`
+`docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」の「outturn 準拠の `--json`
 出力」箇条書き（親項目）と、そのサブ項目「時刻」、およびサブコマンド体系節の
 `--json` に関する blockquote。
 
-決定の実体は ADR-0043「`--json` 機械可読出力を niface 規約準拠にし、JSON 出力の niface
+決定の実体は ADR-0043「`--json` 機械可読出力を outturn 規約準拠にし、JSON 出力の outturn
 準拠を恒常原則とする」。`tool.version` の供給元は ADR-0042。

@@ -113,7 +113,7 @@ PreRemove で親 symlink を除去した後に子配置が途中失敗すると�
 - **`internal/engine/`**: PreRemove を place の前段で実行。除去祖先を `result.Removed` へ畳む。dryrun も PreRemove を Removed としてパック。gen-skip 経路では PreRemove が構造的に空になる旨を明記。
 - **`docs/adr/0015-*.md`**: §4 に本 ADR への改訂注記（back-ref）を追記。本文は当時のまま（ADR-0008 の慣例）。
 - **`docs/spec.md`**: 配置動作（祖先 symlink 非対称）・エラー仕様表（祖先 symlink を foreign 限定の error へ・自己記録 stale は migration）・実行フロー（PreRemove 段）を反映。
-- **cross-epic**: #168（undo・ADR-0044）は PreRemove 段を undo 対象に含める。#167 / #149 は `planner.go` / `engine.go` を共有するため同時着手時は rebase 調整（hard 依存なし）。#126（--json）/ #131（変更系 niface）は PreRemove を出力サーフェスへどう表すかで接触（先行側が seam を用意）。
+- **cross-epic**: #168（undo・ADR-0044）は PreRemove 段を undo 対象に含める。#167 / #149 は `planner.go` / `engine.go` を共有するため同時着手時は rebase 調整（hard 依存なし）。#126（--json）/ #131（変更系 outturn）は PreRemove を出力サーフェスへどう表すかで接触（先行側が seam を用意）。
 
 ## 棄却した代替案
 

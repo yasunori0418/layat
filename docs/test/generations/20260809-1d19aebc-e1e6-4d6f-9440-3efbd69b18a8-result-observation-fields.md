@@ -11,7 +11,7 @@ mitigates:
 
 `Apply` / `Rollback` が返す `Result`（`Rollback` は `RollbackResult` として embed する）
 と、`Reset` が返す別型の `ResetResult` の各フィールドが、その run で実際に起きたことと
-一致することを検証する（→ issue #130。niface envelope の素材）。commit は
+一致することを検証する（→ issue #130。outturn envelope の素材）。commit は
 `nix-env --set` の世代簿記を模した double へ差し替え、世代番号を読み戻せる形にする。
 
 **インベントリと世代観測** — `Entries` が manifest の全 entry を持つ。世代観測は
