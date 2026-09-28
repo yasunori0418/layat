@@ -125,7 +125,7 @@ specification_ja: |
 
 ## 出典
 
-`docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「niface 準拠の `--json`
+`docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「読み取り系ペイロード（#132）」とその配下の全項目。
 
 決定の実体は ADR-0043（読み取り系の info インベントリ・`init` の top-level info）と、

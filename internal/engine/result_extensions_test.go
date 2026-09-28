@@ -1,6 +1,6 @@
 package engine
 
-// Tests for the Result extensions issue #130 wires for the niface envelope (#131 / #132 share
+// Tests for the Result extensions issue #130 wires for the outturn envelope (#131 / #132 share
 // them): full-inventory (Entries), reached state on a mid-run failure (FailedTarget / Unreached /
 // Unwound + partial Result), generation observation (GenBefore / GenAfter, nil-able), and
 // structured planner warnings (Warnings).
@@ -289,7 +289,7 @@ func TestApplyResultStructuredWarnings(t *testing.T) {
 
 // TestResetResultGenerationUnobservable pins the nil branch of Reset's generation observation:
 // a profile link that is not a generation link (test-substituted commit) observes neither
-// before nor after (→ niface ADR-0015's nil-able Generation).
+// before nor after (→ outturn ADR-0015's nil-able Generation).
 func TestResetResultGenerationUnobservable(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)

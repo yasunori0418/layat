@@ -373,7 +373,7 @@ layat init <template>           # `nix flake init -t github:yasunori0418/layat#<
 
 - **既定では成功時サイレント**("silence is golden")。配置レポート、try-lock のスキップ通知、`apply --all` のサマリは `-v` / `--verbose` を付けない限り **出力しない**。`-v` で stderr のレポートに opt-in する。
 - **`--debug`** は内部 nix コマンドを明らかにする(verbosity の `-v` とデバッグは直交)。`--quiet` は **無い**(成功時サイレントが既定になった時点で廃止)。
-- **`--json`** はコマンド完了時に [niface](https://github.com/yasunori0418/niface) 準拠の JSON エンベロープ(1 文書)を stdout へ書く機械可読の第 2 契約。`-v`(stderr・人間向け)とは直交(全サブコマンドがペイロードを載せ、`--all` は config ごとに `SubjectResult` を列挙する。最小形のまま残るのは `reset --dryrun` のみ)。
+- **`--json`** はコマンド完了時に [outturn](https://github.com/yasunori0418/outturn) 準拠の JSON エンベロープ(1 文書)を stdout へ書く機械可読の第 2 契約。`-v`(stderr・人間向け)とは直交(全サブコマンドがペイロードを載せ、`--all` は config ごとに `SubjectResult` を列挙する。最小形のまま残るのは `reset --dryrun` のみ)。
 - **ストリーム規律**：stdout は機械可読出力(`gitignore` 一覧、`apply --dryrun` 計画)専用で、既定 verbosity でも出力される。よって `layat gitignore <name> >> .gitignore` や `layat apply <name> --dryrun | ...` は安全にパイプできる。**警告(例：外部 symlink)とエラーは常に stderr へ出力され、サイレンスされない。**
 
 | 終了コード | 意味 |
@@ -423,7 +423,7 @@ layat init <template>           # `nix flake init -t github:yasunori0418/layat#<
 | copy(place-once)/ out-of-store symlink | 実装済み |
 | flake-parts モジュール | 実装済み |
 | `manifest.json` スキーマ | v1 のみ。migration / 後方互換の仕組みはまだ無い |
-| `--json` 機械可読出力 | 実装済み — 全サブコマンドで niface 準拠エンベロープを返し、コマンドごとのペイロード(items / changes / info)と `--all` の config ごと `SubjectResult` も載る。最小形のまま残るのは `reset --dryrun` のみ |
+| `--json` 機械可読出力 | 実装済み — 全サブコマンドで outturn 準拠エンベロープを返し、コマンドごとのペイロード(items / changes / info)と `--all` の config ごと `SubjectResult` も載る。最小形のまま残るのは `reset --dryrun` のみ |
 | NixOS / nix-darwin モジュール | 将来 |
 | system mode(`systemRoot` = `/`) | 将来(seam のみ。今選ぶと評価時エラー) |
 
@@ -465,7 +465,7 @@ GitHub が旧リポジトリ URL のリダイレクトを維持するため、�
 | `--json` の `E_NPUT_*` / `W_NPUT_*`・`tool.name = "nput"` | `E_LAYAT_*` / `W_LAYAT_*`・`tool.name = "layat"` |
 | `<target>.nput-backup` | `<target>.layat-backup` |
 
-`--json` のコードだけは消費者が無視できない。niface が `E_<TOOL>_<NAME>` の形を要求するため、
+`--json` のコードだけは消費者が無視できない。outturn が `E_<TOOL>_<NAME>` の形を要求するため、
 接頭辞はツール名と一緒に動く。
 
 ### 旧世代: 移行するか、捨てるか

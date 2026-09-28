@@ -220,8 +220,8 @@ func TestResolveApplyJobs(t *testing.T) {
 // executeApply runs the apply command with args, restoring the globals RunE touches.
 func executeApply(t *testing.T, args ...string) error {
 	t.Helper()
-	origAll, origJobs, origReport := flagApplyAll, flagApplyJobs, nifaceReport
-	t.Cleanup(func() { flagApplyAll, flagApplyJobs, nifaceReport = origAll, origJobs, origReport })
+	origAll, origJobs, origReport := flagApplyAll, flagApplyJobs, outturnReport
+	t.Cleanup(func() { flagApplyAll, flagApplyJobs, outturnReport = origAll, origJobs, origReport })
 	cmd := newApplyCmd()
 	cmd.SetArgs(args)
 	cmd.SilenceUsage, cmd.SilenceErrors = true, true

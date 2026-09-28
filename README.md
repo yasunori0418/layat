@@ -455,7 +455,7 @@ layat init <template>           # wrapper over `nix flake init -t github:yasunor
   `--verbose`. Pass `-v` to opt into the report on stderr.
 - **`--debug`** reveals the internal nix commands (verbosity `-v` and debugging are
   orthogonal). There is **no `--quiet`** (removed when success became silent by default).
-- **`--json`** writes a [niface](https://github.com/yasunori0418/niface)-conformant JSON
+- **`--json`** writes a [outturn](https://github.com/yasunori0418/outturn)-conformant JSON
   envelope (a single document) to stdout at command completion — the machine-readable
   second contract, orthogonal to `-v` (every subcommand carries its payload; `--all` lists one
   `SubjectResult` per config. `reset --dryrun` is the one path still on the minimal shape).
@@ -534,7 +534,7 @@ package layers would be delegated to or combined with system-manager, while laya
 | copy (place-once) / out-of-store symlink | implemented |
 | flake-parts module | implemented |
 | `manifest.json` schema | v1 only; no migration / backward-compat machinery yet |
-| `--json` machine-readable output | implemented — niface-conformant envelope on every subcommand, with per-command payloads (items / changes / info) and one `SubjectResult` per config under `--all`; `reset --dryrun` still emits the minimal shape |
+| `--json` machine-readable output | implemented — outturn-conformant envelope on every subcommand, with per-command payloads (items / changes / info) and one `SubjectResult` per config under `--all`; `reset --dryrun` still emits the minimal shape |
 | NixOS / nix-darwin modules | future |
 | system mode (`systemRoot` = `/`) | future (seam only; evaluation-time error if selected today) |
 
@@ -583,7 +583,7 @@ keeps redirecting the old repository URL after the rename, so this pin keeps res
 | `--json`: `E_NPUT_*` / `W_NPUT_*`, `tool.name = "nput"` | `E_LAYAT_*` / `W_LAYAT_*`, `tool.name = "layat"` |
 | `<target>.nput-backup` | `<target>.layat-backup` |
 
-The `--json` codes are the one change consumers cannot ignore: niface requires the
+The `--json` codes are the one change consumers cannot ignore: outturn requires the
 `E_<TOOL>_<NAME>` shape, so the prefix moves with the tool name.
 
 ### Old generations: migrate or drop

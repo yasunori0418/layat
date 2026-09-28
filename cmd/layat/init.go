@@ -19,7 +19,7 @@ const defaultTemplateRef = "github:yasunori0418/layat"
 var initTemplates = []string{"standalone", "project"}
 
 // initInfo is init's envelope-wide info: the run facts of the template expansion (→ issue #132,
-// niface ADR-0018; typed by #196). init registers no subject, so its result.info slot is unused
+// outturn ADR-0018; typed by #196). init registers no subject, so its result.info slot is unused
 // and stays an anonymous *struct{} left nil.
 //
 // Carried as a pointer: an unknown template name fails before setEnvelopeInfo, and only a nil
@@ -31,11 +31,11 @@ type initInfo struct {
 }
 
 // initRun is init's concrete run instantiation, threaded from RunE into runInit.
-type initRun = nifaceRun[*struct{}, *initInfo]
+type initRun = outturnRun[*struct{}, *initInfo]
 
-// beginInitRun starts init's run (→ beginNifaceRun, beginApplyRun).
+// beginInitRun starts init's run (→ beginOutturnRun, beginApplyRun).
 func beginInitRun(command string) *initRun {
-	return beginNifaceRun[*struct{}, *initInfo](command)
+	return beginOutturnRun[*struct{}, *initInfo](command)
 }
 
 func newInitCmd() *cobra.Command {
@@ -70,7 +70,7 @@ func runInit(run *initRun, template string) error {
 	}
 
 	// init has no subject (no config), so the run facts ride in the envelope-wide info while
-	// results stays [] (niface ADR-0018 · → issue #132). Registered before the expansion so a
+	// results stays [] (outturn ADR-0018 · → issue #132). Registered before the expansion so a
 	// failed init still reports what it attempted alongside the top-level error.
 	run.setEnvelopeInfo(&initInfo{Template: template, Ref: ref})
 

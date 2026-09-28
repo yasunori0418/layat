@@ -69,7 +69,7 @@ func ListGenerations(profileLink string) ([]Generation, error) {
 // observeGeneration returns the generation number the profile link currently points at, or nil
 // when it cannot be observed: no profile yet (first apply), or a link whose destination does not
 // parse as the sibling generation link "<base>-<N>-link" that nix-env maintains
-// (→ paths.GenerationLink · issue #130, niface ADR-0015's nil-able Generation.Before/After).
+// (→ paths.GenerationLink · issue #130, outturn ADR-0015's nil-able Generation.Before/After).
 // A readlink is used instead of nix-env --list-generations because the observation runs on every
 // apply/reset and must stay a cheap, subprocess-free probe.
 func observeGeneration(profileLink string) *int {
@@ -201,7 +201,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	}
 
 	// The generation numbers come from the listing rather than a readlink observation: cur/prev
-	// are already identified above, and the pointer only moves at step 7 (→ issue #130, niface
+	// are already identified above, and the pointer only moves at step 7 (→ issue #130, outturn
 	// ADR-0015). GenAfter is set after the pointer move below.
 
 	// 6. reflect the plan onto the real FS in the same four stages as Apply: PreRemove first

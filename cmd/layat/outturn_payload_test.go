@@ -1,9 +1,9 @@
 package main
 
-// Tests for the #131 mutation payloads (apply / reset / rollback): the engine-result → niface
-// items/changes/generation/warnings mapping, the partial-failure partition (niface ADR-0016 /
-// ADR-0020), the error-layer placement (item-borne vs subject-borne · niface §2), and
-// conformance of every emitted shape against niface's checker.
+// Tests for the #131 mutation payloads (apply / reset / rollback): the engine-result → outturn
+// items/changes/generation/warnings mapping, the partial-failure partition (outturn ADR-0016 /
+// ADR-0020), the error-layer placement (item-borne vs subject-borne · outturn §2), and
+// conformance of every emitted shape against outturn's checker.
 
 import (
 	"bytes"
@@ -16,8 +16,8 @@ import (
 	"strings"
 	"testing"
 
-	niface "github.com/yasunori0418/niface/go"
-	"github.com/yasunori0418/niface/go/conformance"
+	"github.com/yasunori0418/outturn/go"
+	"github.com/yasunori0418/outturn/go/conformance"
 
 	"github.com/yasunori0418/layat/internal/engine"
 	"github.com/yasunori0418/layat/internal/manifest"
@@ -62,12 +62,12 @@ func changesFor(t *testing.T, changes []layatChange, target string) []layatChang
 }
 
 // emitPayloadDoc runs the payload through the real emit path (command + subject + payload),
-// checks the document against niface's conformance checker, and returns it decoded. newRun is
+// checks the document against outturn's conformance checker, and returns it decoded. newRun is
 // the emitting command's test-run constructor (newApplyTestRun, ...), which carries both the
 // command name and its info pair from the production alias — so no call site re-spells the type
 // arguments (→ issue #196). The mutation commands' pairs are empty seat types, so the emitted
 // document carries no info key on either level.
-func emitPayloadDoc[TInfo, TEnvInfo any](t *testing.T, newRun func() (*nifaceRun[TInfo, TEnvInfo], *bytes.Buffer), p *nifacePayload[TInfo], cmdErr error) map[string]any {
+func emitPayloadDoc[TInfo, TEnvInfo any](t *testing.T, newRun func() (*outturnRun[TInfo, TEnvInfo], *bytes.Buffer), p *outturnPayload[TInfo], cmdErr error) map[string]any {
 	t.Helper()
 	checker, err := conformance.NewDefaultChecker()
 	if err != nil {
@@ -201,7 +201,7 @@ func TestMutationPayloadFullInventory(t *testing.T) {
 		t.Fatalf("items = %d, want 6 (5 new entries + 1 stale-removed old entry)", len(p.items))
 	}
 	for _, it := range p.items {
-		if it.Status != niface.ItemSuccess {
+		if it.Status != outturn.ItemSuccess {
 			t.Errorf("item %s status = %s, want success", it.Info.Target, it.Status)
 		}
 	}
@@ -213,7 +213,7 @@ func TestMutationPayloadFullInventory(t *testing.T) {
 	if len(p.changes) != 5 {
 		t.Fatalf("changes = %d, want 5 (the no-op entry has none)", len(p.changes))
 	}
-	assertChange := func(target string, kind niface.ChangeKind, reversible bool, old, new string) {
+	assertChange := func(target string, kind outturn.ChangeKind, reversible bool, old, new string) {
 		t.Helper()
 		cs := changesFor(t, p.changes, target)
 		if len(cs) != 1 {
@@ -231,11 +231,11 @@ func TestMutationPayloadFullInventory(t *testing.T) {
 			t.Errorf("%s change info = {old:%q new:%q}, want {old:%q new:%q}", target, gotOld, gotNew, old, new)
 		}
 	}
-	assertChange(".config/tool", niface.ChangeAdd, true, "", "/nix/store/aaa/conf")
-	assertChange(".config/relinked", niface.ChangeModify, true, "/nix/store/prev-bbb", "/nix/store/bbb")
-	assertChange(".local/copy", niface.ChangeAdd, true, "", "/nix/store/ccc")
-	assertChange(".local/recopied", niface.ChangeModify, false, "", "/nix/store/ddd")
-	assertChange(".config/old", niface.ChangeRemove, true, "/nix/store/old/sub", "")
+	assertChange(".config/tool", outturn.ChangeAdd, true, "", "/nix/store/aaa/conf")
+	assertChange(".config/relinked", outturn.ChangeModify, true, "/nix/store/prev-bbb", "/nix/store/bbb")
+	assertChange(".local/copy", outturn.ChangeAdd, true, "", "/nix/store/ccc")
+	assertChange(".local/recopied", outturn.ChangeModify, false, "", "/nix/store/ddd")
+	assertChange(".config/old", outturn.ChangeRemove, true, "/nix/store/old/sub", "")
 
 	relinked := findItem(t, p.items, ".config/relinked")
 	if len(relinked.Warnings) != 1 || relinked.Warnings[0].Code != "W_LAYAT_FOREIGN_SYMLINK" {
@@ -288,14 +288,14 @@ func TestMutationPayloadMethodChangeCoalesces(t *testing.T) {
 		t.Fatalf("changes = %+v, want the coalesced single modify", p.changes)
 	}
 	c := p.changes[0]
-	if c.Kind != niface.ChangeModify || !c.Reversible || c.Info.Old != "/nix/store/old" || c.Info.New != "/nix/store/new" {
+	if c.Kind != outturn.ChangeModify || !c.Reversible || c.Info.Old != "/nix/store/old" || c.Info.New != "/nix/store/new" {
 		t.Errorf("change = %+v info %+v, want reversible modify old→new", c, c.Info)
 	}
 }
 
 // TestMutationPayloadNoopRelinkSuppressed pins the idempotent-re-apply case: apply
 // mechanically re-links a planned symlink back to its recorded dest, which is not a state
-// transition — such a Replaced target must produce no change (niface §4 noop MUST NOT),
+// transition — such a Replaced target must produce no change (outturn §4 noop MUST NOT),
 // while a re-link to a different dest still does.
 func TestMutationPayloadNoopRelinkSuppressed(t *testing.T) {
 	res := &engine.Result{
@@ -317,10 +317,10 @@ func TestMutationPayloadNoopRelinkSuppressed(t *testing.T) {
 	if cs := changesFor(t, p.changes, ".same"); len(cs) != 0 {
 		t.Errorf(".same changes = %+v, want none (noop re-link must be suppressed)", cs)
 	}
-	if cs := changesFor(t, p.changes, ".moved"); len(cs) != 1 || cs[0].Kind != niface.ChangeModify {
+	if cs := changesFor(t, p.changes, ".moved"); len(cs) != 1 || cs[0].Kind != outturn.ChangeModify {
 		t.Errorf(".moved changes = %+v, want one modify", cs)
 	}
-	if it := findItem(t, p.items, ".same"); it.Status != niface.ItemSuccess {
+	if it := findItem(t, p.items, ".same"); it.Status != outturn.ItemSuccess {
 		t.Errorf(".same item status = %s, want success (still in the inventory)", it.Status)
 	}
 }
@@ -328,7 +328,7 @@ func TestMutationPayloadNoopRelinkSuppressed(t *testing.T) {
 // TestMutationPayloadOrphanSubjectWarning pins attachWarnings' subject-side branch: a
 // planner warning whose target is outside the inventory (a vanished copy entry's orphan —
 // neither a new-manifest entry nor a planned removal) lands in subjectResult.warnings, not
-// on any item (→ niface ADR-0019).
+// on any item (→ outturn ADR-0019).
 func TestMutationPayloadOrphanSubjectWarning(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
@@ -394,9 +394,9 @@ func TestMutationPayloadRollbackGeneration(t *testing.T) {
 	}
 }
 
-// TestNifaceWarningMapping pins every planner WarnKind → W_LAYAT_* code pair, plus the
+// TestOutturnWarningMapping pins every planner WarnKind → W_LAYAT_* code pair, plus the
 // defensive fallback for an unknown kind.
-func TestNifaceWarningMapping(t *testing.T) {
+func TestOutturnWarningMapping(t *testing.T) {
 	cases := []struct {
 		kind planner.WarnKind
 		code string
@@ -409,7 +409,7 @@ func TestNifaceWarningMapping(t *testing.T) {
 		{planner.WarnKind(99), "W_LAYAT_WARNING"},
 	}
 	for _, c := range cases {
-		w := nifaceWarning(planner.Warning{Kind: c.kind, Target: "t"})
+		w := outturnWarning(planner.Warning{Kind: c.kind, Target: "t"})
 		if w.Code != c.code {
 			t.Errorf("kind %v: code = %s, want %s", c.kind, w.Code, c.code)
 		}
@@ -422,11 +422,11 @@ func TestNifaceWarningMapping(t *testing.T) {
 	}
 }
 
-// TestMutationPayloadPartialFailure pins the reached-state partition (niface ADR-0016 /
+// TestMutationPayloadPartialFailure pins the reached-state partition (outturn ADR-0016 /
 // ADR-0020): the failed entry carries the classified command error, unreached entries are
 // skipped (and only those), completed entries stay success with their changes, the unwound
 // run carries W_LAYAT_UNWOUND at the subject, and the item-borne failure is NOT duplicated
-// into subjectResult.errors[] (niface §2).
+// into subjectResult.errors[] (outturn §2).
 func TestMutationPayloadPartialFailure(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
@@ -451,17 +451,17 @@ func TestMutationPayloadPartialFailure(t *testing.T) {
 		t.Error("itemBorne = false, want true for an entry-scoped failure")
 	}
 
-	if it := findItem(t, p.items, "a"); it.Status != niface.ItemSuccess {
+	if it := findItem(t, p.items, "a"); it.Status != outturn.ItemSuccess {
 		t.Errorf("completed item status = %s, want success", it.Status)
 	}
 	failed := findItem(t, p.items, "b")
-	if failed.Status != niface.ItemFailed || failed.Error == nil || failed.Error.Code != "E_PERMISSION" {
+	if failed.Status != outturn.ItemFailed || failed.Error == nil || failed.Error.Code != "E_PERMISSION" {
 		t.Errorf("failed item = status %s error %+v, want failed + E_PERMISSION", failed.Status, failed.Error)
 	}
-	if it := findItem(t, p.items, "c"); it.Status != niface.ItemSkipped {
+	if it := findItem(t, p.items, "c"); it.Status != outturn.ItemSkipped {
 		t.Errorf("unreached item status = %s, want skipped", it.Status)
 	}
-	if cs := changesFor(t, p.changes, "a"); len(cs) != 1 || cs[0].Kind != niface.ChangeAdd {
+	if cs := changesFor(t, p.changes, "a"); len(cs) != 1 || cs[0].Kind != outturn.ChangeAdd {
 		t.Errorf("completed entry changes = %+v, want its add present despite the failure", cs)
 	}
 	var unwound bool
@@ -511,7 +511,7 @@ func TestMutationPayloadSubjectBorneFailure(t *testing.T) {
 	if p.itemBorne {
 		t.Error("itemBorne = true, want false for a commit failure")
 	}
-	if it := findItem(t, p.items, "a"); it.Status != niface.ItemSuccess {
+	if it := findItem(t, p.items, "a"); it.Status != outturn.ItemSuccess {
 		t.Errorf("placed item status = %s, want success (the commit, not the entry, failed)", it.Status)
 	}
 	doc := emitPayloadDoc(t, newApplyTestRun, p, cmdErr)
@@ -553,11 +553,11 @@ func TestMutationPayloadConflicts(t *testing.T) {
 		t.Error("itemBorne = false, want true for a conflict stop")
 	}
 	conflicted := findItem(t, p.items, "a")
-	if conflicted.Status != niface.ItemFailed || conflicted.Error == nil ||
+	if conflicted.Status != outturn.ItemFailed || conflicted.Error == nil ||
 		conflicted.Error.Code != "E_LAYAT_COLLISION" || conflicted.Error.Message != "a regular file occupies the symlink target" {
 		t.Errorf("conflicted item = %+v error %+v, want failed + E_LAYAT_COLLISION with the planner reason", conflicted, conflicted.Error)
 	}
-	if it := findItem(t, p.items, "b"); it.Status != niface.ItemSkipped {
+	if it := findItem(t, p.items, "b"); it.Status != outturn.ItemSkipped {
 		t.Errorf("non-conflicted item status = %s, want skipped (nothing ran)", it.Status)
 	}
 	if len(p.changes) != 0 {
@@ -595,7 +595,7 @@ func TestResetPayload(t *testing.T) {
 		t.Fatalf("generation = %+v, want none for reset", p.generation)
 	}
 	for _, target := range []string{"s1", "s2", "c1"} {
-		if it := findItem(t, p.items, target); it.Status != niface.ItemSuccess {
+		if it := findItem(t, p.items, target); it.Status != outturn.ItemSuccess {
 			t.Errorf("item %s status = %s, want success", target, it.Status)
 		}
 	}
@@ -603,11 +603,11 @@ func TestResetPayload(t *testing.T) {
 	if len(kept.Warnings) != 1 || kept.Warnings[0].Code != "W_LAYAT_STALE_MISMATCH" {
 		t.Errorf("kept item warnings = %+v, want one W_LAYAT_STALE_MISMATCH", kept.Warnings)
 	}
-	if cs := changesFor(t, p.changes, "s1"); len(cs) != 1 || cs[0].Kind != niface.ChangeRemove ||
+	if cs := changesFor(t, p.changes, "s1"); len(cs) != 1 || cs[0].Kind != outturn.ChangeRemove ||
 		!cs[0].Reversible || cs[0].Info == nil || cs[0].Info.Old != "/nix/store/s1" {
 		t.Errorf("symlink removal change = %+v, want reversible remove with the recorded dest", cs)
 	}
-	if cs := changesFor(t, p.changes, "c1"); len(cs) != 1 || cs[0].Kind != niface.ChangeRemove ||
+	if cs := changesFor(t, p.changes, "c1"); len(cs) != 1 || cs[0].Kind != outturn.ChangeRemove ||
 		cs[0].Reversible || cs[0].Info != nil {
 		t.Errorf("copy removal change = %+v, want irreversible remove without info", cs)
 	}
@@ -624,7 +624,7 @@ func TestResetPayload(t *testing.T) {
 
 // TestResetPayloadPartialFailure pins reset's reached-state partition: removed-so-far keeps
 // its changes, the failing target carries the classified error, and the never-attempted rest
-// is skipped (→ issue #131, niface ADR-0020).
+// is skipped (→ issue #131, outturn ADR-0020).
 func TestResetPayloadPartialFailure(t *testing.T) {
 	res := &engine.ResetResult{
 		Entries: []manifest.Entry{
@@ -644,14 +644,14 @@ func TestResetPayloadPartialFailure(t *testing.T) {
 	if !p.itemBorne {
 		t.Error("itemBorne = false, want true")
 	}
-	if it := findItem(t, p.items, "s1"); it.Status != niface.ItemSuccess {
+	if it := findItem(t, p.items, "s1"); it.Status != outturn.ItemSuccess {
 		t.Errorf("removed item status = %s, want success", it.Status)
 	}
 	failed := findItem(t, p.items, "c1")
-	if failed.Status != niface.ItemFailed || failed.Error == nil || failed.Error.Code != "E_PERMISSION" {
+	if failed.Status != outturn.ItemFailed || failed.Error == nil || failed.Error.Code != "E_PERMISSION" {
 		t.Errorf("failed item = %s / %+v, want failed + E_PERMISSION", failed.Status, failed.Error)
 	}
-	if it := findItem(t, p.items, "c2"); it.Status != niface.ItemSkipped {
+	if it := findItem(t, p.items, "c2"); it.Status != outturn.ItemSkipped {
 		t.Errorf("unreached item status = %s, want skipped", it.Status)
 	}
 	if cs := changesFor(t, p.changes, "s1"); len(cs) != 1 {
@@ -768,7 +768,7 @@ func TestJSONEndToEndApplyAndResetPayload(t *testing.T) {
 	if len(p.items) != 2 {
 		t.Fatalf("second apply items = %+v, want the kept entry + the stale-removed old entry", p.items)
 	}
-	if cs := changesFor(t, p.changes, ".drop"); len(cs) != 1 || cs[0].Kind != niface.ChangeRemove ||
+	if cs := changesFor(t, p.changes, ".drop"); len(cs) != 1 || cs[0].Kind != outturn.ChangeRemove ||
 		cs[0].Info == nil || cs[0].Info.Old != filepath.Join(src, "f") {
 		t.Errorf(".drop changes = %+v, want one remove with the recorded dest", cs)
 	}
@@ -793,13 +793,13 @@ func TestJSONEndToEndApplyAndResetPayload(t *testing.T) {
 	if gen, ok := sr["generation"]; ok {
 		t.Errorf("reset generation = %v, want the slot absent", gen)
 	}
-	if cs := changesFor(t, rp.changes, ".keep"); len(cs) != 1 || cs[0].Kind != niface.ChangeRemove || !cs[0].Reversible {
+	if cs := changesFor(t, rp.changes, ".keep"); len(cs) != 1 || cs[0].Kind != outturn.ChangeRemove || !cs[0].Reversible {
 		t.Errorf("reset changes = %+v, want one reversible remove for .keep", cs)
 	}
 }
 
 // TestDryrunPayloadFirstPlanOmitsGenerationNumbers pins apply --dryrun over a not-yet-created
-// profile (niface ADR-0015 · → issue #132): the dryrun rides mutationPayload, and with neither
+// profile (outturn ADR-0015 · → issue #132): the dryrun rides mutationPayload, and with neither
 // generation number observable the emitted generation carries the profile path alone — no
 // before / after keys (nil pointers must marshal away, never as 0 or null).
 func TestDryrunPayloadFirstPlanOmitsGenerationNumbers(t *testing.T) {
@@ -850,7 +850,7 @@ func TestDryrunPayloadConflictKeepsEnvelopeBesideExit2(t *testing.T) {
 	if !p.itemBorne {
 		t.Error("itemBorne = false, want true (the conflict is fully represented by its item)")
 	}
-	if it := findItem(t, p.items, ".config/nvim"); it.Status != niface.ItemSuccess {
+	if it := findItem(t, p.items, ".config/nvim"); it.Status != outturn.ItemSuccess {
 		t.Errorf("sibling item status = %s, want success (a dryrun attempts nothing)", it.Status)
 	}
 
@@ -876,7 +876,7 @@ func TestDryrunPayloadConflictKeepsEnvelopeBesideExit2(t *testing.T) {
 		t.Errorf("subjectResult.errors = %v, want absent (the failed item carries the collision)", errList)
 	}
 	item := findItem(t, mustDecodeItems(t, sr), ".zshrc")
-	if item.Status != niface.ItemFailed || item.Error == nil || item.Error.Code != "E_LAYAT_COLLISION" {
+	if item.Status != outturn.ItemFailed || item.Error == nil || item.Error.Code != "E_LAYAT_COLLISION" {
 		t.Errorf("conflicted item = %+v, want failed with E_LAYAT_COLLISION", item)
 	}
 }
@@ -913,7 +913,7 @@ func TestDryrunPayloadRelinkNotSuppressed(t *testing.T) {
 		t.Fatalf("mutationPayload: %v", err)
 	}
 	cs := changesFor(t, p.changes, ".same")
-	if len(cs) != 1 || cs[0].Kind != niface.ChangeModify || !cs[0].Reversible {
+	if len(cs) != 1 || cs[0].Kind != outturn.ChangeModify || !cs[0].Reversible {
 		t.Fatalf(".same changes = %+v, want one reversible modify (unobserved old dest ⇒ not provably a noop)", cs)
 	}
 	if cs[0].Info == nil || cs[0].Info.New != "/nix/store/same" || cs[0].Info.Old != "" {
@@ -974,7 +974,7 @@ func TestMutationPayloadConflictWithWarningStaysConformant(t *testing.T) {
 		t.Fatalf("mutationPayload: %v", err)
 	}
 	it := findItem(t, p.items, ".zshrc")
-	if it.Status != niface.ItemFailed || it.Error == nil || len(it.Warnings) != 1 {
+	if it.Status != outturn.ItemFailed || it.Error == nil || len(it.Warnings) != 1 {
 		t.Fatalf("item = %+v, want failed with both error and the entry-borne warning", it)
 	}
 	doc := emitPayloadDoc(t, newApplyTestRun, p, &exitError{code: 2})
@@ -1005,7 +1005,7 @@ func TestMutationPayloadCopyForeignItemWarning(t *testing.T) {
 	if len(p.warnings) != 0 {
 		t.Errorf("subject warnings = %+v, want none", p.warnings)
 	}
-	if it.Status != niface.ItemSuccess {
+	if it.Status != outturn.ItemSuccess {
 		t.Errorf("item status = %s, want success (a skip is policy inaction, not a failure)", it.Status)
 	}
 }

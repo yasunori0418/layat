@@ -111,7 +111,7 @@ fi
   subject ごとに真偽値を 1 個ずつ出すため、`jq -e` の終了コードが最後の 1 個で決まる
   （`--all` で「先頭は変化あり・末尾は no-op」だと変化なしと判定される）
 
-`--json` は stdout に niface エンベロープを 1 文書だけ出す opt-in の第 2 契約で、
+`--json` は stdout に outturn エンベロープを 1 文書だけ出す opt-in の第 2 契約で、
 `items` / `changes` / `info` は各 `results[i].result` 配下に入る
 （→ REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead）。`status` は終了コード表に連動する
 （exit 0 → `success`、exit 1・2 → `error`）。この経路は engine から見れば

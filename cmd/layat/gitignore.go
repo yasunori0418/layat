@@ -22,11 +22,11 @@ type gitignoreInfo struct {
 }
 
 // gitignoreRun is gitignore's concrete run instantiation, threaded from RunE.
-type gitignoreRun = nifaceRun[*gitignoreInfo, *struct{}]
+type gitignoreRun = outturnRun[*gitignoreInfo, *struct{}]
 
-// beginGitignoreRun starts gitignore's run (→ beginNifaceRun, beginApplyRun).
+// beginGitignoreRun starts gitignore's run (→ beginOutturnRun, beginApplyRun).
 func beginGitignoreRun(command string) *gitignoreRun {
-	return beginNifaceRun[*gitignoreInfo, *struct{}](command)
+	return beginOutturnRun[*gitignoreInfo, *struct{}](command)
 }
 
 func newGitignoreCmd() *cobra.Command {
@@ -41,7 +41,7 @@ func newGitignoreCmd() *cobra.Command {
 			"(under --json it keeps them per config instead; see the --all flag).",
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// beginGitignoreRun also publishes the run to nifaceReport, so main emits the envelope
+			// beginGitignoreRun also publishes the run to outturnReport, so main emits the envelope
 			// after Execute returns whichever path below runs.
 			run := beginGitignoreRun(cmd.Name())
 			if all {
@@ -64,7 +64,7 @@ func newGitignoreCmd() *cobra.Command {
 // runGitignore lists a single config's placement targets. project mode only;
 // it errors out if a non-project config (home / fixed) is given (because the anchor form presupposes the git toplevel; → ADR-0023).
 func runGitignore(run *gitignoreRun, name string) error {
-	// The config name is the niface subject; errors from here on are subject-borne (→ issue #130).
+	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
 	// A named listing registers exactly one, so the run's results[] holds N=1 (→ issue #164).
 	subject := run.beginSubject(name)
 	ep, err := discoverEntrypoint(flagFile)
@@ -100,8 +100,8 @@ func runGitignore(run *gitignoreRun, name string) error {
 // gitignorePayload wraps one config's targets as its SubjectResult payload — the anchor-form
 // enumeration rides result.info, shared by the named listing and --all so both produce the same
 // shape by construction (→ issue #132, #164).
-func gitignorePayload(targets []string) *nifacePayload[*gitignoreInfo] {
-	return &nifacePayload[*gitignoreInfo]{info: &gitignoreInfo{Paths: gitignoreAnchors(targets)}}
+func gitignorePayload(targets []string) *outturnPayload[*gitignoreInfo] {
+	return &outturnPayload[*gitignoreInfo]{info: &gitignoreInfo{Paths: gitignoreAnchors(targets)}}
 }
 
 // gitignoreAnchors maps targets into their /-anchor form (non-nil even when empty, so a
@@ -154,7 +154,7 @@ func runGitignoreAll(run *gitignoreRun) error {
 	})
 }
 
-// enumerateGitignoreAll lists each selected config's targets, registering one niface subject per
+// enumerateGitignoreAll lists each selected config's targets, registering one outturn subject per
 // config (→ issue #164), and prints the de-duplicated union to stdout. targetsFor is the seam that
 // injects the per-config build + manifest read, so the enumeration's subject wiring is testable
 // without nix (mirroring aggregateApply / aggregateDryRun for the mutation side).
@@ -216,7 +216,7 @@ func dedupeSorted(in []string) []string {
 
 // printGitignore prints targets to stdout in /-anchor form (leading /, no trailing /), one per line
 // (→ docs/spec.md, ADR-0013). It is pipe-safe by the stdout-ownership principle (`layat gitignore <name> >> .gitignore`).
-// Under --json it prints nothing: stdout belongs to the niface envelope alone, gated here — the
+// Under --json it prints nothing: stdout belongs to the outturn envelope alone, gated here — the
 // single chokepoint for every call site (→ ADR-0043 §2, issue #130).
 func printGitignore(targets []string) {
 	if flagJSON {

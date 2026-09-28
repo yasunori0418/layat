@@ -84,9 +84,9 @@ ADR-0047（PreRemove 一般化）は「自己記録の stale」を自動移行�
 
 退避が発生した事実は「ユーザー所有物を動かした」という重い意味を持つため、**既定 silent（→ ADR-0031）の対象にせず、常に stderr へ出す**（`-v` 無しでも出る）。`apply --dryrun --backup` は、`--backup` 無しなら conflict（exit 2）になる箇所を「backup + 配置予定」という非 conflict のプランに変える（exit 0）。退避先が既存の場合は `--dryrun --backup` でも conflict のままである（§3 は dryrun でも計算されるため）。
 
-### 7. JSON: `backedUp` を niface 枠内へ追加
+### 7. JSON: `backedUp` を outturn 枠内へ追加
 
-`--json`（→ ADR-0043）の結果ペイロードに、`removed` / `pruned` 等と並ぶ形で `backedUp`（退避した target の配列）を追加する。詳細なフィールド設計は epic #126 の niface 詳細化と合わせて詰める（本 ADR は「追加する」という方針のみ確定し、実装は #126 との seam 調整に委ねる）。
+`--json`（→ ADR-0043）の結果ペイロードに、`removed` / `pruned` 等と並ぶ形で `backedUp`（退避した target の配列）を追加する。詳細なフィールド設計は epic #126 の outturn 詳細化と合わせて詰める（本 ADR は「追加する」という方針のみ確定し、実装は #126 との seam 調整に委ねる）。
 
 ### 8. HM モジュール: `nput.backup.enable` + `nput.backup.suffix`
 

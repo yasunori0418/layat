@@ -119,7 +119,7 @@ Issue #386 が持つ**（本 ADR では二重管理しない）。
 改名対象（網羅ではなく類型）:
 
 - **Go**: module path `github.com/yasunori0418/layat`・`cmd/layat`・cobra `Use`・envelope の `tool.name`・エラー接頭辞 `"layat: "`・環境変数 `LAYAT_TEMPLATE_REF`・固定 flake ref `github:yasunori0418/layat`
-- **JSON 契約**: `E_NPUT_*` / `W_NPUT_*` → `E_LAYAT_*` / `W_LAYAT_*`（niface 仕様が `E_<TOOL>_<NAME>` を要求するため改名は必須。→ ADR-0043 §6）
+- **JSON 契約**: `E_NPUT_*` / `W_NPUT_*` → `E_LAYAT_*` / `W_LAYAT_*`（outturn 仕様が `E_<TOOL>_<NAME>` を要求するため改名は必須。→ ADR-0043 §6）
 - **Nix**: `packages.layat`・`mainProgram`・flake 出力 `layat.<system>.<name>`・flake-parts `name = "layat"`・`options.layat.*`・`home.activation.layat`・`_layatMarker` / `layatSrc` / `layatRoot` などの内部識別子
 - **on-disk**: 状態ディレクトリ `<state>/nix/profiles/layat/`・backup suffix `layat-backup`・`.layat-recopy-aside`・manifest derivation 名 `layat-manifest`
 - **docs / CI / templates / tests**: 生きた文書と item 本文、workflow、issue テンプレ、starter テンプレ
@@ -154,7 +154,7 @@ sara の item ID はツール名を含まない（フル UUIDv4・→ ADR-0053�
 予告の設計規約:
 
 - **文面は英語**とする。README・`--help` と同じ一次言語に揃える
-- **`--json` の envelope には入れない**。envelope は niface 仕様に適合した機械可読の契約面であり、ツールの都合の告知を混ぜない（→ ADR-0043）。`--json` 指定時も予告は stderr にだけ出し、stdout の JSON を汚さない
+- **`--json` の envelope には入れない**。envelope は outturn 仕様に適合した機械可読の契約面であり、ツールの都合の告知を混ぜない（→ ADR-0043）。`--json` 指定時も予告は stderr にだけ出し、stdout の JSON を汚さない
 - **日付は "will be renamed on or after YYYY-MM-DD" の下限表記**にする。改名の着手条件は「予告 + 14 日」と「prune epic #127 の完了」の遅い方であり、上限を約束すると #127 が遅れたときに警告文が嘘になる
 - **文面には旧名で留まる選択肢を含める**。`github:yasunori0418/nput/legacy-nput` への pin を案内する（次項）
 - CLI 層の予告はサブコマンドを選ばず一律に出す。cobra が生成する補完スクリプトは bash / zsh / fish の
@@ -201,7 +201,7 @@ sara の item ID はツール名を含まない（フル UUIDv4・→ ADR-0053�
 - **`README.md` / `README.ja.md`**: 改名予告バナーと "Migrating from nput" 節を追加する（#387）。改名後に自己記述文へ書き直す（#390）
 - **`docs/concept.md` / `docs/glossary.md` / `docs/glossary.ja.md`**: 命名の由来と本 ADR への索引を追加する（#390）
 - **`modules/` / `cmd/`**: 予告の 2 層を追加する（#387）。改名当日に予告を撤去し、機械的全置換を行う（#388）
-- **隣接リポジトリ**: dotfiles / niface の dev shell / skills の dev shell の flake input と参照を差し替える（#391）。niface の仕様側（`E_<TOOL>_` の例示・conformance fixture・ecosystem docs）は**対象外**とする
+- **隣接リポジトリ**: dotfiles / outturn の dev shell / skills の dev shell の flake input と参照を差し替える（#391）。outturn の仕様側（`E_<TOOL>_` の例示・conformance fixture・ecosystem docs）は**対象外**とする
 
 ## 棄却した案
 

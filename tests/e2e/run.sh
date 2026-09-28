@@ -19,8 +19,8 @@ if ! command -v nix >/dev/null 2>&1; then
 	echo "run.sh: nix が PATH にありません" >&2
 	exit 127
 fi
-# --json エンベロープの適合検証（→ issue #132）は niface-validate + jq を要する（ci devShell が提供）。
-for tool in niface-validate jq; do
+# --json エンベロープの適合検証（→ issue #132）は outturn-validate + jq を要する（ci devShell が提供）。
+for tool in outturn-validate jq; do
 	if ! command -v "$tool" >/dev/null 2>&1; then
 		echo "run.sh: $tool が PATH にありません（CI は ci devShell 経由で起動してください）" >&2
 		exit 127

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/yasunori0418/niface/go/conformance"
+	"github.com/yasunori0418/outturn/go/conformance"
 
 	"github.com/yasunori0418/layat/internal/engine"
 )
@@ -25,7 +25,7 @@ func TestListGenerationsJSONInfoGenerations(t *testing.T) {
 		{Number: 2, Date: "2026-07-19 12:00:00", Current: true},
 	}
 	r, buf := newListGenerationsTestRun()
-	r.beginSubject("home").setPayload(&nifacePayload[*generationsInfo]{info: &generationsInfo{Generations: generationRows(gens)}})
+	r.beginSubject("home").setPayload(&outturnPayload[*generationsInfo]{info: &generationsInfo{Generations: generationRows(gens)}})
 	if err := r.emit(nil); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
@@ -78,7 +78,7 @@ func TestListGenerationsJSONInfoAbsentWithoutListing(t *testing.T) {
 // generations key as an empty array — a nil slice would marshal the key away.
 func TestListGenerationsJSONEmptyStaysArray(t *testing.T) {
 	r, buf := newListGenerationsTestRun()
-	r.beginSubject("empty").setPayload(&nifacePayload[*generationsInfo]{info: &generationsInfo{Generations: generationRows(nil)}})
+	r.beginSubject("empty").setPayload(&outturnPayload[*generationsInfo]{info: &generationsInfo{Generations: generationRows(nil)}})
 	if err := r.emit(nil); err != nil {
 		t.Fatalf("emit: %v", err)
 	}

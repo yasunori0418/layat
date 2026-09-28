@@ -82,7 +82,7 @@ Arch / Gentoo 的なミニマル Linux ディストリビューションの基�
 layat は単独ツールに留まらず、n プレフィックスのツール群（nboot / nwrap / nherd /
 nshadow / ncompose）と stdout / stdin の JSON パイプで合成するエコシステムの一員でもある。
 その前提は「規格が契約」に尽きるため、layat の機械可読出力（`--json`）は **今回の機能に閉じず、
-今後追加するすべての機能で** niface specVersion 1 規約に準拠する（→ ADR-0043）。
+今後追加するすべての機能で** outturn specVersion 1 規約に準拠する（→ ADR-0043）。
 
 **スコープの線引き**: 実装スコープは standalone CLI + project mode をコアとし home mode も
 対象、system 配置は将来拡張（→ ADR-0007）。「関数ベースのパッケージ導入・PATH 追加」の具体機構は

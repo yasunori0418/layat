@@ -42,7 +42,7 @@ specification_ja: |
 
 ## 出典
 
-`docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「niface 準拠の `--json`
+`docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「emit タイミングと成立条件」。
 
 決定の実体は ADR-0043。

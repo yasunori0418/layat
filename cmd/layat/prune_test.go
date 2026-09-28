@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/yasunori0418/niface/go/conformance"
+	"github.com/yasunori0418/outturn/go/conformance"
 
 	"github.com/yasunori0418/layat/internal/engine"
 )
@@ -510,7 +510,7 @@ func TestPruneInfoSkipReasonsAreTheEngineVocabulary(t *testing.T) {
 }
 
 // TestPruneJSONEnvelope pins prune's envelope shape: prune names no config, so results stays []
-// and the inventory rides in the envelope-wide info (the init shape · niface ADR-0018). The
+// and the inventory rides in the envelope-wide info (the init shape · outturn ADR-0018). The
 // document is conformant.
 func TestPruneJSONEnvelope(t *testing.T) {
 	checker, err := conformance.NewDefaultChecker()

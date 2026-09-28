@@ -1,9 +1,9 @@
 package main
 
-// Conformance tests for the --json niface envelope foundation (→ issue #130 acceptance):
-// every emitted document passes niface's conformance checker (embedded schema with format
-// assertions + the schema-external lint MUSTs), and the item-id derivation matches niface's
-// id-vectors byte-for-byte (decoded with UseNumber, per the niface godoc input contract).
+// Conformance tests for the --json outturn envelope foundation (→ issue #130 acceptance):
+// every emitted document passes outturn's conformance checker (embedded schema with format
+// assertions + the schema-external lint MUSTs), and the item-id derivation matches outturn's
+// id-vectors byte-for-byte (decoded with UseNumber, per the outturn godoc input contract).
 
 import (
 	"bytes"
@@ -16,8 +16,8 @@ import (
 	"testing"
 	"time"
 
-	niface "github.com/yasunori0418/niface/go"
-	"github.com/yasunori0418/niface/go/conformance"
+	"github.com/yasunori0418/outturn/go"
+	"github.com/yasunori0418/outturn/go/conformance"
 
 	"github.com/yasunori0418/layat/internal/engine"
 	"github.com/yasunori0418/layat/internal/lock"
@@ -34,14 +34,14 @@ func fixedClock(t0 time.Time) func() time.Time {
 	}
 }
 
-// newTestRun returns a nifaceRun with a pinned clock and buffer sink, already begun for command.
+// newTestRun returns an outturnRun with a pinned clock and buffer sink, already begun for command.
 // The info type arguments are the command's own pair (→ issue #196); the command name is a plain
 // string and cannot drive inference, so prefer the per-command wrappers below — they take their
 // arguments from the production run aliases, which keeps the tests from silently exercising a
 // type pair the CLI no longer uses.
-func newTestRun[TInfo, TEnvInfo any](command string) (*nifaceRun[TInfo, TEnvInfo], *bytes.Buffer) {
+func newTestRun[TInfo, TEnvInfo any](command string) (*outturnRun[TInfo, TEnvInfo], *bytes.Buffer) {
 	var buf bytes.Buffer
-	r := &nifaceRun[TInfo, TEnvInfo]{
+	r := &outturnRun[TInfo, TEnvInfo]{
 		now: fixedClock(time.Date(2026, 7, 19, 12, 0, 0, 0, time.FixedZone("JST", 9*3600))),
 		out: &buf,
 	}
@@ -101,10 +101,10 @@ func decodeEnvelope(t *testing.T, buf *bytes.Buffer) map[string]any {
 	return doc
 }
 
-// TestNifaceEnvelopeConformance drives the emit helper through the #130 shapes — success with /
+// TestOutturnEnvelopeConformance drives the emit helper through the #130 shapes — success with /
 // without a subject, pre-subject and subject-borne failures, dryrun conflict — and checks every
-// document against niface's conformance checker (schema + lint MUSTs · issue #130 acceptance).
-func TestNifaceEnvelopeConformance(t *testing.T) {
+// document against outturn's conformance checker (schema + lint MUSTs · issue #130 acceptance).
+func TestOutturnEnvelopeConformance(t *testing.T) {
 	checker, err := conformance.NewDefaultChecker()
 	if err != nil {
 		t.Fatalf("conformance.NewDefaultChecker: %v", err)
@@ -198,9 +198,9 @@ func TestNifaceEnvelopeConformance(t *testing.T) {
 	}
 }
 
-// TestNifaceEnvelopeDryRunFlag pins the envelope's dryRun field to the run's captured --dryrun
+// TestOutturnEnvelopeDryRunFlag pins the envelope's dryRun field to the run's captured --dryrun
 // value (begin snapshots flagDryrun; tests set the field directly).
-func TestNifaceEnvelopeDryRunFlag(t *testing.T) {
+func TestOutturnEnvelopeDryRunFlag(t *testing.T) {
 	checker, err := conformance.NewDefaultChecker()
 	if err != nil {
 		t.Fatalf("conformance.NewDefaultChecker: %v", err)
@@ -227,11 +227,11 @@ type failingWriter struct{}
 
 func (failingWriter) Write([]byte) (int, error) { return 0, errors.New("broken pipe") }
 
-// TestNifaceEmitWriteFailure pins that a failed envelope write surfaces as an error from emit —
+// TestOutturnEmitWriteFailure pins that a failed envelope write surfaces as an error from emit —
 // main then exits non-zero even for a succeeded command, so a missing/partial document is never
 // read as success (→ docs/spec.md emit タイミングと成立条件). The write path does not depend on
 // the info types, so applyRun stands in for any command's instantiation.
-func TestNifaceEmitWriteFailure(t *testing.T) {
+func TestOutturnEmitWriteFailure(t *testing.T) {
 	r := &applyRun{now: fixedClock(time.Date(2026, 7, 19, 12, 0, 0, 0, time.UTC)), out: failingWriter{}}
 	r.begin("apply")
 	r.beginSubject("default")
@@ -240,22 +240,22 @@ func TestNifaceEmitWriteFailure(t *testing.T) {
 	}
 }
 
-// TestNifaceTimestampOffset pins the timestamp shape: RFC 3339, "T" separator, explicit offset
-// (niface ADR-0025 format assertion; local zone renders its UTC offset, UTC renders "Z").
-func TestNifaceTimestampOffset(t *testing.T) {
+// TestOutturnTimestampOffset pins the timestamp shape: RFC 3339, "T" separator, explicit offset
+// (outturn ADR-0025 format assertion; local zone renders its UTC offset, UTC renders "Z").
+func TestOutturnTimestampOffset(t *testing.T) {
 	jst := time.Date(2026, 7, 19, 12, 0, 0, 0, time.FixedZone("JST", 9*3600))
-	if got, want := nifaceTimestamp(jst), "2026-07-19T12:00:00+09:00"; got != want {
-		t.Errorf("nifaceTimestamp(JST) = %q, want %q", got, want)
+	if got, want := outturnTimestamp(jst), "2026-07-19T12:00:00+09:00"; got != want {
+		t.Errorf("outturnTimestamp(JST) = %q, want %q", got, want)
 	}
 	utc := time.Date(2026, 7, 19, 3, 0, 0, 0, time.UTC)
-	if got, want := nifaceTimestamp(utc), "2026-07-19T03:00:00Z"; got != want {
-		t.Errorf("nifaceTimestamp(UTC) = %q, want %q", got, want)
+	if got, want := outturnTimestamp(utc), "2026-07-19T03:00:00Z"; got != want {
+		t.Errorf("outturnTimestamp(UTC) = %q, want %q", got, want)
 	}
 }
 
-// TestEntryItemIDMatchesVectors verifies the id derivation against niface's embedded id-vectors
-// (decoded with UseNumber — the niface godoc input contract; issue #130 acceptance): every vector
-// must reproduce its expected id through niface.DeriveID, and the entry-kind vectors must equally
+// TestEntryItemIDMatchesVectors verifies the id derivation against outturn's embedded id-vectors
+// (decoded with UseNumber — the outturn godoc input contract; issue #130 acceptance): every vector
+// must reproduce its expected id through outturn.DeriveID, and the entry-kind vectors must equally
 // reproduce through layat's entryItemID seam (pinning layat's identity shape: kind="entry",
 // key={target} · → ADR-0043 §3).
 func TestEntryItemIDMatchesVectors(t *testing.T) {
@@ -268,7 +268,7 @@ func TestEntryItemIDMatchesVectors(t *testing.T) {
 			Expected string `json:"expected"`
 		} `json:"vectors"`
 	}
-	dec := json.NewDecoder(bytes.NewReader(niface.IDVectorsV1()))
+	dec := json.NewDecoder(bytes.NewReader(outturn.IDVectorsV1()))
 	dec.UseNumber()
 	if err := dec.Decode(&doc); err != nil {
 		t.Fatalf("decode id-vectors: %v", err)
@@ -285,7 +285,7 @@ func TestEntryItemIDMatchesVectors(t *testing.T) {
 		if err := kd.Decode(&key); err != nil {
 			t.Fatalf("vector %d: decode key: %v", i, err)
 		}
-		got, err := niface.DeriveID(niface.Identity{Kind: v.Identity.Kind, Key: key})
+		got, err := outturn.DeriveID(outturn.Identity{Kind: v.Identity.Kind, Key: key})
 		if err != nil {
 			t.Errorf("vector %d (%s): DeriveID: %v", i, v.Identity.Kind, err)
 			continue
@@ -356,7 +356,7 @@ func TestClassifyErrorCodes(t *testing.T) {
 // TestJSONSuppressesLineOrientedStdout pins the --json stdout-ownership contract at its single
 // chokepoints: every line-oriented printer emits nothing under --json (the envelope owns stdout)
 // and everything under the default contract (→ ADR-0043 §2; issue #130 acceptance "--json 指定時、
-// stdout には niface エンベロープ 1 文書以外何も出ない").
+// stdout には outturn エンベロープ 1 文書以外何も出ない").
 func TestJSONSuppressesLineOrientedStdout(t *testing.T) {
 	origJSON := flagJSON
 	defer func() { flagJSON = origJSON }()
@@ -437,14 +437,14 @@ func TestResetPromptAllowed(t *testing.T) {
 }
 
 // TestBeginRunPublishesEveryCommand pins the wiring step this refactor introduced (→ issue
-// #196): every command's begin<Cmd>Run must begin its run AND publish it to nifaceReport, since
+// #196): every command's begin<Cmd>Run must begin its run AND publish it to outturnReport, since
 // main emits what it finds there, not the command's local variable. A wrapper that dropped the
 // publish would silence that command's envelope entirely while every other test stayed green —
 // only apply and the read commands otherwise exercise the full RunE path (reset / rollback have
 // no --json coverage in the Go tests or the e2e scenarios).
 func TestBeginRunPublishesEveryCommand(t *testing.T) {
-	origReport := nifaceReport
-	defer func() { nifaceReport = origReport }()
+	origReport := outturnReport
+	defer func() { outturnReport = origReport }()
 
 	// Each entry begins the command's run exactly as its RunE does.
 	begins := map[string]func(string) emitter{
@@ -458,15 +458,15 @@ func TestBeginRunPublishesEveryCommand(t *testing.T) {
 	}
 	for command, begin := range begins {
 		t.Run(command, func(t *testing.T) {
-			nifaceReport = noopEmitter{}
+			outturnReport = noopEmitter{}
 			run := begin(command)
 			if !run.began() {
 				t.Errorf("%s: the returned run is not begun", command)
 			}
-			if nifaceReport != emitter(run) {
-				t.Fatalf("%s: nifaceReport = %#v, want the run just begun (main emits what it finds here)", command, nifaceReport)
+			if outturnReport != emitter(run) {
+				t.Fatalf("%s: outturnReport = %#v, want the run just begun (main emits what it finds here)", command, outturnReport)
 			}
-			if !nifaceReport.began() {
+			if !outturnReport.began() {
 				t.Errorf("%s: the published run is not begun; main's gate would skip the envelope", command)
 			}
 		})
@@ -498,14 +498,14 @@ func TestJSONFlagRegistered(t *testing.T) {
 }
 
 // TestJSONUtilityCommandsDoNotBegin pins that cobra's auto-added utility commands (help /
-// completion) never begin a niface run: they own stdout with their own text, so emitting an
+// completion) never begin an outturn run: they own stdout with their own text, so emitting an
 // envelope there would corrupt both contracts (→ issue #130, docs/spec.md).
 func TestJSONUtilityCommandsDoNotBegin(t *testing.T) {
 	for _, args := range [][]string{{"help"}, {"completion", "bash"}} {
-		origReport := nifaceReport
+		origReport := outturnReport
 		// The process-start state: only a RunE of ours replaces it with a begun run, so a
 		// still-noop report after Execute proves the utility command emitted nothing.
-		nifaceReport = noopEmitter{}
+		outturnReport = noopEmitter{}
 		root := newRootCmd()
 		root.SetArgs(args)
 		out := captureStdout(t, func() {
@@ -513,15 +513,15 @@ func TestJSONUtilityCommandsDoNotBegin(t *testing.T) {
 				t.Errorf("%v: Execute: %v", args, err)
 			}
 		})
-		if nifaceReport.began() {
-			t.Errorf("%v began a niface run; utility commands must not emit an envelope", args)
+		if outturnReport.began() {
+			t.Errorf("%v began an outturn run; utility commands must not emit an envelope", args)
 		}
 		// The gate is began(), but assert the observable contract too, so a future wiring that
 		// writes an envelope past the gate is caught rather than inferred.
 		if strings.Contains(out, `"specVersion"`) {
 			t.Errorf("%v wrote an envelope to stdout; utility commands own it with their own text: %q", args, out)
 		}
-		nifaceReport = origReport
+		outturnReport = origReport
 	}
 }
 
@@ -531,14 +531,14 @@ func TestJSONUtilityCommandsDoNotBegin(t *testing.T) {
 // conformant, status error, with the error attached to results[0] and stdout holding nothing else.
 func TestJSONEndToEndSubjectBorneFailure(t *testing.T) {
 	t.Chdir(t.TempDir())
-	origReport := nifaceReport
+	origReport := outturnReport
 	origJSON, origDryrun := flagJSON, flagDryrun
 	defer func() {
-		nifaceReport = origReport
+		outturnReport = origReport
 		flagJSON, flagDryrun = origJSON, origDryrun
 	}()
 
-	nifaceReport = noopEmitter{}
+	outturnReport = noopEmitter{}
 
 	// RunE builds its own concrete run against os.Stdout (→ issue #196), so the document is
 	// captured off the real sink: Execute and the main-style emit both run inside the capture.
@@ -550,18 +550,18 @@ func TestJSONEndToEndSubjectBorneFailure(t *testing.T) {
 		if execErr == nil {
 			return
 		}
-		if !nifaceReport.began() {
+		if !outturnReport.began() {
 			return
 		}
-		if err := nifaceReport.emit(execErr); err != nil {
+		if err := outturnReport.emit(execErr); err != nil {
 			t.Errorf("emit: %v", err)
 		}
 	})
 	if execErr == nil {
 		t.Fatal("apply in an entrypoint-less directory must fail")
 	}
-	if !nifaceReport.began() {
-		t.Fatal("apply's RunE did not publish a begun niface run")
+	if !outturnReport.began() {
+		t.Fatal("apply's RunE did not publish a begun outturn run")
 	}
 	// captureStdout replaces the whole of os.Stdout, so anything else the command wrote lands
 	// here too. Check that first: a stray line would otherwise surface as an opaque JSON decode

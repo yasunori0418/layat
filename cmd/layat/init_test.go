@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/yasunori0418/niface/go/conformance"
+	"github.com/yasunori0418/outturn/go/conformance"
 )
 
 // flakeInitArgs builds the argv for `nix flake init -t <ref>#<template>` (→ plan 6).
@@ -73,7 +73,7 @@ func TestInitJSONEnvelopeInfoAbsentOnRejectedTemplate(t *testing.T) {
 	assertNoInfoKeys(t, decodeEnvelope(t, buf))
 }
 
-// TestInitJSONEnvelopeInfo pins init's --json shape (niface ADR-0018 · → issue #132): init has
+// TestInitJSONEnvelopeInfo pins init's --json shape (outturn ADR-0018 · → issue #132): init has
 // no subject, so results stays [] and the run facts (template / ref) ride in the envelope-wide
 // top-level info. The envelope is conformant.
 func TestInitJSONEnvelopeInfo(t *testing.T) {

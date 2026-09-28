@@ -4,7 +4,7 @@ go 1.26
 
 require (
 	github.com/spf13/cobra v1.10.2
-	github.com/yasunori0418/niface/go v0.0.0-20260718121743-b80944bb0f14
+	github.com/yasunori0418/outturn/go v0.0.0-20260927033742-8eab6bd38fa4
 )
 
 require (

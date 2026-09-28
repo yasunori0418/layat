@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/yasunori0418/niface/go/conformance"
+	"github.com/yasunori0418/outturn/go/conformance"
 )
 
 // gitignoreAnchor normalizes a root-relative target into /-anchor form (leading /, no trailing /; → ADR-0013).
@@ -45,7 +45,7 @@ func TestGitignoreJSONInfoPaths(t *testing.T) {
 	}
 
 	r, buf := newGitignoreTestRun()
-	r.beginSubject("docs").setPayload(&nifacePayload[*gitignoreInfo]{info: &gitignoreInfo{
+	r.beginSubject("docs").setPayload(&outturnPayload[*gitignoreInfo]{info: &gitignoreInfo{
 		Paths: gitignoreAnchors([]string{".claude/skills/nix", ".layat-out/docs"}),
 	}})
 	if err := r.emit(nil); err != nil {
@@ -93,7 +93,7 @@ func TestGitignoreJSONInfoAbsentWithoutEnumeration(t *testing.T) {
 // an empty array — a nil slice would marshal the key away.
 func TestGitignoreJSONEmptyPathsStaysArray(t *testing.T) {
 	r, buf := newGitignoreTestRun()
-	r.beginSubject("empty").setPayload(&nifacePayload[*gitignoreInfo]{info: &gitignoreInfo{Paths: gitignoreAnchors(nil)}})
+	r.beginSubject("empty").setPayload(&outturnPayload[*gitignoreInfo]{info: &gitignoreInfo{Paths: gitignoreAnchors(nil)}})
 	if err := r.emit(nil); err != nil {
 		t.Fatalf("emit: %v", err)
 	}

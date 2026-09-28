@@ -24,7 +24,7 @@ threatens:
   REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5 の前提が崩れる
 - **カウント・エンベロープのレース** — applied / skipped / failures と error / conflict の
   判定を保護なしで共有すると更新が失われ、失敗があるのに exit 0 になる・error が conflict に
-  負ける（REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32 の優先度が崩れる）。`nifaceRun` の
+  負ける（REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32 の優先度が崩れる）。`outturnRun` の
   subject 一覧への append が並行すると `results[]` から config が欠ける
 - **意味論の取り違え** — 並列化の書き換えで try-lock の skip を失敗へ数える・部分失敗時に
   成功 config の subject を捨てる、といった退行が入り込む

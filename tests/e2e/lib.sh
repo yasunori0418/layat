@@ -99,10 +99,10 @@ assert_writable() {
 	if [ -w "$1" ]; then e2e_pass "書込可: $1"; else e2e_fail "書込可であるべき: $1"; fi
 }
 
-# ---- niface エンベロープ検証（--json・→ issue #132） -------------------------
+# ---- outturn エンベロープ検証（--json・→ issue #132） -------------------------
 
 # layat を --json 付きで実行してエンベロープを保存し、終了コードの一致を確認したうえで
-# niface-validate（-schema 省略 = embed 正本 schema〔format assertion 込み〕+ lint MUST）に
+# outturn-validate（-schema 省略 = embed 正本 schema〔format assertion 込み〕+ lint MUST）に
 # 掛ける。トップレベル results[] の常在・subject 必須などの一様形は schema 側が強制する。
 run_json() { # $1: 期待 exit code, $2: エンベロープ保存先, $3...: layat 引数
 	local want="$1" out="$2"
@@ -115,10 +115,10 @@ run_json() { # $1: 期待 exit code, $2: エンベロープ保存先, $3...: lay
 		e2e_fail "exit $code (期待 $want): layat $* --json"
 	fi
 	local findings
-	if findings="$(niface-validate "$out" 2>&1)"; then
-		e2e_pass "niface 適合: $(basename "$out")"
+	if findings="$(outturn-validate "$out" 2>&1)"; then
+		e2e_pass "outturn 適合: $(basename "$out")"
 	else
-		e2e_fail "niface 適合違反: $(basename "$out"): $findings"
+		e2e_fail "outturn 適合違反: $(basename "$out"): $findings"
 	fi
 }
 
