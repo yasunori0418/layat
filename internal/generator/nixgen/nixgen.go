@@ -301,7 +301,7 @@ func stageOf(args []string) generator.Stage {
 // nix's own stderr is captured; a failure is a generator.Error carrying it (→ nixError).
 func (g *Generator) runNixCapture(args ...string) (string, error) {
 	if g.debug {
-		fmt.Fprintf(g.stderr, "layat: + nix %s\n", strings.Join(args, " "))
+		_, _ = fmt.Fprintf(g.stderr, "layat: + nix %s\n", strings.Join(args, " "))
 	}
 	cmd := exec.Command("nix", args...)
 	var stdout, stderr bytes.Buffer
@@ -319,7 +319,7 @@ func (g *Generator) runNixCapture(args ...string) (string, error) {
 // eval succeeded before build = nix-command/flakes are already enabled, so experimental detection is unnecessary.
 func (g *Generator) runNixStream(args ...string) error {
 	if g.debug {
-		fmt.Fprintf(g.stderr, "layat: + nix %s\n", strings.Join(args, " "))
+		_, _ = fmt.Fprintf(g.stderr, "layat: + nix %s\n", strings.Join(args, " "))
 	}
 	cmd := exec.Command("nix", args...)
 	cmd.Stdout = g.stderr
