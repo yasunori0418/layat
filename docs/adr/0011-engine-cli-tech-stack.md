@@ -22,7 +22,7 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-06-13
-- 関連: ADR-0006, ADR-0007, ADR-0010, `docs/spec.md`, `docs/concept.md`
+- 関連: ADR-0006, ADR-0007, ADR-0010, ADR-0055, ADR-0056, `docs/spec.md`, `docs/concept.md`
 - 改訂対象: ADR-0007「store path 取得」を out-link 方式に具体化。ADR-0006 / ADR-0007 の「Go ライブラリ」語を `internal/` 層分離と明文化
 
 > **2026-06-14 改訂注記（ADR-0016）**: 本 ADR の以下を拡張・具体化した。
@@ -38,6 +38,15 @@ references:
 > **2026-07-03 実装注記**: 本 ADR §2 が決定した **fatih/color（dryrun 色付け）は実装では採用しなかった**。
 > `cmd/nput` の依存は cobra のみで、dryrun 出力は色なしの `fmt.Printf` で表示する。CLI 層が「最小依存」枠内で
 > 選択できるという §1 の方針自体は不変（→ Issue #111）。
+
+> **2026-10-02 改訂注記（ADR-0055）**: 本 ADR §4 の「out-link を profileDir 内に作って store path を取得し GC 窓を塞ぐ」
+> 方式は不変。ただし `nix build --out-link <profileDir>/.pending` を実行する主体は CLI から manifest 生成器の nix 実装
+> （`internal/generator/nixgen` の Build 操作）へ移り、「世代コミット可能な link-farm（= store path）を pending に張って返す」
+> ことが生成器の契約の事後条件になった（→ ADR-0055 §4）。
+
+> **2026-10-02 改訂注記（ADR-0056）**: 本 ADR §1 の「CLI 層は最小依存を許可し、人間向け UX に限る」に、生成器を選ぶ
+> 設定ファイル（`layat.toml` / `config.toml`）のパーサとして `github.com/pelletier/go-toml/v2` を加えた。import は
+> `cmd/layat` に閉じ、engine 層の stdlib-only は不変（→ ADR-0056 §4）。
 
 ## 背景
 

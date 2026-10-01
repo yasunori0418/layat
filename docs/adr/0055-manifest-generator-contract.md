@@ -16,6 +16,7 @@ justifies:
   - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
   - "REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6"
   - "REQ-4ffda99a-7062-4c00-915f-70b525cb215b"
+  - "REQ-9341fa5d-836e-4023-af53-cc7d273438d1"
 revises:
   - "ADR-0006"
   - "ADR-0007"
@@ -23,9 +24,9 @@ revises:
   - "ADR-0026"
   - "ADR-0031"
   - "ADR-0043"
-references:
   - "ADR-0011"
   - "ADR-0025"
+references:
   - "ADR-0054"
 ---
 # ADR-0055: manifest 生成器の契約
@@ -33,7 +34,7 @@ references:
 - ステータス: 採用
 - 日付: 2026-10-02
 - 関連: ADR-0006（engine の契約は `manifest.json` 1 本）, ADR-0007（CLI の責務・透明性）, ADR-0011（pending out-link による GC 窓の封鎖）, ADR-0023（eval 先行 → flock → build）, ADR-0025（experimental-features の案内）, ADR-0026（`--manifest` 経路）, ADR-0031（成功時沈黙・`--debug`）, ADR-0043（`--json` の outturn 準拠）, ADR-0054（改名。manifest の生成は nix でなくてもよい）
-- 改訂対象: ADR-0006 / ADR-0007 が「CLI が内部で `nix build` / `nix eval` を回す」とした manifest 取得の主体を生成器インターフェイスへ移す。ADR-0023 §1 の rootKind 先読みを生成器の契約の前提条件に位置づける。ADR-0026 の `--manifest` 経路を prebuilt 生成器として再定義する（外面は不変）。ADR-0031 §3 の「内部 nix コマンド開示」の主体を生成器にし、生成器の stderr を沈黙規律の対象外にする。ADR-0043 の `E_*_BUILD` を「生成器の失敗」へ読み替える
+- 改訂対象: ADR-0006 / ADR-0007 が「CLI が内部で `nix build` / `nix eval` を回す」とした manifest 取得の主体を生成器インターフェイスへ移す。ADR-0023 §1 の rootKind 先読みを生成器の契約の前提条件に位置づける。ADR-0026 の `--manifest` 経路を prebuilt 生成器として再定義する（外面は不変）。ADR-0031 §3 の「内部 nix コマンド開示」の主体を生成器にし、生成器の stderr を沈黙規律の対象外にする。ADR-0043 の `E_*_BUILD` を「生成器の失敗」へ読み替える。ADR-0011 §4 の out-link による store path 取得の主体を nixgen の Build に移す。ADR-0025 §1 の experimental-features の判定と案内を nixgen に閉じる
 - 起点: Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）と、評価器の診断の扱いを決める Issue #396 の結論
 
 ## 背景

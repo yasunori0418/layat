@@ -10,12 +10,13 @@ origin: "Issue #395（epic: manifest 生成器のインターフェイス化）�
 justifies:
   - "REQ-badc7e10-0ba4-40d4-b334-6e40193119db"
   - "REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0"
+  - "REQ-9341fa5d-836e-4023-af53-cc7d273438d1"
 revises:
   - "ADR-0006"
   - "ADR-0043"
+  - "ADR-0011"
 references:
   - "ADR-0007"
-  - "ADR-0011"
   - "ADR-0026"
   - "ADR-0055"
 ---
@@ -24,7 +25,7 @@ references:
 - ステータス: 採用
 - 日付: 2026-10-02
 - 関連: ADR-0006（設定ファイルから config を発見する機構は足さない）, ADR-0007（entrypoint 発見の規律）, ADR-0011（CLI の依存許可と vendorHash）, ADR-0026（`--manifest` 経路と `-f` / `--all` との排他）, ADR-0043（`E_INPUT` の予約）, ADR-0055（manifest 生成器の契約）
-- 改訂対象: ADR-0006 の「設定ファイルから config を発見する機構は足さない」に、生成器の選択に限って設定ファイルを読む例外を足す（config の発見は引き続き足さない）。ADR-0043 §8 が予約した共通コード `E_INPUT` を初めて実装し、入力不正の分類先にする
+- 改訂対象: ADR-0006 の「設定ファイルから config を発見する機構は足さない」に、生成器の選択に限って設定ファイルを読む例外を足す（config の発見は引き続き足さない）。ADR-0043 §8 が予約した共通コード `E_INPUT` を初めて実装し、入力不正の分類先にする。ADR-0011 §1 の CLI 層の許可依存に `github.com/pelletier/go-toml/v2` を加える
 - 起点: Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）
 
 ## 背景

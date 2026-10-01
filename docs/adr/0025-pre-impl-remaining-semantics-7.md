@@ -30,7 +30,7 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-06-14
-- 関連: ADR-0002, ADR-0005, ADR-0007, ADR-0011, ADR-0012, ADR-0013, ADR-0016, ADR-0020, ADR-0021, ADR-0022, ADR-0023, ADR-0024, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`, `CLAUDE.md`
+- 関連: ADR-0002, ADR-0005, ADR-0007, ADR-0011, ADR-0012, ADR-0013, ADR-0016, ADR-0020, ADR-0021, ADR-0022, ADR-0023, ADR-0024, ADR-0055, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`, `CLAUDE.md`
 - 改訂対象: ADR-0022/0023 の `--out-link <profileDir>/.pending-<name>` 命名と ADR-0023 §3・ADR-0024 §1 の profileDir 表が暗黙に持っていた「profileDir = profile リンクそのもの」という用語の二義性を、専用ディレクトリレイアウトへ確定（pending out-link 名 `.pending-<name>` → `.pending`）。ADR-0024 §2 の HM profile 粒度に「role 分離不可」のユーザー視点制約と将来 seam を明示追加（決定の反転なし）。
 - 起点: ADR-0024 までの第6巡で設計は実装着手の閾値に達したが、`/grill-me` による横断検査で骨格に直結する未決・揺れ・考慮漏れが7点残っていた。いずれも第一スライス（ADR-0023 §4）着手で即踏むか、docs の穴で、着手前に確定する（実装前残セマンティクス確定の第7巡）。
 
@@ -49,6 +49,11 @@ references:
 > `<state>/nix/profiles/layat/` へ変わる**。固定 ref をバイナリへハードコードするという決定・専用ディレクトリ
 > レイアウトの構造（`profile` リンク・`profile-N-link`・`.pending`・backref `.root`・flock キー）はいずれも
 > 不変である（→ ADR-0054）。
+
+> **2026-10-02 改訂注記（ADR-0055）**: 本 ADR §1 の「experimental-features はユーザー前提条件とし、自動付与せず案内エラーで
+> 停止する」は不変。ただし前提条件は nix 生成器のものと位置づけ、機能未有効の判定（文字列マッチ）と案内文は
+> `internal/generator/nixgen` に閉じた。nixgen は `generator.Error` の `Kind = PrerequisiteMissing` と `Guidance` で返し、
+> 表示は CLI が決める（→ ADR-0055 §6）。
 
 ## 背景
 
