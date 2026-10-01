@@ -7,9 +7,9 @@ derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
   layat SHALL be composed of two layers: the layat CLI (`packages.layat`, the primary UX
-  installed on PATH) and the engine (a Go library). The CLI SHALL discover an entrypoint,
-  run `nix build` / `nix eval` internally to obtain the store path of the named manifest,
-  and import the engine to drive placement, stale removal and profile swap. The engine
+  installed on PATH) and the engine (a Go library). The CLI SHALL discover an entrypoint
+  and obtain the store path of the named manifest through a manifest generator (nix by
+  default), and import the engine to drive placement, stale removal and profile swap. The engine
   SHALL take `manifest.json` as its input. The boundary between the two layers SHALL be
   `manifest.json` alone, so that the engine does not depend directly on Nix evaluation
   results. Which files are discovered as entrypoints is stated by the CLI specification,
@@ -17,8 +17,8 @@ specification: |
   restated here.
 specification_ja: |
   layat は layat CLI（`packages.layat`・PATH 常駐の一次 UX）と engine（Go ライブラリ）の
-  2 層で構成しなければならない。CLI は entrypoint を発見し、内部で `nix build` /
-  `nix eval` を回して named manifest の store path を得て、engine を import して配置・
+  2 層で構成しなければならない。CLI は生成器（既定 nix）経由で entrypoint を発見して
+  named manifest の store path を得て、engine を import して配置・
   stale 除去・profile swap を駆動しなければならない。engine は `manifest.json` を入力に
   取らなければならない。
   2 層の境界は `manifest.json` だけとし、engine が Nix の評価結果へ直接依存しないように
@@ -52,6 +52,11 @@ engine は Nix の評価結果へ直接依存しない。
 >   `default.nix`・CWD 既定・`-f` 上書き）→ `docs/spec.md`「CLI 仕様」→
 >   「entrypoint の発見」節の担当（後続 PR で item 化）
 > - engine が叩く外部コマンドの限定とネイティブ FS 操作・`nix-env --set` → REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564
+>
+> **2026-10-02 追記（ADR-0055）**: 図の「内部で nix build/eval を回し」は、manifest 生成器
+> （既定 nix）経由で named manifest の store path を得る、に読み替える。entrypoint の発見も
+> 生成器の Discover 操作になる。生成器の契約は REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729、パッケージ構成は
+> DSG-25ad3cce-f921-4db2-aae0-c0263d4b8295 の担当。層の境界が `manifest.json` だけであることは変わらない。
 
 ## 出典
 
@@ -59,3 +64,5 @@ engine は Nix の評価結果へ直接依存しない。
 同節の構成図が層間の受け渡しを `↓ manifest.json in` の 1 本だけで描いていることによる
 （`manifest.json` を「engine が読む唯一の安定契約」と明示するのは同「manifest.json
 スキーマ（v1）」節で、当該節は後続 PR の担当）。
+
+manifest の取得を生成器経由にしたのは ADR-0055「manifest 生成器の契約」。
