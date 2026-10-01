@@ -26,9 +26,14 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-06-17
-- 関連: ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0015, ADR-0023, ADR-0024, ADR-0025, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`
+- 関連: ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0015, ADR-0023, ADR-0024, ADR-0025, ADR-0055, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`
 - 改訂対象: ADR-0003 / ADR-0007 が「モジュールは switch 時に engine を起動する配線」とした**起動方法**を確定する（決定の反転なし・未定義だった invocation を埋める）。CONTEXT.md の `nput CLI` / `apply` / `module` 定義を拡張する。
 - 起点: Issue #17（home-manager モジュール統合）の実装中に判明した計画外の仕様。docs（ADR-0003, ADR-0007, spec のモジュール別動作仕様）は「module は engine を kick する配線」とだけ述べ、**具体的な invocation を一度も規定していなかった**。
+
+> **2026-10-02 改訂注記（ADR-0055）**: 本 ADR の `--manifest` の外面（フラグ・挙動・`-f` / `--all` との排他）は不変。ただし
+> `--manifest` 経路は manifest 生成器の **prebuilt 実装**（Discover = 与えられたパス / Roots = manifest.json から /
+> Build = そのパスを返す）として実装し直し、「rootKind は `manifest.json` から engine が読む」は
+> **prebuilt 生成器の Roots が link-farm の `manifest.json` から読む**へ変わった（→ ADR-0055）。
 
 ## 背景
 

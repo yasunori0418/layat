@@ -32,7 +32,7 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-07-07
-- 関連: ADR-0033, ADR-0023, ADR-0031, ADR-0018, ADR-0042, ADR-0004, `docs/concept.md`, `docs/design.md`, `docs/spec.md`, outturn specVersion 1（yasunori0418/outturn）, outturn ADR-0013（mode 廃止・subject 常時必須）, yasunori0418/outturn#1
+- 関連: ADR-0033, ADR-0023, ADR-0031, ADR-0018, ADR-0042, ADR-0004, ADR-0055, ADR-0056, `docs/concept.md`, `docs/design.md`, `docs/spec.md`, outturn specVersion 1（yasunori0418/outturn）, outturn ADR-0013（mode 廃止・subject 常時必須）, yasunori0418/outturn#1
 - 改訂対象: ADR-0033 §1-3（独自エンベロープ `{"version":1,...}` を outturn エンベロープ準拠へ）/ ADR-0023 §2（「エラーは stdout に畳み込まず stderr 専有」を再改訂）。ストリーム規律の骨子（stdout=機械可読専有・warning/error 常時 stderr）と終了コード表 0/1/2 は不変
 - 起点: nput の outturn 準拠化 grilling（2026-07-06）と、それを受けた outturn 側 grilling による outturn#1 の方針確定（batch エンベロープ + subject + §5 参照キー規約の 3 層化）。2026-07-07 に outturn 側の正式成果物（`spec/v1/spec.md`・`schema/v1/envelope.schema.json`・`go` module・`testdata/v1` 適合ベクタ）が確定し、**エンベロープは single / batch を問わずトップレベル常時 `results[]` に統一**された。さらに同日の outturn ADR-0013 で **`mode` 判別子は全廃・`SubjectResult.subject` は常時必須**へ改訂された（実行形態を切り替える判別子フィールドは持たない）。本 ADR は確定仕様に合わせて記述する
 
@@ -43,6 +43,15 @@ references:
 > `E_IO` 等をそのまま再利用）・参照キー 3 つ組 `(tool.name, subject, id)`・JSON 出力の outturn 準拠を恒常原則と
 > する決定はいずれも不変。また改名予告の警告は **`--json` のエンベロープには入れず stderr にのみ出す**
 > （機械可読の契約面にツールの都合の告知を混ぜない・→ ADR-0054 §6）。
+
+> **2026-10-02 改訂注記（ADR-0055）**: 本 ADR §8 のツール別コード `E_*_BUILD`（現 `E_LAYAT_BUILD`）は存続し、意味を
+> 「nix の失敗」から「**manifest 生成器の失敗**」へ読み替える。新しいコードは足さない。生成器の失敗分類
+> （`generator.Error` の `Kind`）はコードに影響させず、`NotFound` も共通コード `E_NOTFOUND` には写さない。
+> エンベロープに生成器名は出さない（→ ADR-0055）。
+
+> **2026-10-02 改訂注記（ADR-0056）**: 本 ADR §8 で予約した共通コード `E_INPUT` を初めて実装した。未知の生成器名・設定ファイルの
+> 不正・フラグの組み合わせ不正（`--generator` + `--manifest`、`-f` / `--all` + `--manifest`）を `E_INPUT` に分類する。
+> 既存の `-f` / `--all` + `--manifest` は `E_LAYAT_FAILED` から `E_INPUT` へ変わる（文面は不変・→ ADR-0056）。
 
 ## 背景
 

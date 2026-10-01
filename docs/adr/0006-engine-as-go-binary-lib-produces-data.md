@@ -32,7 +32,7 @@ references:
 
 - ステータス: 採用（2026-06-13 一部改訂: 「nput の露出と環境セットアップ」節・実行フロー・該当棄却案を ADR-0007 が反転）
 - 日付: 2026-06-11
-- 関連: ADR-0002, ADR-0003, ADR-0005, ADR-0007, ADR-0012, ADR-0013, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
+- 関連: ADR-0002, ADR-0003, ADR-0005, ADR-0007, ADR-0012, ADR-0013, ADR-0055, ADR-0056, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
 
 > **2026-06-13 精緻化（ADR-0012 / ADR-0013）**: 本 ADR の以下の記述は後続 ADR が具体化・上書きした。
 > - 「flock を try-lock（保持中ならスキップ）」（並行実行・実行フロー）→ ADR-0013 が **解決後 profileDir 単位** + **明示 apply=blocking wait / shellHook=try-lock skip**（衝突時は後勝ち）に精緻化。
@@ -62,6 +62,15 @@ references:
 > **2026-06-14 改訂注記（ADR-0023）**: 本 ADR の実行フロー（「1. flock(profileDir) を try-lock」→「2. root 解決」→…→build）の順序は、
 > ADR-0023 §1 が **「eval 先行（rootKind 取得 → root 解決 → profileDir 確定）→ flock → build（ロック内）」**へ再定義した。profileDir
 > 確定に root 解決が要るのに root 解決が flock 後という循環と、ロック外 build による out-link 競合を同時に解消するため（→ ADR-0023）。
+
+> **2026-10-02 改訂注記（ADR-0055）**: 本 ADR の「engine の契約は `manifest.json` 1 本」「lib はデータ生成に徹する」は不変。
+> ただし CLI が `nix build` で link-farm の store path を得る部分（ADR-0007 / ADR-0011 で具体化）は、manifest 生成器の
+> インターフェイス（`internal/generator`）越しになり、nix はその既定実装（`internal/generator/nixgen`）になった。
+> engine の入力が `manifest.json` だけという境界は変わらない（→ ADR-0055）。
+
+> **2026-10-02 改訂注記（ADR-0056）**: 本 ADR の「グローバル CLI に CWD / 設定ファイルから config を発見する機構は足さない」は不変。
+> ただし**生成器の選択に限って**設定ファイル（`layat.toml` / `$XDG_CONFIG_HOME/layat/config.toml`）を読む初例を足した。
+> 設定ファイルが持つ項目は `generator` のみで、config の発見には使わない（→ ADR-0056）。
 
 ## 背景
 
