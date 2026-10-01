@@ -58,7 +58,7 @@ func newInitCmd() *cobra.Command {
 }
 
 // runInit validates the template name and runs `nix flake init -t <ref>#<template>` in the CWD.
-// Because it generates a new flake, it does not go through entrypoint discovery (discoverEntrypoint; → plan 8).
+// Because it generates a new flake, it does not go through entrypoint discovery (the generator's Discover; → plan 8).
 func runInit(run *initRun, template string) error {
 	if !isValidTemplate(template) {
 		return fmt.Errorf("layat: unknown template: %q (valid values: %s)", template, strings.Join(initTemplates, " / "))

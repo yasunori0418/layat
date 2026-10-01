@@ -9,20 +9,22 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // TestDetectCrossConfigConflictsBuckets pins the bucket rules on the pure detector, without nix.
 func TestDetectCrossConfigConflictsBuckets(t *testing.T) {
 	cases := []struct {
 		name         string
-		roots        map[string]rootInfo
+		roots        map[string]manifest.Root
 		selected     []string
 		rootOverride string
 		wantConflict bool
 	}{
 		{
 			name: "same rootKind shares a bucket",
-			roots: map[string]rootInfo{
+			roots: map[string]manifest.Root{
 				"a": {RootKind: "home", Targets: []string{".config/x", ".config/y"}},
 				"b": {RootKind: "home", Targets: []string{".config/y"}},
 			},
@@ -31,7 +33,7 @@ func TestDetectCrossConfigConflictsBuckets(t *testing.T) {
 		},
 		{
 			name: "different rootKinds are different buckets",
-			roots: map[string]rootInfo{
+			roots: map[string]manifest.Root{
 				"a": {RootKind: "home", Targets: []string{".config/y"}},
 				"b": {RootKind: "project", Targets: []string{".config/y"}},
 			},
@@ -39,7 +41,7 @@ func TestDetectCrossConfigConflictsBuckets(t *testing.T) {
 		},
 		{
 			name: "fixed roots with the same value share a bucket",
-			roots: map[string]rootInfo{
+			roots: map[string]manifest.Root{
 				"a": {RootKind: "fixed", Root: "/srv/app", Targets: []string{"conf"}},
 				"b": {RootKind: "fixed", Root: "/srv/app", Targets: []string{"conf"}},
 			},
@@ -48,7 +50,7 @@ func TestDetectCrossConfigConflictsBuckets(t *testing.T) {
 		},
 		{
 			name: "fixed roots with different values are different buckets",
-			roots: map[string]rootInfo{
+			roots: map[string]manifest.Root{
 				"a": {RootKind: "fixed", Root: "/srv/app", Targets: []string{"conf"}},
 				"b": {RootKind: "fixed", Root: "/srv/other", Targets: []string{"conf"}},
 			},
@@ -58,7 +60,7 @@ func TestDetectCrossConfigConflictsBuckets(t *testing.T) {
 			// The fixed root value is compared, not the kind: a fixed root that happens to equal the
 			// project root is a different bucket (an undetectable case left to the runtime; → ADR-0038).
 			name: "fixed and project are different buckets",
-			roots: map[string]rootInfo{
+			roots: map[string]manifest.Root{
 				"a": {RootKind: "fixed", Root: "/srv/app", Targets: []string{"conf"}},
 				"b": {RootKind: "project", Targets: []string{"conf"}},
 			},
@@ -66,7 +68,7 @@ func TestDetectCrossConfigConflictsBuckets(t *testing.T) {
 		},
 		{
 			name: "--root collapses every config into one bucket",
-			roots: map[string]rootInfo{
+			roots: map[string]manifest.Root{
 				"a": {RootKind: "home", Targets: []string{"conf"}},
 				"b": {RootKind: "fixed", Root: "/srv/app", Targets: []string{"conf"}},
 			},
@@ -76,7 +78,7 @@ func TestDetectCrossConfigConflictsBuckets(t *testing.T) {
 		},
 		{
 			name: "a conflict outside the selection is ignored",
-			roots: map[string]rootInfo{
+			roots: map[string]manifest.Root{
 				"a": {RootKind: "home", Targets: []string{"conf"}},
 				"b": {RootKind: "project", Targets: []string{"conf"}},
 				"c": {RootKind: "project", Targets: []string{"conf"}},
@@ -86,7 +88,7 @@ func TestDetectCrossConfigConflictsBuckets(t *testing.T) {
 		},
 		{
 			name: "no shared target",
-			roots: map[string]rootInfo{
+			roots: map[string]manifest.Root{
 				"a": {RootKind: "home", Targets: []string{".config/x"}},
 				"b": {RootKind: "home", Targets: []string{".config/y"}},
 			},
@@ -108,7 +110,7 @@ func TestDetectCrossConfigConflictsBuckets(t *testing.T) {
 
 // TestDetectCrossConfigConflictsMessage checks the error names the target and both configs.
 func TestDetectCrossConfigConflictsMessage(t *testing.T) {
-	roots := map[string]rootInfo{
+	roots := map[string]manifest.Root{
 		"docs":  {RootKind: "project", Targets: []string{".claude/skills/nix"}},
 		"tools": {RootKind: "project", Targets: []string{".claude/skills/nix", ".config/other"}},
 	}
@@ -129,7 +131,7 @@ func TestDetectCrossConfigConflictsMessage(t *testing.T) {
 // TestDetectCrossConfigConflictsJSON checks the preflight error lands on the top-level errors[]
 // as E_LAYAT_FAILED: it fails before any subject is registered (→ ADR-0043 §6).
 func TestDetectCrossConfigConflictsJSON(t *testing.T) {
-	roots := map[string]rootInfo{
+	roots := map[string]manifest.Root{
 		"a": {RootKind: "home", Targets: []string{"conf"}},
 		"b": {RootKind: "home", Targets: []string{"conf"}},
 	}

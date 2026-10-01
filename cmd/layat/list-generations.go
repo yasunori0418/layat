@@ -66,19 +66,16 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
 	// A named listing registers exactly one, so the run's results[] holds N=1 (→ issue #164).
 	subject := run.beginSubject(name)
-	ep, err := discoverEntrypoint(flagFile)
-	if err != nil {
-		return err
-	}
-	system, err := currentSystem()
-	if err != nil {
+	gen := newGenerator()
+	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}
 
-	rootKind, fixedRoot, err := evalRoot(ep, system, name)
+	root, err := gen.Roots(name)
 	if err != nil {
 		return err
 	}
+	rootKind, fixedRoot := root.RootKind, root.Root
 	if rootKind != manifest.RootKindHome {
 		return fmt.Errorf("layat: list-generations is home mode only (layat.%s has rootKind=%q)", name, rootKind)
 	}

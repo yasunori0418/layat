@@ -48,19 +48,16 @@ func runRollback(run *rollbackRun, name string) error {
 	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
 	// rollback is name-required (no --all), so the run always holds exactly this one (→ issue #164).
 	subject := run.beginSubject(name)
-	ep, err := discoverEntrypoint(flagFile)
-	if err != nil {
-		return err
-	}
-	system, err := currentSystem()
-	if err != nil {
+	gen := newGenerator()
+	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}
 
-	rootKind, fixedRoot, err := evalRoot(ep, system, name)
+	root, err := gen.Roots(name)
 	if err != nil {
 		return err
 	}
+	rootKind, fixedRoot := root.RootKind, root.Root
 	if rootKind != manifest.RootKindHome {
 		return fmt.Errorf("layat: rollback is home mode only (layat.%s has rootKind=%q; project / fixed do not expose generations)", name, rootKind)
 	}

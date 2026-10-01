@@ -18,6 +18,7 @@ import (
 
 	"github.com/yasunori0418/outturn/go"
 
+	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/lock"
 )
 
@@ -286,7 +287,8 @@ func (r *outturnRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 
 // classifyError maps a command-level failure onto an outturn error object (two-layer code naming ·
 // outturn §6, ADR-0043 §8): tool-specific E_LAYAT_COLLISION (dryrun conflict exit) / E_LAYAT_BUILD
-// (internal nix eval / build invocation, via the nixCmdError marker), and the common registry
+// (a generator's failure to evaluate or build the manifest, via the generator.Error marker ·
+// → isBuildFailure), and the common registry
 // codes E_LOCK / E_NOTFOUND / E_PERMISSION / E_IO. Specific sentinels win over the generic
 // E_IO shape check, so a not-found PathError stays E_NOTFOUND. E_LAYAT_FAILED is the
 // tool-generic fallback for a command failure not otherwise classified.
@@ -294,7 +296,6 @@ func classifyError(err error) outturn.Error {
 	code := "E_LAYAT_FAILED"
 	message := err.Error()
 	var ee *exitError
-	var ne *nixCmdError
 	switch {
 	case errors.As(err, &ee) && ee.code == 2:
 		// exit 2 is apply --dryrun's conflict detection (→ docs/spec.md exit code table). Its
@@ -305,7 +306,7 @@ func classifyError(err error) outturn.Error {
 		}
 	case errors.Is(err, lock.ErrLocked):
 		code = "E_LOCK"
-	case errors.As(err, &ne):
+	case isBuildFailure(err):
 		code = "E_LAYAT_BUILD"
 	case errors.Is(err, fs.ErrNotExist):
 		code = "E_NOTFOUND"
@@ -315,6 +316,16 @@ func classifyError(err error) outturn.Error {
 		code = "E_IO"
 	}
 	return outturn.Error{Code: code, Message: message}
+}
+
+// isBuildFailure reports whether err is a generator's failure to evaluate or build the manifest:
+// Stage roots / build of a generator other than prebuilt. A Stage discover failure (no entrypoint,
+// a missing -f path) and a prebuilt failure (an unreadable --manifest link-farm) are not: they fall
+// through so the cause chain keeps the classification it had before generators (→ ADR-0055 §7).
+func isBuildFailure(err error) bool {
+	var ge *generator.Error
+	return errors.As(err, &ge) && ge.Generator != generator.NamePrebuilt &&
+		(ge.Stage == generator.StageRoots || ge.Stage == generator.StageBuild)
 }
 
 // isIOError reports whether err carries a filesystem / external-I/O failure shape (outturn §6

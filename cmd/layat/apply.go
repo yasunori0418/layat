@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
 	"runtime"
 	"sort"
 	"strings"
@@ -15,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
@@ -106,13 +106,18 @@ func newApplyCmd() *cobra.Command {
 }
 
 // runApplyManifest applies the pre-built link-farm passed via --manifest directly to the engine
-// (the module activation path). It does no entrypoint discovery, no rootKind pre-resolution eval,
-// and no nix build; the engine reads rootKind from manifest.json (an HM module pins homeRoot, so home).
-// It drives engine.Apply's Build=nil path (a pre-built LinkFarm) from the CLI (→ engine.Options).
+// (the module activation path) through the prebuilt generator (→ ADR-0055 §5). It does no entrypoint
+// discovery, no rootKind pre-resolution eval, and no nix build; the engine reads rootKind from
+// manifest.json (an HM module pins homeRoot, so home). It drives engine.Apply's Build=nil path
+// (a pre-built LinkFarm) from the CLI (→ engine.Options).
 func runApplyManifest(subject *applySubject, name string) error {
-	linkFarm, err := filepath.Abs(flagManifest)
+	gen := newGenerator()
+	if err := gen.Discover(flagManifest); err != nil {
+		return err
+	}
+	linkFarm, err := gen.DryBuild(name)
 	if err != nil {
-		return fmt.Errorf("layat: cannot resolve the --manifest path (%s): %w", flagManifest, err)
+		return err
 	}
 
 	res, err := engine.Apply(engine.Options{
@@ -162,20 +167,17 @@ func runApply(run *applyRun, name string) error {
 		return runApplyManifest(subject, name)
 	}
 
-	ep, err := discoverEntrypoint(flagFile)
-	if err != nil {
-		return err
-	}
-	system, err := currentSystem()
-	if err != nil {
+	gen := newGenerator()
+	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}
 
 	// 1. Pre-resolve rootKind before build (to establish the order profileDir resolution → flock → build; → ADR-0023).
-	rootKind, fixedRoot, err := evalRoot(ep, system, name)
+	root, err := gen.Roots(name)
 	if err != nil {
 		return err
 	}
+	rootKind, fixedRoot := root.RootKind, root.Root
 
 	// 1.5 --dryrun is a side-effect-free preview (takes no flock / pending gcroot; runs only build read-only; → ADR-0023).
 	if flagDryrun {
@@ -188,7 +190,7 @@ func runApply(run *applyRun, name string) error {
 			Backup:       flagBackupEnabled,
 			BackupSuffix: flagBackup,
 			DryRun:       true,
-			Build:        dryBuildFunc(ep, system, name),
+			Build:        dryBuildFunc(gen, name),
 		})
 		if err != nil {
 			return err
@@ -208,7 +210,7 @@ func runApply(run *applyRun, name string) error {
 	}
 
 	// 2. Drive the engine (flock acquisition, in-lock build, placement, commit, and .pending removal are owned by the engine).
-	res, err := applyOne(ep, system, name, rootKind, fixedRoot)
+	res, err := applyOne(gen, name, rootKind, fixedRoot)
 	if res != nil {
 		// Also on failure: a partial result carries the reached/unreached item partition and
 		// the changes that actually happened before the stop (→ issue #131, outturn ADR-0020).
@@ -267,8 +269,8 @@ func fprintApplyPlan(w io.Writer, res *engine.Result) {
 }
 
 // applyOne runs engine.Apply for one config (shared by runApply / runApplyAll). rootKind / fixedRoot
-// come from evalRoot pre-resolution for the single case and from the batch eval (evalAllRoots) for --all. Only build is done per config.
-func applyOne(ep *entrypoint, system, name, rootKind, fixedRoot string) (*engine.Result, error) {
+// come from the generator's Roots for the single case and from its AllRoots for --all. Only build is done per config.
+func applyOne(gen generator.Generator, name, rootKind, fixedRoot string) (*engine.Result, error) {
 	return engine.Apply(engine.Options{
 		Name:         name,
 		RootKind:     rootKind,
@@ -278,8 +280,15 @@ func applyOne(ep *entrypoint, system, name, rootKind, fixedRoot string) (*engine
 		Recopy:       flagRecopy,
 		Backup:       flagBackupEnabled,
 		BackupSuffix: flagBackup,
-		Build:        buildFunc(ep, system, name),
+		Build:        func(pending string) (string, error) { return gen.Build(name, pending) },
 	})
+}
+
+// dryBuildFunc returns the build callback for --dryrun (→ engine.BuildFunc): the generator's
+// DryBuild, which lays down no gcroot (dryrun is side-effect-free; → ADR-0011, ADR-0023). The
+// pending argument is unused.
+func dryBuildFunc(gen generator.Generator, name string) engine.BuildFunc {
+	return func(string) (string, error) { return gen.DryBuild(name) }
 }
 
 // runApplyAll applies all of the entrypoint's layat.* (→ docs/spec.md execution flow, ADR-0024, ADR-0039).
@@ -303,17 +312,13 @@ func runApplyAll(run *applyRun) error {
 	if err != nil {
 		return err
 	}
-	ep, err := discoverEntrypoint(flagFile)
-	if err != nil {
-		return err
-	}
-	system, err := currentSystem()
-	if err != nil {
+	gen := newGenerator()
+	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}
 
-	// 1. Get rootKind + targets in a single batch eval (config name → rootInfo map; → ADR-0024, ADR-0038).
-	roots, err := evalAllRoots(ep, system)
+	// 1. Get rootKind + targets in a single batch eval (config name → root map; → ADR-0024, ADR-0038).
+	roots, err := gen.AllRoots()
 	if err != nil {
 		return err
 	}
@@ -345,21 +350,27 @@ func runApplyAll(run *applyRun) error {
 
 	// 2.4 Stage 1: realize the selected configs' builds in parallel (read-only: --no-link, no gcroot).
 	//     A config that fails here never reaches stage 2 (→ skipFailedPrebuilds).
+	//     Each config's generator writes its diagnostics through a "[<name>] " line prefix, so its
+	//     --debug disclosure lines stay attributable while builds run in parallel.
 	built := prebuildAll(selected, jobs, func(name string) (string, error) {
-		return realizeNoLink(ep, system, name, "["+name+"] ")
+		g := newGeneratorTo(&linePrefixWriter{w: os.Stderr, prefix: "[" + name + "] "})
+		if err := g.Discover(flagFile); err != nil {
+			return "", err
+		}
+		return g.DryBuild(name)
 	})
 
 	// 2.5 --dryrun is a side-effect-free preview (takes no flock / --set / pending gcroot; runs only build
 	//     read-only). It aggregates each selected config's plan to stdout and decides the exit code by
 	//     priority error(1) > conflict(2) > 0 (→ docs/spec.md, ADR-0024).
 	if flagDryrun {
-		return runApplyAllDryRun(run, ep, system, selected, jobs, roots, built)
+		return runApplyAllDryRun(run, gen, selected, jobs, roots, built)
 	}
 
 	// 3. Stage 2: apply the configs in parallel, each independently. Continue on partial failure and aggregate failures (each config is independently atomic).
 	applied, skipped, failures := aggregateApply(run, selected, jobs, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
 		ri := roots[name]
-		return applyOne(ep, system, name, ri.RootKind, ri.Root)
+		return applyOne(gen, name, ri.RootKind, ri.Root)
 	}))
 
 	// 4. Aggregate report and exit code (priority error(1) > conflict(2) > 0; → docs/spec.md, ADR-0024).
@@ -381,8 +392,8 @@ func runApplyAll(run *applyRun) error {
 // when rootOverride (--root) is set — and errors when a normalized target appears in two configs of
 // one bucket. Configs outside selected are ignored. The error is a plain one (exit 1, and
 // E_LAYAT_FAILED on the --json top-level errors[] since no subject is registered yet).
-func detectCrossConfigConflicts(roots map[string]rootInfo, selected []string, rootOverride string) error {
-	bucketOf := func(ri rootInfo) string {
+func detectCrossConfigConflicts(roots map[string]manifest.Root, selected []string, rootOverride string) error {
+	bucketOf := func(ri manifest.Root) string {
 		switch {
 		case rootOverride != "":
 			return "--root " + rootOverride
@@ -422,7 +433,7 @@ func detectCrossConfigConflicts(roots map[string]rootInfo, selected []string, ro
 // empty-msg exitError (symmetric with the single apply --dryrun conflict=2; main exits with the code alone).
 // Stage 1 (built) is shared with the real apply; a config whose build failed there is not planned.
 // The read-only applies run on the same --jobs pool as the real apply's stage 2.
-func runApplyAllDryRun(run *applyRun, ep *entrypoint, system string, selected []string, jobs int, roots map[string]rootInfo, built map[string]prebuildResult) error {
+func runApplyAllDryRun(run *applyRun, gen generator.Generator, selected []string, jobs int, roots map[string]manifest.Root, built map[string]prebuildResult) error {
 	code := aggregateDryRun(run, selected, jobs, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
 		ri := roots[name]
 		return engine.Apply(engine.Options{
@@ -434,7 +445,7 @@ func runApplyAllDryRun(run *applyRun, ep *entrypoint, system string, selected []
 			Backup:       flagBackupEnabled,
 			BackupSuffix: flagBackup,
 			DryRun:       true,
-			Build:        dryBuildFunc(ep, system, name),
+			Build:        dryBuildFunc(gen, name),
 		})
 	}))
 	if code == 0 {
