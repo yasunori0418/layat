@@ -216,9 +216,18 @@ func (g *Generator) evalAllRoots() (map[string]manifest.Root, error) {
 	if err != nil {
 		return nil, wrapEvalAllErr(err, g.ep.namespaceLabel(g.system))
 	}
-	var roots map[string]manifest.Root
-	if err := json.Unmarshal([]byte(out), &roots); err != nil {
+	// The batch eval's own shape (manifest.Root keeps Targets out of the manifest.json schema).
+	var raw map[string]struct {
+		RootKind string   `json:"rootKind"`
+		Root     string   `json:"root"`
+		Targets  []string `json:"targets"`
+	}
+	if err := json.Unmarshal([]byte(out), &raw); err != nil {
 		return nil, fmt.Errorf("layat: cannot parse the batch eval result for %s: %w", g.ep.namespaceLabel(g.system), err)
+	}
+	roots := make(map[string]manifest.Root, len(raw))
+	for name, r := range raw {
+		roots[name] = manifest.Root{RootKind: r.RootKind, Root: r.Root, Targets: r.Targets}
 	}
 	return roots, nil
 }

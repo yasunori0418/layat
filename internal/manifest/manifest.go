@@ -46,11 +46,12 @@ const (
 //
 // Targets is the config's normalized target list a generator's Roots returns alongside the root
 // (read by apply --all's conflict preflight · → ADR-0038, ADR-0055 §2). It is a Go-side field:
-// manifest.json schema v1 does not carry it, and a prebuilt generator derives it from the entries.
+// manifest.json schema v1 does not carry it (json:"-" keeps Load rejecting a root.targets key as an
+// unknown field), and a prebuilt generator derives it from the entries.
 type Root struct {
 	RootKind string   `json:"rootKind"`
 	Root     string   `json:"root,omitempty"`
-	Targets  []string `json:"targets,omitempty"`
+	Targets  []string `json:"-"`
 }
 
 // Entry is a single placement definition. Its identity is Target (derived from the attribute key; the diff key for stale removal; → ADR-0014).
