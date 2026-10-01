@@ -88,6 +88,9 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 
 - [REQ-14f0aec9-abae-4621-82f3-40536a1ad904](requirements/20260802-14f0aec9-abae-4621-82f3-40536a1ad904-cli-primary-ux-installation.md) — layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする
 - [REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6](requirements/20260802-f9920c87-8551-4aa3-bf03-26fdf4191ed6-nix-experimental-features-prerequisite.md) — nix experimental-features は前提条件とし、CLI は自動付与せず案内エラーで停止する
+- [REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729](requirements/20261002-194e4209-d804-4a4b-a2b8-3d39c6c33729-manifest-generator-contract.md) — CLI は manifest 生成器の契約（Discover / Roots / Build / DryBuild）越しに manifest を得る
+- [REQ-badc7e10-0ba4-40d4-b334-6e40193119db](requirements/20261002-badc7e10-0ba4-40d4-b334-6e40193119db-generator-selection-precedence.md) — 生成器は明示指定のみで選び、フラグ・環境変数・設定ファイル・既定の順に解決する
+- [REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd](requirements/20261002-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd-generator-diagnostics-contract.md) — 生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める
 
 ### entrypoint の発見・アドレッシング
 
