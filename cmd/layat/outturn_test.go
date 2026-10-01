@@ -317,8 +317,9 @@ func TestEntryItemIDMatchesVectors(t *testing.T) {
 // TestClassifyErrorCodes pins the classifyError table directly, one case per code (the #131
 // refinement): a generator failure of Stage roots / build → E_LAYAT_BUILD, including its survival
 // through a %w re-wrap (the chain is the classification's lifeline), while a Stage discover or
-// prebuilt failure keeps the classification of its cause (→ ADR-0055 §7); the specific fs
-// sentinels beating the generic E_IO shape check; and the residual-I/O and fallback arms.
+// prebuilt failure keeps the classification of its cause (→ ADR-0055 §7); the inputError marker →
+// E_INPUT (→ ADR-0056); the specific fs sentinels beating the generic E_IO shape check; and the
+// residual-I/O and fallback arms.
 func TestClassifyErrorCodes(t *testing.T) {
 	notExist := &fs.PathError{Op: "stat", Path: "/x", Err: fs.ErrNotExist}
 	genErr := func(name string, stage generator.Stage, cause error) error {
@@ -337,6 +338,10 @@ func TestClassifyErrorCodes(t *testing.T) {
 		{"discover failure keeps its not-found cause", genErr(generator.NameNix, generator.StageDiscover, notExist), "E_NOTFOUND"},
 		{"discover failure without a cause falls back", genErr(generator.NameNix, generator.StageDiscover, nil), "E_LAYAT_FAILED"},
 		{"prebuilt failure keeps its not-found cause", genErr(generator.NamePrebuilt, generator.StageRoots, notExist), "E_NOTFOUND"},
+		{"input rejection", &inputError{err: errors.New("layat: --manifest cannot be combined with -f")}, "E_INPUT"},
+		{"input marker beats its not-found cause", &inputError{err: notExist}, "E_INPUT"},
+		{"input marker survives a %w rewrap",
+			fmt.Errorf("context: %w", &inputError{err: errors.New("layat: bad flags")}), "E_INPUT"},
 		{"lock sentinel", lock.ErrLocked, "E_LOCK"},
 		{"not-found beats the IO shape", &fs.PathError{Op: "stat", Path: "/x", Err: fs.ErrNotExist}, "E_NOTFOUND"},
 		{"permission beats the IO shape", &fs.PathError{Op: "open", Path: "/x", Err: fs.ErrPermission}, "E_PERMISSION"},
