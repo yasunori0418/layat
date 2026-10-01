@@ -275,23 +275,60 @@ func TestRootsMissingConfigMessage(t *testing.T) {
 	}
 }
 
-// TestBuildCommandFailureIsBuildStage pins a failed nix build (Build and DryBuild) as Stage build.
-func TestBuildCommandFailureIsBuildStage(t *testing.T) {
+// TestAllRootsMissingNamespaceMessage pins a failed batch eval as Stage roots carrying the
+// "no configs found" lead line before the pre-extraction message.
+func TestAllRootsMissingNamespaceMessage(t *testing.T) {
+	stubNix(t, "error: flake does not provide attribute layat")
+	g, _ := discovered(t, io.Discard, false)
+
+	_, err := g.AllRoots()
+	var ge *generator.Error
+	if !errors.As(err, &ge) || ge.Stage != generator.StageRoots {
+		t.Fatalf("AllRoots error = %v, want a Stage roots *generator.Error", err)
+	}
+	want := "layat: " + g.ep.namespaceLabel(g.system) + " not found in the entrypoint (no configs found)\n" +
+		"layat: nix eval failed:\nerror: flake does not provide attribute layat"
+	if err.Error() != want {
+		t.Errorf("AllRoots error = %q, want %q", err.Error(), want)
+	}
+}
+
+// TestDryBuildCommandFailure pins a failed read-only nix build as Stage build carrying the
+// pre-extraction message and the captured stderr.
+func TestDryBuildCommandFailure(t *testing.T) {
 	stubNix(t, "error: boom")
 	g, _ := discovered(t, io.Discard, false)
 
-	for _, op := range []struct {
-		name string
-		run  func() (string, error)
-	}{
-		{"Build", func() (string, error) { return g.Build("web", filepath.Join(t.TempDir(), ".pending")) }},
-		{"DryBuild", func() (string, error) { return g.DryBuild("web") }},
-	} {
-		_, err := op.run()
-		var ge *generator.Error
-		if !errors.As(err, &ge) || ge.Stage != generator.StageBuild {
-			t.Errorf("%s error = %v, want a Stage build *generator.Error", op.name, err)
-		}
+	_, err := g.DryBuild("web")
+	var ge *generator.Error
+	if !errors.As(err, &ge) || ge.Stage != generator.StageBuild {
+		t.Fatalf("DryBuild error = %v, want a Stage build *generator.Error", err)
+	}
+	if want := "layat: nix build failed:\nerror: boom"; ge.Message != want {
+		t.Errorf("Message = %q, want %q", ge.Message, want)
+	}
+	if ge.Stderr != "error: boom" {
+		t.Errorf("Stderr = %q, want the captured stderr", ge.Stderr)
+	}
+}
+
+// TestBuildCommandFailureStreamsStderr pins a failed in-lock nix build as Stage build whose
+// output streams to the generator's writer (not captured) under the pre-extraction message.
+func TestBuildCommandFailureStreamsStderr(t *testing.T) {
+	stubNix(t, "error: boom")
+	var buf bytes.Buffer
+	g, _ := discovered(t, &buf, false)
+
+	_, err := g.Build("web", filepath.Join(t.TempDir(), ".pending"))
+	var ge *generator.Error
+	if !errors.As(err, &ge) || ge.Stage != generator.StageBuild {
+		t.Fatalf("Build error = %v, want a Stage build *generator.Error", err)
+	}
+	if want := "layat: nix build failed: exit status 1"; ge.Message != want {
+		t.Errorf("Message = %q, want %q", ge.Message, want)
+	}
+	if buf.String() != "error: boom" {
+		t.Errorf("writer = %q, want nix's stderr streamed through", buf.String())
 	}
 }
 
