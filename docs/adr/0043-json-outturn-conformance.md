@@ -47,7 +47,8 @@ references:
 > **2026-10-02 改訂注記（ADR-0055）**: 本 ADR §8 のツール別コード `E_*_BUILD`（現 `E_LAYAT_BUILD`）は存続し、意味を
 > 「nix の失敗」から「**manifest 生成器の失敗**」へ読み替える。新しいコードは足さない。生成器の失敗分類
 > （`generator.Error` の `Kind`）はコードに影響させず、`NotFound` も共通コード `E_NOTFOUND` には写さない。
-> エンベロープに生成器名は出さない（→ ADR-0055）。
+> 読み替えの対象は prebuilt 以外の生成器の roots / build 段の失敗で、entrypoint 発見段の失敗と prebuilt の入力を
+> 読めない失敗は従来の分類のまま。エンベロープに生成器名は出さない（→ ADR-0055 §7）。
 
 > **2026-10-02 改訂注記（ADR-0056）**: 本 ADR §8 で予約した共通コード `E_INPUT` を初めて実装した。未知の生成器名・設定ファイルの
 > 不正・フラグの組み合わせ不正（`--generator` + `--manifest`、`-f` / `--all` + `--manifest`）を `E_INPUT` に分類する。

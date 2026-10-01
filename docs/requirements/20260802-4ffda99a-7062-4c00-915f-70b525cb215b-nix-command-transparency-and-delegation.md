@@ -7,16 +7,16 @@ derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
-  The CLI SHALL disclose the commands that its manifest generator runs internally (the
-  nix commands for the default nix generator), for instance through `layat --help`, so
-  that the user can run them selectively by hand; the disclosure under `--debug` SHALL
-  also name the generator. Switching to an
+  The commands that the manifest generator runs internally (the nix commands for the
+  default nix generator) SHALL be disclosed by the generator, for instance through
+  `layat --help`, so that the user can run them selectively by hand; the disclosure under
+  `--debug` SHALL also name the generator. Switching to an
   arbitrary generation and garbage-collecting generations SHALL be done with the standard
   `nix-env` / `nix-collect-garbage` against the profile path, rather than with dedicated
   layat subcommands.
 specification_ja: |
-  CLI は `layat --help` 等で manifest 生成器が内部実行するコマンド（既定の nix 生成器では
-  nix コマンド）を開示し、ユーザーが選択的に手で実行できるようにしなければならない。
+  manifest 生成器が内部実行するコマンド（既定の nix 生成器では nix コマンド）は、生成器が
+  `layat --help` 等で開示し、ユーザーが選択的に手で実行できるようにしなければならない。
   `--debug` での開示には生成器名も含めなければならない。任意世代への切替・世代の GC は layat 専用の
   サブコマンドではなく、標準の `nix-env` / `nix-collect-garbage` を profile パスに対して
   使って行わなければならない。

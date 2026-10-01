@@ -94,9 +94,11 @@ Roots は全ての生成器が build 前に答えられなければならない�
   | `Generator` | 生成器名（`nix` / prebuilt） |
   | `Stage` | `discover` / `roots` / `build`（DryBuild の失敗も `build`） |
   | `Kind` | `PrerequisiteMissing`（前提条件の未充足。nix では experimental-features）/ `NotFound`（config 名が無い）/ `Failed`（それ以外） |
-  | `Message` | 要約 1 行 |
+  | `Message` | 要約 1 行。内部コマンドの失敗では失敗したコマンドを含める（内部コマンドを持たない生成器では省く） |
   | `Guidance` | 解決策の案内（無ければ空） |
   | `Stderr` | キャプチャした生の診断 |
+
+  `generator.Error` は原因の error を保持し、`Unwrap` で辿れるようにする（公開フィールドは上の 6 つから増やさない）。
 
 - **nix 固有の文字列判定・案内文・NotFound の前置文は nixgen に閉じる**（`internal/generator/nixgen/` の外に出さない）。
 - **表示は CLI が決める**。人間向けは要約 + 案内のみで、生の診断は再掲しない（既に writer へ流れている）。`--json` は `errors[].message` に要約とキャプチャを含める。
@@ -104,7 +106,7 @@ Roots は全ての生成器が build 前に答えられなければならない�
 ### 7. `--json` のコードは `E_*_BUILD` 1 本のまま
 
 - `E_LAYAT_BUILD` の意味を「nix の失敗」から「**生成器の失敗**」へ読み替える。新しいコードは足さない。
-- 読み替えの対象は Stage `roots` / `build` の失敗（生成器が manifest を評価・生成できなかった失敗）。**Stage `discover` の失敗（entrypoint の不在・`-f` のパスの不在）と、prebuilt が入力（link-farm・`manifest.json`）を読めない失敗は、生成器化の前の分類（`E_LAYAT_FAILED` / `E_NOTFOUND` 等）を変えない**。
+- `E_LAYAT_BUILD` に分類するのは **prebuilt 以外の生成器の Stage `roots` / `build` の失敗**（生成器が manifest を評価・生成できなかった失敗）に限る。**Stage `discover` の失敗（entrypoint の不在・`-f` のパスの不在）と prebuilt の失敗（入力の link-farm・`manifest.json` を読めない）は、Stage によらず生成器化の前の分類を変えない**。CLI はこれらを原因の error チェーンから従来の規則で分類する: `fs.ErrNotExist` → `E_NOTFOUND`、`fs.ErrPermission` → `E_PERMISSION`、その他の FS エラー → `E_IO`、それ以外（entrypoint の不在など）→ `E_LAYAT_FAILED`。
 - `Kind` は `--json` コードに影響させない。`Kind = NotFound` も outturn 共通コードの `E_NOTFOUND` には写さず `E_LAYAT_BUILD` に分類する。
 - エンベロープに生成器名は出さない（機械可読の契約面を生成器の実装事情から切り離す）。
 
@@ -113,7 +115,7 @@ Roots は全ての生成器が build 前に答えられなければならない�
 ADR-0007 §3 の透明性（内部実行する nix コマンドの開示）と ADR-0031 §3 の `--debug` 開示は、主体を生成器に移す。分担は次のとおり。
 
 - **実行中の逐次開示は生成器が書く**。CLI は `--debug` の有無を生成器へ渡し、生成器は実行する内部コマンドを生成器名付きで、渡された writer へ書く（何を実行するかを知っているのは生成器だけのため）。
-- **失敗時の表示は CLI が組み立てる**。`--debug` のとき、CLI は `generator.Error` の `Generator` と `Message` から、生成器名と失敗した内部コマンドを含む要約行を出す（§6 の「表示は CLI が決める」）。
+- **失敗時の表示は CLI が組み立てる**。`--debug` のとき、CLI は人間向けの要約行に `generator.Error` の `Generator`（生成器名）を添える。失敗した内部コマンドは `Message` が含む（§6）。`--json` の `errors[].message` は `--debug` に左右されず、生成器名を含めない（§7）。
 
 ## 根拠
 
