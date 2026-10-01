@@ -23,9 +23,12 @@ specification: |
   NOT change `errors[].message`. Failures of a generator other than prebuilt at the `roots`
   and `build` stages SHALL be classified as `E_LAYAT_BUILD` regardless of Kind. Failures at
   the `discover` stage and failures of the prebuilt generator SHALL be classified from
-  their cause as before the generator contract: `E_NOTFOUND` for a missing path,
-  `E_PERMISSION` for a permission error, `E_IO` for another filesystem error, and
-  `E_LAYAT_FAILED` otherwise. The envelope SHALL NOT name the generator.
+  their cause as before the generator contract: `E_NOTFOUND` when the cause wraps
+  `fs.ErrNotExist`, `E_PERMISSION` when it wraps `fs.ErrPermission`, `E_IO` for another
+  filesystem error, and `E_LAYAT_FAILED` otherwise (an absent entrypoint is reported
+  without wrapping `fs.ErrNotExist`, so it is `E_LAYAT_FAILED`). The envelope SHALL NOT
+  carry the generator name as a field or a prefix added by the CLI; the name appearing as
+  part of a failed internal command in Message is not covered by this rule.
 specification_ja: |
   manifest 生成器は診断を CLI から渡された `io.Writer` へ書かなければならず、stdout へ
   書いてはならない。成功時も eval・build の両経路の診断を捨てずにその writer へ素通し
@@ -41,9 +44,11 @@ specification_ja: |
   ならない。`--debug` は `errors[].message` を変えてはならない。prebuilt 以外の生成器の
   Stage `roots` / `build` の失敗は Kind によらず `E_LAYAT_BUILD` に分類しなければならない。
   Stage `discover` の失敗と prebuilt 生成器の失敗は、生成器契約の前と同じく原因から
-  分類しなければならない（パス不在 = `E_NOTFOUND`、権限 = `E_PERMISSION`、その他の
-  FS エラー = `E_IO`、それ以外 = `E_LAYAT_FAILED`）。エンベロープに生成器名を出しては
-  ならない。
+  分類しなければならない（原因が `fs.ErrNotExist` を包む = `E_NOTFOUND`、
+  `fs.ErrPermission` を包む = `E_PERMISSION`、その他の FS エラー = `E_IO`、それ以外 =
+  `E_LAYAT_FAILED`。entrypoint の不在は `fs.ErrNotExist` を包まずに返すので
+  `E_LAYAT_FAILED`）。CLI はエンベロープに生成器名をフィールドや前置きとして足しては
+  ならない（Message の内部コマンドの一部として現れる分は対象外）。
 ---
 # REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd: 生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める
 
@@ -52,7 +57,7 @@ specification_ja: |
 | 担い手 | 責務 |
 |---|---|
 | 生成器 | 診断を渡された writer へ書く（成功時も素通し・stdout には書かない）。`--debug` のとき実行する内部コマンドを生成器名付きで writer へ逐次書く。失敗を `generator.Error` に分類する。固有の文字列判定と案内文を持つ |
-| CLI | 表示を決める。人間向け = 要約 + 案内（`--debug` のとき生成器名を添える）、`--json` = `errors[].message` に要約 + キャプチャ（`--debug` に左右されず生成器名を含めない） |
+| CLI | 表示を決める。人間向け = 要約 + 案内（`--debug` のとき生成器名を添える）、`--json` = `errors[].message` に要約 + キャプチャ（`--debug` に左右されず、生成器名を前置きしない） |
 
 `generator.Error` の `Kind`:
 

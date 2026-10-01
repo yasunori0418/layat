@@ -106,16 +106,16 @@ Roots は全ての生成器が build 前に答えられなければならない�
 ### 7. `--json` のコードは `E_*_BUILD` 1 本のまま
 
 - `E_LAYAT_BUILD` の意味を「nix の失敗」から「**生成器の失敗**」へ読み替える。新しいコードは足さない。
-- `E_LAYAT_BUILD` に分類するのは **prebuilt 以外の生成器の Stage `roots` / `build` の失敗**（生成器が manifest を評価・生成できなかった失敗）に限る。**Stage `discover` の失敗（entrypoint の不在・`-f` のパスの不在）と prebuilt の失敗（入力の link-farm・`manifest.json` を読めない）は、Stage によらず生成器化の前の分類を変えない**。CLI はこれらを原因の error チェーンから従来の規則で分類する: `fs.ErrNotExist` → `E_NOTFOUND`、`fs.ErrPermission` → `E_PERMISSION`、その他の FS エラー → `E_IO`、それ以外（entrypoint の不在など）→ `E_LAYAT_FAILED`。
-- `Kind` は `--json` コードに影響させない。`Kind = NotFound` も outturn 共通コードの `E_NOTFOUND` には写さず `E_LAYAT_BUILD` に分類する。
-- エンベロープに生成器名は出さない（機械可読の契約面を生成器の実装事情から切り離す）。
+- `E_LAYAT_BUILD` に分類するのは **prebuilt 以外の生成器の Stage `roots` / `build` の失敗**（生成器が manifest を評価・生成できなかった失敗）に限る。**Stage `discover` の失敗（entrypoint の不在・`-f` のパスの不在）と prebuilt の失敗（入力の link-farm・`manifest.json` を読めない）は、Stage によらず生成器化の前の分類を変えない**。CLI はこれらを原因の error チェーンから従来の規則で分類する: `fs.ErrNotExist` → `E_NOTFOUND`、`fs.ErrPermission` → `E_PERMISSION`、その他の FS エラー → `E_IO`、それ以外 → `E_LAYAT_FAILED`。Discover は entrypoint の不在を `fs.ErrNotExist` を包まずに返す（`E_LAYAT_FAILED`。`-f` のパス自体の不在は `fs.ErrNotExist` を包み `E_NOTFOUND`）。
+- `Kind` は `--json` コードに影響させない。roots / build 段の失敗では `Kind = NotFound` も outturn 共通コードの `E_NOTFOUND` には写さず `E_LAYAT_BUILD` に分類する。
+- エンベロープに生成器名は出さない（機械可読の契約面を生成器の実装事情から切り離す）。CLI が生成器名をフィールドや前置きとして足さないことを指し、`Message` が含む失敗した内部コマンド（`nix eval ...` 等）の一部として現れる分は対象外。
 
 ### 8. 内部コマンドの開示は生成器が担う
 
 ADR-0007 §3 の透明性（内部実行する nix コマンドの開示）と ADR-0031 §3 の `--debug` 開示は、主体を生成器に移す。分担は次のとおり。
 
 - **実行中の逐次開示は生成器が書く**。CLI は `--debug` の有無を生成器へ渡し、生成器は実行する内部コマンドを生成器名付きで、渡された writer へ書く（何を実行するかを知っているのは生成器だけのため）。
-- **失敗時の表示は CLI が組み立てる**。`--debug` のとき、CLI は人間向けの要約行に `generator.Error` の `Generator`（生成器名）を添える。失敗した内部コマンドは `Message` が含む（§6）。`--json` の `errors[].message` は `--debug` に左右されず、生成器名を含めない（§7）。
+- **失敗時の表示は CLI が組み立てる**。`--debug` のとき、CLI は人間向けの要約行に `generator.Error` の `Generator`（生成器名）を添える。失敗した内部コマンドは `Message` が含む（§6）。`--json` の `errors[].message` は `--debug` に左右されず、生成器名を前置きしない（§7）。
 
 ## 根拠
 
