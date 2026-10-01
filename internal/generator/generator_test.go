@@ -112,18 +112,18 @@ func TestPrebuiltRootsReadsManifest(t *testing.T) {
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("Roots = %+v, want %+v", got, want)
 	}
+}
 
+// TestPrebuiltAllRootsFails covers that a single pre-built link-farm has no config list to enumerate.
+func TestPrebuiltAllRootsFails(t *testing.T) {
+	p := &Prebuilt{}
+	if err := p.Discover(t.TempDir()); err != nil {
+		t.Fatalf("Discover: %v", err)
+	}
 	all, err := p.AllRoots()
-	if err != nil {
-		t.Fatalf("AllRoots: %v", err)
-	}
-	if len(all) != 1 {
-		t.Fatalf("AllRoots = %v, want exactly one config", all)
-	}
-	for _, r := range all {
-		if !reflect.DeepEqual(r, want) {
-			t.Errorf("AllRoots entry = %+v, want %+v", r, want)
-		}
+	var ge *Error
+	if all != nil || !errors.As(err, &ge) || ge.Generator != NamePrebuilt {
+		t.Errorf("AllRoots = %v, %v; want nil and a prebuilt *generator.Error", all, err)
 	}
 }
 

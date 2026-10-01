@@ -40,14 +40,11 @@ func (p *Prebuilt) Roots(string) (manifest.Root, error) {
 	return root, nil
 }
 
-// AllRoots returns the link-farm's single config keyed by its directory name (a link-farm carries
-// no config name of its own).
+// AllRoots fails: a pre-built link-farm is a single config with no config list to enumerate
+// (apply --manifest is exclusive with --all · → ADR-0026).
 func (p *Prebuilt) AllRoots() (map[string]manifest.Root, error) {
-	root, err := p.Roots("")
-	if err != nil {
-		return nil, err
-	}
-	return map[string]manifest.Root{filepath.Base(p.linkFarm): root}, nil
+	return nil, NewError(NamePrebuilt, StageRoots, KindFailed,
+		"layat: a pre-built manifest (--manifest) holds a single config and cannot list all configs", "", "", nil)
 }
 
 // Build returns the pre-built link-farm; there is nothing to lay down at pending.
