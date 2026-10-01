@@ -68,7 +68,8 @@ references:
 > インターフェイス（`internal/generator`）越しになり、nix はその既定実装（`internal/generator/nixgen`）になった。
 > engine の入力が `manifest.json` だけという境界は変わらない（→ ADR-0055）。
 
-> **2026-10-02 改訂注記（ADR-0056）**: 本 ADR の「グローバル CLI に CWD / 設定ファイルから config を発見する機構は足さない」は不変。
+> **2026-10-02 改訂注記（ADR-0056）**: 本 ADR の「設定ファイルから config を発見する機構は足さない」は不変（CWD 側は ADR-0007 が
+> entrypoint 発見として反転済み）。
 > ただし**生成器の選択に限って**設定ファイル（`layat.toml` / `$XDG_CONFIG_HOME/layat/config.toml`）を読む初例を足した。
 > 設定ファイルが持つ項目は `generator` のみで、config の発見には使わない（→ ADR-0056）。
 

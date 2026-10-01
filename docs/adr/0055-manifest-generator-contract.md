@@ -12,6 +12,10 @@ justifies:
   - "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"
   - "REQ-badc7e10-0ba4-40d4-b334-6e40193119db"
   - "REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd"
+  - "DSG-25ad3cce-f921-4db2-aae0-c0263d4b8295"
+  - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
+  - "REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6"
+  - "REQ-4ffda99a-7062-4c00-915f-70b525cb215b"
 revises:
   - "ADR-0006"
   - "ADR-0007"
@@ -100,12 +104,16 @@ Roots は全ての生成器が build 前に答えられなければならない�
 ### 7. `--json` のコードは `E_*_BUILD` 1 本のまま
 
 - `E_LAYAT_BUILD` の意味を「nix の失敗」から「**生成器の失敗**」へ読み替える。新しいコードは足さない。
+- 読み替えの対象は Stage `roots` / `build` の失敗（生成器が manifest を評価・生成できなかった失敗）。**Stage `discover` の失敗（entrypoint の不在・`-f` のパスの不在）と、prebuilt が入力（link-farm・`manifest.json`）を読めない失敗は、生成器化の前の分類（`E_LAYAT_FAILED` / `E_NOTFOUND` 等）を変えない**。
 - `Kind` は `--json` コードに影響させない。`Kind = NotFound` も outturn 共通コードの `E_NOTFOUND` には写さず `E_LAYAT_BUILD` に分類する。
 - エンベロープに生成器名は出さない（機械可読の契約面を生成器の実装事情から切り離す）。
 
 ### 8. 内部コマンドの開示は生成器が担う
 
-ADR-0007 §3 の透明性（内部実行する nix コマンドの開示）と ADR-0031 §3 の `--debug` 開示は、主体を生成器に移す。`--debug` のとき、生成器名と生成器が実行する内部コマンドを stderr に出す。
+ADR-0007 §3 の透明性（内部実行する nix コマンドの開示）と ADR-0031 §3 の `--debug` 開示は、主体を生成器に移す。分担は次のとおり。
+
+- **実行中の逐次開示は生成器が書く**。CLI は `--debug` の有無を生成器へ渡し、生成器は実行する内部コマンドを生成器名付きで、渡された writer へ書く（何を実行するかを知っているのは生成器だけのため）。
+- **失敗時の表示は CLI が組み立てる**。`--debug` のとき、CLI は `generator.Error` の `Generator` と `Message` から、生成器名と失敗した内部コマンドを含む要約行を出す（§6 の「表示は CLI が決める」）。
 
 ## 根拠
 

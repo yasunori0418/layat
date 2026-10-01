@@ -33,7 +33,7 @@ ADR-0055 で manifest の取得は生成器インターフェイス越しにな�
 
 選び方には 2 通りある。各生成器の Discover を順に試して最初に entrypoint を見つけたものを使う暗黙の方式（claim 方式）と、利用者が明示する方式である。claim 方式は entrypoint の置き方次第で生成器が切り替わり、同じディレクトリに複数の生成器の entrypoint があると結果が試行順に依存する。
 
-明示の手段には、毎回のフラグのほか、プロジェクトやユーザー単位で固定する設定ファイルが要る。layat はこれまで設定ファイルを読まず、ADR-0006 は「CWD / 設定ファイルから config を発見する機構は足さない」と決めている。
+明示の手段には、毎回のフラグのほか、プロジェクトやユーザー単位で固定する設定ファイルが要る。layat はこれまで設定ファイルを読まず、ADR-0006 は「設定ファイルから config を発見する機構は足さない」と決めている（CWD 側は ADR-0007 が entrypoint 発見として反転済み）。
 
 HM 等のモジュール activation は `apply --manifest` で engine を起動する（→ ADR-0026）。activation の実行環境の環境変数・カレントディレクトリは利用者の制御外で、ここで設定ファイルを読むと activation が利用者の手元の設定に左右される。
 
@@ -49,6 +49,8 @@ claim 方式は採らない。優先順位は次のとおりで、上で値が�
 4. ユーザー設定 `$XDG_CONFIG_HOME/layat/config.toml`（`XDG_CONFIG_HOME` 未設定時は `~/.config/layat/config.toml`）
 5. 既定 `nix`
 
+空文字の `LAYAT_GENERATOR` と、`generator` キーを持たない設定ファイルは「指定なし」として次の段へ進む（キーの無い設定ファイルは不正ではない）。
+
 ### 2. 値の enum は `nix` のみ。prebuilt は出さない
 
 - 選択可能な値は `nix` だけ。2 つ目の実生成器が現れたときに足す。
@@ -57,8 +59,8 @@ claim 方式は採らない。優先順位は次のとおりで、上で値が�
 
 ### 3. 設定ファイルの探索
 
-- プロジェクト設定 `layat.toml` は **`-f` で指定したディレクトリ、無ければ cwd** だけを見る。**上方向探索はしない**。entrypoint 発見と同じ規律で、「設定を読むには entrypoint が要り、entrypoint 発見には生成器が要る」循環を避ける。
-- 設定ファイルが読むのは生成器の選択だけで、**config の発見には使わない**（ADR-0006 の決定は不変）。
+- プロジェクト設定 `layat.toml` は **`-f` で指定したディレクトリ（`-f` がファイルならそのファイルのあるディレクトリ）、無ければ cwd** だけを見る。**上方向探索はしない**。entrypoint 発見と同じ規律で、「設定を読むには entrypoint が要り、entrypoint 発見には生成器が要る」循環を避ける。
+- 設定ファイルが読むのは生成器の選択だけで、**config の発見には使わない**（ADR-0006 の設定ファイル側の決定は不変）。
 
 ### 4. 形式は TOML で strict
 
@@ -79,7 +81,7 @@ generator = "nix"
 
 ### 6. `--generator` は prune / init で無視する
 
-`--generator` は persistent flag とし、manifest を得ない prune と生成器化の範囲外の init（→ ADR-0055 §1）では無視する（エラーにしない）。persistent flag `-f` と同じ扱い。
+`--generator` は persistent flag とし、manifest を得ない prune と生成器化の範囲外の init（→ ADR-0055 §1）では無視する。値を検証せず（未知の値でもエラーにしない）、環境変数・設定ファイルも読まない（壊れた設定ファイルがあっても `E_INPUT` にならない）。persistent flag `-f` と同じ扱い。
 
 ## 根拠
 

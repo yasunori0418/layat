@@ -27,7 +27,8 @@ specification_ja: |
 
 - 透明性: `layat --help` 等で manifest 生成器が内部実行するコマンド（nix 生成器では nix
   コマンド）を開示し、ユーザーが選択的に手で実行できる。開示の主体は生成器で、`--debug`
-  のときは生成器名と内部コマンドを出す。
+  のときは生成器が実行する内部コマンドを生成器名付きで逐次出す（失敗時の要約の組み立ては
+  REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd の担当）。
 - 任意世代への切替・世代の GC は標準の `nix-env` / `nix-collect-garbage` を profile パスに
   対して使う。
 

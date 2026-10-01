@@ -7,9 +7,9 @@ derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
   layat SHALL be composed of two layers: the layat CLI (`packages.layat`, the primary UX
-  installed on PATH) and the engine (a Go library). The CLI SHALL discover an entrypoint
-  and obtain the store path of the named manifest through a manifest generator (nix by
-  default), and import the engine to drive placement, stale removal and profile swap. The engine
+  installed on PATH) and the engine (a Go library). The CLI SHALL, through a manifest generator
+  (nix by default), discover an entrypoint and obtain the store path of the named manifest,
+  and import the engine to drive placement, stale removal and profile swap. The engine
   SHALL take `manifest.json` as its input. The boundary between the two layers SHALL be
   `manifest.json` alone, so that the engine does not depend directly on Nix evaluation
   results. Which files are discovered as entrypoints is stated by the CLI specification,
