@@ -32,7 +32,7 @@ specification_ja: |
 - 任意世代への切替・世代の GC は標準の `nix-env` / `nix-collect-garbage` を profile パスに
   対して使う。
 
-`--debug` による nix コマンドの開示（冗長度と直交させる分離）は REQ-0a123b89-0399-4f76-b988-56a5f7e0becf の担当。
+`--debug` を冗長度（`-v`）と直交させる分離そのものは REQ-0a123b89-0399-4f76-b988-56a5f7e0becf の担当。
 
 ## 出典
 
