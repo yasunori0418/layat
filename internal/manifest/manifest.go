@@ -43,9 +43,14 @@ const (
 // Root is the kind of the placement target base. project / home / system are
 // resolved at runtime and carry no path; only fixed holds an absolute path in
 // Root determined at evaluation time (→ docs/spec.md).
+//
+// Targets is the config's normalized target list a generator's Roots returns alongside the root
+// (read by apply --all's conflict preflight · → ADR-0038, ADR-0055 §2). It is a Go-side field:
+// manifest.json schema v1 does not carry it, and a prebuilt generator derives it from the entries.
 type Root struct {
-	RootKind string `json:"rootKind"`
-	Root     string `json:"root,omitempty"`
+	RootKind string   `json:"rootKind"`
+	Root     string   `json:"root,omitempty"`
+	Targets  []string `json:"targets,omitempty"`
 }
 
 // Entry is a single placement definition. Its identity is Target (derived from the attribute key; the diff key for stale removal; → ADR-0014).
