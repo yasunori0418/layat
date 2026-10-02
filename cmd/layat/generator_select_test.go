@@ -44,10 +44,22 @@ func TestResolveGenerator(t *testing.T) {
 		errContains string
 	}{
 		{name: "default when nothing is set", want: "nix"},
-		{name: "flag wins over env", flag: "nix", env: "bogus", want: "nix"},
-		{name: "env applies alone", env: "nix", want: "nix"},
+		{name: "flag wins over everything", flag: "nix", env: "bogus", project: bogus, user: bogus, want: "nix"},
+		{name: "env wins over both settings files", env: "nix", project: bogus, user: bogus, want: "nix"},
+		{name: "project setting wins over the user setting", project: nixKey, user: bogus, want: "nix"},
+		{name: "user setting applies alone", user: nixKey, want: "nix"},
+		{name: "empty env passes on", env: "", project: bogus, wantErr: true, errContains: "layat.toml"},
+		{name: "project file without the key passes on", project: noKey, user: bogus, wantErr: true, errContains: "config.toml"},
+		{name: "user file without the key falls back to nix", user: noKey, want: "nix"},
 		{name: "unknown flag value", flag: "bogus", wantErr: true, errContains: "--generator"},
 		{name: "unknown env value", env: "bogus", wantErr: true, errContains: "LAYAT_GENERATOR"},
+		{name: "unknown project value", project: bogus, wantErr: true, errContains: "layat.toml"},
+		{name: "unknown user value", user: bogus, wantErr: true, errContains: "config.toml"},
+		{name: "unknown key is rejected (strict)", project: unknown, wantErr: true, errContains: "version"},
+		{name: "unknown key in the user file is rejected", user: unknown, wantErr: true, errContains: "version"},
+		{name: "malformed TOML is rejected", project: malformed, wantErr: true, errContains: "layat.toml"},
+		{name: "a decided step does not read the steps below", project: nixKey, user: malformed, want: "nix"},
+		{name: "a set env does not read a broken project file", env: "nix", project: malformed, want: "nix"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -89,5 +101,22 @@ func TestResolveGeneratorUnsetDirs(t *testing.T) {
 	got, err := resolveGenerator("", "", "", "")
 	if err != nil || got != "nix" {
 		t.Fatalf("resolveGenerator with no dirs = %q, %v; want nix, nil", got, err)
+	}
+}
+
+// TestResolveGeneratorUnreadableSetting pins that a settings file that exists but cannot be read
+// is not an input error: the read failure keeps its own classification (here E_IO).
+func TestResolveGeneratorUnreadableSetting(t *testing.T) {
+	projectDir := t.TempDir()
+	if err := os.Mkdir(filepath.Join(projectDir, "layat.toml"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	_, err := resolveGenerator("", "", projectDir, "")
+	var ie *inputError
+	if err == nil || errors.As(err, &ie) {
+		t.Fatalf("resolveGenerator() error = %v, want a read failure that is not an inputError", err)
+	}
+	if got := classifyError(err).Code; got != "E_IO" {
+		t.Errorf("classifyError().Code = %s, want E_IO", got)
 	}
 }
