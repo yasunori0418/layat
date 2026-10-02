@@ -121,7 +121,7 @@
             pname = "layat";
             inherit version;
             src = goSrc;
-            vendorHash = "sha256-hu3UKyofaF2BZGcBsVD/uODAms9qA39fKk27Sw1GSN4=";
+            vendorHash = "sha256-blRx10aRnzpZDI0sqLJJB3L5OYj2BDY9XrmauXNAVEM=";
             doCheck = true;
             env.GOTOOLCHAIN = "local";
             # VERSION の値を cmd/layat の main.version へ埋め込む（→ ADR-0042）。ldflags 未設定の
