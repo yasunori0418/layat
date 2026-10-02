@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -199,8 +200,20 @@ func TestEntrypointInstallableArgs(t *testing.T) {
 // stubNix puts a fake nix first on PATH that prints stderr to its stderr and exits 1.
 func stubNix(t *testing.T, stderr string) {
 	t.Helper()
+	stubNixExit(t, "", stderr, 1)
+}
+
+// stubNixExit puts a fake nix first on PATH that prints stdout / stderr and exits with code.
+func stubNixExit(t *testing.T, stdout, stderr string, code int) {
+	t.Helper()
+	stubNixScript(t, "printf '%s' '"+stdout+"'\nprintf '%s' '"+stderr+"' >&2\nexit "+strconv.Itoa(code))
+}
+
+// stubNixScript puts a fake nix first on PATH whose body is the given sh script.
+func stubNixScript(t *testing.T, body string) {
+	t.Helper()
 	bin := t.TempDir()
-	script := "#!/bin/sh\nprintf '%s' '" + stderr + "' >&2\nexit 1\n"
+	script := "#!/bin/sh\n" + body + "\n"
 	if err := os.WriteFile(filepath.Join(bin, "nix"), []byte(script), 0o755); err != nil {
 		t.Fatalf("write nix stub: %v", err)
 	}
@@ -240,8 +253,8 @@ func TestDiscoverFailureIsDiscoverStage(t *testing.T) {
 	}
 }
 
-// TestRootsCommandFailure pins a failed nix eval as Stage roots carrying the pre-extraction
-// message (the failed command + nix's stderr) and the captured stderr.
+// TestRootsCommandFailure pins a failed nix eval as Stage roots whose one-line Message names the
+// failed subcommand, with nix's stderr kept in Stderr instead (→ ADR-0055 §6).
 func TestRootsCommandFailure(t *testing.T) {
 	stubNix(t, "error: boom")
 	g, _ := discovered(t, io.Discard, false)
@@ -254,7 +267,7 @@ func TestRootsCommandFailure(t *testing.T) {
 	if ge.Stage != generator.StageRoots || ge.Kind != generator.KindFailed {
 		t.Errorf("Stage/Kind = %q/%q, want roots/Failed", ge.Stage, ge.Kind)
 	}
-	if want := "layat: nix eval failed:\nerror: boom"; ge.Message != want {
+	if want := "layat: nix eval failed: exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if ge.Stderr != "error: boom" {
@@ -262,21 +275,26 @@ func TestRootsCommandFailure(t *testing.T) {
 	}
 }
 
-// TestRootsMissingConfigMessage pins the "config not found" lead line put before nix's error.
+// TestRootsMissingConfigMessage pins the "config not found" summary and its guidance.
 func TestRootsMissingConfigMessage(t *testing.T) {
 	stubNix(t, "error: flake does not provide attribute layat")
 	g, _ := discovered(t, io.Discard, false)
 
 	_, err := g.Roots("web")
-	want := "layat: " + g.ep.label(g.system, "web") + " not found in the entrypoint (check the config name)\n" +
-		"layat: nix eval failed:\nerror: flake does not provide attribute layat"
-	if err == nil || err.Error() != want {
-		t.Errorf("Roots error = %v, want %q", err, want)
+	var ge *generator.Error
+	if !errors.As(err, &ge) {
+		t.Fatalf("Roots error = %v, want a *generator.Error", err)
+	}
+	if want := "layat: " + g.ep.label(g.system, "web") + " not found in the entrypoint (nix eval failed)"; ge.Message != want {
+		t.Errorf("Message = %q, want %q", ge.Message, want)
+	}
+	if want := "check the config name"; ge.Guidance != want {
+		t.Errorf("Guidance = %q, want %q", ge.Guidance, want)
 	}
 }
 
 // TestAllRootsMissingNamespaceMessage pins a failed batch eval as Stage roots carrying the
-// "no configs found" lead line before the pre-extraction message.
+// namespace "not found" summary and the "no configs found" guidance.
 func TestAllRootsMissingNamespaceMessage(t *testing.T) {
 	stubNix(t, "error: flake does not provide attribute layat")
 	g, _ := discovered(t, io.Discard, false)
@@ -286,15 +304,17 @@ func TestAllRootsMissingNamespaceMessage(t *testing.T) {
 	if !errors.As(err, &ge) || ge.Stage != generator.StageRoots {
 		t.Fatalf("AllRoots error = %v, want a Stage roots *generator.Error", err)
 	}
-	want := "layat: " + g.ep.namespaceLabel(g.system) + " not found in the entrypoint (no configs found)\n" +
-		"layat: nix eval failed:\nerror: flake does not provide attribute layat"
-	if err.Error() != want {
-		t.Errorf("AllRoots error = %q, want %q", err.Error(), want)
+	label := g.ep.namespaceLabel(g.system)
+	if want := "layat: " + label + " not found in the entrypoint (nix eval failed)"; ge.Message != want {
+		t.Errorf("Message = %q, want %q", ge.Message, want)
+	}
+	if want := "no configs found; define configs under " + label; ge.Guidance != want {
+		t.Errorf("Guidance = %q, want %q", ge.Guidance, want)
 	}
 }
 
 // TestDryBuildCommandFailure pins a failed read-only nix build as Stage build carrying the
-// pre-extraction message and the captured stderr.
+// one-line Message and the captured stderr.
 func TestDryBuildCommandFailure(t *testing.T) {
 	stubNix(t, "error: boom")
 	g, _ := discovered(t, io.Discard, false)
@@ -304,7 +324,7 @@ func TestDryBuildCommandFailure(t *testing.T) {
 	if !errors.As(err, &ge) || ge.Stage != generator.StageBuild {
 		t.Fatalf("DryBuild error = %v, want a Stage build *generator.Error", err)
 	}
-	if want := "layat: nix build failed:\nerror: boom"; ge.Message != want {
+	if want := "layat: nix build failed: exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if ge.Stderr != "error: boom" {
@@ -313,7 +333,7 @@ func TestDryBuildCommandFailure(t *testing.T) {
 }
 
 // TestBuildCommandFailureStreamsStderr pins a failed in-lock nix build as Stage build whose
-// output streams to the generator's writer (not captured) under the pre-extraction message.
+// output streams to the generator's writer under the one-line Message.
 func TestBuildCommandFailureStreamsStderr(t *testing.T) {
 	stubNix(t, "error: boom")
 	var buf bytes.Buffer
@@ -342,5 +362,153 @@ func TestDebugDisclosesCommandsToWriter(t *testing.T) {
 	want := "layat: + nix eval " + dir + "#layat." + g.system + ".web.rootKind --raw\n"
 	if buf.String() != want {
 		t.Errorf("debug output = %q, want %q", buf.String(), want)
+	}
+}
+
+// TestIsExperimentalDisabled pins the three nix wordings of nix-command / flakes not being
+// enabled, and that an unrelated failure is not taken for one (→ ADR-0025 §1).
+func TestIsExperimentalDisabled(t *testing.T) {
+	cases := []struct {
+		name   string
+		stderr string
+		want   bool
+	}{
+		{"experimental Nix feature", "error: experimental Nix feature 'nix-command' is disabled; add '--extra-experimental-features nix-command' to enable it", true},
+		{"experimental-features", "error: cannot use flakes: enable experimental-features first", true},
+		{"flakes + disabled", "error: flakes are disabled", true},
+		{"flakes alone", "error: flakes ok but evaluation failed", false},
+		{"unrelated", "error: attribute 'web' missing", false},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			if got := isExperimentalDisabled(c.stderr); got != c.want {
+				t.Errorf("isExperimentalDisabled(%q) = %v, want %v", c.stderr, got, c.want)
+			}
+		})
+	}
+}
+
+// TestPrerequisiteMissingGuidance pins an experimental-features failure as Kind
+// PrerequisiteMissing whose Guidance names both ways to enable them, with nix's raw stderr kept
+// in Stderr (→ ADR-0055 §6, ADR-0025 §1).
+func TestPrerequisiteMissingGuidance(t *testing.T) {
+	const raw = "error: experimental Nix feature nix-command is disabled"
+	stubNix(t, raw)
+	g, _ := discovered(t, io.Discard, false)
+
+	_, err := g.Roots("web")
+	var ge *generator.Error
+	if !errors.As(err, &ge) {
+		t.Fatalf("Roots error = %v, want a *generator.Error", err)
+	}
+	if ge.Kind != generator.KindPrerequisiteMissing {
+		t.Errorf("Kind = %q, want PrerequisiteMissing", ge.Kind)
+	}
+	if want := "layat: nix's experimental-features are not enabled (nix eval failed)"; ge.Message != want {
+		t.Errorf("Message = %q, want %q", ge.Message, want)
+	}
+	for _, want := range []string{"nix.conf", "NIX_CONFIG"} {
+		if !strings.Contains(ge.Guidance, want) {
+			t.Errorf("Guidance lacks %q:\n%s", want, ge.Guidance)
+		}
+	}
+	if ge.Stderr != raw {
+		t.Errorf("Stderr = %q, want nix's raw stderr", ge.Stderr)
+	}
+}
+
+// TestNotFoundKind pins a missing attribute as Kind NotFound on both the single and the batch
+// eval, and any other failure as Kind Failed.
+func TestNotFoundKind(t *testing.T) {
+	stubNix(t, "error: flake does not provide attribute layat")
+	g, _ := discovered(t, io.Discard, false)
+
+	var ge *generator.Error
+	if _, err := g.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
+		t.Errorf("Roots error = %v, want Kind NotFound", err)
+	}
+	if _, err := g.AllRoots(); !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
+		t.Errorf("AllRoots error = %v, want Kind NotFound", err)
+	}
+
+	stubNix(t, "error: boom")
+	if _, err := g.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindFailed {
+		t.Errorf("Roots error = %v, want Kind Failed", err)
+	}
+}
+
+// TestSuccessTeesStderrToWriter pins that nix's stderr reaches the writer on success too, on
+// both the eval and the build path, while stdout stays the command's result (→ ADR-0055 §6).
+func TestSuccessTeesStderrToWriter(t *testing.T) {
+	const warn = "warning: Git tree is dirty\n"
+	stubNixExit(t, "managed", warn, 0)
+	var buf bytes.Buffer
+	g, _ := discovered(t, &buf, false)
+
+	root, err := g.Roots("web")
+	if err != nil || root.RootKind != "managed" {
+		t.Fatalf("Roots = %v, %v; want rootKind managed", root, err)
+	}
+	if buf.String() != warn {
+		t.Errorf("writer after eval = %q, want %q", buf.String(), warn)
+	}
+
+	buf.Reset()
+	stubNixExit(t, "/nix/store/x-link-farm", warn, 0)
+	if _, err := g.DryBuild("web"); err != nil {
+		t.Fatalf("DryBuild: %v", err)
+	}
+	if buf.String() != warn {
+		t.Errorf("writer after build = %q, want %q", buf.String(), warn)
+	}
+}
+
+// TestBuildFailureCapturesStderr pins that the in-lock build path, which streams nix's output to
+// the writer, also keeps nix's stderr in Stderr on failure.
+func TestBuildFailureCapturesStderr(t *testing.T) {
+	stubNix(t, "error: boom")
+	var buf bytes.Buffer
+	g, _ := discovered(t, &buf, false)
+
+	_, err := g.Build("web", filepath.Join(t.TempDir(), ".pending"))
+	var ge *generator.Error
+	if !errors.As(err, &ge) {
+		t.Fatalf("Build error = %v, want a *generator.Error", err)
+	}
+	if ge.Stderr != "error: boom" {
+		t.Errorf("Stderr = %q, want the captured stderr", ge.Stderr)
+	}
+	if buf.String() != "error: boom" {
+		t.Errorf("writer = %q, want nix's stderr streamed through", buf.String())
+	}
+}
+
+// writeLog records every Write call separately.
+type writeLog struct{ writes []string }
+
+func (l *writeLog) Write(b []byte) (int, error) {
+	l.writes = append(l.writes, string(b))
+	return len(b), nil
+}
+
+// TestTeeWritesWholeLines pins that nix's stderr reaches the writer in whole lines even when nix
+// writes a line in pieces, with the unterminated tail written once when nix exits — so a
+// line-prefixing writer shared by parallel generators never interleaves mid-line.
+func TestTeeWritesWholeLines(t *testing.T) {
+	stubNixScript(t, "printf 'warning: par' >&2\nsleep 0.2\nprintf 'tial\\nnext\\ntail' >&2\nexit 1")
+	log := &writeLog{}
+	g, _ := discovered(t, log, false)
+
+	_, _ = g.DryBuild("web")
+	if got, want := strings.Join(log.writes, ""), "warning: partial\nnext\ntail"; got != want {
+		t.Fatalf("writer = %q, want %q", got, want)
+	}
+	for i, w := range log.writes[:len(log.writes)-1] {
+		if !strings.HasSuffix(w, "\n") {
+			t.Errorf("write %d = %q, want whole lines (only the last may be unterminated)", i, w)
+		}
+	}
+	if last := log.writes[len(log.writes)-1]; last != "tail" {
+		t.Errorf("last write = %q, want the unterminated tail alone", last)
 	}
 }
