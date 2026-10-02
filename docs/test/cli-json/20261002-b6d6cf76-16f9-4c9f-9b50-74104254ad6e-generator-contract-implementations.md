@@ -16,7 +16,7 @@ mitigates:
   辿れる（`errors.Is` / `errors.As` が原因まで届く）。`%w` で包み直されてもマーカーとして
   取り出せる
 - **nix 生成器の失敗** — 発見の失敗は Stage discover で原因を保持し、eval の失敗は Stage roots、
-  build の失敗は Stage build になる。いずれも文面は生成器化の前と同じ
+  build の失敗は Stage build になる。発見の失敗の文面は生成器化の前と同じ
 - **prebuilt の操作** — Discover は与えられたパスを絶対パスにし、Build / DryBuild はその
   パスを返す。Roots は manifest.json の root を返し、Targets を entries から導く。読めない
   manifest.json は prebuilt・Stage roots の失敗になり、原因の `fs.ErrNotExist` を保持する。
