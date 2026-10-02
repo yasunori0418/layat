@@ -323,8 +323,6 @@ func (g *Generator) runNix(args []string, stdout io.Writer) error {
 	cmd := exec.Command("nix", args...)
 	var stderr bytes.Buffer
 	lines := &lineWriter{w: g.stderr}
-	// The capture comes first: MultiWriter stops at the first failing writer, and Stderr must
-	// not lose nix's diagnostics because the writer failed.
 	tee := io.MultiWriter(&stderr, lines)
 	if stdout == nil {
 		stdout = tee
@@ -342,7 +340,8 @@ func (g *Generator) runNix(args []string, stdout io.Writer) error {
 // lineWriter passes what is written to it on to w in whole lines: each Write hands over the
 // lines completed so far in one call and keeps the unterminated rest until flush. A line-prefixing
 // writer shared by parallel generators (apply --all's stage 1) thus never sees a line in pieces
-// that another generator's line could cut into.
+// that another generator's line could cut into. Writing to w is best-effort, like the --debug
+// disclosure: a failing writer neither fails nix nor cuts the capture of its stderr short.
 type lineWriter struct {
 	w   io.Writer
 	buf []byte
@@ -354,9 +353,7 @@ func (l *lineWriter) Write(b []byte) (int, error) {
 	if i < 0 {
 		return len(b), nil
 	}
-	if _, err := l.w.Write(l.buf[:i+1]); err != nil {
-		return 0, err
-	}
+	_, _ = l.w.Write(l.buf[:i+1])
 	l.buf = append(l.buf[:0], l.buf[i+1:]...)
 	return len(b), nil
 }
@@ -373,8 +370,9 @@ func (l *lineWriter) flush() {
 // PrerequisiteMissing with the guidance to enable them, a missing attribute while reading the
 // roots is NotFound (its summary and guidance are the caller's, which knows what was addressed;
 // → notFound), anything else Failed. A build runs only after its roots were read, so a missing
-// attribute there is an evaluation error inside the config, not a missing config name. The Message is one line naming the failed subcommand; the raw stderr is kept in
-// Stderr, never swallowed (→ ADR-0025 §1, ADR-0055 §6).
+// attribute there is an evaluation error inside the config, not a missing config name. The
+// Message is one line naming the failed subcommand; the raw stderr is kept in Stderr, never
+// swallowed (→ ADR-0025 §1, ADR-0055 §6).
 func nixFailure(args []string, stderr string, runErr error) error {
 	cause := fmt.Errorf("layat: nix %s failed: %w", args[0], runErr)
 	kind, message, guidance := generator.KindFailed, cause.Error(), ""

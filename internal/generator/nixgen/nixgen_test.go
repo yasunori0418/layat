@@ -454,19 +454,23 @@ type failingWriter struct{}
 
 func (failingWriter) Write([]byte) (int, error) { return 0, errors.New("write failed") }
 
-// TestStderrCapturedWhenWriterFails pins that nix's stderr is still captured into Stderr when the
-// diagnostics writer fails.
-func TestStderrCapturedWhenWriterFails(t *testing.T) {
-	stubNix(t, "error: boom\n")
+// TestWriterFailureIsBestEffort pins that a failing diagnostics writer neither turns nix's
+// success into a failure nor drops later chunks of nix's stderr from Stderr.
+func TestWriterFailureIsBestEffort(t *testing.T) {
+	stubNixScript(t, "printf 'managed'\nprintf 'warning: one\\n' >&2\nsleep 0.2\nprintf 'warning: two\\n' >&2\nexit 0")
 	g, _ := discovered(t, failingWriter{}, false)
+	if root, err := g.Roots("web"); err != nil || root.RootKind != "managed" {
+		t.Fatalf("Roots = %v, %v; want success despite the failing writer", root, err)
+	}
 
+	stubNixScript(t, "printf 'error: one\\n' >&2\nsleep 0.2\nprintf 'error: two\\n' >&2\nexit 1")
 	_, err := g.Roots("web")
 	var ge *generator.Error
 	if !errors.As(err, &ge) {
 		t.Fatalf("Roots error = %v, want a *generator.Error", err)
 	}
-	if ge.Stderr != "error: boom" {
-		t.Errorf("Stderr = %q, want the captured stderr", ge.Stderr)
+	if want := "error: one\nerror: two"; ge.Stderr != want {
+		t.Errorf("Stderr = %q, want %q (every chunk captured)", ge.Stderr, want)
 	}
 }
 
