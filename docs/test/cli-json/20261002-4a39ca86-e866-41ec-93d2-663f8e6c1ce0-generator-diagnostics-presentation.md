@@ -15,7 +15,7 @@ nix 生成器は PATH の先頭に置いた nix のスタブで駆動し、CLI �
 - **素通し** — eval / build の両経路で、nix の stderr が成功時も失敗時も生成器の writer へ
   届く。writer へは行単位で渡り、行の途中で切れた書き込みが来ても行が揃うまで渡さない
 - **分類と案内** — experimental-features 未有効の 3 つの文言が `PrerequisiteMissing` になり、
-  `Guidance` に nix.conf と `NIX_CONFIG` の両手段が入る。属性の不在は `NotFound` で、単発は
+  `Guidance` に nix.conf と `NIX_CONFIG` の両手段が入る。eval での属性の不在は `NotFound` で、単発は
   config 名の確認を、一括は config の定義を案内する。それ以外は `Failed`。`Message` は失敗した
   サブコマンドまでの 1 行で、生の診断は `Stderr` に残る
 - **出力面ごとの提示** — 人間向けは要約 1 行と `Guidance` で生の診断を再掲しない。`--debug` では
