@@ -114,10 +114,24 @@ func TestPrebuiltRootsReadsManifest(t *testing.T) {
 	}
 }
 
-// TestPrebuiltAllRootsFails covers that a single pre-built link-farm has no config list to enumerate.
+// TestPrebuiltRootsRejectsTargetsKey covers that Targets stays out of the manifest.json schema v1:
+// a root.targets key is still an unknown field the load rejects (→ ADR-0055 §2).
+func TestPrebuiltRootsRejectsTargetsKey(t *testing.T) {
+	dir := writeLinkFarm(t, `{"schemaVersion":1,"root":{"rootKind":"project","targets":["x"]},"entries":[]}`)
+	p := &Prebuilt{}
+	if err := p.Discover(dir); err != nil {
+		t.Fatalf("Discover: %v", err)
+	}
+	if _, err := p.Roots("web"); err == nil {
+		t.Fatal("Roots accepted a manifest.json carrying root.targets, want the unknown field rejected")
+	}
+}
+
+// TestPrebuiltAllRootsFails covers that a single pre-built link-farm has no config list to enumerate,
+// even when its manifest.json is readable.
 func TestPrebuiltAllRootsFails(t *testing.T) {
 	p := &Prebuilt{}
-	if err := p.Discover(t.TempDir()); err != nil {
+	if err := p.Discover(writeLinkFarm(t, `{"schemaVersion":1,"root":{"rootKind":"home"},"entries":[]}`)); err != nil {
 		t.Fatalf("Discover: %v", err)
 	}
 	all, err := p.AllRoots()
