@@ -70,4 +70,15 @@ assert_json "$ENV_ERR" "status=error・subject=nosuch の一様形" \
 assert_json "$ENV_ERR" "エラーは subject errors[] に構造化・items=[]" \
 	'(.results[0].errors | length) >= 1 and .results[0].result.items == []'
 
+e2e_step "生成器の失敗では nix 自身の診断が stderr へ届き、--json の message にも載る（→ ADR-0055 §6）"
+ERR_LOG="$E2E_WORK/error.stderr"
+layat list-generations nosuch >/dev/null 2>"$ERR_LOG" || true
+if grep -q "does not provide attribute" "$ERR_LOG"; then
+	e2e_pass "stderr に nix の診断（does not provide attribute）が届く"
+else
+	e2e_fail "stderr に nix の診断が無い: $(cat "$ERR_LOG")"
+fi
+assert_json "$ENV_ERR" "errors[0].message に nix の診断（does not provide attribute）を含む" \
+	'.results[0].errors[0].message | contains("does not provide attribute")'
+
 e2e_finish
