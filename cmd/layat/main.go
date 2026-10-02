@@ -90,7 +90,7 @@ var (
 	flagHomeRoot    bool   // --home-root: apply --all modifier; apply only homeRoot configs
 	flagSystemRoot  bool   // --system-root: apply --all modifier; apply only systemRoot configs (future seam)
 	flagManifest    string // --manifest: apply a pre-built manifest (link-farm) directly (for module activation)
-	flagGenerator   string // --generator: the manifest generator to use (→ ADR-0056; declared only, not read yet)
+	flagGenerator   string // --generator: the manifest generator to use; "" = not specified (→ ADR-0056)
 	// flagBackup / flagBackupEnabled are --backup[=suffix] (apply modifier; → ADR-0045, issue #169): a
 	// cobra optional-value flag (NoOptDefVal = "layat-backup"). Bare --backup sets flagBackup to the
 	// default suffix; --backup=<suffix> (the "=" form only — cobra's NoOptDefVal treats a bare next
@@ -128,7 +128,16 @@ Internal nix commands (disclosed for transparency; you can run them by hand sele
 For a legacy entrypoint (shell.nix / default.nix; no per-system dimension; see ADR-0032), the
 above take the -f form instead: nix eval -f <ep> layat.<name>.rootKind / nix build -f <ep> layat.<name> ...
 
-Pass --debug to print the actual nix commands to stderr as they run.`
+Pass --debug to print the actual nix commands to stderr as they run.
+
+Generator selection (the manifest generator; only nix today), first match wins:
+  1. --generator <name>
+  2. LAYAT_GENERATOR
+  3. layat.toml in the -f directory (the file's directory for a file), else the CWD (not searched upward)
+  4. $XDG_CONFIG_HOME/layat/config.toml (~/.config/layat/config.toml when unset)
+  5. nix
+Settings files take only the key generator = "<name>"; an unknown key or name is an input error.
+apply --manifest reads none of these; prune and init ignore them.`
 
 func newRootCmd() *cobra.Command {
 	root := &cobra.Command{
@@ -163,7 +172,9 @@ func newRootCmd() *cobra.Command {
 	pf.BoolVarP(&flagVerbose, "verbose", "v", false, "Print the placement report (summary + per-target lines); silent on success by default (see ADR-0031)")
 	pf.BoolVar(&flagJSON, "json", false, "Write an outturn-conformant JSON envelope to stdout (machine-readable; orthogonal to -v; see ADR-0043)")
 	pf.BoolVar(&flagDebug, "debug", false, "Disclose the internal nix commands on stderr (see ADR-0031)")
-	pf.StringVar(&flagGenerator, "generator", "nix", "Manifest generator (nix; see ADR-0056)")
+	pf.StringVar(&flagGenerator, "generator", "",
+		"Manifest generator (nix). Precedence: --generator > LAYAT_GENERATOR > layat.toml (-f dir, else CWD) > "+
+			"$XDG_CONFIG_HOME/layat/config.toml > nix; ignored by prune / init, rejected with apply --manifest (see ADR-0056)")
 	pf.BoolVarP(&flagYes, "yes", "y", false, "Skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)")
 	pf.BoolVar(&flagProjectRoot, "project-root", false, "Modifier for apply --all: apply only projectRoot configs")
 	pf.BoolVar(&flagHomeRoot, "home-root", false, "Modifier for apply --all: apply only homeRoot configs")

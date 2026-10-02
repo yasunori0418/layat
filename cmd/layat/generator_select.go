@@ -17,23 +17,79 @@ import (
 	"github.com/yasunori0418/layat/internal/generator/nixgen"
 )
 
-// newGenerator returns the manifest generator a command obtains its link-farm through: the
-// prebuilt one for apply --manifest, otherwise nix (→ ADR-0055 §1, §5). Choosing the generator
-// and injecting it into the engine is all the cmd layer does with it.
-func newGenerator() generator.Generator {
-	return newGeneratorTo(os.Stderr)
+// newGenerator returns the manifest generator a command obtains its link-farm through, chosen by
+// selectGenerator: the prebuilt one for apply --manifest, otherwise the one the flag, environment
+// or settings name (→ ADR-0055 §1, §5, ADR-0056). Choosing the generator and injecting it into the
+// engine is all the cmd layer does with it. A rejected selection is an inputError.
+func newGenerator() (generator.Generator, error) {
+	name, err := selectGenerator()
+	if err != nil {
+		return nil, err
+	}
+	return newGeneratorTo(name, os.Stderr), nil
 }
 
-// newGeneratorTo is newGenerator writing the generator's diagnostics to w instead of stderr
-// (apply --all's stage 1 prefixes each config's lines; → ADR-0039).
-//
-// apply --all keeps ignoring --manifest and applies the entrypoint's configs through nix, as it
-// did before generators; rejecting the combination is the selection mechanism's job (→ ADR-0056).
-func newGeneratorTo(w io.Writer) generator.Generator {
-	if flagManifest != "" && !flagApplyAll {
+// newGeneratorTo returns the generator named name (already selected) writing its diagnostics to
+// w (apply --all's stage 1 resolves the name once and prefixes each config's lines; → ADR-0039).
+func newGeneratorTo(name string, w io.Writer) generator.Generator {
+	if name == generator.NamePrebuilt {
 		return &generator.Prebuilt{}
 	}
 	return nixgen.New(w, flagDebug)
+}
+
+// selectGenerator chooses the generator's name for the running command. apply --manifest takes
+// prebuilt without reading the environment or any settings file (module activation runs in an
+// environment the user does not control) and rejects --generator; otherwise resolveGenerator
+// decides from the flag, LAYAT_GENERATOR, the project setting and the user setting (→ ADR-0056).
+func selectGenerator() (string, error) {
+	if flagManifest != "" {
+		if flagGenerator != "" {
+			return "", &inputError{err: errors.New("layat: --manifest cannot be combined with --generator (--manifest fixes the source to a pre-built link-farm)")}
+		}
+		return generator.NamePrebuilt, nil
+	}
+	projectDir, userConfigDir := projectSettingDir(flagFile), userSettingDir()
+	if flagFile != "" && projectDir == "" {
+		// An -f path that cannot be stat'ed reads no settings file; the generator's discovery
+		// reports the missing entrypoint (→ ADR-0056 §3).
+		userConfigDir = ""
+	}
+	return resolveGenerator(flagGenerator, os.Getenv(generatorEnv), projectDir, userConfigDir)
+}
+
+// projectSettingDir is the directory holding the project setting layat.toml: the -f directory
+// (the file's directory when -f names a file), otherwise the CWD. Parent directories are not
+// searched. It is "" when -f cannot be stat'ed or the CWD cannot be resolved.
+func projectSettingDir(file string) string {
+	if file == "" {
+		wd, err := os.Getwd()
+		if err != nil {
+			return ""
+		}
+		return wd
+	}
+	fi, err := os.Stat(file)
+	if err != nil {
+		return ""
+	}
+	if fi.IsDir() {
+		return file
+	}
+	return filepath.Dir(file)
+}
+
+// userSettingDir is the base directory of the user setting <dir>/layat/config.toml:
+// $XDG_CONFIG_HOME, or ~/.config when it is unset. It is "" when neither can be resolved.
+func userSettingDir() string {
+	if dir := os.Getenv("XDG_CONFIG_HOME"); dir != "" {
+		return dir
+	}
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return ""
+	}
+	return filepath.Join(home, ".config")
 }
 
 // generatorEnv is the environment variable naming the manifest generator (→ ADR-0056 §1).

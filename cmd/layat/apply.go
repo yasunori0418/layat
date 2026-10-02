@@ -111,7 +111,10 @@ func newApplyCmd() *cobra.Command {
 // manifest.json (an HM module pins homeRoot, so home). It drives engine.Apply's Build=nil path
 // (a pre-built LinkFarm) from the CLI (→ engine.Options).
 func runApplyManifest(subject *applySubject, name string) error {
-	gen := newGenerator()
+	gen, err := newGenerator()
+	if err != nil {
+		return err
+	}
 	if err := gen.Discover(flagManifest); err != nil {
 		return err
 	}
@@ -167,7 +170,10 @@ func runApply(run *applyRun, name string) error {
 		return runApplyManifest(subject, name)
 	}
 
-	gen := newGenerator()
+	gen, err := newGenerator()
+	if err != nil {
+		return err
+	}
 	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}
@@ -317,7 +323,12 @@ func runApplyAll(run *applyRun) error {
 	if err != nil {
 		return err
 	}
-	gen := newGenerator()
+	// The generator is selected once; stage 1's per-config generators reuse the name (→ ADR-0056).
+	genName, err := selectGenerator()
+	if err != nil {
+		return err
+	}
+	gen := newGeneratorTo(genName, os.Stderr)
 	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}
@@ -358,7 +369,7 @@ func runApplyAll(run *applyRun) error {
 	//     Each config's generator writes its diagnostics through a "[<name>] " line prefix, so its
 	//     --debug disclosure lines stay attributable while builds run in parallel.
 	built := prebuildAll(selected, jobs, func(name string) (string, error) {
-		g := newGeneratorTo(&linePrefixWriter{w: os.Stderr, prefix: "[" + name + "] "})
+		g := newGeneratorTo(genName, &linePrefixWriter{w: os.Stderr, prefix: "[" + name + "] "})
 		if err := g.Discover(flagFile); err != nil {
 			return "", err
 		}
