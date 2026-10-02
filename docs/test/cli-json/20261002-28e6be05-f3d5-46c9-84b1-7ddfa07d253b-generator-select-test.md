@@ -28,5 +28,7 @@ covers:
   ディレクトリ（ファイルならその親）か cwd から読むこと、`-f` のディレクトリに無ければ cwd へ
   落ちないこと、`-f` を stat できなければ設定ファイルをどちらも読まないこと、`config.toml` を
   `XDG_CONFIG_HOME`（未設定なら `~/.config`）から読み、どちらも無ければ飛ばすこと
+- **`apply --all` の配線** — 不正な `LAYAT_GENERATOR` で `apply --all` が `inputError` で止まり、
+  nix を呼ばないこと
 
 nix は起動しない。

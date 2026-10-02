@@ -65,7 +65,7 @@ func TestResolveGenerator(t *testing.T) {
 		{name: "a set env does not read a broken project file", env: "nix", project: malformed, want: "nix"},
 		{name: "an unreadable settings file keeps its own classification", projectDir: true, wantErr: true,
 			errContains: "layat.toml", wantCode: "E_IO"},
-		{name: "no user config directory skips the user setting", noUserDir: true, want: "nix"},
+		{name: "no user config directory skips the user setting", user: bogus, noUserDir: true, want: "nix"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -82,6 +82,9 @@ func TestResolveGenerator(t *testing.T) {
 				}
 			}
 			if c.noUserDir {
+				// The bad config.toml stays reachable as the relative layat/config.toml, so a
+				// resolver that joins "" instead of skipping the step fails.
+				t.Chdir(userConfigDir)
 				userConfigDir = ""
 			}
 			got, err := resolveGenerator(c.flag, c.env, projectDir, userConfigDir)
@@ -119,9 +122,9 @@ func TestResolveGenerator(t *testing.T) {
 // withSelectionFlags isolates the flags and environment the generator selection reads.
 func withSelectionFlags(t *testing.T) {
 	t.Helper()
-	origGen, origManifest, origFile, origAll := flagGenerator, flagManifest, flagFile, flagApplyAll
-	t.Cleanup(func() { flagGenerator, flagManifest, flagFile, flagApplyAll = origGen, origManifest, origFile, origAll })
-	flagGenerator, flagManifest, flagFile, flagApplyAll = "", "", "", false
+	origGen, origManifest, origFile := flagGenerator, flagManifest, flagFile
+	t.Cleanup(func() { flagGenerator, flagManifest, flagFile = origGen, origManifest, origFile })
+	flagGenerator, flagManifest, flagFile = "", "", ""
 	t.Setenv(generatorEnv, "")
 	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
 	t.Chdir(t.TempDir())
@@ -207,6 +210,8 @@ func TestSelectGeneratorWiring(t *testing.T) {
 		{"neither XDG_CONFIG_HOME nor HOME skips the user setting", func(t *testing.T) {
 			t.Setenv("HOME", "")
 			t.Setenv("XDG_CONFIG_HOME", "")
+			// Reachable only if the step resolved to a relative .config under the CWD.
+			writeSetting(t, filepath.Join(".config", "layat", "config.toml"), bad)
 		}, ""},
 	}
 	for _, c := range cases {
@@ -225,5 +230,25 @@ func TestSelectGeneratorWiring(t *testing.T) {
 				t.Fatalf("selectGenerator() error = %v, want an inputError naming %q", err, c.wantErr)
 			}
 		})
+	}
+}
+
+// TestRunApplyAllSelectsGenerator pins that apply --all goes through the selection: an unknown
+// LAYAT_GENERATOR stops it as an input error before any nix call.
+func TestRunApplyAllSelectsGenerator(t *testing.T) {
+	withFlakeEntrypoint(t)
+	origManifest, origAll := flagManifest, flagApplyAll
+	t.Cleanup(func() { flagManifest, flagApplyAll = origManifest, origAll })
+	flagDryrun, flagManifest, flagApplyAll = false, "", true
+	t.Setenv(generatorEnv, "bogus")
+	log := stubNixForApply(t, `{"a":{"rootKind":"home","targets":["x"]}}`)
+	run, _ := newApplyTestRun()
+	err := runApplyAll(run)
+	var ie *inputError
+	if !errors.As(err, &ie) {
+		t.Fatalf("runApplyAll() error = %v, want an inputError", err)
+	}
+	if calls := nixCalls(t, log); len(calls) != 0 {
+		t.Errorf("nix calls = %q, want none", calls)
 	}
 }
