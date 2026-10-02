@@ -262,8 +262,8 @@ func TestJobsNegativeStopsApplyAll(t *testing.T) {
 // with --debug, with and without --dryrun. The stage-1 builds disclose their nix command lines
 // prefixed with the config name, so interleaved lines stay attributable, while the batch eval
 // before the pool keeps the plain disclosure. Every build is a stage-1 --no-link realize — a
-// failed config never re-enters stage 2's build — and nix's own stderr surfaces only inside the
-// failed config's error report.
+// failed config never re-enters stage 2's build. nix's own stderr streams through each config's
+// prefixed writer once, and the failed config's report is the generator's one-line summary.
 func TestRunApplyAllStageOneWiring(t *testing.T) {
 	for _, dryrun := range []bool{false, true} {
 		t.Run(fmt.Sprintf("dryrun=%v", dryrun), func(t *testing.T) {
@@ -304,18 +304,22 @@ func TestRunApplyAllStageOneWiring(t *testing.T) {
 			if builds != 2 {
 				t.Errorf("builds = %d, want 2 (one stage-1 realize per config, no stage-2 retry)", builds)
 			}
-			var nixStderr int
-			for i, l := range lines {
-				if l != "error: stub build failed" {
-					continue
+			for _, name := range []string{"a", "b"} {
+				nixLine := "[" + name + "] error: stub build failed"
+				if n := slices.Index(lines, nixLine); n < 0 || slices.Index(lines[n+1:], nixLine) >= 0 {
+					t.Errorf("stderr must carry %q exactly once:\n%s", nixLine, stderr)
 				}
-				nixStderr++
-				if i == 0 || !strings.HasPrefix(lines[i-1], "layat: apply ") || !strings.HasSuffix(lines[i-1], "failed:") {
-					t.Errorf("nix stderr at line %d is not inside a failure report:\n%s", i, stderr)
+				subject := name
+				if dryrun {
+					subject += " --dryrun"
+				}
+				report := "layat: apply " + subject + " failed: layat: nix build failed: exit status 1"
+				if !slices.Contains(lines, report) {
+					t.Errorf("stderr has no one-line failure report %q:\n%s", report, stderr)
 				}
 			}
-			if nixStderr != 2 {
-				t.Errorf("nix stderr lines = %d, want 2 (one inside each failed config's report):\n%s", nixStderr, stderr)
+			if n := strings.Count(stderr, "error: stub build failed"); n != 2 {
+				t.Errorf("nix stderr occurrences = %d, want 2 (one per config, not repeated in the reports):\n%s", n, stderr)
 			}
 		})
 	}
