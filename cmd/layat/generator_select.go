@@ -17,8 +17,11 @@ func newGenerator() generator.Generator {
 
 // newGeneratorTo is newGenerator writing the generator's diagnostics to w instead of stderr
 // (apply --all's stage 1 prefixes each config's lines; → ADR-0039).
+//
+// apply --all keeps ignoring --manifest and applies the entrypoint's configs through nix, as it
+// did before generators; rejecting the combination is the selection mechanism's job (→ ADR-0056).
 func newGeneratorTo(w io.Writer) generator.Generator {
-	if flagManifest != "" {
+	if flagManifest != "" && !flagApplyAll {
 		return &generator.Prebuilt{}
 	}
 	return nixgen.New(w, flagDebug)

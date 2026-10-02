@@ -41,7 +41,7 @@ func (p *Prebuilt) Roots(string) (manifest.Root, error) {
 }
 
 // AllRoots fails: a pre-built link-farm is a single config with no config list to enumerate
-// (apply --manifest is exclusive with --all · → ADR-0026).
+// (the CLI never selects prebuilt for apply --all).
 func (p *Prebuilt) AllRoots() (map[string]manifest.Root, error) {
 	return nil, NewError(NamePrebuilt, StageRoots, KindFailed,
 		"layat: a pre-built manifest (--manifest) holds a single config and cannot list all configs", "", "", nil)

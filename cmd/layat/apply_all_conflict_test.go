@@ -297,3 +297,22 @@ func TestRunApplyNamedIsNotChecked(t *testing.T) {
 		t.Errorf("evals = %d, builds = %d, want 1 and 1 (evalRoot then the in-lock build)", evals, builds)
 	}
 }
+
+// TestRunApplyAllIgnoresManifest pins that apply --all keeps ignoring --manifest, as it did before
+// generators: the run still goes through nix's batch eval and builds rather than the prebuilt
+// generator (rejecting the combination is the selection mechanism's job · → ADR-0056).
+func TestRunApplyAllIgnoresManifest(t *testing.T) {
+	withFlakeEntrypoint(t)
+	origManifest, origAll := flagManifest, flagApplyAll
+	t.Cleanup(func() { flagManifest, flagApplyAll = origManifest, origAll })
+	flagDryrun, flagManifest, flagApplyAll = false, filepath.Join(t.TempDir(), "no-link-farm"), true
+	log := stubNixForApply(t, `{"a":{"rootKind":"home","targets":["x"]}}`)
+	run, _ := newApplyTestRun()
+	if err := runApplyAll(run); err == nil {
+		t.Fatal("runApplyAll must surface the stub build failure")
+	}
+	calls := nixCalls(t, log)
+	if len(calls) < 2 || !strings.Contains(calls[0], "--apply") {
+		t.Errorf("nix calls = %q, want the batch eval and then a build", calls)
+	}
+}
