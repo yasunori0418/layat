@@ -195,7 +195,8 @@ func nixCalls(t *testing.T, log string) []string {
 	return strings.Split(strings.TrimSpace(string(b)), "\n")
 }
 
-// withFlakeEntrypoint points -f at a temp dir holding a flake.nix and isolates the state / home dirs.
+// withFlakeEntrypoint points -f at a temp dir holding a flake.nix and isolates the state / home dirs
+// and the generator selection's environment (LAYAT_GENERATOR, the user's config.toml; → ADR-0056).
 func withFlakeEntrypoint(t *testing.T) {
 	t.Helper()
 	dir := t.TempDir()
@@ -204,6 +205,8 @@ func withFlakeEntrypoint(t *testing.T) {
 	}
 	t.Setenv("HOME", t.TempDir())
 	t.Setenv("XDG_STATE_HOME", t.TempDir())
+	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
+	t.Setenv(generatorEnv, "")
 	origFile, origDryrun, origRoot, origHome := flagFile, flagDryrun, flagRoot, flagHomeRoot
 	t.Cleanup(func() { flagFile, flagDryrun, flagRoot, flagHomeRoot = origFile, origDryrun, origRoot, origHome })
 	flagFile, flagRoot, flagHomeRoot = dir, "", false
