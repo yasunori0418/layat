@@ -418,7 +418,7 @@ func TestPrerequisiteMissingGuidance(t *testing.T) {
 }
 
 // TestNotFoundKind pins a missing attribute as Kind NotFound on both the single and the batch
-// eval, and any other failure as Kind Failed.
+// eval (in both of nix's wordings) but not on build, and any other failure as Kind Failed.
 func TestNotFoundKind(t *testing.T) {
 	stubNix(t, "error: flake does not provide attribute layat")
 	g, _ := discovered(t, io.Discard, false)
@@ -431,9 +431,42 @@ func TestNotFoundKind(t *testing.T) {
 		t.Errorf("AllRoots error = %v, want Kind NotFound", err)
 	}
 
+	stubNix(t, "error: attribute web missing")
+	if _, err := g.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
+		t.Errorf("Roots error = %v, want Kind NotFound for nix's attribute-missing wording", err)
+	}
+
+	// Build runs after Roots found the config, so a missing attribute there is an evaluation
+	// error inside the config, not a missing config name.
+	stubNix(t, "error: flake does not provide attribute layat")
+	if _, err := g.DryBuild("web"); !errors.As(err, &ge) || ge.Kind != generator.KindFailed {
+		t.Errorf("DryBuild error = %v, want Kind Failed", err)
+	}
+
 	stubNix(t, "error: boom")
 	if _, err := g.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindFailed {
 		t.Errorf("Roots error = %v, want Kind Failed", err)
+	}
+}
+
+// failingWriter fails every Write.
+type failingWriter struct{}
+
+func (failingWriter) Write([]byte) (int, error) { return 0, errors.New("write failed") }
+
+// TestStderrCapturedWhenWriterFails pins that nix's stderr is still captured into Stderr when the
+// diagnostics writer fails.
+func TestStderrCapturedWhenWriterFails(t *testing.T) {
+	stubNix(t, "error: boom\n")
+	g, _ := discovered(t, failingWriter{}, false)
+
+	_, err := g.Roots("web")
+	var ge *generator.Error
+	if !errors.As(err, &ge) {
+		t.Fatalf("Roots error = %v, want a *generator.Error", err)
+	}
+	if ge.Stderr != "error: boom" {
+		t.Errorf("Stderr = %q, want the captured stderr", ge.Stderr)
 	}
 }
 

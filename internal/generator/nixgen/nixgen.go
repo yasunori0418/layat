@@ -323,7 +323,9 @@ func (g *Generator) runNix(args []string, stdout io.Writer) error {
 	cmd := exec.Command("nix", args...)
 	var stderr bytes.Buffer
 	lines := &lineWriter{w: g.stderr}
-	tee := io.MultiWriter(lines, &stderr)
+	// The capture comes first: MultiWriter stops at the first failing writer, and Stderr must
+	// not lose nix's diagnostics because the writer failed.
+	tee := io.MultiWriter(&stderr, lines)
 	if stdout == nil {
 		stdout = tee
 	}
@@ -368,9 +370,10 @@ func (l *lineWriter) flush() {
 }
 
 // nixFailure classifies a failed nix command by its stderr: experimental-features not enabled is
-// PrerequisiteMissing with the guidance to enable them, a missing attribute is NotFound (its
-// summary and guidance are the caller's, which knows what was addressed; → notFound), anything
-// else Failed. The Message is one line naming the failed subcommand; the raw stderr is kept in
+// PrerequisiteMissing with the guidance to enable them, a missing attribute while reading the
+// roots is NotFound (its summary and guidance are the caller's, which knows what was addressed;
+// → notFound), anything else Failed. A build runs only after its roots were read, so a missing
+// attribute there is an evaluation error inside the config, not a missing config name. The Message is one line naming the failed subcommand; the raw stderr is kept in
 // Stderr, never swallowed (→ ADR-0025 §1, ADR-0055 §6).
 func nixFailure(args []string, stderr string, runErr error) error {
 	cause := fmt.Errorf("layat: nix %s failed: %w", args[0], runErr)
@@ -380,7 +383,7 @@ func nixFailure(args []string, stderr string, runErr error) error {
 		kind = generator.KindPrerequisiteMissing
 		message = fmt.Sprintf("layat: nix's experimental-features are not enabled (nix %s failed)", args[0])
 		guidance = experimentalGuidance
-	case isMissingAttribute(stderr):
+	case stageOf(args) == generator.StageRoots && isMissingAttribute(stderr):
 		kind = generator.KindNotFound
 	}
 	return generator.NewError(generator.NameNix, stageOf(args), kind, message, guidance, strings.TrimSpace(stderr), cause)
