@@ -298,50 +298,92 @@ func stageOf(args []string) generator.Stage {
 }
 
 // runNixCapture captures and returns nix's stdout (for machine-readable output such as eval).
-// nix's own stderr is captured; a failure is a generator.Error carrying it (→ nixError).
 func (g *Generator) runNixCapture(args ...string) (string, error) {
-	if g.debug {
-		_, _ = fmt.Fprintf(g.stderr, "layat: + nix %s\n", strings.Join(args, " "))
-	}
-	cmd := exec.Command("nix", args...)
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	if err := cmd.Run(); err != nil {
-		cause := nixError(args, stderr.String(), err)
-		return "", generator.NewError(generator.NameNix, stageOf(args), generator.KindFailed,
-			cause.Error(), "", strings.TrimSpace(stderr.String()), cause)
+	var stdout bytes.Buffer
+	if err := g.runNix(args, &stdout); err != nil {
+		return "", err
 	}
 	return stdout.String(), nil
 }
 
 // runNixStream streams nix's output to the diagnostics writer (for build progress; stdout is reserved for machine-readable output; → ADR-0023).
-// eval succeeded before build = nix-command/flakes are already enabled, so experimental detection is unnecessary.
 func (g *Generator) runNixStream(args ...string) error {
+	return g.runNix(args, nil)
+}
+
+// runNix runs nix with its stdout going to stdout and its stderr teed: passed through to the
+// diagnostics writer on success and failure alike, and captured for the failure's Stderr
+// (→ ADR-0055 §6). The writer gets whole lines (→ lineWriter). A nil stdout streams it through
+// the same tee, so exec copies both from one pipe and the writer is never written from two
+// goroutines at once. A failure is a generator.Error classified by nix's stderr (→ nixFailure).
+func (g *Generator) runNix(args []string, stdout io.Writer) error {
 	if g.debug {
 		_, _ = fmt.Fprintf(g.stderr, "layat: + nix %s\n", strings.Join(args, " "))
 	}
 	cmd := exec.Command("nix", args...)
-	cmd.Stdout = g.stderr
-	cmd.Stderr = g.stderr
-	if err := cmd.Run(); err != nil {
-		cause := fmt.Errorf("layat: nix %s failed: %w", args[0], err)
-		return generator.NewError(generator.NameNix, stageOf(args), generator.KindFailed, cause.Error(), "", "", cause)
+	var stderr bytes.Buffer
+	lines := &lineWriter{w: g.stderr}
+	tee := io.MultiWriter(lines, &stderr)
+	if stdout == nil {
+		stdout = tee
+	}
+	cmd.Stdout = stdout
+	cmd.Stderr = tee
+	err := cmd.Run()
+	lines.flush()
+	if err != nil {
+		return nixFailure(args, stderr.String(), err)
 	}
 	return nil
 }
 
-// nixError classifies a nix failure. For experimental-features not enabled it guides the prerequisites,
-// and otherwise it returns the raw nix stderr attached without swallowing it (→ ADR-0025 §1).
-func nixError(args []string, stderr string, runErr error) error {
-	if isExperimentalDisabled(stderr) {
-		return experimentalGuidance(stderr)
+// lineWriter passes what is written to it on to w in whole lines: each Write hands over the
+// lines completed so far in one call and keeps the unterminated rest until flush. A line-prefixing
+// writer shared by parallel generators (apply --all's stage 1) thus never sees a line in pieces
+// that another generator's line could cut into.
+type lineWriter struct {
+	w   io.Writer
+	buf []byte
+}
+
+func (l *lineWriter) Write(b []byte) (int, error) {
+	l.buf = append(l.buf, b...)
+	i := bytes.LastIndexByte(l.buf, '\n')
+	if i < 0 {
+		return len(b), nil
 	}
-	trimmed := strings.TrimSpace(stderr)
-	if trimmed == "" {
-		return fmt.Errorf("layat: nix %s failed: %w", args[0], runErr)
+	if _, err := l.w.Write(l.buf[:i+1]); err != nil {
+		return 0, err
 	}
-	return fmt.Errorf("layat: nix %s failed:\n%s", args[0], trimmed)
+	l.buf = append(l.buf[:0], l.buf[i+1:]...)
+	return len(b), nil
+}
+
+// flush writes the unterminated rest once the command has exited.
+func (l *lineWriter) flush() {
+	if len(l.buf) > 0 {
+		_, _ = l.w.Write(l.buf)
+		l.buf = l.buf[:0]
+	}
+}
+
+// nixFailure classifies a failed nix command by its stderr: experimental-features not enabled is
+// PrerequisiteMissing with the guidance to enable them, a missing attribute is NotFound (its
+// summary and guidance are the caller's, which knows what was addressed; → notFound), anything
+// else Failed. The Message is one line naming the failed subcommand; the raw stderr is kept in
+// Stderr, never swallowed (→ ADR-0025 §1, ADR-0055 §6).
+func nixFailure(args []string, stderr string, runErr error) error {
+	cause := fmt.Errorf("layat: nix %s failed: %w", args[0], runErr)
+	kind, message, guidance := generator.KindFailed, cause.Error(), ""
+	switch {
+	case isExperimentalDisabled(stderr):
+		kind = generator.KindPrerequisiteMissing
+		message = fmt.Sprintf("layat: nix's experimental-features are not enabled (nix %s failed)", args[0])
+		guidance = experimentalGuidance
+	case isMissingAttribute(stderr):
+		kind = generator.KindNotFound
+	}
+	return generator.NewError(generator.NameNix, stageOf(args), kind, message, guidance, strings.TrimSpace(stderr), cause)
 }
 
 // isExperimentalDisabled detects the nix-command / flakes not-enabled error (→ ADR-0025 §1).
@@ -351,11 +393,16 @@ func isExperimentalDisabled(stderr string) bool {
 		(strings.Contains(stderr, "flakes") && strings.Contains(stderr, "disabled"))
 }
 
-// experimentalGuidance builds an error that guides the prerequisites and how to enable them (attaching the raw nix error too).
-// The CLI does not add --extra-experimental-features automatically (it will not silently override environment settings; → ADR-0025 §1).
-func experimentalGuidance(stderr string) error {
-	return fmt.Errorf(`layat: nix's experimental-features are not enabled.
-This command internally uses `+"`nix eval`"+` / `+"`nix build`"+` (the new CLI) and flakes,
+// isMissingAttribute detects nix reporting that the addressed attribute does not exist.
+func isMissingAttribute(stderr string) bool {
+	return strings.Contains(stderr, "does not provide attribute") ||
+		(strings.Contains(stderr, "attribute") && strings.Contains(stderr, "missing"))
+}
+
+// experimentalGuidance guides the prerequisites and how to enable them. The CLI does not add
+// --extra-experimental-features automatically (it will not silently override environment
+// settings; → ADR-0025 §1).
+const experimentalGuidance = `This command internally uses ` + "`nix eval`" + ` / ` + "`nix build`" + ` (the new CLI) and flakes,
 so experimental-features = nix-command flakes is required.
 
 How to enable (either one):
@@ -364,34 +411,26 @@ How to enable (either one):
   - Temporarily via an environment variable:
       export NIX_CONFIG="experimental-features = nix-command flakes"
 
-layat does not add --extra-experimental-features automatically (it will not override your environment settings).
-
-Original nix error:
-%s`, strings.TrimSpace(stderr))
-}
+layat does not add --extra-experimental-features automatically (it will not override your environment settings).`
 
 // wrapEvalErr makes the "layat.<name> does not exist" case of an eval failure clearer
-// (experimental etc. are passed through as-is) (→ docs/spec.md error spec). The lead line goes
-// before the nix error's message; the stage, the captured stderr, and the cause are kept.
+// (→ docs/spec.md error spec); any other failure is passed through as-is.
 func wrapEvalErr(err error, label string) error {
-	return prependMissing(err, fmt.Sprintf("layat: %s not found in the entrypoint (check the config name)", label))
+	return notFound(err, label, "check the config name")
 }
 
 // wrapEvalAllErr makes the "layat.<system> does not exist" case of a batch eval failure clearer.
 func wrapEvalAllErr(err error, label string) error {
-	return prependMissing(err, fmt.Sprintf("layat: %s not found in the entrypoint (no configs found)", label))
+	return notFound(err, label, "no configs found; define configs under "+label)
 }
 
-// prependMissing puts lead before a generator.Error's message when nix reported a missing attribute.
-func prependMissing(err error, lead string) error {
+// notFound rewrites a NotFound generator.Error's summary to name the missing label and gives it
+// guidance; the stage, the captured stderr, and the cause are kept.
+func notFound(err error, label, guidance string) error {
 	var ge *generator.Error
-	if !errors.As(err, &ge) {
+	if !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
 		return err
 	}
-	msg := ge.Message
-	if strings.Contains(msg, "does not provide attribute") ||
-		(strings.Contains(msg, "attribute") && strings.Contains(msg, "missing")) {
-		return generator.NewError(ge.Generator, ge.Stage, ge.Kind, lead+"\n"+msg, ge.Guidance, ge.Stderr, ge.Unwrap())
-	}
-	return err
+	message := fmt.Sprintf("layat: %s not found in the entrypoint (nix eval failed)", label)
+	return generator.NewError(ge.Generator, ge.Stage, ge.Kind, message, guidance, ge.Stderr, ge.Unwrap())
 }
