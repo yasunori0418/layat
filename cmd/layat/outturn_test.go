@@ -325,6 +325,21 @@ func TestClassifyErrorCodes(t *testing.T) {
 	genErr := func(name string, stage generator.Stage, cause error) error {
 		return generator.NewError(name, stage, generator.KindFailed, "layat: generator failed", "", "", cause)
 	}
+	// The input rejections are produced by their real sources (→ ADR-0056 §5): the unknown values
+	// by the resolver, the --manifest combinations by apply (which return before any nix call).
+	resolveErr := func(flag, env string) error {
+		_, err := resolveGenerator(flag, env, "", "")
+		return err
+	}
+	origManifest, origFile, origAll := flagManifest, flagFile, flagApplyAll
+	t.Cleanup(func() { flagManifest, flagFile, flagApplyAll = origManifest, origFile, origAll })
+	flagManifest, flagFile, flagApplyAll = "/nonexistent/link-farm", "/nonexistent/flake", false
+	run, _ := newApplyTestRun()
+	manifestWithFile := runApply(run, "default")
+	flagFile, flagApplyAll = "", true
+	run, _ = newApplyTestRun()
+	manifestWithAll := runApplyAll(run)
+	flagManifest, flagFile, flagApplyAll = origManifest, origFile, origAll
 	cases := []struct {
 		name string
 		err  error
@@ -340,6 +355,10 @@ func TestClassifyErrorCodes(t *testing.T) {
 		{"prebuilt failure keeps its not-found cause", genErr(generator.NamePrebuilt, generator.StageRoots, notExist), "E_NOTFOUND"},
 		{"input rejection", &inputError{err: errors.New("layat: --manifest cannot be combined with -f")}, "E_INPUT"},
 		{"input marker beats its not-found cause", &inputError{err: notExist}, "E_INPUT"},
+		{"unknown --generator value", resolveErr("bogus", ""), "E_INPUT"},
+		{"unknown LAYAT_GENERATOR value", resolveErr("", "bogus"), "E_INPUT"},
+		{"--manifest with -f", manifestWithFile, "E_INPUT"},
+		{"--manifest with --all", manifestWithAll, "E_INPUT"},
 		{"input marker survives a %w rewrap",
 			fmt.Errorf("context: %w", &inputError{err: errors.New("layat: bad flags")}), "E_INPUT"},
 		{"lock sentinel", lock.ErrLocked, "E_LOCK"},

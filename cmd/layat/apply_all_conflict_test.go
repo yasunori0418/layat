@@ -5,6 +5,7 @@ package main
 // the root filter's selection, the non-check of a named apply, and the --json top-level errors[].
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -298,21 +299,26 @@ func TestRunApplyNamedIsNotChecked(t *testing.T) {
 	}
 }
 
-// TestRunApplyAllIgnoresManifest pins that apply --all keeps ignoring --manifest, as it did before
-// generators: the run still goes through nix's batch eval and builds rather than the prebuilt
-// generator (rejecting the combination is the selection mechanism's job · → ADR-0056).
-func TestRunApplyAllIgnoresManifest(t *testing.T) {
+// TestRunApplyAllRejectsManifest pins that apply --all rejects --manifest as an input error before
+// any nix call: --manifest fixes the source to a single pre-built link-farm, which --all cannot
+// apply config by config (→ ADR-0056 §5, ADR-0026).
+func TestRunApplyAllRejectsManifest(t *testing.T) {
 	withFlakeEntrypoint(t)
 	origManifest, origAll := flagManifest, flagApplyAll
 	t.Cleanup(func() { flagManifest, flagApplyAll = origManifest, origAll })
 	flagDryrun, flagManifest, flagApplyAll = false, filepath.Join(t.TempDir(), "no-link-farm"), true
 	log := stubNixForApply(t, `{"a":{"rootKind":"home","targets":["x"]}}`)
 	run, _ := newApplyTestRun()
-	if err := runApplyAll(run); err == nil {
-		t.Fatal("runApplyAll must surface the stub build failure")
+	err := runApplyAll(run)
+	var ie *inputError
+	if !errors.As(err, &ie) {
+		t.Fatalf("runApplyAll() error = %v, want an inputError", err)
 	}
-	calls := nixCalls(t, log)
-	if len(calls) < 2 || !strings.Contains(calls[0], "--apply") {
-		t.Errorf("nix calls = %q, want the batch eval and then a build", calls)
+	const want = "layat: --manifest cannot be combined with --all (--manifest fixes the source to a pre-built link-farm)"
+	if err.Error() != want {
+		t.Errorf("error = %q, want %q", err.Error(), want)
+	}
+	if calls := nixCalls(t, log); len(calls) != 0 {
+		t.Errorf("nix calls = %q, want none", calls)
 	}
 }

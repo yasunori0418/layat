@@ -162,7 +162,7 @@ func runApply(run *applyRun, name string) error {
 		// --manifest fixes the source to a link-farm, so it conflicts in meaning with the
 		// entrypoint discovery flags (the positional name is orthogonal as a profile selector and coexists; → ADR-0026).
 		if flagFile != "" {
-			return errors.New("layat: --manifest cannot be combined with -f (--manifest fixes the source to a pre-built link-farm)")
+			return &inputError{err: errors.New("layat: --manifest cannot be combined with -f (--manifest fixes the source to a pre-built link-farm)")}
 		}
 		return runApplyManifest(subject, name)
 	}
@@ -304,6 +304,11 @@ func dryBuildFunc(gen generator.Generator, name string) engine.BuildFunc {
 // emits with N=1 (→ issue #164); the failures below stay on their own subject, so a partial
 // failure still carries every succeeded config's result.
 func runApplyAll(run *applyRun) error {
+	// --manifest fixes the source to one pre-built link-farm, which --all cannot apply config by
+	// config; reject it before any discovery or nix call (→ ADR-0056 §5, ADR-0026).
+	if flagManifest != "" {
+		return &inputError{err: errors.New("layat: --manifest cannot be combined with --all (--manifest fixes the source to a pre-built link-farm)")}
+	}
 	filter, err := selectedRootFilter()
 	if err != nil {
 		return err
