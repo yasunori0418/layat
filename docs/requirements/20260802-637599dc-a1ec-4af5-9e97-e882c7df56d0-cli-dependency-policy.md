@@ -8,17 +8,19 @@ derives_from:
 specification: |
   Everything the CLI brings in SHALL be confined to what has been explicitly allowed, and
   each SHALL be pinned, in contrast to the engine's stdlib-only constraint. A minimal set
-  of third-party dependencies SHALL be allowed — cobra, for subcommands and help, and
+  of third-party dependencies SHALL be allowed — cobra, for subcommands and help,
   `github.com/pelletier/go-toml/v2`, for the configuration file that selects the manifest
-  generator — while placement itself is done by importing the engine. Those dependencies SHALL be
+  generator, and `github.com/yasunori0418/outturn/go`, for the `--json` envelope types and
+  item id derivation — while placement itself is done by importing the engine. Those dependencies SHALL be
   fixed by building with `buildGoModule` and a vendorHash string. The Go toolchain SHALL
   be pinned to the go of nixpkgs, and the `toolchain` directive SHALL NOT be used, so that
   the build does not fetch a toolchain of its own and stays reproducible under Nix.
 specification_ja: |
   CLI が持ち込むものは明示的に許可したものだけに閉じ、いずれも固定しなければならない
   （engine の stdlib-only 制約とは対照的に扱う）。第三者依存は最小限だけ許可しなければ
-  ならない（サブコマンド / help のための cobra と、manifest 生成器を選ぶ設定ファイルのための
-  `github.com/pelletier/go-toml/v2`）。配置そのものは engine を import して行う。
+  ならない（サブコマンド / help のための cobra、manifest 生成器を選ぶ設定ファイルのための
+  `github.com/pelletier/go-toml/v2`、`--json` のエンベロープ型と item id 導出のための
+  `github.com/yasunori0418/outturn/go`）。配置そのものは engine を import して行う。
   それらの依存は `buildGoModule` と vendorHash 文字列でビルドすることによって固定しなければ
   ならない。
   Go ツールチェーンは nixpkgs の go に pin しなければならず、`toolchain` ディレクティブを
@@ -56,3 +58,5 @@ specification_ja: |
 帰属は REQ-14f0aec9-abae-4621-82f3-40536a1ad904 / REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 が担当する）。
 
 go-toml/v2 の許可は ADR-0056「生成器の選択と設定ファイル」§4 が定めている。
+
+outturn/go の許可は ADR-0043「`--json` 機械可読出力を outturn 規約準拠にし、JSON 出力の outturn 準拠を恒常原則とする」§8 が定めている。
