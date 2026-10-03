@@ -8,15 +8,17 @@ derives_from:
 specification: |
   Everything the CLI brings in SHALL be confined to what has been explicitly allowed, and
   each SHALL be pinned, in contrast to the engine's stdlib-only constraint. A minimal set
-  of third-party dependencies SHALL be allowed — cobra, for subcommands and help — while
-  placement itself is done by importing the engine. Those dependencies SHALL be
+  of third-party dependencies SHALL be allowed — cobra, for subcommands and help, and
+  `github.com/pelletier/go-toml/v2`, for the configuration file that selects the manifest
+  generator — while placement itself is done by importing the engine. Those dependencies SHALL be
   fixed by building with `buildGoModule` and a vendorHash string. The Go toolchain SHALL
   be pinned to the go of nixpkgs, and the `toolchain` directive SHALL NOT be used, so that
   the build does not fetch a toolchain of its own and stays reproducible under Nix.
 specification_ja: |
   CLI が持ち込むものは明示的に許可したものだけに閉じ、いずれも固定しなければならない
   （engine の stdlib-only 制約とは対照的に扱う）。第三者依存は最小限だけ許可しなければ
-  ならない（サブコマンド / help のための cobra）。配置そのものは engine を import して行う。
+  ならない（サブコマンド / help のための cobra と、manifest 生成器を選ぶ設定ファイルのための
+  `github.com/pelletier/go-toml/v2`）。配置そのものは engine を import して行う。
   それらの依存は `buildGoModule` と vendorHash 文字列でビルドすることによって固定しなければ
   ならない。
   Go ツールチェーンは nixpkgs の go に pin しなければならず、`toolchain` ディレクティブを
@@ -37,6 +39,11 @@ specification_ja: |
 > engine の import に触れるのは、第三者依存を最小限に抑えられる前提が「配置を自前で
 > 持たず engine に委ねること」にあるためで、その役割分担自体を規範化するものではない。
 
+> **2026-10-02 追記（ADR-0056）**: 許可する第三者依存に `github.com/pelletier/go-toml/v2`
+> （生成器を選ぶ設定ファイル `layat.toml` / `config.toml` のパーサ）を足した。import は
+> `cmd/layat` に閉じ、engine の stdlib-only は変わらない。表の「`nix`（build / eval）
+> オーケストレーション」は manifest 生成器（既定 nix）経由に読み替える（→ ADR-0055）。
+
 ## 出典
 
 `docs/spec.md`「依存関係」節の表の `cmd/layat` 行。
@@ -47,3 +54,5 @@ specification_ja: |
 移行する」が定めるが、同 ADR は cobra / vendorHash / Go の pin のいずれにも触れておらず、
 この item の規範を決めていないため、側面の根拠として `justifies` は張らない（位置づけそのものの
 帰属は REQ-14f0aec9-abae-4621-82f3-40536a1ad904 / REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 が担当する）。
+
+go-toml/v2 の許可は ADR-0056「生成器の選択と設定ファイル」§4 が定めている。

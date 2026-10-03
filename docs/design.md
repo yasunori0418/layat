@@ -77,6 +77,7 @@ CLI / engine / lib / `common.nix` / 統合層の 5 段に積み、依存は呼�
 （→ ADR-0003, ADR-0006）。
 
 - [DSG-17db0831-d7da-446d-ba3e-404df64c582d](design/20260802-17db0831-d7da-446d-ba3e-404df64c582d-layer-stack-dependency.md) — 層を CLI / engine / lib / common.nix / 統合層の 5 段に積み、依存を呼ぶ側から呼ばれる側への一方向に限る
+- [DSG-25ad3cce-f921-4db2-aae0-c0263d4b8295](design/20261002-25ad3cce-f921-4db2-aae0-c0263d4b8295-generator-package-layout.md) — internal/generator は契約・prebuilt・Fake を親パッケージに、nix 実装を nixgen サブパッケージに置き、cmd 層は注入点だけを持つ
 
 ---
 

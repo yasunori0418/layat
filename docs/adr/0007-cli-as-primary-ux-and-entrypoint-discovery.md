@@ -42,7 +42,7 @@ references:
 
 - ステータス: 採用（2026-06-14 追記: project mode の `nput` は devShell 同梱が canonical → ADR-0015／2026-07-03 改訂: legacy entrypoint の addressing を `nix build -f` に統一 → ADR-0032）
 - 日付: 2026-06-13
-- 関連: ADR-0002, ADR-0003, ADR-0004, ADR-0005, ADR-0006, ADR-0015, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
+- 関連: ADR-0002, ADR-0003, ADR-0004, ADR-0005, ADR-0006, ADR-0015, ADR-0055, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
 - 改訂対象: ADR-0006「nput の露出と環境セットアップ」節と棄却案（本 ADR が反転）、ADR-0004 / ADR-0005 の root モデル
 - 起点 Issue: #2（root デフォルト）, #3（CLI 化）, #4（flake.nix 以外の entrypoint）
 
@@ -76,6 +76,11 @@ references:
 > **ツール名の改名により、CLI 名・名前空間・サブコマンドの字句が `layat` へ変わる**。CLI 名は `layat`、名前空間は `layat.<name>`
 > （flake 出力 `layat.<system>.<name>`）、サブコマンドは `layat init` になる。一次 UX を CLI に置くという
 > 決定・entrypoint 発見の優先順・root 明示必須のモデルは字句以外に変更が無い（→ ADR-0054）。
+
+> **2026-10-02 改訂注記（ADR-0055）**: 本 ADR の CLI を一次 UX とする決定と entrypoint 発見の優先順は不変。ただし §3.2 の
+> 「内部で `nix build` / `nix eval` を回して store path を得る」主体は manifest 生成器（既定 nix）になり、entrypoint 発見は
+> 生成器の Discover 操作として nix 実装が持つ。§3 の透明性（内部実行する nix コマンドの開示）は、
+> `--help` の文面を CLI が持ち、`--debug` の逐次開示は生成器が担う（生成器名付きで内部コマンドを書く・→ ADR-0055 §8）。
 
 ## 背景
 

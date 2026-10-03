@@ -28,7 +28,7 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-06-14
-- 関連: ADR-0005, ADR-0006, ADR-0007, ADR-0011, ADR-0013, ADR-0017, ADR-0018, ADR-0022, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `CONTEXT.md`
+- 関連: ADR-0005, ADR-0006, ADR-0007, ADR-0011, ADR-0013, ADR-0017, ADR-0018, ADR-0022, ADR-0055, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `CONTEXT.md`
 - 改訂対象: ADR-0011 / ADR-0013 の apply 実行フロー順序を「eval 先行」に具体化（決定の反転なし）。ADR-0017 の `--root` profile キーイングを home / fixed mode へ拡張。
 - 起点: 実装着手前（ドキュメントのみの計画段階を抜ける直前）の横断検査で、ADR-0022 までで潰し切れていない5点を洗い出した（ADR-0015/0016/0017/0022 と同系列の「実装前残セマンティクス」確定の第5巡）
 
@@ -52,6 +52,11 @@ references:
 > （→ ADR-0033）。
 >
 > **2026-07-07 改訂注記（ADR-0043）**: 本 ADR §2 の出力規律のうち **「warning / error は stdout に畳み込まず stderr 専有」を ADR-0043 が再改訂**した。stdout=機械可読専有・warning/error を常時 stderr に出す骨子と終了コード表（0/1/2）は不変だが、`--json` 時はエラーの**構造化コピーを outturn エンベロープにも載せる**（stderr テキストは併存）。また `--json` の出力形は ADR-0033 の独自エンベロープから **outturn specVersion 1 準拠**へ改訂された（→ ADR-0043）。
+
+> **2026-10-02 改訂注記（ADR-0055）**: 本 ADR §1 の「eval 先行（rootKind 取得 → root 解決 → profileDir 確定）→ flock → build（ロック内）」は
+> 不変。ただし rootKind の先読みは manifest 生成器の Roots 操作になり、**全ての生成器が build 前に答えなければならない
+> 契約の前提条件**に位置づけた（先読みできる生成器だけが持つ能力宣言にはしない）。ロック内の build は生成器の Build 操作で、
+> 事後条件は「世代コミット可能な link-farm（= store path）を pending に張って返す」こと（→ ADR-0055）。
 
 ## 背景
 
