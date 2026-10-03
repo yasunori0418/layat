@@ -68,7 +68,10 @@ func runGitignore(run *gitignoreRun, name string) error {
 	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
 	// A named listing registers exactly one, so the run's results[] holds N=1 (→ issue #164).
 	subject := run.beginSubject(name)
-	gen := newGenerator()
+	gen, err := newGenerator()
+	if err != nil {
+		return err
+	}
 	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}
@@ -121,7 +124,10 @@ func gitignoreAnchors(targets []string) []string {
 // Attributing a shared path to one arbitrary config would be a lie about which config declares it;
 // a consumer that wants the union takes it across the results itself.
 func runGitignoreAll(run *gitignoreRun) error {
-	gen := newGenerator()
+	gen, err := newGenerator()
+	if err != nil {
+		return err
+	}
 	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}

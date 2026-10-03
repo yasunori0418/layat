@@ -446,7 +446,36 @@ layat init <template>           # wrapper over `nix flake init -t github:yasunor
 --recopy            # apply qualifier: overwrite every copy target from src
 --manifest <path>   # apply only: apply a pre-built link-farm directly
 -y, --yes           # skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)
+--generator <name>  # manifest generator (only `nix` today; see "Choosing the generator")
 ```
+
+### Choosing the generator
+
+layat obtains the manifest through a generator; `nix` is the only one you can choose today
+(and the default). It is chosen explicitly, never guessed from the files present, by the first
+of these that sets it:
+
+1. `--generator <name>`
+2. the `LAYAT_GENERATOR` environment variable
+3. the project setting `layat.toml` — in the `-f` directory (the file's directory when `-f`
+   names a file), otherwise in the CWD; parent directories are not searched
+4. the user setting `$XDG_CONFIG_HOME/layat/config.toml` (`~/.config/layat/config.toml` when
+   `XDG_CONFIG_HOME` is unset)
+5. the default `nix`
+
+```toml
+# layat.toml / config.toml — `generator` is the only key
+generator = "nix"
+```
+
+An empty `LAYAT_GENERATOR` and a settings file without `generator` count as unset and pass on
+to the next step. The settings files are strict: an unknown key, a TOML syntax error, or an
+unknown generator name (from any step) stops the command with exit 1 and one line on stderr
+(`E_INPUT` under `--json`).
+
+`apply --manifest` reads neither `LAYAT_GENERATOR` nor any settings file — module activation
+runs in an environment you do not control — and rejects `--generator`, `-f`, and `--all`
+(`E_INPUT`). `prune` and `init` obtain no manifest and ignore the whole mechanism.
 
 ### Output and exit codes
 

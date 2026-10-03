@@ -47,7 +47,7 @@ claim 方式は採らない。優先順位は次のとおりで、上で値が�
 1. `--generator <name>`（persistent flag）
 2. 環境変数 `LAYAT_GENERATOR`
 3. プロジェクト設定 `layat.toml`
-4. ユーザー設定 `$XDG_CONFIG_HOME/layat/config.toml`（`XDG_CONFIG_HOME` 未設定時は `~/.config/layat/config.toml`）
+4. ユーザー設定 `$XDG_CONFIG_HOME/layat/config.toml`（`XDG_CONFIG_HOME` 未設定時は `~/.config/layat/config.toml`。どちらも解決できないときはこの段を飛ばす）
 5. 既定 `nix`
 
 空文字の `LAYAT_GENERATOR` と、`generator` キーを持たない設定ファイルは「指定なし」として次の段へ進む（キーの無い設定ファイルは不正ではない）。
@@ -61,12 +61,14 @@ claim 方式は採らない。優先順位は次のとおりで、上で値が�
 ### 3. 設定ファイルの探索
 
 - プロジェクト設定 `layat.toml` は **`-f` で指定したディレクトリ（`-f` がファイルならそのファイルのあるディレクトリ）、無ければ cwd** だけを見る。**上方向探索はしない**。entrypoint 発見と同じ規律で、「設定を読むには entrypoint が要り、entrypoint 発見には生成器が要る」循環を避ける。
+- `-f` のパスを stat できないときは、プロジェクト設定・ユーザー設定のどちらも読まずに既定の `nix` へ進む（フラグ・環境変数の段はそのまま効く）。entrypoint が無いことは生成器の発見が既存のエラー（`E_NOTFOUND`）で報告し、設定ファイルの不正がそれを覆い隠さない。
 - 設定ファイルが読むのは生成器の選択だけで、**config の発見には使わない**（ADR-0006 の設定ファイル側の決定は不変）。
 
 ### 4. 形式は TOML で strict
 
 - 形式は TOML。パーサに `github.com/pelletier/go-toml/v2` を CLI の依存として許可する（engine は stdlib-only のまま）。
 - 未知キーはエラー（strict）。version 項目は持たない。項目は当面 `generator` のみ。
+- 存在するが読めない設定ファイル（権限なし・ディレクトリ）は入力不正にしない。内容の誤りではなく環境の問題なので、読み込み失敗の分類（`E_PERMISSION` / `E_IO`）を保つ。
 
 ```toml
 generator = "nix"

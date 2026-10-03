@@ -66,7 +66,10 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
 	// A named listing registers exactly one, so the run's results[] holds N=1 (→ issue #164).
 	subject := run.beginSubject(name)
-	gen := newGenerator()
+	gen, err := newGenerator()
+	if err != nil {
+		return err
+	}
 	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}

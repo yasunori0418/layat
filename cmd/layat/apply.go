@@ -111,7 +111,10 @@ func newApplyCmd() *cobra.Command {
 // manifest.json (an HM module pins homeRoot, so home). It drives engine.Apply's Build=nil path
 // (a pre-built LinkFarm) from the CLI (→ engine.Options).
 func runApplyManifest(subject *applySubject, name string) error {
-	gen := newGenerator()
+	gen, err := newGenerator()
+	if err != nil {
+		return err
+	}
 	if err := gen.Discover(flagManifest); err != nil {
 		return err
 	}
@@ -162,12 +165,15 @@ func runApply(run *applyRun, name string) error {
 		// --manifest fixes the source to a link-farm, so it conflicts in meaning with the
 		// entrypoint discovery flags (the positional name is orthogonal as a profile selector and coexists; → ADR-0026).
 		if flagFile != "" {
-			return errors.New("layat: --manifest cannot be combined with -f (--manifest fixes the source to a pre-built link-farm)")
+			return &inputError{err: errors.New("layat: --manifest cannot be combined with -f (--manifest fixes the source to a pre-built link-farm)")}
 		}
 		return runApplyManifest(subject, name)
 	}
 
-	gen := newGenerator()
+	gen, err := newGenerator()
+	if err != nil {
+		return err
+	}
 	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}
@@ -304,6 +310,11 @@ func dryBuildFunc(gen generator.Generator, name string) engine.BuildFunc {
 // emits with N=1 (→ issue #164); the failures below stay on their own subject, so a partial
 // failure still carries every succeeded config's result.
 func runApplyAll(run *applyRun) error {
+	// --manifest fixes the source to one pre-built link-farm, which --all cannot apply config by
+	// config; reject it before any discovery or nix call (→ ADR-0056 §5, ADR-0026).
+	if flagManifest != "" {
+		return &inputError{err: errors.New("layat: --manifest cannot be combined with --all (--manifest fixes the source to a pre-built link-farm)")}
+	}
 	filter, err := selectedRootFilter()
 	if err != nil {
 		return err
@@ -312,7 +323,12 @@ func runApplyAll(run *applyRun) error {
 	if err != nil {
 		return err
 	}
-	gen := newGenerator()
+	// The generator is selected once; stage 1's per-config generators reuse the name (→ ADR-0056).
+	genName, err := selectGenerator()
+	if err != nil {
+		return err
+	}
+	gen := newGeneratorTo(genName, os.Stderr)
 	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}
@@ -353,7 +369,7 @@ func runApplyAll(run *applyRun) error {
 	//     Each config's generator writes its diagnostics through a "[<name>] " line prefix, so its
 	//     --debug disclosure lines stay attributable while builds run in parallel.
 	built := prebuildAll(selected, jobs, func(name string) (string, error) {
-		g := newGeneratorTo(&linePrefixWriter{w: os.Stderr, prefix: "[" + name + "] "})
+		g := newGeneratorTo(genName, &linePrefixWriter{w: os.Stderr, prefix: "[" + name + "] "})
 		if err := g.Discover(flagFile); err != nil {
 			return "", err
 		}

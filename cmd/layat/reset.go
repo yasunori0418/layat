@@ -54,7 +54,10 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
 	// reset is name-required (no --all), so the run always holds exactly this one (→ issue #164).
 	subject := run.beginSubject(name)
-	gen := newGenerator()
+	gen, err := newGenerator()
+	if err != nil {
+		return err
+	}
 	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}

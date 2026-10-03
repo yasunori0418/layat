@@ -147,6 +147,9 @@ e2e_isolate() {
 	# 動かせず、これが無いと破壊的な prune がランナーの実状態を触りうる（→ cmd/layat/prune.go の
 	# LAYAT_SYSTEM_PROFILE_BASE）。dir は作らない（基底の不在は正常系）。
 	export LAYAT_SYSTEM_PROFILE_BASE="$E2E_WORK/system"
+	# ユーザー設定 $XDG_CONFIG_HOME/layat/config.toml（→ ADR-0056）もランナーの実設定を読まない
+	# よう隔離先へ向ける（XDG_CONFIG_HOME が設定済みだと HOME の差し替えでは外れない）。
+	export XDG_CONFIG_HOME="$E2E_WORK/config"
 	# 一時 HOME には nix の設定が無いため、ランナーの実設定（experimental-features 等）を引き継ぐ。
 	export NIX_CONFIG="${NIX_CONFIG:-}
 experimental-features = nix-command flakes"
