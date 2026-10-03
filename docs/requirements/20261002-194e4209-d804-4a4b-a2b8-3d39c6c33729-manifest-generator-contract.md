@@ -10,10 +10,12 @@ specification: |
   layer SHALL keep no more than the selection of a generator and its injection into the
   engine. The contract SHALL take a config `name` as its only config argument, without a
   system, and SHALL provide four operations: Discover, which finds the entrypoint; Roots,
-  which returns `manifest.Root` (rootKind, the fixed root when fixed, and the normalized
-  target list) for one config or for all configs without building anything; Build, which
+  which returns `manifest.Root` (rootKind and the fixed root when fixed) for one config or
+  for all configs without building anything; Build, which
   takes a name and a pending path; and DryBuild, which returns the store path of the
-  link-farm without laying down a gcroot. Every generator SHALL answer Roots before any
+  link-farm without laying down a gcroot. The all-configs Roots and the prebuilt generator's
+  Roots SHALL also return the normalized target list, while a single-config Roots MAY omit
+  it. Every generator SHALL answer Roots before any
   build, because the apply flow resolves profileDir and takes the lock before it builds.
   Build SHALL lay down at the pending path, and return, a link-farm that can be committed
   as a generation, which means a store path. `--manifest` SHALL be served by a prebuilt
@@ -24,8 +26,10 @@ specification_ja: |
   生成器の選択と engine への注入だけにしなければならない。契約が取る config の引数は
   `name` のみとし（system は取らない）、次の 4 操作を持たなければならない: entrypoint を
   発見する Discover、build せずに 1 config 分または全 config 分の `manifest.Root`
-  （rootKind・fixed のときの root・正規化後の target 一覧）を返す Roots、name と pending の
+  （rootKind・fixed のときの root）を返す Roots、name と pending の
   パスを取る Build、gcroot を張らずに link-farm の store path を返す DryBuild。
+  全 config 分の Roots と prebuilt 生成器の Roots は正規化後の target 一覧も返さなければ
+  ならず、1 config 分の Roots はそれを省いてもよい。
   apply の実行フローは build の前に profileDir を確定してロックを取るため、全ての生成器は
   build の前に Roots に答えなければならない。Build は世代コミット可能な link-farm
   （= store path）を pending のパスに張って返さなければならない。`--manifest` は prebuilt
@@ -39,7 +43,7 @@ specification_ja: |
 | 操作 | 入力 | 出力・事後条件 |
 |---|---|---|
 | Discover | `-f` の値（無ければ cwd） | entrypoint を発見する |
-| Roots | `name`（`--all` 用の一括取得は全件） | build せずに `manifest.Root`（`RootKind` / `Root` / `Targets`）を返す |
+| Roots | `name`（`--all` 用の一括取得は全件） | build せずに `manifest.Root`（`RootKind` / `Root`）を返す。`--all` 用の一括取得と prebuilt は `Targets` も返す（単一 config では任意） |
 | Build | `name` + pending のパス | 世代コミット可能な link-farm（= store path）を pending に張って返す |
 | DryBuild | `name` | link-farm の store path を gcroot を張らずに返す |
 
@@ -50,6 +54,8 @@ specification_ja: |
 - `--manifest` は prebuilt 生成器で、その外面（フラグ・`-f` / `--all` との排他）は
   REQ-dec58330-6dad-47f7-8f56-2402764a89c7 の担当。
 - `Targets` は Go 構造体 `manifest.Root` 側のフィールドで、manifest.json スキーマ v1 は変えない。
+  消費者は `apply --all` の cross-config target 衝突検査だけなので、課すのは一括取得と prebuilt に
+  限る（単一 config の Roots で返すと nix 実装の eval が 1 本増える）。
 
 生成器の選び方は REQ-badc7e10-0ba4-40d4-b334-6e40193119db、診断の扱いは
 REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd の担当。

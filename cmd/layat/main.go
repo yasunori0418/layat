@@ -15,6 +15,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/manifest"
 	"github.com/yasunori0418/layat/internal/paths"
 )
@@ -89,6 +90,7 @@ var (
 	flagHomeRoot    bool   // --home-root: apply --all modifier; apply only homeRoot configs
 	flagSystemRoot  bool   // --system-root: apply --all modifier; apply only systemRoot configs (future seam)
 	flagManifest    string // --manifest: apply a pre-built manifest (link-farm) directly (for module activation)
+	flagGenerator   string // --generator: the manifest generator to use (→ ADR-0056; declared only, not read yet)
 	// flagBackup / flagBackupEnabled are --backup[=suffix] (apply modifier; → ADR-0045, issue #169): a
 	// cobra optional-value flag (NoOptDefVal = "layat-backup"). Bare --backup sets flagBackup to the
 	// default suffix; --backup=<suffix> (the "=" form only — cobra's NoOptDefVal treats a bare next
@@ -161,6 +163,7 @@ func newRootCmd() *cobra.Command {
 	pf.BoolVarP(&flagVerbose, "verbose", "v", false, "Print the placement report (summary + per-target lines); silent on success by default (see ADR-0031)")
 	pf.BoolVar(&flagJSON, "json", false, "Write an outturn-conformant JSON envelope to stdout (machine-readable; orthogonal to -v; see ADR-0043)")
 	pf.BoolVar(&flagDebug, "debug", false, "Disclose the internal nix commands on stderr (see ADR-0031)")
+	pf.StringVar(&flagGenerator, "generator", "nix", "Manifest generator (nix; see ADR-0056)")
 	pf.BoolVarP(&flagYes, "yes", "y", false, "Skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)")
 	pf.BoolVar(&flagProjectRoot, "project-root", false, "Modifier for apply --all: apply only projectRoot configs")
 	pf.BoolVar(&flagHomeRoot, "home-root", false, "Modifier for apply --all: apply only homeRoot configs")
@@ -216,7 +219,13 @@ func main() {
 			os.Exit(ee.code)
 		}
 
-		fmt.Fprintln(os.Stderr, err)
+		// A generator failure is shown the way the CLI decides (→ ADR-0055 §6); anything else as-is.
+		var ge *generator.Error
+		if errors.As(err, &ge) {
+			printGeneratorError(os.Stderr, ge)
+		} else {
+			fmt.Fprintln(os.Stderr, err)
+		}
 		// The engine rejects a schemaVersion skew between the CLI and the flake pin (→ manifest.validate).
 		// Detect it at the top level and supplement the cause and the fix (→ docs/spec.md "manifest.json schema").
 		if errors.Is(err, manifest.ErrSchemaVersionUnsupported) {

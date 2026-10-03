@@ -1,10 +1,17 @@
-package main
+package nixgen
 
 import (
+	"bytes"
+	"errors"
+	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
+
+	"github.com/yasunori0418/layat/internal/generator"
 )
 
 // writeFile creates an empty file at dir/name (content is irrelevant; discoverEntrypoint only checks existence).
@@ -186,5 +193,154 @@ func TestEntrypointInstallableArgs(t *testing.T) {
 	}
 	if got, want := legacyEp.label("x86_64-linux", "docs"), "layat.docs"; got != want {
 		t.Errorf("legacy label = %q, want %q", got, want)
+	}
+}
+
+// stubNix puts a fake nix first on PATH that prints stderr to its stderr and exits 1.
+func stubNix(t *testing.T, stderr string) {
+	t.Helper()
+	bin := t.TempDir()
+	script := "#!/bin/sh\nprintf '%s' '" + stderr + "' >&2\nexit 1\n"
+	if err := os.WriteFile(filepath.Join(bin, "nix"), []byte(script), 0o755); err != nil {
+		t.Fatalf("write nix stub: %v", err)
+	}
+	t.Setenv("PATH", bin+string(os.PathListSeparator)+os.Getenv("PATH"))
+}
+
+// discovered returns a Generator that has discovered a flake entrypoint in a temp dir.
+func discovered(t *testing.T, w io.Writer, debug bool) (*Generator, string) {
+	t.Helper()
+	dir := t.TempDir()
+	writeFile(t, dir, "flake.nix")
+	g := New(w, debug)
+	if err := g.Discover(dir); err != nil {
+		t.Fatalf("Discover: %v", err)
+	}
+	return g, dir
+}
+
+// TestDiscoverFailureIsDiscoverStage pins a discovery failure as a nix-tagged generator.Error of
+// Stage discover whose text is the pre-extraction message and whose cause still reaches
+// fs.ErrNotExist (the CLI classifies discover failures by the cause · → ADR-0055 §7).
+func TestDiscoverFailureIsDiscoverStage(t *testing.T) {
+	missing := filepath.Join(t.TempDir(), "nope.nix")
+	err := New(io.Discard, false).Discover(missing)
+	var ge *generator.Error
+	if !errors.As(err, &ge) {
+		t.Fatalf("Discover error = %v, want a *generator.Error", err)
+	}
+	if ge.Generator != generator.NameNix || ge.Stage != generator.StageDiscover || ge.Kind != generator.KindFailed {
+		t.Errorf("Generator/Stage/Kind = %q/%q/%q, want nix/discover/Failed", ge.Generator, ge.Stage, ge.Kind)
+	}
+	if !errors.Is(err, fs.ErrNotExist) {
+		t.Errorf("errors.Is(err, fs.ErrNotExist) = false: %v", err)
+	}
+	if want := "layat: -f path not found (" + missing + "): "; !strings.HasPrefix(err.Error(), want) {
+		t.Errorf("Error() = %q, want prefix %q", err.Error(), want)
+	}
+}
+
+// TestRootsCommandFailure pins a failed nix eval as Stage roots carrying the pre-extraction
+// message (the failed command + nix's stderr) and the captured stderr.
+func TestRootsCommandFailure(t *testing.T) {
+	stubNix(t, "error: boom")
+	g, _ := discovered(t, io.Discard, false)
+
+	_, err := g.Roots("web")
+	var ge *generator.Error
+	if !errors.As(err, &ge) {
+		t.Fatalf("Roots error = %v, want a *generator.Error", err)
+	}
+	if ge.Stage != generator.StageRoots || ge.Kind != generator.KindFailed {
+		t.Errorf("Stage/Kind = %q/%q, want roots/Failed", ge.Stage, ge.Kind)
+	}
+	if want := "layat: nix eval failed:\nerror: boom"; ge.Message != want {
+		t.Errorf("Message = %q, want %q", ge.Message, want)
+	}
+	if ge.Stderr != "error: boom" {
+		t.Errorf("Stderr = %q, want the captured stderr", ge.Stderr)
+	}
+}
+
+// TestRootsMissingConfigMessage pins the "config not found" lead line put before nix's error.
+func TestRootsMissingConfigMessage(t *testing.T) {
+	stubNix(t, "error: flake does not provide attribute layat")
+	g, _ := discovered(t, io.Discard, false)
+
+	_, err := g.Roots("web")
+	want := "layat: " + g.ep.label(g.system, "web") + " not found in the entrypoint (check the config name)\n" +
+		"layat: nix eval failed:\nerror: flake does not provide attribute layat"
+	if err == nil || err.Error() != want {
+		t.Errorf("Roots error = %v, want %q", err, want)
+	}
+}
+
+// TestAllRootsMissingNamespaceMessage pins a failed batch eval as Stage roots carrying the
+// "no configs found" lead line before the pre-extraction message.
+func TestAllRootsMissingNamespaceMessage(t *testing.T) {
+	stubNix(t, "error: flake does not provide attribute layat")
+	g, _ := discovered(t, io.Discard, false)
+
+	_, err := g.AllRoots()
+	var ge *generator.Error
+	if !errors.As(err, &ge) || ge.Stage != generator.StageRoots {
+		t.Fatalf("AllRoots error = %v, want a Stage roots *generator.Error", err)
+	}
+	want := "layat: " + g.ep.namespaceLabel(g.system) + " not found in the entrypoint (no configs found)\n" +
+		"layat: nix eval failed:\nerror: flake does not provide attribute layat"
+	if err.Error() != want {
+		t.Errorf("AllRoots error = %q, want %q", err.Error(), want)
+	}
+}
+
+// TestDryBuildCommandFailure pins a failed read-only nix build as Stage build carrying the
+// pre-extraction message and the captured stderr.
+func TestDryBuildCommandFailure(t *testing.T) {
+	stubNix(t, "error: boom")
+	g, _ := discovered(t, io.Discard, false)
+
+	_, err := g.DryBuild("web")
+	var ge *generator.Error
+	if !errors.As(err, &ge) || ge.Stage != generator.StageBuild {
+		t.Fatalf("DryBuild error = %v, want a Stage build *generator.Error", err)
+	}
+	if want := "layat: nix build failed:\nerror: boom"; ge.Message != want {
+		t.Errorf("Message = %q, want %q", ge.Message, want)
+	}
+	if ge.Stderr != "error: boom" {
+		t.Errorf("Stderr = %q, want the captured stderr", ge.Stderr)
+	}
+}
+
+// TestBuildCommandFailureStreamsStderr pins a failed in-lock nix build as Stage build whose
+// output streams to the generator's writer (not captured) under the pre-extraction message.
+func TestBuildCommandFailureStreamsStderr(t *testing.T) {
+	stubNix(t, "error: boom")
+	var buf bytes.Buffer
+	g, _ := discovered(t, &buf, false)
+
+	_, err := g.Build("web", filepath.Join(t.TempDir(), ".pending"))
+	var ge *generator.Error
+	if !errors.As(err, &ge) || ge.Stage != generator.StageBuild {
+		t.Fatalf("Build error = %v, want a Stage build *generator.Error", err)
+	}
+	if want := "layat: nix build failed: exit status 1"; ge.Message != want {
+		t.Errorf("Message = %q, want %q", ge.Message, want)
+	}
+	if buf.String() != "error: boom" {
+		t.Errorf("writer = %q, want nix's stderr streamed through", buf.String())
+	}
+}
+
+// TestDebugDisclosesCommandsToWriter pins the --debug disclosure line on the writer given to New.
+func TestDebugDisclosesCommandsToWriter(t *testing.T) {
+	stubNix(t, "")
+	var buf bytes.Buffer
+	g, dir := discovered(t, &buf, true)
+
+	_, _ = g.Roots("web")
+	want := "layat: + nix eval " + dir + "#layat." + g.system + ".web.rootKind --raw\n"
+	if buf.String() != want {
+		t.Errorf("debug output = %q, want %q", buf.String(), want)
 	}
 }

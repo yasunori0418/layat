@@ -9,6 +9,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"strings"
@@ -20,6 +21,7 @@ import (
 	"github.com/yasunori0418/outturn/go/conformance"
 
 	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/lock"
 )
 
@@ -313,26 +315,33 @@ func TestEntryItemIDMatchesVectors(t *testing.T) {
 }
 
 // TestClassifyErrorCodes pins the classifyError table directly, one case per code (the #131
-// refinement): the nixCmdError marker → E_LAYAT_BUILD, including its survival through
-// wrapEvalErr / wrapEvalAllErr's re-wraps (the %w chain is the classification's lifeline);
-// the specific fs sentinels beating the generic E_IO shape check; and the residual-I/O and
-// fallback arms.
+// refinement): a generator failure of Stage roots / build → E_LAYAT_BUILD, including its survival
+// through a %w re-wrap (the chain is the classification's lifeline), while a Stage discover or
+// prebuilt failure keeps the classification of its cause (→ ADR-0055 §7); the inputError marker →
+// E_INPUT (→ ADR-0056); the specific fs sentinels beating the generic E_IO shape check; and the
+// residual-I/O and fallback arms.
 func TestClassifyErrorCodes(t *testing.T) {
+	notExist := &fs.PathError{Op: "stat", Path: "/x", Err: fs.ErrNotExist}
+	genErr := func(name string, stage generator.Stage, cause error) error {
+		return generator.NewError(name, stage, generator.KindFailed, "layat: generator failed", "", "", cause)
+	}
 	cases := []struct {
 		name string
 		err  error
 		want string
 	}{
-		{"nix invocation failure", &nixCmdError{err: errors.New("layat: nix build failed")}, "E_LAYAT_BUILD"},
-		{"marker survives wrapEvalErr attr-missing rewrap",
-			wrapEvalErr(&nixCmdError{err: errors.New("error: flake does not provide attribute layat")}, "layat.x86_64-linux.web"),
-			"E_LAYAT_BUILD"},
-		{"marker survives wrapEvalErr passthrough",
-			wrapEvalErr(&nixCmdError{err: errors.New("error: something else")}, "layat.x86_64-linux.web"),
-			"E_LAYAT_BUILD"},
-		{"marker survives wrapEvalAllErr attr-missing rewrap",
-			wrapEvalAllErr(&nixCmdError{err: errors.New("error: flake does not provide attribute layat")}, "layat.x86_64-linux"),
-			"E_LAYAT_BUILD"},
+		{"generator roots failure", genErr(generator.NameNix, generator.StageRoots, nil), "E_LAYAT_BUILD"},
+		{"generator build failure", genErr(generator.NameNix, generator.StageBuild, nil), "E_LAYAT_BUILD"},
+		{"build failure beats a not-found cause", genErr(generator.NameNix, generator.StageBuild, notExist), "E_LAYAT_BUILD"},
+		{"marker survives a %w rewrap",
+			fmt.Errorf("context: %w", genErr(generator.NameNix, generator.StageRoots, nil)), "E_LAYAT_BUILD"},
+		{"discover failure keeps its not-found cause", genErr(generator.NameNix, generator.StageDiscover, notExist), "E_NOTFOUND"},
+		{"discover failure without a cause falls back", genErr(generator.NameNix, generator.StageDiscover, nil), "E_LAYAT_FAILED"},
+		{"prebuilt failure keeps its not-found cause", genErr(generator.NamePrebuilt, generator.StageRoots, notExist), "E_NOTFOUND"},
+		{"input rejection", &inputError{err: errors.New("layat: --manifest cannot be combined with -f")}, "E_INPUT"},
+		{"input marker beats its not-found cause", &inputError{err: notExist}, "E_INPUT"},
+		{"input marker survives a %w rewrap",
+			fmt.Errorf("context: %w", &inputError{err: errors.New("layat: bad flags")}), "E_INPUT"},
 		{"lock sentinel", lock.ErrLocked, "E_LOCK"},
 		{"not-found beats the IO shape", &fs.PathError{Op: "stat", Path: "/x", Err: fs.ErrNotExist}, "E_NOTFOUND"},
 		{"permission beats the IO shape", &fs.PathError{Op: "open", Path: "/x", Err: fs.ErrPermission}, "E_PERMISSION"},

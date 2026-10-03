@@ -54,18 +54,15 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
 	// reset is name-required (no --all), so the run always holds exactly this one (→ issue #164).
 	subject := run.beginSubject(name)
-	ep, err := discoverEntrypoint(flagFile)
+	gen := newGenerator()
+	if err := gen.Discover(flagFile); err != nil {
+		return err
+	}
+	root, err := gen.Roots(name)
 	if err != nil {
 		return err
 	}
-	system, err := currentSystem()
-	if err != nil {
-		return err
-	}
-	rootKind, fixedRoot, err := evalRoot(ep, system, name)
-	if err != nil {
-		return err
-	}
+	rootKind, fixedRoot := root.RootKind, root.Root
 
 	// --dryrun: a side-effect-free preview (no flock / confirm; exit code is 0 regardless of whether there are targets; → ADR-0021).
 	if dryrun {

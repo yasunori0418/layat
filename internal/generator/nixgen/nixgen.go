@@ -1,15 +1,23 @@
-package main
+// Package nixgen is the nix manifest generator (→ ADR-0055): it discovers a flake / legacy
+// entrypoint, pre-reads rootKind with `nix eval`, and builds the link-farm with `nix build`.
+// The per-system dimension (`layat.<system>.<name>`) and every nix-specific error string stay
+// inside this package; the contract addresses a config by its name alone.
+package nixgen
 
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"github.com/yasunori0418/layat/internal/generator"
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // entrypointKind distinguishes a flake entrypoint (`layat.<system>.<name>`, addressed via `<flakeRef>#...`)
@@ -145,156 +153,180 @@ func (e *entrypoint) namespaceLabel(system string) string {
 	return fmt.Sprintf("layat.%s", system)
 }
 
-// rootInfo is one config's root info (the value from the batch eval). It has Root only when fixed.
-// Targets is the config's normalized target list, read only by apply --all's conflict preflight (→ ADR-0038).
-type rootInfo struct {
-	RootKind string   `json:"rootKind"`
-	Root     string   `json:"root"`
-	Targets  []string `json:"targets"`
+// Generator is the nix implementation of generator.Generator. Diagnostics (the --debug
+// disclosure and nix build's progress) go to the writer given to New, never to stdout.
+type Generator struct {
+	stderr io.Writer
+	debug  bool
+	ep     *entrypoint
+	system string
 }
 
-// evalAllRoots gets the config name → rootInfo map for `apply --all` / `gitignore --all`
+var _ generator.Generator = (*Generator)(nil)
+
+// New returns a nix generator writing its diagnostics to stderr; debug discloses the nix
+// commands it runs (→ ADR-0031 §3, ADR-0055 §8).
+func New(stderr io.Writer, debug bool) *Generator {
+	return &Generator{stderr: stderr, debug: debug}
+}
+
+// Discover discovers the entrypoint (→ discoverEntrypoint) and the current system.
+func (g *Generator) Discover(file string) error {
+	ep, err := discoverEntrypoint(file)
+	if err != nil {
+		return discoverError(err)
+	}
+	system, err := currentSystem()
+	if err != nil {
+		return discoverError(err)
+	}
+	g.ep, g.system = ep, system
+	return nil
+}
+
+// discoverError tags a discovery failure as Stage discover, keeping err as the cause so the CLI
+// still classifies it by its chain (→ ADR-0055 §7).
+func discoverError(err error) error {
+	return generator.NewError(generator.NameNix, generator.StageDiscover, generator.KindFailed, err.Error(), "", "", err)
+}
+
+// Roots pre-resolves the config's rootKind (+ root when fixed) without building (→ evalRoot).
+func (g *Generator) Roots(name string) (manifest.Root, error) {
+	rootKind, fixedRoot, err := g.evalRoot(name)
+	if err != nil {
+		return manifest.Root{}, err
+	}
+	return manifest.Root{RootKind: rootKind, Root: fixedRoot}, nil
+}
+
+// AllRoots gets every config's root + targets in a single batch eval (→ evalAllRoots).
+func (g *Generator) AllRoots() (map[string]manifest.Root, error) {
+	return g.evalAllRoots()
+}
+
+// evalAllRoots gets the config name → root map for `apply --all` / `gitignore --all`
 // in a single `nix eval` (fixing eval process launches at N→1; → docs/spec.md execution flow, ADR-0024).
 // It is a cheap eval that does no build and reads only the passthru rootKind + targets (+ root for fixed; → ADR-0038).
-func evalAllRoots(e *entrypoint, system string) (map[string]rootInfo, error) {
+func (g *Generator) evalAllRoots() (map[string]manifest.Root, error) {
 	// Extract only rootKind + targets (+ root if fixed) from each config under layat.<system>.
 	apply := `cs: builtins.mapAttrs (_: c: { rootKind = c.rootKind; targets = c.targets; } // (if c ? root then { root = c.root; } else {})) cs`
-	args := append([]string{"eval"}, e.namespaceArgs(system)...)
+	args := append([]string{"eval"}, g.ep.namespaceArgs(g.system)...)
 	args = append(args, "--apply", apply, "--json")
-	out, err := runNixCapture(args...)
+	out, err := g.runNixCapture(args...)
 	if err != nil {
-		return nil, wrapEvalAllErr(err, e.namespaceLabel(system))
+		return nil, wrapEvalAllErr(err, g.ep.namespaceLabel(g.system))
 	}
-	var roots map[string]rootInfo
-	if err := json.Unmarshal([]byte(out), &roots); err != nil {
-		return nil, fmt.Errorf("layat: cannot parse the batch eval result for %s: %w", e.namespaceLabel(system), err)
+	// The batch eval's own shape (manifest.Root keeps Targets out of the manifest.json schema).
+	var raw map[string]struct {
+		RootKind string   `json:"rootKind"`
+		Root     string   `json:"root"`
+		Targets  []string `json:"targets"`
+	}
+	if err := json.Unmarshal([]byte(out), &raw); err != nil {
+		return nil, fmt.Errorf("layat: cannot parse the batch eval result for %s: %w", g.ep.namespaceLabel(g.system), err)
+	}
+	roots := make(map[string]manifest.Root, len(raw))
+	for name, r := range raw {
+		roots[name] = manifest.Root{RootKind: r.RootKind, Root: r.Root, Targets: r.Targets}
 	}
 	return roots, nil
 }
 
-// buildManifestStorePath builds the config and returns the link-farm's store path (a read-only path).
-// Because gitignore does no placement, it gets only the store path via `--no-link --print-out-paths` without laying down an out-link gcroot.
-// Progress goes to stderr and the store path to stdout (→ docs/spec.md output stream discipline).
-func buildManifestStorePath(e *entrypoint, system, name string) (string, error) {
-	args := append([]string{"build"}, e.installableArgs(system, name, "")...)
-	args = append(args, "--no-link", "--print-out-paths")
-	out, err := runNixCapture(args...)
-	if err != nil {
-		return "", err
-	}
-	store := strings.TrimSpace(out)
-	if store == "" {
-		return "", fmt.Errorf("layat: cannot obtain the build output path for %s", e.label(system, name))
-	}
-	return store, nil
-}
-
 // evalRoot pre-resolves rootKind (+ the absolute path when fixed root) via a cheap nix eval before build
 // (→ docs/spec.md execution flow 1, ADR-0023). This resolves profileDir and establishes the order flock → build.
-func evalRoot(e *entrypoint, system, name string) (rootKind, fixedRoot string, err error) {
-	args := append([]string{"eval"}, e.installableArgs(system, name, ".rootKind")...)
+func (g *Generator) evalRoot(name string) (rootKind, fixedRoot string, err error) {
+	args := append([]string{"eval"}, g.ep.installableArgs(g.system, name, ".rootKind")...)
 	args = append(args, "--raw")
-	out, err := runNixCapture(args...)
+	out, err := g.runNixCapture(args...)
 	if err != nil {
-		return "", "", wrapEvalErr(err, e.label(system, name))
+		return "", "", wrapEvalErr(err, g.ep.label(g.system, name))
 	}
 	rootKind = strings.TrimSpace(out)
 	if rootKind == "fixed" {
-		rootArgs := append([]string{"eval"}, e.installableArgs(system, name, ".root")...)
+		rootArgs := append([]string{"eval"}, g.ep.installableArgs(g.system, name, ".root")...)
 		rootArgs = append(rootArgs, "--raw")
-		out, err := runNixCapture(rootArgs...)
+		out, err := g.runNixCapture(rootArgs...)
 		if err != nil {
-			return "", "", wrapEvalErr(err, e.label(system, name))
+			return "", "", wrapEvalErr(err, g.ep.label(g.system, name))
 		}
 		fixedRoot = strings.TrimSpace(out)
 	}
 	return rootKind, fixedRoot, nil
 }
 
-// buildFunc returns the build callback injected into the engine (→ engine.BuildFunc).
-// Inside the lock it runs `nix build <installable> --out-link <pending>`, reads the out-link, and returns the store path.
-func buildFunc(e *entrypoint, system, name string) func(pending string) (string, error) {
-	return func(pending string) (string, error) {
-		args := append([]string{"build"}, e.installableArgs(system, name, "")...)
-		args = append(args, "--out-link", pending)
-		if err := runNixStream(args...); err != nil {
-			return "", err
-		}
-		store, err := os.Readlink(pending)
-		if err != nil {
-			return "", fmt.Errorf("layat: cannot read the build output out-link (%s): %w", pending, err)
-		}
-		return store, nil
+// Build runs `nix build <installable> --out-link <pending>` (the engine calls it inside the lock;
+// → engine.BuildFunc), reads the out-link, and returns the store path.
+func (g *Generator) Build(name, pending string) (string, error) {
+	args := append([]string{"build"}, g.ep.installableArgs(g.system, name, "")...)
+	args = append(args, "--out-link", pending)
+	if err := g.runNixStream(args...); err != nil {
+		return "", err
 	}
+	store, err := os.Readlink(pending)
+	if err != nil {
+		return "", fmt.Errorf("layat: cannot read the build output out-link (%s): %w", pending, err)
+	}
+	return store, nil
 }
 
-// dryBuildFunc returns the build callback for --dryrun (→ engine.BuildFunc). Unlike a normal build,
-// it gets the link-farm's store path via `nix build --no-link --print-out-paths` **without laying down a gcroot (out-link)**
-// (dryrun is side-effect-free and creates no pending out-link; → ADR-0011, ADR-0023). The pending argument is unused.
-func dryBuildFunc(e *entrypoint, system, name string) func(pending string) (string, error) {
-	return func(string) (string, error) {
-		return realizeNoLink(e, system, name, "")
-	}
-}
-
-// realizeNoLink is dryBuildFunc's body, also run directly by apply --all's stage 1 with debugPrefix
-// "[<name>] " so its --debug disclosure lines stay attributable while builds run in parallel (→ runNixCapturePrefixed).
-func realizeNoLink(e *entrypoint, system, name, debugPrefix string) (string, error) {
-	args := append([]string{"build"}, e.installableArgs(system, name, "")...)
+// DryBuild gets the link-farm's store path via `nix build --no-link --print-out-paths` **without
+// laying down a gcroot (out-link)** (dryrun is side-effect-free and creates no pending out-link;
+// → ADR-0011, ADR-0023).
+func (g *Generator) DryBuild(name string) (string, error) {
+	args := append([]string{"build"}, g.ep.installableArgs(g.system, name, "")...)
 	args = append(args, "--no-link", "--print-out-paths")
-	out, err := runNixCapturePrefixed(debugPrefix, args...)
+	out, err := g.runNixCapture(args...)
 	if err != nil {
 		return "", err
 	}
 	store := strings.TrimSpace(out)
 	if store == "" {
-		return "", fmt.Errorf("layat: nix build --print-out-paths was empty (%s)", e.label(system, name))
+		return "", fmt.Errorf("layat: nix build --print-out-paths was empty (%s)", g.ep.label(g.system, name))
 	}
 	// --print-out-paths may return multiple lines (multi-output). The link-farm is a single output, so take the last line.
 	lines := strings.Split(store, "\n")
 	return strings.TrimSpace(lines[len(lines)-1]), nil
 }
 
-// nixCmdError marks a failed internal nix invocation (eval / build), so the --json error
-// classification can map it to E_LAYAT_BUILD without string matching (→ issue #131, ADR-0043 §8).
-// It wraps transparently: Error/Unwrap keep the existing message and chain untouched.
-type nixCmdError struct{ err error }
-
-func (e *nixCmdError) Error() string { return e.err.Error() }
-func (e *nixCmdError) Unwrap() error { return e.err }
-
-// runNixCapture captures and returns nix's stdout (for machine-readable output such as eval).
-func runNixCapture(args ...string) (string, error) {
-	return runNixCapturePrefixed("", args...)
+// stageOf maps a nix subcommand to the contract stage its failure belongs to: eval pre-reads the
+// roots, build builds (→ ADR-0055 §6).
+func stageOf(args []string) generator.Stage {
+	if args[0] == "eval" {
+		return generator.StageRoots
+	}
+	return generator.StageBuild
 }
 
-// runNixCapturePrefixed is runNixCapture with debugPrefix put at the head of the --debug disclosure
-// line (apply --all's stage 1 passes "[<name>] "; → ADR-0039). nix's own stderr is captured either way.
-func runNixCapturePrefixed(debugPrefix string, args ...string) (string, error) {
-	if flagDebug {
-		fmt.Fprintf(os.Stderr, "%slayat: + nix %s\n", debugPrefix, strings.Join(args, " "))
+// runNixCapture captures and returns nix's stdout (for machine-readable output such as eval).
+// nix's own stderr is captured; a failure is a generator.Error carrying it (→ nixError).
+func (g *Generator) runNixCapture(args ...string) (string, error) {
+	if g.debug {
+		_, _ = fmt.Fprintf(g.stderr, "layat: + nix %s\n", strings.Join(args, " "))
 	}
 	cmd := exec.Command("nix", args...)
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
-		return "", &nixCmdError{nixError(args, stderr.String(), err)}
+		cause := nixError(args, stderr.String(), err)
+		return "", generator.NewError(generator.NameNix, stageOf(args), generator.KindFailed,
+			cause.Error(), "", strings.TrimSpace(stderr.String()), cause)
 	}
 	return stdout.String(), nil
 }
 
-// runNixStream streams nix's output to stderr (for build progress; stdout is reserved for machine-readable output; → ADR-0023).
+// runNixStream streams nix's output to the diagnostics writer (for build progress; stdout is reserved for machine-readable output; → ADR-0023).
 // eval succeeded before build = nix-command/flakes are already enabled, so experimental detection is unnecessary.
-func runNixStream(args ...string) error {
-	if flagDebug {
-		fmt.Fprintf(os.Stderr, "layat: + nix %s\n", strings.Join(args, " "))
+func (g *Generator) runNixStream(args ...string) error {
+	if g.debug {
+		_, _ = fmt.Fprintf(g.stderr, "layat: + nix %s\n", strings.Join(args, " "))
 	}
 	cmd := exec.Command("nix", args...)
-	cmd.Stdout = os.Stderr
-	cmd.Stderr = os.Stderr
+	cmd.Stdout = g.stderr
+	cmd.Stderr = g.stderr
 	if err := cmd.Run(); err != nil {
-		return &nixCmdError{fmt.Errorf("layat: nix %s failed: %w", args[0], err)}
+		cause := fmt.Errorf("layat: nix %s failed: %w", args[0], err)
+		return generator.NewError(generator.NameNix, stageOf(args), generator.KindFailed, cause.Error(), "", "", cause)
 	}
 	return nil
 }
@@ -339,23 +371,27 @@ Original nix error:
 }
 
 // wrapEvalErr makes the "layat.<name> does not exist" case of an eval failure clearer
-// (experimental etc. are passed through as-is) (→ docs/spec.md error spec). The original
-// error is wrapped (%w), keeping the nixCmdError marker reachable for --json classification.
+// (experimental etc. are passed through as-is) (→ docs/spec.md error spec). The lead line goes
+// before the nix error's message; the stage, the captured stderr, and the cause are kept.
 func wrapEvalErr(err error, label string) error {
-	msg := err.Error()
-	if strings.Contains(msg, "does not provide attribute") ||
-		(strings.Contains(msg, "attribute") && strings.Contains(msg, "missing")) {
-		return fmt.Errorf("layat: %s not found in the entrypoint (check the config name)\n%w", label, err)
-	}
-	return err
+	return prependMissing(err, fmt.Sprintf("layat: %s not found in the entrypoint (check the config name)", label))
 }
 
 // wrapEvalAllErr makes the "layat.<system> does not exist" case of a batch eval failure clearer.
 func wrapEvalAllErr(err error, label string) error {
-	msg := err.Error()
+	return prependMissing(err, fmt.Sprintf("layat: %s not found in the entrypoint (no configs found)", label))
+}
+
+// prependMissing puts lead before a generator.Error's message when nix reported a missing attribute.
+func prependMissing(err error, lead string) error {
+	var ge *generator.Error
+	if !errors.As(err, &ge) {
+		return err
+	}
+	msg := ge.Message
 	if strings.Contains(msg, "does not provide attribute") ||
 		(strings.Contains(msg, "attribute") && strings.Contains(msg, "missing")) {
-		return fmt.Errorf("layat: %s not found in the entrypoint (no configs found)\n%w", label, err)
+		return generator.NewError(ge.Generator, ge.Stage, ge.Kind, lead+"\n"+msg, ge.Guidance, ge.Stderr, ge.Unwrap())
 	}
 	return err
 }

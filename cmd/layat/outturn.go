@@ -18,6 +18,7 @@ import (
 
 	"github.com/yasunori0418/outturn/go"
 
+	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/lock"
 )
 
@@ -285,8 +286,10 @@ func (r *outturnRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 }
 
 // classifyError maps a command-level failure onto an outturn error object (two-layer code naming ·
-// outturn §6, ADR-0043 §8): tool-specific E_LAYAT_COLLISION (dryrun conflict exit) / E_LAYAT_BUILD
-// (internal nix eval / build invocation, via the nixCmdError marker), and the common registry
+// outturn §6, ADR-0043 §8): E_INPUT (an invalid input combination, via the inputError marker ·
+// → ADR-0056), tool-specific E_LAYAT_COLLISION (dryrun conflict exit) / E_LAYAT_BUILD
+// (a generator's failure to evaluate or build the manifest, via the generator.Error marker ·
+// → buildFailure), and the common registry
 // codes E_LOCK / E_NOTFOUND / E_PERMISSION / E_IO. Specific sentinels win over the generic
 // E_IO shape check, so a not-found PathError stays E_NOTFOUND. E_LAYAT_FAILED is the
 // tool-generic fallback for a command failure not otherwise classified.
@@ -294,8 +297,11 @@ func classifyError(err error) outturn.Error {
 	code := "E_LAYAT_FAILED"
 	message := err.Error()
 	var ee *exitError
-	var ne *nixCmdError
+	var ie *inputError
+	bf := buildFailure(err)
 	switch {
+	case errors.As(err, &ie):
+		code = "E_INPUT"
 	case errors.As(err, &ee) && ee.code == 2:
 		// exit 2 is apply --dryrun's conflict detection (→ docs/spec.md exit code table). Its
 		// exitError deliberately carries no message (the plan went to stdout), so supply one.
@@ -305,8 +311,9 @@ func classifyError(err error) outturn.Error {
 		}
 	case errors.Is(err, lock.ErrLocked):
 		code = "E_LOCK"
-	case errors.As(err, &ne):
+	case bf != nil:
 		code = "E_LAYAT_BUILD"
+		message = generatorErrorMessage(bf)
 	case errors.Is(err, fs.ErrNotExist):
 		code = "E_NOTFOUND"
 	case errors.Is(err, fs.ErrPermission):
@@ -315,6 +322,27 @@ func classifyError(err error) outturn.Error {
 		code = "E_IO"
 	}
 	return outturn.Error{Code: code, Message: message}
+}
+
+// inputError marks a rejected input (an unknown generator, an invalid setting, a forbidden flag
+// combination), so the --json classification maps it to E_INPUT (→ ADR-0056, ADR-0043). It wraps
+// transparently: Error/Unwrap keep the message and chain untouched.
+type inputError struct{ err error }
+
+func (e *inputError) Error() string { return e.err.Error() }
+func (e *inputError) Unwrap() error { return e.err }
+
+// buildFailure returns err's generator.Error when it is a generator's failure to evaluate or build
+// the manifest — Stage roots / build of a generator other than prebuilt — and nil otherwise. A Stage discover failure (no entrypoint,
+// a missing -f path) and a prebuilt failure (an unreadable --manifest link-farm) are not: they fall
+// through so the cause chain keeps the classification it had before generators (→ ADR-0055 §7).
+func buildFailure(err error) *generator.Error {
+	var ge *generator.Error
+	if errors.As(err, &ge) && ge.Generator != generator.NamePrebuilt &&
+		(ge.Stage == generator.StageRoots || ge.Stage == generator.StageBuild) {
+		return ge
+	}
+	return nil
 }
 
 // isIOError reports whether err carries a filesystem / external-I/O failure shape (outturn §6

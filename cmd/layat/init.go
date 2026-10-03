@@ -58,7 +58,7 @@ func newInitCmd() *cobra.Command {
 }
 
 // runInit validates the template name and runs `nix flake init -t <ref>#<template>` in the CWD.
-// Because it generates a new flake, it does not go through entrypoint discovery (discoverEntrypoint; → plan 8).
+// Because it generates a new flake, it does not go through entrypoint discovery (the generator's Discover; → plan 8).
 func runInit(run *initRun, template string) error {
 	if !isValidTemplate(template) {
 		return fmt.Errorf("layat: unknown template: %q (valid values: %s)", template, strings.Join(initTemplates, " / "))
@@ -91,7 +91,7 @@ func runInit(run *initRun, template string) error {
 	}
 	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
-		return nixError(args, stderr.String(), err)
+		return initNixError(args, stderr.String(), err)
 	}
 
 	// On success, forward the captured list of created files (nix's output) to stderr.
@@ -110,4 +110,45 @@ func isValidTemplate(template string) bool {
 // It points to the source template via the ref#template installable.
 func flakeInitArgs(template, ref string) []string {
 	return []string{"flake", "init", "-t", ref + "#" + template}
+}
+
+// initNixError classifies a failed `nix flake init`. For experimental-features not enabled it guides
+// the prerequisites, and otherwise it returns the raw nix stderr attached without swallowing it
+// (→ ADR-0025 §1). init runs nix directly rather than through a manifest generator (→ ADR-0055 §1),
+// so it keeps its own copy of this formatting.
+func initNixError(args []string, stderr string, runErr error) error {
+	if initExperimentalDisabled(stderr) {
+		return initExperimentalGuidance(stderr)
+	}
+	trimmed := strings.TrimSpace(stderr)
+	if trimmed == "" {
+		return fmt.Errorf("layat: nix %s failed: %w", args[0], runErr)
+	}
+	return fmt.Errorf("layat: nix %s failed:\n%s", args[0], trimmed)
+}
+
+// initExperimentalDisabled detects the nix-command / flakes not-enabled error (→ ADR-0025 §1).
+func initExperimentalDisabled(stderr string) bool {
+	return strings.Contains(stderr, "experimental Nix feature") ||
+		strings.Contains(stderr, "experimental-features") ||
+		(strings.Contains(stderr, "flakes") && strings.Contains(stderr, "disabled"))
+}
+
+// initExperimentalGuidance builds an error that guides the prerequisites and how to enable them (attaching the raw nix error too).
+// The CLI does not add --extra-experimental-features automatically (it will not silently override environment settings; → ADR-0025 §1).
+func initExperimentalGuidance(stderr string) error {
+	return fmt.Errorf(`layat: nix's experimental-features are not enabled.
+This command internally uses `+"`nix eval`"+` / `+"`nix build`"+` (the new CLI) and flakes,
+so experimental-features = nix-command flakes is required.
+
+How to enable (either one):
+  - Append to ~/.config/nix/nix.conf or /etc/nix/nix.conf:
+      experimental-features = nix-command flakes
+  - Temporarily via an environment variable:
+      export NIX_CONFIG="experimental-features = nix-command flakes"
+
+layat does not add --extra-experimental-features automatically (it will not override your environment settings).
+
+Original nix error:
+%s`, strings.TrimSpace(stderr))
 }

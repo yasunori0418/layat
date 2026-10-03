@@ -7,6 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
@@ -67,25 +68,21 @@ func runGitignore(run *gitignoreRun, name string) error {
 	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
 	// A named listing registers exactly one, so the run's results[] holds N=1 (→ issue #164).
 	subject := run.beginSubject(name)
-	ep, err := discoverEntrypoint(flagFile)
-	if err != nil {
-		return err
-	}
-	system, err := currentSystem()
-	if err != nil {
+	gen := newGenerator()
+	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}
 
 	// Confirm project mode via rootKind pre-resolution eval (rejecting cheaply before build).
-	rootKind, _, err := evalRoot(ep, system, name)
+	root, err := gen.Roots(name)
 	if err != nil {
 		return err
 	}
-	if rootKind != manifest.RootKindProject {
+	if rootKind := root.RootKind; rootKind != manifest.RootKindProject {
 		return fmt.Errorf("layat: gitignore is project mode only (layat.%s has rootKind=%q; the .gitignore anchor is meaningless for home / fixed)", name, rootKind)
 	}
 
-	targets, err := configTargets(ep, system, name)
+	targets, err := configTargets(gen, name)
 	if err != nil {
 		return err
 	}
@@ -124,16 +121,12 @@ func gitignoreAnchors(targets []string) []string {
 // Attributing a shared path to one arbitrary config would be a lie about which config declares it;
 // a consumer that wants the union takes it across the results itself.
 func runGitignoreAll(run *gitignoreRun) error {
-	ep, err := discoverEntrypoint(flagFile)
-	if err != nil {
-		return err
-	}
-	system, err := currentSystem()
-	if err != nil {
+	gen := newGenerator()
+	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}
 
-	roots, err := evalAllRoots(ep, system)
+	roots, err := gen.AllRoots()
 	if err != nil {
 		return err
 	}
@@ -150,7 +143,7 @@ func runGitignoreAll(run *gitignoreRun) error {
 		}
 	}
 	return enumerateGitignoreAll(run, selected, func(name string) ([]string, error) {
-		return configTargets(ep, system, name)
+		return configTargets(gen, name)
 	})
 }
 
@@ -183,9 +176,10 @@ func enumerateGitignoreAll(run *gitignoreRun, selected []string, targetsFor func
 }
 
 // configTargets builds the config, reads manifest.json, and lists the placement targets
-// (all entries regardless of method; → ADR-0019).
-func configTargets(ep *entrypoint, system, name string) ([]string, error) {
-	store, err := buildManifestStorePath(ep, system, name)
+// (all entries regardless of method; → ADR-0019). Because gitignore does no placement, it gets
+// only the link-farm via DryBuild, without laying down a gcroot.
+func configTargets(gen generator.Generator, name string) ([]string, error) {
+	store, err := gen.DryBuild(name)
 	if err != nil {
 		return nil, err
 	}

@@ -61,11 +61,12 @@ nix 自体は実行時に残る。世代のバックエンドは nix profile（`
 | 操作 | 入力 | 出力・事後条件 |
 |---|---|---|
 | **Discover** | `-f` の値（無ければ cwd） | entrypoint を発見する。発見規則は実装が持つ（nixgen は既存の `flake.nix` → `shell.nix` → `default.nix`） |
-| **Roots** | `name`（`--all` 用の一括取得は全件） | **build せずに** `manifest.Root` を返す。`RootKind` / `Root`（fixed のとき）に加え、正規化後の target 一覧 `Targets` を返す |
+| **Roots** | `name`（`--all` 用の一括取得は全件） | **build せずに** `manifest.Root` を返す。`RootKind` / `Root`（fixed のとき）を返し、`--all` 用の一括取得と prebuilt 実装は正規化後の target 一覧 `Targets` も返す（単一 config の Roots では `Targets` は任意） |
 | **Build** | `name` + pending のパス | 世代コミット可能な link-farm（= store path）を pending に張って返す（→ §4） |
 | **DryBuild** | `name` | link-farm の store path を **gcroot を張らずに**返す（`--dryrun` と gitignore が使う） |
 
 - **契約の引数は `name` のみ**。`system`（`layat.<system>.<name>` の `<system>`）は nixgen の内部に隠す。
+- **`Targets` を課すのは `--all` 用の一括取得と prebuilt 実装に限る**。`Targets` の消費者は `apply --all` の cross-config target 衝突検査（→ ADR-0038）だけで、単一 config の Roots で返すには nix 実装の eval が 1 本増えるため。
 - 現行の `rootInfo`（`RootKind` / `Root` / `Targets`）は `manifest.Root` に統合する。`Targets []string` は **Go 構造体側のフィールド**で、manifest.json スキーマ v1 は変えない（prebuilt は `entries` から導出する）。
 
 ### 3. Roots の先読みは能力宣言ではなく契約の前提条件
