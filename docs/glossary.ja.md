@@ -19,8 +19,16 @@ layat のコア。`root` 相対の `target` に Nix store のパスを配置す�
 - **Avoid**: 移行文脈の旧名以外で「nput」を使うこと、「Layat」「LayAt」「layAt」と書くこと、名前を nix 固有のものと読むこと。
 
 ### layat CLI
-ユーザーが直接触れる一次 UX。`PATH` 上の `packages.layat` バイナリ。**entrypoint** を発見し、内部で `nix build` / `eval` を回して named manifest を取得し、エンジンに配置させる。サブコマンドは `apply [<name>]`・`apply --all`・`reset`・`rollback`・`list-generations`・`gitignore`・`prune`・`init`。
+ユーザーが直接触れる一次 UX。`PATH` 上の `packages.layat` バイナリ。**entrypoint** を発見し、**generator（生成器）**（既定 `nix`）経由で named manifest を取得し、エンジンに配置させる。サブコマンドは `apply [<name>]`・`apply --all`・`reset`・`rollback`・`list-generations`・`gitignore`・`prune`・`init`。
 - **Avoid**: config ごとの `nix run .#x` ラッパーを一次 UX と説明すること、`apply` を「常に entrypoint を build する」と説明すること（ビルド済み link-farm は `--manifest` で適用できる）。
+
+### generator
+**layat CLI** が manifest を得る相手（生成器）。契約は `internal/generator` に置く 4 操作で、Discover（entrypoint の発見）・Roots（build せずに root の種別と root を返す）・Build（世代コミット可能な link-farm = store path を pending に張る）・DryBuild（gcroot を張らずに store path を返す）。nix 実装（nixgen・`internal/generator/nixgen`）が既定。生成器は明示指定でのみ選ばれ、`--generator`・`LAYAT_GENERATOR`・`layat.toml`・`$XDG_CONFIG_HOME/layat/config.toml`・既定 `nix` の順に解決する。エンジンはどの生成器が manifest を作ったかに関知しない（→ [ADR-0055](adr/0055-manifest-generator-contract.md), [ADR-0056](adr/0056-generator-selection-and-config.md)）。
+- **Avoid**: CLI 自身が `nix build` / `nix eval` を回すと説明すること（回すのは nix 生成器）、置かれているファイルから生成器が推測されると説明すること。
+
+### prebuilt
+`apply --manifest <link-farm>` の実体である生成器。Discover は与えられたパス、Roots はその link-farm の `manifest.json` を読み、Build / DryBuild はそのパスを返す。`--generator` の選択肢には出ない（→ [ADR-0055](adr/0055-manifest-generator-contract.md)）。
+- **Avoid**: `--generator` の値として挙げること、`--manifest` を生成器とは別の取得経路と説明すること。
 
 ### entrypoint
 layat CLI が読む Nix の config ファイル。`flake.nix` / `shell.nix` / `default.nix` のいずれか。`layat.<name>` に named manifest を公開する。config は依然として Nix で書かれ、`nix build` で評価される。

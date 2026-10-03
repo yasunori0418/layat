@@ -67,7 +67,7 @@ layat has two layers:
 ```
 [layat CLI]  packages.layat — on PATH, the primary UX
   · discovers an entrypoint (flake.nix / shell.nix / default.nix)
-  · runs `nix build` / `nix eval` internally to obtain a named manifest
+  · obtains a named manifest through a generator (`nix` by default)
   · drives the engine to place, prune stale links, and swap the profile
    ↓ manifest.json
 [engine]    a Go library (stdlib-only)
@@ -82,6 +82,9 @@ layat has two layers:
 - An **entrypoint** is the Nix file the CLI reads (`flake.nix`, `shell.nix`, or
   `default.nix`); it exposes a named manifest under `layat.<name>`. The config is still
   written in Nix and evaluated by `nix build`.
+- A **generator** is what the CLI obtains the manifest from. `nix` is the default (see
+  [Choosing the generator](#choosing-the-generator)); `apply --manifest` uses the
+  *prebuilt* generator, which takes a built link-farm as it is.
 
 ---
 

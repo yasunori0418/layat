@@ -19,8 +19,16 @@ The name of the tool itself. A compressed coinage of "**lay** \<src\> **at** \<t
 - **Avoid**: "nput" for anything other than the old name in migration context; "Layat" / "LayAt" / "layAt"; reading the name as nix-specific.
 
 ### layat CLI
-The primary user-facing UX; the `packages.layat` binary on `PATH`. It discovers an **entrypoint**, runs `nix build` / `eval` internally to obtain a named manifest, and has the engine place it. Subcommands include `apply [<name>]`, `apply --all`, `reset`, `rollback`, `list-generations`, `gitignore`, `prune`, and `init`.
+The primary user-facing UX; the `packages.layat` binary on `PATH`. It discovers an **entrypoint**, obtains a named manifest through a **generator** (`nix` by default), and has the engine place it. Subcommands include `apply [<name>]`, `apply --all`, `reset`, `rollback`, `list-generations`, `gitignore`, `prune`, and `init`.
 - **Avoid**: describing a per-config `nix run .#x` wrapper as the primary UX; describing `apply` as "always builds the entrypoint" (a built link-farm can be applied with `--manifest`).
+
+### generator
+What the **layat CLI** obtains a manifest from. Its contract has four operations under `internal/generator`: Discover (find the entrypoint), Roots (return the root kind and root without building), Build (place a link-farm that can be committed as a generation — a store path — at the pending path), and DryBuild (return the store path without a gcroot). The nix implementation (nixgen, `internal/generator/nixgen`) is the default. A generator is chosen only explicitly: `--generator`, then `LAYAT_GENERATOR`, then `layat.toml`, then `$XDG_CONFIG_HOME/layat/config.toml`, then the default `nix`. The engine does not care which generator produced the manifest (→ [ADR-0055](adr/0055-manifest-generator-contract.md), [ADR-0056](adr/0056-generator-selection-and-config.md)).
+- **Avoid**: saying the CLI runs `nix build` / `nix eval` itself (the nix generator does); saying the generator is guessed from the files present.
+
+### prebuilt
+The generator behind `apply --manifest <link-farm>`: Discover returns the given path, Roots reads that link-farm's `manifest.json`, and Build / DryBuild return the path. It is not one of the `--generator` choices (→ [ADR-0055](adr/0055-manifest-generator-contract.md)).
+- **Avoid**: listing it as a `--generator` value; describing `--manifest` as a route separate from the generators.
 
 ### entrypoint
 The Nix config file the layat CLI reads: one of `flake.nix`, `shell.nix`, or `default.nix`. It exposes a named manifest under `layat.<name>`. The config is still written in Nix and evaluated by `nix build`.

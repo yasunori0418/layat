@@ -39,7 +39,7 @@ layat は 2 層構成。
 ```
 [layat CLI]  packages.layat — PATH 上に乗る一次 UX
   · entrypoint を発見する(flake.nix / shell.nix / default.nix)
-  · 内部で `nix build` / `nix eval` を回して named manifest を取得する
+  · 生成器(既定 `nix`)を通じて named manifest を取得する
   · エンジンを駆動して配置・stale link 除去・profile 切替を行う
    ↓ manifest.json
 [engine]    Go ライブラリ(stdlib-only)
@@ -50,6 +50,7 @@ layat は 2 層構成。
 - **engine** が配置と stale 除去を所有する。`manifest.json`——安定した Nix↔Go の契約——を読み、ネイティブなファイルシステム操作を実行する。
 - `lib.mkManifest` は link-farm derivation(`manifest.json` ＋ symlink farm)を生成する **純粋関数**。副作用を持たない。
 - **entrypoint** は CLI が読む Nix ファイル(`flake.nix` / `shell.nix` / `default.nix`)で、`layat.<name>` に named manifest を公開する。config は依然として Nix で書かれ、`nix build` で評価される。
+- **生成器**は CLI が manifest を得る相手。既定は `nix`(「[生成器の選択](#生成器の選択)」を参照)。`apply --manifest` はビルド済み link-farm をそのまま使う *prebuilt* 生成器を通る。
 
 ---
 
