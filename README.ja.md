@@ -367,7 +367,27 @@ layat init <template>           # `nix flake init -t github:yasunori0418/layat#<
 --recopy            # apply の限定子: 全 copy target を src から上書き
 --manifest <path>   # apply 専用: ビルド済み link-farm を直接適用
 -y, --yes           # reset の確認プロンプトを省略(スクリプト / CI 用)
+--generator <name>  # manifest 生成器(現状は `nix` のみ。「生成器の選択」を参照)
 ```
+
+### 生成器の選択
+
+layat は manifest を生成器を通じて得る。現在選べる生成器は `nix` だけ(既定でもある)。生成器は明示指定でのみ選ばれ、置かれているファイルから推測されることはない。次のうち最初に指定されたものが使われる:
+
+1. `--generator <name>`
+2. 環境変数 `LAYAT_GENERATOR`
+3. プロジェクト設定 `layat.toml` — `-f` のディレクトリ(`-f` がファイルならそのファイルのあるディレクトリ)、無ければ CWD。親ディレクトリは探索しない
+4. ユーザー設定 `$XDG_CONFIG_HOME/layat/config.toml`(`XDG_CONFIG_HOME` 未設定時は `~/.config/layat/config.toml`)
+5. 既定の `nix`
+
+```toml
+# layat.toml / config.toml — キーは `generator` のみ
+generator = "nix"
+```
+
+空の `LAYAT_GENERATOR` と `generator` を持たない設定ファイルは未指定とみなし、次の段へ進む。設定ファイルは strict で、未知のキー・TOML の構文エラー・(どの段からでも)未知の生成器名はコマンドを exit 1 と stderr 1 行で止める(`--json` では `E_INPUT`)。
+
+`apply --manifest` は `LAYAT_GENERATOR` もどの設定ファイルも読まず(モジュールの activation は利用者が制御できない環境で動く)、`--generator`・`-f`・`--all` との併用を拒否する(`E_INPUT`)。`prune` と `init` は manifest を得ないため、この仕組み全体を無視する。
 
 ### 出力と終了コード
 
