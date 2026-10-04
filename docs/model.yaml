@@ -1,63 +1,6 @@
-# sara カスタムモデルスキーマ（layat）
-#
-# sara（https://github.com/cledouarec/sara）が docs/ をナレッジグラフとして
-# 検証するための型定義。`sara schema -o` で吐いた組み込みモデルを起点に、
-# layat の文書構造へ全面的に置き換えたもの（カスタムスキーマは組み込みを
-# 完全置換する仕様で、部分マージはされない）。
-#
-# 設計の出典: epic GitHub Issue #203（grilling 2026-07-31 / 2026-08-01 で確定）、
-# ADR-0048。
-#
-# ## 型構成（11 型）
-#
-# 矢印は全て親 → 子（上流 → 下流）で書く。
-#
-# 仕様の系統:       solution → use_case → requirement → design
-# 品質とテスト計画: solution → quality、solution → test_plan → design
-# 技術基盤:         quality → infrastructure、design → infrastructure
-# リスクとテスト:   requirement / design → risk → test_condition → test_case
-# 独立した根:       adr（justifies で requirement / design / infrastructure / quality /
-#                   test_plan へ必須で接続する。1 本以上 → docs/adr/README.md）
-#
-# 親を持たない根は solution と adr のみ。adr も justifies（upstream relation）を
-# 1 本以上持つため、「接続漏れ = orphan warning」は全型で成立する（→ #203・#237・#253）。
-#
-# 検出した欠陥（defect）は型として持たない。欠陥は規範（あるべき姿）ではなく発生した
-# 出来事であり、GitHub Issues（bug label）で管理する（→ ADR-0051。issue 本文に発見元の
-# CASE と遡及先の REQ / DSG を記載する片方向参照。運用規約は docs/agents/issue-tracker.md）。
-#
-# ## 組み込みから落とした型
-#
-# hardware_requirement / hardware_detailed_design / scenario / system_architecture は
-# 定義しない。layat にハードウェアは無く、Scenario / SystemArchitecture に対応する
-# 実体（use_case と requirement の中間層・requirement と design の中間層）も持たない。
-# 組み込みの system_requirement / software_requirement / software_detailed_design は
-# 汎用名の requirement / design へ寄せた。
-#
-# ## 型名・フィールド名の方針
-#
-# 型名・フィールド名は汎用のまま保ち、layat 固有の語彙を混ぜない。この model.yaml は
-# 当面 layat 内に置くが、型が安定したら skills リポジトリか専用リポジトリへ切り出して
-# 他プロジェクトへ横展開する前提のため（→ #203「model.yaml の置き場所」）。
-#
-# ## ID 形式（フル UUIDv4）
-#
-# 正式 ID は `<PREFIX>-<フル UUIDv4>`（例: REQ-8521e8f8-99cc-47f0-b7d0-70c24c837612）。
-# ファイル名（`<YYYYMMDD>-<フル UUIDv4>-<slug>.md`）も散文中の参照もこのフル ID を
-# そのまま書き、省略形は使わない（→ ADR-0053）。表記が全面で一致するので、ID を
-# そのまま grep しても `sara query` へ渡しても同じものに当たる。
-# 乱数 ID により並列レーン（parallel-worktree）での採番衝突を構造的に回避する。
-# 起票は devShell 同梱の `sara-new` コマンドで行う（`sara init` の採番とファイル名
-# 規約の適用を一手で済ませる）。
-#
-# 下の id_format はこの規約を表記したもの。sara 0.10.0 以降は id_format が採番・
-# 補完・検証を駆動する SSOT で、パースできないテンプレートは schema のロード時に
-# 拒否される（拒否されると組み込みモデルへフォールバックし、本ファイルのカスタム型が
-# 全て unknown item type になる）。使えるプレースホルダは {prefix} / {id} /
-# {seq[:0N]} / {year} / {month} / {day} / {date} / {uuid4} / {uuid7}。
-# 実際の採番は sara-new が包む `sara init` が行う。
-# ADR のみ既存の相互参照・README 運用・Issue 言及を壊さないため
-# 連番（ADR-NNNN）を維持する（採番は `sara init adr` へ委譲する）。
+# sara カスタムモデルスキーマ（layat）。sara の組み込みモデルを全面的に置き換える。
+# 型構成・ID 形式・フィールドと関係の読み方は docs/model.md を参照。
+# id_format は ADR だけ連番、他は UUIDv4。採番は sara-new / `sara init adr` が行う。
 
 item_types:
   # ---- 仕様の系統（solution → use_case → requirement → design）----
@@ -66,8 +9,6 @@ item_types:
   - id: solution
     display_name: Solution
     prefix: SOL
-    # 以降の id_format は sara 0.10.0 以降で実際に検証される（冒頭「ID 形式」節を参照）。
-    # 実際の採番は sara-new が包む `sara init` が行う。
     id_format: '{prefix}-{uuid4}'
     parent_types: []
     fields: []
@@ -86,7 +27,7 @@ item_types:
         targets:
           - solution
 
-  # 何を満たすべきか。docs/requirements/。docs/spec.md の分割先。
+  # 何を満たすべきか。docs/requirements/。
   - id: requirement
     display_name: Requirement
     prefix: REQ
@@ -94,33 +35,15 @@ item_types:
     parent_types:
       - use_case
     fields:
-      # 規範文。sara は requirement の `specification` に RFC2119 キーワード
-      # （SHALL / MUST / SHOULD …）が含まれることをハードコードで検証するため
-      # （sara-core/src/validation/rules/metadata.rs・strict_mode = false でも
-      # model.yaml でも無効化できない）、このフィールドは英語で書く。
-      #
-      # 本リポジトリは RFC2119 同義語のうち SHALL 系のみを使う（MUST / MUST NOT は
-      # 書かない）。強度ごとの綴りを 1 つに固定して item 群の読み味を揃えるためで、
-      # 規約と写像表は docs/agents/sara-graph.md が持つ（sara はどの綴りかを見ない）。
+      # 英語の規範文。sara が RFC2119 キーワードの存在を検証する。
+      # SHALL 系だけを使う規約は docs/agents/sara-graph.md が持つ。
       - name: specification
         display_name: Specification
         field_type: text
         required: true
         placeholder: The system SHALL <describe the requirement>.
-      # 上の specification と対になる日本語の規範文。本リポジトリの一次情報は
-      # 日本語なので、英語版だけが規範文として残る状態を避けるために併記する。
-      #
-      # RFC2119 検証は `FIELD_SPECIFICATION`（literal "specification"）の完全一致で
-      # attributes を引くだけで、前方一致も部分一致もしない（metadata.rs:10,74・
-      # 実地でも本フィールドに日本語のみを入れて sara check が通ることを確認済み）。
-      # よってこのフィールドは英語キーワードの制約を受けない。
-      #
-      # 全 item への併記が揃ったため required: true とした（→ #229。#209 の PR1 で
-      # 新設した当初は移行中で未記入の item があり required: false としていた）。
-      #
-      # 規範を述べる文は平叙形ではなく規範助動詞で終える。英語側の強度との写像表は
-      # docs/agents/sara-graph.md が持つ。sara はこのフィールドを検査しないので、
-      # 様式はレビューで守る。
+      # specification と対になる日本語の規範文。sara は検査しない。
+      # 規範助動詞で終える規約と強度の写像は docs/agents/sara-graph.md が持つ。
       - name: specification_ja
         display_name: Specification (ja)
         field_type: text
@@ -134,7 +57,7 @@ item_types:
         targets:
           - requirement
 
-  # どう実現するか。docs/design/。docs/design.md の分割先。
+  # どう実現するか。docs/design/。
   - id: design
     display_name: Design
     prefix: DSG
@@ -144,10 +67,7 @@ item_types:
       - test_plan
     fields: []
     allowed_targets:
-      # satisfies の対象に test_plan を含めるのは、テストハーネスの実装形を表す design が
-      # requirement ではなくテスト計画を満たす実体だから（→ #237 §3）。専用 relation の
-      # 新設案は「satisfies と意味が重なる関係を 2 本持つ」ことになるため採らず、design を
-      # orphan のまま容認する案も epic #203 の完了条件（warning 0）と両立しないため採らない。
+      # テストハーネスの実装形を表す design は test_plan を満たす。
       - relation: satisfies
         targets:
           - requirement
@@ -159,8 +79,7 @@ item_types:
   # ---- 品質とテスト計画の系統（solution 直下）----
 
   # 品質方針・規約・プロセス横断のガバナンス文書。docs/quality/。
-  # テストプロセスの外にある関心事なので test_plan とは別型に分ける（1 型へ混ぜると
-  # infrastructure が抱えていた「品質系と基盤系の混在」を新型内で再発させる → #237）。
+  # テストプロセスの外にある関心事を置き、テスト計画は test_plan に置く。
   - id: quality
     display_name: Quality
     prefix: QA
@@ -168,10 +87,7 @@ item_types:
     parent_types:
       - solution
     fields:
-      # requirement の specification / specification_ja と同じ様式で書く。ただし sara の
-      # RFC2119 キーワード検証は requirement 型にハードコードされており（metadata.rs）、
-      # quality / test_plan の specification には効かない。英語の規範文で書く規約は
-      # 機械検証されないのでレビューで守る。
+      # requirement の specification / specification_ja と同じ様式で書く。
       - name: specification
         display_name: Specification
         field_type: text
@@ -190,15 +106,8 @@ item_types:
         targets:
           - quality
 
-  # ISTQB のテスト計画活動の成果物。docs/test-plan/。テストスコープ・スコープ外宣言・
-  # テストレベル・テストアプローチ・テスト容易性の要求を収容する。
-  # 既存のテスト系 3 型（risk / test_condition / test_case）はテスト分析以降に
-  # 対応しており、テスト計画に対応する型が空いていた（→ #237）。
-  #
-  # risk の parent_types には test_plan を追加しない。risk の親は「リスクが何に対して
-  # 発生しているか」を示す構造であり、requirement / design が正しい対応先であるため。
-  # テスト計画がどの risk を扱うかは下流の test_condition → mitigates → risk で追跡できる。
-  # テスト工程が動いてから不足が判明した場合に peer relation の追加を再検討する。
+  # テスト計画活動の成果物。docs/test-plan/。テストスコープ・スコープ外宣言・
+  # テストレベル・テストアプローチ・テスト容易性の要求を置く。
   - id: test_plan
     display_name: Test Plan
     prefix: TP
@@ -206,7 +115,7 @@ item_types:
     parent_types:
       - solution
     fields:
-      # RFC2119 検証が効かない点は quality の同フィールドのコメントを参照。
+      # requirement の specification / specification_ja と同じ様式で書く。
       - name: specification
         display_name: Specification
         field_type: text
@@ -227,16 +136,8 @@ item_types:
 
   # ---- 技術基盤 ----
 
-  # プロダクトを開発・提供・稼働させる技術基盤。docs/infrastructure/。CI/CD・リリース・
-  # 開発環境に加え、配信・ホスティング・クラウド（Cloudflare / AWS / Vercel 等）を含む。
-  # web アプリケーションを想定範囲に含めた横展開を見据えた定義（→ #237 §5）。
-  #
-  # dev 基盤は quality を、runtime 基盤は design を satisfy する。この 2 経路で
-  # solution ツリーへ接続できるようになったため根から外した（root は solution と adr のみ）。
-  #
-  # 型名・prefix は変更しない。INF-<UUID> は ADR の justifies から参照されており、
-  # 改名は ID 変更 = 全参照の張り替えを伴う。違和感の主因だった品質系との混在は
-  # quality 型の分離で解消した。
+  # 開発・提供・稼働を支える技術基盤。docs/infrastructure/。
+  # 開発基盤は quality を、稼働基盤は design を満たす。
   - id: infrastructure
     display_name: Infrastructure
     prefix: INF
@@ -245,15 +146,8 @@ item_types:
       - quality
       - design
     fields:
-      # `docs/dev/definition-of-done.md` の項目 ID（DOD-01 …）への対応。DoD は sara の
-      # item ではないため relation にはせず text フィールドへ逃がす（→ #212）。
-      # DOD-01 / DOD-02 のように複数項目に対応する基盤があるため、adr の issues と同じく
-      # !list text を採る（区切り文字の暗黙契約を消費側へ持ち込まない）。対応する DoD 項目を
-      # 持たない基盤もあるので required: false。
-      #
-      # 値が実在する DoD 項目かは機械検証されない。sara は text フィールドの中身を見ず、
-      # broken reference 検出の対象は relation だけであるため。存在しない DOD-99 を書いても
-      # sara check は通る。
+      # docs/dev/definition-of-done.md の項目 ID（DOD-01 …）のリスト。
+      # 実在する項目かは sara が検証しない。
       - name: dod
         display_name: Definition of Done
         field_type: !list text
@@ -269,25 +163,15 @@ item_types:
 
   # ---- 独立した根 ----
 
-  # 意思決定の記録。docs/adr/。仕様ツリーから分離した独立型で、justifies で
-  # requirement / design / infrastructure / quality / test_plan へ必須で接続する
-  # （1 本以上。空 = 埋め忘れ。選定基準は docs/adr/README.md の `justifies` の項）。
+  # 意思決定の記録。docs/adr/。justifies で 1 本以上の item へ接続する
+  # （選定基準は docs/adr/README.md の `justifies` の項）。
   - id: adr
     display_name: Architecture Decision Record
     prefix: ADR
-    # ADR のみ連番を維持する（既存 47 本の相互参照・docs/adr/README.md の運用・
-    # Issue 言及を壊さないため）。
     id_format: '{prefix}-{seq:04}'
     parent_types: []
     fields:
-      # 実データの表記に合わせた日本語 enum。ADR は全 48 本が「採用」で `accepted` 等の
-      # 英語表記は 1 本も無く、英語化すると #208（既存 47 本への frontmatter 追加）が
-      # 全件翻訳になるため採らない。
-      #
-      # 「廃止」は当面値に持たない。ADR-0048 §3 の通り、文書丸ごとの失効を表す
-      # supersedes を定義していない現状では、廃止ステータスだけを先に置くと
-      # 「旧 ADR は読まなくてよい」という誤読を生む。supersedes の追加を再検討する
-      # 時点で「廃止」も併せて足す。
+      # supersedes を定義していないので「廃止」は持たない。
       - name: status
         display_name: Status
         field_type: !enum
@@ -296,15 +180,12 @@ item_types:
             - 採用
         required: true
         placeholder: 採用
-      # ステータス行のカッコ書き注記（例: 「採用（2026-06-14 改訂: … → ADR-0015）」）の
-      # 受け皿。#208 が扱う既存 47 本のうち 10 本が持つ。docs/adr/README.md が「正しい運用例」として明示的に
-      # 保護している情報なので、enum 化で捨てずにここへ逃がす。
+      # ステータス行のカッコ書き注記。
       - name: status_note
         display_name: Status note
         field_type: text
         required: false
-      # 外部参照の逃がし先。sara の item にできない参照（GitHub Issue 番号・
-      # grilling セッション等の起点）は text フィールドへ入れる。
+      # item にできない外部参照（GitHub Issue 番号・起点となったセッション等）。
       - name: issues
         display_name: Issues
         field_type: !list text
@@ -321,7 +202,7 @@ item_types:
           - infrastructure
           - quality
           - test_plan
-      # ADR ヘッダの「改訂対象:」。詳細は下の relations 節のコメントを参照。
+      # ADR ヘッダの「改訂対象:」。
       - relation: revises
         targets:
           - adr
@@ -333,7 +214,7 @@ item_types:
   # ---- リスクとテストの系統（risk → test_condition → test_case）----
 
   # 満たされない懸念。docs/risks/。requirement と design の両方を脅かせる。
-  # どちらへ張るかの使い分け規約は docs/agents/sara-graph.md（→ #203・#210）。
+  # どちらへ張るかの規約と採点規約は docs/agents/sara-graph.md。
   - id: risk
     display_name: Risk
     prefix: RISK
@@ -396,21 +277,8 @@ item_types:
     parent_types:
       - test_condition
     fields:
-      # CASE が対応するテスト資産の識別子。テストコード ⇔ CASE の対応を機械照合可能に
-      # するための正準表記で、規範はここ（frontmatter）にある。本文の「## 対象」節は
-      # 人間向けの補足で、契約テスト（dev/tests/test-doc-map.sh）は照合しない
-      # （→ Issue #304、epic #283）。
-      #
-      # 正準形は 2 規則のみ:
-      #   - ファイルが実在するもの → リポジトリ相対パス
-      #     （Go = internal/engine/engine_test.go、nix-unit = tests/nix-unit/structure.nix、
-      #     e2e = tests/e2e/scenarios/03-stale.sh、
-      #     namaka = tests/namaka/manifest-project/〔末尾スラッシュ〕）
-      #   - flake check → checks.hm-module 形式（checks. 接頭辞）
-      #
-      # 単一値（!list text ではない）。粒度規約「CASE = テストファイル / シナリオ /
-      # check 単位」を型で表し、CASE ⟷ テスト資産の 1:1 を契約テストで強制する
-      # （緩める変更は容易だが逆は 47 件の掃引が要るため、厳しい側へ倒した決定）。
+      # 対応するテスト資産の正準表記（単一値）。正準形は docs/model.md を参照。
+      # dev/tests/test-doc-map.sh が CASE とテスト資産の 1:1 を照合する。
       - name: target
         display_name: Target
         field_type: text
@@ -480,18 +348,8 @@ relations:
     primary: false
 
   # ---- 独自定義: ADR 間の peer 関係 ----
-  #
-  # 組み込みの supersedes / superseded_by は当面定義しない（恒久的な排除ではない）。
-  # supersedes は「文書丸ごとの失効」を意味するが、layat の ADR 改訂は全て節単位の
-  # 部分改訂で、丸ごと失効した実例が無い（改訂実態の調査 2026-08-01: 最も近い
-  # ADR-0033 ← ADR-0043 でも、タイトルになった決定自体は存続している）。
-  # 実例の無い関係を先に定義すると、部分改訂に supersedes を誤用して「旧 ADR は
-  # 読まなくてよい」と誤読させる。よって部分改訂を正しく表す revises を独自に定義し、
-  # 全節が実質失効した ADR が現れた時点で supersedes ＋「廃止」ステータスの追加を
-  # 再検討する（→ #203「関係（relation）」、ADR-0048）。
-  #
-  # ADR ヘッダの「改訂対象:」に対応。旧 ADR 側の blockquote 注記
-  # （docs/adr/README.md の運用）と対になり、注記漏れを機械検証できるようにする。
+  # ADR ヘッダの「改訂対象:」に対応する節単位の部分改訂。
+  # 組み込みの supersedes（ADR 全体の失効）は定義しない。
   - id: revises
     display_name: Revises
     inverse: is_revised_by
