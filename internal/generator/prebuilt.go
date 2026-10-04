@@ -7,9 +7,8 @@ import (
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
-// Prebuilt is the generator behind apply --manifest (→ ADR-0055 §5, ADR-0026): the link-farm is
-// already built, so Discover takes its path, Roots reads its manifest.json, and Build / DryBuild
-// return the path as-is. It runs no external command.
+// Prebuilt is the generator behind apply --manifest: Discover takes the pre-built link-farm's
+// path, Roots reads its manifest.json, and Build / DryBuild return the path as-is.
 type Prebuilt struct {
 	linkFarm string
 }

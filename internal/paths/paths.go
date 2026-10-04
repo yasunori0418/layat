@@ -1,10 +1,6 @@
-// Package paths computes the on-disk profile layout the engine operates on
-// (→ ADR-0005, ADR-0013, ADR-0022, ADR-0024, ADR-0025).
-//
-// profileDir is the per-config dedicated directory (= flock key). The profile
-// link sits inside it as profile, generations as profile-N-link, the build
-// out-link as .pending, and the backref .root at the <roothash> level
-// (→ docs/spec.md "on-disk layout of the profile").
+// Package paths computes the on-disk profile layout the engine operates on. profileDir is the
+// per-config directory (= flock key) holding profile, profile-N-link, and .pending; the backref
+// .root sits at the <roothash> level.
 package paths
 
 import (
@@ -20,18 +16,16 @@ import (
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
-// rootHashLen is the hex character count of the roothash (128 bit; fixed length;
-// FS-safe; → ADR-0013). It matches the digit count of lib.mkManifest's anchorName
-// (the first 32 hex of sha256).
+// rootHashLen is the hex character count of the roothash (128 bit). It matches the digit count
+// of lib.mkManifest's anchorName (the first 32 hex of sha256).
 const rootHashLen = 32
 
-// backrefName is the file at the <roothash> level recording the original
-// root's absolute path (→ ADR-0013). Its presence is what makes a directory
-// under the base a <roothash> series rather than a <name>-keyed profileDir.
+// backrefName is the file at the <roothash> level recording the original root's absolute path.
+// Its presence makes a directory under the base a <roothash> series rather than a profileDir.
 const backrefName = ".root"
 
 // StateDir returns the base <state> for the profiles. $XDG_STATE_HOME if set,
-// otherwise $HOME/.local/state (consistent with nix's own profile default; → ADR-0022).
+// otherwise $HOME/.local/state (consistent with nix's own profile default).
 func StateDir() (string, error) {
 	if s := os.Getenv("XDG_STATE_HOME"); s != "" {
 		return s, nil
@@ -43,7 +37,7 @@ func StateDir() (string, error) {
 	return filepath.Join(home, ".local", "state"), nil
 }
 
-// RootHash returns the truncated hex of the sha256 of the resolved absolute root path (→ ADR-0013).
+// RootHash returns the truncated hex of the sha256 of the resolved absolute root path.
 func RootHash(absRoot string) string {
 	sum := sha256.Sum256([]byte(absRoot))
 	return hex.EncodeToString(sum[:])[:rootHashLen]
@@ -51,14 +45,13 @@ func RootHash(absRoot string) string {
 
 // Base returns the base <state>/nix/profiles/layat for the profiles. The home
 // (no --root) profileDir is <name> directly under it; the roothash series is
-// <roothash>/<name> (→ ADR-0024).
+// <roothash>/<name>.
 func Base(stateDir string) string {
 	return filepath.Join(stateDir, "nix", "profiles", "layat")
 }
 
-// GenerationLink returns the path of the generation link
-// <profileDir>/profile-<gen>-link that nix-env creates as a sibling of the
-// profile link (→ docs/spec.md on-disk layout; ADR-0025).
+// GenerationLink returns the path of the generation link <profileDir>/profile-<gen>-link that
+// nix-env creates as a sibling of the profile link.
 func GenerationLink(profileLink string, gen int) string {
 	return fmt.Sprintf("%s-%d-link", profileLink, gen)
 }
@@ -85,27 +78,17 @@ type RootHashSeries struct {
 	RootHash string
 	// Root is the absolute root path the backref .root records. Empty when BackrefErr is set.
 	Root string
-	// Names are the <name> profileDirs under the series, in whatever order
-	// os.ReadDir returned them; nothing here depends on that order. Nil for a
-	// series that holds nothing but the backref, and for one whose NamesErr is set
-	// (Names being empty therefore does not by itself mean the series has no
-	// <name> profile — check NamesErr first).
+	// Names are the <name> profileDirs under the series, in os.ReadDir order. Nil when the
+	// series holds only the backref or when NamesErr is set (check NamesErr first).
 	Names []string
 	// BackrefErr is the reason the backref could not be turned into a root path.
-	// The series is still returned so the caller can report it rather than
-	// silently drop it.
 	BackrefErr error
-	// NamesErr is the reason the <name> profileDirs could not be listed. The
-	// series is returned the same way, with Names left nil.
+	// NamesErr is the reason the <name> profileDirs could not be listed.
 	NamesErr error
 }
 
-// ReadBackref reads the backref <hashDir>/.root and returns the absolute root
-// path it records. The engine writes it as root + "\n" (→ engine.go), so the
-// surrounding whitespace is trimmed: the verdict on a root must not depend on a
-// trailing newline. A backref that is missing, empty, or not an absolute path
-// is an error — no root path can be decided from it, and a relative path would
-// otherwise resolve against the cwd (→ ADR-0034, DSG-096dc893-21f4-45e3-9347-986e9275b4d1).
+// ReadBackref returns the absolute root path the backref <hashDir>/.root records, with
+// surrounding whitespace trimmed. A missing, empty, or non-absolute backref is an error.
 func ReadBackref(hashDir string) (string, error) {
 	backref := filepath.Join(hashDir, backrefName)
 	b, err := os.ReadFile(backref)
@@ -122,27 +105,9 @@ func ReadBackref(hashDir string) (string, error) {
 	return root, nil
 }
 
-// ListRootHashSeries lists the <roothash> series directly under base — the
-// directories that hold a backref .root, that is the series of project mode,
-// fixed root, and --root override (→ ADR-0024, ADR-0034). A directory without
-// .root is the <name>-keyed profileDir of home mode and system mode and is not
-// a series, so it is not returned.
-//
-// A series whose backref cannot be read is returned with BackrefErr set, and one
-// whose contents cannot be listed with NamesErr set, rather than dropped: the
-// caller reports the reason per series and the rest of the base still comes back
-// (→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f). Only a failure of the base itself
-// is returned as an error. This is the plain FS read both layat prune (→ #133) and
-// layat status (→ #198) enumerate with; it applies no policy of its own beyond the
-// .root test.
-//
-// base is a finished profile base — Base(stateDir) for the user state, or the
-// system base as-is (it does not go through Base()).
-//
-// A base that does not exist is an error matching fs.ErrNotExist, not an empty
-// listing: whether a missing base is normal is the caller's call, and swallowing
-// it here would make a base that could not be listed indistinguishable from one
-// holding no series (→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f).
+// ListRootHashSeries lists the <roothash> series (directories holding a backref .root) directly
+// under base. A series that fails to read is returned with BackrefErr / NamesErr set; only a
+// failure of base itself, including fs.ErrNotExist, is returned as an error.
 func ListRootHashSeries(base string) ([]RootHashSeries, error) {
 	entries, err := os.ReadDir(base)
 	if err != nil {
@@ -162,9 +127,7 @@ func ListRootHashSeries(base string) ([]RootHashSeries, error) {
 			// No backref: a <name>-keyed profileDir, not a series.
 			continue
 		case err != nil:
-			// Whether there is a backref cannot be decided. Return the directory
-			// as a series carrying the reason rather than dropping it silently or
-			// abandoning the rest of the base.
+			// Whether there is a backref cannot be decided; report it as a series with the reason.
 			s.BackrefErr = fmt.Errorf("layat: cannot stat backref (%s): %w", backref, err)
 		default:
 			s.Root, s.BackrefErr = ReadBackref(hashDir)
@@ -186,13 +149,8 @@ func ListRootHashSeries(base string) ([]RootHashSeries, error) {
 	return series, nil
 }
 
-// Resolve determines the profile layout from the state base, config name,
-// rootKind, resolved absolute root, and whether --root was overridden
-// (→ docs/spec.md "root resolution" table; ADR-0024, ADR-0025).
-//
-//   - home (no --root)               : <state>/nix/profiles/layat/<name> (no backref)
-//   - project / fixed / --root override : <state>/nix/profiles/layat/<roothash>/<name>
-//     (backref .root at the <roothash> level)
+// Resolve determines the profile layout for a config: <base>/<name> for home without --root,
+// otherwise <base>/<roothash>/<name> with the backref .root at the <roothash> level.
 func Resolve(stateDir, name, rootKind, absRoot string, rootOverride bool) Profile {
 	base := Base(stateDir)
 

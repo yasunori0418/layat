@@ -41,8 +41,7 @@ func (f fakeFS) Readlink(path string) (string, error) {
 }
 
 // ReadDir lists path's immediate children by scanning the flat fakeFS map for keys one
-// path component below path (path itself need not exist as a "dir" entry in the map;
-// only its children's presence matters, matching how the table-driven tests populate fs).
+// path component below path (path itself need not be in the map).
 func (f fakeFS) ReadDir(path string) ([]os.DirEntry, error) {
 	prefix := path + string(os.PathSeparator)
 	seen := map[string]fakeEntry{}
@@ -130,12 +129,11 @@ type want struct {
 	remove       []string
 	preRemove    []string // RemoveUnlink actions, by Entry.Target
 	preRemoveDir []string // RemoveRmdir actions, by root-relative TargetAbs
-	backup       []string // BackupAction entries, by Entry.Target (→ ADR-0045)
+	backup       []string // BackupAction entries, by Entry.Target
 	warns        []WarnKind
 	conflicts    int
-	// conflictKinds asserts plan.Conflicts[i].Kind in order (nil = skip; the conflicts count
-	// alone does not catch a Kind mix-up such as ForeignAncestor ↔ SelfContradictoryAncestor,
-	// both assigned from the same keptInNext branch · → #176).
+	// conflictKinds asserts plan.Conflicts[i].Kind in order (nil = skip), catching a Kind mix-up
+	// the conflicts count alone does not.
 	conflictKinds []ConflictKind
 }
 
@@ -285,7 +283,7 @@ func TestComputeTableDriven(t *testing.T) {
 			want: want{conflicts: 1, conflictKinds: []ConflictKind{ConflictForeignEntity}},
 		},
 		{
-			// An ancestor component is a symlink: cannot nest under it, conflict (→ ADR-0015).
+			// An ancestor component is a symlink: cannot nest under it, conflict.
 			name: "ancestor symlink → conflict",
 			prev: nil,
 			next: mani(sl(srcB, ".claude/skills/nix")),
@@ -295,17 +293,15 @@ func TestComputeTableDriven(t *testing.T) {
 		{
 			// Self-recorded stale ancestor symlink (prev recorded .claude/skills, on-disk matches, next
 			// drops it for children): migrate — pre-remove the ancestor and place children as new,
-			// deduping the ancestor across multiple children (→ ADR-0046).
+			// deduping the ancestor across multiple children.
 			name: "self-recorded stale ancestor → migrate (preRemove + child PlaceNew)",
 			prev: mani(sl(srcA, ".claude/skills")),
 			next: mani(sl(srcB, ".claude/skills/foo"), sl(srcB, ".claude/skills/bar")),
 			fs: fakeFS{
 				abs(".claude"):        dir(),
 				abs(".claude/skills"): sym(srcA),
-				// The child keys stand in for the files a real lstat would find by resolving through the
-				// ancestor symlink into the previous farm. The relaxation must place children as new
-				// WITHOUT probing them; if the code regressed to normal lstat classification it would see
-				// these regular files and emit conflicts, so their presence keeps this case honest (→ ADR-0046).
+				// Stand-ins for files a real lstat would resolve through the ancestor symlink; children
+				// must be placed as new without probing them, or these would turn into conflicts.
 				abs(".claude/skills/foo"): reg(),
 				abs(".claude/skills/bar"): reg(),
 			},
@@ -316,7 +312,7 @@ func TestComputeTableDriven(t *testing.T) {
 		},
 		{
 			// Same migration but the nested child is a copy entry: it becomes a place-once CopyAction
-			// (the "target absent" copy arm), not a symlink placement (→ ADR-0046).
+			// (the "target absent" copy arm), not a symlink placement.
 			name: "self-recorded stale ancestor, copy child → migrate (preRemove + copy)",
 			prev: mani(sl(srcA, ".claude/skills")),
 			next: mani(cp(srcB, ".claude/skills/foo")),
@@ -324,7 +320,7 @@ func TestComputeTableDriven(t *testing.T) {
 				abs(".claude"):        dir(),
 				abs(".claude/skills"): sym(srcA),
 				// Stand-in for the file a real lstat would resolve through the ancestor symlink; the copy
-				// child must be planned as a place-once new copy without probing it (→ ADR-0046).
+				// child must be planned as a place-once new copy without probing it.
 				abs(".claude/skills/foo"): reg(),
 			},
 			want: want{
@@ -334,7 +330,7 @@ func TestComputeTableDriven(t *testing.T) {
 		},
 		{
 			// Two distinct stale ancestors dropped and re-nested in the same generation: PreRemove
-			// accumulates both (the slice/dedup map grow across multiple keys, not just repeat one) (→ ADR-0046).
+			// accumulates both (the slice/dedup map grow across multiple keys, not just repeat one).
 			name: "two distinct self-recorded stale ancestors → migrate both",
 			prev: mani(sl(srcA, ".claude/skills"), sl(srcA, ".config/nvim")),
 			next: mani(sl(srcB, ".claude/skills/foo"), sl(srcB, ".config/nvim/init.lua")),
@@ -351,7 +347,7 @@ func TestComputeTableDriven(t *testing.T) {
 		},
 		{
 			// Child nested two levels below the stale ancestor symlink (.claude/skills/sub/foo): the walk
-			// stops at the ancestor and the deeper child is placed new via appendAbsentPlacement (→ ADR-0046).
+			// stops at the ancestor and the deeper child is placed new via appendAbsentPlacement.
 			name: "self-recorded stale ancestor, deep child → migrate",
 			prev: mani(sl(srcA, ".claude/skills")),
 			next: mani(sl(srcB, ".claude/skills/sub/foo")),
@@ -367,7 +363,7 @@ func TestComputeTableDriven(t *testing.T) {
 		{
 			// Recorded ancestor but the on-disk symlink points elsewhere (mismatch = foreign / user-swapped):
 			// not eligible for migration, the child stays a conflict; the ancestor is kept with a stale-mismatch
-			// warning by the remove side (→ ADR-0046).
+			// warning by the remove side.
 			name: "foreign ancestor (recorded mismatch) → conflict",
 			prev: mani(sl(srcA, ".claude/skills")),
 			next: mani(sl(srcB, ".claude/skills/foo")),
@@ -380,7 +376,7 @@ func TestComputeTableDriven(t *testing.T) {
 		{
 			// The new generation keeps the ancestor whole-tree symlink AND a nested child
 			// (self-contradictory): the ancestor cannot be removed, so the child stays a conflict while
-			// the ancestor entry itself re-links as a recorded replace (→ ADR-0046).
+			// the ancestor entry itself re-links as a recorded replace.
 			name: "self-contradictory ancestor (kept in next) → conflict",
 			prev: mani(sl(srcA, ".claude/skills")),
 			next: mani(sl(srcB, ".claude/skills"), sl(srcB, ".claude/skills/foo")),
@@ -509,10 +505,8 @@ func TestComputeTableDriven(t *testing.T) {
 			want: want{},
 		},
 		{
-			// Real directory occupying the target, all children recorded ∧ stale (self-recorded by
-			// this profile's previous generation, dropped by the new one): fully migratable — every
-			// child is scheduled RemoveUnlink, the now-empty dir itself RemoveRmdir, and the entry
-			// places as a new symlink (→ ADR-0047, issue #175).
+			// Real directory whose children are all recorded ∧ stale: every child is RemoveUnlink,
+			// the dir itself RemoveRmdir, and the entry places as a new symlink.
 			name: "real dir target, all children recorded+stale → migrate (preRemove unlink+rmdir)",
 			prev: mani(sl(srcA, ".claude/hooks/foo/main.sh"), sl(srcA, ".claude/hooks/bar/main.sh")),
 			next: mani(sl(srcB, ".claude/hooks")),
@@ -540,7 +534,7 @@ func TestComputeTableDriven(t *testing.T) {
 		{
 			// Real directory containing only an empty subdirectory (no leaf entries at all): empty
 			// dirs are migratable regardless of provenance, since rmdir only ever succeeds when empty
-			// (data-loss-free even for dirs layat never created · → ADR-0047 D2).
+			// (data-loss-free even for dirs layat never created).
 			name: "real dir target, empty subdir of unknown provenance → migrate (rmdir only)",
 			prev: nil,
 			next: mani(sl(srcB, ".claude/hooks")),
@@ -560,7 +554,7 @@ func TestComputeTableDriven(t *testing.T) {
 		{
 			// Real directory with one foreign real file mixed among otherwise-migratable children:
 			// the whole directory is a conflict, and critically NONE of the migratable siblings are
-			// partially removed (no dirActions leak into the plan on failure · → ADR-0047).
+			// partially removed (no dirActions leak into the plan on failure).
 			name: "real dir target, one real file mixed in → conflict (no partial removal)",
 			prev: mani(sl(srcA, ".claude/hooks/foo/main.sh")),
 			next: mani(sl(srcB, ".claude/hooks")),
@@ -571,13 +565,8 @@ func TestComputeTableDriven(t *testing.T) {
 				abs(".claude/hooks/foo/main.sh"): sym(srcA),
 				abs(".claude/hooks/README"):      reg(),
 			},
-			// The dir-migration classification for ".claude/hooks" discards its dirActions on
-			// conflict (no partial removal from *that* walk), but ".claude/hooks/foo/main.sh" is
-			// independently a stale entry in prev.Entries under the ordinary remove-side loop (it
-			// was never added to preRemoved, since the dir classification failed before dedup-ing
-			// it). This is harmless: engine.Apply stops before removeStale on any conflict, so this
-			// planned removal never executes (→ ADR-0047). --backup is disabled in this case, so
-			// markDirEntriesPreRemoved is not invoked either (→ ADR-0045).
+			// ".claude/hooks/foo/main.sh" stays an ordinary stale Remove candidate; it never runs
+			// because engine.Apply stops on the conflict first.
 			want: want{
 				conflicts:     1,
 				conflictKinds: []ConflictKind{ConflictDirMigrationFailed},
@@ -585,13 +574,9 @@ func TestComputeTableDriven(t *testing.T) {
 			},
 		},
 		{
-			// Real directory whose new generation still records a nested child at the same relative
-			// target as a dir-child symlink (self-contradictory manifest): the dir-migration
-			// classification for ".claude/hooks" itself conflicts (child kept in next), but
-			// ".claude/hooks/foo" is also independently present in next.Entries and gets classified
-			// on its own merits by the ordinary per-entry loop (a recorded symlink, unaffected by
-			// its ancestor still being a real, unmigrated directory) → PlaceReplace. Harmless for the
-			// same reason as above: the conflict blocks engine.Apply before any placement runs.
+			// Real directory whose child symlink the new generation still keeps: ".claude/hooks"
+			// conflicts, while ".claude/hooks/foo" is classified on its own as PlaceReplace (the
+			// conflict blocks engine.Apply before any placement runs).
 			name: "real dir target, child kept in next → conflict (self-contradictory)",
 			prev: mani(sl(srcA, ".claude/hooks/foo")),
 			next: mani(sl(srcB, ".claude/hooks"), sl(srcB, ".claude/hooks/foo")),
@@ -617,7 +602,7 @@ func TestComputeTableDriven(t *testing.T) {
 		{
 			// Method changed symlink→copy at the same target: the previous generation's recorded
 			// symlink is pre-removed (Unlink) and a fresh place-once copy is scheduled — zero data
-			// loss since the symlink carried no user data (→ ADR-0047 D5).
+			// loss since the symlink carried no user data.
 			name: "method change symlink→copy, recorded → migrate (preRemove unlink + copy)",
 			prev: mani(sl(srcA, ".config/tool.conf")),
 			next: mani(cp(srcB, ".config/tool.conf")),
@@ -633,7 +618,7 @@ func TestComputeTableDriven(t *testing.T) {
 		{
 			// Method changed symlink→copy but the on-disk symlink drifted from the record (foreign /
 			// user-swapped): not eligible for the method-change migration, falls through to the
-			// ordinary foreign handling (→ ADR-0047 D5 fallback).
+			// ordinary foreign handling.
 			name: "method change symlink→copy, drifted record → foreign (no migration)",
 			prev: mani(sl(srcA, ".config/tool.conf")),
 			next: mani(cp(srcB, ".config/tool.conf")),
@@ -644,10 +629,8 @@ func TestComputeTableDriven(t *testing.T) {
 			want: want{warns: []WarnKind{WarnCopyForeign}},
 		},
 		{
-			// Method changed copy→symlink at the same target: NOT migrated (D5 keeps copy→symlink a
-			// conflict to protect potentially user-edited copy data; ADR-0047 only automates the
-			// zero-data-loss symlink→copy direction). The existing copy target is a real file
-			// occupying a symlink placement target, so it is the ordinary no-overwrite conflict.
+			// Method changed copy→symlink at the same target: NOT migrated, to protect possibly
+			// user-edited copy data; it is the ordinary no-overwrite conflict.
 			name: "method change copy→symlink, recorded copy → conflict (not migrated)",
 			prev: mani(cp(srcA, ".config/tool.conf")),
 			next: mani(sl(srcB, ".config/tool.conf")),
@@ -658,7 +641,7 @@ func TestComputeTableDriven(t *testing.T) {
 		},
 		{
 			// apply --backup: a regular file occupying a symlink target is backed up instead of
-			// conflicting, and the entry places fresh (→ ADR-0045, issue #169).
+			// conflicting, and the entry places fresh.
 			name: "backup enabled, regular file at symlink target → backup + placeNew",
 			prev: nil,
 			next: mani(sl(srcB, ".config/foo")),
@@ -682,7 +665,7 @@ func TestComputeTableDriven(t *testing.T) {
 		},
 		{
 			// apply --backup: the backup destination itself already exists (a leftover from an
-			// earlier backup) → conflict rather than silently clobbering it (→ ADR-0045).
+			// earlier backup) → conflict rather than silently clobbering it.
 			name: "backup enabled, backup destination already exists → conflict",
 			prev: nil,
 			next: mani(sl(srcB, ".config/foo")),
@@ -704,7 +687,7 @@ func TestComputeTableDriven(t *testing.T) {
 		},
 		{
 			// apply --backup: a copy target occupied by a foreign real file is backed up and a fresh
-			// copy placed, instead of the usual skip+WarnCopyForeign (→ ADR-0045).
+			// copy placed, instead of the usual skip+WarnCopyForeign.
 			name: "backup enabled, copy foreign file → backup + copy (no WarnCopyForeign)",
 			prev: nil,
 			next: mani(cp(srcA, ".config/foo")),
@@ -714,7 +697,7 @@ func TestComputeTableDriven(t *testing.T) {
 		},
 		{
 			// apply --backup: method changed copy→symlink is backed up instead of the usual
-			// non-migrated conflict — --backup is the escape hatch ADR-0047 D5 promised.
+			// non-migrated conflict.
 			name: "backup enabled, method change copy→symlink → backup + placeNew",
 			prev: mani(cp(srcA, ".config/tool.conf")),
 			next: mani(sl(srcB, ".config/tool.conf")),
@@ -724,8 +707,7 @@ func TestComputeTableDriven(t *testing.T) {
 		},
 		{
 			// apply --backup: a real directory target that fails full migration (a foreign leaf
-			// mixed in) is backed up whole rather than partially migrated — consistent with
-			// ADR-0047's "no partial removal" stance (→ ADR-0045, issue #169).
+			// mixed in) is backed up whole rather than partially migrated.
 			name: "backup enabled, real dir target with foreign leaf → backup whole dir + placeNew",
 			prev: nil,
 			next: mani(sl(srcB, ".claude/hooks")),
@@ -738,13 +720,8 @@ func TestComputeTableDriven(t *testing.T) {
 			want: want{placeNew: []string{".claude/hooks"}, backup: []string{".claude/hooks"}},
 		},
 		{
-			// apply --backup on a dir migration failure must not also schedule the dir's safe
-			// (recorded ∧ stale) leaves on the remove-side: the whole dir is renamed aside as one
-			// unit, so a leaf recorded by prev is neither a lingering Remove candidate nor a
-			// "drifted after planning" false warning at execution time (→ ADR-0045). "safe.sh" alone
-			// would normally be a clean RemoveUnlink candidate (classifyDirMigration would accept it
-			// individually), but "foo.txt" forces the whole-dir backup path, which must also absorb
-			// "safe.sh" out of the remove side rather than leaving it stranded there.
+			// apply --backup on a dir migration failure renames the whole dir aside, so its
+			// recorded ∧ stale leaf "safe.sh" must not also be scheduled on the remove side.
 			name: "backup enabled, real dir target with foreign leaf: sibling recorded-stale leaf must not linger on remove side",
 			prev: mani(sl(srcA, ".claude/hooks/safe.sh")),
 			next: mani(sl(srcB, ".claude/hooks")),
@@ -758,8 +735,8 @@ func TestComputeTableDriven(t *testing.T) {
 			want: want{placeNew: []string{".claude/hooks"}, backup: []string{".claude/hooks"}},
 		},
 		{
-			// apply --backup does NOT extend to ancestor-symlink conflicts (out of scope per issue
-			// #169 / ADR-0045): a foreign ancestor symlink still stops the world even with --backup.
+			// apply --backup does NOT extend to ancestor-symlink conflicts: a foreign ancestor
+			// symlink still stops the world even with --backup.
 			name: "backup enabled, foreign ancestor symlink → still conflict (out of scope)",
 			prev: nil,
 			next: mani(sl(srcB, ".claude/skills/nix")),
@@ -827,13 +804,9 @@ func TestComputeTableDriven(t *testing.T) {
 	}
 }
 
-// TestComputeDirMigrationPreRemoveOrderIsBottomUp verifies the ordering invariant
-// classifyDirMigration's doc comment promises (→ ADR-0047, issue #175 §8): plan.PreRemove lists
-// children before parents, so a consumer walking the slice front-to-back naturally unlinks
-// leaves first and rmdirs from the deepest directory upward — never rmdir-ing a directory before
-// its own contents are cleared. TestComputeTableDriven's sortedEq comparisons cannot catch an
-// order regression (they sort before comparing), so this test asserts slice order directly on a
-// three-level-deep occupying directory (.claude/hooks/foo/sub, with a leaf at each level).
+// TestComputeDirMigrationPreRemoveOrderIsBottomUp verifies that plan.PreRemove lists children
+// before parents on a three-level-deep occupying directory, asserting slice order directly
+// (TestComputeTableDriven sorts before comparing).
 func TestComputeDirMigrationPreRemoveOrderIsBottomUp(t *testing.T) {
 	const src = "/nix/store/aaa-src"
 	prev := mani(

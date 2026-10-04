@@ -1,7 +1,6 @@
-// Package nixgen is the nix manifest generator (→ ADR-0055): it discovers a flake / legacy
-// entrypoint, pre-reads rootKind with `nix eval`, and builds the link-farm with `nix build`.
-// The per-system dimension (`layat.<system>.<name>`) and every nix-specific error string stay
-// inside this package; the contract addresses a config by its name alone.
+// Package nixgen is the nix manifest generator: it discovers a flake / legacy entrypoint,
+// pre-reads rootKind with `nix eval`, and builds the link-farm with `nix build`. The per-system
+// dimension and every nix-specific error string stay inside this package.
 package nixgen
 
 import (
@@ -21,7 +20,7 @@ import (
 )
 
 // entrypointKind distinguishes a flake entrypoint (`layat.<system>.<name>`, addressed via `<flakeRef>#...`)
-// from a legacy entrypoint (`layat.<name>`, addressed via `nix ... -f <path> ...`; → ADR-0007, ADR-0032).
+// from a legacy entrypoint (`layat.<name>`, addressed via `nix ... -f <path> ...`).
 type entrypointKind int
 
 const (
@@ -29,12 +28,11 @@ const (
 	entrypointLegacy
 )
 
-// legacyEntrypointNames is the discovery order for legacy entrypoints, tried after flake.nix
-// (→ docs/spec.md "entrypoint discovery", ADR-0032).
+// legacyEntrypointNames is the discovery order for legacy entrypoints, tried after flake.nix.
 var legacyEntrypointNames = []string{"shell.nix", "default.nix"}
 
 // entrypoint is a discovered entrypoint: a flake (flake.nix) or a legacy file (shell.nix / default.nix).
-// Legacy has no per-system dimension (unlike the flake's `layat.<system>.<name>`; → ADR-0032).
+// Legacy has no per-system dimension (unlike the flake's `layat.<system>.<name>`).
 type entrypoint struct {
 	kind entrypointKind
 	// flakeRef is the flake ref passed to `nix build`/`nix eval` (the absolute path of the directory containing flake.nix).
@@ -43,8 +41,8 @@ type entrypoint struct {
 	legacyPath string
 }
 
-// discoverEntrypoint discovers the entrypoint in the order -f explicit → CWD autodiscovery
-// (→ docs/spec.md "entrypoint discovery"). Discovery order is flake.nix → shell.nix → default.nix (→ ADR-0032).
+// discoverEntrypoint discovers the entrypoint from -f, else from the CWD, in the order
+// flake.nix → shell.nix → default.nix.
 func discoverEntrypoint(fileFlag string) (*entrypoint, error) {
 	if fileFlag != "" {
 		abs, err := filepath.Abs(fileFlag)
@@ -96,9 +94,8 @@ func fileExists(p string) bool {
 	return err == nil
 }
 
-// currentSystem returns the nix system name of the runtime environment (e.g. aarch64-darwin).
-// Because the flake has a system dimension in `layat.<system>.<name>`, the CLI injects the current system (→ ADR-0007).
-// Legacy entrypoints have no system dimension and ignore it (→ ADR-0032).
+// currentSystem returns the nix system name of the runtime environment (e.g. aarch64-darwin),
+// injected into a flake's `layat.<system>.<name>`. Legacy entrypoints ignore it.
 func currentSystem() (string, error) {
 	var arch string
 	switch runtime.GOARCH {
@@ -117,10 +114,9 @@ func currentSystem() (string, error) {
 	}
 }
 
-// installableArgs returns the nix args that select `layat.<name><suffix>` for this entrypoint, to be appended
-// right after the `eval`/`build` subcommand name. A flake entrypoint yields a single
-// "<flakeRef>#layat.<system>.<name><suffix>" installable; a legacy entrypoint (shell.nix / default.nix) has no
-// per-system dimension and yields "-f <legacyPath> layat.<name><suffix>" (→ ADR-0032, docs/spec.md addressing).
+// installableArgs returns the nix args that select `layat.<name><suffix>`, appended right after
+// the `eval`/`build` subcommand: "<flakeRef>#layat.<system>.<name><suffix>" for a flake,
+// "-f <legacyPath> layat.<name><suffix>" for a legacy entrypoint.
 func (e *entrypoint) installableArgs(system, name, suffix string) []string {
 	if e.kind == entrypointLegacy {
 		return []string{"-f", e.legacyPath, "layat." + name + suffix}
@@ -129,7 +125,7 @@ func (e *entrypoint) installableArgs(system, name, suffix string) []string {
 }
 
 // namespaceArgs returns the nix args that select the `layat.<system>` (flake) or `layat` (legacy) namespace,
-// used for the batch eval of apply --all / gitignore --all (→ ADR-0024, ADR-0032).
+// used for the batch eval of apply --all / gitignore --all.
 func (e *entrypoint) namespaceArgs(system string) []string {
 	if e.kind == entrypointLegacy {
 		return []string{"-f", e.legacyPath, "layat"}
@@ -165,7 +161,7 @@ type Generator struct {
 var _ generator.Generator = (*Generator)(nil)
 
 // New returns a nix generator writing its diagnostics to stderr; debug discloses the nix
-// commands it runs (→ ADR-0031 §3, ADR-0055 §8).
+// commands it runs.
 func New(stderr io.Writer, debug bool) *Generator {
 	return &Generator{stderr: stderr, debug: debug}
 }
@@ -184,8 +180,7 @@ func (g *Generator) Discover(file string) error {
 	return nil
 }
 
-// discoverError tags a discovery failure as Stage discover, keeping err as the cause so the CLI
-// still classifies it by its chain (→ ADR-0055 §7).
+// discoverError tags a discovery failure as Stage discover, keeping err as the cause.
 func discoverError(err error) error {
 	return generator.NewError(generator.NameNix, generator.StageDiscover, generator.KindFailed, err.Error(), "", "", err)
 }
@@ -204,9 +199,8 @@ func (g *Generator) AllRoots() (map[string]manifest.Root, error) {
 	return g.evalAllRoots()
 }
 
-// evalAllRoots gets the config name → root map for `apply --all` / `gitignore --all`
-// in a single `nix eval` (fixing eval process launches at N→1; → docs/spec.md execution flow, ADR-0024).
-// It is a cheap eval that does no build and reads only the passthru rootKind + targets (+ root for fixed; → ADR-0038).
+// evalAllRoots gets the config name → root map for `apply --all` / `gitignore --all` in a single
+// `nix eval` that builds nothing and reads only rootKind + targets (+ root for fixed).
 func (g *Generator) evalAllRoots() (map[string]manifest.Root, error) {
 	// Extract only rootKind + targets (+ root if fixed) from each config under layat.<system>.
 	apply := `cs: builtins.mapAttrs (_: c: { rootKind = c.rootKind; targets = c.targets; } // (if c ? root then { root = c.root; } else {})) cs`
@@ -232,8 +226,8 @@ func (g *Generator) evalAllRoots() (map[string]manifest.Root, error) {
 	return roots, nil
 }
 
-// evalRoot pre-resolves rootKind (+ the absolute path when fixed root) via a cheap nix eval before build
-// (→ docs/spec.md execution flow 1, ADR-0023). This resolves profileDir and establishes the order flock → build.
+// evalRoot pre-resolves rootKind (+ the absolute path when fixed root) via a cheap nix eval, so
+// profileDir is known before the flock and the build.
 func (g *Generator) evalRoot(name string) (rootKind, fixedRoot string, err error) {
 	args := append([]string{"eval"}, g.ep.installableArgs(g.system, name, ".rootKind")...)
 	args = append(args, "--raw")
@@ -269,9 +263,8 @@ func (g *Generator) Build(name, pending string) (string, error) {
 	return store, nil
 }
 
-// DryBuild gets the link-farm's store path via `nix build --no-link --print-out-paths` **without
-// laying down a gcroot (out-link)** (dryrun is side-effect-free and creates no pending out-link;
-// → ADR-0011, ADR-0023).
+// DryBuild gets the link-farm's store path via `nix build --no-link --print-out-paths` without
+// laying down a gcroot (out-link).
 func (g *Generator) DryBuild(name string) (string, error) {
 	args := append([]string{"build"}, g.ep.installableArgs(g.system, name, "")...)
 	args = append(args, "--no-link", "--print-out-paths")
@@ -289,7 +282,7 @@ func (g *Generator) DryBuild(name string) (string, error) {
 }
 
 // stageOf maps a nix subcommand to the contract stage its failure belongs to: eval pre-reads the
-// roots, build builds (→ ADR-0055 §6).
+// roots, build builds.
 func stageOf(args []string) generator.Stage {
 	if args[0] == "eval" {
 		return generator.StageRoots
@@ -306,16 +299,14 @@ func (g *Generator) runNixCapture(args ...string) (string, error) {
 	return stdout.String(), nil
 }
 
-// runNixStream streams nix's output to the diagnostics writer (for build progress; stdout is reserved for machine-readable output; → ADR-0023).
+// runNixStream streams nix's output to the diagnostics writer (for build progress).
 func (g *Generator) runNixStream(args ...string) error {
 	return g.runNix(args, nil)
 }
 
-// runNix runs nix with its stdout going to stdout and its stderr teed: passed through to the
-// diagnostics writer on success and failure alike, and captured for the failure's Stderr
-// (→ ADR-0055 §6). The writer gets whole lines (→ lineWriter). A nil stdout streams it through
-// the same tee, so exec copies both from one pipe and the writer is never written from two
-// goroutines at once. A failure is a generator.Error classified by nix's stderr (→ nixFailure).
+// runNix runs nix with its stderr teed to the diagnostics writer (in whole lines) and to a capture
+// for the failure's Stderr. A nil stdout shares the same tee, so the writer is never written from
+// two goroutines at once. A failure is a generator.Error classified by nixFailure.
 func (g *Generator) runNix(args []string, stdout io.Writer) error {
 	if g.debug {
 		_, _ = fmt.Fprintf(g.stderr, "layat: + nix %s\n", strings.Join(args, " "))
@@ -337,11 +328,9 @@ func (g *Generator) runNix(args []string, stdout io.Writer) error {
 	return nil
 }
 
-// lineWriter passes what is written to it on to w in whole lines: each Write hands over the
-// lines completed so far in one call and keeps the unterminated rest until flush. A line-prefixing
-// writer shared by parallel generators (apply --all's stage 1) thus never sees a line in pieces
-// that another generator's line could cut into. Writing to w is best-effort, like the --debug
-// disclosure: a failing writer neither fails nix nor cuts the capture of its stderr short.
+// lineWriter passes writes on to w in whole lines, keeping the unterminated rest until flush,
+// so a writer shared by parallel generators never sees a line in pieces. Writing to w is
+// best-effort: a failing writer neither fails nix nor cuts the stderr capture short.
 type lineWriter struct {
 	w   io.Writer
 	buf []byte
@@ -366,13 +355,9 @@ func (l *lineWriter) flush() {
 	}
 }
 
-// nixFailure classifies a failed nix command by its stderr: experimental-features not enabled is
-// PrerequisiteMissing with the guidance to enable them, a missing attribute while reading the
-// roots is NotFound (its summary and guidance are the caller's, which knows what was addressed;
-// → notFound), anything else Failed. A build runs only after its roots were read, so a missing
-// attribute there is an evaluation error inside the config, not a missing config name. The
-// Message is one line naming the failed subcommand; the raw stderr is kept in Stderr, never
-// swallowed (→ ADR-0025 §1, ADR-0055 §6).
+// nixFailure classifies a failed nix command by its stderr: experimental-features disabled is
+// PrerequisiteMissing, a missing attribute while reading the roots is NotFound, anything else
+// Failed. The raw stderr is kept in Stderr.
 func nixFailure(args []string, stderr string, runErr error) error {
 	cause := fmt.Errorf("layat: nix %s failed: %w", args[0], runErr)
 	kind, message, guidance := generator.KindFailed, cause.Error(), ""
@@ -387,7 +372,7 @@ func nixFailure(args []string, stderr string, runErr error) error {
 	return generator.NewError(generator.NameNix, stageOf(args), kind, message, guidance, strings.TrimSpace(stderr), cause)
 }
 
-// isExperimentalDisabled detects the nix-command / flakes not-enabled error (→ ADR-0025 §1).
+// isExperimentalDisabled detects the nix-command / flakes not-enabled error.
 func isExperimentalDisabled(stderr string) bool {
 	return strings.Contains(stderr, "experimental Nix feature") ||
 		strings.Contains(stderr, "experimental-features") ||
@@ -400,9 +385,7 @@ func isMissingAttribute(stderr string) bool {
 		(strings.Contains(stderr, "attribute") && strings.Contains(stderr, "missing"))
 }
 
-// experimentalGuidance guides the prerequisites and how to enable them. The CLI does not add
-// --extra-experimental-features automatically (it will not silently override environment
-// settings; → ADR-0025 §1).
+// experimentalGuidance guides the prerequisites and how to enable them.
 const experimentalGuidance = `This command internally uses ` + "`nix eval`" + ` / ` + "`nix build`" + ` (the new CLI) and flakes,
 so experimental-features = nix-command flakes is required.
 
@@ -414,8 +397,8 @@ How to enable (either one):
 
 layat does not add --extra-experimental-features automatically (it will not override your environment settings).`
 
-// wrapEvalErr makes the "layat.<name> does not exist" case of an eval failure clearer
-// (→ docs/spec.md error spec); any other failure is passed through as-is.
+// wrapEvalErr makes the "layat.<name> does not exist" case of an eval failure clearer; any other
+// failure is passed through as-is.
 func wrapEvalErr(err error, label string) error {
 	return notFound(err, label, "check the config name")
 }
