@@ -11,7 +11,7 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// applyAllExitCode follows priority error(1) > conflict(2) > 0 (not the plain maximum; → ADR-0024).
+// TestApplyAllExitCode: priority error(1) > conflict(2) > 0, not the plain maximum.
 func TestApplyAllExitCode(t *testing.T) {
 	cases := []struct {
 		name              string
@@ -52,8 +52,7 @@ func captureStdout(t *testing.T, f func()) string {
 	return <-done
 }
 
-// captureStderr is captureStdout's stderr counterpart (verifies reportResult's placement report,
-// which is stderr-owned by ADR-0023's stream discipline · → docs/spec.md "出力ストリームと終了コード").
+// captureStderr is captureStdout's stderr counterpart.
 func captureStderr(t *testing.T, f func()) string {
 	t.Helper()
 	old := os.Stderr
@@ -73,8 +72,8 @@ func captureStderr(t *testing.T, f func()) string {
 	return <-done
 }
 
-// Verifies aggregateDryRun's aggregate exit code and plan output (stdout ownership) by injecting the apply
-// implementation, without nix. This is the regression guard for the real path of #14 AC-4 "error(1) > conflict(2) > 0".
+// TestAggregateDryRun: the exit code is error(1) > conflict(2) > 0 and the plan goes to stdout,
+// with the apply injected.
 func TestAggregateDryRun(t *testing.T) {
 	clean := func(name string) (*engine.Result, error) {
 		return &engine.Result{Placed: []string{"/p/" + name}}, nil
@@ -125,7 +124,7 @@ func TestAggregateDryRun(t *testing.T) {
 			if got != c.wantCode {
 				t.Errorf("aggregateDryRun code = %d, want %d", got, c.wantCode)
 			}
-			// A successful config's plan goes to stdout (owns the machine-readable output; → ADR-0023).
+			// A successful config's plan goes to stdout.
 			if strings.Contains(c.name, "all clean") && !strings.Contains(out, "place\t/p/a") {
 				t.Errorf("plan not emitted to stdout: %q", out)
 			}
@@ -133,9 +132,8 @@ func TestAggregateDryRun(t *testing.T) {
 	}
 }
 
-// Verifies aggregateApply's applied/skipped/failure counts and continue-on-partial-failure behavior by
-// injecting the apply implementation, without nix. This is the regression guard for the real path of
-// docs/spec.md "continue on partial failure" and ErrSkipped-as-normal-skip.
+// TestAggregateApply: the applied / skipped / failure counts and continue-on-partial-failure, with
+// the apply injected.
 func TestAggregateApply(t *testing.T) {
 	clean := func(name string) (*engine.Result, error) {
 		return &engine.Result{Placed: []string{"/p/" + name}}, nil
@@ -215,8 +213,7 @@ func TestSelectedRootFilter(t *testing.T) {
 	})
 }
 
-// TestPrintApplyPlanBackupLine verifies apply --dryrun's plan output includes a "backup\t<target>"
-// line for a planned backup, alongside the existing place/replace/copy/remove lines (→ ADR-0045).
+// TestPrintApplyPlanBackupLine: apply --dryrun's plan includes a "backup\t<target>" line.
 func TestPrintApplyPlanBackupLine(t *testing.T) {
 	out := captureStdout(t, func() {
 		printApplyPlan(&engine.Result{BackedUp: []string{".config/foo"}})
@@ -226,10 +223,8 @@ func TestPrintApplyPlanBackupLine(t *testing.T) {
 	}
 }
 
-// TestReportResultBackupLineAndNoOp verifies reportResult's -v placement report includes a
-// "backedUp <target>" line for a backup-only run, and does NOT report it as "no-op" — a run that
-// only backed up an entity still did something, even though Placed/Replaced/Copied/Removed/Pruned
-// are all empty (→ ADR-0045; regression guard: reportResult's no-op check must count BackedUp too).
+// TestReportResultBackupLineAndNoOp: the -v report shows "backedUp <target>" for a backup-only run
+// and does not report it as "no-op".
 func TestReportResultBackupLineAndNoOp(t *testing.T) {
 	out := captureStderr(t, func() {
 		reportResult(&engine.Result{Root: "/root", BackedUp: []string{".config/foo"}}, "c")
@@ -242,9 +237,7 @@ func TestReportResultBackupLineAndNoOp(t *testing.T) {
 	}
 }
 
-// TestReportResultAllEmptyIsNoOp is the counterpart of TestReportResultBackupLineAndNoOp: a truly
-// empty Result (including BackedUp) must still report "no-op" (pre-existing behavior, unchanged by
-// the BackedUp addition to the no-op check).
+// TestReportResultAllEmptyIsNoOp: a fully empty Result reports "no-op".
 func TestReportResultAllEmptyIsNoOp(t *testing.T) {
 	out := captureStderr(t, func() {
 		reportResult(&engine.Result{Root: "/root"}, "c")

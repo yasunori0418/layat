@@ -1,10 +1,6 @@
-// outturn_payload.go maps the mutation commands' engine results (apply / reset / rollback,
-// single config) onto the outturn SubjectResult payload: full-inventory items, diff-only
-// changes, the generation observation, and structured warnings (→ issue #131, ADR-0043).
-//
-// The builders read the same engine.Result / engine.ResetResult the -v text report reads, so
-// the JSON and the human report can never disagree on the outcome (single result source ·
-// → issue #131 acceptance). They are pure data mapping: no FS access, no engine calls.
+// outturn_payload.go maps the mutation commands' engine results onto the outturn SubjectResult
+// payload: items, changes, generation and warnings. The builders read the same results as the -v
+// report and are pure data mapping.
 package main
 
 import (
@@ -18,47 +14,37 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// outturnEntryInfo is the item.info DTO for an entry item: the entry's declarative identity
-// plus its placement shape ({target, method, subpath} · → issue #131). The volatile src
-// store path stays out — it belongs to change.info (the diff's concrete content), not to
-// the item's identity-adjacent info.
+// outturnEntryInfo is the item.info DTO for an entry item: {target, method, subpath}. The src
+// store path belongs to change.info instead.
 type outturnEntryInfo struct {
 	Target  string `json:"target"`
 	Method  string `json:"method,omitempty"`
 	Subpath string `json:"subpath,omitempty"`
 }
 
-// outturnChangeInfo is the change.info DTO: the transition's concrete old / new values
-// (symlink destinations, copy sources · → issue #131, outturn §4). Either side is omitted
-// when unknowable (a fresh add has no old; a recopy overwrite's old content is untracked).
+// outturnChangeInfo is the change.info DTO: the transition's old / new values. Either side is
+// omitted when unknowable.
 type outturnChangeInfo struct {
 	Old string `json:"old,omitempty"`
 	New string `json:"new,omitempty"`
 }
 
-// outturnPayload is one subject's accumulated result payload, attached to the run by the
-// mutation commands and folded into the SubjectResult at emit time (→ outturnRun.emit).
-// TInfo is the owning command's result.info type (→ issue #196).
+// outturnPayload is one subject's result payload, folded into its SubjectResult at emit time.
+// TInfo is the owning command's result.info type.
 type outturnPayload[TInfo any] struct {
 	items      []layatItem
 	changes    []layatChange
 	generation *outturn.Generation
 	warnings   []outturn.Warning // subject-level (not item-borne) warnings
-	// info is the per-subject tool info (result.info): the read-only enumeration inventories
-	// (list-generations の generations / gitignore の paths · → issue #132, ADR-0043 §5).
-	// The mutation commands leave it at its zero value (a nil seat pointer, omitted from the
-	// document) — their record lives in items / changes.
+	// info is the per-subject result.info; the mutation commands leave it nil.
 	info TInfo
-	// itemBorne marks that the command error is already represented by a failed item
-	// (entry failure / conflict), so emit must not duplicate it into subjectResult.errors[]
-	// (outturn §2: item 起因のエラーを errors[] に置いてはならない).
+	// itemBorne marks that a failed item already represents the command error, so emit keeps it out
+	// of errors[].
 	itemBorne bool
 }
 
-// attachMutationPayload builds the apply / rollback payload from res and attaches it to the
-// subject it belongs to. A payload-build failure (id derivation — practically impossible for
-// string targets) is reported to stderr and that subject falls back to the minimal #130 shape
-// rather than emitting a half-mapped document.
+// attachMutationPayload builds the apply / rollback payload from res and attaches it to s. If the
+// payload cannot be built, it reports to stderr and leaves the subject's items empty.
 func attachMutationPayload[TInfo any](s *outturnSubject[TInfo], res *engine.Result, cmdErr error) {
 	p, err := mutationPayload[TInfo](res, cmdErr)
 	if err != nil {
@@ -78,11 +64,8 @@ func attachResetPayload[TInfo any](s *outturnSubject[TInfo], res *engine.ResetRe
 	s.setPayload(p)
 }
 
-// itemStatuses is the reached-state partition shared by the builders (→ outturn ADR-0016 /
-// ADR-0020): the failed entry, the planned-but-never-attempted entries (skipped — the only
-// use of skipped), and per-target conflicts (failed + E_LAYAT_COLLISION). Everything else is
-// success — including policy inaction (a kept stale target, a place-once copy skip), which
-// carries warnings instead of a non-success status.
+// itemStatuses partitions items by reached state: the failed entry, unreached entries (skipped),
+// and conflicts (failed + E_LAYAT_COLLISION). Everything else is success.
 type itemStatuses struct {
 	failed    string
 	failedErr *outturn.Error
@@ -104,9 +87,8 @@ func (s *itemStatuses) statusFor(target string) (outturn.ItemStatus, *outturn.Er
 	return outturn.ItemSuccess, nil
 }
 
-// newItemStatuses assembles the partition from the engine's reached-state fields. cmdErr is
-// the command's overall error: for an entry-scoped failure it IS the failed entry's error
-// (the engine stops at the first entry failure), so it becomes that item's error object.
+// newItemStatuses assembles the partition from the engine's reached-state fields. cmdErr becomes
+// the failed entry's error object.
 func newItemStatuses(failedTarget string, unreached []string, conflicts []planner.Conflict, cmdErr error) *itemStatuses {
 	s := &itemStatuses{failed: failedTarget, unreached: map[string]bool{}}
 	for _, t := range unreached {
@@ -159,28 +141,14 @@ func changeInfoOrNil(old, new string) *outturnChangeInfo {
 	return &outturnChangeInfo{Old: old, New: new}
 }
 
-// mutationPayload maps an apply / rollback engine.Result onto the outturn payload:
-//
-//   - items = full inventory: every new-manifest entry plus the previous-generation entries
-//     behind planned removals (stale-removed old entries), each with the reached-state status
-//     partition applied (→ outturn ADR-0016 / ADR-0020).
-//   - changes = the diffs that actually happened, in op order: place → add, replace → modify,
-//     new copy → add, recopy → modify (irreversible), stale removal → remove. A target both
-//     unlinked and re-placed in the same run (a symlink→copy method change) coalesces into one
-//     modify — the item's actual old→new transition, not its mechanical op pair.
-//   - generation = the run's before/after observation ({profile, before?, after?} · → outturn
-//     ADR-0015). The first apply has no before; a failed run observes an unmoved pointer.
-//   - warnings = the planner's structured warnings, attached to the warned target's item when
-//     it is in the inventory and to the subject otherwise (→ outturn ADR-0019). An unwound run
-//     (→ ADR-0044) additionally carries W_LAYAT_UNWOUND at the subject level: the changes list
-//     stays the record of what happened up to the failure, and the warning tells consumers
-//     those diffs were rolled back rather than left on disk.
+// mutationPayload maps an apply / rollback engine.Result onto the outturn payload: the full item
+// inventory, the changes that happened in op order, the generation observation, and warnings
+// (plus W_LAYAT_UNWOUND when the run was rolled back).
 func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*outturnPayload[TInfo], error) {
 	statuses := newItemStatuses(res.FailedTarget, res.Unreached, res.Conflicts, cmdErr)
 	p := &outturnPayload[TInfo]{itemBorne: res.FailedTarget != "" || len(res.Conflicts) > 0}
 
-	// Items: the new manifest's inventory first, then the stale-removed old entries not
-	// shadowed by it (a method-change target lives in both; the new entry wins).
+	// Items: the new manifest's entries, then stale-removed old entries it does not shadow.
 	inventory := map[string]bool{}
 	for _, e := range res.Entries {
 		item, err := entryItem(e, statuses)
@@ -207,9 +175,8 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*outturnPaylo
 		inventory[e.Target] = true
 	}
 
-	// Changes. oldDest resolves what a target pointed at before this run touched it: the
-	// pre-re-link readlink for replaces (exact, covers foreign dests), the recorded dest for
-	// removals (re-verified on disk immediately before the unlink).
+	// Changes. oldDest is a target's dest before this run: the pre-re-link readlink for replaces,
+	// the recorded dest for removals.
 	removalByTarget := map[string]manifest.Entry{}
 	for _, e := range res.RemovalEntries {
 		removalByTarget[e.Target] = e
@@ -246,15 +213,12 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*outturnPaylo
 			kind := outturn.ChangeAdd
 			old := ""
 			if modifyAlways || removed[t] {
-				// Re-link, or unlinked-then-re-placed in the same run: the item's actual
-				// transition is old → new, one modify.
+				// A re-link or unlink-then-re-place is one modify from old to new.
 				kind = outturn.ChangeModify
 				old = oldDest(t)
 			}
 			if skipNoop && old != "" && old == newDest[t] {
-				// A re-link back to the recorded dest (apply re-links every planned symlink
-				// mechanically) leaves the state identical: a noop, which changes must not
-				// contain (outturn §4). The -v report still shows the mechanical op.
+				// A re-link to the same dest is a noop and is not a change.
 				continue
 			}
 			if err := addChange(t, kind, reversible, changeInfoOrNil(old, newDest[t])); err != nil {
@@ -272,9 +236,7 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*outturnPaylo
 	if err := place(res.Copied, false, true, false); err != nil {
 		return nil, err
 	}
-	// A recopy overwrite discards content layat never tracked: irreversible, no old value
-	// (→ ADR-0020, ADR-0043 §4). Not a noop even when content happens to match — the
-	// overwrite itself happened and the pre-state is unknowable.
+	// A recopy overwrite is irreversible and has no old value.
 	if err := place(res.Recopied, true, false, false); err != nil {
 		return nil, err
 	}
@@ -287,8 +249,7 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*outturnPaylo
 		}
 	}
 
-	// Generation: the run's observation (→ outturn ADR-0015). Reset never comes through here —
-	// it has its own builder without a generation slot (an FS-only teardown moves nothing).
+	// Generation: the run's before / after observation.
 	p.generation = &outturn.Generation{Profile: res.Profile, Before: res.GenBefore, After: res.GenAfter}
 
 	p.warnings = attachWarnings(p.items, res.Warnings)
@@ -301,13 +262,9 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*outturnPaylo
 	return p, nil
 }
 
-// resetPayload maps an engine.ResetResult onto the outturn payload: items = the selected
-// teardown entries (reset's full inventory), changes = the removals that actually happened
-// (symlink removals reversible, copy deletions irreversible — copy content is untracked ·
-// → ADR-0043 §4), no generation slot (reset is an FS-only teardown: the profile pointer and
-// the generations are untouched, so there is no transition to observe · → issue #131).
-// An aborted run (confirmation declined — unreachable under --json, which never prompts)
-// changed nothing: items stay success, changes stay empty.
+// resetPayload maps an engine.ResetResult onto the outturn payload: the selected entries as items,
+// the removals as changes (copy deletions irreversible), and no generation. An aborted run has no
+// changes.
 func resetPayload[TInfo any](res *engine.ResetResult, cmdErr error) (*outturnPayload[TInfo], error) {
 	statuses := newItemStatuses(res.FailedTarget, res.Unreached, nil, cmdErr)
 	p := &outturnPayload[TInfo]{itemBorne: res.FailedTarget != ""}
@@ -331,8 +288,7 @@ func resetPayload[TInfo any](res *engine.ResetResult, cmdErr error) (*outturnPay
 			p.changes = append(p.changes, c)
 		}
 		for _, t := range res.RemovedCopies {
-			// No info: what a copy deletion destroys is the on-disk content, which layat does
-			// not track (the recorded src is not what was lost · → ADR-0020).
+			// No info: a copy deletion destroys untracked on-disk content.
 			c, err := entryChange(t, outturn.ChangeRemove, false, nil)
 			if err != nil {
 				return nil, err
@@ -345,10 +301,8 @@ func resetPayload[TInfo any](res *engine.ResetResult, cmdErr error) (*outturnPay
 	return p, nil
 }
 
-// attachWarnings maps the planner's structured warnings onto the payload: a warning whose
-// target is an inventory item lands in that item's warnings, anything else (a target outside
-// the inventory — e.g. a kept stale symlink or a copy orphan whose entry left the config) is
-// returned as a subject-level warning (→ outturn ADR-0019). items is mutated in place.
+// attachWarnings attaches each planner warning to its target's item, or returns it as a
+// subject-level warning when the target is outside the inventory. items is mutated in place.
 func attachWarnings(items []layatItem, warnings []planner.Warning) []outturn.Warning {
 	itemIdx := map[string]int{}
 	for i, it := range items {
@@ -366,10 +320,8 @@ func attachWarnings(items []layatItem, warnings []planner.Warning) []outturn.War
 	return subject
 }
 
-// outturnWarning translates one planner warning into the outturn warning vocabulary
-// (tool-specific W_LAYAT_* codes · outturn §6 two-layer naming). The messages mirror the
-// stderr text (→ engine.emitWarnings) without the "layat: " prefix and target suffix — the
-// target rides in detail (and in the carrying item) instead.
+// outturnWarning translates one planner warning into a W_LAYAT_* outturn warning. The message
+// mirrors the stderr text; the target rides in detail.
 func outturnWarning(w planner.Warning) outturn.Warning {
 	var code, msg string
 	switch w.Kind {
@@ -384,8 +336,7 @@ func outturnWarning(w planner.Warning) outturn.Warning {
 	case planner.WarnCopyForeign:
 		code, msg = "W_LAYAT_COPY_FOREIGN", "skipped copy because a real file already exists at the copy target (foreign; place-once)"
 	default:
-		// Unreachable today — the switch covers every planner.WarnKind. Kept as a defensive
-		// fallback so a future kind surfaces visibly instead of being silently mis-coded.
+		// Fallback for an unknown planner.WarnKind.
 		code, msg = "W_LAYAT_WARNING", "unclassified planner warning"
 	}
 	return outturn.Warning{Code: code, Message: msg, Detail: map[string]any{"target": w.Target}}

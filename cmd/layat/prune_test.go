@@ -11,9 +11,8 @@ import (
 	"github.com/yasunori0418/layat/internal/engine"
 )
 
-// withPruneTestState snapshots the package-level state prune's tests reach into — the engine seam
-// and the flags the run reads — and restores it when t finishes. Each subtest calls it before
-// overwriting anything, so a case added later cannot leak its overrides into the ones after it.
+// withPruneTestState snapshots the engine seam and flags prune's tests overwrite and restores them
+// when t finishes.
 func withPruneTestState(t *testing.T) {
 	t.Helper()
 	fn := pruneFn
@@ -24,9 +23,8 @@ func withPruneTestState(t *testing.T) {
 	})
 }
 
-// pruneFixture is the two-series result the output tests drive: one series under the user state
-// base and one under the system base, so an assertion about "every root path" cannot be
-// satisfied by a single line (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed の root パス一覧).
+// pruneFixture is a two-series result, one under each scan base, so "every root path" needs two
+// lines.
 func pruneFixture() *engine.PruneResult {
 	return &engine.PruneResult{
 		Removed: []engine.PruneSeries{
@@ -58,9 +56,7 @@ func pruneFixture() *engine.PruneResult {
 	}
 }
 
-// TestPrunePromptAllowed pins prune's prompt gate: a prompt needs a TTY, and --json forbids it
-// unconditionally so the confirmPolicy refuse path fires without --yes (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed,
-// the same shape as reset's REQ-2a613337-7646-4ced-8807-e43bca18acf3).
+// TestPrunePromptAllowed pins prune's prompt gate: a prompt needs a TTY, and --json forbids it.
 func TestPrunePromptAllowed(t *testing.T) {
 	cases := []struct {
 		name        string
@@ -82,10 +78,8 @@ func TestPrunePromptAllowed(t *testing.T) {
 	}
 }
 
-// TestPruneJSONWithoutYesFailsFast pins the fail-fast composition the two seams produce: with
-// --json and no --yes, the policy refuses before anything is scanned rather than prompting
-// (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed). The TTY case is the load-bearing one — a
-// non-TTY would refuse even without --json.
+// TestPruneJSONWithoutYesFailsFast: with --json and no --yes, the policy refuses before any scan,
+// even on a TTY.
 func TestPruneJSONWithoutYesFailsFast(t *testing.T) {
 	needPrompt, err := confirmPolicy(false, prunePromptAllowed(true, true), "prune")
 	if err == nil {
@@ -108,9 +102,8 @@ func TestPruneJSONWithoutYesFailsFast(t *testing.T) {
 	}
 }
 
-// TestPruneOutputStreams pins prune's stream discipline (→ REQ-fea038de-55eb-45ac-87fc-ec3a7287592a):
-// the --dryrun plan owns stdout in the tab-separated machine-readable form, and the confirmation
-// listing goes to stderr without polluting it.
+// TestPruneOutputStreams pins prune's streams: the --dryrun plan goes to stdout tab-separated, and
+// the confirmation listing goes to stderr.
 func TestPruneOutputStreams(t *testing.T) {
 	res := pruneFixture()
 
@@ -143,9 +136,7 @@ func TestPruneOutputStreams(t *testing.T) {
 	})
 
 	t.Run("printPrunePlan keeps the stderr notice with nothing to delete", func(t *testing.T) {
-		// The empty quadrants of the contract: stdout stays empty under both contracts (nothing
-		// to list), while the stderr notice survives --json — human diagnostics coexist with the
-		// envelope (→ ADR-0043 §2).
+		// stdout stays empty with nothing to list, while the stderr notice survives --json.
 		withPruneTestState(t)
 
 		for _, jsonMode := range []bool{false, true} {
@@ -165,17 +156,14 @@ func TestPruneOutputStreams(t *testing.T) {
 		if out != "" {
 			t.Errorf("the confirmation listing pollutes stdout: %q", out)
 		}
-		// The root path list is the only guard against an unmounted root being taken for a
-		// deleted one (→ ADR-0034 §2), so every one of them has to be shown. The expectations are
-		// literals rather than a loop over res.Removed: reading the wanted roots back out of the
-		// value under test would pass for any listing that agreed with itself.
+		// Every root path has to be shown. The expectations are literals so they cannot agree with the
+		// value under test by construction.
 		for _, root := range []string{"/home/u/src/gone", "/mnt/removable/proj"} {
 			if !strings.Contains(errOut, root) {
 				t.Errorf("root %q missing from the confirmation listing: %q", root, errOut)
 			}
 		}
-		// The count in the header has to match what is actually listed: a listing that showed one
-		// series while announcing two would still contain both roots if the header carried them.
+		// The header count has to match what is listed.
 		if got := strings.Count(errOut, "  root "); got != 2 {
 			t.Errorf("root lines = %d, want 2: %q", got, errOut)
 		}
@@ -204,12 +192,8 @@ func TestPruneOutputStreams(t *testing.T) {
 	})
 }
 
-// TestPruneConfirmShowsThePreview pins the wiring TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9 left to
-// the cli-json 区分: the callback runPrune hands the engine lists the *preview* it is given. The
-// engine's preview is a separate value from the result Prune returns (whose Removed means
-// "actually deleted", and is empty on an abort), so a callback that reported the returned result
-// instead would show "0 series" to the user about to confirm a deletion — the root path list that
-// ADR-0034 §2 calls the only guard would be blank while the deletion still went ahead.
+// TestPruneConfirmShowsThePreview: the callback runPrune hands the engine lists the preview it is
+// given, not the returned result (which is empty on an abort).
 func TestPruneConfirmShowsThePreview(t *testing.T) {
 	restore := withStdin(t, "y\n")
 	defer restore()
@@ -235,24 +219,17 @@ func TestPruneConfirmShowsThePreview(t *testing.T) {
 	}
 }
 
-// TestPruneRunDrivesTheEngine pins runPrune's own orchestration against a stubbed engine: which
-// value reaches the prompt, which one reaches the envelope, when the confirmation callback is
-// passed at all, what -v reports, and what the refused and declined runs do. The stub stands in
-// for the state dir so the CLI's decisions are observable without one on disk.
+// TestPruneRunDrivesTheEngine pins runPrune's orchestration against a stubbed engine: what reaches
+// the prompt and the envelope, when confirm is passed, what -v reports, and refused / declined runs.
 func TestPruneRunDrivesTheEngine(t *testing.T) {
-	// Every subtest reassigns some of these, so each one restores its own state through
-	// withPruneTestState below; this is the outer net for whatever a subtest leaves behind.
+	// Each subtest restores its own state via withPruneTestState; this is the outer net.
 	withPruneTestState(t)
 	flagJSON, flagVerbose = false, false
-	// go test's stdin is never a TTY, so interactivity is passed in rather than detected. The
-	// TTY判定 itself is TestIsInteractiveNonTTY's (reset_test.go) subject.
+	// go test's stdin is never a TTY, so interactivity is passed in.
 	const interactive = true
 
-	// The two values the CLI must keep apart. The preview is what the engine hands the callback
-	// (the judged candidates); the returned result is what the run actually did. They are given
-	// disjoint series here so no assertion can be satisfied by the wrong one: a prompt that
-	// listed the returned result would show the deleted-root, and an envelope built from the
-	// preview would report the candidate-root as deleted.
+	// The preview and the returned result use disjoint series, so a prompt or envelope built from the
+	// wrong one fails.
 	previewRoot, resultRoot := "/home/u/src/candidate", "/home/u/src/deleted"
 	preview := &engine.PruneResult{Removed: []engine.PruneSeries{
 		{RootHash: "cand", Root: previewRoot, Dir: "/state/nix/profiles/layat/cand"},
@@ -317,8 +294,7 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 		if sawConfirm {
 			t.Error("--yes must skip the prompt entirely (no callback)")
 		}
-		// Skipping the prompt skips the listing with it (→ ADR-0034 §2), and silent-on-success
-		// keeps the run quiet without -v.
+		// --yes skips the listing with the prompt, and the run stays quiet without -v.
 		if strings.Contains(errOut, resultRoot) {
 			t.Errorf("--yes must not print the series listing: %q", errOut)
 		}
@@ -345,10 +321,7 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 	})
 
 	t.Run("a mid-deletion failure still reports what is already gone", func(t *testing.T) {
-		// The other arm of the same guard: a run that failed partway is not an aborted run — the
-		// series completed before the failure are gone from disk, so dropping them would hand the
-		// user a partially deleted state with no record of it
-		// (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
+		// A run that failed partway still reports the series already deleted.
 		withPruneTestState(t)
 		flagYes = true
 		failure := errors.New("layat: cannot remove series done")
@@ -374,8 +347,7 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 	})
 
 	t.Run("a refused policy never reaches the engine", func(t *testing.T) {
-		// Non-interactive without --yes: the refusal has to happen before the scan, so no state
-		// dir is read and nothing is deleted (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
+		// Non-interactive without --yes is refused before the scan: nothing is read or deleted.
 		withPruneTestState(t)
 		flagYes = false
 
@@ -393,8 +365,7 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 		if called {
 			t.Error("the refusal must come before the engine is driven")
 		}
-		// Nothing was scanned, so the envelope must not carry an inventory that reads as a
-		// completed scan that found nothing.
+		// Nothing was scanned, so the envelope carries no inventory.
 		if err := run.emit(runErr); err != nil {
 			t.Fatalf("emit: %v", err)
 		}
@@ -405,16 +376,14 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 		withPruneTestState(t)
 		flagYes = true
 		pruneFn = func(engine.PruneOptions) (*engine.PruneResult, error) {
-			// A declined run as the engine reports it: Aborted on the returned value, and the
-			// judged candidates left behind in Removed. The CLI must not turn those candidates
-			// into a report of what was deleted — that is what the abort branch is for.
+			// A declined run as the engine reports it: Aborted, with the judged candidates left in Removed.
 			return &engine.PruneResult{Removed: preview.Removed, Aborted: true}, nil
 		}
 		run, buf := newPruneTestRun()
 		var runErr error
 		out, errOut := captureOutErr(t, func() { runErr = runPrune(run, false, interactive) })
 		if runErr != nil {
-			// Declining is not a failure: the exit code stays 0 (→ reset's aborted path).
+			// Declining is not a failure: the exit code stays 0.
 			t.Errorf("an aborted run must not fail: %v", runErr)
 		}
 		if out != "" {
@@ -423,8 +392,7 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 		if !strings.Contains(errOut, "prune aborted") {
 			t.Errorf("the abort notice is missing from stderr: %q", errOut)
 		}
-		// The -v report is the thing that must not run: an aborted run that fell through to it
-		// would print "removed-series" for series that are still on disk.
+		// An aborted run must not reach the -v report.
 		if strings.Contains(errOut, "removed-series") {
 			t.Errorf("an aborted run reported deletions: %q", errOut)
 		}
@@ -435,16 +403,13 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 		if doc["status"] != "success" {
 			t.Errorf("status = %v, want success (declining is not an error)", doc["status"])
 		}
-		// Nothing was deleted, so no inventory is emitted at all: an envelope carrying the judged
-		// candidates in removed would report a deletion the user declined.
+		// Nothing was deleted, so no inventory is emitted.
 		assertNoInfoKeys(t, doc)
 	})
 }
 
-// TestPruneInfoShape pins the --json payload (→ issue #134): removed / skipped arrays, the skip
-// reason carried verbatim from the engine vocabulary with its detail, and the field name being
-// removed rather than pruned (Result.Pruned already means the rmdir-ed empty ancestors ·
-// → REQ-8409db86-a1ba-4053-86dc-588985cc1ca7).
+// TestPruneInfoShape pins the --json payload: removed / skipped arrays, the skip reason verbatim
+// with its detail, and the field named removed rather than pruned.
 func TestPruneInfoShape(t *testing.T) {
 	info := pruneInfoFrom(pruneFixture())
 
@@ -459,8 +424,7 @@ func TestPruneInfoShape(t *testing.T) {
 	if len(first.Names) != 2 || first.Names[0] != "default" || first.Names[1] != "docs" {
 		t.Errorf("removed[0].names = %v, want [default docs]", first.Names)
 	}
-	// A series holding nothing but the backref still carries names as an array, so a consumer
-	// never has to distinguish null from empty.
+	// A series with only the backref still carries names as an array.
 	if second := info.Removed[1]; second.Names == nil || len(second.Names) != 0 {
 		t.Errorf("removed[1].names = %v, want []", second.Names)
 	}
@@ -479,9 +443,8 @@ func TestPruneInfoShape(t *testing.T) {
 	}
 }
 
-// TestPruneInfoSkipReasonsAreTheEngineVocabulary pins that every engine skip reason survives
-// into the document verbatim: a CLI-side re-spelling would give consumers a vocabulary that
-// drifts from the engine's (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1 の 5 値).
+// TestPruneInfoSkipReasonsAreTheEngineVocabulary: every engine skip reason reaches the document
+// verbatim.
 func TestPruneInfoSkipReasonsAreTheEngineVocabulary(t *testing.T) {
 	reasons := []engine.PruneSkipReason{
 		engine.PruneSkipLocked,
@@ -509,9 +472,8 @@ func TestPruneInfoSkipReasonsAreTheEngineVocabulary(t *testing.T) {
 	}
 }
 
-// TestPruneJSONEnvelope pins prune's envelope shape: prune names no config, so results stays []
-// and the inventory rides in the envelope-wide info (the init shape · outturn ADR-0018). The
-// document is conformant.
+// TestPruneJSONEnvelope pins prune's envelope shape: results stays [] and the inventory rides in the
+// envelope-wide info. The document is conformant.
 func TestPruneJSONEnvelope(t *testing.T) {
 	checker, err := conformance.NewDefaultChecker()
 	if err != nil {
@@ -568,10 +530,8 @@ func TestPruneJSONEmptyResultKeepsArrays(t *testing.T) {
 	}
 }
 
-// TestPruneJSONEnvelopeInfoAbsentBeforeScan pins the failure boundary that forces pruneInfo to
-// be carried as a pointer (→ issue #196 §4): the --json-without---yes refusal happens before the
-// scan exists, so the envelope's info must stay absent rather than emit an empty inventory that
-// reads as "scanned, found nothing".
+// TestPruneJSONEnvelopeInfoAbsentBeforeScan: the --json-without---yes refusal happens before the
+// scan, so the envelope's info stays absent.
 func TestPruneJSONEnvelopeInfoAbsentBeforeScan(t *testing.T) {
 	r, buf := newPruneTestRun()
 	if err := r.emit(errors.New("layat: refusing destructive prune without --yes in a non-interactive context")); err != nil {
@@ -580,12 +540,9 @@ func TestPruneJSONEnvelopeInfoAbsentBeforeScan(t *testing.T) {
 	assertNoInfoKeys(t, decodeEnvelope(t, buf))
 }
 
-// TestPruneDryrunDoesNotDelete pins that the CLI's dryrun path drives the engine read-only: the
-// options it builds carry DryRun and no Confirm, so nothing can prompt or delete
-// (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed の副作用ゼロ).
+// TestPruneDryrunDoesNotDelete: the dryrun path builds options with DryRun and no Confirm.
 func TestPruneDryrunDoesNotDelete(t *testing.T) {
-	// The seam below defaults the system base from the environment, so an inherited value would
-	// make the "left to the engine" assertions depend on the caller's env.
+	// Clear the system base override so the assertions do not depend on the caller's env.
 	t.Setenv(systemBaseEnv, "")
 
 	opts := pruneOptions(true, nil)
@@ -595,9 +552,7 @@ func TestPruneDryrunDoesNotDelete(t *testing.T) {
 	if opts.Confirm != nil {
 		t.Error("the dryrun path must pass no Confirm (a preview never asks)")
 	}
-	// With the override unset the scan bases stay at their defaults: the CLI names neither, so a
-	// run cannot be pointed at a base the engine did not resolve itself
-	// (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1 の層分け).
+	// With the override unset, the CLI leaves both scan bases to the engine.
 	if opts.StateDir != "" || opts.SystemDir != "" {
 		t.Errorf("the CLI must leave the scan bases to the engine, got %+v", opts)
 	}
@@ -615,15 +570,9 @@ func TestPruneDryrunDoesNotDelete(t *testing.T) {
 	}
 }
 
-// TestPruneSystemBaseEnvOverridesTheScanBase pins the isolation seam: with systemBaseEnv set, that
-// value reaches PruneOptions.SystemDir verbatim, so a harness can keep prune off the machine's
-// real /nix/var/nix/profiles/layat. The user state base is not touched by the override — it follows
-// XDG_STATE_HOME through the engine, and conflating the two would send prune to
-// <system base>/nix/profiles/layat (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1: SystemDir is the
-// finished base and does not go through paths.Base()).
-//
-// This is what stops the destructive e2e path from reaching shared state: without the seam the
-// system base is an absolute path that isolating $HOME / XDG_STATE_HOME cannot move.
+// TestPruneSystemBaseEnvOverridesTheScanBase: systemBaseEnv reaches PruneOptions.SystemDir verbatim,
+// while the user state base is left to the engine. This keeps the destructive e2e path off the
+// machine's real /nix/var/nix/profiles/layat.
 func TestPruneSystemBaseEnvOverridesTheScanBase(t *testing.T) {
 	isolated := filepath.Join(t.TempDir(), "system")
 	t.Setenv(systemBaseEnv, isolated)
@@ -639,16 +588,14 @@ func TestPruneSystemBaseEnvOverridesTheScanBase(t *testing.T) {
 			if c.opts.SystemDir != isolated {
 				t.Errorf("SystemDir = %q, want the override %q", c.opts.SystemDir, isolated)
 			}
-			// Passed through verbatim: any massaging here would desynchronize from the engine,
-			// which takes SystemDir as the finished base.
+			// Passed through verbatim, since the engine takes SystemDir as the finished base.
 			if c.opts.StateDir != "" {
 				t.Errorf("StateDir = %q, want it left to the engine", c.opts.StateDir)
 			}
 		})
 	}
 
-	// An empty value is not an override: it must reach the engine as an empty SystemDir so the
-	// engine's own default applies. Treating "" as a base to scan would be the bug here.
+	// An empty value is not an override: it reaches the engine as an empty SystemDir.
 	t.Setenv(systemBaseEnv, "")
 	if got := pruneOptions(false, nil).SystemDir; got != "" {
 		t.Errorf("SystemDir = %q with the override unset, want the engine default", got)

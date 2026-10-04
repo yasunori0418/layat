@@ -1,15 +1,8 @@
 package main
 
-// The partial-failure matrix of apply --all (→ ADR-0024, ADR-0039, issue #155): every non-empty
-// combination of the per-config outcomes — a stage-1 build failure, a stage-2 failure (item-borne or
-// subject-borne), a success, a try-lock skip, and on --dryrun a conflict — is driven through both
-// stages the way runApplyAll composes them, at --jobs 1 and at full parallelism. Each combination
-// must settle the exit code by priority error(1) > conflict(2) > 0, the applied / skipped / failed
-// counts, and every subject's status and error layer. Builds and applies are injected, so nothing
-// here runs nix; run it with -race to cover the parallel aggregation. The composition and the
-// non-dryrun exit-code decision are mirrored here rather than reached through runApplyAll, so its
-// wiring is out of scope (the stage-1 wiring is TestRunApplyAllStageOneWiring's; e2e 09-apply-all
-// drives the whole command).
+// The partial-failure matrix of apply --all: every combination of per-config outcomes runs through
+// both stages at --jobs 1 and full parallelism, checking the exit code, the counts and each
+// subject's status and error layer. Builds and applies are injected; run with -race.
 
 import (
 	"bytes"

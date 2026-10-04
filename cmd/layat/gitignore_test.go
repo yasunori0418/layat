@@ -8,7 +8,7 @@ import (
 	"github.com/yasunori0418/outturn/go/conformance"
 )
 
-// gitignoreAnchor normalizes a root-relative target into /-anchor form (leading /, no trailing /; → ADR-0013).
+// TestGitignoreAnchor: a root-relative target becomes /-anchor form (leading /, no trailing /).
 func TestGitignoreAnchor(t *testing.T) {
 	cases := map[string]string{
 		".claude/skills/nix": "/.claude/skills/nix",
@@ -35,9 +35,8 @@ func TestDedupeSorted(t *testing.T) {
 	}
 }
 
-// TestGitignoreJSONInfoPaths pins gitignore's --json shape (→ issue #132, ADR-0043 §5): the
-// enumeration rides in result.info.paths in anchor form, items stays an empty array (not an
-// id-derived item per path), no generation slot appears, and the envelope is conformant.
+// TestGitignoreJSONInfoPaths pins gitignore's --json shape: anchor-form result.info.paths, empty
+// items, no generation slot, and a conformant envelope.
 func TestGitignoreJSONInfoPaths(t *testing.T) {
 	checker, err := conformance.NewDefaultChecker()
 	if err != nil {
@@ -73,12 +72,8 @@ func TestGitignoreJSONInfoPaths(t *testing.T) {
 	}
 }
 
-// TestGitignoreJSONInfoAbsentWithoutEnumeration pins the failure boundary that forced
-// gitignoreInfo to be carried as a pointer (→ issue #196 §4): gitignore can fail after the
-// subject is registered but before the enumeration exists (entrypoint discovery, the
-// project-mode rejection, the manifest build), and result.info must stay absent there — as it
-// did while the slot was a nil map. A value-struct TInfo would emit "info":{"paths":null},
-// which the conformance checker would still accept.
+// TestGitignoreJSONInfoAbsentWithoutEnumeration: when gitignore fails after registering the subject
+// but before the listing exists, result.info stays absent.
 func TestGitignoreJSONInfoAbsentWithoutEnumeration(t *testing.T) {
 	r, buf := newGitignoreTestRun()
 	r.beginSubject("docs")
@@ -88,9 +83,8 @@ func TestGitignoreJSONInfoAbsentWithoutEnumeration(t *testing.T) {
 	assertNoInfoKeys(t, decodeEnvelope(t, buf))
 }
 
-// TestGitignoreJSONEmptyPathsStaysArray pins the zero-entry boundary at the emit level
-// (spec: entry 0 件でも "paths": [] を明示): the emitted document must carry the paths key as
-// an empty array — a nil slice would marshal the key away.
+// TestGitignoreJSONEmptyPathsStaysArray: a zero-entry run emits "paths": [] rather than dropping
+// the key.
 func TestGitignoreJSONEmptyPathsStaysArray(t *testing.T) {
 	r, buf := newGitignoreTestRun()
 	r.beginSubject("empty").setPayload(&outturnPayload[*gitignoreInfo]{info: &gitignoreInfo{Paths: gitignoreAnchors(nil)}})

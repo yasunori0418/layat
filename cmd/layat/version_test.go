@@ -10,19 +10,14 @@ import (
 	"github.com/yasunori0418/layat/internal/paths"
 )
 
-// TestVersionDefault pins the ldflags-unset default. A plain `go build` (no -X main.version=...)
-// must leave version at "dev" so the CLI still works out of tree (→ ADR-0042 acceptance criteria).
-// The nix build overrides this via ldflags; go test runs without them (the flake's custom checkPhase
-// deliberately omits ldflags — see flake.nix), so this test observes the default.
+// TestVersionDefault: without ldflags (as in go test), version stays "dev".
 func TestVersionDefault(t *testing.T) {
 	if version != "dev" {
 		t.Errorf("version = %q, want %q (ldflags-unset default)", version, "dev")
 	}
 }
 
-// TestRootCmdVersionWired asserts cobra's Version field is wired to the package version variable.
-// Guards against the field silently drifting from the variable that ldflags targets (main.version,
-// a fixed contract for #130's tool.version supply).
+// TestRootCmdVersionWired asserts cobra's Version field is the package version variable.
 func TestRootCmdVersionWired(t *testing.T) {
 	root := newRootCmd()
 	if root.Version != version {
@@ -30,10 +25,8 @@ func TestRootCmdVersionWired(t *testing.T) {
 	}
 }
 
-// TestVersionFlagOutput drives `layat --version` end-to-end and observes the actual stdout, not just
-// the wired field. ADR-0042 requires cobra's default template ("layat version X.Y.Z\n") unchanged, so
-// this catches drift the field-equality check can't — e.g. an errant SetVersionTemplate. cobra prints
-// the version via OutOrStdout(), which falls back to os.Stdout, so captureStdout observes it.
+// TestVersionFlagOutput drives `layat --version` and checks stdout against cobra's default
+// template ("layat version X.Y.Z\n").
 func TestVersionFlagOutput(t *testing.T) {
 	root := newRootCmd()
 	root.SetArgs([]string{"--version"})
@@ -48,9 +41,7 @@ func TestVersionFlagOutput(t *testing.T) {
 	}
 }
 
-// TestVersionSubcommandAbsent locks in that `layat version` is NOT a command: cobra's Version field
-// adds a --version flag only, never a `version` subcommand. This pins the actual UX so a comment or
-// doc claiming otherwise can't drift back in (→ diff-review must finding).
+// TestVersionSubcommandAbsent: `layat version` is not a command; cobra adds only --version.
 func TestVersionSubcommandAbsent(t *testing.T) {
 	root := newRootCmd()
 	cmd, _, err := root.Find([]string{"version"})
@@ -59,10 +50,8 @@ func TestVersionSubcommandAbsent(t *testing.T) {
 	}
 }
 
-// legacyStateDirFixture points $XDG_STATE_HOME at a temp dir holding the pre-rename profile
-// base and returns the exact line the hint must produce for it. The wanted line is built from
-// the same format string the CLI uses, so the assertions below pin the hint's *contents*
-// (which paths it names) without restating the sentence a second time.
+// legacyStateDirFixture points $XDG_STATE_HOME at a temp dir holding the pre-rename profile base
+// and returns the hint line expected for it, built from the CLI's format string.
 func legacyStateDirFixture(t *testing.T) string {
 	t.Helper()
 	state := t.TempDir()
@@ -73,17 +62,11 @@ func legacyStateDirFixture(t *testing.T) string {
 	return fmt.Sprintf(legacyStateDirHintFmt+"\n", legacyStateDir(state), paths.Base(state))
 }
 
-// TestLegacyStateDirHintOnSubcommand drives a real subcommand through Execute with
-// $XDG_STATE_HOME pointed at a temp dir holding <state>/nix/profiles/nput/, and asserts the
-// migration hint reaches stderr exactly once (→ ADR-0054 §8, issue #389). `gitignore` with no
-// argument passes cobra's Args check (MaximumNArgs(1)) and then returns from RunE's arity
-// branch, so the run reaches PersistentPreRun and stops before any entrypoint discovery.
-// SilenceErrors keeps cobra from printing that error, so stderr holds the hint and nothing
-// else — which lets this assert the exact bytes rather than mere containment.
+// TestLegacyStateDirHintOnSubcommand: with <state>/nix/profiles/nput/ present, a subcommand writes
+// the hint to stderr exactly once. `gitignore` with no argument fails in RunE after PersistentPreRun,
+// before any entrypoint discovery.
 func TestLegacyStateDirHintOnSubcommand(t *testing.T) {
-	// gitignore's RunE calls beginGitignoreRun before its arity check, so the run reaches
-	// the package-global outturnReport. Save and restore it as outturn_test.go does, so this
-	// test leaves no state behind for whatever runs next.
+	// gitignore's RunE publishes its run to outturnReport, so save and restore it.
 	origReport := outturnReport
 	defer func() { outturnReport = origReport }()
 
@@ -100,11 +83,8 @@ func TestLegacyStateDirHintOnSubcommand(t *testing.T) {
 	}
 }
 
-// TestLegacyStateDirHintContent pins the four facts ADR-0054 §8 requires the one line to carry:
-// the old directory exists, generations are not carried over, the README's "Migrating from nput"
-// section decides between migrating and deleting, and nothing is GC-collected until it is gone.
-// Asserting on substrings rather than the whole line keeps the wording free to change while the
-// facts stay; the hint is removed wholesale in the next minor (→ issue #392).
+// TestLegacyStateDirHintContent checks the facts the hint carries: the old directory exists,
+// generations are not carried over, the README section decides, and GC is blocked until removal.
 func TestLegacyStateDirHintContent(t *testing.T) {
 	hint := fmt.Sprintf(legacyStateDirHintFmt, legacyStateDir("/state"), paths.Base("/state"))
 	for _, want := range []string{
@@ -123,9 +103,8 @@ func TestLegacyStateDirHintContent(t *testing.T) {
 	}
 }
 
-// TestLegacyStateDirHintAbsentWithoutLegacyDir is the negative half: with $XDG_STATE_HOME at a
-// temp dir that has no nput profile directory, the run must say nothing. os.Stat is the only
-// filesystem access the hint performs, so an empty state base is the whole condition.
+// TestLegacyStateDirHintAbsentWithoutLegacyDir: without the nput profile directory, the run says
+// nothing.
 func TestLegacyStateDirHintAbsentWithoutLegacyDir(t *testing.T) {
 	origReport := outturnReport
 	defer func() { outturnReport = origReport }()
@@ -142,22 +121,15 @@ func TestLegacyStateDirHintAbsentWithoutLegacyDir(t *testing.T) {
 	}
 }
 
-// TestLegacyStateDirHintUnresolvableStateBase pins the silence when no state base can be
-// resolved at all: with neither $XDG_STATE_HOME nor $HOME set, paths.StateDir fails and the
-// hint says nothing (→ main.go). Without that guard the empty state dir would make
-// legacyStateDir return the relative "nix/profiles/nput", and the stat would then be answered
-// by whatever happens to sit under the working directory — a hint naming a relative path in a
-// checkout that has one.
+// TestLegacyStateDirHintUnresolvableStateBase: with neither $XDG_STATE_HOME nor $HOME set, the hint
+// says nothing, even when a relative nix/profiles/nput exists under the working directory.
 func TestLegacyStateDirHintUnresolvableStateBase(t *testing.T) {
 	origReport := outturnReport
 	defer func() { outturnReport = origReport }()
 
 	t.Setenv("XDG_STATE_HOME", "")
 	t.Setenv("HOME", "")
-	// legacyStateDir("") is the relative path an unguarded run would stat, so the decoy goes
-	// exactly there, under the working directory: the test fails if the hint is produced from
-	// it. Deriving the decoy's path from the implementation keeps the two from drifting apart
-	// — a literal here would quietly stop covering anything if the layout ever moved.
+	// Put a decoy at the relative path an unguarded run would stat, derived from legacyStateDir("").
 	t.Chdir(t.TempDir())
 	if err := os.MkdirAll(legacyStateDir(""), 0o755); err != nil {
 		t.Fatalf("MkdirAll(relative decoy): %v", err)
@@ -173,10 +145,8 @@ func TestLegacyStateDirHintUnresolvableStateBase(t *testing.T) {
 	}
 }
 
-// TestLegacyStateDirHintNonDirectoryIgnored pins the other half of the stat verdict: a plain
-// file at <state>/nix/profiles/nput is not the state directory the hint describes, so nothing
-// is said about it. Without the IsDir test the line would tell a stray file a story about
-// generations it does not hold (→ ADR-0054 §8).
+// TestLegacyStateDirHintNonDirectoryIgnored: a plain file at <state>/nix/profiles/nput gets no
+// hint.
 func TestLegacyStateDirHintNonDirectoryIgnored(t *testing.T) {
 	origReport := outturnReport
 	defer func() { outturnReport = origReport }()
@@ -200,15 +170,9 @@ func TestLegacyStateDirHintNonDirectoryIgnored(t *testing.T) {
 	}
 }
 
-// TestLegacyStateDirHintNotInJSONEnvelope pins that the hint stays off the --json envelope: it
-// is an outturn-conformant machine contract and must not carry a tool-side announcement, so
-// stdout holds the document alone while the hint goes to stderr (→ ADR-0043, ADR-0054 §6).
-// outturnReport.emit is called from main, not from Execute (→ main.go), so the emit has to run
-// inside the capture the way TestJSONEndToEndSubjectBorneFailure does it — otherwise no
-// envelope is produced and the stdout assertion passes against an empty string. `gitignore`
-// with no argument fails after beginGitignoreRun has published the run, which is what makes
-// the envelope exist at all. flagJSON is a package global that cobra's flag parsing sets, so
-// it is restored here rather than left set for the next test.
+// TestLegacyStateDirHintNotInJSONEnvelope: under --json, stdout holds only the envelope and the
+// hint goes to stderr. The emit runs inside the capture, since main (not Execute) emits it; flagJSON
+// is restored afterwards.
 func TestLegacyStateDirHintNotInJSONEnvelope(t *testing.T) {
 	origReport := outturnReport
 	origJSON := flagJSON
@@ -242,8 +206,7 @@ func TestLegacyStateDirHintNotInJSONEnvelope(t *testing.T) {
 	if !outturnReport.began() {
 		t.Fatal("gitignore's RunE did not publish a begun outturn run")
 	}
-	// The envelope must be the whole of stdout: a leading "{" is what ADR-0043 §2's
-	// stdout ownership amounts to here, and the hint is what must not be inside it.
+	// The envelope must be the whole of stdout.
 	if !strings.HasPrefix(out, "{") {
 		t.Fatalf("stdout must hold the envelope alone (the --json contract), got %q", out)
 	}
@@ -255,12 +218,8 @@ func TestLegacyStateDirHintNotInJSONEnvelope(t *testing.T) {
 	}
 }
 
-// TestLegacyStateDirHintAbsentFromVersionFlags pins that `--version` and `--help` never reach
-// PersistentPreRun: cobra returns inside execute() before it runs. The hint is a *stderr* line,
-// so stderr is what has to be observed — asserting on stdout could not fail even if the hook did
-// fire, and TestVersionFlagOutput already pins stdout exactly. Nothing else covers this:
-// flake.nix's installCheckPhase captures only stdout (`got=$(... --version)`), so a hint leaking
-// onto stderr there would go unnoticed (→ ADR-0042).
+// TestLegacyStateDirHintAbsentFromVersionFlags: `--version` and `--help` return before
+// PersistentPreRun, so stderr carries no hint.
 func TestLegacyStateDirHintAbsentFromVersionFlags(t *testing.T) {
 	legacyStateDirFixture(t)
 
@@ -268,10 +227,8 @@ func TestLegacyStateDirHintAbsentFromVersionFlags(t *testing.T) {
 		t.Run(flag, func(t *testing.T) {
 			root := newRootCmd()
 			root.SetArgs([]string{flag})
-			// captureStdout / captureStderr restore the streams after f returns rather than
-			// in a defer, so a t.Fatal inside the closure would leave os.Stdout / os.Stderr
-			// pointing at a dead pipe for the rest of the package. The error is carried out
-			// and judged here instead.
+			// captureStdout / captureStderr restore the streams after f returns, not in a defer, so the error
+			// is carried out and judged here instead of calling t.Fatal inside.
 			var err error
 			// --help writes to stdout; discard it so only stderr is under test.
 			errOut := captureStderr(t, func() {
