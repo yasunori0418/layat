@@ -10,8 +10,7 @@
 
 ## 型構成
 
-型は 11 個。親を持たない根は `solution` と `adr` だけで、`adr` も `justifies` を 1 本以上張るため、
-接続漏れは全型で orphan warning として出る。
+型は 11 個。各型が書くものは次のとおり。
 
 | 型 | 書くもの |
 |---|---|
@@ -29,9 +28,6 @@
 
 `risk` の親に `test_plan` は無い。テスト計画がどのリスクを扱うかは
 `test_condition` の `mitigates` を辿って追跡する。
-
-検出した欠陥（defect）は型として持たず、GitHub Issues（`bug` label）で管理する
-（運用は [issue-tracker.md](agents/issue-tracker.md) の「Defect issues」節）。
 
 組み込みモデルの `hardware_requirement` / `hardware_detailed_design` / `scenario` /
 `system_architecture` は定義しない。組み込みの `system_requirement` / `software_requirement` /
@@ -84,20 +80,20 @@ CASE とテスト資産の 1:1 を照合する。本文の `## 対象` 節は人
 ## 関係
 
 上流向き（upstream）の関係は子から親へ張り、逆向き（downstream）は sara が対で持つ。
-`depends_on` / `revises` / `references` は同列（peer）の関係。
+どの型からどの型へ張れるかは [sara-graph.md](agents/sara-graph.md) の型グラフの図が示す。
 
-| 関係 | 向き | 張る元 → 先 | 意味 |
-|---|---|---|---|
-| `refines` | upstream | `use_case` → `solution` | 具体化 |
-| `derives_from` | upstream | `requirement` → `use_case`、`quality` / `test_plan` → `solution` | 導出 |
-| `satisfies` | upstream | `design` → `requirement` / `test_plan`、`infrastructure` → `quality` / `design` | 充足 |
-| `justifies` | upstream | `adr` → `requirement` / `design` / `infrastructure` / `quality` / `test_plan` | 決定の根拠 |
-| `threatens` | upstream | `risk` → `requirement` / `design` | 脅威 |
-| `mitigates` | upstream | `test_condition` → `risk` | 緩和 |
-| `covers` | upstream | `test_case` → `test_condition` | 網羅 |
-| `depends_on` | peer | 同じ型の item どうし（`requirement` / `design` / `quality` / `test_plan` / `infrastructure`）| 依存 |
-| `revises` | peer | `adr` → `adr` | ADR ヘッダの「改訂対象:」。節単位の部分改訂 |
-| `references` | peer | `adr` → `adr` | ADR ヘッダの「関連:」。改訂を伴わない参照 |
+| 関係 | 向き | 意味 |
+|---|---|---|
+| `refines` | upstream | 具体化 |
+| `derives_from` | upstream | 導出 |
+| `satisfies` | upstream | 充足 |
+| `justifies` | upstream | 決定の根拠 |
+| `threatens` | upstream | 脅威 |
+| `mitigates` | upstream | 緩和 |
+| `covers` | upstream | 網羅 |
+| `depends_on` | peer | 同じ型の item どうしの依存 |
+| `revises` | peer | ADR ヘッダの「改訂対象:」。節単位の部分改訂 |
+| `references` | peer | ADR ヘッダの「関連:」。改訂を伴わない参照 |
 
 `refines` / `derives_from` / `satisfies` / `depends_on` / `justifies` は組み込み由来、
 `revises` / `references` / `threatens` / `mitigates` / `covers` は独自定義。
