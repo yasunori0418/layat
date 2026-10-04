@@ -3,31 +3,17 @@ name: Test
 on:
   workflow_dispatch:
   # No `paths` trigger: the workflow starts on every PR so the required status
-  # checks always report. Relevant-change detection moved into the `changes`
-  # job, which skips e2e / go-coverage on docs-only PRs (skipped == success for
-  # required checks) via a job-level `if:` gate. flake-check instead gates at
-  # step level (see below) because the branch ruleset requires its
-  # matrix-expanded contexts (`flake-check (os, system)`), which only get
-  # created when the matrix actually runs — a job-level `if:` would skip the
-  # whole job before the matrix expands, leaving those contexts stuck as
-  # "Expected" forever and blocking merge. The old "run nix only when
-  # nix/Go/CI files change" optimisation is preserved either way
-  # (→ ADR-0027 §2, ADR-0030).
+  # checks always report. The `changes` job skips nix work on docs-only PRs.
   pull_request:
-  # Only `test-doc-matrix` consumes this trigger: the correspondence table is
-  # generated from merged state and uploaded as an artifact (→ #304). Every
-  # other job carries a job-level `github.event_name != 'push'` guard — the
-  # `changes` job treats any non-pull_request event as "run", so without them a
-  # main push would newly fire flake-check / go-coverage / e2e / sara, which
-  # this trigger is not meant to change.
+  # Only `test-doc-matrix` consumes this trigger. Every other job carries a
+  # job-level `github.event_name != 'push'` guard.
   push:
     branches:
       - main
 
 jobs:
   changes:
-    # Every consumer skips on push, so detection would only book a runner to
-    # produce an output nobody reads.
+    # Every consumer skips on push.
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
     outputs:
@@ -41,16 +27,8 @@ jobs:
 
   flake-check:
     needs: changes
-    # Job-level `if:` would skip matrix expansion entirely on docs-only PRs,
-    # so the ruleset's required `flake-check (os, system)` contexts would
-    # never be reported and merge would stay blocked forever. Gate at step
-    # level instead: the job (and its matrix legs) always run and always
-    # report, but do nothing when there's nothing relevant to check.
-    #
-    # `push` is the exception: that constraint is specific to pull_request
-    # (required contexts are only evaluated there), so a job-level guard is
-    # safe and avoids booking three runners — macOS included — to check out
-    # and exit. Only `test-doc-matrix` consumes the push trigger.
+    # Gated at step level so the required matrix contexts `flake-check (os, system)`
+    # always report on pull_request. The job-level guard only skips push.
     if: github.event_name != 'push'
     strategy:
       fail-fast: false
@@ -79,9 +57,7 @@ jobs:
   go-coverage:
     needs: changes
     if: needs.changes.outputs.run == 'true' && github.event_name != 'push'
-    # buildGoModule の checkPhase が出力する coverprofile / func レポートを成果物（$out）から取り出し、
-    # Job Summary に表示する（計測・表示のみ。閾値ゲートは持たない → 他テスト追加 PR とのマージ順依存回避）。
-    # $out 同梱なので cachix の cache hit でも決定論的に同じレポートを参照できる。
+    # buildGoModule の checkPhase が $out へ出力する func レポートを Job Summary に表示する（閾値ゲートは持たない）。
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -104,35 +80,16 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
   sara:
-    # Knowledge-graph validation of docs/ (broken references, duplicate IDs,
-    # cycles) plus four contract tests: test-doc-map's test-code ⇔ CASE
-    # mapping, risk-matrix's level derivation, sara-gap's gap enumeration,
-    # and sara-new's item creation. Non-required
-    # check with no threshold gate, same policy as go-coverage: it is NOT
-    # registered as a required status check and is NOT part of the DoD, so a
-    # failure reports on the PR without blocking merge. The check itself runs
-    # strict (strict_mode = true in sara.toml, all warnings are errors) since
-    # the epic #203 migration completed; staying non-required is a recorded
-    # decision, not a deferral (→ ADR-0050).
-    #
-    # The `changes` job is not reused here: its filter targets nix/Go sources
-    # broadly, whereas this job needs docs plus the specific test assets
-    # test-doc-map enumerates. A job-local filter covers exactly those inputs
-    # instead, so unrelated PRs skip the nix setup entirely.
-    #
-    # Not a required context, so a job-level `push` guard costs nothing (see
-    # flake-check) — only `test-doc-matrix` serves that trigger.
+    # Knowledge-graph validation of docs/ plus the test-doc-map / risk-matrix /
+    # sara-gap / sara-new contract tests. Not a required status check. Uses a
+    # job-local path filter instead of the `changes` job.
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      # Scoped to what this job actually exercises: the documents sara scans,
-      # its config, the sara-new / test-doc-map implementations, the test assets
-      # test-doc-map enumerates, and this workflow. On workflow_dispatch the
-      # step is skipped and `relevant` stays empty, which the guards below
-      # treat as "run" — the event/filter decision lives in a single expression
-      # per step rather than being restated in a shell step.
+      # Scoped to the inputs this job exercises. On workflow_dispatch the step is
+      # skipped and `relevant` stays empty, which the guards below treat as "run".
       - name: Detect sara-relevant changes
         id: filter
         if: github.event_name == 'pull_request'
@@ -143,17 +100,12 @@ jobs:
               - 'docs/**'
               - 'sara.toml'
               - 'dev/flake.nix'
-              # Pins the NUR rev that supplies sara, plus the nixpkgs behind
-              # the dev wrappers' runtimeInputs — a lock bump swaps this job's
-              # entire execution environment.
+              # Pins sara and the nixpkgs behind the dev wrappers.
               - 'dev/flake.lock'
               - 'dev/tests/**'
               - 'dev/scripts/**'
               - '.github/workflows/test.yml'
               # The test assets the test-doc-map contract test enumerates.
-              # Without these, adding or renaming a test file without updating
-              # its CASE would skip the job entirely and the drift would merge
-              # unnoticed — which is the whole point of the check (→ #304).
               - '**/*_test.go'
               - 'tests/**'
               # Defines the flake checks the contract test matches against its
@@ -166,51 +118,32 @@ jobs:
         with:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      # sara is a Rust CLI from the personal NUR, pulled straight from
-      # yasunori0418.cachix.org (dev/flake.nix keeps nixpkgs unfollowed for
-      # exactly this reason → 2c9f9fa). The dedicated `sara` devShell avoids
-      # building layat and running the dogfood shellHook.
+      # sara comes from the personal NUR via yasunori0418.cachix.org. The
+      # dedicated `sara` devShell avoids building layat.
       - name: Run sara check
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c sara check
 
-      # The test-code ⇔ CASE mapping contract (→ #304). Purely static: it reads
-      # the file-level inventory and CASE frontmatter only, so it needs nothing
-      # beyond this devShell. Also exposed as `checks.test-doc-map` for local
-      # `nix flake check ./dev`, which CI's root-flake flake-check never reaches
-      # — hence this explicit step.
+      # The test-code ⇔ CASE mapping contract (purely static). `checks.test-doc-map`
+      # lives in the dev flake, which the root flake-check does not reach.
       - name: Run test-doc-map contract test
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/test-doc-map.sh
 
-      # The level derivation contract for risk items (→ #303): `level` must equal
-      # the matrix cell of `likelihood` × `impact` from docs/agents/sara-graph.md.
-      # `sara check` validates the enum of each field but never the relation
-      # between them. Wired the same way as the test-doc-map step above — also
-      # exposed as `checks.risk-matrix` for local `nix flake check ./dev`, which
-      # CI's root-flake flake-check never reaches.
+      # The level derivation contract for risk items: `level` must equal the
+      # matrix cell of `likelihood` × `impact`.
       - name: Run risk-matrix contract test
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/risk-matrix.sh
 
-      # The gap enumeration contract for sara-gap (unthreatened REQ / DSG,
-      # unmitigated risks, uncovered TCs — the shift-left skills' entry-point
-      # listing). Exercises a self-contained fixture, NOT the live graph: the
-      # live graph legitimately carries gaps while items are being raised, so
-      # sara-gap itself is deliberately not a CI gate. Wired like the other
-      # contract-test steps — also exposed as `checks.sara-gap` for local
-      # `nix flake check ./dev`, which CI's root-flake flake-check never reaches.
+      # The gap enumeration contract for sara-gap, run against a self-contained
+      # fixture rather than the live graph.
       - name: Run sara-gap contract test
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/sara-gap.sh
 
       # The item-creation contract for sara-new, the wrapper around `sara init`
-      # that enforces the <YYYYMMDD>-<full UUID>-<slug>.md filename convention
-      # (→ #367, ADR-0053). The wrapper is the structural guarantee behind that
-      # convention, so a regression here silently degrades every item raised
-      # afterwards. Wired like the other contract-test steps — also exposed as
-      # `checks.sara-new` for local `nix flake check ./dev`, which CI's
-      # root-flake flake-check never reaches.
+      # that enforces the <YYYYMMDD>-<full UUID>-<slug>.md filename convention.
       - name: Run sara-new contract test
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/sara-new.sh
@@ -218,9 +151,8 @@ jobs:
   e2e:
     needs: changes
     if: needs.changes.outputs.run == 'true' && github.event_name != 'push'
-    # Non-NixOS (ubuntu-latest) E2E. Verifies the "works as long as nix is present"
-    # claim with real nix (→ ADR-0012). Runs tests/e2e/run.sh inside the ci devShell
-    # (layat / git / jq / coreutils).
+    # Non-NixOS (ubuntu-latest) E2E with real nix. Runs tests/e2e/run.sh inside
+    # the ci devShell (layat / git / jq / coreutils).
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -235,31 +167,15 @@ jobs:
 
   test-doc-matrix:
     # Generates the test-code ⇔ CASE ⇔ TC ⇔ RISK correspondence table and uploads
-    # it as an artifact (→ #304). Deliberately NOT committed to the repository:
-    # a generated file tracked alongside its sources drifts, and reviewing its
-    # diff adds nothing the contract test does not already enforce.
-    #
-    # Not run on every PR. Unlike the test-doc-map contract test (purely static),
-    # generation needs the `--full` inventory, which runs `go test -json` over the
-    # whole module and evaluates each nix-unit file. That cost buys a document
-    # nobody reads mid-review, so main push and workflow_dispatch pay it instead.
-    #
-    # The exception is a PR that touches generation itself: the step-level filter
-    # below runs the job when the scripts or their data files change, so a broken
-    # generator fails on its own PR rather than after landing on main.
+    # it as an artifact. Runs on main push, workflow_dispatch, and PRs that touch
+    # the generator's inputs.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       # On push / workflow_dispatch this step is skipped and `relevant` stays
-      # empty, which the guards below treat as "run". On pull_request it decides
-      # whether this PR touches anything the table is generated from.
-      #
-      # Covers the generator's real inputs, not just its implementation: CASE
-      # frontmatter and the test assets `--full` walks feed the output, and
-      # docs/model.yaml defines the type names the `sara report matrix` jq
-      # filters select on — renaming a display name would silently empty the
-      # TC / RISK columns. Kept in step with the sara job's filter above.
+      # empty, which the guards below treat as "run". The filter covers the
+      # generator's inputs, kept in step with the sara job's filter above.
       - name: Detect generation-relevant changes
         id: filter
         if: github.event_name == 'pull_request'
@@ -279,15 +195,12 @@ jobs:
               - 'sara.toml'
               - 'tests/**'
               - 'flake.nix'
-              # `--full` runs `go test -json ./...` and evaluates each nix-unit
-              # file, so generation also depends on non-test Go sources and on
-              # lib/ — a build break or an eval break there degrades the table.
+              # `--full` runs `go test -json ./...` and evaluates each nix-unit file.
               - '**/*.go'
               - 'go.mod'
               - 'go.sum'
               - 'lib/**'
-              # nix-unit の名前採取は getFlake → inputs.nixpkgs.lib を経由するので、
-              # root の lock bump も eval の挙動を変えうる（dev/flake.lock と同じ論拠）.
+              # nix-unit の名前採取は getFlake → inputs.nixpkgs.lib を経由する。
               - 'flake.lock'
 
       - name: Setup Nix
@@ -296,16 +209,13 @@ jobs:
         with:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      # The default dev devShell, not `sara`: generation needs go + jq + yq-go +
-      # sara together. Its shellHook dogfoods `layat apply skills`, which is
-      # harmless here (it places into the checkout and is allowed to no-op).
+      # The default dev devShell, not `sara`: generation needs go + jq + yq-go + sara.
       - name: Generate correspondence table
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop ./dev -c dev/scripts/test-doc-matrix.sh test-doc-matrix.md
 
-      # GITHUB_STEP_SUMMARY discards the entire step summary past 1 MiB, so an
-      # oversized table falls back to a pointer at the artifact instead of
-      # silently vanishing.
+      # GITHUB_STEP_SUMMARY discards summaries past 1 MiB, so an oversized table
+      # falls back to a pointer at the artifact.
       - name: Publish correspondence table to job summary
         if: steps.filter.outputs.relevant != 'false'
         run: |

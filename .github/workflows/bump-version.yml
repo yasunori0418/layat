@@ -1,12 +1,7 @@
 name: Bump Version
 
-# バージョン bump を省力化する workflow（ADR-0042 §2）。VERSION を書き換えて
-# `chore: bump version to X` を bot 名義でコミット・push し、通常の PR フローで
-# マージする（マージが release.yml を駆動する）。
-#
-# これは唯一の経路ではない: 手元で VERSION を直接編集して PR を作る手動経路も
-# 同格に有効。この workflow はその手作業を肩代わりするだけで、bump の正規手段を
-# 独占しない（ADR-0042 §2）。
+# VERSION を書き換えて `chore: bump version to X` を bot 名義でコミット・push する。
+# マージは通常の PR フローで行い、マージが release.yml を駆動する。
 
 on:
   workflow_dispatch:
@@ -22,9 +17,7 @@ permissions:
 
 jobs:
   bump:
-    # 非 main ブランチ上でのみ実行する（cryoflow 同型）。bump コミットは branch
-    # 上で積み、マージは人間の PR 操作という ADR-0025（main 直コミット禁止）の
-    # 動線に乗せる。main 上で誤起動しても no-op で終わる。
+    # 非 main ブランチ上でのみ実行する。main 上で誤起動しても no-op で終わる。
     if: github.ref_name != 'main'
     runs-on: ubuntu-latest
     steps:
@@ -57,9 +50,7 @@ jobs:
           git add VERSION
           git commit -m "chore: bump version to $VERSION_INPUT"
 
-          # push が non-fast-forward で reject される（dispatch 後にブランチが
-          # 進んだ場合など）と git の生メッセージしか残らず、運用者に次の一手が
-          # 伝わらない。失敗を捕捉して ::error:: で対処方針を明示し fail-fast する。
+          # push の失敗（non-fast-forward 等）は ::error:: で対処方針を示して fail-fast する。
           if ! git push origin "HEAD:$GITHUB_REF_NAME"; then
             echo "::error::push to '$GITHUB_REF_NAME' failed (likely non-fast-forward). ブランチをリモート最新へ更新（git pull --rebase 等）してから、この workflow を再度 dispatch してください。"
             exit 1
