@@ -53,7 +53,8 @@ in
   };
 
   # entry の正規化は root 種別に依らない。project root との同値比較で見る
-  # （真偽値へ畳まず、ずれたフィールドが出力に出るようにする）。
+  # （真偽値へ畳まず、ずれたフィールドが出力に出るようにする）。現行の resolveEntry は
+  # root を取らず、entry の解決へ root を渡す変更が入ったときの回帰網になる。
   testFixedRootEntryUnaffected = {
     expr = fixed.entries;
     expected =

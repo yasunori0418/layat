@@ -231,8 +231,9 @@
               # mattpocock/skills を .claude/skills/ に dogfood 配置する。競合時は待たず skip する。
               layat apply skills -f "$REPO_ROOT/dev" --no-wait
 
-              # dev/skills/（開発中のスキル正本）を .claude/skills/ へ相対 symlink で配置し、
-              # 編集を即時反映させる。孤児 symlink の掃除は手動。
+              # dev/skills/（開発中のスキル正本）を .claude/skills/ へ相対 symlink で配置し、編集を即時反映させる。
+              # mkOutOfStoreSymlink は pure eval で自身のチェックアウトの絶対パスを得られないため使わない。
+              # 孤児 symlink の掃除は手動。
               mkdir -p "$REPO_ROOT/.claude/skills"
               for d in "$REPO_ROOT"/dev/skills/*/; do
                 [ -d "$d" ] || continue
@@ -241,7 +242,7 @@
             '';
           };
 
-          # テストコード ⇔ CASE 対応の契約テスト（dev/tests/test-doc-map.sh）。CI では devShells.sara で走る。
+          # テストコード ⇔ CASE 対応の契約テスト（dev/tests/test-doc-map.sh）。CI はこの派生ではなく devShells.sara で走らせる。
           # ルート flake の store path を書き込み可能な場所へ複製し、dev/ は dev flake 側から重ねて走らせる。
           checks.test-doc-map =
             pkgs.runCommandLocal "test-doc-map"
@@ -270,7 +271,7 @@
                 touch "$out"
               '';
 
-          # risk の level 導出マトリクス整合の契約テスト（dev/tests/risk-matrix.sh）。CI では devShells.sara で走る。
+          # risk の level 導出マトリクス整合の契約テスト（dev/tests/risk-matrix.sh）。CI はこの派生ではなく devShells.sara で走らせる。
           checks.risk-matrix =
             pkgs.runCommandLocal "risk-matrix"
               {
@@ -298,7 +299,7 @@
                 touch "$out"
               '';
 
-          # sara-gap の検出契約を固定するテスト（dev/tests/sara-gap.sh）。CI では devShells.sara で走る。
+          # sara-gap の検出契約を固定するテスト（dev/tests/sara-gap.sh）。CI はこの派生ではなく devShells.sara で走らせる。
           # テストは fixture を相対パスで解決するため、dev/ の木を作ってから走らせる。
           checks.sara-gap =
             pkgs.runCommandLocal "sara-gap-test"
@@ -323,7 +324,7 @@
                 touch "$out"
               '';
 
-          # sara-new の起票契約を固定するテスト（dev/tests/sara-new.sh）。CI では devShells.sara で走る。
+          # sara-new の起票契約を固定するテスト（dev/tests/sara-new.sh）。CI はこの派生ではなく devShells.sara で走らせる。
           checks.sara-new =
             pkgs.runCommandLocal "sara-new-test"
               {

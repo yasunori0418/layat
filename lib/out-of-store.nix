@@ -1,4 +1,4 @@
-# Marker constructors. A marker carries the kind that the engine resolves at runtime.
+# Marker constructors. A marker carries what the engine resolves at runtime.
 # The `_layatMarker` tag lets `lib/types.nix` tell markers from store-backed attrsets;
 # it never reaches `manifest.json`.
 {

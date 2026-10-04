@@ -23,7 +23,8 @@ in
   imports = [ ./common.nix ];
 
   config = lib.mkIf cfg.enable {
-    # Apply the pre-built link-farm after writeBoundary; `run` honors --dry-run.
+    # Apply the pre-built link-farm after writeBoundary so it does not collide with home.file's
+    # placement; `run` honors --dry-run.
     # layat.backup.enable adds --backup=<suffix> with the user-supplied suffix shell-quoted.
     home.activation.layat = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       run ${lib.getExe layatPackage} apply --manifest ${manifest}${lib.optionalString cfg.backup.enable " --backup=${lib.escapeShellArg cfg.backup.suffix}"}
