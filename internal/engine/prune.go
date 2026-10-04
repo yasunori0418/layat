@@ -13,8 +13,8 @@ import (
 )
 
 // prune removes the profile series whose recorded root no longer exists. It
-// touches no placed artifact and thins no generations; a series whose root
-// exists, or whose verdict cannot be reached, is kept with a warning.
+// touches no placed artifact and thins no generations. A series whose root
+// exists is kept; one whose verdict cannot be reached is kept with a warning.
 
 // defaultSystemDir is the system-mode profile base. Unlike the
 // user state base it is a finished base: it does not go through paths.Base.
@@ -258,9 +258,9 @@ func pruneSkip(res *PruneResult, warnf func(string, ...any), s PruneSeries, reas
 	warnf("layat: prune: skipped series %s (%s): %v", s.Dir, reason, cause)
 }
 
-// pruneRemoveSeries deletes one series, locks and all. On failure it returns
-// the reason the caller may fold into Skipped, or "" when the failure is an
-// error: a removal failure is skippable only if nothing was removed yet.
+// pruneRemoveSeries deletes one series, locks and all. On failure it returns the reason
+// the caller may fold into Skipped, or "" when the failure is an error: a removal failure
+// is skippable only if nothing was removed yet and the cause is a permission error.
 func pruneRemoveSeries(s PruneSeries) (PruneSkipReason, error) {
 	// A series with no <name> has no lock key at all; the enumeration having
 	// succeeded (NamesErr was checked before this point) is what makes an

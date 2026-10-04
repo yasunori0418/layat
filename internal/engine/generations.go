@@ -115,9 +115,9 @@ type RollbackResult struct {
 	To   int // previous generation N-1 rolled back to
 }
 
-// Rollback reverts a home-mode profile to one generation earlier. It plans with current
-// generation N as baseline and N-1 as target, converges the FS (stale-removing N∖N-1 and
-// re-placing N-1), and moves the profile pointer last.
+// Rollback reverts a home-mode profile to one generation earlier. It converges the FS from current
+// generation N to N-1 (stale-removing N∖N-1, re-placing N-1) and moves the profile pointer last,
+// since moving it first would shift the stale-removal baseline.
 func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	warnf := opts.Warnf
 	if warnf == nil {

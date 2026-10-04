@@ -33,8 +33,8 @@ func (a *applier) removeStale(actions []planner.RemoveAction) error {
 }
 
 // preRemove removes, before place, the self-recorded stale objects the planner scheduled to clear
-// a placement target, folding them into result.Removed / result.Pruned. On drift it aborts instead
-// of skipping, and it never walks pruneEmptyAncestors.
+// a placement target, folding them into result.Removed / result.Pruned. Placement assumes these
+// objects are gone, so on drift it aborts instead of skipping; it never walks pruneEmptyAncestors.
 func (a *applier) preRemove(actions []planner.RemoveAction) error {
 	for _, act := range actions {
 		switch act.Kind {

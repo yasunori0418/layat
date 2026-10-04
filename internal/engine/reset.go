@@ -9,9 +9,9 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// reset is an FS-only teardown that reverts the entries of the previous generation's manifest to a
-// not-placed state: symlinks under the stale-removal invariant, copy targets deleted outright.
-// The profile and its generations are untouched.
+// reset is an FS-only teardown that reverts the previous generation's manifest entries (the recorded
+// truth, which a rebuilt config can diverge from) to a not-placed state: symlinks under the
+// stale-removal invariant, copy targets deleted outright. The profile and generations are untouched.
 
 // ResetOptions is the input to Reset. Reset does not build (it reads the previous generation's manifest).
 type ResetOptions struct {
