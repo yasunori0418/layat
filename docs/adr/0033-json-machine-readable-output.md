@@ -3,7 +3,7 @@ id: "ADR-0033"
 type: adr
 name: "`--json` 機械可読出力を全サブコマンド一律のグローバルフラグとして導入する"
 status: 採用
-origin: "次期マイルストーン計画の grilling（2026-07-04）。ADR-0023 が「必要になった時点で追加」とした条件を、`nput prune` 新設（→ ADR-0034）や外部ツール連携（statusline / エディタ統合 / CI）の消費側要求で満たしたと判断した"
+origin: "次期マイルストーン計画の grilling（2026-07-04）。ADR-0023 が「必要になった時点で追加」とした条件を、`layat prune` 新設（→ ADR-0034）や外部ツール連携（statusline / エディタ統合 / CI）の消費側要求で満たしたと判断した"
 justifies:
   - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
   - "REQ-2353259f-5878-452a-8e11-3445de69abc2"
@@ -20,15 +20,15 @@ references:
 - 日付: 2026-07-04
 - 関連: ADR-0031, ADR-0023, ADR-0018, ADR-0021, `docs/spec.md`, `docs/design.md`
 - 改訂対象: ADR-0023 §2 の「`--json` は MVP では持たない（将来送り・必要になった時点で追加）」を撤回し、実装を決定。ストリーム規律・終了コード表そのものは不変
-- 起点: 次期マイルストーン計画の grilling（2026-07-04）。ADR-0023 が「必要になった時点で追加」とした条件を、`nput prune` 新設（→ ADR-0034）や外部ツール連携（statusline / エディタ統合 / CI）の消費側要求で満たしたと判断した
+- 起点: 次期マイルストーン計画の grilling（2026-07-04）。ADR-0023 が「必要になった時点で追加」とした条件を、`layat prune` 新設（→ ADR-0034）や外部ツール連携（statusline / エディタ統合 / CI）の消費側要求で満たしたと判断した
 
-> **2026-07-07 改訂注記（ADR-0043）**: 本 ADR の「`--json` を導入する」という決定は不変。ただし **§1-3 の出力形は outturn specVersion 1 準拠へ改訂**された。独自エンベロープ `{"version":1,"command":...}` は outturn エンベロープ（トップレベル `specVersion` / `tool` / `command` / `status` / `dryRun` / `startedAt` / `finishedAt` / `errors[]` / **`results[]`**。single / batch とも常に `results[]` で `items` / `changes` / `info` は `results[i].result` 配下。実行形態の判別子フィールドは持たない）に置き換わる。**§2 の「warning / error は JSON へ畳み込まず stderr 専有」は反転**し、エラーは outturn エンベロープに構造化して載せた上で stderr テキストを併存させる。ストリーム規律の骨子（stdout=機械可読専有・warning/error 常時 stderr）と終了コード表 0/1/2、`gitignore` の二契約方針は不変。JSON 出力の outturn 準拠は nput の恒常原則となった（→ ADR-0043）。
+> **2026-07-07 改訂注記（ADR-0043）**: 本 ADR の「`--json` を導入する」という決定は不変。ただし **§1-3 の出力形は outturn specVersion 1 準拠へ改訂**された。独自エンベロープ `{"version":1,"command":...}` は outturn エンベロープ（トップレベル `specVersion` / `tool` / `command` / `status` / `dryRun` / `startedAt` / `finishedAt` / `errors[]` / **`results[]`**。single / batch とも常に `results[]` で `items` / `changes` / `info` は `results[i].result` 配下。実行形態の判別子フィールドは持たない）に置き換わる。**§2 の「warning / error は JSON へ畳み込まず stderr 専有」は反転**し、エラーは outturn エンベロープに構造化して載せた上で stderr テキストを併存させる。ストリーム規律の骨子（stdout=機械可読専有・warning/error 常時 stderr）と終了コード表 0/1/2、`gitignore` の二契約方針は不変。JSON 出力の outturn 準拠は layat の恒常原則となった（→ ADR-0043）。
 
 ## 背景
 
 ADR-0023 §2 は出力ストリーム規律（stdout = 機械可読専有 / warning・error = stderr）と終了コード表（0 / 1 / 2）を確定し、`--json` は YAGNI として将来送りにした。ADR-0031 で成功時デフォルト沈黙・`-v` レポート opt-in・`--debug` 分離が確定し、テキスト出力面の規律は完成している。
 
-現状の機械可読 stdout 契約は `gitignore`（行指向）と `apply --dryrun`（プラン行）の 2 つで、`list-generations` や apply / reset / rollback の結果レポートを機械消費する手段は無い。`nput prune` の新設（→ ADR-0034）で「削除予定系列の一覧」という構造化データが増えること、公開後の外部消費（スクリプト・エディタ統合）の受け口を用意することから、`--json` を導入する。
+現状の機械可読 stdout 契約は `gitignore`（行指向）と `apply --dryrun`（プラン行）の 2 つで、`list-generations` や apply / reset / rollback の結果レポートを機械消費する手段は無い。`layat prune` の新設（→ ADR-0034）で「削除予定系列の一覧」という構造化データが増えること、公開後の外部消費（スクリプト・エディタ統合）の受け口を用意することから、`--json` を導入する。
 
 ## 決定
 
@@ -60,7 +60,7 @@ ADR-0023 §2 は出力ストリーム規律（stdout = 機械可読専有 / warn
 ## 根拠
 
 - **全コマンド一律にする理由**: 「どのコマンドが `--json` を持つか」の表はユーザーの記憶負担と docs の維持コストになる。cobra の persistent flag として 1 箇所で受け、コマンド側は「自分の結果を JSON で表現する」責務だけを負う方が実装・仕様の両方で単純。
-- **単一オブジェクトにする理由**: nput の実行は秒オーダーで完結し、進行イベントの逐次消費の需要が無い。ストリームは消費側のパーサ要求を上げるだけ。
+- **単一オブジェクトにする理由**: layat の実行は秒オーダーで完結し、進行イベントの逐次消費の需要が無い。ストリームは消費側のパーサ要求を上げるだけ。
 - **エラーを stderr テキストに残す理由**: 「エラーも JSON」にすると stdout に成功形と失敗形の 2 スキーマが載り、消費側は結局終了コードも見る。終了コード + stderr の既存規律が既に機械判別可能であり、二重化する価値が無い。エラー wrap 規約（op + 対象パス・→ CONTEXT.md）のテキストがそのまま stderr に出る。
 - **version フィールドを持つ理由**: 公開リポジトリの機械可読契約は後方互換の破壊を検知可能にしておく必要がある。フィールド追加は非破壊（version 据え置き）、意味変更・削除は version インクリメントと定める。
 
@@ -69,7 +69,7 @@ ADR-0023 §2 は出力ストリーム規律（stdout = 機械可読専有 / warn
 - **`docs/spec.md`**: CLI 仕様のグローバルフラグ表に `--json` を追加し、「`--json`（機械可読出力）は MVP では持たない」注記を削除。出力ストリーム規律節に JSON エンベロープ仕様（version / command / エラーは stderr のまま）を追記。各コマンド仕様に JSON ペイロード概形を追記。
 - **`docs/design.md`**: 出力・終了コード規約節の「`--json` は将来送り」を実装済みへ更新。
 - **ADR-0023**: §2 への改訂注記（本 ADR で `--json` 将来送りを撤回）を同一 PR で追記。
-- **実装（`cmd/nput/`）**: persistent flag 追加、各コマンドの結果データを構造体化して `encoding/json` で emit（stdlib-only 制約内）。既存の `-v` レポート生成と JSON 生成が同じ結果構造体を共有するよう、レポート系を data-first にリファクタする。
+- **実装（`cmd/layat/`）**: persistent flag 追加、各コマンドの結果データを構造体化して `encoding/json` で emit（stdlib-only 制約内）。既存の `-v` レポート生成と JSON 生成が同じ結果構造体を共有するよう、レポート系を data-first にリファクタする。
 - **e2e / go test**: `--json` 出力のスキーマ検証（version フィールド・終了コードとの整合）を追加。
 
 ## 棄却した代替案

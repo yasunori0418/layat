@@ -28,14 +28,14 @@ references:
 > **2026-06-14 改訂注記（ADR-0017）**: 本 ADR の **世代スキップを「完全 no-op」→「lstat 検査 + 必要時のみ再張り」**へ精緻化した。新 link-farm が前世代と同一なら新世代は積まない（世代無限増殖の回避は不変）が、各 target を lstat 検査し foreign に書き換えられた / 消えた entry はその entry だけ再張りしてドリフトを収束させる（→ ADR-0017）。
 >
 > **2026-06-14 改訂注記（ADR-0019）**: project mode の **copy target も ephemeral 扱い**と確定した。`gitignore` は method を区別せず全 target を列挙し、
-> copy target も各 clone で place-once 再マテリアライズされ編集は clone local / 使い捨て（`git clean` で消える）。committed（vendoring）は nput の責務外（→ ADR-0019）。
+> copy target も各 clone で place-once 再マテリアライズされ編集は clone local / 使い捨て（`git clean` で消える）。committed（vendoring）は layat の責務外（→ ADR-0019）。
 
 ## 背景
 
-これまで nput の公開 API は root = `$HOME` 固定で、配置先は `$HOME` 相対の target だけを想定していた（ADR-0004）。
+これまで layat の公開 API は root = `$HOME` 固定で、配置先は `$HOME` 相対の target だけを想定していた（ADR-0004）。
 ADR-0004 が seam として残した root 一般化は、将来の system 配置（root = `/`、distro 構想）だけを念頭に置いていた。
 
-これとは別に、**任意プロジェクト内に nput を組み込み、repo 内の任意パスへ nix store の物を配置したい**用途が出た。
+これとは別に、**任意プロジェクト内に layat を組み込み、repo 内の任意パスへ nix store の物を配置したい**用途が出た。
 具体例は「repo 内の `.claude/skills/` をチームで共有する」「project-local な tool 設定・hook を nix store から置く」など。
 配置先はクローンした作業ツリーの中であり、`$HOME` でも `/` でもない**第三の root = プロジェクトルート**になる。
 これは ADR-0004 が想定していなかった root 種別である。
@@ -47,12 +47,12 @@ ADR-0004 が seam として残した root 一般化は、将来の system 配置
 - **root = プロジェクトルート**の配置モードを導入する。`$HOME` 相対（home mode）とは別系統の root。
 - root の特定は **実行時に解決**する。クローン場所はクローンごとに違い、Nix 評価時に絶対パスを焼き込めないため。
   - **既定: `git rev-parse --show-toplevel`**（git toplevel）。どのサブディレクトリから叩いても同じ root に解決され、
-    nput が「git リポジトリを扱う」前提とも一致する。
+    layat が「git リポジトリを扱う」前提とも一致する。
   - **`--root <path>` で上書き可能**。git 外で使う場合や別ルートを指したい場合に明示する。
 
 ### profile は解決済み root でキーする
 
-- project mode の profile/世代は **profile key に解決済み root を含める**（例: `~/.local/state/nix/profiles/nput/<roothash>/<name>`）。
+- project mode の profile/世代は **profile key に解決済み root を含める**（例: `~/.local/state/nix/profiles/layat/<roothash>/<name>`）。
 - これにより同一 flake を複数箇所にクローンしても profile が衝突せず、stale 除去が互いの配置を掃除し合う事故を防ぐ。
 - profile・store マニフェストの不変条件（ADR-0002）はそのまま再利用する。repo 内に可変 state は持たない。
 
@@ -72,19 +72,19 @@ ADR-0004 が seam として残した root 一般化は、将来の system 配置
 ### devShell shellHook を正式な配線レイヤーに加える
 
 - ADR-0003 の「モジュール（HM / NixOS / nix-darwin）= エンジンを起動する配線」に、**devShell の `shellHook`** を同型の配線として追加する。
-- `nix develop` / direnv（`use flake`）でシェルに入った瞬間に nput エンジンをキックし、git toplevel を root に解決して配置する。
+- `nix develop` / direnv（`use flake`）でシェルに入った瞬間に layat エンジンをキックし、git toplevel を root に解決して配置する。
 - devShell は配置ロジックを持たず、root（git toplevel）と activation タイミング（シェル入室）を供給するだけ。HM モジュールと同じ位置づけ。
 
 ### ephemeral 配置原則 — 配置物はコミット対象外
 
-- **project mode で nput が配置する物は、プロジェクトにコミットされるべきでない**（per-clone でクローンごとに再生成する ephemeral な物）。
-- したがって **activation（`nput`）は git 状態に一切干渉しない**。`.gitignore` に触れず、target が git tracked かのチェックもしない。
+- **project mode で layat が配置する物は、プロジェクトにコミットされるべきでない**（per-clone でクローンごとに再生成する ephemeral な物）。
+- したがって **activation（`layat`）は git 状態に一切干渉しない**。`.gitignore` に触れず、target が git tracked かのチェックもしない。
 - 正しい運用では配置物は常に untracked なので、保守的 stale 除去（ADR-0002 / ADR-0003）が git-tracked file と衝突する事態は原理的に起きない。
 
 ### `.gitignore` 生成は専用コマンドで stdout 出力のみ
 
-- 配置 target を `.gitignore` 向けに列挙する**専用コマンド**（例: `nput gitignore`）を設ける。出力は **stdout のみ**でファイルは書き込まない。
-- nput は「symlink / copy を target に置く」以外のファイル改変をしないツールであり続ける（`.gitignore` 自動追記はしない）。
+- 配置 target を `.gitignore` 向けに列挙する**専用コマンド**（例: `layat gitignore`）を設ける。出力は **stdout のみ**でファイルは書き込まない。
+- layat は「symlink / copy を target に置く」以外のファイル改変をしないツールであり続ける（`.gitignore` 自動追記はしない）。
 - `.gitignore` の更新は一度きりで足り、定義変更が起きた場合の更新責務はプロジェクト管理者が持つ。
 
 ### copy / out-of-store も同原則を継承
@@ -111,7 +111,7 @@ ADR-0004 が seam として残した root 一般化は、将来の system 配置
 - `docs/spec.md` / `docs/design.md` に以下を反映する。
   - `mkActivationScript` の `root` 引数（既定 `$HOME` / `projectRoot` マーカー / 絶対パス）。
   - `projectRoot` の実行時解決（git toplevel 既定）と `--root` CLI。
-  - `nput gitignore`（stdout 出力のみ）コマンド。
+  - `layat gitignore`（stdout 出力のみ）コマンド。
   - project mode の世代スキップ短絡と、世代の非公開（`--rollback` / `--list-generations` を出さない）。
 - `docs/concept.md` に project-scoped placement 節を追加する。
 - `CONTEXT.md` に用語（`project mode` / `projectRoot` / `ephemeral placement`）を追加し、`root` の定義を更新する。
@@ -123,8 +123,8 @@ ADR-0004 が seam として残した root 一般化は、将来の system 配置
 
 - **config ファイル相対 root**: Nix で flake source が store にコピーされるため store path 化し、作業ツリーを指せない。成立しない。
 - **CWD（`$PWD`）既定 root**: 実行場所で配置先が変わり冪等性を破壊。stale 除去が別ディレクトリを誤って掃除しうる。
-- **repo 内に可変 state（`.nput/` 等）を置く**: ADR-0002（store マニフェストは不変・GC-root）と衝突。配置 symlink の誤コミット懸念も生む。
+- **repo 内に可変 state（`.layat/` 等）を置く**: ADR-0002（store マニフェストは不変・GC-root）と衝突。配置 symlink の誤コミット懸念も生む。
   profile を root でキーして `~/.local/state` に置く方式を採用。
 - **project mode で世代を取らない**: stale 除去（entry が消えたときの掃除）を同時に失い、entry の増減を扱えなくなる。
-- **`.gitignore` への自動追記 / `--write`**: nput が常にファイルを生成・改変するツールになり、「設定を生成しない」核心思想に反する。stdout 出力のみに留める。
+- **`.gitignore` への自動追記 / `--write`**: layat が常にファイルを生成・改変するツールになり、「設定を生成しない」核心思想に反する。stdout 出力のみに留める。
 - **project mode で `--rollback` を公開**: per-clone な ephemeral 配置で rollback の意味が曖昧。devShell キック時は戻し先 host 世代も無い。内部機構に留める。

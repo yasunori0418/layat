@@ -76,7 +76,7 @@ root 解決を**ビルドより前**に行い、flock を**ビルドより前**�
 
 ```
 0. entrypoint 発見（CWD 既定 / -f 上書き）
-1. nix eval で nput.<name> の root kind（+ fixed root のときは絶対パス文字列）を取得
+1. nix eval で layat.<name> の root kind（+ fixed root のときは絶対パス文字列）を取得
    → root 解決（project=git toplevel / home=$HOME / system=/ / fixed=記録値、--root で上書き）
    → profileDir 確定（home: <name> / project: <roothash>/<name>、--root 時は §3）
 2. flock(profileDir) 取得（明示=blocking / shellHook=try-lock skip・ADR-0013）
@@ -86,13 +86,13 @@ root 解決を**ビルドより前**に行い、flock を**ビルドより前**�
 6. --set 成功後に .pending-<name> 削除
 ```
 
-- **`mkManifest` の返り値 derivation に root kind を passthru で露出する**（例: `passthru.rootKind` / `fixed` のとき `passthru.root`）。CLI はこれを `nix eval <ep>#nput.<system>.<name>.rootKind`（legacy は `nix eval -f <ep> nput.<name>.rootKind`）で**ビルドせずに**読む。`rootKind` は eval 時に確定する（git toplevel / `$HOME` の実体解決は依然 engine 実行時）ため、安価な eval で取れる。
+- **`mkManifest` の返り値 derivation に root kind を passthru で露出する**（例: `passthru.rootKind` / `fixed` のとき `passthru.root`）。CLI はこれを `nix eval <ep>#layat.<system>.<name>.rootKind`（legacy は `nix eval -f <ep> layat.<name>.rootKind`）で**ビルドせずに**読む。`rootKind` は eval 時に確定する（git toplevel / `$HOME` の実体解決は依然 engine 実行時）ため、安価な eval で取れる。
 - build が**常にロック内**になり、同名・同 root への並行 apply（shellHook + 手動 apply 等）が `.pending-<name>` out-link を奪い合う競合が構造的に消える。ADR-0011 の「`.pending-<name>` 固定パス・apply ごと上書き・orphan 最大1」はこのロック内直列化で成立する。
 - `--dryrun` は build するが配置しないため pending gcroot を張らない（ADR-0011 不変）。eval 先行は dryrun でも同じ（root 解決はするが flock は読み取り専用のため取らない）。
 
 ### 2. 出力ストリーム規律・終了コード表を確定し、`--json` は将来送り・`--quiet`/`--verbose` を MVP に入れる
 
-- **ストリーム規律**: **stdout は機械可読出力専有**（`gitignore` の列挙・`--dryrun` のプラン）。**進捗 / 配置レポート（placed / replaced / removed / skipped）・warning・shellHook skip 通知はすべて stderr**。これにより `nput gitignore <name> >> .gitignore` や `nput apply <name> --dryrun | ...` が安全にパイプできる。
+- **ストリーム規律**: **stdout は機械可読出力専有**（`gitignore` の列挙・`--dryrun` のプラン）。**進捗 / 配置レポート（placed / replaced / removed / skipped）・warning・shellHook skip 通知はすべて stderr**。これにより `layat gitignore <name> >> .gitignore` や `layat apply <name> --dryrun | ...` が安全にパイプできる。
 - **終了コード表**:
 
   | code | 意味 |
@@ -110,9 +110,9 @@ root 解決を**ビルドより前**に行い、flock を**ビルドより前**�
 
   | 状況 | profileDir |
   |---|---|
-  | home（`--root` なし）| `<state>/nix/profiles/nput/<name>` |
-  | home / fixed（`--root /p`）| `<state>/nix/profiles/nput/<roothash(/p)>/<name>` |
-  | project（`--root` 有無）| `<state>/nix/profiles/nput/<roothash>/<name>`（ADR-0013 既定）|
+  | home（`--root` なし）| `<state>/nix/profiles/layat/<name>` |
+  | home / fixed（`--root /p`）| `<state>/nix/profiles/layat/<roothash(/p)>/<name>` |
+  | project（`--root` 有無）| `<state>/nix/profiles/layat/<roothash>/<name>`（ADR-0013 既定）|
 
 - 異なるオーバーライド root が独立した世代系列に分離され、§背景4 の silent orphan が構造的に消える。`<roothash>` 算出・backref ファイル（`.root`）は project mode と同一機構（ADR-0013）を流用する。
 - この roothash キーイングは `apply` / `reset` / `rollback` / `list-generations` で一貫させる（`--root` を付けた状態の世代を操作するには再び同じ `--root` が要る）。`--root` なしの通常 home は従来どおり `<name>` キーのまま（「1 ユーザー 1 profile」の UX を保つ）。
@@ -120,13 +120,13 @@ root 解決を**ビルドより前**に行い、flock を**ビルドより前**�
 
 ### 4. 実装は垂直トレーサー弾で進める
 
-- **第一スライス = home mode / `method = "symlink"` / store link の `nput apply <name>` を lib → engine → CLI で end-to-end に通す**。manifest.json 契約・`nix eval`/`nix build`・`nix-env --set`・flock の骨格を最早期に検証する。
+- **第一スライス = home mode / `method = "symlink"` / store link の `layat apply <name>` を lib → engine → CLI で end-to-end に通す**。manifest.json 契約・`nix eval`/`nix build`・`nix-env --set`・flock の骨格を最早期に検証する。
 - 以降は横展開:
   - Slice2: `--dryrun` + 保守的 stale 除去の安全不変条件（table-driven テスト）
   - Slice3: `method = "copy"`（place-once / owner-write / symlink 複製）+ out-of-store symlink
   - Slice4: `apply --all`（フィルタ含む）/ `reset` / `apply --recopy`
   - Slice5: project mode（roothash / backref / 世代スキップ / lstat ドリフト修復）
-  - Slice6: `rollback` / `list-generations` + home-manager module + templates / `nput init`
+  - Slice6: `rollback` / `list-generations` + home-manager module + templates / `layat init`
 - レイヤーボトムアップ（lib 全完成 → engine 全完成 → CLI 全完成）は end-to-end 検証が終盤に遅れ契約のずれを終盤で発見しがちなため採らない。
 
 ### 5. 二次的細目
@@ -146,7 +146,7 @@ root 解決を**ビルドより前**に行い、flock を**ビルドより前**�
 ## 影響
 
 - **`docs/spec.md`**:
-  - 実行フロー節（`nput apply` のステップ）を「eval 先行 → flock → build」順に書き換え、`nix eval` での rootKind 先取りと「build はロック内」を明記。
+  - 実行フロー節（`layat apply` のステップ）を「eval 先行 → flock → build」順に書き換え、`nix eval` での rootKind 先取りと「build はロック内」を明記。
   - `mkManifest` 返り値に root kind の passthru 露出を追記。
   - CLI 仕様にストリーム規律・終了コード表・`--quiet`/`--verbose` グローバルフラグを追加。`--json` 非対応（将来送り）を注記。
   - `--root` の解決節に「明示時は全モード roothash キーイング・apply/reset/rollback/list-generations で一貫」を追記。
@@ -154,7 +154,7 @@ root 解決を**ビルドより前**に行い、flock を**ビルドより前**�
   - `listFilesInSrc` の `src` を path 限定（marker 不可）と明記。
   - cross-config 同一 target の lstat 修復振動のユーザー責任注記を世代スキップ / 配置動作節に追記。
 - **`docs/design.md`**: 実行モデル節の手順を eval 先行に更新。CLI サブコマンド表に `--quiet`/`--verbose`・終了コード方針を反映。`mkManifest` passthru を outputs 設計 / コアロジック節に反映。
-- **`CONTEXT.md`**: `engine` 定義の実行順を「eval 先行 → flock → build」に整合させ、`nput CLI` の `gitignore` を project mode 限定と注記。
+- **`CONTEXT.md`**: `engine` 定義の実行順を「eval 先行 → flock → build」に整合させ、`layat CLI` の `gitignore` を project mode 限定と注記。
 - **`docs/concept.md`**: project mode の devShell 例の近辺に振る舞い差は無いが、必要なら gitignore の project 限定を軽く反映（語の整合のみ）。
 - **実装フェーズ**: lib（`mkManifest` の rootKind passthru・`listFilesInSrc` の src 型ガード）、CLI（eval 先取り・flock 順序・終了コード・stdout/stderr 規律・`--quiet`/`--verbose`・`--root` 全モード roothash・gitignore project 限定）、engine（build ロック内化に伴う呼び出し順）。垂直トレーサー弾の Slice 順で着手する。
 

@@ -62,12 +62,12 @@ ADR-0016 / 0017 / 0018 で実装前残セマンティクスの大半が固まっ
 - `gitignore`（`<name>` / `--all`）は **method を区別せず全 target を列挙**する（copy target も含む）。
 - 各 clone で copy は place-once で再マテリアライズされ、**編集は clone local / 使い捨て**（`git clean` で消える）。
   「project mode の配置物はコミットしない」concept と整合する。docs に「project mode の copy 編集は clone local」と明記する。
-- copy を committed（vendoring）にしたい場合は nput の責務外（手動コミット）とし、project mode の ephemeral 原則を崩さない。
+- copy を committed（vendoring）にしたい場合は layat の責務外（手動コミット）とし、project mode の ephemeral 原則を崩さない。
 
 ### 4. 空 entries は正当な全クリアとして許可する（警告なし）
 
 - `entries = {}`（空 manifest）の apply を「**この config の配置を全撤去する**」正当な表現として許可する。
-- 保守的 stale 除去（nput 管理 symlink のみ・実ファイル不可触・ADR-0002）なので安全。冪等・予測可能で特別扱い不要。
+- 保守的 stale 除去（layat 管理 symlink のみ・実ファイル不可触・ADR-0002）なので安全。冪等・予測可能で特別扱い不要。
 - warning も eval エラーも出さない。spec に「空 entries は全 stale 除去（config の配置を消す手段）」と明記する。
 
 ## 根拠
@@ -92,7 +92,7 @@ ADR-0016 / 0017 / 0018 で実装前残セマンティクスの大半が固まっ
 - **ADR-0010**: 改訂注記で「normalizeManifest に target / subpath のパス安全性検査（絶対 / `..` エスケープ拒否）を追加」。
 - **ADR-0006**: 改訂注記で「GC アンカー = symlink store-backed entry 限定。copy entry は farm アンカーしない」。
 - **ADR-0005**: 改訂注記で「project mode の copy target も ephemeral（gitignore に含む・編集は clone local）」。
-- **実装フェーズ**: `lib/`（normalizeManifest のパス検査 throwIf・farm 構築で copy を除外）、`cmd/nput`（gitignore は全 target）、
+- **実装フェーズ**: `lib/`（normalizeManifest のパス検査 throwIf・farm 構築で copy を除外）、`cmd/layat`（gitignore は全 target）、
   `internal/`（空 manifest の全 stale 除去）。
 
 ## 棄却した代替案

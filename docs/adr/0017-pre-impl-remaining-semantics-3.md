@@ -37,7 +37,7 @@ references:
 ADR-0015 / ADR-0016 で実装前残セマンティクスの大半が固まったが、第 3 巡のレビューで次の 4 点に
 未定義 / footgun / 仕様の揺れが残っていた。
 
-1. **`apply --all` が root モードを区別せず全 config を適用する footgun**。`nput.*` に home mode と project mode の
+1. **`apply --all` が root モードを区別せず全 config を適用する footgun**。`layat.*` に home mode と project mode の
    config が混在する entrypoint で、devShell の `shellHook` から `--all` を打つと **home mode config も `$HOME` に配置**される。
 2. **`--root <path>` の適用範囲が曖昧**。spec は「project mode の root を上書き」と書くが、実行フローは汎用的に「--root 上書き」。
    home mode / fixed root の config に `--root` を渡したときの挙動が未定義。
@@ -51,11 +51,11 @@ ADR-0015 / ADR-0016 で実装前残セマンティクスの大半が固まった
 ### 1. `apply --all` に root モードフィルタ（`--project-root` / `--home-root` / `--system-root`）を追加する
 
 - `--all` に **root マーカー名に揃えたフィルタフラグ**を追加する: `--project-root` / `--home-root` / `--system-root`。
-  指定すると `nput.*` のうち該当 root モードの config **のみ**を適用する。
+  指定すると `layat.*` のうち該当 root モードの config **のみ**を適用する。
 - **素の `--all`（フィルタなし）は従来通り全 config を辞書順に適用**する（ADR-0016）。フィルタは opt-in。
-- devShell の `shellHook` は config を絞るため **`nput apply --all --project-root`**（または名指し `nput apply skills`）を
+- devShell の `shellHook` は config を絞るため **`layat apply --all --project-root`**（または名指し `layat apply skills`）を
   使うよう docs にガイドする。これで home mode config が devShell 入室で誤って `$HOME` に配置される footgun を回避できる。
-- フィルタは `--all` と併用する修飾で、名指し apply（`nput apply <name>`）では `<name>` が 1 config を pin するため無意味。
+- フィルタは `--all` と併用する修飾で、名指し apply（`layat apply <name>`）では `<name>` が 1 config を pin するため無意味。
 - `systemRoot` は eval 時に未実装拒否（ADR-0013）のため、`--system-root` は当面マッチする config が無い将来 seam。
 
 ### 2. `--root <path>` は全モードで解決 root を上書きする
@@ -103,13 +103,13 @@ ADR-0015 / ADR-0016 で実装前残セマンティクスの大半が固まった
     `--root` 記述も一般化。
   - 世代管理仕様 / devShell 節 / 実行フローの「世代スキップ = no-op」を「lstat 検査 + 必要時のみ再張り（新世代は積まない）」へ。
   - 配置動作仕様（symlink モード）に「張替えは unlink + symlink で非 atomic・再実行で収束」を一行注記。
-- **`docs/design.md`**: 使用パターン 1 の devShell `shellHook` を `nput apply skills`（名指し）または `--all --project-root` に
+- **`docs/design.md`**: 使用パターン 1 の devShell `shellHook` を `layat apply skills`（名指し）または `--all --project-root` に
   揃える注記。世代スキップの精緻化を反映。
 - **`docs/concept.md`**: project mode 説明 / 使用例 devShell の `shellHook` ガイドを反映。
 - **`CONTEXT.md`**: 必要なら `generation` / project mode 周辺へ世代スキップ精緻化を反映（glossary 粒度では任意）。
 - **ADR-0013**: 改訂注記で「`--all` に root モードフィルタ（`--project-root` 等）を追加・素の `--all` は全適用維持」。
 - **ADR-0005**: 改訂注記で「世代スキップ = 完全 no-op → lstat 検査 + 必要時のみ再張り（新世代は積まない）」。
-- **実装フェーズ**: `cmd/nput`（`--all` の root モードフィルタ・`--root` 全モード上書き）、`internal/`（世代スキップ時の
+- **実装フェーズ**: `cmd/layat`（`--all` の root モードフィルタ・`--root` 全モード上書き）、`internal/`（世代スキップ時の
   lstat 検査 + ドリフト entry の再張り）、`templates/project`（shellHook を `--all --project-root` か名指しに）。
 
 ## 棄却した代替案

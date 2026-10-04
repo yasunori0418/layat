@@ -19,13 +19,13 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-07-04
-- 関連: ADR-0013, ADR-0033, ADR-0035, ADR-0038（前提: 前段衝突検査）, `docs/spec.md`, `cmd/nput/apply.go`
+- 関連: ADR-0013, ADR-0033, ADR-0035, ADR-0038（前提: 前段衝突検査）, `docs/spec.md`, `cmd/layat/apply.go`
 - 改訂対象: ADR-0016 §2 の「`apply --all` の適用順は辞書順（キーソート・決定的）」を並列適用（実行順非決定・完了後の集約表示は辞書順）へ改訂
 - 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。複数 profile / manifest 処理の高速化要望
 
 ## 背景
 
-`apply --all` は一括 eval の後、config ごとに `nix build` → engine 配置を辞書順逐次（ADR-0016 §2）で回す（`cmd/nput/apply.go` の `runApplyAll` / `aggregateApply`）。支配的コストは config ごとの `nix build` で config 数に比例して直列に伸び、`method = "copy"` の大きなツリーでは配置段階も無視できない。
+`apply --all` は一括 eval の後、config ごとに `nix build` → engine 配置を辞書順逐次（ADR-0016 §2）で回す（`cmd/layat/apply.go` の `runApplyAll` / `aggregateApply`）。支配的コストは config ごとの `nix build` で config 数に比例して直列に伸び、`method = "copy"` の大きなツリーでは配置段階も無視できない。
 
 並列化の安全性を 3 点で精査した。
 
@@ -38,7 +38,7 @@ references:
 ### 1. build 段階を worker pool で並列化する
 
 - config ごとの `nix build` を goroutine worker pool で並列実行する。並列度の既定は論理 CPU 数（`runtime.NumCPU()`）とし、上限フラグ（`--jobs` 等の名称・既定値の詳細）は実装時に確定する。
-- nix daemon 側のビルド並列度とは独立の「nput が同時に投げる build プロセス数」の制御であり、二重制御にはならない。
+- nix daemon 側のビルド並列度とは独立の「layat が同時に投げる build プロセス数」の制御であり、二重制御にはならない。
 
 ### 2. 配置段階も config 単位の goroutine で並列化する
 
@@ -60,7 +60,7 @@ references:
 
 ## 影響
 
-- **`cmd/nput/apply.go`**: `runApplyAll` / `aggregateApply` / `aggregateDryRun` の worker pool 化・集約の並行安全化・辞書順の最終ソート。
+- **`cmd/layat/apply.go`**: `runApplyAll` / `aggregateApply` / `aggregateDryRun` の worker pool 化・集約の並行安全化・辞書順の最終ソート。
 - **`docs/spec.md`**: `--all` 節に並列実行・並列度フラグ・表示の辞書順集約・warning 順序の注記。
 - **ADR-0016**: 改訂対象への改訂注記を同一 PR で追記。
 - **テスト**: race detector（`go test -race`）での並行テスト・部分失敗集約・e2e `--all` の結果集約順。CI への `-race` 組込は実装時に判断。

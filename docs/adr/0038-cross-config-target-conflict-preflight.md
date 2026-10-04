@@ -39,10 +39,10 @@ references:
 - 突き合わせは **rootKind バケット単位**で行う: project 同士 / home 同士 / system 同士は同一バケット、fixed root は root 文字列値ごとに別バケット。`--root` 一律上書き（ADR-0017）が指定された場合は全 config が同一 root に解決されるため全体を 1 バケットとして検査する。
 - 検出したら **build にも配置にも入らず error 停止**する（メッセージに衝突 target と両 config 名を含める）。終了コードは一般エラー（1）。
 
-### 2. 実装層 = データ算出は nix（lib）・検出判定は Go CLI（cmd/nput）・engine は不変
+### 2. 実装層 = データ算出は nix（lib）・検出判定は Go CLI（cmd/layat）・engine は不変
 
 - **nix（lib）**: `mkManifest` が `rootKind` を passthru している方式（ADR-0023）と同じく、**正規化後 target 一覧を passthru に追加**する。`--all` の一括 eval（ADR-0024 §8 の `--apply` 式）を拡張し、config 名 → `{ rootKind, targets }` を **1 回の安価 eval（build なし）**で取得する。
-- **Go CLI（`cmd/nput`）**: 取得したマップをバケット分けして重複判定し、error 停止する。検査対象は `--all` のフィルタ（`--project-root` / `--home-root` / `--system-root`・ADR-0017）で**選択された config 集合**であり、選択ロジックは CLI にしかないため判定は CLI 層に置く。
+- **Go CLI（`cmd/layat`）**: 取得したマップをバケット分けして重複判定し、error 停止する。検査対象は `--all` のフィルタ（`--project-root` / `--home-root` / `--system-root`・ADR-0017）で**選択された config 集合**であり、選択ロジックは CLI にしかないため判定は CLI 層に置く。
 - **Go engine（`internal/engine`）**: **変更しない**。engine は 1 起動 = 1 manifest の設計（ADR-0003 の層分離）で cross-config を構造的に見ない。検出不能な衝突への実行時後勝ち + foreign symlink warning（ADR-0015）も engine の挙動として不変。
 - HM モジュールは例外的に nix 側（module eval の assertion・ADR-0035）で検出する。全 config が 1 つの module eval に載るため nix で完結できる、という CLI 検査との対称。
 
@@ -60,8 +60,8 @@ references:
 ## 影響
 
 - **`lib/manifest.nix`**: `mkManifest` の passthru に正規化後 target 一覧を追加。
-- **`cmd/nput/nix.go`**: `--all` 一括 eval の `--apply` 式を `{ rootKind, targets }` 取得へ拡張（flake / legacy `-f` の両経路）。
-- **`cmd/nput/apply.go`**: build 前のバケット検査・error 停止。
+- **`cmd/layat/nix.go`**: `--all` 一括 eval の `--apply` 式を `{ rootKind, targets }` 取得へ拡張（flake / legacy `-f` の両経路）。
+- **`cmd/layat/apply.go`**: build 前のバケット検査・error 停止。
 - **`docs/spec.md`**: `--all` 節に前段検査（対象・バケット規則・限界）を追記。エラー仕様表に cross-config 衝突 error を追加。
 - **ADR-0015 / ADR-0024**: 各改訂対象への改訂注記を同一 PR で追記。
 - **テスト**: バケット判定（project/home/system/fixed 値別・`--root` 一律時の単一バケット化）・フィルタ選択との組合せ・単一 apply の非検査を go test で。e2e に衝突 fixture の error 停止を追加。

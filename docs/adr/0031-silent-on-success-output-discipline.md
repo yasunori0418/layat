@@ -31,7 +31,7 @@ references:
 
 ADR-0023 §2 は MVP の冗長度フラグを **`--quiet`（進捗 / レポート抑制）/ `--verbose`（内部 nix コマンド開示）** とし、**成功時の配置レポートを既定で stderr に出す**設計だった。実装後、次の不都合が明確になった。
 
-1. **UNIX 哲学「沈黙は金」に反する**。成功は最頻ケースで、毎回 `nput: apply <name> 完了 ...` と per-target 行が stderr に出る。`shellHook`（`nput apply --all --project-root --no-wait`）から入室のたびにレポートが流れ、ノイズになる。
+1. **UNIX 哲学「沈黙は金」に反する**。成功は最頻ケースで、毎回 `layat: apply <name> 完了 ...` と per-target 行が stderr に出る。`shellHook`（`layat apply --all --project-root --no-wait`）から入室のたびにレポートが流れ、ノイズになる。
 2. **`--quiet` が事実上の既定運用になる**。静音が欲しい呼び出し側（shellHook・スクリプト・CI）は一律 `--quiet` を付ける必要があり、「既定で出して個別に黙らせる」構図が逆。
 3. **`--verbose` の意味が「nix コマンド開示」に閉じていて、本来欲しい「もっと詳しい配置結果」と噛み合わない**。冗長度の軸（成功レポートの詳しさ）とデバッグの軸（内部コマンド開示）が 1 フラグに混載していた。
 
@@ -51,7 +51,7 @@ ADR-0023 §2 は MVP の冗長度フラグを **`--quiet`（進捗 / レポー�
 
 ### 3. 内部 nix コマンド開示を `--debug` に分離
 
-ADR-0023 で `--verbose` が担っていた「内部実行する `nix` コマンドの逐次開示（`nput: + nix eval ...`）」を **`--debug`** に移す。冗長度（配置結果の詳しさ＝`-v`）とデバッグ（内部コマンド可視化＝`--debug`）を直交させる。`--help` / `rootCmdLong` の透明性開示文も `--debug` を案内する。
+ADR-0023 で `--verbose` が担っていた「内部実行する `nix` コマンドの逐次開示（`layat: + nix eval ...`）」を **`--debug`** に移す。冗長度（配置結果の詳しさ＝`-v`）とデバッグ（内部コマンド可視化＝`--debug`）を直交させる。`--help` / `rootCmdLong` の透明性開示文も `--debug` を案内する。
 
 ### 4. `--quiet` を廃止
 
@@ -66,7 +66,7 @@ ADR-0023 で `--verbose` が担っていた「内部実行する `nix` コマン
 
 ## 影響
 
-- **`cmd/nput/`**: `main.go`（`--quiet` 削除・`-v`/`--verbose` 再定義・`--debug` 追加・`rootCmdLong` 開示文）、`apply.go` / `reset.go` / `rollback.go`（レポート gating を `flagVerbose` に反転）、`nix.go`（nix コマンド開示を `flagDebug` gating）、`init.go`（同）。
+- **`cmd/layat/`**: `main.go`（`--quiet` 削除・`-v`/`--verbose` 再定義・`--debug` 追加・`rootCmdLong` 開示文）、`apply.go` / `reset.go` / `rollback.go`（レポート gating を `flagVerbose` に反転）、`nix.go`（nix コマンド開示を `flagDebug` gating）、`init.go`（同）。
 - **`docs/spec.md`**: グローバルフラグ表（`--quiet` 削除・`-v`/`--verbose` 再定義・`--debug` 追加）、「出力ストリームと終了コード」節（既定沈黙・`-v` opt-in・`--debug` を明記）。ストリーム規律・終了コード表は不変。
 - **`docs/design.md`**: 出力・終了コード規約の 1 行を既定沈黙・`-v`/`--debug` に更新。
 - **本 ADR は出力文字列の英語化（#53）・コメント英語化（#54）を含まない**（日本語のまま gating だけ変える）。

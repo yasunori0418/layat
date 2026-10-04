@@ -41,7 +41,7 @@ publication-roadmap §4-A は SSG ドキュメントサイトの構想（Astro /
 ### 3. リファレンスはビルド時生成・生成物はコミットしない
 
 - **① Nix lib**: 公開 API（`mkManifest` / `mkOutOfStoreSymlink` / マーカー群）に RFC-145 形式の doc-comment（`/** */`）を付与し、**nixdoc** で CommonMark を抽出する。既存の `#` 行コメント（実装注記）とは役割分担する（`/** */` = 公開 API 契約、`#` = 実装注記）。
-- **② Go**: **gomarkdoc** で godoc コメント（公開ブロッカー④で英語化済み）から markdown を生成する。`internal/` は公開 import 面ではない（ADR-0006）ため、リファレンスの主対象は CLI（`cmd/nput` のコマンド体系）とし、internal パッケージの掲載範囲は実装時に絞る。
+- **② Go**: **gomarkdoc** で godoc コメント（公開ブロッカー④で英語化済み）から markdown を生成する。`internal/` は公開 import 面ではない（ADR-0006）ため、リファレンスの主対象は CLI（`cmd/layat` のコマンド体系）とし、internal パッケージの掲載範囲は実装時に絞る。
 - **③ 手書き usage ガイド**: `site/` 配下に英日で執筆する。
 - ①②の生成 markdown は**リポジトリにコミットしない**。CI / ローカルのビルドステップで毎回生成し、ソースとリファレンスの乖離を構造的に排除する。
 
@@ -69,7 +69,7 @@ publication-roadmap §4-A は SSG ドキュメントサイトの構想（Astro /
 
 ## 棄却した代替案
 
-- **別リポジトリ（`nput-docs`）**: API 変更との同期が非原子的。本体リポジトリを軽く保つ利益より乖離リスクが大きい。
+- **別リポジトリ（`layat-docs`）**: API 変更との同期が非原子的。本体リポジトリを軽く保つ利益より乖離リスクが大きい。
 - **GitHub Pages**: リポジトリ完結で簡便だが、PR プレビューデプロイが標準では無く、ドキュメントレビューの UX で Cloudflare Pages に劣る（grilling で Cloudflare Pages を選択）。
 - **生成 markdown をコミットして Cloudflare Git 連携ビルドに乗せる**: デプロイ設定は簡単になるが、生成物とソースの同期を CI チェックと人間の運用で守り続けるコストが恒常化する。
 - **日本語ルート + `/en/`**: 公開方針（英語が外向きの一次言語）と逆転する。

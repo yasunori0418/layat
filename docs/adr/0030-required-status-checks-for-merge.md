@@ -74,7 +74,7 @@ required status check は **走らない check を `Expected / 待機中` とし
 ## 適用コマンド（public 化後）
 
 ```bash
-gh api -X POST repos/yasunori0418/nput/rulesets --input - <<'JSON'
+gh api -X POST repos/yasunori0418/layat/rulesets --input - <<'JSON'
 {
   "name": "main-required-tests",
   "target": "branch",
