@@ -6,10 +6,9 @@ import (
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
-// Fake is the test double of the contract: each operation returns what its stub func returns
-// (zero values when the stub is nil) and is recorded in call order. It lives outside _test files
-// so the cmd layer's tests can inject it too. Safe for concurrent use (apply --all builds in
-// parallel).
+// Fake is the test double of the Generator contract, shared with the cmd layer's tests.
+// Each operation returns its stub func's result (zero values when nil) and is recorded in
+// call order. Safe for concurrent use.
 type Fake struct {
 	DiscoverFunc func(file string) error
 	RootsFunc    func(name string) (manifest.Root, error)

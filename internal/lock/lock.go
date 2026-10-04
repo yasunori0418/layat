@@ -1,9 +1,5 @@
-// Package lock serializes concurrent apply / reset / rollback on a profileDir
-// via an advisory flock (→ ADR-0011, ADR-0013).
-//
-// The advisory lock from syscall.Flock is released automatically by the OS on
-// process exit, so no stale lock remains even after a crash. Supports both
-// linux and darwin (→ ADR-0011).
+// Package lock serializes concurrent apply / reset / rollback on a profileDir via an advisory
+// flock, which the OS releases on process exit, so no stale lock remains after a crash.
 package lock
 
 import (
@@ -13,7 +9,6 @@ import (
 )
 
 // ErrLocked is returned by a non-blocking acquisition (try-lock) when another holder is active.
-// Used for the skip decision on the shellHook path (--no-wait) (→ ADR-0013).
 var ErrLocked = errors.New("layat: profileDir is locked by another process")
 
 // Lock is an exclusive flock acquired on a profileDir.
@@ -21,10 +16,8 @@ type Lock struct {
 	f *os.File
 }
 
-// Acquire takes an exclusive flock on dir (the profileDir).
-// blocking=true uses LOCK_EX for explicit apply (waits until acquired);
-// blocking=false uses LOCK_NB for shellHook (returns ErrLocked if held; → ADR-0013).
-// dir must already exist.
+// Acquire takes an exclusive flock on dir (the profileDir), which must already exist.
+// blocking=true waits until acquired; blocking=false returns ErrLocked if held.
 func Acquire(dir string, blocking bool) (*Lock, error) {
 	f, err := os.Open(dir)
 	if err != nil {
