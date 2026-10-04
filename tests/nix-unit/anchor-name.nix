@@ -1,11 +1,5 @@
-# nix-unit: GC anchor 名（`__internal.anchorName`）の不変条件をアサートする（→ #58, #73, ADR-0016）。
-#
-# anchorName = sha256(target) の先頭 32 hex。symlink farm の衝突しない FS-safe な anchor 名として使う。
-# 検証する性質: (1) 常に 32 文字の hex / (2) 同一 target は同一 hash（決定性）/ (3) 特殊文字を
-# 含む target でも安定して 32 hex を返す。
-#
-# 期待 hash は `lib.substring 0 32 (builtins.hashString "sha256" target)` を nix で評価した実値を
-# 直書きする（関数の再実装ではなく外部に固定した ground-truth との一致を見る）。
+# nix-unit: GC anchor 名（`__internal.anchorName` = sha256(target) の先頭 32 hex）の不変条件をアサートする。
+# 期待 hash は nix で評価した実値を直書きする。
 { lib, layat }:
 let
   an = layat.__internal.anchorName lib;

@@ -1,8 +1,6 @@
 # nix-unit: manifest 構造の不変条件（schemaVersion / root 系 / store・outOfStore エントリ構造）を
-# アサートする（→ ADR-0006, ADR-0010, ADR-0014）。
-#
-# store パスの hash 揺れを避けるため src には toString が安定する fake な flake-input 相当
-# （`{ outPath = …; }`）を使う。これは srcType の store-backed 判定（`? outPath`）を通る正当な test double。
+# アサートする。
+# src は toString が安定する fake な flake-input 相当（`{ outPath = …; }`）を使う。
 { lib, layat }:
 let
   fakeSrc = {
@@ -45,7 +43,7 @@ in
     expected = "project";
   };
 
-  # project は実行時解決なので固定 root パスを持たない（→ ADR-0010）。
+  # project は実行時解決なので固定 root パスを持たない。
   testProjectHasNoFixedRoot = {
     expr = basic.root ? root;
     expected = false;
@@ -62,9 +60,8 @@ in
     };
   };
 
-  # out-of-store marker → clean enum 変換（→ ADR-0001, ADR-0010, ADR-0013）。
-  # srcKind = "outOfStore" / src = marker の絶対パスが記録され、_layatMarker は漏れない
-  # （expected は exact 一致なので余分なキーが残れば fail する）。
+  # out-of-store marker → clean enum 変換。srcKind = "outOfStore" / src = marker の絶対パスが記録され、
+  # _layatMarker は漏れない（exact 一致なので余分なキーが残れば fail する）。
   testOutOfStoreEntry = {
     expr =
       builtins.head
@@ -97,7 +94,7 @@ in
     expected = false;
   };
 
-  # passthru targets は正規化後 target を attrNames（キー）の辞書順で返す（→ ADR-0038）。
+  # passthru targets は正規化後 target を attrNames（キー）の辞書順で返す。
   testPassthruTargetsLexical = {
     expr =
       (passthruOf {
@@ -114,7 +111,7 @@ in
     ];
   };
 
-  # 明示 target 上書きはキーではなく上書き後の値で現れ、並びはキー順のまま（→ ADR-0038）。
+  # 明示 target 上書きはキーではなく上書き後の値で現れ、並びはキー順のまま。
   testPassthruTargetsOverride = {
     expr =
       (passthruOf {
