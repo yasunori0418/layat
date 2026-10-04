@@ -34,13 +34,13 @@ references:
 - 改訂対象: ADR-0022/0023 の `--out-link <profileDir>/.pending-<name>` 命名と ADR-0023 §3・ADR-0024 §1 の profileDir 表が暗黙に持っていた「profileDir = profile リンクそのもの」という用語の二義性を、専用ディレクトリレイアウトへ確定（pending out-link 名 `.pending-<name>` → `.pending`）。ADR-0024 §2 の HM profile 粒度に「role 分離不可」のユーザー視点制約と将来 seam を明示追加（決定の反転なし）。
 - 起点: ADR-0024 までの第6巡で設計は実装着手の閾値に達したが、`/grill-me` による横断検査で骨格に直結する未決・揺れ・考慮漏れが7点残っていた。いずれも第一スライス（ADR-0023 §4）着手で即踏むか、docs の穴で、着手前に確定する（実装前残セマンティクス確定の第7巡）。
 
-> **2026-07-04 改訂注記（ADR-0035）**: 本 ADR §2（HM = 単一 `nput.entries` 据え置き・role 分離不可・将来 seam）のうち、
-> seam として残した **`nput.configs.<name>.entries` の実装が決定**した。`nput.entries` は `configs.default.entries` への
+> **2026-07-04 改訂注記（ADR-0035）**: 本 ADR §2（HM = 単一 `layat.entries` 据え置き・role 分離不可・将来 seam）のうち、
+> seam として残した **`layat.configs.<name>.entries` の実装が決定**した。`layat.entries` は `configs.default.entries` への
 > rename 糖衣（deprecated）として非破壊で残る。configs 間の正規化後 target 衝突は eval 時 assertion で停止する（→ ADR-0035）。
 >
 > **2026-07-04 改訂注記（ADR-0036）**: 本 ADR §4 の profile 専用ディレクトリレイアウト（`profileDir/profile`・`profile-N-link`・
 > `.pending`・backref `.root`）は不変。ただし system mode の実装に伴い、`rootKind = "system"` のときの state 基底が
-> **`/nix/var/nix/profiles/nput`** に切り替わる行がレイアウト表に加わった（ユーザー state 基底の home / project / fixed は不変・
+> **`/nix/var/nix/profiles/layat`** に切り替わる行がレイアウト表に加わった（ユーザー state 基底の home / project / fixed は不変・
 > → ADR-0036）。
 >
 > **2026-09-05 改訂注記（ADR-0054）**: 本 ADR §3（`nput init` が参照する固定 flake ref
