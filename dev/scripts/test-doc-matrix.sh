@@ -3,13 +3,7 @@
 #
 #   nix develop ./dev -c dev/scripts/test-doc-matrix.sh [出力パス]
 #
-# 入力:
-#   - dev/scripts/test-inventory.sh --full        テスト資産とテスト名（go test -json 実行ベース）
-#   - sara report matrix --format json            CASE→TC / TC→RISK の全関係を 1 回で取得
-#   - CASE frontmatter の target（yq）            資産 → CASE の join キー
-#   - dev/tests/test-categories.tsv               区分のセクション順
-#   - dev/tests/test-doc-exclusions.tsv           CASE を持たない資産の理由
-#
+# 入力は test-inventory.sh --full・sara report matrix・CASE の target・区分表と除外リストの TSV。
 # 区分（docs/test/<区分>/）ごとに、行 = テスト資産、列 = CASE / TC / 上流 RISK の表を出す。
 
 set -uo pipefail

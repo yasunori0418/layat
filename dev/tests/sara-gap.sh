@@ -4,17 +4,6 @@
 # 実行:
 #   nix develop ./dev -c dev/tests/sara-gap.sh   # devShell から直接
 #   nix flake check ./dev                         # checks.sara-gap 経由
-#
-# 検証対象。番号は下の節見出しに対応する:
-#   1.  ギャップのある fixture で 3 段（unthreatened / unmitigated / uncovered）を
-#       検出して exit 1 を返す（張り先を持つ item は列挙しない）
-#   2.  text 出力の行形式（<ID 前方8>\t<name>\t<file>、file は docs/ 前置）
-#   3.  --json の 3 キーと行の形（ref / name / file）。exit code は text と同じ
-#   4.  ギャップの無いグラフでは 3 セクション「なし」・空配列で exit 0
-#   5.  sara check が失敗するグラフ（broken reference）では exit 2
-#   6.  JSON 形状異常（.items 不在・valid: false）では exit 2（seam で決定論再現）
-#   7.  走査先をリポジトリルート基準で解決する（SARA_GAP_ROOT 無し・サブディレクトリから）
-#   8.  引数の異常系（--help = 0 / 未知の引数・引数過多 = 2）
 set -uo pipefail
 
 fail=0

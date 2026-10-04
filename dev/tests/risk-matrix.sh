@@ -26,10 +26,7 @@ require_yq_go risk-matrix.sh || exit 1
 # 走査基点をリポジトリルートへ解決する。git 管理外ではカレントを返す。
 repo_root=$(git rev-parse --show-toplevel 2>/dev/null || printf '.')
 
-# 走査対象 docs/risks の在り処は 2 経路ある:
-#   1. RISK_DOCS_DIR（checks.risk-matrix のサンドボックス。作業ツリーが無いので
-#      nix が store path を渡す）
-#   2. git のリポジトリルート基準（`nix develop` からの直接実行・CI の sara job）
+# 走査対象 docs/risks は RISK_DOCS_DIR を優先し、無ければリポジトリルート基準で引く。
 risks_dir="${RISK_DOCS_DIR:-}"
 [[ -d "$risks_dir" ]] || risks_dir="$repo_root/docs/risks"
 

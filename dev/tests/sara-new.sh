@@ -4,27 +4,6 @@
 # 実行:
 #   nix develop ./dev -c dev/tests/sara-new.sh   # devShell から直接
 #   nix flake check ./dev                         # checks.sara-new 経由
-#
-# 検証対象。番号は下の節見出しに対応する:
-#   0.  docs/model.yaml の型 ⟷ prefix が 1:1（SUT ではなくモデル側の不変条件）
-#   1.  item を起票し `<YYYYMMDD>-<フル UUID>-<slug>.md` へ rename する。
-#       frontmatter の id と、ファイル名の UUID 部が一致する
-#   1b. --name 未指定の既定経路でも name が slug 由来になる（仮ファイル名が漏れない）
-#   1c. 一時ファイル・一時ディレクトリ（.sara-new-*）を残さない
-#   2.  採番 ID とファイルパスを機械可読な 2 行（id: / file:）で出力する
-#   3.  sara init へオプションを透過する（-- 以降）
-#   4.  配置ディレクトリを作る（無ければ mkdir -p）
-#   4b. 型名はアンダースコア表記（model.yaml・規約文書）とハイフン表記
-#       （sara init のサブコマンド名）の両方を受ける
-#   5.  slug の検査（空・不正文字は exit 2 で、ファイルを残さない）
-#   5b. 英小文字・数字・ハイフンの slug を受理し、ファイル名へ入れる（境界の有効側）
-#   6.  ADR は連番維持のため exit 2 で拒否する
-#   7.  sara init の失敗（exit 3）をそのまま伝播し、一時ファイルを残さない（seam で再現）
-#   8.  sara init の出力から ID を読めなければ exit 1 で落ち、一時ファイルを残さない（seam）
-#   8b. 採番 ID から UUID 部を取り出せなければ exit 1 で落ちる（prefix がハイフンを
-#       含む型。正常系では踏まない経路なので seam で押さえる）
-#   9.  出力先が既存なら上書きせず exit 1（起票済み item を潰さない）
-#   10. 引数の異常系（引数不足 = 2 / -- 区切り無しの余分引数 = 2 / --help = 0）
 set -uo pipefail
 
 fail=0

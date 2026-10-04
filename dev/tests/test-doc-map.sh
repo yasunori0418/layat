@@ -4,17 +4,6 @@
 # 実行:
 #   nix develop '.?dir=dev#sara' -c dev/tests/test-doc-map.sh   # devShell / CI から直接
 #   nix flake check ./dev                                        # checks.test-doc-map 経由
-#
-# 検証対象。番号は下の節見出しに対応する:
-#   1.  順方向 — 全 CASE の target が実在するテスト資産を指す
-#   2.  逆方向 — 全テスト資産に CASE がある（除外リストにあるものを除く）
-#   3.  1:1 一意性 — 1 資産に 2 つ以上の CASE が張られていない
-#   4.  データファイルの健全性 — 区分表が docs/test/ のディレクトリと一致し、
-#       除外リストが実在する資産だけを挙げている
-#   5.  静的リストの健全性 — test-inventory.sh の FLAKE_CHECKS が flake ファイルの
-#       checks 定義と一致する（片側更新漏れの検出）
-#   6.  自己検証 — §1〜§3 が呼ぶ judge_* と、その結果を pass / fault へ振り分ける
-#       run_judge を合成フィクスチャへ当て、期待どおりに振る舞うことを確かめる
 
 # 1 回の実行で全失敗を報告するため -e は使わない。
 set -uo pipefail

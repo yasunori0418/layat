@@ -128,7 +128,7 @@ work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
 
 # Go: `go test -json` の run イベントからテスト名を採る（サブテスト込み）。
-# テストの合否は見ない。
+# 個々のテストの合否は見ない。
 go test -json ./... 2>/dev/null > "$work/go-json"
 
 jq -r 'select(.Action == "run" and .Test != null) | .Test' "$work/go-json" |
