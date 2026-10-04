@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-// --- undo unit tests (→ ADR-0044, issue #168) --------------------------------
+// --- undo unit tests -----------------------------------------------------------
 
 // TestUndoOneUnlinksNewSymlink verifies undoUnlinkNew removes a freshly placed symlink.
 func TestUndoOneUnlinksNewSymlink(t *testing.T) {
@@ -91,7 +91,7 @@ func TestUndoOneRemovesCopy(t *testing.T) {
 }
 
 // TestUndoOneRestoresRename verifies undoRestoreRename discards the freshly recopied content
-// and renames the aside file back to its original path (→ ADR-0044 §1, --recopy rename-aside).
+// and renames the aside file back to its original path (--recopy rename-aside).
 func TestUndoOneRestoresRename(t *testing.T) {
 	dir := realTempDir(t)
 	target := filepath.Join(dir, "tool.conf")
@@ -128,9 +128,8 @@ func TestUndoOneRecreatesEmptyDir(t *testing.T) {
 }
 
 // TestUnwindReversesJournalInLIFOOrder verifies unwind restores multiple journal entries in
-// last-in-first-out order — the order that correctly reverses a batch like "PreRemove unlinked a
-// child then rmdir-ed its now-empty parent": undo must mkdir the parent back before it can
-// recreate the child symlink inside it.
+// last-in-first-out order: undo must mkdir a removed parent back before it can recreate the
+// child symlink inside it.
 func TestUnwindReversesJournalInLIFOOrder(t *testing.T) {
 	dir := realTempDir(t)
 	parent := filepath.Join(dir, "parent")
@@ -171,10 +170,9 @@ func TestUnwindReversesJournalInLIFOOrder(t *testing.T) {
 	}
 }
 
-// TestUnwindBestEffortContinuesPastFailureAndReportsAll verifies unwind's best-effort contract
-// (→ ADR-0044 §3): when one journal entry cannot be undone (its path was removed out from under
-// it by something else), the rest of the journal is still unwound, and both the original error
-// and the specific unrestorable item are reported to Warnf.
+// TestUnwindBestEffortContinuesPastFailureAndReportsAll verifies unwind's best-effort contract:
+// when one journal entry cannot be undone, the rest is still unwound, and both the original error
+// and the unrestorable item are reported to Warnf.
 func TestUnwindBestEffortContinuesPastFailureAndReportsAll(t *testing.T) {
 	dir := realTempDir(t)
 	restorable := filepath.Join(dir, "restorable")
@@ -233,7 +231,7 @@ func TestUnwindNoJournalReportsOrigErrOnly(t *testing.T) {
 
 // TestDiscardJournalRemovesRecopyAsideFiles verifies discardJournal — called after a successful
 // commit — cleans up any --recopy rename-aside files left behind, since undo was never triggered
-// and the fresh copies already landed successfully (→ ADR-0044).
+// and the fresh copies already landed successfully.
 func TestDiscardJournalRemovesRecopyAsideFiles(t *testing.T) {
 	dir := realTempDir(t)
 	target := filepath.Join(dir, "tool.conf")

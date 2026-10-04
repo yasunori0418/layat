@@ -11,10 +11,9 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// materializeCopies is the branch point that reflects copy entries onto the real FS.
-// On --recopy it overwrites all copy targets unconditionally (recopyAll); normally it
-// follows the planner's place-once classification (new copy only when the target is
-// absent) (→ ADR-0020). Shared by normal apply and generation-skip drift repair.
+// materializeCopies reflects copy entries onto the real FS: on --recopy it overwrites all
+// copy targets (recopyAll), otherwise it places only new copies (placeCopies). Shared by
+// normal apply and generation-skip drift repair.
 func (a *applier) materializeCopies(plan planner.Plan, recopy bool) error {
 	if recopy {
 		return a.recopyAll()
@@ -22,19 +21,15 @@ func (a *applier) materializeCopies(plan planner.Plan, recopy bool) error {
 	return a.placeCopies(plan.Copies)
 }
 
-// placeCopies materializes the planner's place-once CopyActions (only copies whose
-// target is absent · → ADR-0002, ADR-0016). The planner emits no CopyAction for an
-// existing target (recorded / foreign), so this stays a thin executor that reflects
-// only "new copies" onto the real FS.
+// placeCopies materializes the planner's place-once CopyActions, which exist only for
+// copies whose target is absent, as a thin executor.
 func (a *applier) placeCopies(actions []planner.CopyAction) error {
 	for _, act := range actions {
 		if err := ensureParentDir(act.TargetAbs); err != nil {
 			return a.entryFailed(act.Entry.Target, err)
 		}
-		// Journaled before copyTree, not after: copyTree can write a partial tree (e.g. some
-		// files copied before a later one fails), and os.RemoveAll tolerates a fully- or
-		// partially-absent target, so recording the undo up front means a mid-copy failure still
-		// gets its partial tree cleaned up on unwind instead of leaving debris (→ ADR-0044).
+		// Journaled before copyTree so a mid-copy failure still gets its partial tree
+		// cleaned up on unwind.
 		a.journalPlacedCopy(act.TargetAbs)
 		if err := copyTree(act.Src, act.TargetAbs); err != nil {
 			return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: copy placement failed (%s -> %s): %w", act.Src, act.TargetAbs, err))
@@ -44,14 +39,9 @@ func (a *applier) placeCopies(actions []planner.CopyAction) error {
 	return nil
 }
 
-// recopyAll is the copy overwrite path of apply --recopy (→ ADR-0020, docs/spec.md "recopy").
-// For every copy entry in the config, if the target exists it is renamed aside within the same
-// parent directory (a metadata-only operation that survives ENOSPC · → ADR-0044) and then
-// re-copied unconditionally (no diff check · local edits are discarded); the aside copy is
-// removed once the fresh copy lands, or renamed back if anything after it in this Apply fails and
-// the journal is unwound. It does not use the place-once classification (planner.Copies) but
-// scans the manifest directly; ancestor symlinks / structural mismatches are already rejected by
-// the planner's conflict gate before apply.
+// recopyAll is the copy overwrite path of apply --recopy. For every copy entry in the manifest,
+// an existing target is renamed aside within its parent directory and then re-copied
+// unconditionally, discarding local edits; the aside is restored if this Apply unwinds.
 func (a *applier) recopyAll() error {
 	for _, e := range a.manifest.Entries {
 		if e.Method != manifest.MethodCopy {
@@ -65,16 +55,14 @@ func (a *applier) recopyAll() error {
 			if err := os.Rename(targetAbs, aside); err != nil {
 				return a.entryFailed(e.Target, fmt.Errorf("layat: cannot move aside recopy target (%s): %w", targetAbs, err))
 			}
-			// Journaled immediately after the rename-aside, before the fresh copy: if copyTree
-			// below fails partway, undoRestoreRename's os.RemoveAll tolerates a partial/absent
-			// target and still renames the aside back, restoring the pre-apply content instead of
-			// leaving it stranded under the aside name (→ ADR-0044).
+			// Journaled before the fresh copy so a partial copyTree failure still renames the
+			// aside back on unwind.
 			a.journalRenamedAside(targetAbs, aside)
 		} else if !os.IsNotExist(err) {
 			return a.entryFailed(e.Target, fmt.Errorf("layat: cannot lstat recopy target (%s): %w", targetAbs, err))
 		} else {
 			// Same reasoning as placeCopies: journal before copyTree so a mid-copy failure still
-			// gets its partial tree cleaned up on unwind (→ ADR-0044).
+			// gets its partial tree cleaned up on unwind.
 			a.journalPlacedCopy(targetAbs)
 		}
 
@@ -94,19 +82,15 @@ func (a *applier) recopyAll() error {
 }
 
 // asidePath returns a same-parent-directory temporary name for targetAbs, used by recopyAll to
-// move an existing copy target aside before overwriting it (→ ADR-0044 §1). Renaming within the
-// same directory is a metadata-only operation that cannot fail partway under ENOSPC, unlike a
-// remove-then-recopy that would lose the pre-overwrite content if the recopy itself then failed.
+// move an existing copy target aside before overwriting it. A same-directory rename is
+// metadata-only and cannot fail partway under ENOSPC.
 func asidePath(targetAbs string) string {
 	return targetAbs + ".layat-recopy-aside"
 }
 
-// copyTree natively copies src (file / directory / symlink) to dst
-// (→ ADR-0016, docs/spec.md "copy mode").
-//   - Preserves mode while adding owner-write (0o200) (store's read-only 0444/0555 →
-//     editable 0644/0755).
-//   - Symlinks inside the src tree are duplicated as symlinks without deref (avoids
-//     cycles / size blow-up).
+// copyTree natively copies src (file / directory / symlink) to dst, preserving mode while
+// adding owner-write (0o200). Symlinks inside the src tree are duplicated as symlinks
+// without deref.
 func copyTree(src, dst string) error {
 	info, err := os.Lstat(src)
 	if err != nil {
@@ -171,7 +155,7 @@ func copyFile(src, dst string, mode os.FileMode) error {
 	return os.Chmod(dst, perm)
 }
 
-// copySymlink duplicates a symlink without deref, pointing at the same link target (→ ADR-0016).
+// copySymlink duplicates a symlink without deref, pointing at the same link target.
 func copySymlink(src, dst string) error {
 	target, err := os.Readlink(src)
 	if err != nil {

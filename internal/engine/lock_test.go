@@ -1,21 +1,8 @@
 package engine
 
-// lock_test.go fills the under-covered lock-semantics / sentinel-error observations of the
-// public engine API (Apply / Rollback / Reset · → ADR-0013, docs/spec.md execution flow):
-//
-//   - Apply NoWait: a try-lock while the profileDir flock is held returns ErrSkipped.
-//   - Rollback / Reset: a blocking flock waits until the held lock is released, then proceeds.
-//   - Observation order: the lock is held for the whole operation and released on completion
-//     (observed blackbox via a concurrent NoWait Apply that skips mid-operation, then succeeds
-//     once the lock is free).
-//   - ErrSkipped is errors.Is-transparent through wrapping (the sentinel stays reachable even
-//     after fmt.Errorf("%w") wrapping · a watchdog for #90 not breaking sentinel identity).
-//
-// Everything is written blackbox through the exported engine functions; it does not couple to
-// internal helpers. Blocking-lock progress is synchronized deterministically with channels —
-// no time.Sleep for timing. "Stays blocked while held" is asserted with a short-timeout select
-// (the only place a timer appears); "proceeds after release" is asserted by waiting on a
-// completion channel that the operation closes only after it returns.
+// lock_test.go tests the lock semantics and ErrSkipped sentinel of the public engine API
+// (Apply / Rollback / Reset) blackbox through the exported functions. Blocking-lock progress
+// is synchronized with channels; only the "stays blocked" check uses a short-timeout select.
 
 import (
 	"errors"
@@ -41,7 +28,7 @@ const lockTest_progressTimeout = 10 * time.Second
 
 // TestLockApplyNoWaitSkipsWhenHeld verifies the NoWait (shellHook) path: while the profileDir
 // flock is held, a try-lock apply skips with ErrSkipped and places nothing. Asserted via
-// errors.Is (not ==) so the contract survives future context wrapping of the sentinel (#90).
+// errors.Is (not ==) so the contract survives context wrapping of the sentinel.
 func TestLockApplyNoWaitSkipsWhenHeld(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -74,8 +61,7 @@ func TestLockApplyNoWaitSkipsWhenHeld(t *testing.T) {
 }
 
 // TestLockErrSkippedIsTransparentThroughWrapping pins the contract that ErrSkipped stays
-// reachable via errors.Is after fmt.Errorf("%w") wrapping (single and nested). This is the
-// watchdog for #90: adding context to the error must not sever sentinel identity.
+// reachable via errors.Is after fmt.Errorf("%w") wrapping (single and nested).
 func TestLockErrSkippedIsTransparentThroughWrapping(t *testing.T) {
 	single := fmt.Errorf("layat: apply skipped: %w", ErrSkipped)
 	if !errors.Is(single, ErrSkipped) {
@@ -94,11 +80,9 @@ func TestLockErrSkippedIsTransparentThroughWrapping(t *testing.T) {
 	}
 }
 
-// TestLockApplyHoldsLockThroughOperationThenReleases observes the lock lifecycle blackbox:
-// the lock is held for the whole operation and released on completion. A blocking Commit
-// parks Apply inside the lock; while parked, a concurrent NoWait apply must skip (lock held
-// during the operation), and once unblocked-and-returned, a NoWait apply succeeds (lock
-// released after the operation). Order is fixed deterministically with channels.
+// TestLockApplyHoldsLockThroughOperationThenReleases verifies the lock is held for the whole
+// operation and released on completion: a NoWait apply skips while a blocking Commit parks
+// Apply inside the lock, and succeeds after Apply returns.
 func TestLockApplyHoldsLockThroughOperationThenReleases(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)

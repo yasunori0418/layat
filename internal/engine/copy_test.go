@@ -10,13 +10,9 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// copy_test.go covers the error-return paths of copy.go that the high-level Apply
-// tests in engine_test.go do not reach (placeCopies/recopyAll/copyTree/copyFile/copySymlink).
-//
-// All failures here are induced through root-proof FS conditions rather than permission
-// denial (a regular file standing in for a directory → ENOTDIR, an opened directory fd →
-// EISDIR on read, a non-symlink → EINVAL on readlink). They therefore need no EUID guard
-// and stay valid when the suite runs as root in CI.
+// copy_test.go covers the error-return paths of copy.go that the Apply tests do not reach.
+// Failures are induced through FS conditions (ENOTDIR / EISDIR / EINVAL) rather than
+// permission denial, so the tests stay valid when run as root.
 
 // copyErr_blockerFile creates a regular file at <dir>/<name> and returns its path.
 // Using it as a path *component* makes any MkdirAll / Lstat / OpenFile that must
@@ -31,7 +27,7 @@ func copyErr_blockerFile(t *testing.T, dir, name string) string {
 }
 
 // TestCopyPlaceMkdirError exercises placeCopies' parent-directory creation failure
-// (copy.go:31-32). The target's parent path runs through a regular file, so MkdirAll
+// (its ensureParentDir call). The target's parent path runs through a regular file, so MkdirAll
 // returns ENOTDIR before copyTree is ever reached.
 func TestCopyPlaceMkdirError(t *testing.T) {
 	root := realTempDir(t)
@@ -57,12 +53,9 @@ func TestCopyPlaceMkdirError(t *testing.T) {
 	}
 }
 
-// TestCopyTreeDirMkdirError exercises copyTree's directory branch error
-// (copy.go:113-117). With a directory src, WalkDir's first node is the tree root, whose
-// MkdirAll(dst) fails because dst's parent is a regular file (ENOTDIR). This is the only
-// owner-inducible failure in that block: the chmod at line 117 cannot be isolated without
-// a DI seam (copy.go always re-adds owner-write, so a subdir mkdir never hits a perm wall),
-// and adding a seam is out of scope for this file-restricted task.
+// TestCopyTreeDirMkdirError exercises copyTree's directory branch error:
+// the tree root's MkdirAll(dst) fails because dst's parent is a
+// regular file (ENOTDIR).
 func TestCopyTreeDirMkdirError(t *testing.T) {
 	root := realTempDir(t)
 	blocker := copyErr_blockerFile(t, root, "blocker")

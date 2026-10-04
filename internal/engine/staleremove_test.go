@@ -30,9 +30,8 @@ func staleErr_action(dest, target, targetAbs string) planner.RemoveAction {
 // --- tests -------------------------------------------------------------------
 
 // TestStaleRemoveDriftKeepsAndWarns covers reverifyStale's post-plan drift re-check:
-// a target that drifted away from the conservative invariant between planning and
-// unlink (readlink mismatch / non-symlink / missing) is kept with a warning, never
-// removed and never erroring (→ ADR-0002, staleremove.go:33-43).
+// a target that drifted between planning and unlink (readlink mismatch / non-symlink /
+// missing) is kept with a warning, never removed and never erroring.
 func TestStaleRemoveDriftKeepsAndWarns(t *testing.T) {
 	recordedDest := realTempDir(t) // the dest the previous-generation record points at
 
@@ -151,12 +150,8 @@ func TestStaleRemoveContinuesAfterDrift(t *testing.T) {
 }
 
 // TestPreRemoveDriftErrors covers preRemove's post-plan drift re-check across the same drift
-// equivalence classes as TestStaleRemoveDriftKeepsAndWarns (readlink mismatch / non-symlink file /
-// non-symlink dir / missing target). Unlike removeStale, a drifted ancestor is not safe to skip
-// (children were planned as unconditional new placements assuming the ancestor is gone), so
-// preRemove aborts loudly for every class instead of keeping the drifted link (→ staleremove.go,
-// ADR-0046). Rollback shares this executor with apply (→ generations.go), so the same error-stop
-// semantics apply on the rollback path too.
+// classes as TestStaleRemoveDriftKeepsAndWarns: unlike removeStale, preRemove aborts loudly for
+// every class, since children were planned assuming the ancestor is gone.
 func TestPreRemoveDriftErrors(t *testing.T) {
 	recordedDest := realTempDir(t) // the dest the previous-generation record points at
 
@@ -240,10 +235,9 @@ func TestPreRemoveDriftErrors(t *testing.T) {
 	}
 }
 
-// TestStaleRemoveUnlinkError covers the os.Remove failure path: the invariant still
-// holds (reverify passes), but the unlink fails, so removeStale returns a wrapped error
-// and records no removal. Permission-denied is induced by an unwritable parent dir;
-// skipped as root since root bypasses the permission bit (false negative).
+// TestStaleRemoveUnlinkError covers the os.Remove failure path: reverify passes but the
+// unlink fails (unwritable parent dir), so removeStale returns a wrapped error and records
+// no removal. Skipped as root since root bypasses the permission bit.
 func TestStaleRemoveUnlinkError(t *testing.T) {
 	if os.Geteuid() == 0 {
 		t.Skip("permission-denied unlink cannot be induced as root")
@@ -280,7 +274,7 @@ func TestStaleRemoveUnlinkError(t *testing.T) {
 	}
 }
 
-// --- empty-ancestor pruning (Issue #174, epic #172 D4) ---------------------
+// --- empty-ancestor pruning --------------------------------------------------
 
 // TestRemoveStalePrunesMultiLevelEmptyAncestors verifies that removing the last entry under
 // a multi-level directory chain prunes the whole chain up to (but not including) root, the
@@ -334,7 +328,7 @@ func TestRemoveStalePrunesMultiLevelEmptyAncestors(t *testing.T) {
 	}
 }
 
-// TestRemoveStaleLeavesNonEmptyAncestorInPlace verifies the conservative half of D4: a
+// TestRemoveStaleLeavesNonEmptyAncestorInPlace verifies the conservative side of ancestor pruning: a
 // directory that still holds an unrelated entry's placement is left in place (ENOTEMPTY
 // treated as success, not an error), and pruning stops there without touching its own parent.
 func TestRemoveStaleLeavesNonEmptyAncestorInPlace(t *testing.T) {
@@ -414,8 +408,7 @@ func TestRemoveStaleStopsAtRootBoundary(t *testing.T) {
 
 // TestRemoveStaleStopsAtSymlinkAncestor verifies that pruning stops (without touching it)
 // when the walk reaches a directory component that is itself a symlink, rather than
-// following/removing it. This guards the walk against ever unlinking something other than
-// a plain empty directory it created.
+// following/removing it.
 func TestRemoveStaleStopsAtSymlinkAncestor(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -459,11 +452,9 @@ func TestRemoveStaleStopsAtSymlinkAncestor(t *testing.T) {
 		t.Fatalf("second Apply: %v", err)
 	}
 
-	// The walk must not touch anything: "a" (the symlink) survives untouched, and critically
-	// elsewhere/b (the real directory "a" resolves to) must also survive. Lstat("root/a/b")
-	// resolves through the symlink "a" to elsewhere/b, so a walk that naively rmdir'd the
-	// resolved path would delete a real directory outside root's tree without ever "touching
-	// a" by name — the bug this test guards against (→ Issue #174).
+	// The walk must not touch anything: "a" (the symlink) survives, and elsewhere/b (the real
+	// directory "a" resolves to) must also survive — rmdir on the resolved path would delete a
+	// real directory outside root's tree.
 	if len(res.Pruned) != 0 {
 		t.Errorf("Pruned = %v, want none (walk must stop before crossing the symlink)", res.Pruned)
 	}
@@ -479,12 +470,9 @@ func TestRemoveStaleStopsAtSymlinkAncestor(t *testing.T) {
 	}
 }
 
-// TestRemoveStalePruneFailureIsWarnedNotFatal verifies that a prune failure (the rmdir call
-// itself erroring for a reason other than non-empty — here EACCES from a read-only
-// grandparent) does not roll back or fail the already-successful target removal: the target
-// stays removed, the failure is folded into a warning, and removeStale returns nil (→ Issue
-// #174). Permission-denied is induced by an unwritable grandparent dir; skipped as root since
-// root bypasses the permission bit (false negative).
+// TestRemoveStalePruneFailureIsWarnedNotFatal verifies that a prune failure (EACCES from a
+// read-only grandparent) leaves the target removed, is folded into a warning, and removeStale
+// returns nil. Skipped as root since root bypasses the permission bit.
 func TestRemoveStalePruneFailureIsWarnedNotFatal(t *testing.T) {
 	if os.Geteuid() == 0 {
 		t.Skip("permission-denied rmdir cannot be induced as root")
@@ -534,9 +522,7 @@ func TestRemoveStalePruneFailureIsWarnedNotFatal(t *testing.T) {
 
 // TestRemoveStaleLeavesForeignFileNonEmptyAncestorInPlace covers the same conservative
 // residency as TestRemoveStaleLeavesNonEmptyAncestorInPlace, but for a directory made
-// non-empty by a file layat never placed (a user's own file), not by another entry's
-// placement — the boundary case for "never touch what the removal did not empty" (→ Issue
-// #174).
+// non-empty by a file layat never placed (a user's own file).
 func TestRemoveStaleLeavesForeignFileNonEmptyAncestorInPlace(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -575,12 +561,8 @@ func TestRemoveStaleLeavesForeignFileNonEmptyAncestorInPlace(t *testing.T) {
 }
 
 // TestApplyAncestorSelfRecordedMigrationDoesNotPruneOuterAncestor verifies PreRemove's
-// ancestor unlink does NOT run the pruning walk (→ ADR-0047 §5): every PreRemove removal is
-// followed by a placement into the same spot, so pruning "outer/" just to have Place's
-// ensureParentDir recreate it would be a wasted round-trip, and it would pollute res.Pruned
-// with a dir that never stayed removed. "outer/" is left in place across the unlink and
-// simply reused by the following Place; res.Pruned stays empty (pruning belongs to
-// removeStale / reset only).
+// ancestor unlink does not run the pruning walk: "outer/" is left in place and reused by the
+// following Place, and res.Pruned stays empty.
 func TestApplyAncestorSelfRecordedMigrationDoesNotPruneOuterAncestor(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -612,7 +594,7 @@ func TestApplyAncestorSelfRecordedMigrationDoesNotPruneOuterAncestor(t *testing.
 		t.Errorf("Removed = %v, want [outer/skills] (the pre-removed ancestor)", res.Removed)
 	}
 	if len(res.Pruned) != 0 {
-		t.Errorf("Pruned = %v, want none (PreRemove does not prune; outer/ is reused by Place · ADR-0047 §5)", res.Pruned)
+		t.Errorf("Pruned = %v, want none (PreRemove does not prune; outer/ is reused by Place)", res.Pruned)
 	}
 
 	// outer/skills is now a real directory holding the migrated child; outer/ survives on
@@ -630,12 +612,9 @@ func TestApplyAncestorSelfRecordedMigrationDoesNotPruneOuterAncestor(t *testing.
 	}
 }
 
-// TestPreRemoveDoesNotPruneAncestors verifies pruneEmptyAncestors is NOT invoked from
-// preRemove's unlink loop (→ ADR-0047 §5), independent of the apply-level refill guarantee
-// above. It drives preRemove directly against a two-level ancestor chain where nothing
-// refills the freed space: the emptied "outer/" must survive untouched and result.Pruned
-// must stay empty — exploratory pruning from PreRemove would pre-consume targets of the
-// planner's own explicit Rmdir actions and double-register them in Pruned.
+// TestPreRemoveDoesNotPruneAncestors drives preRemove directly against a two-level ancestor
+// chain where nothing refills the freed space: the emptied "outer/" must survive untouched and
+// result.Pruned must stay empty.
 func TestPreRemoveDoesNotPruneAncestors(t *testing.T) {
 	root := realTempDir(t)
 	dest := realTempDir(t)
@@ -658,7 +637,7 @@ func TestPreRemoveDoesNotPruneAncestors(t *testing.T) {
 	}
 
 	if len(a.result.Pruned) != 0 {
-		t.Errorf("Pruned = %v, want none (preRemove must not call the pruning walk · ADR-0047 §5)", a.result.Pruned)
+		t.Errorf("Pruned = %v, want none (preRemove must not call the pruning walk)", a.result.Pruned)
 	}
 	if info, err := os.Lstat(filepath.Join(root, "outer")); err != nil {
 		t.Errorf("outer/ must survive the preRemove untouched: %v", err)
@@ -669,7 +648,7 @@ func TestPreRemoveDoesNotPruneAncestors(t *testing.T) {
 
 // TestResetPrunesEmptyAncestors verifies the pruning walk also runs on the reset teardown
 // path (Reset reuses removeStale for the symlink half, and this covers the copy-target
-// deletion half too), matching apply's behavior (Issue #174).
+// deletion half too), matching apply's behavior.
 func TestResetPrunesEmptyAncestors(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -712,8 +691,7 @@ func TestResetPrunesEmptyAncestors(t *testing.T) {
 
 // TestResetPrunesEmptyAncestorsCopyOnly isolates the copy-target deletion half of Reset's
 // pruning (reset.go's copy-removal loop calls pruneEmptyAncestors independently of
-// removeStale): with no symlink entries in the mix, a regression that dropped the copy
-// loop's prune call would only be caught here, not by the combined symlink+copy case above.
+// removeStale), with no symlink entries in the mix.
 func TestResetPrunesEmptyAncestorsCopyOnly(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)

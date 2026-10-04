@@ -14,10 +14,9 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// Generation operations are unified under the `nix-env --profile <profileDir>/profile`
-// family (→ docs/spec.md generation management spec · ADR-0015, ADR-0025). Commit (--set)
-// lives in commit.go; here we handle rollback (--switch-generation) and listing
-// (--list-generations). Like --set, these are injectable so tmpdir tests do not call nix.
+// Generation operations use `nix-env --profile <profileDir>/profile`: rollback
+// (--switch-generation) and listing (--list-generations) live here, commit (--set) in commit.go.
+// All are injectable so tmpdir tests do not call nix.
 
 // Generation is one generation of a profile (one line of nix-env --list-generations).
 type Generation struct {
@@ -43,7 +42,7 @@ type ProfileOptions struct {
 	Git          GitFunc
 }
 
-// ProfileFor resolves root and fixes the profileDir layout (same shape as apply's preamble · → ADR-0023, ADR-0024).
+// ProfileFor resolves root and fixes the profileDir layout (same shape as apply's preamble).
 // Used in common by non-building rollback / list-generations for flock / generation reads.
 func ProfileFor(opts ProfileOptions) (paths.Profile, string, error) {
 	root, err := resolveRoot(opts.RootKind, opts.FixedRoot, opts.RootOverride, opts.WorkDir, opts.Git)
@@ -66,12 +65,9 @@ func ListGenerations(profileLink string) ([]Generation, error) {
 	return nixEnvListGenerations(profileLink)
 }
 
-// observeGeneration returns the generation number the profile link currently points at, or nil
-// when it cannot be observed: no profile yet (first apply), or a link whose destination does not
-// parse as the sibling generation link "<base>-<N>-link" that nix-env maintains
-// (→ paths.GenerationLink · issue #130, outturn ADR-0015's nil-able Generation.Before/After).
-// A readlink is used instead of nix-env --list-generations because the observation runs on every
-// apply/reset and must stay a cheap, subprocess-free probe.
+// observeGeneration returns the generation number the profile link points at, read from its
+// "<base>-<N>-link" destination without a subprocess. It returns nil when there is no profile
+// or the destination does not parse.
 func observeGeneration(profileLink string) *int {
 	dest, err := os.Readlink(profileLink)
 	if err != nil {
@@ -89,7 +85,7 @@ func observeGeneration(profileLink string) *int {
 	return &n
 }
 
-// intPtr copies n onto the heap for the nil-able generation observation fields (→ issue #130).
+// intPtr copies n onto the heap for the nil-able generation observation fields.
 func intPtr(n int) *int { return &n }
 
 // RollbackOptions is the input to Rollback. Rollback is home mode only, but that decision is
@@ -111,22 +107,17 @@ type RollbackOptions struct {
 	Warnf func(format string, args ...any)
 }
 
-// RollbackResult is the result report of Rollback. It augments Result (placement diff) with the
-// generation transition From→To. On a failure return the partial result carries From == To ==
-// the current generation: no transition happened (→ issue #130 到達状態, same contract as Apply's
-// stage-failure partial Result).
+// RollbackResult is the result report of Rollback: Result plus the generation transition From→To.
+// On failure the partial result carries From == To == the current generation.
 type RollbackResult struct {
 	Result
 	From int // current generation N before rolling back
 	To   int // previous generation N-1 rolled back to
 }
 
-// Rollback reverts a home-mode profile to one generation earlier. A profile pointer move alone
-// does not change the FS at an arbitrary root, so it diffs with the planner using current
-// generation N as baseline and previous generation N-1 as target, conservatively stale-removes
-// N∖N-1, re-places N-1's entries, and only **last** moves the profile pointer (→ docs/spec.md
-// rollback · ADR-0015). Moving the pointer first would shift the baseline to N-2 and corrupt
-// stale removal, so FS convergence comes first and the pointer move last.
+// Rollback reverts a home-mode profile to one generation earlier. It converges the FS from current
+// generation N to N-1 (stale-removing N∖N-1, re-placing N-1) and moves the profile pointer last,
+// since moving it first would shift the stale-removal baseline.
 func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	warnf := opts.Warnf
 	if warnf == nil {
@@ -157,7 +148,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		return nil, fmt.Errorf("layat: no profile (apply has never run): %s", prof.Dir)
 	}
 
-	// 2. serialize with concurrent apply / rollback via a blocking flock (→ ADR-0013).
+	// 2. serialize with concurrent apply / rollback via a blocking flock.
 	l, err := acquireProfileLock(prof.Dir, true)
 	if err != nil {
 		return nil, err
@@ -200,34 +191,27 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		return nil, err
 	}
 
-	// The generation numbers come from the listing rather than a readlink observation: cur/prev
-	// are already identified above, and the pointer only moves at step 7 (→ issue #130, outturn
-	// ADR-0015). GenAfter is set after the pointer move below.
+	// Generation numbers come from the listing above; GenAfter is set after the pointer move.
 
-	// 6. reflect the plan onto the real FS in the same four stages as Apply: PreRemove first
-	//    (unlink self-recorded stale ancestor symlinks so nested children land in a real dir · →
-	//    engine.go, ADR-0046), then new/re-link symlinks, then place-once copies (recopy has no
-	//    Rollback equivalent, so it is always off · → issue #178), then stale removal last
-	//    (→ ADR-0006). Apply's Backup stage is absent: Rollback has no --backup (→ ADR-0045).
+	// 6. reflect the plan onto the FS in Apply's stages: PreRemove, symlinks, place-once copies
+	//    (recopy always off), then stale removal. There is no Backup stage.
 	a := &applier{opts: Options{Warnf: warnf}, result: &Result{Root: root, ProfileDir: prof.Dir, Profile: prof.Profile}}
 	a.profile = prof
 	a.root = root
 	a.result.GenBefore = intPtr(cur.Number)
-	// Full inventory = the generation being rolled back to (its entries are the FS end state · → issue #130).
+	// Full inventory = the generation being rolled back to (its entries are the FS end state).
 	a.result.Entries = target.Entries
 	a.recordRemovalPlan(plan)
-	// Each stage journals its own FS writes; a failure in any of the four unwinds everything
-	// this Rollback call has done so far before returning (→ ADR-0044, same shape as Apply).
-	// Mirroring Apply's stage-failure contract, the partial result is returned alongside the
-	// error, with GenAfter pinned at the unmoved current generation (→ issue #130 到達状態).
+	// A failure in any stage unwinds this call's journaled FS writes and returns the partial
+	// result, with GenAfter pinned at the unmoved current generation.
 	fail := func(err error) (*RollbackResult, error) {
 		res, _ := a.fail(plan, err)
 		res.GenAfter = intPtr(cur.Number)
 		return &RollbackResult{Result: *res, From: cur.Number, To: cur.Number}, err
 	}
 	if len(plan.Conflicts) > 0 {
-		// Same partial-result contract as Apply's conflict stop: structured conflicts + the
-		// everything-unreached partition, so the CLI can map failed/skipped items (→ issue #131).
+		// Same partial-result contract as Apply's conflict stop: structured conflicts and
+		// everything unreached.
 		a.result.Conflicts = plan.Conflicts
 		return fail(reportConflicts(warnf, plan.Conflicts))
 	}
@@ -245,9 +229,8 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		return fail(err)
 	}
 
-	// 7. finally move the profile pointer to N-1 (→ docs/spec.md rollback step 3). Not unwound on
-	//    failure: every FS write up to this point already succeeded, so there is nothing to roll
-	//    back — only the pointer move itself failed, and re-running Rollback retries it (→ ADR-0044 §2).
+	// 7. finally move the profile pointer to N-1. A failure here is not unwound; re-running
+	//    Rollback retries it.
 	if err := switchFn(prof.Profile, prev.Number); err != nil {
 		// Every planned FS action already succeeded, so the failure is not entry-scoped
 		// (FailedTarget / Unreached stay empty) — but the partial result is still returned.
@@ -280,7 +263,7 @@ func nixEnvListGenerations(profileLink string) ([]Generation, error) {
 }
 
 // nixEnvSwitchGeneration is the default profile pointer move (nix-env --profile <p> --switch-generation <gen>).
-// nix output is routed to stderr (stdout is reserved for machine-readable output · → docs/spec.md stream discipline).
+// nix output is routed to stderr (stdout is reserved for machine-readable output).
 func nixEnvSwitchGeneration(profileLink string, gen int) error {
 	if _, err := exec.LookPath("nix-env"); err != nil {
 		return fmt.Errorf("nix-env is not on PATH: %w", err)

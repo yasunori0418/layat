@@ -8,15 +8,9 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// checkOutOfStore checks, just before placement, that the link target of out-of-store symlink
-// entries (the marker's local absolute path + subpath = planner.LinkDest) actually exists. If
-// absent, placing it would create a dangling symlink, so it stops with an engine runtime error
-// ("an absent link target is a runtime error" · → ADR-0001, ADR-0013, docs/spec.md "out-of-store symlink").
-//
-// The check is closed to out-of-store only: store links are guaranteed to exist by the farm
-// derivation build, and copy goes through a different path (place-once · outside this check).
-// method=copy × out-of-store marker is rejected by normalizeManifest at eval time, so no copy
-// out-of-store entry reaches here (→ ADR-0013).
+// checkOutOfStore verifies, just before placement, that every out-of-store entry's link target
+// (planner.LinkDest) exists, and fails otherwise so no dangling symlink is created. Store links
+// and copy entries are not checked here.
 func (a *applier) checkOutOfStore() error {
 	for _, e := range a.manifest.Entries {
 		if e.SrcKind != manifest.SrcKindOutOfStore {
@@ -25,7 +19,7 @@ func (a *applier) checkOutOfStore() error {
 		dest := planner.LinkDest(e)
 		if _, err := os.Lstat(dest); err != nil {
 			if os.IsNotExist(err) {
-				return fmt.Errorf("layat: out-of-store link target does not exist (target: %s -> %s); will not create a dangling symlink (→ ADR-0001)", e.Target, dest)
+				return fmt.Errorf("layat: out-of-store link target does not exist (target: %s -> %s); will not create a dangling symlink", e.Target, dest)
 			}
 			return fmt.Errorf("layat: cannot check out-of-store link target (target: %s -> %s): %w", e.Target, dest, err)
 		}

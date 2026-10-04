@@ -240,7 +240,7 @@ func TestApplyAncestorSymlinkError(t *testing.T) {
 		Warnf: collectFormatted(&warns),
 	})
 	// The aggregate error is a count-bearing summary; the ancestor-symlink detail is reported via
-	// Warnf (→ #176, grilling 2026-07-12 D6).
+	// Warnf.
 	if err == nil || !strings.Contains(err.Error(), "1 conflict") {
 		t.Fatalf("expected a 1-conflict aggregate error, got %v", err)
 	}
@@ -250,7 +250,7 @@ func TestApplyAncestorSymlinkError(t *testing.T) {
 		if strings.Contains(w, "cannot nest beneath it") {
 			found = true
 		}
-		// ConflictForeignAncestor guidance (no previous generation recorded this ancestor · → #176).
+		// ConflictForeignAncestor guidance (no previous generation recorded this ancestor).
 		if strings.Contains(w, "check what created this symlink") {
 			guided = true
 		}
@@ -264,9 +264,8 @@ func TestApplyAncestorSymlinkError(t *testing.T) {
 }
 
 // TestApplyAncestorSelfRecordedMigration verifies that a whole-tree symlink recorded by this
-// profile's own previous generation migrates to nested child entries without a manual rm: the
-// ancestor symlink is pre-removed and the children are placed fresh against the new src, not
-// misclassified through the still-present ancestor into the old farm (→ ADR-0046).
+// profile's previous generation migrates to nested child entries without a manual rm: the
+// ancestor symlink is pre-removed and the children are placed fresh against the new src.
 func TestApplyAncestorSelfRecordedMigration(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -310,7 +309,7 @@ func TestApplyAncestorSelfRecordedMigration(t *testing.T) {
 	if err != nil {
 		t.Fatalf("second Apply (migration): %v", err)
 	}
-	// The migration is a silent, intended operation: it must not surface any warning (→ ADR-0046 §4, ADR-0031).
+	// The migration is a silent, intended operation: it must not surface any warning.
 	if len(warns) != 0 {
 		t.Errorf("migration emitted warnings, want none: %v", warns)
 	}
@@ -348,7 +347,7 @@ func TestApplyAncestorSelfRecordedMigration(t *testing.T) {
 
 // TestApplyAncestorSelfRecordedMigrationCopyChild verifies the migration when the nested child is
 // a copy entry: the ancestor symlink is pre-removed, .claude/skills becomes a real directory, and
-// the child is materialized as a real (owner-writable) copied file, not a symlink (→ ADR-0046).
+// the child is materialized as a real (owner-writable) copied file, not a symlink.
 func TestApplyAncestorSelfRecordedMigrationCopyChild(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -991,11 +990,8 @@ func TestResolveRootHome(t *testing.T) {
 }
 
 // TestResolveRootOverrideWins verifies that the --root override takes precedence regardless of rootKind.
-// The invalid kinds are covered here as well: resolveRoot returns on the override before it ever
-// reaches the switch, so an undetermined ("") or unknown rootKind must not turn into the rejection
-// TestResolveRootInvalidKinds pins. That precedence is the documented contract of `--root`
-// (→ resolveRoot's doc comment), and pinning it keeps a later reordering of the switch from
-// regressing the pair into an error.
+// This includes the undetermined ("") and unknown kinds: the override is returned before
+// resolveRoot reaches the rootKind rejection.
 func TestResolveRootOverrideWins(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -1020,11 +1016,8 @@ func TestResolveRootOverrideWins(t *testing.T) {
 }
 
 // TestResolveRootOverrideRelative pins that a relative --root override is absolutized
-// against the cwd. TestResolveRootOverrideWins above only ever passes absolute paths, for
-// which filepath.Abs merely cleans the input without consulting os.Getwd — so the
-// relative → absolute conversion itself goes unexercised there and an implementation
-// shrunk to `return rootOverride, nil` would still pass. Chdir'ing into a real temp dir
-// makes the expected result computable as filepath.Join(cwd, rel).
+// against the cwd. Chdir'ing into a real temp dir makes the expected result
+// filepath.Join(cwd, rel).
 func TestResolveRootOverrideRelative(t *testing.T) {
 	cwd := realTempDir(t)
 	t.Chdir(cwd)
@@ -1040,10 +1033,8 @@ func TestResolveRootOverrideRelative(t *testing.T) {
 }
 
 // TestResolveRootFixedWithoutPath pins the fixed-root rejection when no path is given.
-// The manifest layer intentionally accepts a `fixed` root document that omits the path
-// (→ CASE-4179dcb2 / TC-172548ea), so this branch is the only place the invalid pair is
-// refused; the exact message is asserted because those items name it as engine's duty.
-// This is a pure argument check, so it stays outside the file-type-conflict section below.
+// The manifest layer accepts a `fixed` root document without a path, so this branch is the
+// only place the invalid pair is refused; the exact message is asserted.
 func TestResolveRootFixedWithoutPath(t *testing.T) {
 	_, err := resolveRoot(manifest.RootKindFixed, "", "", "", nil)
 	if err == nil {
@@ -1054,14 +1045,9 @@ func TestResolveRootFixedWithoutPath(t *testing.T) {
 	}
 }
 
-// TestResolveRootInvalidKinds pins the remaining rejection branches of resolveRoot:
-// the undetermined rootKind ("" — reached when neither eval prefetch nor a manifest
-// supplied one) and any unknown value (the default arm). Both messages are asserted
-// verbatim because they are the only signal the caller gets; the unknown case is
-// formatted with %q, so the expectation carries the quotes as well.
-// RootKindSystem is deliberately left out: its rejection is a placeholder for the
-// unimplemented system mode and will be replaced along with the implementation
-// (→ #129 / #139 / #140), so pinning it now would only pin something scheduled to go.
+// TestResolveRootInvalidKinds pins resolveRoot's rejection of the undetermined ("") and
+// unknown rootKind, asserting both messages verbatim. RootKindSystem is left out because
+// its rejection is a placeholder for the unimplemented system mode.
 func TestResolveRootInvalidKinds(t *testing.T) {
 	tests := []struct {
 		name     string
@@ -1093,18 +1079,11 @@ func TestResolveRootInvalidKinds(t *testing.T) {
 }
 
 // --- error-path coverage (engine.go:262-264, 359, 369-382) ------------------
-// These exercise the under-covered failure branches of resolveRoot (fixed-root
-// Abs), ensureProfileDir (mkdir / backref write), and cleanupPending (warn-only
-// Remove). Failures are induced by file-type conflicts (ENOTDIR / EISDIR /
-// ENOTEMPTY), not permission bits, so they reproduce under root as well and need
-// no os.Geteuid()==0 skip guard.
+// Failure branches of resolveRoot, ensureProfileDir and cleanupPending, induced by
+// file-type conflicts rather than permission bits so they also reproduce under root.
 
-// TestResolveRootFixedAbsFailure covers engine.go:359 (filepath.Abs(fixedRoot)).
-// filepath.Abs only errors when the path is relative and os.Getwd fails, which is
-// inherently environment-dependent: we induce it by chdir'ing into a directory and
-// removing it out from under the process (cwd no longer resolves → Getwd errors).
-// On platforms where a removed cwd still resolves, the branch cannot be reached and
-// the test skips with that reason recorded rather than silently passing.
+// TestResolveRootFixedAbsFailure covers resolveRoot's filepath.Abs(fixedRoot) failure by removing
+// the cwd so os.Getwd fails. It skips on platforms where a removed cwd still resolves.
 func TestResolveRootFixedAbsFailure(t *testing.T) {
 	gone := filepath.Join(realTempDir(t), "gone")
 	if err := os.Mkdir(gone, 0o755); err != nil {
@@ -1119,10 +1098,7 @@ func TestResolveRootFixedAbsFailure(t *testing.T) {
 		t.Skip("removed cwd still resolves on this platform; Abs failure branch unreachable")
 	}
 
-	// fixedRoot must be RELATIVE here: filepath.Abs only calls os.Getwd for relative
-	// paths (an absolute path is just cleaned and never errors), so only a relative
-	// path routes into the now-broken Getwd and makes Abs fail. resolveRoot is
-	// unexported but reachable in-package.
+	// fixedRoot must be relative: filepath.Abs only calls os.Getwd for relative paths.
 	_, err := resolveRoot(manifest.RootKindFixed, "relative/path", "", "", nil)
 	if err == nil {
 		t.Fatal("expected Abs failure for relative fixed root with broken cwd, got nil")
@@ -1183,9 +1159,8 @@ func TestEnsureProfileDirBackrefWriteFailure(t *testing.T) {
 }
 
 // TestApplyCleanupPendingRemoveFailureWarns covers engine.go:262-264 (warn-only Remove).
-// cleanupPending runs only on the Build path. The injected Build leaves a non-empty
-// directory at the .pending path, so os.Remove fails with ENOTEMPTY; the failure must
-// be surfaced as a warning only and must not fail Apply or undo the placement.
+// The injected Build leaves a non-empty directory at the .pending path so os.Remove fails;
+// the failure must surface only as a warning, without failing Apply or undoing the placement.
 func TestApplyCleanupPendingRemoveFailureWarns(t *testing.T) {
 	root := realTempDir(t)
 	src := makeSrc(t, "x")
@@ -1229,7 +1204,7 @@ func TestApplyCleanupPendingRemoveFailureWarns(t *testing.T) {
 
 // TestApplyConflictReportsAll verifies that a non-dryrun Apply lists every planner-detected
 // conflict to stderr (with a one-line guidance each) before returning a single count-bearing
-// aggregate error, instead of stopping at the first conflict only (→ #176, grilling 2026-07-12 D6).
+// aggregate error, instead of stopping at the first conflict only.
 func TestApplyConflictReportsAll(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -1284,7 +1259,7 @@ func TestApplyConflictReportsAll(t *testing.T) {
 }
 
 // TestApplyConflictMatchesDryRun verifies that the non-dryrun conflict set (reported via Warnf)
-// and the --dryrun conflict set (Result.Conflicts) agree on the same plan (→ #176).
+// and the --dryrun conflict set (Result.Conflicts) agree on the same plan.
 func TestApplyConflictMatchesDryRun(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -1323,8 +1298,7 @@ func TestApplyConflictMatchesDryRun(t *testing.T) {
 
 // TestApplySelfContradictoryAncestorGuidance verifies that a new generation which keeps a
 // self-recorded ancestor symlink AND defines an entry nested beneath it (self-contradictory
-// manifest) reports the ConflictSelfContradictoryAncestor guidance via Warnf (→ #176, grilling
-// 2026-07-12 D6).
+// manifest) reports the ConflictSelfContradictoryAncestor guidance via Warnf.
 func TestApplySelfContradictoryAncestorGuidance(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -1367,7 +1341,7 @@ func TestApplySelfContradictoryAncestorGuidance(t *testing.T) {
 
 // TestApplyCopyStructureMismatchGuidance verifies that a copy entry whose src structure (dir)
 // mismatches an existing target (regular file) reports the ConflictCopyStructureMismatch guidance
-// via Warnf (→ #176, grilling 2026-07-12 D6).
+// via Warnf.
 func TestApplyCopyStructureMismatchGuidance(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -1401,7 +1375,7 @@ func TestApplyCopyStructureMismatchGuidance(t *testing.T) {
 
 // TestApplyConflictMixedKindsPairGuidanceCorrectly verifies that when conflicts of different
 // kinds are reported together, each conflict line is immediately followed by its own kind's
-// guidance (no mis-pairing across kinds · → #176).
+// guidance (no mis-pairing across kinds).
 func TestApplyConflictMixedKindsPairGuidanceCorrectly(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -1429,10 +1403,8 @@ func TestApplyConflictMixedKindsPairGuidanceCorrectly(t *testing.T) {
 		t.Fatalf("expected a 2-conflict aggregate error, got %v", err)
 	}
 
-	// Each conflict line (target: X) must be immediately followed by its own kind's guidance,
-	// not the other conflict's. matched tracks how many of the two expected target lines were
-	// actually found, so a silent no-op (neither switch case firing, e.g. because the target
-	// string changed) fails loudly instead of passing vacuously.
+	// Each conflict line (target: X) must be immediately followed by its own kind's guidance.
+	// matched counts the expected target lines found, so the check cannot pass vacuously.
 	matched := 0
 	for i, w := range warns {
 		switch {
