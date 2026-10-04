@@ -51,23 +51,22 @@ let
         # systemRoot is not implemented.
         (lib.optional (
           rootInfo.rootKind == "system"
-        ) "layat: root = systemRoot (system mode) is not implemented (→ ADR-0013)")
+        ) "layat: root = systemRoot (system mode) is not implemented")
         # method = "copy" cannot be combined with an out-of-store marker.
         (map (
-          e:
-          "layat: method = \"copy\" cannot be combined with an out-of-store marker (target: ${e.target}; → ADR-0013)"
+          e: "layat: method = \"copy\" cannot be combined with an out-of-store marker (target: ${e.target})"
         ) (lib.filter (e: e.method == "copy" && e.srcKind == "outOfStore") normEntries))
         # Two keys must not resolve to the same target.
         (lib.optional (
           lib.length targets != lib.length (lib.unique targets)
-        ) "layat: multiple entries resolve to the same target (→ ADR-0024)")
+        ) "layat: multiple entries resolve to the same target")
         # Reject absolute paths / `..` escapes in target / subpath.
-        (map (
-          e: "layat: invalid target (absolute path or escapes root via `..`): ${e.target} (→ ADR-0019)"
-        ) (lib.filter (e: checks.isUnsafe e.target) normEntries))
+        (map (e: "layat: invalid target (absolute path or escapes root via `..`): ${e.target}") (
+          lib.filter (e: checks.isUnsafe e.target) normEntries
+        ))
         (map (
           e:
-          "layat: invalid subpath (absolute path or escapes src via `..`): ${e.subpath} (target: ${e.target}; → ADR-0019)"
+          "layat: invalid subpath (absolute path or escapes src via `..`): ${e.subpath} (target: ${e.target})"
         ) (lib.filter (e: checks.isUnsafe e.subpath) normEntries))
       ];
 

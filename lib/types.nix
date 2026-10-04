@@ -45,7 +45,7 @@ let
         subpath = mkOption {
           type = types.str;
           default = ".";
-          description = "Relative path inside src. Omitted = the whole repository (→ ADR-0008).";
+          description = "Relative path inside src. Omitted = the whole repository.";
         };
         target = mkOption {
           type = types.str;
@@ -60,7 +60,7 @@ let
             "copy"
           ];
           default = "symlink";
-          description = "Placement method (formerly named mode; → ADR-0015).";
+          description = "Placement method (formerly named mode).";
         };
       };
     };

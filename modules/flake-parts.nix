@@ -18,7 +18,7 @@ mkTransposedPerSystemModule {
     type = types.lazyAttrsOf types.package;
     default = { };
     description = ''
-      Attrset that exposes layat's named manifests (the result of `layat.lib.mkManifest` = a derivation) (→ ADR-0007, ADR-0029).
+      Attrset that exposes layat's named manifests (the result of `layat.lib.mkManifest` = a derivation).
 
       Declaring `perSystem.layat.<name>` automatically transposes it to the top-level `flake.layat.<system>.<name>`,
       yielding a buildable derivation the CLI invokes via `nix build .#layat.<system>.<name>`.

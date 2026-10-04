@@ -14,7 +14,7 @@ in
       default = { };
       example = lib.literalExpression ''
         {
-          # attribute key = root-relative target (identifier; → ADR-0014)
+          # attribute key = root-relative target (identifier)
           ".claude/skills/nix" = {
             src = inputs.claude-skills;
             subpath = "skills/nix";
@@ -34,14 +34,14 @@ in
         options = {
           enable = lib.mkEnableOption ''
             back up an occupying foreign entity to "<target>.<suffix>" before placing it,
-            instead of stopping on conflict (wires activation's apply --backup; → ADR-0045)
+            instead of stopping on conflict (wires activation's apply --backup)
           '';
           suffix = lib.mkOption {
             type = lib.types.str;
             default = "layat-backup";
             description = ''
               The backup rename suffix (activation wires apply --backup=<suffix>). The
-              backup destination becomes "<target>.<suffix>" (→ ADR-0045).
+              backup destination becomes "<target>.<suffix>".
             '';
           };
         };
@@ -49,7 +49,7 @@ in
       default = { };
       description = ''
         apply --backup wiring: renames an occupying foreign entity aside instead of
-        conflicting (→ ADR-0045). This is a placement modifier orthogonal to `entries`
+        conflicting. This is a placement modifier orthogonal to `entries`
         and does not touch the manifest v1 contract (lib/types.nix) — activation only
         adds `--backup=<suffix>` to the `layat apply --manifest` invocation when enabled.
       '';
