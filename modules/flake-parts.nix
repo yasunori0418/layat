@@ -1,14 +1,7 @@
-# flake-parts module: transpose perSystem.layat.<name> to flake.layat.<system>.<name> (→ ADR-0029).
-# Reuse flake-parts' official mkTransposedPerSystemModule (the same transposition mechanism as packages / legacyPackages),
-# rather than hand-writing our own mkPerSystemOption + transposition (ADR-0029 remaining task 1).
-#
-# The option is lazyAttrsOf package. The consumer writes, in perSystem,
+# flake-parts module: transpose perSystem.layat.<name> to flake.layat.<system>.<name>.
+# The consumer writes, in perSystem,
 #   layat.<name> = inputs.layat.lib.mkManifest { inherit pkgs; root = ...; entries = { ... }; };
-# The transposition target flake.layat.<system>.<name> must be a buildable derivation that the CLI invokes
-# via `nix build .#layat.<system>.<name>` (it stores the result of mkManifest = a derivation・ADR decision 2).
-#
-# The module does pure transposition only. It does not inject mkManifest or the markers into perSystem arguments
-# (ADR decision 5). The consumer references layat.lib of the same input directly.
+# and the CLI builds it via `nix build .#layat.<system>.<name>`.
 { lib, flake-parts-lib, ... }:
 let
   inherit (lib)
