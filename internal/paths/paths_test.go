@@ -118,7 +118,7 @@ func TestResolveHomeUsesNameKey(t *testing.T) {
 }
 
 func TestResolveHomeWithOverrideUsesRootHash(t *testing.T) {
-	// With --root explicit, even home uses the roothash key (→ ADR-0023).
+	// With --root explicit, even home uses the roothash key.
 	state := "/state"
 	root := "/tmp/sandbox"
 	p := Resolve(state, "vim", manifest.RootKindHome, root, true)
@@ -132,7 +132,7 @@ func TestResolveHomeWithOverrideUsesRootHash(t *testing.T) {
 }
 
 func TestResolveFixedUsesRootHash(t *testing.T) {
-	// A fixed root (no --root) also uses the roothash key (→ ADR-0024).
+	// A fixed root (no --root) also uses the roothash key.
 	state := "/state"
 	root := "/opt/x"
 	p := Resolve(state, "c", manifest.RootKindFixed, root, false)
@@ -230,15 +230,9 @@ func writeFile(t *testing.T, path string) {
 	}
 }
 
-// listRootHashSeriesFixture builds a base holding every shape the enumeration
-// has to tell apart, and returns the result keyed by <roothash>.
-//
-//   - h1: a series with two <name> profiles — one holding only .pending (no
-//     generation link at all), one holding a generation link — plus a stray
-//     file directly under the series
-//   - home-name: a <name>-keyed profileDir with no backref (home / system mode)
-//   - h2: a series holding nothing but .root
-//   - h3: a series whose .root records a relative path
+// listRootHashSeriesFixture builds a base with a two-profile series plus a stray file (h1), a
+// profileDir without backref (home-name), a backref-only series (h2), and a series whose .root
+// is relative (h3), and returns the result keyed by <roothash>.
 func listRootHashSeriesFixture(t *testing.T) map[string]RootHashSeries {
 	t.Helper()
 	base := t.TempDir()
@@ -352,11 +346,8 @@ func TestListRootHashSeriesWithBackrefDir(t *testing.T) {
 }
 
 func TestListRootHashSeriesReportsUnstatableBackref(t *testing.T) {
-	// A directory the backref cannot even be stat'd under is neither "no backref"
-	// nor a decided one, so it must come back carrying the reason — and the
-	// healthy series beside it must still be listed rather than lost with it.
-	// The only induction available is dropping traversal on the directory, since
-	// a non-directory entry never reaches the backref check at all.
+	// A directory whose backref cannot be stat'd (traversal dropped) comes back carrying the
+	// reason, and the healthy series beside it is still listed.
 	if os.Geteuid() == 0 {
 		t.Skip("running as root: a non-traversable directory is still traversable")
 	}
@@ -398,10 +389,8 @@ func TestListRootHashSeriesReportsUnstatableBackref(t *testing.T) {
 }
 
 func TestListRootHashSeriesReportsUnlistableSeries(t *testing.T) {
-	// A series whose contents cannot be listed is still reported, with Names left
-	// nil and NamesErr saying why. Unlike the base and the backref, this failure
-	// has no ENOTDIR construction — a readable backref needs a traversable series
-	// directory — so it is induced by dropping read permission on it.
+	// A series whose contents cannot be listed (read permission dropped) is still reported,
+	// with Names left nil and NamesErr saying why.
 	if os.Geteuid() == 0 {
 		t.Skip("running as root: an unreadable directory is still listable")
 	}

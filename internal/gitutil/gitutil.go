@@ -1,5 +1,4 @@
-// Package gitutil resolves the git toplevel for project mode root resolution
-// (→ ADR-0005, docs/spec.md "root resolution").
+// Package gitutil resolves the git toplevel for project mode root resolution.
 package gitutil
 
 import (
@@ -16,10 +15,8 @@ var ErrNotInRepo = errors.New("layat: outside a git repository (pass --root to s
 // ErrGitNotFound is returned when git is not on PATH.
 var ErrGitNotFound = errors.New("layat: git is not on PATH")
 
-// Toplevel runs `git rev-parse --show-toplevel` rooted at dir and returns the
-// resolved absolute root path (→ ADR-0005). It resolves to the same root no matter
-// which subdirectory it is invoked from. It stops with a clear error if git is
-// missing or dir is outside a repository.
+// Toplevel returns the absolute git toplevel of dir via `git rev-parse --show-toplevel`.
+// It fails if git is missing or dir is outside a repository.
 func Toplevel(dir string) (string, error) {
 	if _, err := exec.LookPath("git"); err != nil {
 		return "", ErrGitNotFound

@@ -23,7 +23,7 @@ func writeFile(t *testing.T, dir, name string) {
 	}
 }
 
-// TestDiscoverEntrypoint_FileFlag covers -f pointing directly at a file (→ ADR-0032 discovery order).
+// TestDiscoverEntrypoint_FileFlag covers -f pointing directly at a file.
 func TestDiscoverEntrypoint_FileFlag(t *testing.T) {
 	cases := []struct {
 		name     string
@@ -80,7 +80,7 @@ func TestDiscoverEntrypoint_FileFlagMissing(t *testing.T) {
 }
 
 // TestDiscoverEntrypoint_FileFlagDir covers -f pointing at a directory, applying the same
-// flake.nix -> shell.nix -> default.nix priority as CWD autodiscovery (→ ADR-0032).
+// flake.nix -> shell.nix -> default.nix priority as CWD autodiscovery.
 func TestDiscoverEntrypoint_FileFlagDir(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -124,7 +124,7 @@ func TestDiscoverEntrypoint_FileFlagDirEmpty(t *testing.T) {
 	}
 }
 
-// TestDiscoverEntrypoint_CWD covers CWD autodiscovery priority flake.nix -> shell.nix -> default.nix (→ ADR-0032).
+// TestDiscoverEntrypoint_CWD covers CWD autodiscovery priority flake.nix -> shell.nix -> default.nix.
 func TestDiscoverEntrypoint_CWD(t *testing.T) {
 	cases := []struct {
 		name       string
@@ -172,7 +172,7 @@ func TestDiscoverEntrypoint_CWD(t *testing.T) {
 }
 
 // TestEntrypointInstallableArgs locks in the flake `<ep>#layat.<system>.<name><suffix>` form vs. the
-// legacy `-f <ep> layat.<name><suffix>` form (no per-system dimension; → ADR-0032).
+// legacy `-f <ep> layat.<name><suffix>` form (no per-system dimension).
 func TestEntrypointInstallableArgs(t *testing.T) {
 	flakeEp := &entrypoint{kind: entrypointFlake, flakeRef: "/proj"}
 	if got, want := flakeEp.installableArgs("x86_64-linux", "docs", ".rootKind"), []string{"/proj#layat.x86_64-linux.docs.rootKind"}; !reflect.DeepEqual(got, want) {
@@ -233,8 +233,7 @@ func discovered(t *testing.T, w io.Writer, debug bool) (*Generator, string) {
 }
 
 // TestDiscoverFailureIsDiscoverStage pins a discovery failure as a nix-tagged generator.Error of
-// Stage discover whose text is the pre-extraction message and whose cause still reaches
-// fs.ErrNotExist (the CLI classifies discover failures by the cause · → ADR-0055 §7).
+// Stage discover whose cause still reaches fs.ErrNotExist.
 func TestDiscoverFailureIsDiscoverStage(t *testing.T) {
 	missing := filepath.Join(t.TempDir(), "nope.nix")
 	err := New(io.Discard, false).Discover(missing)
@@ -254,7 +253,7 @@ func TestDiscoverFailureIsDiscoverStage(t *testing.T) {
 }
 
 // TestRootsCommandFailure pins a failed nix eval as Stage roots whose one-line Message names the
-// failed subcommand, with nix's stderr kept in Stderr instead (→ ADR-0055 §6).
+// failed subcommand, with nix's stderr kept in Stderr instead.
 func TestRootsCommandFailure(t *testing.T) {
 	stubNix(t, "error: boom")
 	g, _ := discovered(t, io.Discard, false)
@@ -366,7 +365,7 @@ func TestDebugDisclosesCommandsToWriter(t *testing.T) {
 }
 
 // TestIsExperimentalDisabled pins the three nix wordings of nix-command / flakes not being
-// enabled, and that an unrelated failure is not taken for one (→ ADR-0025 §1).
+// enabled, and that an unrelated failure is not taken for one.
 func TestIsExperimentalDisabled(t *testing.T) {
 	cases := []struct {
 		name   string
@@ -390,7 +389,7 @@ func TestIsExperimentalDisabled(t *testing.T) {
 
 // TestPrerequisiteMissingGuidance pins an experimental-features failure as Kind
 // PrerequisiteMissing whose Guidance names both ways to enable them, with nix's raw stderr kept
-// in Stderr (→ ADR-0055 §6, ADR-0025 §1).
+// in Stderr.
 func TestPrerequisiteMissingGuidance(t *testing.T) {
 	const raw = "error: experimental Nix feature nix-command is disabled"
 	stubNix(t, raw)
@@ -475,7 +474,7 @@ func TestWriterFailureIsBestEffort(t *testing.T) {
 }
 
 // TestSuccessTeesStderrToWriter pins that nix's stderr reaches the writer on success too, on
-// both the eval and the build path, while stdout stays the command's result (→ ADR-0055 §6).
+// both the eval and the build path, while stdout stays the command's result.
 func TestSuccessTeesStderrToWriter(t *testing.T) {
 	const warn = "warning: Git tree is dirty\n"
 	stubNixExit(t, "managed", warn, 0)
