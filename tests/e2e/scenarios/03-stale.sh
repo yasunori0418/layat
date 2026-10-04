@@ -50,7 +50,7 @@ write_flake x
 git -c user.email=e2e@layat.test -c user.name=e2e add -A
 git -c user.email=e2e@layat.test -c user.name=e2e commit -qm "drop y"
 
-e2e_step "apply --dryrun --json: stale 除去は remove change + 旧 entry も item に載る（→ issue #132）"
+e2e_step "apply --dryrun --json: stale 除去は remove change + 旧 entry も item に載る"
 ENV_STALE="$E2E_WORK/dryrun-stale.json"
 run_json 0 "$ENV_STALE" apply docs --dryrun
 assert_json "$ENV_STALE" "items は新 entry (.out/x) + stale 旧 entry (.out/y) の 2 件" \

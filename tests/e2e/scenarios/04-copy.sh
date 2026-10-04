@@ -48,7 +48,7 @@ e2e_step "out-of-store: live ディレクトリへの symlink"
 assert_symlink "$HOME/.cfg/live" "$LIVE"
 assert_file_eq "$HOME/.cfg/live/note.txt" "LIVE1"
 
-e2e_step "apply --dryrun --json: place-once の copy は change を生まず、既存 symlink は再リンク modify（→ issue #132）"
+e2e_step "apply --dryrun --json: place-once の copy は change を生まず、既存 symlink は再リンク modify"
 ENV_RERUN="$E2E_WORK/dryrun-rerun.json"
 run_json 0 "$ENV_RERUN" apply home --dryrun
 assert_json "$ENV_RERUN" "items は copy + out-of-store の全 entry（フルインベントリ・全て success）" \

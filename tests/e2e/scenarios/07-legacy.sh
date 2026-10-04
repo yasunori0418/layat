@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # legacy entrypoint (shell.nix, passthru canonical form): `layat apply` / `apply --all` /
-# plain `nix-shell` compatibility (→ ADR-0032).
+# plain `nix-shell` compatibility.
 set -euo pipefail
 source "$(dirname "$0")/../lib.sh"
 e2e_isolate
@@ -44,10 +44,8 @@ e2e_step "git toplevel 配下に配置されたか"
 TARGET="$PROJ/.layat-out/docs"
 assert_symlink "$TARGET"
 assert_file_eq "$TARGET/SKILL.md" "SKILLBODY"
-# flake（01-project.sh）と異なり、legacy -f eval には flake の事前 store コピーが無いため、素の相対
-# path リテラル `src = ./srcrepo` は toString でも store へコピーされず生の作業木パスのまま解決される
-# （→ ADR-0007 §5「impure eval を許容」の具体的帰結。reproducible にしたいユーザーは builtins.path /
-# fetchTarball 等で明示的に store 化する）。よってここでは store symlink であることまでは assert しない。
+# legacy -f eval では相対 path リテラル `src = ./srcrepo` が作業木パスのまま解決されるため、
+# store symlink であることまでは assert しない。
 
 e2e_step "layat apply --all（passthru.layat.* を一括適用）"
 layat apply --all
@@ -60,7 +58,7 @@ nix-shell --run true "$PROJ/shell.nix"
 assert_symlink "$TARGET"
 assert_file_eq "$TARGET/SKILL.md" "SKILLBODY"
 
-e2e_step "legacy entrypoint でも gitignore --json が info.paths を運ぶ（→ issue #132）"
+e2e_step "legacy entrypoint でも gitignore --json が info.paths を運ぶ"
 ENV_LEGACY="$E2E_WORK/gitignore-legacy.json"
 run_json 0 "$ENV_LEGACY" gitignore docs
 assert_json "$ENV_LEGACY" "info.paths が anchor 形・items=[]" \

@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-# 非 NixOS E2E ハーネスのオーケストレータ（→ docs/design.md「テスト戦略」・ADR-0012）。
-#
-# 実 nix を使って `layat` を end-to-end に駆動し、「非 NixOS でも nix さえあれば動く」主張を
-# 検証する。CI からは `nix develop '.?dir=dev#ci' -c tests/e2e/run.sh` で起動する。
+# 非 NixOS E2E ハーネスのオーケストレータ。`nix develop '.?dir=dev#ci' -c tests/e2e/run.sh` で起動する。
 # scenarios/*.sh を辞書順に各々独立プロセスで実行し、1 つでも失敗すれば非ゼロ終了する。
 set -uo pipefail
 
@@ -19,7 +16,7 @@ if ! command -v nix >/dev/null 2>&1; then
 	echo "run.sh: nix が PATH にありません" >&2
 	exit 127
 fi
-# --json エンベロープの適合検証（→ issue #132）は outturn-validate + jq を要する（ci devShell が提供）。
+# --json エンベロープの適合検証は outturn-validate + jq を要する（ci devShell が提供）。
 for tool in outturn-validate jq; do
 	if ! command -v "$tool" >/dev/null 2>&1; then
 		echo "run.sh: $tool が PATH にありません（CI は ci devShell 経由で起動してください）" >&2
