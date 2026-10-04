@@ -4,20 +4,17 @@ layat が何であり何を解決するかの全体像と、solution / use_case 
 
 解決したい課題・解決策の核心・想定する使われ方は **`docs/solution/` と `docs/use-cases/` の
 item が持つ**。本文書は通読の入口として全体像を述べ、詳細は item へのリンクで示す
-（README → 本文書 → item の 3 層構造）。
-
-一方で「設計の哲学」「既存ツールとの比較」「north-star」「設計の変遷」は **item を立てず
-本文書に残す**（→ Issue #211）。要求へ落ちない位置づけ・展望・経緯であり、item にすると
-requirement を持たない use_case を作ることになるため。
+（README → 本文書 → item の 3 層構造）。「設計の哲学」「既存ツールとの比較」「north-star」は
+item を立てず本文書に書き下す。
 
 > **この文書の書き方（規約）**
 >
-> - 散文は **見出し 1 つ（h2 / h3 の最も内側）につき 20 行以内**（item 化しない節を抱えるため
->   spec / design より緩い）。表・リンク列挙・コードブロックはこの制限に含めない
+> - 散文は **見出し 1 つ（h2 / h3 の最も内側）につき 10 行以内**。表・リンク列挙・
+>   コードブロックはこの制限に含めない
 > - item 化された内容は **リンクで示し、本文に書き下さない**
-> - **item を立てず散文で書き下してよいのは上記 4 節（哲学・比較・north-star・変遷）に限る**。
->   索引の節（課題と核心・想定する使われ方）は本文書に置くが、内容は item が持つ。この 4 節
->   以外で書き下したい内容が出てきたら、item を立てて本文書からはリンクへ置き換える
+> - **item を立てず散文で書き下してよいのは 3 節（哲学・比較・north-star）に限る**。
+>   索引の節（課題と核心・想定する使われ方・設計の変遷）は本文書に置くが、内容は item / ADR が
+>   持つ。この 3 節以外で書き下したい内容が出てきたら、item を立てて本文書からはリンクへ置き換える
 > - item を横断して検索・追跡するには `sara query`（→ `docs/agents/domain.md`）を使う
 > - item の `## 出典` は本文書の現行章立てを指さない。原文の読み方を含め `docs/spec.md` の
 >   同項が正（同項は 3 文書共通の手順として書いてある）
@@ -60,12 +57,10 @@ opt-in する例外として位置づける（→ ADR-0007）。
 ストアパスを受け取る」設計にすることで、取得方法の変化から独立する。
 
 **配置ロジックはコアが所有し、モジュールは配線に徹する**: 配置の実体は全層で layat 自身の
-固定 Go エンジンが実行する（→ ADR-0003, ADR-0006）。`home.file` / `systemd.tmpfiles` などの
-ネイティブ機構には委譲しない。ネイティブ統合の恩恵は捨てるが、振る舞いが単一コアに集約され、
-テスト可能性とクロスプラットフォームの一貫性を得る。
+固定 Go エンジンが実行し（→ ADR-0003, ADR-0006）、`home.file` / `systemd.tmpfiles` などの
+ネイティブ機構には委譲しない。振る舞いが単一コアに集約され、テストと一貫性を担保できる。
 
-**home-manager に依存しない**: NixOS サーバー・最小構成の環境でも同じ設定定義で動くことを
-優先する。統合は「オプション」であり、統合層はコアの薄いラッパーに過ぎない。
+**home-manager に依存しない**: どの環境でも同じ設定定義で動き、統合層はコアの薄いラッパー。
 
 **冪等性と粒度の柔軟性**: 同じ設定を何度実行しても同じ結果になる。リポジトリ全体・
 サブディレクトリ・単一ファイルを同一インターフェースで扱い、呼び出し側は型を意識しなくてよい。
@@ -75,14 +70,11 @@ opt-in する例外として位置づける（→ ADR-0007）。
 ## north-star: 配置プリミティブから組むミニマル distro
 
 長期的な狙いは、nixpkgs のパッケージ群（＝ストアパス）を活かしつつ配置だけをユーザーに操作させ、
-Arch / Gentoo 的なミニマル Linux ディストリビューションの基盤を作ること（→ ADR-0004）。NixOS は
-同じことを巨大なモジュールシステムで行うが、その代償として nixpkgs の PR / リリースサイクルに
-縛られる。このためコアの中心抽象は root を `$HOME` に固定せず一般化する。
+Arch / Gentoo 的なミニマル Linux ディストリビューションの基盤を作ること（→ ADR-0004）。
+このためコアの中心抽象は root を `$HOME` に固定せず一般化する。
 
-layat は単独ツールに留まらず、n プレフィックスのツール群（nboot / nwrap / nherd /
-nshadow / ncompose）と stdout / stdin の JSON パイプで合成するエコシステムの一員でもある。
-その前提は「規格が契約」に尽きるため、layat の機械可読出力（`--json`）は **今回の機能に閉じず、
-今後追加するすべての機能で** outturn specVersion 1 規約に準拠する（→ ADR-0043）。
+layat は他のツール群と stdout / stdin の JSON パイプで合成するエコシステムの一員でもある。
+機械可読出力（`--json`）は **すべての機能で** outturn specVersion 1 規約に準拠する（→ ADR-0043）。
 
 **スコープの線引き**: 実装スコープは standalone CLI + project mode をコアとし home mode も
 対象、system 配置は将来拡張（→ ADR-0007）。「関数ベースのパッケージ導入・PATH 追加」の具体機構は
@@ -114,68 +106,43 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 
 ### home-manager `home.file` との配置意味論の差
 
-`home.file` と layat はどちらも「symlink を配置し前世代との diff で stale を除去する」同型の
-モデルを持つ。しかし layat は配置のたびに**自己記録の manifest**（前世代 `manifest.json`）を
-持つのに対し、home-manager の cleanup 判定は on-disk の readlink パターンマッチに依存する。
-この一次情報の有無が意味論の差として表れる（HM 現行実装〔2026-07 時点〕との比較・
-→ ADR-0046, ADR-0047）。
+`home.file` と layat はどちらも前世代との diff で stale を除去するが、layat は前世代の
+**自己記録の manifest** を一次情報に持ち、HM は on-disk の readlink パターンマッチで判定する
+（HM 現行実装〔2026-07 時点〕との比較・→ ADR-0046, ADR-0047）。差は次の 5 点に表れる。
 
-1. **同名 leaf を含む per-file → dir symlink 遷移の自動移行** — HM は旧 leaf の残存を誤認して
-   部分適用で失敗しうるが、layat は manifest 記録との一致判定（recorded ∧ stale）で安全に移行する
-2. **所有判定の厳密さ** — HM は readlink の glob パターンマッチ、layat は「記録した配置先 +
-   on-disk の readlink が記録 dest と完全一致」で判定する
-3. **配置を塞ぐ空 dir の由来を問わない自動除去** — HM は collision で停止するが、layat は
-   rmdir が空 dir にしか成功しない＝損失ゼロを利用し、由来を問わず配置前除去の対象に含める
-4. **祖先 symlink の安全性** — HM は祖先 component が symlink でも無検査で辿るが、layat は
-   foreign な祖先 symlink を conflict で停止し、自己記録の stale のみ配置前除去で移行する
-5. **rename 可用性 + fail-fast drift** — layat は「配置を塞ぐ依存除去のみ」を前段化し、
-   前段化した除去が drift を検出したら skip せず error で停止する
+1. **per-file → dir symlink 遷移の自動移行** — manifest 記録との一致判定（recorded ∧ stale）で安全に移行する
+2. **所有判定の厳密さ** — glob ではなく、記録した配置先と記録 dest への readlink の完全一致で判定する
+3. **配置を塞ぐ空 dir の除去** — rmdir が空 dir にしか成功しないことを利用し、由来を問わず除去する
+4. **祖先 symlink の安全性** — foreign な祖先 symlink は conflict で停止し、自己記録の stale だけを移行する
+5. **fail-fast drift** — 前段化した依存除去が drift を検出したら skip せず error で停止する
 
-空親ディレクトリ剪定・conflict 全件報告は layat も同等の挙動を持つ（パリティ項目・HM 超えでは
-ない）。method 変更を跨ぐ自動移行や copy を含めた `reset` は、copy という概念自体が
-home-manager に存在しないため比較の対象外。
+空親ディレクトリ剪定・conflict 全件報告は同等。copy は HM に存在しないため比較の対象外。
 
 ---
 
-## 設計の変遷（会話の流れ）
+## 設計の変遷
 
-| フェーズ | 検討内容 | 採用した方向 |
-|---|---|---|
-| 起点 | `fetchFromGitHub` + `lock.json` + シェルスクリプト | ロック管理をシェルで実装 |
-| ロック管理 | シェルスクリプト vs Nix 関数 | 副作用が必要なため `npins` 等を使う |
-| 配置手段 | home-manager 依存可否 | コアを純粋関数として切り出し、HM 非依存と HM 統合を両立 |
-| src 設計 | npins を内包するか | `src` をストアパスとして受け取り取得手段を問わない設計に |
-| 役割分離 | 全体管理 vs 役割ごとの独立管理 | エントリに `name` を持たせ、個別更新・個別適用できる設計に |
-| out-of-store（ADR-0001）| 型ベース暗黙分岐 vs 明示関数 | store link をデフォルトに統一し、out-of-store は明示関数へ降格 |
-| 世代管理（ADR-0002）| 世代を取らない vs 取る | nix profile に乗せた standalone 世代管理を追加。copy は世代外 |
-| 層モデル（ADR-0003）| ネイティブ翻訳 vs エンジン所有 | 配置ロジックは全層 layat エンジンが所有、モジュールは配線に徹する |
-| 抽象（ADR-0004）| `$HOME` 固定 vs root 一般化 | root を一般化し配置プリミティブに。distro は純粋関数の合成で組む |
-| project mode（ADR-0005）| root=`$HOME` 固定 vs プロジェクト相対 | root を公開引数へ昇格し git toplevel 相対の project mode を追加 |
-| エンジン実装（ADR-0006）| 生成 bash vs 固定バイナリ | 配置ロジックを固定 Go エンジンに集約。契約は manifest.json |
-| 露出 / root（ADR-0007）| per-config ラッパー vs 汎用 CLI | 汎用 `layat` CLI を一次 UX に昇格。root は明示必須。project-first へ |
-| src/subpath 分離（ADR-0008）| `source` を `src` と誤読される問題 | `source` を `subpath` に改名。全体選択は省略で表現 |
-| entries 識別子（ADR-0014）| `name` フィールド vs attrset キー | `entries` を target キーの attrset に変更し一意性を native に担保 |
-| copy と reset（ADR-0019〜0021）| symlink 以外の配置・撤去手段 | `method = "copy"`（世代外・place-once）・`--recopy`・`reset` を追加 |
-| module activation（ADR-0026）| モジュールも entrypoint 発見経由か | ビルド済み link-farm を `apply --manifest` で直接適用する経路を新設 |
-| flake-parts 統合（ADR-0029）| flake-parts 向けの output 形 | `perSystem.layat` を `flake.layat.<system>` へ transpose する module を追加 |
-| 出力規律（ADR-0031）| 成功時に配置レポートを出すか | 成功時はデフォルト沈黙。`-v` で opt-in 表示（`--quiet` は廃止）|
+主要な設計判断の記録。全件は `docs/adr/` を参照。
 
-上記に挙げていない ADR は実装確定に伴う詳細な意味論整備（CI・型検査・flock・root 解決の細部等）。
-個々の内容は `docs/adr/` を参照。
+- [ADR-0001](adr/0001-out-of-store-as-explicit-function.md) — store link をデフォルトに統一し、out-of-store は明示関数へ降格
+- [ADR-0002](adr/0002-generations-on-nix-profile.md) — nix profile に乗せた standalone 世代管理。copy は世代外
+- [ADR-0003](adr/0003-engine-owns-placement-modules-are-wiring.md) — 配置ロジックは全層でエンジンが所有し、モジュールは配線に徹する
+- [ADR-0004](adr/0004-root-generalization-and-distro-positioning.md) — root を一般化し配置プリミティブにする
+- [ADR-0005](adr/0005-project-mode-and-ephemeral-placement.md) — git toplevel 相対の project mode
+- [ADR-0006](adr/0006-engine-as-go-binary-lib-produces-data.md) — 配置ロジックを固定 Go エンジンに集約し、契約は manifest.json
+- [ADR-0007](adr/0007-cli-as-primary-ux-and-entrypoint-discovery.md) — 汎用 `layat` CLI を一次 UX にし、root は明示必須
+- [ADR-0008](adr/0008-source-to-subpath-and-whole-repo-by-omission.md) — `subpath` で取り出し、全体選択は省略で表す
+- [ADR-0014](adr/0014-entries-as-target-keyed-attrset.md) — `entries` は target キーの attrset
+- [ADR-0020](adr/0020-copy-recopy-and-entry-reset.md) — `method = "copy"`（世代外・place-once）・`--recopy`・`reset`（関連: ADR-0019, ADR-0021）
+- [ADR-0026](adr/0026-module-activation-applies-prebuilt-manifest.md) — モジュールはビルド済み link-farm を `apply --manifest` で直接適用する
+- [ADR-0031](adr/0031-silent-on-success-output-discipline.md) — 成功時はデフォルト沈黙。`-v` で opt-in 表示
 
 ### 名前の由来
 
-旧名 **nput** の「n」は **nix** を指していた。nix 側で manifest を構築し store 経由で固定した
-ファイルを配置することが主用途だと見込んでいたためである。しかし engine が受け取る契約は
-`manifest.json` 1 本で、その生成者を engine は問わない（`lib/` は生成系のひとつにすぎない）。
-作者自身の運用も `mkOutOfStoreSymlink` による可変 symlink で store を介していない。結果として
-「n」が指すものが曖昧になった。
-
-現名 **layat** は "**lay** \<src\> **at** \<target\>" の圧縮造語で、manifest の通りに src を
-target へ置くという動作を一語で自己記述する。`chroot`（change root）・`getopt`（get options）と
-同じ、動詞句の圧縮という UNIX コマンドの伝統的造語法に従う。解決しているペインは「フェッチ済みの
-内容を、manifest の通りに root 相対の target へ置く」ことであって、その内容を誰がどうフェッチ
-したかではない——**nix に縛られない、ペインを体現する名前**への改名である。
+旧名 **nput** の「n」は **nix** を指していたが、engine の契約は `manifest.json` 1 本で生成者を
+問わず、store を介さない運用もあるため、「n」が指すものは曖昧だった。現名 **layat** は
+"**lay** \<src\> **at** \<target\>" の圧縮造語で、manifest の通りに src を target へ置く動作を
+一語で表す（`chroot`・`getopt` と同じ動詞句の圧縮）。
 
 - [ADR-0054](adr/0054-rename-nput-to-layat.md) — nput を layat へ改名し、2 週間の改名予告期間を挟む（命名条件・棄却した候補・移行方針）
 
