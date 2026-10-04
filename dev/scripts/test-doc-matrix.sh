@@ -1,29 +1,10 @@
 #!/usr/bin/env bash
-# テスト資産 ⇔ CASE ⇔ TC ⇔ RISK の対応表を Markdown 1 枚で生成する
-# （→ Issue #304、epic #283）。
+# テスト資産 ⇔ CASE ⇔ TC ⇔ RISK の対応表を Markdown で生成する（出力パス省略時は stdout）。
 #
-# 実行:
 #   nix develop ./dev -c dev/scripts/test-doc-matrix.sh [出力パス]
 #
-# 出力パス省略時は stdout。CI は main push / workflow_dispatch のジョブで生成し
-# artifact へ上げる。**リポジトリへはコミットしない**（生成物とソースのドリフト回避）。
-#
-# ## 入力
-#
-#   - dev/scripts/test-inventory.sh --full        テスト資産とテスト名（go test -json 実行ベース）
-#   - sara report matrix --format json            CASE→TC / TC→RISK の全関係を 1 回で取得
-#   - CASE frontmatter の target（yq）            資産 → CASE の join キー
-#   - dev/tests/test-categories.tsv               区分のセクション順
-#   - dev/tests/test-doc-exclusions.tsv           CASE を持たない資産の理由
-#
-# 区分（8 区分）は CASE ファイルの置き場所 docs/test/<区分>/ から導く。パス prefix では
-# 決まらない（同 prefix が複数区分へ割れる → test-categories.tsv の注記）。
-#
-# ## 出力形式
-#
-# 区分ごとにセクションを切り、行 = テスト資産、列 = CASE（フル ID + name）/ covers する TC /
-# 上流 RISK。Go サブテスト・nix-unit attr の内訳は <details> で折りたたむ。
-# CASE を持たない資産（除外リスト）は末尾に別表で理由付きで載せる。
+# 入力は test-inventory.sh --full・sara report matrix・CASE の target・区分表と除外リストの TSV。
+# 区分（docs/test/<区分>/）ごとに、行 = テスト資産、列 = CASE / TC / 上流 RISK の表を出す。
 
 set -uo pipefail
 
@@ -62,10 +43,7 @@ sara report matrix --format json > "$work/matrix.json" 2>/dev/null || {
 }
 
 # CASE: <target>\t<CASE フル ID>\t<name>\t<区分>\t<ファイルパス>
-#
-# 1 ファイル 1 回の yq で frontmatter の 3 列を採る。区分とファイルパスは置き場所
-# （docs/test/<区分>/…）から導けるので yq には要らない。ループを 2 本に割ると同じ入力に
-# 対する grep 条件が 2 箇所へ散り、片方だけ変えたときに両者の集合がずれる。
+# frontmatter の 3 列を yq で採り、区分とファイルパスは置き場所から付ける。
 : > "$work/cases"
 while IFS= read -r file; do
   category=$(printf '%s\n' "$file" | cut -d/ -f3)
@@ -104,13 +82,10 @@ jq -r '
 
 # --- 部品 --------------------------------------------------------------------
 
-# 表へ出す ID を検証して返す。正準形（<PREFIX>-<フル UUIDv4>）はそのまま通す
-# （→ ADR-0053。省略形は使わない）。形式に合わない入力（空文字・UUID でない ID）は
-# そのまま通すと空のコードスパンとして表に出て不整合が見えないため、目に付く形へ置き換える。
+# 表へ出す ID を検証して返す。正準形（<PREFIX>-<フル UUIDv4>）はそのまま、それ以外は目に付く形へ置き換える。
 validated_id() {
   local id=$1
-  # version / variant まで固定する（dev/tests/sara-new.sh と同じ
-  # 強度に揃える。同じ規約に対する検査の厳しさが箇所ごとに食い違わないようにする）。
+  # version / variant まで固定する（dev/tests/sara-new.sh と同じ強度）。
   if [[ "$id" =~ ^[A-Z]+-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$ ]]; then
     printf '%s\n' "$id"
   else
@@ -154,11 +129,8 @@ names_block() {
 }
 
 # --- 行の事前計算 ------------------------------------------------------------
-#
-# 区分 × 資産の対応を 1 度だけ計算して両セクション（表・テスト名内訳）が共有する。
-# 区分ごとに資産を走査して都度 lookup すると、同じフィルタ条件が 2 箇所に散って
-# 片方だけ直したときに対象集合がずれ、awk のフルスキャンも資産数 × 区分数だけ走る。
-#
+
+# 区分 × 資産の対応を 1 度だけ計算し、表とテスト名内訳が共有する。
 # $work/asset-rows: <区分>\t<資産>\t<CASE フル ID>\t<CASE name>
 # $work/assets:     資産の一意リスト（inventory 由来）
 cut -f1 "$work/inventory" | LC_ALL=C sort -u > "$work/assets"
@@ -169,14 +141,8 @@ awk -F'\t' -v OFS='\t' '
   $1 in asset { print $4, $1, $2, $3 }
 ' "$work/assets" "$work/cases" | LC_ALL=C sort > "$work/asset-rows"
 
-# inventory に無い target を指す CASE（リネーム / 削除の追従漏れ）は上の join で落ちる。
-# 「未分類」節はこれを拾わない（あちらは資産側から見た CASE 無し）。落ちた CASE が対応表の
-# どこにも現れないまま無警告になるのを避けるため、stderr へ警告し末尾の節にも載せる
-# （test-doc-map.sh §1 が本来落とすが、sara ジョブは required check ではない → ADR-0050。
-# 未分類節と同じ扱いに揃える）。
-#
-# 診断は CASE のフル ID ではなくファイルパスで出す（追従漏れを直す人が開く対象）。
-# target が空の CASE もここに落ちるので、空は別表記にして調査先を曖昧にしない。
+# inventory に無い target を指す CASE は上の join で落ちるため、stderr へ警告し末尾の節にも載せる。
+# 診断はファイルパスで出し、target が空の CASE は別表記にする。
 awk -F'\t' -v OFS='\t' '
   NR == FNR { asset[$1] = 1; next }
   !($1 in asset) { print $5, ($1 == "" ? "(target 空)" : $1) }
@@ -194,8 +160,7 @@ emit_header() {
   asset_total=$(wc -l < "$work/assets")
   case_total=$(wc -l < "$work/cases")
 
-  # 異常系の節はヘッダから索引する。CASE 総数には dangling も含むため、本体の行数と
-  # 合わない理由をヘッダ側から辿れないと読み手が迷う。
+  # 異常系の節はヘッダから索引する（CASE 総数は dangling を含む）。
   if [ -s "$work/dangling-cases" ]; then
     trailing_note=$(printf -- '- 実在しない資産を指す CASE が %d 件ある。末尾の「実在しない資産を指す CASE」を参照\n' \
       "$(wc -l < "$work/dangling-cases")")
@@ -205,7 +170,7 @@ emit_header() {
 # テストコード ⇔ テストドキュメント対応表
 
 テスト資産 ⇔ CASE ⇔ TC ⇔ 上流 RISK の対応。dev/scripts/test-doc-matrix.sh の生成物で、
-リポジトリへはコミットしない（CI の artifact として取得する → Issue #304）。
+リポジトリへはコミットしない（CI の artifact として取得する）。
 
 - テスト資産: ${asset_total} 件 / CASE: ${case_total} 件
 - 区分（セクション）は CASE の置き場所 \`docs/test/<区分>/\` 由来
@@ -265,9 +230,7 @@ emit_exclusions() {
   printf '\n'
 }
 
-# CASE も除外行も持たない資産。契約テストが本来落とす状態だが、sara ジョブは required
-# status check ではない（→ ADR-0050）ため FAIL のまま main へ入りうる。対応表が「全資産を
-# 映す」成果物である以上、黙って落とさず節として明示し stderr へも警告する。
+# CASE も除外行も持たない資産。節として明示し stderr へも警告する。
 emit_unclassified() {
   cut -f2 "$work/asset-rows" | LC_ALL=C sort -u > "$work/covered"
   read_tsv dev/tests/test-doc-exclusions.tsv | cut -f1 | LC_ALL=C sort -u > "$work/excluded"
@@ -291,9 +254,7 @@ emit_unclassified() {
   printf '\n'
 }
 
-# 実在しない資産を指す CASE。上の join で対応表の本体から落ちるため、成果物側にも節を
-# 出す（stderr 警告だけだと artifact を読む人には落ちた CASE が見えず、ヘッダの件数と
-# 本体の行数が合わない理由が分からない）。未分類節と同じ扱い。
+# 実在しない資産を指す CASE。対応表の本体から落ちるため節として出す。
 emit_dangling() {
   if [ ! -s "$work/dangling-cases" ]; then
     return
@@ -305,8 +266,7 @@ emit_dangling() {
   printf '| CASE | target |\n'
   printf '| --- | --- |\n'
   while IFS=$'\t' read -r file target; do
-    # 「(target 空)」は人間向けの注記なのでバッククォートで囲まない
-    # （コードリテラルとして描画されると実在する値に見える）。
+    # 「(target 空)」は注記なのでバッククォートで囲まない。
     if [ "$target" = "(target 空)" ]; then
       printf '| `%s` | %s |\n' "$file" "$target"
     else

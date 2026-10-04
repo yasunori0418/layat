@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
-# init + templates: `layat init <t>` でテンプレを展開し、展開後 flake が `nix flake check` を通ることを
-# 検証する（→ docs/design.md「テスト戦略」・計画 #16 Q2）。
-#
-# テンプレ flake.nix の layat.url は無 pin github main を指すため、検証時のみ
-# `--override-input layat path:$REPO_ROOT` で局所リポジトリへ差し替える（鶏卵問題の回避）。
-# LAYAT_TEMPLATE_REF で init の展開元も局所リポジトリへ向ける。配置動作（apply）は他シナリオに委任し、
-# ここでは「展開できる + flake.nix が構造的に妥当（flake check 通過）」に限定する。
+# init + templates: `layat init <t>` でテンプレを展開し、展開後 flake が `nix flake check` を通ることを検証する。
+# layat input は `--override-input layat path:$REPO_ROOT`、展開元は LAYAT_TEMPLATE_REF で局所リポジトリへ向ける。
 set -euo pipefail
 source "$(dirname "$0")/../lib.sh"
 e2e_isolate
@@ -34,7 +29,7 @@ for t in standalone project; do
 	fi
 done
 
-e2e_step "init --json: results:[] + トップレベル info（outturn ADR-0018・→ issue #132）"
+e2e_step "init --json: results:[] + トップレベル info"
 d="$E2E_WORK/init-json"
 mkdir -p "$d"
 cd "$d"

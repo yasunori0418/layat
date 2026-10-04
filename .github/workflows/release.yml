@@ -4,13 +4,12 @@ on:
   push:
     branches:
       - main
-    # bump PR のマージで VERSION が変わったときだけ発火する（→ ADR-0042 §3）。
-    # VERSION は semver プレーンテキスト 1 行（→ ADR-0042 §1）。
+    # bump PR のマージで VERSION（semver プレーンテキスト 1 行）が変わったときだけ発火する。
     paths:
       - "VERSION"
   workflow_dispatch:
 
-# タグ作成 + Release 作成に必要な contents: write のみに絞る（→ ADR-0042 §3）。
+# タグ作成 + Release 作成に必要な contents: write のみに絞る。
 permissions:
   contents: write
 
@@ -23,17 +22,12 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-latest
-    # workflow_dispatch はブランチを問わず起動できるが、リリースは main の内容だけを対象にする
-    # （→ ADR-0042 §3「main push が駆動」）。非 main ブランチからの手動実行で誤ったコミットに
-    # タグ + Release が付くのを防ぐガード。
+    # リリースは main の内容だけを対象にする（workflow_dispatch はブランチを問わず起動できる）。
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      # VERSION の内容妥当性はこの workflow より前段のゲート（flake check 等）が保証しないため、
-      # ここで先頭 1 行を取り前後空白を落として正規化し、semver（X.Y.Z）に合致しなければ fail
-      # させる。不正な VERSION で `v` だけのタグや改行入りタグ・GITHUB_OUTPUT への複数行注入を
-      # 早期に弾く（誤ったリリースより fail の方が調査が容易）。
+      # VERSION の先頭 1 行を取り前後空白を落として正規化し、semver（X.Y.Z）に合致しなければ fail させる。
       - name: Read and validate version
         id: version
         run: |
@@ -49,23 +43,15 @@ jobs:
           fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
-      # 成果物は添付しない（nix 前提ツールで単体バイナリの需要が薄い・→ ADR-0042 §4）。
-      # 将来バイナリ配布が必要になったら、この step の前に nix build のジョブ／ステップを足し、
-      # 下の action-gh-release に `files:` を追加してビルド成果物を添付する（seam はここ）。
-      #
-      # 冪等挙動: タグに既に GitHub Release があれば action-gh-release はそれを更新する（新規タグ・
-      # Release は作らない）。同一 VERSION を再実行（workflow_dispatch など）してもタグ位置は動かず、
-      # generate_release_notes による本文再生成のみが起きる。エラーにはならず安全に冪等。
-      # ※ タグだけ存在し Release が未作成のケースでは新規 Release を作る（Release がある場合の話）。
+      # 成果物は添付しない。既存の Release があれば action-gh-release がそれを更新するため、
+      # 同一 VERSION の再実行は本文の再生成だけで冪等になる。
       - name: Create GitHub Release
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
         with:
           tag_name: v${{ steps.version.outputs.version }}
           generate_release_notes: true
 
-      # この workflow は required status check の対象外（→ ADR-0030）で main push 後に単独で走る。
-      # bump PR の緑チェックはリリース成功を意味しないため、タグ + Release が実際に作られたことを
-      # 事後検証し、欠けていれば fail させる（GitHub 既定の失敗メール以外の観測点を持たせる）。
+      # タグ + Release が実際に作られたことを事後検証し、欠けていれば fail させる。
       - name: Verify release created
         env:
           GH_TOKEN: ${{ github.token }}

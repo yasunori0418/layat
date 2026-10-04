@@ -1,10 +1,6 @@
 # shellcheck shell=bash
-# E2E ハーネス共通ライブラリ（→ docs/design.md「テスト戦略」・ADR-0012）。
-#
-# 各シナリオはこのファイルを source し、隔離した一時 HOME / XDG_STATE_HOME 下で
+# E2E ハーネス共通ライブラリ。各シナリオが source し、隔離した一時 HOME / XDG_STATE_HOME 下で
 # 実 nix を使って `layat` を駆動し、FS / profile / 世代の結果をアサートする。
-# 偽 src は fixture flake ディレクトリ内の相対パス（eval 時に store へコピー）か、
-# out-of-store の live ディレクトリ（store 外）として用意する。
 
 # 多重 source を防ぐ。
 if [ -n "${_LAYAT_E2E_LIB:-}" ]; then return 0; fi
@@ -99,11 +95,9 @@ assert_writable() {
 	if [ -w "$1" ]; then e2e_pass "書込可: $1"; else e2e_fail "書込可であるべき: $1"; fi
 }
 
-# ---- outturn エンベロープ検証（--json・→ issue #132） -------------------------
+# ---- outturn エンベロープ検証（--json） -------------------------
 
-# layat を --json 付きで実行してエンベロープを保存し、終了コードの一致を確認したうえで
-# outturn-validate（-schema 省略 = embed 正本 schema〔format assertion 込み〕+ lint MUST）に
-# 掛ける。トップレベル results[] の常在・subject 必須などの一様形は schema 側が強制する。
+# layat を --json 付きで実行してエンベロープを保存し、終了コードの一致と outturn-validate の適合を確認する。
 run_json() { # $1: 期待 exit code, $2: エンベロープ保存先, $3...: layat 引数
 	local want="$1" out="$2"
 	shift 2
@@ -142,13 +136,9 @@ e2e_isolate() {
 	export HOME="$E2E_WORK/home"
 	export XDG_STATE_HOME="$E2E_WORK/state"
 	mkdir -p "$HOME" "$XDG_STATE_HOME"
-	# prune が state 基底と並べて走査する system 基底（→ ADR-0036 §3）を隔離先へ向ける。
-	# こちらは絶対パス（/nix/var/nix/profiles/layat）なので $HOME / XDG_STATE_HOME の差し替えでは
-	# 動かせず、これが無いと破壊的な prune がランナーの実状態を触りうる（→ cmd/layat/prune.go の
-	# LAYAT_SYSTEM_PROFILE_BASE）。dir は作らない（基底の不在は正常系）。
+	# prune が走査する system 基底（絶対パス）を隔離先へ向ける。dir は作らない（基底の不在は正常系）。
 	export LAYAT_SYSTEM_PROFILE_BASE="$E2E_WORK/system"
-	# ユーザー設定 $XDG_CONFIG_HOME/layat/config.toml（→ ADR-0056）もランナーの実設定を読まない
-	# よう隔離先へ向ける（XDG_CONFIG_HOME が設定済みだと HOME の差し替えでは外れない）。
+	# ユーザー設定 $XDG_CONFIG_HOME/layat/config.toml も隔離先へ向ける。
 	export XDG_CONFIG_HOME="$E2E_WORK/config"
 	# 一時 HOME には nix の設定が無いため、ランナーの実設定（experimental-features 等）を引き継ぐ。
 	export NIX_CONFIG="${NIX_CONFIG:-}
@@ -173,9 +163,7 @@ e2e_flake_inputs() {
 layat() { command "$LAYAT" "$@"; }
 
 # legacy（shell.nix / default.nix）シナリオ用: flake.lock がピン留めした nixpkgs の store path を
-# NIX_PATH にエクスポートする（legacy entrypoint は `<nixpkgs>` を NIX_PATH 経由で解決する best-effort
-# impure eval のため・→ ADR-0007 §5, ADR-0032）。使い捨ての probe flake で他 fixture と同じ
-# `inputs.nixpkgs.follows = "layat/nixpkgs"` pin を再利用し、offline で解決する。
+# NIX_PATH にエクスポートする。使い捨ての probe flake で他 fixture と同じ pin を offline で解決する。
 e2e_pin_nix_path() {
 	local probe="$E2E_WORK/nixpkgs-probe"
 	mkdir -p "$probe"
