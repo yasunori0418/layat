@@ -17,10 +17,8 @@ import (
 	"github.com/yasunori0418/layat/internal/generator/nixgen"
 )
 
-// newGenerator returns the manifest generator a command obtains its link-farm through, chosen by
-// selectGenerator: the prebuilt one for apply --manifest, otherwise the one the flag, environment
-// or settings name (→ ADR-0055 §1, §5, ADR-0056). Choosing the generator and injecting it into the
-// engine is all the cmd layer does with it. A rejected selection is an inputError.
+// newGenerator returns the manifest generator chosen by selectGenerator. A rejected selection is
+// an inputError.
 func newGenerator() (generator.Generator, error) {
 	name, err := selectGenerator()
 	if err != nil {
@@ -29,8 +27,7 @@ func newGenerator() (generator.Generator, error) {
 	return newGeneratorTo(name, os.Stderr), nil
 }
 
-// newGeneratorTo returns the generator named name (already selected) writing its diagnostics to
-// w (apply --all's stage 1 resolves the name once and prefixes each config's lines; → ADR-0039).
+// newGeneratorTo returns the generator named name, writing its diagnostics to w.
 func newGeneratorTo(name string, w io.Writer) generator.Generator {
 	if name == generator.NamePrebuilt {
 		return &generator.Prebuilt{}
@@ -38,10 +35,8 @@ func newGeneratorTo(name string, w io.Writer) generator.Generator {
 	return nixgen.New(w, flagDebug)
 }
 
-// selectGenerator chooses the generator's name for the running command. apply --manifest takes
-// prebuilt without reading the environment or any settings file (module activation runs in an
-// environment the user does not control) and rejects --generator; otherwise resolveGenerator
-// decides from the flag, LAYAT_GENERATOR, the project setting and the user setting (→ ADR-0056).
+// selectGenerator chooses the generator's name. apply --manifest takes prebuilt without reading
+// the environment or settings and rejects --generator; otherwise resolveGenerator decides.
 func selectGenerator() (string, error) {
 	if flagManifest != "" {
 		if flagGenerator != "" {
@@ -51,8 +46,7 @@ func selectGenerator() (string, error) {
 	}
 	projectDir, userConfigDir := projectSettingDir(flagFile), userSettingDir()
 	if flagFile != "" && projectDir == "" {
-		// An -f path that cannot be stat'ed reads no settings file; the generator's discovery
-		// reports the missing entrypoint (→ ADR-0056 §3).
+		// An -f path that cannot be stat'ed reads no settings file; discovery reports it.
 		userConfigDir = ""
 	}
 	return resolveGenerator(flagGenerator, os.Getenv(generatorEnv), projectDir, userConfigDir)
@@ -92,25 +86,22 @@ func userSettingDir() string {
 	return filepath.Join(home, ".config")
 }
 
-// generatorEnv is the environment variable naming the manifest generator (→ ADR-0056 §1).
+// generatorEnv is the environment variable naming the manifest generator.
 const generatorEnv = "LAYAT_GENERATOR"
 
-// selectableGenerators are the values --generator / LAYAT_GENERATOR accept. prebuilt is chosen only
-// by --manifest and is never one of them (→ ADR-0056 §2).
+// selectableGenerators are the values --generator / LAYAT_GENERATOR accept. prebuilt is chosen
+// only by --manifest.
 var selectableGenerators = []string{generator.NameNix}
 
-// generatorSetting is the schema of layat.toml / config.toml: generator alone, no version item.
-// An unknown key is rejected (strict; → ADR-0056 §4).
+// generatorSetting is the schema of layat.toml / config.toml: generator alone. Unknown keys are
+// rejected.
 type generatorSetting struct {
 	Generator string `toml:"generator"`
 }
 
-// resolveGenerator decides the manifest generator's name by the precedence --generator flag >
-// LAYAT_GENERATOR env > project setting <projectDir>/layat.toml > user setting
-// <userConfigDir>/layat/config.toml > default nix (→ ADR-0056 §1). An empty value, a missing
-// file, an empty directory and a file without the generator key are "not specified" and pass on to
-// the next step; a step that decides the name leaves the steps below unread. An unknown value and
-// a malformed settings file are an inputError naming where they came from.
+// resolveGenerator decides the generator by precedence: flag > env > <projectDir>/layat.toml >
+// <userConfigDir>/layat/config.toml > nix. Unset values and missing files pass to the next step;
+// an unknown value or malformed file is an inputError naming its source.
 func resolveGenerator(flag, env, projectDir, userConfigDir string) (string, error) {
 	if flag != "" {
 		return checkGeneratorName(flag, "--generator")

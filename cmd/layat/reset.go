@@ -12,10 +12,8 @@ import (
 	"github.com/yasunori0418/layat/internal/engine"
 )
 
-// resetResultInfo / resetEnvInfo are reset's outturn info slots (→ issue #196): empty seat types
-// held as nil pointers, so both info keys stay out of the document exactly as before. Reset's
-// record lives in items / changes; the seats are here so later mutation run facts arrive as
-// field additions alone (→ applyResultInfo in apply.go for the full rationale).
+// resetResultInfo / resetEnvInfo are reset's outturn info slots, reserved for future run facts and
+// held as nil pointers (see applyResultInfo).
 type (
 	resetResultInfo struct{}
 	resetEnvInfo    struct{}
@@ -24,7 +22,7 @@ type (
 // resetRun is reset's concrete run instantiation, threaded from RunE into runReset.
 type resetRun = outturnRun[*resetResultInfo, *resetEnvInfo]
 
-// beginResetRun starts reset's run (→ beginOutturnRun, beginApplyRun).
+// beginResetRun starts reset's run.
 func beginResetRun(command string) *resetRun {
 	return beginOutturnRun[*resetResultInfo, *resetEnvInfo](command)
 }
@@ -51,8 +49,7 @@ func newResetCmd() *cobra.Command {
 // runReset resolves rootKind (→ profileDir) via eval pre-resolution and drives engine.Reset.
 // --dryrun prints the plan read-only to stdout and exits 0. Non-dryrun requires TTY confirmation / --yes.
 func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
-	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
-	// reset is name-required (no --all), so the run always holds exactly this one (→ issue #164).
+	// The config name is the run's single outturn subject.
 	subject := run.beginSubject(name)
 	gen, err := newGenerator()
 	if err != nil {
@@ -67,7 +64,7 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 	}
 	rootKind, fixedRoot := root.RootKind, root.Root
 
-	// --dryrun: a side-effect-free preview (no flock / confirm; exit code is 0 regardless of whether there are targets; → ADR-0021).
+	// --dryrun previews without side effects (no flock / confirm) and exits 0.
 	if dryrun {
 		res, err := engine.Reset(engine.ResetOptions{
 			Name:         name,
@@ -108,9 +105,7 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 		Confirm:      confirm,
 	})
 	if res != nil {
-		// Also on a mid-teardown failure: the partial result keeps the changes complete up to
-		// the failure point (→ issue #131, outturn ADR-0020). No generation slot — reset never
-		// moves the profile pointer (FS-only teardown).
+		// A partial result on failure still carries the changes made before the failure.
 		attachResetPayload(subject, res, err)
 	}
 	if err != nil {
@@ -126,10 +121,8 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 	return nil
 }
 
-// printResetPlan prints reset --dryrun's removal targets to stdout (it owns the machine-readable output; one per line;
-// → docs/spec.md stream discipline, ADR-0023). It is not suppressed even under silent-on-success (the stdout-ownership principle; → ADR-0031).
-// Under --json the stdout lines are suppressed at this single chokepoint (the envelope owns
-// stdout); the stderr nothing-to-remove notice stays — human diagnostics coexist (→ ADR-0043 §2, issue #130).
+// printResetPlan prints reset --dryrun's removal targets to stdout, one per line. --json
+// suppresses the stdout lines; the stderr nothing-to-remove notice stays.
 func printResetPlan(res *engine.ResetResult) {
 	if !flagJSON {
 		for _, t := range res.RemovedSymlinks {
@@ -147,7 +140,7 @@ func printResetPlan(res *engine.ResetResult) {
 	}
 }
 
-// reportResetTargets prints the planned removals to stderr before the confirmation prompt (treated as progress; stdout is reserved for machine-readable output).
+// reportResetTargets prints the planned removals to stderr before the confirmation prompt.
 func reportResetTargets(res *engine.ResetResult, name string) {
 	fmt.Fprintf(os.Stderr, "layat: reset %s removal targets (root=%s):\n", name, res.Root)
 	for _, t := range res.RemovedSymlinks {
@@ -164,7 +157,7 @@ func reportResetTargets(res *engine.ResetResult, name string) {
 	}
 }
 
-// reportResetResult prints the actual removal result to stderr (stdout is reserved for machine-readable output; → ADR-0023).
+// reportResetResult prints the actual removal result to stderr.
 func reportResetResult(res *engine.ResetResult, name string) {
 	fmt.Fprintf(os.Stderr, "layat: reset %s done (root=%s)\n", name, res.Root)
 	for _, t := range res.RemovedSymlinks {
@@ -184,23 +177,14 @@ func reportResetResult(res *engine.ResetResult, name string) {
 	}
 }
 
-// resetPromptAllowed reports whether reset may prompt interactively: it requires a TTY, and
-// --json unconditionally forbids it — machine consumption never prompts, so without --yes the
-// confirmPolicy refuse path fails fast exactly like the non-interactive case (→ ADR-0043 §8,
-// docs/spec.md "reset --json は --yes 必須").
+// resetPromptAllowed reports whether reset may prompt: it requires a TTY, and --json forbids it.
 func resetPromptAllowed(interactive, jsonMode bool) bool {
 	return interactive && !jsonMode
 }
 
-// confirmPolicy decides the confirmation policy for a destructive command from --yes and TTY state (→ ADR-0025 §5).
-//   - --yes: skip confirmation (needPrompt=false, err=nil)
-//   - no --yes + interactive environment: require a confirmation prompt (needPrompt=true)
-//   - no --yes + non-interactive environment: error immediately to prevent a hang / accidental deletion on empty input (refuse)
-//
-// operation is the subcommand the refusal names ("reset" / "prune"): the policy is shared, but a
-// refusal that named the wrong command would send the reader to the wrong flag.
-// runReset / runPrune pass in the result of isInteractive() to use it (a nix-independent,
-// unit-testable seam).
+// confirmPolicy decides a destructive command's confirmation: --yes skips it, an interactive
+// environment prompts, and a non-interactive one is refused. operation names the command in the
+// refusal.
 func confirmPolicy(yes, interactive bool, operation string) (needPrompt bool, err error) {
 	if yes {
 		return false, nil
@@ -211,8 +195,7 @@ func confirmPolicy(yes, interactive bool, operation string) (needPrompt bool, er
 	return true, nil
 }
 
-// isInteractive returns whether stdin is a TTY (attached to a terminal) (→ ADR-0025 §5).
-// It decides using stdlib only (os.ModeCharDevice). false under pipe / redirect / CI.
+// isInteractive reports whether stdin is a TTY; false under pipe / redirect / CI.
 func isInteractive() bool {
 	fi, err := os.Stdin.Stat()
 	if err != nil {

@@ -10,11 +10,8 @@ import (
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
-// rollbackResultInfo / rollbackEnvInfo are rollback's outturn info slots (→ issue #196): empty
-// seat types held as nil pointers, so both info keys stay out of the document exactly as before.
-// The generation transition rides generation.before/after, not info; the seats are here so later
-// mutation run facts arrive as field additions alone (→ applyResultInfo in apply.go for the
-// full rationale).
+// rollbackResultInfo / rollbackEnvInfo are rollback's outturn info slots, reserved for future run
+// facts and held as nil pointers (see applyResultInfo).
 type (
 	rollbackResultInfo struct{}
 	rollbackEnvInfo    struct{}
@@ -23,7 +20,7 @@ type (
 // rollbackRun is rollback's concrete run instantiation, threaded from RunE into runRollback.
 type rollbackRun = outturnRun[*rollbackResultInfo, *rollbackEnvInfo]
 
-// beginRollbackRun starts rollback's run (→ beginOutturnRun, beginApplyRun).
+// beginRollbackRun starts rollback's run.
 func beginRollbackRun(command string) *rollbackRun {
 	return beginOutturnRun[*rollbackResultInfo, *rollbackEnvInfo](command)
 }
@@ -45,8 +42,7 @@ func newRollbackCmd() *cobra.Command {
 
 // runRollback confirms rootKind via eval pre-resolution (home mode only) and drives engine.Rollback.
 func runRollback(run *rollbackRun, name string) error {
-	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
-	// rollback is name-required (no --all), so the run always holds exactly this one (→ issue #164).
+	// The config name is the run's single outturn subject.
 	subject := run.beginSubject(name)
 	gen, err := newGenerator()
 	if err != nil {
@@ -72,9 +68,7 @@ func runRollback(run *rollbackRun, name string) error {
 		RootOverride: flagRoot,
 	})
 	if res != nil {
-		// The From→To transition rides generation.before/after (GenBefore/GenAfter), not
-		// result.info — no double encoding (→ issue #131, outturn ADR-0015). A stage-failure
-		// partial result maps the same way, with the pointer pinned at the unmoved generation.
+		// The From→To transition rides generation.before/after, also for a partial result.
 		attachMutationPayload(subject, &res.Result, err)
 	}
 	if err != nil {
@@ -87,7 +81,7 @@ func runRollback(run *rollbackRun, name string) error {
 	return nil
 }
 
-// reportRollback prints the generation transition and placement diff to stderr (stdout is reserved for machine-readable output; → ADR-0023).
+// reportRollback prints the generation transition and placement diff to stderr.
 func reportRollback(res *engine.RollbackResult, name string) {
 	fmt.Fprintf(os.Stderr, "layat: rollback %s done (generation %d → %d, root=%s)\n", name, res.From, res.To, res.Root)
 	for _, t := range res.Placed {

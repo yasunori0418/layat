@@ -1,10 +1,5 @@
-// Command layat is the primary-UX CLI that drives the placement engine (internal/engine) (→ ADR-0007, ADR-0011).
-//
-// This slice (#7) is scoped to getting project mode's `layat apply [<name>]` end-to-end through a flake
-// entrypoint. The execution order follows docs/spec.md "execution flow":
-// "eval first (rootKind) → flock → in-lock build → place → --set → remove .pending"; the engine owns
-// flock through build, placement, and commit, while the CLI handles the orchestration of entrypoint
-// discovery and nix eval/build (→ ADR-0023, ADR-0025).
+// Command layat is the CLI that drives the placement engine (internal/engine). The engine owns
+// flock, build, placement and commit; the CLI handles entrypoint discovery and nix eval / build.
 package main
 
 import (
@@ -20,48 +15,28 @@ import (
 	"github.com/yasunori0418/layat/internal/paths"
 )
 
-// version is the layat version, wired to cobra's Version field and shown by `layat --version`
-// (→ ADR-0042). The nix build injects the VERSION file's value via ldflags (-X main.version=...);
-// a plain `go build` without ldflags leaves it "dev" so the CLI still works out of tree. The
-// variable name (main.version) is a fixed contract: #130 reads it through a DTO as the source of
-// tool.version for the outturn envelope — do not rename.
+// version is the layat version shown by `layat --version` and used as the envelope's tool.version.
+// The nix build injects it via ldflags (-X main.version=...); a plain `go build` leaves it "dev".
 var version = "dev"
 
 // Note: cobra's Version field adds only a `--version` flag, not a `version` subcommand.
 
-// legacyStateDirHintFmt is the one-line notice printed to stderr when the pre-rename state
-// directory is still around (→ ADR-0054 §8, issue #389). nput's generations are not carried
-// over — layat starts at generation 1 in its own base — and the old directory keeps its
-// generation links out of the Nix garbage collector's reach until it is gone, so leaving it
-// alone forever quietly pins store paths nothing reads any more. The README section it points
-// at holds both routes (migrate with gcroot re-registration, or delete). The two %s take the
-// resolved absolute paths, as every other stderr line of this CLI does (→ reportResetTargets):
-// the reader is being asked to move or delete that directory by hand, so the line names it
-// rather than making them expand <state> themselves. The wording is English, like the rest of
-// the CLI's output. Removed in the next minor (→ issue #392).
+// legacyStateDirHintFmt is the stderr notice printed while the pre-rename state directory exists.
+// nput's generations are not carried over, and the old directory still roots them against Nix GC.
+// The two %s take the resolved absolute paths.
 const legacyStateDirHintFmt = "layat: found the pre-rename state directory %s. " +
 	"Its generations are not carried over: layat keeps its own under %s " +
 	"and starts from generation 1. Migrate or delete it by hand — see the \"Migrating from nput\" " +
 	"section of https://github.com/yasunori0418/layat#migrating-from-nput . " +
 	"Until it is gone, the Nix garbage collector cannot collect the old generations it still roots."
 
-// legacyStateDir returns the pre-rename profile base <state>/nix/profiles/nput, the sibling
-// of paths.Base's <state>/nix/profiles/layat (→ ADR-0024).
+// legacyStateDir returns the pre-rename profile base <state>/nix/profiles/nput.
 func legacyStateDir(stateDir string) string {
 	return filepath.Join(stateDir, "nix", "profiles", "nput")
 }
 
-// printLegacyStateDirHint writes the hint to stderr when <state>/nix/profiles/nput is a
-// directory. It is a single os.Stat and nothing else: no migration, no suppression flag
-// (→ ADR-0054 §8). Like the rename notice it replaces, it is deliberately stderr-only, so the
-// --json envelope on stdout stays a clean outturn contract (→ ADR-0043, ADR-0054 §6). Anything
-// that is not a directory is passed over: the line calls what it found a state directory and
-// describes the generations inside it, so a stray file of that name would be told a story
-// about itself that is not true. os.Stat follows symlinks, so a symlink to the old profile
-// base still gets the hint — the generations it points at are exactly what the hint is about.
-// A state base that cannot be resolved ($HOME unset and no $XDG_STATE_HOME) or a stat that
-// fails for any other reason stays silent too — a hint about a directory whose presence is
-// unknown would be worse than none, and nothing here may affect the command's own outcome.
+// printLegacyStateDirHint writes the hint to stderr when <state>/nix/profiles/nput is a directory
+// (symlinks followed). Anything else, an unresolvable state base or a failed stat stays silent.
 func printLegacyStateDirHint() {
 	stateDir, err := paths.StateDir()
 	if err != nil {
@@ -75,14 +50,14 @@ func printLegacyStateDirHint() {
 	fmt.Fprintf(os.Stderr, legacyStateDirHintFmt+"\n", legacy, paths.Base(stateDir))
 }
 
-// Global flags (→ docs/spec.md "global flags").
+// Global flags.
 var (
 	flagFile        string // -f/--file: specify the entrypoint explicitly
 	flagRoot        string // --root: explicitly override the resolved root
 	flagNoWait      bool   // --no-wait: skip without waiting on flock contention (for shellHook)
-	flagVerbose     bool   // -v/--verbose: print the placement report (summary + per-target lines); silent on success by default (→ ADR-0031)
-	flagJSON        bool   // --json: write an outturn envelope (single JSON document) to stdout at command completion (→ ADR-0043, issue #130)
-	flagDebug       bool   // --debug: disclose the internally run nix commands on stderr (→ ADR-0031)
+	flagVerbose     bool   // -v/--verbose: print the placement report (summary + per-target lines); silent on success by default
+	flagJSON        bool   // --json: write an outturn envelope (single JSON document) to stdout at command completion
+	flagDebug       bool   // --debug: disclose the internally run nix commands on stderr
 	flagRecopy      bool   // --recopy: apply modifier; unconditionally re-copy every copy target from src, overwriting
 	flagYes         bool   // -y/--yes: skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)
 	flagDryrun      bool   // --dryrun: apply / reset / prune modifier; show the plan with zero side effects
@@ -90,19 +65,15 @@ var (
 	flagHomeRoot    bool   // --home-root: apply --all modifier; apply only homeRoot configs
 	flagSystemRoot  bool   // --system-root: apply --all modifier; apply only systemRoot configs (future seam)
 	flagManifest    string // --manifest: apply a pre-built manifest (link-farm) directly (for module activation)
-	flagGenerator   string // --generator: the manifest generator to use; "" = not specified (→ ADR-0056)
-	// flagBackup / flagBackupEnabled are --backup[=suffix] (apply modifier; → ADR-0045, issue #169): a
-	// cobra optional-value flag (NoOptDefVal = "layat-backup"). Bare --backup sets flagBackup to the
-	// default suffix; --backup=<suffix> (the "=" form only — cobra's NoOptDefVal treats a bare next
-	// token as a positional arg, not a space-separated value) sets it to <suffix>. flagBackupEnabled
-	// distinguishes "flag absent" from "flag present" (flagBackup alone can't: its value is never empty
-	// either way), set from cmd.Flags().Changed("backup") in apply's RunE.
+	flagGenerator   string // --generator: the manifest generator to use; "" = not specified
+	// flagBackup / flagBackupEnabled are --backup[=suffix]: bare --backup uses "layat-backup", a custom
+	// suffix needs the "=" form. flagBackupEnabled records whether the flag was given at all.
 	flagBackup        string
 	flagBackupEnabled bool
 )
 
-// exitError is an error carrying a specific exit code that cobra RunE returns (→ docs/spec.md exit code table).
-// apply --dryrun's conflict is exit 2. If msg is empty, main exits with the code alone and emits no extra output.
+// exitError is an error carrying a specific exit code, such as apply --dryrun's conflict (2).
+// With an empty msg, main exits with the code alone.
 type exitError struct {
 	code int
 	msg  string
@@ -110,7 +81,7 @@ type exitError struct {
 
 func (e *exitError) Error() string { return e.msg }
 
-// rootCmdLong discloses the internally run nix commands in --help (for transparency; selectively runnable by hand; → ADR-0007).
+// rootCmdLong is the root --help text, which discloses the internally run nix commands.
 const rootCmdLong = `layat lays contents at root-relative targets, as the manifest says.
 It does not generate configuration (configuration is written in Nix and evaluated by nix build).
 
@@ -144,26 +115,15 @@ func newRootCmd() *cobra.Command {
 		Use:   "layat",
 		Short: "Lays contents at root-relative targets, as the manifest says.",
 		Long:  rootCmdLong,
-		// `layat --version` prints the embedded version (a flag only — cobra does not add a `version`
-		// subcommand). Leave SetVersionTemplate unset: cobra's default template ("layat version X.Y.Z\n")
-		// is exactly what we want (→ ADR-0042). No `-v` shorthand: -v is already --verbose (below), and
-		// cobra skips the shorthand on that collision.
+		// `layat --version` prints the version with cobra's default template. There is no -v shorthand,
+		// since -v is --verbose.
 		Version: version,
-		// Errors are printed exactly once in main, so suppress cobra's automatic usage/error display.
+		// main prints errors exactly once, so cobra's usage / error display is suppressed.
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}
-	// The outturn run is built, begun, and published to outturnReport at each subcommand's RunE
-	// top (→ issue #196: the run is typed by that command's info pair), not via a
-	// PersistentPreRun: cobra's auto-added utility commands (help / completion / __complete)
-	// own stdout with their own text and must never emit an envelope, and PersistentPreRun
-	// cannot tell them apart robustly (→ issue #130, docs/spec.md).
-	//
-	// The legacy state directory hint, unlike the envelope, is a fixed stderr line that no
-	// command needs to type, so PersistentPreRun is the right seam for it: one line for every
-	// subcommand (→ ADR-0054 §8, issue #389). `--version` and `--help` return inside cobra's
-	// execute() before this runs, so neither the installCheckPhase's `layat --version`
-	// assertion nor TestVersionFlagOutput sees the line.
+	// Each subcommand's RunE begins its own outturn run, so help / completion never emit an envelope.
+	// PersistentPreRun prints the legacy state directory hint for every subcommand.
 	root.PersistentPreRun = func(_ *cobra.Command, _ []string) { printLegacyStateDirHint() }
 	pf := root.PersistentFlags()
 	pf.StringVarP(&flagFile, "file", "f", "", "Specify the entrypoint explicitly (overrides autodiscovery)")
@@ -191,10 +151,10 @@ func newRootCmd() *cobra.Command {
 	return root
 }
 
-// exitCodeX is the interface satisfied by errors that carry an exit code (such as apply --all's aggregate exit code).
+// exitCodeX is the interface of errors that carry an exit code (such as apply --all's aggregate).
 type exitCodeX interface{ ExitCode() int }
 
-// exitCodeError is an error that explicitly carries an exit code (→ docs/spec.md "exit codes").
+// exitCodeError is an error that explicitly carries an exit code.
 type exitCodeError struct {
 	code int
 	msg  string
@@ -206,23 +166,20 @@ func (e *exitCodeError) ExitCode() int { return e.code }
 func main() {
 	err := newRootCmd().Execute()
 
-	// Emit the outturn envelope — exactly one JSON document on stdout, exactly once, after the
-	// command has completed — before the exit-code handling below (which is unchanged: the
-	// envelope's status mirrors, never replaces, the exit code · → ADR-0043 §6, issue #130).
+	// Emit the outturn envelope once on stdout before the exit-code handling; its status mirrors
+	// the exit code.
 	if flagJSON && outturnReport.began() {
 		if emitErr := outturnReport.emit(err); emitErr != nil {
 			fmt.Fprintf(os.Stderr, "layat: cannot write the --json envelope: %v\n", emitErr)
 			if err == nil {
-				// The command itself succeeded but the machine channel is broken; the consumer
-				// must not read the missing/partial document as success.
+				// The command succeeded but the envelope was not written, so do not exit 0.
 				os.Exit(1)
 			}
 		}
 	}
 
 	if err != nil {
-		// An error carrying an exit code (such as apply --dryrun conflict=2) exits with the code alone
-		// (the plan was already written to stdout; → docs/spec.md exit code table).
+		// An exitError exits with its code alone; the plan is already on stdout.
 		var ee *exitError
 		if errors.As(err, &ee) {
 			if ee.msg != "" {
@@ -231,21 +188,20 @@ func main() {
 			os.Exit(ee.code)
 		}
 
-		// A generator failure is shown the way the CLI decides (→ ADR-0055 §6); anything else as-is.
+		// A generator failure is formatted by printGeneratorError; anything else is printed as-is.
 		var ge *generator.Error
 		if errors.As(err, &ge) {
 			printGeneratorError(os.Stderr, ge)
 		} else {
 			fmt.Fprintln(os.Stderr, err)
 		}
-		// The engine rejects a schemaVersion skew between the CLI and the flake pin (→ manifest.validate).
-		// Detect it at the top level and supplement the cause and the fix (→ docs/spec.md "manifest.json schema").
+		// On a manifest schemaVersion skew between the CLI and the flake pin, add the cause and the fix.
 		if errors.Is(err, manifest.ErrSchemaVersionUnsupported) {
 			fmt.Fprintln(os.Stderr, "\nlayat: the layat version pinned by the CLI (engine) and by the flake may be out of sync.\n"+
 				"  The flake's layat input is generating a manifest newer than the CLI.\n"+
 				"  Update the CLI, or lower the flake's layat input to match the CLI so both versions align.")
 		}
-		// An error carrying an exit code (such as apply --all's aggregate) exits with that code (→ docs/spec.md, ADR-0024).
+		// An error carrying an exit code (such as apply --all's aggregate) exits with that code.
 		var ec exitCodeX
 		if errors.As(err, &ec) {
 			os.Exit(ec.ExitCode())

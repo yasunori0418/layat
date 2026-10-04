@@ -11,20 +11,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// defaultTemplateRef is the fixed flake ref of the template that init expands (registry-independent, hardcoded;
-// → ADR-0007). The LAYAT_TEMPLATE_REF environment variable overrides it (an escape hatch for E2E / fork users; → plan Q3).
+// defaultTemplateRef is the fixed flake ref of init's templates. LAYAT_TEMPLATE_REF overrides it.
 const defaultTemplateRef = "github:yasunori0418/layat"
 
 // initTemplates is the template names that init accepts (matching the output names in flake.templates).
 var initTemplates = []string{"standalone", "project"}
 
-// initInfo is init's envelope-wide info: the run facts of the template expansion (→ issue #132,
-// outturn ADR-0018; typed by #196). init registers no subject, so its result.info slot is unused
-// and stays an anonymous *struct{} left nil.
-//
-// Carried as a pointer: an unknown template name fails before setEnvelopeInfo, and only a nil
-// pointer keeps the envelope's info omitted there (a value struct would newly emit
-// "info":{"template":"","ref":""} · → issue #196 §4).
+// initInfo is init's envelope-wide info: the template expansion's run facts. It is a pointer so
+// failures before setEnvelopeInfo omit info.
 type initInfo struct {
 	Template string `json:"template"`
 	Ref      string `json:"ref"`
@@ -33,7 +27,7 @@ type initInfo struct {
 // initRun is init's concrete run instantiation, threaded from RunE into runInit.
 type initRun = outturnRun[*struct{}, *initInfo]
 
-// beginInitRun starts init's run (→ beginOutturnRun, beginApplyRun).
+// beginInitRun starts init's run.
 func beginInitRun(command string) *initRun {
 	return beginOutturnRun[*struct{}, *initInfo](command)
 }
@@ -57,8 +51,8 @@ func newInitCmd() *cobra.Command {
 	}
 }
 
-// runInit validates the template name and runs `nix flake init -t <ref>#<template>` in the CWD.
-// Because it generates a new flake, it does not go through entrypoint discovery (the generator's Discover; → plan 8).
+// runInit validates the template name and runs `nix flake init -t <ref>#<template>` in the CWD,
+// without entrypoint discovery.
 func runInit(run *initRun, template string) error {
 	if !isValidTemplate(template) {
 		return fmt.Errorf("layat: unknown template: %q (valid values: %s)", template, strings.Join(initTemplates, " / "))
@@ -69,9 +63,8 @@ func runInit(run *initRun, template string) error {
 		ref = env
 	}
 
-	// init has no subject (no config), so the run facts ride in the envelope-wide info while
-	// results stays [] (outturn ADR-0018 · → issue #132). Registered before the expansion so a
-	// failed init still reports what it attempted alongside the top-level error.
+	// init has no subject, so the run facts ride the envelope-wide info. They are set before the
+	// expansion so a failed init still reports them.
 	run.setEnvelopeInfo(&initInfo{Template: template, Ref: ref})
 
 	args := flakeInitArgs(template, ref)
@@ -79,13 +72,11 @@ func runInit(run *initRun, template string) error {
 		fmt.Fprintf(os.Stderr, "layat: + nix %s\n", strings.Join(args, " "))
 	}
 
-	// Capture stderr. nix flake init prints the list of created files to stderr, so on success forward it,
-	// and on failure classify and guide the experimental-not-enabled case, attaching raw stderr otherwise (UX consistent with apply; → plan Q6).
+	// Capture stderr: forward nix's created-file list on success, classify it on failure.
 	cmd := exec.Command("nix", args...)
 	var stderr bytes.Buffer
 	cmd.Stdout = os.Stdout
-	// Under --json stdout belongs to the envelope alone; route any nix stdout to stderr
-	// (nix flake init normally writes only to stderr anyway · → ADR-0043 §2, issue #130).
+	// Under --json stdout belongs to the envelope, so nix's stdout goes to stderr.
 	if flagJSON {
 		cmd.Stdout = os.Stderr
 	}
@@ -106,16 +97,13 @@ func isValidTemplate(template string) bool {
 	return slices.Contains(initTemplates, template)
 }
 
-// flakeInitArgs is a pure function that builds the argv for `nix flake init` (→ plan 6; a unit-test target).
-// It points to the source template via the ref#template installable.
+// flakeInitArgs builds the argv for `nix flake init` with the ref#template installable.
 func flakeInitArgs(template, ref string) []string {
 	return []string{"flake", "init", "-t", ref + "#" + template}
 }
 
-// initNixError classifies a failed `nix flake init`. For experimental-features not enabled it guides
-// the prerequisites, and otherwise it returns the raw nix stderr attached without swallowing it
-// (→ ADR-0025 §1). init runs nix directly rather than through a manifest generator (→ ADR-0055 §1),
-// so it keeps its own copy of this formatting.
+// initNixError classifies a failed `nix flake init`: guidance for disabled experimental features,
+// otherwise the raw nix stderr attached.
 func initNixError(args []string, stderr string, runErr error) error {
 	if initExperimentalDisabled(stderr) {
 		return initExperimentalGuidance(stderr)
@@ -127,15 +115,15 @@ func initNixError(args []string, stderr string, runErr error) error {
 	return fmt.Errorf("layat: nix %s failed:\n%s", args[0], trimmed)
 }
 
-// initExperimentalDisabled detects the nix-command / flakes not-enabled error (→ ADR-0025 §1).
+// initExperimentalDisabled detects the nix-command / flakes not-enabled error.
 func initExperimentalDisabled(stderr string) bool {
 	return strings.Contains(stderr, "experimental Nix feature") ||
 		strings.Contains(stderr, "experimental-features") ||
 		(strings.Contains(stderr, "flakes") && strings.Contains(stderr, "disabled"))
 }
 
-// initExperimentalGuidance builds an error that guides the prerequisites and how to enable them (attaching the raw nix error too).
-// The CLI does not add --extra-experimental-features automatically (it will not silently override environment settings; → ADR-0025 §1).
+// initExperimentalGuidance builds an error explaining how to enable experimental features, with
+// the raw nix error attached. The CLI never adds --extra-experimental-features itself.
 func initExperimentalGuidance(stderr string) error {
 	return fmt.Errorf(`layat: nix's experimental-features are not enabled.
 This command internally uses `+"`nix eval`"+` / `+"`nix build`"+` (the new CLI) and flakes,
