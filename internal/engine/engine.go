@@ -509,7 +509,7 @@ func resolveRoot(rootKind, fixedRoot, rootOverride, workDir string, git GitFunc)
 		}
 		return filepath.Abs(fixedRoot)
 	case manifest.RootKindSystem:
-		return "", fmt.Errorf("layat: root = systemRoot (system mode) is not implemented (→ ADR-0013)")
+		return "", fmt.Errorf("layat: root = systemRoot (system mode) is not implemented")
 	case "":
 		return "", fmt.Errorf("layat: rootKind is undetermined (eval prefetch or a manifest is required)")
 	default:

@@ -201,7 +201,7 @@ func TestApplyResultCommitFailurePartialResult(t *testing.T) {
 		t.Errorf("FailedTarget/Unreached = %q/%v, want empty (commit failure is not entry-scoped)", res.FailedTarget, res.Unreached)
 	}
 	if res.Unwound {
-		t.Error("Unwound = true, want false (a commit failure is not unwound; → ADR-0044 §2)")
+		t.Error("Unwound = true, want false (a commit failure is not unwound)")
 	}
 	if res.GenBefore != nil || res.GenAfter != nil {
 		t.Errorf("GenBefore/GenAfter = %v/%v, want nil/nil (no generation was ever committed)", res.GenBefore, res.GenAfter)

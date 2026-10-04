@@ -19,7 +19,7 @@ func (a *applier) checkOutOfStore() error {
 		dest := planner.LinkDest(e)
 		if _, err := os.Lstat(dest); err != nil {
 			if os.IsNotExist(err) {
-				return fmt.Errorf("layat: out-of-store link target does not exist (target: %s -> %s); will not create a dangling symlink (→ ADR-0001)", e.Target, dest)
+				return fmt.Errorf("layat: out-of-store link target does not exist (target: %s -> %s); will not create a dangling symlink", e.Target, dest)
 			}
 			return fmt.Errorf("layat: cannot check out-of-store link target (target: %s -> %s): %w", e.Target, dest, err)
 		}

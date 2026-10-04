@@ -31,7 +31,7 @@ func generationUnchanged(profileLink, newLinkFarm string) (bool, error) {
 func (a *applier) repairDrift(plan planner.Plan, recopy bool) error {
 	// Guards the invariant that any PreRemove changes the derivation and so never reaches here.
 	if len(plan.PreRemove) > 0 {
-		return fmt.Errorf("layat: internal invariant violated: generation-skip drift repair received %d pre-removal(s) (→ ADR-0046, ADR-0047)", len(plan.PreRemove))
+		return fmt.Errorf("layat: internal invariant violated: generation-skip drift repair received %d pre-removal(s)", len(plan.PreRemove))
 	}
 	if err := a.backup(plan.Backup); err != nil {
 		return err

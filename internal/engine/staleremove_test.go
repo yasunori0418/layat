@@ -594,7 +594,7 @@ func TestApplyAncestorSelfRecordedMigrationDoesNotPruneOuterAncestor(t *testing.
 		t.Errorf("Removed = %v, want [outer/skills] (the pre-removed ancestor)", res.Removed)
 	}
 	if len(res.Pruned) != 0 {
-		t.Errorf("Pruned = %v, want none (PreRemove does not prune; outer/ is reused by Place · ADR-0047 §5)", res.Pruned)
+		t.Errorf("Pruned = %v, want none (PreRemove does not prune; outer/ is reused by Place)", res.Pruned)
 	}
 
 	// outer/skills is now a real directory holding the migrated child; outer/ survives on
@@ -637,7 +637,7 @@ func TestPreRemoveDoesNotPruneAncestors(t *testing.T) {
 	}
 
 	if len(a.result.Pruned) != 0 {
-		t.Errorf("Pruned = %v, want none (preRemove must not call the pruning walk · ADR-0047 §5)", a.result.Pruned)
+		t.Errorf("Pruned = %v, want none (preRemove must not call the pruning walk)", a.result.Pruned)
 	}
 	if info, err := os.Lstat(filepath.Join(root, "outer")); err != nil {
 		t.Errorf("outer/ must survive the preRemove untouched: %v", err)
