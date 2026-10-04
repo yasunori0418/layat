@@ -1,12 +1,6 @@
-# nix-unit: resolveEntry の src 文字列化・marker→enum 変換と types の marker 判別をアサートする
-# （→ ADR-0001, ADR-0010, ADR-0013）。
-#
-# #71 が unit-test seam として露出した `layat.__internal.resolveEntry` と、`lib/types.nix` の
-# `isRootMarker` / `isOutOfStoreMarker` を直接突く。resolveEntry は manifest 全体を介さず
-# 単一 entry の src 種別判定・文字列化のみを検証できる最小の境界。
-#
-# store パスの hash 揺れを避けるため src には toString が安定する fake な flake-input 相当
-# （`{ outPath = …; }`）を使う。これは srcType の store-backed 判定（`? outPath`）を通る正当な test double。
+# nix-unit: `layat.__internal.resolveEntry` の src 文字列化・marker→enum 変換と、
+# `lib/types.nix` の `isRootMarker` / `isOutOfStoreMarker` の判別をアサートする。
+# src は toString が安定する fake な flake-input 相当（`{ outPath = …; }`）を使う。
 { lib, layat }:
 let
   inherit (layat.__internal) resolveEntry;
@@ -81,7 +75,7 @@ in
     };
   };
 
-  # ---- _layatMarker 判別タグが出力に漏れないこと（Go contract は clean enum・→ ADR-0010）----
+  # ---- _layatMarker 判別タグが出力に漏れないこと（Go contract は clean enum）----
   testResolveMarkerNoTagLeakStore = {
     expr = storeEntry ? _layatMarker;
     expected = false;

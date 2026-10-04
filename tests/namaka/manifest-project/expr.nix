@@ -1,6 +1,5 @@
-# namaka: manifest.json 全体（= normalizeManifest 出力）のスナップショット回帰（→ ADR-0006）。
-# src は toString が安定する fake な flake-input 相当（`{ outPath = …; }`）を使い、
-# store hash 揺れでスナップショットが壊れないようにする。
+# namaka: normalizeManifest 出力のスナップショット回帰。
+# src は toString が安定する fake な flake-input 相当（`{ outPath = …; }`）を使う。
 { lib, layat }:
 layat.normalizeManifest {
   inherit lib;

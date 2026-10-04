@@ -66,7 +66,7 @@
       );
 
       # devShell. On `nix develop` / direnv entry, put the pinned layat CLI on PATH
-      # and auto-place the config in shellHook. No .envrc is bundled (adopting direnv is the user's call・ADR-0018).
+      # and auto-place the config in shellHook. No .envrc is bundled (adopting direnv is the user's call).
       # If you use direnv, run `echo 'use flake' > .envrc && direnv allow` in the repo.
       devShells = forAllSystems (
         system:

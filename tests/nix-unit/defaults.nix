@@ -1,8 +1,5 @@
-# nix-unit: normalizeManifest のデフォルト適用・明示上書き・target 辞書順をアサートする
-# （→ ADR-0010, ADR-0014, ADR-0016）。
-#
-# store パスの hash 揺れを避けるため src には toString が安定する fake な flake-input 相当
-# （`{ outPath = …; }`）を使う。これは srcType の store-backed 判定（`? outPath`）を通る正当な test double。
+# nix-unit: normalizeManifest のデフォルト適用・明示上書き・target 辞書順をアサートする。
+# src は toString が安定する fake な flake-input 相当（`{ outPath = …; }`）を使う。
 { lib, layat }:
 let
   fakeSrc = {
@@ -50,7 +47,7 @@ in
     };
   };
 
-  # entries は target（属性キー）の辞書順で決定的に配列化される（→ ADR-0014, ADR-0016）。
+  # entries は target（属性キー）の辞書順で決定的に配列化される。
   testEntriesSortedByTarget = {
     expr =
       map (e: e.target)

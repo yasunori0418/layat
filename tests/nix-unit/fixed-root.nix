@@ -1,13 +1,6 @@
-# nix-unit: fixed root（root に絶対パス文字列を渡す）の肯定側をアサートする
-# （→ REQ-dd10d820・ADR-0010・Issue #288）。
-#
-# root marker（projectRoot / homeRoot / systemRoot）は実行時解決なのでパスを持たないが、
-# marker でない文字列を渡した場合だけ `rootKind = "fixed"` になり評価時に確定した絶対パスを
-# `root` に併記する。structure.nix は project root（否定側 = 固定 root を持たない）を見るので、
-# その対になる肯定側をここで見る。
-#
-# store パスの hash 揺れを避けるため src には toString が安定する fake な flake-input 相当
-# （`{ outPath = …; }`）を使う。これは srcType の store-backed 判定（`? outPath`）を通る正当な test double。
+# nix-unit: fixed root（root に絶対パス文字列を渡すと `rootKind = "fixed"` + `root` になる）をアサートする。
+# marker 側（固定 root を持たない）は structure.nix が見る。
+# src は toString が安定する fake な flake-input 相当（`{ outPath = …; }`）を使う。
 { lib, layat }:
 let
   fakeSrc = {
@@ -22,7 +15,7 @@ let
   };
 in
 {
-  # marker でない文字列を root に渡すと fixed になる（→ REQ-dd10d820, ADR-0010）。
+  # marker でない文字列を root に渡すと fixed になる。
   testFixedRootKind = {
     expr = fixed.root.rootKind;
     expected = "fixed";
@@ -59,12 +52,9 @@ in
     };
   };
 
-  # entry の正規化は root 種別に依らない。既定値そのものは defaults.nix が持つので、
-  # ここは project root との同値比較で独立性だけを主張する（期待値を写すと既定値の
-  # 知識が二重管理になる）。真偽値へは畳まない（畳むと落ちたとき `expected: true /
-  # got: false` しか出ず、どのフィールドがずれたか分からない）。
-  # 現行の resolveEntry は root を取らないのでこの結合は構造的に起こり得ず、entry の
-  # 解決へ root を渡す設計変更が入ったときに初めて働く回帰網である。
+  # entry の正規化は root 種別に依らない。project root との同値比較で見る
+  # （真偽値へ畳まず、ずれたフィールドが出力に出るようにする）。現行の resolveEntry は
+  # root を取らず、entry の解決へ root を渡す変更が入ったときの回帰網になる。
   testFixedRootEntryUnaffected = {
     expr = fixed.entries;
     expected =
@@ -75,9 +65,7 @@ in
       }).entries;
   };
 
-  # 対になる否定側の再確認: homeRoot marker は fixed にならず絶対パスも持たない
-  # （project 分は structure.nix が見る。ここは fixed 判定が marker へ誤って広がらないことの
-  # 担保）。exact 一致なので `root` フィールドの不在まで見る。
+  # homeRoot marker は fixed にならず絶対パスも持たない（exact 一致で `root` の不在まで見る）。
   testFixedRootHomeMarkerShape = {
     expr = (norm layat.homeRoot { }).root;
     expected = {
