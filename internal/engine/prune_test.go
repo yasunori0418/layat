@@ -17,10 +17,8 @@ import (
 
 // --- fixture helpers -------------------------------------------------------
 //
-// The layout Prune walks is built by hand rather than by running Apply: the
-// verdict only reads the backref .root and the root's existence, so a fixture
-// made of directories and files covers every branch and keeps a series whose
-// root never existed expressible (→ TC-bc653f83-70ce-4920-b7cd-9b70a4cd2cae).
+// The layout Prune walks is built by hand rather than by running Apply, since
+// the verdict only reads the backref .root and the root's existence.
 
 // pruneBases returns a state dir (whose paths.Base is created) and a system
 // base (created as-is), both under tmpdirs. The system base is a tmpdir so no
@@ -107,11 +105,8 @@ func liveSeries(t *testing.T, base, hash string, names ...string) (hashDir, root
 	return hashDir, root
 }
 
-// warnRecorder collects the warnings Prune emits, formatted: every skip goes
-// through one shared format string, so recording the format alone would make
-// every assertion "was anything warned" and let a warning that names the wrong
-// series or the wrong reason pass (the TCs require the reason and the base name
-// to be in the warning).
+// warnRecorder collects the warnings Prune emits, formatted, so assertions can
+// check the reason and the base name each warning carries.
 type warnRecorder struct {
 	msgs []string
 }
@@ -835,9 +830,7 @@ func TestPruneHoldsLocksWhileDeleting(t *testing.T) {
 	base := paths.Base(state)
 	// Two <name> profileDirs: the deletion window is the interval in which the
 	// first is already gone and the second is not. Probing only inside that
-	// interval is what makes this deterministic — a probe that ran before
-	// Prune took its locks would find them free for a reason that is not a
-	// defect.
+	// interval keeps the test deterministic.
 	hashDir := orphanSeries(t, base, "aaaa", "first", "second")
 	first := filepath.Join(hashDir, "first")
 	second := filepath.Join(hashDir, "second")
@@ -855,17 +848,9 @@ func TestPruneHoldsLocksWhileDeleting(t *testing.T) {
 		attempts  int  // acquisitions attempted inside the window
 		windowHit bool
 	}
-	// An implementation that releases before removing would let another holder
-	// take the lock on the <name> still standing (→ the same harm as
-	// RISK-2b17fefb-6e92-4513-9e7c-de21897c9cfe). The probe reports whether it
-	// ever got inside the window, so "no lock taken" cannot be confused with
-	// "never looked".
-	//
-	// Only "second" is probed. The window is defined by "first" being gone, so
-	// by then "first" has no lock key left to test — a variant releasing each
-	// <name> right after its own RemoveAll is outside what this shape can
-	// catch. What it does catch is a release that comes before the removals,
-	// which is the form the DSG's "hold them across the removal" rules out.
+	// The probe tries to take the lock on "second" inside the window and reports
+	// whether it ever got there, so "no lock taken" is not confused with "never
+	// looked". It catches a release that comes before the removals.
 	probed := make(chan probe, 1)
 	go func() {
 		var p probe
@@ -889,12 +874,8 @@ func TestPruneHoldsLocksWhileDeleting(t *testing.T) {
 			if err != nil {
 				continue
 			}
-			// lock.Acquire is open-then-flock, and a flock on an already
-			// unlinked fd always succeeds: being preempted between the two
-			// syscalls long enough for Prune to finish would otherwise look
-			// exactly like an early release. Re-check that the profileDir is
-			// still there, which it is only if the lock was genuinely free
-			// while the series stood.
+			// A flock on an already unlinked fd always succeeds, so the lock
+			// counts only if the profileDir is still there after acquiring it.
 			_, stillThere := os.Lstat(second)
 			_ = l.Release()
 			if stillThere == nil {
@@ -1012,20 +993,9 @@ func TestPruneErrorsWhenDeletionFailsForANonPermissionReason(t *testing.T) {
 	state, system := pruneBases(t)
 	base := paths.Base(state)
 	completed := orphanSeries(t, base, "aaaa", "cfg")
-	// A stray regular file in the series directory: every <name> and .root is
-	// removed, and the final rmdir of the <roothash> then fails with
-	// ENOTEMPTY. root cannot bypass ENOTEMPTY, so no Geteuid guard.
-	//
-	// What this fixes is that a non-permission failure is never folded into
-	// Skipped{permission-denied} — an implementation mapping every failure to
-	// the permission reason would report "fix the permissions and it will go"
-	// for a series that will never go. It does NOT exercise the "nothing
-	// removed" side of the 2×2: by the time the rmdir runs, removedAny is
-	// already true. That cell has no root-proof static inducement at all
-	// (→ TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9 の当該セルの但し書き); what
-	// keeps prune.go's `!removedAny &&` guard honest is the permission pair —
-	// TestPruneSkipsSeriesItCannotBeginToDelete and
-	// TestPruneErrorsWhenDeletionFailsPartwayOnPermission.
+	// A stray regular file in the series directory makes the final rmdir of
+	// the <roothash> fail with ENOTEMPTY, which root cannot bypass. The failure
+	// must be an error, not Skipped{permission-denied}.
 	partial := writeSeries(t, base, seriesSpec{
 		hash:    "bbbb",
 		backref: filepath.Join(realTempDir(t), "gone"),
@@ -1034,14 +1004,9 @@ func TestPruneErrorsWhenDeletionFailsForANonPermissionReason(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(partial, "stray"), []byte("x"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	// A healthy orphan sorting after the failing one. Without it, an
-	// implementation that carries on past a broken series instead of stopping
-	// would pass every assertion below, the failing series always being the
-	// last one processed. This lives here rather than on the permission cases
-	// so the coverage survives a run as root
-	// (→ TP-deb05610-44bc-4962-8939-952392e5fbd0 の横断規約). What detects the
-	// carry-on is the exact-match check on Removed further down plus the
-	// mustExist on this series — loosening either leaves this fixture idle.
+	// A healthy orphan sorting after the failing one: the exact-match check on
+	// Removed and the mustExist on this series detect an implementation that
+	// carries on past a broken series instead of stopping.
 	later := orphanSeries(t, base, "cccc", "cfg")
 
 	var w warnRecorder
@@ -1089,14 +1054,9 @@ func TestPruneErrorsWhenDeletionFailsPartway(t *testing.T) {
 		backref: filepath.Join(realTempDir(t), "gone"),
 		names:   []string{"first", "second"},
 	})
-	// "first" is removable; "second" holds an entry that cannot be unlinked
-	// because "second" itself is read-only, so its RemoveAll fails after
-	// "first" is already gone. The inducement is EACCES, the same errno as
-	// TestPruneErrorsWhenDeletionFailsPartwayOnPermission — what this case
-	// fixes is not the errno but the reporting: Removed keeps the series
-	// completed before the failure, .root survives, and the broken series is
-	// absent from both Removed and Skipped. The non-permission side of the
-	// 2×2 rests on the ENOTEMPTY case above, which root cannot bypass.
+	// "second" is read-only, so its RemoveAll fails after "first" is gone.
+	// Removed keeps the series completed before the failure, .root survives,
+	// and the broken series is absent from both Removed and Skipped.
 	inner := filepath.Join(partial, "second", "inner")
 	if err := os.MkdirAll(inner, 0o755); err != nil {
 		t.Fatal(err)
@@ -1139,10 +1099,8 @@ func TestPruneErrorsWhenDeletionFailsPartwayOnPermission(t *testing.T) {
 	}
 	state, system := pruneBases(t)
 	base := paths.Base(state)
-	// Same shape as above, driven to make explicit that a permission failure
-	// after something was already removed is an error, not
-	// Skipped{permission-denied}: an implementation checking errors.Is before
-	// the progress state would pass every other cell.
+	// Same shape as above: a permission failure after something was already
+	// removed is an error, not Skipped{permission-denied}.
 	partial := writeSeries(t, base, seriesSpec{
 		hash:    "aaaa",
 		backref: filepath.Join(realTempDir(t), "gone"),
@@ -1181,11 +1139,8 @@ func TestPruneRemovesNamesBeforeBackref(t *testing.T) {
 	}
 	state, system := pruneBases(t)
 	base := paths.Base(state)
-	// A series that fails partway must still be reachable afterwards, which
-	// only holds when .root outlives the <name> profiles. That .root survives
-	// a failure is also asserted by TestPruneErrorsWhenDeletionFailsPartway;
-	// what is unique here is the consequence — a second run finds the same
-	// series again, which is the whole point of the removal order.
+	// A series that fails partway must still be reachable afterwards because
+	// .root outlives the <name> profiles: a second run finds the same series.
 	partial := writeSeries(t, base, seriesSpec{
 		hash:    "aaaa",
 		backref: filepath.Join(realTempDir(t), "gone"),

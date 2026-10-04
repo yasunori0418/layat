@@ -11,8 +11,7 @@ import (
 
 // tmpdir integration tests for generation skip + lstat drift repair (real FS · no nix · fakeCommit path).
 // fakeCommit links the profile link directly to the link-farm, so applying the same link-farm twice
-// makes generationUnchanged hold (project mode only), committing no new generation (--set omitted) and
-// running only the lstat repair.
+// makes generationUnchanged hold (project mode only) and runs only the lstat repair.
 
 // applyOnce is a shared helper that runs a single apply in project mode (roothash key).
 func applyOnce(t *testing.T, lf, name, root, state string, commits *[][2]string, warns *[]string) *Result {
@@ -202,7 +201,7 @@ func TestApplyGenerationSkipOnlyProjectMode(t *testing.T) {
 	state := realTempDir(t)
 	src := makeSrc(t, "x")
 
-	// home mode manifest (RootKindHome). RootOverride redirects root to a tmpdir (→ ADR-0017 --root overrides all modes).
+	// home mode manifest (RootKindHome). RootOverride redirects root to a tmpdir (--root overrides all modes).
 	hm := manifest.Manifest{
 		SchemaVersion: 1,
 		Root:          manifest.Root{RootKind: manifest.RootKindHome},

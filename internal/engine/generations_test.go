@@ -123,7 +123,7 @@ func TestRollbackReconverges(t *testing.T) {
 	if switched != 1 {
 		t.Errorf("switched generation = %d, want 1", switched)
 	}
-	// #130's generation observation mirrors From/To (numbers come from the listing, and the
+	// The generation observation mirrors From/To (numbers come from the listing, and the
 	// pointer moves last), and Entries carries the rolled-back-to generation's full inventory.
 	if res.GenBefore == nil || *res.GenBefore != 2 || res.GenAfter == nil || *res.GenAfter != 1 {
 		t.Errorf("GenBefore/GenAfter = %v/%v, want 2/1", res.GenBefore, res.GenAfter)
@@ -147,10 +147,8 @@ func TestRollbackReconverges(t *testing.T) {
 	}
 }
 
-// TestRollbackSwitchGenerationFailureDoesNotUnwind verifies Rollback's own asymmetry, mirroring
-// Apply's commit-failure asymmetry (→ ADR-0044 §2): every FS write (PreRemove/place/removeStale)
-// has already succeeded by the time SwitchGeneration runs, so a failure there is not rolled back —
-// discardJournal is only reached after SwitchGeneration succeeds. Same setup as
+// TestRollbackSwitchGenerationFailureDoesNotUnwind verifies that a SwitchGeneration failure is
+// not rolled back, since every FS write has already succeeded by then. Same setup as
 // TestRollbackReconverges, but SwitchGeneration fails.
 func TestRollbackSwitchGenerationFailureDoesNotUnwind(t *testing.T) {
 	root := realTempDir(t)
@@ -206,7 +204,7 @@ func TestRollbackSwitchGenerationFailureDoesNotUnwind(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected the SwitchGeneration failure to propagate, got nil")
 	}
-	// The partial result mirrors Apply's failure contract (→ issue #130): no transition
+	// The partial result mirrors Apply's failure contract: no transition
 	// happened (From == To == current), the pointer stayed at 2, and the failure is not
 	// entry-scoped (every planned FS action had already succeeded).
 	if res == nil {
@@ -238,12 +236,8 @@ func TestRollbackSwitchGenerationFailureDoesNotUnwind(t *testing.T) {
 }
 
 // TestRollbackAncestorMigration verifies rollback from a whole-tree-ancestor-symlink generation
-// (N, current) back to a per-file generation (N-1): baseline (N) records the ancestor symlink,
-// target (N-1) records the nested children, so the plan carries a PreRemove for the ancestor and
-// the children are placed fresh into the real directory. Before the fix Rollback dropped
-// plan.PreRemove, so place ran with the ancestor symlink still present: ensureParentDir's
-// MkdirAll on the symlinked dir was a no-op, and os.Symlink for the nested child then resolved
-// through it into srcNew (store-equivalent) and failed with EEXIST/EROFS (→ ADR-0046, issue #173).
+// (N, current) back to a per-file generation (N-1): the plan's PreRemove unlinks the ancestor
+// symlink, and the nested children are placed fresh into the real directory.
 func TestRollbackAncestorMigration(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -340,11 +334,9 @@ func TestRollbackAncestorMigration(t *testing.T) {
 	}
 }
 
-// TestRollbackAncestorMigrationCopyChild is TestRollbackAncestorMigration with one of the per-file
-// children being a copy entry: rolling back from the whole-tree ancestor symlink generation (N) to
-// the per-file generation (N-1) must materialize the copy child into the real directory PreRemove
-// cleared, through Rollback's own materializeCopies stage (→ issue #178). Before the fix, Rollback
-// executed plan.Place but dropped plan.Copies, so the copy child was never created.
+// TestRollbackAncestorMigrationCopyChild is TestRollbackAncestorMigration with one per-file child
+// being a copy entry: Rollback's materializeCopies stage must create the copy child in the real
+// directory PreRemove cleared.
 func TestRollbackAncestorMigrationCopyChild(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -449,13 +441,9 @@ func TestRollbackAncestorMigrationCopyChild(t *testing.T) {
 	}
 }
 
-// TestRollbackMethodChangeRestoresCopy covers the flat (non-nested) shape of issue #178: gen N-1
-// placed a copy at a target that gen N turned into a symlink (method change copy→symlink). Rolling
-// back reverses it: the planner's classifyCopy schedules PreRemove of the self-recorded symlink
-// plus a fresh place-once CopyAction, and Rollback must execute the latter so the target ends up
-// as a regular file holding N-1's content. (A copy kept as copy across both generations is a
-// place-once no-op on rollback by design — the planner emits no CopyAction for a recorded
-// occupant — so a bare content edit is not a rollback-observable case.)
+// TestRollbackMethodChangeRestoresCopy verifies rollback across a copy→symlink method change: gen
+// N-1 placed a copy where gen N placed a symlink, so Rollback must remove the symlink and execute
+// the planned CopyAction, leaving a regular file with N-1's content.
 func TestRollbackMethodChangeRestoresCopy(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -528,13 +516,9 @@ func TestRollbackMethodChangeRestoresCopy(t *testing.T) {
 	}
 }
 
-// TestRollbackMidBatchFailureRollsBackPreRemoveMigration verifies Rollback's own undo-journal
-// wiring (→ ADR-0044, issue #168): same ancestor-migration setup as TestRollbackAncestorMigration
-// (PreRemove unlinks the whole-tree symlink so the per-file child can be placed), plus an
-// unrelated second entry in the same target manifest whose placement is blocked by a
-// permission-denied parent directory. Both PreRemove's ancestor unlink AND the child placement it
-// enabled must be rolled back when the later, unrelated placement fails — Rollback must not leave
-// the migration half-done, unlike relying solely on a subsequent idempotent re-run to converge.
+// TestRollbackMidBatchFailureRollsBackPreRemoveMigration verifies Rollback's undo journal: in the
+// TestRollbackAncestorMigration setup plus an entry whose placement is permission-denied, both the
+// ancestor unlink and the child placement must be rolled back when that later placement fails.
 func TestRollbackMidBatchFailureRollsBackPreRemoveMigration(t *testing.T) {
 	if os.Geteuid() == 0 {
 		t.Skip("permission-denied placement cannot be induced as root")
@@ -621,11 +605,9 @@ func TestRollbackMidBatchFailureRollsBackPreRemoveMigration(t *testing.T) {
 	}
 }
 
-// TestRollbackCopyFailureUnwindsPlacedSymlink verifies that Rollback's materializeCopies stage is
-// wired into the same undo journal as its other stages (→ ADR-0044, issue #178): a symlink placed
-// by the preceding place stage is removed again when the copy placement that follows it fails.
-// The copy's parent directory denies write access, so ensureParentDir passes (the directory
-// exists) and copyFile's OpenFile is what fails. The profile pointer must stay put.
+// TestRollbackCopyFailureUnwindsPlacedSymlink verifies that a symlink placed by Rollback's place
+// stage is removed again when the following copy placement fails (its parent directory denies
+// write access). The profile pointer must stay put.
 func TestRollbackCopyFailureUnwindsPlacedSymlink(t *testing.T) {
 	if os.Geteuid() == 0 {
 		t.Skip("permission-denied copy placement cannot be induced as root")
@@ -693,7 +675,7 @@ func TestRollbackCopyFailureUnwindsPlacedSymlink(t *testing.T) {
 		t.Errorf("kept entry must be untouched: readlink=%q, err=%v", got, rerr)
 	}
 
-	// Partial result: same stage-failure contract as Apply (→ issue #130).
+	// Partial result: same stage-failure contract as Apply.
 	if res == nil {
 		t.Fatal("partial RollbackResult must be returned alongside the error")
 	}
@@ -717,14 +699,9 @@ func TestRollbackCopyFailureUnwindsPlacedSymlink(t *testing.T) {
 	}
 }
 
-// TestRollbackAncestorPreRemoveErrorSkipsSwitch verifies the Rollback-level wiring of preRemove's
-// error path: same setup as TestRollbackAncestorMigration, but the ancestor symlink's parent dir
-// is read-only, so preRemove's os.Remove fails. Rollback must propagate the error instead of
-// swallowing it and must not move the profile pointer — a regression a unit test on preRemove
-// alone (TestPreRemoveDriftErrors) cannot catch, since it never exercises the Rollback() call
-// site added by this fix (→ #173). (A pre-plan drift setup cannot be used here: it would make
-// planner.Compute itself see a mismatch and route to Conflicts instead of PreRemove, never
-// reaching this call site — → planner.go recordedLink.)
+// TestRollbackAncestorPreRemoveErrorSkipsSwitch verifies that when preRemove's os.Remove fails
+// (the ancestor symlink's parent dir is read-only), Rollback propagates the error and does not
+// move the profile pointer. Same setup as TestRollbackAncestorMigration.
 func TestRollbackAncestorPreRemoveErrorSkipsSwitch(t *testing.T) {
 	if os.Geteuid() == 0 {
 		t.Skip("permission-denied unlink cannot be induced as root")
@@ -784,10 +761,8 @@ func TestRollbackAncestorPreRemoveErrorSkipsSwitch(t *testing.T) {
 		},
 		SwitchGeneration: func(_ string, gen int) error { switched = gen; return nil },
 	})
-	// The message pins the failure to preRemove's os.Remove path specifically (staleremove.go),
-	// not merely to any early return — e.g. a future planner change that routed this setup to
-	// Conflicts instead of PreRemove would also make Rollback error out before switchFn, and a
-	// bare err != nil check would pass despite never reaching the code this test targets.
+	// The message pins the failure to preRemove's os.Remove path rather than any early return
+	// (such as a Conflicts error, which would also stop Rollback before switchFn).
 	if err == nil || !strings.Contains(err.Error(), "cannot remove recorded symlink for migration") {
 		t.Fatalf("expected a preRemove unlink error, got %v", err)
 	}
@@ -824,10 +799,9 @@ func TestRollbackNoPreviousErrors(t *testing.T) {
 	}
 }
 
-// TestRollbackConflictReportsAll verifies that Rollback, like Apply, lists every planner-detected
-// conflict to stderr (with guidance) before returning a single count-bearing aggregate error
-// (→ #176, grilling 2026-07-12 D6). gen1(target) has {b, c}; gen2(current/baseline) has {a}; both
-// b and c are occupied by regular files on disk, so rolling back to gen1 conflicts on both.
+// TestRollbackConflictReportsAll verifies that Rollback, like Apply, lists every conflict to
+// stderr before returning a single count-bearing error. Rolling back from gen2 {a} to gen1 {b, c}
+// conflicts on both b and c, which are occupied by regular files.
 func TestRollbackConflictReportsAll(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)

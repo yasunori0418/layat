@@ -9,17 +9,13 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// Tests for PreRemove's generalization from "self-recorded stale ancestor symlink" (ADR-0046)
-// to "any self-recorded stale filesystem object occupying a placement target": an occupying real
-// directory whose whole tree is recorded-stale-or-empty, and a symlink→copy method change
-// (→ ADR-0047, issue #175, #172 D2/D3/D5).
+// Tests for PreRemove on any self-recorded stale filesystem object occupying a placement target:
+// an occupying real directory whose whole tree is recorded-stale-or-empty, and a symlink→copy
+// method change.
 
-// TestApplyPerFileToDirSymlinkMigratesSameNamedLeaf reproduces the 2026-07-12 real incident: a
-// per-file layout `<name>/main.sh` migrating to a whole-tree dir symlink `<name>`, where the new
-// generation's dir symlink target shares its leaf name with the old per-file target
-// (`.claude/hooks/foo/main.sh` → `.claude/hooks` as a dir symlink). This is exactly the case a
-// naive readlink-pattern cleanup (home-manager's) misjudges; layat's manifest-recorded classification
-// must migrate it cleanly with a single apply (→ issue #172 background, ADR-0047).
+// TestApplyPerFileToDirSymlinkMigratesSameNamedLeaf verifies that a per-file layout
+// `<name>/main.sh` migrates to a whole-tree dir symlink `<name>` sharing the old target's leaf name
+// (`.claude/hooks/foo/main.sh` → `.claude/hooks`) with a single apply.
 func TestApplyPerFileToDirSymlinkMigratesSameNamedLeaf(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -49,14 +45,8 @@ func TestApplyPerFileToDirSymlinkMigratesSameNamedLeaf(t *testing.T) {
 		t.Errorf("Conflicts = %v, want none", res.Conflicts)
 	}
 	// The leaf must be reported exactly once as Removed (Unlink). Both the intermediate
-	// ".claude/hooks/foo" directory AND the placement target ".claude/hooks" itself are
-	// legitimately Rmdir-ed and reported in Pruned exactly once each — not twice each. A prior
-	// bug double-reported them: preRemove's own pruneEmptyAncestors walk (triggered by the
-	// leaf's Unlink, or by an inner Rmdir's success) raced the planner's own explicit,
-	// already-ordered RemoveRmdir actions for the same directories, recording each directory
-	// from two paths (→ ADR-0047, issue #175). preRemove no longer walks pruneEmptyAncestors at
-	// all, since every directory a migration needs cleared is already an explicit RemoveRmdir
-	// planner action and the placement step that follows recreates the target immediately.
+	// ".claude/hooks/foo" directory and the placement target ".claude/hooks" itself are
+	// Rmdir-ed and reported in Pruned exactly once each.
 	if len(res.Removed) != 1 || res.Removed[0] != ".claude/hooks/foo/main.sh" {
 		t.Errorf("Removed = %v, want exactly [.claude/hooks/foo/main.sh]", res.Removed)
 	}
@@ -83,8 +73,8 @@ func TestApplyPerFileToDirSymlinkMigratesSameNamedLeaf(t *testing.T) {
 }
 
 // TestApplyDirSymlinkRoundTripsThroughPerFile verifies the reverse and back: dir symlink →
-// per-file → dir symlink again converges cleanly across three generations, exercising
-// ADR-0046's ancestor migration and ADR-0047's dir migration in sequence.
+// per-file → dir symlink again converges cleanly across three generations, exercising the
+// ancestor migration and the dir migration in sequence.
 func TestApplyDirSymlinkRoundTripsThroughPerFile(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -118,10 +108,9 @@ func TestApplyDirSymlinkRoundTripsThroughPerFile(t *testing.T) {
 	}
 }
 
-// TestApplyDirMigrationConflictLeavesSiblingsUntouched verifies D2's "one real file blocks the
-// whole directory" rule end-to-end: a real file mixed among otherwise-migratable recorded-stale
-// symlinks makes Apply stop with a conflict, and NONE of the migratable siblings are removed —
-// no partial removal (→ ADR-0047 D2, issue #175 §8).
+// TestApplyDirMigrationConflictLeavesSiblingsUntouched verifies that a real file mixed among
+// otherwise-migratable recorded-stale symlinks makes Apply stop with a conflict, and none of the
+// migratable siblings are removed.
 func TestApplyDirMigrationConflictLeavesSiblingsUntouched(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -191,10 +180,9 @@ func TestApplyDirMigrationEmptySubdirsAtMultipleDepths(t *testing.T) {
 	}
 }
 
-// TestApplyMethodChangeSymlinkToCopyMigrates verifies D5: a target whose method changes from
-// symlink (previous generation, recorded, on-disk matches) to copy (new generation) is
-// automatically migrated — the recorded symlink is pre-removed and a fresh place-once copy lands
-// in its place, with zero data loss (the symlink carried no user data · → ADR-0047 D5).
+// TestApplyMethodChangeSymlinkToCopyMigrates verifies that a target whose method changes from a
+// recorded, on-disk-matching symlink to copy is migrated: the symlink is pre-removed and a fresh
+// place-once copy lands in its place.
 func TestApplyMethodChangeSymlinkToCopyMigrates(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -262,10 +250,9 @@ func TestApplyMethodChangeCopyToSymlinkStaysConflict(t *testing.T) {
 	}
 }
 
-// TestApplyMethodChangeSymlinkToCopyDriftFallsBackToForeign verifies D5's fallback: if the
-// on-disk symlink drifted from the previous generation's record (readlink mismatch) at the
-// moment of planning, the method-change migration does not fire; it falls through to the
-// ordinary copy-foreign-file handling (skip + warning, not an overwrite).
+// TestApplyMethodChangeSymlinkToCopyDriftFallsBackToForeign verifies that if the on-disk symlink
+// drifted from the previous generation's record, the method-change migration does not fire and
+// the ordinary copy-foreign-file handling applies (skip + warning, not an overwrite).
 func TestApplyMethodChangeSymlinkToCopyDriftFallsBackToForeign(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -315,14 +302,9 @@ func TestApplyMethodChangeSymlinkToCopyDriftFallsBackToForeign(t *testing.T) {
 	}
 }
 
-// TestApplyDirMigrationNonEmptySubdirIsConflictAtPlanTime verifies the plan-time half of D3's
-// safety net: a subdirectory that is non-empty *before Apply even plans* makes the planner
-// classify the whole occupying directory as non-migratable (a real-file leaf), so Apply reports
-// a conflict rather than ever scheduling an Rmdir for it. The complementary runtime half — an
-// Rmdir action scheduled at plan time whose target gains content in the window before preRemove
-// executes it (true TOCTOU) — is exercised directly against applier.preRemove in
-// TestPreRemoveRmdirDriftErrorsDirectly, since Apply's own planning step cannot be paused
-// mid-flight to inject content after a snapshot it already took.
+// TestApplyDirMigrationNonEmptySubdirIsConflictAtPlanTime verifies that a subdirectory non-empty
+// before planning makes the whole occupying directory non-migratable, so Apply reports a conflict
+// rather than scheduling an Rmdir (the runtime TOCTOU half is TestPreRemoveRmdirDriftErrorsDirectly).
 func TestApplyDirMigrationNonEmptySubdirIsConflictAtPlanTime(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -346,7 +328,7 @@ func TestApplyDirMigrationNonEmptySubdirIsConflictAtPlanTime(t *testing.T) {
 
 // TestPreRemoveRmdirDriftErrorsDirectly drives applier.preRemove directly with a RemoveRmdir
 // action whose target directory has gained content since planning, verifying the ENOTEMPTY drift
-// is surfaced as a loud error (not skipped) with a message naming the target (→ ADR-0047 D3).
+// is surfaced as a loud error (not skipped) with a message naming the target.
 func TestPreRemoveRmdirDriftErrorsDirectly(t *testing.T) {
 	dir := realTempDir(t)
 	sub := filepath.Join(dir, "sub")
@@ -375,7 +357,7 @@ func TestPreRemoveRmdirDriftErrorsDirectly(t *testing.T) {
 
 // TestPreRemoveUnlinkDriftErrorsDirectly drives applier.preRemove directly with a RemoveUnlink
 // action whose recorded symlink drifted (foreign rewrite) since planning, verifying it errors
-// loudly instead of skipping (→ ADR-0047 D3, same asymmetry as ADR-0046 §3).
+// loudly instead of skipping.
 func TestPreRemoveUnlinkDriftErrorsDirectly(t *testing.T) {
 	dir := realTempDir(t)
 	targetAbs := filepath.Join(dir, "ancestor")
@@ -400,13 +382,9 @@ func TestPreRemoveUnlinkDriftErrorsDirectly(t *testing.T) {
 	}
 }
 
-// TestApplyDirMigrationInterruptedAfterPreRemoveReRunConverges verifies ADR-0017 idempotence for
-// a genuinely partial-migration crash window: PreRemove runs (the occupying directory's
-// recorded-stale child is unlinked and the now-empty directory rmdir-ed) but the process stops
-// there, before place/commit — the real crash window the generalized PreRemove opens (→ ADR-0047,
-// issue #175 §8). A subsequent ordinary Apply must re-plan against that partially-migrated FS
-// (the target now absent, not a real directory) and converge to the same fully-migrated state as
-// an uninterrupted apply.
+// TestApplyDirMigrationInterruptedAfterPreRemoveReRunConverges verifies idempotence when the
+// process stops after PreRemove but before place/commit: a subsequent Apply re-plans against the
+// partially-migrated FS and converges to the same state as an uninterrupted apply.
 func TestApplyDirMigrationInterruptedAfterPreRemoveReRunConverges(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -430,10 +408,8 @@ func TestApplyDirMigrationInterruptedAfterPreRemoveReRunConverges(t *testing.T) 
 		t.Fatalf("plan.Conflicts = %v, want none", plan.Conflicts)
 	}
 
-	// Simulate a crash: run only PreRemove (unlink the recorded-stale child, rmdir the now-empty
-	// dirs including the placement target itself), then stop — no place, no commit. The target is
-	// now absent from the FS, and the previous generation's manifest.json (the profile link) still
-	// points at generation 1 since --set never ran.
+	// Simulate a crash: run only PreRemove, then stop — no place, no commit. The target is now
+	// absent from the FS, and the profile link still points at generation 1 since --set never ran.
 	a := &applier{opts: Options{Warnf: func(string, ...any) {}}, result: &Result{}}
 	a.root = root
 	if err := a.preRemove(plan.PreRemove); err != nil {
