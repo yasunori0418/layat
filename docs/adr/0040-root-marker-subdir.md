@@ -43,7 +43,7 @@ references:
 
 既存機構との関係: `--root` フラグは実行時の一律上書き（ADR-0017）、絶対パス文字列は eval 時固定の fixed root であり、いずれも「マーカーの実行時解決 + 宣言的な配下オフセット」は表現できない。
 
-設計にあたり重要な事実: **「基点を root/sub にする」ことと「全 target に `sub/` を前置する」ことは nput の意味論で完全に等価**である。stale 除去の diff キー・foreign symlink 判定・祖先 symlink walk・`gitignore` の anchor 形はすべて target 文字列で動くため、root を実際に動かす必要がない。root を本当に動かす実装を選ぶと、`manifest.json` に新フィールドが要り（旧 engine が黙って無視すると誤配置になるため schemaVersion bump が必須）、profileDir キーイングにも「同名 config が subdir 違いで世代系列を共有する」footgun（ADR-0023 §背景 4 と同型）が生まれる。糖衣ならどちらも構造的に発生しない。
+設計にあたり重要な事実: **「基点を root/sub にする」ことと「全 target に `sub/` を前置する」ことは layat の意味論で完全に等価**である。stale 除去の diff キー・foreign symlink 判定・祖先 symlink walk・`gitignore` の anchor 形はすべて target 文字列で動くため、root を実際に動かす必要がない。root を本当に動かす実装を選ぶと、`manifest.json` に新フィールドが要り（旧 engine が黙って無視すると誤配置になるため schemaVersion bump が必須）、profileDir キーイングにも「同名 config が subdir 違いで世代系列を共有する」footgun（ADR-0023 §背景 4 と同型）が生まれる。糖衣ならどちらも構造的に発生しない。
 
 なお grilling では「root より親方向（外）へずらす」解釈も検討したが、採らない（ADR-0019 のパス安全性を迂回する escape hatch になる。→ 棄却案）。
 
@@ -54,8 +54,8 @@ references:
 - 3 マーカー（`projectRoot` / `homeRoot` / `systemRoot`）を `__functor` 付き attrset にし、**単体でも従来通り marker、適用しても marker** を両立する:
 
   ```nix
-  root = nput.lib.homeRoot;                        # 従来形（不変）
-  root = nput.lib.homeRoot { subdir = ".config"; } # 適用形（新設）
+  root = layat.lib.homeRoot;                        # 従来形（不変）
+  root = layat.lib.homeRoot { subdir = ".config"; } # 適用形（新設）
   ```
 
 - 適用結果は `subdir` フィールドを足した marker attrset。`mkOutOfStoreSymlink` と同じ「関数でマーカーを作る」既存パターンの延長で、`lib/types.nix` の `rootType` は optional な `subdir`（相対パス文字列）を許容するだけ。

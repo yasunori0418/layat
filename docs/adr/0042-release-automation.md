@@ -33,15 +33,15 @@ references:
 
 参照した cryoflow の方式は 2 workflow 構成: ① `bump-version.yml`（workflow_dispatch・非 main ブランチ上でバージョンファイルを書き換えてコミット → 通常の PR フローでマージ）、② `release.yml`（main への push・バージョンファイルの paths フィルタ → バージョンを読み取り `softprops/action-gh-release` の `generate_release_notes: true` でタグ + Release 作成）。「bump PR のマージがリリースを駆動する」ため main 直コミット禁止（ADR-0025）と整合し、手動のタグ打ちが要らない。
 
-nput 用に決めるのはバージョンの置き場所（Python の pyproject.toml に相当するものが無い）と成果物の扱い。
+layat 用に決めるのはバージョンの置き場所（Python の pyproject.toml に相当するものが無い）と成果物の扱い。
 
 ## 決定
 
 ### 1. バージョンの一次情報 = リポジトリ直下の `VERSION` ファイル
 
 - プレーンテキスト 1 行（例 `0.1.0`）。semver に従う。
-- `flake.nix` は `builtins.readFile ./VERSION` で読み、`packages.nput` の `version` に反映する。
-- Go バイナリへは nix build の `ldflags`（`-X`）で埋め込み、**`nput --version`（または `nput version`）を新設**して表示する。単一の一次情報から flake / バイナリの両方が導出され、二重管理しない。
+- `flake.nix` は `builtins.readFile ./VERSION` で読み、`packages.layat` の `version` に反映する。
+- Go バイナリへは nix build の `ldflags`（`-X`）で埋め込み、**`layat --version`（または `layat version`）を新設**して表示する。単一の一次情報から flake / バイナリの両方が導出され、二重管理しない。
 
 ### 2. `bump-version.yml`（workflow_dispatch）
 
@@ -55,7 +55,7 @@ nput 用に決めるのはバージョンの置き場所（Python の pyproject.
 
 ### 4. 成果物は添付しない
 
-- nput は実行時に `nix` / `git` を叩く nix 前提ツールで、配布の正規経路は flake ref（タグで pin 可能になる）。バイナリ添付は nix の無い環境で動かないため価値が薄い。将来需要が出たら release.yml にステップを足せる seam だけ残す（本 ADR は禁止しない）。
+- layat は実行時に `nix` / `git` を叩く nix 前提ツールで、配布の正規経路は flake ref（タグで pin 可能になる）。バイナリ添付は nix の無い環境で動かないため価値が薄い。将来需要が出たら release.yml にステップを足せる seam だけ残す（本 ADR は禁止しない）。
 
 ## 根拠
 
@@ -66,8 +66,8 @@ nput 用に決めるのはバージョンの置き場所（Python の pyproject.
 ## 影響
 
 - **新規**: `VERSION`・`.github/workflows/bump-version.yml`・`.github/workflows/release.yml`。
-- **`flake.nix`**: `packages.nput` の version を `VERSION` から読む・ldflags 埋め込み。
-- **`cmd/nput`**: `--version` 表示の新設（cobra の Version フィールド）。
+- **`flake.nix`**: `packages.layat` の version を `VERSION` から読む・ldflags 埋め込み。
+- **`cmd/layat`**: `--version` 表示の新設（cobra の Version フィールド）。
 - **`docs/design.md`**: CI / リリース節に本方式を追記。
 - **ADR-0030 との関係**: release.yml は required checks の対象外（main push 後のリリース作業であり merge gate ではない）。
 

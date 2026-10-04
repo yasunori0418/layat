@@ -29,7 +29,7 @@ references:
 - 起点: 実装着手前のドキュメント検査で、各文書が沈黙していた5つの細目を洗い出した（ADR-0015/0016/0017 と同系列の「実装前残セマンティクス」確定）
 
 > **2026-06-14 改訂注記（ADR-0025）**: 本 ADR §3 の profile パス（`$XDG_STATE_HOME` 尊重）自体は不変だが、ADR-0025 §4 が
-> **config 専用ディレクトリレイアウト**へ精緻化した。`<state>/nix/profiles/nput/<name>` は profile リンクそのものではなく
+> **config 専用ディレクトリレイアウト**へ精緻化した。`<state>/nix/profiles/layat/<name>` は profile リンクそのものではなく
 > **profileDir（専用ディレクトリ）**になり、実体は `<profileDir>/profile`（profile リンク）/ `<profileDir>/profile-N-link`
 > （世代）/ `<profileDir>/.pending`（pending out-link）に分かれる。project mode の backref `.root` は `<roothash>` 階層に
 > 据え置き（→ ADR-0025）。
@@ -69,24 +69,24 @@ references:
 ### 3. profile パスは `$XDG_STATE_HOME` 尊重で確定
 
 - profile の基底を **`$XDG_STATE_HOME` があればそれ、無ければ `~/.local/state`** とする。
-  - home mode: `$XDG_STATE_HOME/nix/profiles/nput/<name>`（既定 `~/.local/state/nix/profiles/nput/<name>`）
-  - project mode: `$XDG_STATE_HOME/nix/profiles/nput/<roothash>/<name>`（既定 `~/.local/state/nix/profiles/nput/<roothash>/<name>`）
+  - home mode: `$XDG_STATE_HOME/nix/profiles/layat/<name>`（既定 `~/.local/state/nix/profiles/layat/<name>`）
+  - project mode: `$XDG_STATE_HOME/nix/profiles/layat/<roothash>/<name>`（既定 `~/.local/state/nix/profiles/layat/<roothash>/<name>`）
 - `nix` 本体の profile 既定（`~/.local/state/nix/profiles`）と整合し、XDG をカスタムするユーザーでも配置が散らばらない。
 - spec の「推奨・未確定」注記を外し確定値とする。`<roothash>` / backref / flock キーはこの確定パスを基準にする（ADR-0005, ADR-0013）。
 
 ### 4. copy が foreign 実ファイルに当たったら warning を出して skip
 
-- copy entry の target に**前世代 manifest に無い実ファイル**（= nput が置いていない foreign ファイル）が既存のとき、
+- copy entry の target に**前世代 manifest に無い実ファイル**（= layat が置いていない foreign ファイル）が既存のとき、
   **上書きせず place-once skip し、warning を出す**（「target に既存ファイルがあり copy をスキップした」）。
 - symlink の foreign 警告（記録に無い symlink は warning で後勝ち・ADR-0015）と振る舞いを対称化し、
-  「nput が中身を置いた」とユーザーが誤認する masking を防ぐ。copy はユーザーデータを上書きしない哲学（ADR-0019）を保ち、
+  「layat が中身を置いた」とユーザーが誤認する masking を防ぐ。copy はユーザーデータを上書きしない哲学（ADR-0019）を保ち、
   apply 全体は止めない（project mode の shellHook での全停止 footgun を避ける）。
 - 「自分が置いたか」は前世代 manifest に entry があるかで判別する(内容は判別しない)。
 
 ### 5. shellHook の try-lock skip は stderr に1行通知
 
 - shellHook が try-lock 失敗で apply を skip したとき、**stderr に1行**通知する
-  （例: `nput: another apply in progress, skipped (run \`nput apply\` manually)`）。
+  （例: `layat: another apply in progress, skipped (run \`layat apply\` manually)`）。
 - シェル入室はブロックしない（ADR-0013）まま、「なぜ config が反映されないか」が見えるようにする。
   direnv / シェル再入の衝突は低頻度なのでノイズにならない。
 

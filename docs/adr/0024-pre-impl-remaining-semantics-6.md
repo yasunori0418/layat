@@ -36,16 +36,16 @@ references:
 - 起点: ADR-0023 までの第5巡で潰し切れていない11点を、垂直トレーサー弾（ADR-0023 §4）着手の直前に再度の横断検査で洗い出した。いずれも実装時に恣意判断が混入するか、ドキュメントの穴で、着手前に確定する（実装前残セマンティクス確定の第6巡）。
 
 > **2026-06-14 改訂注記（ADR-0025）**: 本 ADR §2（HM モジュール = 固定 `default` 1 profile）の決定は不変だが、ADR-0025 §2 が
-> 「standalone は複数 profile で役割分離できるが HM は単一 `nput.entries` = 1 profile に限られる」というユーザー視点の制約を
-> 明記し、将来の `nput.configs.<name>` seam を追記した。また §11 で言及した **`.pending-<name>` は ADR-0025 §4 の専用
+> 「standalone は複数 profile で役割分離できるが HM は単一 `layat.entries` = 1 profile に限られる」というユーザー視点の制約を
+> 明記し、将来の `layat.configs.<name>` seam を追記した。また §11 で言及した **`.pending-<name>` は ADR-0025 §4 の専用
 > ディレクトリレイアウトで `.pending` に改名**された（→ ADR-0025）。
 >
 > **2026-07-04 改訂注記（ADR-0034）**: 本 ADR §11 の「cleanup コマンドは MVP 非対応」は当時の決定として不変だが、残しておいた
-> **将来 `nput prune` seam の実装が決定**した。削除対象は「backref `.root` の root パスが実在しない roothash 系列」のみに限定し、
+> **将来 `layat prune` seam の実装が決定**した。削除対象は「backref `.root` の root パスが実在しない roothash 系列」のみに限定し、
 > 配置物には触れない。`--dryrun`・確認プロンプト・try-lock skip を備える（→ ADR-0034）。
 >
 > **2026-07-04 改訂注記（ADR-0035）**: 本 ADR §2（HM モジュール = MVP で固定名 `default` 1 profile）は MVP の決定として不変だが、
-> 将来拡張としていた **HM 複数 profile 化（`nput.configs.<name>.entries`）の実装が決定**した。`nput.entries` は
+> 将来拡張としていた **HM 複数 profile 化（`layat.configs.<name>.entries`）の実装が決定**した。`layat.entries` は
 > `configs.default.entries` への rename 糖衣（deprecated）として残る。1 config = 1 profile = 1 manifest の atomic 性は不変
 > （→ ADR-0035）。
 >
@@ -64,11 +64,11 @@ references:
 ADR-0023 で実行フロー順序・出力規約・`--root` キーイング・実装順序が確定し、設計は実装着手の閾値に達した。着手直前の横断検査で、骨格に直結する揺れ・考慮漏れが11点残っていた。第5巡（ADR-0023）の決定を素直に延長して埋められるものが大半で、新規の方針反転は無い。
 
 1. **fixed root mode（`--root` なし）の profileDir キーイングが未定義**。ADR-0023 §3 の表は home（`--root` なし）= `<name>`、home/fixed（`--root /p`）= `<roothash>`、project = `<roothash>` の3行だが、`root` に絶対パス文字列を渡し `--root` を付けない fixed mode が抜けている。`<name>` で素朴にキーすると別 root の同名 config が世代系列を共有し ADR-0023 §背景4 と同型の silent orphan が起きうる。
-2. **HM モジュール経由の profile `<name>` キーが未定義・複数 config 不可**。standalone は entrypoint の `nput.<name>` で複数 profile を持つが、`modules/common.nix` は `nput.entries` 単一 attrset で `<name>` 次元が無い。profile dir の `<name>` に何が入るか未記述で、「役割ごとに別 profile」の中心思想が HM 利用者に届かない。
+2. **HM モジュール経由の profile `<name>` キーが未定義・複数 config 不可**。standalone は entrypoint の `layat.<name>` で複数 profile を持つが、`modules/common.nix` は `layat.entries` 単一 attrset で `<name>` 次元が無い。profile dir の `<name>` に何が入るか未記述で、「役割ごとに別 profile」の中心思想が HM 利用者に届かない。
 3. **`reset` / `rollback` / `list-generations` の実行フローに eval 先行が未明記**。ADR-0023 §1 は apply にのみ「rootKind 先取り eval → root 解決 → profileDir 確定」を書いたが、これら非 build コマンドも profileDir 単位の flock / 前世代 manifest 読みのため profileDir 確定（= rootKind eval）が前提になる。
 4. **`listFilesInSrc` の `src` に `set`（derivation）を渡したときの挙動が未定義**。ADR-0023 5c は path 限定・marker 不可と決めたが、entries の `src` は `path | set | marker` の3種で、`set`（`fetchFromGitHub` の生 derivation）の扱いが書かれていない。`set` を渡すと IFD（import-from-derivation）が発生し flake pure eval で破綻する。
 5. **同一 manifest 内 target 衝突の検出が engine 実行時とされ ADR-0010 とずれる**。別キー A/B が `target` を同値に明示上書きしたケースを spec は「engine 実行時に conflict 検出」とするが、これは正規化後 target 文字列の静的衝突で eval 時に判定可能。ADR-0010 の「単一検査ゲート・早期エラー」とずれている。
-6. **既存プロジェクトへの組み込み経路が docs に無い**。project-first（ADR-0007）を標榜するのに導入は `nput init`（= `nix flake init -t`・新規作成向け・既存ファイル非上書き）のみで、既に `flake.nix` がある repo への後付け手順が通しで示されていない。
+6. **既存プロジェクトへの組み込み経路が docs に無い**。project-first（ADR-0007）を標榜するのに導入は `layat init`（= `nix flake init -t`・新規作成向け・既存ファイル非上書き）のみで、既に `flake.nix` がある repo への後付け手順が通しで示されていない。
 7. **`apply --all --dryrun` の終了コード混在優先が未定義**。conflict（2）と error（1）が同居したときの最終 exit code が未定義で、単純な最大値では 2 が 1 を隠す。
 8. **`apply --all` の rootKind eval 回数が未定義**。N config の profileDir 確定に rootKind が要るが、個別 eval（N 回）か一括 eval（1 回）か未記述。
 9. **`--quiet` と stdout 機械可読出力の相互作用が未定義**。`--quiet` は「進捗/レポート抑制・warning/error 残す」だが、stdout 専有の dryrun plan / gitignore 列挙を抑制するかが書かれていない。
@@ -83,18 +83,18 @@ ADR-0023 で実行フロー順序・出力規約・`--root` キーイング・�
 
 | 状況 | profileDir |
 |---|---|
-| home（`--root` なし）| `<state>/nix/profiles/nput/<name>` |
-| home / fixed（`--root /p`）| `<state>/nix/profiles/nput/<roothash(/p)>/<name>` |
-| **fixed（`--root` なし・`root = "/abs"`）** | **`<state>/nix/profiles/nput/<roothash(/abs)>/<name>`** |
-| project（`--root` 有無）| `<state>/nix/profiles/nput/<roothash>/<name>` |
+| home（`--root` なし）| `<state>/nix/profiles/layat/<name>` |
+| home / fixed（`--root /p`）| `<state>/nix/profiles/layat/<roothash(/p)>/<name>` |
+| **fixed（`--root` なし・`root = "/abs"`）** | **`<state>/nix/profiles/layat/<roothash(/abs)>/<name>`** |
+| project（`--root` 有無）| `<state>/nix/profiles/layat/<roothash>/<name>` |
 
 - fixed root は評価時確定の任意絶対パスなので、project / `--root` 上書きと同じく root ごとに独立系列へ分離するのが一貫し、silent orphan を構造的に防ぐ。`<name>` 直キーは「1 ユーザー 1 profile」UX が成立する home（`--root` なし）に限る。
 - `<roothash>` 算出・backref（`.root`）は project mode と同一機構（ADR-0013）を流用。`apply` / `reset` / `rollback` / `list-generations` で一貫する。
 
 ### 2. HM モジュール経由は MVP で固定名 1 profile（`default`）、複数化は将来
 
-- HM モジュール（`modules/common.nix` の `nput.entries`）経由の nput profile は **`<name>` = `"default"` 固定の 1 profile** とする（profile dir = `<state>/nix/profiles/nput/default`、HM の root は `homeRoot` を pin する home mode なので `<name>` 直キー）。
-- 「役割ごとに別 profile」を使いたいユーザーは **standalone CLI 経路**（entrypoint の `nput.<name>`）を使う。HM モジュールの複数 profile 化（`nput.configs.<name>.entries` 等）は将来拡張とする。
+- HM モジュール（`modules/common.nix` の `layat.entries`）経由の layat profile は **`<name>` = `"default"` 固定の 1 profile** とする（profile dir = `<state>/nix/profiles/layat/default`、HM の root は `homeRoot` を pin する home mode なので `<name>` 直キー）。
+- 「役割ごとに別 profile」を使いたいユーザーは **standalone CLI 経路**（entrypoint の `layat.<name>`）を使う。HM モジュールの複数 profile 化（`layat.configs.<name>.entries` 等）は将来拡張とする。
 - ADR-0007 の「HM 対応は他モジュールの switch と一括で動くユースケースを拾うだけ」positioning と整合。MVP で options を attrsOf へ広げて activation の複数 profile swap を背負わない。
 
 ### 3. 非 build コマンドも eval 先行を共通前段にする
@@ -116,7 +116,7 @@ ADR-0023 で実行フロー順序・出力規約・`--root` キーイング・�
 
 ### 6. 既存 flake への組み込み手順を docs に追加
 
-`nput init`（新規作成向け）とは別に、**既に `flake.nix` がある既存 repo への後付け手順**を docs（使用パターン）に通しで追加する：(1) input に `nput` 追加 → (2) `outputs.nput.<system>.<name>` に `mkManifest` 公開 → (3) devShell の `packages` に pin 版 `nput` 同梱 → (4) `shellHook` に名指し apply。CLI に flake 自動マージ機構（`init --merge` 等）は持たない（「設定を生成しない」thesis を維持）。
+`layat init`（新規作成向け）とは別に、**既に `flake.nix` がある既存 repo への後付け手順**を docs（使用パターン）に通しで追加する：(1) input に `layat` 追加 → (2) `outputs.layat.<system>.<name>` に `mkManifest` 公開 → (3) devShell の `packages` に pin 版 `layat` 同梱 → (4) `shellHook` に名指し apply。CLI に flake 自動マージ機構（`init --merge` 等）は持たない（「設定を生成しない」thesis を維持）。
 
 ### 7. `--all --dryrun` の終了コードは error(1) 最優先 → conflict(2) → 0
 
@@ -124,7 +124,7 @@ ADR-0023 で実行フロー順序・出力規約・`--root` キーイング・�
 
 ### 8. `apply --all` は rootKind を 1 回の一括 eval で取る
 
-`apply --all` は `nix eval <ep>#nput.<system> --apply 'cs: builtins.mapAttrs (_: c: c.rootKind) cs' --json`（legacy 経路は対応する `-f` 形）で **config 名 → rootKind マップを 1 回の eval で取得**する。`--project-root` 等のフィルタもこの結果で振り分ける。build だけは atomic 性のため config ごと N 回。eval プロセス起動コストを N→1 に固定。
+`apply --all` は `nix eval <ep>#layat.<system> --apply 'cs: builtins.mapAttrs (_: c: c.rootKind) cs' --json`（legacy 経路は対応する `-f` 形）で **config 名 → rootKind マップを 1 回の eval で取得**する。`--project-root` 等のフィルタもこの結果で振り分ける。build だけは atomic 性のため config ごと N 回。eval プロセス起動コストを N→1 に固定。
 
 ### 9. `--quiet` は stderr の進捗/レポートのみ抑制し、stdout 機械可読出力は不可触
 
@@ -134,9 +134,9 @@ ADR-0023 で実行フロー順序・出力規約・`--root` キーイング・�
 
 cross-config 同一 target の lstat 修復振動中に foreign warning が `shellHook` 高頻度実行で出続けるのは、「同一 target を複数 config で狙わない」前提（ADR-0013/0015）違反の**設定ミスのシグナル**であり、出続けるのが正しい。warning は `--quiet` 対象外（§9）なので `--quiet` でも消えない。抑制 / 集約機構は MVP で持たず、config の同一 target 重複を解消して直す旨を docs 注記に留める（ADR-0023 5b「検知して止める機構は持たない」と一貫）。
 
-### 11. cleanup コマンドは MVP 非対応・将来 `nput prune` の seam を残す
+### 11. cleanup コマンドは MVP 非対応・将来 `layat prune` の seam を残す
 
-orphan profile dir（クローン削除で残る `<roothash>/<name>`）・`.pending-<name>`（`--set` 前失敗で config あたり最大1）の cleanup コマンドは **MVP では持たない**。実害が小さい（store は `nix-collect-garbage` で解放され、残るのは小さな symlink dir）ため放置許容 + 手動削除 + docs 注記。backref（`.root`・ADR-0013）があるので**将来 `nput prune`（実在しない root を指す孤児系列を逆引きして削除）を実装できる seam** を残す。消費側の要求が出た時点で追加（YAGNI）。
+orphan profile dir（クローン削除で残る `<roothash>/<name>`）・`.pending-<name>`（`--set` 前失敗で config あたり最大1）の cleanup コマンドは **MVP では持たない**。実害が小さい（store は `nix-collect-garbage` で解放され、残るのは小さな symlink dir）ため放置許容 + 手動削除 + docs 注記。backref（`.root`・ADR-0013）があるので**将来 `layat prune`（実在しない root を指す孤児系列を逆引きして削除）を実装できる seam** を残す。消費側の要求が出た時点で追加（YAGNI）。
 
 ## 根拠
 
@@ -156,19 +156,19 @@ orphan profile dir（クローン削除で残る `<roothash>/<name>`）・`.pend
   - エラー仕様表の「別キー target 明示上書き衝突」を eval 時 throwIf に修正。`normalizeManifest` 節に target 重複検出を追記。cross-config 衝突との区別を明記（§5）。
   - 出力ストリーム / 終了コード節に `--all --dryrun` の優先順位（error > conflict > 0）と `--quiet` × stdout 不可触を追記（§7・§9）。
   - 実行フローに `--all` の rootKind 一括 eval を明記（§8）。
-  - project mode 世代節に振動 warning が `--quiet` でも出る注記（§10）、orphan profile 節に将来 `nput prune` seam 注記（§11）。
+  - project mode 世代節に振動 warning が `--quiet` でも出る注記（§10）、orphan profile 節に将来 `layat prune` seam 注記（§11）。
 - **`docs/design.md`**: 実行モデル節に非 build コマンドの eval 先行・`--all` 一括 eval を反映。モジュール統合表の home-manager 行に profile = `default` 固定を注記。使用パターンに「既存 flake への組み込み」セクションを追加（§6）。
 - **`docs/concept.md`**: 使用パターン / project mode 近辺に既存 repo 後付けの導線を軽く反映（§6・語の整合のみ）。
-- **`CONTEXT.md`**: `engine` / `nput CLI` 定義の実行順記述に非 build コマンドの eval 先行を整合。profile キーイングの fixed 行に触れる場合は roothash を反映。
+- **`CONTEXT.md`**: `engine` / `layat CLI` 定義の実行順記述に非 build コマンドの eval 先行を整合。profile キーイングの fixed 行に触れる場合は roothash を反映。
 - **実装フェーズ**: lib（`normalizeManifest` の target 重複 throwIf・`listFilesInSrc` の src 型ガード）、CLI（fixed/`--root` の roothash 解決・非 build コマンドの eval 先行・`--all` 一括 eval・終了コード優先・`--quiet` 規律・HM profile = default）。ADR-0023 §4 の Slice 順で着手する。
 
 ## 棄却した代替案
 
 - **fixed root を `<name>` 直キー**: 実装最小だが別 root の同名 config が世代系列を共有し silent orphan が残る（§背景1）。
 - **fixed root を MVP で eval エラー禁止**: seam を削るが任意固定 root の利用余地を失い、ADR-0004 の root 一般化方針に逆行。
-- **HM モジュールを MVP から `nput.configs.<name>` の attrsOf にする**: 粒度は揃うが options 設計と activation の複数 profile swap が重く、HM の低い positioning（ADR-0007）に見合わない。
+- **HM モジュールを MVP から `layat.configs.<name>` の attrsOf にする**: 粒度は揃うが options 設計と activation の複数 profile swap が重く、HM の低い positioning（ADR-0007）に見合わない。
 - **target 衝突を engine 実行時のまま**: 検査経路は1つで済むが eval で弾けるエラーを実行時へ遅らせ ADR-0010 とずれる。
 - **`listFilesInSrc` で `set` を許容し IFD はユーザー責任**: entries と型が揃うが flake pure eval での破綻を招き、典型外ユースケースの footgun。
 - **`--all --dryrun` の終了コードを最大値**: 実装最小だが conflict(2) が error(1) を隠し CI で深刻エラーを見落とす。
-- **`nput init --merge` で既存 flake を自動マージ**: 後付けは楽だが「設定を生成しない」thesis を崩す。
-- **MVP に `nput prune` / warning 抑制を入れる**: 運用は楽だが実害の小さい問題に実装・テストを増やし、問題（振動の設定ミス）を隠す。
+- **`layat init --merge` で既存 flake を自動マージ**: 後付けは楽だが「設定を生成しない」thesis を崩す。
+- **MVP に `layat prune` / warning 抑制を入れる**: 運用は楽だが実害の小さい問題に実装・テストを増やし、問題（振動の設定ミス）を隠す。

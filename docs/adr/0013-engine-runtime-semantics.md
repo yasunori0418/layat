@@ -42,7 +42,7 @@ references:
 > 同一 profileDir 後勝ちポリシー（本 ADR §2）の cross-config / cross-tool への一般化（→ ADR-0015）。
 >
 > **2026-06-14 改訂注記（ADR-0016）**: 本 ADR §3 の「`apply --all` は **定義順**」を **辞書順（キーソート・決定的）**へ訂正した。
-> `nput.*` は attrset で `builtins.attrNames` が辞書順を返すため定義順は保持されない。各 config は独立 profile で atomic なので
+> `layat.*` は attrset で `builtins.attrNames` が辞書順を返すため定義順は保持されない。各 config は独立 profile で atomic なので
 > 適用順は結果に影響せず、決定的でありさえすればよい（→ ADR-0016）。
 >
 > **2026-06-14 改訂注記（ADR-0017）**: 本 ADR §3 の `apply --all` に **root モードフィルタ `--project-root` / `--home-root` / `--system-root`** を追加した。
@@ -56,7 +56,7 @@ references:
 > **2026-07-04 改訂注記（ADR-0036）**: 本 ADR §5 の「`root = systemRoot` は eval 時エラー（system mode 未実装）」を撤回し、
 > system mode を実装する。`systemRoot` を API に残した判断自体は不変で、その seam が実装に進んだ。`normalizeManifest` は
 > `rootKind = "system"` を通し、engine は root = `/` へ解決・変更系操作で euid 0 を検査・profile 状態は
-> `/nix/var/nix/profiles/nput` 配下に置く（→ ADR-0036）。
+> `/nix/var/nix/profiles/layat` 配下に置く（→ ADR-0036）。
 
 ## 背景
 
@@ -68,7 +68,7 @@ ADR-0006〜0012 で言語・層分離・契約方式・技術スタック・CI �
 3. `apply --all` で一部 config が失敗したときの挙動（stop / continue / 順序 / 終了コード）が未定義。
 4. `mode = "copy"` + out-of-store marker は spec の表で「非推奨」とだけ書かれ、engine 実挙動が未定義。
 5. `systemRoot` は lib API に露出している（ADR-0004/0007 で seam として正式マーカー化）が engine 未実装。使ったときの挙動が未定義。
-6. `nput gitignore` は stdout 出力のみと決まっているが、行フォーマットが未定義。
+6. `layat gitignore` は stdout 出力のみと決まっているが、行フォーマットが未定義。
 7. project mode profileDir を `<roothash>/<name>` でキーする（ADR-0005）が、roothash の算出方式が未定義。孤児 profile の逆引き可否がこれで変わる。
 
 ## 決定
@@ -78,7 +78,7 @@ ADR-0006〜0012 で言語・層分離・契約方式・技術スタック・CI �
 - `schemaVersion = 1` を実値として確定する。engine は自身の対応版より新しい `schemaVersion` を拒否する（ADR-0006）。
 - 全フィールド（`root.rootKind` / `root.root`、`entries[].name` / `srcKind` / `src` / `subpath` / `target` / `mode`）と
   symlink farm との対応を spec に表 + JSON 例で固定する。lib / engine / テストが同一の一次ソース（spec）を見る。
-- 内部タグ `_nputMarker` は manifest に漏らさず clean enum（`srcKind` / `rootKind`）で写す（ADR-0010 を踏襲）。
+- 内部タグ `_layatMarker` は manifest に漏らさず clean enum（`srcKind` / `rootKind`）で写す（ADR-0010 を踏襲）。
 - symlink farm は **GC アンカー専用**。engine が配置に使う値は manifest が持つ解決済み store パス文字列（ADR-0010）であり、
   farm は store-backed src への GC root を張るためだけに併存する。out-of-store src は store 外なので farm アンカーを持たない。
 
@@ -97,7 +97,7 @@ ADR-0006〜0012 で言語・層分離・契約方式・技術スタック・CI �
 
 - 各 config は独立 profile で atomic（ADR-0002）。1 つの失敗で残りを止める理由がないため、失敗した config は
   スキップして残りを適用し、**最後に成功 / 失敗を集約表示**する。**1 つでも失敗なら非ゼロ終了**。
-- **適用順序は entrypoint の `nput.*` 定義順**（決定的順序）。`--all` 自体を atomic（全成功か全 rollback）にはしない
+- **適用順序は entrypoint の `layat.*` 定義順**（決定的順序）。`--all` 自体を atomic（全成功か全 rollback）にはしない
   （project mode は rollback 非公開で意味論が崩れるため）。
 
 ### 4. `copy` + out-of-store marker は eval 時エラー
@@ -113,7 +113,7 @@ ADR-0006〜0012 で言語・層分離・契約方式・技術スタック・CI �
   `root = systemRoot` を実際に使うと `normalizeManifest` が **「system mode は未実装（予定）」で eval 時 throw** する。
 - API 面を将来に向け安定させつつ、eval は通って engine 実行時に未定義挙動になる罠を防ぐ。
 
-### 6. `nput gitignore` は先頭 `/` アンカー・1 行 1 target
+### 6. `layat gitignore` は先頭 `/` アンカー・1 行 1 target
 
 - 出力は **root 相対 target に先頭 `/` を付けた gitignore アンカー形式**（例: `/.claude/skills/nix`）を 1 行 1 件で stdout に出す。
 - project mode の root = git toplevel = `.gitignore` の置き場所なので、先頭 `/` が正しくアンカーし、別階層の同名パスを
@@ -145,7 +145,7 @@ ADR-0006〜0012 で言語・層分離・契約方式・技術スタック・CI �
 - **`CONTEXT.md`**: flock キー（profileDir）・後勝ちポリシーを `engine` / `generation` 周辺に反映。
   Flagged ambiguities に「standalone = CLI 起動形態であって配置モードではない」を追加。
 - **実装フェーズ**: `lib/manifest.nix`（copy+marker / systemRoot の throwIf）、`internal/`（flock 経路分岐・--all 集約・roothash + backref・
-  gitignore 整形）、`cmd/nput`（--no-wait フラグ・--all レポート）。
+  gitignore 整形）、`cmd/layat`（--no-wait フラグ・--all レポート）。
 
 ## 棄却した代替案
 

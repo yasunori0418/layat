@@ -54,7 +54,7 @@ references:
 
 ## 背景
 
-nput の仕様・設計・テストは `docs/spec.md`（1200 行超）/ `docs/design.md`（550 行）/ `docs/concept.md`
+layat の仕様・設計・テストは `docs/spec.md`（1200 行超）/ `docs/design.md`（550 行）/ `docs/concept.md`
 （400 行）と 47 本の ADR に散文で書かれている。この形では「要求とリスクの紐付けが一貫しているか」を
 機械検証できない。
 
@@ -90,7 +90,7 @@ DOD-04（3 文書が実装に追従）をそのまま維持するため。50 フ
 ### 2. `docs/model.yaml` で組み込みモデルを全面置換する
 
 sara のカスタムスキーマは組み込みモデルを完全置換する仕様で、部分マージはされない。`sara schema -o` で
-吐いた組み込みモデルを起点に、nput の文書構造へ合わせて 10 型を定義する。
+吐いた組み込みモデルを起点に、layat の文書構造へ合わせて 10 型を定義する。
 
 | 型 | prefix | 親 |
 |---|---|---|
@@ -106,7 +106,7 @@ sara のカスタムスキーマは組み込みモデルを完全置換する仕
 | defect | D | test_case |
 
 組み込みの `hardware_requirement` / `hardware_detailed_design` / `scenario` / `system_architecture` は
-**定義しない**。nput にハードウェアは無く、Scenario / SystemArchitecture に対応する実体（use_case と
+**定義しない**。layat にハードウェアは無く、Scenario / SystemArchitecture に対応する実体（use_case と
 requirement の中間層・requirement と design の中間層）も持たない。
 
 残る組み込み型は汎用名へ改名して引き継ぐ。
@@ -117,10 +117,10 @@ requirement の中間層・requirement と design の中間層）も持たない
 | `software_detailed_design` | `design` |
 | `architecture_decision_record` | `adr` |
 
-nput にはハードウェア / ソフトウェアの区別が無く、system / software の 2 段も持たないため、
+layat にはハードウェア / ソフトウェアの区別が無く、system / software の 2 段も持たないため、
 1 つの `requirement` / `design` に統合する。
 
-型名・フィールド名は**汎用のまま保つ**（nput 固有の語彙を混ぜない）。当面 nput 内に置くが、型が安定したら
+型名・フィールド名は**汎用のまま保つ**（layat 固有の語彙を混ぜない）。当面 layat 内に置くが、型が安定したら
 skills リポジトリか専用リポジトリへ切り出して横展開する前提のため。切り出しに備えて設計意図を
 `docs/model.yaml` のコメントに残す。
 
@@ -142,7 +142,7 @@ adr の `status` は実データの表記に合わせ、`!enum {提案, 採用}`
 
 組み込みの `supersedes` / `superseded_by` は model.yaml から落とす。**恒久的な排除ではない。**
 
-`supersedes` は「文書丸ごとの失効」を意味するが、nput の ADR 改訂は全て**節単位の部分改訂**で、丸ごと
+`supersedes` は「文書丸ごとの失効」を意味するが、layat の ADR 改訂は全て**節単位の部分改訂**で、丸ごと
 失効した実例が無い（改訂実態の調査 2026-08-01: 最も近い ADR-0033 ← ADR-0043 でも、タイトルになった
 決定自体は存続している）。実例の無い関係を先に定義すると、部分改訂に `supersedes` を誤用して「旧 ADR は
 読まなくてよい」と読者に誤認させる。これは `docs/adr/README.md` が防ごうとしている失敗そのものである。
@@ -241,13 +241,13 @@ model.yaml 単体が ID 規約のドキュメントとして読まれるため�
   ため、README / 概要文書 / test-plan 等への除外設定は不要
 - devShell に `sara-id` が加わる（`uuidgen -r` を供給する util-linux は `sara-id` の `runtimeInputs`
   として wrapper の PATH に前置されるため、devShell 側には載せない）。CI 用に `devShells.sara` を分けており、
-  docs-only PR で nput のビルドと dogfood の shellHook を走らせない
+  docs-only PR で layat のビルドと dogfood の shellHook を走らせない
 - `docs/adr/README.md` の「ADR は **supersede しない**」という断定表記は、本 ADR の §3（当面使わない・
   恒久排除ではない）と趣旨を揃えるため緩和が必要。この改訂は #208 のスコープで行う
 - 移行は epic #203 の 7 段階（#207 → #213）で進める。段階 2（#208・ADR 47 本への frontmatter 追加）が
   単独で最大の即効性を持つ
 - skills リポジトリ側の改修（テスト成果物の恒久化・全 ID のファイル分割・UUIDv4 採番手順など）は
-  **nput 先行・skills は後追い**とし、移行の実地で必要な改修を確定させてから着手する。本 ADR のスコープ外
+  **layat 先行・skills は後追い**とし、移行の実地で必要な改修を確定させてから着手する。本 ADR のスコープ外
 
 ## 棄却した代替案
 
@@ -259,7 +259,7 @@ model.yaml 単体が ID 規約のドキュメントとして読まれるため�
 
 ### 組み込みモデルをそのまま使う
 
-`hardware_requirement` / `hardware_detailed_design` は nput に対応する実体が無く、`scenario` /
+`hardware_requirement` / `hardware_detailed_design` は layat に対応する実体が無く、`scenario` /
 `system_architecture` も中間層として実在しない。空の型が並ぶと、後任が「ここを埋めるべきか」を毎回判断する
 コストを負う。カスタムスキーマは組み込みを完全置換する仕様なので、部分的に残す選択肢も無い。
 

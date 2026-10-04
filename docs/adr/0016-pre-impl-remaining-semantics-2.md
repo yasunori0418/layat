@@ -41,12 +41,12 @@ ADR-0015 が実装前残セマンティクスの第 1 巡を固めたが、第 2
 1. **copy の「mode 保存」と「編集用途」が矛盾**。concept は copy を「ファイルを直接編集したい場合（テーマ・設定の
    一時調整）」と位置づけるが、ADR-0011 / spec / design は「file mode 保存」でコピーする。store パスは read-only
    （0444 / 0555）なので、保存するとコピー先も read-only になり編集できない。
-2. **`apply --all` の「定義順に適用」が Nix 的に成立しない**。`nput.*` は attrset で、`nix eval` / `builtins.attrNames`
+2. **`apply --all` の「定義順に適用」が Nix 的に成立しない**。`layat.*` は attrset で、`nix eval` / `builtins.attrNames`
    が返すキー順は **辞書順（ソート）**。定義順は保持されない。spec / ADR-0013 の「定義順」は事実と異なる。
 3. **copy の再帰コピーが src ツリー内の symlink をどう扱うか未確定**。ADR-0011 は「symlink 対応」と書くが、store 内に
    よくある symlink を symlink のまま複製するか、deref して実体を写すかが未定義。
-4. **home mode の version skew が未対処**。project mode は devShell 同梱で CLI と `nput.lib` を一致させた（ADR-0015）が、
-   home mode（グローバル install + flake pin の `nput.lib`）は別入力で skew し得る。
+4. **home mode の version skew が未対処**。project mode は devShell 同梱で CLI と `layat.lib` を一致させた（ADR-0015）が、
+   home mode（グローバル install + flake pin の `layat.lib`）は別入力で skew し得る。
 5. **symlink farm の GC アンカー名衝突**。「target をサニタイズして名前に使う」（spec）が、`/` 除去等で別 target が
    同名に潰れうる（linkFarm はキー一意必須）。
 6. **（軽微）`.pending-<name>` out-link の失敗時残留**。`--set` 前に apply が失敗すると pending gcroot が残り、
@@ -65,7 +65,7 @@ ADR-0015 が実装前残セマンティクスの第 1 巡を固めたが、第 2
 
 ### 2. `apply --all` の適用順は辞書順（キーソート・決定的）
 
-- `nput.*` は attrset で、適用順は `builtins.attrNames` が返す **辞書順（キーソート）**になる。Nix attrset は定義順を
+- `layat.*` は attrset で、適用順は `builtins.attrNames` が返す **辞書順（キーソート）**になる。Nix attrset は定義順を
   保持しないため「定義順」は実現不能。
 - 各 config は独立 profile で atomic（ADR-0002）なため、適用順は結果に影響しない（表示・失敗集約のための
   決定的順序であればよい）。spec / ADR-0013 の「定義順」を「**辞書順（決定的）**」へ訂正する。
@@ -83,7 +83,7 @@ ADR-0015 が実装前残セマンティクスの第 1 巡を固めたが、第 2
 - engine は自身の対応版より新しい `schemaVersion` を拒否する（ADR-0006）。**MVP は v1 のみ**（ADR-0015）なので
   skew は実害化せず、skew しても明確な error になる。
 - project mode の devShell 同梱（ADR-0015）に対し、home mode は「**CLI（グローバル install）と flake が pin する
-  `nput.lib` を同一 input から揃える**」ことを推奨として docs に明記するに留める。強制はしない（PATH 常駐の
+  `layat.lib` を同一 input から揃える**」ことを推奨として docs に明記するに留める。強制はしない（PATH 常駐の
   エルゴノミクスを損なわないため）。
 
 ### 5. symlink farm の GC アンカー名は target のハッシュにする

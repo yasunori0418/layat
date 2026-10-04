@@ -53,19 +53,19 @@ cryoflow の構成要素は次の通り。
 
 - **lib（nix-unit / namaka）と engine Go（ユニット + tmpdir 統合）は `nix flake check`** に集約し PR で常時実行する。
   いずれも純評価・偽 source・nix 不使用でサンドボックスと相性が良い。
-- **E2E は ubuntu-latest の別ジョブ**。`cachix/install-nix-action` で nix を入れた後、フィクスチャに対し `nput apply` を
+- **E2E は ubuntu-latest の別ジョブ**。`cachix/install-nix-action` で nix を入れた後、フィクスチャに対し `layat apply` を
   実行し FS / nix profile / rollback をアサートする。profile 書込・実 FS 変更・特権を伴い `nix flake check` の
   サンドボックスでは成立しないため、check 外のジョブに出す。cryoflow の「軽い = check 相当 / 重い = devShell ジョブ」分離と同型。
 
 ### 4. キャッシュ投入 = matrix ビルド
 
-- tag push 時に matrix（x86_64-linux / aarch64-linux / aarch64-darwin）で `nix build .#nput` し cachix `yasunori0418` に投入する。
+- tag push 時に matrix（x86_64-linux / aarch64-linux / aarch64-darwin）で `nix build .#layat` し cachix `yasunori0418` に投入する。
 
 ## 根拠
 
 - **同一メンテナの実績構成**を踏襲することで CI の保守コストと再現性が揃う。
-- **E2E をサンドボックス外に出す**のは技術的必然。nput の E2E は nix profile を実際に書き換え rollback を検証するため、
-  ネットワーク遮断・特権制限のある `nix flake check` 内では成立しない。検証対象（非 NixOS + nix で nput が動く）と
+- **E2E をサンドボックス外に出す**のは技術的必然。layat の E2E は nix profile を実際に書き換え rollback を検証するため、
+  ネットワーク遮断・特権制限のある `nix flake check` 内では成立しない。検証対象（非 NixOS + nix で layat が動く）と
   install-nix-action のジョブが直接一致する。
 - **dockerTools 自作イメージは過剰**。「nix 入りイメージ」を dockerTools で機能させるには store / daemon / sandbox の配管が要り、
   `cachix/install-nix-action` が既に提供する機能の再発明になる。検証対象は image 構築の再現性ではない。

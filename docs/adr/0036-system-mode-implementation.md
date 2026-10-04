@@ -47,12 +47,12 @@ references:
 - **読み取り専用の経路は検査しない**: `list-generations` は profile dir の読み取りだけで動き、`apply --dryrun` は配置を行わない（eval / build は nix daemon 経由で非 root でも可能）。非 root でも計画確認・世代閲覧はできる状態を保つ。
 - 権限があっても個別 target の書き込みが失敗するケース（read-only mount 等）は、既存のエラー wrap 規約（op + 対象パス）で自然に報告される。euid 検査は「確実に全滅する実行を早期に・明確な案内付きで止める」ための前段ゲート。
 
-### 3. profile 状態は `/nix/var/nix/profiles/nput` 配下に置く
+### 3. profile 状態は `/nix/var/nix/profiles/layat` 配下に置く
 
-- `rootKind = "system"` のとき、profileDir の state 基底をユーザー state dir から **`/nix/var/nix/profiles/nput`** に切り替える。nix の system profile 慣習（`/nix/var/nix/profiles`）に一致し、将来の NixOS / nix-darwin モジュールが同じ場所をそのまま使える。
-- キーイングは home mode と同型: root = `/` は固定なので **`<name>` 直キー**（`/nix/var/nix/profiles/nput/<name>`）。`--root` 明示時は全モード共通ルール（ADR-0023）通り `<roothash>/<name>` キー + backref `.root`。ディレクトリ内部レイアウト（`profile` リンク・`profile-N-link`・`.pending`・flock）は ADR-0025 §4 と同一。
+- `rootKind = "system"` のとき、profileDir の state 基底をユーザー state dir から **`/nix/var/nix/profiles/layat`** に切り替える。nix の system profile 慣習（`/nix/var/nix/profiles`）に一致し、将来の NixOS / nix-darwin モジュールが同じ場所をそのまま使える。
+- キーイングは home mode と同型: root = `/` は固定なので **`<name>` 直キー**（`/nix/var/nix/profiles/layat/<name>`）。`--root` 明示時は全モード共通ルール（ADR-0023）通り `<roothash>/<name>` キー + backref `.root`。ディレクトリ内部レイアウト（`profile` リンク・`profile-N-link`・`.pending`・flock）は ADR-0025 §4 と同一。
 - **home / project / fixed の profileDir は一切変わらない**（切り替えは rootKind = system のときだけ）。
-- `nput prune`（ADR-0034）の走査対象にこの system 基底を加える。root = `/` の `<name>` 直キー系列は構造的に孤児化しないが、`--root` 上書きの roothash 系列は孤児化し得る。削除には root 権限が要るため、非 root 実行の prune は権限エラーの系列を warning 付きで skip する。
+- `layat prune`（ADR-0034）の走査対象にこの system 基底を加える。root = `/` の `<name>` 直キー系列は構造的に孤児化しないが、`--root` 上書きの roothash 系列は孤児化し得る。削除には root 権限が要るため、非 root 実行の prune は権限エラーの系列を warning 付きで skip する。
 
 ### 4. `rollback` / `list-generations` の公開基準を「配置の永続性」に整理し、system mode に公開する
 
@@ -71,7 +71,7 @@ references:
 
 - **`lib/manifest.nix`**: systemRoot throwIf 撤去・`rootKind = "system"` 変換。nix-unit / namaka テスト更新（拒否テスト → 変換テスト）。
 - **`internal/engine` / `internal/paths`**: root 解決の system 分岐・profileDir の state 基底切替・euid ゲート（変更系のみ）。
-- **`cmd/nput`**: `rollback` / `list-generations` のモードゲート拡張・`--system-root` 修飾の実効化。
+- **`cmd/layat`**: `rollback` / `list-generations` のモードゲート拡張・`--system-root` 修飾の実効化。
 - **`docs/spec.md`**: エラー仕様表の「systemRoot 未実装」を削除し、権限エラーを追加。root 解決表・profile dir 表・世代管理仕様に system mode を追記。「rollback / list-generations は home mode 限定」の記述を home / system へ更新。
 - **`docs/design.md` / `CONTEXT.md` / `docs/glossary.md`**: system mode を「将来拡張」から実装済みへ更新（NixOS / nix-darwin モジュールは引き続き将来拡張のまま）。
 - **ADR-0013 / ADR-0015 / ADR-0018 / ADR-0025**: 各改訂対象への改訂注記を同一 PR で追記。
@@ -81,6 +81,6 @@ references:
 
 - **euid 事前チェックなし（書き込み失敗を自然に返す）**: 失敗が「最初に触った target の EACCES」という偶発的な形になり、sudo への誘導も無い。決定的な前段ゲートの方がユーザー体験・テスト容易性ともに優る（grilling 中の当初案から反転）。
 - **profile をユーザー state dir のまま（root 実行 → `/root/.local/state`）**: 実装差分ゼロだが、システム状態が root の home に住み、NixOS モジュール導入時に移行痛（世代孤児化）が確定する。正しい場所を先に選ぶ。
-- **profile を `/var/lib/nput` に置く**: FHS 的には自然だが、nix profile の慣習（`/nix/var/nix/profiles`）から外れ、nix エコシステム内での発見可能性が下がる。
+- **profile を `/var/lib/layat` に置く**: FHS 的には自然だが、nix profile の慣習（`/nix/var/nix/profiles`）から外れ、nix エコシステム内での発見可能性が下がる。
 - **世代操作を非公開のまま据え置く**: standalone の system 利用者に戻す手段が `nix-env` 直叩きしか無くなる。「配置の永続性」基準の方が ADR-0005（project = ephemeral だから非公開）とも一貫する。
 - **NixOS / nix-darwin モジュールまで同時に実装する**: 縦割りとしては自然だが、モジュール実装は VM テスト（`runNixOSTest`）・activation 配線・host 世代統合と規模が大きい。engine / CLI の system mode を先に安定させ、モジュールは次マイルストーンとする（grilling で確定）。

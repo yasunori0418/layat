@@ -36,7 +36,7 @@ references:
 > 奪い合う競合が構造的に消える（→ ADR-0023）。
 
 > **2026-07-03 実装注記**: 本 ADR §2 が決定した **fatih/color（dryrun 色付け）は実装では採用しなかった**。
-> `cmd/nput` の依存は cobra のみで、dryrun 出力は色なしの `fmt.Printf` で表示する。CLI 層が「最小依存」枠内で
+> `cmd/layat` の依存は cobra のみで、dryrun 出力は色なしの `fmt.Printf` で表示する。CLI 層が「最小依存」枠内で
 > 選択できるという §1 の方針自体は不変（→ Issue #111）。
 
 > **2026-10-02 改訂注記（ADR-0055）**: 本 ADR §4 の「out-link を profileDir 内に作って store path を取得し GC 窓を塞ぐ」
@@ -61,7 +61,7 @@ ADR-0006（言語 = Go・lib はデータ生成・固定エンジン）と ADR-0
 - 再帰コピー / JSON / エラー処理の実装基盤
 - Go toolchain のバージョン pin 方法（Nix サンドボックスはネットワーク遮断）
 
-ADR-0006 の「ソース配置 = `cmd/nput/` + `internal/`」と ADR-0007 の「engine を Go ライブラリとして実装」も、
+ADR-0006 の「ソース配置 = `cmd/layat/` + `internal/`」と ADR-0007 の「engine を Go ライブラリとして実装」も、
 **「ライブラリ」が公開 import 可能な再利用モジュールを意味するのか、バイナリ内部の層分離なのか**が曖昧だった。
 
 ## 決定
@@ -87,8 +87,8 @@ ADR-0006 の「ソース配置 = `cmd/nput/` + `internal/`」と ADR-0007 の「
 
 ### 4. store path 取得 = out-link を profileDir 内に作る（GC 窓を塞ぐ）
 
-- CLI は link-farm の store path を **`nix build <ep>#nput.<system>.<name> --out-link <profileDir>/.pending-<name>`**
-  （legacy は `nix-build <ep> -A nput.<name> --out-link <profileDir>/.pending-<name>`）で得る。`os.Readlink` で store path を読む。
+- CLI は link-farm の store path を **`nix build <ep>#layat.<system>.<name> --out-link <profileDir>/.pending-<name>`**
+  （legacy は `nix-build <ep> -A layat.<name> --out-link <profileDir>/.pending-<name>`）で得る。`os.Readlink` で store path を読む。
 - これにより **取得と indirect gcroot 登録を一手**に行い、`nix build` 完了〜`nix-env --set` の間に並行
   `nix-collect-garbage` が link-farm を回収して**配置中の symlink が dangling 化する窓**を塞ぐ。
 - `.pending-<name>` は**固定パス**にする。`--out-link` は既存パスを上書きするため、apply ごとに前回 pending root が
@@ -135,7 +135,7 @@ ADR-0006 の「ソース配置 = `cmd/nput/` + `internal/`」と ADR-0007 の「
 - **`docs/spec.md`**: 実行フローの「store path 取得」を out-link-in-profileDir に更新。依存関係表に cobra / fatih/color・
   vendorHash・stdlib 機構を反映。
 - **`CONTEXT.md`**: `engine` 定義に「`internal/` 層分離（公開モジュールではない）」「out-link で GC 窓を塞ぐ」を追記。
-- **`flake.nix`**: `packages.<system>.nput`（`buildGoModule` + vendorHash）の追加は実装フェーズ。
+- **`flake.nix`**: `packages.<system>.layat`（`buildGoModule` + vendorHash）の追加は実装フェーズ。
 - ADR-0007 の「store path 取得」記述（`nix build … → store path`）を本 ADR が out-link 方式に具体化する。
 
 ## 棄却した代替案

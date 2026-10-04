@@ -1,7 +1,7 @@
 ---
 id: "ADR-0020"
 type: adr
-name: "copy の明示上書き（`apply --recopy`）と配置物のリセット（`nput reset`）を追加する"
+name: "copy の明示上書き（`apply --recopy`）と配置物のリセット（`layat reset`）を追加する"
 status: 採用
 origin: "「copy で配置した物を参照元更新に追従させたい」「entry の配置物を無い状態に戻したい（リセット）」という 2 つのユースケース未対応"
 justifies:
@@ -19,7 +19,7 @@ references:
   - "ADR-0017"
   - "ADR-0019"
 ---
-# ADR-0020: copy の明示上書き（`apply --recopy`）と配置物のリセット（`nput reset`）を追加する
+# ADR-0020: copy の明示上書き（`apply --recopy`）と配置物のリセット（`layat reset`）を追加する
 
 - ステータス: 採用
 - 日付: 2026-06-14
@@ -27,7 +27,7 @@ references:
 - 改訂対象: **ADR-0002**（copy = place-once・世代外）に「明示フラグでの上書き経路」を追加。**ADR-0006**（サブコマンド体系）に `reset` を追加
 - 起点: 「copy で配置した物を参照元更新に追従させたい」「entry の配置物を無い状態に戻したい（リセット）」という 2 つのユースケース未対応
 
-> **2026-06-14 改訂注記（ADR-0021）**: 本 ADR が追加した `nput reset` / `apply --recopy` という **decision 自体は不変**。
+> **2026-06-14 改訂注記（ADR-0021）**: 本 ADR が追加した `layat reset` / `apply --recopy` という **decision 自体は不変**。
 > ただし本 ADR が定義しなかった二次的細目が ADR-0021 で確定した——**`reset` は `<name>` 名指し必須で `--all` を提供しない**
 > （一斉撤去は誤操作の被害が大きく、`rollback --all` 却下（ADR-0018）と一貫させる）、**`reset --dryrun` は副作用ゼロの
 > 読み取り専用プレビュー**（FS 削除・confirm・flock いずれも行わず、削除対象の有無に依らず exit 0）、**`reset` は解決後
@@ -46,21 +46,21 @@ copy は決して自動除去しないため、copy を消す明示手段が存�
 
 ## 決定
 
-### 1. `nput apply <name> --recopy` で copy target を上書き再コピーする
+### 1. `layat apply <name> --recopy` で copy target を上書き再コピーする
 
 - `apply` に `--recopy` フラグを追加する。通常の apply（symlink 配置 + stale 除去 + 世代コミット）に加え、
   **config 内の全 copy entry の target を現 `src`/`subpath` から無条件に再コピー（上書き）**する。
-- nput は copy 内容の hash を追跡しない（世代外・ADR-0002）ため、差分判定はせず**無条件上書き**とする。ユーザー責任モデルに整合。
+- layat は copy 内容の hash を追跡しない（世代外・ADR-0002）ため、差分判定はせず**無条件上書き**とする。ユーザー責任モデルに整合。
 - **上書きした target をレポート表示**する。`--recopy` フラグ自体が opt-in なので確認プロンプトは出さない。
   ローカルの copy 編集は破棄され src 内容へ戻る（= 「upstream に追従したい」という flag の意図そのもの）旨を docs に明記する。
 - copy は世代外のまま（ADR-0002）。`--recopy` は世代を増やさず copy target を再マテリアライズするだけで、symlink 部の
   通常 apply 挙動（世代コミット）は不変。
 
-### 2. `nput reset <name> [target...]` で配置物を無い状態へ戻す
+### 2. `layat reset <name> [target...]` で配置物を無い状態へ戻す
 
 - `reset` サブコマンドを追加する。`target` 省略で config の**全 entry**、`target...` 指定で**その entry のみ**を撤去する。
 - 撤去対象:
-  - **symlink**: stale 除去と同じ**保守的不変条件**（nput 管理・記録通りを指す symlink のみ。foreign symlink は warning を出して
+  - **symlink**: stale 除去と同じ**保守的不変条件**（layat 管理・記録通りを指す symlink のみ。foreign symlink は warning を出して
     残す・実ファイルは触らない・ADR-0002）。
   - **copy target**: stale 除去が決して触らない領域だが、reset は **copy を消す唯一の明示手段**として copy target も削除する。
     place-once は配置実績を追跡しないため、reset は manifest が宣言する copy target を削除対象とする（事前存在ファイルを消す
@@ -98,12 +98,12 @@ copy は決して自動除去しないため、copy を消す明示手段が存�
 - **`docs/concept.md`**: copy の「ユーザー管理の副作用」節に「src 追従は `--recopy`、撤去は `reset`」を反映。
 - **ADR-0002**: 改訂注記で「copy = place-once は既定。`apply --recopy` で明示上書き、`reset` で撤去（copy 削除）を追加」。
 - **ADR-0006**: 改訂注記で「サブコマンド体系に `reset` を追加。`apply` に `--recopy`、グローバルに `--yes`」。
-- **実装フェーズ**: `cmd/nput`（`apply --recopy` / `reset` サブコマンド / `--yes` / 確認プロンプト）、`internal/`（copy 上書き再コピー・
+- **実装フェーズ**: `cmd/layat`（`apply --recopy` / `reset` サブコマンド / `--yes` / 確認プロンプト）、`internal/`（copy 上書き再コピー・
   reset の保守的 symlink 除去 + copy 削除）。
 
 ## 棄却した代替案
 
-- **`--recopy` を専用サブコマンド `nput recopy`**: symlink も含む一括更新が 2 コマンドになる。apply フラグなら 1 コマンド。
+- **`--recopy` を専用サブコマンド `layat recopy`**: symlink も含む一括更新が 2 コマンドになる。apply フラグなら 1 コマンド。
 - **`--recopy` を差分判定（変わった target のみ）**: 編集を不必要に潰さないが、mode 保存 + symlink 複製下での diff が非自明で
   実装複雑。「ユーザー責任で上書き」意図ともずれる。
 - **recopy 専用機能を設けず reset + apply で代用**: 表面積最小だが 2 ステップで、symlink と同時更新できない。

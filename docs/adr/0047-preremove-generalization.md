@@ -39,7 +39,7 @@ ADR-0046 は「配置 target の**祖先**が自己記録 stale symlink のと�
 1. **target 自身が実 dir のケース**: 前世代が `foo/main.sh`（per-file）を配置し、新世代がその親 `foo` 自体を dir symlink にしようとすると、`foo` は実 dir として存在しているため「target already has an existing file/directory」で conflict になる。ADR-0046 は祖先の緩和しか扱わないため、**target そのもの**が実 dir のケースは救えない。2026-07-12 の実障害（`.claude/hooks/<name>/main.sh` → `.claude/hooks/<name>` の dir symlink 化）はこのパターン。
 2. **method 変更のケース**: 同一 target で `method` を `symlink` から `copy` へ変えると、前世代が置いた symlink が target を占有しており、copy 側の分類は「structure mismatch」または「foreign」として conflict / skip になる。symlink はユーザーデータを持たないため、これも自動移行して安全なはずだが、現状は手動 `rm` が要る。
 
-nput は manifest 記録を持つため、これらも「自分が置いて自分が消す」の範囲内であれば安全に自動化できる。ADR-0046 の枠組み（`Plan.PreRemove` による配置前除去）を、対象を「祖先」から「配置を塞ぐ自己記録 stale 全般」へ広げることで両方を解決する。
+layat は manifest 記録を持つため、これらも「自分が置いて自分が消す」の範囲内であれば安全に自動化できる。ADR-0046 の枠組み（`Plan.PreRemove` による配置前除去）を、対象を「祖先」から「配置を塞ぐ自己記録 stale 全般」へ広げることで両方を解決する。
 
 ## 決定
 
@@ -49,7 +49,7 @@ symlink method の entry の target に実 dir が既存でも、次の条件を
 
 - 配下の各 leaf（任意深さ）が、以下のいずれか:
   - **recorded ∧ stale**（前世代 manifest が記録した symlink・on-disk が記録 dest と一致・次世代に無い）→ 配置前に Unlink
-  - **空の sub dir**（由来を問わない。rmdir は空でしか成功せず、データ損失が原理的にゼロなため、nput が作った dir かどうかを判別する必要がない）→ 配置前に Rmdir
+  - **空の sub dir**（由来を問わない。rmdir は空でしか成功せず、データ損失が原理的にゼロなため、layat が作った dir かどうかを判別する必要がない）→ 配置前に Rmdir
 - 上記以外の leaf が 1 つでもあれば、**dir 全体**を conflict にする（部分除去はしない）:
   - 中身のある実 file・実 dir（foreign or 判別不能）
   - foreign symlink（記録なし / 記録 dest と不一致）
@@ -95,7 +95,7 @@ ADR-0046 §3 で導入した「PreRemove は最終段の removeStale と違い�
 
 ## 根拠
 
-- **空 dir を由来問わず許す**のは、rmdir が空でしか成功せずデータ損失が原理的にゼロなため。ユーザーは config でその target を（symlink または copy として）宣言済みであり、nput が作ったかどうかの判別コストを払う理由がない。
+- **空 dir を由来問わず許す**のは、rmdir が空でしか成功せずデータ損失が原理的にゼロなため。ユーザーは config でその target を（symlink または copy として）宣言済みであり、layat が作ったかどうかの判別コストを払う理由がない。
 - **中身のある foreign が 1 つでも dir 全体を conflict にする**のは、部分除去がユーザーの意図しない中間状態を生むため。「移行できるところだけ移行する」設計はエラーの見落としを誘発する。
 - **symlink→copy のみ自動化し copy→symlink はしない**のは非対称だが、データ損失リスクの非対称性を反映している。symlink はデータを持たないが copy はユーザー編集を含みうる。この非対称は ADR-0020（copy の place-once・ユーザー管理）と一貫する。
 - **drift 一律 error 停止**は ADR-0046 §3 の踏襲。skip 続行は `MkdirAll` の symlink 追従による store/foreign 汚染窓を開く。
@@ -128,9 +128,9 @@ ADR-0046 §3 で導入した「PreRemove は最終段の removeStale と違い�
 
 ## 棄却した代替案
 
-- **全面反転（home-manager 型の remove→place の完全対称・2 段化）**: 依存除去のみ前段化する現行方式（ADR-0006 の本流順序は不変）ではなく、独立 stale 除去まで含めて全面的に「先に全部消してから全部置く」設計にすると、rename（target A 削除 + B 追加）のような独立除去まで前段化することになる。除去後・配置前でクラッシュすると新旧どちらのパスにも実体が無い瞬間が生じる（home-manager はこれを受容しているが、nput は成功時の挙動を home-manager と同一に保ちながらクラッシュ耐性は上位互換にしたい）。依存除去のみ前段化すれば、この窓は開かない。
+- **全面反転（home-manager 型の remove→place の完全対称・2 段化）**: 依存除去のみ前段化する現行方式（ADR-0006 の本流順序は不変）ではなく、独立 stale 除去まで含めて全面的に「先に全部消してから全部置く」設計にすると、rename（target A 削除 + B 追加）のような独立除去まで前段化することになる。除去後・配置前でクラッシュすると新旧どちらのパスにも実体が無い瞬間が生じる（home-manager はこれを受容しているが、layat は成功時の挙動を home-manager と同一に保ちながらクラッシュ耐性は上位互換にしたい）。依存除去のみ前段化すれば、この窓は開かない。
 - **現状維持 + 実 dir 例外のみアドホックに追加**: 移行パターン（祖先 symlink・実 dir target・method 変更）ごとに個別の特例コードを積み上げると、パターンが増えるたびに例外が累積し、保守不能になる。`RemoveAction.Kind` によるデータモデル拡張で一般化した方が、将来の対象拡張にも耐える。
-- **自動作成した親 dir を manifest に記録する（schema v2）**: 「nput が作った dir かどうか」を manifest で追跡すれば実 dir migration の判定が楽になるが、schemaVersion v1 の契約を破る（MVP は v1 のみ・ADR-0015 §7）。空 dir は由来を問わず migration 対象にできる（rmdir の性質上データ損失ゼロ）ため、記録なしで v1 契約のまま解決できる。
+- **自動作成した親 dir を manifest に記録する（schema v2）**: 「layat が作った dir かどうか」を manifest で追跡すれば実 dir migration の判定が楽になるが、schemaVersion v1 の契約を破る（MVP は v1 のみ・ADR-0015 §7）。空 dir は由来を問わず migration 対象にできる（rmdir の性質上データ損失ゼロ）ため、記録なしで v1 契約のまま解決できる。
 - **foreign symlink 混在まで除去許容**: 他ツール管理の symlink を巻き込む可能性があり、ADR-0015 §4 の安全策が崩れる。
 - **PreRemove drift を warn+skip（home-manager 型）にする、または再計画リトライを内蔵する**: warn+skip は drift 後の実体経由での store/foreign 汚染窓を開く（ADR-0046 §3 と同根）。再計画リトライの内蔵は複雑化する上、冪等再実行（ADR-0017）による収束と役割が重複する。
 - **copy→symlink も自動移行する**: ユーザーが編集済みの copy データを黙って失う可能性があり、place-once（ADR-0020）の「ユーザー管理」思想と衝突する。
