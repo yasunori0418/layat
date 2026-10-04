@@ -12,15 +12,8 @@ import (
 	"github.com/yasunori0418/layat/internal/paths"
 )
 
-// generationsInfo is list-generations' result.info: the read-only generation inventory
-// (→ issue #132, ADR-0043 §5; typed by #196). The envelope-wide slot stays unused — a read-only
-// command records no run-scoped state — so it is an anonymous *struct{} left nil (omitted).
-//
-// It is carried as a *generationsInfo, not a value: the run can fail after the subject is
-// registered but before the listing exists (eval / rootKind rejection / profile resolution),
-// and only a nil pointer keeps omitempty effective there. A value struct would newly emit
-// "info":{"generations":null} on those paths — the same output-invariance trap as the mutation
-// seats (→ issue #196 §4).
+// generationsInfo is list-generations' result.info: the generation inventory. It is a pointer so
+// failures before the listing omit info.
 type generationsInfo struct {
 	Generations []generationRow `json:"generations"`
 }
@@ -28,7 +21,7 @@ type generationsInfo struct {
 // listGenerationsRun is list-generations' concrete run instantiation, threaded from RunE.
 type listGenerationsRun = outturnRun[*generationsInfo, *struct{}]
 
-// beginListGenerationsRun starts list-generations' run (→ beginOutturnRun, beginApplyRun).
+// beginListGenerationsRun starts list-generations' run.
 func beginListGenerationsRun(command string) *listGenerationsRun {
 	return beginOutturnRun[*generationsInfo, *struct{}](command)
 }
@@ -42,8 +35,8 @@ func newListGenerationsCmd() *cobra.Command {
 			"Pass <name> for that config, or --all to list every home mode config.",
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// beginListGenerationsRun also publishes the run to outturnReport, so main emits the
-			// envelope after Execute returns whichever path below runs.
+			// beginListGenerationsRun publishes the run to outturnReport, so main emits the envelope after
+			// Execute.
 			run := beginListGenerationsRun(cmd.Name())
 			if all {
 				if len(args) > 0 {
@@ -63,8 +56,7 @@ func newListGenerationsCmd() *cobra.Command {
 
 // runListGenerations confirms rootKind via eval pre-resolution (home mode only), resolves profileDir, and lists generations.
 func runListGenerations(run *listGenerationsRun, name string) error {
-	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
-	// A named listing registers exactly one, so the run's results[] holds N=1 (→ issue #164).
+	// The config name is the run's single outturn subject.
 	subject := run.beginSubject(name)
 	gen, err := newGenerator()
 	if err != nil {
@@ -96,23 +88,19 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 	if err != nil {
 		return err
 	}
-	// A read-only enumeration rides in result.info (items stays [] — generations are not
-	// id-derived items, and the SubjectResult.generation slot stays absent to avoid encoding
-	// the same numbers twice · → issue #132, ADR-0043 §5).
+	// The listing rides result.info; items stays [] and the generation slot stays absent.
 	subject.setPayload(generationsPayload(gens))
 	printGenerations(gens)
 	return nil
 }
 
-// generationsPayload wraps a config's listing as its SubjectResult payload — the read-only
-// enumeration rides result.info, shared by the named listing and --all so both produce the same
-// shape by construction (→ issue #132, #164).
+// generationsPayload wraps a config's listing as its SubjectResult payload in result.info.
 func generationsPayload(gens []engine.Generation) *outturnPayload[*generationsInfo] {
 	return &outturnPayload[*generationsInfo]{info: &generationsInfo{Generations: generationRows(gens)}}
 }
 
-// generationRow is one generation of the --json inventory (result.info.generations · → issue
-// #132, ADR-0043 §5). date carries nix-env's display timestamp verbatim, like the text output.
+// generationRow is one generation of the --json inventory. date is nix-env's display timestamp
+// verbatim.
 type generationRow struct {
 	Number  int    `json:"number"`
 	Date    string `json:"date"`
@@ -129,14 +117,9 @@ func generationRows(gens []engine.Generation) []generationRow {
 	return rows
 }
 
-// runListAllGenerations scans the home profiles directly under <state>/nix/profiles/layat (the <name>
-// directories that hold a profile link directly under them) and lists each config's generations. No entrypoint eval is needed (disk scan only).
-// The roothash family (project / fixed / --root) has a <roothash>/<name> structure with no profile directly under it, so it is naturally excluded.
-//
-// Each scanned config becomes one SubjectResult carrying its own listing in result.info, the same
-// shape a named listing emits with N=1 (→ issue #164). A scan that finds nothing emits results: []
-// with status success, and a failure before the scan completes (the state dir being unreadable) is
-// a pre-enumeration failure that stays at the top level.
+// runListAllGenerations lists the generations of every home profile directly under
+// <state>/nix/profiles/layat, one subject per config. It reads the disk only; roothash-family
+// directories hold no profile directly and are skipped.
 func runListAllGenerations(run *listGenerationsRun) error {
 	stateDir, err := paths.StateDir()
 	if err != nil {
@@ -169,18 +152,13 @@ func runListAllGenerations(run *listGenerationsRun) error {
 		prof := paths.Resolve(stateDir, name, manifest.RootKindHome, "", false)
 		gens, err := engine.ListGenerations(prof.Profile)
 		if err != nil {
-			// The listing stops here (unchanged), so this config's subject carries the failure and
-			// the ones already scanned keep their results, while the configs after it never become
-			// subjects at all (→ issue #164, docs/spec.md). The same error also returns as the
-			// command error, but it lands only here: emit's finish is first-wins, and the
-			// top-level errors[] takes a failure only when no subject was registered.
+			// The listing stops at the first failure, which this config's subject carries.
 			subject.finish(err)
 			return err
 		}
 		subject.setPayload(generationsPayload(gens))
 		subject.finish(nil)
-		// Under --json stdout belongs to the envelope alone (→ ADR-0043 §2, issue #130); the
-		// listing itself still runs so read failures keep the same exit behavior.
+		// Under --json stdout belongs to the envelope; the listing still runs for the exit behavior.
 		if flagJSON {
 			continue
 		}
@@ -193,10 +171,8 @@ func runListAllGenerations(run *listGenerationsRun) error {
 	return nil
 }
 
-// printGenerations prints the generation list to stdout (the primary output of a read-only command; → ADR-0023).
-// Under --json it prints nothing: stdout belongs to the outturn envelope alone, gated here — the
-// single chokepoint for every call site (→ ADR-0043 §2, issue #130). The --all path additionally
-// gates its own per-config header lines at the call site.
+// printGenerations prints the generation list to stdout. It prints nothing under --json; the --all
+// path gates its own header lines.
 func printGenerations(gens []engine.Generation) {
 	if flagJSON {
 		return

@@ -1,8 +1,7 @@
 package main
 
-// Tests for the manifest generator selection (→ ADR-0056): the five-step precedence on the pure
-// resolver, the strict settings file, and the --manifest path that reads neither the environment
-// nor any settings file. None of them runs nix.
+// Tests for the manifest generator selection: the precedence on the pure resolver, the strict
+// settings file, and --manifest reading neither the environment nor settings. None runs nix.
 
 import (
 	"errors"
@@ -130,9 +129,8 @@ func withSelectionFlags(t *testing.T) {
 	t.Chdir(t.TempDir())
 }
 
-// TestSelectGeneratorManifestIgnoresEnvironment pins that apply --manifest reads neither
-// LAYAT_GENERATOR nor any settings file: an invalid value in each still selects prebuilt, so
-// module activation does not depend on the environment it runs in (→ ADR-0056 §2).
+// TestSelectGeneratorManifestIgnoresEnvironment: apply --manifest selects prebuilt even with an
+// invalid LAYAT_GENERATOR and invalid settings files.
 func TestSelectGeneratorManifestIgnoresEnvironment(t *testing.T) {
 	withSelectionFlags(t)
 	t.Setenv(generatorEnv, "bogus")
@@ -145,8 +143,7 @@ func TestSelectGeneratorManifestIgnoresEnvironment(t *testing.T) {
 	}
 }
 
-// TestSelectGeneratorRejectsGeneratorWithManifest pins that --generator and --manifest together
-// are an input error (→ ADR-0056 §2, §5).
+// TestSelectGeneratorRejectsGeneratorWithManifest: --generator with --manifest is an input error.
 func TestSelectGeneratorRejectsGeneratorWithManifest(t *testing.T) {
 	withSelectionFlags(t)
 	flagGenerator, flagManifest = "nix", "/nonexistent/link-farm"
@@ -160,10 +157,9 @@ func TestSelectGeneratorRejectsGeneratorWithManifest(t *testing.T) {
 	}
 }
 
-// TestSelectGeneratorWiring pins where the command reads each step from: the flag, the
-// environment, layat.toml in the -f directory (its parent when -f names a file) or the CWD, and
-// config.toml under XDG_CONFIG_HOME. An -f path that cannot be stat'ed skips the settings files,
-// leaving the failure to the generator's discovery (→ ADR-0056 §3).
+// TestSelectGeneratorWiring pins where each step is read from: the flag, the environment,
+// layat.toml in the -f directory or the CWD, and config.toml under XDG_CONFIG_HOME. An -f path
+// that cannot be stat'ed skips the settings files.
 func TestSelectGeneratorWiring(t *testing.T) {
 	const bad = "bogus = true\n"
 	cases := []struct {

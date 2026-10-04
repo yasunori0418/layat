@@ -23,8 +23,8 @@ func withDebug(t *testing.T, debug bool) {
 	flagDebug = debug
 }
 
-// TestPrintGeneratorErrorHuman pins the human form: the summary line and the guidance, without
-// re-showing the raw diagnostics that already went to the generator's writer (→ ADR-0055 §6).
+// TestPrintGeneratorErrorHuman pins the human form: the summary line and the guidance, without the
+// raw diagnostics.
 func TestPrintGeneratorErrorHuman(t *testing.T) {
 	withDebug(t, false)
 	e := testGeneratorError()
@@ -53,7 +53,7 @@ func TestPrintGeneratorErrorHumanNoGuidance(t *testing.T) {
 }
 
 // TestPrintGeneratorErrorDebug pins the --debug human form: the generator's name after the summary
-// line (the failed internal command is already in Message), then the guidance (→ ADR-0055 §8).
+// line, then the guidance.
 func TestPrintGeneratorErrorDebug(t *testing.T) {
 	withDebug(t, true)
 	e := testGeneratorError()
@@ -65,9 +65,8 @@ func TestPrintGeneratorErrorDebug(t *testing.T) {
 	}
 }
 
-// TestGeneratorErrorMessageJSON pins the --json errors[].message: the summary followed by the
-// captured raw diagnostics, with no generator name put in front, whether or not --debug is set
-// (→ ADR-0055 §6, §7, §8).
+// TestGeneratorErrorMessageJSON pins the --json errors[].message: the summary followed by the raw
+// diagnostics, with no generator name, with or without --debug.
 func TestGeneratorErrorMessageJSON(t *testing.T) {
 	e := testGeneratorError()
 	want := e.Message + "\n" + e.Stderr

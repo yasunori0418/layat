@@ -10,10 +10,8 @@ import (
 	"github.com/yasunori0418/layat/internal/engine"
 )
 
-// TestListGenerationsJSONInfoGenerations pins list-generations' --json shape (→ issue #132,
-// ADR-0043 §5): the listing rides in result.info.generations as {number, date, current} rows,
-// items stays an empty array, and the SubjectResult.generation slot stays absent (info and
-// generation carrying the same numbers would be double-encoding). The envelope is conformant.
+// TestListGenerationsJSONInfoGenerations pins list-generations' --json shape: {number, date,
+// current} rows in result.info.generations, empty items, no generation slot, conformant envelope.
 func TestListGenerationsJSONInfoGenerations(t *testing.T) {
 	checker, err := conformance.NewDefaultChecker()
 	if err != nil {
@@ -58,12 +56,8 @@ func TestListGenerationsJSONInfoGenerations(t *testing.T) {
 	}
 }
 
-// TestListGenerationsJSONInfoAbsentWithoutListing pins the failure boundary that forced
-// generationsInfo to be carried as a pointer (→ issue #196 §4): list-generations can fail after
-// the subject is registered but before any listing exists (entrypoint discovery, the home-mode
-// rootKind rejection, profile resolution), and result.info must stay absent there — exactly as
-// it did while the slot was a nil map. A value-struct TInfo would emit
-// "info":{"generations":null}, which the conformance checker would still accept.
+// TestListGenerationsJSONInfoAbsentWithoutListing: when list-generations fails after registering
+// the subject but before any listing exists, result.info stays absent.
 func TestListGenerationsJSONInfoAbsentWithoutListing(t *testing.T) {
 	r, buf := newListGenerationsTestRun()
 	r.beginSubject("home")
@@ -73,9 +67,8 @@ func TestListGenerationsJSONInfoAbsentWithoutListing(t *testing.T) {
 	assertNoInfoKeys(t, decodeEnvelope(t, buf))
 }
 
-// TestListGenerationsJSONEmptyStaysArray pins the zero-generation boundary at the emit level
-// (spec: 空 profile でも "generations": [] を明示): the emitted document must carry the
-// generations key as an empty array — a nil slice would marshal the key away.
+// TestListGenerationsJSONEmptyStaysArray: an empty profile emits "generations": [] rather than
+// dropping the key.
 func TestListGenerationsJSONEmptyStaysArray(t *testing.T) {
 	r, buf := newListGenerationsTestRun()
 	r.beginSubject("empty").setPayload(&outturnPayload[*generationsInfo]{info: &generationsInfo{Generations: generationRows(nil)}})

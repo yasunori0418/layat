@@ -11,13 +11,8 @@ import (
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
-// gitignoreInfo is gitignore's result.info: the anchor-form target enumeration (→ issue #132,
-// ADR-0043 §5; typed by #196). The envelope-wide slot stays unused (read-only command), so it is
-// an anonymous *struct{} left nil.
-//
-// Carried as a pointer for the same reason as generationsInfo: gitignore can fail after the
-// subject is registered but before the enumeration exists (eval / project-mode rejection /
-// build), and only a nil pointer keeps result.info omitted there (→ issue #196 §4).
+// gitignoreInfo is gitignore's result.info: the anchor-form target list. It is a pointer so
+// failures before the listing omit info.
 type gitignoreInfo struct {
 	Paths []string `json:"paths"`
 }
@@ -25,7 +20,7 @@ type gitignoreInfo struct {
 // gitignoreRun is gitignore's concrete run instantiation, threaded from RunE.
 type gitignoreRun = outturnRun[*gitignoreInfo, *struct{}]
 
-// beginGitignoreRun starts gitignore's run (→ beginOutturnRun, beginApplyRun).
+// beginGitignoreRun starts gitignore's run.
 func beginGitignoreRun(command string) *gitignoreRun {
 	return beginOutturnRun[*gitignoreInfo, *struct{}](command)
 }
@@ -42,8 +37,7 @@ func newGitignoreCmd() *cobra.Command {
 			"(under --json it keeps them per config instead; see the --all flag).",
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// beginGitignoreRun also publishes the run to outturnReport, so main emits the envelope
-			// after Execute returns whichever path below runs.
+			// beginGitignoreRun publishes the run to outturnReport, so main emits the envelope after Execute.
 			run := beginGitignoreRun(cmd.Name())
 			if all {
 				if len(args) > 0 {
@@ -58,15 +52,14 @@ func newGitignoreCmd() *cobra.Command {
 		},
 	}
 	cmd.Flags().BoolVar(&all, "all", false,
-		"Sort and de-duplicate the targets of all projectRoot configs (see ADR-0018; under --json each config keeps its own targets instead, un-deduplicated, see ADR-0043)")
+		"Sort and de-duplicate the targets of all projectRoot configs (under --json each config keeps its own targets instead, un-deduplicated)")
 	return cmd
 }
 
-// runGitignore lists a single config's placement targets. project mode only;
-// it errors out if a non-project config (home / fixed) is given (because the anchor form presupposes the git toplevel; → ADR-0023).
+// runGitignore lists a single project-mode config's placement targets. Other modes are rejected,
+// since the anchor form presupposes the git toplevel.
 func runGitignore(run *gitignoreRun, name string) error {
-	// The config name is the outturn subject; errors from here on are subject-borne (→ issue #130).
-	// A named listing registers exactly one, so the run's results[] holds N=1 (→ issue #164).
+	// The config name is the run's single outturn subject.
 	subject := run.beginSubject(name)
 	gen, err := newGenerator()
 	if err != nil {
@@ -89,17 +82,13 @@ func runGitignore(run *gitignoreRun, name string) error {
 	if err != nil {
 		return err
 	}
-	// A read-only enumeration rides in result.info as the anchor-form paths (items stays [] —
-	// the listing is not an execution record · → issue #132, ADR-0043 §5). The line-oriented
-	// default stdout below is untouched (--json is the opt-in second contract).
+	// The listing rides result.info as anchor-form paths; items stays [].
 	subject.setPayload(gitignorePayload(targets))
 	printGitignore(targets)
 	return nil
 }
 
-// gitignorePayload wraps one config's targets as its SubjectResult payload — the anchor-form
-// enumeration rides result.info, shared by the named listing and --all so both produce the same
-// shape by construction (→ issue #132, #164).
+// gitignorePayload wraps one config's targets as its SubjectResult payload in result.info.
 func gitignorePayload(targets []string) *outturnPayload[*gitignoreInfo] {
 	return &outturnPayload[*gitignoreInfo]{info: &gitignoreInfo{Paths: gitignoreAnchors(targets)}}
 }
@@ -114,15 +103,8 @@ func gitignoreAnchors(targets []string) []string {
 	return anchors
 }
 
-// runGitignoreAll lists the targets of all projectRoot configs, sorted and de-duplicated
-// (a repo has a single .gitignore, so listing them together is natural; → docs/spec.md, ADR-0018).
-// Non-project configs are excluded (--all picks up only projectRoot configs).
-//
-// The two contracts are deliberately asymmetric here (→ issue #164): the default stdout stays the
-// cross-config dedup+sort union (ADR-0018 unchanged — it is meant to be appended to one .gitignore),
-// while --json gives each config its own SubjectResult holding that config's own paths, undeduped.
-// Attributing a shared path to one arbitrary config would be a lie about which config declares it;
-// a consumer that wants the union takes it across the results itself.
+// runGitignoreAll lists the targets of all projectRoot configs. stdout gets the sorted,
+// de-duplicated union; --json gives each config its own undeduplicated paths.
 func runGitignoreAll(run *gitignoreRun) error {
 	gen, err := newGenerator()
 	if err != nil {
@@ -153,21 +135,15 @@ func runGitignoreAll(run *gitignoreRun) error {
 	})
 }
 
-// enumerateGitignoreAll lists each selected config's targets, registering one outturn subject per
-// config (→ issue #164), and prints the de-duplicated union to stdout. targetsFor is the seam that
-// injects the per-config build + manifest read, so the enumeration's subject wiring is testable
-// without nix (mirroring aggregateApply / aggregateDryRun for the mutation side).
+// enumerateGitignoreAll lists each selected config's targets as its own outturn subject and prints
+// the de-duplicated union to stdout. targetsFor reads one config's targets.
 func enumerateGitignoreAll(run *gitignoreRun, selected []string, targetsFor func(name string) ([]string, error)) error {
 	var all []string
 	for _, name := range selected {
 		subject := run.beginSubject(name)
 		targets, err := targetsFor(name)
 		if err != nil {
-			// The enumeration stops here (unchanged), so this config's subject carries the failure
-			// and the ones already listed keep their results, while the configs after it never
-			// become subjects at all (→ issue #164, docs/spec.md). The same error also returns as
-			// the command error, but it lands only here: emit's finish is first-wins, and the
-			// top-level errors[] takes a failure only when no subject was registered.
+			// The listing stops at the first failure, which this config's subject carries.
 			subject.finish(err)
 			return err
 		}
@@ -175,15 +151,13 @@ func enumerateGitignoreAll(run *gitignoreRun, selected []string, targetsFor func
 		subject.finish(nil)
 		all = append(all, targets...)
 	}
-	// The text contract stays the cross-config dedup+sort union (→ ADR-0018); only the --json
-	// payload above is per-config (→ ADR-0043 §7).
+	// The text output is the cross-config sorted, de-duplicated union.
 	printGitignore(dedupeSorted(all))
 	return nil
 }
 
-// configTargets builds the config, reads manifest.json, and lists the placement targets
-// (all entries regardless of method; → ADR-0019). Because gitignore does no placement, it gets
-// only the link-farm via DryBuild, without laying down a gcroot.
+// configTargets lists every placement target of the config. It gets the link-farm via DryBuild,
+// without a gcroot.
 func configTargets(gen generator.Generator, name string) ([]string, error) {
 	store, err := gen.DryBuild(name)
 	if err != nil {
@@ -214,10 +188,8 @@ func dedupeSorted(in []string) []string {
 	return out
 }
 
-// printGitignore prints targets to stdout in /-anchor form (leading /, no trailing /), one per line
-// (→ docs/spec.md, ADR-0013). It is pipe-safe by the stdout-ownership principle (`layat gitignore <name> >> .gitignore`).
-// Under --json it prints nothing: stdout belongs to the outturn envelope alone, gated here — the
-// single chokepoint for every call site (→ ADR-0043 §2, issue #130).
+// printGitignore prints targets to stdout in /-anchor form, one per line, so the output can be
+// appended to .gitignore. It prints nothing under --json.
 func printGitignore(targets []string) {
 	if flagJSON {
 		return
@@ -227,8 +199,7 @@ func printGitignore(targets []string) {
 	}
 }
 
-// gitignoreAnchor normalizes a root-relative target into /-anchor form. By eval the target has no absolute path
-// and no trailing /, but it normalizes defensively (→ ADR-0013: anchor with a leading /, no trailing / for either directory or file).
+// gitignoreAnchor normalizes a root-relative target into /-anchor form: a leading /, no trailing /.
 func gitignoreAnchor(target string) string {
 	t := strings.TrimSuffix(target, "/")
 	t = strings.TrimPrefix(t, "/")

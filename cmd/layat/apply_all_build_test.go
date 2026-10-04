@@ -1,10 +1,7 @@
 package main
 
-// Tests for apply --all's parallel build stage (→ ADR-0039, issue #153): the worker pool never runs
-// more builds than --jobs at once, a config whose stage-1 build fails is settled on its own subject
-// and never reaches stage 2, --jobs' value range (negative is an error, 0 resolves to the CPU count,
-// it is an --all modifier), the --debug disclosure prefix, and that --jobs 1 and --jobs N aggregate
-// to the same result. Builds and applies are injected, so nothing here runs nix.
+// Tests for apply --all's parallel build stage: the --jobs ceiling, stage-1 failures, --jobs'
+// value range, the --debug prefix, and order independence. Builds and applies are injected.
 
 import (
 	"errors"
@@ -20,12 +17,8 @@ import (
 	"github.com/yasunori0418/layat/internal/engine"
 )
 
-// TestPrebuildAllBoundsConcurrency pins the pool's ceiling: with more configs than --jobs, the
-// in-flight builds reach --jobs (the builds do run in parallel) and never exceed it. The builds
-// hold at a barrier until min(jobs, n) of them are in flight, so reaching the ceiling does not
-// depend on timing; a pool that runs fewer workers fails on the barrier's timeout instead. The
-// barrier stays closed for a grace window after the ceiling is reached, so a surplus worker has
-// time to enter and show up in the peak.
+// TestPrebuildAllBoundsConcurrency: in-flight builds reach min(--jobs, configs) and never exceed
+// it. A barrier holds the builds until that ceiling is reached, then stays closed for a grace window.
 func TestPrebuildAllBoundsConcurrency(t *testing.T) {
 	selected := []string{"a", "b", "c", "d", "e", "f", "g"}
 	for _, jobs := range []int{1, 3, 16} {
@@ -70,9 +63,7 @@ func TestPrebuildAllBoundsConcurrency(t *testing.T) {
 	}
 }
 
-// stagedApply drives both stages the way runApplyAll composes them — stage 1 with the injected
-// build, stage 2 through aggregateApply with stage-1 failures short-circuited — and records the
-// configs stage 2 was actually called for.
+// stagedApply composes both stages like runApplyAll and records the configs stage 2 was called for.
 func stagedApply(run *applyRun, selected []string, jobs int, build func(string) (string, error)) (applied, skipped, failures int, stage2 []string) {
 	built := prebuildAll(selected, jobs, build)
 	applied, skipped, failures = aggregateApply(run, selected, 1, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
@@ -95,9 +86,8 @@ func failBuild(failing ...string) func(string) (string, error) {
 	}
 }
 
-// TestStageOneFailureSkipsStageTwo: a config whose build fails in stage 1 is not handed to stage 2,
-// yet it still gets its own subject (in selection order) settled with the build error, counts as a
-// failure, and is reported on stderr — while the succeeded configs keep their whole results.
+// TestStageOneFailureSkipsStageTwo: a stage-1 build failure skips stage 2, yet settles its own
+// subject with the build error, counts as a failure, and is reported on stderr.
 func TestStageOneFailureSkipsStageTwo(t *testing.T) {
 	run, buf := newApplyTestRun()
 	var applied, skipped, failures int
@@ -156,10 +146,8 @@ func TestStageOneFailureSkipsDryRunStageTwo(t *testing.T) {
 	}
 }
 
-// TestJobsAggregateIsOrderIndependent: the parallel build must not change the final state, so
-// --jobs 1 and --jobs 8 settle the same counts, call stage 2 for the same configs in the same
-// lexical order, and emit byte-identical envelopes (the test runs pin the clock). The builds take
-// longer the earlier the config sorts, so under --jobs 8 they finish in reverse lexical order.
+// TestJobsAggregateIsOrderIndependent: --jobs 1 and --jobs 8 settle the same counts, stage-2 calls
+// and envelopes. Earlier configs build longer, so --jobs 8 finishes in reverse lexical order.
 func TestJobsAggregateIsOrderIndependent(t *testing.T) {
 	selected := []string{"a", "b", "c", "d", "e", "f", "skip"}
 	failing := failBuild("b", "e")
@@ -228,8 +216,7 @@ func executeApply(t *testing.T, args ...string) error {
 	return cmd.Execute()
 }
 
-// TestJobsFlagIsAnAllModifier: --jobs is local to apply and only meaningful with --all, so a named
-// apply rejects it — even an explicit --jobs 0 — before any entrypoint discovery or nix call.
+// TestJobsFlagIsAnAllModifier: a named apply rejects --jobs, even an explicit 0, before any nix call.
 func TestJobsFlagIsAnAllModifier(t *testing.T) {
 	for _, args := range [][]string{{"--jobs", "2", "a"}, {"--jobs", "0"}} {
 		err := executeApply(t, args...)
@@ -258,12 +245,9 @@ func TestJobsNegativeStopsApplyAll(t *testing.T) {
 	}
 }
 
-// TestRunApplyAllStageOneWiring drives runApplyAll through the stub nix, whose builds all fail,
-// with --debug, with and without --dryrun. The stage-1 builds disclose their nix command lines
-// prefixed with the config name, so interleaved lines stay attributable, while the batch eval
-// before the pool keeps the plain disclosure. Every build is a stage-1 --no-link realize — a
-// failed config never re-enters stage 2's build. nix's own stderr streams through each config's
-// prefixed writer once, and the failed config's report is the generator's one-line summary.
+// TestRunApplyAllStageOneWiring drives runApplyAll through a stub nix whose builds all fail, with
+// --debug. Stage-1 builds disclose prefixed --no-link commands, the batch eval stays unprefixed,
+// and a failed config never re-enters stage 2.
 func TestRunApplyAllStageOneWiring(t *testing.T) {
 	for _, dryrun := range []bool{false, true} {
 		t.Run(fmt.Sprintf("dryrun=%v", dryrun), func(t *testing.T) {

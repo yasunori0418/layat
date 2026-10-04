@@ -1,10 +1,7 @@
 package main
 
-// Tests for apply --all's parallel placement stage (→ ADR-0039, issue #154): the configs are applied
-// on a worker pool, so they complete in any order, yet results[], the -v report, the dryrun plan and
-// the per-config stderr lines stay in lexical order, the counts stay exact under -race, a partial
-// failure keeps every succeeded subject, and a try-lock skip is still not a failure. Applies are
-// injected, so nothing here runs nix.
+// Tests for apply --all's parallel placement stage: output stays in lexical order whatever the
+// completion order, counts stay exact under -race, and partial failures and skips settle per config.
 
 import (
 	"errors"
@@ -21,10 +18,8 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// reverseCompletion wraps fn so each config waits for its lexical successor to finish before it
-// returns: the configs complete in reverse lexical order, which is reachable only when all of them
-// run at once (call it with jobs >= len(selected)). completed returns the observed completion order,
-// so a test can show the reversal actually happened before asserting the output is still lexical.
+// reverseCompletion wraps fn so the configs complete in reverse lexical order (needs jobs >=
+// len(selected)). completed returns the observed completion order.
 func reverseCompletion(t *testing.T, selected []string, fn func(string) (*engine.Result, error)) (wrapped func(string) (*engine.Result, error), completed func() []string) {
 	t.Helper()
 	done := make(map[string]chan struct{}, len(selected))
@@ -116,10 +111,8 @@ func TestApplyAllParallelOutputIsLexicalDespiteCompletionOrder(t *testing.T) {
 	}
 }
 
-// TestApplyAllParallelPartialFailureAndSkip: a failure, a try-lock skip and a success completing in
-// reverse keep their stderr lines in lexical order, count as (1 applied, 1 skipped, 1 failed), and
-// settle each subject on its own outcome — the succeeded config keeps its whole result, and the
-// skip is not a failure.
+// TestApplyAllParallelPartialFailureAndSkip: a failure, a skip and a success completing in reverse
+// keep lexical stderr order, count (1, 1, 1), and settle each subject on its own outcome.
 func TestApplyAllParallelPartialFailureAndSkip(t *testing.T) {
 	withVerbose(t)
 	selected := []string{"a", "b", "c"}
@@ -232,9 +225,8 @@ func TestApplyAllDryRunParallelFailureLinesAreLexical(t *testing.T) {
 		"layat: apply b --dryrun failed: stub build of b failed")
 }
 
-// TestApplyAllParallelCountsAreExact runs many configs with mixed outcomes on a smaller pool: the
-// counts must come out exact (a racy counter shows up under -race and as a lost update), the pool
-// never exceeds jobs, and results[] keeps the selection order.
+// TestApplyAllParallelCountsAreExact: many mixed configs on a smaller pool give exact counts, never
+// exceed jobs, and keep results[] in selection order.
 func TestApplyAllParallelCountsAreExact(t *testing.T) {
 	const n, jobs = 60, 8
 	selected := make([]string, n)
