@@ -7,9 +7,7 @@
 
 *この文書は英語版 [`README.md`](README.md) の日本語訳。仕様・用語の一次参照は英語版とし、両者に差異があれば英語版が優先する。*
 
-layat は、**フェッチ済みの Nix store パスの内容を `root` 相対の target へ配置する** Nix ライブラリ・モジュール群(symlink もしくは copy)。設定の生成は **行わない**。リポジトリの内容を、加工せず、指定した場所に置くだけ。
-
-コアは **placement primitive** ——`root` 相対の `target` に Nix store パスを配置する純粋関数。モジュール抽象の裏に隠さず、ユーザーが直接合成して使う。`home.file` 風の配置(`root` = `$HOME`)はその一適用にすぎず、`root` は `projectRoot` / `homeRoot` / `systemRoot` マーカーで**明示的に**選ぶ(**暗黙のデフォルトは持たない**)。
+layat は、**フェッチ済みの Nix store パスの内容を `root` 相対の target へ配置する** Nix ライブラリ・モジュール群(symlink もしくは copy)。設定の生成は **行わない**。`root` は `projectRoot` / `homeRoot` / `systemRoot` マーカーで**明示的に**選ぶ(**暗黙のデフォルトは持たない**)。
 
 > **ステータス: MVP / 実装フェーズ。** 実装済みの範囲は standalone CLI ＋ **project mode** をコアとし、**home mode** もサポート。NixOS / nix-darwin モジュールおよび **system mode** は将来対応。全体のマトリクスは [MVP ステータス](#mvp-ステータス) を参照。API は今後も変わりうる。
 
@@ -17,24 +15,16 @@ layat は、**フェッチ済みの Nix store パスの内容を `root` 相対�
 
 ## なぜ layat か
 
-Nix はリポジトリを *フェッチ* できる(`fetchFromGitHub`、`fetchGit`、flake inputs、npins など)が、その内容をファイルシステム上に *配置する* のは別問題。既存の解にはそれぞれコストがある。
+layat は **フェッチ**(`src` は store パス)と **配置**(固定の実行時エンジン)を分離し、配置の挙動を **単一のコア** に閉じてユーザーが明示的に駆動する。
 
-- **home-manager `home.file`** はファイルを配置できるが、home-manager を要求し、*環境まるごと* のモデルを前提とする。`home-manager switch` 一発ですべてが一斉に更新されるため、一つの変更が無関係なツールへ波及——あるいはそれを壊す——ことがある。file モジュールを standalone なライブラリとして切り出すこともできない。
-- **シェルの `git clone`** は動くが、バージョン固定・再現性・Nix 統合を失う。
-- **モジュール抽象**(home-manager / NixOS / nix-darwin / system-manager)は配置を Nix モジュールシステムで宣言し、挙動を抽象の裏に隠して、プラットフォーム固有の機構(`home.file`、`systemd.tmpfiles` など)へ翻訳する。これは「何をどこへ、どう置くか」の制御をユーザーの手から奪い、挙動を層ごとに重複させる。
-
-layat は **フェッチ**(Nix 評価：`src` は store パス)と **配置**(固定の実行時エンジン)を分離し、配置の挙動を **単一のコア** に閉じてユーザーが明示的に駆動する。
-
-- **設定生成をしない。** layat はモジュールオプションを設定ファイルへ翻訳しない。リポジトリにすでにある内容を配置する。
-- **独立した単位。** 各配置 config(`layat.<name>`)はそれ自体が独立した Nix profile。役割ごとに独立して更新・適用でき、ある更新が別へ波及しない。
-- **home-manager 非依存。** `lib/` コアは nixpkgs のみに依存する。standalone で動き、module 統合(home-manager、devShell、将来の NixOS / nix-darwin)はエンジンを *起動するだけ* の薄い配線であって、自身でファイルを配置することはない。
-- **readlink パターンマッチではなく自己記録の manifest。** layat の配置エンジンは前世代の manifest に「自分が何を置いたか」を記録するため、home-manager の `home.file`(2026-07 時点)では原理的に困難な自動移行——例えば per-file 配置がディレクトリ symlink に変わるケース——を安全に行える。詳細は [`docs/concept.md`](docs/concept.md#home-manager-homefile-との配置意味論の差) を参照。
+- **設定生成をしない。** リポジトリにすでにある内容を配置する。
+- **独立した単位。** 各 config(`layat.<name>`)はそれ自体が独立した Nix profile。ある更新が別へ波及しない。
+- **home-manager 非依存。** `lib/` は nixpkgs のみに依存する。module 統合はエンジンを *起動するだけ*。
+- **readlink パターンマッチではなく自己記録の manifest。** stale 除去は前世代の manifest を使う。詳細は [`docs/concept.md`](docs/concept.md#home-manager-homefile-との配置意味論の差) を参照。
 
 ---
 
 ## 仕組み
-
-layat は 2 層構成。
 
 ```
 [layat CLI]  packages.layat — PATH 上に乗る一次 UX
@@ -49,7 +39,7 @@ layat は 2 層構成。
 
 - **engine** が配置と stale 除去を所有する。`manifest.json`——安定した Nix↔Go の契約——を読み、ネイティブなファイルシステム操作を実行する。
 - `lib.mkManifest` は link-farm derivation(`manifest.json` ＋ symlink farm)を生成する **純粋関数**。副作用を持たない。
-- **entrypoint** は CLI が読む Nix ファイル(`flake.nix` / `shell.nix` / `default.nix`)で、`layat.<name>` に named manifest を公開する。config は依然として Nix で書かれ、`nix build` で評価される。
+- **entrypoint** は CLI が読む Nix ファイル(`flake.nix` / `shell.nix` / `default.nix`)で、`layat.<name>` に named manifest を公開する。
 - **生成器**は CLI が manifest を得る相手。既定は `nix`(「[生成器の選択](#生成器の選択)」を参照)。`apply --manifest` はビルド済み link-farm をそのまま使う *prebuilt* 生成器を通る。
 
 ---
@@ -140,7 +130,6 @@ nix develop          # または: direnv allow
 layat gitignore skills >> .gitignore
 ```
 
-- `--root <path>` は任意モードで解決済み root を上書きする(git なしの木やデバッグ用の退避路)。
 - ここでは世代は内部機構であり、`rollback` / `list-generations` は project mode では **公開されない**(ephemeral な配置に rollback は無意味)。
 - devShell では **named apply**(`layat apply skills`)か `layat apply --all --project-root` を使う。裸の `--all` は home-mode config も `$HOME` へ配置してしまうため、混在 entrypoint では footgun。
 
@@ -373,29 +362,26 @@ layat init <template>           # `nix flake init -t github:yasunori0418/layat#<
 
 ### 生成器の選択
 
-layat は manifest を生成器を通じて得る。現在選べる生成器は `nix` だけ(既定でもある)。生成器は明示指定でのみ選ばれ、置かれているファイルから推測されることはない。次のうち最初に指定されたものが使われる:
+生成器は明示指定でのみ選ばれ、置かれているファイルから推測されることはない。次のうち最初に指定されたものが使われる:
 
 1. `--generator <name>`
 2. 環境変数 `LAYAT_GENERATOR`
-3. プロジェクト設定 `layat.toml` — `-f` のディレクトリ(`-f` がファイルならそのファイルのあるディレクトリ)、無ければ CWD。親ディレクトリは探索しない
-4. ユーザー設定 `$XDG_CONFIG_HOME/layat/config.toml`(`XDG_CONFIG_HOME` 未設定時は `~/.config/layat/config.toml`)
-5. 既定の `nix`
+3. `-f` のディレクトリ(無ければ CWD)の `layat.toml`。親ディレクトリは探索しない
+4. `$XDG_CONFIG_HOME/layat/config.toml`(既定 `~/.config/layat/config.toml`)
+5. 既定の `nix`(現状唯一の生成器)
 
 ```toml
 # layat.toml / config.toml — キーは `generator` のみ
 generator = "nix"
 ```
 
-空の `LAYAT_GENERATOR` と `generator` を持たない設定ファイルは未指定とみなし、次の段へ進む。設定ファイルは strict で、未知のキー・TOML の構文エラー・(どの段からでも)未知の生成器名はコマンドを exit 1 と stderr 1 行で止める(`--json` では `E_INPUT`)。
-
-`apply --manifest` は `LAYAT_GENERATOR` もどの設定ファイルも読まず(モジュールの activation は利用者が制御できない環境で動く)、`--generator`・`-f`・`--all` との併用を拒否する(`E_INPUT`)。`prune` と `init` は manifest を得ないため、この仕組み全体を無視する。
+空の値は未指定とみなす。未知のキー・TOML の構文エラー・未知の生成器名は exit 1 と stderr 1 行で止まる(`--json` では `E_INPUT`)。`apply --manifest` はこれらを読まず `--generator`・`-f`・`--all` を拒否し、`prune` と `init` はこの仕組みを無視する。
 
 ### 出力と終了コード
 
-- **既定では成功時サイレント**("silence is golden")。配置レポート、try-lock のスキップ通知、`apply --all` のサマリは `-v` / `--verbose` を付けない限り **出力しない**。`-v` で stderr のレポートに opt-in する。
-- **`--debug`** は内部 nix コマンドを明らかにする(verbosity の `-v` とデバッグは直交)。`--quiet` は **無い**(成功時サイレントが既定になった時点で廃止)。
+- **既定では成功時サイレント。** 配置レポート、try-lock のスキップ通知、`apply --all` のサマリには `-v` が要る。`--debug` は内部 nix コマンドを表示する。`--quiet` は無い。
 - **`--json`** はコマンド完了時に [outturn](https://github.com/yasunori0418/outturn) 準拠の JSON エンベロープ(1 文書)を stdout へ書く機械可読の第 2 契約。`-v`(stderr・人間向け)とは直交(全サブコマンドがペイロードを載せ、`--all` は config ごとに `SubjectResult` を列挙する。最小形のまま残るのは `reset --dryrun` のみ)。
-- **ストリーム規律**：stdout は機械可読出力(`gitignore` 一覧、`apply --dryrun` 計画)専用で、既定 verbosity でも出力される。よって `layat gitignore <name> >> .gitignore` や `layat apply <name> --dryrun | ...` は安全にパイプできる。**警告(例：外部 symlink)とエラーは常に stderr へ出力され、サイレンスされない。**
+- **ストリーム規律**：stdout は機械可読出力(`gitignore` 一覧、`apply --dryrun` 計画)専用で、既定 verbosity でも出力される。よって `layat gitignore <name> >> .gitignore` や `layat apply <name> --dryrun | ...` は安全にパイプできる。**警告とエラーは常に stderr へ出力され、サイレンスされない。**
 
 | 終了コード | 意味 |
 |---|---|
@@ -405,10 +391,10 @@ generator = "nix"
 
 ### 挙動メモ
 
-- **冪等。** 再適用は同じ結果に収束する。symlink については、layat は「配置したと記録し、かつ記録どおりを指している」stale link だけを保守的に除去する——あなたの実ファイルや外部 link には決して触れない。既存の layat symlink は置き換えられ、外部 symlink は警告付きで置き換えられ、target にある実ファイル / ディレクトリはエラー(上書きしない)。
-- **世代** は layat 自前の Nix profile(`nix-env --profile <dir>`)に乗る。任意世代への切替・間引き・GC は、profile パスに対して標準の `nix-env` / `nix-collect-garbage` で行う。project mode は link-farm が不変なら新世代コミットをスキップする(ただし drift した entry は `lstat` で修復する)。
-- **`apply --all`** は各 config を独立に適用し(各々が自分の profile 上で atomic)、失敗しても続行し、いずれかが失敗すれば非ゼロで終了する。全体としては **atomic ではない**。
-- **`reset`** はファイルシステムのみの撤去：layat 管理 symlink を(保守的に)除去し、**さらに** copy target を削除する(copy を消す唯一の明示手段)。name 必須(`--all` 非対応)、確認または `-y` 必須、profile / 世代には触れない——config に残っている entry は次の apply で再配置される。
+- **冪等。** 「配置したと記録し、かつ記録どおりを指している」stale link だけを除去する。外部 symlink は警告付きで置き換えられ、target にある実ファイル / ディレクトリはエラー。
+- **世代** は layat 自前の Nix profile に乗り、`nix-env` / `nix-collect-garbage` で操作する。project mode は link-farm が不変なら新世代をコミットしないが、drift は修復する。
+- **`apply --all`** は各 config を自分の profile 上で atomic に適用し、失敗しても続行し、いずれかが失敗すれば非ゼロで終了する。全体としては **atomic ではない**。
+- **`reset`** は layat 管理 symlink と copy target を削除する(copy を消す唯一の手段)。name と確認または `-y` が必須で、profile / 世代には触れない。
 
 ---
 
@@ -427,8 +413,6 @@ generator = "nix"
 | numtide/system-manager | 非 NixOS の `/etc` ＋ systemd ＋ パッケージ | module(`lib.evalModules`) | ドメインは重なるが **逆** のアプローチ。任意パス配置・HOME dotfiles・サブディレクトリ抽出なし |
 | `git clone`(シェル) | clone して配置 | 命令的 | 再現性も Nix 統合もない |
 | **layat** | フェッチ済みソースの独立配置 ＋ 世代 ＋ 明示的 out-of-store | **純粋関数・ユーザー管理** | — |
-
-ほぼ同一の既存ツールは無い。構成要素(symlink farm、nix profile、out-of-store、任意パス symlink)はすべて存在するが、それらを「フェッチ非依存 ＋ 非生成 ＋ entry ごとの適用 ＋ HM 非依存の純粋関数コア ＋ クロスプラットフォーム共有スキーマ ＋ 任意パス配置 × 世代管理」として束ねるのは layat だけ。特に layat は system-manager と **競合しない**：ドメイン(パッケージ / systemd / `/etc`)は重なるが、思想(「モジュールに隠す」vs.「純粋関数として露出する」)が設計レベルで異なる。実用的なディストロ基盤では、system / service / package 層は system-manager へ委譲または結合し、layat は **粒度の細かい任意パス配置 primitive** に留まる。
 
 ---
 
@@ -450,7 +434,6 @@ generator = "nix"
 
 **既知の制限 / 正直な注意点**
 
-- ディストロ north-star 向けの関数ベース「パッケージインストール ＋ PATH」機構は未定義でスコープ外。
 - boot / init / filesystem / partition 層は layat のドメインではない。
 - クローンを削除すると `<state>/nix/profiles/layat/` 下に orphan な profile ディレクトリが残る(store は `nix-collect-garbage` で解放されるが、profile ディレクトリは残る)。MVP に `prune` コマンドは無い——手で消す。
 - home-manager モジュールは MVP では役割を複数 profile に分けられない——その用途には standalone CLI を使う。
@@ -555,14 +538,10 @@ rm -rf "${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/nput"
 `docs/` は **README → 概要文書 → item の 3 層構造**。規範的な内容は item(1 ファイル 1 主張の
 Markdown + YAML frontmatter)が持ち、概要文書は通読の入口として全体像と item への索引を担う。
 
-概要文書(全体像 + 索引):
-
-- `docs/concept.md` — コンセプト(solution / use_case item への索引)、設計の哲学、north-star、既存ツールとの比較、設計の変遷
+- `docs/concept.md` — コンセプト、設計の哲学、north-star、既存ツールとの比較、ADR への索引
 - `docs/design.md` — 設計(design item への索引)
 - `docs/spec.md` — 仕様(requirement item への索引)
 - `docs/glossary.md` — 正準な英語用語(日本語対訳は `docs/glossary.ja.md`)
-
-item 群(規範的な内容の所在):
 
 | ディレクトリ | 型 | prefix |
 |---|---|---|
