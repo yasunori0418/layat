@@ -231,7 +231,7 @@ func Compute(prev, next *manifest.Manifest, root string, fs FS, opts Options) (P
 			plan.Conflicts = append(plan.Conflicts, Conflict{
 				Entry:     e,
 				TargetAbs: targetAbs,
-				Reason:    fmt.Sprintf("ancestor %q is a symlink; cannot nest beneath it (→ ADR-0015)", offenderAbs),
+				Reason:    fmt.Sprintf("ancestor %q is a symlink; cannot nest beneath it", offenderAbs),
 				Kind:      kind,
 			})
 			continue
@@ -465,7 +465,7 @@ func classifyRealDirTarget(plan *Plan, e manifest.Entry, targetAbs string, prevB
 		if opts.Backup {
 			markDirEntriesPreRemoved(filepath.Clean(e.Target), prevByTarget, preRemoved)
 		}
-		return appendBackupOrConflict(plan, e, targetAbs, fmt.Sprintf("target directory cannot be fully migrated: %s (→ ADR-0047)", reason), ConflictDirMigrationFailed, fs, opts)
+		return appendBackupOrConflict(plan, e, targetAbs, fmt.Sprintf("target directory cannot be fully migrated: %s", reason), ConflictDirMigrationFailed, fs, opts)
 	}
 	plan.PreRemove = append(plan.PreRemove, dirActions...)
 	plan.PreRemove = append(plan.PreRemove, RemoveAction{Kind: RemoveRmdir, TargetAbs: targetAbs})
