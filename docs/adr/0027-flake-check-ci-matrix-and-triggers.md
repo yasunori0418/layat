@@ -52,7 +52,7 @@ PR #40 の実装で確定したため、ADR-0012 を **supersede せず補足**�
 
 ### 3. Go check は `CGO_ENABLED=0`
 
-- go-vet / golangci-lint の check derivation を `CGO_ENABLED=0` のピュア Go で実行する。nput は cgo 未使用（ADR-0011 stdlib-only）で、サンドボックスに C コンパイラを持ち込まずに検査できる。
+- go-vet / golangci-lint の check derivation を `CGO_ENABLED=0` のピュア Go で実行する。layat は cgo 未使用（ADR-0011 stdlib-only）で、サンドボックスに C コンパイラを持ち込まずに検査できる。
 
 ## 根拠
 

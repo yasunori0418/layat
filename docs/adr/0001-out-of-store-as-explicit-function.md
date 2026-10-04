@@ -28,7 +28,7 @@ justifies:
 ## 決定
 
 - **store link をコア・デフォルトとする。** `src` のデフォルト挙動は常に Nix ストアへの symlink。
-- **out-of-store は明示関数 `nput.lib.mkOutOfStoreSymlink "/abs/path"` でのみ opt-in する。** 型ベースの暗黙分岐は廃止する。
+- **out-of-store は明示関数 `layat.lib.mkOutOfStoreSymlink "/abs/path"` でのみ opt-in する。** 型ベースの暗黙分岐は廃止する。
 - 関数はマーカー attrset を返し、`src` に渡す。`src` フィールドは 1 つのまま、型は `path | set | marker`。
 - `mkOutOfStoreSymlink` は core lib（nixpkgs のみ依存）では **パスをマーカーに包むだけの純粋関数**とする。実際の link 生成は配置エンジンが担う（ADR-0003）。
 - concept では out-of-store を headline から外し、「開発中の dotfiles をライブ編集したいときの明示的退避路」として降格する。

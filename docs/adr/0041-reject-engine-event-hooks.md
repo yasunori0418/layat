@@ -35,9 +35,9 @@ engine の実行イベント（配置前後・stale 除去・世代コミット�
 
 1. **「配置フレームワーク」化への一歩になる**。CONTEXT.md は配置プリミティブの定義で「配置フレームワーク」を明示的な _Avoid_ 語としている。engine に任意スクリプト実行のイベント機構を足すことは、「配置という一仕事をする純粋関数」を「ライフサイクルを持つフレームワーク」へ変質させる方向そのもの。
 2. **hook の置き場は各層に既にある**。「モジュール = 配線・engine = 配置コア」（ADR-0003）の分離により、配線層が hook ポイントを既に提供している:
-   - devShell: `shellHook`（nput apply の前後に任意コマンドを並べられる）
-   - home-manager: activation DAG（`lib.hm.dag.entryAfter [ "nput" ] ...` で nput の後に任意ステップ）
-   - standalone: UNIX 合成（`nput apply && ./post.sh`。exit code 0/1/2 で分岐可能）
+   - devShell: `shellHook`（layat apply の前後に任意コマンドを並べられる）
+   - home-manager: activation DAG（`lib.hm.dag.entryAfter [ "layat" ] ...` で layat の後に任意ステップ）
+   - standalone: UNIX 合成（`layat apply && ./post.sh`。exit code 0/1/2 で分岐可能）
    - 機械可読な実行結果が要る場合: `--json`（ADR-0033）を消費して外部がオーケストレーションする
    engine 内 hook はこれらと重複し、しかも層をバイパスして engine に配線責務を持ち込む。
 3. **engine の設計原則と不整合**。engine は `nix` / `git` 以外を叩かない（ADR-0006）・成功時デフォルト沈黙（ADR-0031）・失敗モードは自身のエラー wrap 規約で閉じる、という性質を持つ。任意スクリプトの実行はサブプロセスの失敗・出力・タイムアウトという新しい失敗モード群を engine の意味論に持ち込む。
@@ -54,5 +54,5 @@ hook が欲しくなる場面（配置後のサービスリロード・通知・
 ## 棄却した代替案
 
 - **engine に pre/post hook を実装する**（原提案）: 上記判断根拠の通り。
-- **CLI 層（cmd/nput）に hook を置く**（engine は触らない折衷）: 層は変わっても「nput が任意スクリプトのライフサイクル管理を背負う」点は同じで、shell 合成に対する優位が「設定ファイルに書ける」程度しかない。UNIX 哲学（合成は shell の仕事）に反する。
+- **CLI 層（cmd/layat）に hook を置く**（engine は触らない折衷）: 層は変わっても「layat が任意スクリプトのライフサイクル管理を背負う」点は同じで、shell 合成に対する優位が「設定ファイルに書ける」程度しかない。UNIX 哲学（合成は shell の仕事）に反する。
 - **判断を保留して検討継続**: 提案自体が「コンセプト逸脱なら中止」を条件としており、逸脱の根拠が CONTEXT.md の Avoid 語として明文で存在する。保留は判断の先送りにしかならない。

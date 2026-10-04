@@ -56,7 +56,7 @@ references:
 1. **判定**: `ancestorSymlink`（`internal/planner/planner.go`）が祖先 symlink を検出すると、それが**自 profile の前世代 manifest が記録した symlink**であっても `Compute` が一律 conflict を積む（ADR-0015 §4）。
 2. **収束不能**: `len(plan.Conflicts) > 0` で engine の `Apply()` が早期 return し、`place` も `removeStale` も走らない。結果、旧世代の全体 symlink も除去されず、新旧どちらの状態にも収束しない（`nixos-rebuild switch` しても新 entries が 1 つも配置されない）。
 
-実運用では、親 entry → 子 entry 群への定義変更のたびに apply 前に対象 symlink を手動 `rm` する回避策が要り、「設定を宣言的に管理する」という nput の思想と相性が悪い。
+実運用では、親 entry → 子 entry 群への定義変更のたびに apply 前に対象 symlink を手動 `rm` する回避策が要り、「設定を宣言的に管理する」という layat の思想と相性が悪い。
 
 一方で ADR-0015 §4 の一律停止は「foreign symlink 配下へネストすると `os.MkdirAll` が symlink-to-store を既存 dir と見なし read-only store へ書く / dangling を作る」汚染を防ぐための安全策であり、**未知の祖先に対しては維持したい**。緩和したいのは「自分が前世代に置いた symlink を、自分が次世代で消して子へ張り替える」既知・安全なケースだけである。
 
@@ -70,7 +70,7 @@ references:
 2. **stale**: その祖先 target が**次世代 manifest に無い**（＝除去予定）。
 3. **帰結**: 次世代にも祖先 entry が残る**自己矛盾 manifest**（`.claude/skills` symlink と `.claude/skills/foo` を同時に持つ）は緩和せず **true conflict のまま維持**する。親 symlink を消せない以上ネストできないため。
 
-foreign（他 nput profile / 他ツール / 手動作成 = 記録 dest と不一致 or 前世代に無い）・`prev == nil`・初回 apply は**従来通り error 停止**を維持する。**既知（自己記録 stale）のみ silent 移行・未知は安全停止**という非対称を保ち、store 汚染の担保を損なわない。
+foreign（他 layat profile / 他ツール / 手動作成 = 記録 dest と不一致 or 前世代に無い）・`prev == nil`・初回 apply は**従来通り error 停止**を維持する。**既知（自己記録 stale）のみ silent 移行・未知は安全停止**という非対称を保ち、store 汚染の担保を損なわない。
 
 ### 2. 子 entry は lstat を経ず無条件に absent 配置する
 

@@ -26,7 +26,7 @@ references:
 
 ## 背景
 
-ADR-0020 で `nput reset <name> [target...]`（配置物の teardown）と `apply --recopy`（copy の上書き再コピー）を
+ADR-0020 で `layat reset <name> [target...]`（配置物の teardown）と `apply --recopy`（copy の上書き再コピー）を
 追加したが、次の二次的細目が未定義だった。
 
 1. **reset の `--all` 対応有無**。`rollback --all` は破壊的 footgun として却下済み（ADR-0018）。reset は copy も消すぶん更に破壊的。
@@ -40,11 +40,11 @@ ADR-0020 で `nput reset <name> [target...]`（配置物の teardown）と `appl
 - `reset` に `--all`（および root モードフィルタ）を提供しない。**`<name>` 必須**とする。
 - 全 config の一斉撤去（copy 含む）は誤操作の被害が大きく、「ユーザーが配置を明示的に握る」思想・`rollback --all` 却下
   （ADR-0018）と一貫させる。複数撤去したいなら名指しを複数回行う。
-- per-entry 撤去は従来通り `nput reset <name> [target...]` の `target` 列挙で行う（config 内の粒度は保つ）。
+- per-entry 撤去は従来通り `layat reset <name> [target...]` の `target` 列挙で行う（config 内の粒度は保つ）。
 
 ### 2. reset は `--dryrun` 対応
 
-- `nput reset <name> [target...] --dryrun` を**副作用ゼロ**の読み取り専用プレビューとする。削除されるべき symlink / copy target を
+- `layat reset <name> [target...] --dryrun` を**副作用ゼロ**の読み取り専用プレビューとする。削除されるべき symlink / copy target を
   表示して exit し、**FS 削除・confirm・flock いずれも行わない**（`apply --dryrun` と同性質・ADR-0006）。
 - CI / スクリプトで「何が消えるか」を非対話で確認でき、copy データ損失前の安全プレビューになる。`apply --dryrun` と対称。
 - 終了コード: 削除対象の有無に依らず 0（読み取り専用・破壊予告であってエラーではない）。
@@ -72,7 +72,7 @@ ADR-0020 で `nput reset <name> [target...]`（配置物の teardown）と `appl
   - reset 節に「blocking flock を取得（`--dryrun` は取らない）」、`--recopy` 節に「`--all` と合成可」を追記。
   - エラー仕様 / フロー記述で reset の flock・dryrun を反映。
 - **`docs/design.md`**: CLI 一覧の reset に `--dryrun` / 名指し必須を反映（任意）。
-- **実装フェーズ**: `cmd/nput`（reset の `--all` 拒否・`--dryrun` 分岐・flock 取得、`apply` の `--all`×`--recopy` 合成）。
+- **実装フェーズ**: `cmd/layat`（reset の `--all` 拒否・`--dryrun` 分岐・flock 取得、`apply` の `--all`×`--recopy` 合成）。
 
 ## 棄却した代替案
 

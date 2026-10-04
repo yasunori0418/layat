@@ -47,7 +47,7 @@ target = mkDefault name;            # target は属性キー(name)から既定�
 
 `home.file` は **attrset で属性キーが識別子**になり、`target` はキーから自動導出される（明示上書き可）。**一意性は Nix の attrset 仕様（キー重複不可）でタダで担保**され、手動チェックは不要。
 
-nput の entry `name` は実質「stale 除去の diff キー + 表示ラベル」でしかなく（`nput.<name>` の config / profile 名とは別物）、**target は本来一意でなければならない**（2 entry が同一 target に置けば衝突）。よって target を自然な識別子にできる。design.md が `name` 必須の根拠にした「index ベース自動命名は並び替えで名前が変わる」懸念も、順序非依存な target をキーにすれば満たされる。
+layat の entry `name` は実質「stale 除去の diff キー + 表示ラベル」でしかなく（`layat.<name>` の config / profile 名とは別物）、**target は本来一意でなければならない**（2 entry が同一 target に置けば衝突）。よって target を自然な識別子にできる。design.md が `name` 必須の根拠にした「index ベース自動命名は並び替えで名前が変わる」懸念も、順序非依存な target をキーにすれば満たされる。
 
 ## 決定
 
@@ -78,7 +78,7 @@ entries = {
 
 ### 4. モジュールオプションも attrsOf に揃える
 
-- `modules/common.nix` の `nput.entries` を `attrsOf (submodule …)`（`lib/types.nix` と共有）にする。`nput.<name>` の config 階層が既に attrset キー方式なので、entry 階層も揃い構造の非対称が解消する。
+- `modules/common.nix` の `layat.entries` を `attrsOf (submodule …)`（`lib/types.nix` と共有）にする。`layat.<name>` の config 階層が既に attrset キー方式なので、entry 階層も揃い構造の非対称が解消する。
 
 ### 5. 動的生成は `listToAttrs` 等で組む
 
@@ -97,12 +97,12 @@ entries = builtins.listToAttrs (map (n: {
 - **home-manager 整合**: 実証済みの `home.file` モデルと同型で、利用者の既知のメンタルモデルに乗る。
 - **native 一意性**: Nix attrset がキー重複を許さないため、検査コードを持たずに一意性が成立する。
 - **identity の自然さ**: target は配置先として元々一意であるべき値で、stale 除去の diff キーとして過不足ない。`name` 必須の旧根拠（index 不安定回避・design.md）も target キーで満たす。
-- **構造の対称**: config 階層（`nput.<name>`）と entry 階層がどちらも attrset キー方式に揃う。
+- **構造の対称**: config 階層（`layat.<name>`）と entry 階層がどちらも attrset キー方式に揃う。
 
 ## 影響
 
-- **`docs/spec.md`**: entries スキーマを attrsOf（キー = target・`name` 廃止）に変更。manifest v1 の `entries[]` から `name` を削除し identity = target に。動的生成節を `listToAttrs` に書き換え。エラー仕様の「重複 name」を「同一キー = Nix で表現不可 / 別名キーで同一 target = engine conflict」に更新。`normalizeManifest` の name 一意性 throwIf を削除。モジュールオプション `nput.entries` を attrsOf に。全 entries 例を変換。
-- **`docs/design.md`**: 「name フィールドを必須にする理由」節を「target をキーにする理由」に差し替え。entries スキーマ表・`nput.entries` 型・全 entries 例を変換。
+- **`docs/spec.md`**: entries スキーマを attrsOf（キー = target・`name` 廃止）に変更。manifest v1 の `entries[]` から `name` を削除し identity = target に。動的生成節を `listToAttrs` に書き換え。エラー仕様の「重複 name」を「同一キー = Nix で表現不可 / 別名キーで同一 target = engine conflict」に更新。`normalizeManifest` の name 一意性 throwIf を削除。モジュールオプション `layat.entries` を attrsOf に。全 entries 例を変換。
+- **`docs/design.md`**: 「name フィールドを必須にする理由」節を「target をキーにする理由」に差し替え。entries スキーマ表・`layat.entries` 型・全 entries 例を変換。
 - **`docs/concept.md`**: entries 例を target キー attrset に変換。
 - **`CONTEXT.md`**: `entry / entries` 定義を「target をキーとする attrset。キーが識別子」に更新。`name` 一意性の記述を除去。
 - **ADR-0010**: 「entries を attrsOf でモデル化」棄却・「`name` 必須」・「重複 name の throwIf」を本 ADR が反転した旨の改訂注記を足す。
