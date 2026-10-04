@@ -9,24 +9,9 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// reset is an FS-only teardown that reverts placed entities to a not-placed state (→ ADR-0020,
-// ADR-0021, ADR-0025, docs/spec.md "recopy · reset").
-//
-//   - symlink: the same conservative invariant as stale removal (delete only symlinks that the
-//     previous generation's manifest recorded and that currently still point at the recorded dest.
-//     foreign / record mismatches are kept with a warning). Reuses planner.Compute (next=nil) +
-//     staleremove (finished modules · → planner, staleremove.go).
-//   - copy target: deleted (the only explicit means to remove a copy · the risk of deleting a
-//     pre-existing file is guarded by the CLI's confirmation).
-//   - profile / generations are untouched. As long as the config keeps the entry it is re-placed
-//     on the next apply (transient).
-//
-// The source of teardown-target entries is the **previous generation's manifest (the manifest.json
-// of the link-farm that profileDir/profile points at)**. This is "the truth of what layat actually
-// placed (recorded)" and matches the conservative invariant's "recorded dest" (rebuilding the
-// config would diverge from the recorded dest under src drift and misjudge, so the recorded
-// previous generation is used). The CLI handles the rootKind pre-resolution eval (fixing profileDir),
-// and entries are read from this previous generation's manifest.
+// reset is an FS-only teardown that reverts the entries of the previous generation's manifest to a
+// not-placed state: symlinks under the stale-removal invariant, copy targets deleted outright.
+// The profile and its generations are untouched.
 
 // ResetOptions is the input to Reset. Reset does not build (it reads the previous generation's manifest).
 type ResetOptions struct {
@@ -41,7 +26,7 @@ type ResetOptions struct {
 	// Targets narrows the teardown-target targets (root-relative · empty = all entries).
 	// Specifying a target not present in the previous generation's manifest is an error.
 	Targets []string
-	// DryRun is a side-effect-free preview (just computes and returns the removal targets · no flock / confirm / FS deletion · → ADR-0021).
+	// DryRun is a side-effect-free preview (just computes and returns the removal targets · no flock / confirm / FS deletion).
 	DryRun bool
 	// Confirm is the confirmation callback before performing deletion (nil = run without confirmation · --yes path / dryrun).
 	// It is passed the computed plan; returning false aborts (Result.Aborted = true). The CLI handles the TTY prompt.
@@ -57,37 +42,33 @@ type ResetResult struct {
 	RemovedSymlinks []string // removed (in dryrun, to-be-removed) symlink targets
 	RemovedCopies   []string // removed (in dryrun, to-be-removed) copy targets
 	KeptForeign     []string // symlink targets kept for not satisfying the conservative invariant (foreign / record mismatch)
-	Pruned          []string // empty ancestor directories rmdir-ed after a removal (→ Issue #174, #172 (D4); not computed in dryrun)
+	Pruned          []string // empty ancestor directories rmdir-ed after a removal (not computed in dryrun)
 	DryRun          bool     // was a read-only preview
 	Aborted         bool     // aborted at the confirmation prompt
 
 	// Warnings are the planner's entry-scoped warnings in structured form (kind + target), for
 	// the CLI to map onto outturn warnings; KeptForeign above stays the preview-oriented view of
-	// the same data (→ issue #130, outturn ADR-0019).
+	// the same data.
 	Warnings []planner.Warning
 	// Entries are the selected teardown entries (the previous generation's manifest narrowed by
 	// Targets) — reset's full inventory, so the CLI can list every entry as an outturn item with
-	// its method/subpath even when it produced no removal (→ issue #131).
+	// its method/subpath even when it produced no removal.
 	Entries []manifest.Entry
-	// FailedTarget / Unreached mirror Result's reached-state contract (→ issue #130 到達状態):
-	// FailedTarget is the root-relative target whose removal failed ("" when the failure was not
-	// entry-scoped), Unreached lists planned removals never attempted because an earlier failure
-	// stopped the run. Both empty on success; when set, the partial ResetResult is returned
-	// alongside the error so the CLI keeps changes complete up to the failure (→ issue #131).
+	// FailedTarget is the root-relative target whose removal failed ("" when not entry-scoped) and
+	// Unreached the planned removals never attempted. Both empty on success; when set, the partial
+	// ResetResult is returned alongside the error.
 	FailedTarget string
 	Unreached    []string
 	// GenBefore / GenAfter are the profile generation numbers observed for the run. Reset is an
 	// FS-only teardown that never moves the profile pointer, so before == after; nil when the
-	// profile link is not a parsable generation link (→ issue #130, outturn ADR-0015).
+	// profile link is not a parsable generation link.
 	GenBefore *int
 	GenAfter  *int
 }
 
-// Reset reverts the placed entities of the target entries to a not-placed state. It shares with the
-// CLI the non-build command preamble of docs/spec.md "execution flow" (rootKind pre-resolution eval →
-// root resolution → fixing profileDir), and the engine side owns profileDir resolution · blocking
-// flock · reading the previous generation's manifest · conservative symlink removal + copy deletion
-// (→ ADR-0021, ADR-0024).
+// Reset reverts the placed entities of the target entries to a not-placed state. It owns
+// profileDir resolution · blocking flock · reading the previous generation's manifest ·
+// conservative symlink removal + copy deletion.
 func Reset(opts ResetOptions) (*ResetResult, error) {
 	warnf := opts.Warnf
 	if warnf == nil {
@@ -96,7 +77,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 		}
 	}
 
-	// 1. fix profileDir (resolve root → layout · preamble shared with apply / rollback · → ADR-0024).
+	// 1. fix profileDir (resolve root → layout · preamble shared with apply / rollback).
 	prof, root, err := ProfileFor(ProfileOptions{
 		Name: opts.Name, RootKind: opts.RootKind, FixedRoot: opts.FixedRoot,
 		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir, Git: opts.Git,
@@ -115,13 +96,13 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	}
 
 	// Observe the generation once: the FS-only teardown never moves the profile pointer, so the
-	// same observation serves as both before and after (→ issue #130, outturn ADR-0015).
+	// same observation serves as both before and after.
 	res.GenBefore = observeGeneration(prof.Profile)
 	if res.GenBefore != nil {
 		res.GenAfter = intPtr(*res.GenBefore)
 	}
 
-	// 2. at run time, serialize with concurrent apply / reset via a blocking flock (→ ADR-0013, ADR-0021).
+	// 2. at run time, serialize with concurrent apply / reset via a blocking flock.
 	//    dryrun is read-only, so it does not take a flock.
 	if !opts.DryRun {
 		l, err := acquireProfileLock(prof.Dir, true)
@@ -181,12 +162,12 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 		}
 	}
 
-	// 6. dryrun returns the computed plan and finishes (no FS deletion · no confirm · → ADR-0021).
+	// 6. dryrun returns the computed plan and finishes (no FS deletion · no confirm).
 	if opts.DryRun {
 		return res, nil
 	}
 
-	// 7. confirmation (data-loss risk · → ADR-0020, ADR-0025). The CLI handles the TTY prompt / --yes.
+	// 7. confirmation (data-loss risk). The CLI handles the TTY prompt / --yes.
 	if opts.Confirm != nil {
 		proceed, err := opts.Confirm(res)
 		if err != nil {
@@ -198,11 +179,9 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 		}
 	}
 
-	// 8. reflect onto the real FS. For symlinks reuse staleremove (with post-plan drift re-verification),
-	//    and delete copy targets. Emit warnings for the kept foreign. A mid-teardown failure
-	//    returns the partial ResetResult alongside the error (removed-so-far + the
-	//    FailedTarget/Unreached partition), mirroring Apply's stage-failure contract so the CLI
-	//    can keep changes complete up to the failure point (→ issue #131, outturn ADR-0020).
+	// 8. reflect onto the real FS: staleremove for symlinks (with drift re-verification), then
+	//    delete copy targets. A mid-teardown failure returns the partial ResetResult alongside
+	//    the error, mirroring Apply's stage-failure contract.
 	a := &applier{opts: Options{Warnf: warnf}, result: &Result{Root: root, ProfileDir: prof.Dir}}
 	a.profile = prof
 	a.root = root
@@ -239,11 +218,8 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 }
 
 // resetUnreached lists the planned removals never attempted once a symlink-stage failure
-// stopped the run: the plan's unlink targets that were neither removed nor the failure
-// itself, followed by every planned copy removal (the copy stage runs strictly after the
-// symlink stage · → issue #131, outturn ADR-0020). Drift-kept targets before the failure
-// point are indistinguishable from unattempted ones here and are folded in — the same
-// conservative approximation Apply's fail() makes.
+// stopped the run: the unlink targets neither removed nor failed, then every planned copy
+// removal. Drift-kept targets are folded in, as Apply's fail() does.
 func resetUnreached(planned []planner.RemoveAction, removed []string, failed string, plannedCopies []string) []string {
 	done := map[string]bool{failed: true}
 	for _, t := range removed {

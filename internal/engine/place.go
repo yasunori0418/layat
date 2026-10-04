@@ -8,20 +8,9 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// ensureParentDir creates targetAbs's parent directory (ancestor symlinks are already
-// rejected as conflicts by the planner · → ADR-0015), wrapping any failure with the
-// target path for diagnosability. Shared by all place-execution entry points that write
-// to targetAbs (place, placeCopies, recopyAll).
-//
-// The directories it creates are NOT journaled for undo (→ ADR-0044 §1 scope note): unwind
-// removing the leaf symlink/copy it made room for already returns the target to "absent" from
-// the caller's perspective, and any now-empty intermediate directories left behind are
-// indistinguishable from the plain mkdir -p residue apply has always left after non-rollback
-// runs (e.g. an entry deleted from config the next run down) — a case the existing
-// pruneEmptyAncestors backstop, not the undo journal, already exists to sweep up on the next
-// removal/apply. Adding mkdir/rmdir entries here would track a directory that may be shared by
-// several journal entries (multiple leaves under the same fresh parent), complicating dedup for
-// a cosmetic leftover with no data-loss risk.
+// ensureParentDir creates targetAbs's parent directory, wrapping any failure with the path.
+// The directories it creates are not journaled for undo; empty leftovers are swept by
+// pruneEmptyAncestors.
 func ensureParentDir(targetAbs string) error {
 	if err := os.MkdirAll(filepath.Dir(targetAbs), 0o755); err != nil {
 		return fmt.Errorf("layat: cannot create parent directory (%s): %w", filepath.Dir(targetAbs), err)
@@ -29,14 +18,9 @@ func ensureParentDir(targetAbs string) error {
 	return nil
 }
 
-// place materializes the planner's Place actions as native symlinks
-// (new / re-link before stale removal · → ADR-0006). The plan is already computed by
-// planner.Compute from the current FS state, so this stays a thin executor that reflects
-// the plan onto the real FS. This slice covers only store / out-of-store symlink placement
-// (copy is a future slice · → Issue #6).
-// Result op lists are appended only after an action's final FS write succeeds, and a failing
-// action records its entry as result.FailedTarget instead, so the lists stay a faithful
-// "completed" record for the reached/unreached partition (→ issue #130 到達状態).
+// place executes the planner's Place actions as native symlinks (new or re-link).
+// Result op lists are appended only after an action's final FS write succeeds; a failing
+// action is recorded as result.FailedTarget instead.
 func (a *applier) place(actions []planner.PlaceAction) error {
 	for _, act := range actions {
 		if err := ensureParentDir(act.TargetAbs); err != nil {
@@ -44,8 +28,8 @@ func (a *applier) place(actions []planner.PlaceAction) error {
 		}
 
 		if act.Kind == planner.PlaceReplace || act.Kind == planner.PlaceForeign {
-			// Re-link is unlink + symlink (no rename-based atomic swap · → ADR-0017).
-			// The foreign-overwrite warning is already emitted via planner.Warnings by emitWarnings (→ ADR-0015).
+			// Re-link is unlink + symlink (no rename-based atomic swap).
+			// The foreign-overwrite warning is already emitted via planner.Warnings by emitWarnings.
 			prevDest, err := os.Readlink(act.TargetAbs)
 			if err != nil {
 				return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: cannot read existing symlink before re-link (%s): %w", act.TargetAbs, err))
@@ -53,10 +37,7 @@ func (a *applier) place(actions []planner.PlaceAction) error {
 			if err := os.Remove(act.TargetAbs); err != nil {
 				return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: cannot remove existing symlink (%s): %w", act.TargetAbs, err))
 			}
-			// Journaled immediately after the unlink, before the re-symlink: if the symlink
-			// creation below fails, undoRelinkOld's own os.Remove tolerates the target already
-			// being absent and still recreates it at prevDest — so this target is restorable even
-			// when this run never got as far as writing the new symlink (→ ADR-0044).
+			// Journaled before the re-symlink so undo can restore prevDest even if it fails.
 			a.journalRelinkedSymlink(act.TargetAbs, prevDest)
 			if err := os.Symlink(act.Dest, act.TargetAbs); err != nil {
 				return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: cannot create symlink (%s -> %s): %w", act.TargetAbs, act.Dest, err))

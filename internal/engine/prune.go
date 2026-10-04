@@ -12,18 +12,11 @@ import (
 	"github.com/yasunori0418/layat/internal/paths"
 )
 
-// prune removes the profile series left behind by a root that no longer exists
-// (→ ADR-0034, ADR-0036 §3, DSG-096dc893-21f4-45e3-9347-986e9275b4d1).
-//
-// It touches no placed artifact and thins no generations: the only verdict is
-// whether the absolute root path the backref .root records still exists. A
-// series whose root does exist is kept whatever else it looks like, and a
-// series whose verdict cannot be reached (the backref unusable, its contents
-// unlistable, the root's stat failing for a reason other than non-existence) is
-// kept with a warning — no path leads from missing evidence to deletion
-// (→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f).
+// prune removes the profile series whose recorded root no longer exists. It
+// touches no placed artifact and thins no generations; a series whose root
+// exists, or whose verdict cannot be reached, is kept with a warning.
 
-// defaultSystemDir is the system-mode profile base (→ ADR-0036 §3). Unlike the
+// defaultSystemDir is the system-mode profile base. Unlike the
 // user state base it is a finished base: it does not go through paths.Base.
 const defaultSystemDir = "/nix/var/nix/profiles/layat"
 
@@ -47,7 +40,7 @@ const (
 	// reason other than non-existence.
 	PruneSkipRootStatFailed PruneSkipReason = "root-stat-failed"
 	// PruneSkipPermissionDenied is a series whose deletion could not even begin
-	// for want of privilege (→ ADR-0036 §3, the non-root run over the system base).
+	// for want of privilege.
 	PruneSkipPermissionDenied PruneSkipReason = "permission-denied"
 )
 
@@ -58,18 +51,15 @@ type PruneOptions struct {
 	// StateDir is <state>; the base is derived through paths.Base
 	// (empty = resolved with paths.StateDir).
 	StateDir string
-	// SystemDir is the finished system base itself — it does not go through
-	// paths.Base, the system-mode layout having no nix/profiles/layat under it
-	// (→ ADR-0036 §3). Empty = defaultSystemDir. Tests point it at a tmpdir so
-	// no run reaches the real /nix/var/nix/profiles.
+	// SystemDir is the finished system base itself; it does not go through
+	// paths.Base. Empty = defaultSystemDir.
 	SystemDir string
 	// DryRun is a side-effect-free preview: it enumerates and judges, takes no
 	// lock, and changes nothing (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
 	DryRun bool
 	// Confirm is the confirmation callback before deletion (nil = --yes path).
-	// It is handed a preview of the verdict — the root paths the CLI presents
-	// are in its Removed — which is a separate value from what Prune returns:
-	// Aborted is set on the returned result, never on the preview.
+	// It is handed a preview separate from the returned result; Aborted is set
+	// on the returned result, never on the preview.
 	Confirm func(*PruneResult) (bool, error)
 	// Warnf is the warning output sink (nil = stderr). Every skipped series is
 	// reported through it.
@@ -86,12 +76,8 @@ type PruneSeries struct {
 	Root string
 	// Names are the <name> profileDirs under the series.
 	Names []string
-	// Dir is the absolute series directory, and so the only field that says
-	// which base the series came from. The <roothash> is a hash of the root
-	// path (→ paths.RootHash), so the same root reached in project mode and in
-	// system mode with an explicit --root puts the same directory name under
-	// both bases; without Dir, neither a Removed entry nor a warning would say
-	// which one it meant.
+	// Dir is the absolute series directory, the only field that says which
+	// base the series came from: the same <roothash> can stand under both.
 	Dir string
 }
 
@@ -106,9 +92,7 @@ type PruneSkipped struct {
 type PruneResult struct {
 	// Removed holds the series deleted — in dryrun, the ones that would be.
 	// When the deletion stage fails it holds the series completed before that
-	// failure, so the caller can tell what is already gone
-	// (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed). That is the only error for
-	// which a result comes back at all — see Prune's own contract.
+	// failure (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
 	Removed []PruneSeries
 	// Skipped holds the series left alone, with the reason.
 	Skipped []PruneSkipped
@@ -117,15 +101,8 @@ type PruneResult struct {
 }
 
 // Prune deletes the <roothash> series whose recorded root no longer exists,
-// under the user state base and the system base. The field name Removed rather
-// than Pruned is deliberate: Result.Pruned already means the empty ancestor
-// directories rmdir-ed after a removal (→ REQ-8409db86-a1ba-4053-86dc-588985cc1ca7).
-//
-// On error the result is nil except when the deletion stage itself failed: only
-// then is anything already gone, and the partial result comes back alongside
-// the error so the caller can report it. Everything before that stage —
-// resolving the state dir, the confirmation callback — fails with nothing
-// deleted, so there is no partial state to describe.
+// under the user state base and the system base. On error the result is nil
+// except when the deletion stage failed, where the partial result comes back.
 func Prune(opts PruneOptions) (*PruneResult, error) {
 	warnf := opts.Warnf
 	if warnf == nil {
@@ -172,9 +149,7 @@ func Prune(opts PruneOptions) (*PruneResult, error) {
 	}
 
 	// 3. confirm before deleting. The preview handed to Confirm is a separate
-	// value: res.Removed goes on to mean "actually deleted", and mutating the
-	// object the callback still holds would empty a list the CLI captured to
-	// display (→ ADR-0034 §2 の root パス一覧).
+	// value, since res.Removed goes on to mean "actually deleted".
 	if opts.Confirm != nil {
 		// Skipped is shared rather than copied: from here on it only ever
 		// grows by append, so the callback's view stays the snapshot it was
@@ -200,15 +175,14 @@ func Prune(opts PruneOptions) (*PruneResult, error) {
 		if err != nil {
 			if reason != "" {
 				// The series was left untouched — its lock could not be taken,
-				// or its deletion could not begin for want of privilege
-				// (→ ADR-0036 §3). It is kept and the rest carries on.
+				// or its deletion could not begin for want of privilege.
+				// It is kept and the rest carries on.
 				pruneSkip(res, warnf, s, reason, err)
 				continue
 			}
-			// Either something was already removed, or the reason was not one
-			// prune can give meaningful guidance about. The series is neither
-			// gone nor untouched, so it is reported as an error and the run
-			// stops (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
+			// Something was already removed, or the reason gives no guidance:
+			// the series is neither gone nor untouched, so the run stops with
+			// an error (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
 			return res, err
 		}
 		res.Removed = append(res.Removed, s)
@@ -253,18 +227,16 @@ func pruneJudgeBase(base string, res *PruneResult, warnf func(string, ...any)) (
 			continue
 		}
 		// The <name> profileDirs are unknown, so neither the lock keys nor the
-		// entities to remove are. Names is nil here just as it is for a series
-		// holding nothing but the backref, so this must be decided on NamesErr
-		// and never on Names alone (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1).
+		// entities to remove are. This is decided on NamesErr, never on Names,
+		// which is also nil for a series holding nothing but the backref.
 		if l.NamesErr != nil {
 			pruneSkip(res, warnf, s, PruneSkipSeriesUnreadable, l.NamesErr)
 			continue
 		}
 
-		// The single condition: only a root that does not exist is an orphan.
-		// os.Stat follows symlinks, so a dangling symlink root falls out here
-		// with no branch of its own; a root replaced by a regular file returns
-		// nil and is kept (the kind is not looked at).
+		// Only a root that does not exist is an orphan. os.Stat follows
+		// symlinks, so a dangling symlink root counts as missing; a root
+		// replaced by a regular file is kept.
 		switch _, err := os.Stat(s.Root); {
 		case err == nil:
 			continue
@@ -278,24 +250,17 @@ func pruneJudgeBase(base string, res *PruneResult, warnf func(string, ...any)) (
 	return candidates, nil
 }
 
-// pruneSkip records a skipped series and warns. Every reason warns: leaving one
-// of them silent would break the "report the reason as a warning" rule
-// (→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f).
-// The series is named by its directory rather than by the <roothash> alone: the
-// same <roothash> can stand under both bases (→ PruneSeries.Dir).
+// pruneSkip records a skipped series and warns for every reason
+// (→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f). The series is named by its
+// directory, since the same <roothash> can stand under both bases.
 func pruneSkip(res *PruneResult, warnf func(string, ...any), s PruneSeries, reason PruneSkipReason, cause error) {
 	res.Skipped = append(res.Skipped, PruneSkipped{Series: s, Reason: reason, Detail: cause.Error()})
 	warnf("layat: prune: skipped series %s (%s): %v", s.Dir, reason, cause)
 }
 
 // pruneRemoveSeries deletes one series, locks and all. On failure it returns
-// the reason the caller may fold into Skipped, or "" when the failure must be
-// reported as an error instead. A lock that cannot be taken is always
-// skippable — nothing has been touched yet. A removal failure is skippable only
-// when nothing had been removed and the reason was privilege: the progress
-// state is checked first and the reason only after, so a permission failure
-// that came after something was already gone stays an error
-// (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1 の 2×2).
+// the reason the caller may fold into Skipped, or "" when the failure is an
+// error: a removal failure is skippable only if nothing was removed yet.
 func pruneRemoveSeries(s PruneSeries) (PruneSkipReason, error) {
 	// A series with no <name> has no lock key at all; the enumeration having
 	// succeeded (NamesErr was checked before this point) is what makes an
@@ -312,13 +277,9 @@ func pruneRemoveSeries(s PruneSeries) (PruneSkipReason, error) {
 		// the flock failure wording stays single-sourced in the engine.
 		l, lerr := acquireProfileLock(dir, false)
 		if lerr != nil {
-			// Either another process holds the profileDir (lock.ErrLocked) or
-			// the lock state could not be decided at all. Neither is allowed
-			// to fall through to deletion, so both skip the series whole and
-			// release what was already taken. The two need no telling apart
-			// here — acquireProfileLock has named the profileDir and carried
-			// ErrLocked's own wording, and pruneSkip prefixes the series and
-			// the reason, so the error goes back as it came.
+			// The profileDir is held by another process or its lock state is
+			// undecidable. Either way the whole series is skipped, what was
+			// already taken is released, and the error goes back as it came.
 			releaseAll()
 			return PruneSkipLocked, lerr
 		}
@@ -328,10 +289,9 @@ func pruneRemoveSeries(s PruneSeries) (PruneSkipReason, error) {
 	// would let another process take the profileDir mid-deletion.
 	defer releaseAll()
 
-	// <name> first and .root last. A .root removed first would take the series
-	// out of the enumeration for good, leaving a half-deleted series that
-	// neither prune nor a person can find again. os.RemoveAll on the series
-	// directory cannot express this order, so it is not used.
+	// <name> first and .root last, so a half-deleted series stays in the
+	// enumeration. os.RemoveAll on the series directory cannot express this
+	// order, so it is not used.
 	removedAny := false
 	// removalReason decides, for a failure of the removal itself, whether the
 	// series may still be called untouched.

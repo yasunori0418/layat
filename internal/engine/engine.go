@@ -1,12 +1,6 @@
-// Package engine is the placement core: it resolves root, fixes the profileDir
-// layout, takes a flock, places store-symlinks via native FS ops, removes stale
-// links conservatively, and commits a generation with `nix-env --set`
-// (→ ADR-0002, ADR-0005, ADR-0006, ADR-0011, ADR-0013, ADR-0015, ADR-0025).
-//
-// The minimal core of this slice (#6) is limited to store-symlink placement in
-// project mode. Placement through stale removal (native FS) is made unit/integration
-// testable without nix, and commit (nix-env --set) is injectable so tmpdir tests do
-// not call nix (→ ADR-0006).
+// Package engine is the placement core: it resolves root, fixes the profileDir layout,
+// takes a flock, places entries via native FS ops, removes stale links conservatively,
+// and commits a generation with `nix-env --set` (injectable so tests do not call nix).
 package engine
 
 import (
@@ -22,54 +16,48 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// CommitFunc is the commit point that records a generation after a successful placement
-// (→ ADR-0006, docs/spec.md execution flow f). The default is
-// nix-env --profile <profileLink> --set <linkFarm>. tmpdir tests substitute this to
-// verify without calling nix.
+// CommitFunc is the commit point that records a generation after a successful placement.
+// The default is nix-env --profile <profileLink> --set <linkFarm>; tmpdir tests substitute it.
 type CommitFunc func(profileLink, linkFarm string) error
 
-// BuildFunc is the callback that builds the link-farm in-lock after the flock is taken
-// (→ docs/spec.md execution flow 2b · ADR-0011, ADR-0023). The pending argument is the
-// out-link destination (<profileDir>/.pending). The return value is the built link-farm's
-// store path (after os.Readlink resolution). The CLI injects
-// `nix build <ep>#layat.<system>.<name> --out-link <pending>`. When nil, opts.LinkFarm is
-// used as pre-built (tmpdir test path).
+// BuildFunc builds the link-farm in-lock with pending (<profileDir>/.pending) as the out-link
+// and returns the built link-farm's store path. When nil, opts.LinkFarm is used as pre-built.
 type BuildFunc func(pending string) (linkFarm string, err error)
 
-// GitFunc resolves the git toplevel in project mode (→ ADR-0005). The default is gitutil.Toplevel.
+// GitFunc resolves the git toplevel in project mode. The default is gitutil.Toplevel.
 type GitFunc func(dir string) (string, error)
 
 // Options is the input to Apply.
 type Options struct {
 	// LinkFarm is the link-farm directory containing manifest.json and the GC anchor symlink farm.
-	// Pre-built link-farm used only on the path that does not pass Build (tmpdir tests) (→ ADR-0011).
+	// Pre-built link-farm used only on the path that does not pass Build (tmpdir tests).
 	LinkFarm string
 	// Name is the config name (uniquely identifies a profile; derived from the entrypoint's layat.<name>).
 	Name string
-	// RootKind is the root kind obtained via eval pre-resolution (→ docs/spec.md execution flow 1 · ADR-0023).
+	// RootKind is the root kind obtained via eval pre-resolution.
 	// Required on the Build path since the manifest is not yet built. When empty, obtained from LinkFarm's manifest.
 	RootKind string
 	// FixedRoot is the absolute path when rootKind=fixed (from eval pre-resolution's passthru.root).
 	// When empty and Build=nil, LinkFarm's manifest.Root.Root is used.
 	FixedRoot string
-	// RootOverride is the --root override (empty = none). When set, uses the roothash key in all modes (→ ADR-0023).
+	// RootOverride is the --root override (empty = none). When set, uses the roothash key in all modes.
 	RootOverride string
 	// WorkDir is the starting point for project-mode git toplevel resolution (empty = os.Getwd).
 	WorkDir string
 	// StateDir overrides the profile base <state> (empty = resolved via paths.StateDir · mainly for tests).
 	StateDir string
-	// NoWait makes the flock a try-lock (shellHook path · ErrSkipped if held · → ADR-0013).
+	// NoWait makes the flock a try-lock (shellHook path; ErrSkipped if held).
 	NoWait bool
-	// Recopy is the apply --recopy modifier (unconditionally overwrite/re-copy all copy targets in the config from src · → ADR-0020).
+	// Recopy is the apply --recopy modifier (unconditionally overwrite/re-copy all copy targets in the config from src).
 	// An opt-in path that breaks place-once. The normal apply of the symlink part (stale removal + generation commit) is unchanged.
 	Recopy bool
 	// Backup is the apply --backup modifier: a foreign occupant that would otherwise be a conflict
 	// (or a copy foreign skip) is renamed aside to "<target>.<BackupSuffix>" and the entry placed
-	// fresh, instead of stopping (→ ADR-0045, issue #169).
+	// fresh, instead of stopping.
 	Backup bool
-	// BackupSuffix is the apply --backup rename suffix. Empty defaults to "layat-backup" (→ ADR-0045).
+	// BackupSuffix is the apply --backup rename suffix. Empty defaults to "layat-backup".
 	BackupSuffix string
-	// DryRun is a side-effect-free read-only preview (apply --dryrun · → ADR-0006, ADR-0023).
+	// DryRun is a side-effect-free read-only preview (apply --dryrun).
 	// When true it runs the planner read-only, packs the plan into Result and returns,
 	// taking none of FS writes / --set / flock / pending gcroot. It builds (src resolution) but does not place.
 	DryRun bool
@@ -80,7 +68,7 @@ type Options struct {
 	Git GitFunc
 	// Commit substitutes the generation commit (nil = nix-env --set).
 	Commit CommitFunc
-	// Warnf is the warning output sink (nil = stderr). Used to surface foreign symlinks etc. (→ ADR-0015).
+	// Warnf is the warning output sink (nil = stderr). Used to surface foreign symlinks etc.
 	Warnf func(format string, args ...any)
 }
 
@@ -88,64 +76,49 @@ type Options struct {
 type Result struct {
 	Root       string   // resolved absolute root path
 	ProfileDir string   // the fixed profileDir
-	Profile    string   // the profile link (<profileDir>/profile) — the outturn generation.profile value (→ issue #131)
+	Profile    string   // the profile link (<profileDir>/profile) — the outturn generation.profile value
 	Placed     []string // newly placed symlink targets
 	Replaced   []string // targets whose existing symlink was re-linked
 	Copied     []string // copy targets newly copied via place-once
-	Recopied   []string // existing copy targets overwritten/re-copied by --recopy (→ ADR-0020)
+	Recopied   []string // existing copy targets overwritten/re-copied by --recopy
 	Removed    []string // stale-removed targets
-	Pruned     []string // empty ancestor directories rmdir-ed after a removal (→ Issue #174, #172 (D4))
-	BackedUp   []string // targets renamed aside to "<target>.<suffix>" under apply --backup (→ ADR-0045)
+	Pruned     []string // empty ancestor directories rmdir-ed after a removal
+	BackedUp   []string // targets renamed aside to "<target>.<suffix>" under apply --backup
 	Skipped    bool     // skipped on try-lock contention (NoWait path)
-	DryRun     bool     // read-only preview (Placed etc. are "to be placed" plans · → ADR-0023)
+	DryRun     bool     // read-only preview (Placed etc. are "to be placed" plans)
 	// Conflicts are the planner-detected conflicts, in structured form. Populated on the dryrun
-	// path (the CLI decides exit 2 · → ADR-0006) and on the non-dryrun conflict stop, where the
-	// partial Result is returned alongside the aggregate error so the CLI can map each conflict
-	// onto a failed outturn item (E_LAYAT_COLLISION · → issue #131, ADR-0043 §6).
+	// path and on the non-dryrun conflict stop, where the partial Result is returned alongside
+	// the aggregate error.
 	Conflicts []planner.Conflict
 	// GenerationSkipped indicates that the project-mode generation skip committed no new
-	// generation (omitted --set). The path where the new link-farm equals the previous
-	// generation so no commit happens and only drifted entries are lstat-repaired
-	// (→ ADR-0005, ADR-0017, docs/spec.md generation skip).
+	// generation (omitted --set) and only drifted entries were repaired.
 	GenerationSkipped bool
 
 	// Entries is the new manifest's full entry inventory, exposed regardless of whether an
-	// entry produced any FS action, so the CLI can list every entry — not just the diff —
-	// as outturn items (full-inventory · → issue #130, outturn ADR-0016).
+	// entry produced any FS action.
 	Entries []manifest.Entry
-	// RemovalEntries are the previous-generation manifest entries behind this run's planned
-	// symlink removals (pre-removal migration + stale removal), recorded at plan time regardless
-	// of completion — completion is what the Removed list says. They are the old-entry half of
-	// the full inventory: the CLI renders items (target/method/subpath) and the recorded old
-	// dest for remove changes from them, including entries whose removal failed or was never
-	// reached (→ issue #131). A method-change target also present in Entries is shadowed there.
+	// RemovalEntries are the previous-generation entries behind this run's planned symlink
+	// removals (pre-removal + stale), recorded at plan time regardless of completion. A
+	// method-change target also present in Entries is shadowed there.
 	RemovalEntries []manifest.Entry
 	// ReplacedDests records, for each re-linked target in Replaced, the symlink destination
-	// that was actually on disk immediately before the re-link (the pre-removal readlink —
-	// for a foreign replace this is the foreign dest, not a recorded one), so the CLI can
-	// carry the old→new transition in change.info (→ issue #131).
+	// actually on disk immediately before the re-link (the foreign dest for a foreign replace).
 	ReplacedDests map[string]string
-	// Warnings are the planner's entry-scoped warnings in structured form (kind + target),
-	// for the CLI to map onto outturn item/subject warnings. The human-readable stderr text
-	// is still emitted through Warnf alongside (→ issue #130, outturn ADR-0019).
+	// Warnings are the planner's entry-scoped warnings in structured form (kind + target).
+	// The human-readable text is emitted through Warnf alongside.
 	Warnings []planner.Warning
 	// FailedTarget is the root-relative target of the entry whose FS action failed, "" when
-	// the failure was not entry-scoped (build / lock / commit ...). When set, this target's
-	// presence in an op list above means the action was attempted, not completed
-	// (→ issue #130 到達状態, outturn ADR-0016 / ADR-0020).
+	// the failure was not entry-scoped. Its presence in an op list above means the action was
+	// attempted, not completed.
 	FailedTarget string
 	// Unreached lists the root-relative targets of planned actions never attempted because
-	// an earlier failure stopped the run (the outturn "skipped" partition · → issue #130,
-	// outturn ADR-0020). Empty on success.
+	// an earlier failure stopped the run. Empty on success.
 	Unreached []string
 	// Unwound reports that the undo journal rolled this run's FS writes back after a failure:
-	// the op lists above then describe performed-then-reverted actions, not surviving state
-	// (→ ADR-0044, issue #130).
+	// the op lists above then describe performed-then-reverted actions, not surviving state.
 	Unwound bool
-	// GenBefore / GenAfter are the profile generation numbers observed at run start / end.
-	// nil when unobservable — no profile yet (first apply's before), or a profile whose link
-	// does not parse as a generation link (→ issue #130, outturn ADR-0015 Generation.Before/After).
-	// Dryrun observes the same untouched pointer twice, so before == after.
+	// GenBefore / GenAfter are the profile generation numbers observed at run start / end,
+	// nil when unobservable (no profile yet, or a link that is not a generation link).
 	GenBefore *int
 	GenAfter  *int
 }
@@ -153,10 +126,8 @@ type Result struct {
 // ErrSkipped indicates a skip on the NoWait path because another apply is in progress.
 var ErrSkipped = lock.ErrLocked
 
-// acquireProfileLock takes the profileDir flock and wraps the error, deduplicating the
-// acquire→wrap step shared by Apply / Rollback / Reset (→ ADR-0013). The NoWait/ErrSkipped
-// branch and defer Release stay with each caller since they differ (Apply short-circuits with
-// a Result; Rollback/Reset always block).
+// acquireProfileLock takes the profileDir flock and wraps the error. Shared by Apply /
+// Rollback / Reset; NoWait handling and Release stay with each caller.
 func acquireProfileLock(dir string, wait bool) (*lock.Lock, error) {
 	l, err := lock.Acquire(dir, wait)
 	if err != nil {
@@ -165,11 +136,9 @@ func acquireProfileLock(dir string, wait bool) (*lock.Lock, error) {
 	return l, nil
 }
 
-// Apply places store-symlinks in project mode and commits a generation on success.
-// It corresponds to the engine-driven part of docs/spec.md "execution flow" (2. drive the
-// engine), and the engine owns the order "flock → in-lock build → placement → --set →
-// .pending removal". The build is delegated in-lock to opts.Build (the CLI injects nix
-// build); when unspecified, opts.LinkFarm is used as pre-built (tmpdir test path).
+// Apply places the manifest's entries and commits a generation on success, in the order
+// flock → in-lock build (opts.Build, or pre-built opts.LinkFarm) → placement → --set →
+// .pending removal.
 func Apply(opts Options) (*Result, error) {
 	a := &applier{opts: opts, result: &Result{}}
 	if a.opts.Warnf == nil {
@@ -196,7 +165,7 @@ func Apply(opts Options) (*Result, error) {
 		}
 	}
 
-	// 1. resolve root → fix profileDir (→ docs/spec.md "root resolution").
+	// 1. resolve root → fix profileDir.
 	prof, root, err := ProfileFor(ProfileOptions{
 		Name: opts.Name, RootKind: rootKind, FixedRoot: fixedRoot,
 		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir, Git: opts.Git,
@@ -210,17 +179,12 @@ func Apply(opts Options) (*Result, error) {
 	a.result.ProfileDir = a.profile.Dir
 	a.result.Profile = a.profile.Profile
 
-	// 1.2 observe the profile generation at run start, and again on every return path (deferred),
-	//     so Result carries the before/after generation numbers (nil when unobservable — first
-	//     apply, or a test-substituted commit whose profile link is not a generation link ·
-	//     → issue #130, outturn ADR-0015). The dryrun / generation-skip / failure paths never move
-	//     the pointer, so they observe before == after without extra branching.
+	// 1.2 observe the profile generation at run start, and again on every return path (deferred).
 	a.result.GenBefore = observeGeneration(a.profile.Profile)
 	defer func() { a.result.GenAfter = observeGeneration(a.profile.Profile) }()
 
-	// 1.5 dryrun is a side-effect-free read-only short-circuit (→ ADR-0006, ADR-0023, docs/spec.md execution flow).
-	//     Up to fixing profileDir it is common with apply, but from here on (mkdir / flock / placement / --set /
-	//     pending gcroot) nothing is done; the planner is run read-only and the plan is packed into Result and returned.
+	// 1.5 dryrun short-circuits here: no mkdir / flock / placement / --set / pending gcroot;
+	//     the planner runs read-only and the plan is packed into Result.
 	if opts.DryRun {
 		return a.dryRun()
 	}
@@ -230,7 +194,7 @@ func Apply(opts Options) (*Result, error) {
 		return nil, err
 	}
 
-	// 3. acquire a flock per resolved profileDir and serialize (→ ADR-0013).
+	// 3. acquire a flock per resolved profileDir and serialize.
 	l, err := acquireProfileLock(a.profile.Dir, !opts.NoWait)
 	if err != nil {
 		if opts.NoWait && errors.Is(err, lock.ErrLocked) {
@@ -241,7 +205,7 @@ func Apply(opts Options) (*Result, error) {
 	}
 	defer func() { _ = l.Release() }()
 
-	// 4. build the link-farm in-lock (→ docs/spec.md execution flow 2b · ADR-0023).
+	// 4. build the link-farm in-lock.
 	//    Closing the build inside the lock structurally removes .pending contention among concurrent applies.
 	if opts.Build != nil {
 		linkFarm, err := opts.Build(a.profile.Pending)
@@ -259,7 +223,7 @@ func Apply(opts Options) (*Result, error) {
 	// 5. read the previous generation's manifest (absent = first run = zero stale removals).
 	prev := a.loadPrevManifest()
 
-	// 5.5 expose the new manifest's full entry inventory (not just the diff · → issue #130).
+	// 5.5 expose the new manifest's full entry inventory (not just the diff).
 	a.result.Entries = a.manifest.Entries
 
 	// 6. compute the place/replace/remove plan with the planner (pure logic · → internal/planner).
@@ -269,33 +233,29 @@ func Apply(opts Options) (*Result, error) {
 	}
 	a.recordRemovalPlan(plan)
 	if len(plan.Conflicts) > 0 {
-		// Return the partial Result (full inventory + structured conflicts + everything-unreached
-		// partition via fail), not nil: the CLI needs it to report conflicted entries as failed
-		// items and the rest as skipped (→ issue #131, outturn ADR-0016 / ADR-0020).
+		// Return the partial Result (full inventory + structured conflicts + everything
+		// unreached via fail), not nil.
 		a.result.Conflicts = plan.Conflicts
 		return a.fail(plan, reportConflicts(a.opts.Warnf, plan.Conflicts))
 	}
 	a.emitWarnings(plan.Warnings, opts.Recopy)
 
-	// 6.5 check out-of-store link target existence just before placement (no dangling · → ADR-0001, ADR-0013).
+	// 6.5 check out-of-store link target existence just before placement (no dangling).
 	//     Closed before any FS change, so on absence it places nothing and stops with an error.
 	if err := a.checkOutOfStore(); err != nil {
 		return nil, err
 	}
 
-	// 7. project-mode generation-skip decision (is the new link-farm derivation the same as the previous generation?).
-	//    If the same, commit no new generation (omit --set) and return after lstat-repairing only drifted entries
-	//    (not a full no-op). home / fixed / system are excluded and commit a new generation every time
-	//    (generation skip is project mode only · → ADR-0005, ADR-0017, docs/spec.md generation skip).
+	// 7. project mode only: if the new link-farm equals the previous generation, commit nothing
+	//    (omit --set) and only repair drifted entries. Other root kinds commit every time.
 	if rootKind == manifest.RootKindProject && prev != nil {
 		same, err := generationUnchanged(a.profile.Profile, a.opts.LinkFarm)
 		if err != nil {
 			// When the previous generation's link-farm cannot be resolved, fall back to the safe side: normal apply (commit a new generation).
 			a.opts.Warnf("layat: could not resolve the previous generation's link-farm; recommitting without a generation skip: %v", err)
 		} else if same {
-			// The drift repair's re-links are journaled the same as normal placement (→ ADR-0044); this
-			// path commits no generation, so there is no commit success to discard the journal on —
-			// discard immediately once the repair itself succeeds (nothing here to roll back further).
+			// The repair is journaled like normal placement; with no commit on this path, the
+			// journal is discarded as soon as the repair succeeds.
 			if err := a.runJournaled(func() error { return a.repairDrift(plan, opts.Recopy) }); err != nil {
 				return nil, err
 			}
@@ -306,19 +266,9 @@ func Apply(opts Options) (*Result, error) {
 		}
 	}
 
-	// 8. reflect the plan onto the real FS. PreRemove first (clear whatever self-recorded stale
-	//    filesystem object occupies a placement target — an ancestor symlink, a real directory
-	//    fully migratable, or a symlink replaced by a symlink→copy method change — so placement
-	//    lands on an empty/absent target · local exception to ADR-0006 · → ADR-0046, ADR-0047),
-	//    then Backup (apply --backup: rename a foreign occupant aside so placement lands on an
-	//    absent target · → ADR-0045), then new / re-link, then stale removal last (→ ADR-0006).
-	//    copy branches: on --recopy overwrite all copy targets unconditionally, normally
-	//    place-once (new copy only when target is absent) (→ ADR-0020).
-	//    Each stage journals its own FS writes; a failure in any of the five unwinds everything this
-	//    run has done so far (across all five, not just the failing stage) before returning (→ ADR-0044).
-	//    On a stage failure the partial Result is returned alongside the error, carrying the
-	//    reached/unreached partition (FailedTarget / Unreached / Unwound) so the CLI can report
-	//    how far the run got (→ issue #130 到達状態, outturn ADR-0016 / ADR-0020).
+	// 8. reflect the plan onto the FS: PreRemove, Backup, symlinks, copies, then stale removal.
+	//    A failure in any stage unwinds every journaled write of this run and returns the partial
+	//    Result with FailedTarget / Unreached / Unwound.
 	if err := a.runJournaled(func() error { return a.preRemove(plan.PreRemove) }); err != nil {
 		return a.fail(plan, err)
 	}
@@ -335,30 +285,25 @@ func Apply(opts Options) (*Result, error) {
 		return a.fail(plan, err)
 	}
 
-	// 9. generation commit (→ docs/spec.md execution flow 2f). A commit failure is NOT unwound: every
-	//    FS write up to this point already succeeded, so there is nothing wrong to roll back — the run
-	//    simply fails to advance the generation, and idempotent re-apply converges (→ ADR-0006, ADR-0017,
-	//    ADR-0044 §2).
+	// 9. generation commit. A commit failure is not unwound; re-apply converges.
 	commit := opts.Commit
 	if commit == nil {
 		commit = nixEnvCommit
 	}
 	if err := commit(a.profile.Profile, a.opts.LinkFarm); err != nil {
-		// Not entry-scoped (every planned FS action already succeeded), so no FailedTarget /
-		// Unreached — but the partial Result is still returned so the CLI can see what landed
-		// without a generation advancing (→ issue #130 到達状態).
+		// Not entry-scoped, so no FailedTarget / Unreached, but the partial Result is still returned.
 		return a.result, fmt.Errorf("layat: generation commit (nix-env --set) failed: %w", err)
 	}
 	a.discardJournal()
 
-	// 10. remove .pending after --set succeeds (the generation link inherits the gcroot · → ADR-0011, ADR-0025).
+	// 10. remove .pending after --set succeeds (the generation link inherits the gcroot).
 	a.cleanupPending()
 
 	return a.result, nil
 }
 
 // cleanupPending removes the .pending out-link after --set succeeds (or after a generation skip).
-// pending is only created on the build path, so it is removed only on that path (→ ADR-0011, ADR-0025).
+// pending is only created on the build path, so it is removed only on that path.
 func (a *applier) cleanupPending() {
 	if a.opts.Build == nil {
 		return
@@ -378,17 +323,13 @@ type applier struct {
 }
 
 // plannerOptions translates the apply --backup modifier (opts.Backup / opts.BackupSuffix) into
-// planner.Options for planner.Compute (→ ADR-0045, issue #169).
+// planner.Options for planner.Compute.
 func (a *applier) plannerOptions() planner.Options {
 	return planner.Options{Backup: a.opts.Backup, Suffix: a.opts.BackupSuffix}
 }
 
-// runJournaled runs an FS-mutating stage and unwinds the journal recorded so far — by this
-// stage and any earlier ones in the same Apply/Rollback call — if it fails (→ ADR-0044). Stages
-// covered: preRemove, place, materializeCopies, removeStale, repairDrift. A stage succeeding
-// simply leaves its journal entries in place for the next stage (or for the final discard on
-// commit success); nothing here decides when the journal is discarded — that is the caller's
-// job once every stage in the call has succeeded and (for Apply) commit has landed.
+// runJournaled runs an FS-mutating stage and, if it fails, unwinds the whole journal recorded
+// so far in this Apply/Rollback call. On success the journal is kept; the caller discards it.
 func (a *applier) runJournaled(stage func() error) error {
 	if err := stage(); err != nil {
 		a.unwind(err)
@@ -398,10 +339,8 @@ func (a *applier) runJournaled(stage func() error) error {
 	return nil
 }
 
-// recordRemovalPlan exposes the previous-generation entries behind the plan's symlink
-// removals on the Result (RemovalEntries), at plan time so the record covers removals that
-// later fail or are never reached (→ issue #131). Rmdir actions carry no manifest entry and
-// are skipped. Shared by Apply (normal + dryrun) and Rollback right after planner.Compute.
+// recordRemovalPlan records the previous-generation entries behind the plan's symlink
+// removals in Result.RemovalEntries at plan time. Rmdir actions carry no entry and are skipped.
 func (a *applier) recordRemovalPlan(plan planner.Plan) {
 	for _, acts := range [][]planner.RemoveAction{plan.PreRemove, plan.Remove} {
 		for _, act := range acts {
@@ -414,7 +353,7 @@ func (a *applier) recordRemovalPlan(plan planner.Plan) {
 }
 
 // recordReplacedDest records the on-disk symlink destination a re-linked target pointed at
-// immediately before this run replaced it (→ Result.ReplacedDests, issue #131).
+// immediately before this run replaced it (→ Result.ReplacedDests).
 func (a *applier) recordReplacedDest(target, prevDest string) {
 	if a.result.ReplacedDests == nil {
 		a.result.ReplacedDests = map[string]string{}
@@ -422,10 +361,8 @@ func (a *applier) recordReplacedDest(target, prevDest string) {
 	a.result.ReplacedDests[target] = prevDest
 }
 
-// entryFailed records the entry-scoped failure position (result.FailedTarget) when err is
-// non-nil, passing err through unchanged so the error-wrap convention (wrap once at the source)
-// is untouched (→ issue #130 到達状態). target == "" (an action with no manifest entry, such as
-// a RemoveRmdir) records nothing. Only the first failure is recorded; a run stops at it anyway.
+// entryFailed records target as result.FailedTarget when err is non-nil and returns err
+// unchanged. Only the first failure is recorded; target == "" records nothing.
 func (a *applier) entryFailed(target string, err error) error {
 	if err != nil && target != "" && a.result.FailedTarget == "" {
 		a.result.FailedTarget = target
@@ -433,12 +370,9 @@ func (a *applier) entryFailed(target string, err error) error {
 	return err
 }
 
-// fail finalizes a mid-run stage failure: it fills result.Unreached with the planned-but-never-
-// attempted targets (everything in the plan that is neither in a completed-op list nor the
-// FailedTarget) and returns the partial Result alongside err, so the CLI can derive the outturn
-// success/failed/skipped item partition (→ issue #130 到達状態, outturn ADR-0016 / ADR-0020).
-// Under --recopy the copy execution source is the manifest, not plan.Copies (→ recopyAll), so
-// the manifest's copy entries are walked as well.
+// fail finalizes a mid-run stage failure: it fills result.Unreached with planned targets that are
+// neither completed nor the FailedTarget (including the manifest's copy entries under --recopy)
+// and returns the partial Result alongside err.
 func (a *applier) fail(plan planner.Plan, err error) (*Result, error) {
 	done := map[string]bool{}
 	if a.result.FailedTarget != "" {
@@ -484,12 +418,9 @@ func (a *applier) fail(plan planner.Plan, err error) (*Result, error) {
 	return a.result, err
 }
 
-// dryRun is the read-only short-circuit of apply --dryrun (→ ADR-0006, ADR-0023). It resolves
-// the manifest via build (it builds for src resolution but does not place · does not create a
-// pending gcroot), computes place/replace/remove/conflict via planner.Compute against the
-// previous generation's manifest, and packs them into Result before returning. It performs none
-// of flock / FS writes / --set. Even on a conflict it does not error but records it in
-// Result.Conflicts, and the CLI decides exit 2 (→ docs/spec.md exit code table).
+// dryRun is the read-only short-circuit of apply --dryrun: it builds the manifest without a
+// gcroot, plans against the previous generation, and packs the plan into Result without flock /
+// FS writes / --set. Conflicts are recorded in Result.Conflicts instead of returned as an error.
 func (a *applier) dryRun() (*Result, error) {
 	// On the build path (CLI) the manifest is not yet obtained, so resolve src via a read-only build.
 	// In dryrun the CLI injects `nix build --no-link --print-out-paths` (no gcroot).
@@ -528,10 +459,8 @@ func (a *applier) dryRun() (*Result, error) {
 	}
 	for _, r := range plan.PreRemove {
 		if r.Kind == planner.RemoveRmdir {
-			// Rmdir actions carry no manifest Entry (nothing was ever recorded for a bare
-			// directory); report the absolute directory path instead, matching the real-run
-			// convention (result.Pruned is always absolute — staleremove.go's preRemove /
-			// pruneEmptyAncestors · → ADR-0047, issue #175).
+			// Rmdir actions carry no manifest Entry; report the absolute directory path, as
+			// result.Pruned does on a real run.
 			a.result.Pruned = append(a.result.Pruned, r.TargetAbs)
 			continue
 		}
@@ -548,7 +477,7 @@ func (a *applier) dryRun() (*Result, error) {
 }
 
 // resolveRoot resolves the absolute placement root from rootKind (+ the absolute path when
-// fixed root) (→ docs/spec.md "root resolution"). Pure resolution logic shared by Apply /
+// fixed root). Pure resolution logic shared by Apply /
 // Rollback / ProfileFor; on `--root` override it uses the override path regardless of kind.
 func resolveRoot(rootKind, fixedRoot, rootOverride, workDir string, git GitFunc) (string, error) {
 	if rootOverride != "" {
@@ -592,7 +521,7 @@ func (a *applier) ensureProfileDir() error {
 	if err := os.MkdirAll(a.profile.Dir, 0o755); err != nil {
 		return fmt.Errorf("layat: cannot create profileDir (%s): %w", a.profile.Dir, err)
 	}
-	// Place backref .root at the <roothash> level (reverse-lookup seam for orphan profiles · → ADR-0013).
+	// Place backref .root at the <roothash> level (reverse-lookup seam for orphan profiles).
 	if a.profile.Backref != "" {
 		if err := os.MkdirAll(a.profile.BackrefDir, 0o755); err != nil {
 			return fmt.Errorf("layat: cannot create backref directory (%s): %w", a.profile.BackrefDir, err)
@@ -606,7 +535,7 @@ func (a *applier) ensureProfileDir() error {
 
 // loadPrevManifest reads the manifest.json pointed at by profileDir/profile (the symlink to
 // the previous generation's link-farm). On the first run (profile absent) it returns nil
-// (zero removal targets · → ADR-0006).
+// (zero removal targets).
 func (a *applier) loadPrevManifest() *manifest.Manifest {
 	if _, err := os.Stat(a.profile.Profile); err != nil {
 		return nil
@@ -621,10 +550,7 @@ func (a *applier) loadPrevManifest() *manifest.Manifest {
 }
 
 // reportConflicts lists every planner-detected conflict to stderr (warnf), each followed by a
-// one-line guidance for that conflict's kind, then returns a single count-bearing aggregate error
-// (exit code stays 1 · → docs/spec.md エラー仕様, grilling 2026-07-12 D6). Mirrors the dryrun path
-// (a.dryRun packs the same plan.Conflicts into Result.Conflicts in full), so apply / Rollback no
-// longer stop at the first conflict only.
+// one-line guidance for its kind, then returns a single count-bearing aggregate error.
 func reportConflicts(warnf func(format string, args ...any), conflicts []planner.Conflict) error {
 	for _, c := range conflicts {
 		warnf("layat: conflict: %s (target: %s)", c.Reason, c.Entry.Target)
@@ -633,8 +559,7 @@ func reportConflicts(warnf func(format string, args ...any), conflicts []planner
 	return fmt.Errorf("layat: %d conflict(s) detected; stopped without placing (see above)", len(conflicts))
 }
 
-// conflictGuidance returns the one-line remediation hint for a conflict kind (→ docs/spec.md
-// エラー仕様, grilling 2026-07-12 D6; HM checkLinkTargets に倣う).
+// conflictGuidance returns the one-line remediation hint for a conflict kind.
 func conflictGuidance(kind planner.ConflictKind) string {
 	switch kind {
 	case planner.ConflictForeignEntity:
@@ -654,13 +579,9 @@ func conflictGuidance(kind planner.ConflictKind) string {
 	}
 }
 
-// emitWarnings emits the non-fatal warnings computed by the planner to stderr (opts.Warnf) and
-// records them in structured form on the Result (kind + target · → issue #130, outturn ADR-0019),
-// so the CLI has the same warnings as data for the machine channel while the human text keeps
-// streaming. Warnings are always emitted, regardless of the silent-on-success default or -v
-// (→ docs/spec.md stream discipline · ADR-0015, ADR-0024, ADR-0031).
-// When recopy=true it suppresses the copy foreign skip warning on both channels (recopy
-// overwrites foreign too, so "skipped" would be a false report · → ADR-0020).
+// emitWarnings emits the planner's non-fatal warnings to opts.Warnf and records them on
+// Result.Warnings. With recopy=true the copy foreign skip warning is suppressed on both, since
+// recopy overwrites foreign targets too.
 func (a *applier) emitWarnings(ws []planner.Warning, recopy bool) {
 	for _, w := range ws {
 		switch w.Kind {

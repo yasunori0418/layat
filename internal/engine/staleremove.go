@@ -11,17 +11,9 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// removeStale applies the planner's Remove actions, re-verifying the conservative
-// invariant against the real FS immediately before each unlink. The plan already
-// restricts removals to "symlinks recorded in the previous generation that still
-// point at the recorded dest", but placement (and any concurrent change) runs
-// between planning and removal, so the stale-remover re-checks lstat/readlink and
-// unlinks only when the invariant still holds; drifted targets are kept with a
-// warning (→ ADR-0002, ADR-0006, docs/spec.md "stale removal targets and safety invariant").
-// After each unlink it walks the parent chain toward root, pruning ancestors left
-// empty by the removal (→ Issue #174, #172 (D4)); a prune failure is folded
-// into the same keep+warn policy as a drifted target, since the target itself is
-// already gone and nothing is lost by leaving a leftover empty dir.
+// removeStale applies the planner's Remove actions, re-verifying the conservative invariant
+// against the real FS before each unlink; drifted targets are kept with a warning. After each
+// unlink it prunes ancestors left empty, warning (not failing) when a prune fails.
 func (a *applier) removeStale(actions []planner.RemoveAction) error {
 	for _, act := range actions {
 		if !reverifyStale(act) {
@@ -40,48 +32,16 @@ func (a *applier) removeStale(actions []planner.RemoveAction) error {
 	return nil
 }
 
-// preRemove removes the self-recorded stale filesystem objects the planner scheduled to clear a
-// placement target: ancestor symlinks (→ ADR-0046), and — generalized under ADR-0047 — leaf
-// symlinks and now-empty directories beneath an occupying real directory, and a symlink replaced
-// by method change (symlink→copy). It runs *before* place so the target lands empty/absent
-// instead of resolving through stale content (local ordering exception to ADR-0006). Removed
-// objects are folded into result.Removed (Unlink) / result.Pruned (Rmdir): the migration is
-// silent by default and surfaced only under -v, never as a warning (→ ADR-0031).
-//
-// Unlike removeStale — the last stage, where keeping a drifted link is harmless — drift here is
-// *not* safe to skip: placement was planned assuming these objects are gone (children as
-// unconditional new placements, or the target itself as absent), so continuing on drift would
-// nest/place through it (e.g. a symlink swapped to a foreign, writable dir) and re-open the
-// ADR-0015 §4 pollution that place/ensureParentDir do not re-guard. So on drift it aborts loudly
-// instead of skipping for both Unlink and Rmdir (→ ADR-0017, ADR-0046, ADR-0047 D3); an idempotent
-// re-run re-plans against the current FS and converges.
-//
-// Unlike removeStale / reset — where a removal can be the final state of that target — PreRemove
-// never walks pruneEmptyAncestors (Issue #174's ancestor-pruning helper). Every PreRemove action
-// exists to clear the way for a placement (place / materializeCopies) that runs immediately
-// afterward in the same Apply, at or beneath the same directory: pruning outer ancestors here
-// would just have that placement step's ensureParentDir immediately recreate them, and — for the
-// generalized real-dir-target and multi-leaf migrations (→ ADR-0047) — pruning mid-batch would
-// race the planner's own explicit, already-ordered bottom-up Rmdir actions for the same
-// directories (classifyDirMigration lists children before parents up to the placement target
-// itself; nothing outside that tree needs pruning here).
+// preRemove removes, before place, the self-recorded stale objects the planner scheduled to clear
+// a placement target, folding them into result.Removed / result.Pruned. On drift it aborts instead
+// of skipping, and it never walks pruneEmptyAncestors.
 func (a *applier) preRemove(actions []planner.RemoveAction) error {
 	for _, act := range actions {
 		switch act.Kind {
 		case planner.RemoveRmdir:
-			// No pre-check of emptiness: os.Remove on a non-empty dir simply fails with ENOTEMPTY,
-			// which IS the re-verification (TOCTOU-safe without a separate stat+readdir race · → ADR-0047 D3).
-			//
-			// IsNotExist is tolerated as success, not drift: preRemove does not walk
-			// pruneEmptyAncestors (see the doc comment above), so nothing in the normal path removes
-			// a directory out from under a still-pending RemoveRmdir action — but treating "already
-			// gone" as success rather than a hard error keeps this branch robust without relying on
-			// that invariant. It is NOT folded into result.Pruned: Pruned means "this run rmdir-ed
-			// it", and a dir that was already gone before this run touched it was not (→ diff-review).
-			//
-			// The mode is captured before the removal purely so undo can recreate an identical
-			// directory (→ ADR-0044); os.Remove itself, not this Lstat, is what re-verifies
-			// emptiness against drift (TOCTOU-safe per the comment above).
+			// os.Remove failing with ENOTEMPTY is the emptiness re-verification. An already-absent
+			// dir counts as success but is not folded into result.Pruned. The mode is captured
+			// only so undo can recreate an identical directory.
 			mode := os.FileMode(0o755)
 			if info, lerr := os.Lstat(act.TargetAbs); lerr == nil {
 				mode = info.Mode().Perm()
@@ -112,22 +72,9 @@ func (a *applier) preRemove(actions []planner.RemoveAction) error {
 	return nil
 }
 
-// pruneEmptyAncestors walks removedAbs's parent chain toward a.root, rmdir-ing each
-// ancestor left empty by a removal (→ Issue #174, #172 (D4) · HM `rmdir -p
-// --ignore-fail-on-non-empty` counterpart). rmdir only ever succeeds on an empty
-// directory, so this is TOCTOU-safe without extra locking: a concurrent writer simply
-// makes the dir non-empty again and the walk stops there.
-//
-// Stop conditions: root itself is never removed; a non-empty ancestor (ENOTEMPTY) is
-// left in place and the walk stops there (conservative — never touches directories the
-// removal did not empty); a symlink *anywhere in dir's path from root* stops the walk
-// without touching it. This must be a full re-check from root on every iteration, not
-// just an Lstat of dir itself: Lstat resolves intermediate path components, so once any
-// ancestor component is a symlink, "dir" as a path silently resolves through it into a
-// foreign subtree — Remove(dir) would then rmdir *through* the symlink and delete real
-// directories outside root's tree that this removal never emptied (the ADR-0015 style
-// pollution this walk must not reopen). Pruned dirs are folded into result.Pruned,
-// surfaced only under -v like the rest of the placement report (→ ADR-0031).
+// pruneEmptyAncestors walks removedAbs's parent chain toward a.root, rmdir-ing each ancestor
+// left empty by a removal into result.Pruned. The walk stops at root, at a non-empty ancestor,
+// and at a symlink anywhere in the path from root, re-checked on every iteration.
 func (a *applier) pruneEmptyAncestors(removedAbs string) error {
 	root := filepath.Clean(a.root)
 	dir := filepath.Dir(removedAbs)
@@ -144,7 +91,7 @@ func (a *applier) pruneEmptyAncestors(removedAbs string) error {
 			return nil
 		}
 		// The mode is captured before the removal purely so undo can recreate an identical
-		// directory (→ ADR-0044); it plays no role in the TOCTOU-safe emptiness re-check below.
+		// directory; it plays no role in the TOCTOU-safe emptiness re-check below.
 		mode := os.FileMode(0o755)
 		if info, lerr := os.Lstat(dir); lerr == nil {
 			mode = info.Mode().Perm()
@@ -168,8 +115,7 @@ func (a *applier) pruneEmptyAncestors(removedAbs string) error {
 
 // pathHasSymlinkComponent reports whether any path component strictly between root and
 // dir (dir itself included) is a symlink, lstat-ing each component from root downward
-// rather than the resolved dir path so an ancestor symlink is caught before Remove(dir)
-// would silently resolve through it (→ pruneEmptyAncestors).
+// so an ancestor symlink is caught before Remove(dir) would resolve through it.
 func pathHasSymlinkComponent(root, dir string) (bool, error) {
 	rel, err := filepath.Rel(root, dir)
 	if err != nil {
