@@ -366,7 +366,7 @@ layat init <template>           # `nix flake init -t github:yasunori0418/layat#<
 
 1. `--generator <name>`
 2. 環境変数 `LAYAT_GENERATOR`
-3. `-f` のディレクトリ(無ければ CWD)の `layat.toml`。親ディレクトリは探索しない
+3. `-f` のディレクトリ(`-f` がファイルならそのファイルのあるディレクトリ)、無ければ CWD の `layat.toml`。親ディレクトリは探索しない
 4. `$XDG_CONFIG_HOME/layat/config.toml`(既定 `~/.config/layat/config.toml`)
 5. 既定の `nix`(現状唯一の生成器)
 
@@ -375,7 +375,7 @@ layat init <template>           # `nix flake init -t github:yasunori0418/layat#<
 generator = "nix"
 ```
 
-空の値は未指定とみなす。未知のキー・TOML の構文エラー・未知の生成器名は exit 1 と stderr 1 行で止まる(`--json` では `E_INPUT`)。`apply --manifest` はこれらを読まず `--generator`・`-f`・`--all` を拒否し、`prune` と `init` はこの仕組みを無視する。
+空の値と `generator` を持たない設定ファイルは未指定とみなす。未知のキー・TOML の構文エラー・未知の生成器名は exit 1 と stderr 1 行で止まる(`--json` では `E_INPUT`)。`apply --manifest` はこれらを読まず `--generator`・`-f`・`--all` を拒否し、`prune` と `init` はこの仕組みを無視する。
 
 ### 出力と終了コード
 
@@ -538,7 +538,7 @@ rm -rf "${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/nput"
 `docs/` は **README → 概要文書 → item の 3 層構造**。規範的な内容は item(1 ファイル 1 主張の
 Markdown + YAML frontmatter)が持ち、概要文書は通読の入口として全体像と item への索引を担う。
 
-- `docs/concept.md` — コンセプト、設計の哲学、north-star、既存ツールとの比較、ADR への索引
+- `docs/concept.md` — コンセプト(solution / use_case item と ADR への索引)、設計の哲学、north-star、既存ツールとの比較
 - `docs/design.md` — 設計(design item への索引)
 - `docs/spec.md` — 仕様(requirement item への索引)
 - `docs/glossary.md` — 正準な英語用語(日本語対訳は `docs/glossary.ja.md`)

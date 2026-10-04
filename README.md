@@ -426,7 +426,7 @@ The generator is chosen explicitly, never guessed from the files present; the fi
 
 1. `--generator <name>`
 2. the `LAYAT_GENERATOR` environment variable
-3. `layat.toml` in the `-f` directory (or the CWD); parent directories are not searched
+3. `layat.toml` in the `-f` directory (the file's directory if `-f` is a file) or the CWD; parents are not searched
 4. `$XDG_CONFIG_HOME/layat/config.toml` (default `~/.config/layat/config.toml`)
 5. the default `nix` (the only generator today)
 
@@ -435,9 +435,10 @@ The generator is chosen explicitly, never guessed from the files present; the fi
 generator = "nix"
 ```
 
-Empty values count as unset. An unknown key, a TOML syntax error, or an unknown generator name
-exits 1 with one line on stderr (`E_INPUT` under `--json`). `apply --manifest` reads none of
-these and rejects `--generator`, `-f`, and `--all`; `prune` and `init` ignore the mechanism.
+An empty value or a settings file without `generator` counts as unset. An unknown key, a TOML
+syntax error, or an unknown generator name exits 1 with one line on stderr (`E_INPUT` under
+`--json`). `apply --manifest` reads none of these and rejects `--generator`, `-f`, and `--all`;
+`prune` and `init` ignore the mechanism.
 
 ### Output and exit codes
 
@@ -622,7 +623,7 @@ as if every target had been placed by a stranger:
 normative content (one claim per Markdown file, with YAML frontmatter); the overview documents
 (maintained in Japanese) give the big picture and an index into the items.
 
-- `docs/concept.md` — concept, design philosophy, north-star, comparison, index into ADRs
+- `docs/concept.md` — concept (index into solution / use_case items and ADRs), philosophy, north-star, comparison
 - `docs/design.md` — design (index into design items)
 - `docs/spec.md` — specification (index into requirement items)
 - `docs/glossary.md` — canonical English terminology
