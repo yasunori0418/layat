@@ -119,7 +119,7 @@ assert_json "$ENV_GI_ALL" "idvec も自 config のパスだけを持つ（cross-
 assert_json "$ENV_GI_ALL" "items=[] は単一実行と同一・トップ errors[] なし" \
 	'([.results[] | select(.result.items == [])] | length) == 2 and (has("errors") | not)'
 
-e2e_step "gitignore --all はフラグ無しで従来の dedup+sort テキスト"
+e2e_step "gitignore --all はフラグ無しで従来の dedup+sort テキスト（不変）"
 if [ "$(layat gitignore --all)" = "$(printf '/.layat-out/docs\n/.zshrc')" ]; then
 	e2e_pass "テキスト集約 / JSON per-config の非対称を保つ"
 else
