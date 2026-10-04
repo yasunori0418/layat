@@ -27,7 +27,7 @@ func copyErr_blockerFile(t *testing.T, dir, name string) string {
 }
 
 // TestCopyPlaceMkdirError exercises placeCopies' parent-directory creation failure
-// (copy.go:31-32). The target's parent path runs through a regular file, so MkdirAll
+// (its ensureParentDir call). The target's parent path runs through a regular file, so MkdirAll
 // returns ENOTDIR before copyTree is ever reached.
 func TestCopyPlaceMkdirError(t *testing.T) {
 	root := realTempDir(t)
@@ -53,8 +53,8 @@ func TestCopyPlaceMkdirError(t *testing.T) {
 	}
 }
 
-// TestCopyTreeDirMkdirError exercises copyTree's directory branch error
-// (copy.go:113-117): the tree root's MkdirAll(dst) fails because dst's parent is a
+// TestCopyTreeDirMkdirError exercises copyTree's directory branch error:
+// the tree root's MkdirAll(dst) fails because dst's parent is a
 // regular file (ENOTDIR).
 func TestCopyTreeDirMkdirError(t *testing.T) {
 	root := realTempDir(t)

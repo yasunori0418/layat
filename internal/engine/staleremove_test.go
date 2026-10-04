@@ -328,7 +328,7 @@ func TestRemoveStalePrunesMultiLevelEmptyAncestors(t *testing.T) {
 	}
 }
 
-// TestRemoveStaleLeavesNonEmptyAncestorInPlace verifies the conservative half of D4: a
+// TestRemoveStaleLeavesNonEmptyAncestorInPlace verifies the conservative side of ancestor pruning: a
 // directory that still holds an unrelated entry's placement is left in place (ENOTEMPTY
 // treated as success, not an error), and pruning stops there without touching its own parent.
 func TestRemoveStaleLeavesNonEmptyAncestorInPlace(t *testing.T) {

@@ -1082,7 +1082,7 @@ func TestResolveRootInvalidKinds(t *testing.T) {
 // Failure branches of resolveRoot, ensureProfileDir and cleanupPending, induced by
 // file-type conflicts rather than permission bits so they also reproduce under root.
 
-// TestResolveRootFixedAbsFailure covers engine.go:359 (filepath.Abs(fixedRoot)) by removing
+// TestResolveRootFixedAbsFailure covers resolveRoot's filepath.Abs(fixedRoot) failure by removing
 // the cwd so os.Getwd fails. It skips on platforms where a removed cwd still resolves.
 func TestResolveRootFixedAbsFailure(t *testing.T) {
 	gone := filepath.Join(realTempDir(t), "gone")

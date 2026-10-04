@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// copytree_test.go unit-tests copyTree / copyFile / copySymlink (copy.go:84-157) on
+// copytree_test.go unit-tests copyTree / copyFile / copySymlink on
 // structural success paths not exercised through Apply: deep nesting, directory-mode
 // owner-write, empty dirs, and in-tree symlink duplication without deref.
 

@@ -993,9 +993,9 @@ func TestPruneErrorsWhenDeletionFailsForANonPermissionReason(t *testing.T) {
 	state, system := pruneBases(t)
 	base := paths.Base(state)
 	completed := orphanSeries(t, base, "aaaa", "cfg")
-	// A stray regular file in the series directory makes the final rmdir of
-	// the <roothash> fail with ENOTEMPTY, which root cannot bypass. The failure
-	// must be an error, not Skipped{permission-denied}.
+	// A stray file makes the final rmdir of the <roothash> fail with ENOTEMPTY, which
+	// root cannot bypass; it must be an error, not Skipped{permission-denied}. The
+	// "nothing removed" side is TestPruneSkipsSeriesItCannotBeginToDelete's.
 	partial := writeSeries(t, base, seriesSpec{
 		hash:    "bbbb",
 		backref: filepath.Join(realTempDir(t), "gone"),
@@ -1099,8 +1099,8 @@ func TestPruneErrorsWhenDeletionFailsPartwayOnPermission(t *testing.T) {
 	}
 	state, system := pruneBases(t)
 	base := paths.Base(state)
-	// Same shape as above: a permission failure after something was already
-	// removed is an error, not Skipped{permission-denied}.
+	// A permission failure after something was already removed is an error, not
+	// Skipped{permission-denied}. This catches checking errors.Is before progress.
 	partial := writeSeries(t, base, seriesSpec{
 		hash:    "aaaa",
 		backref: filepath.Join(realTempDir(t), "gone"),

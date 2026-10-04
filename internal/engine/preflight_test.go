@@ -24,7 +24,7 @@ func preflightErr_deniedDir(t *testing.T) string {
 	return denied
 }
 
-// TestPreflightOutOfStoreNonENOENTError covers preflight.go:26-30: a non-ENOENT os.Lstat
+// TestPreflightOutOfStoreNonENOENTError covers checkOutOfStore's non-ENOENT branch: an os.Lstat
 // error on an out-of-store link target is reported as "cannot check out-of-store link target",
 // not as a missing target. EACCES is induced from a search-denied parent directory.
 func TestPreflightOutOfStoreNonENOENTError(t *testing.T) {

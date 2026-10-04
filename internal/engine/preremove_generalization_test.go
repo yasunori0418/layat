@@ -151,8 +151,8 @@ func TestApplyDirMigrationConflictLeavesSiblingsUntouched(t *testing.T) {
 	}
 }
 
-// TestApplyDirMigrationEmptySubdirsAtMultipleDepths verifies D2's "empty dirs are migratable
-// regardless of provenance" rule across a multi-level nested empty subtree, and that a root-level
+// TestApplyDirMigrationEmptySubdirsAtMultipleDepths verifies that empty dirs are migratable
+// regardless of provenance across a multi-level nested empty subtree, and that a root-level
 // (direct child of root) real-dir target migrates too.
 func TestApplyDirMigrationEmptySubdirsAtMultipleDepths(t *testing.T) {
 	root := realTempDir(t)
@@ -220,7 +220,7 @@ func TestApplyMethodChangeSymlinkToCopyMigrates(t *testing.T) {
 	}
 }
 
-// TestApplyMethodChangeCopyToSymlinkStaysConflict verifies D5's asymmetry: copy→symlink is NOT
+// TestApplyMethodChangeCopyToSymlinkStaysConflict verifies the method-change asymmetry: copy→symlink is NOT
 // automated (a copy may hold user edits), so it stays the ordinary no-overwrite conflict.
 func TestApplyMethodChangeCopyToSymlinkStaysConflict(t *testing.T) {
 	root := realTempDir(t)
