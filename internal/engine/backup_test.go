@@ -9,8 +9,8 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// Tests for apply --backup (→ ADR-0045, issue #169): renaming an occupying foreign filesystem
-// object aside to "<target>.<suffix>" before placement, instead of stopping on conflict.
+// Tests for apply --backup: renaming an occupying foreign filesystem object aside to
+// "<target>.<suffix>" before placement, instead of stopping on conflict.
 
 // TestApplyBackupRenamesForeignFileAndPlaces verifies the basic flow: a regular file occupying a
 // symlink placement target is renamed aside to "<target>.layat-backup" (the default suffix) and the
@@ -77,7 +77,7 @@ func TestApplyBackupCustomSuffix(t *testing.T) {
 
 // TestApplyBackupSurvivesCommit verifies that unlike --recopy's rename-aside (cleaned up on
 // success), a --backup aside is never removed once the run commits — it is the user's backup, kept
-// indefinitely (→ ADR-0045 "reset は復元しない").
+// indefinitely.
 func TestApplyBackupSurvivesCommit(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -102,8 +102,7 @@ func TestApplyBackupSurvivesCommit(t *testing.T) {
 
 // TestApplyBackupMidBatchFailureRestoresBackup verifies that a later placement failure in the same
 // batch rolls the backup back: the target is restored to its pre-apply content and the aside path
-// is gone, mirroring --recopy's rollback shape but keeping the destination on rollback failure too
-// (→ ADR-0044, ADR-0045).
+// is gone.
 func TestApplyBackupMidBatchFailureRestoresBackup(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -137,7 +136,7 @@ func TestApplyBackupMidBatchFailureRestoresBackup(t *testing.T) {
 
 // TestApplyBackupDestinationExistsConflict verifies that a pre-existing "<target>.<suffix>" (a
 // leftover from an earlier backup) stops apply with a conflict instead of being silently
-// overwritten (→ ADR-0045).
+// overwritten.
 func TestApplyBackupDestinationExistsConflict(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -171,7 +170,7 @@ func TestApplyBackupDestinationExistsConflict(t *testing.T) {
 
 // TestApplyDryRunBackupNoConflictNoSideEffects verifies apply --dryrun --backup reports the
 // occupying target as a planned backup (not a conflict) with zero exit-2-worthy conflicts and
-// leaves the FS untouched (→ ADR-0045 "--dryrun --backup は conflict ではなく backup + 配置予定").
+// leaves the FS untouched.
 func TestApplyDryRunBackupNoConflictNoSideEffects(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -208,14 +207,9 @@ func TestApplyDryRunBackupNoConflictNoSideEffects(t *testing.T) {
 	}
 }
 
-// TestApplyBackupDirTargetDoesNotWarnAboutSiblingRecordedLeaf verifies that when a real-dir target
-// migration fails (a foreign leaf mixed in) and --backup renames the whole directory aside, a
-// sibling leaf that prev recorded as its own stale symlink is NOT also reported by removeStale as
-// "drifted after planning" — it left with the directory in the single rename, which is expected,
-// not drift (→ ADR-0045, planner.markDirEntriesPreRemoved). Regression test for a diff-review
-// finding: the remove-side loop used to independently schedule such a leaf as a Remove candidate
-// (never marked preRemoved), so at execution time removeStale's reverifyStale would find it already
-// gone (renamed away with the parent) and misreport a drift warning.
+// TestApplyBackupDirTargetDoesNotWarnAboutSiblingRecordedLeaf verifies that when --backup renames a
+// real-dir target aside, a sibling leaf prev recorded as a stale symlink is not reported as drift by
+// removeStale: it left with the directory in the single rename.
 func TestApplyBackupDirTargetDoesNotWarnAboutSiblingRecordedLeaf(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -273,10 +267,8 @@ func TestApplyBackupDirTargetDoesNotWarnAboutSiblingRecordedLeaf(t *testing.T) {
 }
 
 // TestApplyGenerationSkipBackupRepairsForeignFile verifies that apply --backup also fires on the
-// project-mode generation-skip (drift repair) path, not just normal apply: unlike PreRemove, Backup
-// has no "derivation unchanged ⇒ never fires" invariant, since a foreign entity can appear at a
-// target purely from an FS-level event between shell re-entries, independent of config content
-// (→ ADR-0045, docs/spec.md "途中失敗時の巻き戻し" drift 修復の扱い).
+// project-mode generation-skip (drift repair) path: a foreign entity can appear at a target from an
+// FS-level event even when the derivation is unchanged.
 func TestApplyGenerationSkipBackupRepairsForeignFile(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -345,12 +337,9 @@ func TestApplyWithoutBackupStillConflicts(t *testing.T) {
 	}
 }
 
-// TestApplierBackupReverifiesDestinationImmediatelyBeforeRename directly exercises applier.backup
-// with a BackupAction whose destination did NOT exist when the plan was computed but exists by the
-// time backup() executes (simulating the plan/execute TOCTOU window backup.go's doc comment
-// describes) — mirroring TestPreRemoveJournalRmdirThenUnlinkOrder's pattern of driving an applier
-// stage directly, without a full Apply. backup() must abort loudly rather than clobber the
-// concurrently-created destination (→ ADR-0045, ADR-0017).
+// TestApplierBackupReverifiesDestinationImmediatelyBeforeRename drives applier.backup directly with
+// a destination that appears between planning and execution (the TOCTOU window); backup() must
+// abort rather than clobber the concurrently-created destination.
 func TestApplierBackupReverifiesDestinationImmediatelyBeforeRename(t *testing.T) {
 	root := realTempDir(t)
 	target := filepath.Join(root, "foo")

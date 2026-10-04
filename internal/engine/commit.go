@@ -6,10 +6,9 @@ import (
 	"os/exec"
 )
 
-// nixEnvCommit is the default commit point. It performs an atomic swap of one
-// generation = one link-farm via `nix-env --profile <profileLink> --set <linkFarm>`
-// (→ ADR-0002, ADR-0006, ADR-0015). stdout is reserved for machine-readable output,
-// so nix output is routed to stderr (→ docs/spec.md stream discipline).
+// nixEnvCommit is the default commit point: it atomically swaps the profile to linkFarm
+// via `nix-env --profile <profileLink> --set <linkFarm>`. nix output goes to stderr
+// because stdout is reserved for machine-readable output.
 func nixEnvCommit(profileLink, linkFarm string) error {
 	if _, err := exec.LookPath("nix-env"); err != nil {
 		return fmt.Errorf("nix-env is not on PATH: %w", err)

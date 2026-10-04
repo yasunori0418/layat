@@ -6,14 +6,9 @@ import (
 	"testing"
 )
 
-// copytree_test.go directly unit-tests copyTree / copyFile / copySymlink
-// (copy.go:84-157), focusing on structural success paths not exercised through
-// Apply: deep nesting, directory-mode owner-write, empty dirs, and in-tree
-// symlink duplication without deref.
-//
-// Shared helpers (realTempDir etc.) are reused from engine_test.go; helpers
-// added here use the copyTree_ prefix and tests use the TestCopyTree* /
-// TestCopyFile* / TestCopySymlink* names to stay collision-free.
+// copytree_test.go unit-tests copyTree / copyFile / copySymlink on
+// structural success paths not exercised through Apply: deep nesting, directory-mode
+// owner-write, empty dirs, and in-tree symlink duplication without deref.
 
 // copyTree_chmodRestore registers a cleanup that restores owner-write on a path,
 // so that read-only src dirs/files do not break t.TempDir's RemoveAll cleanup.

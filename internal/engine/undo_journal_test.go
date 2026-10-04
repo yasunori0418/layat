@@ -9,21 +9,13 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// Tests for apply's end-to-end undo journal (→ ADR-0044, issue #168): a mid-run failure in any
-// FS-mutating stage (PreRemove / place / copy materialization / stale removal) must roll back
-// every FS change this run made before returning, leaving pre-apply state intact.
+// Tests for apply's end-to-end undo journal: a mid-run failure in any FS-mutating stage
+// (PreRemove / place / copy materialization / stale removal) must roll back every FS change this
+// run made before returning, leaving pre-apply state intact.
 
-// blockWrite creates dir as a mode-0o555 (read+exec, no write) directory, so it exists and is
-// lstat-able (the planner's pre-flight classification sees an ordinary, empty directory and
-// schedules a plain PlaceNew/CopyAction for anything beneath it — no conflict), but any later
-// write inside it at *execution* time (os.Symlink / os.OpenFile for a copy / os.Mkdir for a new
-// child) fails with EACCES. This is what lets these tests fail a placement mid-*execution* batch
-// rather than during planning: blocking write access (rather than substituting a regular file for
-// the directory, which would make even Lstat of a path beneath it fail with ENOTDIR at *plan*
-// time) keeps Lstat/ReadDir succeeding, so planner.Compute completes and the failure surfaces only
-// once place/materializeCopies actually tries to write (→ ADR-0044). Skips the test outright when
-// running as root, since root bypasses directory write-permission checks entirely and this
-// technique would not observe any failure at all.
+// blockWrite creates dir as a mode-0o555 directory: planning sees an ordinary empty directory,
+// but any write inside it at execution time fails with EACCES, so a placement fails mid-batch.
+// Skips the test when running as root, since root bypasses directory write-permission checks.
 func blockWrite(t *testing.T, dir string) {
 	t.Helper()
 	if os.Geteuid() == 0 {
@@ -109,14 +101,9 @@ func TestApplyPlaceMidBatchFailureRollsBackEarlierRelink(t *testing.T) {
 	}
 }
 
-// TestApplyCopyMidBatchFailureRollsBackEarlierCopy verifies a copy placement already materialized
-// earlier in the same Apply call is removed when a later stage (removeStale) fails. materializeCopies
-// runs after place but before removeStale (→ engine.go Apply step 8), so a copy entry always
-// finishes placing before removeStale even starts; to observe copy's own journal entry get undone
-// by a later-stage failure, this test forces removeStale to fail on a stale symlink whose parent
-// directory has since had its write permission revoked (the unlink itself needs write access to
-// the containing directory, matching blockWrite's technique applied to an existing parent instead
-// of a fresh one).
+// TestApplyCopyMidBatchFailureRollsBackEarlierCopy verifies a copy materialized earlier in the same
+// Apply call is removed when the later removeStale stage fails (forced by revoking write permission
+// on a stale symlink's parent directory).
 func TestApplyCopyMidBatchFailureRollsBackEarlierCopy(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -150,11 +137,9 @@ func TestApplyCopyMidBatchFailureRollsBackEarlierCopy(t *testing.T) {
 	}
 }
 
-// TestApplyPreRemoveMidBatchFailureRollsBackUnlink verifies that when PreRemove's Unlink+Rmdir (a
-// real-dir-target migration → ADR-0047) and the resulting new dir-symlink placement both succeed,
-// but a later placement in the same Apply call fails, the whole migration is undone — the new dir
-// symlink removed, the real directory recreated, and the original per-file leaf symlink restored
-// inside it — landing back on the exact pre-apply state, not left half-migrated.
+// TestApplyPreRemoveMidBatchFailureRollsBackUnlink verifies that when a real-dir-target migration
+// and its new dir-symlink placement succeed but a later placement fails, the whole migration is
+// undone back to the exact pre-apply state.
 func TestApplyPreRemoveMidBatchFailureRollsBackUnlink(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -165,11 +150,9 @@ func TestApplyPreRemoveMidBatchFailureRollsBackUnlink(t *testing.T) {
 		t.Fatalf("first Apply: %v", err)
 	}
 
-	// A second, unrelated entry in the same batch will fail to place, after PreRemove has already
-	// migrated the occupying real directory (unlinked "foo/main.sh", rmdir-ed "foo" then
-	// ".claude/hooks" itself) and place has already placed the new ".claude/hooks" dir symlink
-	// (Place actions run after PreRemove but before this second entry, since planner.Compute emits
-	// Place actions in manifest entry order).
+	// A second, unrelated entry in the same batch fails to place, after PreRemove has migrated the
+	// occupying real directory and place has placed the new ".claude/hooks" dir symlink (Place
+	// actions follow manifest entry order).
 	srcNew := realTempDir(t)
 	blockWrite(t, filepath.Join(root, "ro"))
 	lf2 := writeLinkFarm(t, projectManifest(
@@ -237,11 +220,9 @@ func TestApplyRecopyMidBatchFailureRestoresAsideFile(t *testing.T) {
 	}
 }
 
-// TestPreRemoveJournalRmdirThenUnlinkOrder directly exercises preRemove with a batch containing
-// both a RemoveUnlink and a RemoveRmdir (the shape classifyDirMigration produces: children before
-// parents), verifying the journal records them such that unwind restores the parent directory
-// before recreating the child symlink inside it — LIFO of a bottom-up forward batch naturally
-// yields a top-down (parent-first) undo (→ ADR-0044 §5, ADR-0047).
+// TestPreRemoveJournalRmdirThenUnlinkOrder drives preRemove with a RemoveUnlink and a RemoveRmdir
+// (children before parents), verifying unwind restores the parent directory before recreating
+// the child symlink inside it.
 func TestPreRemoveJournalRmdirThenUnlinkOrder(t *testing.T) {
 	root := realTempDir(t)
 	leafDest := realTempDir(t)
@@ -280,10 +261,9 @@ func TestPreRemoveJournalRmdirThenUnlinkOrder(t *testing.T) {
 	}
 }
 
-// TestApplyCommitFailureDoesNotUnwind verifies ADR-0044 §2's asymmetry: a commit (`nix-env --set`)
-// failure is NOT rolled back, unlike every FS-mutating stage before it. Every FS write for this run
-// already succeeded by the time commit runs, so there is nothing wrong to undo — the run simply
-// fails to advance the generation, and idempotent re-apply converges (→ ADR-0006, ADR-0017).
+// TestApplyCommitFailureDoesNotUnwind verifies that a commit (`nix-env --set`) failure is not
+// rolled back, unlike every FS-mutating stage before it: the run fails to advance the generation,
+// and idempotent re-apply converges.
 func TestApplyCommitFailureDoesNotUnwind(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -314,10 +294,8 @@ func TestApplyCommitFailureDoesNotUnwind(t *testing.T) {
 }
 
 // TestApplyCommitFailureLeavesRecopyAsideFile verifies the same asymmetry for --recopy: a commit
-// failure after a successful rename-aside overwrite must leave the aside file in place (neither
-// cleaned up by discardJournal, which only runs after a successful commit, nor renamed back by
-// unwind, which commit failure does not trigger) — the fresh copy stays live and recoverable from
-// its pre-apply content is still sitting in the aside file for manual inspection if needed.
+// failure after a rename-aside overwrite leaves the aside file in place (neither discarded nor
+// renamed back), and the fresh copy stays live.
 func TestApplyCommitFailureLeavesRecopyAsideFile(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -328,10 +306,8 @@ func TestApplyCommitFailureLeavesRecopyAsideFile(t *testing.T) {
 		t.Fatalf("first Apply: %v", err)
 	}
 
-	// A distinct link-farm (home mode has no generation-skip concept in the first place, but a
-	// second, content-identical project-mode link-farm would still hit generationUnchanged and skip
-	// straight to repairDrift, bypassing commit entirely) — home mode side-steps that branch so
-	// this Apply call actually reaches step 9 (commit) and can be made to fail there.
+	// Home mode has no generation-skip branch, so this Apply call reaches commit and can be made
+	// to fail there.
 	lf2 := writeLinkFarm(t, homeManifest(copyEntry(copySrc, "tool.conf", "tool.conf")))
 	failingCommit := func(string, string) error { return os.ErrPermission }
 	_, err := Apply(Options{

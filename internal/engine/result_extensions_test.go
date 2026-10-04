@@ -1,9 +1,8 @@
 package engine
 
-// Tests for the Result extensions issue #130 wires for the outturn envelope (#131 / #132 share
-// them): full-inventory (Entries), reached state on a mid-run failure (FailedTarget / Unreached /
-// Unwound + partial Result), generation observation (GenBefore / GenAfter, nil-able), and
-// structured planner warnings (Warnings).
+// Tests for the Result extensions behind the outturn envelope: full inventory (Entries), reached
+// state on a mid-run failure (FailedTarget / Unreached / Unwound + partial Result), generation
+// observation (GenBefore / GenAfter, nil-able), and structured planner warnings (Warnings).
 
 import (
 	"os"
@@ -131,9 +130,8 @@ func TestApplyResultInventoryAndGeneration(t *testing.T) {
 }
 
 // TestApplyResultReachedStateOnFailure verifies the reached/unreached partition on a mid-place
-// failure: the completed op lists stay a "completed" record, the failing entry lands in
-// FailedTarget (not in Placed), later planned targets land in Unreached, the partial Result is
-// returned alongside the error, and Unwound reports the journal rollback.
+// failure: the failing entry lands in FailedTarget, later planned targets in Unreached, the partial
+// Result is returned alongside the error, and Unwound reports the journal rollback.
 func TestApplyResultReachedStateOnFailure(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -177,10 +175,9 @@ func TestApplyResultReachedStateOnFailure(t *testing.T) {
 	}
 }
 
-// TestApplyResultCommitFailurePartialResult verifies the commit-failure branch: every planned
-// FS action already succeeded, so the partial Result is returned with the inventory filled and
-// the reached-state fields empty (not entry-scoped), nothing is unwound (→ ADR-0044 §2), and the
-// unmoved profile pointer is observed as GenAfter == GenBefore.
+// TestApplyResultCommitFailurePartialResult verifies the commit-failure branch: the partial Result
+// carries the inventory with empty reached-state fields, nothing is unwound, and the unmoved
+// profile pointer is observed as GenAfter == GenBefore.
 func TestApplyResultCommitFailurePartialResult(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -204,7 +201,7 @@ func TestApplyResultCommitFailurePartialResult(t *testing.T) {
 		t.Errorf("FailedTarget/Unreached = %q/%v, want empty (commit failure is not entry-scoped)", res.FailedTarget, res.Unreached)
 	}
 	if res.Unwound {
-		t.Error("Unwound = true, want false (a commit failure is not unwound; → ADR-0044 §2)")
+		t.Error("Unwound = true, want false (a commit failure is not unwound)")
 	}
 	if res.GenBefore != nil || res.GenAfter != nil {
 		t.Errorf("GenBefore/GenAfter = %v/%v, want nil/nil (no generation was ever committed)", res.GenBefore, res.GenAfter)
@@ -218,10 +215,9 @@ func TestApplyResultCommitFailurePartialResult(t *testing.T) {
 	}
 }
 
-// TestApplyResultRecopyUnreached verifies fail()'s --recopy branch: recopy's copy execution
-// source is the manifest (not plan.Copies), so a copy entry whose place-once classification
-// produced no CopyAction (an existing foreign target recopy would overwrite) must still land in
-// Unreached when an earlier stage failure stops the run before materializeCopies.
+// TestApplyResultRecopyUnreached verifies fail()'s --recopy branch: a copy entry with no CopyAction
+// (recopy reads the manifest, not plan.Copies) still lands in Unreached when an earlier stage
+// failure stops the run before materializeCopies.
 func TestApplyResultRecopyUnreached(t *testing.T) {
 	if os.Getuid() == 0 {
 		t.Skip("running as root; read-only directory does not block")
@@ -289,7 +285,7 @@ func TestApplyResultStructuredWarnings(t *testing.T) {
 
 // TestResetResultGenerationUnobservable pins the nil branch of Reset's generation observation:
 // a profile link that is not a generation link (test-substituted commit) observes neither
-// before nor after (→ outturn ADR-0015's nil-able Generation).
+// before nor after.
 func TestResetResultGenerationUnobservable(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -348,12 +344,11 @@ func TestResetResultGenerationAndWarnings(t *testing.T) {
 	}
 }
 
-// --- issue #131 extensions: structured conflicts, removal-plan entries, replaced dests,
-// reset partial failure ---
+// --- structured conflicts, removal-plan entries, replaced dests, reset partial failure ---
 
 // TestApplyConflictPartialResult verifies the non-dryrun conflict stop returns the partial
 // Result (not nil): the full inventory, the structured conflicts, and every planned action in
-// Unreached, so the CLI can map failed (E_LAYAT_COLLISION) vs skipped items (→ issue #131).
+// Unreached, so the CLI can map failed (E_LAYAT_COLLISION) vs skipped items.
 func TestApplyConflictPartialResult(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -394,7 +389,7 @@ func TestApplyConflictPartialResult(t *testing.T) {
 	}
 }
 
-// TestApplyRecordsReplacedDestsAndRemovalEntries verifies the #131 change-info data sources:
+// TestApplyRecordsReplacedDestsAndRemovalEntries verifies the change-info data sources:
 // a re-linked target records the dest it pointed at before this run (ReplacedDests), and a
 // dropped entry's previous-generation record lands in RemovalEntries.
 func TestApplyRecordsReplacedDestsAndRemovalEntries(t *testing.T) {
@@ -428,7 +423,7 @@ func TestApplyRecordsReplacedDestsAndRemovalEntries(t *testing.T) {
 
 // TestResetPartialFailureReturnsPartial verifies Reset's mid-teardown failure contract: the
 // symlink half already removed keeps its record, the failing copy target is FailedTarget, the
-// never-attempted copy is Unreached, and Entries carries the selected inventory (→ issue #131).
+// never-attempted copy is Unreached, and Entries carries the selected inventory.
 func TestResetPartialFailureReturnsPartial(t *testing.T) {
 	if os.Getuid() == 0 {
 		t.Skip("running as root; read-only directory does not block")
@@ -482,11 +477,9 @@ func TestResetPartialFailureReturnsPartial(t *testing.T) {
 	}
 }
 
-// TestRollbackConflictPartialResult verifies Rollback's conflict stop mirrors Apply's #131
-// contract: the partial RollbackResult (not nil) carries the target generation's inventory,
-// the structured conflicts, the planned-but-never-attempted removals in Unreached, and the
-// pinned, unmoved From == To generation. gen1 (target) has {b, c} both occupied by regular
-// files; gen2 (current) has {a}, whose removal is planned but never runs.
+// TestRollbackConflictPartialResult verifies Rollback's conflict stop mirrors Apply's: the partial
+// RollbackResult carries the target inventory, the structured conflicts, the never-attempted
+// removals in Unreached, and From == To. gen1 has {b, c} occupied; gen2 has {a}.
 func TestRollbackConflictPartialResult(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)

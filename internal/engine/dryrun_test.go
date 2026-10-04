@@ -9,7 +9,7 @@ import (
 )
 
 // TestApplyDryRunNoSideEffects verifies that apply --dryrun only returns a plan and
-// changes neither the FS nor the profileDir (→ ADR-0006, ADR-0023).
+// changes neither the FS nor the profileDir.
 func TestApplyDryRunNoSideEffects(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -79,7 +79,7 @@ func TestApplyDryRunConflict(t *testing.T) {
 
 // TestApplyDryRunAncestorMigration verifies that apply --dryrun reports a self-recorded stale
 // ancestor migration as a (non-conflict) removal plus child placements and leaves the FS
-// untouched (→ ADR-0046).
+// untouched.
 func TestApplyDryRunAncestorMigration(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
@@ -122,11 +122,9 @@ func TestApplyDryRunAncestorMigration(t *testing.T) {
 	}
 }
 
-// TestApplyDryRunRealDirMigration verifies dryrun's reporting of a real-dir-target migration
-// (→ ADR-0047, issue #175): the occupying directory's recorded-stale leaf is packed into
-// Removed (Kind == RemoveUnlink), the now-empty directory itself into Pruned as an absolute
-// path (Kind == RemoveRmdir, matching the real-run convention — result.Pruned is always
-// absolute), the entry into Placed, and the FS is left untouched.
+// TestApplyDryRunRealDirMigration verifies dryrun's reporting of a real-dir-target migration:
+// the recorded-stale leaf goes to Removed, the emptied directory to Pruned as an absolute path,
+// the entry to Placed, and the FS is left untouched.
 func TestApplyDryRunRealDirMigration(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)

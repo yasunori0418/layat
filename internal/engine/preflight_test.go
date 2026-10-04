@@ -9,10 +9,8 @@ import (
 	"testing"
 )
 
-// preflightErr_deniedDir creates a directory with mode 0000 and returns its path.
-// Because the directory lacks search (execute) permission, os.Lstat on any path
-// *inside* it fails with EACCES (a non-ENOENT error) before existence is checked.
-// Cleanup restores 0755 so the surrounding t.TempDir removal succeeds.
+// preflightErr_deniedDir creates a directory with mode 0000 and returns its path, so
+// os.Lstat on any path inside it fails with EACCES. Cleanup restores 0755.
 func preflightErr_deniedDir(t *testing.T) string {
 	t.Helper()
 	denied := filepath.Join(realTempDir(t), "denied")
@@ -26,11 +24,9 @@ func preflightErr_deniedDir(t *testing.T) string {
 	return denied
 }
 
-// TestPreflightOutOfStoreNonENOENTError covers preflight.go:26-30: when os.Lstat on
-// an out-of-store link target fails with a non-ENOENT error, checkOutOfStore wraps it
-// as a generic runtime error ("cannot check out-of-store link target") and must NOT
-// misreport it as a missing target ("does not exist"). The error is induced with EACCES
-// from a search-denied parent directory, since there is no DI seam for os.Lstat.
+// TestPreflightOutOfStoreNonENOENTError covers checkOutOfStore's non-ENOENT branch: an os.Lstat
+// error on an out-of-store link target is reported as "cannot check out-of-store link target",
+// not as a missing target. EACCES is induced from a search-denied parent directory.
 func TestPreflightOutOfStoreNonENOENTError(t *testing.T) {
 	if os.Geteuid() == 0 {
 		t.Skip("requires non-root to trigger permission error")
