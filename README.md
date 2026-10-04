@@ -8,13 +8,8 @@
 
 layat is a Nix library and module set that **places the contents of an already-fetched
 Nix store path at a `root`-relative target** — as a symlink or a copy. It does **not**
-generate configuration. It puts a repository's contents where you ask, untouched.
-
-The core is a **placement primitive**: a pure function that places a Nix store path at a
-`root`-relative `target`. It is not hidden behind a module abstraction — you compose it
-directly. `home.file`-style placement (`root` = `$HOME`) is just one application; `root`
-is chosen explicitly with the `projectRoot` / `homeRoot` / `systemRoot` markers (there is
-**no implicit default**).
+generate configuration. `root` is chosen explicitly with the `projectRoot` / `homeRoot` /
+`systemRoot` markers (there is **no implicit default**).
 
 > **Status: MVP / implementation phase.** The implemented scope is the standalone CLI +
 > **project mode** as the core, with **home mode** also supported. NixOS / nix-darwin
@@ -25,44 +20,20 @@ is chosen explicitly with the `projectRoot` / `homeRoot` / `systemRoot` markers 
 
 ## Why layat
 
-Nix can *fetch* a repository (`fetchFromGitHub`, `fetchGit`, flake inputs, npins, …) but
-*placing* its contents onto the filesystem is a separate problem. The usual answers all
-have costs:
+layat separates **fetching** (`src` is a store path) from **placement** (a fixed runtime
+engine), and keeps placement behavior in a **single core** that you drive explicitly:
 
-- **home-manager `home.file`** places files, but requires home-manager and assumes a
-  *whole-environment* model: one `home-manager switch` updates everything at once, so one
-  change can ripple across — or break — unrelated tools. The file module cannot be
-  extracted as a standalone library.
-- **A shell `git clone`** works but loses version pinning, reproducibility, and Nix
-  integration.
-- **Module abstractions** (home-manager / NixOS / nix-darwin / system-manager) declare
-  placement through the Nix module system and hide the behavior behind an abstraction,
-  translating to a platform-native mechanism (`home.file`, `systemd.tmpfiles`, …). That
-  takes the control of "what goes where, and how" out of your hands and duplicates
-  behavior per layer.
-
-layat separates **fetching** (Nix evaluation: `src` is a store path) from **placement**
-(a fixed runtime engine), and keeps placement behavior in a **single core** that you drive
-explicitly:
-
-- **No configuration generation.** layat never translates module options into config
-  files. It places what the repository already contains.
-- **Independent units.** Each placement config (`layat.<name>`) is its own Nix profile.
-  Update and apply each role independently — one update never ripples to another.
-- **No home-manager dependency.** The `lib/` core depends only on nixpkgs. It runs
-  standalone; module integrations (home-manager, devShell, future NixOS/nix-darwin) are
-  thin wiring that only *kick* the engine — they never place files themselves.
-- **A self-recorded manifest, not readlink pattern-matching.** layat's placement engine
-  tracks what it placed in a manifest from the previous generation, so it can safely
-  auto-migrate cases home-manager's `home.file` (as of 2026-07) cannot — e.g. a per-file
-  target becoming a directory symlink. See [`docs/concept.md`](docs/concept.md#home-manager-homefile-との配置意味論の差)
-  for the full comparison.
+- **No configuration generation.** It places what the repository already contains.
+- **Independent units.** Each config (`layat.<name>`) is its own Nix profile; one update
+  never ripples to another.
+- **No home-manager dependency.** `lib/` depends only on nixpkgs; module integrations only
+  *kick* the engine.
+- **A self-recorded manifest, not readlink pattern-matching.** Stale removal uses the
+  previous generation's manifest. See [`docs/concept.md`](docs/concept.md#home-manager-homefile-との配置意味論の差).
 
 ---
 
 ## How it works
-
-layat has two layers:
 
 ```
 [layat CLI]  packages.layat — on PATH, the primary UX
@@ -80,8 +51,7 @@ layat has two layers:
 - `lib.mkManifest` is a **pure function** that produces a link-farm derivation
   (`manifest.json` + a symlink farm). It has no side effects.
 - An **entrypoint** is the Nix file the CLI reads (`flake.nix`, `shell.nix`, or
-  `default.nix`); it exposes a named manifest under `layat.<name>`. The config is still
-  written in Nix and evaluated by `nix build`.
+  `default.nix`); it exposes a named manifest under `layat.<name>`.
 - A **generator** is what the CLI obtains the manifest from. `nix` is the default (see
   [Choosing the generator](#choosing-the-generator)); `apply --manifest` uses the
   *prebuilt* generator, which takes a built link-farm as it is.
@@ -184,8 +154,6 @@ nix develop          # or: direnv allow
 layat gitignore skills >> .gitignore
 ```
 
-- `--root <path>` overrides the resolved root in any mode (escape hatch for git-less
-  trees, debugging, etc.).
 - Generations are an internal mechanism here; `rollback` / `list-generations` are **not**
   exposed in project mode (rollback is meaningless for ephemeral placements).
 - In a devShell, use a **named apply** (`layat apply skills`) or
@@ -454,39 +422,27 @@ layat init <template>           # wrapper over `nix flake init -t github:yasunor
 
 ### Choosing the generator
 
-layat obtains the manifest through a generator; `nix` is the only one you can choose today
-(and the default). It is chosen explicitly, never guessed from the files present, by the first
-of these that sets it:
+The generator is chosen explicitly, never guessed from the files present; the first of these wins:
 
 1. `--generator <name>`
 2. the `LAYAT_GENERATOR` environment variable
-3. the project setting `layat.toml` — in the `-f` directory (the file's directory when `-f`
-   names a file), otherwise in the CWD; parent directories are not searched
-4. the user setting `$XDG_CONFIG_HOME/layat/config.toml` (`~/.config/layat/config.toml` when
-   `XDG_CONFIG_HOME` is unset)
-5. the default `nix`
+3. `layat.toml` in the `-f` directory (or the CWD); parent directories are not searched
+4. `$XDG_CONFIG_HOME/layat/config.toml` (default `~/.config/layat/config.toml`)
+5. the default `nix` (the only generator today)
 
 ```toml
 # layat.toml / config.toml — `generator` is the only key
 generator = "nix"
 ```
 
-An empty `LAYAT_GENERATOR` and a settings file without `generator` count as unset and pass on
-to the next step. The settings files are strict: an unknown key, a TOML syntax error, or an
-unknown generator name (from any step) stops the command with exit 1 and one line on stderr
-(`E_INPUT` under `--json`).
-
-`apply --manifest` reads neither `LAYAT_GENERATOR` nor any settings file — module activation
-runs in an environment you do not control — and rejects `--generator`, `-f`, and `--all`
-(`E_INPUT`). `prune` and `init` obtain no manifest and ignore the whole mechanism.
+Empty values count as unset. An unknown key, a TOML syntax error, or an unknown generator name
+exits 1 with one line on stderr (`E_INPUT` under `--json`). `apply --manifest` reads none of
+these and rejects `--generator`, `-f`, and `--all`; `prune` and `init` ignore the mechanism.
 
 ### Output and exit codes
 
-- **Silent on success by default** ("silence is golden"). The placement report, try-lock
-  skip notices, and the `apply --all` summary are **not** printed unless you pass `-v` /
-  `--verbose`. Pass `-v` to opt into the report on stderr.
-- **`--debug`** reveals the internal nix commands (verbosity `-v` and debugging are
-  orthogonal). There is **no `--quiet`** (removed when success became silent by default).
+- **Silent on success by default.** The placement report, try-lock skip notices, and the
+  `apply --all` summary need `-v`. `--debug` shows the internal nix commands. No `--quiet`.
 - **`--json`** writes a [outturn](https://github.com/yasunori0418/outturn)-conformant JSON
   envelope (a single document) to stdout at command completion — the machine-readable
   second contract, orthogonal to `-v` (every subcommand carries its payload; `--all` lists one
@@ -494,8 +450,7 @@ runs in an environment you do not control — and rejects `--generator`, `-f`, a
 - **Stream discipline**: stdout is reserved for machine-readable output (`gitignore`
   listings, `apply --dryrun` plans) — printed even at the default verbosity, so
   `layat gitignore <name> >> .gitignore` and `layat apply <name> --dryrun | ...` pipe safely.
-  **Warnings (e.g. foreign symlinks) and errors always go to stderr** and are never
-  silenced.
+  **Warnings and errors always go to stderr** and are never silenced.
 
 | Exit code | Meaning |
 |---|---|
@@ -505,23 +460,14 @@ runs in an environment you do not control — and rejects `--generator`, `-f`, a
 
 ### Behavior notes
 
-- **Idempotent.** Re-applying converges to the same result. For symlinks, layat
-  conservatively removes only the stale links it recorded as placing that still point where
-  the record says — it never touches your real files or foreign links. Existing layat
-  symlinks are replaced; a foreign symlink is replaced with a warning; a real file or
-  directory at the target is an error (no overwrite).
-- **Generations** ride on layat's own Nix profile (`nix-env --profile <dir>`). Switch to an
-  arbitrary generation, prune, and GC via the standard `nix-env` / `nix-collect-garbage`
-  against the profile path. project mode skips committing a new generation when the
-  link-farm is unchanged (but still repairs drifted entries via `lstat`).
-- **`apply --all`** applies each config independently (each is atomic on its own profile),
-  continues past failures, and exits non-zero if any failed. It is **not** atomic as a
-  whole.
-- **`reset`** is a filesystem-only teardown: it removes layat-managed symlinks
-  (conservatively) **and** deletes copy targets (the only explicit way to remove a copy). It
-  requires a name (`--all` is not supported), requires confirmation or `-y`, and leaves the
-  profile/generations untouched — entries still in the config are re-placed on the next
-  apply.
+- **Idempotent.** Only stale links recorded as placed and still matching the record are removed.
+  A foreign symlink is replaced with a warning; a real file or directory at the target is an error.
+- **Generations** ride on layat's own Nix profile; use `nix-env` / `nix-collect-garbage` on it.
+  project mode commits no new generation when the link-farm is unchanged, but repairs drift.
+- **`apply --all`** applies each config atomically on its own profile, continues past
+  failures, and exits non-zero if any failed. It is **not** atomic as a whole.
+- **`reset`** removes layat-managed symlinks and copy targets (the only way to remove a copy).
+  It requires a name and confirmation or `-y`, and leaves the profile/generations untouched.
 
 ---
 
@@ -541,16 +487,6 @@ expose it as a pure function you control."**
 | numtide/system-manager | non-NixOS `/etc` + systemd + packages | module (`lib.evalModules`) | overlapping domain but the **opposite** approach; no arbitrary-path placement, HOME dotfiles, or subdirectory extraction |
 | `git clone` (shell) | clone and place | imperative | no reproducibility or Nix integration |
 | **layat** | independent placement of fetched sources + generations + explicit out-of-store | **pure function, user-managed** | — |
-
-No single existing tool is nearly identical. The building blocks (symlink farm, nix
-profile, out-of-store, arbitrary-path symlink) all exist, but layat is the only one that
-bundles them as "fetch-agnostic + non-generating + per-entry application + HM-independent
-pure-function core + cross-platform shared schema + arbitrary-path placement × generation
-management." In particular layat does **not** compete with system-manager: the domains
-(packages / systemd / `/etc`) overlap, but the philosophy ("hide in a module" vs. "expose
-as a pure function") differs at the design level. For a real distro base, system / service /
-package layers would be delegated to or combined with system-manager, while layat stays a
-**granular arbitrary-path placement primitive**.
 
 ---
 
@@ -572,8 +508,6 @@ package layers would be delegated to or combined with system-manager, while laya
 
 **Known limitations / honest caveats**
 
-- The function-based "package install + PATH" mechanism for the distro north-star is
-  undefined and out of scope.
 - Boot / init / filesystem / partition layers are not layat's domain.
 - Removing a clone leaves an orphan profile directory under
   `<state>/nix/profiles/layat/` (the store is freed by `nix-collect-garbage`, but the
@@ -684,20 +618,14 @@ as if every target had been placed by a stranger:
 
 ## Documentation
 
-`docs/` is a three-layer structure: **README → overview document → item**. The normative
-content lives in the items (one claim per Markdown file, with YAML frontmatter); the overview
-documents are the entry point for reading through, giving the big picture and an index into the
-items. The overview documents are maintained in Japanese.
+`docs/` is a three-layer structure: **README → overview document → item**. Items hold the
+normative content (one claim per Markdown file, with YAML frontmatter); the overview documents
+(maintained in Japanese) give the big picture and an index into the items.
 
-Overview documents (big picture + index):
-
-- `docs/concept.md` — concept (index into solution / use_case items), design philosophy,
-  north-star, comparison with existing tools, how the design evolved
+- `docs/concept.md` — concept, design philosophy, north-star, comparison, index into ADRs
 - `docs/design.md` — design (index into design items)
 - `docs/spec.md` — specification (index into requirement items)
 - `docs/glossary.md` — canonical English terminology
-
-Items (where the normative content lives):
 
 | Directory | Type | Prefix |
 |---|---|---|
