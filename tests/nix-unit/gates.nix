@@ -1,9 +1,6 @@
 # nix-unit: eval 時に throw する検査ゲート群（systemRoot 未実装・copy×outOfStore・絶対/`..` escape・
-# 重複 target・未知キー・素文字列 src・共有 entriesType）をアサートする
-# （→ ADR-0008, ADR-0010, ADR-0013, ADR-0014, ADR-0019, ADR-0024）。
-#
-# store パスの hash 揺れを避けるため src には toString が安定する fake な flake-input 相当
-# （`{ outPath = …; }`）を使う。これは srcType の store-backed 判定（`? outPath`）を通る正当な test double。
+# 重複 target・未知キー・素文字列 src・共有 entriesType）をアサートする。
+# src は toString が安定する fake な flake-input 相当（`{ outPath = …; }`）を使う。
 { lib, layat }:
 let
   fakeSrc = {
@@ -12,7 +9,7 @@ let
   norm = root: entries: layat.normalizeManifest { inherit lib root entries; };
 in
 {
-  # systemRoot は未実装（→ ADR-0013）。
+  # systemRoot は未実装。
   testSystemRootUnimplemented = {
     expr =
       (norm layat.systemRoot {
@@ -24,7 +21,7 @@ in
     expectedError.msg = "system mode";
   };
 
-  # method = "copy" かつ out-of-store marker は意図矛盾（→ ADR-0013）。
+  # method = "copy" かつ out-of-store marker は意図矛盾。
   testCopyOutOfStoreRejected = {
     expr =
       (norm layat.projectRoot {
@@ -37,7 +34,7 @@ in
     expectedError.msg = "out-of-store";
   };
 
-  # target が絶対パス（→ ADR-0019）。
+  # target が絶対パス。
   testAbsoluteTargetRejected = {
     expr =
       (norm layat.projectRoot {
@@ -49,7 +46,7 @@ in
     expectedError.msg = "target";
   };
 
-  # target が `..` で root の外（→ ADR-0019）。
+  # target が `..` で root の外。
   testEscapingTargetRejected = {
     expr =
       (norm layat.projectRoot {
@@ -61,7 +58,7 @@ in
     expectedError.msg = "target";
   };
 
-  # subpath が `..` で src の外（→ ADR-0019）。
+  # subpath が `..` で src の外。
   testEscapingSubpathRejected = {
     expr =
       (norm layat.projectRoot {
@@ -74,7 +71,7 @@ in
     expectedError.msg = "subpath";
   };
 
-  # 別キーで target を同値に明示上書きした衝突（→ ADR-0024）。
+  # 別キーで target を同値に明示上書きした衝突。
   testDuplicateTargetRejected = {
     expr =
       (norm layat.projectRoot {
@@ -91,7 +88,7 @@ in
     expectedError.msg = "same target";
   };
 
-  # 未知キー（タイポ / 旧名）は submodule strict で弾く（→ ADR-0008, ADR-0010）。
+  # 未知キー（タイポ / 旧名）は submodule strict で弾く。
   testUnknownKeyRejected = {
     expr =
       (norm layat.projectRoot {
@@ -104,7 +101,7 @@ in
     expectedError.msg = "source";
   };
 
-  # 素の文字列 src は拒否（out-of-store は marker で opt-in・→ ADR-0001）。
+  # 素の文字列 src は拒否（out-of-store は marker で opt-in）。
   testStringSrcRejected = {
     expr =
       (norm layat.projectRoot {
@@ -116,10 +113,8 @@ in
     expectedError.msg = "src";
   };
 
-  # modules/common.nix が共有する entriesType（attrsOf (submodule entryModule)）を
-  # evalModules で直接検査する。common.nix は同じ lib/types.nix の entriesType を使うため、
-  # 未知キー（タイポ・旧名）はモジュール経路でも strict submodule で eval エラーになる
-  # （→ AC「common.nix の entry submodule が lib/types.nix と共有され未知キーが eval エラー」・ADR-0010, ADR-0014）。
+  # modules/common.nix が共有する entriesType を evalModules で直接検査する。
+  # 未知キーはモジュール経路でも eval エラーになる。
   testSharedEntriesTypeUnknownKey = {
     expr =
       let

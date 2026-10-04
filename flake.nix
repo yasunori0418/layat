@@ -29,14 +29,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # HM モジュール統合の評価テスト専用（→ Issue #17・checks.hm-module）。
-    # lib/ は home-manager に依存しない（→ ADR-0006）。本 input は checks でのみ使う。
+    # checks.hm-module 専用。lib/ は home-manager に依存しない。
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # lib 評価テスト（→ ADR-0006, ADR-0012）。
+    # lib 評価テスト。
     nix-unit = {
       url = "github:nix-community/nix-unit";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -57,9 +56,7 @@
     let
       # flake output（lib）とテスト入力で同一実体を共有する（self 参照を避ける）。
       layatLib = import ./lib;
-      # バージョンの一次情報はリポジトリ直下の VERSION（semver 1 行・→ ADR-0042）。
-      # flake / Go バイナリの双方をこの単一ソースから導出し二重管理しない。
-      # 末尾改行を落として semver 文字列だけを取り出す（nixos-unstable の lib.strings.trim）。
+      # flake / Go バイナリ共通のバージョン（VERSION の semver から末尾改行を落とす）。
       version = inputs.nixpkgs.lib.strings.trim (builtins.readFile ./VERSION);
       systems = [
         "x86_64-linux"
@@ -72,9 +69,8 @@
       imports = [
         inputs.treefmt-nix.flakeModule
         inputs.nix-unit.modules.flake.default
-        # layat output を perSystem へ集約する flake-parts module（→ ADR-0029）。
-        # 循環参照回避のため、公開（flake.flakeModules.default）も import も同一パスを参照する。
-        # self.flakeModules.default 経由の self-import にはしない（ADR 決定4）。
+        # layat output を perSystem から転置する flake-parts module。
+        # 循環参照を避けるため、公開（flake.flakeModules.default）と同一パスを直接 import する。
         ./modules/flake-parts.nix
       ];
       inherit systems;
@@ -96,10 +92,8 @@
               ./cmd
             ];
           };
-          # nix sandbox（ネットワーク遮断）で go ツールを回すための環境。
-          # CLI 層が cobra に依存するため（→ ADR-0011）、buildGoModule が固定 hash で取得した
-          # vendored deps（goModules）を vendor/ に展開し GOFLAGS=-mod=vendor でオフライン解決する。
-          # build dir 直下は Go が temp root とみなし go.mod を無視するため、サブディレクトリで作業する。
+          # nix sandbox で go ツールを回す環境。goModules を vendor/ に展開してオフライン解決する。
+          # build dir 直下は Go が go.mod を無視するため、サブディレクトリで作業する。
           goToolEnv = ''
             export HOME="$TMPDIR"
             export GOCACHE="$TMPDIR/go-cache"
@@ -114,9 +108,7 @@
           '';
         in
         {
-          # layat CLI（cmd/layat）+ 配置エンジン（internal/）を含む Go モジュール（→ ADR-0006, ADR-0011）。
-          # CLI 層が cobra に依存するため vendorHash 文字列を pin する（依存変更時に更新）。
-          # doCheck で go test（engine の unit + tmpdir 統合テスト）を回す。
+          # layat CLI（cmd/layat）+ 配置エンジン（internal/）。vendorHash は依存変更時に更新する。
           packages.layat = pkgs.buildGoModule {
             pname = "layat";
             inherit version;
@@ -124,43 +116,25 @@
             vendorHash = "sha256-blRx10aRnzpZDI0sqLJJB3L5OYj2BDY9XrmauXNAVEM=";
             doCheck = true;
             env.GOTOOLCHAIN = "local";
-            # VERSION の値を cmd/layat の main.version へ埋め込む（→ ADR-0042）。ldflags 未設定の
-            # 素の go build では main.version は "dev" のまま（後続 #130 が tool.version の供給源として読む）。
+            # VERSION の値を main.version へ埋め込む。素の go build では "dev" のまま。
             ldflags = [
               "-X"
               "main.version=${version}"
             ];
-            # 既存 go test と同じ対象（unit + tmpdir 統合）を -coverprofile 付きで回し、func サマリを
-            # build ログへ出す。計測・レポート出力のみで閾値ゲートは持たない（テスト追加 PR の
-            # マージ順依存を避ける → タスク規約）。`go test ./...` は default checkPhase と同等の対象。
-            # この custom checkPhase は go test へ ldflags を渡さない。TestVersionDefault が
-            # main.version="dev" を前提にしているため、default checkPhase へ戻すと（ldflags が test
-            # ビルドにも波及し version が埋まって）当該テストが壊れる点に注意（→ ADR-0042）。
-            # -race で回す（apply --all の build / 配置 goroutine と集約のデータ競合を CI で検出する・
-            # → ADR-0039, Issue #155）。checkPhase は packages.layat 自身のものなので、CI（checks.layat）に
-            # 限らず利用者のソースビルドでも -race で走る。計測は x86_64-linux（16 論理 CPU・sandbox 内の
-            # checkPhase の go test 部分）で -race 無し 2.4s に対し -race 付き 9.4s、増分 7s は小さいと判断した。
-            # aarch64-linux / aarch64-darwin は未計測で CI matrix の leg が実走で確かめ、x86_64-darwin は
-            # CI 外。race detector は cgo を要し、x86_64-linux の buildGoModule sandbox では CGO_ENABLED=1 で
-            # 動くことを確認した
-            # （CGO_ENABLED=0 の goToolEnv を使う go-vet / golangci-lint とは別経路）。
+            # go test を -race -coverprofile 付きで回し、func サマリを出す（閾値ゲートは持たない）。
+            # ldflags を go test へ渡さない（TestVersionDefault は main.version="dev" を前提にする）。
             checkPhase = ''
               runHook preCheck
               go test -race -coverprofile="$TMPDIR/cover.out" ./...
               go tool cover -func="$TMPDIR/cover.out" | tee "$TMPDIR/coverage-func.txt"
               runHook postCheck
             '';
-            # coverprofile / func レポートを成果物へ同梱する。CI は cache hit でも $out から決定論的に
-            # 取り出して Step Summary に出せる（build ログ依存だと cache hit で消えるため）。
+            # coverprofile / func レポートを成果物へ同梱し、CI が cache hit でも $out から読めるようにする。
             postInstall = ''
               install -Dm644 "$TMPDIR/cover.out" "$out/share/layat/coverage/cover.out"
               install -Dm644 "$TMPDIR/coverage-func.txt" "$out/share/layat/coverage/coverage-func.txt"
             '';
-            # ldflags 経由の埋め込み配線（VERSION → main.version → バイナリ）を build 内で smoke する
-            # （→ ADR-0042）。go test は ldflags 未設定で走る（上記 checkPhase）ため埋め込みを観測できず、
-            # -X のキー名ミス・trim 漏れが unit テストを素通りする。installCheck でビルド済みバイナリの
-            # `--version` 出力に VERSION の値が入ることを確認し、二重管理防止の核心を機械検証する。
-            # ネイティブビルド前提（本 flake は cross を持たない）。
+            # ビルド済みバイナリの `--version` に VERSION の値が埋め込まれていることを確かめる。
             doInstallCheck = true;
             installCheckPhase = ''
               runHook preInstallCheck
@@ -177,13 +151,8 @@
             };
           };
 
-          # ドッグフーディング用の project mode config（→ Issue #7・AC e2e 経路・ADR-0029）。
-          # `layat apply default` で git toplevel 配下の .layat-example/docs に本 repo（self）の
-          # docs を store-symlink 配置する最小 example。flake-parts module（imports）が
-          # perSystem.layat.default を flake.layat.<system>.default へ転置する。pkgs は perSystem
-          # 由来になり packages.layat と一貫する（legacyPackages.${system} 直書きの二重解決が消える）。
-          # `layat.<system>.<name>` は標準 flake output ではないため `nix flake check` で
-          # `warning: unknown flake output 'layat'`（exit 0・想定内）が残る（→ docs/spec.md, ADR-0029 影響節）。
+          # ドッグフーディング用の project mode config。本 repo の docs を .layat-example/docs へ配置する。
+          # `nix flake check` は `warning: unknown flake output 'layat'`（exit 0）を出す。
           layat.default = layatLib.mkManifest {
             inherit pkgs;
             root = layatLib.projectRoot;
@@ -199,11 +168,11 @@
               enable = true;
               package = pkgs.nixfmt;
             };
-            # Go 整形（→ ADR-0025）。
+            # Go 整形。
             programs.gofmt.enable = true;
           };
 
-          # 静的解析を flake check に載せる（→ ADR-0025）。stdlib-only ゆえ依存検出は軽い。
+          # 静的解析を flake check に載せる。
           checks.go-vet = pkgs.runCommandLocal "layat-go-vet" { nativeBuildInputs = [ pkgs.go ]; } ''
             ${goToolEnv}
             go vet ./...
@@ -226,10 +195,8 @@
           # go test（unit + tmpdir 統合テスト）も flake check で回す。
           checks.layat = config.packages.layat;
 
-          # nix-unit: デフォルト適用・manifest 構造の不変条件をアサート（→ ADR-0006, ADR-0010）。
-          # flake-parts モジュールが checks 派生を組み `nix flake check` に載せる。
-          # check は sandbox 内で `nix-unit --flake ${self}#tests.systems.<system>` を回し flake を
-          # 再 import するため、全 direct input を override-input でローカルに渡しオフライン評価する。
+          # nix-unit: デフォルト適用・manifest 構造の不変条件をアサートする。
+          # check は sandbox 内で flake を再 import するため、全 direct input をローカルに渡す。
           nix-unit.inputs = {
             inherit (inputs)
               nixpkgs
@@ -245,9 +212,7 @@
             layat = layatLib;
           };
 
-          # namaka: manifest.json 全体（= normalizeManifest 出力）のスナップショット回帰（→ ADR-0006）。
-          # namaka.lib.load は不一致で throw・成功で {} を返す純評価。seq で評価を強制し
-          # check 派生に紐付けて `nix flake check` に載せる。
+          # namaka: normalizeManifest 出力のスナップショット回帰。不一致は評価時に throw する。
           checks.namaka = builtins.seq (inputs.namaka.lib.load {
             src = ./tests/namaka;
             inputs = {
@@ -256,11 +221,8 @@
             };
           }) (pkgs.runCommandLocal "layat-namaka-snapshots" { } "touch \"$out\"");
 
-          # HM モジュール統合の評価アサート（→ Issue #17 AC・NixOS VM / 実 activate は #19 E2E）。
-          # standalone な homeManagerConfiguration を評価し、(1) activation が home.file へ翻訳せず
-          # `layat apply --manifest` で engine を起動する配線であること、(2) 渡す manifest が
-          # root=homeRoot を pin すること、(3) layat.entries が manifest に流れることをアサートする。
-          # 実 activate（nix-env --set・FS 配置）は build sandbox では行えないため E2E（#19）へ回す。
+          # HM モジュールの評価アサート。homeManagerConfiguration を評価し、activation の配線と
+          # manifest の内容を検証する。実 activate は e2e が担う。
           checks.hm-module =
             let
               # store hash 揺れを避ける fake な flake-input 相当（nix-unit / namaka と同じ test double）。
@@ -277,16 +239,14 @@
                     home.username = "layat-test";
                     home.homeDirectory = "/home/layat-test";
                     home.stateVersion = "24.05";
-                    # nixpkgs=unstable と HM=master の release 文字列ずれによる無害な
-                    # warning を抑制する（packages は nixpkgs follows で一致・→ #17 レビュー）。
+                    # nixpkgs と HM の release 文字列ずれによる無害な warning を抑制する。
                     home.enableNixpkgsReleaseCheck = false;
                     layat.enable = true;
                     layat.entries.".claude/skills/nix" = {
                       src = fakeSrc;
                       subpath = "skills/nix";
                     };
-                    # layat.backup.enable の wiring 確認（→ ADR-0045, issue #169）。suffix 省略時は
-                    # submodule 既定値 "layat-backup" が activation に渡ることを検証する。
+                    # suffix 省略時に既定値 "layat-backup" が activation に渡ることを検証する。
                     layat.backup.enable = true;
                   }
                 ];
@@ -312,8 +272,7 @@
               grep -q '".claude/skills/nix"' "$manifest/manifest.json" \
                 || { echo "FAIL: layat.entries が manifest に反映されていません"; cat "$manifest/manifest.json"; exit 1; }
 
-              # (4) layat.backup.enable が --backup=<既定 suffix> として同じ apply 起動に配線されること
-              #     （→ ADR-0045, issue #169）。
+              # (4) layat.backup.enable が --backup=<既定 suffix> として同じ apply 起動に配線されること。
               grep -q -- '--backup=layat-backup' "$script" \
                 || { echo "FAIL: activation が --backup=<suffix> を配線していません"; cat "$script"; exit 1; }
 
@@ -324,7 +283,6 @@
         lib = layatLib;
 
         # `layat init <template>` / `nix flake init -t <ref>#<template>` で展開する starter テンプレ。
-        # default = project（spec が project mode を canonical と明記・最も完備した例を渡す）。
         templates = {
           standalone = {
             path = ./templates/standalone;
@@ -337,14 +295,11 @@
           default = inputs.self.templates.project;
         };
 
-        # flake-parts module を consumer 向けに公開する（→ ADR-0029）。flake-parts を使う repo は
-        # `imports = [ inputs.layat.flakeModules.default ]` してから `perSystem.layat.<name> = ...` を書ける。
-        # 循環参照回避のため、公開も import（上の imports）も同一パスを参照する（ADR 決定4）。
+        # flake-parts module を consumer 向けに公開する。consumer は
+        # `imports = [ inputs.layat.flakeModules.default ]` してから `perSystem.layat.<name> = ...` を書く。
         flakeModules.default = ./modules/flake-parts.nix;
 
-        # HM モジュール本体（modules/home-manager.nix）は engine をキックするのに pin 版 layat
-        # CLI を要する。利用者システムの packages.layat を _module.args として注入する薄い
-        # ラッパーで包む（利用者は import するだけ・→ ADR-0007, modules/home-manager.nix）。
+        # HM モジュールに pin 版 layat CLI を _module.args として注入する薄いラッパー。
         homeManagerModules.default =
           { pkgs, ... }:
           {

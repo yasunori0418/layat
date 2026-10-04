@@ -1,18 +1,6 @@
-# normalizeManifest (pure data, validation gate) + mkManifest (derivation generation) (→ ADR-0006, ADR-0010, ADR-0016, ADR-0019, ADR-0023).
-#
-# Split into two stages (→ ADR-0010):
-#   - normalizeManifest { lib, root, entries } -> attrset
-#       evalModules validation, default application, path safety / cross-field throwIf, marker tag → clean enum conversion.
-#       Kept outside the derivation so it becomes a unit-test target for nix-unit / namaka.
-#   - mkManifest { pkgs, root, entries } -> derivation
-#       Writes normalizeManifest's output to manifest.json and builds a symlink farm to the store src.
-#
-# Minimal scope of this slice: root = projectRoot only / src = store-backed symlink entries of path/set only
-# (→ Issue #5). Types and throwIf are defined in full form, anticipating future slices (home / copy / out-of-store).
-#
-# Private helpers (escapesBase / pathChecks / anchorName / resolveEntry / farmEntries /
-# anchorLines) live in ./__internal.nix so they stay unit-test reachable via
-# `layat.__internal.<name>` (→ #71, #289).
+# normalizeManifest validates entries and returns pure manifest data.
+# mkManifest writes that data to manifest.json and builds a symlink farm to the store src.
+# Private helpers live in ./__internal.nix.
 let
   internal = import ./__internal.nix;
 
@@ -26,7 +14,7 @@ let
       t = import ./types.nix lib;
       checks = internal.pathChecks lib;
 
-      # mkManifest itself runs evalModules so validation applies on both paths (direct CLI call / module) (→ ADR-0010).
+      # Validate here so both direct calls and modules go through the same checks.
       evaluated = lib.evalModules {
         modules = [
           {
@@ -43,7 +31,7 @@ let
       };
       cfg = evaluated.config;
 
-      # root marker tag → clean enum (→ ADR-0010).
+      # root marker tag → clean enum.
       rootInfo =
         if t.isRootMarker cfg.root then
           { rootKind = cfg.root.kind; }
@@ -53,34 +41,32 @@ let
             root = cfg.root;
           };
 
-      # entry marker tag → clean enum + resolved src string (→ ADR-0010).
-      # Since the attribute key = target, serialize to an array deterministically in attrNames lexical order (Go reads the array・→ ADR-0014).
+      # entry marker tag → clean enum + resolved src string, in attrNames lexical order.
       normEntries = map (key: internal.resolveEntry lib cfg.entries.${key}) (lib.attrNames cfg.entries);
 
       targets = map (e: e.target) normEntries;
 
-      # ---- Cross-field / path validation (→ ADR-0013, ADR-0019, ADR-0024)-------
+      # ---- Cross-field / path validation ----
       assertions = lib.concatLists [
-        # systemRoot is not implemented (→ ADR-0013).
+        # systemRoot is not implemented.
         (lib.optional (
           rootInfo.rootKind == "system"
-        ) "layat: root = systemRoot (system mode) is not implemented (→ ADR-0013)")
-        # method = "copy" combined with an out-of-store marker is a contradiction of intent (→ ADR-0013).
+        ) "layat: root = systemRoot (system mode) is not implemented")
+        # method = "copy" cannot be combined with an out-of-store marker.
         (map (
-          e:
-          "layat: method = \"copy\" cannot be combined with an out-of-store marker (target: ${e.target}; → ADR-0013)"
+          e: "layat: method = \"copy\" cannot be combined with an out-of-store marker (target: ${e.target})"
         ) (lib.filter (e: e.method == "copy" && e.srcKind == "outOfStore") normEntries))
-        # Collision from explicitly overriding target to the same value under a different key (→ ADR-0024).
+        # Two keys must not resolve to the same target.
         (lib.optional (
           lib.length targets != lib.length (lib.unique targets)
-        ) "layat: multiple entries resolve to the same target (→ ADR-0024)")
-        # Reject absolute paths / `..` escapes in target / subpath (→ ADR-0019).
-        (map (
-          e: "layat: invalid target (absolute path or escapes root via `..`): ${e.target} (→ ADR-0019)"
-        ) (lib.filter (e: checks.isUnsafe e.target) normEntries))
+        ) "layat: multiple entries resolve to the same target")
+        # Reject absolute paths / `..` escapes in target / subpath.
+        (map (e: "layat: invalid target (absolute path or escapes root via `..`): ${e.target}") (
+          lib.filter (e: checks.isUnsafe e.target) normEntries
+        ))
         (map (
           e:
-          "layat: invalid subpath (absolute path or escapes src via `..`): ${e.subpath} (target: ${e.target}; → ADR-0019)"
+          "layat: invalid subpath (absolute path or escapes src via `..`): ${e.subpath} (target: ${e.target})"
         ) (lib.filter (e: checks.isUnsafe e.subpath) normEntries))
       ];
 
@@ -105,20 +91,18 @@ let
 
       manifestJson = pkgs.writeText "manifest.json" (builtins.toJSON norm);
 
-      # Farm anchors are limited to entries that are "store-backed and method = symlink" (→ ADR-0016, ADR-0019).
-      # out-of-store / copy have no farm anchor (copy is out-of-generation, place-once, and independent of the store).
+      # Farm anchors cover only store-backed entries with method = symlink.
       farmEntries = internal.farmEntries lib norm.entries;
 
       anchorLines = internal.anchorLines lib farmEntries;
 
-      # Normalized targets in attrNames lexical order, for apply --all's cross-config conflict preflight (→ ADR-0038).
+      # Normalized targets for apply --all's cross-config conflict preflight.
       targets = map (e: e.target) norm.entries;
     in
-    # The derivation contains manifest.json (the engine's input contract) + a symlink farm to the store src (GC anchors) (→ ADR-0006).
+    # Output: manifest.json + a symlink farm to the store src (GC anchors).
     pkgs.runCommandLocal "layat-manifest"
       {
-        # The CLI reads this via `nix eval … .rootKind` before build (→ ADR-0023);
-        # apply --all also reads `targets` in its batch eval (→ ADR-0038).
+        # The CLI reads rootKind / targets via `nix eval` before build.
         passthru = {
           inherit (norm.root) rootKind;
           inherit targets;

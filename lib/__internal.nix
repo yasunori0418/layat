@@ -1,10 +1,7 @@
-# Private helpers extracted from manifest.nix for unit-test reachability (→ #71).
-#
-# NOT part of the public API. Reached via `layat.__internal.<name>` and used internally by
-# manifest.nix. Each helper takes nixpkgs.lib explicitly because the layat lib attrset is
-# unparameterized (`import ./lib` with no args), so we cannot pre-bind lib at this layer.
+# Private helpers of manifest.nix, exposed as `layat.__internal.<name>` for unit tests.
+# Not a public API. Each helper takes nixpkgs.lib explicitly.
 let
-  # Determine whether following `..` makes the depth go negative (escapes outside base) (→ ADR-0019).
+  # Whether following `..` makes the depth go negative (escapes outside base).
   escapesBase =
     lib: p:
     let
@@ -29,16 +26,15 @@ let
       depth = 0;
     } comps).bad;
 
-  # target is root-relative, subpath is relative within src. Absolute paths (leading `/`) and
-  # paths that escape outward via `..` are rejected at eval time (→ ADR-0019).
+  # Absolute paths and paths that escape outward via `..` are unsafe.
   pathChecks = lib: {
     isUnsafe = p: lib.hasPrefix "/" p || escapesBase lib p;
   };
 
-  # GC anchor name for the symlink farm = sha256 short hex of target (fixed length, FS-safe, collision-free・→ ADR-0016).
+  # GC anchor name for the symlink farm: sha256 short hex of target.
   anchorName = lib: target: lib.substring 0 32 (builtins.hashString "sha256" target);
 
-  # entry marker tag → clean enum + resolved src string (→ ADR-0010).
+  # entry marker tag → clean enum + resolved src string.
   resolveEntry =
     lib: e:
     let
@@ -60,12 +56,10 @@ let
       inherit (e) subpath target method;
     };
 
-  # Farm anchors are limited to entries that are "store-backed and method = symlink" (→ ADR-0016, ADR-0019).
-  # out-of-store / copy have no farm anchor (copy is out-of-generation, place-once, and independent of the store).
+  # Farm anchors cover only store-backed entries with method = symlink.
   farmEntries = lib: entries: lib.filter (e: e.srcKind == "store" && e.method == "symlink") entries;
 
-  # Shell lines that place the GC anchors of the symlink farm, one per farm entry (→ ADR-0016).
-  # Takes the already-filtered farm entries (see farmEntries).
+  # Shell lines that place one GC anchor per farm entry.
   anchorLines =
     lib: entries:
     lib.concatMapStringsSep "\n" (

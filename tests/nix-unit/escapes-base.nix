@@ -1,9 +1,5 @@
-# nix-unit: `escapesBase` の `..` 深さ判定の境界を網羅する（→ #72・ADR-0019）。
-#
-# #71 で `lib/__internal.nix` に切り出した private helper を `layat.__internal` 経由で直接叩く。
-# `escapesBase lib p` は path を `/` 分割し `""`・`.` を捨てた上で depth を辿り、depth 0 で `..` に
-# 当たった瞬間に escape（base の外へ出る）と判定する。`isUnsafe` はそれに絶対パス（先頭 `/`）拒否を
-# OR したもの。テスト名は他ファイルと衝突しない `testEscapesBase*` 接頭辞を付ける（`//` は後勝ちのため）。
+# nix-unit: `layat.__internal.escapesBase` の `..` 深さ判定の境界を網羅する。
+# depth 0 で `..` に当たると escape と判定する。`isUnsafe` はそれに絶対パス拒否を OR したもの。
 { lib, layat }:
 let
   escapesBase = layat.__internal.escapesBase lib;

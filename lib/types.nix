@@ -1,9 +1,5 @@
-# entry submodule + srcType / rootType / marker custom type (→ ADR-0010, ADR-0014).
-#
-# Written as a pure function that takes nixpkgs.lib and returns the full set of type definitions,
-# so it can be shared by `mkManifest`'s `evalModules` and `modules/common.nix`'s `attrsOf (submodule …)`.
-# `lib.types` / `mkOption` / `evalModules` are core to nixpkgs.lib, so this satisfies
-# "lib depends on nixpkgs.lib only" (no dependency on home-manager / NixOS / nix-darwin).
+# entry submodule + srcType / rootType / marker custom types.
+# Shared by `mkManifest` and `modules/common.nix`; depends on nixpkgs.lib only.
 lib:
 let
   inherit (lib) types mkOption mkDefault;
@@ -14,16 +10,14 @@ let
   isOutOfStoreMarker = x: isAttrs x && (x._layatMarker or null) == "outOfStore";
   isRootMarker = x: isAttrs x && (x._layatMarker or null) == "root";
 
-  # store-backed src: collapse path / derivation / flake input (`{ outPath = …; }`) into a single branch.
-  # Reject bare strings and forbid the implicit out-of-store branch at the type level (→ ADR-0001).
-  # path and set behave identically (both are store links), so they are not split at the type level (→ ADR-0010).
+  # store-backed src: path / derivation / flake input (`{ outPath = …; }`). Bare strings are rejected.
   isStoreBacked =
     x:
     lib.isPath x
     || lib.isDerivation x
     || (isAttrs x && x ? outPath && (x._layatMarker or null) == null);
 
-  # srcType = either storeBacked outOfStoreMarker (→ ADR-0010).
+  # srcType = either storeBacked outOfStoreMarker.
   srcType = types.mkOptionType {
     name = "layatSrc";
     description = "store-backed source (path / derivation / flake input) or out-of-store marker";
@@ -31,8 +25,7 @@ let
     merge = mergeEqualOption;
   };
 
-  # rootType = either str rootMarker (→ ADR-0010). Used only by `mkManifest`, not shared with modules
-  # (modules pin root・→ ADR-0003).
+  # rootType = either str rootMarker. Used only by `mkManifest`; modules pin root.
   rootType = types.mkOptionType {
     name = "layatRoot";
     description = "absolute path string or root marker (projectRoot / homeRoot / systemRoot)";
@@ -40,7 +33,7 @@ let
     merge = mergeEqualOption;
   };
 
-  # entry submodule (→ ADR-0014). The attribute key = target is the identifier. strict (unknown keys rejected).
+  # entry submodule. The attribute key is the default target; unknown keys are rejected.
   entryModule =
     { name, ... }:
     {
@@ -52,11 +45,11 @@ let
         subpath = mkOption {
           type = types.str;
           default = ".";
-          description = "Relative path inside src. Omitted = the whole repository (→ ADR-0008).";
+          description = "Relative path inside src. Omitted = the whole repository.";
         };
         target = mkOption {
           type = types.str;
-          # Default = attribute key (→ ADR-0014).
+          # Default = attribute key.
           default = name;
           defaultText = "attribute key";
           description = "Placement target relative to root. Defaults to the attribute key when omitted.";
@@ -67,7 +60,7 @@ let
             "copy"
           ];
           default = "symlink";
-          description = "Placement method (formerly named mode; → ADR-0015).";
+          description = "Placement method (formerly named mode).";
         };
       };
     };

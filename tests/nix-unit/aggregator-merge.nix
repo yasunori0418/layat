@@ -1,16 +1,6 @@
-# nix-unit: アグリゲータの衝突検査（`tests/nix-unit-lib.nix` の `mergeTests`）自身を
-# ダミー入力でアサートする（→ Issue #308, RISK-3de9753f）。
-#
-# 検査対象は本番の readDir 経路ではなく純関数のほう。実ファイルは衝突しない（衝突したら
-# `nix flake check` が落ちる）ため、throw 側の経路は合成した `{ file, tests }` を渡さない
-# 限り一度も実行されず、検査が常に「衝突なし」を返す退行を検知できない。
-#
-# ダミーの tests の値は `mergeTests` が名前しか見ないので任意でよいが、マージ結果が
-# 名前と値の対応を取り違えていないか見分けられるよう全て違う値を置く（`//` の後勝ちが
-# 選ぶ側は検証できない。衝突する入力は必ず throw するので到達しない）。
-#
-# `layat` は使わない（検証対象がスイートの組み立てで、manifest 生成関数ではないため）が、
-# アグリゲータが全 leaf を `{ lib, layat }` で import するのでシグネチャは他ファイルに揃える。
+# nix-unit: アグリゲータの衝突検査（`tests/nix-unit-lib.nix` の `mergeTests`）をダミー入力でアサートする。
+# ダミーの値は名前と値の対応の取り違えを見分けられるよう全て違う値にする。
+# `layat` は使わないが、シグネチャは他の leaf に揃える。
 { lib, layat }:
 let
   inherit (import ../nix-unit-lib.nix { inherit lib; }) mergeTests;
@@ -110,10 +100,7 @@ in
     expected = { };
   };
 
-  # 1 ファイルだけなら owners は必ず長さ 1 で、テストを何件持っていても衝突しない
-  # （`length owners > 1` の境界の下側。同名を定義しうるのは 2 ファイル以上からで、
-  # 1 ファイル内は attrset なので同名を書くこと自体ができない）。`disjoint` を切り出して
-  # 使うと期待値が共有フィクスチャの中身に依存するので、独立したフィクスチャを置く。
+  # 1 ファイルだけなら、テストを何件持っていても衝突しない（`length owners > 1` の境界の下側）。
   testAggregatorMergeSingleModuleManyTests = {
     expr = mergeTests [
       {
@@ -142,10 +129,8 @@ in
     expectedError.msg = "  - testDup: alpha\\.nix, beta\\.nix";
   };
 
-  # 衝突していないテスト名は報告に出ない（無関係なファイルを巻き込んで報告しない）。
-  # nix-unit は `expectedError.msg` を `std::regex` の既定文法（ECMAScript）で構築するので
-  # negative lookahead が使え、`$` は行末ではなく文字列末尾を指す。`.` は改行を跨がないため
-  # 複数行の報告を舐めるには `(.|\n)` と書く。
+  # 衝突していないテスト名は報告に出ない。`expectedError.msg` は ECMAScript の正規表現で、
+  # `$` は文字列末尾を指し、複数行は `(.|\n)` で舐める。
   testAggregatorMergeCollisionReportExcludesInnocent = {
     expr = mergeTests twoWayCollision;
     expectedError.type = "ThrownError";
