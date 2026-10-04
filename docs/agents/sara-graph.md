@@ -2,6 +2,7 @@
 
 How to place items in this repo's sara knowledge graph (`docs/model.yaml`, validated by
 `sara check`). Covers the conventions that the model schema itself cannot enforce.
+What each type, field and relation in the schema means is explained in [`docs/model.md`](../model.md).
 
 ## The type graph at a glance
 
