@@ -110,11 +110,11 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 **自己記録の manifest** を一次情報に持ち、HM は on-disk の readlink パターンマッチで判定する
 （HM 現行実装〔2026-07 時点〕との比較・→ ADR-0046, ADR-0047）。差は次の 5 点に表れる。
 
-1. **per-file → dir symlink 遷移の自動移行** — HM は旧 leaf の残存を誤認して失敗しうるが、layat は manifest 記録との一致判定（recorded ∧ stale）で安全に移行する
+1. **同名 leaf を含む per-file → dir symlink 遷移の自動移行** — HM は旧 leaf の残存を誤認して失敗しうるが、layat は manifest 記録との一致判定（recorded ∧ stale）で安全に移行する
 2. **所有判定の厳密さ** — HM は readlink の glob マッチ、layat は記録済みの配置先のうち readlink が記録 dest と完全一致するものだけを所有とみなす
 3. **配置を塞ぐ空 dir の除去** — HM は collision で停止するが、layat は rmdir が空 dir にしか成功しないことを利用し、由来を問わず除去する
 4. **祖先 symlink の安全性** — HM は無検査で辿るが、layat は foreign な祖先 symlink を conflict で停止し、自己記録の stale だけを移行する
-5. **fail-fast drift** — 前段化した依存除去が drift を検出したら skip せず error で停止する
+5. **rename 可用性 + fail-fast drift** — 配置を塞ぐ依存除去だけを前段化し、その除去が drift を検出したら skip せず error で停止する
 
 空親ディレクトリ剪定・conflict 全件報告は同等。copy は HM に存在しないため比較の対象外。
 

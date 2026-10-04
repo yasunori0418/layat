@@ -366,7 +366,7 @@ layat init <template>           # `nix flake init -t github:yasunori0418/layat#<
 
 1. `--generator <name>`
 2. 環境変数 `LAYAT_GENERATOR`
-3. `-f` のディレクトリ(`-f` がファイルならそのファイルのあるディレクトリ)、無ければ CWD の `layat.toml`。親ディレクトリは探索しない
+3. `-f` のディレクトリ(`-f` がファイルならそのファイルのあるディレクトリ)、`-f` 未指定なら CWD の `layat.toml`。親ディレクトリは探索しない
 4. `$XDG_CONFIG_HOME/layat/config.toml`(既定 `~/.config/layat/config.toml`)
 5. 既定の `nix`(現状唯一の生成器)
 
