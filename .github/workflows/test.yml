@@ -3,7 +3,7 @@ name: Test
 on:
   workflow_dispatch:
   # No `paths` trigger: the workflow starts on every PR so the required status
-  # checks always report. The `changes` job skips nix work on docs-only PRs.
+  # checks always report. Jobs gated on `changes` skip nix work on docs-only PRs.
   pull_request:
   # Only `test-doc-matrix` consumes this trigger. Every other job carries a
   # job-level `github.event_name != 'push'` guard.
