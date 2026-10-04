@@ -426,7 +426,7 @@ The generator is chosen explicitly, never guessed from the files present; the fi
 
 1. `--generator <name>`
 2. the `LAYAT_GENERATOR` environment variable
-3. `layat.toml` in the `-f` directory (the file's directory if `-f` is a file), else the CWD; parents are not searched
+3. `layat.toml` in the `-f` directory (the file's directory if `-f` is a file), or the CWD without `-f`; parents are not searched
 4. `$XDG_CONFIG_HOME/layat/config.toml` (default `~/.config/layat/config.toml`)
 5. the default `nix` (the only generator today)
 
