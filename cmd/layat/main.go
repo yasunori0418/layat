@@ -1,5 +1,5 @@
 // Command layat is the CLI that drives the placement engine (internal/engine). The engine owns
-// flock, build, placement and commit; the CLI handles entrypoint discovery and nix eval / build.
+// flock, the in-lock build, placement and commit; the CLI handles entrypoint discovery and nix eval.
 package main
 
 import (

@@ -43,8 +43,8 @@ type outturnPayload[TInfo any] struct {
 	itemBorne bool
 }
 
-// attachMutationPayload builds the apply / rollback payload from res and attaches it to s. On a
-// build failure it reports to stderr and leaves the subject's items empty.
+// attachMutationPayload builds the apply / rollback payload from res and attaches it to s. If the
+// payload cannot be built, it reports to stderr and leaves the subject's items empty.
 func attachMutationPayload[TInfo any](s *outturnSubject[TInfo], res *engine.Result, cmdErr error) {
 	p, err := mutationPayload[TInfo](res, cmdErr)
 	if err != nil {

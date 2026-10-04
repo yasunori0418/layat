@@ -11,7 +11,7 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// applyAllExitCode follows priority error(1) > conflict(2) > 0, not the plain maximum.
+// TestApplyAllExitCode: priority error(1) > conflict(2) > 0, not the plain maximum.
 func TestApplyAllExitCode(t *testing.T) {
 	cases := []struct {
 		name              string
@@ -72,8 +72,8 @@ func captureStderr(t *testing.T, f func()) string {
 	return <-done
 }
 
-// Verifies aggregateDryRun's exit code error(1) > conflict(2) > 0 and its stdout plan, with the
-// apply injected.
+// TestAggregateDryRun: the exit code is error(1) > conflict(2) > 0 and the plan goes to stdout,
+// with the apply injected.
 func TestAggregateDryRun(t *testing.T) {
 	clean := func(name string) (*engine.Result, error) {
 		return &engine.Result{Placed: []string{"/p/" + name}}, nil
@@ -132,7 +132,7 @@ func TestAggregateDryRun(t *testing.T) {
 	}
 }
 
-// Verifies aggregateApply's applied / skipped / failure counts and continue-on-partial-failure, with
+// TestAggregateApply: the applied / skipped / failure counts and continue-on-partial-failure, with
 // the apply injected.
 func TestAggregateApply(t *testing.T) {
 	clean := func(name string) (*engine.Result, error) {

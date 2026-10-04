@@ -161,7 +161,7 @@ func printPrunePlan(res *engine.PruneResult) {
 }
 
 // reportPruneTargets lists the series about to be deleted, with every root path, on stderr before
-// the confirmation prompt.
+// the confirmation prompt. The root paths keep an unmounted root from passing for a deleted one.
 func reportPruneTargets(res *engine.PruneResult) {
 	fmt.Fprintf(os.Stderr, "layat: prune will delete %d orphan profile series:\n", len(res.Removed))
 	for _, s := range res.Removed {

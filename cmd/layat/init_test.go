@@ -8,7 +8,7 @@ import (
 	"github.com/yasunori0418/outturn/go/conformance"
 )
 
-// flakeInitArgs builds the argv for `nix flake init -t <ref>#<template>`.
+// TestFlakeInitArgs: the argv is `nix flake init -t <ref>#<template>`.
 func TestFlakeInitArgs(t *testing.T) {
 	cases := []struct {
 		name     string

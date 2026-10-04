@@ -8,7 +8,7 @@ import (
 	"github.com/yasunori0418/outturn/go/conformance"
 )
 
-// gitignoreAnchor normalizes a root-relative target into /-anchor form (leading /, no trailing /).
+// TestGitignoreAnchor: a root-relative target becomes /-anchor form (leading /, no trailing /).
 func TestGitignoreAnchor(t *testing.T) {
 	cases := map[string]string{
 		".claude/skills/nix": "/.claude/skills/nix",

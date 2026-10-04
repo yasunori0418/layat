@@ -421,7 +421,7 @@ func TestResetPromptAllowed(t *testing.T) {
 	cases := []struct{ interactive, jsonMode, want bool }{
 		{true, false, true},   // TTY, default contract → prompting allowed
 		{true, true, false},   // TTY + --json → machine consumption never prompts
-		{false, false, false}, // non-TTY → refuse path (unchanged)
+		{false, false, false}, // non-TTY → refuse path
 		{false, true, false},
 	}
 	for _, c := range cases {

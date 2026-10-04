@@ -63,7 +63,7 @@ func newApplyCmd() *cobra.Command {
 			if err := ensureNoRootFilter("apply --all"); err != nil {
 				return err
 			}
-			// An explicit --jobs 0 is rejected too, since 0 is a valid --all value.
+			// Check Changed, not the value: an explicit --jobs 0 equals the default.
 			if cmd.Flags().Changed("jobs") {
 				return fmt.Errorf("layat: --jobs is a modifier for apply --all")
 			}

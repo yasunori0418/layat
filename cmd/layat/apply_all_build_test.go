@@ -17,8 +17,8 @@ import (
 	"github.com/yasunori0418/layat/internal/engine"
 )
 
-// TestPrebuildAllBoundsConcurrency: in-flight builds reach --jobs and never exceed it. A barrier
-// holds the builds until the ceiling is reached, then stays closed for a grace window.
+// TestPrebuildAllBoundsConcurrency: in-flight builds reach min(--jobs, configs) and never exceed
+// it. A barrier holds the builds until that ceiling is reached, then stays closed for a grace window.
 func TestPrebuildAllBoundsConcurrency(t *testing.T) {
 	selected := []string{"a", "b", "c", "d", "e", "f", "g"}
 	for _, jobs := range []int{1, 3, 16} {

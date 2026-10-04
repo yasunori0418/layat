@@ -127,7 +127,7 @@ func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 	}
 }
 
-// TestApplyAllPartialFailureItemBorne: when the engine returns a partial result with the error,
+// TestApplyAllPartialFailureItemBorne: when the engine's partial result names the failed target,
 // the failure is item-borne, so the subject's errors[] stays empty while its status is error.
 func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 	run, buf := newApplyTestRun()
