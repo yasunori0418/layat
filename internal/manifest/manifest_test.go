@@ -38,8 +38,6 @@ func TestLoadValid(t *testing.T) {
 		t.Errorf("rootKind = %q, want project", m.Root.RootKind)
 	}
 	// project omits the path in the manifest, so it decodes to the empty string.
-	// This fixes the decoded shape only; rejecting a project document that does carry
-	// a path is asserted in TestLoadRootPathAllowedOnlyForFixed (→ REQ-dd10d820).
 	if m.Root.Root != "" {
 		t.Errorf("project root = %q, want empty", m.Root.Root)
 	}
@@ -64,9 +62,7 @@ func TestLoadRejectsNewerSchema(t *testing.T) {
 	}
 }
 
-// Both edges of the lower bound. The valid edge sits next to the invalid ones so that
-// moving the bound in validate() breaks a case here rather than passing unnoticed.
-// The upper bound is a separate concern and belongs to TestLoadRejectsNewerSchema.
+// Both edges of the schemaVersion lower bound; the upper bound is TestLoadRejectsNewerSchema.
 func TestLoadSchemaVersionBoundary(t *testing.T) {
 	for _, tt := range []struct {
 		name    string
@@ -89,13 +85,11 @@ func TestLoadSchemaVersionBoundary(t *testing.T) {
 			if err == nil {
 				t.Fatalf("expected error for schemaVersion %s, got nil", tt.version)
 			}
-			// Pin the rejection to the below-minimum check rather than any other failure.
 			if !strings.Contains(err.Error(), "is invalid") {
 				t.Errorf("error should report an invalid schemaVersion, got %v", err)
 			}
 			// Below the minimum is a broken document, not version skew, so it must not wrap
-			// the skew sentinel — otherwise the CLI emits a misleading "flake and CLI differ"
-			// hint for it (→ TC-172548ea, cmd/layat: ErrSchemaVersionUnsupported branch).
+			// the skew sentinel.
 			if errors.Is(err, ErrSchemaVersionUnsupported) {
 				t.Errorf("error should not wrap ErrSchemaVersionUnsupported, got %v", err)
 			}
@@ -103,9 +97,7 @@ func TestLoadSchemaVersionBoundary(t *testing.T) {
 	}
 }
 
-// A missing root object decodes to the zero value, so it reaches the very same
-// emptiness check as an explicitly empty rootKind. Both spellings are pinned to
-// document that no separate guard covers the missing key (→ TC-172548ea).
+// A missing root object and an explicitly empty rootKind both reach the same emptiness check.
 func TestLoadRejectsRootKindEmptiedByEitherSpelling(t *testing.T) {
 	for _, tt := range []struct {
 		name string
@@ -140,23 +132,11 @@ func TestLoadMissingFile(t *testing.T) {
 	}
 }
 
-// The kinds the engine resolves at runtime must not carry a path. A document that
-// spells one out is not merely redundant: the engine ignores it and places under the
-// resolved base instead, so the difference never surfaces (→ REQ-dd10d820, TC-172548ea).
-//
-// Both sides of the kind × path-presence table are covered so that narrowing the guard
-// to the kind alone — dropping the path-presence half — breaks a case here.
-//
-// Every accepting row states what this layer does not judge, not that the document is
-// usable end to end. A fixed document without a path is stopped by the engine's root
-// resolution, and a system document is rejected by the engine and by the Nix side while
-// that kind remains unimplemented. Both still pass here because neither verdict is this
-// layer's to make.
+// TestLoadRootPathAllowedOnlyForFixed covers the kind × path-presence table: only fixed may carry
+// a path. Accepting rows mean only that this layer does not reject them (e.g. fixed without a
+// path is stopped later by root resolution).
 func TestLoadRootPathAllowedOnlyForFixed(t *testing.T) {
-	// An empty path means the key is left out. Spelling it as "root": "" would decode to
-	// the same empty string, so the two spellings cannot be told apart afterwards and one
-	// row per kind suffices — unlike rootKind, where the omitted object reaches the check
-	// through a separate default-value path and is pinned on its own.
+	// An empty path means the key is left out ("root": "" decodes the same).
 	for _, tt := range []struct {
 		name    string
 		kind    string

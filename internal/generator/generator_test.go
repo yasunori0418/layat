@@ -21,14 +21,14 @@ func writeLinkFarm(t *testing.T, content string) string {
 	return dir
 }
 
-// Every implementation of the contract satisfies Generator (→ ADR-0055 §1, §5).
+// Every implementation of the contract satisfies Generator.
 var (
 	_ Generator = (*Prebuilt)(nil)
 	_ Generator = (*Fake)(nil)
 )
 
-// TestErrorKeepsCauseAndMessage pins generator.Error's error face: Error() is Message as-is, and
-// the cause stays reachable through Unwrap, so errors.Is / errors.As see past it (→ ADR-0055 §6).
+// TestErrorKeepsCauseAndMessage pins that Error() is Message as-is and the cause stays
+// reachable through Unwrap.
 func TestErrorKeepsCauseAndMessage(t *testing.T) {
 	cause := &fs.PathError{Op: "stat", Path: "/nope", Err: fs.ErrNotExist}
 	e := NewError("nix", StageDiscover, KindFailed, "layat: -f path not found (/nope)", "", "", cause)
@@ -62,7 +62,7 @@ func TestErrorSurvivesWrapping(t *testing.T) {
 }
 
 // TestPrebuiltDiscoverResolvesAbsolutePath covers prebuilt Discover = the given link-farm path,
-// made absolute (→ ADR-0055 §5, ADR-0026).
+// made absolute.
 func TestPrebuiltDiscoverResolvesAbsolutePath(t *testing.T) {
 	dir := writeLinkFarm(t, `{"schemaVersion":1,"root":{"rootKind":"home"},"entries":[]}`)
 	t.Chdir(filepath.Dir(dir))
@@ -89,7 +89,7 @@ func TestPrebuiltDiscoverResolvesAbsolutePath(t *testing.T) {
 }
 
 // TestPrebuiltRootsReadsManifest covers prebuilt Roots = the link-farm's manifest.json root, with
-// Targets derived from the entries (the manifest schema itself carries no targets · → ADR-0055 §2).
+// Targets derived from the entries.
 func TestPrebuiltRootsReadsManifest(t *testing.T) {
 	dir := writeLinkFarm(t, `{
 	  "schemaVersion": 1,
@@ -115,7 +115,7 @@ func TestPrebuiltRootsReadsManifest(t *testing.T) {
 }
 
 // TestPrebuiltRootsRejectsTargetsKey covers that Targets stays out of the manifest.json schema v1:
-// a root.targets key is still an unknown field the load rejects (→ ADR-0055 §2).
+// a root.targets key is an unknown field the load rejects.
 func TestPrebuiltRootsRejectsTargetsKey(t *testing.T) {
 	dir := writeLinkFarm(t, `{"schemaVersion":1,"root":{"rootKind":"project","targets":["x"]},"entries":[]}`)
 	p := &Prebuilt{}
@@ -142,8 +142,7 @@ func TestPrebuiltAllRootsFails(t *testing.T) {
 }
 
 // TestPrebuiltRootsFailureKeepsCause covers an unreadable manifest.json: a prebuilt-tagged
-// generator.Error whose cause chain still reaches fs.ErrNotExist (the CLI classifies prebuilt
-// failures by the cause, not as E_LAYAT_BUILD · → ADR-0055 §7).
+// generator.Error whose cause chain still reaches fs.ErrNotExist.
 func TestPrebuiltRootsFailureKeepsCause(t *testing.T) {
 	p := &Prebuilt{}
 	if err := p.Discover(t.TempDir()); err != nil {
