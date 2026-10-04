@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # HM module: home-manager standalone configuration を非 NixOS で評価・activate し、
 # activation（home.activation.layat）が engine を起動して \$HOME 配下へ配置することをアサート。
-# モジュール経路は CLI と mkManifest が同一 flake input 由来で schemaVersion skew が起きない（→ ADR-0026）。
 set -euo pipefail
 source "$(dirname "$0")/../lib.sh"
 e2e_isolate
@@ -59,7 +58,7 @@ case "$(readlink "$HOME/.cfg/skill")" in
 	*) e2e_fail "store symlink を指すべき: $(readlink "$HOME/.cfg/skill")" ;;
 esac
 
-e2e_step "エラーでも --json は適合エンベロープ + exit 1（HM fixture は layat 出力を持たない・→ issue #132）"
+e2e_step "エラーでも --json は適合エンベロープ + exit 1（HM fixture は layat 出力を持たない）"
 # この flake は homeConfigurations だけを公開し layat 出力を持たないため、どの名前でも
 # rootKind 先取り eval（layat.<system>.<name>.rootKind）が失敗する。名前 nosuch は任意で、
 # 検証対象は「subject 確定後の eval 失敗が results[0].errors[]（主体起因の層）に載る」こと。
@@ -70,7 +69,7 @@ assert_json "$ENV_ERR" "status=error・subject=nosuch の一様形" \
 assert_json "$ENV_ERR" "エラーは subject errors[] に構造化・items=[]" \
 	'(.results[0].errors | length) >= 1 and .results[0].result.items == []'
 
-e2e_step "生成器の失敗では nix 自身の診断が stderr へ届き、--json の message にも載る（→ ADR-0055 §6）"
+e2e_step "生成器の失敗では nix 自身の診断が stderr へ届き、--json の message にも載る"
 ERR_LOG="$E2E_WORK/error.stderr"
 layat list-generations nosuch >/dev/null 2>"$ERR_LOG" || true
 if grep -q "does not provide attribute" "$ERR_LOG"; then

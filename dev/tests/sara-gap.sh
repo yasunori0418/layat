@@ -1,33 +1,9 @@
 #!/usr/bin/env bash
-# sara-gap（グラフ未カバー 3 段の列挙コマンド）の検証。
+# sara-gap（グラフ未カバー 3 段の列挙コマンド）の検証。fixture に実物の docs/model.yaml を重ねる。
 #
 # 実行:
 #   nix develop ./dev -c dev/tests/sara-gap.sh   # devShell から直接
 #   nix flake check ./dev                         # checks.sara-gap 経由
-#
-# 検証対象。番号は下の節見出しに対応する:
-#   1.  ギャップのある fixture で 3 段（unthreatened / unmitigated / uncovered）を
-#       検出して exit 1 を返す（張り先を持つ item は列挙しない）
-#   2.  text 出力の行形式（<ID 前方8>\t<name>\t<file>、file は docs/ 前置）
-#   3.  --json の 3 キーと行の形（ref / name / file）。exit code は text と同じ
-#   4.  ギャップの無いグラフでは 3 セクション「なし」・空配列で exit 0
-#   5.  sara check が失敗するグラフ（broken reference）では exit 2
-#   6.  JSON 形状異常（.items 不在・valid: false）では exit 2（seam で決定論再現）
-#   7.  走査先をリポジトリルート基準で解決する（SARA_GAP_ROOT 無し・サブディレクトリから）
-#   8.  引数の異常系（--help = 0 / 未知の引数・引数過多 = 2）
-#
-# 担保できる範囲: 逆引きロジック（宣言辺 → to 集合 → 未カバー）と exit code 契約、
-# 出力形式。fixture は実物の sara バイナリ + 実物の docs/model.yaml で検証する
-# （モデルは fixture に写しを持たず、実行時に実物を重ねる — 二重管理の回避。型や
-# 必須フィールドの変更で fixture item が実モデルに合わなくなれば、このテストが落ちて
-# 追随を要求する）。sara の JSON 形状が変われば lock bump の PR でこのテストが落ちる
-# （変わった「後」にしか現れない点で事前検知ではない）。
-#
-# 担保できない範囲: 実リポジトリ docs/ との整合（実グラフのどの item がギャップかは
-# ここでは見ない。実グラフは fixture と違い件数が動き続けるため契約にできない）。
-#
-# -e は使わない。dev/tests/ の他のテストと同じく「1 回の実行で全失敗を報告する」集計方式のため
-# （-e があると最初の非ゼロ終了で以降のアサーションが走らない）。
 set -uo pipefail
 
 fail=0
@@ -40,8 +16,7 @@ fault() {
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
 
-# fixture はスクリプト自身からの相対で解決する（checks.sara-gap のサンドボックスは
-# dev/tests/ の木を作ってから走らせる。devShell / CI 経路はリポジトリそのまま）。
+# fixture はスクリプト自身からの相対で解決する。
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 fixture="$script_dir/fixtures/sara-gap"
 
@@ -50,10 +25,8 @@ if [[ ! -d "$fixture/docs" ]]; then
   exit 1
 fi
 
-# モデルの正本は実リポジトリの docs/model.yaml（fixture は写しを持たない）。
-# 解決は 2 経路: checks.sara-gap のサンドボックスは作業ツリーが無いので nix が
-# SARA_GAP_MODEL_YAML で store path を渡す。devShell / CI 経路は git ルート基準。
-# どちらでも解決できなければ skip せず失敗させる（黙って素通りさせない）。
+# モデルは実リポジトリの docs/model.yaml。SARA_GAP_MODEL_YAML があればそれを、無ければ git ルート基準で引く。
+# どちらでも解決できなければ失敗させる。
 model_yaml="${SARA_GAP_MODEL_YAML:-}"
 contract_root="$(git rev-parse --show-toplevel 2>/dev/null || printf '.')"
 [[ -f "$model_yaml" ]] || model_yaml="$contract_root/docs/model.yaml"
@@ -109,7 +82,7 @@ for nowant in REQ-aaaa0001 RISK-11110001 TC-33330001 CASE-55550001; do
   fi
 done
 
-# 3 セクションの見出しが揃っている（片方の段の検出が黙って消える退行を防ぐ）。
+# 3 セクションの見出しが揃っている。
 if [[ "$(grep -c '^## ' <<<"$gap_out")" -eq 3 ]]; then
   pass "セクション見出しを 3 つ出す"
 else
@@ -158,9 +131,8 @@ fi
 
 # --- 4. ギャップなしのグラフでは exit 0 ----------------------------------------
 #
-# ギャップ側の item（と、それにぶら下がるものが無い item）を除いた複製を作る。
-# 残るのは SOL → UC → REQ-aaaa0001 ← RISK-11110001 ← TC-33330001 ← CASE-55550001 の
-# 一本鎖で、3 段とも未カバーが無い。
+# ギャップ側の item を除き、SOL → UC → REQ-aaaa0001 ← RISK-11110001 ← TC-33330001 ← CASE-55550001
+# の一本鎖だけを残す。
 
 clean="$work/clean"
 make_fixture "$clean"
@@ -189,8 +161,7 @@ fi
 
 # --- 5. sara check が失敗するグラフでは exit 2 ---------------------------------
 #
-# broken reference（実在しない risk への mitigates）を混ぜる。壊れたグラフから
-# ギャップ一覧を出さない契約（部分的な一覧を信用して工程を進める事故の防止）。
+# broken reference（実在しない risk への mitigates）を混ぜ、ギャップ一覧を出さないことを確かめる。
 
 broken="$work/broken"
 make_fixture "$broken"
@@ -219,11 +190,8 @@ fi
 
 # --- 6. JSON 形状異常では exit 2（seam）----------------------------------------
 #
-# sara のバージョン更新で JSON 形状が変わったとき、黙って「ギャップなし」を返す
-# 事故を防ぐガード。実物の sara に形状を変えさせることはできないので、
-# SARA_GAP_SARA seam で偽 sara を差し込んで決定論的に検証する。
-# shebang は実行中の bash の絶対パスを埋め込む（`#!/usr/bin/env bash` だと
-# nix のビルドサンドボックスに /usr/bin/env が無く exit 126 になる）。
+# SARA_GAP_SARA seam で偽 sara を差し込み、JSON 形状の異常を再現する。
+# shebang はサンドボックスに /usr/bin/env が無いため実行中の bash の絶対パスを埋め込む。
 
 fake_noitems="$work/fake-sara-noitems"
 {
@@ -255,8 +223,7 @@ fi
 
 # --- 7. 走査先をリポジトリルート基準で解決する ---------------------------------
 #
-# SARA_GAP_ROOT 無しの通常経路。サブディレクトリから叩いても git ルートの
-# sara.toml / docs を対象にすることを固定する。
+# SARA_GAP_ROOT 無しでサブディレクトリから実行しても git ルートの sara.toml / docs を対象にする。
 
 gitrepo="$work/gitrepo"
 make_fixture "$gitrepo"

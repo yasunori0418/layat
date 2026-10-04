@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
-# 生成器の選択（→ ADR-0056）: --manifest 経路が LAYAT_GENERATOR / layat.toml に左右されないこと
-# （HM 等の activation は実行環境の環境変数・cwd を制御できない）と、未知の生成器名・不正な
-# 設定ファイルが exit 1 + 1 行・--json で E_INPUT になること、正しい指定では通常どおり配置することを
-# アサート。
+# 生成器の選択: --manifest 経路が LAYAT_GENERATOR / layat.toml に左右されないこと、未知の生成器名・
+# 不正な設定ファイルが exit 1 + 1 行・--json で E_INPUT になること、正しい指定では通常どおり配置することをアサート。
 set -euo pipefail
 source "$(dirname "$0")/../lib.sh"
 e2e_isolate
@@ -35,7 +33,7 @@ git -c user.email=e2e@layat.test -c user.name=e2e commit -qm init
 # どちらの層でも E_INPUT であることを見る。
 E_INPUT_EXPR='[.errors[]?, .results[]?.errors[]?] | any(.code == "E_INPUT")'
 
-# 人間向けは exit 1 + stderr 1 行（→ ADR-0056 §5）。
+# 人間向けは exit 1 + stderr 1 行。
 assert_input_error_line() { # $1: 説明, $2...: layat 引数
 	local desc="$1" err="$E2E_WORK/stderr.txt" code=0
 	shift

@@ -1,26 +1,7 @@
 #!/usr/bin/env bash
-# prune: 実 nix で apply した project mode の系列から root（git toplevel）を消し、`layat prune` が
-# その <roothash> 系列だけを丸ごと削除することをアサートする（→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1・
-# ADR-0034）。engine のユニットは tmpdir に手で組んだ fixture で判定分岐を覆っているので、ここが見るのは
-# 「実 apply が置いた本物のレイアウト（実 nix-env --set が張る世代リンクと indirect gcroot）を
-# prune が拾って消し切れるか」と「消えた結果 store が GC 可能になるか」の 2 点。
-#
-# `.pending` は逆にユニット側だけが持つ形で、ここには現れない（apply 成功時に cleanupPending が
-# 消す → internal/engine/engine.go 手順 10・ADR-0011。世代リンクが gcroot を継承する）。
-#
-# GC 可能になったことは `nix-store --gc --print-roots` に当該系列の `profile-N-link` が出なくなる
-# ことで見る（実 GC は回さない。`<state>` 配下の世代リンクは /nix/var/nix/gcroots/auto 経由の
-# indirect root で、系列を消すまで store path を保持し続ける）。
-#
-# 走査基底は 2 つある（ユーザー state 基底と system 基底 → ADR-0036 §3）。system 基底は絶対パス
-# なので $HOME / XDG_STATE_HOME の差し替えでは動かせず、`e2e_isolate` が
-# LAYAT_SYSTEM_PROFILE_BASE で隔離先へ向けている（→ cmd/layat/prune.go）。これにより破壊的な
-# `prune --yes` も実機の /nix/var/nix/profiles/layat には触れない。
-#
-# その隔離が効いていること自体を、隔離先へ置いた孤児系列が走査に載ることで確かめる（env の値を
-# 見比べるだけだと、export が消えていないことしか分からず、バイナリがその env を実際に読むかは
-# 観測できない。`layat` は run.sh の LAYAT で差し替え可能なので、seam を持たないバイナリを指した
-# 実行が緑のまま実基底を走査する形になる）。
+# prune: 実 apply した project mode の系列から root（git toplevel）を消し、`layat prune` がその
+# <roothash> 系列だけを削除して、`nix-store --gc --print-roots` から世代リンクが消えることをアサートする。
+# system 基底は `e2e_isolate` が隔離先へ向け、そこへ置いた孤児系列が走査に載ることも確かめる。
 set -euo pipefail
 source "$(dirname "$0")/../lib.sh"
 e2e_isolate
@@ -58,8 +39,7 @@ EOF
 }
 
 # base 直下の系列のうち、.root が $1 を指すものの <roothash> ディレクトリを返す。
-# roothash の計算式（→ paths.RootHash）をシナリオ側へ写し取ると実装と二重管理になるので、
-# 実際に置かれた backref の内容から引く。
+# roothash は実際に置かれた backref の内容から引く。
 series_dir_of() { # $1: root の絶対パス
 	local d
 	for d in "$BASE"/*/; do
@@ -72,8 +52,7 @@ series_dir_of() { # $1: root の絶対パス
 	return 1
 }
 
-# print-roots を 1 回読んでキャッシュへ落とす。失敗（daemon 不在・権限）は空出力と区別が付かず、
-# 「gcroot が消えた」の陰性判定が偽陽性で通ってしまうので、ここで落とす。
+# print-roots を 1 回読んでキャッシュへ落とす。取得の失敗・空出力はここで落とす。
 PRINT_ROOTS_CACHE="$E2E_WORK/print-roots.out"
 refresh_print_roots() {
 	if ! nix-store --gc --print-roots >"$PRINT_ROOTS_CACHE" 2>/dev/null; then
@@ -88,9 +67,7 @@ refresh_print_roots() {
 }
 
 # キャッシュした print-roots に当該系列配下の gcroot（世代リンク profile-N-link）が何件あるか。
-# print-roots の各行はリンクパスを二重引用符で囲んだ形（`"<path>" -> <store path>`）なので、
-# 系列 dir を接頭辞に持つ行だけを数える。パスに正規表現メタ文字（mktemp の tmpdir が持つ `.`）が
-# 入るため -F の固定文字列で照合する（行頭固定は落ちるが、`"` 込みの接頭辞は他の行と衝突しない）。
+# 各行 `"<path>" -> <store path>` のうち `"<系列 dir>` を接頭辞に持つ行を -F の固定文字列で数える。
 gcroot_count_under() { # $1: 系列ディレクトリ
 	grep -cF "\"$1/" "$PRINT_ROOTS_CACHE" || true
 }
@@ -106,13 +83,8 @@ LIVE_SERIES="$(series_dir_of "$LIVE_ROOT")" || { e2e_fail "生存させる系列
 e2e_log "gone=$GONE_SERIES live=$LIVE_SERIES"
 
 e2e_step "隔離先の system 基底へ孤児系列を仕込む（隔離が効いているかの観測点）"
-# 実 apply では system mode の系列を作れないので、ディレクトリと backref で組む（判定の入力は
-# .root と root の実在だけ → DSG-096dc893）。これが走査に載れば、layat が
-# LAYAT_SYSTEM_PROFILE_BASE を読んでいることが実挙動で決まる。判定は下の --dryrun / --yes で行う。
-#
-# 系列名は paths.RootHash の出力（sha256 hex の先頭 32 文字）に桁数を合わせてあるが、列挙は
-# `.root` の有無だけで決まり名前を検証しない（→ paths.ListRootHashSeries）ので、桁数は
-# 実物らしさのためであって依存ではない。
+# system mode の系列はディレクトリと backref で組む。これが走査に載れば、layat が
+# LAYAT_SYSTEM_PROFILE_BASE を読んでいる。判定は下の --dryrun / --yes で行う。
 SYS_ORPHAN="$SYSTEM_BASE/deadbeefdeadbeefdeadbeefdeadbeef"
 SYS_ORPHAN_ROOT="$E2E_WORK/never-existed"
 mkdir -p "$SYS_ORPHAN"
@@ -137,7 +109,7 @@ e2e_step "root（git toplevel）を消して孤児にする"
 rm -rf "$GONE_ROOT"
 assert_absent "$GONE_ROOT"
 
-e2e_step "prune --dryrun: 孤児系列を挙げるが FS は変えない（→ ADR-0034 §2）"
+e2e_step "prune --dryrun: 孤児系列を挙げるが FS は変えない"
 DRYRUN_OUT="$E2E_WORK/prune-dryrun.out"
 layat prune --dryrun >"$DRYRUN_OUT"
 # 行の形は `remove-series\t<roothash>\t<root>\t<names>`（→ cmd/layat/prune.go の printPrunePlan）。
@@ -169,7 +141,7 @@ fi
 assert_exists "$GONE_SERIES/.root"
 assert_symlink "$GONE_SERIES/docs/profile-1-link"
 
-e2e_step "prune --dryrun --json: 同じ在庫をエンベロープの info が運ぶ（→ issue #134）"
+e2e_step "prune --dryrun --json: 同じ在庫をエンベロープの info が運ぶ"
 ENV_DRYRUN="$E2E_WORK/prune-dryrun.json"
 run_json 0 "$ENV_DRYRUN" prune --dryrun
 assert_json "$ENV_DRYRUN" "results は空（prune は config を名指ししない）" \
@@ -178,10 +150,7 @@ assert_json "$ENV_DRYRUN" "removed に孤児系列が root / names 付きで載�
 	"[.info.removed[] | select(.root == \"$GONE_ROOT\")] | (length == 1) and (.[0].names == [\"docs\"])"
 assert_json "$ENV_DRYRUN" "生存系列は removed に載らない" \
 	"[.info.removed[] | select(.root == \"$LIVE_ROOT\")] | length == 0"
-# 想定外の skip が無いこと。skipped を見ないと、系列が backref 読み取り失敗などで skip 側へ
-# 落ちても removed に孤児が居る限り通ってしまう（dryrun の Removed は candidates で、skip 済みは
-# そこに入らないため、載っている側の確認では代替できない）。走査基底は 2 つとも隔離下にあり、
-# 素性の分かる系列しか置いていないので、基底で絞らず全件 0 で固定する。
+# 想定外の skip が無いこと。走査基底は 2 つとも隔離下にあるため、全件 0 で固定する。
 assert_json "$ENV_DRYRUN" "隔離した 2 基底のどの系列も skip されていない" \
 	'.info.skipped == []'
 

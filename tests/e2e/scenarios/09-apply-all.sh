@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# apply --all の並列化（→ ADR-0038 / ADR-0039・issue #155）: 集約順が辞書順で並列度に依らないこと、
+# apply --all の並列化: 集約順が辞書順で並列度に依らないこと、
 # cross-config target 衝突が build 前に error で止まること、--no-wait 併用で全 config が適用されること。
 # fixture ごとに別 git repo（= 別 project root）を切り、lock・.root backref・配置先を混ぜない。
 set -euo pipefail
@@ -70,7 +70,7 @@ else
 fi
 for n in alpha delta mid zeta; do assert_symlink "$LEX/out/$n"; done
 
-e2e_step "定常状態で既定並列度と --jobs 1 の results[] が同一（→ ADR-0039）"
+e2e_step "定常状態で既定並列度と --jobs 1 の results[] が同一"
 ENV_DEFAULT="$E2E_WORK/lex-default.json"
 ENV_SERIAL="$E2E_WORK/lex-serial.json"
 run_json 0 "$ENV_DEFAULT" apply --all
@@ -90,7 +90,7 @@ mk_fixture "$CONF" left=shared/cfg right=shared/cfg solo=solo/cfg
 cd "$CONF"
 
 for mode in "" "--dryrun"; do
-	e2e_step "apply --all $mode: 衝突は exit 1 で build 前に止まる（→ ADR-0038）"
+	e2e_step "apply --all $mode: 衝突は exit 1 で build 前に止まる"
 	ERR_CONF="$E2E_WORK/conflict${mode}.err"
 	# shellcheck disable=SC2086 # mode は空か 1 語。空のときに空引数を渡さない。
 	run_code 1 "$ERR_CONF" apply --all $mode

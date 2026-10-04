@@ -1,35 +1,11 @@
 #!/usr/bin/env bash
-# テストコード ⇔ テストドキュメント（CASE）対応の契約テスト（→ Issue #304、epic #283）。
+# テストコード ⇔ テストドキュメント（CASE）対応の契約テスト。go test も nix eval も呼ばない。
 #
 # 実行:
 #   nix develop '.?dir=dev#sara' -c dev/tests/test-doc-map.sh   # devShell / CI から直接
 #   nix flake check ./dev                                        # checks.test-doc-map 経由
-#
-# 検証対象。番号は下の節見出しに対応する:
-#   1.  順方向 — 全 CASE の target が実在するテスト資産を指す
-#   2.  逆方向 — 全テスト資産に CASE がある（除外リストにあるものを除く）
-#   3.  1:1 一意性 — 1 資産に 2 つ以上の CASE が張られていない
-#   4.  データファイルの健全性 — 区分表が docs/test/ のディレクトリと一致し、
-#       除外リストが実在する資産だけを挙げている
-#   5.  静的リストの健全性 — test-inventory.sh の FLAKE_CHECKS が flake ファイルの
-#       checks 定義と一致する（片側更新漏れの検出）
-#   6.  自己検証 — §1〜§3 が呼ぶ judge_* と、その結果を pass / fault へ振り分ける
-#       run_judge を合成フィクスチャへ当て、期待どおりに振る舞うことを確かめる
-#
-# ## 純静的であること
-#
-# この検証は毎 PR で回る（CI の sara ジョブ）。入力は dev/scripts/test-inventory.sh
-# --static（find / glob のみ）と CASE frontmatter（yq）だけで、go test も nix eval も
-# 呼ばない。sara devShell（sara / yq / git 等）だけで完結する。
-#
-# ## 規範は frontmatter にある
-#
-# CASE 本文の「## 対象」節は人間向けの補足で、ここでは照合しない。照合するのは
-# frontmatter の target（docs/model.yaml で required: true）。
 
-# -e は使わない（dev/tests/ の他のテストと同じ理由）。このテストは「1 回の実行で全失敗を報告する」
-# 集計方式で、-e があると最初の非ゼロ終了で以降のアサーションが走らず、退行時の診断が
-# 先頭 1 件で切れる。
+# 1 回の実行で全失敗を報告するため -e は使わない。
 set -uo pipefail
 
 fail=0
@@ -69,9 +45,7 @@ bash "$inventory_sh" --static > "$work/inventory" || {
 }
 cut -f1 "$work/inventory" | LC_ALL=C sort > "$work/assets"
 
-# 逆方向（§2）の走査対象。§4 の stale 除外検査も同じ変数を読み、「除外リストは走査対象の
-# 部分集合である」という同じ契約を両者が共有することを配線で示す（契約そのものの検査は
-# judge_reverse 内で行う。そちらが引数配線の取り違えを検知する → 4 周目のレビュー）。
+# 逆方向（§2）の走査対象。§4 の stale 除外検査も同じ変数を読む。
 reverse_scan=$work/assets
 
 if [ ! -s "$work/assets" ]; then
@@ -79,13 +53,8 @@ if [ ! -s "$work/assets" ]; then
   exit 1
 fi
 
-# CASE の <ファイルパス>\t<target> 表。frontmatter の target を yq で読む
-# （sara report matrix --format json は関係だけを返し、カスタムフィールドを含まない）。
-# ファイルごとに yq を起こすのは 47 件規模なら実用上のコストにならない。
-#
-# yq の失敗（frontmatter が壊れている等）と「target が空」は区別する。畳むと
-# 「target が無い（model.yaml で required なので sara check も落ちる）」と診断されて、
-# sara check が実は緑な状況で誤った調査先へ案内してしまう。
+# CASE の <ファイルパス>\t<target> 表。frontmatter の target を yq で読む。
+# yq の失敗（frontmatter の破損）と target が空は区別して報告する。
 : > "$work/case-targets"
 unreadable=0
 while IFS= read -r file; do
@@ -110,12 +79,7 @@ read_tsv "$exclusions_tsv" | cut -f1 | LC_ALL=C sort > "$work/exclusions"
 
 # --- 判定（§1〜§3 の本体。§6 が同じ関数を合成フィクスチャで叩く） --------------
 #
-# 判定を関数へ切り出して §1〜§3 と §6 の双方から呼ぶ。§6 が判定を再実装すると
-# 「アサーションが常に真を返す退行」を検知できない（プリミティブの動作確認になるだけで、
-# §1 の条件を `if false` へ差し替えても緑のまま通る → review 2 周目で実証された）。
-#
-# 各関数は診断行を stdout へ出し、違反があれば 1 を返す。呼び出し側が pass / fault へ
-# 振り分ける。ファイルパスを引数で受けるので、実データでも合成フィクスチャでも同じ経路。
+# 各関数は診断行を stdout へ出し、違反があれば 1 を返す。呼び出し側が pass / fault へ振り分ける。
 
 # 順方向: case_targets（<ファイル>\t<target>）の target が assets に在るか。
 judge_forward() {
@@ -142,17 +106,8 @@ judge_reverse() {
   local scan_target=$1 covered=$2 exclusions=$3 exclusions_hint=${4:-$3}
   local violated=0 asset
 
-  # 引数配線の自己防衛。免除集合（covered / exclusions）は走査対象の部分集合でなければ
-  # 意味を成さない（走査対象に居ない要素を免除しても効かない）。走査対象と免除集合を
-  # 取り違えると判定は恒常 green へ縮退し、データの性質を見るアサーションでは恒真に
-  # なって検知できない（→ 4 周目のレビューで実証）。契約を関数内で主張すれば、
-  # 取り違えは縮退ではなく違反として現れる。
-  #
-  # ただし **early return しない**。covered は CASE の target 由来なので、テスト資産の
-  # リネーム / 削除に CASE が追従していないと（＝配線が正しくても）データ起因で
-  # 非部分集合になる。抜けると (1) 診断が存在しない配線バグを指し (2) 同じ PR に入った
-  # 未カバー資産が 1 件も報告されない（→ 5 周目のレビューで実証）。違反として記録した
-  # うえで走査は続け、両方の診断を出す。
+  # 免除集合（covered / exclusions）が走査対象の部分集合であることを確かめる。
+  # 違反でも early return せず、未カバー資産の走査を続ける。
   local stray
   stray=$(LC_ALL=C comm -23 <(LC_ALL=C sort -u "$covered" "$exclusions") \
     <(LC_ALL=C sort -u "$scan_target"))
@@ -189,9 +144,7 @@ judge_unique() {
   return 1
 }
 
-# 判定関数を実データへ当て、診断行を fault へ流す。§6 がこの関数自体も検証する
-# （ここが壊れると判定が正しくても pass / fault の振り分けが失われ、違反があるのに
-# 緑で通る。2 周目の穴が判定から 1 段外側へ移っただけになる → 3 周目のレビュー）。
+# 判定関数を実データへ当て、診断行を fault へ流す。§6 がこの関数自体も検証する。
 run_judge() {
   local ok_message=$1
   shift
@@ -206,8 +159,7 @@ run_judge() {
       emitted=1
     fi
   done <<< "$diagnostics"
-  # 非ゼロを返したのに診断行が無いと pass も fault も出ず、アサーションが出力から
-  # 静かに消えて fail=0 のまま通る。判定側の実装漏れを緑にしないため必ず 1 件は出す。
+  # 非ゼロで診断行が無いときも必ず fault を 1 件出す。
   if [ "$emitted" -eq 0 ]; then
     fault "$ok_message — 判定が違反を返したが診断行が空（判定側の実装漏れ）"
   fi
@@ -228,14 +180,13 @@ run_judge "全テスト資産に CASE がある（除外リストを除く）" \
 
 # --- 3. 1:1 一意性 -----------------------------------------------------------
 
-# 順方向の 1:1（1 CASE = 1 target）は frontmatter が単一 text であることで型に担保
-# されている（!list text ではない）。ここで見るのは逆方向の重複だけ。
+# 順方向の 1:1 は target が単一 text であることで型が担保する。ここは逆方向の重複だけを見る。
 run_judge "1 テスト資産に張られた CASE は高々 1 件（1:1）" \
   judge_unique "$work/case-targets"
 
 # --- 4. データファイルの健全性 -----------------------------------------------
 
-# 区分表 ⟷ docs/test/ のディレクトリ。区分を増減したときの片側更新漏れを検出する。
+# 区分表 ⟷ docs/test/ のディレクトリ。
 read_tsv "$categories_tsv" | cut -f1 | LC_ALL=C sort > "$work/categories"
 find docs/test -mindepth 1 -maxdepth 1 -type d 2>/dev/null |
   sed 's|.*/||' |
@@ -249,7 +200,7 @@ else
   fault "区分表と docs/test/ が不一致（表のみ: ${only_table:-なし}/ ディレクトリのみ: ${only_dirs:-なし}）"
 fi
 
-# 区分表の 2 列目（説明）が空でないこと。区分名だけの行は表の意味を成さない。
+# 区分表の 2 列目（説明）が空でないこと。
 empty_desc=$(read_tsv "$categories_tsv" | awk -F'\t' 'NF < 2 || $2 == "" { print $1 }' | tr '\n' ' ')
 if [ -z "$empty_desc" ]; then
   pass "区分表の全行が説明を持つ"
@@ -257,8 +208,7 @@ else
   fault "区分表に説明の無い行がある（$empty_desc）"
 fi
 
-# 除外リストが実在する資産だけを挙げていること。消えた資産の除外が残ると、
-# 同名の資産を後で追加したときに CASE 無しのまま黙って通る。
+# 除外リストが実在する資産だけを挙げていること。
 stale_exclusion=0
 while IFS= read -r asset; do
   if ! grep -qxF "$asset" "$reverse_scan"; then
@@ -271,7 +221,7 @@ if [ "$stale_exclusion" -eq 0 ]; then
   pass "除外リストが実在するテスト資産だけを挙げている"
 fi
 
-# 除外リストの 2 列目（理由）が空でないこと。理由の無い除外は後から判断できない。
+# 除外リストの 2 列目（理由）が空でないこと。
 empty_reason=$(read_tsv "$exclusions_tsv" | awk -F'\t' 'NF < 2 || $2 == "" { print $1 }' | tr '\n' ' ')
 if [ -z "$empty_reason" ]; then
   pass "除外リストの全行が理由を持つ"
@@ -279,7 +229,7 @@ else
   fault "除外リストに理由の無い行がある（$empty_reason）"
 fi
 
-# CASE と除外リストの重複。除外しつつ CASE を持つのは意図が二重で、どちらかが古い。
+# CASE と除外リストが重複していないこと。
 both=$(LC_ALL=C comm -12 "$work/covered" "$work/exclusions" | tr '\n' ' ')
 if [ -z "$both" ]; then
   pass "除外リストと CASE の target が排他である"
@@ -289,13 +239,9 @@ fi
 
 # --- 5. 静的リストの健全性（FLAKE_CHECKS ⟷ flake ファイル） ------------------
 
-# test-inventory.sh は flake check の一覧を静的リストで持つ（--static を純ファイル走査に
-# 保つため nix eval を呼べない）。この突合が無いと片側更新漏れが検知できない: check を
-# flake へ足してリストへ足し忘れると列挙に現れず、順方向・逆方向のどちらも触れないまま
-# 黙って緑になる（実際に踏んだ）。そこで flake ファイルの定義行を grep して集合比較する。
+# test-inventory.sh の静的リストと、flake ファイルの `checks.<name> =` 定義行を集合比較する。
 
-# 静的リストの flake check 識別子。冒頭で保存した --static の出力から採る
-# （再実行すると終了ステータスの扱いが冒頭と二重になる）。
+# 静的リストの flake check 識別子。冒頭で保存した --static の出力から採る。
 awk -F'\t' '$2 == "flake-check" { print $1 }' "$work/inventory" |
   LC_ALL=C sort > "$work/listed-checks"
 
@@ -322,9 +268,7 @@ else
   # 静的リスト（module 生成分を除く）⟷ flake の定義。
   LC_ALL=C comm -23 "$work/listed-checks" "$work/module-checks" > "$work/listed-hand"
 
-  # module 生成分は only_flake から除く。除かないと「flake に在るが FLAKE_CHECKS に無い
-  # → 追加せよ」と出るが、実際は既に FLAKE_CHECKS に在るので指示に従っても直らない
-  # （正しい診断は下の wrongly_module 側が出す）。
+  # module 生成分は only_flake から除く（診断は下の wrongly_module 側が出す）。
   LC_ALL=C comm -13 "$work/listed-hand" "$work/defined-checks" |
     LC_ALL=C comm -23 - "$work/module-checks" > "$work/only-flake"
 
@@ -341,9 +285,7 @@ else
     fault "静的リスト: FLAKE_CHECKS に在るが flake の定義に無い（$only_list）— 消えた check の残骸か、flakeModule 生成分なら --module-generated-checks 側へ移す"
   fi
 
-  # MODULE_GENERATED_CHECKS ⊆ FLAKE_CHECKS。包含が崩れると 3 判定すべてが空になり、
-  # その check が列挙から静かに落ちる（f4c7a49 が塞いだ片側更新漏れと同型の穴が
-  # module 生成分側に残る → 3 周目のレビュー）。
+  # MODULE_GENERATED_CHECKS ⊆ FLAKE_CHECKS。
   not_listed=$(LC_ALL=C comm -13 "$work/listed-checks" "$work/module-checks" | tr '\n' ' ')
   if [ -z "$not_listed" ]; then
     pass "flakeModule 生成分が FLAKE_CHECKS にも載っている"
@@ -362,37 +304,25 @@ fi
 
 # --- 6. 自己検証（判定関数が両側へ倒れるか） ---------------------------------
 #
-# §1〜§3 は「今のリポジトリが正しい」ことだけを見るため、判定が誤って常に真を返す退行が
-# 起きても緑のまま通る。ここでは §1〜§3 が実際に呼んでいる judge_* 関数そのものを、
-# 合成フィクスチャ（$work/self/ 配下・リポジトリの実ファイルには触らない）へ当てて、
-# 違反なしで真・違反ありで偽の**両側へ**倒れることを確かめる。
-#
-# 判定を §6 内で再実装してはいけない。再実装すると grep / uniq の動作確認になるだけで、
-# §1 の条件を `if false` へ差し替えても緑のまま通る（2 周目のレビューで実証された）。
+# §1〜§3 が呼ぶ judge_* を合成フィクスチャ（$work/self/ 配下）へ当て、
+# 違反なしで真・違反ありで偽の両側へ倒れることを確かめる。
 
 self=$work/self
 mkdir -p "$self"
 
-# 違反のないフィクスチャ。空集合は真に空にする（実データ側の exclusions / covered は
-# read_tsv / grep -v が空行を落とすため、空行 1 行を含むファイルは形が乖離する）。
+# 違反のないフィクスチャ。空集合は空行も含まない空ファイルにする。
 printf 'a_test.go\nb_test.go\n' > "$self/assets-ok"
 printf 'CASE-a.md\ta_test.go\nCASE-b.md\tb_test.go\n' > "$self/case-targets-ok"
 printf 'a_test.go\nb_test.go\n' > "$self/covered-ok"
 : > "$self/exclusions-empty"
 
-# 違反のあるフィクスチャ。判定内の分岐ごとに 1 つずつ用意する。1 つのフィクスチャで
-# 複数の分岐を同時に踏ませると、片方の分岐が死んでももう片方が違反を返して緑になり、
-# 「常に真になる退行」を取りこぼす（実際に踏んだ）。
+# 違反のあるフィクスチャ。判定内の分岐ごとに 1 つずつ用意する。
 # 順方向 (a): 実在しない target を指す。
 printf 'CASE-a.md\tgone_test.go\n' > "$self/case-targets-dangling"
-# 順方向 (b): target が空。空 target 分岐だけを踏ませるため、assets 側に空行を含める
-# （含めないと grep 分岐も同時に違反を返し、空 target 分岐を殺しても偽が返って
-# 分岐の生死が見えない）。
+# 順方向 (b): target が空。空 target 分岐だけを踏ませるため、assets 側に空行を含める。
 printf 'CASE-b.md\t\n' > "$self/case-targets-empty"
 printf '\na_test.go\n' > "$self/assets-with-empty"
-# 逆方向: covered にも exclusions にも無い資産（c_test.go）。免除集合は走査対象の
-# 部分集合に保つ（そうしないと judge_reverse の部分集合契約が先に発火して、
-# 意図した未カバー判定の分岐を踏まない）。
+# 逆方向: covered にも exclusions にも無い資産（c_test.go）。免除集合は走査対象の部分集合に保つ。
 printf 'a_test.go\nc_test.go\n' > "$self/assets-uncovered"
 printf 'a_test.go\n' > "$self/covered-subset"
 # 逆方向: 除外リストだけで消える資産（除外経路の単独検証用）。
@@ -430,13 +360,11 @@ expect_judge_pass "judge_forward" \
   judge_forward "$self/case-targets-ok" "$self/assets-ok"
 expect_judge_fail "judge_forward（実在しない target）" \
   judge_forward "$self/case-targets-dangling" "$self/assets-ok"
-# 空 target 分岐は assets-with-empty（空行を含む）と組ませることで単独に踏ませる。
-# この組では grep 分岐が空文字を「在る」と判定するため、空 target 分岐だけが違反を返す。
+# 空 target 分岐は assets-with-empty（空行を含む）と組ませて単独に踏ませる。
 expect_judge_fail "judge_forward（target が空）" \
   judge_forward "$self/case-targets-empty" "$self/assets-with-empty"
 
-# 逆方向は「covered に在る」「exclusions に在る」の 2 経路で違反を消す。両経路を
-# それぞれ単独で確かめる（片方が死んでももう片方が拾って緑になるのを防ぐ）。
+# 逆方向で違反を消す 2 経路（covered / exclusions）をそれぞれ単独で確かめる。
 expect_judge_pass "judge_reverse（covered 経路）" \
   judge_reverse "$self/assets-ok" "$self/covered-ok" "$self/exclusions-empty"
 printf 'c_test.go\n' > "$self/exclusions-c"
@@ -445,8 +373,7 @@ expect_judge_pass "judge_reverse（除外リスト経路）" \
   judge_reverse "$self/assets-c-only" "$self/covered-empty" "$self/exclusions-c"
 expect_judge_fail "judge_reverse（どちらにも無い）" \
   judge_reverse "$self/assets-uncovered" "$self/covered-subset" "$self/exclusions-empty"
-# 部分集合契約。走査対象に無い要素を免除集合が含む配線（引数の取り違えがこの形になる）で
-# 落ちること。診断が未カバー判定ではなく配線の誤りを指すことも固定する。
+# 部分集合契約。走査対象に無い要素を免除集合が含むと落ち、診断が配線の誤りを指す。
 expect_judge_fail "judge_reverse（走査対象と免除集合の取り違え）" \
   judge_reverse "$self/covered-ok" "$self/assets-uncovered" "$self/exclusions-c"
 
@@ -461,9 +388,7 @@ expect_judge_pass "judge_unique" \
 expect_judge_fail "judge_unique" \
   judge_unique "$self/case-targets-dup"
 
-# run_judge 自体の検証。judge_* が正しくても、この関数が pass / fault の振り分けを
-# 誤れば違反があるのに緑で通る（判定を直しただけでは穴が 1 段外側へ移るだけ）。
-# pass / fault を数える版へ一時的に差し替えて、呼ばれ方を観測する。
+# run_judge 自体の検証。pass / fault を数える版へ一時的に差し替えて、呼ばれ方を観測する。
 judge_always_ok() { return 0; }
 judge_always_violates() { echo "合成の違反診断"; return 1; }
 judge_violates_silently() { return 1; }
@@ -481,9 +406,7 @@ probe_run_judge() {
   printf '%d\t%d\t%d\n' "$pass_count" "$fault_count" "$status"
 }
 
-# probe_run_judge は pass / fault を差し替えるため、必ずコマンド置換（サブシェル）で
-# 呼ぶ。本体の定義はサブシェル内でしか隠れないので、終了と同時に元へ戻る。直接呼ぶと
-# 以降の pass / fault が失われ、アサーションが黙って出力から消える。
+# probe_run_judge は pass / fault を差し替えるため、必ずコマンド置換（サブシェル）で呼ぶ。
 probe_ok=$(probe_run_judge judge_always_ok)
 probe_violation=$(probe_run_judge judge_always_violates)
 probe_silent=$(probe_run_judge judge_violates_silently)
@@ -507,8 +430,7 @@ check_probe "違反あり" "$probe_violation" 0 1 1
 # 違反ありだが診断行が空 → 黙って通さず fault へ倒す。
 check_probe "違反ありで診断が空" "$probe_silent" 0 1 1
 
-# 実データ側の入力の非空性。assets / covered が空だと §1〜§3 が空虚に真になる
-# （exclusions は空でも §2 が単に厳しく判定するだけなので、ここには含めない）。
+# 実データ側の入力の非空性。assets / covered が空だと §1〜§3 が空虚に真になる。
 for name in assets covered case-targets; do
   if [ ! -s "$work/$name" ]; then
     fault "自己検証: $name が空（§1〜§3 が空虚に真になる）"

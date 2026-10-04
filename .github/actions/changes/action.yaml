@@ -1,5 +1,5 @@
 name: 'Detect relevant changes'
-description: 'Detect whether nix / Go / CI-defining files changed. Outputs run=true when the CI jobs should execute (→ ADR-0030).'
+description: 'Detect whether nix / Go / CI-defining files changed. Outputs run=true when the CI jobs should execute.'
 outputs:
   run:
     description: 'true when nix/Go/CI files changed, or on any non-pull_request event'
@@ -7,9 +7,8 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    # On pull_request, classify the changed paths. The same set the old `paths`
-    # trigger used; centralised here so required status checks always report
-    # (skipped jobs count as success) instead of never starting (→ ADR-0030).
+    # On pull_request, classify the changed paths so required status checks
+    # always report (skipped jobs count as success).
     - name: Filter changed paths
       id: filter
       if: github.event_name == 'pull_request'
