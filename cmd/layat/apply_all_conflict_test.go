@@ -1,8 +1,7 @@
 package main
 
-// Tests for apply --all's cross-config target conflict preflight (→ ADR-0038, issue #152): the
-// bucket rules (per rootKind, per fixed root value, one bucket under --root), the interplay with
-// the root filter's selection, the non-check of a named apply, and the --json top-level errors[].
+// Tests for apply --all's cross-config target conflict preflight: bucket rules, root filter
+// selection, named apply, and the --json top-level errors[].
 
 import (
 	"errors"
@@ -58,8 +57,7 @@ func TestDetectCrossConfigConflictsBuckets(t *testing.T) {
 			selected: []string{"a", "b"},
 		},
 		{
-			// The fixed root value is compared, not the kind: a fixed root that happens to equal the
-			// project root is a different bucket (an undetectable case left to the runtime; → ADR-0038).
+			// A fixed root is compared by value, so one equal to the project root is a different bucket.
 			name: "fixed and project are different buckets",
 			roots: map[string]manifest.Root{
 				"a": {RootKind: "fixed", Root: "/srv/app", Targets: []string{"conf"}},
@@ -129,8 +127,8 @@ func TestDetectCrossConfigConflictsMessage(t *testing.T) {
 	}
 }
 
-// TestDetectCrossConfigConflictsJSON checks the preflight error lands on the top-level errors[]
-// as E_LAYAT_FAILED: it fails before any subject is registered (→ ADR-0043 §6).
+// TestDetectCrossConfigConflictsJSON: the preflight error lands on the top-level errors[] as
+// E_LAYAT_FAILED, since no subject is registered yet.
 func TestDetectCrossConfigConflictsJSON(t *testing.T) {
 	roots := map[string]manifest.Root{
 		"a": {RootKind: "home", Targets: []string{"conf"}},
@@ -195,8 +193,8 @@ func nixCalls(t *testing.T, log string) []string {
 	return strings.Split(strings.TrimSpace(string(b)), "\n")
 }
 
-// withFlakeEntrypoint points -f at a temp dir holding a flake.nix and isolates the state / home dirs
-// and the generator selection's environment (LAYAT_GENERATOR, the user's config.toml; → ADR-0056).
+// withFlakeEntrypoint points -f at a temp flake.nix and isolates the state / home dirs and the
+// generator selection's environment.
 func withFlakeEntrypoint(t *testing.T) {
 	t.Helper()
 	dir := t.TempDir()
@@ -216,10 +214,9 @@ func withFlakeEntrypoint(t *testing.T) {
 // error ("N config(s) failed") cannot pass for it.
 const conflictMarker = "claimed by both"
 
-// TestRunApplyAllPreflight drives runApplyAll through a stub nix: a conflict stops the run after
-// the batch eval, so no build (hence no placement) is ever started, with or without --dryrun.
-// The selection and --root reach the detector from runApplyAll itself: a conflict outside the root
-// filter's selection goes on to build, and --root makes configs of different rootKinds collide.
+// TestRunApplyAllPreflight drives runApplyAll through a stub nix: a conflict stops the run before
+// any build, with or without --dryrun. Conflicts outside the root filter go on to build, and
+// --root makes configs of different rootKinds collide.
 func TestRunApplyAllPreflight(t *testing.T) {
 	const sameKind = `{"a":{"rootKind":"home","targets":["dup"]},"b":{"rootKind":"home","targets":["dup"]}}`
 	const unselected = `{"a":{"rootKind":"home","targets":["dup"]},"b":{"rootKind":"project","targets":["dup"]},"c":{"rootKind":"project","targets":["dup"]}}`
@@ -302,9 +299,8 @@ func TestRunApplyNamedIsNotChecked(t *testing.T) {
 	}
 }
 
-// TestRunApplyAllRejectsManifest pins that apply --all rejects --manifest as an input error before
-// any nix call: --manifest fixes the source to a single pre-built link-farm, which --all cannot
-// apply config by config (→ ADR-0056 §5, ADR-0026).
+// TestRunApplyAllRejectsManifest: apply --all rejects --manifest as an input error before any nix
+// call.
 func TestRunApplyAllRejectsManifest(t *testing.T) {
 	withFlakeEntrypoint(t)
 	origManifest, origAll := flagManifest, flagApplyAll

@@ -1,9 +1,7 @@
 package main
 
-// Conformance and shape tests for the --all paths' multiple SubjectResult output (→ issue #164
-// acceptance). Every emitted document must pass outturn's conformance checker under the same
-// schema as a single-config run — the point of the shape being identical is that N=1 and N>1 are
-// not different documents, only different lengths of results[].
+// Conformance and shape tests for the --all paths' multiple SubjectResult output. N=1 and N>1
+// documents differ only in the length of results[].
 
 import (
 	"bytes"
@@ -36,9 +34,8 @@ func checkConformance(t *testing.T, buf *bytes.Buffer) {
 	}
 }
 
-// subjectResults decodes the envelope and returns its results[] keyed by subject name, alongside
-// the ordered names — the --all documents are asserted per subject, and a map keeps each
-// assertion pointing at the config it means rather than at a positional index.
+// subjectResults decodes the envelope and returns its results[] keyed by subject name, with the
+// ordered names.
 func subjectResults(t *testing.T, buf *bytes.Buffer) (map[string]map[string]any, []string) {
 	t.Helper()
 	doc := decodeEnvelope(t, buf)
@@ -63,10 +60,7 @@ func statusAndErrors(t *testing.T, sr map[string]any) (string, []any) {
 	return sr["status"].(string), errs
 }
 
-// placedResult is one config's successful apply: a single placed entry, so its SubjectResult
-// carries a real inventory rather than an empty one (a succeeded config surviving a sibling's
-// failure has to be observable as more than a bare status). Each config has its own profile —
-// what makes --all N separate atomic runs rather than one (→ layat ADR-0002).
+// placedResult is one config's successful apply with a single placed entry and its own profile.
 func placedResult(name string) *engine.Result {
 	return &engine.Result{
 		Profile: "/state/nix/profiles/layat/" + name + "/profile",
@@ -75,12 +69,9 @@ func placedResult(name string) *engine.Result {
 	}
 }
 
-// TestApplyAllPartialFailureKeepsEverySubject is issue #164's first acceptance criterion: with one
-// config failing among several, the envelope aggregates to error while still carrying the
-// SubjectResult of every config that succeeded — a consumer must not lose the successes because a
-// sibling failed. The failure stays on its own subject, and the top-level errors[] stays absent:
-// once subjects exist, the top level is reserved for failures that precede their enumeration
-// (→ ADR-0043 §6).
+// TestApplyAllPartialFailureKeepsEverySubject: with one config failing, the envelope is error yet
+// carries every succeeded config's SubjectResult. The failure stays on its own subject, and the
+// top-level errors[] stays absent.
 func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 	run, buf := newApplyTestRun()
 	applied, skipped, failures := aggregateApply(run, []string{"a", "b", "c"}, 4, func(name string) (*engine.Result, error) {
@@ -136,19 +127,14 @@ func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 	}
 }
 
-// TestApplyAllPartialFailureItemBorne is the acceptance criterion above on the path production
-// actually takes: engine.Apply returns its partial result alongside the error (→ engine.apply's
-// "return a.result, err"), so the failing config's subject gets a payload whose failed item already
-// carries the error. That makes the failure item-borne, and its SubjectResult.errors[] must stay
-// empty while the status is still error (outturn §2 / ADR-0002). The res == nil variant above only
-// covers the failures that precede any engine result (a pre-flight eval / lock rejection).
+// TestApplyAllPartialFailureItemBorne: when the engine returns a partial result with the error,
+// the failure is item-borne, so the subject's errors[] stays empty while its status is error.
 func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 	run, buf := newApplyTestRun()
 	failure := errors.New("layat: symlink t/b: permission denied")
 	_, _, failures := aggregateApply(run, []string{"a", "b", "c"}, 4, func(name string) (*engine.Result, error) {
 		if name == "b" {
-			// The engine's partial result: the entry it stopped on, plus the planned entry it
-			// never reached (→ outturn ADR-0016's reached-state partition).
+			// The engine's partial result: the entry it stopped on, plus a planned entry it never reached.
 			res := placedResult(name)
 			res.Placed = nil
 			res.Entries = append(res.Entries, manifest.Entry{Target: "t/" + name + "-later"})
@@ -205,14 +191,9 @@ func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 	}
 }
 
-// TestApplyAllSharedTargetKeepsItemIDsResultScoped pins the id-scoping contract the --all shape
-// depends on (→ docs/spec.md, outturn §5): item ids derive from the target alone — the config name
-// is deliberately not part of the identity (→ ADR-0043 §3) — so two configs declaring the same
-// target produce the same item.id in two different results[]. That is legal precisely because
-// references resolve within one SubjectResult (the (tool, subject, id) triple), and the conformance
-// checker's uniqueness scope has to agree. Nothing else in the suite puts a duplicate id in one
-// document, and cross-config target collisions are reachable today (ADR-0038's pre-flight
-// detection is accepted but unimplemented).
+// TestApplyAllSharedTargetKeepsItemIDsResultScoped: item ids derive from the target alone, so two
+// configs with the same target share an item.id across results[]. The document still conforms,
+// since references resolve within one SubjectResult.
 func TestApplyAllSharedTargetKeepsItemIDsResultScoped(t *testing.T) {
 	run, buf := newApplyTestRun()
 	shared := manifest.Entry{Target: ".config/shared"}
@@ -251,18 +232,13 @@ func TestApplyAllSharedTargetKeepsItemIDsResultScoped(t *testing.T) {
 	}
 }
 
-// TestApplyAllSkipIsNotAFailure pins the try-lock skip's asymmetry with a failure: ErrSkipped is a
-// normal skip (exit 0 for a named apply), so its subject succeeds and the aggregate stays success.
-// Without this the skip would be indistinguishable from a failure in the envelope while the exit
-// code says otherwise (→ docs/spec.md exit code table).
+// TestApplyAllSkipIsNotAFailure: a try-lock skip settles its subject as success, and the aggregate
+// stays success.
 func TestApplyAllSkipIsNotAFailure(t *testing.T) {
 	run, buf := newApplyTestRun()
 	applied, skipped, failures := aggregateApply(run, []string{"a", "b"}, 4, func(name string) (*engine.Result, error) {
 		if name == "b" {
-			// The engine returns its result alongside ErrSkipped (→ engine.apply's try-lock arm
-			// sets Skipped and returns a.result), so a payload is attached here too. The try-lock
-			// gate precedes the manifest read, so that result carries no entries at all — the run
-			// never learned what it would have placed.
+			// The engine returns a result with no entries alongside ErrSkipped, so a payload is attached too.
 			return &engine.Result{Profile: placedResult(name).Profile, Skipped: true}, engine.ErrSkipped
 		}
 		return placedResult(name), nil
@@ -284,10 +260,8 @@ func TestApplyAllSkipIsNotAFailure(t *testing.T) {
 	}
 }
 
-// TestApplyAllEmptySelectionEmitsEmptyResults is issue #164's second acceptance criterion: an
-// --all that matches no config emits results: [] with status success — the same shape, at N=0.
-// Consumers may only rely on results[] always being present, so an empty selection must not
-// degrade into an absent key or an error.
+// TestApplyAllEmptySelectionEmitsEmptyResults: an --all matching no config emits results: [] with
+// status success.
 func TestApplyAllEmptySelectionEmitsEmptyResults(t *testing.T) {
 	run, buf := newApplyTestRun()
 	if applied, skipped, failures := aggregateApply(run, nil, 4, func(string) (*engine.Result, error) {
@@ -314,12 +288,9 @@ func TestApplyAllEmptySelectionEmitsEmptyResults(t *testing.T) {
 	}
 }
 
-// TestApplyAllDryRunConflictIsItemBorne is issue #164's third acceptance criterion and the
-// symmetry requirement against the named apply --dryrun: a conflicting config's entry becomes a
-// failed item carrying E_LAYAT_COLLISION (item-borne, so it must NOT be repeated in that
-// SubjectResult's errors[] · outturn §2), the subject's status is error (outturn ADR-0002: a failed
-// item makes the result error), the aggregate is error, and the exit code stays what
-// applyAllExitCode decides — conflict 2, not the error 1 (→ layat ADR-0043 §6, ADR-0024).
+// TestApplyAllDryRunConflictIsItemBorne: a conflicting entry is a failed item with
+// E_LAYAT_COLLISION and is not repeated in errors[]; subject and aggregate are error, and the exit
+// code is conflict 2.
 func TestApplyAllDryRunConflictIsItemBorne(t *testing.T) {
 	run, buf := newApplyTestRun()
 	run.dryRun = true
@@ -385,10 +356,8 @@ func TestApplyAllDryRunConflictIsItemBorne(t *testing.T) {
 	}
 }
 
-// TestApplyAllDryRunMixedErrorAndConflict pins the two error layers side by side in one document,
-// which is the combination the exit-code priority exists for: a config that failed outright carries
-// a subject-level error, a config that merely conflicts carries none (its item does), and the exit
-// code is error(1) — not the conflict's 2, which must never mask a real failure (→ ADR-0024).
+// TestApplyAllDryRunMixedErrorAndConflict: an outright failure carries a subject-level error, a
+// conflict carries none, and the exit code is error(1).
 func TestApplyAllDryRunMixedErrorAndConflict(t *testing.T) {
 	run, buf := newApplyTestRun()
 	run.dryRun = true
@@ -434,7 +403,7 @@ func TestApplyAllDryRunMixedErrorAndConflict(t *testing.T) {
 	if got := errs[0].(map[string]any)["code"]; got != "E_LAYAT_FAILED" {
 		t.Errorf("failed subject error code = %v, want E_LAYAT_FAILED (the build error is unclassified here)", got)
 	}
-	// The conflict is item-borne: same error status, but errors[] stays empty (outturn §2).
+	// The conflict is item-borne: same error status, but errors[] stays empty.
 	status, errs = statusAndErrors(t, byName["clashing"])
 	if status != "error" {
 		t.Errorf("conflicting subject status = %s, want error", status)
@@ -447,12 +416,8 @@ func TestApplyAllDryRunMixedErrorAndConflict(t *testing.T) {
 	}
 }
 
-// TestApplyAllSingleConfigMatchesNamedApply is issue #164's fourth acceptance criterion, pinned as
-// an equality rather than a description: a one-config --all and a named apply of the same config
-// must emit byte-identical documents once the clocks agree. Any drift the append-based
-// generalization could introduce (an extra results entry, a different error layer, a status the
-// subject no longer decides) shows up here as a diff, which is what "single-config output is
-// unchanged" actually means.
+// TestApplyAllSingleConfigMatchesNamedApply: a one-config --all and a named apply of the same config
+// emit byte-identical documents once the clocks agree.
 func TestApplyAllSingleConfigMatchesNamedApply(t *testing.T) {
 	res := placedResult("default")
 
@@ -476,15 +441,11 @@ func TestApplyAllSingleConfigMatchesNamedApply(t *testing.T) {
 	checkConformance(t, allBuf)
 }
 
-// TestApplyAllSingleConfigFailureMatchesNamedApply is the equality above on the failing side, which
-// is where the two paths actually diverge in mechanism: the named apply settles nothing and lets
-// emit attribute the command error to its one subject, while --all settles the subject itself with
-// that config's error and hands emit an aggregate error it must not re-apply. Both must still land
-// on the same document — the invariant behind emit's first-wins finish (→ issue #164).
+// TestApplyAllSingleConfigFailureMatchesNamedApply: on failure too, the named apply (settled by
+// emit) and --all (settled by the aggregator) emit the same document.
 func TestApplyAllSingleConfigFailureMatchesNamedApply(t *testing.T) {
 	failure := errors.New("layat: generation commit (nix-env --set) failed")
-	// A commit failure: the engine returns a result but no failed target, so it is subject-borne
-	// (not item-borne) and has to appear in the SubjectResult's errors[] on both paths.
+	// A commit failure has a result but no failed target, so it is subject-borne on both paths.
 	newRes := func() *engine.Result {
 		res := placedResult("default")
 		res.Placed = nil
@@ -499,8 +460,7 @@ func TestApplyAllSingleConfigFailureMatchesNamedApply(t *testing.T) {
 
 	all, allBuf := newApplyTestRun()
 	aggregateApply(all, []string{"default"}, 4, func(string) (*engine.Result, error) { return newRes(), failure })
-	// --all reports its own aggregate error, whose text differs from the config's; the subject is
-	// already settled, so this must not reach it.
+	// --all's aggregate error must not reach the already settled subject.
 	if err := all.emit(&exitCodeError{code: 1, msg: "layat: apply --all: 1 config(s) failed"}); err != nil {
 		t.Fatalf("emit all: %v", err)
 	}
@@ -516,11 +476,8 @@ func TestApplyAllSingleConfigFailureMatchesNamedApply(t *testing.T) {
 	}
 }
 
-// stubNixEnvListGenerations puts a fake nix-env first on PATH: it prints one generation line for
-// every profile except failFor, for which it exits non-zero. That makes runListAllGenerations
-// drivable in-process — the real one shells out to nix-env — so the subject wiring (register per
-// config, attach that config's listing, settle it) is exercised through production code rather
-// than restated by the test.
+// stubNixEnvListGenerations puts a fake nix-env first on PATH: it prints one generation for every
+// profile except failFor, for which it exits non-zero.
 func stubNixEnvListGenerations(t *testing.T, failFor string) {
 	t.Helper()
 	bin := t.TempDir()
@@ -536,9 +493,8 @@ func stubNixEnvListGenerations(t *testing.T, failFor string) {
 	t.Setenv("PATH", bin+string(os.PathListSeparator)+os.Getenv("PATH"))
 }
 
-// makeHomeProfiles creates the on-disk shape runListAllGenerations scans for: a <name> directory
-// holding a "profile" link directly under <state>/nix/profiles/layat (the home-mode layout; the
-// roothash family nests one level deeper and is skipped · → paths.Resolve, ADR-0024).
+// makeHomeProfiles creates <state>/nix/profiles/layat/<name>/profile links, the home-mode layout
+// runListAllGenerations scans.
 func makeHomeProfiles(t *testing.T, names ...string) {
 	t.Helper()
 	state := t.TempDir()
@@ -555,10 +511,8 @@ func makeHomeProfiles(t *testing.T, names ...string) {
 	}
 }
 
-// TestListGenerationsAllWiring drives the real runListAllGenerations, which is what actually
-// registers and settles one subject per scanned config (→ issue #164). Driving production rather
-// than hand-building the subjects is the point: a forgotten beginSubject / setPayload / finish
-// cannot pass by having the test restate what production should have done.
+// TestListGenerationsAllWiring drives the real runListAllGenerations, which registers and settles
+// one subject per scanned config.
 func TestListGenerationsAllWiring(t *testing.T) {
 	origJSON := flagJSON
 	defer func() { flagJSON = origJSON }()
@@ -609,8 +563,7 @@ func TestListGenerationsAllWiring(t *testing.T) {
 		if doc["status"] != "error" {
 			t.Errorf("aggregate status = %v, want error", doc["status"])
 		}
-		// The failure belongs to the config it happened on, not to the top level — subjects exist,
-		// so the top-level layer (pre-enumeration failures only) must stay empty (→ ADR-0043 §6).
+		// The failure belongs to its config's subject; the top-level errors[] stays empty.
 		if topErrs, ok := doc["errors"]; ok {
 			t.Errorf("top-level errors = %v, want absent (the failure belongs to subject work)", topErrs)
 		}
@@ -628,10 +581,8 @@ func TestListGenerationsAllWiring(t *testing.T) {
 	})
 }
 
-// TestGitignoreAllWiring is TestListGenerationsAllWiring's gitignore counterpart, driving the real
-// enumerateGitignoreAll through its target-lookup seam (→ issue #164). Both read commands promise
-// the same truncation contract in docs/spec.md, so both have to pin it: a failure stops the
-// enumeration, the config it happened on carries it, and the configs after it never appear.
+// TestGitignoreAllWiring drives the real enumerateGitignoreAll: a failure stops the enumeration,
+// its config carries it, and the configs after it never appear.
 func TestGitignoreAllWiring(t *testing.T) {
 	origJSON := flagJSON
 	defer func() { flagJSON = origJSON }()
@@ -704,9 +655,8 @@ func TestGitignoreAllWiring(t *testing.T) {
 	})
 }
 
-// infoArray reads an array out of one SubjectResult's result.info (the read commands' inventory
-// slot), failing the test if the key is missing or not an array. The key must be present even
-// when empty — the read commands build non-nil slices precisely so it never marshals away.
+// infoArray reads an array out of one SubjectResult's result.info, failing if the key is missing
+// or not an array.
 func infoArray(t *testing.T, sr map[string]any, key string) []any {
 	t.Helper()
 	info, ok := sr["result"].(map[string]any)["info"].(map[string]any)

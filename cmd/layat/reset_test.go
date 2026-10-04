@@ -9,8 +9,8 @@ import (
 	"github.com/yasunori0418/layat/internal/engine"
 )
 
-// confirmPolicy decides the confirmation policy from --yes / TTY state (→ ADR-0025 §5).
-// Regression guard for refusing a destructive reset when non-interactive without --yes (#13 AC-5).
+// confirmPolicy decides the confirmation policy from --yes / TTY state, refusing a non-interactive
+// destructive run without --yes.
 func TestConfirmPolicy(t *testing.T) {
 	cases := []struct {
 		name        string
@@ -67,8 +67,8 @@ func TestPromptYesNo(t *testing.T) {
 	}
 }
 
-// isInteractive returns false for pipe / redirect stdin (the non-TTY path; → ADR-0025 §5).
-// The TTY=true path needs a real terminal and cannot be verified in CI, so only the false path is verified.
+// isInteractive returns false for pipe / redirect stdin. The TTY path needs a real terminal and is
+// not tested.
 func TestIsInteractiveNonTTY(t *testing.T) {
 	restore := withStdin(t, "")
 	defer restore()
@@ -77,8 +77,8 @@ func TestIsInteractiveNonTTY(t *testing.T) {
 	}
 }
 
-// reset's output stream discipline (#13 AC-9): the dryrun plan owns stdout,
-// while the planned removals / result report go to stderr.
+// reset's output streams: the dryrun plan goes to stdout, the planned removals and result report
+// to stderr.
 func TestResetOutputStreams(t *testing.T) {
 	res := &engine.ResetResult{
 		Root:            "/root",

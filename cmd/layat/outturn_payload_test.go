@@ -1,9 +1,7 @@
 package main
 
-// Tests for the #131 mutation payloads (apply / reset / rollback): the engine-result → outturn
-// items/changes/generation/warnings mapping, the partial-failure partition (outturn ADR-0016 /
-// ADR-0020), the error-layer placement (item-borne vs subject-borne · outturn §2), and
-// conformance of every emitted shape against outturn's checker.
+// Tests for the mutation payloads (apply / reset / rollback): the engine-result → outturn mapping,
+// the partial-failure partition, the error-layer placement, and conformance of every shape.
 
 import (
 	"bytes"
@@ -61,12 +59,8 @@ func changesFor(t *testing.T, changes []layatChange, target string) []layatChang
 	return out
 }
 
-// emitPayloadDoc runs the payload through the real emit path (command + subject + payload),
-// checks the document against outturn's conformance checker, and returns it decoded. newRun is
-// the emitting command's test-run constructor (newApplyTestRun, ...), which carries both the
-// command name and its info pair from the production alias — so no call site re-spells the type
-// arguments (→ issue #196). The mutation commands' pairs are empty seat types, so the emitted
-// document carries no info key on either level.
+// emitPayloadDoc runs the payload through the real emit path, checks conformance, and returns the
+// decoded document. newRun is the command's test-run constructor (newApplyTestRun, ...).
 func emitPayloadDoc[TInfo, TEnvInfo any](t *testing.T, newRun func() (*outturnRun[TInfo, TEnvInfo], *bytes.Buffer), p *outturnPayload[TInfo], cmdErr error) map[string]any {
 	t.Helper()
 	checker, err := conformance.NewDefaultChecker()
@@ -84,14 +78,8 @@ func emitPayloadDoc[TInfo, TEnvInfo any](t *testing.T, newRun func() (*outturnRu
 	return decodeEnvelope(t, buf)
 }
 
-// assertNoInfoKeys fails when the document carries an info key at the envelope level or inside
-// any result. The seat types are empty structs held as nil pointers precisely so omitempty
-// drops both keys (→ issue #196 §4); a value struct, or a seat accidentally filled with &T{},
-// would emit "info":{} — schema-valid (envelope.schema.json types info as a bare object) and
-// therefore invisible to the conformance checker, so it has to be pinned here.
-//
-// The results loop is empty for init — the one command that registers no subject — leaving the
-// envelope-level check as the whole assertion there, which is the only level its documents have.
+// assertNoInfoKeys fails when the document carries an info key at the envelope level or inside any
+// result. "info":{} is schema-valid, so the conformance checker cannot catch it.
 func assertNoInfoKeys(t *testing.T, doc map[string]any) {
 	t.Helper()
 	if v, ok := doc["info"]; ok {
@@ -106,12 +94,8 @@ func assertNoInfoKeys(t *testing.T, doc map[string]any) {
 	}
 }
 
-// TestMutationSeatInfoKeysStayAbsent pins the output-invariance requirement that made the
-// mutation info slots empty seat types behind pointers (→ issue #196 §4): apply / reset /
-// rollback must emit no info key at either level, both with a payload attached and on the
-// payload-less path (a failure before any engine result exists). Without this the seats could
-// silently start emitting "info":{} — the conformance checker accepts it, so no other test
-// in the suite would notice.
+// TestMutationSeatInfoKeysStayAbsent: apply / reset / rollback emit no info key at either level,
+// with a payload and on the payload-less failure path.
 func TestMutationSeatInfoKeysStayAbsent(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
@@ -144,8 +128,7 @@ func TestMutationSeatInfoKeysStayAbsent(t *testing.T) {
 		}
 		assertNoInfoKeys(t, emitPayloadDoc(t, newResetTestRun, p, nil))
 	})
-	// The subject-registered-but-payload-less path: the command failed before any engine result
-	// existed, so Result.Info stays the zero value. A non-pointer seat would surface here.
+	// Payload-less path: the command failed before any engine result, so Result.Info stays zero.
 	t.Run("apply without payload", func(t *testing.T) {
 		r, buf := newApplyTestRun()
 		r.beginSubject("default")
@@ -166,10 +149,8 @@ func subjectResultOf(t *testing.T, doc map[string]any) map[string]any {
 	return results[0].(map[string]any)
 }
 
-// TestMutationPayloadFullInventory pins the success mapping: every new-manifest entry plus the
-// stale-removed old entry as items (all success), diff-only changes with kind/reversible/info,
-// warnings attached to the warned item, and the generation observation (first apply: before
-// omitted · → issue #131).
+// TestMutationPayloadFullInventory pins the success mapping: new and stale-removed entries as
+// items, diff-only changes, warnings on the warned item, and the generation (before omitted).
 func TestMutationPayloadFullInventory(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/state/layat/default/profile",
@@ -259,9 +240,8 @@ func TestMutationPayloadFullInventory(t *testing.T) {
 	}
 }
 
-// TestMutationPayloadMethodChangeCoalesces pins the symlink→copy method change: the same
-// target unlinked and re-placed in one run yields one item (the new entry) and one modify
-// change carrying the old symlink dest → new copy source transition (→ issue #131).
+// TestMutationPayloadMethodChangeCoalesces: a symlink→copy method change yields one item and one
+// modify change from the old symlink dest to the new copy source.
 func TestMutationPayloadMethodChangeCoalesces(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
@@ -293,10 +273,8 @@ func TestMutationPayloadMethodChangeCoalesces(t *testing.T) {
 	}
 }
 
-// TestMutationPayloadNoopRelinkSuppressed pins the idempotent-re-apply case: apply
-// mechanically re-links a planned symlink back to its recorded dest, which is not a state
-// transition — such a Replaced target must produce no change (outturn §4 noop MUST NOT),
-// while a re-link to a different dest still does.
+// TestMutationPayloadNoopRelinkSuppressed: a re-link to the recorded dest produces no change, while
+// a re-link to a different dest does.
 func TestMutationPayloadNoopRelinkSuppressed(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
@@ -325,10 +303,8 @@ func TestMutationPayloadNoopRelinkSuppressed(t *testing.T) {
 	}
 }
 
-// TestMutationPayloadOrphanSubjectWarning pins attachWarnings' subject-side branch: a
-// planner warning whose target is outside the inventory (a vanished copy entry's orphan —
-// neither a new-manifest entry nor a planned removal) lands in subjectResult.warnings, not
-// on any item (→ outturn ADR-0019).
+// TestMutationPayloadOrphanSubjectWarning: a warning whose target is outside the inventory lands
+// in subjectResult.warnings.
 func TestMutationPayloadOrphanSubjectWarning(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
@@ -355,9 +331,8 @@ func TestMutationPayloadOrphanSubjectWarning(t *testing.T) {
 	}
 }
 
-// TestMutationPayloadRollbackGeneration pins the rollback reuse of mutationPayload: the
-// From→To transition rides generation.before/after (nothing in result.info), and a failed
-// rollback observes the pinned, unmoved generation (before == after == current).
+// TestMutationPayloadRollbackGeneration: the From→To transition rides generation.before/after, and
+// a failed rollback observes before == after == current.
 func TestMutationPayloadRollbackGeneration(t *testing.T) {
 	rr := &engine.RollbackResult{
 		Result: engine.Result{
@@ -422,11 +397,9 @@ func TestOutturnWarningMapping(t *testing.T) {
 	}
 }
 
-// TestMutationPayloadPartialFailure pins the reached-state partition (outturn ADR-0016 /
-// ADR-0020): the failed entry carries the classified command error, unreached entries are
-// skipped (and only those), completed entries stay success with their changes, the unwound
-// run carries W_LAYAT_UNWOUND at the subject, and the item-borne failure is NOT duplicated
-// into subjectResult.errors[] (outturn §2).
+// TestMutationPayloadPartialFailure pins the reached-state partition: the failed entry carries the
+// error, unreached entries are skipped, completed ones keep their changes, W_LAYAT_UNWOUND is on the
+// subject, and the error is not duplicated in subjectResult.errors[].
 func TestMutationPayloadPartialFailure(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
@@ -491,9 +464,8 @@ func TestMutationPayloadPartialFailure(t *testing.T) {
 	}
 }
 
-// TestMutationPayloadSubjectBorneFailure pins the non-entry-scoped failure (commit / build):
-// no failed item, the full changes stay, and the classified error lands in
-// subjectResult.errors[] (→ ADR-0043 §6).
+// TestMutationPayloadSubjectBorneFailure: a commit / build failure has no failed item, keeps the
+// changes, and puts the error in subjectResult.errors[].
 func TestMutationPayloadSubjectBorneFailure(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
@@ -529,9 +501,8 @@ func TestMutationPayloadSubjectBorneFailure(t *testing.T) {
 	}
 }
 
-// TestMutationPayloadConflicts pins the conflict mapping: each conflicted entry is a failed
-// item with E_LAYAT_COLLISION and the planner reason, everything else planned is skipped, and
-// the aggregate command error is not duplicated at the subject layer (→ ADR-0043 §6).
+// TestMutationPayloadConflicts: each conflicted entry is a failed item with E_LAYAT_COLLISION, the
+// rest is skipped, and the command error is not duplicated at the subject.
 func TestMutationPayloadConflicts(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
@@ -570,11 +541,9 @@ func TestMutationPayloadConflicts(t *testing.T) {
 	}
 }
 
-// TestResetPayload pins reset's mapping: items = the selected teardown entries, symlink
-// removals are reversible remove changes with the recorded dest, copy deletions are
-// irreversible removes without info, a kept-foreign target stays success with the
-// W_LAYAT_STALE_MISMATCH warning on its item, and no generation slot is emitted (reset never
-// moves the profile pointer · → issue #131).
+// TestResetPayload pins reset's mapping: selected entries as items, reversible symlink removes with
+// the dest, irreversible copy removes without info, a kept-foreign warning on its item, and no
+// generation.
 func TestResetPayload(t *testing.T) {
 	res := &engine.ResetResult{
 		Entries: []manifest.Entry{
@@ -622,9 +591,8 @@ func TestResetPayload(t *testing.T) {
 	}
 }
 
-// TestResetPayloadPartialFailure pins reset's reached-state partition: removed-so-far keeps
-// its changes, the failing target carries the classified error, and the never-attempted rest
-// is skipped (→ issue #131, outturn ADR-0020).
+// TestResetPayloadPartialFailure: removed-so-far keeps its changes, the failing target carries the
+// error, and the rest is skipped.
 func TestResetPayloadPartialFailure(t *testing.T) {
 	res := &engine.ResetResult{
 		Entries: []manifest.Entry{
@@ -705,12 +673,8 @@ func writeTestLinkFarm(t *testing.T, entries ...manifest.Entry) string {
 	return dir
 }
 
-// TestJSONEndToEndApplyAndResetPayload drives the real engine (tmpdir, injected commit) and
-// checks the emitted envelopes: first apply (add changes, before omitted / after observed),
-// second apply with a dropped entry (stale-removed old entry item + remove change, 1→2
-// generation), then reset (remove changes, no generation slot). The payload reads the same
-// engine result the -v report reads — this is the single-result-source path end to end
-// (→ issue #131 acceptance).
+// TestJSONEndToEndApplyAndResetPayload drives the real engine on a tmpdir: a first apply, a second
+// apply dropping an entry, then reset, checking each emitted envelope.
 func TestJSONEndToEndApplyAndResetPayload(t *testing.T) {
 	root := t.TempDir()
 	state := t.TempDir()
@@ -798,10 +762,8 @@ func TestJSONEndToEndApplyAndResetPayload(t *testing.T) {
 	}
 }
 
-// TestDryrunPayloadFirstPlanOmitsGenerationNumbers pins apply --dryrun over a not-yet-created
-// profile (outturn ADR-0015 · → issue #132): the dryrun rides mutationPayload, and with neither
-// generation number observable the emitted generation carries the profile path alone — no
-// before / after keys (nil pointers must marshal away, never as 0 or null).
+// TestDryrunPayloadFirstPlanOmitsGenerationNumbers: a dryrun over a not-yet-created profile emits
+// the generation with the profile path alone, no before / after keys.
 func TestDryrunPayloadFirstPlanOmitsGenerationNumbers(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/state/nix/profiles/layat/home/profile",
@@ -825,11 +787,9 @@ func TestDryrunPayloadFirstPlanOmitsGenerationNumbers(t *testing.T) {
 	}
 }
 
-// TestDryrunPayloadConflictKeepsEnvelopeBesideExit2 pins the dryrun conflict contract
-// (→ issue #132 acceptance): the CLI attaches the payload with cmdErr nil (the exit-2
-// exitError is decided after the plan is printed), the conflicted entry is a failed item with
-// E_LAYAT_COLLISION, and the envelope emitted alongside exit 2 stays conformant with status
-// error, dryRun true, and no subject-level duplication of the item-borne error.
+// TestDryrunPayloadConflictKeepsEnvelopeBesideExit2: with cmdErr nil, the conflicted entry is a
+// failed item with E_LAYAT_COLLISION, and the envelope stays conformant with status error and
+// dryRun true.
 func TestDryrunPayloadConflictKeepsEnvelopeBesideExit2(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/state/nix/profiles/layat/home/profile",
@@ -896,11 +856,8 @@ func mustDecodeItems(t *testing.T, sr map[string]any) []layatItem {
 	return items
 }
 
-// TestDryrunPayloadRelinkNotSuppressed pins the dryrun side of the noop rule (→ issue #132):
-// a dryrun never executes the re-link, so no pre-relink dest is observed (ReplacedDests
-// stays empty) and the planned re-link cannot be proven a noop — it stays a modify (mirroring
-// the text plan's replace line), unlike the real apply's suppression
-// (→ TestMutationPayloadNoopRelinkSuppressed).
+// TestDryrunPayloadRelinkNotSuppressed: a dryrun observes no pre-relink dest, so a planned re-link
+// stays a modify.
 func TestDryrunPayloadRelinkNotSuppressed(t *testing.T) {
 	res := &engine.Result{
 		Profile:  "/state/nix/profiles/layat/home/profile",
@@ -921,10 +878,8 @@ func TestDryrunPayloadRelinkNotSuppressed(t *testing.T) {
 	}
 }
 
-// TestMutationPayloadKeptStaleSubjectWarning pins the apply-side routing of the conservative
-// keep warnings (→ issue #132 review follow-up): a kept-stale target (record mismatch / not a
-// symlink) is neither in the new manifest nor in the removal plan, so no item exists for it —
-// its W_LAYAT_STALE_* warning lands on the subject, self-contained via detail.target.
+// TestMutationPayloadKeptStaleSubjectWarning: a kept-stale target has no item, so its
+// W_LAYAT_STALE_* warning lands on the subject.
 func TestMutationPayloadKeptStaleSubjectWarning(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
@@ -956,9 +911,8 @@ func TestMutationPayloadKeptStaleSubjectWarning(t *testing.T) {
 	}
 }
 
-// TestMutationPayloadConflictWithWarningStaysConformant pins the failed-item × warnings
-// combination: an item that failed on a conflict can still carry an entry-borne warning, and
-// the emitted envelope (error + warnings side by side on one item) stays conformant.
+// TestMutationPayloadConflictWithWarningStaysConformant: a conflict-failed item can carry a warning,
+// and the envelope stays conformant.
 func TestMutationPayloadConflictWithWarningStaysConformant(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
@@ -983,10 +937,8 @@ func TestMutationPayloadConflictWithWarningStaysConformant(t *testing.T) {
 	}
 }
 
-// TestMutationPayloadCopyForeignItemWarning completes the warning kind × in/out-of-inventory
-// table (→ issue #132 review follow-up): the place-once copy skip is the one copy-family
-// warning whose entry stays in the manifest, so W_LAYAT_COPY_FOREIGN rides on its item — not
-// the subject.
+// TestMutationPayloadCopyForeignItemWarning: W_LAYAT_COPY_FOREIGN rides on its item, whose entry
+// stays in the manifest.
 func TestMutationPayloadCopyForeignItemWarning(t *testing.T) {
 	res := &engine.Result{
 		Profile:  "/p",

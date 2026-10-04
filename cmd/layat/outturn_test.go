@@ -1,9 +1,7 @@
 package main
 
-// Conformance tests for the --json outturn envelope foundation (→ issue #130 acceptance):
-// every emitted document passes outturn's conformance checker (embedded schema with format
-// assertions + the schema-external lint MUSTs), and the item-id derivation matches outturn's
-// id-vectors byte-for-byte (decoded with UseNumber, per the outturn godoc input contract).
+// Conformance tests for the --json outturn envelope: every emitted document passes outturn's
+// conformance checker, and item ids match outturn's id-vectors byte-for-byte.
 
 import (
 	"bytes"
@@ -37,10 +35,7 @@ func fixedClock(t0 time.Time) func() time.Time {
 }
 
 // newTestRun returns an outturnRun with a pinned clock and buffer sink, already begun for command.
-// The info type arguments are the command's own pair (→ issue #196); the command name is a plain
-// string and cannot drive inference, so prefer the per-command wrappers below — they take their
-// arguments from the production run aliases, which keeps the tests from silently exercising a
-// type pair the CLI no longer uses.
+// Prefer the per-command wrappers below, which take the production run aliases' type pairs.
 func newTestRun[TInfo, TEnvInfo any](command string) (*outturnRun[TInfo, TEnvInfo], *bytes.Buffer) {
 	var buf bytes.Buffer
 	r := &outturnRun[TInfo, TEnvInfo]{
@@ -51,15 +46,9 @@ func newTestRun[TInfo, TEnvInfo any](command string) (*outturnRun[TInfo, TEnvInf
 	return r, &buf
 }
 
-// The per-command test runs. Each is spelled against its production alias (applyRun, resetRun,
-// ...), so changing a command's info pair updates its tests by construction: a test that kept
-// the old pair would no longer satisfy the alias-typed return and fails to compile (→ issue
-// #196, diff-review follow-up).
-//
-// The command strings are literals rather than cobra's Use values: the envelope's command field
-// is part of the output contract, so a rename must be a visible edit here (and
-// TestBeginRunPublishesEveryCommand checks that every registered RunE subcommand still has a
-// begin<Cmd>Run case, which is where a rename would otherwise hide).
+// The per-command test runs, each typed by its production alias so a changed info pair breaks
+// compilation. Command strings are literals because the envelope's command field is part of the
+// output contract; TestBeginRunPublishesEveryCommand checks every subcommand has a case.
 func newApplyTestRun() (*applyRun, *bytes.Buffer) {
 	return newTestRun[*applyResultInfo, *applyEnvInfo]("apply")
 }
@@ -103,9 +92,8 @@ func decodeEnvelope(t *testing.T, buf *bytes.Buffer) map[string]any {
 	return doc
 }
 
-// TestOutturnEnvelopeConformance drives the emit helper through the #130 shapes — success with /
-// without a subject, pre-subject and subject-borne failures, dryrun conflict — and checks every
-// document against outturn's conformance checker (schema + lint MUSTs · issue #130 acceptance).
+// TestOutturnEnvelopeConformance emits success with / without a subject, pre-subject and
+// subject-borne failures, and a dryrun conflict, and checks each against outturn's checker.
 func TestOutturnEnvelopeConformance(t *testing.T) {
 	checker, err := conformance.NewDefaultChecker()
 	if err != nil {
@@ -171,7 +159,7 @@ func TestOutturnEnvelopeConformance(t *testing.T) {
 				if sr["status"] != c.wantStatus {
 					t.Errorf("subject status = %v, want %v", sr["status"], c.wantStatus)
 				}
-				// The minimal #130 SubjectResult carries an empty items array (payloads are #131/#132).
+				// A SubjectResult without a payload carries an empty items array.
 				items := sr["result"].(map[string]any)["items"].([]any)
 				if len(items) != 0 {
 					t.Errorf("items = %v, want empty in the #130 minimal envelope", items)
@@ -229,10 +217,8 @@ type failingWriter struct{}
 
 func (failingWriter) Write([]byte) (int, error) { return 0, errors.New("broken pipe") }
 
-// TestOutturnEmitWriteFailure pins that a failed envelope write surfaces as an error from emit —
-// main then exits non-zero even for a succeeded command, so a missing/partial document is never
-// read as success (→ docs/spec.md emit タイミングと成立条件). The write path does not depend on
-// the info types, so applyRun stands in for any command's instantiation.
+// TestOutturnEmitWriteFailure: a failed envelope write is an error from emit, so main exits
+// non-zero. applyRun stands in for any command.
 func TestOutturnEmitWriteFailure(t *testing.T) {
 	r := &applyRun{now: fixedClock(time.Date(2026, 7, 19, 12, 0, 0, 0, time.UTC)), out: failingWriter{}}
 	r.begin("apply")
@@ -243,7 +229,7 @@ func TestOutturnEmitWriteFailure(t *testing.T) {
 }
 
 // TestOutturnTimestampOffset pins the timestamp shape: RFC 3339, "T" separator, explicit offset
-// (outturn ADR-0025 format assertion; local zone renders its UTC offset, UTC renders "Z").
+// (local zone renders its UTC offset, UTC renders "Z").
 func TestOutturnTimestampOffset(t *testing.T) {
 	jst := time.Date(2026, 7, 19, 12, 0, 0, 0, time.FixedZone("JST", 9*3600))
 	if got, want := outturnTimestamp(jst), "2026-07-19T12:00:00+09:00"; got != want {
@@ -255,11 +241,8 @@ func TestOutturnTimestampOffset(t *testing.T) {
 	}
 }
 
-// TestEntryItemIDMatchesVectors verifies the id derivation against outturn's embedded id-vectors
-// (decoded with UseNumber — the outturn godoc input contract; issue #130 acceptance): every vector
-// must reproduce its expected id through outturn.DeriveID, and the entry-kind vectors must equally
-// reproduce through layat's entryItemID seam (pinning layat's identity shape: kind="entry",
-// key={target} · → ADR-0043 §3).
+// TestEntryItemIDMatchesVectors: every outturn id-vector reproduces through outturn.DeriveID, and
+// the entry-kind vectors also through entryItemID (kind="entry", key={target}).
 func TestEntryItemIDMatchesVectors(t *testing.T) {
 	var doc struct {
 		Vectors []struct {
@@ -314,19 +297,15 @@ func TestEntryItemIDMatchesVectors(t *testing.T) {
 	}
 }
 
-// TestClassifyErrorCodes pins the classifyError table directly, one case per code (the #131
-// refinement): a generator failure of Stage roots / build → E_LAYAT_BUILD, including its survival
-// through a %w re-wrap (the chain is the classification's lifeline), while a Stage discover or
-// prebuilt failure keeps the classification of its cause (→ ADR-0055 §7); the inputError marker →
-// E_INPUT (→ ADR-0056); the specific fs sentinels beating the generic E_IO shape check; and the
-// residual-I/O and fallback arms.
+// TestClassifyErrorCodes pins classifyError per code: generator roots / build failures (also
+// re-wrapped) → E_LAYAT_BUILD, discover / prebuilt failures keep their cause's code, inputError →
+// E_INPUT, fs sentinels beat E_IO, plus the residual-I/O and fallback arms.
 func TestClassifyErrorCodes(t *testing.T) {
 	notExist := &fs.PathError{Op: "stat", Path: "/x", Err: fs.ErrNotExist}
 	genErr := func(name string, stage generator.Stage, cause error) error {
 		return generator.NewError(name, stage, generator.KindFailed, "layat: generator failed", "", "", cause)
 	}
-	// The input rejections are produced by their real sources (→ ADR-0056 §5): the unknown values
-	// by the resolver, the --manifest combinations by apply (which return before any nix call).
+	// The input rejections come from their real sources: the resolver and apply's --manifest checks.
 	resolveErr := func(flag, env string) error {
 		_, err := resolveGenerator(flag, env, "", "")
 		return err
@@ -381,10 +360,8 @@ func TestClassifyErrorCodes(t *testing.T) {
 	}
 }
 
-// TestJSONSuppressesLineOrientedStdout pins the --json stdout-ownership contract at its single
-// chokepoints: every line-oriented printer emits nothing under --json (the envelope owns stdout)
-// and everything under the default contract (→ ADR-0043 §2; issue #130 acceptance "--json 指定時、
-// stdout には outturn エンベロープ 1 文書以外何も出ない").
+// TestJSONSuppressesLineOrientedStdout: every line-oriented printer emits nothing under --json and
+// everything under the default contract.
 func TestJSONSuppressesLineOrientedStdout(t *testing.T) {
 	origJSON := flagJSON
 	defer func() { flagJSON = origJSON }()
@@ -419,10 +396,8 @@ func TestJSONSuppressesLineOrientedStdout(t *testing.T) {
 	}
 }
 
-// TestJSONEmptyResetPlanKeepsStderrNotice covers the empty-result quadrants of printResetPlan's
-// contract: with nothing to remove, the stderr "nothing to remove" notice is printed under BOTH
-// contracts — human diagnostics coexist with --json — while stdout stays empty (under --json it
-// must stay empty for the envelope; under the default contract there are simply no plan lines).
+// TestJSONEmptyResetPlanKeepsStderrNotice: with nothing to remove, the stderr notice is printed
+// under both contracts while stdout stays empty.
 func TestJSONEmptyResetPlanKeepsStderrNotice(t *testing.T) {
 	origJSON := flagJSON
 	defer func() { flagJSON = origJSON }()
@@ -440,9 +415,8 @@ func TestJSONEmptyResetPlanKeepsStderrNotice(t *testing.T) {
 	}
 }
 
-// TestResetPromptAllowed pins reset's prompt-permission composition: --json forbids prompting
-// even on a TTY, so reset --json without --yes goes down confirmPolicy's refuse path and fails
-// fast (→ ADR-0043 §8, docs/spec.md "reset --json は --yes 必須").
+// TestResetPromptAllowed: --json forbids prompting even on a TTY, so reset --json without --yes
+// is refused.
 func TestResetPromptAllowed(t *testing.T) {
 	cases := []struct{ interactive, jsonMode, want bool }{
 		{true, false, true},   // TTY, default contract → prompting allowed
@@ -464,12 +438,8 @@ func TestResetPromptAllowed(t *testing.T) {
 	}
 }
 
-// TestBeginRunPublishesEveryCommand pins the wiring step this refactor introduced (→ issue
-// #196): every command's begin<Cmd>Run must begin its run AND publish it to outturnReport, since
-// main emits what it finds there, not the command's local variable. A wrapper that dropped the
-// publish would silence that command's envelope entirely while every other test stayed green —
-// only apply and the read commands otherwise exercise the full RunE path (reset / rollback have
-// no --json coverage in the Go tests or the e2e scenarios).
+// TestBeginRunPublishesEveryCommand: every begin<Cmd>Run begins its run and publishes it to
+// outturnReport, which is what main emits.
 func TestBeginRunPublishesEveryCommand(t *testing.T) {
 	origReport := outturnReport
 	defer func() { outturnReport = origReport }()
@@ -500,8 +470,7 @@ func TestBeginRunPublishesEveryCommand(t *testing.T) {
 		})
 	}
 
-	// Every subcommand the root registers must be covered above, so a command added later
-	// cannot quietly skip the begin/publish contract.
+	// Every registered subcommand must be covered above.
 	for _, cmd := range newRootCmd().Commands() {
 		if cmd.RunE == nil {
 			continue // cobra's own utility commands (help / completion) never begin a run
@@ -512,8 +481,7 @@ func TestBeginRunPublishesEveryCommand(t *testing.T) {
 	}
 }
 
-// TestJSONFlagRegistered pins --json as a root persistent flag, so every subcommand accepts it
-// (issue #130 acceptance: --json errors on no subcommand).
+// TestJSONFlagRegistered pins --json as a root persistent flag accepted by every subcommand.
 func TestJSONFlagRegistered(t *testing.T) {
 	root := newRootCmd()
 	f := root.PersistentFlags().Lookup("json")
@@ -525,14 +493,12 @@ func TestJSONFlagRegistered(t *testing.T) {
 	}
 }
 
-// TestJSONUtilityCommandsDoNotBegin pins that cobra's auto-added utility commands (help /
-// completion) never begin an outturn run: they own stdout with their own text, so emitting an
-// envelope there would corrupt both contracts (→ issue #130, docs/spec.md).
+// TestJSONUtilityCommandsDoNotBegin: cobra's help / completion never begin an outturn run, since
+// they own stdout with their own text.
 func TestJSONUtilityCommandsDoNotBegin(t *testing.T) {
 	for _, args := range [][]string{{"help"}, {"completion", "bash"}} {
 		origReport := outturnReport
-		// The process-start state: only a RunE of ours replaces it with a begun run, so a
-		// still-noop report after Execute proves the utility command emitted nothing.
+		// Only a RunE of ours replaces the noop report, so a noop after Execute means nothing was emitted.
 		outturnReport = noopEmitter{}
 		root := newRootCmd()
 		root.SetArgs(args)
@@ -544,8 +510,7 @@ func TestJSONUtilityCommandsDoNotBegin(t *testing.T) {
 		if outturnReport.began() {
 			t.Errorf("%v began an outturn run; utility commands must not emit an envelope", args)
 		}
-		// The gate is began(), but assert the observable contract too, so a future wiring that
-		// writes an envelope past the gate is caught rather than inferred.
+		// Also assert the observable output, not just the began() gate.
 		if strings.Contains(out, `"specVersion"`) {
 			t.Errorf("%v wrote an envelope to stdout; utility commands own it with their own text: %q", args, out)
 		}
@@ -553,10 +518,8 @@ func TestJSONUtilityCommandsDoNotBegin(t *testing.T) {
 	}
 }
 
-// TestJSONEndToEndSubjectBorneFailure exercises the real wiring — apply's RunE begins the run,
-// runApply registers the subject, main-style emit after Execute — in-process: an apply in an
-// entrypoint-less directory fails after the subject is known, so the envelope must be
-// conformant, status error, with the error attached to results[0] and stdout holding nothing else.
+// TestJSONEndToEndSubjectBorneFailure runs apply in an entrypoint-less directory in-process: the
+// envelope is conformant, status error, with the error on results[0] and nothing else on stdout.
 func TestJSONEndToEndSubjectBorneFailure(t *testing.T) {
 	t.Chdir(t.TempDir())
 	origReport := outturnReport
@@ -568,8 +531,7 @@ func TestJSONEndToEndSubjectBorneFailure(t *testing.T) {
 
 	outturnReport = noopEmitter{}
 
-	// RunE builds its own concrete run against os.Stdout (→ issue #196), so the document is
-	// captured off the real sink: Execute and the main-style emit both run inside the capture.
+	// RunE emits to os.Stdout, so Execute and the main-style emit both run inside the capture.
 	var execErr error
 	out := captureStdout(t, func() {
 		root := newRootCmd()
@@ -591,9 +553,7 @@ func TestJSONEndToEndSubjectBorneFailure(t *testing.T) {
 	if !outturnReport.began() {
 		t.Fatal("apply's RunE did not publish a begun outturn run")
 	}
-	// captureStdout replaces the whole of os.Stdout, so anything else the command wrote lands
-	// here too. Check that first: a stray line would otherwise surface as an opaque JSON decode
-	// error rather than the stdout-ownership violation it actually is (→ ADR-0043 §2).
+	// Check for stray output first, so it is not reported as a JSON decode error.
 	if !strings.HasPrefix(out, "{") {
 		t.Fatalf("stdout must hold the envelope alone (the --json contract), got %q", out)
 	}
@@ -624,8 +584,6 @@ func TestJSONEndToEndSubjectBorneFailure(t *testing.T) {
 	if topErrs, ok := doc["errors"]; ok {
 		t.Errorf("top-level errors present = %v, want the failure attached to the subject", topErrs)
 	}
-	// The subject is registered but no payload ever exists (the failure precedes any engine
-	// result), so both info slots stay at their nil-pointer zero value and must be omitted —
-	// the output-invariance requirement behind the seat types (→ issue #196 §4).
+	// No payload exists, so both info slots stay nil and are omitted.
 	assertNoInfoKeys(t, doc)
 }
