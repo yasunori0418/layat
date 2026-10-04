@@ -96,7 +96,7 @@ Internal nix commands (disclosed for transparency; you can run them by hand sele
   rollback /        nix eval <ep>#layat.<system>.<name>.rootKind --raw
   list-generations
 
-For a legacy entrypoint (shell.nix / default.nix; no per-system dimension; see ADR-0032), the
+For a legacy entrypoint (shell.nix / default.nix; no per-system dimension), the
 above take the -f form instead: nix eval -f <ep> layat.<name>.rootKind / nix build -f <ep> layat.<name> ...
 
 Pass --debug to print the actual nix commands to stderr as they run.
@@ -129,13 +129,13 @@ func newRootCmd() *cobra.Command {
 	pf.StringVarP(&flagFile, "file", "f", "", "Specify the entrypoint explicitly (overrides autodiscovery)")
 	pf.StringVar(&flagRoot, "root", "", "Override the resolved root explicitly (all modes)")
 	pf.BoolVar(&flagNoWait, "no-wait", false, "Skip without waiting on flock contention (for shellHook)")
-	pf.BoolVarP(&flagVerbose, "verbose", "v", false, "Print the placement report (summary + per-target lines); silent on success by default (see ADR-0031)")
-	pf.BoolVar(&flagJSON, "json", false, "Write an outturn-conformant JSON envelope to stdout (machine-readable; orthogonal to -v; see ADR-0043)")
-	pf.BoolVar(&flagDebug, "debug", false, "Disclose the internal nix commands on stderr (see ADR-0031)")
+	pf.BoolVarP(&flagVerbose, "verbose", "v", false, "Print the placement report (summary + per-target lines); silent on success by default")
+	pf.BoolVar(&flagJSON, "json", false, "Write an outturn-conformant JSON envelope to stdout (machine-readable; orthogonal to -v)")
+	pf.BoolVar(&flagDebug, "debug", false, "Disclose the internal nix commands on stderr")
 	pf.StringVar(&flagGenerator, "generator", "",
 		"Manifest generator (nix). Precedence: --generator > LAYAT_GENERATOR > layat.toml (-f dir, else CWD) > "+
 			"$XDG_CONFIG_HOME/layat/config.toml > nix; the settings files take only generator = \"<name>\"; "+
-			"ignored by prune / init, rejected with apply --manifest (see ADR-0056)")
+			"ignored by prune / init, rejected with apply --manifest")
 	pf.BoolVarP(&flagYes, "yes", "y", false, "Skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)")
 	pf.BoolVar(&flagProjectRoot, "project-root", false, "Modifier for apply --all: apply only projectRoot configs")
 	pf.BoolVar(&flagHomeRoot, "home-root", false, "Modifier for apply --all: apply only homeRoot configs")

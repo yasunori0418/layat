@@ -42,7 +42,7 @@ func newResetCmd() *cobra.Command {
 		},
 	}
 	cmd.Flags().BoolVar(&flagDryrun, "dryrun", false,
-		"Show the removal targets (symlink / copy target) with zero side effects and exit (no confirm / flock; see ADR-0021)")
+		"Show the removal targets (symlink / copy target) with zero side effects and exit (no confirm / flock)")
 	return cmd
 }
 

@@ -52,7 +52,7 @@ func newGitignoreCmd() *cobra.Command {
 		},
 	}
 	cmd.Flags().BoolVar(&all, "all", false,
-		"Sort and de-duplicate the targets of all projectRoot configs (see ADR-0018; under --json each config keeps its own targets instead, un-deduplicated, see ADR-0043)")
+		"Sort and de-duplicate the targets of all projectRoot configs (under --json each config keeps its own targets instead, un-deduplicated)")
 	return cmd
 }
 

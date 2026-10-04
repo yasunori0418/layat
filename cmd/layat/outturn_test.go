@@ -162,7 +162,7 @@ func TestOutturnEnvelopeConformance(t *testing.T) {
 				// A SubjectResult without a payload carries an empty items array.
 				items := sr["result"].(map[string]any)["items"].([]any)
 				if len(items) != 0 {
-					t.Errorf("items = %v, want empty in the #130 minimal envelope", items)
+					t.Errorf("items = %v, want empty in the minimal envelope", items)
 				}
 			}
 

@@ -76,15 +76,15 @@ func newApplyCmd() *cobra.Command {
 	}
 	cmd.Flags().BoolVar(&flagApplyAll, "all", false, "Apply all of layat.* in parallel, reporting in lexical order (continues on partial failure; exits non-zero if any fails)")
 	cmd.Flags().IntVar(&flagApplyJobs, "jobs", 0,
-		"With --all, build and then place up to N configs in parallel (0 = the logical CPU count; see ADR-0039)")
+		"With --all, build and then place up to N configs in parallel (0 = the logical CPU count)")
 	cmd.Flags().BoolVar(&flagRecopy, "recopy", false,
-		"Unconditionally re-copy every copy target from src, overwriting (discards local edits; see ADR-0020)")
+		"Unconditionally re-copy every copy target from src, overwriting (discards local edits)")
 	cmd.Flags().BoolVar(&flagDryrun, "dryrun", false,
-		"Show place/replace/remove/conflict/no-op with zero side effects (exit 2 on conflict; see ADR-0006)")
+		"Show place/replace/remove/conflict/no-op with zero side effects (exit 2 on conflict)")
 	cmd.Flags().StringVar(&flagManifest, "manifest", "",
-		"Apply a pre-built manifest (link-farm path) directly (host/module activation seam; no entrypoint discovery or nix eval/build; see ADR-0026)")
+		"Apply a pre-built manifest (link-farm path) directly (host/module activation seam; no entrypoint discovery or nix eval/build)")
 	cmd.Flags().StringVar(&flagBackup, "backup", "",
-		"Back up an occupying foreign entity to \"<target>.<suffix>\" before placing, instead of stopping on conflict (bare --backup uses suffix \"layat-backup\"; \"=\" form required for a custom suffix, e.g. --backup=bak; see ADR-0045)")
+		"Back up an occupying foreign entity to \"<target>.<suffix>\" before placing, instead of stopping on conflict (bare --backup uses suffix \"layat-backup\"; \"=\" form required for a custom suffix, e.g. --backup=bak)")
 	cmd.Flags().Lookup("backup").NoOptDefVal = "layat-backup"
 	return cmd
 }
@@ -385,7 +385,7 @@ func detectCrossConfigConflicts(roots map[string]manifest.Root, selected []strin
 	if len(conflicts) == 0 {
 		return nil
 	}
-	return fmt.Errorf("layat: apply --all: selected configs place the same target in the same root (nothing was built or placed; → ADR-0038):\n%s",
+	return fmt.Errorf("layat: apply --all: selected configs place the same target in the same root (nothing was built or placed):\n%s",
 		strings.Join(conflicts, "\n"))
 }
 

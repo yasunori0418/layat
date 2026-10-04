@@ -56,9 +56,9 @@ func newPruneCmd() *cobra.Command {
 			"kept series are never thinned; free the store with nix-collect-garbage as before.\n\n" +
 			"Before deleting, the root paths of every series are listed and confirmed (--yes skips the prompt; a " +
 			"non-TTY without --yes aborts). That listing is the only guard against an out-of-store root — one on a " +
-			"removable disk or a network mount — being taken for a deleted one while it is unmounted (see ADR-0034).\n" +
+			"removable disk or a network mount — being taken for a deleted one while it is unmounted.\n" +
 			"--dryrun shows the same series with zero side effects and exits (no confirm / flock).\n\n" +
-			"Alongside the user state base a system base is scanned (see ADR-0036 §3). " + systemBaseEnv +
+			"Alongside the user state base a system base is scanned. " + systemBaseEnv +
 			" points that one elsewhere (for tests / isolated harnesses, not a way to target a base).",
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -67,7 +67,7 @@ func newPruneCmd() *cobra.Command {
 		},
 	}
 	cmd.Flags().BoolVar(&flagDryrun, "dryrun", false,
-		"Show the series that would be deleted with zero side effects and exit (no confirm / flock; see ADR-0034 §2)")
+		"Show the series that would be deleted with zero side effects and exit (no confirm / flock)")
 	return cmd
 }
 
