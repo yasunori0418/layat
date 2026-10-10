@@ -3,8 +3,6 @@
 > **layat** — lays contents at root-relative targets, as the manifest says.
 > （manifest の言うとおりに、内容を root 相対の target へ置く。）
 
-*旧名 **nput**。*
-
 *この文書は英語版 [`README.md`](README.md) の日本語訳。仕様・用語の一次参照は英語版とし、両者に差異があれば英語版が優先する。*
 
 layat は、**フェッチ済みの Nix store パスの内容を `root` 相対の target へ配置する** Nix ライブラリ・モジュール群(symlink もしくは copy)。設定の生成は **行わない**。`root` は `projectRoot` / `homeRoot` / `systemRoot` マーカーで**明示的に**選ぶ(**暗黙のデフォルトは持たない**)。

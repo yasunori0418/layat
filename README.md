@@ -4,8 +4,6 @@
 
 > **layat** — lays contents at root-relative targets, as the manifest says.
 
-*Formerly **nput**.*
-
 layat is a Nix library and module set that **places the contents of an already-fetched
 Nix store path at a `root`-relative target** — as a symlink or a copy. It does **not**
 generate configuration. `root` is chosen explicitly with the `projectRoot` / `homeRoot` /
