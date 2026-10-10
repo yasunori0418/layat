@@ -6,13 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
 
 	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/manifest"
-	"github.com/yasunori0418/layat/internal/paths"
 )
 
 // version is the layat version shown by `layat --version` and used as the envelope's tool.version.
@@ -20,35 +18,6 @@ import (
 var version = "dev"
 
 // Note: cobra's Version field adds only a `--version` flag, not a `version` subcommand.
-
-// legacyStateDirHintFmt is the stderr notice printed while the pre-rename state directory exists.
-// nput's generations are not carried over, and the old directory still roots them against Nix GC.
-// The two %s take the resolved absolute paths.
-const legacyStateDirHintFmt = "layat: found the pre-rename state directory %s. " +
-	"Its generations are not carried over: layat keeps its own under %s " +
-	"and starts from generation 1. Migrate or delete it by hand — see the \"Migrating from nput\" " +
-	"section of https://github.com/yasunori0418/layat#migrating-from-nput . " +
-	"Until it is gone, the Nix garbage collector cannot collect the old generations it still roots."
-
-// legacyStateDir returns the pre-rename profile base <state>/nix/profiles/nput.
-func legacyStateDir(stateDir string) string {
-	return filepath.Join(stateDir, "nix", "profiles", "nput")
-}
-
-// printLegacyStateDirHint writes the hint to stderr when <state>/nix/profiles/nput is a directory
-// (symlinks followed). Anything else, an unresolvable state base or a failed stat stays silent.
-func printLegacyStateDirHint() {
-	stateDir, err := paths.StateDir()
-	if err != nil {
-		return
-	}
-	legacy := legacyStateDir(stateDir)
-	fi, err := os.Stat(legacy)
-	if err != nil || !fi.IsDir() {
-		return
-	}
-	fmt.Fprintf(os.Stderr, legacyStateDirHintFmt+"\n", legacy, paths.Base(stateDir))
-}
 
 // Global flags.
 var (
@@ -123,8 +92,6 @@ func newRootCmd() *cobra.Command {
 		SilenceErrors: true,
 	}
 	// Each subcommand's RunE begins its own outturn run, so help / completion never emit an envelope.
-	// PersistentPreRun prints the legacy state directory hint for every subcommand.
-	root.PersistentPreRun = func(_ *cobra.Command, _ []string) { printLegacyStateDirHint() }
 	pf := root.PersistentFlags()
 	pf.StringVarP(&flagFile, "file", "f", "", "Specify the entrypoint explicitly (overrides autodiscovery)")
 	pf.StringVar(&flagRoot, "root", "", "Override the resolved root explicitly (all modes)")
