@@ -3,7 +3,7 @@
 > **layat** — lays contents at root-relative targets, as the manifest says.
 > （manifest の言うとおりに、内容を root 相対の target へ置く。）
 
-*旧名 **nput** — 書き換えの内容は [nput からの移行](#nput-からの移行) を参照。*
+*旧名 **nput**。*
 
 *この文書は英語版 [`README.md`](README.md) の日本語訳。仕様・用語の一次参照は英語版とし、両者に差異があれば英語版が優先する。*
 
@@ -437,99 +437,6 @@ generator = "nix"
 - boot / init / filesystem / partition 層は layat のドメインではない。
 - クローンを削除すると `<state>/nix/profiles/layat/` 下に orphan な profile ディレクトリが残る(store は `nix-collect-garbage` で解放されるが、profile ディレクトリは残る)。MVP に `prune` コマンドは無い——手で消す。
 - home-manager モジュールは MVP では役割を複数 profile に分けられない——その用途には standalone CLI を使う。
-
----
-
-## nput からの移行
-
-nput は **layat** へ改名された。改名は破壊的変更で、**互換シムは提供しない**。
-改名の理由・棄却候補・予告期間の方針の全記録は
-[`docs/adr/0054-rename-nput-to-layat.md`](docs/adr/0054-rename-nput-to-layat.md)。
-
-### 旧名で留まる
-
-まだ移行したくない場合は、nput 名の最後の状態に pin する。
-
-```nix
-inputs.nput.url = "github:yasunori0418/nput/legacy-nput";
-```
-
-`legacy-nput` は予告 PR のマージコミットに打った annotated tag で、GitHub Release ではない。改名後も
-GitHub が旧リポジトリ URL のリダイレクトを維持するため、この pin は解決し続ける。
-
-### 書き換えが要るもの
-
-| 変更前 | 変更後 |
-|---|---|
-| `github:yasunori0418/nput` | `github:yasunori0418/layat` |
-| モジュールオプション `nput.*`（`nput.enable`・`nput.entries`・`nput.backup.*`）| `layat.*` |
-| `home.activation.nput` | `home.activation.layat` |
-| `perSystem.nput.<name>` / `#nput.<system>.<name>` | `perSystem.layat.<name>` / `#layat.<system>.<name>` |
-| `packages.nput` / `nput` バイナリ | `packages.layat` / `layat` バイナリ |
-| `--json` の `E_NPUT_*` / `W_NPUT_*`・`tool.name = "nput"` | `E_LAYAT_*` / `W_LAYAT_*`・`tool.name = "layat"` |
-| `<target>.nput-backup` | `<target>.layat-backup` |
-
-`--json` のコードだけは消費者が無視できない。outturn が `E_<TOOL>_<NAME>` の形を要求するため、
-接頭辞はツール名と一緒に動く。
-
-### 旧世代: 移行するか、捨てるか
-
-nput の世代は `<state>/nix/profiles/nput/` にあり、layat は `<state>/nix/profiles/layat/` を
-読む。移行は自動では行われない。layat はそのディレクトリを移動もしなければ読みもしない。
-どちらにするかは**初回 `layat apply` より前に**決めること。下記の移行はディレクトリごと
-移動するもので、`<state>/nix/profiles/layat/` がまだ存在しないことを前提としている。無いことを
-確認し、あるなら先に退避すること。既存ディレクトリへの `mv` は失敗せず、黙って `nput/` をその
-中へ入れ子にして exit 0 で終わる。
-どちらを選んでも `<target>.nput-backup` は残るので、新しい配置に納得したら手で消す。
-
-#### 世代を移行する
-
-ディレクトリを移動するだけでは足りない。世代リンクは `/nix/var/nix/gcroots/auto/` 配下の
-*間接 root* によって Nix の GC から保護されているが、その root は**旧絶対パス**を指している。
-素の `mv` の後は全ての root がぶら下がった状態になり、次の GC で除去され、移した link farm
-——前世代の `manifest.json` を含む——ごと回収される。世代リンクごとの root 再登録は、`mv` に
-続けて 1 ステップで行う(間に GC を挟まないため)。再登録は各リンクを作り直すので mtime が
-リセットされる。元の世代の日付を保ちたい場合は、先に旧ディレクトリのコピーを取り
-(`cp -a` は symlink のタイムスタンプを保つ)、後からそのコピーを参照して `touch -h -r` で
-移動後のリンクへ復元する。
-
-```sh
-old="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/nput"
-new="${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/layat"
-mv "$old" "$new" && find "$new" -name 'profile-*-link' -type l \
-  -exec sh -c 'nix-store --add-root "$1" --indirect -r "$(readlink "$1")" >/dev/null' _ {} \;
-```
-
-旧 root——まだ `<state>/nix/profiles/nput/` を指しているもの——は放置してよい。次の GC で消える。
-
-結果は `layat list-generations <name>` で確認する——`nput` と同じく home mode 限定
-(home-manager なら `default`。`--root` を付けて apply した config には同じ `--root` を渡す)。
-旧世代が並べば成功。
-
-前世代の manifest は一緒に移っているので、移行後の初回 `layat apply` は通常の apply と
-変わらない——foreign 警告は出ず、stale 除去も継続して働く。
-
-#### 世代を捨てる
-
-履歴が要らなければ、旧状態ディレクトリを削除する。
-
-```sh
-rm -rf "${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/nput"
-```
-
-**放置せず削除すること。** 世代リンクが残っている限り、その間接 root が旧 store path を
-生かし続け、GC は永久に回収しない。リンクが消えれば `gcroots/auto/` の項目は次の GC で
-除去され、store path が回収対象になる。
-
-読むべき前世代が無いため、初回 `layat apply` は世代 1 から始まり、全ての target が他人に
-よって置かれたかのように振る舞う。
-
-- **symlink entry は後勝ちで上書きされる**。`W_LAYAT_FOREIGN_SYMLINK` 警告が出るが、実行は
-  失敗しない。
-- **copy entry は skip される**。target に実ファイルが既にあるため。既存ファイルを退避して
-  copy を配置するには `--backup` を渡す。
-- **旧 nput の世代にのみあった target はそのまま残る**。stale 除去には前世代の manifest が要り、
-  layat はそれを持たないため。
 
 ---
 
