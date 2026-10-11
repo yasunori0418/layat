@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/manifest"
 	"github.com/yasunori0418/layat/internal/paths"
 	"github.com/yasunori0418/layat/internal/planner"
@@ -23,21 +24,6 @@ func fixedManifest(root string, entries ...manifest.Entry) manifest.Manifest {
 	}
 }
 
-// fakeGenCommit mimics nix-env --set's generation bookkeeping: each commit creates the sibling
-// generation link <profile>-<N>-link -> linkFarm and re-points the profile link at it
-// (relative, like nix-env), so observeGeneration can read N back.
-func fakeGenCommit(gen *int) CommitFunc {
-	return func(profileLink, linkFarm string) error {
-		*gen++
-		genLink := paths.GenerationLink(profileLink, *gen)
-		if err := os.Symlink(linkFarm, genLink); err != nil {
-			return err
-		}
-		_ = os.Remove(profileLink)
-		return os.Symlink(filepath.Base(genLink), profileLink)
-	}
-}
-
 func TestObserveGeneration(t *testing.T) {
 	dir := realTempDir(t)
 	profile := filepath.Join(dir, "profile")
@@ -46,7 +32,7 @@ func TestObserveGeneration(t *testing.T) {
 		t.Errorf("absent profile: got %v, want nil", *got)
 	}
 
-	// A generation link "profile-3-link" (relative sibling, as nix-env creates it) parses as 3.
+	// A generation link "profile-3-link" (relative sibling, as the backend creates it) parses as 3.
 	if err := os.Symlink("profile-3-link", profile); err != nil {
 		t.Fatal(err)
 	}
@@ -83,8 +69,8 @@ func TestApplyResultInventoryAndGeneration(t *testing.T) {
 	e1 := storeEntry(src, "conf", ".config/one")
 	lf := writeLinkFarm(t, fixedManifest(root, e1))
 
-	gen := 0
-	res, err := Apply(Options{LinkFarm: lf, Name: "c", StateDir: state, Commit: fakeGenCommit(&gen)})
+	fake := &generation.Fake{}
+	res, err := Apply(Options{LinkFarm: lf, Name: "c", StateDir: state, Backend: fake})
 	if err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -102,7 +88,7 @@ func TestApplyResultInventoryAndGeneration(t *testing.T) {
 	src2 := makeSrc(t, "conf/rc")
 	e2 := storeEntry(src2, "conf", ".config/two")
 	lf2 := writeLinkFarm(t, fixedManifest(root, e1, e2))
-	res, err = Apply(Options{LinkFarm: lf2, Name: "c", StateDir: state, Commit: fakeGenCommit(&gen)})
+	res, err = Apply(Options{LinkFarm: lf2, Name: "c", StateDir: state, Backend: fake})
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
 	}
@@ -117,7 +103,7 @@ func TestApplyResultInventoryAndGeneration(t *testing.T) {
 	}
 
 	// Dryrun never moves the pointer: before == after == 2, and Entries is still the inventory.
-	res, err = Apply(Options{LinkFarm: lf2, Name: "c", StateDir: state, DryRun: true})
+	res, err = Apply(Options{LinkFarm: lf2, Name: "c", StateDir: state, DryRun: true, Backend: fake})
 	if err != nil {
 		t.Fatalf("dryrun Apply: %v", err)
 	}
@@ -150,7 +136,7 @@ func TestApplyResultReachedStateOnFailure(t *testing.T) {
 	later := storeEntry(src, "conf", "zz-later")
 	lf := writeLinkFarm(t, fixedManifest(root, ok, bad, later))
 
-	res, err := Apply(Options{LinkFarm: lf, Name: "c", StateDir: state, Commit: fakeCommit(nil)})
+	res, err := Apply(Options{LinkFarm: lf, Name: "c", StateDir: state, Backend: &generation.Fake{}})
 	if err == nil {
 		t.Fatal("Apply should fail on the blocked parent")
 	}
@@ -186,7 +172,7 @@ func TestApplyResultCommitFailurePartialResult(t *testing.T) {
 
 	res, err := Apply(Options{
 		LinkFarm: lf, Name: "c", StateDir: state,
-		Commit: func(string, string) error { return os.ErrPermission },
+		Backend: &generation.Fake{OnCommit: func(string, string) error { return os.ErrPermission }},
 	})
 	if err == nil {
 		t.Fatal("Apply must fail when the commit fails")
@@ -239,7 +225,7 @@ func TestApplyResultRecopyUnreached(t *testing.T) {
 	cp := copyEntry(src, "conf/rc", "copytarget") // file×file: place-once skips it as foreign, no structure conflict
 	lf := writeLinkFarm(t, fixedManifest(root, bad, cp))
 
-	res, err := Apply(Options{LinkFarm: lf, Name: "c", StateDir: state, Recopy: true, Commit: fakeCommit(nil)})
+	res, err := Apply(Options{LinkFarm: lf, Name: "c", StateDir: state, Recopy: true, Backend: &generation.Fake{}})
 	if err == nil {
 		t.Fatal("Apply should fail on the blocked parent")
 	}
@@ -270,7 +256,7 @@ func TestApplyResultStructuredWarnings(t *testing.T) {
 	var warned []string
 	res, err := Apply(Options{
 		LinkFarm: lf, Name: "c", StateDir: state,
-		Commit: fakeCommit(nil), Warnf: collectFormatted(&warned),
+		Backend: &generation.Fake{}, Warnf: collectFormatted(&warned),
 	})
 	if err != nil {
 		t.Fatalf("Apply: %v", err)
@@ -284,7 +270,7 @@ func TestApplyResultStructuredWarnings(t *testing.T) {
 }
 
 // TestResetResultGenerationUnobservable pins the nil branch of Reset's generation observation:
-// a profile link that is not a generation link (test-substituted commit) observes neither
+// a profile link pointing straight at a link-farm (not a generation link) observes neither
 // before nor after.
 func TestResetResultGenerationUnobservable(t *testing.T) {
 	root := realTempDir(t)
@@ -292,10 +278,14 @@ func TestResetResultGenerationUnobservable(t *testing.T) {
 	src := makeSrc(t, "conf/rc")
 	lf := writeLinkFarm(t, fixedManifest(root, storeEntry(src, "conf", "link")))
 
-	if _, err := Apply(Options{LinkFarm: lf, Name: "c", StateDir: state, Commit: fakeCommit(nil)}); err != nil {
-		t.Fatalf("Apply: %v", err)
+	prof := paths.Resolve(fakeBase(state), "c", manifest.RootKindFixed, root, false)
+	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
+		t.Fatal(err)
 	}
-	res, err := Reset(ResetOptions{Name: "c", RootKind: manifest.RootKindFixed, FixedRoot: root, StateDir: state})
+	if err := os.Symlink(lf, prof.Profile); err != nil {
+		t.Fatal(err)
+	}
+	res, err := Reset(ResetOptions{Name: "c", RootKind: manifest.RootKindFixed, FixedRoot: root, StateDir: state, Backend: &generation.Fake{}})
 	if err != nil {
 		t.Fatalf("Reset: %v", err)
 	}
@@ -313,8 +303,8 @@ func TestResetResultGenerationAndWarnings(t *testing.T) {
 	e := storeEntry(src, "conf", "link")
 	lf := writeLinkFarm(t, fixedManifest(root, e))
 
-	gen := 0
-	if _, err := Apply(Options{LinkFarm: lf, Name: "c", StateDir: state, Commit: fakeGenCommit(&gen)}); err != nil {
+	fake := &generation.Fake{}
+	if _, err := Apply(Options{LinkFarm: lf, Name: "c", StateDir: state, Backend: fake}); err != nil {
 		t.Fatalf("Apply: %v", err)
 	}
 
@@ -327,7 +317,7 @@ func TestResetResultGenerationAndWarnings(t *testing.T) {
 
 	var warned []string
 	res, err := Reset(ResetOptions{
-		Name: "c", RootKind: manifest.RootKindFixed, FixedRoot: root, StateDir: state,
+		Name: "c", RootKind: manifest.RootKindFixed, FixedRoot: root, StateDir: state, Backend: &generation.Fake{},
 		Warnf: collectFormatted(&warned),
 	})
 	if err != nil {
@@ -362,7 +352,7 @@ func TestApplyConflictPartialResult(t *testing.T) {
 
 	var warned []string
 	res, err := Apply(Options{
-		LinkFarm: lf, Name: "c", StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", StateDir: state, Backend: &generation.Fake{},
 		Warnf: collectFormatted(&warned),
 	})
 	if err == nil {
@@ -399,13 +389,13 @@ func TestApplyRecordsReplacedDestsAndRemovalEntries(t *testing.T) {
 	src2 := makeSrc(t, "conf/rc")
 
 	lf1 := writeLinkFarm(t, fixedManifest(root, storeEntry(src1, "conf", "link"), storeEntry(src1, "conf", "drop")))
-	gen := 0
-	if _, err := Apply(Options{LinkFarm: lf1, Name: "c", StateDir: state, Commit: fakeGenCommit(&gen)}); err != nil {
+	fake := &generation.Fake{}
+	if _, err := Apply(Options{LinkFarm: lf1, Name: "c", StateDir: state, Backend: fake}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
 
 	lf2 := writeLinkFarm(t, fixedManifest(root, storeEntry(src2, "conf", "link")))
-	res, err := Apply(Options{LinkFarm: lf2, Name: "c", StateDir: state, Commit: fakeGenCommit(&gen)})
+	res, err := Apply(Options{LinkFarm: lf2, Name: "c", StateDir: state, Backend: fake})
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
 	}
@@ -437,8 +427,8 @@ func TestResetPartialFailureReturnsPartial(t *testing.T) {
 		copyEntry(src, "conf", "boxed/c1"),
 		copyEntry(src, "conf", "later/c2"),
 	))
-	gen := 0
-	if _, err := Apply(Options{LinkFarm: lf, Name: "c", StateDir: state, Commit: fakeGenCommit(&gen)}); err != nil {
+	fake := &generation.Fake{}
+	if _, err := Apply(Options{LinkFarm: lf, Name: "c", StateDir: state, Backend: fake}); err != nil {
 		t.Fatalf("Apply: %v", err)
 	}
 
@@ -451,7 +441,7 @@ func TestResetPartialFailureReturnsPartial(t *testing.T) {
 
 	var warned []string
 	res, err := Reset(ResetOptions{
-		Name: "c", RootKind: manifest.RootKindFixed, FixedRoot: root, StateDir: state,
+		Name: "c", RootKind: manifest.RootKindFixed, FixedRoot: root, StateDir: state, Backend: &generation.Fake{},
 		Warnf: collectFormatted(&warned),
 	})
 	if err == nil {
@@ -487,7 +477,7 @@ func TestRollbackConflictPartialResult(t *testing.T) {
 	srcB := makeSrc(t, "x")
 	srcC := makeSrc(t, "x")
 
-	prof := paths.Resolve(state, "vim", manifest.RootKindHome, root, true)
+	prof := paths.Resolve(fakeBase(state), "vim", manifest.RootKindHome, root, true)
 	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -514,11 +504,8 @@ func TestRollbackConflictPartialResult(t *testing.T) {
 	var warns []string
 	res, err := Rollback(RollbackOptions{
 		Name: "vim", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state,
-		ListGenerations: func(string) ([]Generation, error) {
-			return []Generation{{Number: 1}, {Number: 2, Current: true}}, nil
-		},
-		SwitchGeneration: func(string, int) error { return nil },
-		Warnf:            collectFormatted(&warns),
+		Backend: &generation.Fake{},
+		Warnf:   collectFormatted(&warns),
 	})
 	if err == nil {
 		t.Fatal("Rollback must fail on the conflicts")

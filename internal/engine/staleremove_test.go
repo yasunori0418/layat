@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
@@ -286,7 +287,7 @@ func TestRemoveStalePrunesMultiLevelEmptyAncestors(t *testing.T) {
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(src, "x", "a/b/c/file")))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -295,7 +296,7 @@ func TestRemoveStalePrunesMultiLevelEmptyAncestors(t *testing.T) {
 	// a/b/c, a/b, a chain should be pruned back to root.
 	lf2 := writeLinkFarm(t, projectManifest())
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
@@ -341,7 +342,7 @@ func TestRemoveStaleLeavesNonEmptyAncestorInPlace(t *testing.T) {
 		storeEntry(src, "x", "a/other/file2"),
 	))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -349,7 +350,7 @@ func TestRemoveStaleLeavesNonEmptyAncestorInPlace(t *testing.T) {
 	// Drop only a/b/c/file1; a/other/file2 (and thus a/) must survive.
 	lf2 := writeLinkFarm(t, projectManifest(storeEntry(src, "x", "a/other/file2")))
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
@@ -385,14 +386,14 @@ func TestRemoveStaleStopsAtRootBoundary(t *testing.T) {
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(src, "x", "file")))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
 
 	lf2 := writeLinkFarm(t, projectManifest())
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
@@ -416,7 +417,7 @@ func TestRemoveStaleStopsAtSymlinkAncestor(t *testing.T) {
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(src, "x", "a/b/file")))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -446,7 +447,7 @@ func TestRemoveStaleStopsAtSymlinkAncestor(t *testing.T) {
 
 	lf2 := writeLinkFarm(t, projectManifest())
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
@@ -530,7 +531,7 @@ func TestRemoveStaleLeavesForeignFileNonEmptyAncestorInPlace(t *testing.T) {
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(src, "x", "a/file")))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -543,7 +544,7 @@ func TestRemoveStaleLeavesForeignFileNonEmptyAncestorInPlace(t *testing.T) {
 
 	lf2 := writeLinkFarm(t, projectManifest())
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
@@ -573,7 +574,7 @@ func TestApplyAncestorSelfRecordedMigrationDoesNotPruneOuterAncestor(t *testing.
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(srcOld, ".", "outer/skills")))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -584,7 +585,7 @@ func TestApplyAncestorSelfRecordedMigrationDoesNotPruneOuterAncestor(t *testing.
 	}
 	lf2 := writeLinkFarm(t, projectManifest(storeEntry(srcNew, "foo", "outer/skills/foo")))
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("second Apply (migration): %v", err)

@@ -43,15 +43,8 @@ func RootHash(absRoot string) string {
 	return hex.EncodeToString(sum[:])[:rootHashLen]
 }
 
-// Base returns the base <state>/nix/profiles/layat for the profiles. The home
-// (no --root) profileDir is <name> directly under it; the roothash series is
-// <roothash>/<name>.
-func Base(stateDir string) string {
-	return filepath.Join(stateDir, "nix", "profiles", "layat")
-}
-
 // GenerationLink returns the path of the generation link <profileDir>/profile-<gen>-link that
-// nix-env creates as a sibling of the profile link.
+// the generation backend creates as a sibling of the profile link.
 func GenerationLink(profileLink string, gen int) string {
 	return fmt.Sprintf("%s-%d-link", profileLink, gen)
 }
@@ -60,9 +53,9 @@ func GenerationLink(profileLink string, gen int) string {
 type Profile struct {
 	// Dir is the profileDir (per-config directory; flock key).
 	Dir string
-	// Profile is the profile link (the target of nix-env --profile).
+	// Profile is the profile link the generation backend operates on.
 	Profile string
-	// Pending is the output of nix build --out-link (a sibling that does not pass through the profile).
+	// Pending is the generator's build out-link (a sibling that does not pass through the profile).
 	Pending string
 	// BackrefDir is the level where the backref .root is placed. Empty for home (no --root).
 	BackrefDir string
@@ -149,11 +142,10 @@ func ListRootHashSeries(base string) ([]RootHashSeries, error) {
 	return series, nil
 }
 
-// Resolve determines the profile layout for a config: <base>/<name> for home without --root,
-// otherwise <base>/<roothash>/<name> with the backref .root at the <roothash> level.
-func Resolve(stateDir, name, rootKind, absRoot string, rootOverride bool) Profile {
-	base := Base(stateDir)
-
+// Resolve determines the profile layout for a config under base (the generation backend's
+// user or system base): <base>/<name> for home without --root, otherwise <base>/<roothash>/<name>
+// with the backref .root at the <roothash> level.
+func Resolve(base, name, rootKind, absRoot string, rootOverride bool) Profile {
 	// Only home (no --root) keys directly on <name>. Otherwise separate into an independent series per root.
 	if rootKind == manifest.RootKindHome && !rootOverride {
 		dir := filepath.Join(base, name)

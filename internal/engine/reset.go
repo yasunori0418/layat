@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/manifest"
 	"github.com/yasunori0418/layat/internal/planner"
 )
@@ -22,6 +23,8 @@ type ResetOptions struct {
 	WorkDir      string
 	StateDir     string
 	Git          GitFunc
+	// Backend owns the profile base the profileDir is keyed under. Required: nil is an error.
+	Backend generation.Backend
 
 	// Targets narrows the teardown-target targets (root-relative · empty = all entries).
 	// Specifying a target not present in the previous generation's manifest is an error.
@@ -81,6 +84,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	prof, root, err := ProfileFor(ProfileOptions{
 		Name: opts.Name, RootKind: opts.RootKind, FixedRoot: opts.FixedRoot,
 		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir, Git: opts.Git,
+		Backend: opts.Backend,
 	})
 	if err != nil {
 		return nil, err

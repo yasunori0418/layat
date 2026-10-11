@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/manifest"
 	"github.com/yasunori0418/layat/internal/paths"
 )
@@ -15,47 +16,6 @@ func homeManifest(entries ...manifest.Entry) manifest.Manifest {
 		SchemaVersion: 1,
 		Root:          manifest.Root{RootKind: manifest.RootKindHome},
 		Entries:       entries,
-	}
-}
-
-func TestParseGenerations(t *testing.T) {
-	out := "" +
-		"   1   2026-06-01 10:00:00   \n" +
-		"   2   2026-06-02 11:30:00   (current)\n"
-	gens, err := parseGenerations(out)
-	if err != nil {
-		t.Fatalf("parseGenerations: %v", err)
-	}
-	if len(gens) != 2 {
-		t.Fatalf("len = %d, want 2", len(gens))
-	}
-	if gens[0].Number != 1 || gens[0].Current {
-		t.Errorf("gen[0] = %+v", gens[0])
-	}
-	if gens[0].Date != "2026-06-01 10:00:00" {
-		t.Errorf("gen[0].Date = %q", gens[0].Date)
-	}
-	if gens[1].Number != 2 || !gens[1].Current {
-		t.Errorf("gen[1] = %+v", gens[1])
-	}
-	if gens[1].Date != "2026-06-02 11:30:00" {
-		t.Errorf("gen[1].Date = %q (should not include (current))", gens[1].Date)
-	}
-}
-
-func TestParseGenerationsEmpty(t *testing.T) {
-	gens, err := parseGenerations("\n  \n")
-	if err != nil {
-		t.Fatalf("parseGenerations: %v", err)
-	}
-	if len(gens) != 0 {
-		t.Errorf("len = %d, want 0", len(gens))
-	}
-}
-
-func TestParseGenerationsBadLine(t *testing.T) {
-	if _, err := parseGenerations("not-a-number 2026-06-01\n"); err == nil {
-		t.Fatal("expected parse error for non-numeric generation, got nil")
 	}
 }
 
@@ -69,7 +29,7 @@ func TestRollbackReconverges(t *testing.T) {
 	srcC := makeSrc(t, "x")
 
 	// Use the --root override for home + roothash key to be independent of $HOME.
-	prof := paths.Resolve(state, "vim", manifest.RootKindHome, root, true)
+	prof := paths.Resolve(fakeBase(state), "vim", manifest.RootKindHome, root, true)
 	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -102,16 +62,13 @@ func TestRollbackReconverges(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var switched int
+	fake := &generation.Fake{}
 	res, err := Rollback(RollbackOptions{
 		Name:         "vim",
 		RootKind:     manifest.RootKindHome,
 		RootOverride: root,
 		StateDir:     state,
-		ListGenerations: func(string) ([]Generation, error) {
-			return []Generation{{Number: 1}, {Number: 2, Current: true}}, nil
-		},
-		SwitchGeneration: func(_ string, gen int) error { switched = gen; return nil },
+		Backend:      fake,
 	})
 	if err != nil {
 		t.Fatalf("Rollback: %v", err)
@@ -120,8 +77,8 @@ func TestRollbackReconverges(t *testing.T) {
 	if res.From != 2 || res.To != 1 {
 		t.Errorf("From/To = %d/%d, want 2/1", res.From, res.To)
 	}
-	if switched != 1 {
-		t.Errorf("switched generation = %d, want 1", switched)
+	if len(fake.Switches) != 1 || fake.Switches[0] != 1 {
+		t.Errorf("switched generations = %v, want [1]", fake.Switches)
 	}
 	// The generation observation mirrors From/To (numbers come from the listing, and the
 	// pointer moves last), and Entries carries the rolled-back-to generation's full inventory.
@@ -157,7 +114,7 @@ func TestRollbackSwitchGenerationFailureDoesNotUnwind(t *testing.T) {
 	srcB := makeSrc(t, "x")
 	srcC := makeSrc(t, "x")
 
-	prof := paths.Resolve(state, "vim", manifest.RootKindHome, root, true)
+	prof := paths.Resolve(fakeBase(state), "vim", manifest.RootKindHome, root, true)
 	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -195,11 +152,8 @@ func TestRollbackSwitchGenerationFailureDoesNotUnwind(t *testing.T) {
 		RootKind:     manifest.RootKindHome,
 		RootOverride: root,
 		StateDir:     state,
-		ListGenerations: func(string) ([]Generation, error) {
-			return []Generation{{Number: 1}, {Number: 2, Current: true}}, nil
-		},
-		SwitchGeneration: func(string, int) error { return os.ErrPermission },
-		Warnf:            collectFormatted(&warns),
+		Backend:      &generation.Fake{OnSwitch: func(string, int) error { return os.ErrPermission }},
+		Warnf:        collectFormatted(&warns),
 	})
 	if err == nil {
 		t.Fatal("expected the SwitchGeneration failure to propagate, got nil")
@@ -254,7 +208,7 @@ func TestRollbackAncestorMigration(t *testing.T) {
 		}
 	}
 
-	prof := paths.Resolve(state, "c", manifest.RootKindHome, root, true)
+	prof := paths.Resolve(fakeBase(state), "c", manifest.RootKindHome, root, true)
 	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -285,21 +239,18 @@ func TestRollbackAncestorMigration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var switched int
+	fake := &generation.Fake{}
 	var warns []string
 	res, err := Rollback(RollbackOptions{
 		Name: "c", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state,
-		ListGenerations: func(string) ([]Generation, error) {
-			return []Generation{{Number: 1}, {Number: 2, Current: true}}, nil
-		},
-		SwitchGeneration: func(_ string, gen int) error { switched = gen; return nil },
-		Warnf:            collectWarnings(&warns),
+		Backend: fake,
+		Warnf:   collectWarnings(&warns),
 	})
 	if err != nil {
 		t.Fatalf("Rollback: %v", err)
 	}
-	if switched != 1 {
-		t.Errorf("switched generation = %d, want 1", switched)
+	if len(fake.Switches) != 1 || fake.Switches[0] != 1 {
+		t.Errorf("switched generations = %v, want [1]", fake.Switches)
 	}
 	if len(warns) != 0 {
 		t.Errorf("rollback migration emitted warnings, want none: %v", warns)
@@ -353,7 +304,7 @@ func TestRollbackAncestorMigrationCopyChild(t *testing.T) {
 		}
 	}
 
-	prof := paths.Resolve(state, "c", manifest.RootKindHome, root, true)
+	prof := paths.Resolve(fakeBase(state), "c", manifest.RootKindHome, root, true)
 	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -384,21 +335,18 @@ func TestRollbackAncestorMigrationCopyChild(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var switched int
+	fake := &generation.Fake{}
 	var warns []string
 	res, err := Rollback(RollbackOptions{
 		Name: "c", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state,
-		ListGenerations: func(string) ([]Generation, error) {
-			return []Generation{{Number: 1}, {Number: 2, Current: true}}, nil
-		},
-		SwitchGeneration: func(_ string, gen int) error { switched = gen; return nil },
-		Warnf:            collectWarnings(&warns),
+		Backend: fake,
+		Warnf:   collectWarnings(&warns),
 	})
 	if err != nil {
 		t.Fatalf("Rollback: %v", err)
 	}
-	if switched != 1 {
-		t.Errorf("switched generation = %d, want 1", switched)
+	if len(fake.Switches) != 1 || fake.Switches[0] != 1 {
+		t.Errorf("switched generations = %v, want [1]", fake.Switches)
 	}
 	if len(warns) != 0 {
 		t.Errorf("rollback migration emitted warnings, want none: %v", warns)
@@ -456,7 +404,7 @@ func TestRollbackMethodChangeRestoresCopy(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prof := paths.Resolve(state, "c", manifest.RootKindHome, root, true)
+	prof := paths.Resolve(fakeBase(state), "c", manifest.RootKindHome, root, true)
 	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -478,21 +426,18 @@ func TestRollbackMethodChangeRestoresCopy(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var switched int
+	fake := &generation.Fake{}
 	var warns []string
 	res, err := Rollback(RollbackOptions{
 		Name: "c", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state,
-		ListGenerations: func(string) ([]Generation, error) {
-			return []Generation{{Number: 1}, {Number: 2, Current: true}}, nil
-		},
-		SwitchGeneration: func(_ string, gen int) error { switched = gen; return nil },
-		Warnf:            collectWarnings(&warns),
+		Backend: fake,
+		Warnf:   collectWarnings(&warns),
 	})
 	if err != nil {
 		t.Fatalf("Rollback: %v", err)
 	}
-	if switched != 1 {
-		t.Errorf("switched generation = %d, want 1", switched)
+	if len(fake.Switches) != 1 || fake.Switches[0] != 1 {
+		t.Errorf("switched generations = %v, want [1]", fake.Switches)
 	}
 	if len(warns) != 0 {
 		t.Errorf("rollback emitted warnings, want none: %v", warns)
@@ -531,7 +476,7 @@ func TestRollbackMidBatchFailureRollsBackPreRemoveMigration(t *testing.T) {
 	}
 	srcNew := realTempDir(t)
 
-	prof := paths.Resolve(state, "c", manifest.RootKindHome, root, true)
+	prof := paths.Resolve(fakeBase(state), "c", manifest.RootKindHome, root, true)
 	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -566,21 +511,18 @@ func TestRollbackMidBatchFailureRollsBackPreRemoveMigration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var switched int
+	fake := &generation.Fake{}
 	var warns []string
 	_, err := Rollback(RollbackOptions{
 		Name: "c", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state,
-		ListGenerations: func(string) ([]Generation, error) {
-			return []Generation{{Number: 1}, {Number: 2, Current: true}}, nil
-		},
-		SwitchGeneration: func(_ string, gen int) error { switched = gen; return nil },
-		Warnf:            collectFormatted(&warns),
+		Backend: fake,
+		Warnf:   collectFormatted(&warns),
 	})
 	if err == nil {
 		t.Fatal("expected an error, got nil")
 	}
-	if switched != 0 {
-		t.Errorf("SwitchGeneration was called (switched=%d), want it skipped when placement fails", switched)
+	if len(fake.Switches) != 0 {
+		t.Errorf("Switch was called (%v), want it skipped when placement fails", fake.Switches)
 	}
 
 	// The whole migration must be undone: .claude/skills is the ancestor symlink again, and the
@@ -618,7 +560,7 @@ func TestRollbackCopyFailureUnwindsPlacedSymlink(t *testing.T) {
 	srcKeep := makeSrc(t, "x")
 	copySrc := makeSrc(t, "tool.conf")
 
-	prof := paths.Resolve(state, "c", manifest.RootKindHome, root, true)
+	prof := paths.Resolve(fakeBase(state), "c", manifest.RootKindHome, root, true)
 	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -647,21 +589,18 @@ func TestRollbackCopyFailureUnwindsPlacedSymlink(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var switched int
+	fake := &generation.Fake{}
 	var warns []string
 	res, err := Rollback(RollbackOptions{
 		Name: "c", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state,
-		ListGenerations: func(string) ([]Generation, error) {
-			return []Generation{{Number: 1}, {Number: 2, Current: true}}, nil
-		},
-		SwitchGeneration: func(_ string, gen int) error { switched = gen; return nil },
-		Warnf:            collectFormatted(&warns),
+		Backend: fake,
+		Warnf:   collectFormatted(&warns),
 	})
 	if err == nil {
 		t.Fatal("expected an error from the permission-denied copy placement, got nil")
 	}
-	if switched != 0 {
-		t.Errorf("SwitchGeneration was called (switched=%d), want it skipped when copy placement fails", switched)
+	if len(fake.Switches) != 0 {
+		t.Errorf("Switch was called (%v), want it skipped when copy placement fails", fake.Switches)
 	}
 
 	// The symlink placed before the failing copy is unwound; the copy target never landed.
@@ -716,7 +655,7 @@ func TestRollbackAncestorPreRemoveErrorSkipsSwitch(t *testing.T) {
 	}
 	srcNew := realTempDir(t) // stays empty: preRemove errors before place ever reads its contents
 
-	prof := paths.Resolve(state, "c", manifest.RootKindHome, root, true)
+	prof := paths.Resolve(fakeBase(state), "c", manifest.RootKindHome, root, true)
 	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -753,21 +692,18 @@ func TestRollbackAncestorPreRemoveErrorSkipsSwitch(t *testing.T) {
 	}
 	t.Cleanup(func() { _ = os.Chmod(claudeDir, 0o755) }) // restore so TempDir cleanup can recurse
 
-	var switched int
+	fake := &generation.Fake{}
 	_, err := Rollback(RollbackOptions{
 		Name: "c", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state,
-		ListGenerations: func(string) ([]Generation, error) {
-			return []Generation{{Number: 1}, {Number: 2, Current: true}}, nil
-		},
-		SwitchGeneration: func(_ string, gen int) error { switched = gen; return nil },
+		Backend: fake,
 	})
 	// The message pins the failure to preRemove's os.Remove path rather than any early return
 	// (such as a Conflicts error, which would also stop Rollback before switchFn).
 	if err == nil || !strings.Contains(err.Error(), "cannot remove recorded symlink for migration") {
 		t.Fatalf("expected a preRemove unlink error, got %v", err)
 	}
-	if switched != 0 {
-		t.Errorf("SwitchGeneration was called (switched=%d), want it skipped when preRemove fails", switched)
+	if len(fake.Switches) != 0 {
+		t.Errorf("Switch was called (%v), want it skipped when preRemove fails", fake.Switches)
 	}
 	// The ancestor symlink must be left untouched (unlink failed, not silently skipped).
 	got, rerr := os.Readlink(filepath.Join(claudeDir, "skills"))
@@ -780,19 +716,22 @@ func TestRollbackAncestorPreRemoveErrorSkipsSwitch(t *testing.T) {
 func TestRollbackNoPreviousErrors(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
-	prof := paths.Resolve(state, "vim", manifest.RootKindHome, root, true)
+	prof := paths.Resolve(fakeBase(state), "vim", manifest.RootKindHome, root, true)
 	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
 	lf := writeLinkFarm(t, homeManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+	// A single generation link, the oldest, is the current one.
+	if err := os.Symlink(lf, paths.GenerationLink(prof.Profile, 1)); err != nil {
+		t.Fatal(err)
+	}
 	if err := os.Symlink(lf, prof.Profile); err != nil {
 		t.Fatal(err)
 	}
 
 	_, err := Rollback(RollbackOptions{
 		Name: "vim", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state,
-		ListGenerations:  func(string) ([]Generation, error) { return []Generation{{Number: 1, Current: true}}, nil },
-		SwitchGeneration: func(string, int) error { return nil },
+		Backend: &generation.Fake{},
 	})
 	if err == nil || !strings.Contains(err.Error(), "no previous generation") {
 		t.Fatalf("expected no-previous-generation error, got %v", err)
@@ -809,7 +748,7 @@ func TestRollbackConflictReportsAll(t *testing.T) {
 	srcB := makeSrc(t, "x")
 	srcC := makeSrc(t, "x")
 
-	prof := paths.Resolve(state, "vim", manifest.RootKindHome, root, true)
+	prof := paths.Resolve(fakeBase(state), "vim", manifest.RootKindHome, root, true)
 	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -844,11 +783,8 @@ func TestRollbackConflictReportsAll(t *testing.T) {
 	var warns []string
 	_, err := Rollback(RollbackOptions{
 		Name: "vim", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state,
-		ListGenerations: func(string) ([]Generation, error) {
-			return []Generation{{Number: 1}, {Number: 2, Current: true}}, nil
-		},
-		SwitchGeneration: func(string, int) error { return nil },
-		Warnf:            collectFormatted(&warns),
+		Backend: &generation.Fake{},
+		Warnf:   collectFormatted(&warns),
 	})
 	if err == nil {
 		t.Fatal("expected a conflict error, got nil")
@@ -876,10 +812,19 @@ func TestRollbackNoProfileErrors(t *testing.T) {
 	state := realTempDir(t)
 	_, err := Rollback(RollbackOptions{
 		Name: "vim", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state,
-		ListGenerations:  func(string) ([]Generation, error) { return nil, nil },
-		SwitchGeneration: func(string, int) error { return nil },
+		Backend: &generation.Fake{},
 	})
 	if err == nil || !strings.Contains(err.Error(), "profile") {
 		t.Fatalf("expected no-profile error, got %v", err)
+	}
+}
+
+// TestRollbackRequiresBackend verifies Rollback refuses to run without a generation backend.
+func TestRollbackRequiresBackend(t *testing.T) {
+	_, err := Rollback(RollbackOptions{
+		Name: "vim", RootKind: manifest.RootKindHome, RootOverride: realTempDir(t), StateDir: realTempDir(t),
+	})
+	if err == nil || !strings.Contains(err.Error(), "generation backend") {
+		t.Fatalf("err = %v, want the missing-backend error", err)
 	}
 }

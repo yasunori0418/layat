@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
@@ -23,6 +24,7 @@ func TestApplyDryRunNoSideEffects(t *testing.T) {
 		RootOverride: root,
 		StateDir:     state,
 		DryRun:       true,
+		Backend:      &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("Apply dryrun: %v", err)
@@ -65,6 +67,7 @@ func TestApplyDryRunConflict(t *testing.T) {
 		RootOverride: root,
 		StateDir:     state,
 		DryRun:       true,
+		Backend:      &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("Apply dryrun: %v", err)
@@ -90,7 +93,7 @@ func TestApplyDryRunAncestorMigration(t *testing.T) {
 	srcOld := makeSrc(t, "other")
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(srcOld, ".", ".claude/skills")))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -99,7 +102,7 @@ func TestApplyDryRunAncestorMigration(t *testing.T) {
 	srcNew := makeSrc(t, "foo")
 	lf2 := writeLinkFarm(t, projectManifest(storeEntry(srcNew, "foo", ".claude/skills/foo")))
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, DryRun: true,
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}, DryRun: true,
 	})
 	if err != nil {
 		t.Fatalf("dryrun Apply: %v", err)
@@ -132,7 +135,7 @@ func TestApplyDryRunRealDirMigration(t *testing.T) {
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(srcOld, ".", ".claude/hooks/foo")))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -140,7 +143,7 @@ func TestApplyDryRunRealDirMigration(t *testing.T) {
 	srcNew := realTempDir(t)
 	lf2 := writeLinkFarm(t, projectManifest(storeEntry(srcNew, ".", ".claude/hooks")))
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, DryRun: true,
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}, DryRun: true,
 	})
 	if err != nil {
 		t.Fatalf("dryrun Apply: %v", err)

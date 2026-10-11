@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/lock"
-	"github.com/yasunori0418/layat/internal/paths"
 )
 
 // --- fixture helpers -------------------------------------------------------
@@ -20,13 +20,13 @@ import (
 // The layout Prune walks is built by hand rather than by running Apply, since
 // the verdict only reads the backref .root and the root's existence.
 
-// pruneBases returns a state dir (whose paths.Base is created) and a system
+// pruneBases returns a state dir (whose user base is created) and a system
 // base (created as-is), both under tmpdirs. The system base is a tmpdir so no
 // test ever reaches the real /nix/var/nix/profiles (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1).
 func pruneBases(t *testing.T) (stateDir, systemDir string) {
 	t.Helper()
 	stateDir = realTempDir(t)
-	if err := os.MkdirAll(paths.Base(stateDir), 0o755); err != nil {
+	if err := os.MkdirAll(fakeBase(stateDir), 0o755); err != nil {
 		t.Fatal(err)
 	}
 	systemDir = filepath.Join(realTempDir(t), "system")
@@ -146,7 +146,7 @@ func (w *warnRecorder) wantWarning(t *testing.T, parts ...string) {
 
 // pruneOpts builds options driving both tmpdir bases with a warning recorder.
 func pruneOpts(stateDir, systemDir string, w *warnRecorder) PruneOptions {
-	return PruneOptions{StateDir: stateDir, SystemDir: systemDir, Warnf: w.warnf}
+	return PruneOptions{StateDir: stateDir, SystemDir: systemDir, Warnf: w.warnf, Backend: &generation.Fake{}}
 }
 
 func hashes(series []PruneSeries) []string {
@@ -195,7 +195,7 @@ func mustExist(t *testing.T, path, what string) {
 
 func TestPruneRemovesOrphanSeriesWhole(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	hashDir := orphanSeries(t, base, "aaaa", "cfg", "other")
 	// A generation link under one of the names, so "everything under the
 	// series is gone" covers generation links too.
@@ -228,7 +228,7 @@ func TestPruneRemovesOrphanSeriesWhole(t *testing.T) {
 
 func TestPruneRemovesSeriesWithoutGenerations(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	// The majority shape in the wild: .pending out-links only, no generation
 	// link anywhere (→ DSG-096dc893 「世代を持たない系列も対象」).
 	pendingOnly := writeSeries(t, base, seriesSpec{
@@ -258,7 +258,7 @@ func TestPruneRemovesSeriesWithoutGenerations(t *testing.T) {
 
 func TestPruneKeepsLiveSeries(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	hashDir, root := liveSeries(t, base, "aaaa", "cfg")
 	// A file placed under the live root: prune must not touch placed artifacts.
 	placed := filepath.Join(root, "placed")
@@ -286,7 +286,7 @@ func TestPruneKeepsLiveSeries(t *testing.T) {
 
 func TestPruneIgnoresDirWithoutBackref(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	// The <name>-keyed profileDir of home mode: no .root, so no root path can
 	// be derived and the directory is structurally out of scope.
 	homeDir := writeSeries(t, base, seriesSpec{hash: "cfg", names: []string{"profile-1-link"}})
@@ -308,7 +308,7 @@ func TestPruneIgnoresDirWithoutBackref(t *testing.T) {
 
 func TestPruneScansBothBases(t *testing.T) {
 	state, system := pruneBases(t)
-	stateOrphan := orphanSeries(t, paths.Base(state), "aaaa", "cfg")
+	stateOrphan := orphanSeries(t, fakeBase(state), "aaaa", "cfg")
 	systemOrphan := orphanSeries(t, system, "bbbb", "cfg")
 
 	var w warnRecorder
@@ -343,7 +343,7 @@ func TestPruneTreatsMissingBaseAsEmpty(t *testing.T) {
 
 func TestPruneWarnsOnUnlistableBase(t *testing.T) {
 	state, system := pruneBases(t)
-	stateOrphan := orphanSeries(t, paths.Base(state), "aaaa", "cfg")
+	stateOrphan := orphanSeries(t, fakeBase(state), "aaaa", "cfg")
 	// A regular file where the system base should be: ReadDir fails with
 	// ENOTDIR, which root cannot bypass either (→ TP-deb05610 の横断規約).
 	if err := os.RemoveAll(system); err != nil {
@@ -389,7 +389,7 @@ func TestPruneKeepsSeriesWithUnusableBackref(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			state, system := pruneBases(t)
-			base := paths.Base(state)
+			base := fakeBase(state)
 			hashDir := filepath.Join(base, "aaaa")
 			if err := os.MkdirAll(filepath.Join(hashDir, "cfg"), 0o755); err != nil {
 				t.Fatal(err)
@@ -415,7 +415,7 @@ func TestPruneKeepsSeriesWithUnusableBackref(t *testing.T) {
 
 func TestPruneTrimsTrailingNewlineInBackref(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	root := realTempDir(t)
 	// The engine writes root + "\n"; a verdict that does not trim reports a
 	// live root as root-stat-failed and stops pruning genuine orphans.
@@ -447,7 +447,7 @@ func TestPruneKeepsSeriesWithUnstatableRoot(t *testing.T) {
 		t.Skip("root bypasses the permission denial this case needs")
 	}
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	// The root sits under a directory stripped of search permission, so its
 	// stat fails with something other than ErrNotExist.
 	parent := filepath.Join(realTempDir(t), "sealed")
@@ -476,7 +476,7 @@ func TestPruneKeepsSeriesWithUnstatableRoot(t *testing.T) {
 
 func TestPruneRemovesSeriesWithDanglingSymlinkRoot(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	// The recorded root is reachable only through a symlink whose target is
 	// gone: os.Stat follows it, so it falls out as not existing.
 	link := filepath.Join(realTempDir(t), "link")
@@ -499,7 +499,7 @@ func TestPruneRemovesSeriesWithDanglingSymlinkRoot(t *testing.T) {
 
 func TestPruneKeepsSeriesWhoseRootIsAFile(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	// The verdict is "does not exist" only; the kind is not looked at, so a
 	// root replaced by a regular file falls on the existing side.
 	root := filepath.Join(realTempDir(t), "was-a-dir")
@@ -525,7 +525,7 @@ func TestPruneKeepsSeriesWhoseNamesCannotBeListed(t *testing.T) {
 		t.Skip("root bypasses the permission denial this case needs")
 	}
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	healthy := orphanSeries(t, base, "aaaa", "cfg")
 	// The series directory is stripped of read permission after .root is
 	// written: the backref is still statable through the path, but the <name>
@@ -564,7 +564,7 @@ func TestPruneKeepsSeriesWhoseNamesCannotBeListed(t *testing.T) {
 
 func TestPruneDryRunChangesNothing(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	hashDir := orphanSeries(t, base, "aaaa", "cfg")
 
 	var w warnRecorder
@@ -588,7 +588,7 @@ func TestPruneDryRunChangesNothing(t *testing.T) {
 
 func TestPruneDryRunTakesNoLock(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	hashDir := orphanSeries(t, base, "aaaa", "cfg")
 
 	var w warnRecorder
@@ -612,7 +612,7 @@ func TestPruneDryRunTakesNoLock(t *testing.T) {
 
 func TestPruneDryRunListsLockedSeries(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	hashDir := orphanSeries(t, base, "aaaa", "cfg")
 
 	held, err := lock.Acquire(filepath.Join(hashDir, "cfg"), true)
@@ -640,7 +640,7 @@ func TestPruneDryRunListsLockedSeries(t *testing.T) {
 
 func TestPruneConfirmReceivesRootPaths(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	first := orphanSeries(t, base, "aaaa", "cfg")
 	second := orphanSeries(t, base, "bbbb", "cfg")
 
@@ -677,7 +677,7 @@ func TestPruneConfirmReceivesRootPaths(t *testing.T) {
 
 func TestPruneConfirmFalseAborts(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	hashDir := orphanSeries(t, base, "aaaa", "cfg")
 
 	var seen *PruneResult
@@ -721,7 +721,7 @@ func TestPruneConfirmFalseAborts(t *testing.T) {
 
 func TestPruneConfirmErrorPropagates(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	hashDir := orphanSeries(t, base, "aaaa", "cfg")
 
 	sentinel := errors.New("confirm failed")
@@ -742,7 +742,7 @@ func TestPruneConfirmErrorPropagates(t *testing.T) {
 
 func TestPruneSkipsLockedSeries(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	// Two <name> profileDirs, only one of them locked: the whole series is
 	// skipped, all-or-nothing.
 	locked := orphanSeries(t, base, "aaaa", "cfg", "other")
@@ -775,7 +775,7 @@ func TestPruneSkipsLockedSeries(t *testing.T) {
 
 func TestPruneReleasesLocksTakenBeforeASkip(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	// "cfg" sorts before "other", so the lock on "cfg" is taken and must be
 	// released once "other" turns out to be held.
 	hashDir := orphanSeries(t, base, "aaaa", "cfg", "other")
@@ -802,7 +802,7 @@ func TestPruneSkipsSeriesWhoseLockCannotBeAcquired(t *testing.T) {
 		t.Skip("root bypasses the permission denial this case needs")
 	}
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	hashDir := orphanSeries(t, base, "aaaa", "cfg")
 	// lock.Acquire opens the profileDir; with no read permission the open
 	// fails with something other than ErrLocked, and an undecidable lock must
@@ -827,7 +827,7 @@ func TestPruneSkipsSeriesWhoseLockCannotBeAcquired(t *testing.T) {
 
 func TestPruneHoldsLocksWhileDeleting(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	// Two <name> profileDirs: the deletion window is the interval in which the
 	// first is already gone and the second is not. Probing only inside that
 	// interval keeps the test deterministic.
@@ -909,7 +909,7 @@ func TestPruneHoldsLocksWhileDeleting(t *testing.T) {
 
 func TestPruneReleasesLocksAfterDeleting(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	// The series is deleted, so the profileDir is gone and the lock cannot be
 	// probed through it. Recreate the path and check the lock is takeable:
 	// a leaked flock lives on the open fd, which Release closes.
@@ -934,7 +934,7 @@ func TestPruneReleasesLocksAfterDeleting(t *testing.T) {
 
 func TestPruneRemovesBareSeriesWithoutLock(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	// No <name> profileDir means no lock key exists; the series is still
 	// removed rather than skipped for want of a lock.
 	hashDir := writeSeries(t, base, seriesSpec{hash: "aaaa", backref: filepath.Join(realTempDir(t), "gone")})
@@ -959,7 +959,7 @@ func TestPruneSkipsSeriesItCannotBeginToDelete(t *testing.T) {
 		t.Skip("root bypasses the permission denial this case needs")
 	}
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	blocked := orphanSeries(t, base, "aaaa", "cfg")
 	free := orphanSeries(t, base, "bbbb", "cfg")
 	// The series directory is read-execute only: its entries can be listed
@@ -991,7 +991,7 @@ func TestPruneSkipsSeriesItCannotBeginToDelete(t *testing.T) {
 
 func TestPruneErrorsWhenDeletionFailsForANonPermissionReason(t *testing.T) {
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	completed := orphanSeries(t, base, "aaaa", "cfg")
 	// A stray file makes the final rmdir of the <roothash> fail with ENOTEMPTY, which
 	// root cannot bypass; it must be an error, not Skipped{permission-denied}. The
@@ -1045,7 +1045,7 @@ func TestPruneErrorsWhenDeletionFailsPartway(t *testing.T) {
 		t.Skip("root bypasses the permission denial this case needs")
 	}
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	// "aaaa" sorts before "bbbb", so the first series completes and lands in
 	// Removed before the second one fails partway.
 	completed := orphanSeries(t, base, "aaaa", "cfg")
@@ -1098,7 +1098,7 @@ func TestPruneErrorsWhenDeletionFailsPartwayOnPermission(t *testing.T) {
 		t.Skip("root bypasses the permission denial this case needs")
 	}
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	// A permission failure after something was already removed is an error, not
 	// Skipped{permission-denied}. This catches checking errors.Is before progress.
 	partial := writeSeries(t, base, seriesSpec{
@@ -1138,7 +1138,7 @@ func TestPruneRemovesNamesBeforeBackref(t *testing.T) {
 		t.Skip("root bypasses the permission denial this case needs")
 	}
 	state, system := pruneBases(t)
-	base := paths.Base(state)
+	base := fakeBase(state)
 	// A series that fails partway must still be reachable afterwards because
 	// .root outlives the <name> profiles: a second run finds the same series.
 	partial := writeSeries(t, base, seriesSpec{
@@ -1172,5 +1172,15 @@ func TestPruneRemovesNamesBeforeBackref(t *testing.T) {
 	mustNotExist(t, partial, "the series on the re-run")
 	if got := hashes(res.Removed); len(got) != 1 || got[0] != "aaaa" {
 		t.Errorf("Removed = %v, want [aaaa] on the re-run", got)
+	}
+}
+
+// TestPruneRequiresBackend verifies Prune refuses to scan without a generation backend, since
+// both bases come from it.
+func TestPruneRequiresBackend(t *testing.T) {
+	stateDir, systemDir := pruneBases(t)
+	_, err := Prune(PruneOptions{StateDir: stateDir, SystemDir: systemDir, DryRun: true})
+	if err == nil || !strings.Contains(err.Error(), "generation backend") {
+		t.Fatalf("err = %v, want the missing-backend error", err)
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
@@ -23,7 +24,7 @@ func TestApplyPerFileToDirSymlinkMigratesSameNamedLeaf(t *testing.T) {
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(srcOld, "foo/main.sh", ".claude/hooks/foo/main.sh")))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -31,7 +32,7 @@ func TestApplyPerFileToDirSymlinkMigratesSameNamedLeaf(t *testing.T) {
 	srcNew := realTempDir(t)
 	lf2 := writeLinkFarm(t, projectManifest(storeEntry(srcNew, ".", ".claude/hooks")))
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("second Apply (dir migration): %v", err)
@@ -79,7 +80,7 @@ func TestApplyDirSymlinkRoundTripsThroughPerFile(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)
 	opts := func(lf string) Options {
-		return Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil)}
+		return Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}}
 	}
 
 	src1 := realTempDir(t)
@@ -121,7 +122,7 @@ func TestApplyDirMigrationConflictLeavesSiblingsUntouched(t *testing.T) {
 		storeEntry(srcOld, ".", ".claude/hooks/bar"),
 	))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -134,7 +135,7 @@ func TestApplyDirMigrationConflictLeavesSiblingsUntouched(t *testing.T) {
 	srcNew := realTempDir(t)
 	lf2 := writeLinkFarm(t, projectManifest(storeEntry(srcNew, ".", ".claude/hooks")))
 	_, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err == nil {
 		t.Fatal("expected a conflict error, got nil")
@@ -166,7 +167,7 @@ func TestApplyDirMigrationEmptySubdirsAtMultipleDepths(t *testing.T) {
 	srcNew := realTempDir(t)
 	lf := writeLinkFarm(t, projectManifest(storeEntry(srcNew, ".", "hooks")))
 	res, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("Apply: %v", err)
@@ -190,7 +191,7 @@ func TestApplyMethodChangeSymlinkToCopyMigrates(t *testing.T) {
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(symSrc, ".", ".config/tool.conf")))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply (symlink): %v", err)
 	}
@@ -198,7 +199,7 @@ func TestApplyMethodChangeSymlinkToCopyMigrates(t *testing.T) {
 	copySrc := makeSrc(t, "tool.conf")
 	lf2 := writeLinkFarm(t, projectManifest(copyEntry(copySrc, "tool.conf", ".config/tool.conf")))
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("second Apply (method change → copy): %v", err)
@@ -229,7 +230,7 @@ func TestApplyMethodChangeCopyToSymlinkStaysConflict(t *testing.T) {
 
 	lf1 := writeLinkFarm(t, projectManifest(copyEntry(copySrc, "tool.conf", ".config/tool.conf")))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply (copy): %v", err)
 	}
@@ -237,7 +238,7 @@ func TestApplyMethodChangeCopyToSymlinkStaysConflict(t *testing.T) {
 	symSrc := realTempDir(t)
 	lf2 := writeLinkFarm(t, projectManifest(storeEntry(symSrc, ".", ".config/tool.conf")))
 	_, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err == nil {
 		t.Fatal("expected a conflict error for copy→symlink, got nil")
@@ -260,7 +261,7 @@ func TestApplyMethodChangeSymlinkToCopyDriftFallsBackToForeign(t *testing.T) {
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(symSrc, ".", ".config/tool.conf")))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply (symlink): %v", err)
 	}
@@ -279,7 +280,7 @@ func TestApplyMethodChangeSymlinkToCopyDriftFallsBackToForeign(t *testing.T) {
 	var warns []string
 	lf2 := writeLinkFarm(t, projectManifest(copyEntry(copySrc, "tool.conf", ".config/tool.conf")))
 	_, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 		Warnf: collectWarnings(&warns),
 	})
 	if err != nil {
@@ -319,7 +320,7 @@ func TestApplyDirMigrationNonEmptySubdirIsConflictAtPlanTime(t *testing.T) {
 	srcNew := realTempDir(t)
 	lf := writeLinkFarm(t, projectManifest(storeEntry(srcNew, ".", "hooks")))
 	_, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err == nil {
 		t.Fatal("expected a conflict/error, got nil")
@@ -392,7 +393,7 @@ func TestApplyDirMigrationInterruptedAfterPreRemoveReRunConverges(t *testing.T) 
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(srcOld, ".", ".claude/hooks/foo")))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -423,7 +424,7 @@ func TestApplyDirMigrationInterruptedAfterPreRemoveReRunConverges(t *testing.T) 
 	// PreRemove needed this time) and converge to the fully-migrated state without erroring.
 	lf2 := writeLinkFarm(t, projectManifest(storeEntry(srcNew, ".", ".claude/hooks")))
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("re-run Apply after simulated crash: %v", err)

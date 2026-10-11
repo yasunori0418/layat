@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/lock"
 	"github.com/yasunori0418/layat/internal/paths"
 )
@@ -15,10 +16,6 @@ import (
 // prune removes the profile series whose recorded root no longer exists. It
 // touches no placed artifact and thins no generations. A series whose root
 // exists is kept; one whose verdict cannot be reached is kept with a warning.
-
-// defaultSystemDir is the system-mode profile base. Unlike the
-// user state base it is a finished base: it does not go through paths.Base.
-const defaultSystemDir = "/nix/var/nix/profiles/layat"
 
 // PruneSkipReason is why a series was left alone. Only failures appear here; a
 // series kept because its root exists is not a failure and is not reported
@@ -48,11 +45,12 @@ const (
 // evaluates nor builds, and its only inputs are the two bases to scan
 // (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1).
 type PruneOptions struct {
-	// StateDir is <state>; the base is derived through paths.Base
-	// (empty = resolved with paths.StateDir).
+	// Backend owns both bases: the user base is derived from StateDir through
+	// Backend.UserBase and the system base is Backend.SystemBase. Required: nil is an error.
+	Backend generation.Backend
+	// StateDir is <state> (empty = resolved with paths.StateDir).
 	StateDir string
-	// SystemDir is the finished system base itself; it does not go through
-	// paths.Base. Empty = defaultSystemDir.
+	// SystemDir overrides the finished system base itself (empty = Backend.SystemBase).
 	SystemDir string
 	// DryRun is a side-effect-free preview: it enumerates and judges, takes no
 	// lock, and changes nothing (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
@@ -104,6 +102,9 @@ type PruneResult struct {
 // under the user state base and the system base. On error the result is nil
 // except when the deletion stage failed, where the partial result comes back.
 func Prune(opts PruneOptions) (*PruneResult, error) {
+	if opts.Backend == nil {
+		return nil, errNoBackend
+	}
 	warnf := opts.Warnf
 	if warnf == nil {
 		warnf = func(format string, args ...any) {
@@ -121,7 +122,7 @@ func Prune(opts PruneOptions) (*PruneResult, error) {
 	}
 	systemDir := opts.SystemDir
 	if systemDir == "" {
-		systemDir = defaultSystemDir
+		systemDir = opts.Backend.SystemBase()
 	}
 
 	res := &PruneResult{DryRun: opts.DryRun}
@@ -130,7 +131,7 @@ func Prune(opts PruneOptions) (*PruneResult, error) {
 	// not reported; a base that exists but cannot be listed is reported by
 	// name, and the other base is still processed (→ RISK-f522a51b-db4b-4164-bd20-63fa4a0cb27d).
 	var candidates []PruneSeries
-	for _, base := range []string{paths.Base(stateDir), systemDir} {
+	for _, base := range []string{opts.Backend.UserBase(stateDir), systemDir} {
 		found, err := pruneJudgeBase(base, res, warnf)
 		if err != nil {
 			// paths.ListRootHashSeries already names the base in its own wrap,
