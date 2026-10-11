@@ -23,4 +23,4 @@ mitigates:
 
 ## 対応する CASE
 
-CASE-364ebb9d-b9f8-4c79-8509-8bbf31e73698（`internal/engine/generations_test.go`）。
+CASE-80a327c3-5fdd-48d4-9446-4b3e0e262105（`internal/generation/nixprofile/nixprofile_test.go`）。
