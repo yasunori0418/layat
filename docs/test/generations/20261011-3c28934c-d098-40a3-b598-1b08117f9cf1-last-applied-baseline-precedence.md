@@ -30,8 +30,8 @@ stale 除去・ドリフト修復・reset・rollback が使う baseline（この
   一致するときだけ行い、その経路でも記録を更新する。profile が無いときや両者が食い違う間は、
   記録を baseline に通常経路を通る
 - rollback は FS の収束後・profile ポインタ移動の前に N-1 の manifest と link-farm で書き直す
-- reset は実際に撤去した entry だけを除いて書き直し（foreign として残した entry と
-  `linkFarm` は保持）、全撤去なら記録を削除する
+- reset は撤去対象のうち target が無くなった entry だけを除いて書き直し（foreign として
+  残した entry・途中失敗で未到達の entry・`linkFarm` は保持）、全撤去なら記録を削除する
 - generation skip・rollback・reset も、記録を書けなければ失敗する
 
 上位の規範は TP-e7c25263-6d2d-4a37-8275-26906889d912（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。
