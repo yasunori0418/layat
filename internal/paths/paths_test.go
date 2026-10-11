@@ -155,8 +155,8 @@ func TestResolveRecordHomeUsesNameKey(t *testing.T) {
 	if r.File != filepath.Join(wantDir, "last-applied.json") {
 		t.Errorf("File = %q", r.File)
 	}
-	if r.BackrefDir != "" || r.Backref != "" {
-		t.Errorf("home (no --root) should have no backref, got %q / %q", r.BackrefDir, r.Backref)
+	if r.Backref != "" {
+		t.Errorf("home (no --root) should have no backref, got %q", r.Backref)
 	}
 }
 
@@ -180,8 +180,8 @@ func TestResolveRecordRootHashSeries(t *testing.T) {
 			if r.File != filepath.Join(hashDir, "c", "last-applied.json") {
 				t.Errorf("File = %q", r.File)
 			}
-			if r.BackrefDir != hashDir || r.Backref != filepath.Join(hashDir, ".root") {
-				t.Errorf("backref = %q / %q, want %q / %q", r.BackrefDir, r.Backref, hashDir, filepath.Join(hashDir, ".root"))
+			if r.Backref != filepath.Join(hashDir, ".root") {
+				t.Errorf("Backref = %q, want %q", r.Backref, filepath.Join(hashDir, ".root"))
 			}
 		})
 	}

@@ -176,8 +176,6 @@ type Record struct {
 	Dir string
 	// File is the last-applied record file.
 	File string
-	// BackrefDir is the level where the backref .root is placed. Empty for home (no --root).
-	BackrefDir string
 	// Backref is the backref file recording the original root's absolute path. Empty for home.
 	Backref string
 }
@@ -186,9 +184,8 @@ type Record struct {
 func ResolveRecord(stateDir, name, rootKind, absRoot string, rootOverride bool) Record {
 	p := Resolve(filepath.Join(stateDir, "layat"), name, rootKind, absRoot, rootOverride)
 	return Record{
-		Dir:        p.Dir,
-		File:       filepath.Join(p.Dir, recordFileName),
-		BackrefDir: p.BackrefDir,
-		Backref:    p.Backref,
+		Dir:     p.Dir,
+		File:    filepath.Join(p.Dir, recordFileName),
+		Backref: p.Backref,
 	}
 }
