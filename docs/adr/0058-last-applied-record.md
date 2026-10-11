@@ -55,7 +55,7 @@ manifest を内容ごと持つ。記録の有効性は store の GC と無関係
 3. 両方あって `linkFarm` が profile の指す先と食い違えば記録を採り、warning を 1 行出す
 4. どちらも無ければ baseline は空（初回）。「last-applied 記録なし」を warning 1 行として出す（warning は沈黙規律の対象外で stderr へ出る）
 
-対象は apply の stale 除去と drift 修復、reset の撤去対象、rollback の baseline（離れる世代 N）。**generation skip は、新 link-farm が profile の current 世代と記録の `linkFarm` の両方（存在する方全て。どちらも無ければ skip しない）に一致するときだけ行う**。記録は commit の前に書かれるので、commit 失敗後は記録（新）と profile（旧）が食い違う。記録だけと比べると同じ設定での再実行が skip に入り commit を飛ばし、profile だけと比べると旧設定への再実行が skip に入り未コミットの試行が置いた entry を撤去し損ねる。両方一致を条件にすれば、食い違う間は通常経路（記録を baseline に stale 除去 → commit）を通って収束する。**rollback の target（N-1）は引き続き世代リンクから読む**（記録は「最後に置いたもの」しか持たない）。
+対象は apply の stale 除去と drift 修復、reset の撤去対象、rollback の baseline（離れる世代 N）。**generation skip は、新 link-farm が profile の current 世代に一致し、記録があればその `linkFarm` にも一致するときだけ行う。profile が無ければ（記録だけがあっても）skip しない**。記録は commit の前に書かれるので、commit 失敗後は記録（新）と profile（旧）が食い違う。記録だけと比べると同じ設定での再実行が skip に入り commit を飛ばし、profile だけと比べると旧設定への再実行が skip に入り未コミットの試行が置いた entry を撤去し損ねる。両方一致を条件にすれば、食い違う間は通常経路（記録を baseline に stale 除去 → commit）を通って収束する。**rollback の target（N-1）は引き続き世代リンクから読む**（記録は「最後に置いたもの」しか持たない）。
 
 ### 4. 記録の書き込み
 
