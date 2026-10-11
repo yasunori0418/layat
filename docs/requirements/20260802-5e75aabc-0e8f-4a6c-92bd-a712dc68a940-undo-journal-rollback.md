@@ -24,8 +24,9 @@ specification: |
   journal SHALL be rolled back by the same mechanism. The journal SHALL be discarded once
   the generation commit through the generation backend contract
   (REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b) has succeeded, a failure of the commit itself
-  being outside the scope of rollback because an idempotent re-run converges. On the success of the run, the aside made by `--recopy` SHALL be
-  deleted, whereas the aside made by `--backup` SHALL be left in place. Crashes such as
+  being outside the scope of rollback because an idempotent re-run converges. On the
+  success of the run, the aside made by `--recopy` SHALL be deleted, whereas the aside
+  made by `--backup` SHALL be left in place. Crashes such as
   SIGKILL or power loss SHALL be out of scope, the journal existing only in process memory
   with no persistent write-ahead log; in that case the guarantee SHALL continue to rest on
   the generation being left uncommitted and on convergence by idempotent re-run. The drift

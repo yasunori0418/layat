@@ -23,8 +23,8 @@ specification: |
   teardown that leaves the profile and generations untouched, while rewriting the
   last-applied record (and, when only a record exists, creating the profileDir that is the
   flock key together with the backref `.root` for the roothash series) as stated by
-  REQ-9d622539-a1e5-4719-af51-e0cd85b66f35; as long as the config still holds the entry, the next apply SHALL place it again. It SHALL be usable in both home
-  and project mode.
+  REQ-9d622539-a1e5-4719-af51-e0cd85b66f35; as long as the config still holds the entry,
+  the next apply SHALL place it again. It SHALL be usable in both home and project mode.
 specification_ja: |
   `layat reset <name> [target...]` は配置物を無い状態へ戻す teardown でなければならない。
   target 省略で全 entry、指定でその entry のみを対象としなければならない。symlink は stale
