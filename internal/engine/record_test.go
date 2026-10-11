@@ -659,3 +659,22 @@ func TestResetPartialFailureKeepsRecord(t *testing.T) {
 		})
 	}
 }
+
+// TestResetPartialFailureJoinsRecordError verifies a reset stopped mid-way whose record rewrite
+// also fails returns both the removal error and the record error.
+func TestResetPartialFailureJoinsRecordError(t *testing.T) {
+	root, state := realTempDir(t), realTempDir(t)
+	src := makeSrc(t, "x")
+	applyForReset(t, root, state, homeManifest(storeEntry(src, ".", "a"), copyEntry(src, "x", "boxed/c1")))
+	lockRecordDir(t, paths.ResolveRecord(state, "cfg", manifest.RootKindHome, root, true))
+	frozen := filepath.Join(root, "boxed")
+	if err := os.Chmod(frozen, 0o555); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chmod(frozen, 0o755) })
+
+	_, err := Reset(resetOpts(root, state, nil, false, nil))
+	if err == nil || !strings.Contains(err.Error(), "cannot remove copy target") || !isRecordErr(err) {
+		t.Fatalf("Reset = %v, want the removal error joined with the record write failure", err)
+	}
+}
