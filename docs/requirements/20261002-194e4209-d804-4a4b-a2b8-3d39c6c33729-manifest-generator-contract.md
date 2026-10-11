@@ -17,8 +17,9 @@ specification: |
   Roots SHALL also return the normalized target list, while a single-config Roots MAY omit
   it. Every generator SHALL answer Roots before any
   build, because the apply flow resolves profileDir and takes the lock before it builds.
-  Build SHALL lay down at the pending path, and return, a link-farm that can be committed
-  as a generation, which means a store path. `--manifest` SHALL be served by a prebuilt
+  Build SHALL lay down at the pending path, and return, the path of a link-farm that the
+  selected generation backend can commit (the default nixprofile backend requires a store
+  path). `--manifest` SHALL be served by a prebuilt
   generator whose Discover is the given path, whose Roots reads that link-farm's
   `manifest.json`, and whose Build returns that path.
 specification_ja: |
@@ -31,8 +32,9 @@ specification_ja: |
   全 config 分の Roots と prebuilt 生成器の Roots は正規化後の target 一覧も返さなければ
   ならず、1 config 分の Roots はそれを省いてもよい。
   apply の実行フローは build の前に profileDir を確定してロックを取るため、全ての生成器は
-  build の前に Roots に答えなければならない。Build は世代コミット可能な link-farm
-  （= store path）を pending のパスに張って返さなければならない。`--manifest` は prebuilt
+  build の前に Roots に答えなければならない。Build は選択中の世代バックエンドがコミット可能な
+  link-farm のパス（既定の nixprofile は store path を要求する）を pending のパスに張って返さ
+  なければならない。`--manifest` は prebuilt
   生成器が担わなければならない（Discover = 与えられたパス、Roots = その link-farm の
   `manifest.json` から読む、Build = そのパスを返す）。
 ---
@@ -44,13 +46,14 @@ specification_ja: |
 |---|---|---|
 | Discover | `-f` の値（無ければ cwd） | entrypoint を発見する |
 | Roots | `name`（`--all` 用の一括取得は全件） | build せずに `manifest.Root`（`RootKind` / `Root`）を返す。`--all` 用の一括取得と prebuilt は `Targets` も返す（単一 config では任意） |
-| Build | `name` + pending のパス | 世代コミット可能な link-farm（= store path）を pending に張って返す |
+| Build | `name` + pending のパス | 選択中の世代バックエンドがコミット可能な link-farm のパス（既定の nixprofile は store path）を pending に張って返す |
 | DryBuild | `name` | link-farm の store path を gcroot を張らずに返す |
 
 - Roots の先読みは能力宣言ではなく契約の前提条件。apply の「eval 先行 → flock → build」
   （REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9）を全ての生成器で成り立たせるため。
-- Build の事後条件が store path なのは、世代のバックエンドが nix profile で `nix-env --set` が
-  store 外のパスを拒否するため。この条件を緩めるのは後継 epic #406 の担当。
+- Build の事後条件は選択中の世代バックエンドに依存する。既定の nixprofile は `nix-env --set` が
+  store 外のパスを拒否するため store path を要求し、非 store パスを受け入れる世代バックエンドは
+  無い。世代バックエンドの契約は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b の担当。
 - `--manifest` は prebuilt 生成器で、その外面（フラグ・`-f` / `--all` との排他）は
   REQ-dec58330-6dad-47f7-8f56-2402764a89c7 の担当。
 - `Targets` は Go 構造体 `manifest.Root` 側のフィールドで、manifest.json スキーマ v1 は変えない。
@@ -62,4 +65,5 @@ REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd の担当。
 
 ## 出典
 
-ADR-0055「manifest 生成器の契約」§1〜§5。
+ADR-0055「manifest 生成器の契約」§1〜§5。Build 事後条件の文言は ADR-0057「世代バックエンドの
+契約」§5 が「選択中の世代バックエンドがコミット可能な link-farm のパス」へ緩和した。
