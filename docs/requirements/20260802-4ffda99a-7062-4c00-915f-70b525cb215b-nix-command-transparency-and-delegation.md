@@ -12,14 +12,15 @@ specification: |
   that the user can run them selectively by hand. Under `--debug`, the generator itself
   SHALL write each internal command it runs, prefixed with the generator name. Switching to an
   arbitrary generation and garbage-collecting generations SHALL be done with the standard
-  `nix-env` / `nix-collect-garbage` against the profile path, rather than with dedicated
-  layat subcommands.
+  commands of the generation backend (`nix-env` / `nix-collect-garbage` for the default
+  nixprofile backend) against the profile path, rather than with dedicated layat
+  subcommands.
 specification_ja: |
   CLI は `layat --help` 等で manifest 生成器が内部実行するコマンド（既定の nix 生成器では
   nix コマンド）を開示し、ユーザーが選択的に手で実行できるようにしなければならない。
   `--debug` のときは、生成器自身が実行する内部コマンドを生成器名付きで書かなければならない。任意世代への切替・世代の GC は layat 専用の
-  サブコマンドではなく、標準の `nix-env` / `nix-collect-garbage` を profile パスに対して
-  使って行わなければならない。
+  サブコマンドではなく、世代バックエンドの標準コマンド（既定の nixprofile では `nix-env` /
+  `nix-collect-garbage`）を profile パスに対して使って行わなければならない。
 ---
 # REQ-4ffda99a-7062-4c00-915f-70b525cb215b: 内部実行する nix コマンドを開示し世代の切替と GC は標準の nix コマンドへ委譲する
 
@@ -29,8 +30,9 @@ specification_ja: |
   コマンド）を開示し、ユーザーが選択的に手で実行できる。`--help` の文面は CLI が持ち、
   `--debug` の逐次開示は生成器が担う（実行する内部コマンドを生成器名付きで書く）。失敗時の要約の組み立ては
   REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd の担当。
-- 任意世代への切替・世代の GC は標準の `nix-env` / `nix-collect-garbage` を profile パスに
-  対して使う。
+- 任意世代への切替・世代の GC は世代バックエンドの標準コマンド（既定の nixprofile では
+  `nix-env` / `nix-collect-garbage`）を profile パスに対して使う。engine 自身は `nix-env` を
+  叩かない（REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564）。
 
 `--debug` を冗長度（`-v`）と直交させる分離そのものは REQ-0a123b89-0399-4f76-b988-56a5f7e0becf の担当。
 
@@ -40,4 +42,5 @@ specification_ja: |
 
 決定の実体は ADR-0007 §3「透明性」（`layat --help` 等で内部実行する nix コマンドを開示し、
 ユーザーが選択的に手で実行できるようにする）。`--help` の文面を CLI、`--debug` の
-逐次開示を生成器に分けたのは ADR-0055「manifest 生成器の契約」§8。
+逐次開示を生成器に分けたのは ADR-0055「manifest 生成器の契約」§8。世代の切替・GC の委譲先を
+世代バックエンドの標準コマンドとしたのは ADR-0057「世代バックエンドの契約」。
