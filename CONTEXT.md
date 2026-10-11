@@ -13,7 +13,7 @@ layat のコア。「nix store のパスを root 相対の target に配置す�
 _Avoid_: 「配置フレームワーク」「設定管理」（設定は生成しない）
 
 **engine (layat エンジン)**:
-配置（**ネイティブ FS 操作**）と stale 除去を一手に所有する**配置コア**。`manifest.json` を入力に取り `nix`（profile）/ `git`（toplevel）のみ叩く Go **ライブラリ**として実装し、**layat CLI** が import して駆動する（→ ADR-0003, ADR-0006, ADR-0007）。config ごとに bash を生成しない。「ライブラリ」は **`internal/` のバイナリ内層分離**であって公開 import 可能な再利用モジュールではない（安定面は `manifest.json` 契約に閉じる）。**stdlib-only 厳守**（`syscall.Flock` / `filepath.WalkDir` ベースのコピー / `encoding/json`）。CLI が**生成器**の Build に世代コミット可能な link-farm（= store path）を `<profileDir>/.pending` へ張らせ（nix 生成器では `nix build --out-link`・→ ADR-0055）、配置〜`nix-env --set` の **GC 窓**を indirect gcroot で塞ぐ（`profileDir` は config 専用ディレクトリで profile リンクは `<profileDir>/profile`・世代 `profile-N-link`・backref `.root` は `<roothash>` 階層・→ ADR-0011, ADR-0025）。実行順は **eval 先行 → flock → build**で、生成器の Roots で `rootKind` を build 前に先取りして（nix 生成器では `mkManifest` が passthru する値を安価 eval）profileDir を確定し、flock を取ってから build を**ロック内**で行う（profileDir 未確定の循環と out-link 競合を同時に解消・→ ADR-0023）。非 build コマンド（`reset` / `rollback` / `list-generations`）も profileDir 確定のため Roots を先行し、`apply --all` は rootKind を一括の Roots で取る（nix 生成器では 1 回の一括 eval・→ ADR-0024）。並行実行は**解決後 profileDir 単位**の flock で直列化する（明示 apply は blocking wait / shellHook は try-lock skip・同一 profileDir 衝突はユーザー責任で後勝ち・→ ADR-0013）。配置前に target の祖先 component を lstat walk し、symlink ならネスト不可で error 停止する。target に foreign symlink（自身の前世代 manifest に記録の無い・別 config / 別ツール / 手動）があれば warning を出して後勝ちで置換する（→ ADR-0015）。
+配置（**ネイティブ FS 操作**）と stale 除去を一手に所有する**配置コア**。`manifest.json` を入力に取り、外部コマンドは `git`（toplevel）のみ叩く Go **ライブラリ**として実装し、**layat CLI** が import して駆動する（→ ADR-0003, ADR-0006, ADR-0007）。config ごとに bash を生成しない。「ライブラリ」は **`internal/` のバイナリ内層分離**であって公開 import 可能な再利用モジュールではない（安定面は `manifest.json` 契約に閉じる）。**stdlib-only 厳守**（`syscall.Flock` / `filepath.WalkDir` ベースのコピー / `encoding/json`）。CLI が**生成器**の Build に世代コミット可能な link-farm（= store path）を `<profileDir>/.pending` へ張らせ（nix 生成器では `nix build --out-link`・→ ADR-0055）、配置〜世代 commit の **GC 窓**を indirect gcroot で塞ぐ（`profileDir` は config 専用ディレクトリで profile リンクは `<profileDir>/profile`・世代 `profile-N-link`・backref `.root` は `<roothash>` 階層・→ ADR-0011, ADR-0025）。実行順は **eval 先行 → flock → build**で、生成器の Roots で `rootKind` を build 前に先取りして（nix 生成器では `mkManifest` が passthru する値を安価 eval）profileDir を確定し、flock を取ってから build を**ロック内**で行う（profileDir 未確定の循環と out-link 競合を同時に解消・→ ADR-0023）。非 build コマンド（`reset` / `rollback` / `list-generations`）も profileDir 確定のため Roots を先行し、`apply --all` は rootKind を一括の Roots で取る（nix 生成器では 1 回の一括 eval・→ ADR-0024）。並行実行は**解決後 profileDir 単位**の flock で直列化する（明示 apply は blocking wait / shellHook は try-lock skip・同一 profileDir 衝突はユーザー責任で後勝ち・→ ADR-0013）。配置前に target の祖先 component を lstat walk し、symlink ならネスト不可で error 停止する。target に foreign symlink（自身の前世代 manifest に記録の無い・別 config / 別ツール / 手動）があれば warning を出して後勝ちで置換する（→ ADR-0015）。
 _Avoid_: 「config ごとに生成される bash スクリプト」「各層がネイティブ機構へ翻訳する」「層ごとの配置ロジック」「CLI と一体の平らな単一実装」「engine を公開 Go モジュールとして外部から import する」（エンジンは `manifest.json` in 契約を保つ `internal/` 層）
 
 **layat CLI**:
@@ -27,6 +27,10 @@ _Avoid_: 「CLI が内部で `nix build` / `nix eval` を直接回す」と説�
 **prebuilt**:
 `apply --manifest <link-farm>` の実体である生成器。Discover = 与えられたパス / Roots = その link-farm の `manifest.json` から読む / Build・DryBuild = そのパスを返す（→ ADR-0055 §5）。外面は ADR-0026 のまま。`--generator` の選択肢には出ない（→ ADR-0056）。
 _Avoid_: `--generator prebuilt` のように選択肢として挙げること、`--manifest` を生成器とは別の取得経路と説明すること
+
+**generation backend (世代バックエンド)**:
+**engine** が世代の記録・一覧・切替を委ねる相手。契約は Commit（link-farm を新世代として記録し profile を向ける）/ List（世代の一覧と current）/ Switch（既存の世代へ profile を向ける）/ UserBase（user state の profileDir の基底）/ SystemBase（system mode の profileDir の基底）の 5 操作で、入出力はパスと整数のみ。`internal/generation` に置く（→ ADR-0057）。nix 実装（nixprofile・`internal/generation/nixprofile`）が既定かつ唯一の実装で、`nix-env` を叩くのはここだけ（基底は `<state>/nix/profiles/layat` / `/nix/var/nix/profiles/layat`）。CLI は常に nixprofile を注入し、engine はバックエンドが渡されなければ error にする。**engine** は誰が世代を管理するかに関知しない。profileDir 内部のレイアウト（`profile` / `profile-<N>-link` / `.pending`）は契約の固定部分で、engine が直接読む。バックエンドを選ぶフラグ / 環境変数 / `layat.toml` キーも、基底を上書きする設定キーも持たない。
+_Avoid_: 「engine が `nix-env` を叩く」と説明すること、バックエンドの選択手段や基底の設定キーがあると説明すること
 
 **entrypoint**:
 layat CLI が読む nix の config ファイル。`flake.nix` / `shell.nix` / `default.nix` のいずれか。**`layat.<name>`** に named manifest（`mkManifest` の結果）を公開する。config は依然 Nix で書き `nix build` で評価される（→ ADR-0007）。
@@ -94,11 +98,15 @@ _Avoid_: デフォルト挙動として扱うこと、`src` の型による暗�
 ### 状態管理
 
 **generation (世代)**:
-ロールバック単位。layat 自身の nix profile（`nix-env --profile <dir>` 式）に乗せて管理する（→ ADR-0002）。コミット（`--set`）・rollback（`--rollback`）・任意世代切替（`--switch-generation`）・一覧（`--list-generations`）・間引き（`--delete-generations`）は**全て `nix-env --profile <dir>` 系で統一**し、store GC のみ `nix-collect-garbage`（→ ADR-0015）。`rollback` は profile dir ≠ 配置先のため再配置が必須で、stale 除去は baseline=離れる世代・ポインタ移動は最後（→ ADR-0015）。
+ロールバック単位。既定の **generation backend**（nixprofile）が layat 自身の nix profile（`nix-env --profile <dir>` 式）に乗せて管理する（→ ADR-0002, ADR-0057）。nixprofile ではコミット（`--set`）・rollback（`--rollback`）・任意世代切替（`--switch-generation`）・一覧（`--list-generations`）・間引き（`--delete-generations`）は**全て `nix-env --profile <dir>` 系で統一**し、store GC のみ `nix-collect-garbage`（→ ADR-0015）。`rollback` は profile dir ≠ 配置先のため再配置が必須で、stale 除去は baseline=離れる世代・ポインタ移動は最後（→ ADR-0015）。
 _Avoid_: 「stateless スクリプト」前提の語り（初期方針からは覆っている）、`nix profile`（新CLI: `list` / `wipe-history` / `rollback`）で管理すること（profile-manifest を要求し `nix-env --set` 製 profile では動かない・→ ADR-0015）
 
 **store マニフェスト (store manifest)**:
 「layat が配置した」記録を持つ世代由来のデータ。実体は link-farm derivation 内の **`manifest.json`**（`schemaVersion` 付き）で、Nix（`lib.mkManifest`）が生成し Go エンジンが読む **Nix↔Go の契約**。GC 参照は併存する symlink farm が明示的に張る。エンジンの保守的 stale 除去（記録通りを指す layat 管理 symlink だけ削除し、ユーザーの実ファイルには触れない）の不変条件を支える（→ ADR-0002, ADR-0003, ADR-0006）。
+
+**last-applied 記録 (last-applied record)**:
+「この root に layat が最後に置いたもの」という FS の事実を layat 自身が持つ記録。置き場は `<state>/layat/<鍵>/last-applied.json` で、鍵は profileDir と同じ規則（home は `<name>` 直、他は `<roothash>/<name>` + backref `.root`）。内容は `recordVersion`（1）・`linkFarm`・`appliedAt`・`manifest`（配置した `manifest.json` を verbatim で埋め込む）で、manifest を内容ごと持つので store の GC と無関係（→ ADR-0058）。apply（generation skip を含む）と rollback は FS 操作の成功後・世代操作の前に、reset は撤去の後に書き直す（reset で全 entry が消えれば削除）。stale 除去・drift 修復・reset の撤去対象・rollback の離れる世代の baseline は**記録 → profile の current → 空**の順に取り、記録と profile の `linkFarm` が食い違えば記録を採って warning を 1 行出す。初回（記録も profile も無い）は baseline を空とし、「last-applied 記録なし」の warning を 1 行出して配置する。壊れた記録は「記録なし」に倒さず error にする。
+_Avoid_: 記録を世代と呼ぶこと（rollback の target は世代リンクから読む）、記録を flock の鍵と説明すること（鍵は profileDir）
 
 ### エラー処理
 
