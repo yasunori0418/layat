@@ -27,7 +27,7 @@ satisfies:
 - **鍵の解決は `internal/paths`** が profileDir と同じ規則で行う（基底だけが
   `<state>/layat`）。backref `.root` も同じ階層に置く。
 - **読み書きは engine が持つ**。読みは壊れた JSON・必須フィールドの欠落や型違い・
-  `recordVersion` 不一致を error にする（「記録なし」に倒さない）。
+  未知のフィールド・`recordVersion` 不一致を error にする（「記録なし」に倒さない）。
   書きは temp + rename で atomic に行い、全 FS 操作の成功直後・世代 commit の前に呼ぶ。
   削除は reset の全撤去時だけ。
 - **baseline の優先順位は 1 つの関数に集める**。apply（stale 除去と drift 修復）・rollback

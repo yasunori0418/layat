@@ -64,7 +64,7 @@ manifest を内容ごと持つ。記録の有効性は store の GC と無関係
 - rollback では FS の収束後・profile ポインタ移動の前に N-1 の manifest で書き直す（apply と同じ「FS 成功直後・世代操作の前」）。書けなければ rollback は失敗し、undo journal が FS を巻き戻す。
 - reset では、撤去対象のうち target が消えた entry だけを除いた manifest で書き直す（foreign・drift として残した entry と途中失敗で未到達の entry は記録に残る）。FS 操作が途中で失敗しても同じ規則で書き直し、書き直しの失敗は撤去の error と併せて返す。全 entry が除かれれば記録ファイルを削除する。書けなければ reset は失敗する。reset は undo journal を持たないので FS は reset が残した状態のまま。
 - profile が無く記録だけがあるとき、reset は flock の鍵である profileDir（roothash 系列は backref `.root` も）を apply と同じ手順で作ってから flock を取り、撤去する。
-- 読みは JSON として不正な記録・必須フィールドの欠落や型違い・`recordVersion` が 1 でない記録を error にする（「記録なし」には倒さない。誤った baseline で stale 除去するより止める）。
+- 読みは JSON として不正な記録・必須フィールドの欠落や型違い・未知のフィールドを含む記録・`recordVersion` が 1 でない記録を error にする（「記録なし」には倒さない。誤った baseline で stale 除去するより止める）。
 - `--json` の契約・flock の鍵（profileDir）・prune の対象は変えない。
 
 ## 根拠
