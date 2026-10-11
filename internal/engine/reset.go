@@ -119,10 +119,10 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 
 	// 2. at run time, serialize with concurrent apply / reset via a blocking flock.
 	//    dryrun is read-only, so it does not take a flock.
-	//    profileDir is the lock key, so it is created when only the record remains.
+	//    profileDir is the lock key, so it is prepared like apply's when only the record remains.
 	if !opts.DryRun {
-		if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
-			return nil, fmt.Errorf("layat: cannot create profileDir (%s): %w", prof.Dir, err)
+		if err := (&applier{profile: prof, root: root}).ensureProfileDir(); err != nil {
+			return nil, err
 		}
 		l, err := acquireProfileLock(prof.Dir, true)
 		if err != nil {
