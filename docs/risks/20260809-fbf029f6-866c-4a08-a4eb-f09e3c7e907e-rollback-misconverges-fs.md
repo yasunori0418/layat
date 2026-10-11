@@ -27,8 +27,8 @@ N-2 と読んで stale 除去を誤る。
 祖先 symlink を除去する必要がある（plan の PreRemove を落とすと、symlink 越しに解決した
 store パスへ書こうとして EEXIST / EROFS で落ちる → ADR-0046、issue #173）。**途中失敗の
 巻き戻し** — rollback も apply と同じ undo journal を使う必要があり、migration だけ済んで
-配置が失敗した状態を残してはならない。**ポインタ移動の失敗** — `SwitchGeneration` の
-失敗時点では FS の書き込みが全て成功しているため巻き戻さない（apply の commit 失敗と同じ
+配置が失敗した状態を残してはならない。**ポインタ移動の失敗** — 世代バックエンドの
+`Switch` の失敗時点では FS の書き込みが全て成功しているため巻き戻さない（apply の commit 失敗と同じ
 非対称性 → ADR-0044 §2）。ここで unwind すると整合状態を壊す。
 
 前提が満たされない場合に静かに進むのも本リスクに含む。前世代が無い（最古世代）・profile が
