@@ -22,7 +22,7 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-06-14
-- 関連: ADR-0002, ADR-0005, ADR-0006, ADR-0013, ADR-0015, ADR-0016, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `CONTEXT.md`
+- 関連: ADR-0002, ADR-0005, ADR-0006, ADR-0013, ADR-0015, ADR-0016, ADR-0058, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `CONTEXT.md`
 - 改訂対象: **ADR-0013**「`--all` は全 config を適用」に root モードフィルタを追加。**ADR-0005 / ADR-0006**「project mode の世代スキップ = 完全 no-op」を「lstat 検査 + 必要時のみ再張り」へ精緻化
 - 起点: ADR-0016 に続く実装前レビュー第 3 巡（grill）で surfaced した残細目の束
 
@@ -31,6 +31,11 @@ references:
 > キーイング**（home / fixed mode で `--root` 明示時にどうキーするか、本 ADR では未定義だった）を ADR-0023 §3 が
 > 「上書き後 root の `<roothash>` でキーする」と具体化した（`apply` / `reset` / `rollback` / `list-generations` で
 > 一貫・→ ADR-0023）。
+
+> **2026-10-11 改訂注記（ADR-0058）**: 本 ADR §3 の「新世代は積まない」「lstat 検査 + ドリフトした entry のみ再張り」は不変。
+> ただし世代スキップの判定元は「新 link-farm が前世代と同一」から、新 link-farm が profile の current 世代に一致し、
+> last-applied 記録があればその `linkFarm` にも一致するときへ変わった（profile が無ければ skip しない）。profile と記録が食い違う間は通常経路で
+> 記録を baseline に stale 除去と世代コミットを行う。lstat 検査の「記録通り」も記録を優先した baseline に照らす（→ ADR-0058 §3）。
 
 ## 背景
 
