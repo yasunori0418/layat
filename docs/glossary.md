@@ -103,7 +103,7 @@ A live symlink to a local absolute path, opted into only via `layat.lib.mkOutOfS
 ## State management
 
 ### generation
-The unit of rollback. The default **generation backend**, nixprofile, manages it on layat's own Nix profile (the `nix-env --profile <dir>` style). With nixprofile, commit (`--set`), rollback, switching to an arbitrary generation, listing, and pruning are all unified under the `nix-env --profile <dir>` family; only store GC uses `nix-collect-garbage`.
+The unit of rollback. The default **generation backend**, nixprofile, manages it on layat's own Nix profile (the `nix-env --profile <dir>` style). nixprofile commits (`--set`), lists (`--list-generations`), and switches (`--switch-generation`, which rollback also uses) generations with `nix-env --profile <dir>`; pruning (`--delete-generations`) and store GC (`nix-collect-garbage`) are left to the user's nix commands.
 - **Avoid**: narrating it under a "stateless script" premise (reversed since the initial direction); managing it with the new `nix profile` CLI (which requires a profile-manifest and does not work on `nix-env --set` profiles).
 
 ### store manifest
@@ -111,7 +111,7 @@ The generation-derived record of "what layat placed". Concretely the `manifest.j
 
 ### last-applied record
 layat's own record of what it last placed under a root — a filesystem fact, not a generation. It lives at `<state>/layat/<key>/last-applied.json`, keyed like the profileDir (`<name>` for home, otherwise `<roothash>/<name>` with the backref `.root`). It holds `recordVersion` (1), `linkFarm`, `appliedAt`, and `manifest` (the placed `manifest.json` embedded verbatim), so it does not depend on store GC. apply (including generation skip) and rollback rewrite it after the filesystem operations succeed and before the generation operation; reset rewrites it after removal and deletes it once every entry is gone. The baseline for stale removal, drift repair, reset's removal set, and rollback's departing generation is taken from **the record, else the profile's current generation, else empty**; when the record and the profile disagree on `linkFarm`, the record wins with a one-line warning. On the first apply (neither exists) the baseline is empty and a one-line "no last-applied record" warning is printed. A broken record is an error, not treated as absent (→ [ADR-0058](adr/0058-last-applied-record.md)).
-- **Avoid**: calling the record a generation (the rollback target is still read from the generation link); describing it as the flock key (that is the profileDir).
+- **Avoid**: calling the record a generation (the rollback target is read from the generation link); describing it as the flock key (that is the profileDir).
 
 ### method
 The entry field that selects the placement kind (renamed from the old `mode`). Renamed to avoid misreading it as a unix file mode.

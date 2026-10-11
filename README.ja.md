@@ -390,7 +390,7 @@ generator = "nix"
 ### 挙動メモ
 
 - **冪等。** 「配置したと記録し、かつ記録どおりを指している」stale link だけを除去する。外部 symlink は警告付きで置き換えられ、target にある実ファイル / ディレクトリはエラー。
-- **世代** は既定の nixprofile バックエンドが layat 自前の Nix profile に乗せ、`nix-env` / `nix-collect-garbage` で操作する。project mode は link-farm が不変なら新世代をコミットしないが、drift は修復する。layat が最後に配置したものは last-applied 記録(`<state>/layat/<name>/last-applied.json`。home mode 以外は `<state>/layat/<roothash>/<name>/` 下)にも残り、stale 除去は profile より先にこれを読む。
+- **世代** は既定の nixprofile バックエンドが layat 自前の Nix profile に乗せ、`nix-env` / `nix-collect-garbage` で操作する。project mode は link-farm が不変なら新世代をコミットしないが、drift は修復する。layat が最後に配置したものは last-applied 記録(`<state>/layat/<name>/last-applied.json`。`--root` なしの home mode の場合。それ以外は `<state>/layat/<roothash>/<name>/` 下)にも残り、stale 除去は profile より先にこれを読む。
 - **`apply --all`** は各 config を自分の profile 上で atomic に適用し、失敗しても続行し、いずれかが失敗すれば非ゼロで終了する。全体としては **atomic ではない**。
 - **`reset`** は layat 管理 symlink と copy target を削除する(copy を消す唯一の手段)。name と確認または `-y` が必須で、profile / 世代には触れない。
 

@@ -103,7 +103,7 @@ standalone・home-manager・将来の NixOS モジュール・devShell の `shel
 ## 状態管理
 
 ### generation
-rollback の単位。既定の **generation backend** である nixprofile が layat 自身の Nix profile（`nix-env --profile <dir>` 式）に乗せて管理する。nixprofile ではコミット（`--set`）・rollback・任意世代への切替・一覧・間引きはすべて `nix-env --profile <dir>` 系で統一され、store GC のみ `nix-collect-garbage` を使う。
+rollback の単位。既定の **generation backend** である nixprofile が layat 自身の Nix profile（`nix-env --profile <dir>` 式）に乗せて管理する。nixprofile はコミット（`--set`）・一覧（`--list-generations`）・切替（`--switch-generation`。rollback もこれを使う）を `nix-env --profile <dir>` で行う。間引き（`--delete-generations`）と store GC（`nix-collect-garbage`）はユーザーが nix コマンドで行う。
 - **Avoid**: 「stateless スクリプト」前提で語ること（初期方針からは覆っている）、新 `nix profile` CLI で管理すること（profile-manifest を要求し、`nix-env --set` 製の profile では動かない）。
 
 ### store manifest
@@ -111,7 +111,7 @@ rollback の単位。既定の **generation backend** である nixprofile が l
 
 ### last-applied record
 「この root に layat が最後に置いたもの」という FS の事実を layat 自身が持つ記録（last-applied 記録）。世代ではない。置き場は `<state>/layat/<鍵>/last-applied.json` で、鍵は profileDir と同じ規則（home は `<name>` 直、他は `<roothash>/<name>` + backref `.root`）。内容は `recordVersion`（1）・`linkFarm`・`appliedAt`・`manifest`（配置した `manifest.json` を verbatim で埋め込む）で、store の GC に依存しない。apply（generation skip を含む）と rollback は FS 操作の成功後・世代操作の前に、reset は撤去の後に書き直し、reset で全 entry が消えれば削除する。stale 除去・drift 修復・reset の撤去対象・rollback の離れる世代の baseline は**記録 → profile の current → 空**の順に取り、記録と profile の `linkFarm` が食い違えば記録を採って warning を 1 行出す。初回（どちらも無い）は baseline を空とし、「last-applied 記録なし」の warning を 1 行出す。壊れた記録は「記録なし」に倒さず error にする（→ [ADR-0058](adr/0058-last-applied-record.md)）。
-- **Avoid**: 記録を世代と呼ぶこと（rollback の target は引き続き世代リンクから読む）、記録を flock の鍵と説明すること（鍵は profileDir）。
+- **Avoid**: 記録を世代と呼ぶこと（rollback の target は世代リンクから読む）、記録を flock の鍵と説明すること（鍵は profileDir）。
 
 ### method
 配置の種別を選ぶ entry のフィールド（旧名 `mode` からの改名）。unix の file mode との誤読を避けるために改名した。
