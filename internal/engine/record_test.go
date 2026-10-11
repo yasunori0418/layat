@@ -466,6 +466,11 @@ func TestGenerationSkipWithoutRecord(t *testing.T) {
 	}
 }
 
+// isRecordErr reports whether err is a last-applied record failure.
+func isRecordErr(err error) bool {
+	return err != nil && strings.Contains(err.Error(), "last-applied record")
+}
+
 // lockRecordDir makes the record directory read-only so the next record write fails.
 func lockRecordDir(t *testing.T, rec paths.Record) {
 	t.Helper()
@@ -490,8 +495,8 @@ func TestRecordWriteFailureFailsOperation(t *testing.T) {
 			t.Fatal(err)
 		}
 		lockRecordDir(t, projectRecord(state, root))
-		if _, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake}); err == nil {
-			t.Fatal("Apply = nil error, want the record write failure")
+		if _, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake}); !isRecordErr(err) {
+			t.Fatalf("Apply = %v, want the record write failure", err)
 		}
 		if _, err := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(err) {
 			t.Errorf("drift repair survived the failed record write: %v", err)
@@ -507,8 +512,8 @@ func TestRecordWriteFailureFailsOperation(t *testing.T) {
 			}
 		}
 		lockRecordDir(t, paths.ResolveRecord(state, "vim", manifest.RootKindHome, root, true))
-		if _, err := Rollback(RollbackOptions{Name: "vim", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state, Backend: fake}); err == nil {
-			t.Fatal("Rollback = nil error, want the record write failure")
+		if _, err := Rollback(RollbackOptions{Name: "vim", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state, Backend: fake}); !isRecordErr(err) {
+			t.Fatalf("Rollback = %v, want the record write failure", err)
 		}
 		if len(fake.Switches) != 0 {
 			t.Errorf("switches = %v, want none", fake.Switches)
@@ -524,8 +529,14 @@ func TestRecordWriteFailureFailsOperation(t *testing.T) {
 		root, state := realTempDir(t), realTempDir(t)
 		applyForReset(t, root, state, homeManifest(storeEntry(makeSrc(t, "x"), ".", "a"), storeEntry(makeSrc(t, "x"), ".", "b")))
 		lockRecordDir(t, paths.ResolveRecord(state, "cfg", manifest.RootKindHome, root, true))
-		if _, err := Reset(resetOpts(root, state, []string{"a"}, false, nil)); err == nil {
-			t.Fatal("Reset = nil error, want the record write failure")
+		if _, err := Reset(resetOpts(root, state, []string{"a"}, false, nil)); !isRecordErr(err) {
+			t.Fatalf("Reset = %v, want the record write failure", err)
+		}
+		if _, err := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(err) {
+			t.Errorf("a was not removed: %v", err)
+		}
+		if _, err := os.Lstat(filepath.Join(root, "b")); err != nil {
+			t.Errorf("b outside the targets was touched: %v", err)
 		}
 	})
 }
@@ -544,7 +555,9 @@ func TestRollbackReadsRecordFirst(t *testing.T) {
 		if i == 2 {
 			backend = failCommit()
 		}
-		_, _ = Apply(Options{LinkFarm: lf, Name: "vim", RootOverride: root, StateDir: state, Backend: backend})
+		if _, err := Apply(Options{LinkFarm: lf, Name: "vim", RootOverride: root, StateDir: state, Backend: backend}); (err != nil) != (i == 2) {
+			t.Fatalf("Apply %d = %v, want only the third commit to fail", i+1, err)
+		}
 	}
 	if _, err := Rollback(RollbackOptions{Name: "vim", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state, Backend: fake, Warnf: func(string, ...any) {}}); err != nil {
 		t.Fatal(err)
@@ -591,5 +604,51 @@ func TestResetRecordFromProfile(t *testing.T) {
 	}
 	if got, m := mustReadRecord(t, rec); got.LinkFarm != lf.LinkFarm || entryTargets(m) != "b" {
 		t.Errorf("record = %s / %s, want %s / b", got.LinkFarm, entryTargets(m), lf.LinkFarm)
+	}
+}
+
+// TestResetPartialFailureKeepsRecord verifies a reset stopped mid-way still rewrites the record,
+// keeping exactly the selected entries whose target is still on disk.
+func TestResetPartialFailureKeepsRecord(t *testing.T) {
+	for _, tc := range []struct {
+		desc, frozen string
+		entries      func(src string) []manifest.Entry
+	}{
+		{"symlink stage", "ro", func(src string) []manifest.Entry {
+			return []manifest.Entry{storeEntry(src, ".", "a"), storeEntry(src, ".", "ro/s")}
+		}},
+		{"copy stage", "boxed", func(src string) []manifest.Entry {
+			return []manifest.Entry{storeEntry(src, ".", "a"), copyEntry(src, "x", "boxed/c1"), copyEntry(src, "x", "later/c2")}
+		}},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			root, state := realTempDir(t), realTempDir(t)
+			entries := tc.entries(makeSrc(t, "x"))
+			applyForReset(t, root, state, homeManifest(entries...))
+			rec := paths.ResolveRecord(state, "cfg", manifest.RootKindHome, root, true)
+			lf, _ := mustReadRecord(t, rec)
+			if os.Geteuid() == 0 {
+				t.Skip("running as root: directory write-permission checks are bypassed")
+			}
+			frozen := filepath.Join(root, tc.frozen)
+			if err := os.Chmod(frozen, 0o555); err != nil {
+				t.Fatal(err)
+			}
+			t.Cleanup(func() { _ = os.Chmod(frozen, 0o755) })
+
+			if _, err := Reset(resetOpts(root, state, nil, false, nil)); err == nil {
+				t.Fatal("Reset = nil error, want the frozen removal to fail")
+			}
+			var want []string
+			for _, e := range entries {
+				if _, err := os.Lstat(filepath.Join(root, e.Target)); err == nil {
+					want = append(want, e.Target)
+				}
+			}
+			got, m := mustReadRecord(t, rec)
+			if len(want) == 0 || entryTargets(m) != strings.Join(want, ",") || got.LinkFarm != lf.LinkFarm {
+				t.Errorf("record = %s / %s, want the entries still on disk %v / %s", entryTargets(m), got.LinkFarm, want, lf.LinkFarm)
+			}
+		})
 	}
 }
