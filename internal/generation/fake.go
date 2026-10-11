@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/yasunori0418/layat/internal/paths"
 )
 
 // Fake is the file-system test double of Backend. It keeps the same profileDir layout as the
@@ -36,8 +38,8 @@ type FakeCommit struct {
 	LinkFarm    string
 }
 
-// FakeDateLayout is the timestamp layout List reports for a generation link's mtime.
-const FakeDateLayout = "2006-01-02 15:04:05"
+// fakeDateLayout is the timestamp layout List reports for a generation link's mtime.
+const fakeDateLayout = "2006-01-02 15:04:05"
 
 // Commit creates <profileLink>-<N>-link → linkFarm with N one above the highest existing
 // generation and re-points the profile link at it with a relative sibling symlink.
@@ -58,7 +60,7 @@ func (f *Fake) Commit(profileLink, linkFarm string) error {
 	if len(gens) > 0 {
 		next = gens[len(gens)-1] + 1
 	}
-	genLink := fakeGenerationLink(profileLink, next)
+	genLink := paths.GenerationLink(profileLink, next)
 	if err := os.Symlink(linkFarm, genLink); err != nil {
 		return err
 	}
@@ -81,8 +83,8 @@ func (f *Fake) List(profileLink string) ([]Generation, error) {
 	gens := make([]Generation, 0, len(nums))
 	for _, n := range nums {
 		date := ""
-		if fi, err := os.Lstat(fakeGenerationLink(profileLink, n)); err == nil {
-			date = fi.ModTime().Format(FakeDateLayout)
+		if fi, err := os.Lstat(paths.GenerationLink(profileLink, n)); err == nil {
+			date = fi.ModTime().Format(fakeDateLayout)
 		}
 		gens = append(gens, Generation{Number: n, Date: date, Current: n == current})
 	}
@@ -99,7 +101,7 @@ func (f *Fake) Switch(profileLink string, gen int) error {
 			return err
 		}
 	}
-	genLink := fakeGenerationLink(profileLink, gen)
+	genLink := paths.GenerationLink(profileLink, gen)
 	if _, err := os.Lstat(genLink); err != nil {
 		return fmt.Errorf("generation %d does not exist (%s): %w", gen, genLink, err)
 	}
@@ -116,9 +118,18 @@ func (f *Fake) SystemBase() string {
 	return f.System
 }
 
-// fakeGenerationLink is <profileLink>-<gen>-link.
-func fakeGenerationLink(profileLink string, gen int) string {
-	return fmt.Sprintf("%s-%d-link", profileLink, gen)
+// fakeGenerationNumber parses the generation number out of a sibling name of the form
+// <profile>-<N>-link; ok is false for any other name.
+func fakeGenerationNumber(profileLink, name string) (n int, ok bool) {
+	prefix := filepath.Base(profileLink) + "-"
+	if !strings.HasPrefix(name, prefix) || !strings.HasSuffix(name, "-link") {
+		return 0, false
+	}
+	n, err := strconv.Atoi(strings.TrimSuffix(strings.TrimPrefix(name, prefix), "-link"))
+	if err != nil || n < 0 {
+		return 0, false
+	}
+	return n, true
 }
 
 // fakeGenerationLinks returns the generation numbers of the <profile>-<N>-link siblings in
@@ -131,18 +142,11 @@ func fakeGenerationLinks(profileLink string) ([]int, error) {
 		}
 		return nil, err
 	}
-	prefix := filepath.Base(profileLink) + "-"
 	var nums []int
 	for _, e := range entries {
-		name := e.Name()
-		if !strings.HasPrefix(name, prefix) || !strings.HasSuffix(name, "-link") {
-			continue
+		if n, ok := fakeGenerationNumber(profileLink, e.Name()); ok {
+			nums = append(nums, n)
 		}
-		n, err := strconv.Atoi(strings.TrimSuffix(strings.TrimPrefix(name, prefix), "-link"))
-		if err != nil || n < 0 {
-			continue
-		}
-		nums = append(nums, n)
 	}
 	sort.Ints(nums)
 	return nums, nil
@@ -155,12 +159,8 @@ func fakeCurrent(profileLink string, nums []int) int {
 	if err != nil {
 		return -1
 	}
-	prefix := filepath.Base(profileLink) + "-"
-	base := filepath.Base(dest)
-	if strings.HasPrefix(base, prefix) && strings.HasSuffix(base, "-link") {
-		if n, err := strconv.Atoi(strings.TrimSuffix(strings.TrimPrefix(base, prefix), "-link")); err == nil {
-			return n
-		}
+	if n, ok := fakeGenerationNumber(profileLink, filepath.Base(dest)); ok {
+		return n
 	}
 	// The profile names something else (a link-farm directly): match by resolved path, taking
 	// the newest generation that resolves to the same place.
@@ -170,7 +170,7 @@ func fakeCurrent(profileLink string, nums []int) int {
 	}
 	current := -1
 	for _, n := range nums {
-		if r, err := filepath.EvalSymlinks(fakeGenerationLink(profileLink, n)); err == nil && r == resolved {
+		if r, err := filepath.EvalSymlinks(paths.GenerationLink(profileLink, n)); err == nil && r == resolved {
 			current = n
 		}
 	}
