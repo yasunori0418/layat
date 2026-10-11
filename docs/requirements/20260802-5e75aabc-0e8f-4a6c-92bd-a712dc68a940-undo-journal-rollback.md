@@ -21,10 +21,10 @@ specification: |
   far SHALL be rolled back in reverse (LIFO) order before the error is returned. When
   writing the last-applied record (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) fails, in an
   apply (the generation-skip path included) or in a rollback, the run SHALL fail and the
-  journal SHALL be rolled back by the same mechanism. The journal SHALL be discarded once the generation commit through the generation backend
-  contract (REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b) has succeeded, a failure of the
-  commit itself being outside the scope of rollback because an idempotent re-run
-  converges. On the success of the run, the aside made by `--recopy` SHALL be
+  journal SHALL be rolled back by the same mechanism. The journal SHALL be discarded once
+  the generation commit through the generation backend contract
+  (REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b) has succeeded, a failure of the commit itself
+  being outside the scope of rollback because an idempotent re-run converges. On the success of the run, the aside made by `--recopy` SHALL be
   deleted, whereas the aside made by `--backup` SHALL be left in place. Crashes such as
   SIGKILL or power loss SHALL be out of scope, the journal existing only in process memory
   with no persistent write-ahead log; in that case the guarantee SHALL continue to rest on
@@ -102,4 +102,5 @@ undo ジャーナルへ逆操作を 1 件記録する:
 導入文・コードブロックと、箇条書き第 3・4・5 項。
 
 決定の実体は ADR-0044「apply 途中失敗の完全巻き戻し — インメモリ undo ジャーナル」。
-コミットとポインタ移動を世代バックエンドの契約越しにしたのは ADR-0057「世代バックエンドの契約」。
+コミットとポインタ移動を世代バックエンドの契約越しにしたのは ADR-0057「世代バックエンドの契約」、
+last-applied 記録を書けないときに undo ジャーナルで巻き戻すのは ADR-0058「last-applied 記録」§4。
