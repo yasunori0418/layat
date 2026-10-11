@@ -1,11 +1,11 @@
 ---
 id: "DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5"
 type: design
-name: "last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest を verbatim で埋め込み、baseline は記録 → profile → 空の順に読む"
+name: "last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、baseline は記録 → profile → 空の順に読む"
 satisfies:
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
 ---
-# DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5: last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest を verbatim で埋め込み、baseline は記録 → profile → 空の順に読む
+# DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5: last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、baseline は記録 → profile → 空の順に読む
 
 ## 設計
 
@@ -20,7 +20,7 @@ satisfies:
   "recordVersion": 1,
   "linkFarm": "/nix/store/<hash>-layat-<name>",
   "appliedAt": "2026-10-11T12:34:56+09:00",
-  "manifest": { ...配置した manifest.json を verbatim... }
+  "manifest": { ...配置した manifest.json をそのまま... }
 }
 ```
 

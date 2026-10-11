@@ -43,7 +43,7 @@ apply は「最後に配置した manifest」を layat 自前の記録 `<state>/
 ### 2. 記録の内容
 
 ```json
-{ "recordVersion": 1, "linkFarm": "<store path>", "appliedAt": "<RFC3339>", "manifest": <manifest.json を verbatim 埋め込み> }
+{ "recordVersion": 1, "linkFarm": "<store path>", "appliedAt": "<RFC3339>", "manifest": <manifest.json をそのまま埋め込み> }
 ```
 
 manifest を内容ごと持つ。記録の有効性は store の GC と無関係で、`linkFarm` は profile との突合に使う。rollback で書き直すときの `linkFarm` は N-1 の link-farm、reset で書き直すときは保持する（残った entry の出所。記録が無く baseline を profile から取ったときはその current 世代の link-farm）。`appliedAt` はその操作の時刻に更新する。

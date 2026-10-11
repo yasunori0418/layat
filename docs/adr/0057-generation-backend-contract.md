@@ -40,11 +40,11 @@ references:
 
 ## 背景
 
-engine は世代操作を `nix-env --profile <p>` 系（`--set` / `--list-generations` / `--switch-generation`）で直接叩き、profile の基底 `<state>/nix/profiles/layat`（`paths.Base`）と system の基底 `/nix/var/nix/profiles/layat`（prune の定数）を固定で持つ。seam は `CommitFunc` / `ListGenerationsFunc` / `SwitchGenerationFunc` の 3 関数型で、nil のとき nix-env へ暗黙にフォールバックする。manifest の取得側は ADR-0055 で生成器の契約越しになったが、世代側は nix 前提のまま engine に残っている。
+engine は世代操作を `nix-env --profile <p>` 系（`--set` / `--list-generations` / `--switch-generation`）で直接叩き、profile の基底 `<state>/nix/profiles/layat`（`paths.Base`）と system の基底 `/nix/var/nix/profiles/layat`（prune の定数）を固定で持つ。差し替え点は `CommitFunc` / `ListGenerationsFunc` / `SwitchGenerationFunc` の 3 関数型で、nil のとき nix-env へ暗黙にフォールバックする。manifest の取得側は ADR-0055 で生成器の契約越しになったが、世代側は nix 前提のまま engine に残っている。
 
 ### 北極星
 
-世代管理は将来、独立した世代管理 CLI へ切り出し、layat は「ファイル配置を上手くやるアプリケーション」に専念する。終着点のトポロジーは、パイプラインが `layat apply --json` → `jq` → `generation commit` と外から順に呼ぶ形で、世代管理 CLI は状態識別子（link-farm のパス）を opaque に扱い、outturn の JSON エンベロープが境界プロトコルになる。
+世代管理は将来、独立した世代管理 CLI へ切り出し、layat は「ファイル配置を上手くやるアプリケーション」に専念する。終着点のトポロジーは、パイプラインが `layat apply --json` → `jq` → `generation commit` と外から順に呼ぶ形で、世代管理 CLI は状態識別子（link-farm のパス）の中身を解釈せずにそのまま受け渡し、outturn の JSON エンベロープが境界プロトコルになる。
 
 本 ADR はその **in-process 段階**を決める。engine と世代バックエンドの境界を、そのままプロセス境界に載せられる形（入出力がパスと整数だけ）の Go インターフェイスとして固定する。**プロセス境界の契約は世代管理 CLI 側が定義する**。それが確定した時点で、本契約の Commit / List / Switch の配線を世代管理 CLI の呼び出しへ置き換える。
 
@@ -82,7 +82,7 @@ type Backend interface {
 
 - nix 実装は `internal/generation/nixprofile`（`New() generation.Backend`）。nix-env 3 コマンドと世代一覧のパース、2 基底を所有する。
 - テストダブルは `internal/generation` に FS ベースの Fake を置く（`profile-<N>-link` を実際に張る）。engine / cmd のテストが持つ nix-env 代替はこれに統一する。
-- engine 側は seam 3 関数型を `Backend` 1 フィールドに置き換える。profileDir を解決する全入口（apply / rollback / reset / prune / profile 解決）が `Backend` を要求し、nil は error。**nix-env への暗黙のフォールバックは廃止する**。cmd 層は常に nixprofile を注入する。
+- engine 側は差し替え点の 3 関数型を `Backend` 1 フィールドに置き換える。profileDir を解決する全入口（apply / rollback / reset / prune / profile 解決）が `Backend` を要求し、nil は error。**nix-env への暗黙のフォールバックは廃止する**。cmd 層は常に nixprofile を注入する。
 
 ### 3. レイアウトは契約の固定部分。読み操作は将来移管する
 
@@ -109,7 +109,7 @@ ADR-0055 §4 の「世代コミット可能な link-farm（= store path）」を
 
 - **プロセス内インターフェイス**: 生成器（ADR-0055）と同じ理由。実装が nix 1 つの段階で外部プログラム規約を決めると使われない仕様が固まる。
 - **パスと整数だけ**: 契約がプロセス境界へ載る形なら、世代管理 CLI が確定したときに配線の置き換えで済む。Go コールバックを混ぜると in-process にしか載らない。
-- **暗黙フォールバックの廃止**: nil で nix-env に落ちる seam は「注入し忘れ」を本番挙動として通す。error にすれば全入口の注入をテストで検証できる。
+- **暗黙フォールバックの廃止**: nil で nix-env に落ちる差し替え点は「注入し忘れ」を本番挙動として通す。error にすれば全入口の注入をテストで検証できる。
 - **レイアウト固定**: 読み操作まで契約に載せると、Fake が実 FS を模倣するか契約が肥大するかの二択になる。FS ベースの Fake なら engine の読みは無改変で動く。
 - **基底の設定キーを作らない**: 基底は「世代をどこに置くか」で、layat の配置の関心ではない。設定キーを足すと世代管理を切り出すときに layat 側へ互換負債が残る。
 
@@ -125,4 +125,4 @@ ADR-0055 §4 の「世代コミット可能な link-farm（= store path）」を
 - **Commit に pending のパスを渡し後片付けをバックエンドへ移す**: pending は生成器が張る一時リンクで、世代の概念ではない。バックエンドが知ると生成器の事情が契約へ漏れる。
 - **設定キーで基底を上書きする**: 世代管理が layat から出るときに互換負債になる（§6）。
 - **非 nix バックエンドの同時実装（自前 symlink + 採番 + GC アンカー代替）**: GC 安全性を自前で背負う ADR-0006 の却下理由が残る。別アプリケーションとして検討する（#147 へ番外登録）。
-- **seam 3 関数型を残し nil フォールバックも残す**: 注入し忘れが nix-env 直叩きとして通り、契約越しであることを検証できない。
+- **差し替え点の 3 関数型を残し nil フォールバックも残す**: 注入し忘れが nix-env 直叩きとして通り、契約越しであることを検証できない。
