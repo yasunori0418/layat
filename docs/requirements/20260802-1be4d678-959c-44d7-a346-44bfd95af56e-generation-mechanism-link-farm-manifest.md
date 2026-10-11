@@ -115,4 +115,4 @@ standalone 中心）」と ADR-0006「エンジンを固定の Go バイナリ�
 （link farm derivation への manifest 埋め込み・コミット最後）。全モードのコミットを
 `nix-env --profile <profileDir>/profile --set` に統一することは ADR-0025 が定めている。
 コミットを世代バックエンドの契約越しにしたのは ADR-0057「世代バックエンドの契約」、
-last-applied 記録を store 外の唯一の可変ファイルとして認めたのは ADR-0058「last-applied 記録」。
+last-applied 記録を store 外の唯一の可変 JSON として認めたのは ADR-0058「last-applied 記録」。

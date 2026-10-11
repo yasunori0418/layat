@@ -46,7 +46,7 @@ apply は「最後に配置した manifest」を layat 自前の記録 `<state>/
 { "recordVersion": 1, "linkFarm": "<store path>", "appliedAt": "<RFC3339>", "manifest": <manifest.json を verbatim 埋め込み> }
 ```
 
-manifest を内容ごと持つ。記録の有効性は store の GC と無関係で、`linkFarm` は profile との突合にだけ使う。
+manifest を内容ごと持つ。記録の有効性は store の GC と無関係で、`linkFarm` は profile との突合と、drift / generation skip の link-farm 比較に使う。rollback で書き直すときの `linkFarm` は N-1 の link-farm、reset で書き直すときは保持する（残った entry の出所）。`appliedAt` はその操作の時刻に更新する。
 
 ### 3. baseline の優先順位
 
@@ -60,10 +60,10 @@ manifest を内容ごと持つ。記録の有効性は store の GC と無関係
 ### 4. 記録の書き込み
 
 - apply では全 FS 操作の成功直後・世代 commit の前に temp + rename で atomic に書く。記録は FS の事実なので commit の成否と独立。書けなければ apply は失敗し、undo journal が FS を巻き戻す。
-- generation skip 経路でも更新する。
+- generation skip 経路でも更新する。失敗時の扱いは apply 本経路と同じ（apply は失敗し、undo journal がドリフト修復を巻き戻す）。
 - rollback では FS の収束後・profile ポインタ移動の前に N-1 の manifest で書き直す（apply と同じ「FS 成功直後・世代操作の前」）。書けなければ rollback は失敗し、undo journal が FS を巻き戻す。
 - reset では実際に撤去した entry を除いた manifest で書き直す（foreign として残した entry は記録に残る）。全撤去なら記録ファイルを削除する。書けなければ reset は失敗する。reset は undo journal を持たないので FS は reset が残した状態のまま。
-- 読みは JSON として不正な記録・`recordVersion` が 1 でない記録を error にする。
+- 読みは JSON として不正な記録・必須フィールドの欠落や型違い・`recordVersion` が 1 でない記録を error にする（「記録なし」には倒さない。誤った baseline で stale 除去するより止める）。
 - `--json` の契約・flock の鍵（profileDir）・prune の対象は変えない。
 
 ## 根拠
@@ -78,7 +78,7 @@ ADR-0002 の却下理由は、記録に限っては成立しない。
 
 - 実装は Issue #448（`internal/paths` の鍵解決・engine の読み書き・各経路の更新・e2e の検証）。
 - ADR-0002 / ADR-0015 に改訂注記を足す。
-- 要求: 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）を起票し、世代機構（REQ-1be4d678-959c-44d7-a346-44bfd95af56e）の「store 外に可変 JSON を持たない」を「last-applied 記録だけが store 外の可変ファイル」へ改訂する。レイアウトは DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5。
+- 要求: 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）を起票し、世代機構（REQ-1be4d678-959c-44d7-a346-44bfd95af56e）の「store 外に可変 JSON を持たない」を「last-applied 記録だけが store 外の可変 JSON」へ改訂する。レイアウトは DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5。
 
 ## 棄却した代替案
 
