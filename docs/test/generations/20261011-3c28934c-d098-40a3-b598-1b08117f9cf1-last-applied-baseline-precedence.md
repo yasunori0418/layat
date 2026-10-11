@@ -18,8 +18,8 @@ stale 除去・ドリフト修復・reset・rollback が使う baseline（この
   食い違えば記録を採り、warning を 1 行出す
 - 記録が無ければ profile の current を baseline にする
 - 両方無ければ baseline は空で、「last-applied 記録なし」の warning を 1 行出す
-- 壊れた JSON・必須フィールドの欠落や型違い・`recordVersion` ≠ 1 の記録は「記録なし」に
-  倒さず error にする
+- 壊れた JSON・必須フィールドの欠落や型違い・未知のフィールド・`recordVersion` ≠ 1 の記録は
+  「記録なし」に倒さず error にする
 
 **書き**
 
