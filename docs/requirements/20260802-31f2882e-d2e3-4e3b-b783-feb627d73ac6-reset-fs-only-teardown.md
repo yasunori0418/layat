@@ -73,6 +73,11 @@ home / project 両モード可。
 > **2026-10-11 追記（ADR-0058）**: 撤去対象の entry とその記録は、last-applied 記録があれば記録から、無ければ
 > profile の current 世代から取る。reset は profile / 世代を触らないが、撤去で target が消えた entry を除いた
 > manifest で記録を書き直す（全撤去なら記録を削除する）。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
+>
+> **2026-10-11 追記（ADR-0057）**: 上の写しの「profile 完全除去は `nix-env --profile <profileDir>/profile
+> --delete-generations`」は、既定の世代バックエンド nixprofile の profile に対して利用者が叩く nix コマンドで、
+> layat のサブコマンドではない（世代の間引きを nix コマンドへ委譲することは
+> REQ-706de717-4e47-471a-a1c0-448635be159c の担当）。
 
 名指し必須と flock は REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4、`--dryrun` は REQ-6a950d6d-c191-4235-a1b4-73ffc7c2bb38 の担当。
 
