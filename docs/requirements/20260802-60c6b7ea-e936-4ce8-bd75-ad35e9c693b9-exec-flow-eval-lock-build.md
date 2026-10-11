@@ -27,8 +27,9 @@ specification: |
   `nix build` with `--out-link <profileDir>/.pending` and obtain the link-farm store path
   via `os.Readlink`, the out-link establishing an indirect gcroot that closes the GC
   window between placement and the generation commit, and the build being inside the lock so that
-  out-link contention cannot structurally occur; (c) read the previous generation
-  `manifest.json` of `profileDir`, an absent one meaning the first run with zero removal
+  out-link contention cannot structurally occur; (c) read the baseline manifest — the
+  last-applied record when one exists, otherwise the previous generation `manifest.json`
+  of `profileDir` (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) — an absent one meaning the first run with zero removal
   targets; (d) in project mode, skip stacking a new generation when the new link-farm is
   identical to the previous one, while still lstat-checking each target and re-linking
   only the drifted entries rather than making it a complete no-op; (e) diff the old and
@@ -66,7 +67,8 @@ specification_ja: |
   (b) ロック内で `nix build` を `--out-link <profileDir>/.pending` 付きで実行し、
   `os.Readlink` で link-farm store path を得る。out-link が indirect gcroot を張り、
   配置〜世代コミットの GC 窓を塞ぐ。build がロック内なので out-link 競合は構造的に起きない。
-  (c) profileDir の前世代 `manifest.json` を読む（無ければ初回 = 削除対象ゼロ）。
+  (c) baseline の manifest を読む（last-applied 記録があれば記録、無ければ profileDir の前世代
+  `manifest.json`。REQ-9d622539-a1e5-4719-af51-e0cd85b66f35。どちらも無ければ初回 = 削除対象ゼロ）。
   (d) project mode かつ新 link-farm が前世代と同一なら新世代は積まない。ただし各 target を
   lstat 検査し、ドリフトした entry だけ再張りする（完全 no-op にしない）。(e)
   `manifest.json` を新旧 diff し、配置を塞ぐ自己記録 stale（祖先 symlink・実 dir target・
@@ -150,6 +152,10 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 > 世代バックエンドの契約の Commit と読み替える（`nix-env` は既定実装 nixprofile の内側に閉じる。
 > REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）。g の `.pending` 削除は build 出力の一時リンクの片付けで、
 > engine の素の FS 操作。gcroot の引き継ぎは nixprofile の世代リンクの性質で、engine は gcroot を扱わない。
+>
+> **2026-10-11 追記（ADR-0058）**: 上の図の c「profileDir の前世代 manifest.json を読む」は、last-applied 記録が
+> あれば記録の manifest を baseline に採り、無ければ profileDir の前世代から読む、と読み替える。d の世代スキップの
+> 判定元は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 
 ## 出典
 
@@ -161,4 +167,5 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 `apply --manifest` の skip は ADR-0026。2a の flock を blocking で取るか try-lock で取るか
 （shellHook の skip 通知を含む）は REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461 の担当で、その決定元となる ADR は
 本 item の出典には含めない。世代のコミットを世代バックエンドの契約越しにし、`.pending` の
-削除を engine の FS 操作として位置づけたのは ADR-0057「世代バックエンドの契約」§2・§7。
+削除を engine の FS 操作として位置づけたのは ADR-0057「世代バックエンドの契約」§2・§7、baseline を
+last-applied 記録から優先して読むのは ADR-0058「last-applied 記録」§3。

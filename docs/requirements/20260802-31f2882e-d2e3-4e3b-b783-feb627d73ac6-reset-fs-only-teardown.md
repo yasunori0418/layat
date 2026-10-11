@@ -11,23 +11,29 @@ specification: |
   state of not being present; omitting `target` SHALL select every entry, and specifying
   it SHALL select only those entries. Symlinks SHALL be removed under the same
   conservative invariants as stale removal (only those managed by layat and matching the
-  record; foreign ones SHALL be left with a warning), and copy targets SHALL also be
+  record; foreign ones SHALL be left with a warning), the selected entries and their record
+  being taken from the last-applied record when one exists and otherwise from the current
+  generation of the profile (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35), and copy targets SHALL also be
   deleted, `reset` being the only explicit means of deleting a copy. After removing either
   a symlink or a copy, empty-parent-directory pruning SHALL be applied. Because of the
   risk of data loss, the command SHALL request consent, either through a confirmation
   prompt or via `-y` / `--yes` (the latter being for scripts and CI), and SHALL report the
   deleted targets. `reset` SHALL be an FS-only
-  teardown that leaves the profile and generations untouched; as long as the config still
+  teardown that leaves the profile and generations untouched, rewriting only the
+  last-applied record as stated by REQ-9d622539-a1e5-4719-af51-e0cd85b66f35; as long as the config still
   holds the entry, the next apply SHALL place it again. It SHALL be usable in both home
   and project mode.
 specification_ja: |
   `layat reset <name> [target...]` は配置物を無い状態へ戻す teardown でなければならない。
   target 省略で全 entry、指定でその entry のみを対象としなければならない。symlink は stale
-  除去と同じ保守的不変条件（layat 管理・記録通りのみ・foreign は warning で残す）で除去し、
+  除去と同じ保守的不変条件（layat 管理・記録通りのみ・foreign は warning で残す）で除去し
+  （対象の entry とその記録は、last-applied 記録があれば記録から、無ければ profile の current
+  世代から取る。REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）、
   copy target も削除しなければならない（copy を消す唯一の明示手段）。symlink・copy いずれの
   除去後も空親ディレクトリ剪定を適用しなければならない。データ損失リスクのため確認プロンプトを
   出すか `-y` / `--yes`（スクリプト / CI 用）で同意を要求し、削除 target をレポート表示
-  しなければならない。`reset` は profile / 世代を触らない FS-only teardown でなければならず、
+  しなければならない。`reset` は profile / 世代を触らない FS-only teardown でなければならず
+  （書き直すのは REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 が定める last-applied 記録だけ）、
   config が entry を残す限り次の apply がこれを再配置しなければならない。home / project の
   両モードで使用できなければならない。
 ---
@@ -63,6 +69,10 @@ home / project 両モード可。
 > （`-y, --yes`）と ADR-0020 §3 の見出し（`--yes` / `-y` グローバルフラグ）が定めており、
 > `-f` / `--file`・`-v` / `--verbose` が短縮形込みで規範化されているのに揃えて、
 > 規範文では `-y` / `--yes` と書いた。
+>
+> **2026-10-11 追記（ADR-0058）**: 撤去対象の entry とその記録は、last-applied 記録があれば記録から、無ければ
+> profile の current 世代から取る。reset は profile / 世代を触らないが、撤去で target が消えた entry を除いた
+> manifest で記録を書き直す（全撤去なら記録を削除する）。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 
 名指し必須と flock は REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4、`--dryrun` は REQ-6a950d6d-c191-4235-a1b4-73ffc7c2bb38 の担当。
 
@@ -72,4 +82,5 @@ home / project 両モード可。
 同節グローバルフラグ表の `-y, --yes`。
 
 決定の実体は ADR-0020「配置物のリセット（`layat reset`）を追加する」で、`-y` / `--yes` に
-よる同意もここで決まっている。
+よる同意もここで決まっている。撤去対象を last-applied 記録から優先して取り、記録を書き直すのは
+ADR-0058「last-applied 記録」§3・§4。

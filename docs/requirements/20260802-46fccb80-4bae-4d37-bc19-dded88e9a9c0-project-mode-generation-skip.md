@@ -14,14 +14,19 @@ specification: |
   the profile SHALL be confined to being the internal mechanism for stale removal and the
   generation-skip decision, and neither `rollback` nor `list-generations` SHALL be offered,
   the placed objects being ephemeral and there being no host generation to return to when
-  kicked from a devShell. When the new link farm derivation is identical to that of the
-  previous generation, no new generation SHALL be stacked; this is mandatory, since under
+  kicked from a devShell. When the new link farm derivation is identical to both the
+  current generation of the profile and the `linkFarm` of the last-applied record
+  (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) — to whichever of the two exist, the skip never being
+  taken when neither exists — no new generation SHALL be stacked; while the two disagree
+  the full apply path SHALL run instead. Skipping is mandatory, since under
   devShell / direnv the `shellHook` runs on every shell re-entry and stacking a generation
   each time would make them grow without bound. Home mode SHALL remain as it is, stacking
   a new generation on every application, the generation skip being confined to project
   mode. Even when the generation is skipped, a lightweight filesystem inspection SHALL
   still be performed rather than making it a complete no-op: the target of each entry
-  SHALL be inspected with `lstat`, and any entry that is not as recorded — rewritten by a
+  SHALL be inspected with `lstat` against the baseline (the last-applied record when one
+  exists, otherwise the current generation of the profile), and any entry that is not as
+  recorded — rewritten by a
   foreign tool, or gone — SHALL be re-placed, and that entry alone, with a warning where
   it is a foreign symlink. The implication "identical derivation, therefore identical
   filesystem" breaks down under a foreign rewrite, so the filesystem SHALL be made to
@@ -39,12 +44,15 @@ specification_ja: |
   sha256 を短縮した hex（固定長・FS 安全）でなければならない。project mode では世代をユーザーに
   公開してはならない。profile は stale 除去と世代スキップ判定の内部機構に留めなければならず、
   `rollback` / `list-generations` を出してはならない（配置物が ephemeral で rollback の意味が薄く、
-  devShell キック時は戻し先 host 世代も無いため）。新 link farm derivation が前世代と同一なら
-  新世代を積んではならない。これは必須であり、devShell / direnv 運用では `shellHook` がシェル
+  devShell キック時は戻し先 host 世代も無いため）。新 link farm derivation が profile の
+  current 世代と last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）の `linkFarm` の
+  両方（存在する方全て。どちらも無ければ skip しない）に一致するなら新世代を積んではならず、
+  両者が食い違う間は通常の apply 経路を走らせなければならない。skip は必須であり、devShell / direnv 運用では `shellHook` がシェル
   再入のたびに走るため、毎回新世代を積むと世代が無限増殖するからである。home mode は従来通り
   「適用のたびに新世代」のままでなければならず、世代スキップは project mode 限定としなければ
   ならない。ただし世代スキップ時も完全 no-op にせず、FS 検査だけは軽量に行わなければならない。
-  各 entry の target を `lstat` で検査しなければならず、記録通りでない（foreign tool に
+  各 entry の target を baseline（last-applied 記録があれば記録、無ければ profile の current
+  世代）に照らして `lstat` で検査しなければならず、記録通りでない（foreign tool に
   書き換えられた・消えた）entry があればその entry だけ再張りしなければならない
   （foreign symlink なら warning）。「derivation 同一 ⇒ FS 同一」は foreign 書き換えで崩れるため、
   新世代を積まずに FS だけ収束させなければならない。lstat 比較は安価で `shellHook` の高頻度実行に
@@ -87,6 +95,11 @@ specification_ja: |
 > - ドリフト修復経路でも `--backup` の退避段が効くこと → REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98
 > - `rollback` / `list-generations` が home mode 限定であること（CLI 側の規範）→ REQ-05abce3e-9797-432b-b93f-37c55d09afde
 > - foreign symlink の warning そのもの → REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557、place-once そのもの → REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9
+>
+> **2026-10-11 追記（ADR-0058）**: 上の写しの「新 link farm derivation が前世代と同一なら」は、新 link-farm が
+> profile の current 世代と last-applied 記録の `linkFarm` の両方（存在する方全て。どちらも無ければ skip
+> しない）に一致するなら、と読み替える。食い違う間は通常経路で記録を baseline に stale 除去とコミットを行う。
+> lstat 検査の「記録通り」も記録を優先した baseline に照らす。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 
 ## 出典
 
@@ -95,4 +108,5 @@ specification_ja: |
 決定の実体は ADR-0005「project mode（プロジェクト相対配置）と ephemeral 配置原則」（世代の
 非公開・ephemeral）と ADR-0017「実装前レビュー第 3 巡」（世代スキップとドリフト修復）。
 profile を解決済み root でキーすることと `<roothash>` の定義は ADR-0013、`<state>` の確定は
-ADR-0022、copy のドリフト修復の限定は ADR-0022 が定めている。
+ADR-0022、copy のドリフト修復の限定は ADR-0022 が定めている。世代スキップの判定元を profile と
+last-applied 記録の両方一致にし、baseline を記録優先にしたのは ADR-0058「last-applied 記録」§3。
