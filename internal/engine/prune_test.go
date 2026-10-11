@@ -324,6 +324,24 @@ func TestPruneScansBothBases(t *testing.T) {
 	}
 }
 
+// TestPruneSystemBaseComesFromBackend: with SystemDir left empty, the system base is the
+// backend's, so an orphan under Backend.SystemBase() is found and removed.
+func TestPruneSystemBaseComesFromBackend(t *testing.T) {
+	state, system := pruneBases(t)
+	systemOrphan := orphanSeries(t, system, "bbbb", "cfg")
+
+	var w warnRecorder
+	res, err := Prune(PruneOptions{StateDir: state, Backend: &generation.Fake{System: system}, Warnf: w.warnf})
+	if err != nil {
+		t.Fatalf("Prune: %v", err)
+	}
+
+	mustNotExist(t, systemOrphan, "the orphan under the backend's system base")
+	if got := hashes(res.Removed); len(got) != 1 || got[0] != "bbbb" {
+		t.Errorf("Removed = %v, want the series under the backend's system base", got)
+	}
+}
+
 func TestPruneTreatsMissingBaseAsEmpty(t *testing.T) {
 	// Neither base exists: normal for an environment that never used system
 	// mode, so it is not an error and produces no warning.
