@@ -18,10 +18,10 @@ specification: |
   recorded in the previous-generation manifest for a stale-removed link or a PreRemove
   unlink; re-creation of the empty directory for a PreRemove rmdir; and renaming back for
   the aside made by `--recopy` or `--backup`. Once an error occurs, the journal recorded so
-  far SHALL be rolled back in reverse (LIFO) order before the error is returned. The
-  A failure to write the last-applied record (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35)
-  SHALL be rolled back by the same mechanism. The
-  journal SHALL be discarded once the generation commit through the generation backend
+  far SHALL be rolled back in reverse (LIFO) order before the error is returned. When
+  writing the last-applied record (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) fails, in an
+  apply (the generation-skip path included) or in a rollback, the run SHALL fail and the
+  journal SHALL be rolled back by the same mechanism. The journal SHALL be discarded once the generation commit through the generation backend
   contract (REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b) has succeeded, a failure of the
   commit itself being outside the scope of rollback because an idempotent re-run
   converges. On the success of the run, the aside made by `--recopy` SHALL be
@@ -44,9 +44,9 @@ specification_ja: |
   の記録 dest での symlink 再作成、PreRemove の rmdir は空 dir の再作成、`--recopy` / `--backup`
   の rename 退避は退避物の rename back としなければならない。エラーが発生したら、それまでに
   記録したジャーナルを
-  逆順（LIFO）で巻き戻してからエラーを返さなければならない。last-applied 記録
-  （REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）の書き込みの失敗も同じ機構で巻き戻さなければ
-  ならない。世代バックエンドの契約
+  逆順（LIFO）で巻き戻してからエラーを返さなければならない。apply（世代スキップ経路を含む）
+  と rollback で last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）を書けなければ、
+  run を失敗させ、同じ機構でジャーナルを巻き戻さなければならない。世代バックエンドの契約
   （REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）越しの世代コミットが成功した後はジャーナルを
   破棄しなければならない（コミット自体の失敗は冪等再実行で収束するため巻き戻し対象外）。`--recopy` の退避物は成功時に削除しなければならず、`--backup` の退避物は成功時も
   残置しなければならない。クラッシュ（SIGKILL・電源断）は対象外としなければならない

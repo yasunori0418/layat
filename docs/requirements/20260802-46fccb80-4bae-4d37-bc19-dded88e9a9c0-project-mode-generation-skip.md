@@ -18,8 +18,7 @@ specification: |
   current generation of the profile and the `linkFarm` of the last-applied record
   (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) — to whichever of the two exist, the skip never being
   taken when neither exists — no new generation SHALL be stacked; while the profile and
-  the record disagree
-  the full apply path SHALL run instead. Skipping is mandatory, since under
+  the record disagree the full apply path SHALL run instead. Skipping is mandatory, since under
   devShell / direnv the `shellHook` runs on every shell re-entry and stacking a generation
   each time would make them grow without bound. Home mode SHALL remain as it is, stacking
   a new generation on every application, the generation skip being confined to project

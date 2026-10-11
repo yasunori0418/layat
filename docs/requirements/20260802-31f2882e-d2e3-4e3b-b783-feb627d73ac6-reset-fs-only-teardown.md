@@ -13,8 +13,8 @@ specification: |
   conservative invariants as stale removal (only those managed by layat and matching the
   record; foreign ones SHALL be left with a warning), the selected entries and the
   destinations recorded for them being taken from the last-applied record when one exists
-  and otherwise from the current
-  generation of the profile (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35), and copy targets SHALL also be
+  and otherwise from the current generation of the profile
+  (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35), and copy targets SHALL also be
   deleted, `reset` being the only explicit means of deleting a copy. After removing either
   a symlink or a copy, empty-parent-directory pruning SHALL be applied. Because of the
   risk of data loss, the command SHALL request consent, either through a confirmation
@@ -22,7 +22,7 @@ specification: |
   deleted targets. `reset` SHALL be an FS-only
   teardown that leaves the profile and generations untouched, while rewriting the
   last-applied record (and, when only a record exists, creating the profileDir that is the
-  flock key) as stated by REQ-9d622539-a1e5-4719-af51-e0cd85b66f35; as long as the config still
+  flock key together with the backref `.root` for the roothash series) as stated by REQ-9d622539-a1e5-4719-af51-e0cd85b66f35; as long as the config still
   holds the entry, the next apply SHALL place it again. It SHALL be usable in both home
   and project mode.
 specification_ja: |
@@ -36,7 +36,7 @@ specification_ja: |
   出すか `-y` / `--yes`（スクリプト / CI 用）で同意を要求し、削除 target をレポート表示
   しなければならない。`reset` は profile / 世代を触らない FS-only teardown でなければならず
   （REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 が定める last-applied 記録の書き直しと、記録だけが
-  あるときの flock の鍵である profileDir の作成は行う）、
+  あるときの flock の鍵である profileDir（roothash 系列は backref `.root` も）の作成は行う）、
   config が entry を残す限り次の apply がこれを再配置しなければならない。home / project の
   両モードで使用できなければならない。
 ---
@@ -75,7 +75,8 @@ home / project 両モード可。
 >
 > **2026-10-11 追記（ADR-0058）**: 撤去対象の entry と manifest が記録する配置先は、last-applied 記録があれば記録から、無ければ
 > profile の current 世代から取る。reset は profile / 世代を触らないが、撤去で target が消えた entry を除いた
-> manifest で記録を書き直す（全撤去なら記録を削除する）。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
+> manifest で記録を書き直す（全撤去なら記録を削除する）。profile が無く記録だけがあるときは flock の鍵である
+> profileDir（roothash 系列は backref `.root` も）を作る。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 >
 > **2026-10-11 追記（ADR-0057）**: 上の写しの「profile 完全除去は `nix-env --profile <profileDir>/profile
 > --delete-generations`」は、既定の世代バックエンド nixprofile の profile に対して利用者が叩く nix コマンドで、

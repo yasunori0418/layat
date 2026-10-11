@@ -33,7 +33,8 @@ specification: |
   meaning the first run with zero removal targets; (d) in project mode, skip stacking a
   new generation when the generation-skip condition stated by
   REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 holds, while still lstat-checking each target and re-linking
-  only the drifted entries rather than making it a complete no-op; (e) diff the old and
+  only the drifted entries rather than making it a complete no-op, and then writing the
+  last-applied record, a failure to write it being unwound by the undo journal; (e) diff the old and
   new `manifest.json`, remove before placement the self-recorded stale entries that block
   placement (ancestor symlink, real directory target, method change), place the new and
   re-linked ones, reflect the copy entries, and then perform conservative stale removal
@@ -74,7 +75,8 @@ specification_ja: |
   current 世代の `manifest.json`。REQ-9d622539-a1e5-4719-af51-e0cd85b66f35。どちらも無ければ初回 = 削除対象ゼロ）。
   (d) project mode かつ REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 が定める世代スキップの条件を満たすなら
   新世代は積まない。ただし各 target を
-  lstat 検査し、ドリフトした entry だけ再張りする（完全 no-op にしない）。(e)
+  lstat 検査し、ドリフトした entry だけ再張りする（完全 no-op にしない）。その後 last-applied
+  記録を書き、書けなければ undo ジャーナルで巻き戻す。(e)
   `manifest.json` を新旧 diff し、配置を塞ぐ自己記録 stale（祖先 symlink・実 dir target・
   method 変更）を配置前除去し、新規 / 張替を配置し、copy 反映を行い、保守的 stale 除去
   （ネイティブ FS）を行う。この 4 段のいずれかが途中失敗すると、この run が行った FS 変更を
@@ -160,8 +162,8 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 > engine の素の FS 操作。gcroot の引き継ぎは nixprofile の世代リンクの性質で、engine は gcroot を扱わない。
 >
 > **2026-10-11 追記（ADR-0058）**: 上の図の c「profileDir の前世代 manifest.json を読む」は、last-applied 記録が
-> あれば記録の manifest を baseline に採り、無ければ profileDir の current 世代から読む、と読み替える。e の後・f の前に
-> 記録を書く。d の世代スキップの判定元は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
+> あれば記録の manifest を baseline に採り、無ければ profileDir の current 世代から読む、と読み替える。記録は
+> e の後・f の前に書き、世代スキップ経路では d のドリフト修復の後に書く。d の世代スキップの判定元は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 
 ## 出典
 
