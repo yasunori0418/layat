@@ -33,8 +33,9 @@ satisfies:
   link-farm 比較）・rollback（離れる世代 N）・reset（撤去対象）が同じ関数で baseline を得る。
   記録があれば記録の manifest、無ければ profile リンクの current、どちらも無ければ空。
   両方あって `linkFarm` が profile の指す先と食い違えば記録を採り warning を 1 行出す。
-- **更新する経路**: apply の通常経路と generation skip 経路・rollback 成功後（N-1 の
-  manifest）・reset 成功後（撤去 entry を除いた manifest）。rollback の target（N-1）は
+- **更新する経路**: apply の通常経路と generation skip 経路・rollback（FS 収束後・ポインタ
+  移動前に N-1 の manifest。失敗は undo journal で巻き戻す）・reset（実際に撤去した entry を
+  除いた manifest。失敗は error で undo journal は無い）。rollback の target（N-1）は
   引き続き `profile-<N-1>-link` から読む。
 - 記録を flock の鍵にしない。flock の鍵・prune の対象・`--json` の payload は従来どおり
   profileDir 側に残る。

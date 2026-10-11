@@ -77,7 +77,7 @@ references:
 > ただし「`nix`（profile）と `git`（toplevel）のみサブプロセスで叩く」は **engine が叩くのは `git` のみ**へ改訂し、
 > profile 操作 `nix-env --profile <dir> --set` は世代バックエンドの契約（`internal/generation`）の既定実装 nixprofile へ移った。
 > 実行フロー 6 の `nix-env --set` は契約の Commit と読むこと。却下案「エンジンが世代 symlink を直接管理」は、契約の
-> 別実装として再評価の対象になった（本 ADR の範囲では実装しない。→ ADR-0057）。
+> 別実装として再評価の対象になった（ADR-0057 の範囲では実装しない。→ ADR-0057）。
 
 ## 背景
 

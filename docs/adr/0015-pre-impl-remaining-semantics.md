@@ -70,8 +70,8 @@ references:
 >
 > **2026-10-11 改訂注記（ADR-0058）**: 本 ADR §5 の rollback セマンティクス（baseline = 離れる世代 N・FS 収束を先に・ポインタ
 > 移動を最後に）は不変。ただし baseline となる N の manifest の供給元は、last-applied 記録があれば記録、無ければ世代リンク、の
-> 優先順位になった。target（N-1）の manifest は引き続き世代リンクから読み、rollback 成功後に記録を N-1 の manifest で書き直す
-> （→ ADR-0058）。
+> 優先順位になった。target（N-1）の manifest は引き続き世代リンクから読み、FS の収束後・ポインタ移動の前に記録を N-1 の
+> manifest で書き直す（→ ADR-0058）。
 
 ## 背景
 

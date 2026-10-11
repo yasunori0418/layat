@@ -6,7 +6,6 @@ status: 採用
 issues:
   - "#444"
   - "#406"
-  - "#447"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。世代管理 CLI への分離計画（Issue #447）への橋"
 justifies:
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
@@ -54,22 +53,24 @@ manifest を内容ごと持つ。記録の有効性は store の GC と無関係
 1. 記録があれば baseline = 記録の `manifest`
 2. 無ければ従来どおり nix profile の current（profile リンク）
 3. 両方あって `linkFarm` が profile の指す先と食い違えば記録を採り、warning を 1 行出す
-4. どちらも無ければ baseline は空（初回）。stderr に「last-applied 記録なし」を 1 行出す
+4. どちらも無ければ baseline は空（初回）。「last-applied 記録なし」を warning 1 行として出す（warning は沈黙規律の対象外で stderr へ出る）
 
 対象は apply の stale 除去、drift / generation skip の link-farm 比較、reset の撤去対象、rollback の baseline（離れる世代 N）。**rollback の target（N-1）は引き続き世代リンクから読む**（記録は「最後に置いたもの」しか持たない）。
 
 ### 4. 記録の書き込み
 
-- 全 FS 操作の成功直後・世代 commit の前に temp + rename で atomic に書く。記録は FS の事実なので commit の成否と独立。
-- generation skip 経路・rollback 成功後（= N-1 の manifest）・reset 成功後（撤去した entry を除いた manifest。全撤去なら記録ファイルを削除）も更新する。
-- 書けなければその操作は失敗（undo journal で FS を巻き戻す）。
+- apply では全 FS 操作の成功直後・世代 commit の前に temp + rename で atomic に書く。記録は FS の事実なので commit の成否と独立。書けなければ apply は失敗し、undo journal が FS を巻き戻す。
+- generation skip 経路でも更新する。
+- rollback では FS の収束後・profile ポインタ移動の前に N-1 の manifest で書き直す（apply と同じ「FS 成功直後・世代操作の前」）。書けなければ rollback は失敗し、undo journal が FS を巻き戻す。
+- reset では実際に撤去した entry を除いた manifest で書き直す（foreign として残した entry は記録に残る）。全撤去なら記録ファイルを削除する。書けなければ reset は失敗する。reset は undo journal を持たないので FS は reset が残した状態のまま。
+- 読みは JSON として不正な記録・`recordVersion` が 1 でない記録を error にする。
 - `--json` の契約・flock の鍵（profileDir）・prune の対象は変えない。
 
 ## 根拠
 
 ADR-0002 の却下理由は、記録に限っては成立しない。
 
-- **GC と無関係**: 却下案は manifest を store パスの参照で持ち、参照先が GC で消えると壊れた。記録は manifest を内容ごと持つので、参照する store パスが消えても baseline は読める。
+- **GC と無関係**: 却下案は manifest を store パスの参照で持ち、参照先が GC で消えると壊れた。記録は manifest を内容ごと持つので、参照する store パスが消えても baseline は読める。GC root は引き続き世代（profile）が担い、記録は baseline の読み出しだけを担う。記録があることで GC が安全になるわけではない。
 - **二重にならない**: 却下理由の「standalone では profile と二重」は profile が layat の所有物である間の話。profile が layat から出れば、記録が唯一の baseline になる。移行期の二重は §3 の優先順位と warning で吸収する。
 - **rollback で巻き戻す対象ではない**: 記録は「最後に置いたもの」であって世代ではない。rollback は FS を N-1 に収束させた後に記録を N-1 の manifest で書き直すので、記録が世代に捕捉されている必要が無い。
 
