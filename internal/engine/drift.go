@@ -10,19 +10,21 @@ import (
 // Generation skip + lstat drift repair (project mode only): when the new link-farm equals the
 // previous generation no generation is committed, and only drifted entries are re-converged.
 
-// generationUnchanged reports whether the new link-farm resolves to the same store path
-// as the profile link's current generation. It returns an error if either cannot be
-// resolved; the caller then falls back to a normal apply.
-func generationUnchanged(profileLink, newLinkFarm string) (bool, error) {
-	prev, err := filepath.EvalSymlinks(profileLink)
-	if err != nil {
-		return false, err
+// generationUnchanged reports whether the new link-farm resolves to the same store path as the
+// profile's current generation and, when there is a record, the record's link-farm. Without a
+// profile it is false; an unresolvable link-farm is an error and the caller falls back to a normal apply.
+func generationUnchanged(b baseline, newLinkFarm string) (bool, error) {
+	if b.profileErr != nil {
+		return false, b.profileErr
+	}
+	if b.profileLinkFarm == "" {
+		return false, nil
 	}
 	next, err := filepath.EvalSymlinks(newLinkFarm)
 	if err != nil {
 		return false, err
 	}
-	return prev == next, nil
+	return next == b.profileLinkFarm && (b.record == nil || b.record.LinkFarm == next), nil
 }
 
 // repairDrift re-converges only the drifted entries during a generation skip, without stale

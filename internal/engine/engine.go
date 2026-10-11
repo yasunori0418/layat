@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/gitutil"
@@ -135,8 +136,8 @@ func acquireProfileLock(dir string, wait bool) (*lock.Lock, error) {
 }
 
 // Apply places the manifest's entries and commits a generation on success, in the order
-// flock → in-lock build (opts.Build, or pre-built opts.LinkFarm) → placement → commit →
-// .pending removal.
+// flock → in-lock build (opts.Build, or pre-built opts.LinkFarm) → placement → last-applied
+// record → commit → .pending removal.
 func Apply(opts Options) (*Result, error) {
 	a := &applier{opts: opts, result: &Result{}}
 	if a.opts.Warnf == nil {
@@ -177,6 +178,9 @@ func Apply(opts Options) (*Result, error) {
 	a.profile = prof
 	a.result.ProfileDir = a.profile.Dir
 	a.result.Profile = a.profile.Profile
+	if a.record, err = recordFor(opts.StateDir, opts.Name, rootKind, root, opts.RootOverride != ""); err != nil {
+		return nil, err
+	}
 
 	// 1.2 observe the profile generation at run start, and again on every return path (deferred).
 	a.result.GenBefore = observeGeneration(a.profile.Profile)
@@ -219,8 +223,13 @@ func Apply(opts Options) (*Result, error) {
 		a.manifest = m
 	}
 
-	// 5. read the previous generation's manifest (absent = first run = zero stale removals).
-	prev := a.loadPrevManifest()
+	// 5. read the baseline: the last-applied record, else the profile's current generation
+	//    (neither = first run = zero stale removals).
+	base, err := a.readBaseline()
+	if err != nil {
+		return nil, err
+	}
+	prev := base.manifest
 
 	// 5.5 expose the new manifest's full entry inventory (not just the diff).
 	a.result.Entries = a.manifest.Entries
@@ -245,10 +254,11 @@ func Apply(opts Options) (*Result, error) {
 		return nil, err
 	}
 
-	// 7. project mode only: if the new link-farm equals the previous generation, commit nothing
-	//    (omit the commit) and only repair drifted entries. Other root kinds commit every time.
+	// 7. project mode only: if the new link-farm equals both the profile's current generation and
+	//    the record, commit nothing (omit the commit) and only repair drifted entries. Other root
+	//    kinds commit every time.
 	if rootKind == manifest.RootKindProject && prev != nil {
-		same, err := generationUnchanged(a.profile.Profile, a.opts.LinkFarm)
+		same, err := generationUnchanged(base, a.opts.LinkFarm)
 		if err != nil {
 			// When the previous generation's link-farm cannot be resolved, fall back to the safe side: normal apply (commit a new generation).
 			a.opts.Warnf("layat: could not resolve the previous generation's link-farm; recommitting without a generation skip: %v", err)
@@ -256,6 +266,9 @@ func Apply(opts Options) (*Result, error) {
 			// The repair is journaled like normal placement; with no commit on this path, the
 			// journal is discarded as soon as the repair succeeds.
 			if err := a.runJournaled(func() error { return a.repairDrift(plan, opts.Recopy) }); err != nil {
+				return nil, err
+			}
+			if err := a.runJournaled(func() error { return a.recordPlacement(a.opts.LinkFarm) }); err != nil {
 				return nil, err
 			}
 			a.discardJournal()
@@ -281,6 +294,11 @@ func Apply(opts Options) (*Result, error) {
 		return a.fail(plan, err)
 	}
 	if err := a.runJournaled(func() error { return a.removeStale(plan.Remove) }); err != nil {
+		return a.fail(plan, err)
+	}
+
+	// 8.5 record what was placed. A failure unwinds the placement like a failed stage.
+	if err := a.runJournaled(func() error { return a.recordPlacement(a.opts.LinkFarm) }); err != nil {
 		return a.fail(plan, err)
 	}
 
@@ -312,6 +330,7 @@ type applier struct {
 	opts     Options
 	manifest *manifest.Manifest
 	profile  paths.Profile
+	record   paths.Record
 	root     string
 	result   *Result
 	journal  []undoOp
@@ -432,7 +451,11 @@ func (a *applier) dryRun() (*Result, error) {
 		a.manifest = m
 	}
 
-	prev := a.loadPrevManifest()
+	base, err := a.readBaseline()
+	if err != nil {
+		return nil, err
+	}
+	prev := base.manifest
 	a.result.Entries = a.manifest.Entries
 	plan, err := planner.Compute(prev, a.manifest, a.root, planner.OSFS, a.plannerOptions())
 	if err != nil {
@@ -528,20 +551,28 @@ func (a *applier) ensureProfileDir() error {
 	return nil
 }
 
-// loadPrevManifest reads the manifest.json pointed at by profileDir/profile (the symlink to
-// the previous generation's link-farm). On the first run (profile absent) it returns nil
-// (zero removal targets).
-func (a *applier) loadPrevManifest() *manifest.Manifest {
-	if _, err := os.Stat(a.profile.Profile); err != nil {
-		return nil
+// readBaseline reads the baseline for stale removal and drift repair. Without a record, a
+// profile manifest that cannot be read gives up stale removal instead of blocking placement.
+func (a *applier) readBaseline() (baseline, error) {
+	b, err := loadBaseline(a.record.File, a.profile.Profile, a.opts.Warnf)
+	if err == nil && b.record == nil && b.profileErr != nil {
+		a.opts.Warnf("layat: could not read the previous generation's manifest; skipping stale removal: %v", b.profileErr)
+		b.manifest = nil
 	}
-	m, err := manifest.Load(a.profile.Profile)
+	return b, err
+}
+
+// recordPlacement writes the last-applied record for the manifest just placed from linkFarm.
+func (a *applier) recordPlacement(linkFarm string) error {
+	resolved, err := filepath.EvalSymlinks(linkFarm)
 	if err != nil {
-		// Even if the previous generation cannot be read, do not block new placement (just give up stale removal).
-		a.opts.Warnf("layat: could not read the previous generation's manifest; skipping stale removal: %v", err)
-		return nil
+		return fmt.Errorf("layat: cannot resolve the link-farm for the last-applied record (%s): %w", linkFarm, err)
 	}
-	return m
+	raw, err := os.ReadFile(filepath.Join(resolved, manifest.FileName))
+	if err != nil {
+		return fmt.Errorf("layat: cannot read the manifest for the last-applied record: %w", err)
+	}
+	return writeRecord(a.record, a.root, resolved, raw, time.Now())
 }
 
 // reportConflicts lists every planner-detected conflict to stderr (warnf), each followed by a

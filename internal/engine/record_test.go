@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/manifest"
 	"github.com/yasunori0418/layat/internal/paths"
 )
@@ -194,5 +195,217 @@ func TestLoadBaselineRejectsBrokenRecord(t *testing.T) {
 	profile := putProfile(t, filepath.Join(state, "profiles", "c"), writeLinkFarm(t, homeManifest()))
 	if _, err := loadBaseline(rec.File, profile, func(string, ...any) {}); err == nil {
 		t.Error("loadBaseline with a broken record = nil error, want an error")
+	}
+}
+
+// --- apply / rollback / reset keep the record ------------------------------
+
+// projectRecord returns the record of the project-mode config applyOnce places under root.
+func projectRecord(state, root string) paths.Record {
+	return paths.ResolveRecord(state, "c", manifest.RootKindProject, root, true)
+}
+
+// mustReadRecord reads the record at rec, failing the test when it is absent or invalid.
+func mustReadRecord(t *testing.T, rec paths.Record) (*lastApplied, *manifest.Manifest) {
+	t.Helper()
+	got, m, err := readRecord(rec.File)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got == nil {
+		t.Fatalf("no last-applied record at %s", rec.File)
+	}
+	return got, m
+}
+
+func TestApplyWritesRecord(t *testing.T) {
+	root, state := realTempDir(t), realTempDir(t)
+	lf := writeLinkFarm(t, projectManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+	before := time.Now().Add(-time.Second)
+	applyOnce(t, lf, "c", root, state, &generation.Fake{}, nil)
+
+	got, _ := mustReadRecord(t, projectRecord(state, root))
+	if got.LinkFarm != lf {
+		t.Errorf("linkFarm = %q, want %q", got.LinkFarm, lf)
+	}
+	want, err := os.ReadFile(filepath.Join(lf, manifest.FileName))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got.Manifest) != string(want) {
+		t.Errorf("manifest = %s, want manifest.json verbatim %s", got.Manifest, want)
+	}
+	if at, err := time.Parse(time.RFC3339, got.AppliedAt); err != nil || at.Before(before) {
+		t.Errorf("appliedAt = %q (%v), want the apply time", got.AppliedAt, err)
+	}
+}
+
+func TestApplyFSFailureWritesNoRecord(t *testing.T) {
+	root, state := realTempDir(t), realTempDir(t)
+	blockWrite(t, filepath.Join(root, "ro"))
+	lf := writeLinkFarm(t, projectManifest(storeEntry(makeSrc(t, "x"), ".", "ro/a")))
+	fake := &generation.Fake{}
+	if _, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake}); err == nil {
+		t.Fatal("Apply = nil error, want the placement failure")
+	}
+	if _, err := os.Lstat(projectRecord(state, root).File); !os.IsNotExist(err) {
+		t.Errorf("record exists after a failed placement: %v", err)
+	}
+}
+
+func TestApplyRecordWriteFailureUnwinds(t *testing.T) {
+	root, state := realTempDir(t), realTempDir(t)
+	blockWrite(t, filepath.Join(state, "layat"))
+	lf := writeLinkFarm(t, projectManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+	fake := &generation.Fake{}
+	res, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake})
+	if err == nil || !strings.Contains(err.Error(), "last-applied record") {
+		t.Fatalf("Apply = %v, want the record write failure", err)
+	}
+	if !res.Unwound {
+		t.Error("Unwound = false, want the placement unwound")
+	}
+	if _, err := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(err) {
+		t.Errorf("placed symlink survived the failed record write: %v", err)
+	}
+	if len(fake.Commits) != 0 {
+		t.Errorf("commit calls = %d, want 0 (the record is written before the commit)", len(fake.Commits))
+	}
+}
+
+// TestGenerationSkipNeedsRecordAndProfile verifies a generation skip only when the new link-farm
+// matches both the profile and the record. After a failed commit the record is ahead of the
+// profile; re-applying the profile's config then takes the normal path with the record as baseline.
+func TestGenerationSkipNeedsRecordAndProfile(t *testing.T) {
+	root, state := realTempDir(t), realTempDir(t)
+	srcA, srcC := makeSrc(t, "x"), makeSrc(t, "x")
+	lf1 := writeLinkFarm(t, projectManifest(storeEntry(srcA, ".", "a")))
+	lf2 := writeLinkFarm(t, projectManifest(storeEntry(srcA, ".", "a"), storeEntry(srcC, ".", "c")))
+	fake := &generation.Fake{}
+	applyOnce(t, lf1, "c", root, state, fake, nil)
+
+	failing := &generation.Fake{OnCommit: func(string, string) error { return os.ErrPermission }}
+	if _, err := Apply(Options{LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: failing}); err == nil {
+		t.Fatal("Apply with a failing commit = nil error")
+	}
+
+	var warns []string
+	res := applyOnce(t, lf1, "c", root, state, fake, &warns)
+	if res.GenerationSkipped {
+		t.Error("GenerationSkipped = true while the record (lf2) disagrees with the profile (lf1)")
+	}
+	if _, err := os.Lstat(filepath.Join(root, "c")); !os.IsNotExist(err) {
+		t.Errorf("c placed by the uncommitted apply was not stale-removed: %v", err)
+	}
+	if len(fake.Commits) != 2 {
+		t.Errorf("commit calls = %d, want 2", len(fake.Commits))
+	}
+	if len(warns) != 1 || !strings.Contains(warns[0], "disagrees") {
+		t.Errorf("warnings = %q, want one record/profile mismatch", warns)
+	}
+
+	if res := applyOnce(t, lf1, "c", root, state, fake, nil); !res.GenerationSkipped {
+		t.Error("GenerationSkipped = false once the record and the profile agree")
+	}
+}
+
+func TestGenerationSkipUpdatesRecord(t *testing.T) {
+	root, state := realTempDir(t), realTempDir(t)
+	m := projectManifest(storeEntry(makeSrc(t, "x"), ".", "a"))
+	lf := writeLinkFarm(t, m)
+	fake := &generation.Fake{}
+	applyOnce(t, lf, "c", root, state, fake, nil)
+	rec := projectRecord(state, root)
+	putRecord(t, rec, lf, m)
+
+	if res := applyOnce(t, lf, "c", root, state, fake, nil); !res.GenerationSkipped {
+		t.Fatal("GenerationSkipped = false, want a skip")
+	}
+	if got, _ := mustReadRecord(t, rec); strings.HasPrefix(got.AppliedAt, "2000-") {
+		t.Errorf("appliedAt = %q, want it refreshed by the skipped apply", got.AppliedAt)
+	}
+}
+
+// TestRollbackWritesRecordBeforeSwitch verifies the record holds generation N-1 once the FS has
+// converged, even when the profile pointer move then fails.
+func TestRollbackWritesRecordBeforeSwitch(t *testing.T) {
+	root, state := realTempDir(t), realTempDir(t)
+	lf1 := writeLinkFarm(t, homeManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+	lf2 := writeLinkFarm(t, homeManifest(storeEntry(makeSrc(t, "x"), ".", "b")))
+	fake := &generation.Fake{}
+	for _, lf := range []string{lf1, lf2} {
+		if _, err := Apply(Options{LinkFarm: lf, Name: "vim", RootOverride: root, StateDir: state, Backend: fake}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	rec := paths.ResolveRecord(state, "vim", manifest.RootKindHome, root, true)
+	opts := RollbackOptions{Name: "vim", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state, Backend: fake}
+
+	fake.OnSwitch = func(string, int) error { return os.ErrPermission }
+	if _, err := Rollback(opts); err == nil {
+		t.Fatal("Rollback with a failing switch = nil error")
+	}
+	got, m := mustReadRecord(t, rec)
+	if got.LinkFarm != lf1 || entryTargets(m) != "a" {
+		t.Errorf("record after the failed switch = %s / %s, want %s / a", got.LinkFarm, entryTargets(m), lf1)
+	}
+
+	fake.OnSwitch = nil
+	if _, err := Rollback(opts); err != nil {
+		t.Fatal(err)
+	}
+	if got, m := mustReadRecord(t, rec); got.LinkFarm != lf1 || entryTargets(m) != "a" {
+		t.Errorf("record after rollback = %s / %s, want %s / a", got.LinkFarm, entryTargets(m), lf1)
+	}
+}
+
+// TestResetUpdatesRecord verifies reset drops only the entries it removed from the record, keeps
+// the record's link-farm, and deletes the record once nothing is left.
+func TestResetUpdatesRecord(t *testing.T) {
+	root, state := realTempDir(t), realTempDir(t)
+	srcA, srcB, srcC := makeSrc(t, "x"), makeSrc(t, "x"), makeSrc(t, "x")
+	applyForReset(t, root, state, homeManifest(
+		storeEntry(srcA, ".", "a"), storeEntry(srcB, ".", "b"), storeEntry(srcC, ".", "c"),
+	))
+	rec := paths.ResolveRecord(state, "cfg", manifest.RootKindHome, root, true)
+	lf, _ := mustReadRecord(t, rec)
+
+	// c is re-pointed by another tool: reset keeps it as foreign.
+	c := filepath.Join(root, "c")
+	if err := os.Remove(c); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(srcA, c); err != nil {
+		t.Fatal(err)
+	}
+
+	steps := []struct {
+		targets []string
+		want    string
+	}{
+		{[]string{"a"}, "b,c"},
+		{nil, "c"},
+	}
+	for _, s := range steps {
+		if _, err := Reset(resetOpts(root, state, s.targets, false, nil)); err != nil {
+			t.Fatal(err)
+		}
+		got, m := mustReadRecord(t, rec)
+		if entryTargets(m) != s.want || got.LinkFarm != lf.LinkFarm {
+			t.Errorf("reset %v: record = %s / %s, want %s / %s", s.targets, entryTargets(m), got.LinkFarm, s.want, lf.LinkFarm)
+		}
+	}
+
+	if err := os.Remove(c); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(srcC, c); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Reset(resetOpts(root, state, nil, false, nil)); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Lstat(rec.File); !os.IsNotExist(err) {
+		t.Errorf("record survived a full reset: %v", err)
 	}
 }

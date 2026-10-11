@@ -103,9 +103,9 @@ type RollbackResult struct {
 	To   int // previous generation N-1 rolled back to
 }
 
-// Rollback reverts a home-mode profile to one generation earlier. It converges the FS from current
-// generation N to N-1 (stale-removing N∖N-1, re-placing N-1) and moves the profile pointer last,
-// since moving it first would shift the stale-removal baseline.
+// Rollback reverts a home-mode profile to one generation earlier. It converges the FS from the
+// baseline N to N-1 (stale-removing N∖N-1, re-placing N-1), records N-1 as last applied, and moves
+// the profile pointer last, since moving it first would shift the stale-removal baseline.
 func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	warnf := opts.Warnf
 	if warnf == nil {
@@ -120,6 +120,10 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir, Git: opts.Git,
 		Backend: opts.Backend,
 	})
+	if err != nil {
+		return nil, err
+	}
+	rec, err := recordFor(opts.StateDir, opts.Name, opts.RootKind, root, opts.RootOverride != "")
 	if err != nil {
 		return nil, err
 	}
@@ -156,11 +160,16 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	cur := gens[curIdx]
 	prev := gens[curIdx-1]
 
-	// 4. baseline = current generation N's manifest (current FS state) / target = previous generation N-1's manifest.
-	baseline, err := manifest.Load(prof.Profile)
+	// 4. baseline = what was last applied (the record, else current generation N) / target =
+	//    previous generation N-1's manifest.
+	b, err := loadBaseline(rec.File, prof.Profile, warnf)
 	if err != nil {
-		return nil, fmt.Errorf("layat: cannot read the current generation's manifest: %w", err)
+		return nil, err
 	}
+	if b.record == nil && b.profileErr != nil {
+		return nil, fmt.Errorf("layat: cannot read the current generation's manifest: %w", b.profileErr)
+	}
+	baseline := b.manifest
 	target, err := manifest.Load(paths.GenerationLink(prof.Profile, prev.Number))
 	if err != nil {
 		return nil, fmt.Errorf("layat: cannot read the previous generation's manifest (generation %d): %w", prev.Number, err)
@@ -178,6 +187,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	//    (recopy always off), then stale removal. There is no Backup stage.
 	a := &applier{opts: Options{Warnf: warnf}, result: &Result{Root: root, ProfileDir: prof.Dir, Profile: prof.Profile}}
 	a.profile = prof
+	a.record = rec
 	a.root = root
 	a.result.GenBefore = intPtr(cur.Number)
 	// Full inventory = the generation being rolled back to (its entries are the FS end state).
@@ -207,6 +217,9 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		return fail(err)
 	}
 	if err := a.runJournaled(func() error { return a.removeStale(plan.Remove) }); err != nil {
+		return fail(err)
+	}
+	if err := a.runJournaled(func() error { return a.recordPlacement(paths.GenerationLink(prof.Profile, prev.Number)) }); err != nil {
 		return fail(err)
 	}
 

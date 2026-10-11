@@ -7,6 +7,7 @@ package engine
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/yasunori0418/layat/internal/generation"
@@ -264,8 +265,9 @@ func TestApplyResultStructuredWarnings(t *testing.T) {
 	if len(res.Warnings) != 1 || res.Warnings[0].Kind != planner.WarnForeignReplace || res.Warnings[0].Target != "link" {
 		t.Errorf("Warnings = %+v, want [{WarnForeignReplace link}]", res.Warnings)
 	}
-	if len(warned) != 1 {
-		t.Errorf("Warnf stream = %v, want the human-readable text alongside", warned)
+	// The first apply also warns that there is no last-applied record yet.
+	if len(warned) != 2 || !strings.Contains(warned[0], "no last-applied record") || !strings.Contains(warned[1], "overwriting an unrecorded symlink") {
+		t.Errorf("Warnf stream = %v, want the no-record warning, then the human-readable text alongside", warned)
 	}
 }
 
