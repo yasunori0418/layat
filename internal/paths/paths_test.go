@@ -145,6 +145,48 @@ func TestResolveFixedUsesRootHash(t *testing.T) {
 	}
 }
 
+func TestResolveRecordHomeUsesNameKey(t *testing.T) {
+	// The record lives under <state>/layat, keyed like the profileDir.
+	r := ResolveRecord("/state", "home", manifest.RootKindHome, "/home/me", false)
+	wantDir := filepath.Join("/state", "layat", "home")
+	if r.Dir != wantDir {
+		t.Errorf("Dir = %q, want %q", r.Dir, wantDir)
+	}
+	if r.File != filepath.Join(wantDir, "last-applied.json") {
+		t.Errorf("File = %q", r.File)
+	}
+	if r.BackrefDir != "" || r.Backref != "" {
+		t.Errorf("home (no --root) should have no backref, got %q / %q", r.BackrefDir, r.Backref)
+	}
+}
+
+func TestResolveRecordRootHashSeries(t *testing.T) {
+	root := "/home/me/proj"
+	for _, tc := range []struct {
+		desc         string
+		rootKind     string
+		rootOverride bool
+	}{
+		{"project", manifest.RootKindProject, false},
+		{"fixed", manifest.RootKindFixed, false},
+		{"home with --root", manifest.RootKindHome, true},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			r := ResolveRecord("/state", "c", tc.rootKind, root, tc.rootOverride)
+			hashDir := filepath.Join("/state", "layat", RootHash(root))
+			if r.Dir != filepath.Join(hashDir, "c") {
+				t.Errorf("Dir = %q, want %q", r.Dir, filepath.Join(hashDir, "c"))
+			}
+			if r.File != filepath.Join(hashDir, "c", "last-applied.json") {
+				t.Errorf("File = %q", r.File)
+			}
+			if r.BackrefDir != hashDir || r.Backref != filepath.Join(hashDir, ".root") {
+				t.Errorf("backref = %q / %q, want %q / %q", r.BackrefDir, r.Backref, hashDir, filepath.Join(hashDir, ".root"))
+			}
+		})
+	}
+}
+
 // writeBackref writes a .root under hashDir exactly as the engine does
 // (the recorded root plus a trailing newline is the shape on disk).
 func writeBackref(t *testing.T, hashDir, content string) {
