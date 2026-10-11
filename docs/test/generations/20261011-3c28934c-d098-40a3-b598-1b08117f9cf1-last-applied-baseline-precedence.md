@@ -32,6 +32,10 @@ stale 除去・ドリフト修復・reset・rollback が使う baseline（この
 - rollback は FS の収束後・profile ポインタ移動の前に N-1 の manifest と link-farm で書き直す
 - reset は撤去対象のうち target が無くなった entry だけを除いて書き直し（foreign として
   残した entry・途中失敗で未到達の entry・`linkFarm` は保持）、全撤去なら記録を削除する
+- reset は FS 操作の途中失敗でも同じ規則で記録を書き直し、書き直しも失敗したときは撤去の
+  error と書き直しの error を併せて返す
+- profile が無く記録だけがあるとき、reset は flock を取る前に profileDir（roothash 系列は
+  backref `.root` も）を apply と同じ手順で作る
 - generation skip・rollback・reset も、記録を書けなければ失敗する
 
 上位の規範は TP-e7c25263-6d2d-4a37-8275-26906889d912（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。
