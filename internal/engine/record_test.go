@@ -120,6 +120,7 @@ func TestReadRecordRejectsInvalid(t *testing.T) {
 		{"manifest missing", `{"recordVersion":1,"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z"}`},
 		{"manifest null", `{"recordVersion":1,"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","manifest":null}`},
 		{"manifest wrong type", `{"recordVersion":1,"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","manifest":"x"}`},
+		{"unknown field", `{"recordVersion":1,"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","extra":true,"manifest":` + m + `}`},
 		{"manifest without rootKind", `{"recordVersion":1,"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","manifest":{"schemaVersion":1,"root":{},"entries":[]}}`},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
