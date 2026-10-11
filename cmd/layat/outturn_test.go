@@ -19,6 +19,7 @@ import (
 	"github.com/yasunori0418/outturn/go/conformance"
 
 	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/lock"
 )
@@ -345,7 +346,7 @@ func TestClassifyErrorCodes(t *testing.T) {
 		{"permission beats the IO shape", &fs.PathError{Op: "open", Path: "/x", Err: fs.ErrPermission}, "E_PERMISSION"},
 		{"residual IO PathError", &fs.PathError{Op: "rmdir", Path: "/x", Err: syscall.ENOTEMPTY}, "E_IO"},
 		{"residual IO LinkError", &os.LinkError{Op: "symlink", Old: "/a", New: "/b", Err: syscall.EEXIST}, "E_IO"},
-		{"unclassified fallback", errors.New("layat: generation commit (nix-env --set) failed"), "E_LAYAT_FAILED"},
+		{"unclassified fallback", errors.New("layat: generation commit failed"), "E_LAYAT_FAILED"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -368,7 +369,7 @@ func TestJSONSuppressesLineOrientedStdout(t *testing.T) {
 
 	applyRes := &engine.Result{Placed: []string{"a"}, Removed: []string{"b"}}
 	resetRes := &engine.ResetResult{RemovedSymlinks: []string{"s"}, RemovedCopies: []string{"c"}, KeptForeign: []string{"k"}}
-	gens := []engine.Generation{{Number: 1, Date: "2026-07-19", Current: true}}
+	gens := []generation.Generation{{Number: 1, Date: "2026-07-19", Current: true}}
 	targets := []string{".claude/skills"}
 	pruneRes := &engine.PruneResult{Removed: []engine.PruneSeries{{RootHash: "aaaa", Root: "/gone"}}}
 

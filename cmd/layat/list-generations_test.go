@@ -7,7 +7,7 @@ import (
 
 	"github.com/yasunori0418/outturn/go/conformance"
 
-	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/generation"
 )
 
 // TestListGenerationsJSONInfoGenerations pins list-generations' --json shape: {number, date,
@@ -18,7 +18,7 @@ func TestListGenerationsJSONInfoGenerations(t *testing.T) {
 		t.Fatalf("conformance.NewDefaultChecker: %v", err)
 	}
 
-	gens := []engine.Generation{
+	gens := []generation.Generation{
 		{Number: 1, Date: "2026-07-18 09:00:00"},
 		{Number: 2, Date: "2026-07-19 12:00:00", Current: true},
 	}

@@ -16,8 +16,8 @@ import (
 	"github.com/yasunori0418/outturn/go/conformance"
 
 	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/manifest"
-	"github.com/yasunori0418/layat/internal/paths"
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
@@ -444,7 +444,7 @@ func TestApplyAllSingleConfigMatchesNamedApply(t *testing.T) {
 // TestApplyAllSingleConfigFailureMatchesNamedApply: on failure too, the named apply (settled by
 // emit) and --all (settled by the aggregator) emit the same document.
 func TestApplyAllSingleConfigFailureMatchesNamedApply(t *testing.T) {
-	failure := errors.New("layat: generation commit (nix-env --set) failed")
+	failure := errors.New("layat: generation commit failed")
 	// A commit failure has a result but no failed target, so it is subject-borne on both paths.
 	newRes := func() *engine.Result {
 		res := placedResult("default")
@@ -476,35 +476,40 @@ func TestApplyAllSingleConfigFailureMatchesNamedApply(t *testing.T) {
 	}
 }
 
-// stubNixEnvListGenerations puts a fake nix-env first on PATH: it prints one generation for every
-// profile except failFor, for which it exits non-zero.
-func stubNixEnvListGenerations(t *testing.T, failFor string) {
+// installFakeBackend routes the CLI's backend injection point at a generation.Fake for t and
+// returns it. failFor names the profile whose listing fails; "" fails none.
+func installFakeBackend(t *testing.T, failFor string) *generation.Fake {
 	t.Helper()
-	bin := t.TempDir()
-	script := "#!/bin/sh\n" +
-		"for a in \"$@\"; do case \"$prev\" in --profile) prof=$a;; esac; prev=$a; done\n" +
-		"case \"$prof\" in\n" +
-		"*/" + failFor + "/profile) echo 'error: not a valid profile' >&2; exit 1;;\n" +
-		"esac\n" +
-		"printf '   1   2026-07-19 12:00:00   (current)\\n'\n"
-	if err := os.WriteFile(filepath.Join(bin, "nix-env"), []byte(script), 0o755); err != nil {
-		t.Fatalf("write nix-env stub: %v", err)
+	fake := &generation.Fake{}
+	if failFor != "" {
+		fake.OnList = func(profileLink string) error {
+			if filepath.Base(filepath.Dir(profileLink)) == failFor {
+				return errors.New("error: not a valid profile")
+			}
+			return nil
+		}
 	}
-	t.Setenv("PATH", bin+string(os.PathListSeparator)+os.Getenv("PATH"))
+	orig := newGenerationBackend
+	newGenerationBackend = func() generation.Backend { return fake }
+	t.Cleanup(func() { newGenerationBackend = orig })
+	return fake
 }
 
-// makeHomeProfiles creates <state>/nix/profiles/layat/<name>/profile links, the home-mode layout
-// runListAllGenerations scans.
-func makeHomeProfiles(t *testing.T, names ...string) {
+// makeHomeProfiles creates <user base>/<name>/profile links with one generation each, the
+// home-mode layout runListAllGenerations scans.
+func makeHomeProfiles(t *testing.T, backend generation.Backend, names ...string) {
 	t.Helper()
 	state := t.TempDir()
 	t.Setenv("XDG_STATE_HOME", state)
 	for _, name := range names {
-		dir := filepath.Join(paths.Base(state), name)
+		dir := filepath.Join(backend.UserBase(state), name)
 		if err := os.MkdirAll(dir, 0o755); err != nil {
 			t.Fatalf("mkdir %s: %v", dir, err)
 		}
-		// The scan only lstats the link, so the destination need not exist.
+		// The scan only lstats the links, so the generation's destination need not exist.
+		if err := os.Symlink("/nowhere", filepath.Join(dir, "profile-1-link")); err != nil {
+			t.Fatalf("symlink generation: %v", err)
+		}
 		if err := os.Symlink("profile-1-link", filepath.Join(dir, "profile")); err != nil {
 			t.Fatalf("symlink profile: %v", err)
 		}
@@ -519,8 +524,7 @@ func TestListGenerationsAllWiring(t *testing.T) {
 	flagJSON = true
 
 	t.Run("every scanned config becomes its own SubjectResult", func(t *testing.T) {
-		makeHomeProfiles(t, "home", "work")
-		stubNixEnvListGenerations(t, "")
+		makeHomeProfiles(t, installFakeBackend(t, ""), "home", "work")
 		run, buf := newListGenerationsTestRun()
 		if err := runListAllGenerations(run); err != nil {
 			t.Fatalf("runListAllGenerations: %v", err)
@@ -547,8 +551,7 @@ func TestListGenerationsAllWiring(t *testing.T) {
 
 	t.Run("a mid-enumeration failure lands on its own subject", func(t *testing.T) {
 		// "work" sorts after "home", so the scan lists home, then fails on work and stops.
-		makeHomeProfiles(t, "home", "work", "zzz")
-		stubNixEnvListGenerations(t, "work")
+		makeHomeProfiles(t, installFakeBackend(t, "work"), "home", "work", "zzz")
 		run, buf := newListGenerationsTestRun()
 		err := runListAllGenerations(run)
 		if err == nil {

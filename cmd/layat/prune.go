@@ -127,14 +127,16 @@ func prunePrompt(preview *engine.PruneResult) (bool, error) {
 // pruneFn is the engine entry point runPrune drives, replaceable in tests.
 var pruneFn = engine.Prune
 
-// systemBaseEnv overrides the system scan base (/nix/var/nix/profiles/layat) for one run, so tests
-// can point it at a throwaway directory. It is not a supported way to prune another base.
+// systemBaseEnv overrides the backend's system scan base for one run, so tests can point it at a
+// throwaway directory. It is not a supported way to prune another base.
 const systemBaseEnv = "LAYAT_SYSTEM_PROFILE_BASE"
 
-// pruneOptions builds the engine options for one prune run. StateDir and Warnf keep the engine's
-// defaults; SystemDir comes verbatim from systemBaseEnv when set.
+// pruneOptions builds the engine options for one prune run. The bases come from the injected
+// backend (StateDir and Warnf keep the engine's defaults); SystemDir comes verbatim from
+// systemBaseEnv when set.
 func pruneOptions(dryrun bool, confirm func(*engine.PruneResult) (bool, error)) engine.PruneOptions {
 	return engine.PruneOptions{
+		Backend:   newGenerationBackend(),
 		DryRun:    dryrun,
 		Confirm:   confirm,
 		SystemDir: os.Getenv(systemBaseEnv),

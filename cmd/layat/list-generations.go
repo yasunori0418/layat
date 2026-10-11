@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/manifest"
 	"github.com/yasunori0418/layat/internal/paths"
 )
@@ -75,16 +76,18 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 		return fmt.Errorf("layat: list-generations is home mode only (layat.%s has rootKind=%q)", name, rootKind)
 	}
 
+	backend := newGenerationBackend()
 	prof, _, err := engine.ProfileFor(engine.ProfileOptions{
 		Name:         name,
 		RootKind:     rootKind,
 		FixedRoot:    fixedRoot,
 		RootOverride: flagRoot,
+		Backend:      backend,
 	})
 	if err != nil {
 		return err
 	}
-	gens, err := engine.ListGenerations(prof.Profile)
+	gens, err := backend.List(prof.Profile)
 	if err != nil {
 		return err
 	}
@@ -95,12 +98,12 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 }
 
 // generationsPayload wraps a config's listing as its SubjectResult payload in result.info.
-func generationsPayload(gens []engine.Generation) *outturnPayload[*generationsInfo] {
+func generationsPayload(gens []generation.Generation) *outturnPayload[*generationsInfo] {
 	return &outturnPayload[*generationsInfo]{info: &generationsInfo{Generations: generationRows(gens)}}
 }
 
-// generationRow is one generation of the --json inventory. date is nix-env's display timestamp
-// verbatim.
+// generationRow is one generation of the --json inventory. date is the backend's display
+// timestamp verbatim.
 type generationRow struct {
 	Number  int    `json:"number"`
 	Date    string `json:"date"`
@@ -109,7 +112,7 @@ type generationRow struct {
 
 // generationRows converts the engine listing into the info inventory (non-nil even when empty,
 // so an empty profile still lists "generations": []).
-func generationRows(gens []engine.Generation) []generationRow {
+func generationRows(gens []generation.Generation) []generationRow {
 	rows := make([]generationRow, 0, len(gens))
 	for _, g := range gens {
 		rows = append(rows, generationRow{Number: g.Number, Date: g.Date, Current: g.Current})
@@ -117,15 +120,16 @@ func generationRows(gens []engine.Generation) []generationRow {
 	return rows
 }
 
-// runListAllGenerations lists the generations of every home profile directly under
-// <state>/nix/profiles/layat, one subject per config. It reads the disk only; roothash-family
+// runListAllGenerations lists the generations of every home profile directly under the
+// backend's user base, one subject per config. It reads the disk only; roothash-family
 // directories hold no profile directly and are skipped.
 func runListAllGenerations(run *listGenerationsRun) error {
 	stateDir, err := paths.StateDir()
 	if err != nil {
 		return err
 	}
-	base := paths.Base(stateDir)
+	backend := newGenerationBackend()
+	base := backend.UserBase(stateDir)
 	dents, err := os.ReadDir(base)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -139,7 +143,7 @@ func runListAllGenerations(run *listGenerationsRun) error {
 		if !d.IsDir() {
 			continue
 		}
-		prof := paths.Resolve(stateDir, d.Name(), manifest.RootKindHome, "", false)
+		prof := paths.Resolve(base, d.Name(), manifest.RootKindHome, "", false)
 		if _, err := os.Lstat(prof.Profile); err != nil {
 			continue // no profile directly under it = roothash family / empty directory.
 		}
@@ -149,8 +153,8 @@ func runListAllGenerations(run *listGenerationsRun) error {
 
 	for i, name := range names {
 		subject := run.beginSubject(name)
-		prof := paths.Resolve(stateDir, name, manifest.RootKindHome, "", false)
-		gens, err := engine.ListGenerations(prof.Profile)
+		prof := paths.Resolve(base, name, manifest.RootKindHome, "", false)
+		gens, err := backend.List(prof.Profile)
 		if err != nil {
 			// The listing stops at the first failure, which this config's subject carries.
 			subject.finish(err)
@@ -173,7 +177,7 @@ func runListAllGenerations(run *listGenerationsRun) error {
 
 // printGenerations prints the generation list to stdout. It prints nothing under --json; the --all
 // path gates its own header lines.
-func printGenerations(gens []engine.Generation) {
+func printGenerations(gens []generation.Generation) {
 	if flagJSON {
 		return
 	}
