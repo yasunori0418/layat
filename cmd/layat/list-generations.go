@@ -110,7 +110,7 @@ type generationRow struct {
 	Current bool   `json:"current"`
 }
 
-// generationRows converts the engine listing into the info inventory (non-nil even when empty,
+// generationRows converts the backend listing into the info inventory (non-nil even when empty,
 // so an empty profile still lists "generations": []).
 func generationRows(gens []generation.Generation) []generationRow {
 	rows := make([]generationRow, 0, len(gens))

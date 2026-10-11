@@ -49,7 +49,7 @@ func TestApplyGenerationSkipNoDrift(t *testing.T) {
 		t.Errorf("GenerationSkipped = false, want true (same derivation)")
 	}
 	if len(fake.Commits) != 1 {
-		t.Errorf("commit calls = %d, want 1 (generation skip omits --set)", len(fake.Commits))
+		t.Errorf("commit calls = %d, want 1 (generation skip omits the commit)", len(fake.Commits))
 	}
 	if len(res.Placed)+len(res.Replaced)+len(res.Removed) != 0 {
 		t.Errorf("no-drift skip should touch nothing: Placed=%v Replaced=%v Removed=%v", res.Placed, res.Replaced, res.Removed)
