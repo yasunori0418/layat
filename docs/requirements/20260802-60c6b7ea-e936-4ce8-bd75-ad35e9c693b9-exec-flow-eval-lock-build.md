@@ -28,17 +28,20 @@ specification: |
   via `os.Readlink`, the out-link establishing an indirect gcroot that closes the GC
   window between placement and the generation commit, and the build being inside the lock so that
   out-link contention cannot structurally occur; (c) read the baseline manifest — the
-  last-applied record when one exists, otherwise the previous generation `manifest.json`
-  of `profileDir` (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) — an absent one meaning the first run with zero removal
-  targets; (d) in project mode, skip stacking a new generation when the new link-farm is
-  identical to the previous one, while still lstat-checking each target and re-linking
+  last-applied record when one exists, otherwise the `manifest.json` of the current
+  generation of `profileDir` (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) — an absent one
+  meaning the first run with zero removal targets; (d) in project mode, skip stacking a
+  new generation when the generation-skip condition stated by
+  REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 holds, while still lstat-checking each target and re-linking
   only the drifted entries rather than making it a complete no-op; (e) diff the old and
   new `manifest.json`, remove before placement the self-recorded stale entries that block
   placement (ancestor symlink, real directory target, method change), place the new and
   re-linked ones, reflect the copy entries, and then perform conservative stale removal
   with native filesystem operations, any mid-way failure among these four stages unwinding
   every filesystem change made by this run via the in-memory undo journal back to the
-  pre-apply state;
+  pre-apply state, and once they have succeeded write the last-applied record
+  (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35), a failure to write it being unwound by the same
+  undo journal;
   (f) commit the link-farm as a new generation through the generation backend contract
   (REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b), the commit point, the default nixprofile
   backend running `nix-env --profile <profileDir>/profile --set <link-farm>`; and
@@ -67,14 +70,17 @@ specification_ja: |
   (b) ロック内で `nix build` を `--out-link <profileDir>/.pending` 付きで実行し、
   `os.Readlink` で link-farm store path を得る。out-link が indirect gcroot を張り、
   配置〜世代コミットの GC 窓を塞ぐ。build がロック内なので out-link 競合は構造的に起きない。
-  (c) baseline の manifest を読む（last-applied 記録があれば記録、無ければ profileDir の前世代
-  `manifest.json`。REQ-9d622539-a1e5-4719-af51-e0cd85b66f35。どちらも無ければ初回 = 削除対象ゼロ）。
-  (d) project mode かつ新 link-farm が前世代と同一なら新世代は積まない。ただし各 target を
+  (c) baseline の manifest を読む（last-applied 記録があれば記録、無ければ profileDir の
+  current 世代の `manifest.json`。REQ-9d622539-a1e5-4719-af51-e0cd85b66f35。どちらも無ければ初回 = 削除対象ゼロ）。
+  (d) project mode かつ REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 が定める世代スキップの条件を満たすなら
+  新世代は積まない。ただし各 target を
   lstat 検査し、ドリフトした entry だけ再張りする（完全 no-op にしない）。(e)
   `manifest.json` を新旧 diff し、配置を塞ぐ自己記録 stale（祖先 symlink・実 dir target・
   method 変更）を配置前除去し、新規 / 張替を配置し、copy 反映を行い、保守的 stale 除去
   （ネイティブ FS）を行う。この 4 段のいずれかが途中失敗すると、この run が行った FS 変更を
-  全てインメモリ undo ジャーナルで巻き戻し pre-apply 状態へ戻す。(f) 世代バックエンドの
+  全てインメモリ undo ジャーナルで巻き戻し pre-apply 状態へ戻す。4 段が成功したら last-applied
+  記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）を書き、書けなければ同じ undo ジャーナルで
+  巻き戻す。(f) 世代バックエンドの
   契約（REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）越しに link-farm を新世代としてコミットする
   （コミット点。既定の nixprofile は `nix-env --profile <profileDir>/profile --set <link-farm>`
   を実行する）。(g) コミット成功後に `<profileDir>/.pending` を素の FS 操作で削除する
@@ -154,8 +160,8 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 > engine の素の FS 操作。gcroot の引き継ぎは nixprofile の世代リンクの性質で、engine は gcroot を扱わない。
 >
 > **2026-10-11 追記（ADR-0058）**: 上の図の c「profileDir の前世代 manifest.json を読む」は、last-applied 記録が
-> あれば記録の manifest を baseline に採り、無ければ profileDir の前世代から読む、と読み替える。d の世代スキップの
-> 判定元は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
+> あれば記録の manifest を baseline に採り、無ければ profileDir の current 世代から読む、と読み替える。e の後・f の前に
+> 記録を書く。d の世代スキップの判定元は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 
 ## 出典
 

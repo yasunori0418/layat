@@ -17,7 +17,8 @@ specification: |
   kicked from a devShell. When the new link farm derivation is identical to both the
   current generation of the profile and the `linkFarm` of the last-applied record
   (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) — to whichever of the two exist, the skip never being
-  taken when neither exists — no new generation SHALL be stacked; while the two disagree
+  taken when neither exists — no new generation SHALL be stacked; while the profile and
+  the record disagree
   the full apply path SHALL run instead. Skipping is mandatory, since under
   devShell / direnv the `shellHook` runs on every shell re-entry and stacking a generation
   each time would make them grow without bound. Home mode SHALL remain as it is, stacking
@@ -47,7 +48,7 @@ specification_ja: |
   devShell キック時は戻し先 host 世代も無いため）。新 link farm derivation が profile の
   current 世代と last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）の `linkFarm` の
   両方（存在する方全て。どちらも無ければ skip しない）に一致するなら新世代を積んではならず、
-  両者が食い違う間は通常の apply 経路を走らせなければならない。skip は必須であり、devShell / direnv 運用では `shellHook` がシェル
+  profile と記録が食い違う間は通常の apply 経路を走らせなければならない。skip は必須であり、devShell / direnv 運用では `shellHook` がシェル
   再入のたびに走るため、毎回新世代を積むと世代が無限増殖するからである。home mode は従来通り
   「適用のたびに新世代」のままでなければならず、世代スキップは project mode 限定としなければ
   ならない。ただし世代スキップ時も完全 no-op にせず、FS 検査だけは軽量に行わなければならない。
@@ -98,7 +99,7 @@ specification_ja: |
 >
 > **2026-10-11 追記（ADR-0058）**: 上の写しの「新 link farm derivation が前世代と同一なら」は、新 link-farm が
 > profile の current 世代と last-applied 記録の `linkFarm` の両方（存在する方全て。どちらも無ければ skip
-> しない）に一致するなら、と読み替える。食い違う間は通常経路で記録を baseline に stale 除去とコミットを行う。
+> しない）に一致するなら、と読み替える。profile と記録が食い違う間は通常経路で記録を baseline に stale 除去とコミットを行う。
 > lstat 検査の「記録通り」も記録を優先した baseline に照らす。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 
 ## 出典

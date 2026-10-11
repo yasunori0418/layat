@@ -34,7 +34,7 @@ references:
 
 > **2026-10-11 改訂注記（ADR-0058）**: 本 ADR §3 の「新世代は積まない」「lstat 検査 + ドリフトした entry のみ再張り」は不変。
 > ただし世代スキップの判定元は「新 link-farm が前世代と同一」から、新 link-farm が profile の current 世代と last-applied
-> 記録の `linkFarm` の両方（存在する方全て。どちらも無ければ skip しない）に一致するときへ変わった。食い違う間は通常経路で
+> 記録の `linkFarm` の両方（存在する方全て。どちらも無ければ skip しない）に一致するときへ変わった。profile と記録が食い違う間は通常経路で
 > 記録を baseline に stale 除去と世代コミットを行う。lstat 検査の「記録通り」も記録を優先した baseline に照らす（→ ADR-0058 §3）。
 
 ## 背景
