@@ -26,7 +26,7 @@ specification: |
   (b) inside the lock, run
   `nix build` with `--out-link <profileDir>/.pending` and obtain the link-farm store path
   via `os.Readlink`, the out-link establishing an indirect gcroot that closes the GC
-  window between placement and `--set`, and the build being inside the lock so that
+  window between placement and the generation commit, and the build being inside the lock so that
   out-link contention cannot structurally occur; (c) read the previous generation
   `manifest.json` of `profileDir`, an absent one meaning the first run with zero removal
   targets; (d) in project mode, skip stacking a new generation when the new link-farm is
@@ -38,9 +38,11 @@ specification: |
   with native filesystem operations, any mid-way failure among these four stages unwinding
   every filesystem change made by this run via the in-memory undo journal back to the
   pre-apply state;
-  (f) run `nix-env --profile <profileDir>/profile --set <link-farm>` as a subprocess, the
-  commit point; and (g) delete `<profileDir>/.pending` after `--set` succeeds, the
-  generation link taking over the gcroot.
+  (f) commit the link-farm as a new generation through the generation backend contract
+  (REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b), the commit point, the default nixprofile
+  backend running `nix-env --profile <profileDir>/profile --set <link-farm>`; and
+  (g) after the commit succeeds, delete `<profileDir>/.pending` as a plain filesystem
+  operation that cleans up the temporary build output link.
 
   Mapped onto this flow, `apply --manifest <link-farm>` SHALL enter at stage 2a and run
   through 2g, skipping stages 0 to 1 and stage 2b; no pending out-link SHALL be
@@ -63,16 +65,18 @@ specification_ja: |
   ユーザー責任で衝突時は後勝ちとする。
   (b) ロック内で `nix build` を `--out-link <profileDir>/.pending` 付きで実行し、
   `os.Readlink` で link-farm store path を得る。out-link が indirect gcroot を張り、
-  配置〜`--set` の GC 窓を塞ぐ。build がロック内なので out-link 競合は構造的に起きない。
+  配置〜世代コミットの GC 窓を塞ぐ。build がロック内なので out-link 競合は構造的に起きない。
   (c) profileDir の前世代 `manifest.json` を読む（無ければ初回 = 削除対象ゼロ）。
   (d) project mode かつ新 link-farm が前世代と同一なら新世代は積まない。ただし各 target を
   lstat 検査し、ドリフトした entry だけ再張りする（完全 no-op にしない）。(e)
   `manifest.json` を新旧 diff し、配置を塞ぐ自己記録 stale（祖先 symlink・実 dir target・
   method 変更）を配置前除去し、新規 / 張替を配置し、copy 反映を行い、保守的 stale 除去
   （ネイティブ FS）を行う。この 4 段のいずれかが途中失敗すると、この run が行った FS 変更を
-  全てインメモリ undo ジャーナルで巻き戻し pre-apply 状態へ戻す。(f)
-  `nix-env --profile <profileDir>/profile --set <link-farm>`（サブプロセス・コミット点）。
-  (g) `--set` 成功後に `<profileDir>/.pending` を削除する（世代リンクが gcroot を引き継ぐ）。
+  全てインメモリ undo ジャーナルで巻き戻し pre-apply 状態へ戻す。(f) 世代バックエンドの
+  契約（REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）越しに link-farm を新世代としてコミットする
+  （コミット点。既定の nixprofile は `nix-env --profile <profileDir>/profile --set <link-farm>`
+  を実行する）。(g) コミット成功後に `<profileDir>/.pending` を素の FS 操作で削除する
+  （build 出力の一時リンクの片付け）。
 
   このフロー上で `apply --manifest <link-farm>` は 2a から入って 2g までを通り、0〜1 と
   2b を skip しなければならない。build しないため pending out-link はそこで張ってはならない。
@@ -141,6 +145,11 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 >   本 item はそれがフロー上のどの段に入り・どの段を skip するかだけを規定する
 > - 2a の flock を blocking で取るか try-lock で取るか（`LOCK_EX` / `LOCK_NB`・
 >   skip 時の stderr 通知）→ REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461。本 item はフロー上の位置（2a）だけを規定する
+>
+> **2026-10-11 追記（ADR-0057）**: 上の図の f「`nix-env --profile <profileDir>/profile --set`」は、
+> 世代バックエンドの契約の Commit と読み替える（`nix-env` は既定実装 nixprofile の内側に閉じる。
+> REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）。g の `.pending` 削除は build 出力の一時リンクの片付けで、
+> engine の素の FS 操作。gcroot の引き継ぎは nixprofile の世代リンクの性質で、engine は gcroot を扱わない。
 
 ## 出典
 
@@ -151,4 +160,5 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 よる indirect gcroot は ADR-0011、同一 profileDir 同時実行の後勝ちは ADR-0013、
 `apply --manifest` の skip は ADR-0026。2a の flock を blocking で取るか try-lock で取るか
 （shellHook の skip 通知を含む）は REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461 の担当で、その決定元となる ADR は
-本 item の出典には含めない。
+本 item の出典には含めない。世代のコミットを世代バックエンドの契約越しにし、`.pending` の
+削除を engine の FS 操作として位置づけたのは ADR-0057「世代バックエンドの契約」§2・§7。
