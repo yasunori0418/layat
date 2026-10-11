@@ -34,8 +34,8 @@ satisfies:
   （離れる世代 N）・reset（撤去対象）が同じ関数で baseline を得る。記録があれば記録の
   manifest、無ければ profile リンクの current、どちらも無ければ空。両方あって `linkFarm` が
   profile の指す先と食い違えば記録を採り warning を 1 行出す。generation skip の判定は新
-  link-farm を profile の current と記録の `linkFarm` の両方と比べ、どちらかが食い違えば skip
-  せず通常経路に入る。
+  link-farm を profile の current と記録の `linkFarm` の両方（存在する方全て。どちらも無ければ
+  skip しない）と比べ、どちらかが食い違えば skip せず通常経路に入る。
 - **更新する経路**: apply の通常経路と generation skip 経路（失敗規則は同じ）・rollback
   （FS 収束後・ポインタ移動前に N-1 の manifest と link-farm。失敗は undo journal で巻き戻す）・
   reset（実際に撤去した entry を除いた manifest。`linkFarm` は保持。記録が無ければ profile の
