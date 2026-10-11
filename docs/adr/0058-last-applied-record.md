@@ -46,7 +46,7 @@ apply は「最後に配置した manifest」を layat 自前の記録 `<state>/
 { "recordVersion": 1, "linkFarm": "<store path>", "appliedAt": "<RFC3339>", "manifest": <manifest.json を verbatim 埋め込み> }
 ```
 
-manifest を内容ごと持つ。記録の有効性は store の GC と無関係で、`linkFarm` は profile との突合と、drift / generation skip の link-farm 比較に使う。rollback で書き直すときの `linkFarm` は N-1 の link-farm、reset で書き直すときは保持する（残った entry の出所）。`appliedAt` はその操作の時刻に更新する。
+manifest を内容ごと持つ。記録の有効性は store の GC と無関係で、`linkFarm` は profile との突合に使う。rollback で書き直すときの `linkFarm` は N-1 の link-farm、reset で書き直すときは保持する（残った entry の出所。記録が無く baseline を profile から取ったときはその current 世代の link-farm）。`appliedAt` はその操作の時刻に更新する。
 
 ### 3. baseline の優先順位
 
@@ -55,7 +55,7 @@ manifest を内容ごと持つ。記録の有効性は store の GC と無関係
 3. 両方あって `linkFarm` が profile の指す先と食い違えば記録を採り、warning を 1 行出す
 4. どちらも無ければ baseline は空（初回）。「last-applied 記録なし」を warning 1 行として出す（warning は沈黙規律の対象外で stderr へ出る）
 
-対象は apply の stale 除去、drift / generation skip の link-farm 比較、reset の撤去対象、rollback の baseline（離れる世代 N）。**rollback の target（N-1）は引き続き世代リンクから読む**（記録は「最後に置いたもの」しか持たない）。
+対象は apply の stale 除去と drift 修復、reset の撤去対象、rollback の baseline（離れる世代 N）。**generation skip の判定（新 link-farm がコミット済みのものと同一か）は記録ではなく profile の current 世代と比べる**。記録は commit の前に書かれるので、記録と比べると commit 失敗後の同じ設定での再実行が skip に入り、未コミットのまま冪等な再実行で収束する保証が崩れるため。**rollback の target（N-1）は引き続き世代リンクから読む**（記録は「最後に置いたもの」しか持たない）。
 
 ### 4. 記録の書き込み
 
