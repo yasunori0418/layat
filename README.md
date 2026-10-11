@@ -469,7 +469,9 @@ syntax error, or an unknown generator name exits 1 with one line on stderr (`E_I
 - **`apply --all`** applies each config atomically on its own profile, continues past
   failures, and exits non-zero if any failed. It is **not** atomic as a whole.
 - **`reset`** removes layat-managed symlinks and copy targets (the only way to remove a copy).
-  It requires a name and confirmation or `-y`, and leaves the profile/generations untouched.
+  It requires a name and confirmation or `-y`, and leaves the profile/generations untouched,
+  except that when no profile exists but a last-applied record does, it creates the profileDir
+  (and, for the roothash series, the backref `.root`) to take the lock on.
 
 ---
 
