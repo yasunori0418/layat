@@ -32,7 +32,7 @@ references:
 
 - ステータス: 採用（2026-06-13 一部改訂: 「layat の露出と環境セットアップ」節・実行フロー・該当棄却案を ADR-0007 が反転）
 - 日付: 2026-06-11
-- 関連: ADR-0002, ADR-0003, ADR-0005, ADR-0007, ADR-0012, ADR-0013, ADR-0055, ADR-0056, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
+- 関連: ADR-0002, ADR-0003, ADR-0005, ADR-0007, ADR-0012, ADR-0013, ADR-0055, ADR-0056, ADR-0057, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
 
 > **2026-06-13 精緻化（ADR-0012 / ADR-0013）**: 本 ADR の以下の記述は後続 ADR が具体化・上書きした。
 > - 「flock を try-lock（保持中ならスキップ）」（並行実行・実行フロー）→ ADR-0013 が **解決後 profileDir 単位** + **明示 apply=blocking wait / shellHook=try-lock skip**（衝突時は後勝ち）に精緻化。
@@ -72,6 +72,12 @@ references:
 > entrypoint 発見として反転済み）。
 > ただし**生成器の選択に限って**設定ファイル（`layat.toml` / `$XDG_CONFIG_HOME/layat/config.toml`）を読む初例を足した。
 > 設定ファイルが持つ項目は `generator` のみで、config の発見には使わない（→ ADR-0056）。
+
+> **2026-10-11 改訂注記（ADR-0057）**: 本 ADR の固定 Go エンジン・`manifest.json` 契約・コミット最後は不変。
+> ただし「`nix`（profile）と `git`（toplevel）のみサブプロセスで叩く」は **engine が叩くのは `git` のみ**へ改訂し、
+> profile 操作 `nix-env --profile <dir> --set` は世代バックエンドの契約（`internal/generation`）の既定実装 nixprofile へ移った。
+> 実行フロー 6 の `nix-env --set` は契約の Commit と読むこと。却下案「エンジンが世代 symlink を直接管理」は、契約の
+> 別実装として再評価の対象になった（本 ADR の範囲では実装しない。→ ADR-0057）。
 
 ## 背景
 
