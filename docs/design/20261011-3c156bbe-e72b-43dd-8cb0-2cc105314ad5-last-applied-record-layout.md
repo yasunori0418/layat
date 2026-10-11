@@ -38,8 +38,11 @@ satisfies:
   skip しない）と比べ、どちらかが食い違えば skip せず通常経路に入る。
 - **更新する経路**: apply の通常経路と generation skip 経路（失敗規則は同じ）・rollback
   （FS 収束後・ポインタ移動前に N-1 の manifest と link-farm。失敗は undo journal で巻き戻す）・
-  reset（実際に撤去した entry を除いた manifest。`linkFarm` は保持。記録が無ければ profile の
-  current の link-farm。失敗は error で undo journal は無い）。`appliedAt` は書いた操作の時刻。rollback の target（N-1）は引き続き
+  reset（撤去対象のうち target が消えた entry だけを除いた manifest。FS 操作の途中失敗でも
+  書き直し、書き直しの失敗は撤去の error と併せて返す。`linkFarm` は保持。記録が無ければ
+  profile の current の link-farm。失敗は error で undo journal は無い。profile が無く記録
+  だけがあるときは flock の鍵である profileDir（roothash 系列は backref `.root` も）を apply
+  と同じ手順で作ってから flock を取る）。`appliedAt` は書いた操作の時刻。rollback の target（N-1）は引き続き
   `profile-<N-1>-link` から読む。
 - 記録を flock の鍵にしない。flock の鍵・prune の対象・`--json` の payload は従来どおり
   profileDir 側に残る。
