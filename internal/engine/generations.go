@@ -166,7 +166,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	if err != nil {
 		return nil, err
 	}
-	if b.record == nil && b.profileErr != nil {
+	if b.profileUnreadable() {
 		return nil, fmt.Errorf("layat: cannot read the current generation's manifest: %w", b.profileErr)
 	}
 	baseline := b.manifest

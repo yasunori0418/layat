@@ -555,7 +555,7 @@ func (a *applier) ensureProfileDir() error {
 // profile manifest that cannot be read gives up stale removal instead of blocking placement.
 func (a *applier) readBaseline() (baseline, error) {
 	b, err := loadBaseline(a.record.File, a.profile.Profile, a.opts.Warnf)
-	if err == nil && b.record == nil && b.profileErr != nil {
+	if err == nil && b.profileUnreadable() {
 		a.opts.Warnf("layat: could not read the previous generation's manifest; skipping stale removal: %v", b.profileErr)
 		b.manifest = nil
 	}

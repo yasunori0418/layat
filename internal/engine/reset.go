@@ -2,6 +2,7 @@ package engine
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -118,7 +119,11 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 
 	// 2. at run time, serialize with concurrent apply / reset via a blocking flock.
 	//    dryrun is read-only, so it does not take a flock.
+	//    profileDir is the lock key, so it is created when only the record remains.
 	if !opts.DryRun {
+		if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
+			return nil, fmt.Errorf("layat: cannot create profileDir (%s): %w", prof.Dir, err)
+		}
 		l, err := acquireProfileLock(prof.Dir, true)
 		if err != nil {
 			return nil, err
@@ -131,7 +136,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	if err != nil {
 		return nil, err
 	}
-	if b.record == nil && b.profileErr != nil {
+	if b.profileUnreadable() {
 		return nil, fmt.Errorf("layat: cannot read the previous generation's manifest (%s): %w", prof.Profile, b.profileErr)
 	}
 	if b.manifest == nil {
@@ -214,7 +219,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 		res.Pruned = a.result.Pruned
 		res.FailedTarget = a.result.FailedTarget
 		res.Unreached = resetUnreached(plan.Remove, a.result.Removed, a.result.FailedTarget, plannedCopies)
-		return res, err
+		return res, errors.Join(err, recordAfterReset(rec, root, b, entries))
 	}
 	res.RemovedSymlinks = a.result.Removed // actually removed (excludes those kept due to drift)
 
@@ -225,7 +230,8 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 			res.Pruned = a.result.Pruned
 			res.FailedTarget = plannedCopies[i]
 			res.Unreached = plannedCopies[i+1:]
-			return res, fmt.Errorf("layat: cannot remove copy target (%s): %w", targetAbs, err)
+			err = fmt.Errorf("layat: cannot remove copy target (%s): %w", targetAbs, err)
+			return res, errors.Join(err, recordAfterReset(rec, root, b, entries))
 		}
 		removedCopies = append(removedCopies, plannedCopies[i])
 		if err := a.pruneEmptyAncestors(targetAbs); err != nil {
@@ -235,37 +241,25 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	res.RemovedCopies = removedCopies
 	res.Pruned = a.result.Pruned // covers both the symlink half (removeStale) and the copy half above
 
-	if err := recordAfterReset(rec, root, b, entries, plan.Remove, res); err != nil {
+	if err := recordAfterReset(rec, root, b, entries); err != nil {
 		return res, err
 	}
 	return res, nil
 }
 
-// recordAfterReset rewrites the record without the selected entries reset took down, keeping the
-// ones it left in place (foreign or drifted) and the record's link-farm. With nothing left the
-// record is deleted.
-func recordAfterReset(rec paths.Record, root string, b baseline, selected []manifest.Entry, planned []planner.RemoveAction, res *ResetResult) error {
-	down := make(map[string]bool, len(selected))
+// recordAfterReset rewrites the record without the selected entries whose target is gone, so
+// entries reset left in place (foreign, drifted, or unreached after a failure) stay recorded with
+// the record's link-farm. With nothing left the record is deleted.
+func recordAfterReset(rec paths.Record, root string, b baseline, selected []manifest.Entry) error {
+	isSelected := make(map[string]bool, len(selected))
 	for _, e := range selected {
-		down[e.Target] = true
+		isSelected[e.Target] = true
 	}
-	for _, t := range res.KeptForeign {
-		delete(down, t)
-	}
-	removed := make(map[string]bool, len(res.RemovedSymlinks))
-	for _, t := range res.RemovedSymlinks {
-		removed[t] = true
-	}
-	for _, act := range planned {
-		if act.Kind == planner.RemoveUnlink && !removed[act.Entry.Target] {
-			delete(down, act.Entry.Target)
-		}
-	}
-
 	m := *b.manifest
 	m.Entries = nil
 	for _, e := range b.manifest.Entries {
-		if !down[e.Target] {
+		_, err := os.Lstat(filepath.Join(root, filepath.Clean(e.Target)))
+		if !isSelected[e.Target] || !os.IsNotExist(err) {
 			m.Entries = append(m.Entries, e)
 		}
 	}

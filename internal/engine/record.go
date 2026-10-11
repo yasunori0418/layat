@@ -78,9 +78,6 @@ func parseRecord(data []byte) (*lastApplied, *manifest.Manifest, error) {
 	case len(raw.Manifest) == 0 || bytes.Equal(raw.Manifest, []byte("null")):
 		return nil, nil, errors.New("manifest is missing")
 	}
-	if _, err := time.Parse(time.RFC3339, *raw.AppliedAt); err != nil {
-		return nil, nil, fmt.Errorf("appliedAt is not RFC3339: %w", err)
-	}
 	var m manifest.Manifest
 	if err := strictDecode(raw.Manifest, &m); err != nil {
 		return nil, nil, fmt.Errorf("manifest: %w", err)
@@ -157,8 +154,13 @@ type baseline struct {
 	record *lastApplied
 	// profileLinkFarm is the link-farm the profile link resolves to, "" without a profile.
 	profileLinkFarm string
-	// profileErr is why the profile could not serve as the baseline when no record did.
+	// profileErr is why the profile's link-farm or, without a record, its manifest could not be read.
 	profileErr error
+}
+
+// profileUnreadable reports that there is no record and the profile's manifest could not be read.
+func (b baseline) profileUnreadable() bool {
+	return b.record == nil && b.profileErr != nil
 }
 
 // linkFarm is the link-farm the baseline was placed from: the record's, else the profile's.
