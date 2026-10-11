@@ -14,11 +14,11 @@ specification: |
   the profile SHALL be confined to being the internal mechanism for stale removal and the
   generation-skip decision, and neither `rollback` nor `list-generations` SHALL be offered,
   the placed objects being ephemeral and there being no host generation to return to when
-  kicked from a devShell. When the new link farm derivation is identical to both the
-  current generation of the profile and the `linkFarm` of the last-applied record
-  (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) — to whichever of the two exist, the skip never being
-  taken when neither exists — no new generation SHALL be stacked; while the profile and
-  the record disagree the full apply path SHALL run instead. Skipping is mandatory, since under
+  kicked from a devShell. When the new link farm derivation is identical to the current
+  generation of the profile and, when a last-applied record exists, also to its `linkFarm`
+  (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35), no new generation SHALL be stacked; the
+  skip SHALL never be taken when no profile exists, and while the profile and the record
+  disagree the full apply path SHALL run instead. Skipping is mandatory, since under
   devShell / direnv the `shellHook` runs on every shell re-entry and stacking a generation
   each time would make them grow without bound. Home mode SHALL remain as it is, stacking
   a new generation on every application, the generation skip being confined to project
@@ -45,9 +45,9 @@ specification_ja: |
   公開してはならない。profile は stale 除去と世代スキップ判定の内部機構に留めなければならず、
   `rollback` / `list-generations` を出してはならない（配置物が ephemeral で rollback の意味が薄く、
   devShell キック時は戻し先 host 世代も無いため）。新 link farm derivation が profile の
-  current 世代と last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）の `linkFarm` の
-  両方（存在する方全て。どちらも無ければ skip しない）に一致するなら新世代を積んではならず、
-  profile と記録が食い違う間は通常の apply 経路を走らせなければならない。skip は必須であり、devShell / direnv 運用では `shellHook` がシェル
+  current 世代に一致し、last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）が
+  あればその `linkFarm` にも一致するなら新世代を積んではならない。profile が無ければ skip
+  してはならず、profile と記録が食い違う間は通常の apply 経路を走らせなければならない。skip は必須であり、devShell / direnv 運用では `shellHook` がシェル
   再入のたびに走るため、毎回新世代を積むと世代が無限増殖するからである。home mode は従来通り
   「適用のたびに新世代」のままでなければならず、世代スキップは project mode 限定としなければ
   ならない。ただし世代スキップ時も完全 no-op にせず、FS 検査だけは軽量に行わなければならない。
@@ -97,8 +97,8 @@ specification_ja: |
 > - foreign symlink の warning そのもの → REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557、place-once そのもの → REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9
 >
 > **2026-10-11 追記（ADR-0058）**: 上の写しの「新 link farm derivation が前世代と同一なら」は、新 link-farm が
-> profile の current 世代と last-applied 記録の `linkFarm` の両方（存在する方全て。どちらも無ければ skip
-> しない）に一致するなら、と読み替える。profile と記録が食い違う間は通常経路で記録を baseline に stale 除去とコミットを行う。
+> profile の current 世代に一致し、last-applied 記録があればその `linkFarm` にも一致するなら、と読み替える
+> （profile が無ければ skip しない）。profile と記録が食い違う間は通常経路で記録を baseline に stale 除去とコミットを行う。
 > lstat 検査の「記録通り」も記録を優先した baseline に照らす。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 
 ## 出典

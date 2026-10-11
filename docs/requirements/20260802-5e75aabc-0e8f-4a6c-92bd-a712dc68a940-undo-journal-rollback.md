@@ -15,7 +15,8 @@ specification: |
   record one inverse operation in an in-memory undo journal for each filesystem write:
   deletion for a newly placed symlink or copy; re-creation with the old destination
   (captured before the unlink) for a replacement; re-creation with the destination
-  recorded in the previous-generation manifest for a stale-removed link or a PreRemove
+  recorded in the baseline manifest (the last-applied record when one exists, otherwise
+  the current generation of the profile; REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) for a stale-removed link or a PreRemove
   unlink; re-creation of the empty directory for a PreRemove rmdir; and renaming back for
   the aside made by `--recopy` or `--backup`. Once an error occurs, the journal recorded so
   far SHALL be rolled back in reverse (LIFO) order before the error is returned. When
@@ -41,8 +42,9 @@ specification_ja: |
   しなければならない（「失敗した apply は FS に痕跡を残さない」）。これは常時有効であり、
   フラグで制御してはならない。そのため engine は FS 書き込みごとにインメモリの undo ジャーナルへ
   逆操作を 1 件記録しなければならない。新規配置 symlink / copy は削除、張替えは unlink 前に捕捉
-  した旧リンク先での symlink 再作成、stale 除去したリンクと PreRemove の unlink は前世代 manifest
-  の記録 dest での symlink 再作成、PreRemove の rmdir は空 dir の再作成、`--recopy` / `--backup`
+  した旧リンク先での symlink 再作成、stale 除去したリンクと PreRemove の unlink は baseline の
+  manifest（last-applied 記録があれば記録、無ければ profile の current 世代。
+  REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）の記録 dest での symlink 再作成、PreRemove の rmdir は空 dir の再作成、`--recopy` / `--backup`
   の rename 退避は退避物の rename back としなければならない。エラーが発生したら、それまでに
   記録したジャーナルを
   逆順（LIFO）で巻き戻してからエラーを返さなければならない。apply（世代スキップ経路を含む）
