@@ -10,11 +10,14 @@ specification: |
   `profileDir` SHALL be a directory dedicated to each config, holding within it the
   profile link, the generations and the build out-link. Its base `<state>` SHALL be
   `$XDG_STATE_HOME` when that is set and `~/.local/state` otherwise, consistently with the
-  default profile location of nix itself. The profile link SHALL be `<profileDir>/profile`
-  and SHALL be the subject of `nix-env --profile`; the generations `profile-N-link`
-  created by `nix-env` and the `nix build --out-link` target SHALL sit as its siblings
-  inside the same directory, so that neither passes through the profile link and no
-  breakage arising from passing through a read-only store path can occur structurally.
+  default profile location of nix itself; the base directory of profiles under `<state>`
+  SHALL be given by the generation backend (`<state>/nix/profiles/layat` for the default
+  nixprofile backend). The profile link SHALL be `<profileDir>/profile` and SHALL be the
+  profile link handed to the generation backend (the subject of `nix-env --profile` under
+  nixprofile); the generations `profile-N-link` created by the backend and the build
+  out-link SHALL sit as its siblings inside the same directory, so that neither passes
+  through the profile link and no breakage arising from passing through a read-only store
+  path can occur structurally.
   The pending out-link SHALL be named `.pending`, there being at most one per config
   inside the dedicated directory. The backref file `.root`, which records the absolute
   path of the original root, SHALL be placed at the roothash level — the parent of the
@@ -25,10 +28,12 @@ specification: |
 specification_ja: |
   `profileDir` は各 config 専用のディレクトリでなければならず、その中に profile リンク・世代・
   build out-link を置かなければならない。基底 `<state>` は `$XDG_STATE_HOME` があればそれ、
-  無ければ `~/.local/state` としなければならない（nix 本体の profile 既定と整合）。profile
-  リンクは `<profileDir>/profile` でなければならず、これを `nix-env --profile` の対象と
-  しなければならない。`nix-env` が作る世代 `profile-N-link` と `nix build --out-link` の対象は、
-  同じディレクトリ内の兄弟として並べなければならず、profile リンクを貫通させてはならない
+  無ければ `~/.local/state` としなければならない（nix 本体の profile 既定と整合）。`<state>`
+  配下の profile の基底は世代バックエンドが与えなければならない（既定の nixprofile では
+  `<state>/nix/profiles/layat`）。profile リンクは `<profileDir>/profile` でなければならず、
+  これを世代バックエンドへ渡す profile リンクとしなければならない（nixprofile では
+  `nix-env --profile` の対象）。バックエンドが作る世代 `profile-N-link` と build out-link の
+  対象は、同じディレクトリ内の兄弟として並べなければならず、profile リンクを貫通させてはならない
   （read-only な store パスを貫通する破綻を構造的に起こさないため）。pending out-link は専用
   ディレクトリ内に config あたり最大 1 個であり、名は `.pending` としなければならない。元 root の
   絶対パスを記録した backref ファイル `.root` は roothash 階層（`<name>` dir の親）に置かなければ
@@ -73,6 +78,12 @@ specification_ja: |
 > 取るか try-lock で取るかは REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461、pending out-link が gcroot を持ち config あたり
 > 最大 1 に抑えられることは REQ-840b3641-6e76-46da-82e9-680cabd65abe の担当。
 
+> **2026-10-11 追記（ADR-0057）**: 上の写しの `nix-env --profile <profileDir>/profile ...` と
+> 基底 `<state>/nix/profiles/layat` は、既定の世代バックエンド nixprofile の内部と読み替える。
+> profile リンク・世代 `profile-N-link`・`.pending` が兄弟として並ぶレイアウトは世代バックエンドの
+> 契約の固定部分で（REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）、engine はこれを直接読む。基底は
+> 契約の `UserBase` が与え、設定ファイルでは上書きできない。
+
 ## 出典
 
 `docs/spec.md`「世代管理仕様」→「機構」→「profile のオンディスクレイアウト」節と、
@@ -80,4 +91,5 @@ specification_ja: |
 
 決定の実体は ADR-0025「実装前残セマンティクス第7巡」の「profile 専用ディレクトリレイアウト」
 （ADR-0022 / ADR-0023 の `.pending-<name>` を改訂）。`<state>` の定義は ADR-0022、backref
-`.root` による孤児逆引きは ADR-0013 が定めている。
+`.root` による孤児逆引きは ADR-0013 が定めている。基底の所有を世代バックエンドへ移し、レイアウトを
+契約の固定部分としたのは ADR-0057「世代バックエンドの契約」§3・§6。

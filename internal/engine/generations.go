@@ -1,35 +1,24 @@
 package engine
 
 import (
-	"bytes"
+	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/manifest"
 	"github.com/yasunori0418/layat/internal/paths"
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// Generation operations use `nix-env --profile <profileDir>/profile`: rollback
-// (--switch-generation) and listing (--list-generations) live here, commit (--set) in commit.go.
-// All are injectable so tmpdir tests do not call nix.
+// Generation operations go through the generation backend on <profileDir>/profile: rollback
+// (List + Switch) lives here, the commit in Apply.
 
-// Generation is one generation of a profile (one line of nix-env --list-generations).
-type Generation struct {
-	Number  int    // generation number
-	Date    string // creation timestamp (nix-env's display verbatim; carried unparsed)
-	Current bool   // whether it is the current generation (the one the profile link points at)
-}
-
-// ListGenerationsFunc is the generation-list retrieval point (default nix-env --list-generations). Substituted in tmpdir tests.
-type ListGenerationsFunc func(profileLink string) ([]Generation, error)
-
-// SwitchGenerationFunc is the profile pointer move point (default nix-env --switch-generation). Substituted in tmpdir tests.
-type SwitchGenerationFunc func(profileLink string, gen int) error
+// errNoBackend is returned by every entry point that resolves a profileDir without a backend.
+var errNoBackend = errors.New("layat: internal error: no generation backend configured")
 
 // ProfileOptions is the input for fixing the profileDir (shared by Rollback / list-generations).
 type ProfileOptions struct {
@@ -40,11 +29,16 @@ type ProfileOptions struct {
 	WorkDir      string
 	StateDir     string
 	Git          GitFunc
+	// Backend owns the user base the profileDir is keyed under. Required: nil is an error.
+	Backend generation.Backend
 }
 
 // ProfileFor resolves root and fixes the profileDir layout (same shape as apply's preamble).
 // Used in common by non-building rollback / list-generations for flock / generation reads.
 func ProfileFor(opts ProfileOptions) (paths.Profile, string, error) {
+	if opts.Backend == nil {
+		return paths.Profile{}, "", errNoBackend
+	}
 	root, err := resolveRoot(opts.RootKind, opts.FixedRoot, opts.RootOverride, opts.WorkDir, opts.Git)
 	if err != nil {
 		return paths.Profile{}, "", err
@@ -56,13 +50,8 @@ func ProfileFor(opts ProfileOptions) (paths.Profile, string, error) {
 			return paths.Profile{}, "", err
 		}
 	}
-	prof := paths.Resolve(stateDir, opts.Name, opts.RootKind, root, opts.RootOverride != "")
+	prof := paths.Resolve(opts.Backend.UserBase(stateDir), opts.Name, opts.RootKind, root, opts.RootOverride != "")
 	return prof, root, nil
-}
-
-// ListGenerations returns the generation list for profileLink (default nix-env implementation). Used by the CLI's list-generations.
-func ListGenerations(profileLink string) ([]Generation, error) {
-	return nixEnvListGenerations(profileLink)
 }
 
 // observeGeneration returns the generation number the profile link points at, read from its
@@ -98,9 +87,8 @@ type RollbackOptions struct {
 	WorkDir      string
 	StateDir     string
 
-	// ListGenerations / SwitchGeneration substitute the nix-env calls (nil = default nix-env implementation).
-	ListGenerations  ListGenerationsFunc
-	SwitchGeneration SwitchGenerationFunc
+	// Backend lists and switches the generations and owns the profile base. Required: nil is an error.
+	Backend generation.Backend
 	// Git substitutes git toplevel resolution (nil = gitutil.Toplevel). Unused in home mode.
 	Git GitFunc
 	// Warnf is the warning output sink (nil = stderr).
@@ -115,9 +103,9 @@ type RollbackResult struct {
 	To   int // previous generation N-1 rolled back to
 }
 
-// Rollback reverts a home-mode profile to one generation earlier. It converges the FS from current
-// generation N to N-1 (stale-removing N∖N-1, re-placing N-1) and moves the profile pointer last,
-// since moving it first would shift the stale-removal baseline.
+// Rollback reverts a home-mode profile to one generation earlier. It converges the FS from the
+// baseline N to N-1 (stale-removing N∖N-1, re-placing N-1), records N-1 as last applied, and moves
+// the profile pointer last, since moving it first would shift the stale-removal baseline.
 func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	warnf := opts.Warnf
 	if warnf == nil {
@@ -125,20 +113,17 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 			fmt.Fprintf(os.Stderr, format+"\n", args...)
 		}
 	}
-	listFn := opts.ListGenerations
-	if listFn == nil {
-		listFn = nixEnvListGenerations
-	}
-	switchFn := opts.SwitchGeneration
-	if switchFn == nil {
-		switchFn = nixEnvSwitchGeneration
-	}
 
 	// 1. fix profileDir (resolve root → layout · preamble shared with apply).
 	prof, root, err := ProfileFor(ProfileOptions{
 		Name: opts.Name, RootKind: opts.RootKind, FixedRoot: opts.FixedRoot,
 		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir, Git: opts.Git,
+		Backend: opts.Backend,
 	})
+	if err != nil {
+		return nil, err
+	}
+	rec, err := recordFor(opts.StateDir, opts.Name, opts.RootKind, root, opts.RootOverride != "")
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +141,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	defer func() { _ = l.Release() }()
 
 	// 3. identify current generation N and previous generation N-1 from the generation list.
-	gens, err := listFn(prof.Profile)
+	gens, err := opts.Backend.List(prof.Profile)
 	if err != nil {
 		return nil, err
 	}
@@ -175,11 +160,16 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	cur := gens[curIdx]
 	prev := gens[curIdx-1]
 
-	// 4. baseline = current generation N's manifest (current FS state) / target = previous generation N-1's manifest.
-	baseline, err := manifest.Load(prof.Profile)
+	// 4. baseline = what was last applied (the record, else current generation N) / target =
+	//    previous generation N-1's manifest.
+	b, err := loadBaseline(rec.File, prof.Profile, warnf)
 	if err != nil {
-		return nil, fmt.Errorf("layat: cannot read the current generation's manifest: %w", err)
+		return nil, err
 	}
+	if b.profileUnreadable() {
+		return nil, fmt.Errorf("layat: cannot read the current generation's manifest: %w", b.profileErr)
+	}
+	baseline := b.manifest
 	target, err := manifest.Load(paths.GenerationLink(prof.Profile, prev.Number))
 	if err != nil {
 		return nil, fmt.Errorf("layat: cannot read the previous generation's manifest (generation %d): %w", prev.Number, err)
@@ -197,6 +187,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	//    (recopy always off), then stale removal. There is no Backup stage.
 	a := &applier{opts: Options{Warnf: warnf}, result: &Result{Root: root, ProfileDir: prof.Dir, Profile: prof.Profile}}
 	a.profile = prof
+	a.record = rec
 	a.root = root
 	a.result.GenBefore = intPtr(cur.Number)
 	// Full inventory = the generation being rolled back to (its entries are the FS end state).
@@ -228,73 +219,19 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	if err := a.runJournaled(func() error { return a.removeStale(plan.Remove) }); err != nil {
 		return fail(err)
 	}
+	if err := a.runJournaled(func() error { return a.recordPlacement(paths.GenerationLink(prof.Profile, prev.Number)) }); err != nil {
+		return fail(err)
+	}
 
 	// 7. finally move the profile pointer to N-1. A failure here is not unwound; re-running
 	//    Rollback retries it.
-	if err := switchFn(prof.Profile, prev.Number); err != nil {
+	if err := opts.Backend.Switch(prof.Profile, prev.Number); err != nil {
 		// Every planned FS action already succeeded, so the failure is not entry-scoped
 		// (FailedTarget / Unreached stay empty) — but the partial result is still returned.
-		return fail(fmt.Errorf("layat: failed to move the profile pointer (--switch-generation %d): %w", prev.Number, err))
+		return fail(fmt.Errorf("layat: failed to move the profile pointer (switch to generation %d): %w", prev.Number, err))
 	}
 	a.discardJournal()
 	a.result.GenAfter = intPtr(prev.Number)
 
 	return &RollbackResult{Result: *a.result, From: cur.Number, To: prev.Number}, nil
-}
-
-// nixEnvListGenerations is the default generation-list retrieval (nix-env --profile <p> --list-generations).
-// It captures and parses stdout (ingesting machine-readable output).
-func nixEnvListGenerations(profileLink string) ([]Generation, error) {
-	if _, err := exec.LookPath("nix-env"); err != nil {
-		return nil, fmt.Errorf("nix-env is not on PATH: %w", err)
-	}
-	cmd := exec.Command("nix-env", "--profile", profileLink, "--list-generations")
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	if err := cmd.Run(); err != nil {
-		trimmed := strings.TrimSpace(stderr.String())
-		if trimmed != "" {
-			return nil, fmt.Errorf("layat: nix-env --list-generations failed: %w\n%s", err, trimmed)
-		}
-		return nil, fmt.Errorf("layat: nix-env --list-generations failed: %w", err)
-	}
-	return parseGenerations(stdout.String())
-}
-
-// nixEnvSwitchGeneration is the default profile pointer move (nix-env --profile <p> --switch-generation <gen>).
-// nix output is routed to stderr (stdout is reserved for machine-readable output).
-func nixEnvSwitchGeneration(profileLink string, gen int) error {
-	if _, err := exec.LookPath("nix-env"); err != nil {
-		return fmt.Errorf("nix-env is not on PATH: %w", err)
-	}
-	cmd := exec.Command("nix-env", "--profile", profileLink, "--switch-generation", strconv.Itoa(gen))
-	cmd.Stdout = os.Stderr
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
-}
-
-// parseGenerations parses the output of `nix-env --list-generations`. Each line is of the
-// form "<number>   <timestamp>   [(current)]" (leading and separating whitespace is variable).
-func parseGenerations(out string) ([]Generation, error) {
-	var gens []Generation
-	for _, line := range strings.Split(out, "\n") {
-		fields := strings.Fields(line)
-		if len(fields) == 0 {
-			continue
-		}
-		n, err := strconv.Atoi(fields[0])
-		if err != nil {
-			return nil, fmt.Errorf("layat: cannot parse a line of the generation list: %q", line)
-		}
-		g := Generation{Number: n}
-		end := len(fields)
-		if fields[end-1] == "(current)" {
-			g.Current = true
-			end--
-		}
-		g.Date = strings.Join(fields[1:end], " ")
-		gens = append(gens, g)
-	}
-	return gens, nil
 }

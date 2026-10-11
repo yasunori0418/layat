@@ -1,6 +1,6 @@
 // Package engine is the placement core: it resolves root, fixes the profileDir layout,
 // takes a flock, places entries via native FS ops, removes stale links conservatively,
-// and commits a generation with `nix-env --set` (injectable so tests do not call nix).
+// and commits a generation through the generation backend.
 package engine
 
 import (
@@ -8,17 +8,15 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/gitutil"
 	"github.com/yasunori0418/layat/internal/lock"
 	"github.com/yasunori0418/layat/internal/manifest"
 	"github.com/yasunori0418/layat/internal/paths"
 	"github.com/yasunori0418/layat/internal/planner"
 )
-
-// CommitFunc is the commit point that records a generation after a successful placement.
-// The default is nix-env --profile <profileLink> --set <linkFarm>; tmpdir tests substitute it.
-type CommitFunc func(profileLink, linkFarm string) error
 
 // BuildFunc builds the link-farm in-lock with pending (<profileDir>/.pending) as the out-link
 // and returns the built link-farm's store path. When nil, opts.LinkFarm is used as pre-built.
@@ -29,7 +27,7 @@ type GitFunc func(dir string) (string, error)
 
 // Options is the input to Apply.
 type Options struct {
-	// LinkFarm is the link-farm directory containing manifest.json and the GC anchor symlink farm.
+	// LinkFarm is the link-farm directory containing manifest.json and the entry symlink farm.
 	// Pre-built link-farm used only on the path that does not pass Build (tmpdir tests).
 	LinkFarm string
 	// Name is the config name (uniquely identifies a profile; derived from the entrypoint's layat.<name>).
@@ -59,15 +57,16 @@ type Options struct {
 	BackupSuffix string
 	// DryRun is a side-effect-free read-only preview (apply --dryrun).
 	// When true it runs the planner read-only, packs the plan into Result and returns,
-	// taking none of FS writes / --set / flock / pending gcroot. It builds (src resolution) but does not place.
+	// taking none of FS writes / commit / flock / pending out-link. It builds (src resolution) but does not place.
 	DryRun bool
 
 	// Build substitutes the in-lock build (nil = use opts.LinkFarm as pre-built).
 	Build BuildFunc
 	// Git substitutes git toplevel resolution (nil = gitutil.Toplevel).
 	Git GitFunc
-	// Commit substitutes the generation commit (nil = nix-env --set).
-	Commit CommitFunc
+	// Backend records the generation after a successful placement and owns the profile base.
+	// Required: nil is an error.
+	Backend generation.Backend
 	// Warnf is the warning output sink (nil = stderr). Used to surface foreign symlinks etc.
 	Warnf func(format string, args ...any)
 }
@@ -91,7 +90,7 @@ type Result struct {
 	// the aggregate error.
 	Conflicts []planner.Conflict
 	// GenerationSkipped indicates that the project-mode generation skip committed no new
-	// generation (omitted --set) and only drifted entries were repaired.
+	// generation (omitted the commit) and only drifted entries were repaired.
 	GenerationSkipped bool
 
 	// Entries is the new manifest's full entry inventory, exposed regardless of whether an
@@ -137,8 +136,8 @@ func acquireProfileLock(dir string, wait bool) (*lock.Lock, error) {
 }
 
 // Apply places the manifest's entries and commits a generation on success, in the order
-// flock → in-lock build (opts.Build, or pre-built opts.LinkFarm) → placement → --set →
-// .pending removal.
+// flock → in-lock build (opts.Build, or pre-built opts.LinkFarm) → placement → last-applied
+// record → commit → .pending removal.
 func Apply(opts Options) (*Result, error) {
 	a := &applier{opts: opts, result: &Result{}}
 	if a.opts.Warnf == nil {
@@ -169,6 +168,7 @@ func Apply(opts Options) (*Result, error) {
 	prof, root, err := ProfileFor(ProfileOptions{
 		Name: opts.Name, RootKind: rootKind, FixedRoot: fixedRoot,
 		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir, Git: opts.Git,
+		Backend: opts.Backend,
 	})
 	if err != nil {
 		return nil, err
@@ -178,12 +178,15 @@ func Apply(opts Options) (*Result, error) {
 	a.profile = prof
 	a.result.ProfileDir = a.profile.Dir
 	a.result.Profile = a.profile.Profile
+	if a.record, err = recordFor(opts.StateDir, opts.Name, rootKind, root, opts.RootOverride != ""); err != nil {
+		return nil, err
+	}
 
 	// 1.2 observe the profile generation at run start, and again on every return path (deferred).
 	a.result.GenBefore = observeGeneration(a.profile.Profile)
 	defer func() { a.result.GenAfter = observeGeneration(a.profile.Profile) }()
 
-	// 1.5 dryrun short-circuits here: no mkdir / flock / placement / --set / pending gcroot;
+	// 1.5 dryrun short-circuits here: no mkdir / flock / placement / commit / pending out-link;
 	//     the planner runs read-only and the plan is packed into Result.
 	if opts.DryRun {
 		return a.dryRun()
@@ -220,8 +223,13 @@ func Apply(opts Options) (*Result, error) {
 		a.manifest = m
 	}
 
-	// 5. read the previous generation's manifest (absent = first run = zero stale removals).
-	prev := a.loadPrevManifest()
+	// 5. read the baseline: the last-applied record, else the profile's current generation
+	//    (neither = first run = zero stale removals).
+	base, err := a.readBaseline()
+	if err != nil {
+		return nil, err
+	}
+	prev := base.manifest
 
 	// 5.5 expose the new manifest's full entry inventory (not just the diff).
 	a.result.Entries = a.manifest.Entries
@@ -246,10 +254,11 @@ func Apply(opts Options) (*Result, error) {
 		return nil, err
 	}
 
-	// 7. project mode only: if the new link-farm equals the previous generation, commit nothing
-	//    (omit --set) and only repair drifted entries. Other root kinds commit every time.
+	// 7. project mode only: if the new link-farm equals both the profile's current generation and
+	//    the record, commit nothing (omit the commit) and only repair drifted entries. Other root
+	//    kinds commit every time.
 	if rootKind == manifest.RootKindProject && prev != nil {
-		same, err := generationUnchanged(a.profile.Profile, a.opts.LinkFarm)
+		same, err := generationUnchanged(base, a.opts.LinkFarm)
 		if err != nil {
 			// When the previous generation's link-farm cannot be resolved, fall back to the safe side: normal apply (commit a new generation).
 			a.opts.Warnf("layat: could not resolve the previous generation's link-farm; recommitting without a generation skip: %v", err)
@@ -257,6 +266,9 @@ func Apply(opts Options) (*Result, error) {
 			// The repair is journaled like normal placement; with no commit on this path, the
 			// journal is discarded as soon as the repair succeeds.
 			if err := a.runJournaled(func() error { return a.repairDrift(plan, opts.Recopy) }); err != nil {
+				return nil, err
+			}
+			if err := a.runJournaled(func() error { return a.recordPlacement(a.opts.LinkFarm) }); err != nil {
 				return nil, err
 			}
 			a.discardJournal()
@@ -285,25 +297,26 @@ func Apply(opts Options) (*Result, error) {
 		return a.fail(plan, err)
 	}
 
-	// 9. generation commit. A commit failure is not unwound; re-apply converges.
-	commit := opts.Commit
-	if commit == nil {
-		commit = nixEnvCommit
+	// 8.5 record what was placed. A failure unwinds the placement like a failed stage.
+	if err := a.runJournaled(func() error { return a.recordPlacement(a.opts.LinkFarm) }); err != nil {
+		return a.fail(plan, err)
 	}
-	if err := commit(a.profile.Profile, a.opts.LinkFarm); err != nil {
+
+	// 9. generation commit. A commit failure is not unwound; re-apply converges.
+	if err := opts.Backend.Commit(a.profile.Profile, a.opts.LinkFarm); err != nil {
 		// Not entry-scoped, so no FailedTarget / Unreached, but the partial Result is still returned.
-		return a.result, fmt.Errorf("layat: generation commit (nix-env --set) failed: %w", err)
+		return a.result, fmt.Errorf("layat: generation commit failed: %w", err)
 	}
 	a.discardJournal()
 
-	// 10. remove .pending after --set succeeds (the generation link inherits the gcroot).
+	// 10. clean up the build's temporary out-link once the generation is committed.
 	a.cleanupPending()
 
 	return a.result, nil
 }
 
-// cleanupPending removes the .pending out-link after --set succeeds (or after a generation skip).
-// pending is only created on the build path, so it is removed only on that path.
+// cleanupPending removes the build's temporary out-link .pending after the commit succeeds (or
+// after a generation skip). pending is only created on the build path, so it is removed only there.
 func (a *applier) cleanupPending() {
 	if a.opts.Build == nil {
 		return
@@ -317,6 +330,7 @@ type applier struct {
 	opts     Options
 	manifest *manifest.Manifest
 	profile  paths.Profile
+	record   paths.Record
 	root     string
 	result   *Result
 	journal  []undoOp
@@ -418,12 +432,12 @@ func (a *applier) fail(plan planner.Plan, err error) (*Result, error) {
 	return a.result, err
 }
 
-// dryRun is the read-only short-circuit of apply --dryrun: it builds the manifest without a
-// gcroot, plans against the previous generation, and packs the plan into Result without flock /
-// FS writes / --set. Conflicts are recorded in Result.Conflicts instead of returned as an error.
+// dryRun is the read-only short-circuit of apply --dryrun: it builds the manifest without an
+// out-link, plans against the previous generation, and packs the plan into Result without flock /
+// FS writes / commit. Conflicts are recorded in Result.Conflicts instead of returned as an error.
 func (a *applier) dryRun() (*Result, error) {
 	// On the build path (CLI) the manifest is not yet obtained, so resolve src via a read-only build.
-	// In dryrun the CLI injects `nix build --no-link --print-out-paths` (no gcroot).
+	// In dryrun the CLI injects the generator's read-only build (no out-link).
 	if a.opts.Build != nil {
 		linkFarm, err := a.opts.Build(a.profile.Pending)
 		if err != nil {
@@ -437,7 +451,11 @@ func (a *applier) dryRun() (*Result, error) {
 		a.manifest = m
 	}
 
-	prev := a.loadPrevManifest()
+	base, err := a.readBaseline()
+	if err != nil {
+		return nil, err
+	}
+	prev := base.manifest
 	a.result.Entries = a.manifest.Entries
 	plan, err := planner.Compute(prev, a.manifest, a.root, planner.OSFS, a.plannerOptions())
 	if err != nil {
@@ -533,20 +551,28 @@ func (a *applier) ensureProfileDir() error {
 	return nil
 }
 
-// loadPrevManifest reads the manifest.json pointed at by profileDir/profile (the symlink to
-// the previous generation's link-farm). On the first run (profile absent) it returns nil
-// (zero removal targets).
-func (a *applier) loadPrevManifest() *manifest.Manifest {
-	if _, err := os.Stat(a.profile.Profile); err != nil {
-		return nil
+// readBaseline reads the baseline for stale removal and drift repair. Without a record, a
+// profile manifest that cannot be read gives up stale removal instead of blocking placement.
+func (a *applier) readBaseline() (baseline, error) {
+	b, err := loadBaseline(a.record.File, a.profile.Profile, a.opts.Warnf)
+	if err == nil && b.profileUnreadable() {
+		a.opts.Warnf("layat: could not read the previous generation's manifest; skipping stale removal: %v", b.profileErr)
+		b.manifest = nil
 	}
-	m, err := manifest.Load(a.profile.Profile)
+	return b, err
+}
+
+// recordPlacement writes the last-applied record for the manifest just placed from linkFarm.
+func (a *applier) recordPlacement(linkFarm string) error {
+	resolved, err := filepath.EvalSymlinks(linkFarm)
 	if err != nil {
-		// Even if the previous generation cannot be read, do not block new placement (just give up stale removal).
-		a.opts.Warnf("layat: could not read the previous generation's manifest; skipping stale removal: %v", err)
-		return nil
+		return fmt.Errorf("layat: cannot resolve the link-farm for the last-applied record (%s): %w", linkFarm, err)
 	}
-	return m
+	raw, err := os.ReadFile(filepath.Join(resolved, manifest.FileName))
+	if err != nil {
+		return fmt.Errorf("layat: cannot read the manifest for the last-applied record: %w", err)
+	}
+	return writeRecord(a.record, a.root, resolved, raw, time.Now())
 }
 
 // reportConflicts lists every planner-detected conflict to stderr (warnf), each followed by a

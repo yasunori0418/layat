@@ -13,9 +13,9 @@ covers:
 `internal/engine/result_extensions_test.go`
 
 issue #130 が outturn envelope（#131 / #132 が共有）のために足した `Result` /
-`ResetResult` 拡張のテスト。`fakeGenCommit` が `nix-env --set` の世代簿記を模し、兄弟の
-`<profile>-<N>-link` を作って profile リンクを（`nix-env` と同じく相対で）張り替えるため、
-世代番号を読み戻せる。manifest は原則 `rootKind=fixed`（root を明示的に渡し git に依存
+`ResetResult` 拡張のテスト。世代バックエンドに `internal/generation` の `Fake` を渡す。
+`Fake` は実バックエンドと同じ profileDir の構造（兄弟の `<profile>-<N>-link` と相対の
+profile リンク）を symlink だけで作るため、世代番号を読み戻せる。manifest は原則 `rootKind=fixed`（root を明示的に渡し git に依存
 しない）で、rollback 系のみ home mode + `--root` 上書き（rollback が home 限定であるため
 → REQ-05abce3e-9797-432b-b93f-37c55d09afde）。
 
@@ -26,7 +26,7 @@ issue #130 が outturn envelope（#131 / #132 が共有）のために足した 
   （壊れた番号）→ nil の 4 分岐
 - **インベントリと世代観測** — `Entries` が全 entry を持つ。初回 apply（nil → 1）・
   2 回目（1 → 2）・`--dryrun`（before == after でポインタ不動）
-- **観測不能時の nil** — profile リンクが世代リンクでない（テスト差し替えの commit）
+- **観測不能時の nil** — profile リンクが世代リンクを経ず link-farm を直接指すとき、
   `Reset` は before / after ともに nil（→ outturn の nil-able Generation）
 - **失敗時の到達状態** — 配置途中の失敗で、完了済み操作リストは完了の記録として残り、
   失敗 entry は `FailedTarget`（`Placed` には入らない）、以降の予定 target は

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
@@ -43,7 +44,7 @@ func TestApplyPlaceMidBatchFailureRollsBackEarlierPlacements(t *testing.T) {
 		storeEntry(realTempDir(t), ".", "ro/leaf"),
 		storeEntry(src3, ".", "c"),
 	))
-	_, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil)})
+	_, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}})
 	if err == nil {
 		t.Fatal("expected an error from the blocked mid-batch placement, got nil")
 	}
@@ -80,7 +81,7 @@ func TestApplyPlaceMidBatchFailureRollsBackEarlierRelink(t *testing.T) {
 	oldDest := realTempDir(t)
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(oldDest, ".", "a")))
-	if _, err := Apply(Options{LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil)}); err != nil {
+	if _, err := Apply(Options{LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
 
@@ -90,7 +91,7 @@ func TestApplyPlaceMidBatchFailureRollsBackEarlierRelink(t *testing.T) {
 		storeEntry(newDest, ".", "a"),              // re-link: "a" already exists from gen 1
 		storeEntry(realTempDir(t), ".", "ro/leaf"), // fails: "ro" denies write access
 	))
-	_, err := Apply(Options{LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil)})
+	_, err := Apply(Options{LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}})
 	if err == nil {
 		t.Fatal("expected an error from the blocked mid-batch placement, got nil")
 	}
@@ -111,7 +112,7 @@ func TestApplyCopyMidBatchFailureRollsBackEarlierCopy(t *testing.T) {
 	staleDest := realTempDir(t)
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(staleDest, ".", "ro/stale")))
-	if _, err := Apply(Options{LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil)}); err != nil {
+	if _, err := Apply(Options{LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
 	if os.Geteuid() == 0 {
@@ -123,7 +124,7 @@ func TestApplyCopyMidBatchFailureRollsBackEarlierCopy(t *testing.T) {
 	t.Cleanup(func() { _ = os.Chmod(filepath.Join(root, "ro"), 0o755) })
 
 	lf2 := writeLinkFarm(t, projectManifest(copyEntry(copySrc, "tool.conf", "copied.conf"))) // "ro/stale" dropped → removeStale target
-	_, err := Apply(Options{LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil)})
+	_, err := Apply(Options{LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}})
 	if err == nil {
 		t.Fatal("expected an error from the permission-denied stale removal, got nil")
 	}
@@ -146,7 +147,7 @@ func TestApplyPreRemoveMidBatchFailureRollsBackUnlink(t *testing.T) {
 	srcOld := makeSrc(t, "foo/main.sh")
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(srcOld, "foo/main.sh", ".claude/hooks/foo/main.sh")))
-	if _, err := Apply(Options{LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil)}); err != nil {
+	if _, err := Apply(Options{LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
 
@@ -159,7 +160,7 @@ func TestApplyPreRemoveMidBatchFailureRollsBackUnlink(t *testing.T) {
 		storeEntry(srcNew, ".", ".claude/hooks"),
 		storeEntry(realTempDir(t), ".", "ro/leaf"),
 	))
-	_, err := Apply(Options{LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil)})
+	_, err := Apply(Options{LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}})
 	if err == nil {
 		t.Fatal("expected an error from the blocked mid-batch placement, got nil")
 	}
@@ -186,7 +187,7 @@ func TestApplyRecopyMidBatchFailureRestoresAsideFile(t *testing.T) {
 	copySrc := makeSrc(t, "tool.conf")
 
 	lf1 := writeLinkFarm(t, projectManifest(copyEntry(copySrc, "tool.conf", "tool.conf")))
-	if _, err := Apply(Options{LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil)}); err != nil {
+	if _, err := Apply(Options{LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
 	// Simulate a local edit so we can tell "restored" apart from "recopied".
@@ -205,7 +206,7 @@ func TestApplyRecopyMidBatchFailureRestoresAsideFile(t *testing.T) {
 		storeEntry(realTempDir(t), ".", "ro/leaf"),
 	))
 	_, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil), Recopy: true,
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}, Recopy: true,
 	})
 	if err == nil {
 		t.Fatal("expected an error from the blocked mid-batch placement, got nil")
@@ -261,7 +262,7 @@ func TestPreRemoveJournalRmdirThenUnlinkOrder(t *testing.T) {
 	}
 }
 
-// TestApplyCommitFailureDoesNotUnwind verifies that a commit (`nix-env --set`) failure is not
+// TestApplyCommitFailureDoesNotUnwind verifies that a generation commit failure is not
 // rolled back, unlike every FS-mutating stage before it: the run fails to advance the generation,
 // and idempotent re-apply converges.
 func TestApplyCommitFailureDoesNotUnwind(t *testing.T) {
@@ -274,7 +275,7 @@ func TestApplyCommitFailureDoesNotUnwind(t *testing.T) {
 
 	var warns []string
 	_, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: failingCommit,
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{OnCommit: failingCommit},
 		Warnf: collectFormatted(&warns),
 	})
 	if err == nil {
@@ -302,7 +303,7 @@ func TestApplyCommitFailureLeavesRecopyAsideFile(t *testing.T) {
 	copySrc := makeSrc(t, "tool.conf")
 
 	lf1 := writeLinkFarm(t, projectManifest(copyEntry(copySrc, "tool.conf", "tool.conf")))
-	if _, err := Apply(Options{LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil)}); err != nil {
+	if _, err := Apply(Options{LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
 
@@ -311,7 +312,7 @@ func TestApplyCommitFailureLeavesRecopyAsideFile(t *testing.T) {
 	lf2 := writeLinkFarm(t, homeManifest(copyEntry(copySrc, "tool.conf", "tool.conf")))
 	failingCommit := func(string, string) error { return os.ErrPermission }
 	_, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: failingCommit, Recopy: true,
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{OnCommit: failingCommit}, Recopy: true,
 	})
 	if err == nil {
 		t.Fatal("expected the commit failure to propagate, got nil")

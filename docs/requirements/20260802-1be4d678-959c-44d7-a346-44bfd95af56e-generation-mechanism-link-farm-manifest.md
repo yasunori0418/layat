@@ -9,18 +9,22 @@ derives_from:
 specification: |
   The manifest of what has been placed SHALL be embedded inside the store, as part of the
   link farm derivation produced by `lib.mkManifest` (what that derivation contains is
-  stated by REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281 and is NOT restated here); no mutable JSON SHALL be kept outside
+  stated by REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281 and is NOT restated here); the last-applied record
+  (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) SHALL be the only mutable JSON kept outside
   the store, and `manifest.json` SHALL be immutable.
   At run time the engine SHALL, in this order: acquire a flock keyed on the resolved
-  `profileDir`; read the store manifest of the previous generation and diff it against the
+  `profileDir`; read the baseline manifest (the last-applied record when one exists,
+  otherwise the store manifest of the previous generation) and diff it against the
   new generation so as to determine which entries have disappeared; place the symlinks,
   out-of-store symlinks and place-once copies, doing the new placements and replacements
-  first and the stale removal last; and only once everything has succeeded, commit by
-  updating the layat nix profile through `nix-env --profile <profileDir>/profile --set
-  <link-farm-drv>`, that being the commit point in every mode, so that a partial failure
-  never reaches the commit and the previous generation is preserved. The previous
-  generation SHALL be read from the previous generation of layat's own profile in every
-  mode, standalone and module alike, and SHALL NOT depend on the host's `oldGenPath`.
+  first and the stale removal last; and only once everything has succeeded, commit the
+  link-farm as a new generation through the generation backend contract (the default
+  nixprofile backend updates the layat nix profile with `nix-env --profile
+  <profileDir>/profile --set <link-farm-drv>`), that being the commit point in every
+  mode, so that a partial failure never reaches the commit and the previous generation is
+  preserved. When no record exists, the previous generation SHALL be read from the
+  previous generation of layat's own profile in every mode, standalone and module alike,
+  and SHALL NOT depend on the host's `oldGenPath`.
   layat SHALL hold its own profile in every mode: in standalone it SHALL serve
   user-facing rollback, whereas in a module (home-manager / NixOS / nix-darwin) it SHALL
   be confined to an internal mechanism holding the previous-generation manifest and stale
@@ -28,14 +32,17 @@ specification: |
 specification_ja: |
   「配置したもの」のマニフェストは、純粋関数 `lib.mkManifest` が生成する link farm derivation の
   一部として store 内に埋め込まなければならない（当該 derivation が何を含むかは REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281 が
-  規定し、ここでは繰り返さない）。store 外の可変 JSON を持ってはならず、`manifest.json` は
+  規定し、ここでは繰り返さない）。store 外に持つ可変 JSON は last-applied 記録
+  （REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）だけでなければならず、`manifest.json` は
   不変でなければならない。
-  engine は実行時に、解決後 `profileDir` 単位の flock を取得し、前世代の store マニフェストと
+  engine は実行時に、解決後 `profileDir` 単位の flock を取得し、baseline の manifest
+  （last-applied 記録があれば記録、無ければ前世代の store マニフェスト）と
   新世代を diff して消えた entry を判定し、symlink / out-of-store symlink / place-once copy を
-  配置し（新規・張替を先に、stale 除去を最後に）、全て成功してから
-  `nix-env --profile <profileDir>/profile --set <link-farm-drv>` で layat の nix
-  profile を更新しなければならない。この `--set` が全モード共通のコミット点であり、途中失敗は
-  そこへ到達せず前世代を保つ。前世代は standalone / module を問わず全モード共通で layat 自身の
+  配置し（新規・張替を先に、stale 除去を最後に）、全て成功してから世代バックエンドの契約越しに
+  link-farm を新世代としてコミットしなければならない（既定の nixprofile は
+  `nix-env --profile <profileDir>/profile --set <link-farm-drv>` で layat の nix profile を
+  更新する）。このコミットが全モード共通のコミット点であり、途中失敗はそこへ到達せず前世代を
+  保つ。記録が無いとき、前世代は standalone / module を問わず全モード共通で layat 自身の
   profile の前世代から読み、ホストの `oldGenPath` に依存してはならない。layat は全モードで自前
   profile を持たなければならず、standalone ではユーザー向け rollback に使い、module
   （HM / NixOS / darwin）では前世代マニフェストと stale 追跡のための内部機構に留めなければ
@@ -83,6 +90,13 @@ specification_ja: |
 > `cleanup` を参考に Go で再実装する（`home.file` 自体は再利用しない）」は実装方針の注記で
 > 要求ではなく、「`nix` / `git` 以外はサブプロセスを使わない」は REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564 の担当。
 
+> **2026-10-11 追記（ADR-0057 / ADR-0058）**: 上の写しの手順 3「`nix-env --profile <profileDir>/profile
+> --set` で layat の nix profile を更新」は、世代バックエンドの契約の Commit と読み替える（`nix-env` は
+> 既定実装 nixprofile の内側に閉じる。REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）。「store 外の可変 JSON は
+> 持たない」は last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）に限って覆し、手順 1 の前世代
+> manifest は記録があれば記録の manifest を baseline に採る（profile の前世代から読むのは記録が無いとき）。
+> 世代由来の store マニフェストと機構表は不変。
+
 逆に、上の写しには現れないが規範文が持つものが 1 つある。**1 profile = 1 config の atomic
 性**で、原文はこれを本節ではなく「CLI 仕様」→「サブコマンド体系」の `apply` の箇条書き
 （「profile は config 単位で atomic」）で述べる。atomic 性は「1 config が 1 profile を持ち、
@@ -100,3 +114,5 @@ REQ-c2d44626-d8f4-446a-a80a-319a500129b4 と、これを論拠として引く RE
 standalone 中心）」と ADR-0006「エンジンを固定の Go バイナリにし、lib はデータ生成に徹する」
 （link farm derivation への manifest 埋め込み・コミット最後）。全モードのコミットを
 `nix-env --profile <profileDir>/profile --set` に統一することは ADR-0025 が定めている。
+コミットを世代バックエンドの契約越しにしたのは ADR-0057「世代バックエンドの契約」、
+last-applied 記録を store 外の唯一の可変 JSON として認めたのは ADR-0058「last-applied 記録」。

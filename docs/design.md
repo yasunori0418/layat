@@ -78,6 +78,8 @@ CLI / engine / lib / `common.nix` / 統合層の 5 段に積み、依存は呼�
 
 - [DSG-17db0831-d7da-446d-ba3e-404df64c582d](design/20260802-17db0831-d7da-446d-ba3e-404df64c582d-layer-stack-dependency.md) — 層を CLI / engine / lib / common.nix / 統合層の 5 段に積み、依存を呼ぶ側から呼ばれる側への一方向に限る
 - [DSG-25ad3cce-f921-4db2-aae0-c0263d4b8295](design/20261002-25ad3cce-f921-4db2-aae0-c0263d4b8295-generator-package-layout.md) — internal/generator は契約・prebuilt・Fake を親パッケージに、nix 実装を nixgen サブパッケージに置き、cmd 層は注入点だけを持つ
+- [DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814](design/20261011-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814-generation-package-layout.md) — internal/generation は契約・Generation 型・FS ベースの Fake を親パッケージに、nix-env 実装を nixprofile サブパッケージに置き、engine は Backend 1 フィールドで受ける
+- [DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5](design/20261011-3c156bbe-e72b-43dd-8cb0-2cc105314ad5-last-applied-record-layout.md) — last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、baseline は記録 → profile → 空の順に読む
 
 ---
 

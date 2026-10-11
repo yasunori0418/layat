@@ -80,6 +80,16 @@ else
 	e2e_fail "世代が 1 つも無い"
 fi
 
+e2e_step "last-applied 記録: apply 後に記録が profile の指す link-farm を指す"
+RECORD="$XDG_STATE_HOME/layat/home/last-applied.json"
+if [ -f "$RECORD" ]; then
+	e2e_pass "記録 $RECORD が存在する"
+else
+	e2e_fail "apply 後に記録が無い: $RECORD"
+fi
+assert_json "$RECORD" "記録の linkFarm が profile の指す link-farm と一致する" \
+	".linkFarm == \"$(readlink -f "$PROFILE")\""
+
 e2e_step "apply --dryrun --json: 既存 profile では generation.before = after"
 ENV_DRYRUN="$E2E_WORK/dryrun-gen.json"
 run_json 0 "$ENV_DRYRUN" apply home --dryrun
@@ -123,6 +133,10 @@ assert_json "$ENV_ROLLBACK" "changes は .cfg/a の add と .cfg/b の remove（
 	                        {kind: "remove", reversible: true, target: ".cfg/b"}]'
 assert_json "$ENV_ROLLBACK" "status=success・dryRun=false・command=rollback" \
 	'.status == "success" and .dryRun == false and .command == "rollback"'
+
+e2e_step "last-applied 記録: rollback 後に記録の linkFarm が N-1 の link-farm に変わる"
+assert_json "$RECORD" "記録の linkFarm が世代 1 の link-farm と一致する" \
+	".linkFarm == \"$(readlink -f "$PROFILE-1-link")\""
 
 e2e_step "list-generations --json: result.info.generations（items=[]）"
 ENV_GENS="$E2E_WORK/list-generations.json"

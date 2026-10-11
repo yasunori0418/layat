@@ -6,18 +6,19 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
-// tmpdir integration tests for generation skip + lstat drift repair (real FS · no nix · fakeCommit path).
-// fakeCommit links the profile link directly to the link-farm, so applying the same link-farm twice
+// tmpdir integration tests for generation skip + lstat drift repair (real FS · no nix · generation.Fake).
+// The Fake points the profile at a generation link of the link-farm, so applying the same link-farm twice
 // makes generationUnchanged hold (project mode only) and runs only the lstat repair.
 
 // applyOnce is a shared helper that runs a single apply in project mode (roothash key).
-func applyOnce(t *testing.T, lf, name, root, state string, commits *[][2]string, warns *[]string) *Result {
+func applyOnce(t *testing.T, lf, name, root, state string, fake *generation.Fake, warns *[]string) *Result {
 	t.Helper()
 	opts := Options{
-		LinkFarm: lf, Name: name, RootOverride: root, StateDir: state, Commit: fakeCommit(commits),
+		LinkFarm: lf, Name: name, RootOverride: root, StateDir: state, Backend: fake,
 	}
 	if warns != nil {
 		opts.Warnf = collectWarnings(warns)
@@ -36,19 +37,19 @@ func TestApplyGenerationSkipNoDrift(t *testing.T) {
 	// Use the same link-farm twice (same derivation = generation-skip candidate).
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, ".", ".config/foo")))
 
-	var commits [][2]string
-	applyOnce(t, lf, "c", root, state, &commits, nil)
-	if len(commits) != 1 {
-		t.Fatalf("first apply commit calls = %d, want 1", len(commits))
+	fake := &generation.Fake{}
+	applyOnce(t, lf, "c", root, state, fake, nil)
+	if len(fake.Commits) != 1 {
+		t.Fatalf("first apply commit calls = %d, want 1", len(fake.Commits))
 	}
 
 	// Second apply: same link-farm, no FS drift → generation skip, full no-op (commit count unchanged).
-	res := applyOnce(t, lf, "c", root, state, &commits, nil)
+	res := applyOnce(t, lf, "c", root, state, fake, nil)
 	if !res.GenerationSkipped {
 		t.Errorf("GenerationSkipped = false, want true (same derivation)")
 	}
-	if len(commits) != 1 {
-		t.Errorf("commit calls = %d, want 1 (generation skip omits --set)", len(commits))
+	if len(fake.Commits) != 1 {
+		t.Errorf("commit calls = %d, want 1 (generation skip omits the commit)", len(fake.Commits))
 	}
 	if len(res.Placed)+len(res.Replaced)+len(res.Removed) != 0 {
 		t.Errorf("no-drift skip should touch nothing: Placed=%v Replaced=%v Removed=%v", res.Placed, res.Replaced, res.Removed)
@@ -65,8 +66,8 @@ func TestApplyGenerationSkipRepairsDeletedSymlink(t *testing.T) {
 	src := makeSrc(t, "x")
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, ".", ".config/foo")))
 
-	var commits [][2]string
-	applyOnce(t, lf, "c", root, state, &commits, nil)
+	fake := &generation.Fake{}
+	applyOnce(t, lf, "c", root, state, fake, nil)
 
 	// foreign tool removes the target.
 	tgt := filepath.Join(root, ".config", "foo")
@@ -75,12 +76,12 @@ func TestApplyGenerationSkipRepairsDeletedSymlink(t *testing.T) {
 	}
 
 	// Second apply: generation skip, but re-link the deleted entry (not a full no-op).
-	res := applyOnce(t, lf, "c", root, state, &commits, nil)
+	res := applyOnce(t, lf, "c", root, state, fake, nil)
 	if !res.GenerationSkipped {
 		t.Errorf("GenerationSkipped = false, want true")
 	}
-	if len(commits) != 1 {
-		t.Errorf("commit calls = %d, want 1 (no new generation)", len(commits))
+	if len(fake.Commits) != 1 {
+		t.Errorf("commit calls = %d, want 1 (no new generation)", len(fake.Commits))
 	}
 	if len(res.Placed) != 1 || res.Placed[0] != ".config/foo" {
 		t.Errorf("Placed = %v, want [.config/foo] (deleted symlink re-placed)", res.Placed)
@@ -96,8 +97,8 @@ func TestApplyGenerationSkipRepairsForeignSymlinkWithWarn(t *testing.T) {
 	src := makeSrc(t, "x")
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, ".", ".config/foo")))
 
-	var commits [][2]string
-	applyOnce(t, lf, "c", root, state, &commits, nil)
+	fake := &generation.Fake{}
+	applyOnce(t, lf, "c", root, state, fake, nil)
 
 	// foreign tool rewrites the target to point elsewhere.
 	tgt := filepath.Join(root, ".config", "foo")
@@ -111,12 +112,12 @@ func TestApplyGenerationSkipRepairsForeignSymlinkWithWarn(t *testing.T) {
 
 	// Second apply: generation skip, but re-link the foreign rewrite with a warning (last-wins).
 	var warns []string
-	res := applyOnce(t, lf, "c", root, state, &commits, &warns)
+	res := applyOnce(t, lf, "c", root, state, fake, &warns)
 	if !res.GenerationSkipped {
 		t.Errorf("GenerationSkipped = false, want true")
 	}
-	if len(commits) != 1 {
-		t.Errorf("commit calls = %d, want 1 (no new generation)", len(commits))
+	if len(fake.Commits) != 1 {
+		t.Errorf("commit calls = %d, want 1 (no new generation)", len(fake.Commits))
 	}
 	if len(res.Replaced) != 1 || res.Replaced[0] != ".config/foo" {
 		t.Errorf("Replaced = %v, want [.config/foo] (foreign re-placed)", res.Replaced)
@@ -141,8 +142,8 @@ func TestApplyGenerationSkipRepairsDeletedCopy(t *testing.T) {
 	src := makeROSrc(t, "file.txt", "store-content")
 	lf := writeLinkFarm(t, projectManifest(copyEntry(src, "file.txt", ".config/foo")))
 
-	var commits [][2]string
-	applyOnce(t, lf, "c", root, state, &commits, nil)
+	fake := &generation.Fake{}
+	applyOnce(t, lf, "c", root, state, fake, nil)
 	tgt := filepath.Join(root, ".config", "foo")
 	if _, err := os.Stat(tgt); err != nil {
 		t.Fatalf("copy target should exist after first apply: %v", err)
@@ -153,12 +154,12 @@ func TestApplyGenerationSkipRepairsDeletedCopy(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	res := applyOnce(t, lf, "c", root, state, &commits, nil)
+	res := applyOnce(t, lf, "c", root, state, fake, nil)
 	if !res.GenerationSkipped {
 		t.Errorf("GenerationSkipped = false, want true")
 	}
-	if len(commits) != 1 {
-		t.Errorf("commit calls = %d, want 1 (no new generation)", len(commits))
+	if len(fake.Commits) != 1 {
+		t.Errorf("commit calls = %d, want 1 (no new generation)", len(fake.Commits))
 	}
 	if len(res.Copied) != 1 || res.Copied[0] != ".config/foo" {
 		t.Errorf("Copied = %v, want [.config/foo] (deleted copy re-materialized)", res.Copied)
@@ -174,8 +175,8 @@ func TestApplyGenerationSkipKeepsEditedCopy(t *testing.T) {
 	src := makeROSrc(t, "file.txt", "store-content")
 	lf := writeLinkFarm(t, projectManifest(copyEntry(src, "file.txt", ".config/foo")))
 
-	var commits [][2]string
-	applyOnce(t, lf, "c", root, state, &commits, nil)
+	fake := &generation.Fake{}
+	applyOnce(t, lf, "c", root, state, fake, nil)
 
 	// User edits the copy (content diff) → generation-skip repair leaves it untouched (src follow is --recopy only).
 	tgt := filepath.Join(root, ".config", "foo")
@@ -183,7 +184,7 @@ func TestApplyGenerationSkipKeepsEditedCopy(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	res := applyOnce(t, lf, "c", root, state, &commits, nil)
+	res := applyOnce(t, lf, "c", root, state, fake, nil)
 	if !res.GenerationSkipped {
 		t.Errorf("GenerationSkipped = false, want true")
 	}
@@ -209,10 +210,10 @@ func TestApplyGenerationSkipOnlyProjectMode(t *testing.T) {
 	}
 	lf := writeLinkFarm(t, hm)
 
-	var commits [][2]string
+	fake := &generation.Fake{}
 	apply := func() *Result {
 		res, err := Apply(Options{
-			LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+			LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 		})
 		if err != nil {
 			t.Fatalf("Apply: %v", err)
@@ -225,8 +226,8 @@ func TestApplyGenerationSkipOnlyProjectMode(t *testing.T) {
 	if res.GenerationSkipped {
 		t.Errorf("home mode must not skip generations (GenerationSkipped = true)")
 	}
-	if len(commits) != 2 {
-		t.Errorf("home mode commit calls = %d, want 2 (new generation each apply)", len(commits))
+	if len(fake.Commits) != 2 {
+		t.Errorf("home mode commit calls = %d, want 2 (new generation each apply)", len(fake.Commits))
 	}
 }
 
@@ -237,8 +238,8 @@ func TestApplyGenerationSkipRecopyOverwrites(t *testing.T) {
 	src := makeROSrc(t, "file.txt", "store-content")
 	lf := writeLinkFarm(t, projectManifest(copyEntry(src, "file.txt", ".config/foo")))
 
-	var commits [][2]string
-	applyOnce(t, lf, "c", root, state, &commits, nil)
+	fake := &generation.Fake{}
+	applyOnce(t, lf, "c", root, state, fake, nil)
 	tgt := filepath.Join(root, ".config", "foo")
 	if err := os.WriteFile(tgt, []byte("user-edit"), 0o644); err != nil {
 		t.Fatal(err)
@@ -246,7 +247,7 @@ func TestApplyGenerationSkipRecopyOverwrites(t *testing.T) {
 
 	// Second apply: same derivation so generation skip, but --recopy overwrites the copy. No new generation.
 	res, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Recopy: true, Commit: fakeCommit(&commits),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Recopy: true, Backend: fake,
 	})
 	if err != nil {
 		t.Fatalf("recopy Apply: %v", err)
@@ -254,8 +255,8 @@ func TestApplyGenerationSkipRecopyOverwrites(t *testing.T) {
 	if !res.GenerationSkipped {
 		t.Errorf("GenerationSkipped = false, want true")
 	}
-	if len(commits) != 1 {
-		t.Errorf("commit calls = %d, want 1 (recopy stays out of generations)", len(commits))
+	if len(fake.Commits) != 1 {
+		t.Errorf("commit calls = %d, want 1 (recopy stays out of generations)", len(fake.Commits))
 	}
 	if data, _ := os.ReadFile(tgt); string(data) != "store-content" {
 		t.Errorf("recopy should restore src content, got %q", data)
@@ -272,18 +273,18 @@ func TestApplyNewDerivationCommitsNewGeneration(t *testing.T) {
 
 	src1 := makeSrc(t, "x")
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(src1, ".", ".config/foo")))
-	var commits [][2]string
-	applyOnce(t, lf1, "c", root, state, &commits, nil)
+	fake := &generation.Fake{}
+	applyOnce(t, lf1, "c", root, state, fake, nil)
 
 	// Different link-farm (different src = different derivation) → no generation skip.
 	src2 := makeSrc(t, "x")
 	lf2 := writeLinkFarm(t, projectManifest(storeEntry(src2, ".", ".config/foo")))
-	res := applyOnce(t, lf2, "c", root, state, &commits, nil)
+	res := applyOnce(t, lf2, "c", root, state, fake, nil)
 	if res.GenerationSkipped {
 		t.Errorf("GenerationSkipped = true, want false (derivation changed)")
 	}
-	if len(commits) != 2 {
-		t.Errorf("commit calls = %d, want 2 (new derivation = new generation)", len(commits))
+	if len(fake.Commits) != 2 {
+		t.Errorf("commit calls = %d, want 2 (new derivation = new generation)", len(fake.Commits))
 	}
 	if dest, _ := os.Readlink(filepath.Join(root, ".config", "foo")); dest != src2 {
 		t.Errorf("dest = %q, want %q", dest, src2)

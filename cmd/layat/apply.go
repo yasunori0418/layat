@@ -112,6 +112,7 @@ func runApplyManifest(subject *applySubject, name string) error {
 		Recopy:       flagRecopy,
 		Backup:       flagBackupEnabled,
 		BackupSuffix: flagBackup,
+		Backend:      newGenerationBackend(),
 	})
 	if res != nil {
 		// A partial result on failure still carries the reached items and the changes made.
@@ -172,6 +173,7 @@ func runApply(run *applyRun, name string) error {
 			BackupSuffix: flagBackup,
 			DryRun:       true,
 			Build:        dryBuildFunc(gen, name),
+			Backend:      newGenerationBackend(),
 		})
 		if err != nil {
 			return err
@@ -253,6 +255,7 @@ func applyOne(gen generator.Generator, name, rootKind, fixedRoot string) (*engin
 		Backup:       flagBackupEnabled,
 		BackupSuffix: flagBackup,
 		Build:        func(pending string) (string, error) { return gen.Build(name, pending) },
+		Backend:      newGenerationBackend(),
 	})
 }
 
@@ -405,6 +408,7 @@ func runApplyAllDryRun(run *applyRun, gen generator.Generator, selected []string
 			BackupSuffix: flagBackup,
 			DryRun:       true,
 			Build:        dryBuildFunc(gen, name),
+			Backend:      newGenerationBackend(),
 		})
 	}))
 	if code == 0 {

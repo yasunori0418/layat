@@ -19,7 +19,7 @@ references:
 
 - ステータス: 採用（2026-06-11 改訂: 実装機構を固定 Go エンジンに変更 → ADR-0006／2026-06-14 改訂: 世代操作 CLI を `nix-env` 系統一・rollback diff 基準を確定 → ADR-0015）
 - 日付: 2026-06-07
-- 関連: ADR-0001, ADR-0003, ADR-0006, ADR-0015, `docs/concept.md`, `docs/spec.md`（世代管理仕様）
+- 関連: ADR-0001, ADR-0003, ADR-0006, ADR-0015, ADR-0057, ADR-0058, `docs/concept.md`, `docs/spec.md`（世代管理仕様）
 
 > **2026-06-14 改訂注記（ADR-0015）**: 本 ADR の profile / 世代 / 保守的 stale 除去という **decision 自体は不変**。
 > ただし世代操作の CLI は **`nix-env --profile <dir>` 系で統一**された——本文中の「任意世代切替・GC を `nix profile` /
@@ -37,6 +37,17 @@ references:
 > **2026-06-14 改訂注記（ADR-0020）**: copy = place-once・世代外という**決定は既定として不変**だが、ユーザー責任で破る 2 経路を追加した。
 > **`apply --recopy`** は config 内の全 copy target を src から無条件上書き再コピーし（upstream 追従）、**`layat reset <name> [target...]`** は
 > 配置物を撤去する（symlink は保守的除去・copy は明示削除・profile / 世代は不変の FS-only teardown）。stale 除去が copy を消さない不変条件も維持（→ ADR-0020）。
+
+> **2026-10-11 改訂注記（ADR-0057）**: 本 ADR の profile / 世代 / 保守的 stale 除去という **decision 自体は不変**。
+> ただし世代操作（`nix-env --profile <dir> --set` / rollback / 一覧）の主体は engine から**世代バックエンドの契約**
+> （`internal/generation`）へ移り、`nix-env` 系はその既定実装 nixprofile の内側に閉じた。engine は世代を誰が管理するかに
+> 関知しない。本文中の `nix-env` は「既定バックエンド nixprofile の内部コマンド」と読むこと（→ ADR-0057）。
+
+> **2026-10-11 改訂注記（ADR-0058）**: 本 ADR の「可変 JSON ファイルは持たない」「記録は世代に捕捉され rollback で記録も巻き戻る」は、
+> **last-applied 記録**（`<state>/layat/<鍵>/last-applied.json`）に限って覆した。stale 除去・drift・reset・rollback の baseline は
+> 記録があれば記録の manifest を採り、無ければ従来どおり profile の current 世代から読む。記録は manifest を内容ごと持つので GC と
+> 無関係で、「最後に置いたもの」であり rollback で巻き戻す対象ではない。世代由来の store manifest（link-farm 内の `manifest.json`）
+> 自体は不変（→ ADR-0058）。
 
 ## 背景
 

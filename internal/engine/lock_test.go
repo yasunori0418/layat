@@ -12,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/lock"
 	"github.com/yasunori0418/layat/internal/manifest"
 	"github.com/yasunori0418/layat/internal/paths"
@@ -47,7 +48,7 @@ func TestLockApplyNoWaitSkipsWhenHeld(t *testing.T) {
 	defer func() { _ = held.Release() }()
 
 	res, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, NoWait: true, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, NoWait: true, Backend: &generation.Fake{},
 	})
 	if !errors.Is(err, ErrSkipped) {
 		t.Fatalf("NoWait while locked: err = %v, want errors.Is(err, ErrSkipped)", err)
@@ -91,17 +92,16 @@ func TestLockApplyHoldsLockThroughOperationThenReleases(t *testing.T) {
 
 	inLock := make(chan struct{})  // closed once Apply is inside the lock (Commit entered).
 	proceed := make(chan struct{}) // gates the in-lock operation's completion.
-	commit := fakeCommit(nil)
-	blockingCommit := func(profileLink, linkFarm string) error {
+	blocking := &generation.Fake{OnCommit: func(string, string) error {
 		close(inLock)
 		<-proceed
-		return commit(profileLink, linkFarm)
-	}
+		return nil
+	}}
 
 	done := make(chan error, 1)
 	go func() {
 		_, err := Apply(Options{
-			LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: blockingCommit,
+			LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: blocking,
 		})
 		done <- err
 	}()
@@ -111,7 +111,7 @@ func TestLockApplyHoldsLockThroughOperationThenReleases(t *testing.T) {
 
 	// While held, a concurrent NoWait apply must skip.
 	if _, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, NoWait: true, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, NoWait: true, Backend: &generation.Fake{},
 	}); !errors.Is(err, ErrSkipped) {
 		t.Fatalf("NoWait during in-lock operation: err = %v, want errors.Is(err, ErrSkipped)", err)
 	}
@@ -124,7 +124,7 @@ func TestLockApplyHoldsLockThroughOperationThenReleases(t *testing.T) {
 
 	// Lock is now free → a NoWait apply succeeds (no skip).
 	res, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, NoWait: true, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, NoWait: true, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("NoWait after release: %v", err)
@@ -149,7 +149,7 @@ func TestLockResetWaitsForHeldLock(t *testing.T) {
 		t.Fatalf("setup: .link missing: %v", err)
 	}
 
-	prof := paths.Resolve(state, "cfg", manifest.RootKindHome, root, true)
+	prof := paths.Resolve(fakeBase(state), "cfg", manifest.RootKindHome, root, true)
 	held, err := lock.Acquire(prof.Dir, true)
 	if err != nil {
 		t.Fatal(err)
@@ -206,7 +206,7 @@ func TestLockRollbackWaitsForHeldLock(t *testing.T) {
 	srcA := makeSrc(t, "x")
 	srcB := makeSrc(t, "x")
 
-	prof := paths.Resolve(state, "vim", manifest.RootKindHome, root, true)
+	prof := paths.Resolve(fakeBase(state), "vim", manifest.RootKindHome, root, true)
 	if err := os.MkdirAll(prof.Dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -242,7 +242,7 @@ func TestLockRollbackWaitsForHeldLock(t *testing.T) {
 		res *RollbackResult
 		err error
 	}
-	var switched int
+	fake := &generation.Fake{}
 	started := make(chan struct{})
 	done := make(chan rollbackOutcome, 1)
 	go func() {
@@ -252,10 +252,7 @@ func TestLockRollbackWaitsForHeldLock(t *testing.T) {
 			RootKind:     manifest.RootKindHome,
 			RootOverride: root,
 			StateDir:     state,
-			ListGenerations: func(string) ([]Generation, error) {
-				return []Generation{{Number: 1}, {Number: 2, Current: true}}, nil
-			},
-			SwitchGeneration: func(_ string, gen int) error { switched = gen; return nil },
+			Backend:      fake,
 		})
 		done <- rollbackOutcome{res, err}
 	}()
@@ -282,8 +279,8 @@ func TestLockRollbackWaitsForHeldLock(t *testing.T) {
 		if out.res.From != 2 || out.res.To != 1 {
 			t.Errorf("From/To = %d/%d, want 2/1", out.res.From, out.res.To)
 		}
-		if switched != 1 {
-			t.Errorf("switched generation = %d, want 1", switched)
+		if len(fake.Switches) != 1 || fake.Switches[0] != 1 {
+			t.Errorf("switched generations = %v, want [1]", fake.Switches)
 		}
 		if _, err := os.Lstat(filepath.Join(root, "b")); !os.IsNotExist(err) {
 			t.Errorf("b should be removed after rollback, lstat err = %v", err)

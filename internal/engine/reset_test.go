@@ -3,8 +3,10 @@ package engine
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
@@ -19,7 +21,7 @@ func applyForReset(t *testing.T, root, state string, m manifest.Manifest) {
 		RootKind:     manifest.RootKindHome,
 		RootOverride: root,
 		StateDir:     state,
-		Commit:       fakeCommit(nil),
+		Backend:      &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("setup Apply: %v", err)
 	}
@@ -34,6 +36,7 @@ func resetOpts(root, state string, targets []string, dryrun bool, confirm func(*
 		Targets:      targets,
 		DryRun:       dryrun,
 		Confirm:      confirm,
+		Backend:      &generation.Fake{},
 	}
 }
 
@@ -207,5 +210,15 @@ func TestResetConfirmAbort(t *testing.T) {
 	}
 	if _, err := os.Lstat(filepath.Join(root, ".a")); err != nil {
 		t.Errorf(".a should remain after abort: %v", err)
+	}
+}
+
+// TestResetRequiresBackend verifies Reset refuses to run without a generation backend.
+func TestResetRequiresBackend(t *testing.T) {
+	opts := resetOpts(realTempDir(t), realTempDir(t), nil, false, nil)
+	opts.Backend = nil
+	_, err := Reset(opts)
+	if err == nil || !strings.Contains(err.Error(), "generation backend") {
+		t.Fatalf("err = %v, want the missing-backend error", err)
 	}
 }

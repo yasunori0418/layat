@@ -136,6 +136,8 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 - [ADR-0020](adr/0020-copy-recopy-and-entry-reset.md) — `method = "copy"`（世代外・place-once）・`--recopy`・`reset`（関連: ADR-0019, ADR-0021）
 - [ADR-0026](adr/0026-module-activation-applies-prebuilt-manifest.md) — モジュールはビルド済み link-farm を `apply --manifest` で直接適用する
 - [ADR-0031](adr/0031-silent-on-success-output-discipline.md) — 成功時はデフォルト沈黙。`-v` で opt-in 表示
+- [ADR-0057](adr/0057-generation-backend-contract.md) — 世代操作を世代バックエンドの契約越しにし、engine から nix-env と profile 基底の固定を外す
+- [ADR-0058](adr/0058-last-applied-record.md) — 最後に配置した manifest を last-applied 記録に持ち、stale 除去の baseline を世代の概念から FS の事実へ移す
 
 ### 名前の由来
 

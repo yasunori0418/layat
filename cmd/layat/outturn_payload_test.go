@@ -10,7 +10,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -18,6 +17,7 @@ import (
 	"github.com/yasunori0418/outturn/go/conformance"
 
 	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/manifest"
 	"github.com/yasunori0418/layat/internal/planner"
 )
@@ -475,7 +475,7 @@ func TestMutationPayloadSubjectBorneFailure(t *testing.T) {
 		Placed:   []string{"a"},
 		GenAfter: ip(2), GenBefore: ip(2),
 	}
-	cmdErr := errors.New("layat: generation commit (nix-env --set) failed: exit status 1")
+	cmdErr := errors.New("layat: generation commit failed: exit status 1")
 	p, err := mutationPayload[*applyResultInfo](res, cmdErr)
 	if err != nil {
 		t.Fatalf("mutationPayload: %v", err)
@@ -640,20 +640,6 @@ func TestResetPayloadPartialFailure(t *testing.T) {
 
 // --- end-to-end through the real engine on a tmpdir ---
 
-// genCommit fakes nix-env --set with a real generation-link layout, so observeGeneration
-// reads a numeric generation the same way it does under nix.
-func genCommit(gen int) engine.CommitFunc {
-	return func(profileLink, linkFarm string) error {
-		genLink := profileLink + "-" + strconv.Itoa(gen) + "-link"
-		_ = os.Remove(genLink)
-		if err := os.Symlink(linkFarm, genLink); err != nil {
-			return err
-		}
-		_ = os.Remove(profileLink)
-		return os.Symlink(filepath.Base(genLink), profileLink)
-	}
-}
-
 // writeTestLinkFarm writes a manifest.json-only link-farm for the engine's pre-built path.
 func writeTestLinkFarm(t *testing.T, entries ...manifest.Entry) string {
 	t.Helper()
@@ -685,11 +671,14 @@ func TestJSONEndToEndApplyAndResetPayload(t *testing.T) {
 
 	keep := manifest.Entry{SrcKind: "store", Src: src, Subpath: "f", Target: ".keep", Method: "symlink"}
 	drop := manifest.Entry{SrcKind: "store", Src: src, Subpath: "f", Target: ".drop", Method: "symlink"}
-	apply := func(gen int, entries ...manifest.Entry) *engine.Result {
+	// The Fake keeps the real generation-link layout, so observeGeneration reads a numeric
+	// generation the same way it does under the nix profile backend.
+	backend := &generation.Fake{}
+	apply := func(entries ...manifest.Entry) *engine.Result {
 		t.Helper()
 		res, err := engine.Apply(engine.Options{
 			LinkFarm: writeTestLinkFarm(t, entries...), Name: "cfg",
-			RootOverride: root, StateDir: state, Commit: genCommit(gen),
+			RootOverride: root, StateDir: state, Backend: backend,
 			Warnf: func(string, ...any) {},
 		})
 		if err != nil {
@@ -699,7 +688,7 @@ func TestJSONEndToEndApplyAndResetPayload(t *testing.T) {
 	}
 
 	// First apply: two adds, no previous generation to observe.
-	res := apply(1, keep, drop)
+	res := apply(keep, drop)
 	p, err := mutationPayload[*applyResultInfo](res, nil)
 	if err != nil {
 		t.Fatalf("mutationPayload: %v", err)
@@ -718,7 +707,7 @@ func TestJSONEndToEndApplyAndResetPayload(t *testing.T) {
 	}
 
 	// Second apply drops .drop: its old entry is stale-removed and stays in the inventory.
-	res = apply(2, keep)
+	res = apply(keep)
 	p, err = mutationPayload[*applyResultInfo](res, nil)
 	if err != nil {
 		t.Fatalf("mutationPayload: %v", err)
@@ -743,7 +732,7 @@ func TestJSONEndToEndApplyAndResetPayload(t *testing.T) {
 	// Reset tears the remaining placement down: a reversible remove, no generation slot.
 	resetRes, err := engine.Reset(engine.ResetOptions{
 		Name: "cfg", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state,
-		Warnf: func(string, ...any) {},
+		Backend: backend, Warnf: func(string, ...any) {},
 	})
 	if err != nil {
 		t.Fatalf("Reset: %v", err)

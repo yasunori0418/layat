@@ -43,7 +43,7 @@ manifest をエンジンへ渡す。エンジンは `manifest.json` を唯一の
 
 - [REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645](requirements/20260802-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645-two-layer-architecture.md) — layat は CLI とエンジンの 2 層で構成する
 - [REQ-1767b250-b475-4276-a551-20dc79e75a30](requirements/20260802-1767b250-b475-4276-a551-20dc79e75a30-config-written-in-nix.md) — config は Nix で書き nix build で評価する
-- [REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564](requirements/20260802-6c4e174a-4d16-477a-96ff-17cb4eb5b564-engine-external-command-constraint.md) — engine が叩く外部コマンドは nix と git のみに限る
+- [REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564](requirements/20260802-6c4e174a-4d16-477a-96ff-17cb4eb5b564-engine-external-command-constraint.md) — engine が叩く外部コマンドは git のみに限る
 
 ---
 
@@ -235,7 +235,9 @@ stale 除去は前世代 manifest の記録通りを指す symlink だけに限�
 - [REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3](requirements/20260802-2aa3abbc-90b2-486e-92de-d785554bdeb3-profile-on-disk-layout.md) — profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる
 - [REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2](requirements/20260802-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2-stale-removal-invariants.md) — stale 除去は前世代の記録通りを指す symlink のみに限り、copy は消さず orphan を警告する
 - [REQ-8409db86-a1ba-4053-86dc-588985cc1ca7](requirements/20260802-8409db86-a1ba-4053-86dc-588985cc1ca7-empty-parent-dir-pruning.md) — target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する
-- [REQ-706de717-4e47-471a-a1c0-448635be159c](requirements/20260802-706de717-4e47-471a-a1c0-448635be159c-generation-gc.md) — 世代操作は nix-env --profile 系で統一し、GC root の間引きと store 解放を分けて行う
+- [REQ-706de717-4e47-471a-a1c0-448635be159c](requirements/20260802-706de717-4e47-471a-a1c0-448635be159c-generation-gc.md) — 世代操作は世代バックエンドの契約越しに行い、GC root の間引きと store 解放は nix コマンドへ分けて委譲する
+- [REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b](requirements/20261011-833205ca-adfc-4c86-bf66-ae4d8fe4885b-generation-backend-contract.md) — engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う
+- [REQ-9d622539-a1e5-4719-af51-e0cd85b66f35](requirements/20261011-9d622539-a1e5-4719-af51-e0cd85b66f35-last-applied-record.md) — apply は最後に配置した manifest を last-applied 記録に書き、stale 除去の baseline は記録を優先して読む
 - [REQ-0e341430-17f0-498b-9439-65491652163a](requirements/20260802-0e341430-17f0-498b-9439-65491652163a-rollback-refit-then-pointer.md) — rollback は FS を先に収束させてから profile ポインタを最後に移す
 - [REQ-844ee375-919f-4341-81e1-a5f89fd32840](requirements/20260802-844ee375-919f-4341-81e1-a5f89fd32840-module-mode-profile-internal.md) — module 時は rollback を host へ一本化し、layat profile は前進のみで追従する
 - [REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0](requirements/20260802-46fccb80-4bae-4d37-bc19-dded88e9a9c0-project-mode-generation-skip.md) — project mode は世代を非公開にし、derivation 同一なら世代を積まず lstat ドリフト修復だけ行う

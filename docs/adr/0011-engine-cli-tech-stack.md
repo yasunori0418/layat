@@ -22,7 +22,7 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-06-13
-- 関連: ADR-0006, ADR-0007, ADR-0010, ADR-0055, ADR-0056, `docs/spec.md`, `docs/concept.md`
+- 関連: ADR-0006, ADR-0007, ADR-0010, ADR-0055, ADR-0056, ADR-0057, `docs/spec.md`, `docs/concept.md`
 - 改訂対象: ADR-0007「store path 取得」を out-link 方式に具体化。ADR-0006 / ADR-0007 の「Go ライブラリ」語を `internal/` 層分離と明文化
 
 > **2026-06-14 改訂注記（ADR-0016）**: 本 ADR の以下を拡張・具体化した。
@@ -47,6 +47,11 @@ references:
 > **2026-10-02 改訂注記（ADR-0056）**: 本 ADR §1 の「CLI 層は最小依存を許可し、人間向け UX に限る」に、生成器を選ぶ
 > 設定ファイル（`layat.toml` / `config.toml`）のパーサとして `github.com/pelletier/go-toml/v2` を加えた。import は
 > `cmd/layat` に閉じ、engine 層の stdlib-only は不変（→ ADR-0056 §4）。
+
+> **2026-10-11 改訂注記（ADR-0057）**: 本 ADR §4 の「`.pending` は固定パス・orphan は config あたり最大 1」は不変。
+> ただし「`nix-env --set` 成功後に削除する」の `nix-env --set` は世代バックエンドの契約の Commit になり、`.pending` の削除は
+> gcroot の解除ではなく **build 出力の一時リンクの片付け**として engine の素の FS 操作に位置づけ直した（gcroot を張るのは
+> 生成器の事情で、engine は関知しない。→ ADR-0057）。
 
 ## 背景
 

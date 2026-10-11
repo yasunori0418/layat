@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/lock"
 	"github.com/yasunori0418/layat/internal/manifest"
 	"github.com/yasunori0418/layat/internal/paths"
@@ -17,7 +18,7 @@ import (
 // profileDirFor returns the profileDir for the --root override (roothash key) case.
 func profileDirFor(t *testing.T, state, root, name string) string {
 	t.Helper()
-	return paths.Resolve(state, name, manifest.RootKindProject, root, true).Dir
+	return paths.Resolve(fakeBase(state), name, manifest.RootKindProject, root, true).Dir
 }
 
 // --- test helpers ----------------------------------------------------------
@@ -60,16 +61,9 @@ func makeSrc(t *testing.T, subpath string) string {
 	return src
 }
 
-// fakeCommit mimics nix-env --set and links the profile link to the link-farm
-// (so that reading the previous generation's manifest works on a subsequent apply).
-func fakeCommit(captured *[][2]string) CommitFunc {
-	return func(profileLink, linkFarm string) error {
-		if captured != nil {
-			*captured = append(*captured, [2]string{profileLink, linkFarm})
-		}
-		_ = os.Remove(profileLink)
-		return os.Symlink(linkFarm, profileLink)
-	}
+// fakeBase is the user base generation.Fake keys the profileDirs under for state.
+func fakeBase(state string) string {
+	return (&generation.Fake{}).UserBase(state)
 }
 
 func collectWarnings(buf *[]string) func(string, ...any) {
@@ -138,6 +132,31 @@ func makeROSrc(t *testing.T, subpath, content string) string {
 
 // --- tests -----------------------------------------------------------------
 
+// TestApplyRequiresBackend verifies Apply refuses to run without a generation backend instead of
+// falling back to one, also on the dryrun path.
+func TestApplyRequiresBackend(t *testing.T) {
+	root := realTempDir(t)
+	state := realTempDir(t)
+	lf := writeLinkFarm(t, projectManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+	for _, dry := range []bool{false, true} {
+		_, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, DryRun: dry})
+		if err == nil || !strings.Contains(err.Error(), "generation backend") {
+			t.Errorf("dryrun=%v: err = %v, want the missing-backend error", dry, err)
+		}
+	}
+	if _, err := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(err) {
+		t.Errorf("nothing may be placed without a backend, lstat err = %v", err)
+	}
+}
+
+// TestProfileForRequiresBackend verifies the shared profileDir resolution refuses a nil backend.
+func TestProfileForRequiresBackend(t *testing.T) {
+	_, _, err := ProfileFor(ProfileOptions{Name: "c", RootKind: manifest.RootKindHome, StateDir: realTempDir(t)})
+	if err == nil || !strings.Contains(err.Error(), "generation backend") {
+		t.Fatalf("err = %v, want the missing-backend error", err)
+	}
+}
+
 func TestApplyFirstPlacementProjectMode(t *testing.T) {
 	if _, err := exec.LookPath("git"); err != nil {
 		t.Skip("git not available")
@@ -150,13 +169,13 @@ func TestApplyFirstPlacementProjectMode(t *testing.T) {
 	state := realTempDir(t)
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, "skills/nix", ".claude/skills/nix")))
 
-	var commits [][2]string
+	fake := &generation.Fake{}
 	res, err := Apply(Options{
 		LinkFarm: lf,
 		Name:     "skills",
 		WorkDir:  root, // project mode: git toplevel = root
 		StateDir: state,
-		Commit:   fakeCommit(&commits),
+		Backend:  fake,
 	})
 	if err != nil {
 		t.Fatalf("Apply: %v", err)
@@ -172,8 +191,8 @@ func TestApplyFirstPlacementProjectMode(t *testing.T) {
 		t.Errorf("symlink dest = %q, want %q", dest, want)
 	}
 
-	// The profileDir layout is created at <state>/nix/profiles/layat/<roothash>/<name>.
-	if !strings.HasPrefix(res.ProfileDir, filepath.Join(state, "nix", "profiles", "layat")) {
+	// The profileDir layout is created at <user base>/<roothash>/<name>.
+	if !strings.HasPrefix(res.ProfileDir, fakeBase(state)) {
 		t.Errorf("ProfileDir = %q, not under state base", res.ProfileDir)
 	}
 	if fi, err := os.Stat(res.ProfileDir); err != nil || !fi.IsDir() {
@@ -191,11 +210,11 @@ func TestApplyFirstPlacementProjectMode(t *testing.T) {
 	}
 
 	// commit is called once with profileDir/profile and the link-farm.
-	if len(commits) != 1 {
-		t.Fatalf("commit calls = %d, want 1", len(commits))
+	if len(fake.Commits) != 1 {
+		t.Fatalf("commit calls = %d, want 1", len(fake.Commits))
 	}
-	if commits[0][0] != filepath.Join(res.ProfileDir, "profile") || commits[0][1] != lf {
-		t.Errorf("commit args = %v", commits[0])
+	if fake.Commits[0].ProfileLink != filepath.Join(res.ProfileDir, "profile") || fake.Commits[0].LinkFarm != lf {
+		t.Errorf("commit args = %+v", fake.Commits[0])
 	}
 	if len(res.Placed) != 1 || res.Placed[0] != ".claude/skills/nix" {
 		t.Errorf("Placed = %v", res.Placed)
@@ -209,7 +228,7 @@ func TestApplySubpathDot(t *testing.T) {
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, ".", ".config/whole")))
 
 	_, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("Apply: %v", err)
@@ -236,7 +255,7 @@ func TestApplyAncestorSymlinkError(t *testing.T) {
 
 	var warns []string
 	_, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 		Warnf: collectFormatted(&warns),
 	})
 	// The aggregate error is a count-bearing summary; the ancestor-symlink detail is reported via
@@ -280,9 +299,9 @@ func TestApplyAncestorSelfRecordedMigration(t *testing.T) {
 		}
 	}
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(srcOld, ".", ".claude/skills")))
-	var commits [][2]string
+	fake := &generation.Fake{}
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -304,7 +323,7 @@ func TestApplyAncestorSelfRecordedMigration(t *testing.T) {
 	var warns []string
 	res, err := Apply(Options{
 		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state,
-		Commit: fakeCommit(&commits), Warnf: collectWarnings(&warns),
+		Backend: fake, Warnf: collectWarnings(&warns),
 	})
 	if err != nil {
 		t.Fatalf("second Apply (migration): %v", err)
@@ -359,9 +378,9 @@ func TestApplyAncestorSelfRecordedMigrationCopyChild(t *testing.T) {
 		t.Fatal(err)
 	}
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(srcOld, ".", ".claude/skills")))
-	var commits [][2]string
+	fake := &generation.Fake{}
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -370,7 +389,7 @@ func TestApplyAncestorSelfRecordedMigrationCopyChild(t *testing.T) {
 	srcNew := makeSrc(t, "foo") // srcNew/foo = "content"
 	lf2 := writeLinkFarm(t, projectManifest(copyEntry(srcNew, "foo", ".claude/skills/foo")))
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 	})
 	if err != nil {
 		t.Fatalf("second Apply (copy-child migration): %v", err)
@@ -422,7 +441,7 @@ func TestApplyExistingRegularFileError(t *testing.T) {
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, ".", ".config/foo")))
 
 	_, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err == nil {
 		t.Fatal("expected error for existing regular file, got nil")
@@ -447,7 +466,7 @@ func TestApplyForeignSymlinkWarns(t *testing.T) {
 	var warns []string
 	res, err := Apply(Options{
 		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state,
-		Commit: fakeCommit(nil), Warnf: collectWarnings(&warns),
+		Backend: &generation.Fake{}, Warnf: collectWarnings(&warns),
 	})
 	if err != nil {
 		t.Fatalf("Apply: %v", err)
@@ -470,9 +489,9 @@ func TestApplyRecordedSymlinkReplacedSilently(t *testing.T) {
 	src1 := makeSrc(t, "x")
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(src1, ".", ".config/foo")))
-	var commits [][2]string
+	fake := &generation.Fake{}
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -483,7 +502,7 @@ func TestApplyRecordedSymlinkReplacedSilently(t *testing.T) {
 	var warns []string
 	res, err := Apply(Options{
 		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state,
-		Commit: fakeCommit(&commits), Warnf: collectWarnings(&warns),
+		Backend: fake, Warnf: collectWarnings(&warns),
 	})
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
@@ -512,9 +531,9 @@ func TestApplyStaleRemoval(t *testing.T) {
 		storeEntry(src, ".", ".config/keep"),
 		storeEntry(src, ".", ".config/drop"),
 	))
-	var commits [][2]string
+	fake := &generation.Fake{}
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -525,7 +544,7 @@ func TestApplyStaleRemoval(t *testing.T) {
 	// Second apply: drop drop → stale-removed. keep remains.
 	lf2 := writeLinkFarm(t, projectManifest(storeEntry(src, ".", ".config/keep")))
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 	})
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
@@ -547,9 +566,9 @@ func TestApplyStaleRemovalKeepsForeign(t *testing.T) {
 	src := makeSrc(t, "x")
 
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(src, ".", ".config/drop")))
-	var commits [][2]string
+	fake := &generation.Fake{}
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -565,7 +584,7 @@ func TestApplyStaleRemovalKeepsForeign(t *testing.T) {
 	var warns []string
 	res, err := Apply(Options{
 		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state,
-		Commit: fakeCommit(&commits), Warnf: collectWarnings(&warns),
+		Backend: fake, Warnf: collectWarnings(&warns),
 	})
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
@@ -593,7 +612,7 @@ func TestApplyGitNotInRepoError(t *testing.T) {
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, ".", ".config/foo")))
 
 	_, err := Apply(Options{
-		LinkFarm: lf, Name: "c", WorkDir: work, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", WorkDir: work, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err == nil {
 		t.Fatal("expected git-not-in-repo error, got nil")
@@ -618,7 +637,7 @@ func TestApplyNoWaitSkipsWhenLocked(t *testing.T) {
 	defer func() { _ = held.Release() }()
 
 	res, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, NoWait: true, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, NoWait: true, Backend: &generation.Fake{},
 	})
 	if err != ErrSkipped {
 		t.Fatalf("NoWait while locked: err = %v, want ErrSkipped", err)
@@ -640,7 +659,7 @@ func TestApplyOutOfStorePlacesLiveSymlink(t *testing.T) {
 	lf := writeLinkFarm(t, projectManifest(outOfStoreEntry(src, "lua", ".config/nvim")))
 
 	res, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("Apply: %v", err)
@@ -671,9 +690,9 @@ func TestApplyOutOfStoreStaleRemoval(t *testing.T) {
 
 	// First apply: place the out-of-store entry (the marker's absolute path is recorded in the manifest).
 	lf1 := writeLinkFarm(t, projectManifest(outOfStoreEntry(src, ".", ".config/nvim")))
-	var commits [][2]string
+	fake := &generation.Fake{}
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -685,7 +704,7 @@ func TestApplyOutOfStoreStaleRemoval(t *testing.T) {
 	// Second apply: empty manifest. The link points at the recorded out-of-store path, so it satisfies the conservative invariant and is removed.
 	lf2 := writeLinkFarm(t, projectManifest())
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 	})
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
@@ -704,9 +723,9 @@ func TestApplyOutOfStoreStaleKeepsMismatch(t *testing.T) {
 	src := makeSrc(t, "x")
 
 	lf1 := writeLinkFarm(t, projectManifest(outOfStoreEntry(src, ".", ".config/nvim")))
-	var commits [][2]string
+	fake := &generation.Fake{}
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -722,7 +741,7 @@ func TestApplyOutOfStoreStaleKeepsMismatch(t *testing.T) {
 	var warns []string
 	res, err := Apply(Options{
 		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state,
-		Commit: fakeCommit(&commits), Warnf: collectWarnings(&warns),
+		Backend: fake, Warnf: collectWarnings(&warns),
 	})
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
@@ -746,7 +765,7 @@ func TestApplyOutOfStoreMissingPathError(t *testing.T) {
 	lf := writeLinkFarm(t, projectManifest(outOfStoreEntry(missing, ".", ".config/nvim")))
 
 	_, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err == nil {
 		t.Fatal("expected error for missing out-of-store path, got nil")
@@ -767,7 +786,7 @@ func TestApplyCopyPlaceOnceFile(t *testing.T) {
 	lf := writeLinkFarm(t, projectManifest(copyEntry(src, "file.txt", ".config/foo")))
 
 	res, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("Apply: %v", err)
@@ -802,9 +821,9 @@ func TestApplyCopyPlaceOnceKeepsExisting(t *testing.T) {
 	lf := writeLinkFarm(t, projectManifest(copyEntry(src, "file.txt", ".config/foo")))
 
 	// First apply: new copy.
-	var commits [][2]string
+	fake := &generation.Fake{}
 	if _, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -816,7 +835,7 @@ func TestApplyCopyPlaceOnceKeepsExisting(t *testing.T) {
 
 	// Second apply: place-once leaves the target untouched (the edit remains).
 	res, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 	})
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
@@ -848,7 +867,7 @@ func TestApplyCopyForeignFileSkipsWithWarn(t *testing.T) {
 	var warns []string
 	res, err := Apply(Options{
 		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state,
-		Commit: fakeCommit(nil), Warnf: collectWarnings(&warns),
+		Backend: &generation.Fake{}, Warnf: collectWarnings(&warns),
 	})
 	if err != nil {
 		t.Fatalf("Apply: %v", err)
@@ -883,7 +902,7 @@ func TestApplyCopyDirRecursivePreservesSymlinks(t *testing.T) {
 	lf := writeLinkFarm(t, projectManifest(copyEntry(src, "tree", ".config/tree")))
 
 	if _, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("Apply: %v", err)
 	}
@@ -912,9 +931,9 @@ func TestApplyRecopyOverwrites(t *testing.T) {
 	lf := writeLinkFarm(t, projectManifest(copyEntry(src, "file.txt", ".config/foo")))
 
 	// First apply: new copy.
-	var commits [][2]string
+	fake := &generation.Fake{}
 	if _, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -926,7 +945,7 @@ func TestApplyRecopyOverwrites(t *testing.T) {
 	// Second apply: --recopy overwrites unconditionally → reverts to src content.
 	res, err := Apply(Options{
 		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state,
-		Recopy: true, Commit: fakeCommit(&commits),
+		Recopy: true, Backend: fake,
 	})
 	if err != nil {
 		t.Fatalf("recopy Apply: %v", err)
@@ -957,7 +976,7 @@ func TestApplyRecopyForeignFileOverwrites(t *testing.T) {
 	var warns []string
 	res, err := Apply(Options{
 		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state,
-		Recopy: true, Commit: fakeCommit(nil), Warnf: collectWarnings(&warns),
+		Recopy: true, Backend: &generation.Fake{}, Warnf: collectWarnings(&warns),
 	})
 	if err != nil {
 		t.Fatalf("Apply: %v", err)
@@ -1106,19 +1125,19 @@ func TestResolveRootFixedAbsFailure(t *testing.T) {
 }
 
 // TestEnsureProfileDirMkdirFailure covers engine.go:370-372 (MkdirAll(profile.Dir)).
-// A regular file planted at <state>/nix forces MkdirAll under it to fail with ENOTDIR.
+// A regular file planted at the user base forces MkdirAll under it to fail with ENOTDIR.
 func TestEnsureProfileDirMkdirFailure(t *testing.T) {
 	root := realTempDir(t)
 	src := makeSrc(t, "x")
 	state := realTempDir(t)
-	// <state>/nix is a file, so <state>/nix/profiles/... cannot be created.
-	if err := os.WriteFile(filepath.Join(state, "nix"), []byte("not a dir"), 0o644); err != nil {
+	// The base is a file, so <base>/<roothash>/... cannot be created.
+	if err := os.WriteFile(fakeBase(state), []byte("not a dir"), 0o644); err != nil {
 		t.Fatal(err)
 	}
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, ".", ".config/foo")))
 
 	_, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err == nil {
 		t.Fatal("expected profileDir mkdir failure, got nil")
@@ -1137,7 +1156,7 @@ func TestEnsureProfileDirBackrefWriteFailure(t *testing.T) {
 	state := realTempDir(t)
 
 	// Resolve the same layout Apply will compute (RootOverride → roothash key, abs root == root).
-	prof := paths.Resolve(state, "c", manifest.RootKindProject, root, true)
+	prof := paths.Resolve(fakeBase(state), "c", manifest.RootKindProject, root, true)
 	if prof.Backref == "" {
 		t.Fatal("expected a backref path for the roothash-keyed layout")
 	}
@@ -1148,7 +1167,7 @@ func TestEnsureProfileDirBackrefWriteFailure(t *testing.T) {
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, ".", ".config/foo")))
 
 	_, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err == nil {
 		t.Fatal("expected backref write failure, got nil")
@@ -1179,7 +1198,7 @@ func TestApplyCleanupPendingRemoveFailureWarns(t *testing.T) {
 	res, err := Apply(Options{
 		Name: "c", RootOverride: root, StateDir: state,
 		RootKind: manifest.RootKindProject, Build: build,
-		Commit: fakeCommit(nil), Warnf: collectWarnings(&warns),
+		Backend: &generation.Fake{}, Warnf: collectWarnings(&warns),
 	})
 	if err != nil {
 		t.Fatalf("Apply: %v", err)
@@ -1225,7 +1244,7 @@ func TestApplyConflictReportsAll(t *testing.T) {
 	var warns []string
 	_, err := Apply(Options{
 		LinkFarm: lf, Name: "cfg", RootKind: manifest.RootKindHome,
-		RootOverride: root, StateDir: state, Warnf: collectFormatted(&warns),
+		RootOverride: root, StateDir: state, Backend: &generation.Fake{}, Warnf: collectFormatted(&warns),
 	})
 	if err == nil {
 		t.Fatal("expected a conflict error, got nil")
@@ -1277,7 +1296,7 @@ func TestApplyConflictMatchesDryRun(t *testing.T) {
 
 	dry, err := Apply(Options{
 		LinkFarm: lf, Name: "cfg", RootKind: manifest.RootKindHome,
-		RootOverride: root, StateDir: state, DryRun: true,
+		RootOverride: root, StateDir: state, Backend: &generation.Fake{}, DryRun: true,
 	})
 	if err != nil {
 		t.Fatalf("Apply dryrun: %v", err)
@@ -1289,7 +1308,7 @@ func TestApplyConflictMatchesDryRun(t *testing.T) {
 	var warns []string
 	_, err = Apply(Options{
 		LinkFarm: lf, Name: "cfg", RootKind: manifest.RootKindHome,
-		RootOverride: root, StateDir: state, Warnf: collectFormatted(&warns),
+		RootOverride: root, StateDir: state, Backend: &generation.Fake{}, Warnf: collectFormatted(&warns),
 	})
 	if err == nil || !strings.Contains(err.Error(), "2 conflict") {
 		t.Fatalf("expected a 2-conflict aggregate error, got %v", err)
@@ -1306,9 +1325,9 @@ func TestApplySelfContradictoryAncestorGuidance(t *testing.T) {
 	// First generation: a whole-tree symlink at .claude/skills.
 	srcOld := makeSrc(t, "x")
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(srcOld, ".", ".claude/skills")))
-	var commits [][2]string
+	fake := &generation.Fake{}
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -1322,7 +1341,7 @@ func TestApplySelfContradictoryAncestorGuidance(t *testing.T) {
 	var warns []string
 	_, err := Apply(Options{
 		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state,
-		Commit: fakeCommit(&commits), Warnf: collectFormatted(&warns),
+		Backend: fake, Warnf: collectFormatted(&warns),
 	})
 	if err == nil || !strings.Contains(err.Error(), "1 conflict") {
 		t.Fatalf("expected a 1-conflict aggregate error, got %v", err)
@@ -1356,7 +1375,7 @@ func TestApplyCopyStructureMismatchGuidance(t *testing.T) {
 	var warns []string
 	_, err := Apply(Options{
 		LinkFarm: lf, Name: "cfg", RootKind: manifest.RootKindHome,
-		RootOverride: root, StateDir: state, Warnf: collectFormatted(&warns),
+		RootOverride: root, StateDir: state, Backend: &generation.Fake{}, Warnf: collectFormatted(&warns),
 	})
 	if err == nil || !strings.Contains(err.Error(), "1 conflict") {
 		t.Fatalf("expected a 1-conflict aggregate error, got %v", err)
@@ -1396,7 +1415,7 @@ func TestApplyConflictMixedKindsPairGuidanceCorrectly(t *testing.T) {
 
 	var warns []string
 	_, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 		Warnf: collectFormatted(&warns),
 	})
 	if err == nil || !strings.Contains(err.Error(), "2 conflict") {

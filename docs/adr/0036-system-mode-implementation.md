@@ -23,9 +23,14 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-07-04
-- 関連: ADR-0004, ADR-0005, ADR-0007, ADR-0023, ADR-0024, ADR-0034, `docs/spec.md`, `docs/design.md`
+- 関連: ADR-0004, ADR-0005, ADR-0007, ADR-0023, ADR-0024, ADR-0034, ADR-0057, `docs/spec.md`, `docs/design.md`
 - 改訂対象: ADR-0013 §5 の「`root = systemRoot` は eval 時エラー（未実装拒否）」を撤回し実装へ。ADR-0015 §5 の「rollback は home mode 限定」・ADR-0018 §4 の「`list-generations --all` は homeRoot の config を対象」を home / system の両モードへ拡張。ADR-0025 §4 の profile 専用ディレクトリレイアウトに system mode の state 基底（`/nix/var/nix/profiles`）を追加（ユーザー state 基底のレイアウト自体は不変）
 - 起点: 次期マイルストーン計画の grilling（2026-07-04）。NixOS / nix-darwin モジュール実装（将来・別マイルストーン）に先行して、lib / engine / CLI の system mode 対応だけを縦に通す
+
+> **2026-10-11 改訂注記（ADR-0057）**: 本 ADR §3 の「system mode の profile 状態は `/nix/var/nix/profiles/layat` 配下」と
+> 鍵・内部レイアウトは不変。ただしこの基底（およびユーザー state 基底 `<state>/nix/profiles/layat`）の所有者は engine の定数から
+> **世代バックエンドの契約の `SystemBase` / `UserBase`**（既定実装 nixprofile）へ移った。engine と `layat prune` は契約から
+> 基底を導く。基底を設定ファイルで上書きする機構は足さない（→ ADR-0057）。
 
 ## 背景
 

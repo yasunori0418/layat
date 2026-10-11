@@ -1,17 +1,22 @@
 package engine
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/paths"
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// reset is an FS-only teardown that reverts the previous generation's manifest entries (the recorded
-// truth, which a rebuilt config can diverge from) to a not-placed state: symlinks under the
-// stale-removal invariant, copy targets deleted outright. The profile and generations are untouched.
+// reset is an FS-only teardown that reverts the baseline's entries (the recorded truth, which a
+// rebuilt config can diverge from) to a not-placed state: symlinks under the stale-removal
+// invariant, copy targets deleted outright. The profile and generations are untouched.
 
 // ResetOptions is the input to Reset. Reset does not build (it reads the previous generation's manifest).
 type ResetOptions struct {
@@ -22,6 +27,8 @@ type ResetOptions struct {
 	WorkDir      string
 	StateDir     string
 	Git          GitFunc
+	// Backend owns the profile base the profileDir is keyed under. Required: nil is an error.
+	Backend generation.Backend
 
 	// Targets narrows the teardown-target targets (root-relative · empty = all entries).
 	// Specifying a target not present in the previous generation's manifest is an error.
@@ -81,18 +88,26 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	prof, root, err := ProfileFor(ProfileOptions{
 		Name: opts.Name, RootKind: opts.RootKind, FixedRoot: opts.FixedRoot,
 		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir, Git: opts.Git,
+		Backend: opts.Backend,
 	})
+	if err != nil {
+		return nil, err
+	}
+	rec, err := recordFor(opts.StateDir, opts.Name, opts.RootKind, root, opts.RootOverride != "")
 	if err != nil {
 		return nil, err
 	}
 	res := &ResetResult{Root: root, ProfileDir: prof.Dir, DryRun: opts.DryRun}
 
-	// If profile (the previous generation link) is absent, apply has never run = a no-op with zero teardown targets.
+	// With neither a profile (the previous generation link) nor a record, apply has never run = a
+	// no-op with zero teardown targets.
 	if _, err := os.Stat(prof.Profile); err != nil {
-		if os.IsNotExist(err) {
+		if !os.IsNotExist(err) {
+			return nil, fmt.Errorf("layat: cannot check profile (%s): %w", prof.Profile, err)
+		}
+		if _, err := os.Lstat(rec.File); os.IsNotExist(err) {
 			return res, nil
 		}
-		return nil, fmt.Errorf("layat: cannot check profile (%s): %w", prof.Profile, err)
 	}
 
 	// Observe the generation once: the FS-only teardown never moves the profile pointer, so the
@@ -104,7 +119,11 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 
 	// 2. at run time, serialize with concurrent apply / reset via a blocking flock.
 	//    dryrun is read-only, so it does not take a flock.
+	//    profileDir is the lock key; it is prepared like apply's, also when only the record remains.
 	if !opts.DryRun {
+		if err := (&applier{profile: prof, root: root}).ensureProfileDir(); err != nil {
+			return nil, err
+		}
 		l, err := acquireProfileLock(prof.Dir, true)
 		if err != nil {
 			return nil, err
@@ -112,11 +131,18 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 		defer func() { _ = l.Release() }()
 	}
 
-	// 3. read the previous generation's manifest (the recorded truth) and narrow the target entries.
-	prev, err := manifest.Load(prof.Profile)
+	// 3. read the baseline (the record, else the previous generation) and narrow the target entries.
+	b, err := loadBaseline(rec.File, prof.Profile, warnf)
 	if err != nil {
-		return nil, fmt.Errorf("layat: cannot read the previous generation's manifest (%s): %w", prof.Profile, err)
+		return nil, err
 	}
+	if b.profileUnreadable() {
+		return nil, fmt.Errorf("layat: cannot read the previous generation's manifest (%s): %w", prof.Profile, b.profileErr)
+	}
+	if b.manifest == nil {
+		return res, nil
+	}
+	prev := b.manifest
 	entries, err := selectResetEntries(prev.Entries, opts.Targets)
 	if err != nil {
 		return nil, err
@@ -193,7 +219,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 		res.Pruned = a.result.Pruned
 		res.FailedTarget = a.result.FailedTarget
 		res.Unreached = resetUnreached(plan.Remove, a.result.Removed, a.result.FailedTarget, plannedCopies)
-		return res, err
+		return res, errors.Join(err, recordAfterReset(rec, root, b, entries))
 	}
 	res.RemovedSymlinks = a.result.Removed // actually removed (excludes those kept due to drift)
 
@@ -204,7 +230,8 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 			res.Pruned = a.result.Pruned
 			res.FailedTarget = plannedCopies[i]
 			res.Unreached = plannedCopies[i+1:]
-			return res, fmt.Errorf("layat: cannot remove copy target (%s): %w", targetAbs, err)
+			err = fmt.Errorf("layat: cannot remove copy target (%s): %w", targetAbs, err)
+			return res, errors.Join(err, recordAfterReset(rec, root, b, entries))
 		}
 		removedCopies = append(removedCopies, plannedCopies[i])
 		if err := a.pruneEmptyAncestors(targetAbs); err != nil {
@@ -214,7 +241,36 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	res.RemovedCopies = removedCopies
 	res.Pruned = a.result.Pruned // covers both the symlink half (removeStale) and the copy half above
 
+	if err := recordAfterReset(rec, root, b, entries); err != nil {
+		return res, err
+	}
 	return res, nil
+}
+
+// recordAfterReset rewrites the record without the selected entries whose target is gone, so
+// entries reset left in place (foreign, drifted, or unreached after a failure) stay recorded with
+// the record's link-farm. With nothing left the record is deleted.
+func recordAfterReset(rec paths.Record, root string, b baseline, selected []manifest.Entry) error {
+	isSelected := make(map[string]bool, len(selected))
+	for _, e := range selected {
+		isSelected[e.Target] = true
+	}
+	m := *b.manifest
+	m.Entries = nil
+	for _, e := range b.manifest.Entries {
+		_, err := os.Lstat(filepath.Join(root, filepath.Clean(e.Target)))
+		if !isSelected[e.Target] || !os.IsNotExist(err) {
+			m.Entries = append(m.Entries, e)
+		}
+	}
+	if len(m.Entries) == 0 {
+		return removeRecord(rec.File)
+	}
+	raw, err := json.Marshal(m)
+	if err != nil {
+		return fmt.Errorf("layat: cannot encode the manifest for the last-applied record: %w", err)
+	}
+	return writeRecord(rec, root, b.linkFarm(), raw, time.Now())
 }
 
 // resetUnreached lists the planned removals never attempted once a symlink-stage failure

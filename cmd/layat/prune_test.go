@@ -556,6 +556,9 @@ func TestPruneDryrunDoesNotDelete(t *testing.T) {
 	if opts.StateDir != "" || opts.SystemDir != "" {
 		t.Errorf("the CLI must leave the scan bases to the engine, got %+v", opts)
 	}
+	if opts.Backend == nil {
+		t.Error("the CLI must inject the generation backend the bases are derived from")
+	}
 
 	confirm := func(*engine.PruneResult) (bool, error) { return true, nil }
 	real := pruneOptions(false, confirm)

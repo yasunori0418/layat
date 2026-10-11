@@ -73,6 +73,7 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 			RootOverride: flagRoot,
 			Targets:      targets,
 			DryRun:       true,
+			Backend:      newGenerationBackend(),
 		})
 		if err != nil {
 			return err
@@ -103,6 +104,7 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 		RootOverride: flagRoot,
 		Targets:      targets,
 		Confirm:      confirm,
+		Backend:      newGenerationBackend(),
 	})
 	if res != nil {
 		// A partial result on failure still carries the changes made before the failure.

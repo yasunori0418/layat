@@ -85,11 +85,11 @@ func TestRootHashDeterministicAndFixedLen(t *testing.T) {
 }
 
 func TestResolveProjectUsesRootHash(t *testing.T) {
-	state := "/state"
+	base := "/state/profiles"
 	root := "/home/me/proj"
-	p := Resolve(state, "skills", manifest.RootKindProject, root, false)
+	p := Resolve(base, "skills", manifest.RootKindProject, root, false)
 
-	wantDir := filepath.Join(state, "nix", "profiles", "layat", RootHash(root), "skills")
+	wantDir := filepath.Join(base, RootHash(root), "skills")
 	if p.Dir != wantDir {
 		t.Errorf("Dir = %q, want %q", p.Dir, wantDir)
 	}
@@ -99,16 +99,16 @@ func TestResolveProjectUsesRootHash(t *testing.T) {
 	if p.Pending != filepath.Join(wantDir, ".pending") {
 		t.Errorf("Pending = %q", p.Pending)
 	}
-	wantBackref := filepath.Join(state, "nix", "profiles", "layat", RootHash(root), ".root")
+	wantBackref := filepath.Join(base, RootHash(root), ".root")
 	if p.Backref != wantBackref {
 		t.Errorf("Backref = %q, want %q", p.Backref, wantBackref)
 	}
 }
 
 func TestResolveHomeUsesNameKey(t *testing.T) {
-	state := "/state"
-	p := Resolve(state, "vim", manifest.RootKindHome, "/home/me", false)
-	wantDir := filepath.Join(state, "nix", "profiles", "layat", "vim")
+	base := "/state/profiles"
+	p := Resolve(base, "vim", manifest.RootKindHome, "/home/me", false)
+	wantDir := filepath.Join(base, "vim")
 	if p.Dir != wantDir {
 		t.Errorf("Dir = %q, want %q", p.Dir, wantDir)
 	}
@@ -119,10 +119,10 @@ func TestResolveHomeUsesNameKey(t *testing.T) {
 
 func TestResolveHomeWithOverrideUsesRootHash(t *testing.T) {
 	// With --root explicit, even home uses the roothash key.
-	state := "/state"
+	base := "/state/profiles"
 	root := "/tmp/sandbox"
-	p := Resolve(state, "vim", manifest.RootKindHome, root, true)
-	wantDir := filepath.Join(state, "nix", "profiles", "layat", RootHash(root), "vim")
+	p := Resolve(base, "vim", manifest.RootKindHome, root, true)
+	wantDir := filepath.Join(base, RootHash(root), "vim")
 	if p.Dir != wantDir {
 		t.Errorf("Dir = %q, want %q", p.Dir, wantDir)
 	}
@@ -133,15 +133,57 @@ func TestResolveHomeWithOverrideUsesRootHash(t *testing.T) {
 
 func TestResolveFixedUsesRootHash(t *testing.T) {
 	// A fixed root (no --root) also uses the roothash key.
-	state := "/state"
+	base := "/state/profiles"
 	root := "/opt/x"
-	p := Resolve(state, "c", manifest.RootKindFixed, root, false)
+	p := Resolve(base, "c", manifest.RootKindFixed, root, false)
 	if p.Backref == "" {
 		t.Error("fixed root should produce a backref")
 	}
-	wantDir := filepath.Join(state, "nix", "profiles", "layat", RootHash(root), "c")
+	wantDir := filepath.Join(base, RootHash(root), "c")
 	if p.Dir != wantDir {
 		t.Errorf("Dir = %q, want %q", p.Dir, wantDir)
+	}
+}
+
+func TestResolveRecordHomeUsesNameKey(t *testing.T) {
+	// The record lives under <state>/layat, keyed like the profileDir.
+	r := ResolveRecord("/state", "home", manifest.RootKindHome, "/home/me", false)
+	wantDir := filepath.Join("/state", "layat", "home")
+	if r.Dir != wantDir {
+		t.Errorf("Dir = %q, want %q", r.Dir, wantDir)
+	}
+	if r.File != filepath.Join(wantDir, "last-applied.json") {
+		t.Errorf("File = %q", r.File)
+	}
+	if r.Backref != "" {
+		t.Errorf("home (no --root) should have no backref, got %q", r.Backref)
+	}
+}
+
+func TestResolveRecordRootHashSeries(t *testing.T) {
+	root := "/home/me/proj"
+	for _, tc := range []struct {
+		desc         string
+		rootKind     string
+		rootOverride bool
+	}{
+		{"project", manifest.RootKindProject, false},
+		{"fixed", manifest.RootKindFixed, false},
+		{"home with --root", manifest.RootKindHome, true},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			r := ResolveRecord("/state", "c", tc.rootKind, root, tc.rootOverride)
+			hashDir := filepath.Join("/state", "layat", RootHash(root))
+			if r.Dir != filepath.Join(hashDir, "c") {
+				t.Errorf("Dir = %q, want %q", r.Dir, filepath.Join(hashDir, "c"))
+			}
+			if r.File != filepath.Join(hashDir, "c", "last-applied.json") {
+				t.Errorf("File = %q", r.File)
+			}
+			if r.Backref != filepath.Join(hashDir, ".root") {
+				t.Errorf("Backref = %q, want %q", r.Backref, filepath.Join(hashDir, ".root"))
+			}
+		})
 	}
 }
 

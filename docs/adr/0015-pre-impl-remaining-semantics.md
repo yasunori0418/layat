@@ -30,7 +30,7 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-06-14
-- 関連: ADR-0002, ADR-0005, ADR-0007, ADR-0010, ADR-0011, ADR-0013, ADR-0014, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `CONTEXT.md`
+- 関連: ADR-0002, ADR-0005, ADR-0007, ADR-0010, ADR-0011, ADR-0013, ADR-0014, ADR-0057, ADR-0058, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `CONTEXT.md`
 - 改訂対象: **ADR-0002**「世代 GC / rollback を `nix profile`（新CLI）/ `nix-collect-garbage` に委譲」を `nix-env` 系統一へ訂正。**ADR-0007 / templates** に devShell 同梱を canonical として追記。**ADR-0013** の配置セマンティクス（foreign symlink・祖先 symlink）を拡張。**ADR-0010 / ADR-0014** の entry フィールド `mode` を `method` に改名
 - 起点: ドキュメント計画段階の最終レビュー（grill）で surfaced した「実装前に決めておくべき」残細目の束
 
@@ -62,6 +62,16 @@ references:
 > symlink から copy へ変わったとき、前世代が記録した symlink で on-disk が記録通りなら配置前に除去して copy を新規配置する
 > （symlink はユーザーデータを持たないため損失ゼロ）。copy→symlink 方向は非対称に**自動化しない**（ユーザー編集済み copy
 > データの保護を優先し、従来通り conflict のまま・→ ADR-0047）。
+>
+> **2026-10-11 改訂注記（ADR-0057）**: 本 ADR §3 の「世代操作は `nix-env --profile <dir>` 系で統一する」は、**engine が世代
+> バックエンドの契約**（Commit / List / Switch / UserBase / SystemBase）越しに世代操作を行い、`nix-env` 系はその既定実装
+> nixprofile の内側に閉じる、へ改訂した。`nix profile`（新 CLI）非互換の判断と、間引き（`--delete-generations`）・store GC を
+> nix コマンドへ委譲することは不変（→ ADR-0057）。
+>
+> **2026-10-11 改訂注記（ADR-0058）**: 本 ADR §5 の rollback セマンティクス（baseline = 離れる世代 N・FS 収束を先に・ポインタ
+> 移動を最後に）は不変。ただし baseline となる N の manifest の供給元は、last-applied 記録があれば記録、無ければ世代リンク、の
+> 優先順位になった。target（N-1）の manifest は引き続き世代リンクから読み、FS の収束後・ポインタ移動の前に記録を N-1 の
+> manifest で書き直す（→ ADR-0058）。
 
 ## 背景
 

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
@@ -27,7 +28,7 @@ func TestApplyBackupRenamesForeignFileAndPlaces(t *testing.T) {
 
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, "foo", "foo")))
 	res, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil), Backup: true,
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}, Backup: true,
 	})
 	if err != nil {
 		t.Fatalf("Apply: %v", err)
@@ -61,7 +62,7 @@ func TestApplyBackupCustomSuffix(t *testing.T) {
 
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, "foo", "foo")))
 	if _, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 		Backup: true, BackupSuffix: "bak",
 	}); err != nil {
 		t.Fatalf("Apply: %v", err)
@@ -90,7 +91,7 @@ func TestApplyBackupSurvivesCommit(t *testing.T) {
 
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, "foo", "foo")))
 	if _, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil), Backup: true,
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}, Backup: true,
 	}); err != nil {
 		t.Fatalf("Apply: %v", err)
 	}
@@ -119,7 +120,7 @@ func TestApplyBackupMidBatchFailureRestoresBackup(t *testing.T) {
 		storeEntry(realTempDir(t), ".", "ro/leaf"),
 	))
 	_, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil), Backup: true,
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}, Backup: true,
 	})
 	if err == nil {
 		t.Fatal("expected an error from the blocked mid-batch placement, got nil")
@@ -152,7 +153,7 @@ func TestApplyBackupDestinationExistsConflict(t *testing.T) {
 
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, "foo", "foo")))
 	_, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil), Backup: true,
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}, Backup: true,
 	})
 	if err == nil {
 		t.Fatal("expected a conflict error when the backup destination already exists, got nil")
@@ -183,7 +184,7 @@ func TestApplyDryRunBackupNoConflictNoSideEffects(t *testing.T) {
 
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, "foo", "foo")))
 	res, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, DryRun: true, Backup: true,
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, DryRun: true, Backup: true, Backend: &generation.Fake{},
 	})
 	if err != nil {
 		t.Fatalf("Apply dryrun: %v", err)
@@ -218,7 +219,7 @@ func TestApplyBackupDirTargetDoesNotWarnAboutSiblingRecordedLeaf(t *testing.T) {
 	// First apply: place a per-file symlink at .claude/hooks/safe.sh (this generation's own record).
 	lf1 := writeLinkFarm(t, projectManifest(storeEntry(srcOld, ".", ".claude/hooks/safe.sh")))
 	if _, err := Apply(Options{
-		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf1, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	}); err != nil {
 		t.Fatalf("first Apply: %v", err)
 	}
@@ -236,7 +237,7 @@ func TestApplyBackupDirTargetDoesNotWarnAboutSiblingRecordedLeaf(t *testing.T) {
 	lf2 := writeLinkFarm(t, projectManifest(storeEntry(srcNew, ".", ".claude/hooks")))
 	var warns []string
 	res, err := Apply(Options{
-		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf2, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 		Backup: true, Warnf: collectFormatted(&warns),
 	})
 	if err != nil {
@@ -275,8 +276,8 @@ func TestApplyGenerationSkipBackupRepairsForeignFile(t *testing.T) {
 	src := makeSrc(t, "x")
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, ".", ".config/foo")))
 
-	var commits [][2]string
-	applyOnce(t, lf, "c", root, state, &commits, nil)
+	fake := &generation.Fake{}
+	applyOnce(t, lf, "c", root, state, fake, nil)
 
 	// foreign tool replaces the target with a regular file between shell re-entries.
 	tgt := filepath.Join(root, ".config", "foo")
@@ -289,7 +290,7 @@ func TestApplyGenerationSkipBackupRepairsForeignFile(t *testing.T) {
 
 	// Second apply: same link-farm (generation skip candidate) with --backup enabled.
 	res, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(&commits), Backup: true,
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake, Backup: true,
 	})
 	if err != nil {
 		t.Fatalf("Apply: %v", err)
@@ -297,8 +298,8 @@ func TestApplyGenerationSkipBackupRepairsForeignFile(t *testing.T) {
 	if !res.GenerationSkipped {
 		t.Errorf("GenerationSkipped = false, want true (same derivation)")
 	}
-	if len(commits) != 1 {
-		t.Errorf("commit calls = %d, want 1 (no new generation)", len(commits))
+	if len(fake.Commits) != 1 {
+		t.Errorf("commit calls = %d, want 1 (no new generation)", len(fake.Commits))
 	}
 	if len(res.BackedUp) != 1 || res.BackedUp[0] != ".config/foo" {
 		t.Errorf("Result.BackedUp = %v, want [.config/foo]", res.BackedUp)
@@ -327,7 +328,7 @@ func TestApplyWithoutBackupStillConflicts(t *testing.T) {
 
 	lf := writeLinkFarm(t, projectManifest(storeEntry(src, "foo", "foo")))
 	_, err := Apply(Options{
-		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Commit: fakeCommit(nil),
+		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{},
 	})
 	if err == nil {
 		t.Fatal("expected a conflict error without --backup, got nil")
