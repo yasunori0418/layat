@@ -119,7 +119,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 
 	// 2. at run time, serialize with concurrent apply / reset via a blocking flock.
 	//    dryrun is read-only, so it does not take a flock.
-	//    profileDir is the lock key, so it is prepared like apply's when only the record remains.
+	//    profileDir is the lock key; it is prepared like apply's, also when only the record remains.
 	if !opts.DryRun {
 		if err := (&applier{profile: prof, root: root}).ensureProfileDir(); err != nil {
 			return nil, err

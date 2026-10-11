@@ -466,7 +466,7 @@ func TestGenerationSkipWithoutRecord(t *testing.T) {
 	}
 }
 
-// isRecordErr reports whether err is a last-applied record failure.
+// isRecordErr reports whether err comes from the last-applied record.
 func isRecordErr(err error) bool {
 	return err != nil && strings.Contains(err.Error(), "last-applied record")
 }
@@ -571,18 +571,25 @@ func TestRollbackReadsRecordFirst(t *testing.T) {
 }
 
 // TestResetRecordOnly verifies reset tears down a record-only placement (a failed first commit,
-// no profile) and deletes the record.
+// no profile) and deletes the record, preparing the profileDir and its backref like apply.
 func TestResetRecordOnly(t *testing.T) {
 	root, state := realTempDir(t), realTempDir(t)
 	lf := writeLinkFarm(t, homeManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
 	if _, err := Apply(Options{LinkFarm: lf, Name: "cfg", RootOverride: root, StateDir: state, Backend: failCommit()}); err == nil {
 		t.Fatal("Apply with a failing commit = nil error")
 	}
+	prof := paths.Resolve(fakeBase(state), "cfg", manifest.RootKindHome, root, true)
+	if err := os.RemoveAll(prof.BackrefDir); err != nil {
+		t.Fatal(err)
+	}
 	if _, err := Reset(resetOpts(root, state, nil, false, nil)); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(err) {
 		t.Errorf("a survived the reset: %v", err)
+	}
+	if b, err := os.ReadFile(prof.Backref); err != nil || string(b) != root+"\n" {
+		t.Errorf("profile backref = %q, %v; want %q", b, err, root+"\n")
 	}
 	if _, err := os.Lstat(paths.ResolveRecord(state, "cfg", manifest.RootKindHome, root, true).File); !os.IsNotExist(err) {
 		t.Errorf("record survived a full reset: %v", err)
