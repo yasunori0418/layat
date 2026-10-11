@@ -48,9 +48,10 @@ specification_ja: |
 ## 仕様
 
 **走査対象** — 2 つの基底の直下で backref `.root` を持つディレクトリ、つまり project mode /
-fixed root / `--root` 上書きで生じた `<roothash>` 系列だけ。基底が 2 つあるのは、system mode の
-profile 状態が `/nix/var/nix/profiles/layat/` に住み（→ ADR-0036 §3）、ユーザー state 基底
-`<state>/nix/profiles/layat/` とは別の場所になるため。
+fixed root / `--root` 上書きで生じた `<roothash>` 系列だけ。基底は世代バックエンドが与え
+（REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）、既定の nixprofile ではユーザー state 基底が
+`<state>/nix/profiles/layat/`、system 基底が `/nix/var/nix/profiles/layat/`。基底が 2 つあるのは、
+system mode の profile 状態がユーザー state 基底とは別の場所に住むため（→ ADR-0036 §3）。
 
 `.root` を持たない `<name>` 直キーの系列（home mode の root = `$HOME`・system mode の
 root = `/`）は、判定すべき root パスが導けないため構造的に対象外になる。system mode でも
@@ -89,7 +90,8 @@ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed が持つ。
 `.pending` と `.root` だけが残っている系列も同じく対象になる。
 
 **触らないもの** — 配置物には一切触れない（root が消えている以上、配置先も消えている）。残す
-系列の世代間引きも行わない（`nix-env --profile <dir> --delete-generations` の二重化になる）。
+系列の世代間引きも行わない（既定の nixprofile では利用者が叩く `nix-env --profile <dir>
+--delete-generations` の二重化になる。REQ-706de717-4e47-471a-a1c0-448635be159c）。
 store の回収は `nix-collect-garbage` に委ねる。
 
 > 孤児 profile が backref で逆引き可能なまま残ること自体は REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4、
@@ -106,4 +108,4 @@ out-of-store な root がアンマウント中に「一時的に実在しない�
 走査対象に system 基底 `/nix/var/nix/profiles/layat/` を加えることと、非 root 実行で削除権限が
 無い系列を warning 付きで skip することは ADR-0036 §3 が定めている（ADR-0034 は system mode の
 実装決定より前の 2026-07-04 で、当時は root = `/` が常に実在することだけを理由に対象外として
-いた）。
+いた）。基底の所有を世代バックエンドへ移したのは ADR-0057「世代バックエンドの契約」§6。

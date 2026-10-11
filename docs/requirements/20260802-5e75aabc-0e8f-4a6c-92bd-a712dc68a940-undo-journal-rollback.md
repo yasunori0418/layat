@@ -15,14 +15,19 @@ specification: |
   record one inverse operation in an in-memory undo journal for each filesystem write:
   deletion for a newly placed symlink or copy; re-creation with the old destination
   (captured before the unlink) for a replacement; re-creation with the destination
-  recorded in the previous-generation manifest for a stale-removed link or a PreRemove
+  recorded in the baseline manifest (the last-applied record when one exists, otherwise
+  the current generation of the profile; REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) for a stale-removed link or a PreRemove
   unlink; re-creation of the empty directory for a PreRemove rmdir; and renaming back for
   the aside made by `--recopy` or `--backup`. Once an error occurs, the journal recorded so
-  far SHALL be rolled back in reverse (LIFO) order before the error is returned. The
-  journal SHALL be discarded once the commit through `nix-env --set` has succeeded, a
-  failure of `--set` itself being outside the scope of rollback because an idempotent
-  re-run converges. On the success of the run, the aside made by `--recopy` SHALL be
-  deleted, whereas the aside made by `--backup` SHALL be left in place. Crashes such as
+  far SHALL be rolled back in reverse (LIFO) order before the error is returned. When
+  writing the last-applied record (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) fails, in an
+  apply (the generation-skip path included) or in a rollback, the run SHALL fail and the
+  journal SHALL be rolled back by the same mechanism. The journal SHALL be discarded once
+  the generation commit through the generation backend contract
+  (REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b) has succeeded, a failure of the commit itself
+  being outside the scope of rollback because an idempotent re-run converges. On the
+  success of the run, the aside made by `--recopy` SHALL be deleted, whereas the aside
+  made by `--backup` SHALL be left in place. Crashes such as
   SIGKILL or power loss SHALL be out of scope, the journal existing only in process memory
   with no persistent write-ahead log; in that case the guarantee SHALL continue to rest on
   the generation being left uncommitted and on convergence by idempotent re-run. The drift
@@ -37,13 +42,16 @@ specification_ja: |
   しなければならない（「失敗した apply は FS に痕跡を残さない」）。これは常時有効であり、
   フラグで制御してはならない。そのため engine は FS 書き込みごとにインメモリの undo ジャーナルへ
   逆操作を 1 件記録しなければならない。新規配置 symlink / copy は削除、張替えは unlink 前に捕捉
-  した旧リンク先での symlink 再作成、stale 除去したリンクと PreRemove の unlink は前世代 manifest
-  の記録 dest での symlink 再作成、PreRemove の rmdir は空 dir の再作成、`--recopy` / `--backup`
+  した旧リンク先での symlink 再作成、stale 除去したリンクと PreRemove の unlink は baseline の
+  manifest（last-applied 記録があれば記録、無ければ profile の current 世代。
+  REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）の記録 dest での symlink 再作成、PreRemove の rmdir は空 dir の再作成、`--recopy` / `--backup`
   の rename 退避は退避物の rename back としなければならない。エラーが発生したら、それまでに
   記録したジャーナルを
-  逆順（LIFO）で巻き戻してからエラーを返さなければならない。`nix-env --set`（コミット）が成功した
-  後はジャーナルを破棄しなければならない（`--set` 自体の失敗は冪等再実行で収束するため巻き戻し
-  対象外）。`--recopy` の退避物は成功時に削除しなければならず、`--backup` の退避物は成功時も
+  逆順（LIFO）で巻き戻してからエラーを返さなければならない。apply（世代スキップ経路を含む）
+  と rollback で last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）を書けなければ、
+  run を失敗させ、同じ機構でジャーナルを巻き戻さなければならない。世代バックエンドの契約
+  （REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）越しの世代コミットが成功した後はジャーナルを
+  破棄しなければならない（コミット自体の失敗は冪等再実行で収束するため巻き戻し対象外）。`--recopy` の退避物は成功時に削除しなければならず、`--backup` の退避物は成功時も
   残置しなければならない。クラッシュ（SIGKILL・電源断）は対象外としなければならない
   （ジャーナルはプロセスメモリ上にのみ存在し永続 WAL を持たないため）。この場合は
   「世代未コミット + 冪等再実行で収束」が保証を担う。世代スキップ経路の drift 修復も同じ機構で
@@ -86,6 +94,10 @@ undo ジャーナルへ逆操作を 1 件記録する:
 > **上は原文の写しで、規範は frontmatter が正**。巻き戻し自体が失敗したときの続行と報告は
 > REQ-9fca28c9-d3b1-4ad7-8f24-13b2ec7aeab2、drift 修復経路で Backup 段だけが残ることは REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 の担当。
 > `rollback` の FS 収束を先・ポインタ移動を最後にする順序そのものは REQ-0e341430-17f0-498b-9439-65491652163a の担当。
+>
+> **2026-10-11 追記（ADR-0057）**: 上の写しの「nix-env --set（コミット）」と「`--switch-generation`」は、
+> 世代バックエンドの契約の Commit / Switch と読み替える（`nix-env` は既定実装 nixprofile の内側に閉じる。
+> REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）。ジャーナルを破棄する時点と巻き戻し対象外の範囲は変わらない。
 
 ## 出典
 
@@ -93,3 +105,5 @@ undo ジャーナルへ逆操作を 1 件記録する:
 導入文・コードブロックと、箇条書き第 3・4・5 項。
 
 決定の実体は ADR-0044「apply 途中失敗の完全巻き戻し — インメモリ undo ジャーナル」。
+コミットとポインタ移動を世代バックエンドの契約越しにしたのは ADR-0057「世代バックエンドの契約」、
+last-applied 記録を書けないときに undo ジャーナルで巻き戻すのは ADR-0058「last-applied 記録」§4。

@@ -36,7 +36,7 @@ specification_ja: |
 
 - `home.activation.layat` は `configs` を走査し、**profile ごとに 1 回ずつ**
   `layat apply --manifest <link-farm-N> <name>` を実行する
-- 各起動は profileDir 単位の flock・前世代 diff・保守的 stale 除去・`nix-env --set` が
+- 各起動は profileDir 単位の flock・baseline との diff・保守的 stale 除去・世代コミットが
   **profile ごとに独立して**走る
 - 実行順は `<name>` の**辞書順**で決定的にする（Nix の attrset 走査順と一致・ログの
   再現性のため）
@@ -63,7 +63,7 @@ specification_ja: |
 > が別経路であり、片方の規範が他方を含意しないため、規範としては別立てになる。
 >
 > **本文箇条書き第 2 項に対応する規範文を持たない理由**: 「各起動は profileDir 単位の
-> flock・前世代 diff・保守的 stale 除去・`nix-env --set` が profile ごとに独立して走る」は、
+> flock・baseline との diff・保守的 stale 除去・世代コミットが profile ごとに独立して走る」は、
 > 本 item の「config ごとに 1 回 engine を起動する」と、profileDir 単位の flock を定める
 > REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461・profileDir のキーを定める REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81・世代機構を定める REQ-1be4d678-959c-44d7-a346-44bfd95af56e の
 > 合成から従うため、規範として再掲しない。
