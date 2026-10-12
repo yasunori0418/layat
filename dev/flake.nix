@@ -228,17 +228,8 @@
             ];
             shellHook = ''
               export REPO_ROOT=$(git rev-parse --show-superproject-working-tree --show-toplevel)
-              # mattpocock/skills を .claude/skills/ に dogfood 配置する。競合時は待たず skip する。
+              # mattpocock/skills と dev/skills/ を .claude/skills/ に dogfood 配置する。競合時は待たず skip する。
               layat apply skills -f "$REPO_ROOT/dev" --no-wait
-
-              # dev/skills/（開発中のスキル正本）を .claude/skills/ へ相対 symlink で配置し、編集を即時反映させる。
-              # mkOutOfStoreSymlink は pure eval で自身のチェックアウトの絶対パスを得られないため使わない。
-              # 孤児 symlink の掃除は手動。
-              mkdir -p "$REPO_ROOT/.claude/skills"
-              for d in "$REPO_ROOT"/dev/skills/*/; do
-                [ -d "$d" ] || continue
-                ln -sfn "../../dev/skills/$(basename "$d")" "$REPO_ROOT/.claude/skills/$(basename "$d")"
-              done
             '';
           };
 

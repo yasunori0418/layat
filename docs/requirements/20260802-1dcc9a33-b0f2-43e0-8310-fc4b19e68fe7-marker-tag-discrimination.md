@@ -7,13 +7,15 @@ derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
-  Markers (`mkOutOfStoreSymlink` and the root markers) SHALL carry a `_layatMarker`
+  Markers (`mkOutOfStoreSymlink`, `mkRootRelativeSymlink` and the root markers) SHALL
+  carry a `_layatMarker`
   discriminator tag so that a custom optionType `check` can distinguish them from a
   derivation. `_layatMarker` SHALL stay entirely inside Nix evaluation and SHALL NOT leak
   into `manifest.json`; what crosses into the Go contract SHALL be the clean enums
   `srcKind` and `rootKind`.
 specification_ja: |
-  marker（`mkOutOfStoreSymlink` / root マーカー）は `_layatMarker` 判別タグを持ち、
+  marker（`mkOutOfStoreSymlink` / `mkRootRelativeSymlink` / root マーカー）は
+  `_layatMarker` 判別タグを持ち、
   custom optionType の `check` で derivation と判別できなければならない。`_layatMarker` は
   Nix 評価内で完結させ、`manifest.json` へ漏らしてはならない。Go 契約へ渡すのは
   `srcKind` / `rootKind` の clean enum でなければならない。
@@ -22,7 +24,7 @@ specification_ja: |
 
 ## 仕様
 
-`src` の `set`（derivation）と marker（`mkOutOfStoreSymlink`）はどちらも attrset で
+`src` の `set`（derivation）と marker（`mkOutOfStoreSymlink` / `mkRootRelativeSymlink`）はどちらも attrset で
 構造判別できないため、marker には `_layatMarker` 判別タグを持たせ custom optionType の
 `check` で判別する。
 

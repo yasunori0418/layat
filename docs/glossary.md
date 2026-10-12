@@ -97,7 +97,8 @@ The core, default placement: a symlink whose destination is a Nix store path. Th
 - **Avoid**: confusing it with out-of-store symlink; calling it a "copy".
 
 ### out-of-store symlink
-A live symlink to a local absolute path, opted into only via `layat.lib.mkOutOfStoreSymlink "/abs/path"` (for live editing of dotfiles under development). An explicit escape hatch, not a first-class feature.
+A live symlink to a local path, opted into only via an explicit marker. An explicit escape hatch, not a first-class feature. There are two markers. `layat.lib.mkOutOfStoreSymlink "/abs/path"` points to a local absolute path (for live editing of dotfiles under development).
+For in-repo trees, the root-relative marker `layat.lib.mkRootRelativeSymlink "rel/path"` takes a path relative to the placement root; the engine resolves it against the root at runtime and creates a relative link from the target's parent.
 - **Avoid**: treating it as default behavior; producing it via implicit branching on the type of `src`.
 
 ## State management

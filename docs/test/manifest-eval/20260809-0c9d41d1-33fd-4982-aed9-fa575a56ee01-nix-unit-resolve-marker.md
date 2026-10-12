@@ -11,22 +11,28 @@ covers:
 ## 対象
 
 `tests/nix-unit/resolve-marker.nix`（TP-403c55c7-d996-4951-8e6b-c3a7dddd387c のテスト seam `layat.__internal.resolveEntry`
-と `lib/types.nix` の `isRootMarker` / `isOutOfStoreMarker` を直接叩く。manifest 全体を介さず
-単一 entry の src 種別判定・文字列化だけを見る最小の境界）
+と `lib/types.nix` の `isRootMarker` / `isOutOfStoreMarker` / `isRootRelativeMarker` を直接叩く。manifest 全体を介さず
+単一 entry の src 種別判定・文字列化だけを見る最小の境界。root 相対 marker だけは、
+`normalizeManifest` を通した entries の形も 1 件確かめる）
 
 ## 検証内容
 
 src 解決については、`srcKind` 単体・`src` 単体・entry 全体の shape という 3 段のアサートを
-store / out-of-store それぞれに重ねて置く。どの段で落ちたかで、種別判定・文字列化・余分な
+store / out-of-store / root 相対それぞれに重ねて置く。どの段で落ちたかで、種別判定・文字列化・余分な
 キーの混入のどれが壊れたかを切り分けられるようにするため。
 
 - **store src**: `srcKind = "store"`、`src` が store パスへ文字列化、entry 全体が
   5 フィールドに exact 一致
 - **out-of-store marker**: `srcKind = "outOfStore"`、`src` が marker の絶対パス、entry 全体が
   exact 一致（`method = "copy"` を明示した形で）
-- **判別タグの非漏洩**: store / out-of-store のどちらの解決結果にも `_layatMarker` が無いこと
-- **`isOutOfStoreMarker`**: out-of-store marker には true、root マーカー・store-backed な
-  attrset には false
+- **root 相対 marker**: `mkRootRelativeSymlink` が `_layatMarker = "rootRelative"` と `path` だけを
+  持つこと、`srcKind = "rootRelative"`、`src` が marker の root 相対パスのまま、entry 全体が
+  exact 一致。`normalizeManifest` を通した entries でも同じ形に正規化されること
+- **判別タグの非漏洩**: store / out-of-store / root 相対のいずれの解決結果にも `_layatMarker` が無いこと
+- **`isOutOfStoreMarker`**: out-of-store marker には true、root マーカー・root 相対 marker・
+  store-backed な attrset には false
+- **`isRootRelativeMarker`**: root 相対 marker には true、out-of-store marker・root マーカー・
+  store-backed な attrset には false
 - **`isRootMarker`**: projectRoot / homeRoot / systemRoot には true、out-of-store marker と
   絶対パス文字列には false
 

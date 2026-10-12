@@ -5,6 +5,7 @@ name: "internal/engine/preflight_test.go — out-of-store 配置直前検査の�
 target: "internal/engine/preflight_test.go"
 covers:
   - "TC-8435052a-5dcc-49e2-ac26-82f645cb6890"
+  - "TC-f1da084f-c0f0-4aba-85d9-f273c04eb373"
 ---
 # CASE-f3a5fee2-1981-42c3-ba5b-81b75fd7a3ad: preflight_test.go
 
@@ -21,3 +22,6 @@ covers:
 - **非 ENOENT の分岐**: 検索権限を落とした親ディレクトリで誘発した EACCES が、「リンク先が
   存在しない」ではなく「リンク先を検査できない」として報告されること（root では skip）
 - **原因の保存**: 返るエラーが元の権限エラーを包んでおり、`errors.Is` で辿れること
+- **root 相対の解決基準**: root 相対の entry の配置元（部分パスを含む）を作業ディレクトリでは
+  なく配置 root の下で探し、存在すれば通すこと。不在ならエラーで止め、本文に target と root で
+  解決した絶対パスの両方が載ること。非 ENOENT のエラーを不在と同一視しないことも同様に確かめる

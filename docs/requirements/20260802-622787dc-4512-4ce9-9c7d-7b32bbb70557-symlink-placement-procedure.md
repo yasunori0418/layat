@@ -14,7 +14,10 @@ specification: |
   placed by hand — SHALL be replaced as well but SHALL emit a warning, the last writer
   thereby winning. It SHALL then create a symlink at `<root>/<target>` pointing at
   `<placement source>/<subpath>`, the placement source being the Nix store path for a
-  store link and the absolute path held by the marker for an out-of-store symlink. The
+  store link and the absolute path held by the marker for an out-of-store symlink
+  (`srcKind: "outOfStore"`). For a root-relative symlink (`srcKind: "rootRelative"`) the
+  link SHALL instead point at the relative path from the directory of the target to
+  `<src>/<subpath>`, computed as specified by DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296. The
   processing SHALL be the same whether the subpath denotes a file or a directory. Two
   different configs (profiles) aiming at the same target SHALL be treated as something not
   meant to happen; the last writer SHALL be tolerated and the overwriting of a foreign
@@ -28,8 +31,10 @@ specification_ja: |
   （foreign な）symlink——他 layat profile / 他ツール / 手動——も置き換えるが warning を出す
   （後勝ち）。そのうえで `<配置元>/<subpath>` を
   指す symlink を `<root>/<target>` に作成しなければならない。配置元は store link では Nix
-  ストアパス、out-of-store symlink では marker の絶対パスでなければならない。subpath が
-  ファイル・
+  ストアパス、out-of-store symlink（`srcKind: "outOfStore"`）では marker の絶対パスで
+  なければならない。root 相対の symlink（`srcKind: "rootRelative"`）では、target の親
+  ディレクトリから `<src>/<subpath>` への相対パスを指さなければならない（計算は
+  DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296 の担当）。subpath がファイル・
   ディレクトリのいずれでも処理は同じでなければならない。別 config（別 profile）が同一
   target を狙うことは起きない前提として扱わなければならず、後勝ちを許容しつつ foreign
   symlink の上書きは warning で可視化しなければならない。例外として、同一 entrypoint の
@@ -48,6 +53,7 @@ specification_ja: |
 3. <配置元>/<subpath> を指す symlink を <root>/<target> に作成（os.Symlink）
    - store link:        配置元 = Nix ストアパス
    - out-of-store:      配置元 = marker の絶対パス
+   - root 相対:         target の親から <src>/<subpath> への相対パス（→ DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296）
 ```
 
 - subpath がファイル・ディレクトリどちらでも同じ処理
@@ -68,4 +74,5 @@ specification_ja: |
 第 3・4 項。
 
 決定の実体は ADR-0015「実装前レビューで surfaced した残セマンティクス」の foreign symlink
-warning と cross-config 衝突（後勝ち）。
+warning と cross-config 衝突（後勝ち）。root 相対の配置元は ADR-0059「root 相対 out-of-store
+マーカー」が加えた。

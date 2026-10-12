@@ -289,16 +289,25 @@ guarantees reproducibility). Out-of-store is opt-in via an explicit marker.
 | `builtins.path { path = /home/...; name = "..."; }` | Nix store (local copied in) | a local tree via the store |
 | `set` (e.g. `pkgs.fetchFromGitHub { ... }`) | Nix store (immutable) | version-pinned external repo |
 | `marker` (`layat.lib.mkOutOfStoreSymlink "/abs/path"`) | local FS (live) | local dotfiles under development |
+| `marker` (`layat.lib.mkRootRelativeSymlink "rel/path"`) | local FS under the placement root (live, relative link) | in-repo trees placed within the same checkout |
 
 ```nix
 src = inputs.myrepo;                                    # store link
 src = pkgs.fetchFromGitHub { owner = "..."; repo = "..."; rev = "..."; hash = "..."; };
 src = builtins.path { path = /path/to/dotfiles; name = "dotfiles"; };
 src = layat.lib.mkOutOfStoreSymlink "/path/to/dotfiles"; # out-of-store (live), explicit
+src = layat.lib.mkRootRelativeSymlink "dev/skills/foo";  # out-of-store (live), relative to the placement root
 
 # Removed: passing a bare string for implicit out-of-store is not supported.
 # src = "/path/to/dotfiles";   # error
 ```
+
+`mkRootRelativeSymlink` takes a path relative to the placement root that the engine resolves
+at runtime (project / home / fixed, including `--root`). The engine links `target` to
+`<root>/<src>/<subpath>` with a relative path from the target's parent (e.g.
+`.claude/skills/foo` → `../../dev/skills/foo`), so the link survives moving the checkout.
+Absolute paths, `..` escapes, `method = "copy"`, and entries whose `<src>/<subpath>` equals
+`target` or is an ancestor or descendant of it are rejected at evaluation.
 
 ### `subpath` — default `"."`
 
@@ -327,7 +336,7 @@ Selects the placement kind:
 | `method` | `src` kind | Behavior | Generations |
 |---|---|---|---|
 | `"symlink"` | path / set | symlink into the Nix store (read-only) | yes (profile) |
-| `"symlink"` | marker | out-of-store symlink to a local path (live) | yes (link target only) |
+| `"symlink"` | marker | out-of-store symlink to a local path or a root-relative path (live) | yes (link target only) |
 | `"copy"` | path / set | **place-once** copy (writable, user-managed) | **no** |
 | `"copy"` | marker | evaluation-time error (contradictory) | — |
 

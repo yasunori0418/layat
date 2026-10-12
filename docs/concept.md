@@ -138,6 +138,7 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 - [ADR-0031](adr/0031-silent-on-success-output-discipline.md) — 成功時はデフォルト沈黙。`-v` で opt-in 表示
 - [ADR-0057](adr/0057-generation-backend-contract.md) — 世代操作を世代バックエンドの契約越しにし、engine から nix-env と profile 基底の固定を外す
 - [ADR-0058](adr/0058-last-applied-record.md) — 最後に配置した manifest を last-applied 記録に持ち、stale 除去の baseline を世代の概念から FS の事実へ移す
+- [ADR-0059](adr/0059-root-relative-src-marker.md) — 配置 root 相対の src を `mkRootRelativeSymlink` で宣言し、engine が target 起点の相対 symlink として張る
 
 ### 名前の由来
 

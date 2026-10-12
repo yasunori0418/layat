@@ -8,6 +8,7 @@ let
 
   # Marker discrimination (distinguished by the `_layatMarker` tag attached by `out-of-store.nix`).
   isOutOfStoreMarker = x: isAttrs x && (x._layatMarker or null) == "outOfStore";
+  isRootRelativeMarker = x: isAttrs x && (x._layatMarker or null) == "rootRelative";
   isRootMarker = x: isAttrs x && (x._layatMarker or null) == "root";
 
   # store-backed src: path / derivation / flake input (`{ outPath = …; }`). Bare strings are rejected.
@@ -17,11 +18,11 @@ let
     || lib.isDerivation x
     || (isAttrs x && x ? outPath && (x._layatMarker or null) == null);
 
-  # srcType = either storeBacked outOfStoreMarker.
+  # srcType = either storeBacked (either outOfStoreMarker rootRelativeMarker).
   srcType = types.mkOptionType {
     name = "layatSrc";
-    description = "store-backed source (path / derivation / flake input) or out-of-store marker";
-    check = x: isStoreBacked x || isOutOfStoreMarker x;
+    description = "store-backed source (path / derivation / flake input), out-of-store marker or root-relative marker";
+    check = x: isStoreBacked x || isOutOfStoreMarker x || isRootRelativeMarker x;
     merge = mergeEqualOption;
   };
 
@@ -40,7 +41,7 @@ let
       options = {
         src = mkOption {
           type = srcType;
-          description = "Placement source. A store-backed value (path / set) or an out-of-store marker.";
+          description = "Placement source. A store-backed value (path / set) or an out-of-store / root-relative marker.";
         };
         subpath = mkOption {
           type = types.str;
@@ -70,6 +71,7 @@ in
 {
   inherit
     isOutOfStoreMarker
+    isRootRelativeMarker
     isRootMarker
     isStoreBacked
     srcType

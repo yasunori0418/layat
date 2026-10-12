@@ -23,8 +23,9 @@ const FileName = "manifest.json"
 
 // Enums for src kind, placement method, and root kind.
 const (
-	SrcKindStore      = "store"
-	SrcKindOutOfStore = "outOfStore"
+	SrcKindStore        = "store"
+	SrcKindOutOfStore   = "outOfStore"
+	SrcKindRootRelative = "rootRelative"
 
 	MethodSymlink = "symlink"
 	MethodCopy    = "copy"
@@ -96,10 +97,26 @@ func (m *Manifest) validate() error {
 	if m.Root.RootKind == "" {
 		return fmt.Errorf("root.rootKind is empty")
 	}
-	// Only fixed carries a path; beside the other kinds it would be silently ignored. An
-	// unknown kind reaches this check too; judging the kind is left to root resolution.
+	switch m.Root.RootKind {
+	case RootKindProject, RootKindHome, RootKindSystem, RootKindFixed:
+	default:
+		return fmt.Errorf("unknown root.rootKind %q", m.Root.RootKind)
+	}
+	// Only fixed carries a path; beside the other kinds it would be silently ignored.
 	if m.Root.RootKind != RootKindFixed && m.Root.Root != "" {
 		return fmt.Errorf("root.root must be omitted: it is only allowed when rootKind is %q, got %q", RootKindFixed, m.Root.RootKind)
+	}
+	for _, e := range m.Entries {
+		switch e.SrcKind {
+		case SrcKindStore, SrcKindOutOfStore, SrcKindRootRelative:
+		default:
+			return fmt.Errorf("unknown srcKind %q (target: %s)", e.SrcKind, e.Target)
+		}
+		switch e.Method {
+		case MethodSymlink, MethodCopy:
+		default:
+			return fmt.Errorf("unknown method %q (target: %s)", e.Method, e.Target)
+		}
 	}
 	return nil
 }

@@ -31,6 +31,23 @@ let
     isUnsafe = p: lib.hasPrefix "/" p || escapesBase lib p;
   };
 
+  # Path components with `.` dropped and `..` folded into its parent (an excess `..` is dropped).
+  relComponents =
+    lib: p:
+    lib.foldl' (
+      acc: c: if c == ".." then lib.take (lib.max 0 (lib.length acc - 1)) acc else acc ++ [ c ]
+    ) [ ] (lib.filter (c: c != "" && c != ".") (lib.splitString "/" p));
+
+  # Whether two relative paths are equal or one is an ancestor of the other, per component.
+  pathsOverlap =
+    lib: a: b:
+    let
+      ca = relComponents lib a;
+      cb = relComponents lib b;
+      isPrefix = x: y: lib.take (lib.length x) y == x;
+    in
+    isPrefix ca cb || isPrefix cb ca;
+
   # GC anchor name for the symlink farm: sha256 short hex of target.
   anchorName = lib: target: lib.substring 0 32 (builtins.hashString "sha256" target);
 
@@ -43,6 +60,11 @@ let
         if t.isOutOfStoreMarker e.src then
           {
             srcKind = "outOfStore";
+            src = e.src.path;
+          }
+        else if t.isRootRelativeMarker e.src then
+          {
+            srcKind = "rootRelative";
             src = e.src.path;
           }
         else
@@ -70,6 +92,7 @@ in
   inherit
     escapesBase
     pathChecks
+    pathsOverlap
     anchorName
     resolveEntry
     farmEntries

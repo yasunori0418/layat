@@ -109,6 +109,13 @@ func outOfStoreEntry(src, subpath, target string) manifest.Entry {
 	}
 }
 
+// rootRelativeEntry is a symlink entry whose src is relative to the placement root.
+func rootRelativeEntry(src, subpath, target string) manifest.Entry {
+	e := outOfStoreEntry(src, subpath, target)
+	e.SrcKind = manifest.SrcKindRootRelative
+	return e
+}
+
 func copyEntry(src, subpath, target string) manifest.Entry {
 	e := storeEntry(src, subpath, target)
 	e.Method = manifest.MethodCopy
@@ -776,6 +783,62 @@ func TestApplyOutOfStoreMissingPathError(t *testing.T) {
 	// The absence check is closed before placement, so the target is not created.
 	if _, err := os.Lstat(filepath.Join(root, ".config", "nvim")); !os.IsNotExist(err) {
 		t.Errorf("should not place on missing path: lstat err = %v", err)
+	}
+}
+
+// TestApplyRootRelativeLifecycle places a root-relative entry as a target-relative symlink, keeps
+// it untouched when a later generation adds an entry, and removes it once the entry is dropped.
+func TestApplyRootRelativeLifecycle(t *testing.T) {
+	root := realTempDir(t)
+	state := realTempDir(t)
+	for _, d := range []string{"dev/skills/x", "dev/skills/y"} {
+		if err := os.MkdirAll(filepath.Join(root, d), 0o755); err != nil {
+			t.Fatal(err)
+		}
+	}
+	x := rootRelativeEntry("dev/skills/x", ".", ".claude/skills/x")
+	y := rootRelativeEntry("dev/skills/y", ".", ".claude/skills/y")
+	tgt := filepath.Join(root, ".claude", "skills", "x")
+	fake := &generation.Fake{}
+	apply := func(m manifest.Manifest) (*Result, []string) {
+		t.Helper()
+		var warns []string
+		res, err := Apply(Options{
+			LinkFarm: writeLinkFarm(t, m), Name: "c", RootOverride: root, StateDir: state,
+			Backend: fake, Warnf: collectWarnings(&warns),
+		})
+		if err != nil {
+			t.Fatalf("Apply: %v", err)
+		}
+		return res, warns
+	}
+	assertLink := func(phase string) {
+		t.Helper()
+		if dest, err := os.Readlink(tgt); err != nil || dest != "../../dev/skills/x" {
+			t.Fatalf("%s: readlink = %q, %v; want ../../dev/skills/x", phase, dest, err)
+		}
+		if _, err := os.Stat(tgt); err != nil {
+			t.Errorf("%s: link should resolve under root: %v", phase, err)
+		}
+	}
+
+	if res, _ := apply(projectManifest(x)); len(res.Placed) != 1 || res.Placed[0] != ".claude/skills/x" {
+		t.Errorf("first apply Placed = %v", res.Placed)
+	}
+	assertLink("first apply")
+
+	// A different link-farm skips no generation, so x goes through the planner again.
+	if _, warns := apply(projectManifest(x, y)); len(warns) != 0 {
+		t.Errorf("re-apply should not warn: %v", warns)
+	}
+	assertLink("re-apply")
+
+	res, _ := apply(projectManifest(y))
+	if _, err := os.Lstat(tgt); !os.IsNotExist(err) {
+		t.Errorf("dropped root-relative link should be removed: lstat err = %v", err)
+	}
+	if len(res.Removed) != 1 || res.Removed[0] != ".claude/skills/x" {
+		t.Errorf("Removed = %v, want [.claude/skills/x]", res.Removed)
 	}
 }
 

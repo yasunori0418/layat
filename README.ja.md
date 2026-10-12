@@ -246,16 +246,24 @@ entry submodule は **strict**(未知のキーを拒否する)。typo や旧名(
 | `builtins.path { path = /home/...; name = "..."; }` | Nix store(ローカルを取り込み) | store 経由のローカル木 |
 | `set`(例：`pkgs.fetchFromGitHub { ... }`) | Nix store(不変) | バージョン固定の外部リポジトリ |
 | `marker`(`layat.lib.mkOutOfStoreSymlink "/abs/path"`) | ローカル FS(ライブ) | 開発中のローカル dotfiles |
+| `marker`(`layat.lib.mkRootRelativeSymlink "rel/path"`) | 配置 root 配下のローカル FS(ライブ・相対リンク) | 同じチェックアウト内へ配置するリポジトリ内の木 |
 
 ```nix
 src = inputs.myrepo;                                    # store link
 src = pkgs.fetchFromGitHub { owner = "..."; repo = "..."; rev = "..."; hash = "..."; };
 src = builtins.path { path = /path/to/dotfiles; name = "dotfiles"; };
 src = layat.lib.mkOutOfStoreSymlink "/path/to/dotfiles"; # out-of-store(ライブ)・明示
+src = layat.lib.mkRootRelativeSymlink "dev/skills/foo";  # out-of-store(ライブ)・配置 root 相対
 
 # 廃止: 裸の文字列で暗黙の out-of-store にするのはサポートしない。
 # src = "/path/to/dotfiles";   # エラー
 ```
+
+`mkRootRelativeSymlink` は、engine が実行時に解決する配置 root(project / home / fixed。`--root` の
+上書きを含む)からの相対パスを受け取る。engine は `target` から `<root>/<src>/<subpath>` へ、target の
+親を起点とする相対パスでリンクを張る(例: `.claude/skills/foo` → `../../dev/skills/foo`)。そのため
+チェックアウトを移動してもリンクは有効なまま残る。絶対パス・`..` による脱出・`method = "copy"` との
+併用・`<src>/<subpath>` と `target` の一方が他方と一致するか祖先になる指定は、評価時に拒否する。
 
 ### `subpath` — デフォルト `"."`
 
@@ -280,7 +288,7 @@ subpath = "themes/dark.json";   # 単一ファイル
 | `method` | `src` の種類 | 挙動 | 世代 |
 |---|---|---|---|
 | `"symlink"` | path / set | Nix store への symlink(read-only) | あり(profile) |
-| `"symlink"` | marker | ローカルパスへの out-of-store symlink(ライブ) | あり(link 先のみ) |
+| `"symlink"` | marker | ローカルパスまたは root 相対パスへの out-of-store symlink(ライブ) | あり(link 先のみ) |
 | `"copy"` | path / set | **一度だけ配置する** copy(書き込み可・ユーザー管理) | **なし** |
 | `"copy"` | marker | 評価時エラー(矛盾) | — |
 

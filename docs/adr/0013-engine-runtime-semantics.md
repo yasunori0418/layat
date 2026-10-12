@@ -3,7 +3,7 @@ id: "ADR-0013"
 type: adr
 name: "engine 実行時セマンティクスの細目を確定する（manifest v1 / flock / --all / copy+marker / systemRoot / gitignore / roothash）"
 status: 採用
-status_note: "2026-06-14 拡張: 配置セマンティクスに foreign symlink warning・祖先 symlink error を追加 → ADR-0015"
+status_note: "2026-06-14 拡張: 配置セマンティクスに foreign symlink warning・祖先 symlink error を追加 → ADR-0015／2026-10-12 拡張: `srcKind` に `\"rootRelative\"` を追加し copy 併用の eval 時エラーを適用 → ADR-0059"
 origin: "ドキュメント計画段階のレビューで surfaced した「実装前に決めておくべき」細目の束"
 justifies:
   - "REQ-16faf428-77f3-492f-b858-222c5274cbf7"
@@ -31,9 +31,9 @@ references:
 ---
 # ADR-0013: engine 実行時セマンティクスの細目を確定する（manifest v1 / flock / --all / copy+marker / systemRoot / gitignore / roothash）
 
-- ステータス: 採用（2026-06-14 拡張: 配置セマンティクスに foreign symlink warning・祖先 symlink error を追加 → ADR-0015）
+- ステータス: 採用（2026-06-14 拡張: 配置セマンティクスに foreign symlink warning・祖先 symlink error を追加 → ADR-0015／2026-10-12 拡張: `srcKind` に `"rootRelative"` を追加し copy 併用の eval 時エラーを適用 → ADR-0059）
 - 日付: 2026-06-13
-- 関連: ADR-0002, ADR-0005, ADR-0006, ADR-0007, ADR-0010, ADR-0011, ADR-0015, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`
+- 関連: ADR-0002, ADR-0005, ADR-0006, ADR-0007, ADR-0010, ADR-0011, ADR-0015, ADR-0059, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`
 - 起点: ドキュメント計画段階のレビューで surfaced した「実装前に決めておくべき」細目の束
 
 > **2026-06-14 拡張（ADR-0015）**: 本 ADR の配置 / flock セマンティクスに次を追加した。(a) cross-config（別 profile）の同一 target は
@@ -57,6 +57,11 @@ references:
 > system mode を実装する。`systemRoot` を API に残した判断自体は不変で、その seam が実装に進んだ。`normalizeManifest` は
 > `rootKind = "system"` を通し、engine は root = `/` へ解決・変更系操作で euid 0 を検査・profile 状態は
 > `/nix/var/nix/profiles/layat` 配下に置く（→ ADR-0036）。
+>
+> **2026-10-12 改訂注記（ADR-0059）**: 本 ADR §1 の `schemaVersion = 1`・`_layatMarker` を manifest に漏らさないこと・
+> out-of-store src は farm アンカーを持たないことは不変。ただし `srcKind` の列挙に `"rootRelative"`（`src` は配置 root 相対の
+> 文字列）が加わり、engine の `validate()` が `srcKind` / `method` / `rootKind` の未知値を明示エラーにする。§4 の
+> 「copy + out-of-store marker は eval 時エラー」は root 相対マーカー（`mkRootRelativeSymlink`）にも同じく適用する（→ ADR-0059）。
 
 ## 背景
 
