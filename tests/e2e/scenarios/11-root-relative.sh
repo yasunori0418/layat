@@ -88,6 +88,8 @@ assert_symlink "$ALT/.out/sub" "../assets/skills/demo"
 assert_file_eq "$ALT/.out/sub/SKILL.md" "ALTBODY"
 assert_symlink "$PROJ/.claude/skills/demo" "../../assets/skills/demo"
 assert_file_eq "$PROJ/.claude/skills/demo/SKILL.md" "DEMOBODY"
+assert_symlink "$PROJ/.out/sub" "../assets/skills/demo"
+assert_file_eq "$PROJ/.out/sub/SKILL.md" "DEMOBODY"
 
 e2e_step "リポジトリを移動しても readlink は不変で内容へ到達できる"
 MOVED="$E2E_WORK/moved"
