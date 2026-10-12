@@ -145,6 +145,31 @@ in
     expectedError.msg = "overlaps target";
   };
 
+  # subpath を省いた entry のメッセージは src をそのまま出し、既定値 "." を "/." として付けない。
+  testRootRelativeOverlapMessageOmitsDefaultSubpath = {
+    expr =
+      (norm layat.projectRoot {
+        ".claude/x" = {
+          src = layat.mkRootRelativeSymlink ".claude";
+        };
+      }).entries;
+    expectedError.type = "ThrownError";
+    expectedError.msg = "other\\): \\.claude \\(target: \\.claude/x\\)";
+  };
+
+  # subpath 付きの entry のメッセージは src と subpath を "/" で繋いだ形で出す。
+  testRootRelativeOverlapMessageJoinsSubpath = {
+    expr =
+      (norm layat.projectRoot {
+        ".claude" = {
+          src = layat.mkRootRelativeSymlink ".claude";
+          subpath = "skills/x";
+        };
+      }).entries;
+    expectedError.type = "ThrownError";
+    expectedError.msg = "other\\): \\.claude/skills/x \\(target: \\.claude\\)";
+  };
+
   # 先頭の文字列が一致するだけの兄弟パスは重なりではない（コンポーネント単位で比較する）。
   testRootRelativeSiblingPrefixAccepted = {
     expr =

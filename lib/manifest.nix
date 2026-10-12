@@ -46,6 +46,9 @@ let
 
       targets = map (e: e.target) normEntries;
 
+      # Path shown for a root-relative src in messages; the default subpath "." is not appended.
+      rootRelativeSrcPath = e: if e.subpath == "." then e.src else "${e.src}/${e.subpath}";
+
       # ---- Cross-field / path validation ----
       assertions = lib.concatLists [
         # systemRoot is not implemented.
@@ -72,7 +75,7 @@ let
         (map
           (
             e:
-            "layat: root-relative src overlaps target (equal, or one contains the other): ${e.src}/${e.subpath} (target: ${e.target})"
+            "layat: root-relative src overlaps target (equal, or one contains the other): ${rootRelativeSrcPath e} (target: ${e.target})"
           )
           (
             lib.filter (

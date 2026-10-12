@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # root 相対 out-of-store: mkRootRelativeSymlink の entry が target 起点の相対リンクで張られ、
-# 再 apply の冪等性・リポジトリ移動後の到達性と移動先での再 apply・entry 削除時の stale 除去を満たすことをアサート。
+# 再 apply の冪等性・--root 上書き後の root での実在判定と配置・リポジトリ移動後の到達性と移動先での再 apply・
+# entry 削除時の stale 除去を満たすことをアサート。
 set -euo pipefail
 source "$(dirname "$0")/../lib.sh"
 e2e_isolate
@@ -57,6 +58,38 @@ else
 fi
 assert_symlink "$PROJ/.claude/skills/demo" "../../assets/skills/demo"
 assert_symlink "$PROJ/.out/sub" "../assets/skills/demo"
+
+e2e_step "--root 上書き: 上書き先に src が無ければ上書き先のパスを名指しして停止し、何も置かない"
+ALT="$E2E_WORK/alt"
+mkdir -p "$ALT"
+ALT_ERR="$E2E_WORK/alt.err"
+alt_code=0
+layat apply docs --root "$ALT" 2>"$ALT_ERR" || alt_code=$?
+if [ "$alt_code" -ne 0 ]; then
+	e2e_pass "exit $alt_code: 上書き先に src が無い apply は失敗する"
+else
+	e2e_fail "exit 0 (期待 非 0): 上書き先に src が無いのに apply が成功した"
+fi
+if grep -qF "root-relative link source does not exist" "$ALT_ERR" && grep -qF "$ALT/assets/skills/demo" "$ALT_ERR"; then
+	e2e_pass "エラーが上書き先の src パスを名指しする"
+else
+	e2e_fail "エラーが上書き先の src パスを名指ししない: $(cat "$ALT_ERR")"
+fi
+assert_absent "$ALT/.claude/skills/demo"
+assert_absent "$ALT/.out/sub"
+
+e2e_step "--root 上書き: 上書き先に src があれば上書き先の下に相対リンクで張られ、元の root は変わらない"
+mkdir -p "$ALT/assets/skills/demo"
+echo "ALTBODY" >"$ALT/assets/skills/demo/SKILL.md"
+layat apply docs --root "$ALT"
+assert_symlink "$ALT/.claude/skills/demo" "../../assets/skills/demo"
+assert_file_eq "$ALT/.claude/skills/demo/SKILL.md" "ALTBODY"
+assert_symlink "$ALT/.out/sub" "../assets/skills/demo"
+assert_file_eq "$ALT/.out/sub/SKILL.md" "ALTBODY"
+assert_symlink "$PROJ/.claude/skills/demo" "../../assets/skills/demo"
+assert_file_eq "$PROJ/.claude/skills/demo/SKILL.md" "DEMOBODY"
+assert_symlink "$PROJ/.out/sub" "../assets/skills/demo"
+assert_file_eq "$PROJ/.out/sub/SKILL.md" "DEMOBODY"
 
 e2e_step "リポジトリを移動しても readlink は不変で内容へ到達できる"
 MOVED="$E2E_WORK/moved"

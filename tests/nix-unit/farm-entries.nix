@@ -8,8 +8,8 @@ let
   };
   norm = root: entries: layat.normalizeManifest { inherit lib root entries; };
 
-  # store×symlink（採用）/ store×copy（除外）/ out-of-store×symlink（除外）が混在する manifest。
-  # 抽出テストと配線テストが同じ入力を見るよう、entries を 1 箇所で宣言する。
+  # store×symlink（採用）/ store×copy（除外）/ out-of-store×symlink（除外）/ root 相対×symlink（除外）が
+  # 混在する manifest。抽出テストと配線テストが同じ入力を見るよう、entries を 1 箇所で宣言する。
   mixedEntries = {
     ".config/copy" = {
       src = fakeSrc;
@@ -17,6 +17,9 @@ let
     };
     ".config/out" = {
       src = layat.mkOutOfStoreSymlink "/home/me/dotfiles/x";
+    };
+    ".config/rr" = {
+      src = layat.mkRootRelativeSymlink "dev/x";
     };
     ".config/sym" = {
       src = fakeSrc;
@@ -27,7 +30,7 @@ let
   };
 
   # normalizeManifest は target 辞書順で配列化するため mixed.entries の順は
-  # [".config/copy", ".config/out", ".config/sym", ".config/sym2"]。
+  # [".config/copy", ".config/out", ".config/rr", ".config/sym", ".config/sym2"]。
   mixed = norm layat.projectRoot mixedEntries;
 
   farm = layat.__internal.farmEntries lib mixed.entries;
@@ -57,7 +60,7 @@ let
     }).buildCommand;
 in
 {
-  # farmEntries は store×symlink のみを採用し、copy / out-of-store を除外する。
+  # farmEntries は store×symlink のみを採用し、copy / out-of-store / root 相対を除外する。
   testFarmEntriesIncludesOnlyStoreSymlink = {
     expr = map (e: e.target) farm;
     expected = [
@@ -66,7 +69,7 @@ in
     ];
   };
 
-  # store×symlink が皆無なら farmEntries は空（copy / out-of-store だけではアンカーを持たない）。
+  # store×symlink が皆無なら farmEntries は空（copy / out-of-store / root 相対だけではアンカーを持たない）。
   testFarmEntriesEmptyWhenNoStoreSymlink = {
     expr =
       layat.__internal.farmEntries lib
@@ -77,6 +80,9 @@ in
           };
           ".config/out" = {
             src = layat.mkOutOfStoreSymlink "/home/me/dotfiles/x";
+          };
+          ".config/rr" = {
+            src = layat.mkRootRelativeSymlink "dev/x";
           };
         }).entries;
     expected = [ ];
