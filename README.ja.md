@@ -263,7 +263,7 @@ src = layat.lib.mkRootRelativeSymlink "dev/skills/foo";  # out-of-store(ライ�
 上書きを含む)からの相対パスを受け取る。engine は `target` から `<root>/<src>/<subpath>` へ、target の
 親を起点とする相対パスでリンクを張る(例: `.claude/skills/foo` → `../../dev/skills/foo`)。そのため
 チェックアウトを移動してもリンクは有効なまま残る。絶対パス・`..` による脱出・`method = "copy"` との
-併用・src と `target` の一方が他方と一致するか祖先になる指定は、評価時に拒否する。
+併用・`<src>/<subpath>` と `target` の一方が他方と一致するか祖先になる指定は、評価時に拒否する。
 
 ### `subpath` — デフォルト `"."`
 

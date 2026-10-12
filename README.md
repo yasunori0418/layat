@@ -306,8 +306,8 @@ src = layat.lib.mkRootRelativeSymlink "dev/skills/foo";  # out-of-store (live), 
 at runtime (project / home / fixed, including `--root`). The engine links `target` to
 `<root>/<src>/<subpath>` with a relative path from the target's parent (e.g.
 `.claude/skills/foo` → `../../dev/skills/foo`), so the link survives moving the checkout.
-Absolute paths, `..` escapes, `method = "copy"`, and a source that equals or contains
-`target` (or vice versa) are rejected at evaluation.
+Absolute paths, `..` escapes, `method = "copy"`, and entries whose `<src>/<subpath>` equals
+`target` or is an ancestor or descendant of it are rejected at evaluation.
 
 ### `subpath` — default `"."`
 
