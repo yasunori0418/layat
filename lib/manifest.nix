@@ -56,6 +56,10 @@ let
         (map (
           e: "layat: method = \"copy\" cannot be combined with an out-of-store marker (target: ${e.target})"
         ) (lib.filter (e: e.method == "copy" && e.srcKind == "outOfStore") normEntries))
+        # An out-of-store marker path must be absolute.
+        (map (e: "layat: out-of-store path must be absolute (got: ${e.src}; target: ${e.target})") (
+          lib.filter (e: e.srcKind == "outOfStore" && !(lib.hasPrefix "/" e.src)) normEntries
+        ))
         # Two keys must not resolve to the same target.
         (lib.optional (
           lib.length targets != lib.length (lib.unique targets)
