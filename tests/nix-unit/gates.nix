@@ -34,6 +34,18 @@ in
     expectedError.msg = "out-of-store";
   };
 
+  # out-of-store marker のパスは評価時に確定する絶対パスでなければならない。
+  testOutOfStoreRelativePathRejected = {
+    expr =
+      (norm layat.projectRoot {
+        ".claude/x" = {
+          src = layat.mkOutOfStoreSymlink "rel/path";
+        };
+      }).entries;
+    expectedError.type = "ThrownError";
+    expectedError.msg = "must be absolute";
+  };
+
   # target が絶対パス。
   testAbsoluteTargetRejected = {
     expr =
