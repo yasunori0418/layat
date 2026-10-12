@@ -47,7 +47,7 @@ const (
 type PlaceAction struct {
 	Entry     manifest.Entry
 	TargetAbs string
-	Dest      string // LinkDest(Entry): <src>/<subpath>
+	Dest      string // LinkDest(Entry)
 	Kind      PlaceKind
 }
 
@@ -180,12 +180,22 @@ func backupSuffix(opts Options) string {
 	return opts.Suffix
 }
 
-// LinkDest returns the destination the entry's symlink should point to (<src>/<subpath>).
+// LinkDest returns the destination the entry's symlink should point to: <src>/<subpath>, or for
+// rootRelative that path relative to the target's directory, so it needs no root.
 func LinkDest(e manifest.Entry) string {
-	if e.Subpath == "" || e.Subpath == "." {
-		return e.Src
+	joined := e.Src
+	if e.Subpath != "" && e.Subpath != "." {
+		joined = filepath.Join(e.Src, e.Subpath)
 	}
-	return filepath.Join(e.Src, e.Subpath)
+	if e.SrcKind != manifest.SrcKindRootRelative {
+		return joined
+	}
+	// Rel fails only on a ".."-escaping path, which evaluation already rejects.
+	rel, err := filepath.Rel(filepath.Dir(e.Target), joined)
+	if err != nil {
+		return joined
+	}
+	return rel
 }
 
 // Compute diffs the previous-generation manifest (prev; nil means first apply) against next,

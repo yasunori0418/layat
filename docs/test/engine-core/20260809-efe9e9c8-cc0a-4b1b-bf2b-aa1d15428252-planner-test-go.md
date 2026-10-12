@@ -9,6 +9,7 @@ covers:
   - "TC-b9d4ffaf-ac91-4bf1-9f27-5ea3964466ad"
   - "TC-d160e18b-4c0c-4531-a506-e7d00d88788a"
   - "TC-596d697f-4ba6-4ec1-b71e-8b5375806c08"
+  - "TC-f1da084f-c0f0-4aba-85d9-f273c04eb373"
 ---
 # CASE-efe9e9c8-cc0a-4b1b-bf2b-aa1d15428252: planner_test.go
 
@@ -34,6 +35,9 @@ table-driven テスト。実 FS へ触らずに分類の全パターンを列挙
 - **除去順序**: ディレクトリ移行の事前除去がボトムアップ順で組まれること
 - **未知の method**: 未定義の method がエラーとして弾かれること
 - **祖先が symlink でない場合**: 実ディレクトリ祖先が symlink 祖先と別分類になること
+- **リンク先の計算**: root 相対の entry は target のディレクトリを起点にした相対パス（部分パス
+  付きも含む）になり、root を参照しないこと。store / out-of-store の entry は配置元と部分パスを
+  つないだパスのまま変わらないこと
 
 なお同じ table には backup 有効時の分類（退避先の衝突・実 dir 全体の退避など）のブロックも
 あるが、これは `atomicity` 対象の担当であり、この CASE では数えない。

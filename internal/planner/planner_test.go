@@ -897,3 +897,29 @@ func TestComputeAncestorDirNotSymlink(t *testing.T) {
 		t.Errorf("Place = %v, want one PlaceNew", plan.Place)
 	}
 }
+
+// TestLinkDestBySrcKind pins LinkDest per srcKind: rootRelative links relative to the target's
+// directory, while store / outOfStore keep the joined <src>/<subpath>.
+func TestLinkDestBySrcKind(t *testing.T) {
+	for _, tt := range []struct {
+		name    string
+		srcKind string
+		src     string
+		subpath string
+		target  string
+		want    string
+	}{
+		{"rootRelative whole src", manifest.SrcKindRootRelative, "dev/skills/x", ".", ".claude/skills/x", "../../dev/skills/x"},
+		{"rootRelative with subpath", manifest.SrcKindRootRelative, "dev/skills/x", "sub", ".claude/skills/x", "../../dev/skills/x/sub"},
+		{"rootRelative top-level target", manifest.SrcKindRootRelative, "dev/skills/x", ".", "x", "dev/skills/x"},
+		{"store", manifest.SrcKindStore, "/nix/store/aaa-source", "skills/nix", ".claude/skills/nix", "/nix/store/aaa-source/skills/nix"},
+		{"outOfStore whole src", manifest.SrcKindOutOfStore, "/home/u/dotfiles", ".", ".config/nvim", "/home/u/dotfiles"},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			e := manifest.Entry{SrcKind: tt.srcKind, Src: tt.src, Subpath: tt.subpath, Target: tt.target, Method: manifest.MethodSymlink}
+			if got := LinkDest(e); got != tt.want {
+				t.Errorf("LinkDest = %q, want %q", got, tt.want)
+			}
+		})
+	}
+}
