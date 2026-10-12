@@ -109,6 +109,13 @@ func outOfStoreEntry(src, subpath, target string) manifest.Entry {
 	}
 }
 
+// rootRelativeEntry is a symlink entry whose src is relative to the placement root.
+func rootRelativeEntry(src, subpath, target string) manifest.Entry {
+	e := outOfStoreEntry(src, subpath, target)
+	e.SrcKind = manifest.SrcKindRootRelative
+	return e
+}
+
 func copyEntry(src, subpath, target string) manifest.Entry {
 	e := storeEntry(src, subpath, target)
 	e.Method = manifest.MethodCopy
