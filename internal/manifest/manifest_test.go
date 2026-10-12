@@ -185,3 +185,37 @@ func TestLoadFixedRootHasPath(t *testing.T) {
 		t.Errorf("fixed root = %q, want /opt/x", m.Root.Root)
 	}
 }
+
+// TestLoadRejectsUnknownEnumValues covers the known-value check on srcKind, method, and rootKind.
+func TestLoadRejectsUnknownEnumValues(t *testing.T) {
+	for _, tt := range []struct {
+		name     string
+		rootKind string
+		srcKind  string
+		method   string
+		wantErr  string
+	}{
+		{"store symlink", RootKindProject, SrcKindStore, MethodSymlink, ""},
+		{"outOfStore symlink", RootKindHome, SrcKindOutOfStore, MethodSymlink, ""},
+		{"rootRelative symlink", RootKindProject, SrcKindRootRelative, MethodSymlink, ""},
+		{"store copy", RootKindSystem, SrcKindStore, MethodCopy, ""},
+		{"unknown srcKind", RootKindProject, "bogus", MethodSymlink, `srcKind "bogus"`},
+		{"unknown method", RootKindProject, SrcKindStore, "bogus", `method "bogus"`},
+		{"unknown rootKind", "bogus", SrcKindStore, MethodSymlink, `rootKind "bogus"`},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := Load(writeManifest(t, `{ "schemaVersion": 1, "root": { "rootKind": "`+tt.rootKind+`" }, "entries": [
+			  { "srcKind": "`+tt.srcKind+`", "src": "dev/skills/x", "subpath": ".", "target": ".claude/skills/x", "method": "`+tt.method+`" }
+			] }`))
+			if tt.wantErr == "" {
+				if err != nil {
+					t.Fatalf("known values should be accepted, got %v", err)
+				}
+				return
+			}
+			if err == nil || !strings.Contains(err.Error(), tt.wantErr) {
+				t.Fatalf("error should report %s, got %v", tt.wantErr, err)
+			}
+		})
+	}
+}
