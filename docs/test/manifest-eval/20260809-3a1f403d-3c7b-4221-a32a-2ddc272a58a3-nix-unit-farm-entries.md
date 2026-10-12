@@ -17,9 +17,10 @@ covers:
 
 ## 検証内容
 
-- **抽出条件**: store×symlink / store×copy / out-of-store×symlink が混在する manifest を
-  1 つ与え、採用されるのが store×symlink の 2 件だけであること（target 列で確認）
-- **空になる条件**: copy と out-of-store しか無い manifest では抽出結果が空リストになること
+- **抽出条件**: store×symlink / store×copy / out-of-store×symlink / root 相対×symlink が混在する
+  manifest を 1 つ与え、採用されるのが store×symlink の 2 件だけであること（target 列で確認）
+- **空になる条件**: copy と out-of-store と root 相対しか無い manifest では抽出結果が空リストに
+  なること
 - **アンカー名の固定**: 対象 target の 1 つ（`.config/sym`）についてアンカー名を `anchorName`
   に単独で問い、既知の sha256 短縮 hex リテラルに一致すること。以降の生成結果の期待値を作る
   ための足場である。アンカー名の形式・決定性・特殊文字耐性は CASE-ead15d61-8ca7-41fb-9121-a5d247ef727a の担当
