@@ -71,7 +71,7 @@ target の親が symlink だと、相対リンクは symlink の先を起点に�
 
 link farm の GC アンカーは `srcKind == "store"` の entry だけを対象にするので、root 相対 entry は自然に対象外になる。
 
-### 7. engine で root を要るのは preflight だけ
+### 7. engine で root が要るのは preflight だけ
 
 `LinkDest` は root を受け取らない純関数のままにする。preflight の out-of-store 実在検査に、`<root>/<src>/<subpath>` を Lstat して不在なら dangling を作らず停止する分岐を足す。copy 経路は決定 6 で併用を拒否するので触らない。
 
@@ -84,7 +84,7 @@ link farm の GC アンカーは `srcKind == "store"` の entry だけを対象�
 - **相対リンクなら照合経路に手を入れずに済む**。`LinkDest` が root 不要の純関数のままなので、planner・stale 除去・drift 修復・`--json` は相対の文字列をそのまま比べる。last-applied 記録は manifest をそのまま保持する（ADR-0058）ので、前世代の root 相対 entry からも同じ文字列を再計算できる。
 - **worktree の移動・改名に耐える**。リンクの中身が root の絶対パスを含まないので、リポジトリを動かしてもリンクは有効なまま。home mode では `~/dotfiles/...` を HOME 非依存に書けるので、絶対パスの OS 別ホーム慣例の差を考えずに済む。
 - **基準点を target と同じ root に固定すれば、src 側の root 選択は構造的に要らない**。相対リンクは target からの位置関係しか持たないので、別の root を基準にした src は表現できない。
-- **`schemaVersion` を上げなくても版ずれは起きない**。CLI と lib は devShell に同梱され（ADR-0015）、古い engine が新しい manifest を読む経路は構造的に無い。値検査を足せば、仮に経路ができても未知の `srcKind` は黙って誤配置せずに明示エラーで止まる。
+- **`schemaVersion` を上げなくても版ずれは起きない**。CLI と lib は devShell に同梱され（ADR-0015）、古い engine が新しい manifest を読む経路は構造的に無い。値検査を足せば、仮にその経路ができても、未知の `srcKind` は誤配置されずに明示エラーで止まる。
 
 ## 影響
 
@@ -94,7 +94,7 @@ link farm の GC アンカーは `srcKind == "store"` の entry だけを対象�
 
 ## 棄却した代替案
 
-- **絶対パスで張る**（engine が `<root>/<src>/<subpath>` を絶対パスにして張る）: `LinkDest` が root を要るようになり、planner・stale 除去・drift 修復・`--json` の照合経路を全て root 付きに書き換えることになる。worktree を動かすとリンクが切れ、home mode では HOME 依存の文字列が残る。
-- **`mkOutOfStoreSymlink` の overload**（相対文字列を受理したら root 相対とみなす）: 絶対パスの書き忘れ（`"dotfiles/nvim"`）が黙って root 相対へ化ける。型ベースの暗黙分岐を廃した ADR-0001 と同じ問題を引数の形で持ち込む。
+- **絶対パスで張る**（engine が `<root>/<src>/<subpath>` を絶対パスにして張る）: `LinkDest` に root が必要になり、planner・stale 除去・drift 修復・`--json` の照合経路を全て root 付きに書き換えることになる。worktree を動かすとリンクが切れ、home mode では HOME 依存の文字列が残る。
+- **`mkOutOfStoreSymlink` の overload**（相対文字列を受理したら root 相対とみなす）: 絶対パスの書き忘れ（`"dotfiles/nvim"`）が、警告なしに root 相対として扱われる。型ベースの暗黙分岐を廃した ADR-0001 と同じ問題を引数の形で持ち込む。
 - **src 側で root 種別を選ぶ形**（`{ root = projectRoot; path = "..."; }`）: target と別の root を基準にした src は相対リンクで表現できず、絶対パスで張る案に戻る。基準点を target の root に固定すれば選択肢自体が要らない。
 - **`schemaVersion` を 2 に上げる**: CLI と lib が同梱で版ずれが起きない以上、全利用者の manifest を版上げする代償に見合う保護が無い。未知値の明示エラーは `validate()` の値検査で得られる。

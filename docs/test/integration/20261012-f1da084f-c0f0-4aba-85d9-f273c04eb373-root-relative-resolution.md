@@ -12,7 +12,7 @@ mitigates:
 root 相対 src の解決が配置 root と `target` の位置だけで決まることを確かめる。
 
 - **相対形で張られる** — 配置後の readlink が `target` の親から `<src>/<subpath>` への相対
-  文字列に一致し（subpath の有無とも）、リンク越しに内容へ到達できること
+  文字列に一致し（subpath があってもなくても）、リンク越しに内容へ到達できること
 - **基準点が root である** — preflight が `<root>/<src>/<subpath>` の実在で判定し、不在なら
   dangling を作らずに停止すること。cwd を root 以外に置いても結果が変わらないこと
 - **移動に耐える** — リポジトリのディレクトリごと移動した後も readlink が変わらず、内容へ

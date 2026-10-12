@@ -27,9 +27,9 @@ specification_ja: |
   解決する root。`--root` 上書きを含む）に対して解決しなければならず、engine は `target` の
   親ディレクトリから `<src>/<subpath>` への相対パスを指す symlink として配置しなければ
   ならない。このマーカーは全ての root 種別で受け付けなければならない。`method = "copy"`
-  との併用は `mkOutOfStoreSymlink` と同じく評価時に拒否しなければならず
-  （REQ-16faf428-77f3-492f-b858-222c5274cbf7）、`<src>/<subpath>` と `target` が一致するか一方が
-  他方の祖先である entry も評価時に拒否しなければならない。`<root>/<src>/<subpath>` が存在
+  との併用は `mkOutOfStoreSymlink` と同じく評価時に拒否しなければならない
+  （REQ-16faf428-77f3-492f-b858-222c5274cbf7）。`<src>/<subpath>` と `target` が一致する entry と、
+  一方が他方の祖先である entry も、評価時に拒否しなければならない。`<root>/<src>/<subpath>` が存在
   しないとき、engine は配置の前に停止しなければならず、dangling symlink を作っては
   ならない。
 ---
