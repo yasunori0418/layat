@@ -45,6 +45,11 @@ let
             srcKind = "outOfStore";
             src = e.src.path;
           }
+        else if t.isRootRelativeMarker e.src then
+          {
+            srcKind = "rootRelative";
+            src = e.src.path;
+          }
         else
           {
             srcKind = "store";

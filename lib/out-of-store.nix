@@ -8,6 +8,12 @@
     inherit path;
   };
 
+  # Out-of-store symlink to a path relative to the placement root; the engine links it relatively.
+  mkRootRelativeSymlink = path: {
+    _layatMarker = "rootRelative";
+    inherit path;
+  };
+
   # root markers. The engine resolves the concrete path at runtime.
   projectRoot = {
     _layatMarker = "root";

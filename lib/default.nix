@@ -14,9 +14,11 @@ in
   inherit (manifest) normalizeManifest;
 
   # lib.mkOutOfStoreSymlink "/abs/path" -> marker (passed to src)
+  # lib.mkRootRelativeSymlink "rel/path" -> marker (passed to src; relative to the placement root)
   # lib.projectRoot / homeRoot / systemRoot -> marker (passed to root)
   inherit (markers)
     mkOutOfStoreSymlink
+    mkRootRelativeSymlink
     projectRoot
     homeRoot
     systemRoot
