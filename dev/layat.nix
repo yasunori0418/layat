@@ -34,15 +34,6 @@ let
         )
       )
   );
-
-  # mattpocock/skills と dev/skills/ で名前が重なると後者が黙って勝つため、重なりを評価時に拒否する。
-  duplicateSkillNames = map baseNameOf (
-    builtins.attrNames (builtins.intersectAttrs skillEntries devSkillEntries)
-  );
-  entries =
-    inputs.nixpkgs.lib.throwIf (duplicateSkillNames != [ ])
-      "layat dev: skill name collides between mattpocock/skills and dev/skills: ${builtins.concatStringsSep ", " duplicateSkillNames}"
-      (skillEntries // devSkillEntries);
 in
 {
   perSystem =
@@ -50,8 +41,9 @@ in
     {
       # flake.layat.<system>.skills へ転置される。
       layat.skills = layatLib.mkManifest {
-        inherit pkgs entries;
+        inherit pkgs;
         root = layatLib.projectRoot;
+        entries = skillEntries // devSkillEntries;
       };
     };
 }
