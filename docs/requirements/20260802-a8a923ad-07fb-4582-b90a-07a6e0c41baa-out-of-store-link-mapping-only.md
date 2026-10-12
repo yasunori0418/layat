@@ -5,14 +5,17 @@ name: "out-of-store symlink は marker の絶対パスまたは root 相対パ�
 derives_from:
   - "UC-01b896b4-04b9-40d0-bf9e-966eaf64c3d4"
 specification: |
-  For an out-of-store entry, which is placed as a symlink pointing at the absolute path
-  or the root-relative path held by the marker (REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557,
-  REQ-a77181dd-a59c-40bb-855e-3430ad970eb6), generations SHALL version only the mapping of which
+  For an out-of-store entry, which is placed as a symlink pointing either at the absolute
+  path held by the marker or, for a root-relative marker, at the relative path from the
+  directory of the target to `<src>/<subpath>` that realises the marker's root-relative
+  path (REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557, REQ-a77181dd-a59c-40bb-855e-3430ad970eb6),
+  generations SHALL version only the mapping of which
   path is pointed at, and SHALL NOT version the content of the destination, which is live
   by design and SHALL never be snapshotted.
 specification_ja: |
-  marker の絶対パスまたは root 相対パス（ローカル FS）を指す symlink として配置される
-  out-of-store entry（REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557・REQ-a77181dd-a59c-40bb-855e-3430ad970eb6）について、
+  marker の絶対パス、または root 相対の marker では target の親から `<src>/<subpath>` への
+  相対パス（marker の root 相対パスを相対リンクとして実現したもの）を指す symlink として
+  配置される out-of-store entry（REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557・REQ-a77181dd-a59c-40bb-855e-3430ad970eb6）について、
   世代が版管理するのは「どのパスを指すか」というリンク先
   マッピングのみとし、指す先の内容は版管理してはならない（設計上ライブであり、永遠に
   スナップショットしない）。

@@ -41,4 +41,4 @@ LinkDest(e) = filepath.Rel(filepath.Dir(e.Target), filepath.Join(e.Src, e.Subpat
 
 ## 出典
 
-ADR-0059「root 相対 out-of-store マーカー」の決定 1・2・3・5・7。
+ADR-0059「root 相対 out-of-store マーカー」の決定 1・2・3・5・6・7。
