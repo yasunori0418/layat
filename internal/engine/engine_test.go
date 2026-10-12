@@ -827,7 +827,7 @@ func TestApplyRootRelativeLifecycle(t *testing.T) {
 	}
 	assertLink("first apply")
 
-	// A different link-farm skips no generation, so x goes through the planner again.
+	// A different link-farm means no generation is skipped, so x goes through the planner again.
 	if _, warns := apply(projectManifest(x, y)); len(warns) != 0 {
 		t.Errorf("re-apply should not warn: %v", warns)
 	}
