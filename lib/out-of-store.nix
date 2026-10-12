@@ -8,7 +8,7 @@
     inherit path;
   };
 
-  # Out-of-store symlink to a path relative to the placement root; the engine links it relatively.
+  # Out-of-store symlink to a path relative to the placement root.
   mkRootRelativeSymlink = path: {
     _layatMarker = "rootRelative";
     inherit path;

@@ -92,7 +92,6 @@ in
   inherit
     escapesBase
     pathChecks
-    relComponents
     pathsOverlap
     anchorName
     resolveEntry
