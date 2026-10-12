@@ -3,15 +3,21 @@ id: "ADR-0001"
 type: adr
 name: "out-of-store symlink を明示関数に降格し store link に統一する"
 status: 採用
+status_note: "2026-10-12 拡張: out-of-store marker に配置 root 相対の `mkRootRelativeSymlink` を追加 → ADR-0059"
 justifies:
   - "REQ-eb363122-385a-499c-a074-c95efb949d07"
   - "REQ-99ca5381-6c53-426c-b145-7b4297c53868"
 ---
 # ADR-0001: out-of-store symlink を明示関数に降格し store link に統一する
 
-- ステータス: 採用
+- ステータス: 採用（2026-10-12 拡張: out-of-store marker に配置 root 相対の `mkRootRelativeSymlink` を追加 → ADR-0059）
 - 日付: 2026-06-07
-- 関連: `docs/concept.md`, `docs/spec.md`（entries スキーマ / `src`）
+- 関連: ADR-0059, `docs/concept.md`, `docs/spec.md`（entries スキーマ / `src`）
+
+> **2026-10-12 改訂注記（ADR-0059）**: 本 ADR「決定」の store link を既定とし out-of-store を明示関数でのみ opt-in する決定、
+> および型ベースの暗黙分岐の廃止は不変。ただし `src` の型 `path | set | marker` の marker は、`mkOutOfStoreSymlink "/abs/path"`
+> （評価時確定の絶対パス）に加えて `mkRootRelativeSymlink "rel/path"`（配置 root 相対・engine が target 起点の相対 symlink
+> として張る）の 2 構築子になった。`mkOutOfStoreSymlink` に相対文字列を受理させる形は採らない（→ ADR-0059）。
 
 ## 背景
 
