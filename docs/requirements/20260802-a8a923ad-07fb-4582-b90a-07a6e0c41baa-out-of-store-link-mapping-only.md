@@ -13,10 +13,10 @@ specification: |
   path is pointed at, and SHALL NOT version the content of the destination, which is live
   by design and SHALL never be snapshotted.
 specification_ja: |
-  marker の絶対パス、または root 相対の marker では target の親から `<src>/<subpath>` への
-  相対パス（marker の root 相対パスを相対リンクとして実現したもの）を指す symlink として
-  配置される out-of-store entry（REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557・REQ-a77181dd-a59c-40bb-855e-3430ad970eb6）について、
-  世代が版管理するのは「どのパスを指すか」というリンク先
+  out-of-store entry は symlink として配置され、marker の絶対パスを指す。root 相対の
+  marker では、target の親から `<src>/<subpath>` への相対パスを指す（marker の root 相対
+  パスを相対リンクとして実現したもの。REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557・REQ-a77181dd-a59c-40bb-855e-3430ad970eb6）。
+  この entry について、世代が版管理するのは「どのパスを指すか」というリンク先
   マッピングのみとし、指す先の内容は版管理してはならない（設計上ライブであり、永遠に
   スナップショットしない）。
 ---
