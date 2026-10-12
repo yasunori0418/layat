@@ -68,6 +68,7 @@ manifest をエンジンへ渡す。エンジンは `manifest.json` を唯一の
 ### マーカー構築子
 
 - [REQ-eb363122-385a-499c-a074-c95efb949d07](requirements/20260802-eb363122-385a-499c-a074-c95efb949d07-mkoutofstoresymlink-marker.md) — mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す
+- [REQ-a77181dd-a59c-40bb-855e-3430ad970eb6](requirements/20261012-a77181dd-a59c-40bb-855e-3430ad970eb6-root-relative-symlink-marker.md) — mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る
 - [REQ-3f541d39-da41-4ef8-858b-707f54cf6a29](requirements/20260802-3f541d39-da41-4ef8-858b-707f54cf6a29-root-markers-runtime-resolution.md) — root マーカーは kind を運ぶ入れ物でパス解決は engine が行う
 
 ### 入力検査（`evalModules` + `normalizeManifest`）
@@ -220,7 +221,7 @@ symlink は配置前除去 → 配置 → stale 除去の順で進み、途中�
 - [REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7](requirements/20260802-07c3b735-3744-4778-a640-8c6fb66f4aa7-copy-foreign-skip-warning.md) — copy が foreign 実ファイルを skip したときは warning で可視化する
 - [REQ-84e3c717-adf5-4ff3-b0db-d039b82ef19c](requirements/20260802-84e3c717-adf5-4ff3-b0db-d039b82ef19c-copy-mode-owner-write.md) — copy は元の mode を保存しつつ owner-write を付与する
 - [REQ-0bd55dfc-b28c-4ad2-ad50-bb1f76b2246c](requirements/20260802-0bd55dfc-b28c-4ad2-ad50-bb1f76b2246c-copy-preserves-inner-symlinks.md) — copy は src ツリー内の symlink を deref せず symlink のまま複製する
-- [REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa](requirements/20260802-a8a923ad-07fb-4582-b90a-07a6e0c41baa-out-of-store-link-mapping-only.md) — out-of-store symlink は marker の絶対パスを指し、版管理はリンク先マッピングのみとする
+- [REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa](requirements/20260802-a8a923ad-07fb-4582-b90a-07a6e0c41baa-out-of-store-link-mapping-only.md) — out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする
 - [REQ-b4e4b65d-6e35-40c3-a00e-20c14043df6f](requirements/20260802-b4e4b65d-6e35-40c3-a00e-20c14043df6f-recopy-rename-aside.md) — recopy の上書きは削除ではなく同一親内への rename 退避で行う
 - [REQ-31dae599-f3a3-4bbe-b367-c955535265da](requirements/20260802-31dae599-f3a3-4bbe-b367-c955535265da-reset-confirm-non-tty.md) — reset の確認プロンプトは stdin が TTY のときだけ出し、非 TTY で同意が無ければ即エラー停止する
 
@@ -255,7 +256,7 @@ root は評価時にパスへ展開せず、マーカーが運ぶ kind をエン
 - [REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e](requirements/20260802-9cb26ffd-071e-4c68-a6fc-faac6373b75e-project-mode-root-resolution.md) — project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない
 - [REQ-e79178f5-5865-4444-a05d-3ab06f33cd6d](requirements/20260802-e79178f5-5865-4444-a05d-3ab06f33cd6d-project-mode-ephemeral.md) — project mode の配置物は ephemeral とし、activation は git 状態に干渉しない
 - [REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81](requirements/20260802-d5a2e289-40bc-45a9-9d44-21b8dc561b81-profiledir-keying.md) — profileDir は home のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする
-- [REQ-81249072-56b8-42f5-807b-ea623c1efe99](requirements/20260802-81249072-56b8-42f5-807b-ea623c1efe99-out-of-store-eval-time-path.md) — out-of-store のローカルパスは評価時に確定し、target の root 解決には影響しない
+- [REQ-81249072-56b8-42f5-807b-ea623c1efe99](requirements/20260802-81249072-56b8-42f5-807b-ea623c1efe99-out-of-store-eval-time-path.md) — out-of-store の src は評価時の絶対パスか配置 root 相対のどちらかで、root 相対は target と同じ root に対して実行時に解決する
 
 ---
 
