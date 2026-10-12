@@ -12,7 +12,8 @@ covers:
 
 `tests/nix-unit/resolve-marker.nix`（TP-403c55c7-d996-4951-8e6b-c3a7dddd387c のテスト seam `layat.__internal.resolveEntry`
 と `lib/types.nix` の `isRootMarker` / `isOutOfStoreMarker` / `isRootRelativeMarker` を直接叩く。manifest 全体を介さず
-単一 entry の src 種別判定・文字列化だけを見る最小の境界）
+単一 entry の src 種別判定・文字列化だけを見る最小の境界。root 相対 marker だけは、
+`normalizeManifest` を通した entries の形も 1 件確かめる）
 
 ## 検証内容
 

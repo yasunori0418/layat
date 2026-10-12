@@ -1,6 +1,5 @@
-# nix-unit: eval 時に throw する検査ゲート群（systemRoot 未実装・copy×outOfStore・絶対/`..` escape・
-# root 相対 src の絶対/脱出・copy 併用・target 重なり・重複 target・未知キー・素文字列 src・
-# 共有 entriesType）をアサートする。
+# nix-unit: eval 時に throw する検査ゲート群（systemRoot 未実装・copy 併用・絶対/`..` escape・
+# root 相対 src の target 重なり・重複 target・未知キー・素文字列 src・共有 entriesType）をアサートする。
 # src は toString が安定する fake な flake-input 相当（`{ outPath = …; }`）を使う。
 { lib, layat }:
 let
@@ -116,6 +115,30 @@ in
         ".claude/skills/x" = {
           src = layat.mkRootRelativeSymlink "./.claude/skills";
           subpath = "x/";
+        };
+      }).entries;
+    expectedError.type = "ThrownError";
+    expectedError.msg = "overlaps target";
+  };
+
+  # root 内に留まる `..` を畳むと target の祖先になる src。
+  testRootRelativeDotDotFoldedOverlapRejected = {
+    expr =
+      (norm layat.projectRoot {
+        ".claude/skills/x" = {
+          src = layat.mkRootRelativeSymlink "dev/../.claude";
+        };
+      }).entries;
+    expectedError.type = "ThrownError";
+    expectedError.msg = "overlaps target";
+  };
+
+  # src = "." は root 自身なので、どの target とも重なる。
+  testRootRelativeRootItselfRejected = {
+    expr =
+      (norm layat.projectRoot {
+        ".claude/x" = {
+          src = layat.mkRootRelativeSymlink ".";
         };
       }).entries;
     expectedError.type = "ThrownError";
