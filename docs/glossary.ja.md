@@ -97,7 +97,8 @@ standalone・home-manager・将来の NixOS モジュール・devShell の `shel
 - **Avoid**: out-of-store symlink と混同すること、「copy（コピー）」と呼ぶこと。
 
 ### out-of-store symlink
-ローカルの絶対パスへのライブ symlink。`layat.lib.mkOutOfStoreSymlink "/abs/path"` でのみ opt-in する（開発中の dotfiles をライブ編集する用途）。明示的な退避路（escape hatch）であり、第一級機能ではない。
+ローカルパスへのライブ symlink。明示マーカーでのみ opt-in する。明示的な退避路（escape hatch）であり、第一級機能ではない。マーカーは 2 つある。`layat.lib.mkOutOfStoreSymlink "/abs/path"` はローカルの絶対パスを指す（開発中の dotfiles をライブ編集する用途）。
+リポジトリ内の実体には、root 相対マーカー `layat.lib.mkRootRelativeSymlink "rel/path"` を使う。src は配置 root からの相対パスで、engine が実行時に解決した root を基準に、target の親を起点とする相対リンクを張る。
 - **Avoid**: デフォルト挙動として扱うこと、`src` の型による暗黙の分岐で生み出すこと。
 
 ## 状態管理

@@ -92,7 +92,8 @@ _Avoid_: 「vendoring」「成果物をコミットする配置」と混同す�
 _Avoid_: out-of-store symlink と混同すること、「コピー」と呼ぶこと
 
 **out-of-store symlink**:
-ローカル絶対パスへのライブ symlink。`layat.lib.mkOutOfStoreSymlink "/abs/path"` でのみ opt-in する明示的退避路（開発中 dotfiles のライブ編集用）。第一級機能ではない（→ ADR-0001）。
+ローカルパスへのライブ symlink。明示マーカーでのみ opt-in する明示的退避路で、第一級機能ではない（→ ADR-0001）。マーカーは 2 つある。`layat.lib.mkOutOfStoreSymlink "/abs/path"` はローカル絶対パスを指す（開発中 dotfiles のライブ編集用）。
+root 相対マーカー `layat.lib.mkRootRelativeSymlink "rel/path"` はリポジトリ内の実体を指す。src は配置 root からの相対パスで、engine が実行時に解決した root を基準に、target の親を起点とする相対リンクを張る（→ ADR-0059）。
 _Avoid_: デフォルト挙動として扱うこと、`src` の型による暗黙分岐で生むこと
 
 ### 状態管理
