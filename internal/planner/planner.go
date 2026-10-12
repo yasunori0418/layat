@@ -190,7 +190,7 @@ func LinkDest(e manifest.Entry) string {
 	if e.SrcKind != manifest.SrcKindRootRelative {
 		return joined
 	}
-	// Rel fails only on a ".."-escaping path, which evaluation already rejects.
+	// Rel fails only when the target climbs out with "..", which evaluation already rejects.
 	rel, err := filepath.Rel(filepath.Dir(e.Target), joined)
 	if err != nil {
 		return joined
