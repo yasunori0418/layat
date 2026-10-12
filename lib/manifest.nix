@@ -52,14 +52,34 @@ let
         (lib.optional (
           rootInfo.rootKind == "system"
         ) "layat: root = systemRoot (system mode) is not implemented")
-        # method = "copy" cannot be combined with an out-of-store marker.
+        # method = "copy" cannot be combined with an out-of-store / root-relative marker.
         (map (
           e: "layat: method = \"copy\" cannot be combined with an out-of-store marker (target: ${e.target})"
         ) (lib.filter (e: e.method == "copy" && e.srcKind == "outOfStore") normEntries))
+        (map (
+          e: "layat: method = \"copy\" cannot be combined with a root-relative marker (target: ${e.target})"
+        ) (lib.filter (e: e.method == "copy" && e.srcKind == "rootRelative") normEntries))
         # An out-of-store marker path must be absolute.
         (map (e: "layat: out-of-store path must be absolute (got: ${e.src}; target: ${e.target})") (
           lib.filter (e: e.srcKind == "outOfStore" && !(lib.hasPrefix "/" e.src)) normEntries
         ))
+        # A root-relative marker path must stay inside root.
+        (map (
+          e:
+          "layat: invalid root-relative src (absolute path or escapes root via `..`): ${e.src} (target: ${e.target})"
+        ) (lib.filter (e: e.srcKind == "rootRelative" && checks.isUnsafe e.src) normEntries))
+        # A root-relative src/subpath must not equal target or be its ancestor / descendant (symlink loop).
+        (map
+          (
+            e:
+            "layat: root-relative src overlaps target (equal, or one contains the other): ${e.src}/${e.subpath} (target: ${e.target})"
+          )
+          (
+            lib.filter (
+              e: e.srcKind == "rootRelative" && internal.pathsOverlap lib "${e.src}/${e.subpath}" e.target
+            ) normEntries
+          )
+        )
         # Two keys must not resolve to the same target.
         (lib.optional (
           lib.length targets != lib.length (lib.unique targets)
