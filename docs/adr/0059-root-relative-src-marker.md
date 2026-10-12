@@ -15,6 +15,7 @@ justifies:
   - "REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7"
   - "REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa"
   - "REQ-99ca5381-6c53-426c-b145-7b4297c53868"
+  - "REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557"
 revises:
   - "ADR-0001"
   - "ADR-0013"
@@ -76,7 +77,7 @@ link farm の GC アンカーは `srcKind == "store"` の entry だけを対象�
 
 ### 8. 要求と設計の置き場
 
-要求は REQ-a77181dd-a59c-40bb-855e-3430ad970eb6、相対 `LinkDest` の計算と root の扱いは DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296 に置く。src の時点（REQ-81249072-56b8-42f5-807b-ea623c1efe99）・manifest の `srcKind` 列挙（REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336）・マーカーの判別（REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7）・リンク先と版管理（REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa）・src の種別（REQ-99ca5381-6c53-426c-b145-7b4297c53868）を root 相対の形を含むよう改める。
+要求は REQ-a77181dd-a59c-40bb-855e-3430ad970eb6、相対 `LinkDest` の計算と root の扱いは DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296 に置く。src の時点（REQ-81249072-56b8-42f5-807b-ea623c1efe99）・manifest の `srcKind` 列挙（REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336）・マーカーの判別（REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7）・リンク先と版管理（REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa）・src の種別（REQ-99ca5381-6c53-426c-b145-7b4297c53868）・配置手順の配置元（REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557）を root 相対の形を含むよう改める。
 
 ## 根拠
 
@@ -89,7 +90,7 @@ link farm の GC アンカーは `srcKind == "store"` の entry だけを対象�
 
 - lib（マーカー・正規化・評価時ゲート 3 つ・nix-unit）は Issue #461、engine（`srcKind` 定数と値の検査・相対 `LinkDest`・preflight・Go テスト）は Issue #462、dogfood（`dev/layat.nix` の宣言化・shellHook の整理・e2e・利用者向け文書）は Issue #463。
 - ADR-0001 / ADR-0013 に改訂注記を足す。
-- 要求: REQ-a77181dd-a59c-40bb-855e-3430ad970eb6 を起票し、REQ-81249072-56b8-42f5-807b-ea623c1efe99 / REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336 / REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7 / REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa / REQ-99ca5381-6c53-426c-b145-7b4297c53868 を改訂する。REQ-eb363122-385a-499c-a074-c95efb949d07（`mkOutOfStoreSymlink` は絶対パス）は据え置く。設計は DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296。
+- 要求: REQ-a77181dd-a59c-40bb-855e-3430ad970eb6 を起票し、REQ-81249072-56b8-42f5-807b-ea623c1efe99 / REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336 / REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7 / REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa / REQ-99ca5381-6c53-426c-b145-7b4297c53868 / REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557 を改訂する。REQ-eb363122-385a-499c-a074-c95efb949d07（`mkOutOfStoreSymlink` は絶対パス）は据え置く。設計は DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296。
 
 ## 棄却した代替案
 
