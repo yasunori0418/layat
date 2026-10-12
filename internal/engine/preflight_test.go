@@ -63,17 +63,36 @@ func TestPreflightRootRelativeResolvesAgainstRoot(t *testing.T) {
 		t.Fatalf("existing root-relative src should pass: %v", err)
 	}
 
-	missing := projectManifest(rootRelativeEntry("dev/skills/y", ".", ".claude/skills/y"))
+	missing := projectManifest(rootRelativeEntry("dev/skills/x", "nosub", ".claude/skills/y"))
 	err := (&applier{manifest: &missing, root: root}).checkOutOfStore()
 	if err == nil {
 		t.Fatal("expected error for missing root-relative src, got nil")
 	}
-	for _, want := range []string{".claude/skills/y", filepath.Join(root, "dev", "skills", "y")} {
+	for _, want := range []string{".claude/skills/y", filepath.Join(root, "dev", "skills", "x", "nosub")} {
 		if !strings.Contains(err.Error(), want) {
 			t.Errorf("error should contain %q: %v", want, err)
 		}
 	}
 	if !strings.Contains(err.Error(), "does not exist") {
 		t.Errorf("error should report a missing src: %v", err)
+	}
+}
+
+// TestPreflightRootRelativeNonENOENTError covers the root-relative non-ENOENT branch: an Lstat
+// error under a search-denied root is not reported as a missing source.
+func TestPreflightRootRelativeNonENOENTError(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("requires non-root to trigger permission error")
+	}
+	m := projectManifest(rootRelativeEntry("dev/skills/x", ".", ".claude/skills/x"))
+	err := (&applier{manifest: &m, root: preflightErr_deniedDir(t)}).checkOutOfStore()
+	if err == nil {
+		t.Fatal("expected non-ENOENT error from Lstat, got nil")
+	}
+	if !strings.Contains(err.Error(), "cannot check root-relative link source") || strings.Contains(err.Error(), "does not exist") {
+		t.Errorf("error should be the non-ENOENT branch: %v", err)
+	}
+	if !errors.Is(err, fs.ErrPermission) {
+		t.Errorf("wrapped error should be a permission error (EACCES): %v", err)
 	}
 }
