@@ -45,6 +45,15 @@ in
       '';
     };
 
+    jobs = lib.mkOption {
+      type = lib.types.ints.unsigned;
+      default = 0;
+      description = ''
+        How many configs activation builds and places in parallel (wires
+        `layat apply --all --jobs <n>`). 0 = the logical CPU count.
+      '';
+    };
+
     backup = lib.mkOption {
       type = lib.types.submodule {
         options = {

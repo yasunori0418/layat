@@ -264,6 +264,10 @@
               sugar = mkHm { entries.".claude/skills/nix" = skill; };
               canonical = mkHm { configs.default.entries.".claude/skills/nix" = skill; };
               empty = mkHm { };
+              jobs3 = mkHm {
+                configs.default.entries.".claude/skills/nix" = skill;
+                jobs = 3;
+              };
               # home.activation の dag entry の生スクリプト。
               activationScript = pkgs.writeText "layat-activation" multi.home.activation.layat.data;
             in
@@ -274,16 +278,17 @@
                 sugarWarnings = lib.concatStringsSep "\n" sugar.warnings;
                 renameWarning = "has been renamed to `layat.configs.default.entries'";
                 emptyLaunches = lib.boolToString (empty.home.activation ? layat);
+                jobs3Activation = jobs3.home.activation.layat.data;
               }
               ''
                 script=${activationScript}
 
                 # (1) home.file へ翻訳せず、全 config の link-farm を辞書順の <name>=<farm> で
-                #     1 回の apply --all 起動に渡し、--backup=<既定 suffix> を末尾に付けること。
+                #     1 回の apply --all 起動に渡し、既定の --jobs 0 と --backup=<既定 suffix> を末尾に付けること。
                 test "$(grep -c ' apply ' "$script")" -eq 1 \
                   || { echo "FAIL: activation が layat apply を 1 回だけ起動していません"; cat "$script"; exit 1; }
-                grep -qE " apply --all --manifest 'default=/nix/store/[a-z0-9]+-layat-manifest' --manifest 'work=/nix/store/[a-z0-9]+-layat-manifest' --backup=layat-backup$" "$script" \
-                  || { echo "FAIL: activation が apply --all --manifest <name>=<farm> … --backup=<suffix> の形ではありません"; cat "$script"; exit 1; }
+                grep -qE " apply --all --manifest 'default=/nix/store/[a-z0-9]+-layat-manifest' --manifest 'work=/nix/store/[a-z0-9]+-layat-manifest' --jobs 0 --backup=layat-backup$" "$script" \
+                  || { echo "FAIL: activation が apply --all --manifest <name>=<farm> … --jobs 0 --backup=<suffix> の形ではありません"; cat "$script"; exit 1; }
 
                 # (2) config ごとに別 store path の manifest が root=homeRoot を pin し、自分の entries だけを持つこと。
                 farmDefault=$(grep -oE "default=/nix/store/[^ ']+" "$script" | cut -d= -f2)
@@ -309,7 +314,11 @@
                 grep -qF -- "$renameWarning" <<<"$sugarWarnings" \
                   || { echo "FAIL: layat.entries の deprecation warning がありません"; echo "$sugarWarnings"; exit 1; }
 
-                # (4) config が 1 つも無いとき activation は layat を起動しないこと。
+                # (4) layat.jobs の値がそのまま --jobs に乗ること。
+                grep -qE " --manifest 'default=[^']+' --jobs 3$" <<<"$jobs3Activation" \
+                  || { echo "FAIL: layat.jobs = 3 が --jobs 3 として渡っていません"; echo "$jobs3Activation"; exit 1; }
+
+                # (5) config が 1 つも無いとき activation は layat を起動しないこと。
                 test "$emptyLaunches" = false \
                   || { echo "FAIL: configs が空でも activation が layat を起動します"; exit 1; }
 
