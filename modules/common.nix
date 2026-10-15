@@ -67,7 +67,8 @@ in
         apply --backup wiring: renames an occupying foreign entity aside instead of
         conflicting. This is a placement modifier orthogonal to `entries`
         and does not touch the manifest v1 contract (lib/types.nix) — activation only
-        adds `--backup=<suffix>` to the `layat apply --manifest` invocation when enabled.
+        adds `--backup=<suffix>` to the `layat apply --all` invocation when enabled. It
+        applies to every config.
       '';
     };
   };
