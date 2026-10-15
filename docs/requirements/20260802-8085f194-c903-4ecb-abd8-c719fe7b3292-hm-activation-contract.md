@@ -5,7 +5,8 @@ name: "home-manager モジュールの engine kick は activation から全 conf
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
 specification: |
-  The home-manager module SHALL kick the engine from `home.activation.layat`
+  Where `layat.configs` holds at least one config, the home-manager module SHALL kick the
+  engine from `home.activation.layat`
   (`entryAfter ["writeBoundary"]`) with a single
   `layat apply --all --manifest <name>=<link-farm> …` invocation, each link-farm being built
   by `mkManifest` from the entries of a config at module evaluation time and its store path
@@ -22,7 +23,8 @@ specification: |
   and not invoking `layat` when no config is present are stated by REQ-c847d1af-a437-46bb-bd64-42083810d034 and are likewise not
   restated here.
 specification_ja: |
-  home-manager モジュールは `home.activation.layat`（`entryAfter ["writeBoundary"]`）から
+  `layat.configs` に config が 1 つ以上あるとき、home-manager モジュールは
+  `home.activation.layat`（`entryAfter ["writeBoundary"]`）から
   `layat apply --all --manifest <name>=<link-farm> …` の 1 回の起動で engine を kick しなければ
   ならない。各 link-farm はモジュール評価時に config の entries から `mkManifest` でビルドし、
   その store パスを activation script から渡す。activation は entrypoint 経路ではないため

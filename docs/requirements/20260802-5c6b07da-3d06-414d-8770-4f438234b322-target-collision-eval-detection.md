@@ -8,8 +8,9 @@ specification: |
   A collision in which two distinct keys A and B explicitly override the `target` field to
   the same value SHALL be detected as a duplicate of the normalized target string and
   SHALL stop evaluation via `lib.throwIf` at eval time, not at engine runtime. A
-  cross-config collision that does not ride on a single evaluation (a same target across
-  separate entrypoints, machines or tools) cannot be detected at eval time and SHALL
+  cross-config collision that rides neither on a single evaluation nor on a single
+  invocation (a same target across separate entrypoints, machines or tools) cannot be
+  detected before placement and SHALL
   instead be handled at engine runtime as last-writer-wins plus a foreign symlink warning.
   The two SHALL remain separate paths. Where several configs do ride on a single
   invocation, as the `layat.configs` of one module configuration do through the `apply
@@ -19,8 +20,9 @@ specification: |
 specification_ja: |
   別キー A / B が `target` フィールドを同値に明示上書きした衝突は、正規化後 target
   文字列の重複として eval 時に `lib.throwIf` で検出し停止しなければならない
-  （engine 実行時ではない）。単一の eval に載らない cross-config（別 entrypoint・別マシン・
-  別ツールに跨る場合）の同一 target 衝突は eval では検出できず、engine 実行時の後勝ち +
+  （engine 実行時ではない）。単一の eval にも単一の起動にも載らない cross-config（別
+  entrypoint・別マシン・別ツールに跨る場合）の同一 target 衝突は配置前に検出できず、engine
+  実行時の後勝ち +
   foreign symlink warning として扱わなければならない。両者は別経路として保たなければ
   ならない。単一の起動に載る複数 config
   （activation の `apply --all` に載る 1 つのモジュール config の `layat.configs` など）に
@@ -59,4 +61,5 @@ cross-config（別 profile・別 manifest）の同一 target 衝突は eval で�
 決定の実体は同一 manifest 内の target 衝突を eval 時に検出すると定めた ADR-0024
 「実装前残セマンティクス第6巡」§5 で、cross-config を「単一の eval に載らない場合」へ限定した
 のは ADR-0035「HM モジュールに `layat.configs.<name>` を導入し複数 profile（役割分離）を
-可能にする」§4（単一のモジュール eval に載る config 間は静的検出が可能）。
+可能にする」§4（単一のモジュール eval に載る config 間は静的検出が可能）。例外の条件を「単一の起動」へ改めたのは ADR-0060「HM activation を
+prebuilt manifest 群への `apply --all` 1 回起動にし、configs 間の衝突検出を CLI 前段へ委譲する」§3。

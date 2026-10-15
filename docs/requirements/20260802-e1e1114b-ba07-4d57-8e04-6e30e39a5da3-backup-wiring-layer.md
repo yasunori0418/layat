@@ -33,7 +33,7 @@ specification_ja: |
 
 > **上は原文の写しで、規範は frontmatter が正**。オプションの型とデフォルト値そのものは
 > REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、`--backup[=<suffix>]` が何を退避しどう振る舞うかは REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b、
-> module activation が `apply --manifest` で engine を kick すること自体は REQ-dec58330-6dad-47f7-8f56-2402764a89c7 /
+> module activation が `apply --all --manifest <name>=<link-farm> …` で engine を kick すること自体は REQ-dec58330-6dad-47f7-8f56-2402764a89c7 /
 > REQ-8085f194-c903-4ecb-abd8-c719fe7b3292 の担当。本 item は `layat.backup` が manifest ではなく起動側に効くという
 > レイヤーの所属と、その**配線の発動条件**（`enable` が true のときに限る）を規定する。
 > 発動条件は REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 が定めるオプションの型・デフォルト値とは別の規範で、退避が

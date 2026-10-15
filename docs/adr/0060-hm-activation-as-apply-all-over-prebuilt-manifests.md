@@ -14,6 +14,9 @@ justifies:
   - "REQ-dec58330-6dad-47f7-8f56-2402764a89c7"
   - "REQ-38506419-c23d-4fce-b167-30715ce6a69d"
   - "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"
+  - "REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3"
+  - "REQ-5c6b07da-3d06-414d-8770-4f438234b322"
+  - "REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693"
 revises:
   - "ADR-0026"
   - "ADR-0035"
@@ -73,7 +76,7 @@ ADR-0035 は HM の `layat.configs.<name>` を決め、activation を「profile 
 - **CLI（`cmd/layat`・`internal/generator`）**: `--manifest` の繰り返し指定と `--all` 合成、入力エラーの判定、prebuilt 生成器の集合化。
 - **`modules/home-manager.nix`**: config ごとの `mkManifest` と、activation の `apply --all` 1 行起動。configs ループと部分失敗集約の bash は書かない。
 - **`modules/common.nix`**: configs 間衝突の assertion を足さない。
-- **要求**: REQ-c847d1af-a437-46bb-bd64-42083810d034 / REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 / REQ-8085f194-c903-4ecb-abd8-c719fe7b3292 / REQ-dec58330-6dad-47f7-8f56-2402764a89c7 / REQ-38506419-c23d-4fce-b167-30715ce6a69d / REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729 を本 ADR に合わせて改訂する。
+- **要求**: REQ-c847d1af-a437-46bb-bd64-42083810d034 / REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 / REQ-8085f194-c903-4ecb-abd8-c719fe7b3292 / REQ-dec58330-6dad-47f7-8f56-2402764a89c7 / REQ-38506419-c23d-4fce-b167-30715ce6a69d / REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729 を本 ADR に合わせて改訂する。`--backup` の配線先（REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3）と、configs 間衝突の委譲記述（REQ-5c6b07da-3d06-414d-8770-4f438234b322 / REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 / REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a）も同じ経路へ揃える。
 - **ADR-0026 / ADR-0035 / ADR-0038 / ADR-0039 / ADR-0055**: 改訂注記を同じ変更で追記する。
 
 ## 棄却した代替案

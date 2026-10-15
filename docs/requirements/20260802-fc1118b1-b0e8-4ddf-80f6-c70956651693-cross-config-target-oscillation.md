@@ -74,4 +74,5 @@ specification_ja: |
 すること）と ADR-0024「実装前残セマンティクス第6巡」（振動 warning を抑制しないこと）。
 「検知して止める機構を持たない」を engine 実行時へ限定したのは ADR-0035「HM モジュールに
 `layat.configs.<name>` を導入し複数 profile（役割分離）を可能にする」§4（単一のモジュール eval に
-載る config 間は静的検出が可能）。
+載る config 間は静的検出が可能）。例外の条件を「単一の起動」へ改めたのは ADR-0060「HM activation を
+prebuilt manifest 群への `apply --all` 1 回起動にし、configs 間の衝突検出を CLI 前段へ委譲する」§3。
