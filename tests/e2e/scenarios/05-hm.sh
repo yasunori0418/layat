@@ -77,13 +77,22 @@ assert_single_generation() {
 	fi
 }
 
-# $1: activationPackage, $2: ログ保存先。activate が非ゼロで終わること。
-activate_fails() {
-	if "$1/activate" >"$2" 2>&1; then
-		e2e_fail "activate は非ゼロで終わるべき: $(cat "$2")"
+# $1: activationPackage, $2: ログ保存先, $3...: ログに載るべき断片。activate が非ゼロで終わること。
+assert_activate_fails() {
+	local act="$1" log="$2" needle
+	shift 2
+	if "$act/activate" >"$log" 2>&1; then
+		e2e_fail "activate は非ゼロで終わるべき: $(cat "$log")"
 	else
 		e2e_pass "activate が非ゼロで終わる"
 	fi
+	for needle in "$@"; do
+		if grep -qF -- "$needle" "$log"; then
+			e2e_pass "activate の出力が「$needle」を含む"
+		else
+			e2e_fail "activate の出力に「$needle」が無い: $(cat "$log")"
+		fi
+	done
 }
 
 e2e_step "multi: activationPackage をビルドして activate（2 config を 1 回の apply --all で配置）"
@@ -112,15 +121,7 @@ fi
 
 e2e_step "collide: 同一 target の configuration は eval を通り、activate が非ゼロで何も配置しない"
 ACT_COLLIDE="$(build_act collide)"
-COLLIDE_LOG="$E2E_WORK/collide.log"
-activate_fails "$ACT_COLLIDE" "$COLLIDE_LOG"
-for needle in c1 c2 .collide/skill; do
-	if grep -qF "$needle" "$COLLIDE_LOG"; then
-		e2e_pass "activate の出力が $needle を含む"
-	else
-		e2e_fail "activate の出力に $needle が無い: $(cat "$COLLIDE_LOG")"
-	fi
-done
+assert_activate_fails "$ACT_COLLIDE" "$E2E_WORK/collide.log" "claimed by both c1 and c2" ".collide/skill"
 assert_absent "$HOME/.collide"
 assert_absent "$PROFILES/c1"
 assert_absent "$PROFILES/c2"
@@ -129,7 +130,7 @@ e2e_step "partial: 後段 p2 の conflict で activate は非ゼロ、p1 の配�
 ACT_PARTIAL="$(build_act partial)"
 mkdir -p "$HOME/.p2"
 echo "FOREIGN" >"$HOME/.p2/skill"
-activate_fails "$ACT_PARTIAL" "$E2E_WORK/partial.log"
+assert_activate_fails "$ACT_PARTIAL" "$E2E_WORK/partial.log" "conflict(s) detected" ".p2/skill"
 assert_symlink "$HOME/.p1/skill"
 assert_file_eq "$HOME/.p1/skill/SKILL.md" "SKILLBODY"
 assert_single_generation p1
