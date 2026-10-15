@@ -141,6 +141,44 @@ func TestPrebuiltAllRootsFails(t *testing.T) {
 	}
 }
 
+// TestPrebuiltSetSelectsByName covers a named link-farm set: Discover makes every farm absolute,
+// AllRoots maps each name to its manifest.json root, and Roots / Build / DryBuild pick by name.
+func TestPrebuiltSetSelectsByName(t *testing.T) {
+	a := writeLinkFarm(t, `{"schemaVersion":1,"root":{"rootKind":"home"},"entries":[
+	  {"srcKind":"store","src":"/nix/store/aaa-source","subpath":"","target":"x","method":"symlink"}]}`)
+	b := writeLinkFarm(t, `{"schemaVersion":1,"root":{"rootKind":"fixed","root":"/srv"},"entries":[]}`)
+	t.Chdir(filepath.Dir(a))
+
+	p := &Prebuilt{LinkFarms: map[string]string{"a": filepath.Base(a), "b": b}}
+	if err := p.Discover(""); err != nil {
+		t.Fatalf("Discover: %v", err)
+	}
+	all, err := p.AllRoots()
+	if err != nil {
+		t.Fatalf("AllRoots: %v", err)
+	}
+	want := map[string]manifest.Root{
+		"a": {RootKind: manifest.RootKindHome, Targets: []string{"x"}},
+		"b": {RootKind: manifest.RootKindFixed, Root: "/srv", Targets: []string{}},
+	}
+	if !reflect.DeepEqual(all, want) {
+		t.Errorf("AllRoots = %+v, want %+v", all, want)
+	}
+	if r, err := p.Roots("b"); err != nil || !reflect.DeepEqual(r, want["b"]) {
+		t.Errorf("Roots(b) = %+v, %v; want %+v", r, err, want["b"])
+	}
+	if got, err := p.Build("a", "/ignored/.pending"); err != nil || got != a {
+		t.Errorf("Build(a) = %q, %v; want the absolute farm %q", got, err, a)
+	}
+	if got, err := p.DryBuild("b"); err != nil || got != b {
+		t.Errorf("DryBuild(b) = %q, %v; want %q", got, err, b)
+	}
+	var ge *Error
+	if _, err := p.DryBuild("zzz"); !errors.As(err, &ge) || ge.Kind != KindNotFound {
+		t.Errorf("DryBuild(zzz) error = %v, want a NotFound *generator.Error", err)
+	}
+}
+
 // TestPrebuiltRootsFailureKeepsCause covers an unreadable manifest.json: a prebuilt-tagged
 // generator.Error whose cause chain still reaches fs.ErrNotExist.
 func TestPrebuiltRootsFailureKeepsCause(t *testing.T) {
