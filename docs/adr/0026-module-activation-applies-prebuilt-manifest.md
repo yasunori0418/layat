@@ -26,7 +26,7 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-06-17
-- 関連: ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0015, ADR-0023, ADR-0024, ADR-0025, ADR-0055, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`
+- 関連: ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0015, ADR-0023, ADR-0024, ADR-0025, ADR-0055, ADR-0060, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`
 - 改訂対象: ADR-0003 / ADR-0007 が「モジュールは switch 時に engine を起動する配線」とした**起動方法**を確定する（決定の反転なし・未定義だった invocation を埋める）。CONTEXT.md の `layat CLI` / `apply` / `module` 定義を拡張する。
 - 起点: Issue #17（home-manager モジュール統合）の実装中に判明した計画外の仕様。docs（ADR-0003, ADR-0007, spec のモジュール別動作仕様）は「module は engine を kick する配線」とだけ述べ、**具体的な invocation を一度も規定していなかった**。
 
@@ -34,6 +34,12 @@ references:
 > `--manifest` 経路は manifest 生成器の **prebuilt 実装**（Discover = 与えられたパス / Roots = manifest.json から /
 > Build = そのパスを返す）として実装し直し、「rootKind は `manifest.json` から engine が読む」は
 > **prebuilt 生成器の Roots が link-farm の `manifest.json` から読む**へ変わった（→ ADR-0055）。
+
+> **2026-10-15 改訂注記（ADR-0060）**: 単一形 `apply --manifest <link-farm> [name]` の挙動と、§1 の取得後の挙動・
+> §4 の公開 seam としての位置づけは不変。ただし §2 の「`--manifest` + `--all` は error 停止」は、`--all` と合成する
+> ときに `--manifest <name>=<link-farm>` を繰り返す形に限って合成可へ変わった（素パス形と `--all` の合成は入力エラーの
+> まま）。§3 の HM activation の invocation も、`layat apply --all --manifest <name>=<link-farm> … --jobs <n>` の
+> 1 回起動へ変わった。blocking flock・レポート可視・非 0 終了で switch を止める点は不変（→ ADR-0060）。
 
 ## 背景
 

@@ -24,9 +24,16 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-07-04
-- 関連: ADR-0007, ADR-0014, ADR-0026, ADR-0010, `docs/spec.md`, `modules/common.nix`, `modules/home-manager.nix`
+- 関連: ADR-0007, ADR-0014, ADR-0026, ADR-0010, ADR-0060（§3・§4 の改訂）, `docs/spec.md`, `modules/common.nix`, `modules/home-manager.nix`
 - 改訂対象: ADR-0024 §2 の「HM モジュール経由は MVP で固定名 1 profile（`default`）、複数化は将来」と ADR-0025 §2 の「単一 `layat.entries` 据え置き・role 分離不可・将来 `layat.configs.<name>.entries` seam」を、本 ADR で seam の実装決定へ進める。「1 config = 1 profile = 1 manifest」の atomic 性（ADR-0002）は不変
 - 起点: 次期マイルストーン計画の grilling（2026-07-04）。ADR-0025 §2 が「消費側の要求が出た時点で追加」とした HM 複数 profile 化を実施する
+
+> **2026-10-15 改訂注記（ADR-0060）**: §1（`layat.configs.<name>.entries` の新設）と §2（`layat.entries` の rename
+> 糖衣）は不変。ただし §3 の「profile ごとに 1 回ずつ engine を起動し、bash 側で部分失敗を集約する」は、全 config の
+> link-farm を `apply --all --manifest <name>=<link-farm> …` の 1 回起動へ渡す形へ変わった（config ごとに独立した
+> 世代コミットは不変。部分失敗の集約は `apply --all` が担う）。§4 の「configs 間 target 衝突を eval 時 assertion で
+> 停止する」は、activation の `apply --all` 前段検査で停止する形へ変わり、module eval では検出しない。根拠節の
+> 「CLI 拡張をしない理由」と棄却案末尾の「activation を 1 回の engine 起動に集約」の棄却は反転した（→ ADR-0060）。
 
 ## 背景
 

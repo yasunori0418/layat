@@ -21,9 +21,15 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-07-04
-- 関連: ADR-0013, ADR-0023, ADR-0035, ADR-0039（本検査を前提に並列化）, ADR-0040, `docs/spec.md`
+- 関連: ADR-0013, ADR-0023, ADR-0035, ADR-0039（本検査を前提に並列化）, ADR-0040, ADR-0060（HM の検出を前段検査へ）, `docs/spec.md`
 - 改訂対象: ADR-0015 §2 の「cross-config 同一 target は実行時後勝ち + foreign symlink warning」のうち、**同一 entrypoint 内**（`apply --all` の対象 config 間）の衝突を前段検出・error 停止へ改訂（別 entrypoint / 別ツールの衝突は実行時後勝ちのまま不変）。ADR-0024 §8 の `--all` 一括 eval を「rootKind に加え正規化後 target 一覧も取得」へ拡張
 - 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。`apply --all` 並列化（→ ADR-0039）の検討中に「複数 config / profile / manifest 間の target 衝突をどう扱うか」が独立の前提問題として切り出された
+
+> **2026-10-15 改訂注記（ADR-0060）**: §1 の検出規則（正規化後 target・バケット規則・build 前の error 停止）と
+> §3 の検査範囲の限界は不変。ただし §1 の検査集合に `apply --all --manifest <name>=<link-farm> …` で渡された
+> prebuilt 集合が加わり、その `targets` は各 link-farm の `manifest.json` の entries から得る。§2 末尾の「HM
+> モジュールは nix 側（module eval の assertion）で検出する」は、HM activation も同じ CLI 前段検査を通る形へ
+> 変わった（→ ADR-0060）。
 
 ## 背景
 
