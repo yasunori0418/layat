@@ -34,8 +34,7 @@ in
   config = lib.mkIf (cfg.enable && cfg.configs != { }) {
     # Apply the pre-built link-farms after writeBoundary so it does not collide with home.file's
     # placement; `run` honors --dry-run.
-    # --jobs is always explicit (0 included); layat.recopy adds --recopy and
-    # layat.backup.enable adds --backup=<suffix> shell-quoted.
+    # --jobs is always explicit (0 included); --recopy and a shell-quoted --backup=<suffix> only when enabled.
     home.activation.layat = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       run ${lib.getExe layatPackage} apply --all ${manifestArgs} --jobs ${toString cfg.jobs}${lib.optionalString cfg.recopy " --recopy"}${lib.optionalString cfg.backup.enable " --backup=${lib.escapeShellArg cfg.backup.suffix}"}
     '';
