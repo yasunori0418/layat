@@ -42,11 +42,11 @@ references:
 > 緩和した。実装は変えず、nixprofile が唯一のバックエンドである間の実質は不変。「緩めるのは後継 epic #406 の担当」は
 > これで回収した（→ ADR-0057）。
 
-> **2026-10-15 改訂注記（ADR-0060）**: §1〜§4 の契約と §5 の単一形（`--manifest <link-farm>` を prebuilt 生成器に
-> 写すこと）は不変。ただし §5 の「ADR-0026 の外面（`--all` との排他）は不変」は、`--all` と合成するときに
-> `--manifest <name>=<link-farm>` を繰り返す形に限って合成可へ変わった。prebuilt 生成器は名前付き link-farm の集合を
-> 扱い、一括の Roots が name ごとの `manifest.Root`（`Targets` を含む）を返し、Build / DryBuild が name で
-> link-farm を選ぶ（→ ADR-0060）。
+> **2026-10-15 改訂注記（ADR-0060）**: §1・§3・§4 の契約、§2 の 4 操作と引数、§5 の単一形（`--manifest <link-farm>` を
+> prebuilt 生成器に写すこと）は不変。ただし §2 の prebuilt 実装は名前付き link-farm の集合を扱うようになり、一括の
+> Roots が name ごとの `manifest.Root`（`Targets` を含む）を返し、Build / DryBuild が name で link-farm を選ぶ。§5 の
+> 「ADR-0026 の外面（`--all` との排他）は不変」は、`--all` と合成するときに `--manifest <name>=<link-farm>` を繰り返す
+> 形に限って合成可へ変わった（→ ADR-0060）。
 
 ## 背景
 

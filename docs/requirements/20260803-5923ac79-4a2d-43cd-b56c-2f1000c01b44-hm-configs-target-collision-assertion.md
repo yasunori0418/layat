@@ -54,6 +54,11 @@ specification_ja: |
 > 委ねる範囲の外にある。両 item が何を規定するかはそれぞれの specification が正で、
 > ここでは再掲しない。
 >
+> **REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a との整合**: 同 item が Nix 評価時に検出するのは、
+> `mkManifest` が 1 つの manifest の設定だけで判定できる誤りである。configs 間の衝突は複数の
+> manifest に跨るため `mkManifest` では判定できず、CLI の前段検査が engine の起動前に止める。
+> engine を起動させないという層分けの趣旨は保たれる。
+>
 > **他 item との担当分界**: 正規化後 target 文字列の同値判定と属性キー = target という
 > 識別の体系は REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 / REQ-b232ec98-af3b-41f3-a050-29d417322002、`layat.configs` オプションの定義は
 > REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、`<name>` 次元と役割分離そのものは REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a、foreign symlink warning

@@ -16,7 +16,9 @@ specification: |
   REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af; the activation SHALL NOT loop over the configs
   nor aggregate failures in the shell, and SHALL only return the non-zero exit through
   `run` so that the switch stops. The report SHALL be presented in the lexical order of
-  `<name>`, while the parallelism of the placement SHALL follow `--jobs`. The contract of
+  `<name>`, while the parallelism of the placement SHALL follow `--jobs`. Where
+  `layat.configs` holds no config, the activation SHALL NOT invoke `layat`, since an
+  `apply --all` without `--manifest` would take the entrypoint path. The contract of
   the kick is stated by REQ-8085f194-c903-4ecb-abd8-c719fe7b3292, and the correspondence of
   one config to one manifest and one profile by REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a;
   neither is restated here.
@@ -31,7 +33,8 @@ specification_ja: |
   ものでなければならない。activation は config をシェルでループしてはならず、失敗をシェルで
   集約してもならず、非ゼロ終了を `run` で返して switch を止めるだけにしなければならない。
   報告は `<name>` の辞書順で示さなければならず、配置の並列度は `--jobs` に従わなければ
-  ならない。起動の契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、1 config が
+  ならない。`layat.configs` に config が 1 つも無いときは、activation は `layat` を起動しては
+  ならない（`--manifest` の無い `apply --all` は entrypoint 経路になるため）。起動の契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、1 config が
   1 manifest = 1 profile に対応することは REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a の担当で、
   いずれも本 item では規定しない。
 ---
@@ -48,6 +51,7 @@ specification_ja: |
 - 部分失敗の続行・集約・非ゼロ終了は `apply --all` に任せ、activation はシェルでループも
   集約もしない。非ゼロ終了は `run` がそのまま返して switch を止める
 - 報告は辞書順、配置の並列度は `--jobs` に従う
+- config が 1 つも無いときは `layat` を起動しない
 
 > **他 item との担当分界**: 起動 1 回の activation 契約（`entryAfter ["writeBoundary"]`・
 > ビルド済み link-farm を渡すこと・activation が `nix eval` / `build` を行わないこと・engine

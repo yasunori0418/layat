@@ -46,12 +46,13 @@ ADR-0035 は HM の `layat.configs.<name>` を決め、activation を「profile 
 - 各 config は従来どおり 1 config = 1 profile = 1 manifest で、profileDir 単位の flock・baseline との diff・stale 除去・世代コミットは config ごとに独立して走る（`apply --all` の既存の性質）。
 - 部分失敗の続行と集約、非ゼロ終了は `apply --all` のもの（REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af）をそのまま使う。activation は `run` で非ゼロ終了を返して switch を止めるだけで、bash 側にループも集約も書かない。
 - 報告（人間向けの集約表示・`--json` の `results[]`）は辞書順、配置の並列度は `--jobs` に従う。
+- config が 1 つも無いときは `layat` を起動しない（`--manifest` の無い `apply --all` は entrypoint 経路になるため）。
 
 ### 2. `--manifest` は `--all` と合成するとき `<name>=<link-farm>` を繰り返す
 
 - `apply --manifest <link-farm> [name]`（単一形）の挙動とエラー文は変えない。
 - `--all` と合成するときは `--manifest <name>=<link-farm>` を 1 回以上繰り返す。最初の `=` で分割し、`<name>` が空なら入力エラーにする。
-- 次は入力エラー（`--json` では `E_INPUT`）: `--all` なしで `--manifest` を 2 回以上指定する、`--all` なしで `<name>=` 形を使う、`--all` と素パス形を合成する。`--manifest` と `-f` / `--generator` の併用は従来どおり入力エラー。
+- 次は入力エラー（`--json` では `E_INPUT`）: `--all` なしで `--manifest` を 2 回以上指定する、`--all` なしで `<name>=` 形を使う、`--all` と素パス形を合成する、`--all` と合成した組で同じ `<name>` を 2 回以上指定する。`--manifest` と `-f` / `--generator` の併用は従来どおり入力エラー。
 - 実装は prebuilt 生成器の集合化とする。一括の Roots は name → `manifest.Root`（`Targets` は各 link-farm の `manifest.json` の entries から導出）を返し、Build / DryBuild は name で link-farm を選ぶ。manifest.json スキーマ v1 は変えない。
 - root フィルタ（`--home-root` 等）は特別扱いせず、`manifest.json` の rootKind による一般の選択規則に従う。
 

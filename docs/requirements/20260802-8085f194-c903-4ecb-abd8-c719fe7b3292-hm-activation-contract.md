@@ -64,16 +64,16 @@ specification_ja: |
 > - method と `src` の組み合わせが選ぶ配置方法 → REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe。表が HM でも engine が扱う
 >   （HM の `mkOutOfStoreSymlink` へ委譲しない）と述べる点は REQ-eb363122-385a-499c-a074-c95efb949d07 / REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9
 > - `apply --manifest` の契約そのもの（entrypoint 発見・eval・build を行わないこと・
->   `-f` / `--all` との併用エラー）→ REQ-dec58330-6dad-47f7-8f56-2402764a89c7
+>   `-f` との併用エラー・`--all` と合成するときの `<name>=<link-farm>` の繰り返し）→ REQ-dec58330-6dad-47f7-8f56-2402764a89c7
 > - モジュールが root を pin し利用者が再指定しないこと → REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10。`homeRoot` の
 >   層ごとの解決 → REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b
 > - manifest を供給するオプションの定義（canonical は `layat.configs.<name>.entries`・
 >   `layat.entries` はその糖衣）→ REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、1 config が 1 manifest = 1 profile に対応する
 >   ことと profile 粒度 → REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a。本 item の写しにある `layat.entries` は原文逐語であり、
 >   規範文では供給元を「config の entries」と述べて ADR-0035 と衝突しない形にしている。
->   activation が profile ごとに engine を kick する規律（ADR-0035 §3・辞書順・部分失敗の
->   集約）は原文に対応記述が無いため本 item の写しには現れないが、規範は REQ-c847d1af-a437-46bb-bd64-42083810d034 が
->   持つ
+>   activation が全 config を 1 回の `apply --all` 起動へ渡す規律（ADR-0060 §1・`<name>` の
+>   辞書順・`--jobs`・部分失敗の集約）は原文に対応記述が無いため本 item の写しには現れないが、
+>   規範は REQ-c847d1af-a437-46bb-bd64-42083810d034 が持つ
 > - flock を既定 blocking で取ること → REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461。レポートと warning を stderr へ出す
 >   ストリーム規律 → REQ-fea038de-55eb-45ac-87fc-ec3a7287592a。終了コードの体系 → REQ-2c5a10d8-112b-4f96-947a-aba7164779c4
 > - 世代が layat 自前 profile に乗ること → REQ-1be4d678-959c-44d7-a346-44bfd95af56e。profile 名の次元 → REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a、
