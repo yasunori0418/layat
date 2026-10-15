@@ -21,7 +21,8 @@ standalone な home-manager configuration を設定違いで複数評価し、�
   名前の辞書順に `<name>=<配置物>` の組で並べ、engine を `apply --all` の 1 回の起動で渡して
   いること
 - 2 つの config の配置物が別の store パスになり、どちらの文書も実在して root の種別として
-  home を固定し、それぞれの config で宣言した entry をその属性キーを配置先として持つこと
+  home を固定し、それぞれの config で宣言した entry をその属性キーを配置先として持ち、
+  他の config の entry を持たないこと
 - 退避のオプションを有効にし、かつサフィックスを省略したとき、既定のサフィックスが同じ起動の
   末尾へフラグとして乗ること
 - 旧来の `layat.entries` だけで書いた設定が、`configs.default.entries` に同じ entry を書いた

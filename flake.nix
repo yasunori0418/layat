@@ -285,18 +285,21 @@
                 grep -qE " apply --all --manifest 'default=/nix/store/[a-z0-9]+-layat-manifest' --manifest 'work=/nix/store/[a-z0-9]+-layat-manifest' --backup=layat-backup$" "$script" \
                   || { echo "FAIL: activation が apply --all --manifest <name>=<farm> … --backup=<suffix> の形ではありません"; cat "$script"; exit 1; }
 
-                # (2) config ごとに別 store path の manifest が root=homeRoot を pin し、各 entries を持つこと。
+                # (2) config ごとに別 store path の manifest が root=homeRoot を pin し、自分の entries だけを持つこと。
                 farmDefault=$(grep -oE "default=/nix/store/[^ ']+" "$script" | cut -d= -f2)
                 farmWork=$(grep -oE "work=/nix/store/[^ ']+" "$script" | cut -d= -f2)
                 test "$farmDefault" != "$farmWork" \
                   || { echo "FAIL: 2 configs の manifest が同じ store path です"; cat "$script"; exit 1; }
-                for pair in "$farmDefault:.claude/skills/nix" "$farmWork:.config/work"; do
-                  json="''${pair%%:*}/manifest.json"
+                for spec in "$farmDefault:.claude/skills/nix:.config/work" "$farmWork:.config/work:.claude/skills/nix"; do
+                  IFS=: read -r farm own other <<<"$spec"
+                  json="$farm/manifest.json"
                   test -f "$json" || { echo "FAIL: $json がありません"; exit 1; }
                   grep -q '"rootKind":"home"' "$json" \
                     || { echo "FAIL: manifest が homeRoot を pin していません"; cat "$json"; exit 1; }
-                  grep -qF "\"''${pair#*:}\"" "$json" \
+                  grep -qF "\"$own\"" "$json" \
                     || { echo "FAIL: configs.<name>.entries が manifest に反映されていません"; cat "$json"; exit 1; }
+                  ! grep -qF "\"$other\"" "$json" \
+                    || { echo "FAIL: 他の config の entries が manifest に混入しています"; cat "$json"; exit 1; }
                 done
 
                 # (3) layat.entries のみの config は configs.default.entries と同一 manifest を生み、
