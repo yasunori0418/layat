@@ -8,9 +8,8 @@ specification: |
   A collision in which two distinct keys A and B explicitly override the `target` field to
   the same value SHALL be detected as a duplicate of the normalized target string and
   SHALL stop evaluation via `lib.throwIf` at eval time, not at engine runtime. A
-  cross-config collision that rides neither on a single evaluation nor on a single
-  invocation (a same target across separate entrypoints, machines or tools) cannot be
-  detected before placement and SHALL
+  cross-config collision that does not ride on a single invocation (a same target across
+  separate entrypoints, machines or tools) cannot be detected before placement and SHALL
   instead be handled at engine runtime as last-writer-wins plus a foreign symlink warning.
   The two SHALL remain separate paths. Where several configs do ride on a single
   invocation, as the `layat.configs` of one module configuration do through the `apply
@@ -20,7 +19,7 @@ specification: |
 specification_ja: |
   別キー A / B が `target` フィールドを同値に明示上書きした衝突は、正規化後 target
   文字列の重複として eval 時に `lib.throwIf` で検出し停止しなければならない
-  （engine 実行時ではない）。単一の eval にも単一の起動にも載らない cross-config（別
+  （engine 実行時ではない）。単一の起動に載らない cross-config（別
   entrypoint・別マシン・別ツールに跨る場合）の同一 target 衝突は配置前に検出できず、engine
   実行時の後勝ち +
   foreign symlink warning として扱わなければならない。両者は別経路として保たなければ

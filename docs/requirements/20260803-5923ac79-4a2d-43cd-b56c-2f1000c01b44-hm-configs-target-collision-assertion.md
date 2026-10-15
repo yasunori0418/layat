@@ -47,7 +47,7 @@ specification_ja: |
 - 検出しなければ、activation のたびに A と B が同じ target を交互に奪い合うフリップフロップが
   恒常化する
 
-> **REQ-5c6b07da-3d06-414d-8770-4f438234b322 / REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 との整合**: 両 item は規範文を「単一の eval に載らない
+> **REQ-5c6b07da-3d06-414d-8770-4f438234b322 / REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 との整合**: 両 item は規範文を「単一の起動に載らない
 > 場合」へ限定し、単一の起動に載る複数 config については「配置前の検出を妨げない」までを
 > 述べる。本 item の検出はその場合にあたり、activation の `apply --all` 前段検査が配置の前に
 > 止めるので、両 item が engine 実行時に委ねる範囲の外にある。両 item が何を規定するかはそれぞれの specification が正で、

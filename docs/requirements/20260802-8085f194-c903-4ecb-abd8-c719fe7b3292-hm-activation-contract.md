@@ -99,4 +99,4 @@ specification_ja: |
 
 決定の実体は ADR-0026「モジュール activation の engine kick は `apply --manifest`
 （ビルド済み link-farm 直接適用）で行う」。モジュールを配線に徹させることは ADR-0003 が
-定めている。
+定めている。全 config を `apply --all` の 1 回の起動で渡す形は ADR-0060 §1。
