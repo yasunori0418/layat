@@ -31,7 +31,7 @@ fixture flake は `layat` を `path:<repo>` input で参照し、`nixpkgs` / `ho
 | `02-home`    | home mode。仮 `$HOME` で apply → `$HOME` 配下配置 + profile 世代コミット、entry 入替で世代を進め `layat rollback` で前世代へ復帰 |
 | `03-stale`   | stale 除去。entry を config から削除 → 再 apply で旧 symlink が消える（保守的不変条件） |
 | `04-copy`    | copy place-once / out-of-store。copy が通常ファイル（書込可）・place-once 冪等（ローカル編集を破棄しない）・out-of-store の live symlink |
-| `05-hm`      | HM module。home-manager standalone configuration を非 NixOS で評価・activate し、activation が engine を起動して配置すること |
+| `05-hm`      | HM module。home-manager standalone configuration を非 NixOS で評価・activate し、activation が engine を起動して配置すること。`layat.entries` と別名の config を併せ持つ構成で 2 profile が独立した世代を持つこと、2 config が同一 target を持つと何も置かずに非ゼロで止まること、後の config の target を外来ファイルで塞ぐと前の config だけ配置・コミットされ非ゼロになることを検証 |
 | `06-init-templates` | init + templates。`layat init <t>` で standalone / project テンプレを展開し、展開後 flake が `nix flake check`（layat を局所 override）を通ること |
 | `07-legacy`  | legacy entrypoint（shell.nix・passthru canonical 形・→ ADR-0032）。`NIX_PATH` を flake.lock の nixpkgs に pin し、`layat apply` / `apply --all` / 素の `nix-shell` 互換を検証 |
 | `08-prune`   | prune（→ ADR-0034）。apply した 2 系列の一方の root を消して孤児にし、`--dryrun` の非破壊性・`--yes` の系列ごと削除・生存系列と配置物の不変・`print-roots` から gcroot が外れることを検証 |

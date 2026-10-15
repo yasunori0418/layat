@@ -170,16 +170,19 @@ layat list-generations vim-plugins
 
 ### home-manager モジュール
 
-モジュールは `root = homeRoot` に固定される(`root` を再指定しない)。`home.activation` から `layat apply --manifest <link-farm>` でエンジンを起動し、`home.file` へは委譲しない。layat は自前の profile を **内部機構** として保持するが、ユーザー公開の rollback はホスト側に一本化される(`home-manager --rollback`)。
+モジュールは `root = homeRoot` に固定される(`root` を再指定しない)。`layat.configs.<name>` の一つひとつが独自の link-farm と独自の profile `<name>` を持つので、standalone の `layat.<name>` と同じく役割を分けられる。`home.activation` は `layat apply --all --manifest <name>=<link-farm> … --jobs <n>` の 1 回の起動でエンジンを駆動し、`home.file` へは委譲しない。2 つの config が同じ target を持つと、何も配置せずに activation が止まる。layat は自前の profile を **内部機構** として保持するが、ユーザー公開の rollback はホスト側に一本化される(`home-manager --rollback`)。
 
 ```nix
 imports = [ inputs.layat.homeManagerModules.default ];
 
 layat = {
   enable = true;
-  entries = {
+  # 各 config = 独立した profile
+  configs.ai-tools.entries = {
     # 外部リポジトリ(store link)
     ".claude/skills/nix" = { src = inputs.skills-repo; subpath = "skills/nix"; };
+  };
+  configs.desktop.entries = {
     # テーマを copy で(一度配置したら以降ユーザー管理)
     ".local/share/themes/dark" = { src = inputs.themes; subpath = "dark"; method = "copy"; };
     # ローカル dotfiles を out-of-store symlink でライブ編集
@@ -188,7 +191,13 @@ layat = {
 };
 ```
 
-> home-manager モジュールは MVP では **単一 manifest = 一つの profile**(固定名 `default`)であり、`<name>` 次元を持たないため、**役割分離はモジュール経由では使えない**。複数の独立 profile が要るなら standalone CLI 経路(`layat.<name>` entrypoint)を使う。
+全 config に共通のオプション:
+
+- `layat.recopy`(bool、既定 `false`)——activation のたびに `--recopy` を付け、全 copy target を `src` から上書きする(ローカル編集は失われる)。
+- `layat.jobs`(非負整数、既定 `0` = 論理 CPU 数)——config をいくつ並列にビルド・配置するか(`--jobs <n>`)。
+- `layat.backup.enable` / `layat.backup.suffix`(既定 `"layat-backup"`)——衝突で止まる代わりに、居座る外部の実体を `<target>.<suffix>` へ退避する。
+
+> `layat.entries` は `layat.configs.default.entries` の deprecated な別名。今も動くが、評価時に deprecation warning が出る。
 
 ### 既存の flake に layat を追加する
 
@@ -429,7 +438,7 @@ generator = "nix"
 | Standalone CLI(`apply` / `reset` / `rollback` / `list-generations` / `gitignore` / `init`) | 実装済み(コア) |
 | project mode(`projectRoot`) | 実装済み(コア) |
 | home mode(`homeRoot`) | 実装済み |
-| home-manager モジュール | 実装済み——単一 profile(固定名 `default`)・役割分離なし |
+| home-manager モジュール | 実装済み——`layat.configs.<name>` ごとに 1 profile |
 | 世代 / rollback(home mode) | 実装済み |
 | copy(place-once)/ out-of-store symlink | 実装済み |
 | flake-parts モジュール | 実装済み |
@@ -442,7 +451,6 @@ generator = "nix"
 
 - boot / init / filesystem / partition 層は layat のドメインではない。
 - クローンを削除すると `<state>/nix/profiles/layat/` 下に orphan な profile ディレクトリが残る(store は `nix-collect-garbage` で解放されるが、profile ディレクトリは残る)。MVP に `prune` コマンドは無い——手で消す。
-- home-manager モジュールは MVP では役割を複数 profile に分けられない——その用途には standalone CLI を使う。
 
 ---
 

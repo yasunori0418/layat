@@ -199,19 +199,25 @@ affected config to keep the change from touching any other tool.
 
 ### home-manager module
 
-The module pins `root = homeRoot` (you do not re-specify `root`). It kicks the engine from
-`home.activation` via `layat apply --manifest <link-farm>` — it never delegates to
-`home.file`. layat keeps its own profile as an **internal mechanism**; user-facing rollback
-is unified on the host (`home-manager --rollback`).
+The module pins `root = homeRoot` (you do not re-specify `root`). Each
+`layat.configs.<name>` is its own link-farm and its own profile `<name>`, so roles stay
+separate just as with standalone `layat.<name>`. `home.activation` kicks the engine once via
+`layat apply --all --manifest <name>=<link-farm> … --jobs <n>` — it never delegates to
+`home.file`. A target claimed by two configs stops activation before anything is placed.
+layat keeps its own profiles as an **internal mechanism**; user-facing rollback is unified on
+the host (`home-manager --rollback`).
 
 ```nix
 imports = [ inputs.layat.homeManagerModules.default ];
 
 layat = {
   enable = true;
-  entries = {
+  # each config = an independent profile
+  configs.ai-tools.entries = {
     # external repo (store link)
     ".claude/skills/nix" = { src = inputs.skills-repo; subpath = "skills/nix"; };
+  };
+  configs.desktop.entries = {
     # theme as a copy (place-once, then user-managed)
     ".local/share/themes/dark" = { src = inputs.themes; subpath = "dark"; method = "copy"; };
     # live editing of local dotfiles via out-of-store symlink
@@ -220,10 +226,17 @@ layat = {
 };
 ```
 
-> The home-manager module is a **single manifest = one profile** (fixed name `default`) in
-> the MVP — it has no `<name>` dimension, so **role separation is not available through the
-> module**. Use the standalone CLI path (`layat.<name>` entrypoints) for multiple
-> independent profiles.
+Options shared by every config:
+
+- `layat.recopy` (bool, default `false`) — every activation passes `--recopy`, overwriting
+  every copy target from its `src` and discarding local edits.
+- `layat.jobs` (unsigned int, default `0` = logical CPU count) — how many configs are built
+  and placed in parallel (`--jobs <n>`).
+- `layat.backup.enable` / `layat.backup.suffix` (default `"layat-backup"`) — rename an
+  occupying foreign entity to `<target>.<suffix>` instead of stopping on conflict.
+
+> `layat.entries` is a deprecated alias of `layat.configs.default.entries`; it still works
+> but evaluates with a deprecation warning.
 
 ### Adding layat to an existing flake
 
@@ -510,7 +523,7 @@ expose it as a pure function you control."**
 | Standalone CLI (`apply` / `reset` / `rollback` / `list-generations` / `gitignore` / `prune` / `init`) | implemented (core) |
 | project mode (`projectRoot`) | implemented (core) |
 | home mode (`homeRoot`) | implemented |
-| home-manager module | implemented — single profile (fixed name `default`); no role separation |
+| home-manager module | implemented — one profile per `layat.configs.<name>` |
 | Generations / rollback (home mode) | implemented |
 | copy (place-once) / out-of-store symlink | implemented |
 | flake-parts module | implemented |
@@ -526,8 +539,6 @@ expose it as a pure function you control."**
   `<state>/nix/profiles/layat/` (the store is freed by `nix-collect-garbage`, but the
   profile directory remains). `layat prune` deletes the series whose recorded root no longer
   exists; it lists the root paths and asks before deleting anything.
-- The home-manager module cannot separate roles into multiple profiles in the MVP — use the
-  standalone CLI for that.
 
 ---
 
