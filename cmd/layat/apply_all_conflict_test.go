@@ -1,11 +1,13 @@
 package main
 
 // Tests for apply --all's cross-config target conflict preflight: bucket rules, root filter
-// selection, named apply, and the --json top-level errors[].
+// selection, named apply, the --json top-level errors[], and the --manifest <name>=<link-farm> set.
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -295,5 +297,135 @@ func TestRunApplyNamedIsNotChecked(t *testing.T) {
 	}
 	if evals != 1 || builds != 1 {
 		t.Errorf("evals = %d, builds = %d, want 1 and 1 (evalRoot then the in-lock build)", evals, builds)
+	}
+}
+
+// withManifestFlags sets --manifest to values and --all to all, restoring both with --generator.
+func withManifestFlags(t *testing.T, all bool, values ...string) {
+	t.Helper()
+	origManifest, origAll, origGen := flagManifest, flagApplyAll, flagGenerator
+	t.Cleanup(func() { flagManifest, flagApplyAll, flagGenerator = origManifest, origAll, origGen })
+	flagManifest, flagApplyAll = values, all
+}
+
+// symlinkEntries returns one symlink entry per target, all pointing at a real source file.
+func symlinkEntries(t *testing.T, targets ...string) []manifest.Entry {
+	t.Helper()
+	src := t.TempDir()
+	if err := os.WriteFile(filepath.Join(src, "f"), []byte("x"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	entries := make([]manifest.Entry, 0, len(targets))
+	for _, target := range targets {
+		entries = append(entries, manifest.Entry{SrcKind: "store", Src: src, Subpath: "f", Target: target, Method: "symlink"})
+	}
+	return entries
+}
+
+// TestRunApplyAllManifestSet drives apply --all over a --manifest <name>=<link-farm> set: both
+// configs are placed and reported in lexical order without any nix call.
+func TestRunApplyAllManifestSet(t *testing.T) {
+	withFlakeEntrypoint(t)
+	installFakeBackend(t, "")
+	root := t.TempDir()
+	flagFile, flagDryrun, flagRoot = "", false, root
+	farmA := writeTestLinkFarm(t, symlinkEntries(t, "from-a")...)
+	farmB := writeTestLinkFarm(t, symlinkEntries(t, "from-b")...)
+	withManifestFlags(t, true, "b="+farmB, "a="+farmA)
+	log := stubNixForApply(t, `{}`)
+	run, buf := newApplyTestRun()
+	if err := runApplyAll(run); err != nil {
+		t.Fatalf("runApplyAll: %v", err)
+	}
+	if err := run.emit(nil); err != nil {
+		t.Fatalf("emit: %v", err)
+	}
+	checkConformance(t, buf)
+	byName, order := subjectResults(t, buf)
+	if want := []string{"a", "b"}; !slices.Equal(order, want) {
+		t.Fatalf("results order = %v, want %v", order, want)
+	}
+	for _, name := range order {
+		if status, errs := statusAndErrors(t, byName[name]); status != "success" || len(errs) != 0 {
+			t.Errorf("subject %s = (%s, %v), want (success, none)", name, status, errs)
+		}
+	}
+	for _, target := range []string{"from-a", "from-b"} {
+		if _, err := os.Lstat(filepath.Join(root, target)); err != nil {
+			t.Errorf("target %s not placed: %v", target, err)
+		}
+	}
+	if calls := nixCalls(t, log); len(calls) != 0 {
+		t.Errorf("nix calls = %q, want none", calls)
+	}
+}
+
+// TestRunApplyAllManifestSetConflict: two link-farms claiming the same target stop the run before
+// any placement, naming the target and both configs.
+func TestRunApplyAllManifestSetConflict(t *testing.T) {
+	withFlakeEntrypoint(t)
+	installFakeBackend(t, "")
+	root := t.TempDir()
+	flagFile, flagDryrun, flagRoot = "", false, root
+	withManifestFlags(t, true,
+		"a="+writeTestLinkFarm(t, symlinkEntries(t, "dup", "only-a")...),
+		"b="+writeTestLinkFarm(t, symlinkEntries(t, "dup")...))
+	run, _ := newApplyTestRun()
+	err := runApplyAll(run)
+	if err == nil || !strings.Contains(err.Error(), "dup: "+conflictMarker+" a and b") {
+		t.Fatalf("runApplyAll = %v, want the conflict on dup naming a and b", err)
+	}
+	if entries, _ := os.ReadDir(root); len(entries) != 0 {
+		t.Errorf("root holds %v, want nothing placed", entries)
+	}
+}
+
+// TestManifestFlagInputErrors: every malformed --manifest combination is an input error (E_INPUT)
+// raised before any nix call.
+func TestManifestFlagInputErrors(t *testing.T) {
+	cases := []struct {
+		name      string
+		all       bool
+		values    []string // "FARM" stands for an existing link-farm
+		withFile  bool
+		generator string
+	}{
+		{name: "given twice without --all", values: []string{"FARM", "FARM"}},
+		{name: "name= form without --all", values: []string{"a=FARM"}},
+		{name: "bare path with --all", all: true, values: []string{"FARM"}},
+		{name: "empty name", all: true, values: []string{"=FARM"}},
+		{name: "same name twice", all: true, values: []string{"a=FARM", "b=FARM", "a=FARM"}},
+		{name: "-f with --all", all: true, values: []string{"a=FARM"}, withFile: true},
+		{name: "--generator with --all", all: true, values: []string{"a=FARM"}, generator: "nix"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			withFlakeEntrypoint(t)
+			farm := writeTestLinkFarm(t)
+			values := make([]string, 0, len(tc.values))
+			for _, v := range tc.values {
+				values = append(values, strings.Replace(v, "FARM", farm, 1))
+			}
+			withManifestFlags(t, tc.all, values...)
+			flagDryrun, flagGenerator = false, tc.generator
+			if !tc.withFile {
+				flagFile = ""
+			}
+			log := stubNixForApply(t, `{}`)
+			run, _ := newApplyTestRun()
+			var err error
+			if tc.all {
+				err = runApplyAll(run)
+			} else {
+				err = runApply(run, "default")
+			}
+			var ie *inputError
+			if !errors.As(err, &ie) || classifyError(err).Code != "E_INPUT" {
+				t.Fatalf("error = %v, want an E_INPUT inputError", err)
+			}
+			if calls := nixCalls(t, log); len(calls) != 0 {
+				t.Errorf("nix calls = %q, want none", calls)
+			}
+		})
 	}
 }
