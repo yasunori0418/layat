@@ -15,7 +15,7 @@ mitigates:
 - **入力不正** — 未知の値（どの段でも）・TOML のパース失敗・未知キーは出どころを名指しした
   1 行の `inputError` になり、`--json` では `E_INPUT` に分類される。存在するが読めない設定
   ファイルは入力不正にせず読み込み失敗の分類を保つ
-- **フラグの組み合わせ不正** — `--manifest` と `-f` / `--all` / `--generator` の同時指定が
-  `E_INPUT` で止まり、nix を呼ばない
+- **フラグの組み合わせ不正** — `--manifest` と `-f` / `--generator` の同時指定、`--all` と
+  素パス形の `--manifest` の同時指定が `E_INPUT` で止まり、nix を呼ばない
 - **`--manifest` 経路の環境非依存** — `apply --manifest` は環境変数・設定ファイルが不正でも
   読まずに prebuilt で配置する

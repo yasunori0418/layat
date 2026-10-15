@@ -27,7 +27,7 @@ specification: |
   as `E_INPUT` and SHALL keep the classification of its read failure (`E_PERMISSION`,
   `E_IO`). An unknown generator name, an invalid configuration file, and the flag
   combinations `--generator` with `--manifest`, `-f` with `--manifest` and `--all` with
-  `--manifest` SHALL be reported as `E_INPUT` under `--json`. `prune` and `init` SHALL
+  the bare-path form of `--manifest` SHALL be reported as `E_INPUT` under `--json`. `prune` and `init` SHALL
   ignore `--generator` without validating its value, and SHALL NOT read the environment
   variable or any configuration file.
 specification_ja: |
@@ -48,7 +48,7 @@ specification_ja: |
   存在するが読めない設定ファイルは `E_INPUT` として報告してはならず、読み込み失敗の分類
   （`E_PERMISSION` / `E_IO`）を保たなければならない。
   未知の生成器名・設定ファイルの不正・フラグの組み合わせ（`--generator` + `--manifest`、
-  `-f` + `--manifest`、`--all` + `--manifest`）は `--json` で `E_INPUT` として報告しなければ
+  `-f` + `--manifest`、`--all` + 素パス形の `--manifest`）は `--json` で `E_INPUT` として報告しなければ
   ならない。`prune` と `init` は `--generator` の値を検証せずに無視し、環境変数・設定
   ファイルを読んではならない。
 ---
@@ -73,13 +73,14 @@ generator = "nix"
 - 値の enum は `nix` のみ。prebuilt は `--manifest` でだけ選ばれ、`--manifest` 時は
   2〜4 を読まない（モジュール activation が実行環境の環境変数・cwd に左右されないため）。
 - 入力不正（未知値・TOML のパース失敗・未知キー・フラグの組み合わせ不正）は人間向けは
-  exit 1 + 1 行、`--json` では共通コード `E_INPUT`。`-f` / `--all` + `--manifest` の既存の
-  エラーは文面を変えずにコードだけ `E_INPUT` へ揃える。
+  exit 1 + 1 行、`--json` では共通コード `E_INPUT`。`-f` + `--manifest` の既存のエラーは
+  文面を変えずにコードだけ `E_INPUT` へ揃える。`--all` は `--manifest <name>=<link-farm>` と
+  合成でき、素パス形との組み合わせだけが入力不正になる。
 - 存在するが読めない設定ファイル（権限なし・ディレクトリ）は入力不正にせず、読み込み失敗の
   分類（`E_PERMISSION` / `E_IO`）を保つ。
 - 設定ファイルは生成器の選択にだけ使い、config の発見には使わない。
 
-`--manifest` の外面と `-f` / `--all` との排他そのものは REQ-dec58330-6dad-47f7-8f56-2402764a89c7、TOML パーサの
+`--manifest` の外面・`-f` との排他・`--all` との合成の形そのものは REQ-dec58330-6dad-47f7-8f56-2402764a89c7、TOML パーサの
 依存許可は REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0 の担当。
 
 ## 出典
