@@ -268,6 +268,10 @@
                 configs.default.entries.".claude/skills/nix" = skill;
                 jobs = 3;
               };
+              recopy = mkHm {
+                configs.default.entries.".claude/skills/nix" = skill;
+                recopy = true;
+              };
               # home.activation の dag entry の生スクリプト。
               activationScript = pkgs.writeText "layat-activation" multi.home.activation.layat.data;
             in
@@ -279,6 +283,7 @@
                 renameWarning = "has been renamed to `layat.configs.default.entries'";
                 emptyLaunches = lib.boolToString (empty.home.activation ? layat);
                 jobs3Activation = jobs3.home.activation.layat.data;
+                recopyActivation = recopy.home.activation.layat.data;
               }
               ''
                 script=${activationScript}
@@ -318,7 +323,13 @@
                 grep -qE " --manifest 'default=[^']+' --jobs 3$" <<<"$jobs3Activation" \
                   || { echo "FAIL: layat.jobs = 3 が --jobs 3 として渡っていません"; echo "$jobs3Activation"; exit 1; }
 
-                # (5) config が 1 つも無いとき activation は layat を起動しないこと。
+                # (5) layat.recopy = true のときだけ --recopy が同じ起動に乗ること。
+                grep -qE " apply --all --manifest 'default=[^']+' --jobs 0 --recopy$" <<<"$recopyActivation" \
+                  || { echo "FAIL: layat.recopy = true が --recopy として渡っていません"; echo "$recopyActivation"; exit 1; }
+                ! grep -qF -- "--recopy" "$script" && ! grep -qF -- "--recopy" <<<"$jobs3Activation" \
+                  || { echo "FAIL: layat.recopy の既定で --recopy が渡っています"; cat "$script"; echo "$jobs3Activation"; exit 1; }
+
+                # (6) config が 1 つも無いとき activation は layat を起動しないこと。
                 test "$emptyLaunches" = false \
                   || { echo "FAIL: configs が空でも activation が layat を起動します"; exit 1; }
 

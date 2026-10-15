@@ -27,6 +27,8 @@ standalone な home-manager configuration を設定違いで複数評価し、�
   末尾へフラグとして乗ること
 - 並列度のオプションを省略したとき、既定値 0 が `--jobs 0` として同じ起動へ明示で乗り、
   値を与えたときはその値が `--jobs` へそのまま渡ること
+- 再コピーのオプションを有効にしたときだけ `--recopy` が同じ起動の末尾へ乗り、既定では
+  どの起動にも乗らないこと
 - 旧来の `layat.entries` だけで書いた設定が、`configs.default.entries` に同じ entry を書いた
   設定と同一の起動（同一の配置物）を生み、rename の deprecation warning を出すこと
 - config が 1 つも無いとき、activation が engine を起動しないこと
