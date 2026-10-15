@@ -14,15 +14,19 @@ covers:
 
 ## 検証内容
 
-standalone な home-manager configuration をビルドの sandbox 内で評価し、生成された
-activation スクリプトと、それが参照する文書に対してアサートする。activate はしない。
+standalone な home-manager configuration を設定違いで複数評価し、生成された activation
+スクリプトと、それが参照する文書に対してアサートする。activate はしない。
 
-- activation が統合先のファイル配置機構へ翻訳せず、ビルド済みの配置物を渡して engine を
-  `apply --manifest` の形で起動していること
-- 起動に渡る文書が実在し、root の種別として home を固定していること
-- モジュール上で宣言した entry が、その属性キーを配置先として文書へ流れていること
-- 退避のオプションを有効にし、かつサフィックスを省略したとき、既定のサフィックスが同じ起動へ
-  フラグとして乗ること
+- activation が統合先のファイル配置機構へ翻訳せず、名前つき config ごとのビルド済み配置物を
+  名前の辞書順に `<name>=<配置物>` の組で並べ、engine を `apply --all` の 1 回の起動で渡して
+  いること
+- 2 つの config の配置物が別の store パスになり、どちらの文書も実在して root の種別として
+  home を固定し、それぞれの config で宣言した entry をその属性キーを配置先として持つこと
+- 退避のオプションを有効にし、かつサフィックスを省略したとき、既定のサフィックスが同じ起動の
+  末尾へフラグとして乗ること
+- 旧来の `layat.entries` だけで書いた設定が、`configs.default.entries` に同じ entry を書いた
+  設定と同一の起動（同一の配置物）を生み、rename の deprecation warning を出すこと
+- config が 1 つも無いとき、activation が engine を起動しないこと
 
 配置元は固定の store パスを持つ test double で与え、文書の内容をマシンによらず安定させる。
 home-manager はこの check のためだけの入力として持ち込み、ライブラリ本体には依存を波及させ
