@@ -349,6 +349,7 @@ layat apply <name> --recopy     # さらに全 copy target を src から無条�
 layat apply --manifest <farm>   # ビルド済み link-farm を直接適用(entrypoint 発見 / eval / build なし)
 layat apply --all               # 全 layat.* を辞書順で適用。失敗しても続行する
 layat apply --all --project-root # projectRoot config のみ適用(--home-root / --system-root も同様)
+layat apply --all --manifest <name>=<farm> … # ビルド済み link-farm を config ごとに 1 つずつ渡して適用
 layat reset <name> [target...]  # 配置を撤去(profile 変更なし)。target 省略 = 全 entry
 layat reset <name> --dryrun     # 削除対象を表示。副作用ゼロ
 layat rollback <name>           # 直前の世代へ戻す(home mode のみ・name 必須)
@@ -371,6 +372,7 @@ layat init <template>           # `nix flake init -t github:yasunori0418/layat#<
 --project-root      # --all の限定子: projectRoot config のみ(--home-root / --system-root も同様)
 --recopy            # apply の限定子: 全 copy target を src から上書き
 --manifest <path>   # apply 専用: ビルド済み link-farm を直接適用
+--manifest <name>=<farm> # --all と合わせるとき: 素のパスの代わりに config ごとに繰り返す
 -y, --yes           # reset の確認プロンプトを省略(スクリプト / CI 用)
 --generator <name>  # manifest 生成器(現状は `nix` のみ。「生成器の選択」を参照)
 ```

@@ -412,6 +412,7 @@ layat apply <name> --recopy     # also overwrite every copy target from its src 
 layat apply --manifest <farm>   # apply a pre-built link-farm directly (no entrypoint discovery / eval / build)
 layat apply --all               # apply every layat.* in lexicographic order; continues past failures
 layat apply --all --project-root # apply only projectRoot configs (also --home-root / --system-root)
+layat apply --all --manifest <name>=<farm> … # apply pre-built link-farms, one --manifest per config
 layat reset <name> [target...]  # tear down placements (no profile change); target omitted = all entries
 layat reset <name> --dryrun     # show what would be removed; zero side effects
 layat rollback <name>           # roll back to the previous generation (home mode only; name required)
@@ -436,6 +437,7 @@ layat init <template>           # wrapper over `nix flake init -t github:yasunor
 --project-root      # --all qualifier: only projectRoot configs (also --home-root / --system-root)
 --recopy            # apply qualifier: overwrite every copy target from src
 --manifest <path>   # apply only: apply a pre-built link-farm directly
+--manifest <name>=<farm> # with --all: repeat once per config instead of a bare path
 -y, --yes           # skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)
 --generator <name>  # manifest generator (only `nix` today; see "Choosing the generator")
 ```
