@@ -1,79 +1,76 @@
 ---
 id: "REQ-c847d1af-a437-46bb-bd64-42083810d034"
 type: requirement
-name: "HM の activation は configs を辞書順に走査して profile ごとに engine を起動し、部分失敗を最後に集約する"
+name: "HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う"
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 specification: |
-  The `home.activation.layat` of the home-manager module SHALL walk `layat.configs` and kick
-  the engine once per config, so that each profile takes its own engine invocation. The
-  order of execution SHALL be the lexical order of `<name>`, so that the run is
-  deterministic and its log reproducible. A failure of one profile SHALL NOT stop the
-  profiles that follow; every failure SHALL instead be aggregated and the activation SHALL
-  be failed at the end, as `apply --all` does on a partial failure. No CLI extension
-  passing several manifests to a single engine invocation SHALL be introduced, so that the
-  unit of atomicity — one profile — is kept at the CLI boundary as well. The contract of a
-  single kick is stated by REQ-8085f194-c903-4ecb-abd8-c719fe7b3292, and the correspondence of one config to one
-  manifest and one profile by REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a; neither is restated here. The posture of
-  continuing past a partial failure and aggregating it is common with the `apply --all` of
-  the standalone path stated by REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af.
+  The `home.activation.layat` of the home-manager module SHALL kick the engine exactly once
+  per activation, as `layat apply --all --manifest <name>=<link-farm> … --jobs <n>`, passing
+  one `<name>=<link-farm>` per config of `layat.configs` in the lexical order of `<name>`.
+  `--jobs` SHALL always be given explicitly, with the value of `layat.jobs` even when it is
+  0. Each `<name>=<link-farm>` SHALL be applied as its own profile with its own generation
+  commit, so that the unit of atomicity stays one profile. Continuing past a partial
+  failure, aggregating it and exiting non-zero SHALL be those of `apply --all` stated by
+  REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af; the activation SHALL NOT loop over the configs
+  nor aggregate failures in the shell, and SHALL only return the non-zero exit through
+  `run` so that the switch stops. The report SHALL be presented in the lexical order of
+  `<name>`, while the parallelism of the placement SHALL follow `--jobs`. The contract of
+  the kick is stated by REQ-8085f194-c903-4ecb-abd8-c719fe7b3292, and the correspondence of
+  one config to one manifest and one profile by REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a;
+  neither is restated here.
 specification_ja: |
-  home-manager モジュールの `home.activation.layat` は `layat.configs` を走査し、config
-  ごとに 1 回ずつ engine を起動しなければならない（profile ごとに独立した engine 起動を
-  取るため）。実行順は `<name>` の辞書順としなければならない（実行を決定的にしログを
-  再現可能にするため）。1 profile の失敗は後続の profile を止めてはならず、失敗は最後に
-  集約して activation を失敗させなければならない（`apply --all` の部分失敗と同じ姿勢）。
-  複数 manifest を 1 回の engine 起動へ渡す CLI 拡張を導入してはならない（atomic 性の
-  単位である profile を CLI 界面にも保つため）。1 起動あたりの契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、
-  1 config が 1 manifest = 1 profile に対応することは REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a の担当で、いずれも
-  本 item では規定しない。部分失敗で続行し集約する姿勢は、standalone 経路の
-  `apply --all` を定める REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af と共通である。
+  home-manager モジュールの `home.activation.layat` は、activation 1 回につき engine を
+  ちょうど 1 回、`layat apply --all --manifest <name>=<link-farm> … --jobs <n>` の形で起動
+  しなければならない。`<name>=<link-farm>` は `layat.configs` の config ごとに 1 つ、`<name>`
+  の辞書順に並べなければならない。`--jobs` は `layat.jobs` の値で、値が 0 でも常に明示で
+  付けなければならない。各 `<name>=<link-farm>` はそれぞれ独立した profile として独立に世代を
+  コミットしなければならない（atomic 性の単位を 1 profile に保つため）。部分失敗での続行・
+  集約・非ゼロ終了は REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af が定める `apply --all` の
+  ものでなければならない。activation は config をシェルでループしてはならず、失敗をシェルで
+  集約してもならず、非ゼロ終了を `run` で返して switch を止めるだけにしなければならない。
+  報告は `<name>` の辞書順で示さなければならず、配置の並列度は `--jobs` に従わなければ
+  ならない。起動の契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、1 config が
+  1 manifest = 1 profile に対応することは REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a の担当で、
+  いずれも本 item では規定しない。
 ---
-# REQ-c847d1af-a437-46bb-bd64-42083810d034: HM の activation は configs を辞書順に走査して profile ごとに engine を起動し、部分失敗を最後に集約する
+# REQ-c847d1af-a437-46bb-bd64-42083810d034: HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う
 
 ## 仕様
 
-- `home.activation.layat` は `configs` を走査し、**profile ごとに 1 回ずつ**
-  `layat apply --manifest <link-farm-N> <name>` を実行する
-- 各起動は profileDir 単位の flock・baseline との diff・保守的 stale 除去・世代コミットが
-  **profile ごとに独立して**走る
-- 実行順は `<name>` の**辞書順**で決定的にする（Nix の attrset 走査順と一致・ログの
-  再現性のため）
-- **1 profile の失敗は後続 profile を止めず、最後に集約して activation を失敗させる**
-- 複数 manifest を 1 回の engine 起動に渡す CLI 拡張は行わない（atomic 性の単位 =
-  profile を CLI 界面にも保つ）
+- `home.activation.layat` は全 config の link-farm を **1 回の起動**に渡す:
+  `layat apply --all --manifest <name>=<link-farm> … --jobs <n>`。`<name>=<link-farm>` は
+  config ごとに 1 つ、`<name>` の辞書順に並べる
+- `--jobs` は `layat.jobs` の値を、0 でも常に明示で付ける
+- 各 config は独立した profile で、profileDir 単位の flock・baseline との diff・保守的
+  stale 除去・世代コミットは config ごとに独立して走る
+- 部分失敗の続行・集約・非ゼロ終了は `apply --all` に任せ、activation はシェルでループも
+  集約もしない。非ゼロ終了は `run` がそのまま返して switch を止める
+- 報告は辞書順、配置の並列度は `--jobs` に従う
 
-> **本 item の出典は ADR-0035 §3 であり、`docs/spec.md` に対応記述は無い**。原文が
-> ADR-0035 に未追従で、複数 config があるとき activation が engine を何回 kick するかを
-> 述べていないため、#209 の分割では item 化されず REQ-8085f194-c903-4ecb-abd8-c719fe7b3292 / REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a の注記に
-> 申し送りとして残っていた（epic #203 / issue #228 で回収）。
+> **他 item との担当分界**: 起動 1 回の activation 契約（`entryAfter ["writeBoundary"]`・
+> ビルド済み link-farm を渡すこと・activation が `nix eval` / `build` を行わないこと・engine
+> error が非 0 終了で switch を止めること）は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292。
+> 1 config = 1 profile = 1 manifest の対応と `<name>` 次元そのものは
+> REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a。`layat.configs` / `layat.jobs` オプションの定義は
+> REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10。`--manifest <name>=<link-farm>` の繰り返しと
+> `--all` の合成は REQ-dec58330-6dad-47f7-8f56-2402764a89c7。並列適用と辞書順の集約・
+> 部分失敗の続行は REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af、`--jobs` の解決規則は
+> REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d。configs 間の target 衝突の停止は
+> REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44。
 >
-> **他 item との担当分界**: 1 起動あたりの activation 契約（`entryAfter ["writeBoundary"]`・
-> `apply --manifest` でビルド済み link-farm を渡すこと・activation が `nix eval` /
-> `build` を行わないこと・engine error が非 0 終了で switch を止めること）は
-> REQ-8085f194-c903-4ecb-abd8-c719fe7b3292。1 config = 1 profile = 1 manifest の対応と `<name>` 次元そのものは
-> REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a。`layat.configs` オプションの定義は REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10。`apply --manifest` と
-> 位置引数 `name` の直交・両立は REQ-dec58330-6dad-47f7-8f56-2402764a89c7 / REQ-c2d44626-d8f4-446a-a80a-319a500129b4。profileDir 単位の flock は
-> REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461、profileDir のキーは REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81。世代が layat 自前 profile に積まれる
-> ことは REQ-1be4d678-959c-44d7-a346-44bfd95af56e、module 経路で rollback を host へ一本化することは REQ-844ee375-919f-4341-81e1-a5f89fd32840。
-> 辞書順・部分失敗続行・最後に集約という姿勢を standalone の `apply --all` について
-> 定めるのは REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af。本 item は同じ姿勢を HM activation の configs ループについて
-> 独立に規定する。文面は重なるが、適用先（CLI の `--all` か activation の configs ループか）
-> が別経路であり、片方の規範が他方を含意しないため、規範としては別立てになる。
->
-> **本文箇条書き第 2 項に対応する規範文を持たない理由**: 「各起動は profileDir 単位の
-> flock・baseline との diff・保守的 stale 除去・世代コミットが profile ごとに独立して走る」は、
-> 本 item の「config ごとに 1 回 engine を起動する」と、profileDir 単位の flock を定める
-> REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461・profileDir のキーを定める REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81・世代機構を定める REQ-1be4d678-959c-44d7-a346-44bfd95af56e の
-> 合成から従うため、規範として再掲しない。
+> **本文箇条書き第 3 項に対応する規範文を持たない理由**: profile ごとに独立して走る処理の
+> 列挙は、`apply --all` が config ごとに engine を駆動することと、profileDir 単位の flock を
+> 定める REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461・profileDir のキーを定める
+> REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81・世代機構を定める
+> REQ-1be4d678-959c-44d7-a346-44bfd95af56e の合成から従うため、規範として再掲しない。
 
 ## 出典
 
-ADR-0035「HM モジュールに `layat.configs.<name>` を導入し複数 profile（役割分離）を
-可能にする」§3「activation は profile ごとに独立した engine 起動」。
+ADR-0060「HM activation を prebuilt manifest 群への `apply --all` 1 回起動にし、configs 間の
+衝突検出を CLI 前段へ委譲する」§1。`layat.jobs` の定義は ADR-0061 §2。
 
 `docs/spec.md` には対応記述が無いため、原文の写しは持たない（規範は frontmatter が正で、
-上の箇条書きは ADR 本文の要約）。部分失敗を集約する姿勢の淵源は ADR-0018、rollback を
-host へ一本化する点は ADR-0002 / ADR-0024、`apply --manifest` と位置引数の両立は
-ADR-0026 が定めている。
+上の箇条書きは ADR 本文の要約）。旧版（config ごとに起動し bash で集約する形）の出典は
+ADR-0035 §3 で、ADR-0060 が改訂した。

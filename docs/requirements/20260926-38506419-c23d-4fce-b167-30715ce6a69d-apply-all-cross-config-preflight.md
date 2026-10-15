@@ -7,7 +7,10 @@ derives_from:
 specification: |
   Before any build, `apply --all` SHALL check the configs selected after the root filter
   (`--project-root` / `--home-root` / `--system-root`) for a normalized target claimed by
-  more than one of them, using the `targets` obtained by the batched eval. The check SHALL
+  more than one of them, using the `targets` obtained by the batched eval or, for the
+  prebuilt set given by `--manifest <name>=<link-farm>`, derived from the entries of each
+  link-farm's `manifest.json`; the prebuilt set, including the one the home-manager
+  activation passes, SHALL be checked the same way. The check SHALL
   group the selected configs into buckets: one per rootKind for project / home / system,
   one per root string value for fixed, and a single bucket for all of them when `--root`
   is given. When two configs in one bucket share a normalized target, `apply --all` SHALL
@@ -21,7 +24,10 @@ specification: |
 specification_ja: |
   `apply --all` は build の前に、root フィルタ（`--project-root` / `--home-root` /
   `--system-root`）適用後に選択された config 群について、一括 eval で得た `targets` を用いて
-  正規化後 target が複数の config に現れないかを検査しなければならない。検査は選択された
+  正規化後 target が複数の config に現れないかを検査しなければならない。`--manifest
+  <name>=<link-farm>` で渡された prebuilt 集合では `targets` を各 link-farm の `manifest.json` の
+  entries から導出し、home-manager の activation が渡す集合を含め同じ検査をしなければならない。
+  検査は選択された
   config をバケットに分けて行わなければならない: project / home / system は rootKind ごとに
   1 つ、fixed は root 文字列値ごとに 1 つ、`--root` 指定時は全体で 1 つ。同一バケット内の
   2 つの config が正規化後 target を共有するとき、`apply --all` は衝突 target と両 config 名を
@@ -36,7 +42,9 @@ specification_ja: |
 ## 仕様
 
 - **検出対象**: `apply --all` で選択された config 集合内の、正規化後 target の重複。
-  `targets` は一括 eval（REQ-535b811d-dfc5-4eac-92db-737e70eb5415）が rootKind と同時に取る
+  `targets` は一括 eval（REQ-535b811d-dfc5-4eac-92db-737e70eb5415）が rootKind と同時に取る。
+  `--manifest <name>=<link-farm>` の prebuilt 集合（HM activation が渡すものを含む）では
+  各 link-farm の `manifest.json` の entries から導出する
 - **バケット規則**: project / home / system は rootKind ごと、fixed は root 文字列値ごと、
   `--root` 一律上書き時は全体 1 つ
 - **error 停止**: build にも配置にも入らず exit 1（`--dryrun` も同じ）。`--json` では
@@ -52,4 +60,4 @@ specification_ja: |
 ## 出典
 
 ADR-0038「同一 entrypoint 内の cross-config target 衝突を `apply --all` 前段で検出し error 停止する」
-§1〜§3（Issue #152 で起票）。
+§1〜§3（Issue #152 で起票）。prebuilt 集合を検査対象に含めるのは ADR-0060 §2〜§3。

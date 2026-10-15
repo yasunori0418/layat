@@ -113,7 +113,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [REQ-02a33511-0941-4813-b289-a05eb8e9aa57](requirements/20260802-02a33511-0941-4813-b289-a05eb8e9aa57-apply-dryrun-readonly.md) — apply --dryrun は読み取り専用で conflict 検出時に非ゼロ終了する
 - [REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065](requirements/20260802-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065-apply-recopy.md) — apply --recopy は config 内の全 copy target を src から無条件に上書き再コピーする
 - [REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b](requirements/20260802-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b-apply-backup-rename-aside.md) — apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する
-- [REQ-dec58330-6dad-47f7-8f56-2402764a89c7](requirements/20260802-dec58330-6dad-47f7-8f56-2402764a89c7-apply-manifest-direct.md) — apply --manifest はビルド済み link-farm を engine へ直接適用する
+- [REQ-dec58330-6dad-47f7-8f56-2402764a89c7](requirements/20260802-dec58330-6dad-47f7-8f56-2402764a89c7-apply-manifest-direct.md) — apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す
 - [REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6](requirements/20260802-31f2882e-d2e3-4e3b-b783-feb627d73ac6-reset-fs-only-teardown.md) — reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す
 - [REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4](requirements/20260802-a8edc58f-4adc-4637-b888-ab8ccc7e73e4-reset-named-only-and-flock.md) — reset は名指し必須で profileDir 単位の blocking flock を取る
 - [REQ-6a950d6d-c191-4235-a1b4-73ffc7c2bb38](requirements/20260802-6a950d6d-c191-4235-a1b4-73ffc7c2bb38-reset-dryrun-no-side-effect.md) — reset --dryrun は副作用ゼロで削除対象を表示して終了する
@@ -270,9 +270,9 @@ root は評価時にパスへ展開せず、マーカーが運ぶ kind をエン
 - [REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3](requirements/20260802-e1e1114b-ba07-4d57-8e04-6e30e39a5da3-backup-wiring-layer.md) — layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない
 - [REQ-c2654ca5-62c2-4e4b-ad67-ffc5468f429b](requirements/20260802-c2654ca5-62c2-4e4b-ad67-ffc5468f429b-module-user-option.md) — NixOS / nix-darwin モジュールは配置先ユーザーを特定する user オプションを必須で取る
 - [REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9](requirements/20260802-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9-modules-are-engine-wiring.md) — 全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない
-- [REQ-8085f194-c903-4ecb-abd8-c719fe7b3292](requirements/20260802-8085f194-c903-4ecb-abd8-c719fe7b3292-hm-activation-contract.md) — home-manager モジュールの engine kick 1 回は activation からビルド済み link-farm を渡し、失敗で switch を止める
-- [REQ-c847d1af-a437-46bb-bd64-42083810d034](requirements/20260803-c847d1af-a437-46bb-bd64-42083810d034-hm-activation-per-config-kick.md) — HM の activation は configs を辞書順に走査して profile ごとに engine を起動し、部分失敗を最後に集約する
-- [REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44](requirements/20260803-5923ac79-4a2d-43cd-b56c-2f1000c01b44-hm-configs-target-collision-assertion.md) — 単一 HM config 内の configs 間 target 衝突は eval 時 assertion で停止する
+- [REQ-8085f194-c903-4ecb-abd8-c719fe7b3292](requirements/20260802-8085f194-c903-4ecb-abd8-c719fe7b3292-hm-activation-contract.md) — home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める
+- [REQ-c847d1af-a437-46bb-bd64-42083810d034](requirements/20260803-c847d1af-a437-46bb-bd64-42083810d034-hm-activation-per-config-kick.md) — HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う
+- [REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44](requirements/20260803-5923ac79-4a2d-43cd-b56c-2f1000c01b44-hm-configs-target-collision-assertion.md) — 単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段検査で停止する
 - [REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9](requirements/20260802-a0bdf6db-6c0c-476c-916a-61ee4e4510d9-devshell-wiring.md) — devShell は shellHook から engine を起動する配線で、シェル入室のたびに project mode で配置する
 
 ---

@@ -8,8 +8,10 @@ specification: |
   Every module (home-manager / NixOS / nix-darwin) SHALL expose the same set of common
   options: `layat.enable :: bool` defaulting to false, `layat.configs :: attrsOf (submodule
   { entries :: attrsOf entry; })` defaulting to `{}` and with `entries` likewise
-  defaulting to `{}`, `layat.backup.enable :: bool` defaulting to false, and
-  `layat.backup.suffix :: str` defaulting to `"layat-backup"`. The bare `layat.entries` SHALL
+  defaulting to `{}`, `layat.backup.enable :: bool` defaulting to false,
+  `layat.backup.suffix :: str` defaulting to `"layat-backup"`, `layat.recopy :: bool`
+  defaulting to false, and `layat.jobs :: ints.unsigned` defaulting to 0, where 0 means the
+  logical CPU count. The bare `layat.entries` SHALL
   be kept as a sugar renaming onto `configs.default.entries`, non-breaking and deprecated.
   These SHALL be defined jointly for every module, so that the set does not diverge per
   module. What the `<name>` dimension of `configs` means for the granularity of profiles
@@ -23,7 +25,9 @@ specification_ja: |
   公開しなければならない: `layat.enable :: bool`（デフォルト false）・
   `layat.configs :: attrsOf (submodule { entries :: attrsOf entry; })`（デフォルト `{}`・
   `entries` のデフォルトも `{}`）・`layat.backup.enable :: bool`（デフォルト false）・
-  `layat.backup.suffix :: str`（デフォルト `"layat-backup"`）。素の `layat.entries` は
+  `layat.backup.suffix :: str`（デフォルト `"layat-backup"`）・`layat.recopy :: bool`
+  （デフォルト false）・`layat.jobs :: ints.unsigned`（デフォルト 0。0 は論理 CPU 数）。
+  素の `layat.entries` は
   `configs.default.entries` への rename 糖衣として非破壊に残さなければならず、deprecated と
   しなければならない。
   これらは全モジュール共通に定義し、モジュールごとに集合が分岐しないようにしなければ
@@ -54,7 +58,11 @@ layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-0045�
 > entry submodule のフィールド定義は REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 / REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74、`root` が
 > `mkManifest` / CLI 層で明示必須であることは REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4、`--backup` の退避契約そのものは
 > REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b の担当。`layat.backup` が manifest ではなく engine 起動の配線に効くことは
-> REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3 の担当。
+> REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3 の担当。`layat.jobs` を activation の `--jobs` へ渡すことは
+> REQ-c847d1af-a437-46bb-bd64-42083810d034 の担当。
+>
+> **2026-10-15 追記（ADR-0061）**: 写しの表に無い `layat.recopy` / `layat.jobs` は ADR-0061 が
+> 共通オプションへ足した（規範は frontmatter）。
 >
 > **写しの `layat.entries` を canonical としない理由**: **ADR-0035 §1〜§2 は
 > `layat.configs.<name>.entries` を canonical とし、素の `layat.entries` を
@@ -82,4 +90,4 @@ layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-0045�
 決定の実体は root 明示必須とモジュール側 pin を定めた ADR-0007「汎用 layat CLI を一次 UX に
 昇格し、entrypoint 発見＋root 明示モデルへ移行する」と、配置ロジックを engine が所有し
 モジュールは配線に徹すると定めた ADR-0003。`layat.backup` の追加は ADR-0045、`layat.configs`
-の新設と `layat.entries` の糖衣化は ADR-0035。
+の新設と `layat.entries` の糖衣化は ADR-0035、`layat.recopy` / `layat.jobs` の追加は ADR-0061。

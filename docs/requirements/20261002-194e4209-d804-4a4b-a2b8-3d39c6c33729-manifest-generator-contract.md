@@ -21,7 +21,11 @@ specification: |
   selected generation backend can commit (the default nixprofile backend requires a store
   path). `--manifest` SHALL be served by a prebuilt
   generator whose Discover is the given path, whose Roots reads that link-farm's
-  `manifest.json`, and whose Build returns that path.
+  `manifest.json`, and whose Build returns that path. Where `--all` is combined with
+  `--manifest <name>=<link-farm>` pairs, the prebuilt generator SHALL hold the named set:
+  its all-configs Roots SHALL return each name's `manifest.Root` with the targets derived
+  from the entries of that link-farm's `manifest.json`, and Build and DryBuild SHALL select
+  the link-farm by name.
 specification_ja: |
   CLI は manifest を manifest 生成器の契約越しにのみ得なければならず、CLI 層に残すのは
   生成器の選択と engine への注入だけにしなければならない。契約が取る config の引数は
@@ -36,7 +40,11 @@ specification_ja: |
   link-farm のパス（既定の nixprofile は store path を要求する）を pending のパスに張って返さ
   なければならない。`--manifest` は prebuilt
   生成器が担わなければならない（Discover = 与えられたパス、Roots = その link-farm の
-  `manifest.json` から読む、Build = そのパスを返す）。
+  `manifest.json` から読む、Build = そのパスを返す）。`--all` と `--manifest <name>=<link-farm>`
+  の組を合成するときは、prebuilt 生成器は名前付きの集合を持たなければならない: 全 config 分の
+  Roots は name ごとの `manifest.Root` を、target 一覧をその link-farm の `manifest.json` の
+  entries から導出して返さなければならず、Build と DryBuild は name で link-farm を選ばなければ
+  ならない。
 ---
 # REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729: CLI は manifest 生成器の契約（Discover / Roots / Build / DryBuild）越しに manifest を得る
 
@@ -54,7 +62,8 @@ specification_ja: |
 - Build の事後条件は選択中の世代バックエンドに依存する。既定の nixprofile は `nix-env --set` が
   store 外のパスを拒否するため store path を要求し、非 store パスを受け入れる世代バックエンドは
   無い。世代バックエンドの契約は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b の担当。
-- `--manifest` は prebuilt 生成器で、その外面（フラグ・`-f` / `--all` との排他）は
+- `--manifest` は prebuilt 生成器で、`--all` と合成するときは名前付き link-farm の集合を持つ。
+  その外面（フラグ・`-f` との排他・`<name>=<link-farm>` の繰り返し）は
   REQ-dec58330-6dad-47f7-8f56-2402764a89c7 の担当。
 - `Targets` は Go 構造体 `manifest.Root` 側のフィールドで、manifest.json スキーマ v1 は変えない。
   消費者は `apply --all` の cross-config target 衝突検査だけなので、課すのは一括取得と prebuilt に
@@ -66,4 +75,5 @@ REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd の担当。
 ## 出典
 
 ADR-0055「manifest 生成器の契約」§1〜§5。Build 事後条件の文言は ADR-0057「世代バックエンドの
-契約」§5 が「選択中の世代バックエンドがコミット可能な link-farm のパス」へ緩和した。
+契約」§5 が「選択中の世代バックエンドがコミット可能な link-farm のパス」へ緩和した。prebuilt
+生成器が名前付き集合を持つのは ADR-0060 §2。
