@@ -12,8 +12,9 @@ specification: |
   separate entrypoints, machines or tools) cannot be detected at eval time and SHALL
   instead be handled at engine runtime as last-writer-wins plus a foreign symlink warning.
   The two SHALL remain separate paths. Where several configs do ride on a single
-  evaluation, as the `layat.configs` of one module configuration do, static detection is
-  possible and SHALL NOT be precluded by this; that case is stated by REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 and is
+  invocation, as the `layat.configs` of one module configuration do through the `apply
+  --all` of the activation, detection before placement is possible and SHALL NOT be
+  precluded by this; that case is stated by REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 and is
   not restated here.
 specification_ja: |
   別キー A / B が `target` フィールドを同値に明示上書きした衝突は、正規化後 target
@@ -21,9 +22,9 @@ specification_ja: |
   （engine 実行時ではない）。単一の eval に載らない cross-config（別 entrypoint・別マシン・
   別ツールに跨る場合）の同一 target 衝突は eval では検出できず、engine 実行時の後勝ち +
   foreign symlink warning として扱わなければならない。両者は別経路として保たなければ
-  ならない。単一の eval に載る複数 config
-  （1 つのモジュール config の `layat.configs` など）については静的検出が可能であり、
-  本 item はそれを妨げない。その場合の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の担当で、本 item では
+  ならない。単一の起動に載る複数 config
+  （activation の `apply --all` に載る 1 つのモジュール config の `layat.configs` など）に
+  ついては配置前の検出が可能であり、本 item はそれを妨げない。その場合の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の担当で、本 item では
   規定しない。
 ---
 # REQ-5c6b07da-3d06-414d-8770-4f438234b322: target 衝突の検出経路を同一 manifest 内と cross-config で分ける
@@ -46,6 +47,10 @@ cross-config（別 profile・別 manifest）の同一 target 衝突は eval で�
 > 同じ扱い）。本 item は静的検出が可能な場合を妨げないことまでを規範とし、その場合に実際に
 > eval 停止する規範（ADR-0035 §4）そのものは持たない。**同 §4 の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 が
 > 持つ**。`docs/spec.md` の追従は本 item の担当範囲外。
+>
+> **2026-10-15 追記（ADR-0060）**: 上の「eval 時 assertion で停止」は、activation の `apply --all`
+> 前段検査で停止する形へ改められた。本 item が妨げないとする対象も「単一の eval」から「単一の
+> 起動」へ読み替える（規範は frontmatter）。
 
 ## 出典
 

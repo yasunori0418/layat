@@ -64,13 +64,14 @@ specification_ja: |
 > **ADR-0035 §3〜§4 を本 item に含めない理由**: 同 ADR は §3 で activation が `configs` を
 > 走査して profile ごとに engine を kick すること（辞書順・1 profile の失敗で後続を止めず
 > 最後に集約）、§4 で単一 HM config 内の `configs` 間の正規化後 target 衝突を eval 時
-> assertion で停止することも決めているが、いずれも `docs/spec.md` に対応記述が無い
+> assertion で停止することも決めている（ADR-0060 が §3 を `apply --all` 1 回起動へ、§4 を
+> activation の `apply --all` 前段検査へ改めた）が、いずれも `docs/spec.md` に対応記述が無い
 > （原文が ADR-0035 未追従のため）。本 item は原文 blockquote の担当範囲＝profile 粒度に
-> 留め、**§3 の規範は REQ-c847d1af-a437-46bb-bd64-42083810d034、§4 の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 が持つ**。なお §4 の eval
-> 停止は、別 entrypoint・別 manifest の cross-config を「eval では検出不可・実行時の
+> 留め、**§3 の規範は REQ-c847d1af-a437-46bb-bd64-42083810d034、§4 の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 が持つ**。なお §4 の前段
+> 検出は、別 entrypoint・別 manifest の cross-config を「eval では検出不可・実行時の
 > 後勝ち + foreign warning」とする REQ-5c6b07da-3d06-414d-8770-4f438234b322 / REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 に対する**例外**（HM の
-> `configs` は全 config が単一のモジュール eval に載るため静的検出が可能）であり、この
-> 関係は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の注記が明示している。
+> `configs` は全 config が activation の単一の `apply --all` 起動に載るため配置前に検出できる）
+> であり、この関係は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の注記が明示している。
 
 ## 出典
 

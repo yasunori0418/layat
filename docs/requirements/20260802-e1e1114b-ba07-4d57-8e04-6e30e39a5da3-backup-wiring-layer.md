@@ -7,14 +7,16 @@ derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
   The `layat.backup` submodule, common to every module, SHALL wire `--backup=<suffix>` onto
-  the `layat apply --manifest` invocation performed at activation only where
+  the `layat apply --all --manifest <name>=<link-farm> …` invocation performed at
+  activation only where
   `layat.backup.enable` is true, setting it aside being an explicit opt-in by the user; the
   suffix SHALL be the value of `layat.backup.suffix`, whose default REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 states.
   `layat.backup` SHALL be an option of the invocation-wiring layer, independent of `entries`
   (the manifest v1 contract), and SHALL NOT affect the manifest itself.
 specification_ja: |
   全モジュール共通の `layat.backup` submodule は、`layat.backup.enable` が true のときに限り、
-  activation で行う `layat apply --manifest` 起動へ `--backup=<suffix>` を配線しなければ
+  activation で行う `layat apply --all --manifest <name>=<link-farm> …` 起動へ
+  `--backup=<suffix>` を配線しなければ
   ならない（退避はユーザーの明示 opt-in であるため）。suffix は `layat.backup.suffix` の値で
   なければならず、そのデフォルトは REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 が定める。`layat.backup` は `entries`
   （manifest v1 契約）とは独立な起動配線レイヤーのオプションであり、manifest 自体に影響して
@@ -37,6 +39,10 @@ specification_ja: |
 > 発動条件は REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 が定めるオプションの型・デフォルト値とは別の規範で、退避が
 > ユーザーの明示 opt-in であるという ADR-0045 の設計意図（既定 false・記録外実体を勝手に
 > 動かさない）を担保する。
+>
+> **2026-10-15 追記（ADR-0060）**: 上の写しの `layat apply --manifest` 起動は、全 config を渡す
+> `layat apply --all --manifest <name>=<link-farm> …` の 1 回起動と読み替える。`--backup` は
+> その起動に載る全 config へ一律に付く。
 
 ## 出典
 
