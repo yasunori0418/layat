@@ -21,20 +21,20 @@ var version = "dev"
 
 // Global flags.
 var (
-	flagFile        string // -f/--file: specify the entrypoint explicitly
-	flagRoot        string // --root: explicitly override the resolved root
-	flagNoWait      bool   // --no-wait: skip without waiting on flock contention (for shellHook)
-	flagVerbose     bool   // -v/--verbose: print the placement report (summary + per-target lines); silent on success by default
-	flagJSON        bool   // --json: write an outturn envelope (single JSON document) to stdout at command completion
-	flagDebug       bool   // --debug: disclose the internally run nix commands on stderr
-	flagRecopy      bool   // --recopy: apply modifier; unconditionally re-copy every copy target from src, overwriting
-	flagYes         bool   // -y/--yes: skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)
-	flagDryrun      bool   // --dryrun: apply / reset / prune modifier; show the plan with zero side effects
-	flagProjectRoot bool   // --project-root: apply --all modifier; apply only projectRoot configs
-	flagHomeRoot    bool   // --home-root: apply --all modifier; apply only homeRoot configs
-	flagSystemRoot  bool   // --system-root: apply --all modifier; apply only systemRoot configs (future seam)
-	flagManifest    string // --manifest: apply a pre-built manifest (link-farm) directly (for module activation)
-	flagGenerator   string // --generator: the manifest generator to use; "" = not specified
+	flagFile        string   // -f/--file: specify the entrypoint explicitly
+	flagRoot        string   // --root: explicitly override the resolved root
+	flagNoWait      bool     // --no-wait: skip without waiting on flock contention (for shellHook)
+	flagVerbose     bool     // -v/--verbose: print the placement report (summary + per-target lines); silent on success by default
+	flagJSON        bool     // --json: write an outturn envelope (single JSON document) to stdout at command completion
+	flagDebug       bool     // --debug: disclose the internally run nix commands on stderr
+	flagRecopy      bool     // --recopy: apply modifier; unconditionally re-copy every copy target from src, overwriting
+	flagYes         bool     // -y/--yes: skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)
+	flagDryrun      bool     // --dryrun: apply / reset / prune modifier; show the plan with zero side effects
+	flagProjectRoot bool     // --project-root: apply --all modifier; apply only projectRoot configs
+	flagHomeRoot    bool     // --home-root: apply --all modifier; apply only homeRoot configs
+	flagSystemRoot  bool     // --system-root: apply --all modifier; apply only systemRoot configs (future seam)
+	flagManifest    []string // --manifest: apply pre-built manifests (link-farms) directly (for module activation)
+	flagGenerator   string   // --generator: the manifest generator to use; "" = not specified
 	// flagBackup / flagBackupEnabled are --backup[=suffix]: bare --backup uses "layat-backup", a custom
 	// suffix needs the "=" form. flagBackupEnabled records whether the flag was given at all.
 	flagBackup        string

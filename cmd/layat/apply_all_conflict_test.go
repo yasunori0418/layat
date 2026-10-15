@@ -4,7 +4,6 @@ package main
 // selection, named apply, and the --json top-level errors[].
 
 import (
-	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -296,28 +295,5 @@ func TestRunApplyNamedIsNotChecked(t *testing.T) {
 	}
 	if evals != 1 || builds != 1 {
 		t.Errorf("evals = %d, builds = %d, want 1 and 1 (evalRoot then the in-lock build)", evals, builds)
-	}
-}
-
-// TestRunApplyAllRejectsManifest: apply --all rejects --manifest as an input error before any nix
-// call.
-func TestRunApplyAllRejectsManifest(t *testing.T) {
-	withFlakeEntrypoint(t)
-	origManifest, origAll := flagManifest, flagApplyAll
-	t.Cleanup(func() { flagManifest, flagApplyAll = origManifest, origAll })
-	flagDryrun, flagManifest, flagApplyAll = false, filepath.Join(t.TempDir(), "no-link-farm"), true
-	log := stubNixForApply(t, `{"a":{"rootKind":"home","targets":["x"]}}`)
-	run, _ := newApplyTestRun()
-	err := runApplyAll(run)
-	var ie *inputError
-	if !errors.As(err, &ie) {
-		t.Fatalf("runApplyAll() error = %v, want an inputError", err)
-	}
-	const want = "layat: --manifest cannot be combined with --all (--manifest fixes the source to a pre-built link-farm)"
-	if err.Error() != want {
-		t.Errorf("error = %q, want %q", err.Error(), want)
-	}
-	if calls := nixCalls(t, log); len(calls) != 0 {
-		t.Errorf("nix calls = %q, want none", calls)
 	}
 }

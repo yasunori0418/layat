@@ -30,17 +30,24 @@ func newGenerator() (generator.Generator, error) {
 // newGeneratorTo returns the generator named name, writing its diagnostics to w.
 func newGeneratorTo(name string, w io.Writer) generator.Generator {
 	if name == generator.NamePrebuilt {
+		if flagApplyAll {
+			return &generator.Prebuilt{LinkFarms: manifestSet(flagManifest)}
+		}
 		return &generator.Prebuilt{}
 	}
 	return nixgen.New(w, flagDebug)
 }
 
 // selectGenerator chooses the generator's name. apply --manifest takes prebuilt without reading
-// the environment or settings and rejects --generator; otherwise resolveGenerator decides.
+// the environment or settings, rejecting --generator and a malformed --manifest; otherwise
+// resolveGenerator decides.
 func selectGenerator() (string, error) {
-	if flagManifest != "" {
+	if len(flagManifest) > 0 {
 		if flagGenerator != "" {
 			return "", &inputError{err: errors.New("layat: --manifest cannot be combined with --generator (--manifest fixes the source to a pre-built link-farm)")}
+		}
+		if err := checkManifestForm(flagManifest, flagApplyAll); err != nil {
+			return "", err
 		}
 		return generator.NamePrebuilt, nil
 	}
@@ -50,6 +57,44 @@ func selectGenerator() (string, error) {
 		userConfigDir = ""
 	}
 	return resolveGenerator(flagGenerator, os.Getenv(generatorEnv), projectDir, userConfigDir)
+}
+
+// checkManifestForm rejects a --manifest list that does not fit its mode: one bare link-farm path
+// without --all, or <name>=<link-farm> pairs with non-empty, distinct names under --all.
+func checkManifestForm(values []string, all bool) error {
+	if !all {
+		if len(values) > 1 {
+			return &inputError{err: errors.New("layat: --manifest can be given only once without --all (repeat --manifest <name>=<link-farm> with --all)")}
+		}
+		if strings.Contains(values[0], "=") {
+			return &inputError{err: fmt.Errorf("layat: --manifest %q: the <name>=<link-farm> form requires --all", values[0])}
+		}
+		return nil
+	}
+	seen := map[string]bool{}
+	for _, v := range values {
+		name, _, ok := strings.Cut(v, "=")
+		switch {
+		case !ok:
+			return &inputError{err: fmt.Errorf("layat: --manifest %q: with --all, give each config as <name>=<link-farm>", v)}
+		case name == "":
+			return &inputError{err: fmt.Errorf("layat: --manifest %q: the config name before \"=\" is empty", v)}
+		case seen[name]:
+			return &inputError{err: fmt.Errorf("layat: --manifest: config %q is given more than once", name)}
+		}
+		seen[name] = true
+	}
+	return nil
+}
+
+// manifestSet maps each --manifest <name>=<link-farm> pair, split at the first "=", to its config.
+func manifestSet(values []string) map[string]string {
+	farms := make(map[string]string, len(values))
+	for _, v := range values {
+		name, farm, _ := strings.Cut(v, "=")
+		farms[name] = farm
+	}
+	return farms
 }
 
 // projectSettingDir is the directory holding the project setting layat.toml: the -f directory

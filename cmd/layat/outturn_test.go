@@ -313,7 +313,7 @@ func TestClassifyErrorCodes(t *testing.T) {
 	}
 	origManifest, origFile, origAll := flagManifest, flagFile, flagApplyAll
 	t.Cleanup(func() { flagManifest, flagFile, flagApplyAll = origManifest, origFile, origAll })
-	flagManifest, flagFile, flagApplyAll = "/nonexistent/link-farm", "/nonexistent/flake", false
+	flagManifest, flagFile, flagApplyAll = []string{"/nonexistent/link-farm"}, "/nonexistent/flake", false
 	run, _ := newApplyTestRun()
 	manifestWithFile := runApply(run, "default")
 	flagFile, flagApplyAll = "", true
@@ -338,7 +338,7 @@ func TestClassifyErrorCodes(t *testing.T) {
 		{"unknown --generator value", resolveErr("bogus", ""), "E_INPUT"},
 		{"unknown LAYAT_GENERATOR value", resolveErr("", "bogus"), "E_INPUT"},
 		{"--manifest with -f", manifestWithFile, "E_INPUT"},
-		{"--manifest with --all", manifestWithAll, "E_INPUT"},
+		{"bare --manifest with --all", manifestWithAll, "E_INPUT"},
 		{"input marker survives a %w rewrap",
 			fmt.Errorf("context: %w", &inputError{err: errors.New("layat: bad flags")}), "E_INPUT"},
 		{"lock sentinel", lock.ErrLocked, "E_LOCK"},
