@@ -13,8 +13,8 @@ home-manager モジュールに名前つき config を複数与え、評価と�
 
 評価の層（activate しない）:
 
-- **配置物の分離** — config ごとの配置物が別の store パスになり、それぞれが自分の entry
-  だけを持つこと
+- **配置物の分離** — config ごとの配置物が別の store パスになり、それぞれに自分の entry
+  しか入らないこと
 - **起動への展開** — 全 config が名前の辞書順に `<name>=<配置物>` の組として 1 回の
   `apply --all` へ渡ること。config が 1 つも無いときは engine を起動しないこと
 

@@ -20,11 +20,11 @@ standalone 経路と同じ役割分離が HM 経路では成り立たなくな�
 
 崩れ方は次の形をとる。
 
-- **配置物の混線** — ある config の entry が別の config の配置物へ混ざる、または config の
+- **配置物の混線** — ある config の entry が別の config の配置物へ入り込む、または config の
   一部が起動の引数から漏れる
 - **profile の共有** — 複数の config が同じ profile と世代を使い、一方の apply が他方の
   entry を stale とみなして撤去する
-- **衝突の素通り** — 2 つの config が同じ target を持っても前段で止まらず、後勝ちの置換で
+- **衝突の見逃し** — 2 つの config が同じ target を持っても前段で止まらず、後勝ちの置換で
   apply のたびに配置が入れ替わる
 - **失敗の巻き込み** — 1 つの config の配置失敗で他の config まで配置されない、または
   失敗が activation の終了コードに現れない

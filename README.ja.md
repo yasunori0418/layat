@@ -170,7 +170,7 @@ layat list-generations vim-plugins
 
 ### home-manager モジュール
 
-モジュールは `root = homeRoot` に固定される(`root` を再指定しない)。`layat.configs.<name>` の一つひとつが独自の link-farm と独自の profile `<name>` を持つので、standalone の `layat.<name>` と同じく役割を分けられる。`home.activation` は `layat apply --all --manifest <name>=<link-farm> … --jobs <n>` の 1 回の起動でエンジンを駆動し、`home.file` へは委譲しない。2 つの config が同じ target を持つと、何も配置せずに activation が止まる。layat は自前の profile を **内部機構** として保持するが、ユーザー公開の rollback はホスト側に一本化される(`home-manager --rollback`)。
+モジュールは `root = homeRoot` に固定される(`root` を再指定しない)。`layat.configs.<name>` ごとに link-farm と profile `<name>` が別々に作られるので、standalone の `layat.<name>` と同じく役割を分けられる。`home.activation` は `layat apply --all --manifest <name>=<link-farm> … --jobs <n>` の 1 回の起動でエンジンを駆動し、`home.file` へは委譲しない。2 つの config が同じ target を持つと、何も配置せずに activation が止まる。layat は自前の profile を **内部機構** として保持するが、ユーザー公開の rollback はホスト側に一本化される(`home-manager --rollback`)。
 
 ```nix
 imports = [ inputs.layat.homeManagerModules.default ];
@@ -195,7 +195,7 @@ layat = {
 
 - `layat.recopy`(bool、既定 `false`)——activation のたびに `--recopy` を付け、全 copy target を `src` から上書きする(ローカル編集は失われる)。
 - `layat.jobs`(非負整数、既定 `0` = 論理 CPU 数)——config をいくつ並列にビルド・配置するか(`--jobs <n>`)。
-- `layat.backup.enable` / `layat.backup.suffix`(既定 `"layat-backup"`)——衝突で止まる代わりに、居座る外部の実体を `<target>.<suffix>` へ退避する。
+- `layat.backup.enable` / `layat.backup.suffix`(既定 `"layat-backup"`)——衝突で止まる代わりに、target を塞いでいる外部の実体を `<target>.<suffix>` へ退避する。
 
 > `layat.entries` は `layat.configs.default.entries` の deprecated な別名。今も動くが、評価時に deprecation warning が出る。
 
