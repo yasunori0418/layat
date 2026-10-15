@@ -18,7 +18,7 @@ specification_ja: |
   全モジュール共通の `layat.recopy` は、値が true のときに限り、activation で行う
   `layat apply --all` 起動へ `--recopy` を配線しなければならない（全 copy target を src から
   上書きしローカル編集を捨てるのは、ユーザーの明示 opt-in であるため）。false のときは起動に
-  `--recopy` を付けてはならない。`--recopy` はその起動に載る全 config へ一律に効かなければ
+  `--recopy` を付けてはならない。`--recopy` はその起動に載る全 config へ一律に適用されなければ
   ならず、モジュールは config 単位・entry 単位の上書きを提供してはならない。`layat.recopy` は
   `entries`（manifest v1 契約）とは独立な起動配線レイヤーのオプションでなければならず、
   manifest 自体に影響してはならない。オプションの説明文には、有効にすると activation のたびに
@@ -29,7 +29,7 @@ specification_ja: |
 ## 仕様
 
 - `layat.recopy = true` のときだけ、activation の `apply --all` 起動へ `--recopy` を付ける
-- `--recopy` は起動に載る全 config へ一律に効き、config 単位・entry 単位の上書きは無い
+- `--recopy` は起動に載る全 config へ一律に適用され、config 単位・entry 単位の上書きは無い
 - 起動配線レイヤーのオプションで、manifest（entries）には影響しない
 - オプションの説明文に「activation のたびに全 copy target を src から上書きし、ローカル編集を
   捨てる」ことを明記する

@@ -58,13 +58,13 @@ ADR-0035 は HM の `layat.configs.<name>` を決め、activation を「profile 
 ### 3. configs 間の target 衝突は activation の `apply --all` 前段検査で止める
 
 - 同一 HM configuration の configs が正規化後 target を重複させた場合、activation の `apply --all` の前段検査（→ ADR-0038 §1）が build と配置の前に停止させる。どの config も配置されず、activation は非ゼロで終わり switch が止まる。
-- module eval では検出しない（nix の `assertions` を持たない）。前段検査は prebuilt 集合にもそのまま効き、全 config が home の 1 バケットに入る。
+- module eval では検出しない（nix の `assertions` を持たない）。前段検査は prebuilt 集合にもそのまま適用され、全 config が home の 1 バケットに入る。
 
 ## 根拠
 
 - **世代単位は曖昧にならない**: ADR-0035 と ADR-0039 §3 が「複数 manifest を 1 コマンドに渡す」CLI 拡張を棄却した理由は、世代コミットの単位が曖昧になることだった。`apply --all` は既に config ごとに独立した profile へ独立に世代をコミットし、全体を atomic にしない（REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af）。名前付き link-farm の集合を渡しても `<name>=<link-farm>` の 1 組が 1 profile の世代になり、atomic 性の単位は profile のまま変わらない。部分失敗時の状態も `apply --all` と同じ言葉で説明できる。
 - **衝突検出を一本化する**: standalone の `--all` と HM activation が同じ前段検査を通るので、「同一の起動に載る衝突は build 前に止まる」が両経路で同じ実装になる。nix 側に第 2 の検出器を持つと、正規化規則（属性キー既定値・`target` 上書き・`subdir`）を 2 か所で揃え続ける負担が残る。
-- **並列化を HM にも効かせる**: ADR-0039 が「モジュール配線側の将来論点」とした HM の並列化が、`--jobs` を渡すだけで手に入る。
+- **HM activation も並列化の対象にする**: ADR-0039 が「モジュール配線側の将来論点」とした HM の並列化が、`--jobs` を渡すだけで手に入る。
 - **eval で止めなくなる代償は小さい**: 衝突は eval ではなく activation で止まるが、配置は 1 つも行われず switch は失敗する。誤設定を通さない点は eval 停止と変わらない。
 
 ## 影響
