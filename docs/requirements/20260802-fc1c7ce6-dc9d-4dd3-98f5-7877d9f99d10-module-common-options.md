@@ -58,7 +58,7 @@ layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-0045�
 > entry submodule のフィールド定義は REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 / REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74、`root` が
 > `mkManifest` / CLI 層で明示必須であることは REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4、`--backup` の退避契約そのものは
 > REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b の担当。`layat.backup` が manifest ではなく engine 起動の配線に効くことは
-> REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3 の担当。`layat.jobs` を activation の `--jobs` へ渡すことは
+> REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3、`layat.recopy` の配線は REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c の担当。`layat.jobs` を activation の `--jobs` へ渡すことは
 > REQ-c847d1af-a437-46bb-bd64-42083810d034 の担当。
 >
 > **2026-10-15 追記（ADR-0061）**: 写しの表に無い `layat.recopy` / `layat.jobs` は ADR-0061 が

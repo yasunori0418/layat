@@ -9,6 +9,7 @@ issues:
 origin: "Issue #128（HM 複数 profile・ADR-0035 の実装）の着手前 grilling（2026-10-15）"
 justifies:
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
+  - "REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c"
 references:
   - "ADR-0020"
   - "ADR-0045"
@@ -54,7 +55,7 @@ references:
 
 - **`modules/common.nix`**: `layat.recopy` / `layat.jobs` を追加する。
 - **`modules/home-manager.nix`**: activation の `apply --all` 起動へ `--recopy` を条件付きで、`--jobs <n>` を常に付ける。
-- **要求**: 共通オプション集合（REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10）を改訂し、recopy の配線レイヤーの要求を起票する。
+- **要求**: 共通オプション集合（REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10）を改訂し、recopy の配線レイヤーの要求（REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c）を起票する。
 
 ## 棄却した代替案
 
