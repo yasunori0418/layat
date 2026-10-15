@@ -390,7 +390,7 @@ layat init <template>           # `nix flake init -t github:yasunori0418/layat#<
 generator = "nix"
 ```
 
-空の値と `generator` を持たない設定ファイルは未指定とみなす。未知のキー・TOML の構文エラー・未知の生成器名は exit 1 と stderr 1 行で止まる(`--json` では `E_INPUT`)。`apply --manifest` はこれらを読まず `--generator`・`-f`・`--all` を拒否し、`prune` と `init` はこの仕組みを無視する。
+空の値と `generator` を持たない設定ファイルは未指定とみなす。未知のキー・TOML の構文エラー・未知の生成器名は exit 1 と stderr 1 行で止まる(`--json` では `E_INPUT`)。`apply --manifest` はこれらを読まず `--generator`・`-f` を拒否する。`--all` と合わせるときは素のパスではなく `--manifest <name>=<link-farm>` を config ごとに繰り返す。`prune` と `init` はこの仕組みを無視する。
 
 ### 出力と終了コード
 

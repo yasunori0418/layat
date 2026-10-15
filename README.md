@@ -457,7 +457,8 @@ generator = "nix"
 
 An empty value or a settings file without `generator` counts as unset. An unknown key, a TOML
 syntax error, or an unknown generator name exits 1 with one line on stderr (`E_INPUT` under
-`--json`). `apply --manifest` reads none of these and rejects `--generator`, `-f`, and `--all`;
+`--json`). `apply --manifest` reads none of these and rejects `--generator` and `-f`; combined with
+`--all`, it takes `--manifest <name>=<link-farm>` once per config instead of a bare path.
 `prune` and `init` ignore the mechanism.
 
 ### Output and exit codes
