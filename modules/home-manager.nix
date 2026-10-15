@@ -16,7 +16,7 @@ let
   manifest = layatLib.mkManifest {
     inherit pkgs;
     root = layatLib.homeRoot;
-    entries = cfg.entries;
+    entries = cfg.configs.default.entries or { };
   };
 in
 {
