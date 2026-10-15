@@ -179,6 +179,21 @@ func TestPrebuiltSetSelectsByName(t *testing.T) {
 	}
 }
 
+// TestPrebuiltSetAllRootsFailsOnUnreadableFarm covers a set whose one link-farm lacks
+// manifest.json: AllRoots fails as a whole instead of dropping that config.
+func TestPrebuiltSetAllRootsFailsOnUnreadableFarm(t *testing.T) {
+	ok := writeLinkFarm(t, `{"schemaVersion":1,"root":{"rootKind":"home"},"entries":[]}`)
+	p := &Prebuilt{LinkFarms: map[string]string{"a": ok, "b": t.TempDir()}}
+	if err := p.Discover(""); err != nil {
+		t.Fatalf("Discover: %v", err)
+	}
+	all, err := p.AllRoots()
+	var ge *Error
+	if all != nil || !errors.As(err, &ge) || ge.Stage != StageRoots || !errors.Is(err, fs.ErrNotExist) {
+		t.Errorf("AllRoots = %v, %v; want nil and a roots-stage *generator.Error keeping fs.ErrNotExist", all, err)
+	}
+}
+
 // TestPrebuiltRootsFailureKeepsCause covers an unreadable manifest.json: a prebuilt-tagged
 // generator.Error whose cause chain still reaches fs.ErrNotExist.
 func TestPrebuiltRootsFailureKeepsCause(t *testing.T) {

@@ -5,6 +5,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
@@ -323,40 +324,45 @@ func symlinkEntries(t *testing.T, targets ...string) []manifest.Entry {
 }
 
 // TestRunApplyAllManifestSet drives apply --all over a --manifest <name>=<link-farm> set: both
-// configs are placed and reported in lexical order without any nix call.
+// configs are reported in lexical order without any nix call, and placed unless --dryrun.
 func TestRunApplyAllManifestSet(t *testing.T) {
-	withFlakeEntrypoint(t)
-	installFakeBackend(t, "")
-	root := t.TempDir()
-	flagFile, flagDryrun, flagRoot = "", false, root
-	farmA := writeTestLinkFarm(t, symlinkEntries(t, "from-a")...)
-	farmB := writeTestLinkFarm(t, symlinkEntries(t, "from-b")...)
-	withManifestFlags(t, true, "b="+farmB, "a="+farmA)
-	log := stubNixForApply(t, `{}`)
-	run, buf := newApplyTestRun()
-	if err := runApplyAll(run); err != nil {
-		t.Fatalf("runApplyAll: %v", err)
-	}
-	if err := run.emit(nil); err != nil {
-		t.Fatalf("emit: %v", err)
-	}
-	checkConformance(t, buf)
-	byName, order := subjectResults(t, buf)
-	if want := []string{"a", "b"}; !slices.Equal(order, want) {
-		t.Fatalf("results order = %v, want %v", order, want)
-	}
-	for _, name := range order {
-		if status, errs := statusAndErrors(t, byName[name]); status != "success" || len(errs) != 0 {
-			t.Errorf("subject %s = (%s, %v), want (success, none)", name, status, errs)
-		}
-	}
-	for _, target := range []string{"from-a", "from-b"} {
-		if _, err := os.Lstat(filepath.Join(root, target)); err != nil {
-			t.Errorf("target %s not placed: %v", target, err)
-		}
-	}
-	if calls := nixCalls(t, log); len(calls) != 0 {
-		t.Errorf("nix calls = %q, want none", calls)
+	for _, dryrun := range []bool{false, true} {
+		t.Run(fmt.Sprintf("dryrun=%v", dryrun), func(t *testing.T) {
+			withFlakeEntrypoint(t)
+			installFakeBackend(t, "")
+			root := t.TempDir()
+			flagFile, flagDryrun, flagRoot = "", dryrun, root
+			farmA := writeTestLinkFarm(t, symlinkEntries(t, "from-a")...)
+			farmB := writeTestLinkFarm(t, symlinkEntries(t, "from-b")...)
+			withManifestFlags(t, true, "b="+farmB, "a="+farmA)
+			log := stubNixForApply(t, `{}`)
+			run, buf := newApplyTestRun()
+			if err := runApplyAll(run); err != nil {
+				t.Fatalf("runApplyAll: %v", err)
+			}
+			if err := run.emit(nil); err != nil {
+				t.Fatalf("emit: %v", err)
+			}
+			checkConformance(t, buf)
+			byName, order := subjectResults(t, buf)
+			if want := []string{"a", "b"}; !slices.Equal(order, want) {
+				t.Fatalf("results order = %v, want %v", order, want)
+			}
+			for _, name := range order {
+				if status, errs := statusAndErrors(t, byName[name]); status != "success" || len(errs) != 0 {
+					t.Errorf("subject %s = (%s, %v), want (success, none)", name, status, errs)
+				}
+			}
+			for _, target := range []string{"from-a", "from-b"} {
+				_, err := os.Lstat(filepath.Join(root, target))
+				if placed := err == nil; placed == dryrun {
+					t.Errorf("target %s placed = %v, want %v", target, placed, !dryrun)
+				}
+			}
+			if calls := nixCalls(t, log); len(calls) != 0 {
+				t.Errorf("nix calls = %q, want none", calls)
+			}
+		})
 	}
 }
 

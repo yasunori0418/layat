@@ -5,8 +5,10 @@ package main
 
 import (
 	"errors"
+	"maps"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -246,5 +248,23 @@ func TestRunApplyAllSelectsGenerator(t *testing.T) {
 	}
 	if calls := nixCalls(t, log); len(calls) != 0 {
 		t.Errorf("nix calls = %q, want none", calls)
+	}
+}
+
+// TestManifestFlagRepeats pins that --manifest repeats without splitting on commas, and that a
+// <name>=<link-farm> pair splits at the first "=".
+func TestManifestFlagRepeats(t *testing.T) {
+	orig := flagManifest
+	t.Cleanup(func() { flagManifest = orig })
+	cmd := newApplyCmd()
+	if err := cmd.ParseFlags([]string{"--manifest", "a=/x", "--manifest", "b=/y,z=w"}); err != nil {
+		t.Fatalf("ParseFlags: %v", err)
+	}
+	if want := []string{"a=/x", "b=/y,z=w"}; !slices.Equal(flagManifest, want) {
+		t.Fatalf("flagManifest = %q, want %q", flagManifest, want)
+	}
+	want := map[string]string{"a": "/x", "b": "/y,z=w"}
+	if got := manifestSet(flagManifest); !maps.Equal(got, want) {
+		t.Errorf("manifestSet = %v, want %v", got, want)
 	}
 }
