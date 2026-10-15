@@ -18,8 +18,8 @@ specification: |
   of the kick; the correspondence of one config to one manifest and one profile is stated
   by REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a, and the definition of the option supplying
   its entries by REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10, neither being restated here. The
-  order of the `<name>=<link-farm>` pairs, `--jobs`, and how a partial failure is
-  aggregated are stated by REQ-c847d1af-a437-46bb-bd64-42083810d034 and are likewise not
+  order of the `<name>=<link-farm>` pairs, `--jobs`, how a partial failure is aggregated,
+  and not invoking `layat` when no config is present are stated by REQ-c847d1af-a437-46bb-bd64-42083810d034 and are likewise not
   restated here.
 specification_ja: |
   home-manager モジュールは `home.activation.layat`（`entryAfter ["writeBoundary"]`）から
@@ -33,7 +33,7 @@ specification_ja: |
   規定するのは起動の契約であり、1 config が 1 manifest = 1 profile に対応することは
   REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a、その entries を供給するオプションの定義は
   REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 の担当で、いずれも本 item では規定しない。
-  `<name>=<link-farm>` の並び・`--jobs`・部分失敗の集約は
+  `<name>=<link-farm>` の並び・`--jobs`・部分失敗の集約・config が無いときに `layat` を起動しないことは
   REQ-c847d1af-a437-46bb-bd64-42083810d034 の担当で、これも本 item では規定しない。
 ---
 # REQ-8085f194-c903-4ecb-abd8-c719fe7b3292: home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める

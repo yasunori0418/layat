@@ -6,8 +6,8 @@ derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 specification: |
-  The `home.activation.layat` of the home-manager module SHALL kick the engine exactly once
-  per activation, as `layat apply --all --manifest <name>=<link-farm> … --jobs <n>`, passing
+  Where `layat.configs` holds at least one config, the `home.activation.layat` of the
+  home-manager module SHALL kick the engine exactly once per activation, as `layat apply --all --manifest <name>=<link-farm> … --jobs <n>`, passing
   one `<name>=<link-farm>` per config of `layat.configs` in the lexical order of `<name>`.
   `--jobs` SHALL always be given explicitly, with the value of `layat.jobs` even when it is
   0. Each `<name>=<link-farm>` SHALL be applied as its own profile with its own generation
@@ -23,7 +23,8 @@ specification: |
   one config to one manifest and one profile by REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a;
   neither is restated here.
 specification_ja: |
-  home-manager モジュールの `home.activation.layat` は、activation 1 回につき engine を
+  `layat.configs` に config が 1 つ以上あるとき、home-manager モジュールの
+  `home.activation.layat` は、activation 1 回につき engine を
   ちょうど 1 回、`layat apply --all --manifest <name>=<link-farm> … --jobs <n>` の形で起動
   しなければならない。`<name>=<link-farm>` は `layat.configs` の config ごとに 1 つ、`<name>`
   の辞書順に並べなければならない。`--jobs` は `layat.jobs` の値で、値が 0 でも常に明示で
