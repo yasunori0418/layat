@@ -54,6 +54,15 @@ in
       '';
     };
 
+    recopy = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        When enabled, every activation overwrites every copy target from its src,
+        discarding local edits (wires `layat apply --all --recopy`). It applies to every config.
+      '';
+    };
+
     backup = lib.mkOption {
       type = lib.types.submodule {
         options = {
