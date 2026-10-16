@@ -437,7 +437,7 @@ layat init <template>           # wrapper over `nix flake init -t github:yasunor
 --project-root      # --all qualifier: only projectRoot configs (also --home-root / --system-root)
 --recopy            # apply qualifier: overwrite every copy target from src
 --manifest <path>   # apply only: apply a pre-built link-farm directly
---manifest <name>=<farm> # with --all: repeat once per config instead of a bare path
+--manifest <name>=<farm> # with --all: repeat once per config in place of the plain `<link-farm>` form
 -y, --yes           # skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)
 --generator <name>  # manifest generator (only `nix` today; see "Choosing the generator")
 ```
@@ -460,7 +460,7 @@ generator = "nix"
 An empty value or a settings file without `generator` counts as unset. An unknown key, a TOML
 syntax error, or an unknown generator name exits 1 with one line on stderr (`E_INPUT` under
 `--json`). `apply --manifest` reads none of these and rejects `--generator` and `-f`; combined with
-`--all`, it takes `--manifest <name>=<link-farm>` once per config instead of a bare path.
+`--all`, it takes `--manifest <name>=<link-farm>` once per config in place of the plain `<link-farm>` form.
 `prune` and `init` ignore the mechanism.
 
 ### Output and exit codes
