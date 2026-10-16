@@ -37,7 +37,7 @@ references:
 
 > **2026-10-15 改訂注記（ADR-0060）**: 単一形 `apply --manifest <link-farm> [name]` の挙動と、§1 の取得後の挙動・
 > §4 の公開 seam としての位置づけは不変。ただし §2 の「`--manifest` + `--all` は error 停止」は、`--all` と合成する
-> ときに `--manifest <name>=<link-farm>` を繰り返す形に限って合成可へ変わった（素パス形と `--all` の合成は入力エラーの
+> ときに `--manifest <name>=<link-farm>` を繰り返す形に限って合成可へ変わった（`<link-farm>` 形と `--all` の合成は入力エラーの
 > まま）。§3 の HM activation の invocation も、`layat apply --all --manifest <name>=<link-farm> … --jobs <n>` の
 > 1 回起動へ変わった。blocking flock・レポート可視・非 0 終了で switch を止める点は不変（→ ADR-0060）。
 

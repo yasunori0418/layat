@@ -55,7 +55,7 @@ ADR-0035 は HM の `layat.configs.<name>` を決め、activation を「profile 
 
 - `apply --manifest <link-farm> [name]`（単一形）の挙動とエラー文は変えない。
 - `--all` と合成するときは `--manifest <name>=<link-farm>` を 1 回以上繰り返す。最初の `=` で分割し、`<name>` が空なら入力エラーにする。
-- 次は入力エラー（`--json` では `E_INPUT`）: `--all` なしで `--manifest` を 2 回以上指定する、`--all` なしで `<name>=` 形を使う、`--all` と素パス形を合成する、`--all` と合成した組で同じ `<name>` を 2 回以上指定する。`--manifest` と `-f` / `--generator` の併用は従来どおり入力エラー。
+- 次は入力エラー（`--json` では `E_INPUT`）: `--all` なしで `--manifest` を 2 回以上指定する、`--all` なしで `<name>=` 形を使う、`--all` と `<link-farm>` 形を合成する、`--all` と合成した組で同じ `<name>` を 2 回以上指定する。`--manifest` と `-f` / `--generator` の併用は従来どおり入力エラー。
 - 実装は prebuilt 生成器の集合化とする。一括の Roots は name → `manifest.Root`（`Targets` は各 link-farm の `manifest.json` の entries から導出）を返し、Build / DryBuild は name で link-farm を選ぶ。manifest.json スキーマ v1 は変えない。
 - root フィルタ（`--home-root` 等）は特別扱いせず、`manifest.json` の rootKind による一般の選択規則に従う。
 
@@ -83,5 +83,5 @@ ADR-0035 は HM の `layat.configs.<name>` を決め、activation を「profile 
 
 - **ADR-0035 §3 のまま profile ごとに起動し bash で集約する**: `apply --all` が持つループ・集約・並列化を bash で再実装することになる。終了コードの優先度（error > conflict）も bash 側で写し直す必要がある。
 - **module eval の assertion と CLI 前段検査を両方持つ**: 同じ規則の検出器が 2 つになり、正規化規則の乖離が衝突の見逃しや誤検出を生む。
-- **`--manifest` を素パスの繰り返しにし、name を manifest.json に持たせる**: manifest.json スキーマ v1 の拡張が要る。name は profile 選択で manifest の内容ではないため、起動側で与える方が既存の「位置引数 `name` は `--manifest` と直交」に沿う。
+- **`--manifest` を `<link-farm>` の繰り返しにし、name を manifest.json に持たせる**: manifest.json スキーマ v1 の拡張が要る。name は profile 選択で manifest の内容ではないため、起動側で与える方が既存の「位置引数 `name` は `--manifest` と直交」に沿う。
 - **`--all` を付けずに `--manifest` の複数指定だけで集合とみなす**: `apply` の単一 config と集合の区別がフラグから読めなくなる。集合は `--all` が担うという既存の区分を保つ。
