@@ -16,7 +16,7 @@ mitigates:
   導出）を返し、Roots / Build / DryBuild は名前で link-farm を選ぶ。集合に無い名前は NotFound
 - **前段衝突検査** — 2 つの link-farm が同じ root の同じ正規化後 target を持つとき、配置前に
   止まり、メッセージに target と両 config 名が載る
-- **形の不正** — `--all` なしの複数指定・`--all` なしの `<name>=` 形・`--all` と素パス形・
+- **形の不正** — `--all` なしの複数指定・`--all` なしの `<name>=` 形・`--all` と `<link-farm>` 形・
   空の `<name>`・`--all` での同じ `<name>` の重複・`-f` / `--generator` との併用は、nix を
   呼ぶ前に `E_INPUT` で止まる
 - **単一形の不変** — `apply --manifest <link-farm> [name]` は従来どおり 1 つの link-farm を
