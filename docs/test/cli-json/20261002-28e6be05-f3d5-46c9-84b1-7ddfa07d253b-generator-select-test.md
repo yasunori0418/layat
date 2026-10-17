@@ -5,6 +5,7 @@ name: "generator_select_test.go — 選択の優先順位・strict な設定フ�
 target: "cmd/layat/generator_select_test.go"
 covers:
   - "TC-8377d290-1f47-48f3-844c-bd51f257e25e"
+  - "TC-e54fe715-7b49-431c-a611-25e196b1d0a0"
 ---
 # CASE-28e6be05-f3d5-46c9-84b1-7ddfa07d253b: generator_select_test.go — 選択の優先順位・strict な設定ファイル・--manifest 経路の環境非依存
 
@@ -28,6 +29,8 @@ covers:
   ディレクトリ（ファイルならその親）か cwd から読むこと、`-f` のディレクトリに無ければ cwd へ
   落ちないこと、`-f` を stat できなければ設定ファイルをどちらも読まないこと、`config.toml` を
   `XDG_CONFIG_HOME`（未設定なら `~/.config`）から読み、どちらも無ければ飛ばすこと
+- **`--manifest` の繰り返し** — `apply` のフラグ解析で `--manifest` を繰り返すと値がカンマで
+  割られずに順に並ぶこと、`<name>=<link-farm>` の組が最初の `=` で分割されること
 - **`apply --all` の配線** — 不正な `LAYAT_GENERATOR` で `apply --all` が `inputError` で止まり、
   nix を呼ばないこと
 

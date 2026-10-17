@@ -229,55 +229,112 @@
               fakeSrc = {
                 outPath = "/nix/store/00000000000000000000000000000000-fake-src";
               };
-              hm = inputs.home-manager.lib.homeManagerConfiguration {
-                inherit pkgs;
-                modules = [
-                  ./modules/home-manager.nix
-                  {
-                    # ラッパー（flake.homeManagerModules.default）と同じく pin 版 layat を注入する。
-                    _module.args.layatPackage = config.packages.layat;
-                    home.username = "layat-test";
-                    home.homeDirectory = "/home/layat-test";
-                    home.stateVersion = "24.05";
-                    # nixpkgs と HM の release 文字列ずれによる無害な warning を抑制する。
-                    home.enableNixpkgsReleaseCheck = false;
-                    layat.enable = true;
-                    layat.entries.".claude/skills/nix" = {
-                      src = fakeSrc;
-                      subpath = "skills/nix";
-                    };
-                    # suffix 省略時に既定値 "layat-backup" が activation に渡ることを検証する。
-                    layat.backup.enable = true;
-                  }
-                ];
+              skill = {
+                src = fakeSrc;
+                subpath = "skills/nix";
+              };
+              # 共通の土台に layat の設定だけを差し替えて評価し、config を返す。
+              mkHm =
+                layatCfg:
+                (inputs.home-manager.lib.homeManagerConfiguration {
+                  inherit pkgs;
+                  modules = [
+                    ./modules/home-manager.nix
+                    {
+                      # ラッパー（flake.homeManagerModules.default）と同じく pin 版 layat を注入する。
+                      _module.args.layatPackage = config.packages.layat;
+                      home.username = "layat-test";
+                      home.homeDirectory = "/home/layat-test";
+                      home.stateVersion = "24.05";
+                      # nixpkgs と HM の release 文字列ずれによる無害な warning を抑制する。
+                      home.enableNixpkgsReleaseCheck = false;
+                      layat = {
+                        enable = true;
+                      }
+                      // layatCfg;
+                    }
+                  ];
+                }).config;
+              # suffix 省略時に既定値 "layat-backup" が activation に渡ることも検証する。
+              multi = mkHm {
+                configs.default.entries.".claude/skills/nix" = skill;
+                configs.work.entries.".config/work" = skill;
+                backup.enable = true;
+              };
+              sugar = mkHm { entries.".claude/skills/nix" = skill; };
+              canonical = mkHm { configs.default.entries.".claude/skills/nix" = skill; };
+              empty = mkHm { };
+              jobs3 = mkHm {
+                configs.default.entries.".claude/skills/nix" = skill;
+                jobs = 3;
+              };
+              recopy = mkHm {
+                configs.default.entries.".claude/skills/nix" = skill;
+                recopy = true;
               };
               # home.activation の dag entry の生スクリプト。
-              activationScript = pkgs.writeText "layat-activation" hm.config.home.activation.layat.data;
+              activationScript = pkgs.writeText "layat-activation" multi.home.activation.layat.data;
             in
-            pkgs.runCommandLocal "layat-hm-module-check" { } ''
-              script=${activationScript}
+            pkgs.runCommandLocal "layat-hm-module-check"
+              {
+                sugarActivation = sugar.home.activation.layat.data;
+                canonicalActivation = canonical.home.activation.layat.data;
+                sugarWarnings = lib.concatStringsSep "\n" sugar.warnings;
+                renameWarning = "has been renamed to `layat.configs.default.entries'";
+                emptyLaunches = lib.boolToString (empty.home.activation ? layat);
+                jobs3Activation = jobs3.home.activation.layat.data;
+                recopyActivation = recopy.home.activation.layat.data;
+              }
+              ''
+                script=${activationScript}
 
-              # (1) home.file へ翻訳せず engine を --manifest 経路で起動する配線であること。
-              grep -q 'apply --manifest /nix/store/' "$script" \
-                || { echo "FAIL: activation が layat apply --manifest を起動していません"; cat "$script"; exit 1; }
+                # (1) home.file へ翻訳せず、全 config の link-farm を辞書順の <name>=<farm> で
+                #     1 回の apply --all 起動に渡し、既定の --jobs 0 と --backup=<既定 suffix> を末尾に付けること。
+                test "$(grep -c ' apply ' "$script")" -eq 1 \
+                  || { echo "FAIL: activation が layat apply を 1 回だけ起動していません"; cat "$script"; exit 1; }
+                grep -qE " apply --all --manifest 'default=/nix/store/[a-z0-9]+-layat-manifest' --manifest 'work=/nix/store/[a-z0-9]+-layat-manifest' --jobs 0 --backup=layat-backup$" "$script" \
+                  || { echo "FAIL: activation が apply --all --manifest <name>=<farm> … --jobs 0 --backup=<suffix> の形ではありません"; cat "$script"; exit 1; }
 
-              # (2) 渡す manifest が root=homeRoot を pin していること（mkManifest が記録）。
-              manifest=$(grep -oE '/nix/store/[a-z0-9]+-layat-manifest' "$script" | head -n1)
-              test -n "$manifest" || { echo "FAIL: manifest の store パスを抽出できません"; cat "$script"; exit 1; }
-              test -f "$manifest/manifest.json" || { echo "FAIL: $manifest/manifest.json がありません"; exit 1; }
-              grep -q '"rootKind":"home"' "$manifest/manifest.json" \
-                || { echo "FAIL: manifest が homeRoot を pin していません"; cat "$manifest/manifest.json"; exit 1; }
+                # (2) config ごとに別 store path の manifest が root=homeRoot を pin し、自分の entries だけを持つこと。
+                farmDefault=$(grep -oE "default=/nix/store/[^ ']+" "$script" | cut -d= -f2)
+                farmWork=$(grep -oE "work=/nix/store/[^ ']+" "$script" | cut -d= -f2)
+                test "$farmDefault" != "$farmWork" \
+                  || { echo "FAIL: 2 configs の manifest が同じ store path です"; cat "$script"; exit 1; }
+                for spec in "$farmDefault:.claude/skills/nix:.config/work" "$farmWork:.config/work:.claude/skills/nix"; do
+                  IFS=: read -r farm own other <<<"$spec"
+                  json="$farm/manifest.json"
+                  test -f "$json" || { echo "FAIL: $json がありません"; exit 1; }
+                  grep -q '"rootKind":"home"' "$json" \
+                    || { echo "FAIL: manifest が homeRoot を pin していません"; cat "$json"; exit 1; }
+                  grep -qF "\"$own\"" "$json" \
+                    || { echo "FAIL: configs.<name>.entries が manifest に反映されていません"; cat "$json"; exit 1; }
+                  ! grep -qF "\"$other\"" "$json" \
+                    || { echo "FAIL: 他の config の entries が manifest に混入しています"; cat "$json"; exit 1; }
+                done
 
-              # (3) layat.entries が manifest に流れていること（target = 属性キー）。
-              grep -q '".claude/skills/nix"' "$manifest/manifest.json" \
-                || { echo "FAIL: layat.entries が manifest に反映されていません"; cat "$manifest/manifest.json"; exit 1; }
+                # (3) layat.entries のみの config は configs.default.entries と同一 manifest を生み、
+                #     rename の deprecation warning を出すこと。
+                test "$sugarActivation" = "$canonicalActivation" \
+                  || { echo "FAIL: layat.entries と configs.default.entries の activation が異なります"; echo "$sugarActivation"; echo "$canonicalActivation"; exit 1; }
+                grep -qF -- "$renameWarning" <<<"$sugarWarnings" \
+                  || { echo "FAIL: layat.entries の deprecation warning がありません"; echo "$sugarWarnings"; exit 1; }
 
-              # (4) layat.backup.enable が --backup=<既定 suffix> として同じ apply 起動に配線されること。
-              grep -q -- '--backup=layat-backup' "$script" \
-                || { echo "FAIL: activation が --backup=<suffix> を配線していません"; cat "$script"; exit 1; }
+                # (4) layat.jobs の値がそのまま --jobs に乗ること。
+                grep -qE " --manifest 'default=[^']+' --jobs 3$" <<<"$jobs3Activation" \
+                  || { echo "FAIL: layat.jobs = 3 が --jobs 3 として渡っていません"; echo "$jobs3Activation"; exit 1; }
 
-              touch "$out"
-            '';
+                # (5) layat.recopy = true のときだけ --recopy が同じ起動に乗ること。
+                grep -qE " apply --all --manifest 'default=[^']+' --jobs 0 --recopy$" <<<"$recopyActivation" \
+                  || { echo "FAIL: layat.recopy = true が --recopy として渡っていません"; echo "$recopyActivation"; exit 1; }
+                ! grep -qF -- "--recopy" "$script" && ! grep -qF -- "--recopy" <<<"$jobs3Activation" \
+                  || { echo "FAIL: layat.recopy の既定で --recopy が渡っています"; cat "$script"; echo "$jobs3Activation"; exit 1; }
+
+                # (6) config が 1 つも無いとき activation は layat を起動しないこと。
+                test "$emptyLaunches" = false \
+                  || { echo "FAIL: configs が空でも activation が layat を起動します"; exit 1; }
+
+                touch "$out"
+              '';
         };
       flake = {
         lib = layatLib;

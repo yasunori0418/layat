@@ -11,9 +11,9 @@ specification: |
   last writer winning. Not aiming at the same target from several configs SHALL be the
   responsibility of the user, and layat SHALL make the situation visible through the
   foreign symlink warning and SHALL NOT hold any mechanism that detects and stops it at
-  engine runtime. Where several configs ride on a single evaluation, as the `layat.configs`
-  of one module configuration do, a static detection at eval time is possible and SHALL
-  NOT be precluded by this; that case is stated by REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 and is not restated here.
+  engine runtime. Where several configs ride on a single invocation, as the `layat.configs`
+  of one module configuration do through the `apply --all` of the activation, a detection
+  before placement is possible and SHALL NOT be precluded by this; that case is stated by REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 and is not restated here.
   As an exception, a conflict between configs selected by one `apply --all` of a single
   entrypoint SHALL be stopped before the build by the preflight of REQ-38506419-c23d-4fce-b167-30715ce6a69d.
   The foreign warning during an oscillation will keep appearing under the high frequency
@@ -26,9 +26,9 @@ specification_ja: |
   別 config が同一 target を狙うと、ドリフト修復が「A が置く → B が foreign 検知して奪う →
   A が再奪取」と `shellHook` 再入のたびに振動しうる（単発の後勝ちではなく能動的オシレーション）。
   「同一 target を複数 config で狙わない」はユーザー責任とし、layat は foreign symlink warning で
-  可視化するに留め、engine 実行時に検知して止める機構を持ってはならない。単一の eval に載る
-  複数 config（1 つのモジュール config の `layat.configs` など）については eval 時の静的検出が
-  可能であり、本 item はそれを妨げない。その場合の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の担当で、本 item
+  可視化するに留め、engine 実行時に検知して止める機構を持ってはならない。単一の起動に載る
+  複数 config（activation の `apply --all` に載る 1 つのモジュール config の `layat.configs` など）
+  については配置前の検出が可能であり、本 item はそれを妨げない。その場合の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の担当で、本 item
   では規定しない。例外として、同一 entrypoint の `apply --all` で選択された config 間の衝突は
   REQ-38506419-c23d-4fce-b167-30715ce6a69d の前段検査で build 前に止まらなければならない。振動中の foreign warning は
   `shellHook` の高頻度実行で出続けるが、これは設定ミスのシグナルとして正しいものと
@@ -61,6 +61,9 @@ specification_ja: |
 > 同じ扱い）。本 item は静的検出が可能な場合を妨げないことまでを規範とし、その場合に実際に
 > eval 停止する規範そのものは持たない（**同 §4 の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 が持つ**）。
 > `docs/spec.md` の追従は本 item の担当範囲外。
+>
+> **2026-10-15 追記（ADR-0060）**: 上の「eval 時 assertion で停止」は、activation の `apply --all`
+> 前段検査で停止する形へ改められた（規範は frontmatter・REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44）。
 
 ## 出典
 
@@ -71,4 +74,5 @@ specification_ja: |
 すること）と ADR-0024「実装前残セマンティクス第6巡」（振動 warning を抑制しないこと）。
 「検知して止める機構を持たない」を engine 実行時へ限定したのは ADR-0035「HM モジュールに
 `layat.configs.<name>` を導入し複数 profile（役割分離）を可能にする」§4（単一のモジュール eval に
-載る config 間は静的検出が可能）。
+載る config 間は静的検出が可能）。例外の条件を「単一の起動」へ改めたのは ADR-0060「HM activation を
+prebuilt manifest 群への `apply --all` 1 回起動にし、configs 間の衝突検出を CLI 前段へ委譲する」§3。

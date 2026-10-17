@@ -39,7 +39,7 @@ specification_ja: |
 > ときに `default` へ解決すること（および `layat.default` 未定義でのエラー停止）は
 > REQ-c2d44626-d8f4-446a-a80a-319a500129b4 / REQ-205d744d-5a53-4511-bc09-892ba01d4e6f、`rollback` が名指し必須で home mode 限定であることは
 > REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796 / REQ-05abce3e-9797-432b-b93f-37c55d09afde、`gitignore` を非 project config へ与えたときのエラー停止は
-> REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9、`--manifest` と `-f` / `--all` の併用エラーは REQ-dec58330-6dad-47f7-8f56-2402764a89c7、
+> REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9、`--manifest` と `-f` の併用エラー、および `--all` と合成するときの形の制約は REQ-dec58330-6dad-47f7-8f56-2402764a89c7、
 > experimental-features 未有効の案内エラーは REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6 の担当。停止時の終了コードは
 > REQ-2c5a10d8-112b-4f96-947a-aba7164779c4 の担当。
 

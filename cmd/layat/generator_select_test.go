@@ -5,8 +5,10 @@ package main
 
 import (
 	"errors"
+	"maps"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -123,7 +125,7 @@ func withSelectionFlags(t *testing.T) {
 	t.Helper()
 	origGen, origManifest, origFile := flagGenerator, flagManifest, flagFile
 	t.Cleanup(func() { flagGenerator, flagManifest, flagFile = origGen, origManifest, origFile })
-	flagGenerator, flagManifest, flagFile = "", "", ""
+	flagGenerator, flagManifest, flagFile = "", nil, ""
 	t.Setenv(generatorEnv, "")
 	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
 	t.Chdir(t.TempDir())
@@ -136,7 +138,7 @@ func TestSelectGeneratorManifestIgnoresEnvironment(t *testing.T) {
 	t.Setenv(generatorEnv, "bogus")
 	writeSetting(t, "layat.toml", "bogus = true\n")
 	writeSetting(t, filepath.Join(os.Getenv("XDG_CONFIG_HOME"), "layat", "config.toml"), "bogus = true\n")
-	flagManifest = "/nonexistent/link-farm"
+	flagManifest = []string{"/nonexistent/link-farm"}
 	got, err := selectGenerator()
 	if err != nil || got != "prebuilt" {
 		t.Fatalf("selectGenerator() = %q, %v; want prebuilt, nil", got, err)
@@ -146,7 +148,7 @@ func TestSelectGeneratorManifestIgnoresEnvironment(t *testing.T) {
 // TestSelectGeneratorRejectsGeneratorWithManifest: --generator with --manifest is an input error.
 func TestSelectGeneratorRejectsGeneratorWithManifest(t *testing.T) {
 	withSelectionFlags(t)
-	flagGenerator, flagManifest = "nix", "/nonexistent/link-farm"
+	flagGenerator, flagManifest = "nix", []string{"/nonexistent/link-farm"}
 	_, err := selectGenerator()
 	var ie *inputError
 	if !errors.As(err, &ie) {
@@ -235,7 +237,7 @@ func TestRunApplyAllSelectsGenerator(t *testing.T) {
 	withFlakeEntrypoint(t)
 	origManifest, origAll := flagManifest, flagApplyAll
 	t.Cleanup(func() { flagManifest, flagApplyAll = origManifest, origAll })
-	flagDryrun, flagManifest, flagApplyAll = false, "", true
+	flagDryrun, flagManifest, flagApplyAll = false, nil, true
 	t.Setenv(generatorEnv, "bogus")
 	log := stubNixForApply(t, `{"a":{"rootKind":"home","targets":["x"]}}`)
 	run, _ := newApplyTestRun()
@@ -246,5 +248,23 @@ func TestRunApplyAllSelectsGenerator(t *testing.T) {
 	}
 	if calls := nixCalls(t, log); len(calls) != 0 {
 		t.Errorf("nix calls = %q, want none", calls)
+	}
+}
+
+// TestManifestFlagRepeats pins that --manifest repeats without splitting on commas, and that a
+// <name>=<link-farm> pair splits at the first "=".
+func TestManifestFlagRepeats(t *testing.T) {
+	orig := flagManifest
+	t.Cleanup(func() { flagManifest = orig })
+	cmd := newApplyCmd()
+	if err := cmd.ParseFlags([]string{"--manifest", "a=/x", "--manifest", "b=/y,z=w"}); err != nil {
+		t.Fatalf("ParseFlags: %v", err)
+	}
+	if want := []string{"a=/x", "b=/y,z=w"}; !slices.Equal(flagManifest, want) {
+		t.Fatalf("flagManifest = %q, want %q", flagManifest, want)
+	}
+	want := map[string]string{"a": "/x", "b": "/y,z=w"}
+	if got := manifestSet(flagManifest); !maps.Equal(got, want) {
+		t.Errorf("manifestSet = %v, want %v", got, want)
 	}
 }

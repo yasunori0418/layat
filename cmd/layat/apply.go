@@ -81,8 +81,9 @@ func newApplyCmd() *cobra.Command {
 		"Unconditionally re-copy every copy target from src, overwriting (discards local edits)")
 	cmd.Flags().BoolVar(&flagDryrun, "dryrun", false,
 		"Show place/replace/remove/conflict/no-op with zero side effects (exit 2 on conflict)")
-	cmd.Flags().StringVar(&flagManifest, "manifest", "",
-		"Apply a pre-built manifest (link-farm path) directly (host/module activation seam; no entrypoint discovery or nix eval/build)")
+	cmd.Flags().StringArrayVar(&flagManifest, "manifest", nil,
+		"Apply a pre-built manifest (link-farm path) directly (host/module activation seam; no entrypoint discovery or nix eval/build); "+
+			"with --all, repeat it as <name>=<link-farm> once per config")
 	cmd.Flags().StringVar(&flagBackup, "backup", "",
 		"Back up an occupying foreign entity to \"<target>.<suffix>\" before placing, instead of stopping on conflict (bare --backup uses suffix \"layat-backup\"; \"=\" form required for a custom suffix, e.g. --backup=bak)")
 	cmd.Flags().Lookup("backup").NoOptDefVal = "layat-backup"
@@ -96,7 +97,7 @@ func runApplyManifest(subject *applySubject, name string) error {
 	if err != nil {
 		return err
 	}
-	if err := gen.Discover(flagManifest); err != nil {
+	if err := gen.Discover(flagManifest[0]); err != nil {
 		return err
 	}
 	linkFarm, err := gen.DryBuild(name)
@@ -138,7 +139,7 @@ func runApplyManifest(subject *applySubject, name string) error {
 func runApply(run *applyRun, name string) error {
 	// The config name is the run's single outturn subject.
 	subject := run.beginSubject(name)
-	if flagManifest != "" {
+	if len(flagManifest) > 0 {
 		// --manifest fixes the source to a link-farm, so it conflicts with -f.
 		if flagFile != "" {
 			return &inputError{err: errors.New("layat: --manifest cannot be combined with -f (--manifest fixes the source to a pre-built link-farm)")}
@@ -269,9 +270,9 @@ func dryBuildFunc(gen generator.Generator, name string) engine.BuildFunc {
 // parallel, stage 2 applies them in parallel. It continues on partial failure, reports in lexical
 // order, and exits non-zero if any config fails.
 func runApplyAll(run *applyRun) error {
-	// --manifest fixes the source to one link-farm, which --all cannot apply per config.
-	if flagManifest != "" {
-		return &inputError{err: errors.New("layat: --manifest cannot be combined with --all (--manifest fixes the source to a pre-built link-farm)")}
+	// --manifest fixes the source to pre-built link-farms, so it conflicts with -f.
+	if len(flagManifest) > 0 && flagFile != "" {
+		return &inputError{err: errors.New("layat: --manifest cannot be combined with -f (--manifest fixes the source to a pre-built link-farm)")}
 	}
 	filter, err := selectedRootFilter()
 	if err != nil {

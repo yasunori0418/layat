@@ -19,9 +19,14 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-07-04
-- 関連: ADR-0013, ADR-0033, ADR-0035, ADR-0038（前提: 前段衝突検査）, `docs/spec.md`, `cmd/layat/apply.go`
+- 関連: ADR-0013, ADR-0033, ADR-0035, ADR-0038（前提: 前段衝突検査）, ADR-0060（§3 の改訂）, `docs/spec.md`, `cmd/layat/apply.go`
 - 改訂対象: ADR-0016 §2 の「`apply --all` の適用順は辞書順（キーソート・決定的）」を並列適用（実行順非決定・完了後の集約表示は辞書順）へ改訂
 - 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。複数 profile / manifest 処理の高速化要望
+
+> **2026-10-15 改訂注記（ADR-0060）**: §1・§2 の並列化と表示の辞書順集約は不変。ただし §3 の「複数 manifest を
+> 1 コマンドに渡す CLI 拡張は行わない」と「HM activation の複数 profile 起動の並列化はスコープ外」は反転した。
+> `apply --all` は `--manifest <name>=<link-farm>` の繰り返しで prebuilt 集合を受け取り、HM activation はその
+> 1 回起動に `--jobs` を渡して本 ADR の並列化に乗る。config ごとに独立した世代コミットは変わらない（→ ADR-0060）。
 
 ## 背景
 

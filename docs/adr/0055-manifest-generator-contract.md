@@ -33,7 +33,7 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-10-02
-- 関連: ADR-0006（engine の契約は `manifest.json` 1 本）, ADR-0007（CLI の責務・透明性）, ADR-0011（pending out-link による GC 窓の封鎖）, ADR-0023（eval 先行 → flock → build）, ADR-0025（experimental-features の案内）, ADR-0026（`--manifest` 経路）, ADR-0031（成功時沈黙・`--debug`）, ADR-0043（`--json` の outturn 準拠）, ADR-0054（改名。manifest の生成は nix でなくてもよい）, ADR-0057（世代バックエンドの契約。Build 事後条件の緩和）
+- 関連: ADR-0006（engine の契約は `manifest.json` 1 本）, ADR-0007（CLI の責務・透明性）, ADR-0011（pending out-link による GC 窓の封鎖）, ADR-0023（eval 先行 → flock → build）, ADR-0025（experimental-features の案内）, ADR-0026（`--manifest` 経路）, ADR-0031（成功時沈黙・`--debug`）, ADR-0043（`--json` の outturn 準拠）, ADR-0054（改名。manifest の生成は nix でなくてもよい）, ADR-0057（世代バックエンドの契約。Build 事後条件の緩和）, ADR-0060（prebuilt 集合と `--all` の合成）
 - 改訂対象: ADR-0006 / ADR-0007 が「CLI が内部で `nix build` / `nix eval` を回す」とした manifest 取得の主体を生成器インターフェイスへ移す。ADR-0023 §1 の rootKind 先読みを生成器の契約の前提条件に位置づける。ADR-0026 の `--manifest` 経路を prebuilt 生成器として再定義する（外面は不変）。ADR-0031 §3 の「内部 nix コマンド開示」の主体を生成器にし、生成器の stderr を沈黙規律の対象外にする。ADR-0043 の `E_*_BUILD` を「生成器の失敗」へ読み替える。ADR-0011 §4 の out-link による store path 取得の主体を nixgen の Build に移す。ADR-0025 §1 の experimental-features の判定と案内を nixgen に閉じる
 - 起点: Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）と、評価器の診断の扱いを決める Issue #396 の結論
 
@@ -41,6 +41,12 @@ references:
 > 「**選択中の世代バックエンドがコミット可能な link-farm のパス**（既定の nixprofile は store path を要求する）」へ文言のみ
 > 緩和した。実装は変えず、nixprofile が唯一のバックエンドである間の実質は不変。「緩めるのは後継 epic #406 の担当」は
 > これで回収した（→ ADR-0057）。
+
+> **2026-10-15 改訂注記（ADR-0060）**: §1・§3・§4 の契約、§2 の 4 操作と引数、§5 の単一形（`--manifest <link-farm>` を
+> prebuilt 生成器に写すこと）は不変。ただし §2 の prebuilt 実装は名前付き link-farm の集合を扱うようになり、一括の
+> Roots が name ごとの `manifest.Root`（`Targets` を含む）を返し、Build / DryBuild が name で link-farm を選ぶ。§5 の
+> 「ADR-0026 の外面（`--all` との排他）は不変」は、`--all` と合成するときに `--manifest <name>=<link-farm>` を繰り返す
+> 形に限って合成可へ変わった（→ ADR-0060）。
 
 ## 背景
 
