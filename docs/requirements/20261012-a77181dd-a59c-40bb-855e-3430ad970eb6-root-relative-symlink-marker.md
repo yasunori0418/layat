@@ -49,7 +49,7 @@ specification_ja: |
 |---|---|
 | 基準点 | その manifest の配置 root（`target` と同じ root。`--root` 上書きを含む）|
 | リンクの形 | `target` の親ディレクトリから `<src>/<subpath>` への相対パス（上の例は `../../dev/skills/sara-docs`）|
-| root 種別 | 全種別で使える（system mode は未実装のまま）|
+| root 種別 | 全種別で使える |
 | 評価時の拒否 | 絶対パス・`..` による root 外への脱出・`method = "copy"` との併用・`<src>/<subpath>` と `target` の一致または祖先関係 |
 | 実行時の停止 | `<root>/<src>/<subpath>` が不在なら配置前に停止（dangling を作らない）|
 | 版管理 | 相対のリンク先文字列のみ。指す先の内容はライブ（REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa の担当）|

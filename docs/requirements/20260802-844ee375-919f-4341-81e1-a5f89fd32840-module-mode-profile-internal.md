@@ -34,7 +34,7 @@ oldGenPath 配管は不要。
 > それを内部機構に留めること・前世代を layat 自身の profile から読みホストの oldGenPath に
 > 依存しないことは REQ-1be4d678-959c-44d7-a346-44bfd95af56e の担当で、本 item はユーザー向け rollback の一本化先と、
 > それが成立する追従の仕組み（前進のみ）を規定する。home mode 側の rollback 手順は
-> REQ-0e341430-17f0-498b-9439-65491652163a、`rollback` が home mode 限定であることは REQ-05abce3e-9797-432b-b93f-37c55d09afde の担当。
+> REQ-0e341430-17f0-498b-9439-65491652163a、`rollback` が home / system mode 限定であることは REQ-05abce3e-9797-432b-b93f-37c55d09afde の担当。
 
 ## 出典
 
