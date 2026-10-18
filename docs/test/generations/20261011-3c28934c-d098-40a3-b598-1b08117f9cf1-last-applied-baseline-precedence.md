@@ -26,6 +26,7 @@ stale 除去・ドリフト修復・reset・rollback が使う baseline（この
 - apply は全 FS 操作の成功直後・世代 commit の前に、そのまま（内容を変えずに）埋め込んだ manifest・
   `linkFarm`・`appliedAt` を書く。FS 操作が失敗すれば書かない。記録を書けなければ apply は失敗し、
   undo journal が配置を巻き戻す
+- 記録ファイルは全ユーザーが読める mode 0644 で書く
 - generation skip は新 link-farm が profile の current に一致し、記録があればその `linkFarm` にも
   一致するときだけ行い、その経路でも記録を更新する。profile が無いときや両者が食い違う間は、
   記録を baseline に通常経路を通る

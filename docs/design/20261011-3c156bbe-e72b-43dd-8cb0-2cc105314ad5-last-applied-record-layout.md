@@ -29,6 +29,7 @@ satisfies:
 - **読み書きは engine が持つ**。読みは壊れた JSON・必須フィールドの欠落や型違い・
   未知のフィールド・`recordVersion` 不一致を error にする（「記録なし」に倒さない）。
   書きは temp + rename で atomic に行い、全 FS 操作の成功直後・世代 commit の前に呼ぶ。
+  記録ファイルは rename 前に 0644 にする（root kind で分けない。ディレクトリは 0755）。
   削除は reset の全撤去時だけ。
 - **baseline の優先順位は 1 つの関数に集める**。apply（stale 除去と drift 修復）・rollback
   （離れる世代 N）・reset（撤去対象）が同じ関数で baseline を得る。記録があれば記録の
