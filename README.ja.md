@@ -205,7 +205,7 @@ layat = {
 
 1 つの entrypoint に system と home / project の config が混在するときは、実行を分ける。`sudo layat apply --all --system-root` のあと、自分のユーザーで `layat apply --all --home-root`(または `--project-root`)を実行する。home / project の config を root で適用すると、配置物は root 所有になり、世代は root の state に記録される。そのため root が絞り込みなしで実行した `apply --all` の選択にそれらが含まれると、warning が出る。同じ config(fixed も含む)を root と自分のユーザーの両方で適用しないこと。profile と記録が 2 ユーザーの state に分かれ、baseline が食い違う。
 
-`LAYAT_SYSTEM_PROFILE_BASE` / `LAYAT_SYSTEM_STATE_DIR` は、テストや隔離したハーネスのために system の profile 基底と記録の基底を別の場所へ向ける。サポート対象の設定ではない。
+`LAYAT_SYSTEM_PROFILE_BASE` / `LAYAT_SYSTEM_STATE_DIR` は、テストや隔離したハーネスのために system の profile 基底と記録の基底を別の場所に差し替える。サポート対象の設定ではない。
 
 ### 既存の flake に layat を追加する
 
