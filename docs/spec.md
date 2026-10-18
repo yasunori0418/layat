@@ -119,7 +119,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [REQ-6a950d6d-c191-4235-a1b4-73ffc7c2bb38](requirements/20260802-6a950d6d-c191-4235-a1b4-73ffc7c2bb38-reset-dryrun-no-side-effect.md) — reset --dryrun は副作用ゼロで削除対象を表示して終了する
 - [REQ-c44433a1-7ee7-459a-9aae-7cc42166876f](requirements/20260823-c44433a1-7ee7-459a-9aae-7cc42166876f-prune-target-selection.md) — prune は backref の root が実在しない roothash 系列だけを系列ごと削除する
 - [REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed](requirements/20260823-42fe312c-927c-4da3-9346-f7ca2f3a58ed-prune-safety-gates.md) — prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る
-- [REQ-05abce3e-9797-432b-b93f-37c55d09afde](requirements/20260802-05abce3e-9797-432b-b93f-37c55d09afde-rollback-list-generations-home-only.md) — rollback と list-generations は home mode 限定にする
+- [REQ-05abce3e-9797-432b-b93f-37c55d09afde](requirements/20260802-05abce3e-9797-432b-b93f-37c55d09afde-rollback-list-generations-home-only.md) — rollback と list-generations は home / system mode 限定にする
 - [REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796](requirements/20260802-89c7baf9-9be0-417b-bd2d-b2e4edabe796-rollback-named-only.md) — rollback は名指し必須で --all に対応しない
 - [REQ-a480c183-40ce-4201-93b5-65a7a59c1b9e](requirements/20260802-a480c183-40ce-4201-93b5-65a7a59c1b9e-gitignore-anchored-output.md) — gitignore は配置 target を stdout へ列挙するだけでファイルを書き込まない
 - [REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9](requirements/20260802-eaa8c0df-af44-4f52-9603-cd2bc22a67e9-gitignore-project-mode-only.md) — gitignore は project mode 限定で非 project config を指定したらエラーで停止する

@@ -34,7 +34,10 @@ specification: |
   `results[i].result.info.generations = [{number, date, current}]` (`date` being the raw
   string displayed by nix-env) with `items: []`, and SHALL NOT emit the
   `SubjectResult.generation` slot, so as not to encode the generation numbers twice. Even
-  for an empty profile it SHALL state `"generations": []` explicitly.
+  for an empty profile it SHALL state `"generations": []` explicitly. Beside it,
+  `results[i].result.info.mode` SHALL state the profile's mode, `"home"` or `"system"`.
+  Under `list-generations --all` every `results[i].subject.name` SHALL be
+  `<mode>:<name>`, the mode being `home` for the user base and `system` for the system base.
 
   `gitignore <name>` SHALL emit `results[i].result.info.paths` as anchored targets (with a
   leading `/`) and `items: []`. Even with zero entries it SHALL state `"paths": []`
@@ -73,6 +76,9 @@ specification_ja: |
   current}]`（`date` は nix-env 表示の生文字列）と `items: []` を出さなければならず、
   `SubjectResult.generation` スロットは出してはならない（世代番号の二重符号化回避）。
   空 profile でも `"generations": []` を明示しなければならない。
+  あわせて `results[i].result.info.mode` に profile のモード（`"home"` か `"system"`）を
+  出さなければならない。`list-generations --all` では全ての `results[i].subject.name` を
+  `<mode>:<name>`（user 基底は `home`、system 基底は `system`）としなければならない。
 
   `gitignore <name>` は `results[i].result.info.paths` に anchor 形 target（先頭 `/`）と
   `items: []` を出さなければならない。entry 0 件でも `"paths": []` を明示しなければ
@@ -111,7 +117,10 @@ specification_ja: |
 - **`list-generations <name>`**: `results[i].result.info.generations = [{number, date,
   current}]`（`date` は nix-env 表示の生文字列）・`items: []`。`SubjectResult.generation`
   スロットは出さない（世代番号の二重符号化回避）。空 profile でも `"generations": []` を
-  明示する。
+  明示する。`info.mode` に profile のモード（`"home"` / `"system"`）を添える。
+  `list-generations --all` は user 基底と system 基底を走査し、同名 config が両方にあっても
+  subject 名が 1 エンベロープ内で重複しないよう、全 subject を `home:<name>` /
+  `system:<name>` と名付ける（単発の `list-generations <name>` は素の `<name>`）。
 - **`gitignore <name>`**: `results[i].result.info.paths` = anchor 形 target（先頭 `/`）・
   `items: []`。デフォルトの行指向 stdout は不変（`--json` は opt-in の第 2 契約）。
   entry 0 件でも `"paths": []` を明示する。
