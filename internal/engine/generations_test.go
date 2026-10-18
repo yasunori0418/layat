@@ -828,3 +828,15 @@ func TestRollbackRequiresBackend(t *testing.T) {
 		t.Fatalf("err = %v, want the missing-backend error", err)
 	}
 }
+
+// TestRollbackSystemRequiresRoot verifies that a non-root system rollback stops before taking
+// the flock or touching the root, the profile bases, and the record bases.
+func TestRollbackSystemRequiresRoot(t *testing.T) {
+	root, state, sys, sysState := realTempDir(t), realTempDir(t), realTempDir(t), realTempDir(t)
+	_, err := Rollback(RollbackOptions{
+		Name: "sys", RootKind: manifest.RootKindSystem, RootOverride: root, StateDir: state,
+		SystemStateDir: sysState, Backend: &generation.Fake{System: sys}, Geteuid: euid(1000),
+	})
+	assertRootGate(t, err)
+	assertEmptyDirs(t, root, state, sys, sysState)
+}

@@ -240,6 +240,29 @@ func TestApplyWritesRecord(t *testing.T) {
 	}
 }
 
+// TestApplySystemWritesRecordUnderSystemStateDir verifies that a root system apply keeps its
+// record under <SystemStateDir>/layat with the profile's key, not under the user state.
+func TestApplySystemWritesRecordUnderSystemStateDir(t *testing.T) {
+	root, state, sys, sysState := realTempDir(t), realTempDir(t), realTempDir(t), realTempDir(t)
+	lf := writeLinkFarm(t, systemManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+	if _, err := Apply(Options{
+		LinkFarm: lf, Name: "sys", RootOverride: root, StateDir: state, SystemStateDir: sysState,
+		Backend: &generation.Fake{System: sys}, Geteuid: euid(0),
+	}); err != nil {
+		t.Fatalf("root system apply: %v", err)
+	}
+
+	hashDir := filepath.Join(sysState, "layat", paths.RootHash(root))
+	got, _ := mustReadRecord(t, paths.Record{File: filepath.Join(hashDir, "sys", "last-applied.json")})
+	if got.LinkFarm != lf {
+		t.Errorf("linkFarm = %q, want %q", got.LinkFarm, lf)
+	}
+	if b, err := os.ReadFile(filepath.Join(hashDir, ".root")); err != nil || string(b) != root+"\n" {
+		t.Errorf("record backref = %q (%v), want %q", b, err, root+"\n")
+	}
+	assertEmptyDirs(t, state)
+}
+
 func TestApplyFSFailureWritesNoRecord(t *testing.T) {
 	root, state := realTempDir(t), realTempDir(t)
 	blockWrite(t, filepath.Join(root, "ro"))

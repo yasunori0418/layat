@@ -222,3 +222,24 @@ func TestResetRequiresBackend(t *testing.T) {
 		t.Fatalf("err = %v, want the missing-backend error", err)
 	}
 }
+
+// TestResetSystemRequiresRoot verifies that a non-root system reset stops before taking the
+// flock or touching the root, the profile bases, and the record bases, while the dryrun
+// preview is still allowed.
+func TestResetSystemRequiresRoot(t *testing.T) {
+	root, state, sys, sysState := realTempDir(t), realTempDir(t), realTempDir(t), realTempDir(t)
+	opts := ResetOptions{
+		Name: "sys", RootKind: manifest.RootKindSystem, RootOverride: root, StateDir: state,
+		SystemStateDir: sysState, Backend: &generation.Fake{System: sys}, Geteuid: euid(1000),
+	}
+
+	_, err := Reset(opts)
+	assertRootGate(t, err)
+	assertEmptyDirs(t, root, state, sys, sysState)
+
+	opts.DryRun = true
+	if _, err := Reset(opts); err != nil {
+		t.Fatalf("non-root system reset dryrun: %v", err)
+	}
+	assertEmptyDirs(t, root, state, sys, sysState)
+}
