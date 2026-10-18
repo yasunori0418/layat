@@ -323,6 +323,11 @@ func runApplyAll(run *applyRun) error {
 		return nil
 	}
 
+	// 2.2 Run as root with no filter, home / project configs end up root-owned: warn, then go on.
+	if w := rootMixWarning(roots, selected, filter); w != "" {
+		fmt.Fprintln(os.Stderr, w)
+	}
+
 	// 2.3 Stop before any build when two selected configs claim the same target in the same root.
 	if err := detectCrossConfigConflicts(roots, selected, flagRoot); err != nil {
 		return err
@@ -360,6 +365,30 @@ func runApplyAll(run *applyRun) error {
 		return nil
 	}
 	return &exitCodeError{code: code, msg: fmt.Sprintf("layat: apply --all: %d config(s) failed", failures)}
+}
+
+// geteuid reports the caller's effective uid for apply --all's root-mix warning; tests replace it.
+var geteuid = os.Geteuid
+
+// rootMixWarning returns apply --all's one-line warning for a root caller with no root filter whose
+// selection holds home / project configs, naming each with its rootKind; "" when none applies.
+func rootMixWarning(roots map[string]manifest.Root, selected []string, filter string) string {
+	if filter != "" || geteuid() != 0 {
+		return ""
+	}
+	var mixed []string
+	for _, name := range selected {
+		switch kind := roots[name].RootKind; kind {
+		case manifest.RootKindHome, manifest.RootKindProject:
+			mixed = append(mixed, fmt.Sprintf("%s (%s)", name, kind))
+		}
+	}
+	if len(mixed) == 0 {
+		return ""
+	}
+	return fmt.Sprintf("layat: warning: apply --all as root also applies %s: their placements become root-owned "+
+		"and their generations land in root's state; split the run with --system-root and --home-root / --project-root",
+		strings.Join(mixed, ", "))
 }
 
 // detectCrossConfigConflicts errors when a normalized target appears in two selected configs that
