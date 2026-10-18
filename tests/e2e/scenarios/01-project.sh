@@ -227,11 +227,11 @@ for cmd in rollback list-generations; do
 	else
 		e2e_fail "exit $reject_code (期待 1): layat $cmd docs"
 	fi
-	# home mode を要する旨は語の出現で見て、rootKind は値ごと固定する。
-	if grep -q 'home mode' "$reject_err"; then
-		e2e_pass "stderr が home mode を要する旨を伝える"
+	# home / system mode を要する旨は語の出現で見て、rootKind は値ごと固定する。
+	if grep -q 'home / system mode' "$reject_err"; then
+		e2e_pass "stderr が home / system mode を要する旨を伝える"
 	else
-		e2e_fail "stderr に home mode の説明が無い: $(cat "$reject_err")"
+		e2e_fail "stderr に home / system mode の説明が無い: $(cat "$reject_err")"
 	fi
 	if grep -qF 'rootKind="project"' "$reject_err"; then
 		e2e_pass "stderr が拒否に使った rootKind の値を示す"
