@@ -1,7 +1,6 @@
-// Package nixprofile is the generation backend on nix profiles: Commit and Switch run
-// `nix-env --profile <profileLink>`, List scans the generation links read-only, and the
-// profileDirs are keyed under <state>/nix/profiles/layat (user) and
-// /nix/var/nix/profiles/layat (system).
+// Package nixprofile is the generation backend on nix profiles: Commit and Switch run nix-env,
+// List scans the generation links read-only, and the profileDirs are keyed under
+// <state>/nix/profiles/layat (user) and /nix/var/nix/profiles/layat (system).
 package nixprofile
 
 import (
