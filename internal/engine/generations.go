@@ -121,7 +121,7 @@ type RollbackResult struct {
 	To   int // previous generation N-1 rolled back to
 }
 
-// Rollback reverts a home-mode profile to one generation earlier. It converges the FS from the
+// Rollback reverts a home- or system-mode profile to one generation earlier. It converges the FS from the
 // baseline N to N-1 (stale-removing N∖N-1, re-placing N-1), records N-1 as last applied, and moves
 // the profile pointer last, since moving it first would shift the stale-removal baseline.
 func Rollback(opts RollbackOptions) (*RollbackResult, error) {
