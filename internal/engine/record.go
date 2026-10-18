@@ -28,8 +28,18 @@ type lastApplied struct {
 	Manifest      json.RawMessage `json:"manifest"`
 }
 
-// recordFor locates the last-applied record of a config, resolving the state base like ProfileFor.
-func recordFor(stateDir, name, rootKind, root string, rootOverride bool) (paths.Record, error) {
+// defaultSystemStateDir is the record base <state> for system mode (records under /var/lib/layat).
+const defaultSystemStateDir = "/var/lib"
+
+// recordFor locates the last-applied record of a config, resolving the state base like ProfileFor:
+// system mode under systemStateDir (empty = /var/lib), otherwise under the user stateDir.
+func recordFor(stateDir, systemStateDir, name, rootKind, root string, rootOverride bool) (paths.Record, error) {
+	if rootKind == manifest.RootKindSystem {
+		if systemStateDir == "" {
+			systemStateDir = defaultSystemStateDir
+		}
+		return paths.ResolveRecord(systemStateDir, name, rootKind, root, rootOverride), nil
+	}
 	if stateDir == "" {
 		var err error
 		if stateDir, err = paths.StateDir(); err != nil {

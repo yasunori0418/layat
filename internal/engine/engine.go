@@ -47,6 +47,8 @@ type Options struct {
 	StateDir string
 	// SystemDir overrides the system-mode profile base (empty = Backend.SystemBase).
 	SystemDir string
+	// SystemStateDir overrides the system-mode record base <state> (empty = /var/lib).
+	SystemStateDir string
 	// Geteuid reports the effective uid system mode checks for 0 (nil = os.Geteuid).
 	Geteuid func() int
 	// NoWait makes the flock a try-lock (shellHook path; ErrSkipped if held).
@@ -183,7 +185,7 @@ func Apply(opts Options) (*Result, error) {
 	a.profile = prof
 	a.result.ProfileDir = a.profile.Dir
 	a.result.Profile = a.profile.Profile
-	if a.record, err = recordFor(opts.StateDir, opts.Name, rootKind, root, opts.RootOverride != ""); err != nil {
+	if a.record, err = recordFor(opts.StateDir, opts.SystemStateDir, opts.Name, rootKind, root, opts.RootOverride != ""); err != nil {
 		return nil, err
 	}
 

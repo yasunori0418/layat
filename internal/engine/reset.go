@@ -28,6 +28,8 @@ type ResetOptions struct {
 	StateDir     string
 	// SystemDir overrides the system-mode profile base (empty = Backend.SystemBase).
 	SystemDir string
+	// SystemStateDir overrides the system-mode record base <state> (empty = /var/lib).
+	SystemStateDir string
 	// Geteuid reports the effective uid system mode checks for 0 (nil = os.Geteuid).
 	Geteuid func() int
 	Git     GitFunc
@@ -103,7 +105,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 			return nil, err
 		}
 	}
-	rec, err := recordFor(opts.StateDir, opts.Name, opts.RootKind, root, opts.RootOverride != "")
+	rec, err := recordFor(opts.StateDir, opts.SystemStateDir, opts.Name, opts.RootKind, root, opts.RootOverride != "")
 	if err != nil {
 		return nil, err
 	}
