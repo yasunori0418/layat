@@ -62,11 +62,13 @@ func runRollback(run *rollbackRun, name string) error {
 	}
 
 	res, err := engine.Rollback(engine.RollbackOptions{
-		Name:         name,
-		RootKind:     rootKind,
-		FixedRoot:    fixedRoot,
-		RootOverride: flagRoot,
-		Backend:      newGenerationBackend(),
+		Name:           name,
+		RootKind:       rootKind,
+		FixedRoot:      fixedRoot,
+		RootOverride:   flagRoot,
+		Backend:        newGenerationBackend(),
+		SystemDir:      systemDirOverride(),
+		SystemStateDir: systemStateDirOverride(),
 	})
 	if res != nil {
 		// The From→To transition rides generation.before/after, also for a partial result.

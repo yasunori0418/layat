@@ -106,14 +106,16 @@ func runApplyManifest(subject *applySubject, name string) error {
 	}
 
 	res, err := engine.Apply(engine.Options{
-		Name:         name,
-		LinkFarm:     linkFarm,
-		RootOverride: flagRoot,
-		NoWait:       flagNoWait,
-		Recopy:       flagRecopy,
-		Backup:       flagBackupEnabled,
-		BackupSuffix: flagBackup,
-		Backend:      newGenerationBackend(),
+		Name:           name,
+		LinkFarm:       linkFarm,
+		RootOverride:   flagRoot,
+		NoWait:         flagNoWait,
+		Recopy:         flagRecopy,
+		Backup:         flagBackupEnabled,
+		BackupSuffix:   flagBackup,
+		Backend:        newGenerationBackend(),
+		SystemDir:      systemDirOverride(),
+		SystemStateDir: systemStateDirOverride(),
 	})
 	if res != nil {
 		// A partial result on failure still carries the reached items and the changes made.
@@ -165,16 +167,18 @@ func runApply(run *applyRun, name string) error {
 	// 1.5 --dryrun previews without side effects (no flock / pending gcroot; build is read-only).
 	if flagDryrun {
 		res, err := engine.Apply(engine.Options{
-			Name:         name,
-			RootKind:     rootKind,
-			FixedRoot:    fixedRoot,
-			RootOverride: flagRoot,
-			Recopy:       flagRecopy,
-			Backup:       flagBackupEnabled,
-			BackupSuffix: flagBackup,
-			DryRun:       true,
-			Build:        dryBuildFunc(gen, name),
-			Backend:      newGenerationBackend(),
+			Name:           name,
+			RootKind:       rootKind,
+			FixedRoot:      fixedRoot,
+			RootOverride:   flagRoot,
+			Recopy:         flagRecopy,
+			Backup:         flagBackupEnabled,
+			BackupSuffix:   flagBackup,
+			DryRun:         true,
+			Build:          dryBuildFunc(gen, name),
+			Backend:        newGenerationBackend(),
+			SystemDir:      systemDirOverride(),
+			SystemStateDir: systemStateDirOverride(),
 		})
 		if err != nil {
 			return err
@@ -247,16 +251,18 @@ func fprintApplyPlan(w io.Writer, res *engine.Result) {
 // applyOne runs engine.Apply for one config; only build is done per config.
 func applyOne(gen generator.Generator, name, rootKind, fixedRoot string) (*engine.Result, error) {
 	return engine.Apply(engine.Options{
-		Name:         name,
-		RootKind:     rootKind,
-		FixedRoot:    fixedRoot,
-		RootOverride: flagRoot,
-		NoWait:       flagNoWait,
-		Recopy:       flagRecopy,
-		Backup:       flagBackupEnabled,
-		BackupSuffix: flagBackup,
-		Build:        func(pending string) (string, error) { return gen.Build(name, pending) },
-		Backend:      newGenerationBackend(),
+		Name:           name,
+		RootKind:       rootKind,
+		FixedRoot:      fixedRoot,
+		RootOverride:   flagRoot,
+		NoWait:         flagNoWait,
+		Recopy:         flagRecopy,
+		Backup:         flagBackupEnabled,
+		BackupSuffix:   flagBackup,
+		Build:          func(pending string) (string, error) { return gen.Build(name, pending) },
+		Backend:        newGenerationBackend(),
+		SystemDir:      systemDirOverride(),
+		SystemStateDir: systemStateDirOverride(),
 	})
 }
 
@@ -400,16 +406,18 @@ func runApplyAllDryRun(run *applyRun, gen generator.Generator, selected []string
 	code := aggregateDryRun(run, selected, jobs, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
 		ri := roots[name]
 		return engine.Apply(engine.Options{
-			Name:         name,
-			RootKind:     ri.RootKind,
-			FixedRoot:    ri.Root,
-			RootOverride: flagRoot,
-			Recopy:       flagRecopy,
-			Backup:       flagBackupEnabled,
-			BackupSuffix: flagBackup,
-			DryRun:       true,
-			Build:        dryBuildFunc(gen, name),
-			Backend:      newGenerationBackend(),
+			Name:           name,
+			RootKind:       ri.RootKind,
+			FixedRoot:      ri.Root,
+			RootOverride:   flagRoot,
+			Recopy:         flagRecopy,
+			Backup:         flagBackupEnabled,
+			BackupSuffix:   flagBackup,
+			DryRun:         true,
+			Build:          dryBuildFunc(gen, name),
+			Backend:        newGenerationBackend(),
+			SystemDir:      systemDirOverride(),
+			SystemStateDir: systemStateDirOverride(),
 		})
 	}))
 	if code == 0 {

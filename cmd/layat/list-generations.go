@@ -84,6 +84,7 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 		FixedRoot:    fixedRoot,
 		RootOverride: flagRoot,
 		Backend:      backend,
+		SystemDir:    systemDirOverride(),
 	})
 	if err != nil {
 		return err
@@ -135,7 +136,10 @@ func runListAllGenerations(run *listGenerationsRun) error {
 	if err != nil {
 		return fmt.Errorf("layat: cannot read the profile base (%s): %w", userBase, err)
 	}
-	systemBase := backend.SystemBase()
+	systemBase := systemDirOverride()
+	if systemBase == "" {
+		systemBase = backend.SystemBase()
+	}
 	systemNames, err := profileNamesUnder(systemBase, manifest.RootKindSystem)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "layat: warning: skipping the system profile base (%s): %v\n", systemBase, err)

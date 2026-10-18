@@ -32,7 +32,7 @@ var (
 	flagDryrun      bool     // --dryrun: apply / reset / prune modifier; show the plan with zero side effects
 	flagProjectRoot bool     // --project-root: apply --all modifier; apply only projectRoot configs
 	flagHomeRoot    bool     // --home-root: apply --all modifier; apply only homeRoot configs
-	flagSystemRoot  bool     // --system-root: apply --all modifier; apply only systemRoot configs (future seam)
+	flagSystemRoot  bool     // --system-root: apply --all modifier; apply only systemRoot configs
 	flagManifest    []string // --manifest: apply pre-built manifests (link-farms) directly (for module activation)
 	flagGenerator   string   // --generator: the manifest generator to use; "" = not specified
 	// flagBackup / flagBackupEnabled are --backup[=suffix]: bare --backup uses "layat-backup", a custom
@@ -40,6 +40,18 @@ var (
 	flagBackup        string
 	flagBackupEnabled bool
 )
+
+// systemBaseEnv / systemStateEnv point the system profile base and the system record base <state>
+// elsewhere for one run, so tests can use throwaway directories. They are not a supported way to
+// target another base.
+const (
+	systemBaseEnv  = "LAYAT_SYSTEM_PROFILE_BASE"
+	systemStateEnv = "LAYAT_SYSTEM_STATE_DIR"
+)
+
+// systemDirOverride / systemStateDirOverride read those variables; "" keeps the engine's default.
+func systemDirOverride() string      { return os.Getenv(systemBaseEnv) }
+func systemStateDirOverride() string { return os.Getenv(systemStateEnv) }
 
 // exitError is an error carrying a specific exit code, such as apply --dryrun's conflict (2).
 // With an empty msg, main exits with the code alone.
@@ -106,7 +118,7 @@ func newRootCmd() *cobra.Command {
 	pf.BoolVarP(&flagYes, "yes", "y", false, "Skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)")
 	pf.BoolVar(&flagProjectRoot, "project-root", false, "Modifier for apply --all: apply only projectRoot configs")
 	pf.BoolVar(&flagHomeRoot, "home-root", false, "Modifier for apply --all: apply only homeRoot configs")
-	pf.BoolVar(&flagSystemRoot, "system-root", false, "Modifier for apply --all: apply only systemRoot configs (system mode not yet implemented)")
+	pf.BoolVar(&flagSystemRoot, "system-root", false, "Modifier for apply --all: apply only systemRoot configs")
 
 	root.AddCommand(newInitCmd())
 	root.AddCommand(newApplyCmd())
