@@ -840,3 +840,39 @@ func TestRollbackSystemRequiresRoot(t *testing.T) {
 	assertRootGate(t, err)
 	assertEmptyDirs(t, root, state, sys, sysState)
 }
+
+// TestRollbackSystemUsesSystemBases verifies that a root system rollback lists the generations
+// under SystemDir and rewrites the record under SystemStateDir, leaving the user state untouched.
+func TestRollbackSystemUsesSystemBases(t *testing.T) {
+	root, state, backendSys, sys, sysState := realTempDir(t), realTempDir(t), realTempDir(t), realTempDir(t), realTempDir(t)
+	backend := &generation.Fake{System: backendSys}
+	gen1 := writeLinkFarm(t, systemManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+	gen2 := writeLinkFarm(t, systemManifest(storeEntry(makeSrc(t, "y"), ".", "b")))
+	for _, lf := range []string{gen1, gen2} {
+		if _, err := Apply(Options{
+			LinkFarm: lf, Name: "sys", RootOverride: root, StateDir: state,
+			SystemDir: sys, SystemStateDir: sysState, Backend: backend, Geteuid: euid(0),
+		}); err != nil {
+			t.Fatalf("setup Apply: %v", err)
+		}
+	}
+
+	res, err := Rollback(RollbackOptions{
+		Name: "sys", RootKind: manifest.RootKindSystem, RootOverride: root, StateDir: state,
+		SystemDir: sys, SystemStateDir: sysState, Backend: backend, Geteuid: euid(0),
+	})
+	if err != nil {
+		t.Fatalf("root system rollback: %v", err)
+	}
+	if res.From != 2 || res.To != 1 {
+		t.Errorf("rollback %d → %d, want 2 → 1", res.From, res.To)
+	}
+	if _, err := os.Lstat(filepath.Join(root, "a")); err != nil {
+		t.Errorf("a not restored: %v", err)
+	}
+	rec, _, err := readRecord(filepath.Join(sysState, "layat", paths.RootHash(root), "sys", "last-applied.json"))
+	if err != nil || rec == nil || rec.LinkFarm != gen1 {
+		t.Errorf("system record = %+v (%v), want generation 1's link-farm", rec, err)
+	}
+	assertEmptyDirs(t, state, backendSys)
+}

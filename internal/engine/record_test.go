@@ -263,6 +263,29 @@ func TestApplySystemWritesRecordUnderSystemStateDir(t *testing.T) {
 	assertEmptyDirs(t, state)
 }
 
+// TestRecordForSystemDefaultBase verifies that an empty SystemStateDir puts the system record
+// under /var/lib/layat with the profile's key.
+func TestRecordForSystemDefaultBase(t *testing.T) {
+	for _, tc := range []struct {
+		desc, root string
+		override   bool
+		want       string
+	}{
+		{"no --root", "/", false, "/var/lib/layat/sys/last-applied.json"},
+		{"--root", "/tmp/sandbox", true, "/var/lib/layat/39063e070b845ac426247c9b241f1698/sys/last-applied.json"},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			rec, err := recordFor("/state", "", "sys", manifest.RootKindSystem, tc.root, tc.override)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if rec.File != tc.want {
+				t.Errorf("File = %q, want %q", rec.File, tc.want)
+			}
+		})
+	}
+}
+
 func TestApplyFSFailureWritesNoRecord(t *testing.T) {
 	root, state := realTempDir(t), realTempDir(t)
 	blockWrite(t, filepath.Join(root, "ro"))

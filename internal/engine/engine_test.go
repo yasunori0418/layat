@@ -1147,6 +1147,22 @@ func TestApplySystemRequiresRoot(t *testing.T) {
 	assertEmptyDirs(t, root, state, sys, sysState)
 }
 
+// TestApplySystemDefaultsToProcessEuid verifies that a nil Geteuid falls back to the process's
+// effective uid, so an unprivileged run is refused without any stub.
+func TestApplySystemDefaultsToProcessEuid(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("running as root: the process euid passes the gate")
+	}
+	root, state, sys, sysState := realTempDir(t), realTempDir(t), realTempDir(t), realTempDir(t)
+	lf := writeLinkFarm(t, systemManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+	_, err := Apply(Options{
+		LinkFarm: lf, Name: "sys", RootOverride: root, StateDir: state, SystemStateDir: sysState,
+		Backend: &generation.Fake{System: sys},
+	})
+	assertRootGate(t, err)
+	assertEmptyDirs(t, root, state, sys, sysState)
+}
+
 // TestApplySystemPlacesUnderSystemBase verifies that a root system apply with --root keys the
 // profileDir as <roothash>/<name> with a backref under the system base, SystemDir taking
 // precedence over Backend.SystemBase, and leaves the user base untouched.
