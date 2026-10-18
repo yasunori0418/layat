@@ -169,14 +169,14 @@ ENV_GENS_ALL="$E2E_WORK/list-generations-all.json"
 run_json 0 "$ENV_GENS_ALL" list-generations --all
 # 陽性対照と除外を subject 名の集合の等式で固定する。
 assert_json "$ENV_GENS_ALL" "results は home mode の home だけ（proj は roothash 階層なので除外）" \
-	'[.results[].subject.name] == ["home"]'
+	'[.results[].subject.name] == ["home:home"]'
 # 以降も添字ではなく名前で引く。
 assert_json "$ENV_GENS_ALL" "home の info.generations は名指し列挙と同じ 2 世代（current は世代 1）" \
-	'first(.results[] | select(.subject.name == "home")).result.info as $i
+	'first(.results[] | select(.subject.name == "home:home")).result.info as $i
 	 | ($i.generations | length) == 2
 	 and ([$i.generations[] | select(.current) | .number] == [1])'
 assert_json "$ENV_GENS_ALL" "home は items=[]・generation スロット無し・status=success" \
-	'first(.results[] | select(.subject.name == "home"))
+	'first(.results[] | select(.subject.name == "home:home"))
 	 | .result.items == [] and (has("generation") | not) and .status == "success"'
 assert_json "$ENV_GENS_ALL" "集約 status=success・dryRun=false" \
 	'.status == "success" and .dryRun == false'
