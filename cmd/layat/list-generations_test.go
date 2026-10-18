@@ -14,6 +14,7 @@ import (
 	"github.com/yasunori0418/outturn/go/conformance"
 
 	"github.com/yasunori0418/layat/internal/generation"
+	"github.com/yasunori0418/layat/internal/paths"
 )
 
 // TestListGenerationsJSONInfoGenerations pins list-generations' --json shape: {number, date,
@@ -297,6 +298,35 @@ func TestListGenerationsAllScansSystemBase(t *testing.T) {
 		stderr := captureStderr(t, func() { _, _, err = listAll() })
 		if err != nil || stderr != "" {
 			t.Errorf("(err, stderr) = (%v, %q), want (nil, \"\")", err, stderr)
+		}
+	})
+
+	t.Run("an unreadable user base stops before any subject", func(t *testing.T) {
+		flagJSON = true
+		fake := installFakeBackend(t, "")
+		makeHomeProfiles(t, fake)
+		stateDir, err := paths.StateDir()
+		if err != nil {
+			t.Fatal(err)
+		}
+		userBase := fake.UserBase(stateDir)
+		if err := os.MkdirAll(filepath.Dir(userBase), 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(userBase, nil, 0o644); err != nil {
+			t.Fatal(err)
+		}
+		fake.System = t.TempDir()
+		makeProfilesUnder(t, fake.System, "s")
+		run, buf, err := listAll()
+		if err == nil || !strings.Contains(err.Error(), userBase) {
+			t.Fatalf("runListAllGenerations = %v, want an error naming %s", err, userBase)
+		}
+		if err := run.emit(err); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		if results, _ := decodeEnvelope(t, buf)["results"].([]any); len(results) != 0 {
+			t.Errorf("results = %v, want none (the scan stops before the system base)", results)
 		}
 	})
 
