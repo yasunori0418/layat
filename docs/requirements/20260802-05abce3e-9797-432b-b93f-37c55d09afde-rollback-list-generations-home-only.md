@@ -28,7 +28,7 @@ layat list-generations --all    # home mode、続けて system mode の全 confi
 `rollback` / `list-generations` は **home / system mode 限定**。project / fixed mode は世代を
 内部機構に留めユーザーに公開しない。`list-generations --all` は user 基底（home mode）の全
 config、続けて system 基底（system mode）の全 config の世代を一覧する（読み取り専用）。
-system 基底が無ければ空として扱い、読めなければ warning を出して飛ばす。
+system 基底が無ければ空として扱い、読めなければ warning を出してその基底を走査しない。
 
 `rollback` が名指し必須である点は REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796 の担当。
 

@@ -25,7 +25,7 @@ REQ-14f0aec9-abae-4621-82f3-40536a1ad904 が layat CLI を一次 UX に据え、
 ここを外すと世代機構が実装されないまま残るため。
 
 system mode（`systemRoot`）は、root マーカーの union に最初から含めてあり（root マーカーの型は
-requirement 側の担当）、engine の root 解決・profile 基底・記録基底に分岐を足す形で実装している。
+requirement 側の担当）、engine の root 解決・profile 基底・記録基底に分岐を足して実装している。
 変更系操作（`apply` / `reset` / `rollback`）は engine が root 権限を検査する。
 
 将来拡張へ置くのは NixOS / nix-darwin モジュールで、「engine 側の追加を必要としない」ことを
