@@ -950,3 +950,27 @@ func TestMutationPayloadCopyForeignItemWarning(t *testing.T) {
 		t.Errorf("item status = %s, want success (a skip is policy inaction, not a failure)", it.Status)
 	}
 }
+
+// TestGenerationsPayloadMode: list-generations' info carries the profile's mode next to the
+// inventory, "home" or "system", and the envelope stays conformant either way.
+func TestGenerationsPayloadMode(t *testing.T) {
+	gens := []generation.Generation{{Number: 1, Date: "2026-10-18 09:00:00", Current: true}}
+	for _, mode := range []string{manifest.RootKindHome, manifest.RootKindSystem} {
+		t.Run(mode, func(t *testing.T) {
+			r, buf := newListGenerationsTestRun()
+			r.beginSubject("c").setPayload(generationsPayload(mode, gens))
+			if err := r.emit(nil); err != nil {
+				t.Fatalf("emit: %v", err)
+			}
+			checkConformance(t, buf)
+			byName, _ := subjectResults(t, buf)
+			info := byName["c"]["result"].(map[string]any)["info"].(map[string]any)
+			if info["mode"] != mode {
+				t.Errorf("info.mode = %v, want %q", info["mode"], mode)
+			}
+			if rows, _ := info["generations"].([]any); len(rows) != 1 {
+				t.Errorf("info.generations = %v, want the listing beside mode", info["generations"])
+			}
+		})
+	}
+}
