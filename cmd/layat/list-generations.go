@@ -31,8 +31,8 @@ func newListGenerationsCmd() *cobra.Command {
 	var all bool
 	cmd := &cobra.Command{
 		Use:   "list-generations [name]",
-		Short: "List generations (home mode only)",
-		Long: "A read-only command that lists the generations of the home mode profile. " +
+		Short: "List generations (home / system mode only)",
+		Long: "A read-only command that lists the generations of the home / system mode profile. " +
 			"Pass <name> for that config, or --all to list every home mode config.",
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -55,7 +55,7 @@ func newListGenerationsCmd() *cobra.Command {
 	return cmd
 }
 
-// runListGenerations confirms rootKind via eval pre-resolution (home mode only), resolves profileDir, and lists generations.
+// runListGenerations confirms rootKind via eval pre-resolution (home / system mode only), resolves profileDir, and lists generations.
 func runListGenerations(run *listGenerationsRun, name string) error {
 	// The config name is the run's single outturn subject.
 	subject := run.beginSubject(name)
@@ -72,8 +72,8 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 		return err
 	}
 	rootKind, fixedRoot := root.RootKind, root.Root
-	if rootKind != manifest.RootKindHome {
-		return fmt.Errorf("layat: list-generations is home mode only (layat.%s has rootKind=%q)", name, rootKind)
+	if rootKind != manifest.RootKindHome && rootKind != manifest.RootKindSystem {
+		return fmt.Errorf("layat: list-generations is home / system mode only (layat.%s has rootKind=%q)", name, rootKind)
 	}
 
 	backend := newGenerationBackend()
