@@ -111,7 +111,7 @@ else
 	e2e_fail "非 root の変更系が sysroot・profile ディレクトリ・記録のどれかを変えた"
 fi
 
-e2e_step "非 root: apply --dryrun と list-generations は exit 0"
+e2e_step "非 root: apply --dryrun と list-generations は exit 0 で、list-generations は世代を返す"
 run_json 0 "$E2E_WORK/nonroot-dryrun.json" apply sys --dryrun --root "$SYSROOT"
 run_json 0 "$E2E_WORK/nonroot-gens.json" list-generations sys --root "$SYSROOT"
 assert_json "$E2E_WORK/nonroot-gens.json" "非 root にも世代 1・2 が見え、current は世代 2" \
