@@ -180,9 +180,16 @@ func TestGenerationCommandsModeGate(t *testing.T) {
 		override := t.TempDir()
 		makeProfilesUnder(t, override, "c")
 		t.Setenv(systemBaseEnv, override)
-		run, _ := newListGenerationsTestRun()
+		run, buf := newListGenerationsTestRun()
 		if err := runListGenerations(run, "c"); err != nil {
 			t.Fatalf("runListGenerations = %v, want the listing from the override base", err)
+		}
+		if err := run.emit(nil); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		byName, _ := subjectResults(t, buf)
+		if got := infoArray(t, byName["c"], "generations"); len(got) != 1 {
+			t.Errorf("generations = %v, want the override base's profile", got)
 		}
 	})
 
