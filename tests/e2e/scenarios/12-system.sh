@@ -40,10 +40,10 @@ gens_count() {
 	printf '%s\n' "$out" | grep -c . || true
 }
 
-# sysroot 配下と profile の現行リンク先を 1 つの文字列に写す（非 root の不変判定に使う）。
+# sysroot 配下・profile ディレクトリ・記録を 1 つの文字列に写す（非 root の不変判定に使う）。
 snapshot() {
-	find "$SYSROOT" -printf '%P %y %l\n' | sort
-	readlink "$SERIES/sys/profile"
+	find "$SYSROOT" "$SERIES/sys" -printf '%p %y %l\n' | sort
+	cat "$RECORD"
 }
 
 cd "$CFG"
@@ -126,9 +126,12 @@ assert_file_eq "$SYSROOT/.cfg/a/file" "AAA"
 assert_absent "$SYSROOT/.cfg/b"
 assert_symlink "$SERIES/sys/profile" "profile-1-link"
 
-e2e_step "root で reset --yes → 配置が撤去される"
+e2e_step "root で reset --yes → 配置が撤去され、profile と世代は動かない"
+PROFILE_BEFORE="$(readlink "$SERIES/sys/profile")"
 as_root layat reset sys --yes --root "$SYSROOT"
 assert_absent "$SYSROOT/.cfg/a"
 assert_absent "$SYSROOT/.cfg/b"
+assert_symlink "$SERIES/sys/profile" "$PROFILE_BEFORE"
+if [ "$(gens_count)" -eq 2 ]; then e2e_pass "reset 後も世代が 2 件"; else e2e_fail "reset が世代の本数を動かした"; fi
 
 e2e_finish

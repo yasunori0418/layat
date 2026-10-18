@@ -178,6 +178,9 @@ e2e_root_init() {
 		_E2E_ROOT_RUNNER=(unshare -Ur)
 	elif sudo -n true 2>/dev/null; then
 		_E2E_ROOT_RUNNER=(sudo -n --preserve-env -- env "PATH=$PATH")
+		# root 所有のファイルが残るため、後始末も root で行う。
+		# shellcheck disable=SC2064
+		trap "sudo -n rm -rf '$E2E_WORK'" EXIT
 	else
 		e2e_fail "root を取得できない（unshare -Ur も sudo -n も不可）"
 		exit 1
