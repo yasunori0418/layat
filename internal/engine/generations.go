@@ -89,8 +89,8 @@ func observeGeneration(profileLink string) *int {
 // intPtr copies n onto the heap for the nil-able generation observation fields.
 func intPtr(n int) *int { return &n }
 
-// RollbackOptions is the input to Rollback. Rollback is home mode only, but that decision is
-// the CLI's; the engine resolves the profileDir regardless of rootKind and converges to the previous generation.
+// RollbackOptions is the input to Rollback. Which root kinds may roll back is the CLI's
+// decision; the engine resolves the profileDir regardless of rootKind and converges to the previous generation.
 type RollbackOptions struct {
 	Name         string
 	RootKind     string
@@ -100,6 +100,8 @@ type RollbackOptions struct {
 	StateDir     string
 	// SystemDir overrides the system-mode profile base (empty = Backend.SystemBase).
 	SystemDir string
+	// Geteuid reports the effective uid system mode checks for 0 (nil = os.Geteuid).
+	Geteuid func() int
 
 	// Backend lists and switches the generations and owns the profile base. Required: nil is an error.
 	Backend generation.Backend
@@ -135,6 +137,9 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		SystemDir: opts.SystemDir, Git: opts.Git, Backend: opts.Backend,
 	})
 	if err != nil {
+		return nil, err
+	}
+	if err := requireRoot(opts.RootKind, opts.Geteuid); err != nil {
 		return nil, err
 	}
 	rec, err := recordFor(opts.StateDir, opts.Name, opts.RootKind, root, opts.RootOverride != "")

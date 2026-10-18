@@ -28,7 +28,9 @@ type ResetOptions struct {
 	StateDir     string
 	// SystemDir overrides the system-mode profile base (empty = Backend.SystemBase).
 	SystemDir string
-	Git       GitFunc
+	// Geteuid reports the effective uid system mode checks for 0 (nil = os.Geteuid).
+	Geteuid func() int
+	Git     GitFunc
 	// Backend owns the profile base the profileDir is keyed under. Required: nil is an error.
 	Backend generation.Backend
 
@@ -94,6 +96,12 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	})
 	if err != nil {
 		return nil, err
+	}
+	// A system-mode teardown runs only as root; the dryrun preview stays read-only and unchecked.
+	if !opts.DryRun {
+		if err := requireRoot(opts.RootKind, opts.Geteuid); err != nil {
+			return nil, err
+		}
 	}
 	rec, err := recordFor(opts.StateDir, opts.Name, opts.RootKind, root, opts.RootOverride != "")
 	if err != nil {

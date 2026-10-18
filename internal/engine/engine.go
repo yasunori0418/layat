@@ -6,6 +6,7 @@ package engine
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"time"
@@ -46,6 +47,8 @@ type Options struct {
 	StateDir string
 	// SystemDir overrides the system-mode profile base (empty = Backend.SystemBase).
 	SystemDir string
+	// Geteuid reports the effective uid system mode checks for 0 (nil = os.Geteuid).
+	Geteuid func() int
 	// NoWait makes the flock a try-lock (shellHook path; ErrSkipped if held).
 	NoWait bool
 	// Recopy is the apply --recopy modifier (unconditionally overwrite/re-copy all copy targets in the config from src).
@@ -192,6 +195,11 @@ func Apply(opts Options) (*Result, error) {
 	//     the planner runs read-only and the plan is packed into Result.
 	if opts.DryRun {
 		return a.dryRun()
+	}
+
+	// 1.6 system mode mutates only as root; refused before any mkdir / flock.
+	if err := requireRoot(rootKind, opts.Geteuid); err != nil {
+		return nil, err
 	}
 
 	// 2. prepare profileDir / backref (the flock opens profileDir, so create it first).
@@ -535,6 +543,21 @@ func resolveRoot(rootKind, fixedRoot, rootOverride, workDir string, git GitFunc)
 	default:
 		return "", fmt.Errorf("layat: unknown rootKind: %q", rootKind)
 	}
+}
+
+// requireRoot refuses a mutating system-mode operation unless the effective uid is 0 (geteuid
+// nil = os.Geteuid). Other root kinds pass unchecked.
+func requireRoot(rootKind string, geteuid func() int) error {
+	if rootKind != manifest.RootKindSystem {
+		return nil
+	}
+	if geteuid == nil {
+		geteuid = os.Geteuid
+	}
+	if geteuid() != 0 {
+		return fmt.Errorf("layat: system mode requires root privileges (rerun with sudo): %w", fs.ErrPermission)
+	}
+	return nil
 }
 
 func (a *applier) ensureProfileDir() error {
