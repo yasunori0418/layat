@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
-	"strconv"
-	"strings"
 	"sync"
 
 	"github.com/yasunori0418/layat/internal/paths"
@@ -38,9 +35,6 @@ type FakeCommit struct {
 	LinkFarm    string
 }
 
-// fakeDateLayout is the timestamp layout List reports for a generation link's mtime.
-const fakeDateLayout = "2006-01-02 15:04:05"
-
 // Commit creates <profileLink>-<N>-link → linkFarm with N one above the highest existing
 // generation and re-points the profile link at it with a relative sibling symlink.
 func (f *Fake) Commit(profileLink, linkFarm string) error {
@@ -52,7 +46,7 @@ func (f *Fake) Commit(profileLink, linkFarm string) error {
 			return err
 		}
 	}
-	gens, err := fakeGenerationLinks(profileLink)
+	gens, err := generationLinks(profileLink)
 	if err != nil {
 		return err
 	}
@@ -67,28 +61,14 @@ func (f *Fake) Commit(profileLink, linkFarm string) error {
 	return fakeRepoint(profileLink, genLink)
 }
 
-// List scans the profile's sibling generation links. The current generation is the one the
-// profile link names, or failing that the one resolving to the same path as the profile.
+// List scans the profile's sibling generation links with ListLinks.
 func (f *Fake) List(profileLink string) ([]Generation, error) {
 	if f.OnList != nil {
 		if err := f.OnList(profileLink); err != nil {
 			return nil, err
 		}
 	}
-	nums, err := fakeGenerationLinks(profileLink)
-	if err != nil {
-		return nil, err
-	}
-	current := fakeCurrent(profileLink, nums)
-	gens := make([]Generation, 0, len(nums))
-	for _, n := range nums {
-		date := ""
-		if fi, err := os.Lstat(paths.GenerationLink(profileLink, n)); err == nil {
-			date = fi.ModTime().Format(fakeDateLayout)
-		}
-		gens = append(gens, Generation{Number: n, Date: date, Current: n == current})
-	}
-	return gens, nil
+	return ListLinks(profileLink)
 }
 
 // Switch re-points the profile link at the existing generation gen.
@@ -116,65 +96,6 @@ func (f *Fake) UserBase(stateDir string) string {
 // SystemBase returns System.
 func (f *Fake) SystemBase() string {
 	return f.System
-}
-
-// fakeGenerationNumber parses the generation number out of a sibling name of the form
-// <profile>-<N>-link; ok is false for any other name.
-func fakeGenerationNumber(profileLink, name string) (n int, ok bool) {
-	prefix := filepath.Base(profileLink) + "-"
-	if !strings.HasPrefix(name, prefix) || !strings.HasSuffix(name, "-link") {
-		return 0, false
-	}
-	n, err := strconv.Atoi(strings.TrimSuffix(strings.TrimPrefix(name, prefix), "-link"))
-	if err != nil || n < 0 {
-		return 0, false
-	}
-	return n, true
-}
-
-// fakeGenerationLinks returns the generation numbers of the <profile>-<N>-link siblings in
-// ascending order. A missing profileDir holds no generations.
-func fakeGenerationLinks(profileLink string) ([]int, error) {
-	entries, err := os.ReadDir(filepath.Dir(profileLink))
-	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			return nil, nil
-		}
-		return nil, err
-	}
-	var nums []int
-	for _, e := range entries {
-		if n, ok := fakeGenerationNumber(profileLink, e.Name()); ok {
-			nums = append(nums, n)
-		}
-	}
-	sort.Ints(nums)
-	return nums, nil
-}
-
-// fakeCurrent returns the current generation number among nums, or -1 when the profile link is
-// absent or points at none of them.
-func fakeCurrent(profileLink string, nums []int) int {
-	dest, err := os.Readlink(profileLink)
-	if err != nil {
-		return -1
-	}
-	if n, ok := fakeGenerationNumber(profileLink, filepath.Base(dest)); ok {
-		return n
-	}
-	// The profile names something else (a link-farm directly): match by resolved path, taking
-	// the newest generation that resolves to the same place.
-	resolved, err := filepath.EvalSymlinks(profileLink)
-	if err != nil {
-		return -1
-	}
-	current := -1
-	for _, n := range nums {
-		if r, err := filepath.EvalSymlinks(paths.GenerationLink(profileLink, n)); err == nil && r == resolved {
-			current = n
-		}
-	}
-	return current
 }
 
 // fakeRepoint replaces profileLink with a relative symlink to its sibling genLink.
