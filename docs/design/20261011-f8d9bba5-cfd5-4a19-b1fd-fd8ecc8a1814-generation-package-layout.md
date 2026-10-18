@@ -14,9 +14,10 @@ satisfies:
 cmd/layat                           ← バックエンドの注入だけ（newGenerationBackend()・常に nixprofile）
   │ import
   ├─ internal/generation            ← 契約（Backend インターフェイス・Generation 型）
+  │                                   + 世代リンクの走査 ListLinks（scan.go。Fake と nixprofile が共用）
   │                                   + テストダブル Fake（fake.go・非 _test ファイル。profile-<N>-link を実際に張る）
   ├─ internal/generation/nixprofile ← nix-env 実装（New() generation.Backend。
-  │                                   nix-env 3 コマンド・世代一覧のパース・2 基底）
+  │                                   Commit / Switch の nix-env 2 コマンド・List は ListLinks・2 基底）
   ├─ internal/paths                 ← profileDir 内部のレイアウト（profile / profile-<N>-link / .pending）。
   │                                   Resolve は基底を引数に取る
   └─ internal/engine                ← Options / RollbackOptions / ResetOptions / PruneOptions /
@@ -35,8 +36,11 @@ type Backend interface {
 ```
 
 - **契約と nix-env 実装をパッケージで分ける**。`nixprofile` は `generation` を import する側に
-  立ち、逆向きの依存を持たない。`nix-env` の呼び出し・世代一覧のパース・基底
+  立ち、逆向きの依存を持たない。`nix-env` の呼び出しと基底
   `<state>/nix/profiles/layat` と `/nix/var/nix/profiles/layat` は `nixprofile` の外へ出ない。
+- **世代一覧は親パッケージの走査を共用する**。`ListLinks` は `profile-<N>-link` を読み取り専用で
+  走査し、Fake と `nixprofile` の List がどちらもこれを返す。`nix-env` は列挙でも profileDir に
+  lock を取るため、List には使わない。
 - **Fake は親パッケージの非 `_test` ファイルに置く**。`cmd/layat` のテストからも import する
   ため。Fake は FS ベースで `profile-<N>-link` と `profile` リンクを実際に張り、engine の
   レイアウト読みがそのまま動く。

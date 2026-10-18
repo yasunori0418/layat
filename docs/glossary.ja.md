@@ -104,7 +104,7 @@ standalone・home-manager・将来の NixOS モジュール・devShell の `shel
 ## 状態管理
 
 ### generation
-rollback の単位。既定の **generation backend** である nixprofile が layat 自身の Nix profile（`nix-env --profile <dir>` 式）に乗せて管理する。nixprofile はコミット（`--set`）・一覧（`--list-generations`）・切替（`--switch-generation`。rollback もこれを使う）を `nix-env --profile <dir>` で行う。間引き（`--delete-generations`）と store GC（`nix-collect-garbage`）はユーザーが nix コマンドで行う。
+rollback の単位。既定の **generation backend** である nixprofile が layat 自身の Nix profile（`nix-env --profile <dir>` 式）に乗せて管理する。nixprofile はコミット（`--set`）と切替（`--switch-generation`。rollback もこれを使う）を `nix-env --profile <dir>` で行い、一覧は nix-env を経由せず profileDir の世代リンク（`profile-<N>-link`）を読み取り専用で走査する。間引き（`--delete-generations`）と store GC（`nix-collect-garbage`）はユーザーが nix コマンドで行う。
 - **Avoid**: 「stateless スクリプト」前提で語ること（初期方針からは覆っている）、新 `nix profile` CLI で管理すること（profile-manifest を要求し、`nix-env --set` 製の profile では動かない）。
 
 ### store manifest

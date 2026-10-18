@@ -16,9 +16,9 @@ specification: |
   returns the base directory of system profiles. Every engine entry point that resolves a
   profileDir SHALL require a backend and SHALL fail with an error when none is injected;
   there SHALL be no implicit fallback to `nix-env`. The default backend SHALL be
-  nixprofile, which implements the three generation operations with
-  `nix-env --profile <profileLink>` (`--set`, `--list-generations`,
-  `--switch-generation`) and owns the two bases (`<state>/nix/profiles/layat` and
+  nixprofile, which implements Commit and Switch with `nix-env --profile <profileLink>`
+  (`--set`, `--switch-generation`), implements List by scanning the generation links in
+  profileDir read-only without invoking `nix-env`, and owns the two bases (`<state>/nix/profiles/layat` and
   `/nix/var/nix/profiles/layat`). The layout inside profileDir (`profile`,
   `profile-<N>-link`, `.pending`) SHALL be a fixed part of the contract: the engine MAY
   keep reading it directly, and the removal of `.pending` after a successful commit SHALL
@@ -34,9 +34,9 @@ specification_ja: |
   ユーザー profile の基底を導く UserBase、system profile の基底を返す SystemBase。profileDir
   を解決する engine の全入口はバックエンドを要求しなければならず、注入が無ければ error で
   失敗しなければならない。`nix-env` への暗黙のフォールバックを持ってはならない。既定の
-  バックエンドは nixprofile でなければならず、3 つの世代操作を `nix-env --profile
-  <profileLink>`（`--set` / `--list-generations` / `--switch-generation`）で実装し、2 つの
-  基底（`<state>/nix/profiles/layat` と `/nix/var/nix/profiles/layat`）を所有する。
+  バックエンドは nixprofile でなければならず、Commit と Switch を `nix-env --profile
+  <profileLink>`（`--set` / `--switch-generation`）で実装し、List は `nix-env` を呼び出さず
+  profileDir の世代リンクを読み取り専用で走査して実装し、2 つの基底（`<state>/nix/profiles/layat` と `/nix/var/nix/profiles/layat`）を所有する。
   profileDir 内部のレイアウト（`profile` / `profile-<N>-link` / `.pending`）は契約の固定部分
   でなければならず、engine はこれを直接読んでもよく、コミット成功後の `.pending` の除去は
   engine の素の FS 操作のままでなければならない。nixprofile が唯一のバックエンドである間、
@@ -49,7 +49,7 @@ specification_ja: |
 | 操作 | 入力 | 出力・事後条件 |
 |---|---|---|
 | Commit | profile リンク + link-farm のパス | link-farm を新世代としてコミットする（nixprofile: `nix-env --profile <profileLink> --set <linkFarm>`） |
-| List | profile リンク | 世代の一覧（番号・日付・current）を返す（nixprofile: `--list-generations`） |
+| List | profile リンク | 世代の一覧（番号・日付・current）を返す（nixprofile: profileDir の `profile-<N>-link` を読み取り専用で走査する） |
 | Switch | profile リンク + 世代番号 | その世代へ profile ポインタを移す（nixprofile: `--switch-generation N`） |
 | UserBase | state ディレクトリ | ユーザー profile の基底（nixprofile: `<state>/nix/profiles/layat`） |
 | SystemBase | なし | system profile の基底（nixprofile: `/nix/var/nix/profiles/layat`） |
