@@ -34,16 +34,17 @@ EOF
 # root として layat を実行する。
 as_root() { E2E_AS_ROOT=1 "$@"; }
 
+# 世代の本数は root で数える（非 root の読み取りは下の検査で別に見る）。
 gens_count() {
 	local out
-	out="$(layat list-generations sys --root "$SYSROOT")" || return 1
+	out="$(as_root layat list-generations sys --root "$SYSROOT")" || return 1
 	printf '%s\n' "$out" | grep -c . || true
 }
 
 # sysroot 配下・profile ディレクトリ・記録を 1 つの文字列に写す（非 root の不変判定に使う）。
 snapshot() {
 	find "$SYSROOT" "$SERIES/sys" -printf '%p %y %l\n' | sort
-	cat "$RECORD"
+	e2e_as_root cat "$RECORD"
 }
 
 cd "$CFG"
@@ -70,13 +71,16 @@ assert_symlink "$SERIES/sys/profile"
 assert_symlink "$SERIES/sys/profile-1-link"
 RECORD="$LAYAT_SYSTEM_STATE_DIR/layat/$ROOTHASH/sys/last-applied.json"
 assert_exists "$RECORD"
-assert_json "$RECORD" "記録の linkFarm が profile の指す link-farm と一致する" \
+# 記録は root 所有の 0600 になりうるので root で写してから読む。
+RECORD_COPY="$E2E_WORK/record.json"
+e2e_as_root cat "$RECORD" >"$RECORD_COPY"
+assert_json "$RECORD_COPY" "記録の linkFarm が profile の指す link-farm と一致する" \
 	".linkFarm == \"$(readlink -f "$SERIES/sys/profile")\""
 
 e2e_step "list-generations: 単発は世代を mode=system で出し、--all は <roothash> 系列を除外する"
 if [ "$(gens_count)" -eq 1 ]; then e2e_pass "世代が 1 件"; else e2e_fail "世代が 1 件でない"; fi
 ENV_GENS="$E2E_WORK/gens.json"
-run_json 0 "$ENV_GENS" list-generations sys --root "$SYSROOT"
+as_root run_json 0 "$ENV_GENS" list-generations sys --root "$SYSROOT"
 assert_json "$ENV_GENS" "単発の subject は素の sys で info.mode == system" \
 	'.results[0] | .subject.name == "sys" and .result.info.mode == "system"'
 ENV_ALL="$E2E_WORK/gens-all.json"
@@ -111,12 +115,17 @@ else
 fi
 
 e2e_step "非 root: apply --dryrun と list-generations は exit 0"
-run_json 0 "$E2E_WORK/nonroot-dryrun.json" apply sys --dryrun --root "$SYSROOT"
-run_json 0 "$E2E_WORK/nonroot-gens.json" list-generations sys --root "$SYSROOT"
-if [ "$(snapshot)" = "$BEFORE" ]; then
-	e2e_pass "読み取り系の前後でも不変"
+# 実 root 経路では非 root が system profile の lock と 0600 の記録を扱えず失敗するので省く。
+if [ "$E2E_ROOT_MODE" = userns ]; then
+	run_json 0 "$E2E_WORK/nonroot-dryrun.json" apply sys --dryrun --root "$SYSROOT"
+	run_json 0 "$E2E_WORK/nonroot-gens.json" list-generations sys --root "$SYSROOT"
+	if [ "$(snapshot)" = "$BEFORE" ]; then
+		e2e_pass "読み取り系の前後でも不変"
+	else
+		e2e_fail "読み取り系が sysroot・profile ディレクトリ・記録のどれかを変えた"
+	fi
 else
-	e2e_fail "読み取り系が sysroot・profile ディレクトリ・記録のどれかを変えた"
+	e2e_log "skip: 実 root 経路のため非 root の apply --dryrun / list-generations の検査を省く"
 fi
 
 e2e_step "root で rollback → 世代 1 の配置（entry a）へ戻る"
