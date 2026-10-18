@@ -32,6 +32,11 @@ references:
 > **世代バックエンドの契約の `SystemBase` / `UserBase`**（既定実装 nixprofile）へ移った。engine と `layat prune` は契約から
 > 基底を導く。基底を設定ファイルで上書きする機構は足さない（→ ADR-0057）。
 
+> **2026-10-18 改訂注記（ADR-0062）**: 本 ADR §3 の profile の基底（`/nix/var/nix/profiles/layat`）と鍵（`<name>` 直キー・
+> `--root` 時は `<roothash>/<name>` + backref）は不変。ただし本 ADR の起票後に足された last-applied 記録（ADR-0058）の
+> system mode の置き場を **`/var/lib/layat/<鍵>`**（鍵は profileDir と同型）に決めた。engine の profile 基底と記録基底は
+> 入力 `SystemDir` / `SystemStateDir` で上書きでき、CLI はテスト用の環境変数だけをその口にする（→ ADR-0062）。
+
 ## 背景
 
 `systemRoot` マーカーは ADR-0004/0007 で distro 構想の seam として正式 API 化されたが、ADR-0013 §5 により `normalizeManifest` が「system mode は未実装（予定）」で eval 時 throw する据え置き状態だった。NixOS / nix-darwin モジュール（将来拡張）の前提となる engine / CLI 側の system mode を、モジュール実装に先行して standalone CLI から使える形で実装する。

@@ -28,6 +28,10 @@ references:
 - 改訂対象: ADR-0002 の「可変 JSON ファイルは持たない」「記録は世代に捕捉され rollback で記録も巻き戻る」を、last-applied 記録に限って覆す（stale 除去の baseline を世代の概念から FS の事実へ移す）。ADR-0015 §5 の rollback の baseline（離れる世代 N の manifest）の供給元を、世代リンクから記録優先へ変える（baseline = 離れる世代・ポインタ移動は最後という順序は不変）
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。世代管理 CLI への分離計画（Issue #447）への橋
 
+> **2026-10-18 改訂注記（ADR-0062）**: 本 ADR §1 の鍵の規則（profileDir と同じ）と §2〜§4 の内容・書き込み・baseline の
+> 優先順位は不変。ただし記録の置き場 `<state>/layat/<鍵>` は system mode（`rootKind = "system"`）に限って
+> **`/var/lib/layat/<鍵>`** に切り替わる。鍵は system mode の profileDir と同型で、`--root` なしは `<name>` 直キーになる（→ ADR-0062）。
+
 ## 背景
 
 stale 除去・drift 検出・reset・rollback は「前回 layat がこの root に何を置いたか」を baseline として要る。現状その baseline は nix profile の current 世代（`<profileDir>/profile` が指す link-farm の `manifest.json`）から読む。ADR-0002 はこれを「世代由来の store manifest」と定め、store 外の可変 JSON を「GC root を作らず参照中 store パスが消えると rollback が壊れる・standalone では profile と二重」として却下した。
