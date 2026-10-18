@@ -73,14 +73,11 @@ REQ 側に無い（REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb / REQ-37b56673-6e40-
 検出しない。`integration` 区分が見るのは「HM モジュールが root に home を pin する配線」であり、
 文書の形そのものではない。
 
-第三に、`rootKind = "system"` は REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb が定める 4 値の 1 つで、ADR-0036（採用）が
-ADR-0013 §5 の throw を撤回して manifest v1 の正規値にすると決めているが、実装は依然
-`normalizeManifest` の assertion で `system` を弾く。評価層で `{ rootKind = "system"; }` が
-発行される側を見るテストは存在しない。throw する現状を写すアサート
-（`testSystemRootUnimplemented`）は CASE-879a93da-d22f-4397-84da-3544f8249af1 に残っているが、TC-e7ff0e6d-32d7-4ed6-8c2f-449dba34b2f6 は撤回済み決定の
-残骸としてこれを条件に含めておらず、RISK-09df40d3-2752-433e-9ab0-2816fbd14969 も同じ理由で規範から外している。つまり
-`system` は規範側にも条件側にも所在を持たない。ADR-0036 が指示した実装更新が済むまでの残余で、
-更新時にはゲート側のテストと合わせて組み替える必要がある。
+第三に、`rootKind = "system"` は REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb が定める 4 値の 1 つで、`normalizeManifest` は
+`systemRoot` を `{ rootKind = "system"; }` へ変換して通す（→ ADR-0036）。この発行は
+CASE-7a6c4957-9365-4490-b48f-9725f42162f2 の変換テストがアサートするが、文書の形を条件とする TC-4e7cfae7-72bc-4af6-a1f5-1ead7db564b1 の適用範囲は
+project root に限られ、system の変換を受ける TC はまだ無い。`system` は規範側に所在を持つが、
+条件側には持たない。
 
 第四に、`fixed` の絶対パスが `mkManifest` の `passthru.root`（REQ-2f9205ee-cec5-4072-ac3e-890caae79904）へ写る側は
 derivation 層の担当で、本区分の TC 群は見ない（TC-f9e927d0-8e10-4b8e-9870-5b5486949af6 が射程外と宣言している）。この
