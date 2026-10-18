@@ -114,6 +114,8 @@ fi
 e2e_step "非 root: apply --dryrun と list-generations は exit 0"
 run_json 0 "$E2E_WORK/nonroot-dryrun.json" apply sys --dryrun --root "$SYSROOT"
 run_json 0 "$E2E_WORK/nonroot-gens.json" list-generations sys --root "$SYSROOT"
+assert_json "$E2E_WORK/nonroot-gens.json" "非 root にも世代 1・2 が見え、current は世代 2" \
+	'[.results[0].result.info.generations[] | {number, current}] == [{"number":1,"current":false},{"number":2,"current":true}]'
 if [ "$(snapshot)" = "$BEFORE" ]; then
 	e2e_pass "読み取り系の前後でも不変"
 else
