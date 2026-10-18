@@ -105,9 +105,9 @@ for cmd in "apply sys" "rollback sys" "reset sys --yes"; do
 		'any(.results[] | select(.subject.name == "sys") | .errors[]; .code == "E_PERMISSION")'
 done
 if [ "$(snapshot)" = "$BEFORE" ]; then
-	e2e_pass "非 root の変更系の前後で sysroot と profile が不変"
+	e2e_pass "非 root の変更系の前後で sysroot・profile ディレクトリ・記録が不変"
 else
-	e2e_fail "非 root の変更系が sysroot か profile を変えた"
+	e2e_fail "非 root の変更系が sysroot・profile ディレクトリ・記録のどれかを変えた"
 fi
 
 e2e_step "非 root: apply --dryrun と list-generations は exit 0"
@@ -116,7 +116,7 @@ run_json 0 "$E2E_WORK/nonroot-gens.json" list-generations sys --root "$SYSROOT"
 if [ "$(snapshot)" = "$BEFORE" ]; then
 	e2e_pass "読み取り系の前後でも不変"
 else
-	e2e_fail "読み取り系が sysroot か profile を変えた"
+	e2e_fail "読み取り系が sysroot・profile ディレクトリ・記録のどれかを変えた"
 fi
 
 e2e_step "root で rollback → 世代 1 の配置（entry a）へ戻る"
