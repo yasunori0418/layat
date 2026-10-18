@@ -43,6 +43,11 @@ in
     expected = "project";
   };
 
+  testRootKindSystem = {
+    expr = (norm layat.systemRoot { }).root.rootKind;
+    expected = "system";
+  };
+
   # project は実行時解決なので固定 root パスを持たない。
   testProjectHasNoFixedRoot = {
     expr = basic.root ? root;
