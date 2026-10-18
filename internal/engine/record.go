@@ -138,6 +138,10 @@ func writeRecord(rec paths.Record, root, linkFarm string, manifestJSON []byte, a
 	if cerr := tmp.Close(); werr == nil {
 		werr = cerr
 	}
+	// CreateTemp makes the file 0600; every user reads the record, e.g. a non-root apply --dryrun.
+	if werr == nil {
+		werr = os.Chmod(tmp.Name(), 0o644)
+	}
 	if werr == nil {
 		werr = os.Rename(tmp.Name(), rec.File)
 	}

@@ -83,6 +83,12 @@ func TestWriteRecordRoundTrip(t *testing.T) {
 	if entryTargets(gotM) != "a" {
 		t.Errorf("manifest entries = %s, want a", entryTargets(gotM))
 	}
+	// Every user can read the record, so a read-only operation does not need the writer's privileges.
+	if fi, err := os.Stat(rec.File); err != nil {
+		t.Error(err)
+	} else if fi.Mode().Perm() != 0o644 {
+		t.Errorf("record mode = %v, want 0644", fi.Mode().Perm())
+	}
 	if b, err := os.ReadFile(rec.Backref); err != nil || string(b) != root+"\n" {
 		t.Errorf("backref = %q, %v; want %q", b, err, root+"\n")
 	}
