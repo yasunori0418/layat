@@ -51,10 +51,6 @@ let
 
       # ---- Cross-field / path validation ----
       assertions = lib.concatLists [
-        # systemRoot is not implemented.
-        (lib.optional (
-          rootInfo.rootKind == "system"
-        ) "layat: root = systemRoot (system mode) is not implemented")
         # method = "copy" cannot be combined with an out-of-store / root-relative marker.
         (map (
           e: "layat: method = \"copy\" cannot be combined with an out-of-store marker (target: ${e.target})"
