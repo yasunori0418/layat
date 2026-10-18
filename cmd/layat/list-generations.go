@@ -123,8 +123,8 @@ func generationRows(gens []generation.Generation) []generationRow {
 }
 
 // runListAllGenerations lists the generations of every profile directly under the backend's user
-// base (home), then under its system base (system), one subject per config. It reads the disk only;
-// an unreadable system base is warned about and skipped.
+// base (home), then under its system base (system), one "<mode>:<name>" subject per config. It
+// reads the disk only; an unreadable system base is warned about and skipped.
 func runListAllGenerations(run *listGenerationsRun) error {
 	stateDir, err := paths.StateDir()
 	if err != nil {
@@ -154,7 +154,7 @@ func runListAllGenerations(run *listGenerationsRun) error {
 		{systemBase, manifest.RootKindSystem, systemNames},
 	} {
 		for _, name := range b.names {
-			subject := run.beginSubject(name)
+			subject := run.beginSubject(b.mode + ":" + name)
 			prof := paths.Resolve(b.base, name, b.mode, "", false)
 			gens, err := backend.List(prof.Profile)
 			if err != nil {
