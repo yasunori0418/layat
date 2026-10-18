@@ -28,8 +28,8 @@ covers:
   読むこと
 - **`--all` の 2 基底走査** — user 基底の後に system 基底を走査し、subject 名が常に
   `<mode>:<name>` で `info.mode` と一致すること（同名 config が両基底にあっても適合を保つ）、
-  非 JSON の見出しが home の後に空行を挟んで system の `# <name> (system)` と並ぶこと、`LAYAT_SYSTEM_PROFILE_BASE` が
-  system 基底を差し替えること、system 基底が無ければ warning を出さずに空として扱い、
+  非 JSON の見出しが home の後に空行を挟んで system の `# <name> (system)` と並ぶこと、
+  `LAYAT_SYSTEM_PROFILE_BASE` が system 基底を差し替えること、system 基底が無ければ warning を出さずに空として扱い、
   読めなければ warning を 1 行出してその基底を走査せず、user 基底の一覧は残ること
 
 `info` の境界の扱いはパス列挙の CASE と対称であり、読み取り系コマンド全体で同じ規約が成り立つ

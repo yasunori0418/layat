@@ -113,7 +113,7 @@ specification_ja: |
   `result.info.generations` を持たなければならない（`items: []`・単一実行と同一）。user
   profile 基底の読み取り失敗と profile の一覧失敗はそこで打ち切らなければならず、失敗した
   config の subject がその失敗を持ち、既に列挙済みの config の結果は残さなければならない。
-  system profile 基底が読めないときは打ち切らず、warning を出してその基底を飛ばさなければ
+  system profile 基底が読めないときは打ち切らず、warning を出してその基底の走査を省かなければ
   ならない。
 
   読み取り系 `--all` は打ち切り以降の config を `results[]` に載せてはならない
@@ -174,7 +174,7 @@ warnings / info）の写像規則は単一 config と同一で、`--all` 固有�
   system profile 基底で見つかった system mode config ごとに `result.info.generations` を持つ
   （`items: []`・単一実行と同一）。user profile 基底の読み取り失敗と profile の一覧失敗は
   そこで打ち切り、失敗した config の subject がその失敗を持ち、既に列挙済みの config の結果は
-  残る。system profile 基底が読めないときは warning を出してその基底を飛ばす。
+  残る。system profile 基底が読めないときは warning を出してその基底の走査を省く。
 - **読み取り系 `--all` は打ち切り以降の config を `results[]` に載せない**
   （`list-generations --all` / `gitignore --all`）。両者は最初の失敗で列挙を中断するため、
   `results[]` は「失敗した config まで」で終わり、未到達の config は要素として現れない。
