@@ -29,7 +29,7 @@ references:
 ADR-0036 §3 は system mode の profile 状態を `/nix/var/nix/profiles/layat` に置くと決めた。その後
 ADR-0058 が、stale 除去の baseline として layat 自前の last-applied 記録 `<state>/layat/<鍵>` を
 足した。`<state>` は実行ユーザーの state（`$XDG_STATE_HOME`、既定 `$HOME/.local/state`）なので、
-このままでは root で実行した system mode の記録が `/root/.local/state/layat` に住む。
+このままでは root で実行した system mode の記録が `/root/.local/state/layat` に置かれる。
 
 ADR-0036 は profile について「システムの状態が root の個人領域に住む」形を棄却している。記録も
 同じ理由で個人領域に置けないが、記録は nix profile ではないため、profile と同じ基底に置く理由も無い。
@@ -62,7 +62,7 @@ ADR-0036 は profile について「システムの状態が root の個人領�
 - **profile の基底（`/nix/var/nix/profiles/layat`）に同居させない理由**: その基底は世代バックエンドの
   所有物（ADR-0057）で、記録は世代と独立した layat の所有物（ADR-0058）。user mode でも記録
   （`<state>/layat`）と profile（`<state>/nix/profiles/layat`）は別の基底にある。同居させると
-  `layat prune` の走査対象に記録のディレクトリが混ざる。
+  `layat prune` の走査対象に記録のディレクトリが入る。
 - **基底を設定で上書きさせない理由**: 基底を変えると既存の世代と記録を見失う。ADR-0057 は profile の
   基底を設定ファイルで上書きする機構を足さないと決めており、記録の基底もそれに揃える。テストの
   隔離に要るのは環境変数の口だけ。
@@ -78,9 +78,9 @@ ADR-0036 は profile について「システムの状態が root の個人領�
 ## 棄却した代替案
 
 - **実行ユーザーの state（root なら `/root/.local/state/layat`）のまま**: 実装差分は無いが、システムの
-  状態が root の個人領域に住む。ADR-0036 が profile について棄却した形と同じで、将来のモジュール
+  状態が root の個人領域に置かれる。ADR-0036 が profile について棄却した形と同じで、将来のモジュール
   導入時に記録を移す痛みが残る。
 - **`/nix/var/nix/profiles/layat` の下に同居させる**: 置き場の数は減るが、世代バックエンドの所有する
   基底へ layat 自前の状態を持ち込み、prune の走査と衝突する。
 - **基底を設定ファイルのキーで上書きできるようにする**: 利用者の需要が無く、上書きのたびに
-  既存の世代と記録を見失う経路を開く。
+  既存の世代と記録を見失うおそれが生じる。
