@@ -38,6 +38,9 @@ references:
 - 改訂対象: ADR-0002 / ADR-0015 §3 が「世代操作は `nix-env --profile <dir>` 系」とした主体を世代バックエンドの契約へ移す（nix-env はその既定実装 nixprofile になる）。ADR-0006 の「`nix`（profile）と `git` のみサブプロセスで叩く」を `git` のみへ改訂し、却下案「エンジンが世代 symlink を直接管理」を契約の実装として再評価する。ADR-0011 §4 の「`nix-env --set` 成功後に `.pending` を削除する」の主体を engine の FS 操作として位置づけ直す。ADR-0036 §3 の system 基底 `/nix/var/nix/profiles/layat` の所有者を nixprofile にする。ADR-0055 §4 の Build 事後条件「世代コミット可能な store path」を「選択中の世代バックエンドがコミット可能な link-farm のパス」へ緩和する（文言のみ）
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）
 
+> **2026-10-18 改訂注記（ADR-0063）**: 本 ADR §2 の「nixprofile は nix-env 3 コマンドと世代一覧のパースを所有する」のうち List が対象。
+> 契約の 5 操作・Commit / Switch の nix-env・Fake の位置づけは不変。ただし List は `--list-generations` のパースをやめ、profileDir の世代リンクを読み取り専用で走査する（Fake と同じ `ListLinks` を共用する）（→ ADR-0063）。
+
 ## 背景
 
 engine は世代操作を `nix-env --profile <p>` 系（`--set` / `--list-generations` / `--switch-generation`）で直接叩き、profile の基底 `<state>/nix/profiles/layat`（`paths.Base`）と system の基底 `/nix/var/nix/profiles/layat`（prune の定数）を固定で持つ。差し替え点は `CommitFunc` / `ListGenerationsFunc` / `SwitchGenerationFunc` の 3 関数型で、nil のとき nix-env へ暗黙にフォールバックする。manifest の取得側は ADR-0055 で生成器の契約越しになったが、世代側は nix 前提のまま engine に残っている。
