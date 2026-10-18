@@ -125,9 +125,6 @@ func makeProfilesUnder(t *testing.T, base string, names ...string) {
 // refuse project / fixed before touching any profile. A system rollback reaching the engine's
 // root check (instead of the CLI gate) proves the gate let it through.
 func TestGenerationCommandsModeGate(t *testing.T) {
-	if os.Geteuid() == 0 {
-		t.Skip("the system rollback case relies on the engine refusing a non-root caller")
-	}
 	origJSON := flagJSON
 	t.Cleanup(func() { flagJSON = origJSON })
 	flagJSON = true
@@ -176,7 +173,23 @@ func TestGenerationCommandsModeGate(t *testing.T) {
 		}
 	})
 
+	t.Run("list-generations reads a system profile under LAYAT_SYSTEM_PROFILE_BASE", func(t *testing.T) {
+		withFlakeEntrypoint(t)
+		stubNixRootKind(t, "system")
+		installFakeBackend(t, "").System = t.TempDir()
+		override := t.TempDir()
+		makeProfilesUnder(t, override, "c")
+		t.Setenv(systemBaseEnv, override)
+		run, _ := newListGenerationsTestRun()
+		if err := runListGenerations(run, "c"); err != nil {
+			t.Fatalf("runListGenerations = %v, want the listing from the override base", err)
+		}
+	})
+
 	t.Run("rollback passes a system config on to the engine", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("relies on the engine refusing a non-root caller")
+		}
 		withFlakeEntrypoint(t)
 		stubNixRootKind(t, "system")
 		installFakeBackend(t, "").System = t.TempDir()
@@ -188,8 +201,8 @@ func TestGenerationCommandsModeGate(t *testing.T) {
 }
 
 // TestListGenerationsAllScansSystemBase: --all lists the user base, then the system base (or the
-// LAYAT_SYSTEM_PROFILE_BASE override), naming each subject <mode>:<name> beside its info.mode. A missing system base is
-// an empty listing; an unreadable one is one warning line and skipped.
+// LAYAT_SYSTEM_PROFILE_BASE override), naming each subject <mode>:<name> beside its info.mode. A
+// missing system base is an empty listing; an unreadable one is one warning line and skipped.
 func TestListGenerationsAllScansSystemBase(t *testing.T) {
 	origJSON := flagJSON
 	t.Cleanup(func() { flagJSON = origJSON })
@@ -241,8 +254,9 @@ func TestListGenerationsAllScansSystemBase(t *testing.T) {
 				t.Errorf("runListAllGenerations: %v", err)
 			}
 		})
-		if !strings.Contains(out, "# a\n") || !strings.Contains(out, "# s (system)\n") {
-			t.Errorf("stdout = %q, want the headings \"# a\" and \"# s (system)\"", out)
+		home, system := strings.Index(out, "# a\n"), strings.Index(out, "\n\n# s (system)\n")
+		if !strings.HasPrefix(out, "# a\n") || system < 0 || system < home {
+			t.Errorf("stdout = %q, want \"# a\" first, then a blank line and \"# s (system)\"", out)
 		}
 	})
 

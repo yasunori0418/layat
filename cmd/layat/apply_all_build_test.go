@@ -359,3 +359,33 @@ func TestRootMixWarning(t *testing.T) {
 		})
 	}
 }
+
+// TestRunApplyAllRootMixWarningWiring drives runApplyAll through a stub nix: as root the warning
+// reaches stderr exactly once and never stdout, and the run ends as it does for a non-root caller.
+func TestRunApplyAllRootMixWarningWiring(t *testing.T) {
+	const evalAll = `{"h":{"rootKind":"home","targets":["a"]},"s":{"rootKind":"system","targets":["etc/b"]}}`
+	run := func(t *testing.T, euid int) (stdout, stderr string, err error) {
+		withFlakeEntrypoint(t)
+		stubNixForApply(t, evalAll)
+		orig := geteuid
+		t.Cleanup(func() { geteuid = orig })
+		geteuid = func() int { return euid }
+		r, _ := newApplyTestRun()
+		stdout = captureStdout(t, func() {
+			stderr = captureStderr(t, func() { err = runApplyAll(r) })
+		})
+		return stdout, stderr, err
+	}
+	rootOut, rootErr, rootRes := run(t, 0)
+	_, userErr, userRes := run(t, 1000)
+	const marker = "layat: warning: apply --all as root"
+	if n := strings.Count(rootErr, marker); n != 1 {
+		t.Errorf("root stderr carries the warning %d times, want once:\n%s", n, rootErr)
+	}
+	if strings.Contains(rootOut, marker) || strings.Contains(userErr, marker) {
+		t.Errorf("warning leaked (root stdout %q / non-root stderr %q)", rootOut, userErr)
+	}
+	if fmt.Sprint(rootRes) != fmt.Sprint(userRes) {
+		t.Errorf("root run ended with %v, want the non-root outcome %v", rootRes, userRes)
+	}
+}
