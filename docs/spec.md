@@ -255,7 +255,7 @@ root は評価時にパスへ展開せず、マーカーが運ぶ kind をエン
 - [REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b](requirements/20260802-8d965ca2-f8fd-44a4-87f3-94e850e9f85b-home-mode-root-resolution.md) — home mode の root は層ごとに定まった供給元から解決する
 - [REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e](requirements/20260802-9cb26ffd-071e-4c68-a6fc-faac6373b75e-project-mode-root-resolution.md) — project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない
 - [REQ-e79178f5-5865-4444-a05d-3ab06f33cd6d](requirements/20260802-e79178f5-5865-4444-a05d-3ab06f33cd6d-project-mode-ephemeral.md) — project mode の配置物は ephemeral とし、activation は git 状態に干渉しない
-- [REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81](requirements/20260802-d5a2e289-40bc-45a9-9d44-21b8dc561b81-profiledir-keying.md) — profileDir は home のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする
+- [REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81](requirements/20260802-d5a2e289-40bc-45a9-9d44-21b8dc561b81-profiledir-keying.md) — profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする
 - [REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4](requirements/20261018-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4-system-mode-root-gate-and-record-base.md) — system mode は root を / に解決し、変更系操作の前に euid 0 を検査し、profile と last-applied 記録を system 基底に置く
 - [REQ-81249072-56b8-42f5-807b-ea623c1efe99](requirements/20260802-81249072-56b8-42f5-807b-ea623c1efe99-out-of-store-eval-time-path.md) — out-of-store の src は評価時の絶対パスか配置 root 相対のどちらかで、root 相対は target と同じ root に対して実行時に解決する
 

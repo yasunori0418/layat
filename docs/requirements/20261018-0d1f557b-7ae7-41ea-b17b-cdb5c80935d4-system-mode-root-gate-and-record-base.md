@@ -56,8 +56,7 @@ derives_from:
   動くので、非 root でも計画確認と世代閲覧ができる。
 - **変えないもの**: home / project / fixed の profileDir と記録の置き場。
 
-profileDir の鍵の一般規則（REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81）は `<name>` 直キーを
-home に限っているが、system mode では本 item の規則で `<name>` 直キーになる。記録の内容・
+profileDir の鍵の一般規則は REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81 の担当。記録の内容・
 書き込み・baseline の優先順位は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当で、system mode
 でも変わらない。本 item が決めるのは置き場の基底だけ。
 
