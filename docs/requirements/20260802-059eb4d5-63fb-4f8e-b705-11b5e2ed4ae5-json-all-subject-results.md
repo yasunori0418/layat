@@ -54,10 +54,10 @@ specification: |
   `list-generations --all` SHALL hold `result.info.generations` per home mode config found
   by scanning the user profile base and then per system mode config found by scanning the
   system profile base, with `items: []`, identically to a single execution. A failure to
-  read the user profile base or to list a profile SHALL abort there, the failing config's
-  subject SHALL carry that failure, and the results of the configs already enumerated SHALL
-  remain. A system profile base that cannot be read SHALL instead be skipped with a
-  warning.
+  read the user profile base SHALL abort before any subject is created. A failure to list a
+  profile SHALL abort there, the failing config's subject SHALL carry that failure, and the
+  results of the configs already enumerated SHALL remain. A system profile base that cannot
+  be read SHALL instead be skipped with a warning.
 
   The read-only `--all` commands SHALL NOT place the configs after the abort into
   `results[]`, since both abort enumeration at the first failure, whereas `apply --all`
@@ -111,8 +111,9 @@ specification_ja: |
   `list-generations --all` は user profile 基底の走査で見つかった home mode config ごと、
   続けて system profile 基底の走査で見つかった system mode config ごとに
   `result.info.generations` を持たなければならない（`items: []`・単一実行と同一）。user
-  profile 基底の読み取り失敗と profile の一覧失敗はそこで打ち切らなければならず、失敗した
-  config の subject がその失敗を持ち、既に列挙済みの config の結果は残さなければならない。
+  profile 基底の読み取り失敗は subject を作る前に打ち切らなければならない。profile の一覧
+  失敗はそこで打ち切らなければならず、失敗した config の subject がその失敗を持ち、既に
+  列挙済みの config の結果は残さなければならない。
   system profile 基底が読めないときは打ち切らず、warning を出してその基底の走査を省かなければ
   ならない。
 
@@ -172,9 +173,9 @@ warnings / info）の写像規則は単一 config と同一で、`--all` 固有�
   1 つ）で、テキスト集約 / JSON per-config の非対称を意図的に保つ。
 - **`list-generations --all`**: user profile 基底で見つかった home mode config、続けて
   system profile 基底で見つかった system mode config ごとに `result.info.generations` を持つ
-  （`items: []`・単一実行と同一）。user profile 基底の読み取り失敗と profile の一覧失敗は
-  そこで打ち切り、失敗した config の subject がその失敗を持ち、既に列挙済みの config の結果は
-  残る。system profile 基底が読めないときは warning を出してその基底の走査を省く。
+  （`items: []`・単一実行と同一）。user profile 基底の読み取り失敗は subject を作る前に
+  打ち切る。profile の一覧失敗はそこで打ち切り、失敗した config の subject がその失敗を持ち、
+  既に列挙済みの config の結果は残る。system profile 基底が読めないときは warning を出してその基底の走査を省く。
 - **読み取り系 `--all` は打ち切り以降の config を `results[]` に載せない**
   （`list-generations --all` / `gitignore --all`）。両者は最初の失敗で列挙を中断するため、
   `results[]` は「失敗した config まで」で終わり、未到達の config は要素として現れない。
