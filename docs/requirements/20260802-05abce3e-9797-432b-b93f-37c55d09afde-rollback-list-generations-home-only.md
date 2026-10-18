@@ -8,12 +8,15 @@ specification: |
   `layat rollback` and `layat list-generations` SHALL be restricted to home mode and system
   mode. In project mode and fixed mode generations SHALL be kept as an internal mechanism and
   SHALL NOT be exposed to the user. `list-generations --all` SHALL list the generations of
-  every home mode config and then of every system mode config, and SHALL be read-only.
+  every home mode config and then of every system mode config, and SHALL be read-only. A
+  system base that does not exist SHALL be listed as empty, and one that cannot be read SHALL
+  be skipped with a warning.
 specification_ja: |
   `layat rollback` と `layat list-generations` は home mode と system mode に限らなければならない。
   project mode と fixed mode では世代を内部機構に留め、ユーザーに公開してはならない。
   `list-generations --all` は home mode の全 config、続けて system mode の全 config の世代を
-  一覧しなければならず、読み取り専用でなければならない。
+  一覧しなければならず、読み取り専用でなければならない。system 基底が存在しなければ空として
+  扱わなければならず、読めなければ warning を出してその基底の走査を省かなければならない。
 ---
 # REQ-05abce3e-9797-432b-b93f-37c55d09afde: rollback と list-generations は home / system mode 限定にする
 
