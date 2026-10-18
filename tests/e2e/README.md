@@ -38,6 +38,7 @@ fixture flake は `layat` を `path:<repo>` input で参照し、`nixpkgs` / `ho
 | `09-apply-all` | `apply --all` の並列化（→ ADR-0038 / ADR-0039）。4 つの projectRoot config で `results[]` と `-v` の done 行が辞書順・`--jobs 1` と既定並列度で `results[]` が同一、同じ target を持つ 2 config が `--dryrun` 含め exit 1 で何も置かずに止まり `--json` ではトップ `errors[]` に載る、`--no-wait` 併用の初回 apply で全 config が applied になることを検証 |
 | `10-generator-select` | 生成器の選択（→ ADR-0056）。`LAYAT_GENERATOR=bogus` と未知キー入りの `layat.toml` を cwd に置いても `apply --manifest` が配置すること（activation の環境不定に耐える）、`apply --generator bogus` と不正な `layat.toml` での `apply` が exit 1 + 1 行・`--json` で `E_INPUT` になること、`LAYAT_GENERATOR=nix` の `apply` が通常どおり配置することを検証 |
 | `11-root-relative` | root 相対 out-of-store（`mkRootRelativeSymlink`）。project mode で apply → readlink が target 起点の相対文字列で内容へ到達できること、再 apply が warning 無しで冪等なこと、リポジトリを移動しても readlink が不変で、移動先での再 apply が foreign の last-wins 置換と記録なしの warning だけで成功すること、`--root` で上書きした root に対して src の実在判定と配置が行われること、entry を外した apply で stale 除去されることを検証 |
+| `12-system` | system mode。root を user namespace（`unshare -Ur`、不可なら `sudo -n`）で取り、`systemRoot` の config を `--root` の sysroot へ apply → 隔離した system 基底に `<roothash>/<name>` の profile・backref と記録が立つこと、世代 2 から `rollback` で世代 1 へ戻り `reset --yes` で撤去されること、`--all` が `<roothash>` 系列を除外することを検証。非 root の `apply` / `rollback` / `reset --yes` が `E_PERMISSION` で何も変えずに止まり、`apply --dryrun` / `list-generations` は通ることも見る |
 
 ## 将来拡張
 

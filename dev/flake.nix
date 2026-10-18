@@ -370,6 +370,8 @@
               git
               jq
               coreutils
+              # system mode の e2e が root を user namespace（unshare -Ur）で取る。
+              util-linux
               # --json エンベロープの適合検証（schema + lint）。
               outturn-validate
             ];
