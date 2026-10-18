@@ -191,7 +191,7 @@ e2e_root_init() {
 	e2e_log "root runner: ${_E2E_ROOT_RUNNER[*]} (mode=$E2E_ROOT_MODE)"
 }
 
-# e2e_root_init が解決した root ランナー越しに任意のコマンドを実行する（root 所有の 0600 ファイルを読む等）。
+# e2e_root_init が解決した root ランナー越しに任意のコマンドを実行する。
 e2e_as_root() { "${_E2E_ROOT_RUNNER[@]}" "$@"; }
 
 # legacy（shell.nix / default.nix）シナリオ用: flake.lock がピン留めした nixpkgs の store path を
