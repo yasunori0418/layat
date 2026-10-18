@@ -1,16 +1,15 @@
-// Package nixprofile is the generation backend on nix profiles: generations are the
-// `nix-env --profile <profileLink>` generations, and the profileDirs are keyed under
-// <state>/nix/profiles/layat (user) and /nix/var/nix/profiles/layat (system).
+// Package nixprofile is the generation backend on nix profiles: Commit and Switch run
+// `nix-env --profile <profileLink>`, List scans the generation links read-only, and the
+// profileDirs are keyed under <state>/nix/profiles/layat (user) and
+// /nix/var/nix/profiles/layat (system).
 package nixprofile
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
-	"strings"
 
 	"github.com/yasunori0418/layat/internal/generation"
 )
@@ -38,23 +37,10 @@ func (backend) Commit(profileLink, linkFarm string) error {
 	return cmd.Run()
 }
 
-// List runs `nix-env --profile <profileLink> --list-generations` and parses its stdout.
+// List scans the profile's generation links without running nix-env, which takes a lock in
+// the profileDir even to list.
 func (backend) List(profileLink string) ([]generation.Generation, error) {
-	if _, err := exec.LookPath("nix-env"); err != nil {
-		return nil, fmt.Errorf("nix-env is not on PATH: %w", err)
-	}
-	cmd := exec.Command("nix-env", "--profile", profileLink, "--list-generations")
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	if err := cmd.Run(); err != nil {
-		trimmed := strings.TrimSpace(stderr.String())
-		if trimmed != "" {
-			return nil, fmt.Errorf("layat: nix-env --list-generations failed: %w\n%s", err, trimmed)
-		}
-		return nil, fmt.Errorf("layat: nix-env --list-generations failed: %w", err)
-	}
-	return parseGenerations(stdout.String())
+	return generation.ListLinks(profileLink)
 }
 
 // Switch moves the profile pointer via `nix-env --profile <profileLink> --switch-generation
@@ -78,29 +64,4 @@ func (backend) UserBase(stateDir string) string {
 // SystemBase returns /nix/var/nix/profiles/layat.
 func (backend) SystemBase() string {
 	return systemBase
-}
-
-// parseGenerations parses the output of `nix-env --list-generations`. Each line is of the
-// form "<number>   <timestamp>   [(current)]" (leading and separating whitespace is variable).
-func parseGenerations(out string) ([]generation.Generation, error) {
-	var gens []generation.Generation
-	for _, line := range strings.Split(out, "\n") {
-		fields := strings.Fields(line)
-		if len(fields) == 0 {
-			continue
-		}
-		n, err := strconv.Atoi(fields[0])
-		if err != nil {
-			return nil, fmt.Errorf("layat: cannot parse a line of the generation list: %q", line)
-		}
-		g := generation.Generation{Number: n}
-		end := len(fields)
-		if fields[end-1] == "(current)" {
-			g.Current = true
-			end--
-		}
-		g.Date = strings.Join(fields[1:end], " ")
-		gens = append(gens, g)
-	}
-	return gens, nil
 }
