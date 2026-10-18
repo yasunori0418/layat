@@ -28,8 +28,10 @@ type ProfileOptions struct {
 	RootOverride string
 	WorkDir      string
 	StateDir     string
-	Git          GitFunc
-	// Backend owns the user base the profileDir is keyed under. Required: nil is an error.
+	// SystemDir overrides the system-mode profile base (empty = Backend.SystemBase).
+	SystemDir string
+	Git       GitFunc
+	// Backend owns the user and system bases the profileDir is keyed under. Required: nil is an error.
 	Backend generation.Backend
 }
 
@@ -43,14 +45,24 @@ func ProfileFor(opts ProfileOptions) (paths.Profile, string, error) {
 	if err != nil {
 		return paths.Profile{}, "", err
 	}
-	stateDir := opts.StateDir
-	if stateDir == "" {
-		stateDir, err = paths.StateDir()
-		if err != nil {
-			return paths.Profile{}, "", err
+	// System mode keys under the system base; it never resolves the user <state>.
+	var base string
+	switch {
+	case opts.RootKind == manifest.RootKindSystem && opts.SystemDir != "":
+		base = opts.SystemDir
+	case opts.RootKind == manifest.RootKindSystem:
+		base = opts.Backend.SystemBase()
+	default:
+		stateDir := opts.StateDir
+		if stateDir == "" {
+			stateDir, err = paths.StateDir()
+			if err != nil {
+				return paths.Profile{}, "", err
+			}
 		}
+		base = opts.Backend.UserBase(stateDir)
 	}
-	prof := paths.Resolve(opts.Backend.UserBase(stateDir), opts.Name, opts.RootKind, root, opts.RootOverride != "")
+	prof := paths.Resolve(base, opts.Name, opts.RootKind, root, opts.RootOverride != "")
 	return prof, root, nil
 }
 
@@ -86,6 +98,8 @@ type RollbackOptions struct {
 	RootOverride string
 	WorkDir      string
 	StateDir     string
+	// SystemDir overrides the system-mode profile base (empty = Backend.SystemBase).
+	SystemDir string
 
 	// Backend lists and switches the generations and owns the profile base. Required: nil is an error.
 	Backend generation.Backend
@@ -117,8 +131,8 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	// 1. fix profileDir (resolve root → layout · preamble shared with apply).
 	prof, root, err := ProfileFor(ProfileOptions{
 		Name: opts.Name, RootKind: opts.RootKind, FixedRoot: opts.FixedRoot,
-		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir, Git: opts.Git,
-		Backend: opts.Backend,
+		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir,
+		SystemDir: opts.SystemDir, Git: opts.Git, Backend: opts.Backend,
 	})
 	if err != nil {
 		return nil, err

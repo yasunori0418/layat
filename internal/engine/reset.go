@@ -26,7 +26,9 @@ type ResetOptions struct {
 	RootOverride string
 	WorkDir      string
 	StateDir     string
-	Git          GitFunc
+	// SystemDir overrides the system-mode profile base (empty = Backend.SystemBase).
+	SystemDir string
+	Git       GitFunc
 	// Backend owns the profile base the profileDir is keyed under. Required: nil is an error.
 	Backend generation.Backend
 
@@ -87,8 +89,8 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	// 1. fix profileDir (resolve root → layout · preamble shared with apply / rollback).
 	prof, root, err := ProfileFor(ProfileOptions{
 		Name: opts.Name, RootKind: opts.RootKind, FixedRoot: opts.FixedRoot,
-		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir, Git: opts.Git,
-		Backend: opts.Backend,
+		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir,
+		SystemDir: opts.SystemDir, Git: opts.Git, Backend: opts.Backend,
 	})
 	if err != nil {
 		return nil, err

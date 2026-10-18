@@ -57,9 +57,9 @@ type Profile struct {
 	Profile string
 	// Pending is the generator's build out-link (a sibling that does not pass through the profile).
 	Pending string
-	// BackrefDir is the level where the backref .root is placed. Empty for home (no --root).
+	// BackrefDir is the level where the backref .root is placed. Empty for home / system (no --root).
 	BackrefDir string
-	// Backref is the backref file recording the original root's absolute path. Empty for home.
+	// Backref is the backref file recording the original root's absolute path. Empty for home / system (no --root).
 	Backref string
 }
 
@@ -143,11 +143,11 @@ func ListRootHashSeries(base string) ([]RootHashSeries, error) {
 }
 
 // Resolve determines the profile layout for a config under base (the generation backend's
-// user or system base): <base>/<name> for home without --root, otherwise <base>/<roothash>/<name>
-// with the backref .root at the <roothash> level.
+// user or system base): <base>/<name> for home or system without --root, otherwise
+// <base>/<roothash>/<name> with the backref .root at the <roothash> level.
 func Resolve(base, name, rootKind, absRoot string, rootOverride bool) Profile {
-	// Only home (no --root) keys directly on <name>. Otherwise separate into an independent series per root.
-	if rootKind == manifest.RootKindHome && !rootOverride {
+	// Only home and system (no --root) key directly on <name>. Otherwise separate into an independent series per root.
+	if (rootKind == manifest.RootKindHome || rootKind == manifest.RootKindSystem) && !rootOverride {
 		dir := filepath.Join(base, name)
 		return Profile{
 			Dir:     dir,
@@ -176,7 +176,7 @@ type Record struct {
 	Dir string
 	// File is the last-applied record file.
 	File string
-	// Backref is the backref file recording the original root's absolute path. Empty for home.
+	// Backref is the backref file recording the original root's absolute path. Empty for home / system (no --root).
 	Backref string
 }
 

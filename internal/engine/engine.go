@@ -44,6 +44,8 @@ type Options struct {
 	WorkDir string
 	// StateDir overrides the profile base <state> (empty = resolved via paths.StateDir · mainly for tests).
 	StateDir string
+	// SystemDir overrides the system-mode profile base (empty = Backend.SystemBase).
+	SystemDir string
 	// NoWait makes the flock a try-lock (shellHook path; ErrSkipped if held).
 	NoWait bool
 	// Recopy is the apply --recopy modifier (unconditionally overwrite/re-copy all copy targets in the config from src).
@@ -167,8 +169,8 @@ func Apply(opts Options) (*Result, error) {
 	// 1. resolve root → fix profileDir.
 	prof, root, err := ProfileFor(ProfileOptions{
 		Name: opts.Name, RootKind: rootKind, FixedRoot: fixedRoot,
-		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir, Git: opts.Git,
-		Backend: opts.Backend,
+		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir,
+		SystemDir: opts.SystemDir, Git: opts.Git, Backend: opts.Backend,
 	})
 	if err != nil {
 		return nil, err
@@ -527,7 +529,7 @@ func resolveRoot(rootKind, fixedRoot, rootOverride, workDir string, git GitFunc)
 		}
 		return filepath.Abs(fixedRoot)
 	case manifest.RootKindSystem:
-		return "", fmt.Errorf("layat: root = systemRoot (system mode) is not implemented")
+		return "/", nil
 	case "":
 		return "", fmt.Errorf("layat: rootKind is undetermined (eval prefetch or a manifest is required)")
 	default:
