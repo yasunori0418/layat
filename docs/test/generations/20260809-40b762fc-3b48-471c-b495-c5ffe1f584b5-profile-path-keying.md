@@ -28,6 +28,8 @@ profile の on-disk レイアウトを決めるパス解決層を、環境変数
 | project mode | `<roothash>` |
 | home mode（`--root` なし）| `<name>` 直キー |
 | home mode + `--root` 上書き | `<roothash>` |
+| system mode（`--root` なし）| `<SystemBase>/<name>` 直キー |
+| system mode + `--root` 上書き | `<SystemBase>/<roothash>/<name>` + backref |
 | fixed root mode | `<roothash>` |
 
 **世代リンクの命名** — profile リンクに対する `profile-N-link` の形が `nix-env` の
@@ -35,7 +37,7 @@ profile の on-disk レイアウトを決めるパス解決層を、環境変数
 
 **兄弟の配置** — `.pending` out-link が profileDir 内に置かれること。backref `.root` は
 roothash 階層（`<name>` dir の親）に置かれ、`<roothash>` キーのモードでのみ生じること
-（home の `<name>` 直キーでは空。→ REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3）。
+（home / system の `<name>` 直キーでは空。→ REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3）。
 
 上位の規範は TP-e7c25263-6d2d-4a37-8275-26906889d912 の「FS に一切触れずに判断する層」。`internal/paths/` の解決と
 ハッシュ化は入力が列挙可能なので、統合テストがたまたま到達する範囲に委ねず、ユニット
