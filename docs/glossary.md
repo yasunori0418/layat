@@ -104,7 +104,7 @@ For in-repo trees, the root-relative marker `layat.lib.mkRootRelativeSymlink "re
 ## State management
 
 ### generation
-The unit of rollback. The default **generation backend**, nixprofile, manages it on layat's own Nix profile (the `nix-env --profile <dir>` style). nixprofile commits (`--set`), lists (`--list-generations`), and switches (`--switch-generation`, which rollback also uses) generations with `nix-env --profile <dir>`; pruning (`--delete-generations`) and store GC (`nix-collect-garbage`) are left to the user's nix commands.
+The unit of rollback. The default **generation backend**, nixprofile, manages it on layat's own Nix profile (the `nix-env --profile <dir>` style). nixprofile commits (`--set`) and switches (`--switch-generation`, which rollback also uses) generations with `nix-env --profile <dir>`, and lists them by scanning the generation links (`profile-<N>-link`) in the profileDir read-only, without `nix-env`; pruning (`--delete-generations`) and store GC (`nix-collect-garbage`) are left to the user's nix commands.
 - **Avoid**: narrating it under a "stateless script" premise (reversed since the initial direction); managing it with the new `nix profile` CLI (which requires a profile-manifest and does not work on `nix-env --set` profiles).
 
 ### store manifest

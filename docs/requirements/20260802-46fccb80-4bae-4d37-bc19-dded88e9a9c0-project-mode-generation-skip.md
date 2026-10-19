@@ -93,7 +93,7 @@ specification_ja: |
 > - `<state>` の定義 → REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3
 > - cross-config で同一 target を狙ったときの振動がユーザー責任であること → REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693
 > - ドリフト修復経路でも `--backup` の退避段が効くこと → REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98
-> - `rollback` / `list-generations` が home mode 限定であること（CLI 側の規範）→ REQ-05abce3e-9797-432b-b93f-37c55d09afde
+> - `rollback` / `list-generations` が home / system mode 限定であること（CLI 側の規範）→ REQ-05abce3e-9797-432b-b93f-37c55d09afde
 > - foreign symlink の warning そのもの → REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557、place-once そのもの → REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9
 >
 > **2026-10-11 追記（ADR-0058）**: 上の写しの「新 link farm derivation が前世代と同一なら」は、新 link-farm が

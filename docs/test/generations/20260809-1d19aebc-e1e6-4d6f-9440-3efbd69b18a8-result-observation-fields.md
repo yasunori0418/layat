@@ -22,8 +22,8 @@ nil であり、0 や現在値で埋めない。
 **世代観測の分解能** — 観測の下地である「profile symlink の指す先から世代番号を読む」
 層そのものも直接駆動して検証する。profile リンク不在 → nil、`profile-3-link` → 3、
 store パスなど世代リンクでない dest → nil、`profile-x-link` のような壊れた番号 → nil。
-TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7 が扱う `nix-env --list-generations` のテキストパースとは別層（こちらは
-symlink 名のパース）である。
+TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7 が扱う、profileDir の世代リンクを番号順に列挙して current を判定する
+走査とは別層（こちらは profile リンクの指す先の symlink 名のパース）である。
 
 **失敗時の到達状態の分割** — 配置の途中で失敗した run では、完了済みの操作リストは
 「完了した記録」として残り、失敗した entry は `FailedTarget` に入って `Placed` には

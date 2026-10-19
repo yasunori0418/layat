@@ -138,6 +138,8 @@ e2e_isolate() {
 	mkdir -p "$HOME" "$XDG_STATE_HOME"
 	# prune が走査する system 基底（絶対パス）を隔離先へ向ける。dir は作らない（基底の不在は正常系）。
 	export LAYAT_SYSTEM_PROFILE_BASE="$E2E_WORK/system"
+	# system mode の記録基底（<その値>/layat/...）も隔離先へ向ける。
+	export LAYAT_SYSTEM_STATE_DIR="$E2E_WORK/sysstate"
 	# ユーザー設定 $XDG_CONFIG_HOME/layat/config.toml も隔離先へ向ける。
 	export XDG_CONFIG_HOME="$E2E_WORK/config"
 	# 一時 HOME には nix の設定が無いため、ランナーの実設定（experimental-features 等）を引き継ぐ。
@@ -160,7 +162,37 @@ e2e_flake_inputs() {
 }
 
 # layat を実行する（dirty git tree 警告など stderr ノイズは通すが、結果はアサーションで判定）。
-layat() { command "$LAYAT" "$@"; }
+# E2E_AS_ROOT=1 の間は e2e_root_init が解決した root ランナー越しに実行する。
+layat() {
+	if [ "${E2E_AS_ROOT:-0}" = 1 ]; then
+		e2e_as_root "$LAYAT" "$@"
+	else
+		command "$LAYAT" "$@"
+	fi
+}
+
+# euid 0 で実行するランナーを解決する。user namespace（unshare -Ur）を優先し、使えなければ
+# sudo -n（環境変数と PATH を引き継ぐ）。どちらも使えなければ失敗する（skip しない）。
+# E2E_ROOT_MODE は userns（root の成果物が実 uid の所有）か real（実 root の所有）。
+e2e_root_init() {
+	if unshare -Ur true 2>/dev/null; then
+		_E2E_ROOT_RUNNER=(unshare -Ur)
+		E2E_ROOT_MODE=userns
+	elif sudo -n true 2>/dev/null; then
+		_E2E_ROOT_RUNNER=(sudo -n --preserve-env -- env "PATH=$PATH")
+		E2E_ROOT_MODE=real
+		# root 所有のファイルが残るため、後始末も root で行う。
+		# shellcheck disable=SC2064
+		trap "sudo -n rm -rf '$E2E_WORK'" EXIT
+	else
+		e2e_fail "root を取得できない（unshare -Ur も sudo -n も不可）"
+		exit 1
+	fi
+	e2e_log "root runner: ${_E2E_ROOT_RUNNER[*]} (mode=$E2E_ROOT_MODE)"
+}
+
+# e2e_root_init が解決した root ランナー越しに任意のコマンドを実行する。
+e2e_as_root() { "${_E2E_ROOT_RUNNER[@]}" "$@"; }
 
 # legacy（shell.nix / default.nix）シナリオ用: flake.lock がピン留めした nixpkgs の store path を
 # NIX_PATH にエクスポートする。使い捨ての probe flake で他 fixture と同じ pin を offline で解決する。

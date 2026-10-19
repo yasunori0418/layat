@@ -28,8 +28,8 @@ func beginRollbackRun(command string) *rollbackRun {
 func newRollbackCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "rollback <name>",
-		Short: "Roll layat.<name> back to the previous generation (home mode only; name required)",
-		Long: "Roll the home mode profile back one generation. Because moving the profile pointer alone does not change the FS at an arbitrary root, " +
+		Short: "Roll layat.<name> back to the previous generation (home / system mode only; name required)",
+		Long: "Roll the home / system mode profile back one generation. Because moving the profile pointer alone does not change the FS at an arbitrary root, " +
 			"it re-converges the FS (treating current generation N as baseline and previous generation N-1 as target: conservatively stale-removes N∖N-1 and re-places N-1) " +
 			"before moving the profile pointer. A name is required (no --all); errors out if there is no previous generation.",
 		Args: cobra.ExactArgs(1),
@@ -40,7 +40,7 @@ func newRollbackCmd() *cobra.Command {
 	}
 }
 
-// runRollback confirms rootKind via eval pre-resolution (home mode only) and drives engine.Rollback.
+// runRollback confirms rootKind via eval pre-resolution (home / system mode only) and drives engine.Rollback.
 func runRollback(run *rollbackRun, name string) error {
 	// The config name is the run's single outturn subject.
 	subject := run.beginSubject(name)
@@ -57,16 +57,18 @@ func runRollback(run *rollbackRun, name string) error {
 		return err
 	}
 	rootKind, fixedRoot := root.RootKind, root.Root
-	if rootKind != manifest.RootKindHome {
-		return fmt.Errorf("layat: rollback is home mode only (layat.%s has rootKind=%q; project / fixed do not expose generations)", name, rootKind)
+	if rootKind != manifest.RootKindHome && rootKind != manifest.RootKindSystem {
+		return fmt.Errorf("layat: rollback is home / system mode only (layat.%s has rootKind=%q; project / fixed do not expose generations)", name, rootKind)
 	}
 
 	res, err := engine.Rollback(engine.RollbackOptions{
-		Name:         name,
-		RootKind:     rootKind,
-		FixedRoot:    fixedRoot,
-		RootOverride: flagRoot,
-		Backend:      newGenerationBackend(),
+		Name:           name,
+		RootKind:       rootKind,
+		FixedRoot:      fixedRoot,
+		RootOverride:   flagRoot,
+		Backend:        newGenerationBackend(),
+		SystemDir:      systemDirOverride(),
+		SystemStateDir: systemStateDirOverride(),
 	})
 	if res != nil {
 		// The From→To transition rides generation.before/after, also for a partial result.

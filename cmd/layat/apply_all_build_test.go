@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // TestPrebuildAllBoundsConcurrency: in-flight builds reach min(--jobs, configs) and never exceed
@@ -306,5 +307,85 @@ func TestRunApplyAllStageOneWiring(t *testing.T) {
 				t.Errorf("nix stderr occurrences = %d, want 2 (one per config, not repeated in the reports):\n%s", n, stderr)
 			}
 		})
+	}
+}
+
+// TestRootMixWarning: apply --all run as root with no root filter warns once when the selection
+// holds home / project configs, naming them with their rootKind. A filter, a non-root caller, or
+// a selection of system (and fixed) configs only stays silent.
+func TestRootMixWarning(t *testing.T) {
+	roots := map[string]manifest.Root{
+		"h":   {RootKind: manifest.RootKindHome},
+		"p":   {RootKind: manifest.RootKindProject},
+		"s":   {RootKind: manifest.RootKindSystem},
+		"fix": {RootKind: manifest.RootKindFixed, Root: "/srv"},
+	}
+	cases := []struct {
+		name     string
+		euid     int
+		selected []string
+		filter   string
+		want     []string // substrings of the warning; nil = no warning
+	}{
+		{name: "root, no filter, home selected", euid: 0, selected: []string{"h", "s"}, want: []string{"h (home)", "--system-root", "--home-root / --project-root"}},
+		{name: "root, no filter, project selected", euid: 0, selected: []string{"p", "s"}, want: []string{"p (project)"}},
+		{name: "root, filtered", euid: 0, selected: []string{"h"}, filter: manifest.RootKindHome},
+		{name: "non-root", euid: 1000, selected: []string{"h", "p", "s"}},
+		{name: "root, system and fixed only", euid: 0, selected: []string{"fix", "s"}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			orig := geteuid
+			t.Cleanup(func() { geteuid = orig })
+			geteuid = func() int { return tc.euid }
+			got := rootMixWarning(roots, tc.selected, tc.filter)
+			if tc.want == nil {
+				if got != "" {
+					t.Errorf("warning = %q, want none", got)
+				}
+				return
+			}
+			if strings.Contains(got, "\n") {
+				t.Errorf("warning = %q, want a single line", got)
+			}
+			for _, w := range tc.want {
+				if !strings.Contains(got, w) {
+					t.Errorf("warning = %q, want it to mention %q", got, w)
+				}
+			}
+			if strings.Contains(got, "s (system)") || strings.Contains(got, "fix (") {
+				t.Errorf("warning = %q, want system / fixed configs left out", got)
+			}
+		})
+	}
+}
+
+// TestRunApplyAllRootMixWarningWiring drives runApplyAll through a stub nix: as root the warning
+// reaches stderr exactly once and never stdout, and the run ends as it does for a non-root caller.
+func TestRunApplyAllRootMixWarningWiring(t *testing.T) {
+	const evalAll = `{"h":{"rootKind":"home","targets":["a"]},"s":{"rootKind":"system","targets":["etc/b"]}}`
+	run := func(t *testing.T, euid int) (stdout, stderr string, err error) {
+		withFlakeEntrypoint(t)
+		stubNixForApply(t, evalAll)
+		orig := geteuid
+		t.Cleanup(func() { geteuid = orig })
+		geteuid = func() int { return euid }
+		r, _ := newApplyTestRun()
+		stdout = captureStdout(t, func() {
+			stderr = captureStderr(t, func() { err = runApplyAll(r) })
+		})
+		return stdout, stderr, err
+	}
+	rootOut, rootErr, rootRes := run(t, 0)
+	_, userErr, userRes := run(t, 1000)
+	const marker = "layat: warning: apply --all as root"
+	if n := strings.Count(rootErr, marker); n != 1 {
+		t.Errorf("root stderr carries the warning %d times, want once:\n%s", n, rootErr)
+	}
+	if strings.Contains(rootOut, marker) || strings.Contains(userErr, marker) {
+		t.Errorf("warning leaked (root stdout %q / non-root stderr %q)", rootOut, userErr)
+	}
+	if fmt.Sprint(rootRes) != fmt.Sprint(userRes) {
+		t.Errorf("root run ended with %v, want the non-root outcome %v", rootRes, userRes)
 	}
 }

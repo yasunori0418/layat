@@ -106,14 +106,16 @@ func runApplyManifest(subject *applySubject, name string) error {
 	}
 
 	res, err := engine.Apply(engine.Options{
-		Name:         name,
-		LinkFarm:     linkFarm,
-		RootOverride: flagRoot,
-		NoWait:       flagNoWait,
-		Recopy:       flagRecopy,
-		Backup:       flagBackupEnabled,
-		BackupSuffix: flagBackup,
-		Backend:      newGenerationBackend(),
+		Name:           name,
+		LinkFarm:       linkFarm,
+		RootOverride:   flagRoot,
+		NoWait:         flagNoWait,
+		Recopy:         flagRecopy,
+		Backup:         flagBackupEnabled,
+		BackupSuffix:   flagBackup,
+		Backend:        newGenerationBackend(),
+		SystemDir:      systemDirOverride(),
+		SystemStateDir: systemStateDirOverride(),
 	})
 	if res != nil {
 		// A partial result on failure still carries the reached items and the changes made.
@@ -165,16 +167,18 @@ func runApply(run *applyRun, name string) error {
 	// 1.5 --dryrun previews without side effects (no flock / pending gcroot; build is read-only).
 	if flagDryrun {
 		res, err := engine.Apply(engine.Options{
-			Name:         name,
-			RootKind:     rootKind,
-			FixedRoot:    fixedRoot,
-			RootOverride: flagRoot,
-			Recopy:       flagRecopy,
-			Backup:       flagBackupEnabled,
-			BackupSuffix: flagBackup,
-			DryRun:       true,
-			Build:        dryBuildFunc(gen, name),
-			Backend:      newGenerationBackend(),
+			Name:           name,
+			RootKind:       rootKind,
+			FixedRoot:      fixedRoot,
+			RootOverride:   flagRoot,
+			Recopy:         flagRecopy,
+			Backup:         flagBackupEnabled,
+			BackupSuffix:   flagBackup,
+			DryRun:         true,
+			Build:          dryBuildFunc(gen, name),
+			Backend:        newGenerationBackend(),
+			SystemDir:      systemDirOverride(),
+			SystemStateDir: systemStateDirOverride(),
 		})
 		if err != nil {
 			return err
@@ -247,16 +251,18 @@ func fprintApplyPlan(w io.Writer, res *engine.Result) {
 // applyOne runs engine.Apply for one config; only build is done per config.
 func applyOne(gen generator.Generator, name, rootKind, fixedRoot string) (*engine.Result, error) {
 	return engine.Apply(engine.Options{
-		Name:         name,
-		RootKind:     rootKind,
-		FixedRoot:    fixedRoot,
-		RootOverride: flagRoot,
-		NoWait:       flagNoWait,
-		Recopy:       flagRecopy,
-		Backup:       flagBackupEnabled,
-		BackupSuffix: flagBackup,
-		Build:        func(pending string) (string, error) { return gen.Build(name, pending) },
-		Backend:      newGenerationBackend(),
+		Name:           name,
+		RootKind:       rootKind,
+		FixedRoot:      fixedRoot,
+		RootOverride:   flagRoot,
+		NoWait:         flagNoWait,
+		Recopy:         flagRecopy,
+		Backup:         flagBackupEnabled,
+		BackupSuffix:   flagBackup,
+		Build:          func(pending string) (string, error) { return gen.Build(name, pending) },
+		Backend:        newGenerationBackend(),
+		SystemDir:      systemDirOverride(),
+		SystemStateDir: systemStateDirOverride(),
 	})
 }
 
@@ -317,6 +323,11 @@ func runApplyAll(run *applyRun) error {
 		return nil
 	}
 
+	// 2.2 Run as root with no filter, home / project configs end up root-owned: warn, then go on.
+	if w := rootMixWarning(roots, selected, filter); w != "" {
+		fmt.Fprintln(os.Stderr, w)
+	}
+
 	// 2.3 Stop before any build when two selected configs claim the same target in the same root.
 	if err := detectCrossConfigConflicts(roots, selected, flagRoot); err != nil {
 		return err
@@ -354,6 +365,30 @@ func runApplyAll(run *applyRun) error {
 		return nil
 	}
 	return &exitCodeError{code: code, msg: fmt.Sprintf("layat: apply --all: %d config(s) failed", failures)}
+}
+
+// geteuid reports the caller's effective uid for apply --all's root-mix warning; tests replace it.
+var geteuid = os.Geteuid
+
+// rootMixWarning returns apply --all's one-line warning for a root caller with no root filter whose
+// selection holds home / project configs, naming each with its rootKind; "" when none applies.
+func rootMixWarning(roots map[string]manifest.Root, selected []string, filter string) string {
+	if filter != "" || geteuid() != 0 {
+		return ""
+	}
+	var mixed []string
+	for _, name := range selected {
+		switch kind := roots[name].RootKind; kind {
+		case manifest.RootKindHome, manifest.RootKindProject:
+			mixed = append(mixed, fmt.Sprintf("%s (%s)", name, kind))
+		}
+	}
+	if len(mixed) == 0 {
+		return ""
+	}
+	return fmt.Sprintf("layat: warning: apply --all as root also applies %s: their placements become root-owned "+
+		"and their generations land in root's state; split the run with --system-root and --home-root / --project-root",
+		strings.Join(mixed, ", "))
 }
 
 // detectCrossConfigConflicts errors when a normalized target appears in two selected configs that
@@ -400,16 +435,18 @@ func runApplyAllDryRun(run *applyRun, gen generator.Generator, selected []string
 	code := aggregateDryRun(run, selected, jobs, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
 		ri := roots[name]
 		return engine.Apply(engine.Options{
-			Name:         name,
-			RootKind:     ri.RootKind,
-			FixedRoot:    ri.Root,
-			RootOverride: flagRoot,
-			Recopy:       flagRecopy,
-			Backup:       flagBackupEnabled,
-			BackupSuffix: flagBackup,
-			DryRun:       true,
-			Build:        dryBuildFunc(gen, name),
-			Backend:      newGenerationBackend(),
+			Name:           name,
+			RootKind:       ri.RootKind,
+			FixedRoot:      ri.Root,
+			RootOverride:   flagRoot,
+			Recopy:         flagRecopy,
+			Backup:         flagBackupEnabled,
+			BackupSuffix:   flagBackup,
+			DryRun:         true,
+			Build:          dryBuildFunc(gen, name),
+			Backend:        newGenerationBackend(),
+			SystemDir:      systemDirOverride(),
+			SystemStateDir: systemStateDirOverride(),
 		})
 	}))
 	if code == 0 {

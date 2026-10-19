@@ -50,9 +50,8 @@ attrset のため Nix のキー重複不可で担保され、**重複 `name` と
 > - 同一 manifest 内の正規化後 target 重複 → REQ-5c6b07da-3d06-414d-8770-4f438234b322
 > - `mkManifest` が入力検査の単一ゲートであること → REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34
 >
-> 原文が同じ列挙に含める「`root = systemRoot`（system mode は未実装）を評価時エラーに
-> する」は規範に採らない。この決定（ADR-0013 §5）は ADR-0036 が撤回済みで、現行は
-> `rootKind = "system"` を正規の値として通すため（REQ-16faf428-77f3-492f-b858-222c5274cbf7 の注記と同じ理由）。
+> `root = systemRoot`（system mode）は `rootKind = "system"` として評価を通り、評価時エラーには
+> ならない（→ ADR-0036）。
 
 ## 出典
 

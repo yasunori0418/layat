@@ -17,7 +17,7 @@ _Avoid_: 「配置フレームワーク」「設定管理」（設定は生成�
 _Avoid_: 「config ごとに生成される bash スクリプト」「各層がネイティブ機構へ翻訳する」「層ごとの配置ロジック」「CLI と一体の平らな単一実装」「engine を公開 Go モジュールとして外部から import する」（エンジンは `manifest.json` in 契約を保つ `internal/` 層）
 
 **layat CLI**:
-ユーザーが叩く一次 UX。PATH に常駐する `packages.layat`。**entrypoint** を発見（CWD 既定 / `-f` で上書き）し、**generator（生成器）**（既定 `nix`）経由で named manifest を得て **engine** に配置させる（→ ADR-0055, ADR-0056）。`apply [<name>]`（省略時は `layat.default`）/ `apply --all` / `reset`（配置物を無い状態へ戻す。名指し必須・→ ADR-0020, ADR-0021）/ `rollback`（home mode 限定）/ `list-generations`（home mode 限定）/ `gitignore`（project mode 限定・→ ADR-0023）/ `prune`（root が実在しない孤児 profile 系列を削除する。名指し不要・entrypoint 発見も nix eval / build もしない・→ ADR-0034, ADR-0036 §3）/ `init` のサブコマンドを持つ。**`apply` の manifest 取得元は 2 つ**: 選択された生成器で entrypoint を build する（標準）か、ビルド済み link-farm を `--manifest` で直接渡す（`apply --manifest`・**prebuilt** 生成器・取得後の挙動は同一・→ ADR-0026, ADR-0055）。`--all` と合成するときは `--manifest <name>=<link-farm>` を繰り返し、ビルド済みの名前つき集合を `apply --all` の対象にする（module / host activation の engine kick・→ ADR-0060）。既定の nix 生成器が叩く nix コマンドは `--help` で開示し、`--debug` では生成器が実行する内部コマンドを逐次開示する（→ ADR-0007, ADR-0055）。
+ユーザーが叩く一次 UX。PATH に常駐する `packages.layat`。**entrypoint** を発見（CWD 既定 / `-f` で上書き）し、**generator（生成器）**（既定 `nix`）経由で named manifest を得て **engine** に配置させる（→ ADR-0055, ADR-0056）。`apply [<name>]`（省略時は `layat.default`）/ `apply --all` / `reset`（配置物を無い状態へ戻す。名指し必須・→ ADR-0020, ADR-0021）/ `rollback`（home / system mode 限定）/ `list-generations`（home / system mode 限定）/ `gitignore`（project mode 限定・→ ADR-0023）/ `prune`（root が実在しない孤児 profile 系列を削除する。名指し不要・entrypoint 発見も nix eval / build もしない・→ ADR-0034, ADR-0036 §3）/ `init` のサブコマンドを持つ。**`apply` の manifest 取得元は 2 つ**: 選択された生成器で entrypoint を build する（標準）か、ビルド済み link-farm を `--manifest` で直接渡す（`apply --manifest`・**prebuilt** 生成器・取得後の挙動は同一・→ ADR-0026, ADR-0055）。`--all` と合成するときは `--manifest <name>=<link-farm>` を繰り返し、ビルド済みの名前つき集合を `apply --all` の対象にする（module / host activation の engine kick・→ ADR-0060）。既定の nix 生成器が叩く nix コマンドは `--help` で開示し、`--debug` では生成器が実行する内部コマンドを逐次開示する（→ ADR-0007, ADR-0055）。
 _Avoid_: config ごとの `nix run .#x` ラッパーを一次 UX と説明すること（per-config ラッパー `mkActivationScript` は廃止 → ADR-0007）、`apply` を「常に entrypoint を build する」と説明すること（`--manifest` でビルド済み link-farm も適用する・→ ADR-0026）
 
 **generator (生成器)**:
@@ -99,7 +99,7 @@ _Avoid_: デフォルト挙動として扱うこと、`src` の型による暗�
 ### 状態管理
 
 **generation (世代)**:
-ロールバック単位。既定の **generation backend**（nixprofile）が layat 自身の nix profile（`nix-env --profile <dir>` 式）に乗せて管理する（→ ADR-0002, ADR-0057）。nixprofile はコミット（`--set`）・一覧（`--list-generations`）・切替（`--switch-generation`。rollback もこれを使う）を `nix-env --profile <dir>` で行う。間引き（`--delete-generations`）と store GC（`nix-collect-garbage`）はユーザーが nix コマンドで行う（→ ADR-0015）。`rollback` は profile dir ≠ 配置先のため再配置が必須で、stale 除去は baseline=離れる世代・ポインタ移動は最後（→ ADR-0015）。
+ロールバック単位。既定の **generation backend**（nixprofile）が layat 自身の nix profile（`nix-env --profile <dir>` 式）に乗せて管理する（→ ADR-0002, ADR-0057）。nixprofile はコミット（`--set`）と切替（`--switch-generation`。rollback もこれを使う）を `nix-env --profile <dir>` で行い、一覧は nix-env を経由せず profileDir の世代リンク（`profile-<N>-link`）を読み取り専用で走査する。間引き（`--delete-generations`）と store GC（`nix-collect-garbage`）はユーザーが nix コマンドで行う（→ ADR-0015）。`rollback` は profile dir ≠ 配置先のため再配置が必須で、stale 除去は baseline=離れる世代・ポインタ移動は最後（→ ADR-0015）。
 _Avoid_: 「stateless スクリプト」前提の語り（初期方針からは覆っている）、`nix profile`（新CLI: `list` / `wipe-history` / `rollback`）で管理すること（profile-manifest を要求し `nix-env --set` 製 profile では動かない・→ ADR-0015）
 
 **store マニフェスト (store manifest)**:

@@ -1,4 +1,4 @@
-# nix-unit: eval 時に throw する検査ゲート群（systemRoot 未実装・copy 併用・絶対/`..` escape・
+# nix-unit: eval 時に throw する検査ゲート群（copy 併用・絶対/`..` escape・
 # root 相対 src の target 重なり・重複 target・未知キー・素文字列 src・共有 entriesType）をアサートする。
 # src は toString が安定する fake な flake-input 相当（`{ outPath = …; }`）を使う。
 { lib, layat }:
@@ -9,18 +9,6 @@ let
   norm = root: entries: layat.normalizeManifest { inherit lib root entries; };
 in
 {
-  # systemRoot は未実装。
-  testSystemRootUnimplemented = {
-    expr =
-      (norm layat.systemRoot {
-        "x" = {
-          src = fakeSrc;
-        };
-      }).entries;
-    expectedError.type = "ThrownError";
-    expectedError.msg = "system mode";
-  };
-
   # method = "copy" かつ out-of-store marker は意図矛盾。
   testCopyOutOfStoreRejected = {
     expr =

@@ -6,6 +6,7 @@ package engine
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"time"
@@ -44,6 +45,12 @@ type Options struct {
 	WorkDir string
 	// StateDir overrides the profile base <state> (empty = resolved via paths.StateDir · mainly for tests).
 	StateDir string
+	// SystemDir overrides the system-mode profile base (empty = Backend.SystemBase).
+	SystemDir string
+	// SystemStateDir overrides the system-mode record base <state> (empty = /var/lib).
+	SystemStateDir string
+	// Geteuid reports the effective uid system mode checks for 0 (nil = os.Geteuid).
+	Geteuid func() int
 	// NoWait makes the flock a try-lock (shellHook path; ErrSkipped if held).
 	NoWait bool
 	// Recopy is the apply --recopy modifier (unconditionally overwrite/re-copy all copy targets in the config from src).
@@ -167,8 +174,8 @@ func Apply(opts Options) (*Result, error) {
 	// 1. resolve root → fix profileDir.
 	prof, root, err := ProfileFor(ProfileOptions{
 		Name: opts.Name, RootKind: rootKind, FixedRoot: fixedRoot,
-		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir, Git: opts.Git,
-		Backend: opts.Backend,
+		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir,
+		SystemDir: opts.SystemDir, Git: opts.Git, Backend: opts.Backend,
 	})
 	if err != nil {
 		return nil, err
@@ -178,7 +185,7 @@ func Apply(opts Options) (*Result, error) {
 	a.profile = prof
 	a.result.ProfileDir = a.profile.Dir
 	a.result.Profile = a.profile.Profile
-	if a.record, err = recordFor(opts.StateDir, opts.Name, rootKind, root, opts.RootOverride != ""); err != nil {
+	if a.record, err = recordFor(opts.StateDir, opts.SystemStateDir, opts.Name, rootKind, root, opts.RootOverride != ""); err != nil {
 		return nil, err
 	}
 
@@ -190,6 +197,11 @@ func Apply(opts Options) (*Result, error) {
 	//     the planner runs read-only and the plan is packed into Result.
 	if opts.DryRun {
 		return a.dryRun()
+	}
+
+	// 1.6 system mode mutates only as root; refused before any mkdir / flock.
+	if err := requireRoot(rootKind, opts.Geteuid); err != nil {
+		return nil, err
 	}
 
 	// 2. prepare profileDir / backref (the flock opens profileDir, so create it first).
@@ -527,12 +539,27 @@ func resolveRoot(rootKind, fixedRoot, rootOverride, workDir string, git GitFunc)
 		}
 		return filepath.Abs(fixedRoot)
 	case manifest.RootKindSystem:
-		return "", fmt.Errorf("layat: root = systemRoot (system mode) is not implemented")
+		return "/", nil
 	case "":
 		return "", fmt.Errorf("layat: rootKind is undetermined (eval prefetch or a manifest is required)")
 	default:
 		return "", fmt.Errorf("layat: unknown rootKind: %q", rootKind)
 	}
+}
+
+// requireRoot refuses a mutating system-mode operation unless the effective uid is 0 (geteuid
+// nil = os.Geteuid). Other root kinds pass unchecked.
+func requireRoot(rootKind string, geteuid func() int) error {
+	if rootKind != manifest.RootKindSystem {
+		return nil
+	}
+	if geteuid == nil {
+		geteuid = os.Geteuid
+	}
+	if geteuid() != 0 {
+		return fmt.Errorf("layat: system mode requires root privileges (rerun with sudo): %w", fs.ErrPermission)
+	}
+	return nil
 }
 
 func (a *applier) ensureProfileDir() error {

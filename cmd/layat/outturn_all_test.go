@@ -535,7 +535,7 @@ func TestListGenerationsAllWiring(t *testing.T) {
 		checkConformance(t, buf)
 
 		byName, order := subjectResults(t, buf)
-		want := []string{"home", "work"}
+		want := []string{"home:home", "home:work"}
 		if !slices.Equal(order, want) {
 			t.Fatalf("results order = %v, want %v (lexical scan order)", order, want)
 		}
@@ -572,13 +572,13 @@ func TestListGenerationsAllWiring(t *testing.T) {
 		}
 		byName, order := subjectResults(t, buf)
 		// The scan stops at the failure, so the untouched config never becomes a subject at all.
-		if want := []string{"home", "work"}; !slices.Equal(order, want) {
+		if want := []string{"home:home", "home:work"}; !slices.Equal(order, want) {
 			t.Fatalf("results = %v, want %v — the scan stops at the failure and zzz is never reached", order, want)
 		}
-		if status, errs := statusAndErrors(t, byName["home"]); status != "success" || len(errs) != 0 {
+		if status, errs := statusAndErrors(t, byName["home:home"]); status != "success" || len(errs) != 0 {
 			t.Errorf("already-listed subject = (%s, %v), want (success, none) — it keeps its result", status, errs)
 		}
-		if status, errs := statusAndErrors(t, byName["work"]); status != "error" || len(errs) != 1 {
+		if status, errs := statusAndErrors(t, byName["home:work"]); status != "error" || len(errs) != 1 {
 			t.Errorf("failing subject = (%s, %v), want (error, exactly one subject-borne error)", status, errs)
 		}
 	})

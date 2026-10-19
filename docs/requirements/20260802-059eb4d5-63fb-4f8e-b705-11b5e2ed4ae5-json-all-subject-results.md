@@ -13,7 +13,9 @@ specification: |
   different document. `specVersion` / `tool` / `command` / `dryRun` / `startedAt` /
   `finishedAt` SHALL be placed once at the top level, so that an extracted `results[i]`
   SHALL NOT be a valid document on its own. The mapping rules for the contents of each
-  `results[i]` SHALL be the same as for a single config, with no `--all`-specific mapping.
+  `results[i]` SHALL be the same as for a single config, with no `--all`-specific mapping
+  except that `list-generations --all` SHALL name each subject `<mode>:<name>`, since it
+  scans two profile bases that can hold the same config name.
 
   `results[]` SHALL be ordered lexically after applying the per-command selection rule.
   Since each config is independently atomic, the order SHALL NOT affect the outcome, and a
@@ -50,10 +52,12 @@ specification: |
   text output does is stated elsewhere and not restated here.
 
   `list-generations --all` SHALL hold `result.info.generations` per home mode config found
-  by scanning the profile directories, with `items: []`, identically to a single
-  execution. A read failure during enumeration SHALL abort there as before, the failing
-  config's subject SHALL carry that failure, and the results of the configs already
-  enumerated SHALL remain.
+  by scanning the user profile base and then per system mode config found by scanning the
+  system profile base, with `items: []`, identically to a single execution. A failure to
+  read the user profile base SHALL abort before any subject is created. A failure to list a
+  profile SHALL abort there, the failing config's subject SHALL carry that failure, and the
+  results of the configs already enumerated SHALL remain. A system profile base that cannot
+  be read SHALL instead be skipped with a warning.
 
   The read-only `--all` commands SHALL NOT place the configs after the abort into
   `results[]`, since both abort enumeration at the first failure, whereas `apply --all`
@@ -67,7 +71,9 @@ specification_ja: |
   特殊形であって別文書ではない）。`specVersion` / `tool` / `command` / `dryRun` /
   `startedAt` / `finishedAt` はトップに 1 度だけ置き、`results[i]` を切り出しても単独で
   valid な文書にはならないようにしなければならない。各 `results[i]` の中身の写像規則は
-  単一 config と同一でなければならず、`--all` 固有の写像を持ってはならない。
+  単一 config と同一でなければならず、`--all` 固有の写像を持ってはならない。ただし
+  `list-generations --all` は同じ config 名を持ちうる 2 つの profile 基底を走査するため、
+  各 subject を `<mode>:<name>` と名付けなければならない。
 
   `results[]` はコマンドごとの選択規則を適用したあとの辞書順で並べなければならない。各
   config は独立 atomic なので順序は結果に影響せず、消費側は `subject.name` で引かなければ
@@ -102,10 +108,14 @@ specification_ja: |
   非対称は意図的に保たなければならない。そのテキスト出力が何をするかは別 item の担当で、
   本 item では規定しない。
 
-  `list-generations --all` は profile ディレクトリ走査で見つかった home mode config ごとに
-  `result.info.generations` を持たなければならない（`items: []`・単一実行と同一）。列挙途中の
-  読み取り失敗は従来どおりそこで打ち切らなければならず、失敗した config の subject がその
-  失敗を持ち、既に列挙済みの config の結果は残さなければならない。
+  `list-generations --all` は user profile 基底の走査で見つかった home mode config ごと、
+  続けて system profile 基底の走査で見つかった system mode config ごとに
+  `result.info.generations` を持たなければならない（`items: []`・単一実行と同一）。user
+  profile 基底の読み取り失敗は subject を作る前に打ち切らなければならない。profile の一覧
+  失敗はそこで打ち切らなければならず、失敗した config の subject がその失敗を持ち、既に
+  列挙済みの config の結果は残さなければならない。
+  system profile 基底が読めないときは打ち切らず、warning を出してその基底の走査を省かなければ
+  ならない。
 
   読み取り系 `--all` は打ち切り以降の config を `results[]` に載せてはならない
   （両者は最初の失敗で列挙を中断するため）。`apply --all` は部分失敗でも全 config を
@@ -123,11 +133,15 @@ specification_ja: |
 （単一実行は N=1 の特殊形であって別文書ではない）。`specVersion` / `tool` / `command` /
 `dryRun` / `startedAt` / `finishedAt` はトップに 1 度だけ置き、`results[i]` を切り出しても
 単独で valid な文書にはならない。各 `results[i]` の中身（items / changes / generation /
-warnings / info）の写像規則は単一 config と同一で、`--all` 固有の写像は無い。
+warnings / info）の写像規則は単一 config と同一で、`--all` 固有の写像は無い。例外は
+`list-generations --all` の subject 名で、2 つの profile 基底に同名 config がありうるため
+`<mode>:<name>`（user 基底は `home`、system 基底は `system`）と名付ける。
 
 - **順序**: `results[]` はコマンドごとの選択規則（`apply --all` は `--project-root` 等の
   フィルタ適用後・`gitignore --all` は projectRoot config のみ・`list-generations --all` は
-  profile ディレクトリ走査で見つかった home mode config）を適用したあとの辞書順で並ぶ。
+  user profile 基底で見つかった home mode config、続けて system profile 基底で見つかった
+  system mode config）を適用したあとの辞書順で並ぶ（`list-generations --all` は基底ごとの
+  辞書順）。
   ただし各 config は独立 atomic なので順序は結果に影響せず、消費側は `subject.name` で
   引くこと（`changes[].itemId` の解決は**同一 `SubjectResult` 内**に閉じる・result 跨ぎ
   参照は outturn lint MUST 違反）。
@@ -157,10 +171,11 @@ warnings / info）の写像規則は単一 config と同一で、`--all` 固有�
   「どの config が宣言しているか」の偽り）。union が必要な消費側が `results` を跨いで
   union + dedup する。**テキスト既定出力は従来どおり dedup + sort**（repo の `.gitignore` は
   1 つ）で、テキスト集約 / JSON per-config の非対称を意図的に保つ。
-- **`list-generations --all`**: profile ディレクトリ走査で見つかった home mode config ごとに
-  `result.info.generations` を持つ（`items: []`・単一実行と同一）。列挙途中の読み取り失敗は
-  従来どおりそこで打ち切り、失敗した config の subject がその失敗を持ち、既に列挙済みの
-  config の結果は残る。
+- **`list-generations --all`**: user profile 基底で見つかった home mode config、続けて
+  system profile 基底で見つかった system mode config ごとに `result.info.generations` を持つ
+  （`items: []`・単一実行と同一）。user profile 基底の読み取り失敗は subject を作る前に
+  打ち切る。profile の一覧失敗はそこで打ち切り、失敗した config の subject がその失敗を持ち、
+  既に列挙済みの config の結果は残る。system profile 基底が読めないときは warning を出してその基底の走査を省く。
 - **読み取り系 `--all` は打ち切り以降の config を `results[]` に載せない**
   （`list-generations --all` / `gitignore --all`）。両者は最初の失敗で列挙を中断するため、
   `results[]` は「失敗した config まで」で終わり、未到達の config は要素として現れない。
@@ -169,7 +184,7 @@ warnings / info）の写像規則は単一 config と同一で、`--all` 固有�
   変更系は続行」という既存の実行方針の反映であり、消費側は **`results[]` の subject 集合が
   対象 config 集合と一致することを前提にしてはならない**（成功時は一致する）。
 
-> **上は原文の写しで、規範は frontmatter が正**。「エラーの層」項のうち、item 起因の
+> **上は原文の写しに system profile 基底と `list-generations --all` の subject 名を足したもので、規範は frontmatter が正**。「エラーの層」項のうち、item 起因の
 > 失敗を `item.error` に埋めて `results[i].errors[]` へ重複させないこと・トップ
 > `errors[]` に載るのが主体列挙前の失敗のみであることは、単一 config 実行と共通の
 > 振り分け規則であり REQ-9341fa5d-836e-4023-af53-cc7d273438d1 の規範。本 item が規範化するのは `--all` 固有の差分
@@ -192,4 +207,5 @@ warnings / info）の写像規則は単一 config と同一で、`--all` 固有�
 出力」のサブ項目「`--all` の複数 `SubjectResult`（#164）」とその配下の全項目。
 
 決定の実体は ADR-0043 §7（`--all` の複数 `SubjectResult`）・§6（conflict 1 件でも
-`status:error`）。
+`status:error`）。system profile 基底と subject 名は原文に無く、決定の実体は ADR-0036
+（system mode の実装と `list-generations` の home / system 公開）。

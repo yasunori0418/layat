@@ -1,13 +1,13 @@
 ---
 id: "DSG-4a84f282-76ea-47c9-aede-deac12ff5257"
 type: design
-name: "実装スコープを standalone CLI + project mode + home mode に限り、system mode とモジュール 2 層は将来拡張に置く"
+name: "実装スコープを standalone CLI + project mode + home mode + system mode とし、NixOS / nix-darwin モジュールは将来拡張に置く"
 satisfies:
   - "REQ-14f0aec9-abae-4621-82f3-40536a1ad904"
   - "TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2"
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
 ---
-# DSG-4a84f282-76ea-47c9-aede-deac12ff5257: 実装スコープを standalone CLI + project mode + home mode に限り、system mode とモジュール 2 層は将来拡張に置く
+# DSG-4a84f282-76ea-47c9-aede-deac12ff5257: 実装スコープを standalone CLI + project mode + home mode + system mode とし、NixOS / nix-darwin モジュールは将来拡張に置く
 
 ## 設計
 
@@ -17,23 +17,25 @@ satisfies:
 | project mode（devShell / `projectRoot`）| 実装する（コア）|
 | home-manager モジュール | 実装する |
 | NixOS / nix-darwin モジュール | 将来拡張（スタブ公開のみ・→ DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda）|
-| system mode（`systemRoot`）| 将来拡張 |
+| system mode（`systemRoot`）| 実装する（変更系操作は root 権限が要る）|
 
 REQ-14f0aec9-abae-4621-82f3-40536a1ad904 が layat CLI を一次 UX に据え、project mode を devShell 同梱で canonical と
 する以上、**最初に完成させるべきは CLI と project mode**になる。home mode（`homeRoot`）を
 同時に含めるのは、そこが rollback・世代管理という layat 固有機構を通る唯一の経路であり、
 ここを外すと世代機構が実装されないまま残るため。
 
-将来拡張へ置く 2 つは、いずれも「engine 側の追加を必要としない」ことを条件に選んでいる。
+system mode（`systemRoot`）は、root マーカーの union に最初から含めてあり（root マーカーの型は
+requirement 側の担当）、engine の root 解決・profile 基底・記録基底に分岐を足して実装している。
+変更系操作（`apply` / `reset` / `rollback`）は engine が root 権限を検査する。
+
+将来拡張へ置くのは NixOS / nix-darwin モジュールで、「engine 側の追加を必要としない」ことを
+条件に選んでいる。
 
 - **NixOS / nix-darwin モジュール**: REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 の通り配線に過ぎず、
   home-manager モジュールで確立する engine kick の形（DSG-98d7fa5d-c590-441a-b682-0ab7afa14233 の
   ビルド済み manifest クラス）をそのまま流用できる。実装が後になっても
   engine の設計が変わらない。実 activate を E2E で検証しないことは
   TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2 が定めている
-- **system mode**: root マーカーとしては `systemRoot` を最初から union に含めるため
-  （root マーカーの型は requirement 側の担当）、engine の root 解決に
-  分岐を後から足すだけで済む
 
 **モジュール対応の位置づけ**も同じ線引きから来る。モジュール層は他のモジュールシステムの
 switch と一括で動いてほしいユースケースを拾うために存在するのであって、各モジュールの

@@ -187,6 +187,58 @@ func TestResolveRecordRootHashSeries(t *testing.T) {
 	}
 }
 
+// TestResolveLayoutTable pins every rootKind × --root layout of Resolve and ResolveRecord as
+// literal paths, so a change to one kind's key cannot move another kind's profile or record.
+func TestResolveLayoutTable(t *testing.T) {
+	for _, tc := range []struct {
+		desc, rootKind, root string
+		override             bool
+		dir, backref         string
+		recDir, recBackref   string
+	}{
+		{"home", manifest.RootKindHome, "/home/me", false,
+			"/base/vim", "",
+			"/state/layat/vim", ""},
+		{"home with --root", manifest.RootKindHome, "/tmp/sandbox", true,
+			"/base/39063e070b845ac426247c9b241f1698/vim", "/base/39063e070b845ac426247c9b241f1698/.root",
+			"/state/layat/39063e070b845ac426247c9b241f1698/vim", "/state/layat/39063e070b845ac426247c9b241f1698/.root"},
+		{"project", manifest.RootKindProject, "/home/me/proj", false,
+			"/base/4c3b4937ddaa21c332cba088d92b4d24/vim", "/base/4c3b4937ddaa21c332cba088d92b4d24/.root",
+			"/state/layat/4c3b4937ddaa21c332cba088d92b4d24/vim", "/state/layat/4c3b4937ddaa21c332cba088d92b4d24/.root"},
+		{"project with --root", manifest.RootKindProject, "/tmp/sandbox", true,
+			"/base/39063e070b845ac426247c9b241f1698/vim", "/base/39063e070b845ac426247c9b241f1698/.root",
+			"/state/layat/39063e070b845ac426247c9b241f1698/vim", "/state/layat/39063e070b845ac426247c9b241f1698/.root"},
+		{"fixed", manifest.RootKindFixed, "/opt/x", false,
+			"/base/9c1df247e0f78b46bc6a9d46d8d72d30/vim", "/base/9c1df247e0f78b46bc6a9d46d8d72d30/.root",
+			"/state/layat/9c1df247e0f78b46bc6a9d46d8d72d30/vim", "/state/layat/9c1df247e0f78b46bc6a9d46d8d72d30/.root"},
+		{"fixed with --root", manifest.RootKindFixed, "/tmp/sandbox", true,
+			"/base/39063e070b845ac426247c9b241f1698/vim", "/base/39063e070b845ac426247c9b241f1698/.root",
+			"/state/layat/39063e070b845ac426247c9b241f1698/vim", "/state/layat/39063e070b845ac426247c9b241f1698/.root"},
+		{"system", manifest.RootKindSystem, "/", false,
+			"/base/vim", "",
+			"/state/layat/vim", ""},
+		{"system with --root", manifest.RootKindSystem, "/tmp/sandbox", true,
+			"/base/39063e070b845ac426247c9b241f1698/vim", "/base/39063e070b845ac426247c9b241f1698/.root",
+			"/state/layat/39063e070b845ac426247c9b241f1698/vim", "/state/layat/39063e070b845ac426247c9b241f1698/.root"},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			p := Resolve("/base", "vim", tc.rootKind, tc.root, tc.override)
+			wantP := Profile{Dir: tc.dir, Profile: tc.dir + "/profile", Pending: tc.dir + "/.pending", Backref: tc.backref}
+			if tc.backref != "" {
+				wantP.BackrefDir = filepath.Dir(tc.backref)
+			}
+			if p != wantP {
+				t.Errorf("Resolve = %+v, want %+v", p, wantP)
+			}
+			r := ResolveRecord("/state", "vim", tc.rootKind, tc.root, tc.override)
+			wantR := Record{Dir: tc.recDir, File: tc.recDir + "/last-applied.json", Backref: tc.recBackref}
+			if r != wantR {
+				t.Errorf("ResolveRecord = %+v, want %+v", r, wantR)
+			}
+		})
+	}
+}
+
 // writeBackref writes a .root under hashDir exactly as the engine does
 // (the recorded root plus a trailing newline is the shape on disk).
 func writeBackref(t *testing.T, hashDir, content string) {

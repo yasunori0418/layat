@@ -83,6 +83,12 @@ func TestWriteRecordRoundTrip(t *testing.T) {
 	if entryTargets(gotM) != "a" {
 		t.Errorf("manifest entries = %s, want a", entryTargets(gotM))
 	}
+	// Every user can read the record, so a read-only operation does not need the writer's privileges.
+	if fi, err := os.Stat(rec.File); err != nil {
+		t.Error(err)
+	} else if fi.Mode().Perm() != 0o644 {
+		t.Errorf("record mode = %v, want 0644", fi.Mode().Perm())
+	}
 	if b, err := os.ReadFile(rec.Backref); err != nil || string(b) != root+"\n" {
 		t.Errorf("backref = %q, %v; want %q", b, err, root+"\n")
 	}
@@ -237,6 +243,52 @@ func TestApplyWritesRecord(t *testing.T) {
 	}
 	if at, err := time.Parse(time.RFC3339, got.AppliedAt); err != nil || at.Before(before) {
 		t.Errorf("appliedAt = %q (%v), want the apply time", got.AppliedAt, err)
+	}
+}
+
+// TestApplySystemWritesRecordUnderSystemStateDir verifies that a root system apply keeps its
+// record under <SystemStateDir>/layat with the profile's key, not under the user state.
+func TestApplySystemWritesRecordUnderSystemStateDir(t *testing.T) {
+	root, state, sys, sysState := realTempDir(t), realTempDir(t), realTempDir(t), realTempDir(t)
+	lf := writeLinkFarm(t, systemManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+	if _, err := Apply(Options{
+		LinkFarm: lf, Name: "sys", RootOverride: root, StateDir: state, SystemStateDir: sysState,
+		Backend: &generation.Fake{System: sys}, Geteuid: euid(0),
+	}); err != nil {
+		t.Fatalf("root system apply: %v", err)
+	}
+
+	hashDir := filepath.Join(sysState, "layat", paths.RootHash(root))
+	got, _ := mustReadRecord(t, paths.Record{File: filepath.Join(hashDir, "sys", "last-applied.json")})
+	if got.LinkFarm != lf {
+		t.Errorf("linkFarm = %q, want %q", got.LinkFarm, lf)
+	}
+	if b, err := os.ReadFile(filepath.Join(hashDir, ".root")); err != nil || string(b) != root+"\n" {
+		t.Errorf("record backref = %q (%v), want %q", b, err, root+"\n")
+	}
+	assertEmptyDirs(t, state)
+}
+
+// TestRecordForSystemDefaultBase verifies that an empty SystemStateDir puts the system record
+// under /var/lib/layat with the profile's key.
+func TestRecordForSystemDefaultBase(t *testing.T) {
+	for _, tc := range []struct {
+		desc, root string
+		override   bool
+		want       string
+	}{
+		{"no --root", "/", false, "/var/lib/layat/sys/last-applied.json"},
+		{"--root", "/tmp/sandbox", true, "/var/lib/layat/39063e070b845ac426247c9b241f1698/sys/last-applied.json"},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			rec, err := recordFor("/state", "", "sys", manifest.RootKindSystem, tc.root, tc.override)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if rec.File != tc.want {
+				t.Errorf("File = %q, want %q", rec.File, tc.want)
+			}
+		})
 	}
 }
 

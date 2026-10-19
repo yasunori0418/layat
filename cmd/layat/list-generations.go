@@ -13,9 +13,10 @@ import (
 	"github.com/yasunori0418/layat/internal/paths"
 )
 
-// generationsInfo is list-generations' result.info: the generation inventory. It is a pointer so
-// failures before the listing omit info.
+// generationsInfo is list-generations' result.info: the profile's mode ("home" / "system") and the
+// generation inventory. It is a pointer so failures before the listing omit info.
 type generationsInfo struct {
+	Mode        string          `json:"mode"`
 	Generations []generationRow `json:"generations"`
 }
 
@@ -31,9 +32,9 @@ func newListGenerationsCmd() *cobra.Command {
 	var all bool
 	cmd := &cobra.Command{
 		Use:   "list-generations [name]",
-		Short: "List generations (home mode only)",
-		Long: "A read-only command that lists the generations of the home mode profile. " +
-			"Pass <name> for that config, or --all to list every home mode config.",
+		Short: "List generations (home / system mode only)",
+		Long: "A read-only command that lists the generations of the home / system mode profile. " +
+			"Pass <name> for that config, or --all to list every home mode config, then every system mode config.",
 		Args: cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// beginListGenerationsRun publishes the run to outturnReport, so main emits the envelope after
@@ -51,11 +52,11 @@ func newListGenerationsCmd() *cobra.Command {
 			return runListGenerations(run, args[0])
 		},
 	}
-	cmd.Flags().BoolVar(&all, "all", false, "List generations for every home mode config")
+	cmd.Flags().BoolVar(&all, "all", false, "List generations for every home mode config, then every system mode config")
 	return cmd
 }
 
-// runListGenerations confirms rootKind via eval pre-resolution (home mode only), resolves profileDir, and lists generations.
+// runListGenerations confirms rootKind via eval pre-resolution (home / system mode only), resolves profileDir, and lists generations.
 func runListGenerations(run *listGenerationsRun, name string) error {
 	// The config name is the run's single outturn subject.
 	subject := run.beginSubject(name)
@@ -72,8 +73,8 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 		return err
 	}
 	rootKind, fixedRoot := root.RootKind, root.Root
-	if rootKind != manifest.RootKindHome {
-		return fmt.Errorf("layat: list-generations is home mode only (layat.%s has rootKind=%q)", name, rootKind)
+	if rootKind != manifest.RootKindHome && rootKind != manifest.RootKindSystem {
+		return fmt.Errorf("layat: list-generations is home / system mode only (layat.%s has rootKind=%q)", name, rootKind)
 	}
 
 	backend := newGenerationBackend()
@@ -83,6 +84,7 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 		FixedRoot:    fixedRoot,
 		RootOverride: flagRoot,
 		Backend:      backend,
+		SystemDir:    systemDirOverride(),
 	})
 	if err != nil {
 		return err
@@ -92,14 +94,14 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 		return err
 	}
 	// The listing rides result.info; items stays [] and the generation slot stays absent.
-	subject.setPayload(generationsPayload(gens))
+	subject.setPayload(generationsPayload(rootKind, gens))
 	printGenerations(gens)
 	return nil
 }
 
-// generationsPayload wraps a config's listing as its SubjectResult payload in result.info.
-func generationsPayload(gens []generation.Generation) *outturnPayload[*generationsInfo] {
-	return &outturnPayload[*generationsInfo]{info: &generationsInfo{Generations: generationRows(gens)}}
+// generationsPayload wraps a config's listing and its mode as its SubjectResult payload in result.info.
+func generationsPayload(mode string, gens []generation.Generation) *outturnPayload[*generationsInfo] {
+	return &outturnPayload[*generationsInfo]{info: &generationsInfo{Mode: mode, Generations: generationRows(gens)}}
 }
 
 // generationRow is one generation of the --json inventory. date is the backend's display
@@ -120,59 +122,90 @@ func generationRows(gens []generation.Generation) []generationRow {
 	return rows
 }
 
-// runListAllGenerations lists the generations of every home profile directly under the
-// backend's user base, one subject per config. It reads the disk only; roothash-family
-// directories hold no profile directly and are skipped.
+// runListAllGenerations lists the generations of every profile directly under the backend's user
+// base (home), then under its system base (system), one "<mode>:<name>" subject per config. It
+// reads the disk only; an unreadable system base is warned about and skipped.
 func runListAllGenerations(run *listGenerationsRun) error {
 	stateDir, err := paths.StateDir()
 	if err != nil {
 		return err
 	}
 	backend := newGenerationBackend()
-	base := backend.UserBase(stateDir)
+	userBase := backend.UserBase(stateDir)
+	homeNames, err := profileNamesUnder(userBase, manifest.RootKindHome)
+	if err != nil {
+		return fmt.Errorf("layat: cannot read the profile base (%s): %w", userBase, err)
+	}
+	systemBase := systemDirOverride()
+	if systemBase == "" {
+		systemBase = backend.SystemBase()
+	}
+	systemNames, err := profileNamesUnder(systemBase, manifest.RootKindSystem)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "layat: warning: skipping the system profile base (%s): %v\n", systemBase, err)
+	}
+
+	printed := false
+	for _, b := range []struct {
+		base, mode string
+		names      []string
+	}{
+		{userBase, manifest.RootKindHome, homeNames},
+		{systemBase, manifest.RootKindSystem, systemNames},
+	} {
+		for _, name := range b.names {
+			subject := run.beginSubject(b.mode + ":" + name)
+			prof := paths.Resolve(b.base, name, b.mode, "", false)
+			gens, err := backend.List(prof.Profile)
+			if err != nil {
+				// The listing stops at the first failure, which this config's subject carries.
+				subject.finish(err)
+				return err
+			}
+			subject.setPayload(generationsPayload(b.mode, gens))
+			subject.finish(nil)
+			// Under --json stdout belongs to the envelope; the listing still runs for the exit behavior.
+			if flagJSON {
+				continue
+			}
+			if printed {
+				fmt.Println()
+			}
+			printed = true
+			if b.mode == manifest.RootKindSystem {
+				fmt.Printf("# %s (system)\n", name)
+			} else {
+				fmt.Printf("# %s\n", name)
+			}
+			printGenerations(gens)
+		}
+	}
+	return nil
+}
+
+// profileNamesUnder returns, sorted, the names under base holding a profile directly (roothash-family
+// directories hold none and are skipped). A base that does not exist yet lists nothing.
+func profileNamesUnder(base, mode string) ([]string, error) {
 	dents, err := os.ReadDir(base)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return nil // no profile created yet = empty listing.
+			return nil, nil
 		}
-		return fmt.Errorf("layat: cannot read the profile base (%s): %w", base, err)
+		return nil, err
 	}
-
 	var names []string
 	for _, d := range dents {
 		if !d.IsDir() {
 			continue
 		}
-		prof := paths.Resolve(base, d.Name(), manifest.RootKindHome, "", false)
+		prof := paths.Resolve(base, d.Name(), mode, "", false)
 		if _, err := os.Lstat(prof.Profile); err != nil {
-			continue // no profile directly under it = roothash family / empty directory.
+			continue
 		}
 		names = append(names, d.Name())
 	}
 	sort.Strings(names)
-
-	for i, name := range names {
-		subject := run.beginSubject(name)
-		prof := paths.Resolve(base, name, manifest.RootKindHome, "", false)
-		gens, err := backend.List(prof.Profile)
-		if err != nil {
-			// The listing stops at the first failure, which this config's subject carries.
-			subject.finish(err)
-			return err
-		}
-		subject.setPayload(generationsPayload(gens))
-		subject.finish(nil)
-		// Under --json stdout belongs to the envelope; the listing still runs for the exit behavior.
-		if flagJSON {
-			continue
-		}
-		if i > 0 {
-			fmt.Println()
-		}
-		fmt.Printf("# %s\n", name)
-		printGenerations(gens)
-	}
-	return nil
+	return names, nil
 }
 
 // printGenerations prints the generation list to stdout. It prints nothing under --json; the --all

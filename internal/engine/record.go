@@ -28,8 +28,18 @@ type lastApplied struct {
 	Manifest      json.RawMessage `json:"manifest"`
 }
 
-// recordFor locates the last-applied record of a config, resolving the state base like ProfileFor.
-func recordFor(stateDir, name, rootKind, root string, rootOverride bool) (paths.Record, error) {
+// defaultSystemStateDir is the record base <state> for system mode (records under /var/lib/layat).
+const defaultSystemStateDir = "/var/lib"
+
+// recordFor locates the last-applied record of a config, resolving the state base like ProfileFor:
+// system mode under systemStateDir (empty = /var/lib), otherwise under the user stateDir.
+func recordFor(stateDir, systemStateDir, name, rootKind, root string, rootOverride bool) (paths.Record, error) {
+	if rootKind == manifest.RootKindSystem {
+		if systemStateDir == "" {
+			systemStateDir = defaultSystemStateDir
+		}
+		return paths.ResolveRecord(systemStateDir, name, rootKind, root, rootOverride), nil
+	}
 	if stateDir == "" {
 		var err error
 		if stateDir, err = paths.StateDir(); err != nil {
@@ -127,6 +137,10 @@ func writeRecord(rec paths.Record, root, linkFarm string, manifestJSON []byte, a
 	_, werr := tmp.Write(data)
 	if cerr := tmp.Close(); werr == nil {
 		werr = cerr
+	}
+	// CreateTemp makes the file 0600; every user reads the record, e.g. a non-root apply --dryrun.
+	if werr == nil {
+		werr = os.Chmod(tmp.Name(), 0o644)
 	}
 	if werr == nil {
 		werr = os.Rename(tmp.Name(), rec.File)

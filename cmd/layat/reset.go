@@ -67,13 +67,15 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 	// --dryrun previews without side effects (no flock / confirm) and exits 0.
 	if dryrun {
 		res, err := engine.Reset(engine.ResetOptions{
-			Name:         name,
-			RootKind:     rootKind,
-			FixedRoot:    fixedRoot,
-			RootOverride: flagRoot,
-			Targets:      targets,
-			DryRun:       true,
-			Backend:      newGenerationBackend(),
+			Name:           name,
+			RootKind:       rootKind,
+			FixedRoot:      fixedRoot,
+			RootOverride:   flagRoot,
+			Targets:        targets,
+			DryRun:         true,
+			Backend:        newGenerationBackend(),
+			SystemDir:      systemDirOverride(),
+			SystemStateDir: systemStateDirOverride(),
 		})
 		if err != nil {
 			return err
@@ -98,13 +100,15 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 	}
 
 	res, err := engine.Reset(engine.ResetOptions{
-		Name:         name,
-		RootKind:     rootKind,
-		FixedRoot:    fixedRoot,
-		RootOverride: flagRoot,
-		Targets:      targets,
-		Confirm:      confirm,
-		Backend:      newGenerationBackend(),
+		Name:           name,
+		RootKind:       rootKind,
+		FixedRoot:      fixedRoot,
+		RootOverride:   flagRoot,
+		Targets:        targets,
+		Confirm:        confirm,
+		Backend:        newGenerationBackend(),
+		SystemDir:      systemDirOverride(),
+		SystemStateDir: systemStateDirOverride(),
 	})
 	if res != nil {
 		// A partial result on failure still carries the changes made before the failure.

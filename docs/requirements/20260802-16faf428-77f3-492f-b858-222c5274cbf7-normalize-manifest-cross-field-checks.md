@@ -27,10 +27,9 @@ specification_ja: |
 `normalizeManifest` はクロスフィールドの `lib.throwIf` チェックを持つ。
 
 - `method = "copy"` かつ out-of-store marker の組み合わせを拒否する。
-- `root = systemRoot` を未実装として拒否する。
 
-上の箇条書きは原文の写しで、規範は frontmatter が正。`root = systemRoot` の拒否は
-規範に含めない（理由は下の注記）。
+規範は frontmatter が正。`root = systemRoot`（system mode）は `rootKind = "system"` として
+評価を通り、このチェックの対象ではない（→ ADR-0036）。
 
 単一フィールドの optionType では表現できない条件のため、型検査とは別に `throwIf` で
 評価時に停止させる。out-of-store は「ライブ symlink」、copy は「place-once
@@ -39,10 +38,3 @@ specification_ja: |
 ## 出典
 
 `docs/spec.md`「lib API」→「入力検査（`evalModules` + `normalizeManifest`）」。
-
-> **`root = systemRoot` の拒否を本 item に含めない理由**: `docs/spec.md` の当該記述は
-> 「`root = systemRoot` の未実装拒否」も同じ `throwIf` の対象として挙げるが、この決定
-> （ADR-0013 §5）は **ADR-0036 が撤回済み**で、現行は `rootKind = "system"` を正規の値
-> として通す（ADR-0013 冒頭の 2026-07-04 改訂注記）。`docs/spec.md` 側がこの改訂に
-> 追従できていないため、分割にあたって撤回済みの決定を規範文へ持ち込まない判断をした。
-> `docs/spec.md` の追従は本 item の担当範囲外（→ #209 の後続・別 issue）。

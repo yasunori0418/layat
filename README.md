@@ -10,8 +10,8 @@ generate configuration. `root` is chosen explicitly with the `projectRoot` / `ho
 `systemRoot` markers (there is **no implicit default**).
 
 > **Status: MVP / implementation phase.** The implemented scope is the standalone CLI +
-> **project mode** as the core, with **home mode** also supported. NixOS / nix-darwin
-> modules and **system mode** are future work. See [MVP status](#mvp-status) for the full
+> **project mode** as the core, with **home mode** and **system mode** also supported.
+> NixOS / nix-darwin modules are future work. See [MVP status](#mvp-status) for the full
 > matrix. APIs may still change.
 
 ---
@@ -189,7 +189,7 @@ outputs.layat.${system} = {
 ```bash
 # Update / apply / roll back each role independently (separate profiles)
 layat apply vim-plugins
-layat rollback vim-plugins          # home mode only
+layat rollback vim-plugins          # home / system mode only
 layat apply zsh-plugins
 layat list-generations vim-plugins
 ```
@@ -237,6 +237,24 @@ Options shared by every config:
 
 > `layat.entries` is a deprecated alias of `layat.configs.default.entries`; it still works
 > but evaluates with a deprecation warning.
+
+### System mode
+
+A `systemRoot` config places at `/`. `apply` / `reset` / `rollback` on it require root
+(`sudo layat apply <name>`); `--dryrun` and `list-generations` do not. Its profile lives under
+`/nix/var/nix/profiles/layat/` and its last-applied record under `/var/lib/layat/`.
+`list-generations --all` lists the home profiles, then the system ones (headed
+`# <name> (system)`; under `--json` the subjects are named `home:<name>` / `system:<name>`).
+
+When one entrypoint mixes system and home / project configs, split the run:
+`sudo layat apply --all --system-root`, then `layat apply --all --home-root` (or
+`--project-root`) as yourself. Applying home / project configs as root places them root-owned
+and records their generations in root's state, so `apply --all` warns when root's unfiltered
+selection includes them. Do not apply the same config (fixed included) both as root and as your
+user: its profile and record split between the two users' state and the baseline diverges.
+
+`LAYAT_SYSTEM_PROFILE_BASE` / `LAYAT_SYSTEM_STATE_DIR` point the system profile base and record
+base elsewhere for tests and isolated harnesses; they are not a supported setting.
 
 ### Adding layat to an existing flake
 
@@ -415,9 +433,9 @@ layat apply --all --project-root # apply only projectRoot configs (also --home-r
 layat apply --all --manifest <name>=<farm> … # apply pre-built link-farms, one --manifest per config
 layat reset <name> [target...]  # tear down placements (no profile change); target omitted = all entries
 layat reset <name> --dryrun     # show what would be removed; zero side effects
-layat rollback <name>           # roll back to the previous generation (home mode only; name required)
-layat list-generations <name>   # list generations (home mode only)
-layat list-generations --all    # list generations for all home-mode configs
+layat rollback <name>           # roll back to the previous generation (home / system mode only; name required)
+layat list-generations <name>   # list generations (home / system mode only)
+layat list-generations --all    # list generations for all home-mode configs, then all system-mode ones
 layat gitignore <name>          # print placement targets for .gitignore to stdout (no writes; project mode only)
 layat gitignore --all           # sorted + deduped targets for all projectRoot configs
 layat prune                     # delete the orphan profile series whose recorded root is gone (no name; lists the roots and confirms)
@@ -527,13 +545,13 @@ expose it as a pure function you control."**
 | project mode (`projectRoot`) | implemented (core) |
 | home mode (`homeRoot`) | implemented |
 | home-manager module | implemented — one profile per `layat.configs.<name>` |
-| Generations / rollback (home mode) | implemented |
+| system mode (`systemRoot` = `/`) | implemented — apply / reset / rollback require root |
+| Generations / rollback (home / system mode) | implemented |
 | copy (place-once) / out-of-store symlink | implemented |
 | flake-parts module | implemented |
 | `manifest.json` schema | v1 only; no migration / backward-compat machinery yet |
 | `--json` machine-readable output | implemented — outturn-conformant envelope on every subcommand, with per-command payloads (items / changes / info) and one `SubjectResult` per config under `--all`; `reset --dryrun` still emits the minimal shape |
 | NixOS / nix-darwin modules | future |
-| system mode (`systemRoot` = `/`) | future (seam only; evaluation-time error if selected today) |
 
 **Known limitations / honest caveats**
 

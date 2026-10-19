@@ -28,8 +28,10 @@ type ProfileOptions struct {
 	RootOverride string
 	WorkDir      string
 	StateDir     string
-	Git          GitFunc
-	// Backend owns the user base the profileDir is keyed under. Required: nil is an error.
+	// SystemDir overrides the system-mode profile base (empty = Backend.SystemBase).
+	SystemDir string
+	Git       GitFunc
+	// Backend owns the user and system bases the profileDir is keyed under. Required: nil is an error.
 	Backend generation.Backend
 }
 
@@ -43,14 +45,24 @@ func ProfileFor(opts ProfileOptions) (paths.Profile, string, error) {
 	if err != nil {
 		return paths.Profile{}, "", err
 	}
-	stateDir := opts.StateDir
-	if stateDir == "" {
-		stateDir, err = paths.StateDir()
-		if err != nil {
-			return paths.Profile{}, "", err
+	// System mode keys under the system base; it never resolves the user <state>.
+	var base string
+	switch {
+	case opts.RootKind == manifest.RootKindSystem && opts.SystemDir != "":
+		base = opts.SystemDir
+	case opts.RootKind == manifest.RootKindSystem:
+		base = opts.Backend.SystemBase()
+	default:
+		stateDir := opts.StateDir
+		if stateDir == "" {
+			stateDir, err = paths.StateDir()
+			if err != nil {
+				return paths.Profile{}, "", err
+			}
 		}
+		base = opts.Backend.UserBase(stateDir)
 	}
-	prof := paths.Resolve(opts.Backend.UserBase(stateDir), opts.Name, opts.RootKind, root, opts.RootOverride != "")
+	prof := paths.Resolve(base, opts.Name, opts.RootKind, root, opts.RootOverride != "")
 	return prof, root, nil
 }
 
@@ -77,8 +89,8 @@ func observeGeneration(profileLink string) *int {
 // intPtr copies n onto the heap for the nil-able generation observation fields.
 func intPtr(n int) *int { return &n }
 
-// RollbackOptions is the input to Rollback. Rollback is home mode only, but that decision is
-// the CLI's; the engine resolves the profileDir regardless of rootKind and converges to the previous generation.
+// RollbackOptions is the input to Rollback. Which root kinds may roll back is the CLI's
+// decision; the engine resolves the profileDir regardless of rootKind and converges to the previous generation.
 type RollbackOptions struct {
 	Name         string
 	RootKind     string
@@ -86,6 +98,12 @@ type RollbackOptions struct {
 	RootOverride string
 	WorkDir      string
 	StateDir     string
+	// SystemDir overrides the system-mode profile base (empty = Backend.SystemBase).
+	SystemDir string
+	// SystemStateDir overrides the system-mode record base <state> (empty = /var/lib).
+	SystemStateDir string
+	// Geteuid reports the effective uid system mode checks for 0 (nil = os.Geteuid).
+	Geteuid func() int
 
 	// Backend lists and switches the generations and owns the profile base. Required: nil is an error.
 	Backend generation.Backend
@@ -103,7 +121,7 @@ type RollbackResult struct {
 	To   int // previous generation N-1 rolled back to
 }
 
-// Rollback reverts a home-mode profile to one generation earlier. It converges the FS from the
+// Rollback reverts a home- or system-mode profile to one generation earlier. It converges the FS from the
 // baseline N to N-1 (stale-removing N∖N-1, re-placing N-1), records N-1 as last applied, and moves
 // the profile pointer last, since moving it first would shift the stale-removal baseline.
 func Rollback(opts RollbackOptions) (*RollbackResult, error) {
@@ -117,13 +135,16 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	// 1. fix profileDir (resolve root → layout · preamble shared with apply).
 	prof, root, err := ProfileFor(ProfileOptions{
 		Name: opts.Name, RootKind: opts.RootKind, FixedRoot: opts.FixedRoot,
-		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir, Git: opts.Git,
-		Backend: opts.Backend,
+		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir,
+		SystemDir: opts.SystemDir, Git: opts.Git, Backend: opts.Backend,
 	})
 	if err != nil {
 		return nil, err
 	}
-	rec, err := recordFor(opts.StateDir, opts.Name, opts.RootKind, root, opts.RootOverride != "")
+	if err := requireRoot(opts.RootKind, opts.Geteuid); err != nil {
+		return nil, err
+	}
+	rec, err := recordFor(opts.StateDir, opts.SystemStateDir, opts.Name, opts.RootKind, root, opts.RootOverride != "")
 	if err != nil {
 		return nil, err
 	}

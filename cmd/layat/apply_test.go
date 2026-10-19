@@ -246,3 +246,34 @@ func TestReportResultAllEmptyIsNoOp(t *testing.T) {
 		t.Errorf("reportResult output = %q, want it to report no-op for a fully empty Result", out)
 	}
 }
+
+// TestRunApplyAllSystemRootSelectsSystem drives runApplyAll through a stub nix with --system-root:
+// only the systemRoot config reaches the build; the home / project ones are never built.
+func TestRunApplyAllSystemRootSelectsSystem(t *testing.T) {
+	withFlakeEntrypoint(t)
+	origSystem := flagSystemRoot
+	t.Cleanup(func() { flagSystemRoot = origSystem })
+	flagDryrun, flagSystemRoot = false, true
+	log := stubNixForApply(t, `{"h":{"rootKind":"home","targets":["a"]},"p":{"rootKind":"project","targets":["b"]},"s":{"rootKind":"system","targets":["etc/c"]}}`)
+	run, _ := newApplyTestRun()
+	captureStderr(t, func() {
+		// The stub build fails, so the run errors on the selected config's build.
+		if err := runApplyAll(run); err == nil {
+			t.Error("runApplyAll must surface the stub build failure")
+		}
+	})
+	var built []string
+	for _, c := range nixCalls(t, log) {
+		if !strings.HasPrefix(c, "build ") {
+			continue
+		}
+		for _, f := range strings.Fields(c) {
+			if strings.Contains(f, "#") {
+				built = append(built, f[strings.LastIndex(f, ".")+1:])
+			}
+		}
+	}
+	if len(built) != 1 || built[0] != "s" {
+		t.Errorf("built configs = %v, want [s] (--system-root selects systemRoot configs only)", built)
+	}
+}

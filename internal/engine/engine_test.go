@@ -2,7 +2,9 @@ package engine
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -1071,6 +1073,145 @@ func TestResolveRootHome(t *testing.T) {
 	}
 }
 
+// TestResolveRootSystem verifies that rootKind=system returns the filesystem root.
+func TestResolveRootSystem(t *testing.T) {
+	got, err := resolveRoot(manifest.RootKindSystem, "", "", "", nil)
+	if err != nil {
+		t.Fatalf("resolveRoot system: %v", err)
+	}
+	if got != "/" {
+		t.Errorf("resolveRoot system = %q, want %q", got, "/")
+	}
+}
+
+// --- system mode -----------------------------------------------------------
+
+func systemManifest(entries ...manifest.Entry) manifest.Manifest {
+	return manifest.Manifest{
+		SchemaVersion: 1,
+		Root:          manifest.Root{RootKind: manifest.RootKindSystem},
+		Entries:       entries,
+	}
+}
+
+// euid returns a Geteuid stub reporting id.
+func euid(id int) func() int { return func() int { return id } }
+
+// assertRootGate checks that err is the system-mode root-privilege refusal.
+func assertRootGate(t *testing.T, err error) {
+	t.Helper()
+	if !errors.Is(err, fs.ErrPermission) {
+		t.Fatalf("err = %v, want one wrapping fs.ErrPermission", err)
+	}
+	if !strings.Contains(err.Error(), "system mode requires root privileges") {
+		t.Errorf("err = %q, want the root-privilege message", err)
+	}
+}
+
+// assertEmptyDirs fails for each dir that holds any entry.
+func assertEmptyDirs(t *testing.T, dirs ...string) {
+	t.Helper()
+	for _, d := range dirs {
+		entries, err := os.ReadDir(d)
+		if err != nil {
+			t.Fatalf("ReadDir(%s): %v", d, err)
+		}
+		if len(entries) != 0 {
+			t.Errorf("%s is not empty: %v", d, entries)
+		}
+	}
+}
+
+// TestApplySystemRequiresRoot verifies that a non-root system apply stops before touching the
+// root, the profile bases, and the record bases, while the dryrun preview is still allowed.
+func TestApplySystemRequiresRoot(t *testing.T) {
+	root, state, sys, sysState := realTempDir(t), realTempDir(t), realTempDir(t), realTempDir(t)
+	lf := writeLinkFarm(t, systemManifest(storeEntry(makeSrc(t, "x"), ".", "etc/a")))
+	opts := Options{
+		LinkFarm: lf, Name: "sys", RootOverride: root, StateDir: state, SystemStateDir: sysState,
+		Backend: &generation.Fake{System: sys}, Geteuid: euid(1000),
+	}
+
+	_, err := Apply(opts)
+	assertRootGate(t, err)
+	assertEmptyDirs(t, root, state, sys, sysState)
+
+	opts.DryRun = true
+	res, err := Apply(opts)
+	if err != nil {
+		t.Fatalf("non-root system dryrun: %v", err)
+	}
+	if len(res.Placed) != 1 {
+		t.Errorf("dryrun Placed = %v, want the one planned entry", res.Placed)
+	}
+	assertEmptyDirs(t, root, state, sys, sysState)
+}
+
+// TestApplySystemDefaultsToProcessEuid verifies that a nil Geteuid falls back to the process's
+// effective uid, so an unprivileged run is refused without any stub.
+func TestApplySystemDefaultsToProcessEuid(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("running as root: the process euid passes the gate")
+	}
+	root, state, sys, sysState := realTempDir(t), realTempDir(t), realTempDir(t), realTempDir(t)
+	lf := writeLinkFarm(t, systemManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+	_, err := Apply(Options{
+		LinkFarm: lf, Name: "sys", RootOverride: root, StateDir: state, SystemStateDir: sysState,
+		Backend: &generation.Fake{System: sys},
+	})
+	assertRootGate(t, err)
+	assertEmptyDirs(t, root, state, sys, sysState)
+}
+
+// TestApplySystemPlacesUnderSystemBase verifies that a root system apply with --root keys the
+// profileDir as <roothash>/<name> with a backref under the system base, SystemDir taking
+// precedence over Backend.SystemBase, and leaves the user base untouched.
+func TestApplySystemPlacesUnderSystemBase(t *testing.T) {
+	for _, tc := range []struct {
+		desc     string
+		override bool
+	}{
+		{"backend system base", false},
+		{"SystemDir override", true},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			root, state, backendSys, sysState := realTempDir(t), realTempDir(t), realTempDir(t), realTempDir(t)
+			sys, systemDir := backendSys, ""
+			if tc.override {
+				sys = realTempDir(t)
+				systemDir = sys
+			}
+			lf := writeLinkFarm(t, systemManifest(storeEntry(makeSrc(t, "x"), ".", "etc/a")))
+			res, err := Apply(Options{
+				LinkFarm: lf, Name: "sys", RootOverride: root, StateDir: state,
+				SystemDir: systemDir, SystemStateDir: sysState,
+				Backend: &generation.Fake{System: backendSys}, Geteuid: euid(0),
+			})
+			if err != nil {
+				t.Fatalf("root system apply: %v", err)
+			}
+
+			hashDir := filepath.Join(sys, paths.RootHash(root))
+			if res.ProfileDir != filepath.Join(hashDir, "sys") {
+				t.Errorf("ProfileDir = %q, want %q", res.ProfileDir, filepath.Join(hashDir, "sys"))
+			}
+			if dest, err := os.Readlink(filepath.Join(hashDir, "sys", "profile")); err != nil || !strings.HasPrefix(dest, "profile-1-link") {
+				t.Errorf("profile link = %q (%v), want generation 1", dest, err)
+			}
+			if b, err := os.ReadFile(filepath.Join(hashDir, ".root")); err != nil || string(b) != root+"\n" {
+				t.Errorf("backref = %q (%v), want %q", b, err, root+"\n")
+			}
+			if _, err := os.Lstat(filepath.Join(root, "etc", "a")); err != nil {
+				t.Errorf("entry not placed under --root: %v", err)
+			}
+			assertEmptyDirs(t, state)
+			if tc.override {
+				assertEmptyDirs(t, backendSys)
+			}
+		})
+	}
+}
+
 // TestResolveRootOverrideWins verifies that the --root override takes precedence regardless of rootKind.
 // This includes the undetermined ("") and unknown kinds: the override is returned before
 // resolveRoot reaches the rootKind rejection.
@@ -1080,6 +1221,7 @@ func TestResolveRootOverrideWins(t *testing.T) {
 		rootKind string
 	}{
 		{name: "home", rootKind: manifest.RootKindHome},
+		{name: "system", rootKind: manifest.RootKindSystem},
 		{name: "undetermined", rootKind: ""},
 		{name: "unknown", rootKind: "bogus"},
 	}
@@ -1128,8 +1270,7 @@ func TestResolveRootFixedWithoutPath(t *testing.T) {
 }
 
 // TestResolveRootInvalidKinds pins resolveRoot's rejection of the undetermined ("") and
-// unknown rootKind, asserting both messages verbatim. RootKindSystem is left out because
-// its rejection is a placeholder for the unimplemented system mode.
+// unknown rootKind, asserting both messages verbatim.
 func TestResolveRootInvalidKinds(t *testing.T) {
 	tests := []struct {
 		name     string

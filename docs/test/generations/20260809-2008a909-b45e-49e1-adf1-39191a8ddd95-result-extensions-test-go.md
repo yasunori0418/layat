@@ -16,7 +16,7 @@ issue #130 が outturn envelope（#131 / #132 が共有）のために足した 
 `ResetResult` 拡張のテスト。世代バックエンドに `internal/generation` の `Fake` を渡す。
 `Fake` は実バックエンドと同じ profileDir の構造（兄弟の `<profile>-<N>-link` と相対の
 profile リンク）を symlink だけで作るため、世代番号を読み戻せる。manifest は原則 `rootKind=fixed`（root を明示的に渡し git に依存
-しない）で、rollback 系のみ home mode + `--root` 上書き（rollback が home 限定であるため
+しない）で、rollback 系のみ home mode + `--root` 上書き（rollback が home / system 限定であるため
 → REQ-05abce3e-9797-432b-b93f-37c55d09afde）。
 
 ## 検証内容

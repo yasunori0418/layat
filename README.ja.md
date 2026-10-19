@@ -7,7 +7,7 @@
 
 layat は、**フェッチ済みの Nix store パスの内容を `root` 相対の target へ配置する** Nix ライブラリ・モジュール群(symlink もしくは copy)。設定の生成は **行わない**。`root` は `projectRoot` / `homeRoot` / `systemRoot` マーカーで**明示的に**選ぶ(**暗黙のデフォルトは持たない**)。
 
-> **ステータス: MVP / 実装フェーズ。** 実装済みの範囲は standalone CLI ＋ **project mode** をコアとし、**home mode** もサポート。NixOS / nix-darwin モジュールおよび **system mode** は将来対応。全体のマトリクスは [MVP ステータス](#mvp-ステータス) を参照。API は今後も変わりうる。
+> **ステータス: MVP / 実装フェーズ。** 実装済みの範囲は standalone CLI ＋ **project mode** をコアとし、**home mode** と **system mode** もサポート。NixOS / nix-darwin モジュールは将来対応。全体のマトリクスは [MVP ステータス](#mvp-ステータス) を参照。API は今後も変わりうる。
 
 ---
 
@@ -161,7 +161,7 @@ outputs.layat.${system} = {
 ```bash
 # 各役割を独立して更新 / 適用 / rollback できる(別 profile)
 layat apply vim-plugins
-layat rollback vim-plugins          # home mode のみ
+layat rollback vim-plugins          # home / system mode のみ
 layat apply zsh-plugins
 layat list-generations vim-plugins
 ```
@@ -198,6 +198,14 @@ layat = {
 - `layat.backup.enable` / `layat.backup.suffix`(既定 `"layat-backup"`)——衝突で止まる代わりに、target を塞いでいる外部の実体を `<target>.<suffix>` へ退避する。
 
 > `layat.entries` は `layat.configs.default.entries` の deprecated な別名。今も動くが、評価時に deprecation warning が出る。
+
+### System mode
+
+`systemRoot` の config は `/` に配置する。この config への `apply` / `reset` / `rollback` は root が必要(`sudo layat apply <name>`)で、`--dryrun` と `list-generations` は不要。profile は `/nix/var/nix/profiles/layat/` 下に、last-applied 記録は `/var/lib/layat/` 下に置かれる。`list-generations --all` は home の profile を一覧したあと、system の profile を一覧する(見出しは `# <name> (system)`。`--json` では subject 名が `home:<name>` / `system:<name>` になる)。
+
+1 つの entrypoint に system と home / project の config が混在するときは、実行を分ける。`sudo layat apply --all --system-root` のあと、自分のユーザーで `layat apply --all --home-root`(または `--project-root`)を実行する。home / project の config を root で適用すると、配置物は root 所有になり、世代は root の state に記録される。そのため root が絞り込みなしで実行した `apply --all` の選択にそれらが含まれると、warning が出る。同じ config(fixed も含む)を root と自分のユーザーの両方で適用しないこと。profile と記録が 2 ユーザーの state に分かれ、baseline が食い違う。
+
+`LAYAT_SYSTEM_PROFILE_BASE` / `LAYAT_SYSTEM_STATE_DIR` は、テストや隔離したハーネスのために system の profile 基底と記録の基底を別の場所に差し替える。サポート対象の設定ではない。
 
 ### 既存の flake に layat を追加する
 
@@ -352,9 +360,9 @@ layat apply --all --project-root # projectRoot config のみ適用(--home-root /
 layat apply --all --manifest <name>=<farm> … # ビルド済み link-farm を config ごとに 1 つずつ渡して適用
 layat reset <name> [target...]  # 配置を撤去(profile 変更なし)。target 省略 = 全 entry
 layat reset <name> --dryrun     # 削除対象を表示。副作用ゼロ
-layat rollback <name>           # 直前の世代へ戻す(home mode のみ・name 必須)
-layat list-generations <name>   # 世代を一覧(home mode のみ)
-layat list-generations --all    # 全 home-mode config の世代を一覧
+layat rollback <name>           # 直前の世代へ戻す(home / system mode のみ・name 必須)
+layat list-generations <name>   # 世代を一覧(home / system mode のみ)
+layat list-generations --all    # 全 home-mode config の世代、続けて全 system-mode config の世代を一覧
 layat gitignore <name>          # 配置 target を .gitignore 用に stdout へ出力(書き込みなし・project mode のみ)
 layat gitignore --all           # 全 projectRoot config の target をソート＋重複排除して出力
 layat init <template>           # `nix flake init -t github:yasunori0418/layat#<template>` のラッパー
@@ -441,13 +449,13 @@ generator = "nix"
 | project mode(`projectRoot`) | 実装済み(コア) |
 | home mode(`homeRoot`) | 実装済み |
 | home-manager モジュール | 実装済み——`layat.configs.<name>` ごとに 1 profile |
-| 世代 / rollback(home mode) | 実装済み |
+| system mode(`systemRoot` = `/`) | 実装済み——apply / reset / rollback は root が必要 |
+| 世代 / rollback(home / system mode) | 実装済み |
 | copy(place-once)/ out-of-store symlink | 実装済み |
 | flake-parts モジュール | 実装済み |
 | `manifest.json` スキーマ | v1 のみ。migration / 後方互換の仕組みはまだ無い |
 | `--json` 機械可読出力 | 実装済み — 全サブコマンドで outturn 準拠エンベロープを返し、コマンドごとのペイロード(items / changes / info)と `--all` の config ごと `SubjectResult` も載る。最小形のまま残るのは `reset --dryrun` のみ |
 | NixOS / nix-darwin モジュール | 将来 |
-| system mode(`systemRoot` = `/`) | 将来(seam のみ。今選ぶと評価時エラー) |
 
 **既知の制限 / 正直な注意点**
 

@@ -8,6 +8,7 @@ import (
 
 	"github.com/yasunori0418/layat/internal/generation"
 	"github.com/yasunori0418/layat/internal/manifest"
+	"github.com/yasunori0418/layat/internal/paths"
 )
 
 // applyForReset commits one generation as a precondition for reset tests (prof.Profile points at the link-farm).
@@ -221,4 +222,57 @@ func TestResetRequiresBackend(t *testing.T) {
 	if err == nil || !strings.Contains(err.Error(), "generation backend") {
 		t.Fatalf("err = %v, want the missing-backend error", err)
 	}
+}
+
+// TestResetSystemRequiresRoot verifies that a non-root system reset stops before taking the
+// flock or touching the root, the profile bases, and the record bases, while the dryrun
+// preview is still allowed.
+func TestResetSystemRequiresRoot(t *testing.T) {
+	root, state, sys, sysState := realTempDir(t), realTempDir(t), realTempDir(t), realTempDir(t)
+	opts := ResetOptions{
+		Name: "sys", RootKind: manifest.RootKindSystem, RootOverride: root, StateDir: state,
+		SystemStateDir: sysState, Backend: &generation.Fake{System: sys}, Geteuid: euid(1000),
+	}
+
+	_, err := Reset(opts)
+	assertRootGate(t, err)
+	assertEmptyDirs(t, root, state, sys, sysState)
+
+	opts.DryRun = true
+	if _, err := Reset(opts); err != nil {
+		t.Fatalf("non-root system reset dryrun: %v", err)
+	}
+	assertEmptyDirs(t, root, state, sys, sysState)
+}
+
+// TestResetSystemUsesSystemBases verifies that a root system reset resolves the profileDir under
+// SystemDir and rewrites the record under SystemStateDir, leaving the user state untouched.
+func TestResetSystemUsesSystemBases(t *testing.T) {
+	root, state, backendSys, sys, sysState := realTempDir(t), realTempDir(t), realTempDir(t), realTempDir(t), realTempDir(t)
+	lf := writeLinkFarm(t, systemManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+	backend := &generation.Fake{System: backendSys}
+	if _, err := Apply(Options{
+		LinkFarm: lf, Name: "sys", RootOverride: root, StateDir: state,
+		SystemDir: sys, SystemStateDir: sysState, Backend: backend, Geteuid: euid(0),
+	}); err != nil {
+		t.Fatalf("setup Apply: %v", err)
+	}
+
+	res, err := Reset(ResetOptions{
+		Name: "sys", RootKind: manifest.RootKindSystem, RootOverride: root, StateDir: state,
+		SystemDir: sys, SystemStateDir: sysState, Backend: backend, Geteuid: euid(0),
+	})
+	if err != nil {
+		t.Fatalf("root system reset: %v", err)
+	}
+	if len(res.RemovedSymlinks) != 1 {
+		t.Errorf("RemovedSymlinks = %v, want the one placed entry", res.RemovedSymlinks)
+	}
+	if _, err := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(err) {
+		t.Errorf("a remains after reset: %v", err)
+	}
+	if _, err := os.Lstat(filepath.Join(sysState, "layat", paths.RootHash(root), "sys", "last-applied.json")); !os.IsNotExist(err) {
+		t.Errorf("system record remains after a full reset: %v", err)
+	}
+	assertEmptyDirs(t, state, backendSys)
 }

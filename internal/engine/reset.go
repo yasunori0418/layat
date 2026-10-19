@@ -26,7 +26,13 @@ type ResetOptions struct {
 	RootOverride string
 	WorkDir      string
 	StateDir     string
-	Git          GitFunc
+	// SystemDir overrides the system-mode profile base (empty = Backend.SystemBase).
+	SystemDir string
+	// SystemStateDir overrides the system-mode record base <state> (empty = /var/lib).
+	SystemStateDir string
+	// Geteuid reports the effective uid system mode checks for 0 (nil = os.Geteuid).
+	Geteuid func() int
+	Git     GitFunc
 	// Backend owns the profile base the profileDir is keyed under. Required: nil is an error.
 	Backend generation.Backend
 
@@ -87,13 +93,19 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	// 1. fix profileDir (resolve root → layout · preamble shared with apply / rollback).
 	prof, root, err := ProfileFor(ProfileOptions{
 		Name: opts.Name, RootKind: opts.RootKind, FixedRoot: opts.FixedRoot,
-		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir, Git: opts.Git,
-		Backend: opts.Backend,
+		RootOverride: opts.RootOverride, WorkDir: opts.WorkDir, StateDir: opts.StateDir,
+		SystemDir: opts.SystemDir, Git: opts.Git, Backend: opts.Backend,
 	})
 	if err != nil {
 		return nil, err
 	}
-	rec, err := recordFor(opts.StateDir, opts.Name, opts.RootKind, root, opts.RootOverride != "")
+	// A system-mode teardown runs only as root; the dryrun preview stays read-only and unchecked.
+	if !opts.DryRun {
+		if err := requireRoot(opts.RootKind, opts.Geteuid); err != nil {
+			return nil, err
+		}
+	}
+	rec, err := recordFor(opts.StateDir, opts.SystemStateDir, opts.Name, opts.RootKind, root, opts.RootOverride != "")
 	if err != nil {
 		return nil, err
 	}
