@@ -15,7 +15,7 @@ threatens:
 
 root マーカーの subdir 適用形（REQ-08c8f639-790c-4970-a954-c9567538cf9b）は、全 entry の target に
 `<subdir>/` を前置する評価時の糖衣で、root も `rootKind` も動かさない。前提として、単体の
-マーカーは従来どおり kind を運ぶだけの入れ物で、root の値はマーカーと絶対パス文字列の union を
+マーカーは従来どおり `kind` を運ぶだけの入れ物で、root の値はマーカーと絶対パス文字列の union を
 取る（REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66）。この糖衣が崩れる形は 3 つある。
 
 - **前置の抜け・揺れ**: 明示 target や既定 target の一部にだけ前置が掛からない。または
@@ -30,8 +30,8 @@ root マーカーの subdir 適用形（REQ-08c8f639-790c-4970-a954-c9567538cf9b
 
 **顕在化したときに起きること**: 前置が抜けた entry は `$HOME/.config/nvim` のつもりが
 `$HOME/nvim` に置かれ、宣言からは読み取れない場所へ配置される。root 側へ漏れた場合は、
-`subdir` を知らない engine が manifest を黙って受け入れ、利用者は適用形が効いていないことに
-気付けない。単体 marker の形が変わると、marker を exact 比較する既存の利用側が壊れる。
+`subdir` を知らない engine が manifest を警告なく受け入れ、利用者は適用形が反映されていないことに
+気付けない。単体 marker の形が変わると、marker を exact 比較する既存の利用側で比較が一致しなくなる。
 
 ## 評価
 
