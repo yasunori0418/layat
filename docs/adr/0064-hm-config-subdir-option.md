@@ -29,7 +29,7 @@ references:
 
 root marker の subdir 適用形（`homeRoot { subdir = "..."; }`・→ ADR-0040）は lib に入り、`mkManifest` は root を動かさずに全 target へ subdir を前置できるようになった。一方 `modules/home-manager.nix` は `root = layatLib.homeRoot` を固定しており、HM 利用者には適用形を渡す口が無い。
 
-config（= profile）ごとに配置の基点は異なる。たとえば `ai-tools` は `~/.claude`、`desktop` は `~/.config` の下にまとまる。基点が同じ entry 群に毎回同じ接頭辞を書く冗長さを、standalone の `layat.<name>` と同じく subdir 適用形で畳めるようにしたい。
+config（= profile）ごとに配置の基点は異なる。たとえば `ai-tools` は `~/.claude`、`desktop` は `~/.config` の下にまとまる。基点が同じ entry 群には毎回同じ接頭辞を書くことになる。standalone の `layat.<name>` と同じく、この接頭辞を subdir 適用形で 1 か所にまとめられるようにしたい。
 
 ## 決定
 
@@ -51,7 +51,7 @@ config（= profile）ごとに配置の基点は異なる。たとえば `ai-too
 
 - **config ごとに持つ理由**: 配置の基点は役割（profile）ごとに異なり、1 本の共通値では表せない。standalone の `layat.<name>` も config ごとに root を持つ。
 - **`root` を公開しない理由**: モジュールが自分の性質で root を pin する原則（→ ADR-0007）を保つため。subdir 適用形は root を動かさず target だけを変えるので、この原則と両立する。
-- **検査を lib に委ねる理由**: 同じ規則を 2 か所で持つと分岐する。lib の検査は standalone と同じ経路で効くので、モジュールで重ねても得るものが無い。
+- **検査を lib に委ねる理由**: 同じ規則を 2 か所で持つと分岐する。lib の検査は standalone と同じ経路で効くので、モジュールでもう一度検査しても得るものが無い。
 - **`apply --all` の衝突検出**: subdir 適用形は eval 時に target へ前置する糖衣で（→ ADR-0040）、manifest には前置後の target が載る。config 間の target 衝突検出は engine と manifest.json スキーマを変えずに追従する。
 - **オプションの置き場所**: `layat.recopy` / `layat.jobs`（→ ADR-0061）と同じく共通集合へ足し、モジュールごとに集合を分岐させない。
 

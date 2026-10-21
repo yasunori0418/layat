@@ -34,8 +34,8 @@ standalone な home-manager configuration を設定違いで複数評価し、�
   設定と同一の起動（同一の配置物）を生み、rename の deprecation warning を出すこと
 - config が 1 つも無いとき、activation が engine を起動しないこと
 - subdir を与えた config と与えない config を同居させたとき、前者の文書だけ全 target に subdir が
-  前置され、root の種別は home のままで subdir というキーを持たず、後者の文書には前置が漏れない
-  こと
+  前置され、root の種別は home のままで subdir というキーを持たず、後者の文書の target には
+  subdir が前置されないこと
 - 不正な subdir（絶対パス・`..` による脱出・空文字）を与えた config は評価が失敗すること
 
 配置元は固定の store パスを持つ test double で与え、文書の内容をマシンによらず安定させる。
