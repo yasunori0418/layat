@@ -58,7 +58,7 @@ _Avoid_: 旧名 `source` / `dir` を使うこと、**src** と混同すること
 **entry** の配置先パス。**root** からの相対パスで指定する。**entries の属性キーが target の既定値**であり、entry の identity（stale 除去の diff キー・一意性）でもある（→ ADR-0014）。
 
 **root**:
-配置先の基準パス。公開 API の `root` 引数で**明示必須**に選ぶ（**暗黙デフォルトは持たない**）。型は `string（絶対パス・評価時固定）| marker（実行時解決）` の union。マーカーは **projectRoot** / **homeRoot** / **systemRoot** の 3 つ（→ ADR-0004, ADR-0005）。各マーカーは適用形 `homeRoot { subdir = "..."; }` も取る。適用形でも root は動かず、全 target へ `<subdir>/` を前置するのと等価な eval 時の糖衣として働く（→ ADR-0040）。
+配置先の基準パス。公開 API の `root` 引数で**明示必須**に選ぶ（**暗黙デフォルトは持たない**）。型は `string（絶対パス・評価時固定）| marker（実行時解決）` の union。マーカーは **projectRoot** / **homeRoot** / **systemRoot** の 3 つ（→ ADR-0004, ADR-0005）。各マーカーは適用形 `homeRoot { subdir = "..."; }` も受け付ける。適用形でも root は動かず、全 target へ `<subdir>/` を前置するのと等価な評価時の糖衣である（→ ADR-0040）。
 _Avoid_: 「`$HOME` 固定」「既定は home mode」「root 省略時の既定」と説明すること（暗黙デフォルトは廃止し、root は明示必須になった）。マーカーを「パス文字列を返す糖衣」と説明すること（実行時解決の種別であって評価時にパスへ展開しない）。適用形で「root が実際に subdir へ解決される」（`$HOME/.config` が root になる）と説明すること（root と `rootKind` は単体形と同じで、変わるのは target だけ）
 
 ### 配置モード
@@ -72,7 +72,7 @@ _Avoid_: 「standalone 専用」「`root` 省略時の既定」と説明する�
 _Avoid_: 「CWD 相対」「設定ファイル相対」と説明すること（root は git toplevel で解決）
 
 **projectRoot**:
-**project mode** を選ぶ root マーカー。実行時に git toplevel を **root** に解決する（`--root` で上書き可）。`homeRoot` / `systemRoot` と並ぶ root マーカーの一つ。`mkOutOfStoreSymlink` と同じ「マーカーを渡して挙動を opt-in する」パターン（→ ADR-0005）。適用形 `projectRoot { subdir = "..."; }` も取る（意味は **root** の項）。
+**project mode** を選ぶ root マーカー。実行時に git toplevel を **root** に解決する（`--root` で上書き可）。`homeRoot` / `systemRoot` と並ぶ root マーカーの一つ。`mkOutOfStoreSymlink` と同じ「マーカーを渡して挙動を opt-in する」パターン（→ ADR-0005）。適用形 `projectRoot { subdir = "..."; }` も受け付ける（意味は **root** の項）。
 _Avoid_: 設定ファイルの場所を指すと解釈すること（Nix では store path 化して成立しない）
 
 **homeRoot**:
@@ -80,7 +80,7 @@ _Avoid_: 設定ファイルの場所を指すと解釈すること（Nix では 
 _Avoid_: 適用形の root が `$HOME/.config` へ解決されると説明すること
 
 **systemRoot**:
-**system mode**（root = `/`）を選ぶ root マーカー。distro 構想（root = `/`）の配置に使う。ADR-0004 が「将来の絶対パス文字列 seam」としていたものを正式なマーカーへ昇格（→ ADR-0004）。適用形 `systemRoot { subdir = "..."; }` も取る（意味は **root** の項）。
+**system mode**（root = `/`）を選ぶ root マーカー。distro 構想（root = `/`）の配置に使う。ADR-0004 が「将来の絶対パス文字列 seam」としていたものを正式なマーカーへ昇格（→ ADR-0004）。適用形 `systemRoot { subdir = "..."; }` も受け付ける（意味は **root** の項）。
 
 **ephemeral placement**:
 **project mode** の配置物の性質。クローンごとに再生成される前提で、プロジェクトにコミットされない。ゆえに activation は git 状態に干渉しない（→ ADR-0005）。

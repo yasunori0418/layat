@@ -168,7 +168,7 @@ layat list-generations vim-plugins
 
 `src` を更新した後(flake input 更新、`npins update` など)は、影響を受けた config だけを再適用すれば、変更が他のツールに触れずに済む。
 
-全 target を `$HOME` 配下のサブディレクトリへ置くには、マーカーを `subdir` に適用する。root は `$HOME` のまま動かない。適用形は全 target へ `.config/` を前置するのと等価な評価時の糖衣で、次の entry は `~/.config/nvim` に置かれる。
+全 target を `$HOME` 配下のサブディレクトリへ置くには、マーカーを `{ subdir = ...; }` に適用する。root は `$HOME` のまま動かない。適用形は全 target へ `.config/` を前置するのと等価な評価時の糖衣で、次の entry は `~/.config/nvim` に置かれる。
 
 ```nix
 nvim = layat.lib.mkManifest {

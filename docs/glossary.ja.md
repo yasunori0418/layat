@@ -60,7 +60,7 @@ standalone・home-manager・将来の NixOS モジュール・devShell の `shel
 **entry** の配置先。**root** からの相対パスで指定する。`entries` の属性キーが既定の `target` であり、entry の identity（stale 除去の diff キーであり、一意性のキー）でもある。
 
 ### root
-配置の基準パス。公開 API の `root` 引数で**明示的に**選ぶ（**暗黙のデフォルトは持たない**）。型は `string`（絶対パス・評価時に固定）と `marker`（実行時に解決）の union。マーカーは **projectRoot** / **homeRoot** / **systemRoot**。各マーカーは適用形 `homeRoot { subdir = "..."; }` も取る。適用形でも root は動かず、全 target へ `<subdir>/` を前置するのと等価な評価時の糖衣として働く。
+配置の基準パス。公開 API の `root` 引数で**明示的に**選ぶ（**暗黙のデフォルトは持たない**）。型は `string`（絶対パス・評価時に固定）と `marker`（実行時に解決）の union。マーカーは **projectRoot** / **homeRoot** / **systemRoot**。各マーカーは適用形 `homeRoot { subdir = "..."; }` も受け付ける。適用形でも root は動かず、全 target へ `<subdir>/` を前置するのと等価な評価時の糖衣である。
 - **Avoid**: 「`$HOME` is fixed（`$HOME` 固定）」「defaults to home mode（既定は home mode）」「the default when `root` is omitted（`root` 省略時の既定）」と説明すること、マーカーを「パス文字列を返す糖衣（sugar）」と説明すること（実行時解決の種別であって、評価時にパスへ展開しない）、適用形を「root actually resolves to the subdir（root が実際に subdir へ解決される）」と説明すること（root と `rootKind` は単体形と同じで、変わるのは target だけ）。
 
 ## 配置モード
@@ -77,7 +77,7 @@ standalone・home-manager・将来の NixOS モジュール・devShell の `shel
 **root** = `/` の配置モード。`systemRoot` マーカーで選ぶ。distro 構想（root = `/`）に使う。
 
 ### projectRoot
-**project mode** を選ぶ root マーカー。実行時に git toplevel を **root** に解決する（`--root` で上書き可）。`homeRoot` / `systemRoot` と並ぶ root マーカーの一つで、`mkOutOfStoreSymlink` と同じ「マーカーを渡して挙動を opt-in する」パターンに従う。適用形 `projectRoot { subdir = "..."; }` も取る（意味は **root** の項）。
+**project mode** を選ぶ root マーカー。実行時に git toplevel を **root** に解決する（`--root` で上書き可）。`homeRoot` / `systemRoot` と並ぶ root マーカーの一つで、`mkOutOfStoreSymlink` と同じ「マーカーを渡して挙動を opt-in する」パターンに従う。適用形 `projectRoot { subdir = "..."; }` も受け付ける（意味は **root** の項）。
 - **Avoid**: 設定ファイルの場所を指すと解釈すること。
 
 ### homeRoot
@@ -85,7 +85,7 @@ standalone・home-manager・将来の NixOS モジュール・devShell の `shel
 - **Avoid**: 適用形の root が `$HOME/.config` へ解決されると説明すること。
 
 ### systemRoot
-**system mode**（root = `/`）を選ぶ root マーカー。ADR-0004 が「将来の絶対パス文字列 seam」と呼んでいたものを第一級のマーカーへ昇格したもの。適用形 `systemRoot { subdir = "..."; }` も取る（意味は **root** の項）。
+**system mode**（root = `/`）を選ぶ root マーカー。ADR-0004 が「将来の絶対パス文字列 seam」と呼んでいたものを第一級のマーカーへ昇格したもの。適用形 `systemRoot { subdir = "..."; }` も受け付ける（意味は **root** の項）。
 
 ### ephemeral placement
 **project mode** における配置物の性質。クローンごとに再生成される前提で、プロジェクトにコミットされない。ゆえに activation は git 状態に干渉しない。
