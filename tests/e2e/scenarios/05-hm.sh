@@ -17,6 +17,7 @@ echo "WORKBODY" >"$PROJ/srcrepo/skills/work/SKILL.md"
 
 # multi: layat.entries（configs.default の糖衣）と別名 config。collide: 2 config が同一 target。
 # partial: 辞書順で後の p2 の target を foreign な実ファイルで塞いで conflict させる。
+# sub: subdir で target を $HOME/.sub/ 配下へ。badsubdir: 絶対パスの subdir で eval が失敗する。
 cat >"$PROJ/flake.nix" <<EOF
 {
 $(e2e_flake_inputs with-hm)
@@ -52,6 +53,12 @@ $(e2e_flake_inputs with-hm)
         partial = mkHome {
           configs.p1.entries.".p1/skill" = nix;
           configs.p2.entries.".p2/skill" = work;
+        };
+        sub = mkHome {
+          configs.sub = { subdir = ".sub"; entries."skill" = nix; };
+        };
+        badsubdir = mkHome {
+          configs.bad = { subdir = "/abs"; entries.".bad/skill" = nix; };
         };
       };
     };
@@ -139,6 +146,29 @@ if [ -z "$(find "$PROFILES/p2" -maxdepth 1 -name 'profile*' 2>/dev/null)" ]; the
 	e2e_pass "conflict した p2 は世代をコミットしない"
 else
 	e2e_fail "p2 に世代がある: $(ls -la "$PROFILES/p2")"
+fi
+
+e2e_step "sub: subdir 付き config は \$HOME/<subdir>/ 配下へ配置され、profile は世代 1 を持つ"
+"$(build_act sub)/activate"
+assert_symlink "$HOME/.sub/skill"
+assert_file_eq "$HOME/.sub/skill/SKILL.md" "SKILLBODY"
+case "$(readlink "$HOME/.sub/skill")" in
+	/nix/store/*) e2e_pass "store symlink を指す" ;;
+	*) e2e_fail "store symlink を指すべき: $(readlink "$HOME/.sub/skill")" ;;
+esac
+assert_single_generation sub
+
+e2e_step "badsubdir: 不正な subdir の activationPackage は build が失敗し、診断に root subdir が載る"
+BAD_LOG="$E2E_WORK/badsubdir.log"
+if nix build ".#homeConfigurations.badsubdir.activationPackage" --no-link >"$BAD_LOG" 2>&1; then
+	e2e_fail "不正な subdir の build は非ゼロで終わるべき"
+else
+	e2e_pass "不正な subdir の build が非ゼロで終わる"
+fi
+if grep -qF "root subdir" "$BAD_LOG"; then
+	e2e_pass "build の診断が「root subdir」を含む"
+else
+	e2e_fail "build の診断に「root subdir」が無い: $(cat "$BAD_LOG")"
 fi
 
 e2e_step "エラーでも --json は適合エンベロープ + exit 1（HM fixture は layat 出力を持たない）"
