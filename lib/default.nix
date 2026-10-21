@@ -16,6 +16,7 @@ in
   # lib.mkOutOfStoreSymlink "/abs/path" -> marker (passed to src)
   # lib.mkRootRelativeSymlink "rel/path" -> marker (passed to src; relative to the placement root)
   # lib.projectRoot / homeRoot / systemRoot -> marker (passed to root)
+  # lib.homeRoot { subdir = "rel/path"; } -> marker (prefixes every target with subdir; root stays put)
   inherit (markers)
     mkOutOfStoreSymlink
     mkRootRelativeSymlink

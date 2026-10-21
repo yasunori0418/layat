@@ -1,0 +1,2 @@
+#json
+{"entries":[{"method":"symlink","src":"/nix/store/11111111111111111111111111111111-other","srcKind":"store","subpath":".","target":".config/git"},{"method":"symlink","src":"/nix/store/00000000000000000000000000000000-fake-src","srcKind":"store","subpath":"nvim","target":".config/nvim"}],"root":{"rootKind":"home"},"schemaVersion":1}

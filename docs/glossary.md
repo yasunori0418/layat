@@ -60,8 +60,8 @@ The relative path selecting which path inside **src** to take, for an **entry**.
 The placement destination of an **entry**, specified as a path relative to **root**. The `entries` attribute key is the default `target` and is also the entry's identity (the diff key for stale removal, and its uniqueness key).
 
 ### root
-The base path for placement. Chosen explicitly via the `root` argument of the public API (there is **no implicit default**). Its type is a union of `string` (absolute path, fixed at evaluation time) and `marker` (resolved at runtime). The markers are **projectRoot**, **homeRoot**, and **systemRoot**.
-- **Avoid**: "`$HOME` is fixed", "defaults to home mode", "the default when `root` is omitted"; describing a marker as "sugar that returns a path string" (it is a runtime-resolution kind, not expanded to a path at evaluation time).
+The base path for placement. Chosen explicitly via the `root` argument of the public API (there is **no implicit default**). Its type is a union of `string` (absolute path, fixed at evaluation time) and `marker` (resolved at runtime). The markers are **projectRoot**, **homeRoot**, and **systemRoot**. Each marker also accepts the applied form `homeRoot { subdir = "..."; }`. The applied form does not move root; it is evaluation-time sugar equivalent to prefixing every target with `<subdir>/`.
+- **Avoid**: "`$HOME` is fixed", "defaults to home mode", "the default when `root` is omitted"; describing a marker as "sugar that returns a path string" (it is a runtime-resolution kind, not expanded to a path at evaluation time); describing the applied form as "root actually resolves to the subdir" (`$HOME/.config` becoming root). Root and `rootKind` stay the same as the bare marker; only the targets change.
 
 ## Placement modes
 
@@ -77,14 +77,15 @@ The placement mode where **root** = the project root, selected with the `project
 The placement mode where **root** = `/`, selected with the `systemRoot` marker. Used for the distro concept (root = `/`).
 
 ### projectRoot
-The root marker selecting **project mode**. At runtime it resolves the git toplevel as **root** (overridable with `--root`). One of the root markers alongside `homeRoot` / `systemRoot`, following the same "pass a marker to opt into behavior" pattern as `mkOutOfStoreSymlink`.
+The root marker selecting **project mode**. At runtime it resolves the git toplevel as **root** (overridable with `--root`). One of the root markers alongside `homeRoot` / `systemRoot`, following the same "pass a marker to opt into behavior" pattern as `mkOutOfStoreSymlink`. Also accepts the applied form `projectRoot { subdir = "..."; }` (see **root**).
 - **Avoid**: interpreting it as pointing to the config file location.
 
 ### homeRoot
-The root marker selecting **home mode**. At runtime it resolves `$HOME` as **root**. It promotes the previously implicit `$HOME` default into an explicit marker.
+The root marker selecting **home mode**. At runtime it resolves `$HOME` as **root**. It promotes the previously implicit `$HOME` default into an explicit marker. The applied form `homeRoot { subdir = ".config"; }` keeps root at `$HOME` and places every target under `.config/`.
+- **Avoid**: saying that the applied form resolves root to `$HOME/.config`.
 
 ### systemRoot
-The root marker selecting **system mode** (root = `/`). Promotes what ADR-0004 called a "future absolute-path string seam" into a first-class marker.
+The root marker selecting **system mode** (root = `/`). Promotes what ADR-0004 called a "future absolute-path string seam" into a first-class marker. Also accepts the applied form `systemRoot { subdir = "..."; }` (see **root**).
 
 ### ephemeral placement
 The nature of placements in **project mode**: regenerated on each clone and never committed to the project, so activation never touches git state.

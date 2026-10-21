@@ -20,7 +20,7 @@ lib/
 ├── default.nix        # 公開 API のまとめ（mkManifest / mkOutOfStoreSymlink / projectRoot / homeRoot / systemRoot）
 ├── types.nix          # entries の型定義（各モジュールで共有）
 ├── manifest.nix       # mkManifest（manifest.json + symlink farm derivation を生成する純粋関数）
-└── out-of-store.nix   # mkOutOfStoreSymlink / projectRoot / homeRoot / systemRoot（マーカー構築子）
+└── out-of-store.nix   # mkOutOfStoreSymlink / projectRoot / homeRoot / systemRoot（マーカー構築子・__functor による subdir 適用形）
 ```
 
 分割の軸は「公開 API 面 / 型 / 生成ロジック / マーカー」の 4 つで、次の理由による。

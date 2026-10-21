@@ -168,6 +168,16 @@ layat list-generations vim-plugins
 
 `src` を更新した後(flake input 更新、`npins update` など)は、影響を受けた config だけを再適用すれば、変更が他のツールに触れずに済む。
 
+全 target を `$HOME` 配下のサブディレクトリへ置くには、マーカーを `{ subdir = ...; }` に適用する。root は `$HOME` のまま動かない。適用形は全 target へ `.config/` を前置するのと等価な評価時の糖衣で、次の entry は `~/.config/nvim` に置かれる。
+
+```nix
+nvim = layat.lib.mkManifest {
+  inherit pkgs;
+  root = layat.lib.homeRoot { subdir = ".config"; };
+  entries."nvim" = { src = inputs.nvim-config; };   # → ~/.config/nvim
+};
+```
+
 ### home-manager モジュール
 
 モジュールは `root = homeRoot` に固定される(`root` を再指定しない)。`layat.configs.<name>` ごとに link-farm と profile `<name>` が別々に作られるので、standalone の `layat.<name>` と同じく役割を分けられる。`home.activation` は `layat apply --all --manifest <name>=<link-farm> … --jobs <n>` の 1 回の起動でエンジンを駆動し、`home.file` へは委譲しない。2 つの config が同じ target を持つと、何も配置せずに activation が止まる。layat は自前の profile を **内部機構** として保持するが、ユーザー公開の rollback はホスト側に一本化される(`home-manager --rollback`)。

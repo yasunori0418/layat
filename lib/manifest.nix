@@ -41,8 +41,15 @@ let
             root = cfg.root;
           };
 
+      # root marker subdir: normalized, then prepended to every target. root itself never moves.
+      rawSubdir = if t.isRootMarker cfg.root then cfg.root.subdir or null else null;
+      subdir = if rawSubdir == null then "" else internal.normalizeRelPath lib rawSubdir;
+      subdirInvalid = rawSubdir != null && (checks.isUnsafe rawSubdir || subdir == "");
+
       # entry marker tag → clean enum + resolved src string, in attrNames lexical order.
-      normEntries = map (key: internal.resolveEntry lib cfg.entries.${key}) (lib.attrNames cfg.entries);
+      rawEntries = map (key: internal.resolveEntry lib cfg.entries.${key}) (lib.attrNames cfg.entries);
+      normEntries =
+        if subdir == "" then rawEntries else map (e: e // { target = "${subdir}/${e.target}"; }) rawEntries;
 
       targets = map (e: e.target) normEntries;
 
@@ -51,6 +58,8 @@ let
 
       # ---- Cross-field / path validation ----
       assertions = lib.concatLists [
+        # A root subdir must stay inside root and must not normalize to empty.
+        (lib.optional subdirInvalid "layat: invalid root subdir (absolute path, escapes root via `..`, or empty): ${rawSubdir}")
         # method = "copy" cannot be combined with an out-of-store / root-relative marker.
         (map (
           e: "layat: method = \"copy\" cannot be combined with an out-of-store marker (target: ${e.target})"
@@ -83,9 +92,9 @@ let
         (lib.optional (
           lib.length targets != lib.length (lib.unique targets)
         ) "layat: multiple entries resolve to the same target")
-        # Reject absolute paths / `..` escapes in target / subpath.
+        # Reject absolute paths / `..` escapes in target (as written, before the subdir prefix) / subpath.
         (map (e: "layat: invalid target (absolute path or escapes root via `..`): ${e.target}") (
-          lib.filter (e: checks.isUnsafe e.target) normEntries
+          lib.filter (e: checks.isUnsafe e.target) rawEntries
         ))
         (map (
           e:

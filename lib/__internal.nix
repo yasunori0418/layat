@@ -38,6 +38,9 @@ let
       acc: c: if c == ".." then lib.take (lib.max 0 (lib.length acc - 1)) acc else acc ++ [ c ]
     ) [ ] (lib.filter (c: c != "" && c != ".") (lib.splitString "/" p));
 
+  # Relative path rejoined from relComponents ("./a/" -> "a"); "" when nothing remains.
+  normalizeRelPath = lib: p: lib.concatStringsSep "/" (relComponents lib p);
+
   # Whether two relative paths are equal or one is an ancestor of the other, per component.
   pathsOverlap =
     lib: a: b:
@@ -92,6 +95,7 @@ in
   inherit
     escapesBase
     pathChecks
+    normalizeRelPath
     pathsOverlap
     anchorName
     resolveEntry

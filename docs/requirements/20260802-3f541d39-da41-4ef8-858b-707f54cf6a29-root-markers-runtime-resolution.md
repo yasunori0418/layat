@@ -53,8 +53,6 @@ systemRoot  :: marker   # /（distro 構想・将来）
 > ADR-0036 は本 item の `justifies` の対象にしない（当該規範を持つ REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 側で
 > 接続している）。
 >
-> **marker の関数適用形（`subdir`）を含めない理由**: **ADR-0040** は root マーカーを
-> `homeRoot { subdir = ".config"; }` の関数適用形へ拡張することを決定済みだが、
-> `docs/spec.md` の当該節はこれにも未追従で、単体 marker 形しか記していない。本 item は
-> 原文の範囲（marker が kind を運ぶこと）に留め、適用形は担当範囲外とする。
-> `docs/spec.md` の追従は本 item の担当範囲外。
+> **marker の関数適用形（`subdir`）**: 適用形 `homeRoot { subdir = ".config"; }` は本 item の
+> 担当範囲外で、その規範は REQ-08c8f639-790c-4970-a954-c9567538cf9b が持つ。本 item は原文の範囲
+> （marker が kind を運ぶこと）に留まる。

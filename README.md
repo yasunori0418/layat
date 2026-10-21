@@ -197,6 +197,18 @@ layat list-generations vim-plugins
 After updating a `src` (a flake input update, `npins update`, …), re-apply only the
 affected config to keep the change from touching any other tool.
 
+To place every target under a subdirectory of `$HOME`, apply the marker to `{ subdir = ...; }`. Root
+stays `$HOME`; the applied form is evaluation-time sugar equivalent to prefixing every
+target with `.config/`, so the entry below is placed at `~/.config/nvim`.
+
+```nix
+nvim = layat.lib.mkManifest {
+  inherit pkgs;
+  root = layat.lib.homeRoot { subdir = ".config"; };
+  entries."nvim" = { src = inputs.nvim-config; };   # → ~/.config/nvim
+};
+```
+
 ### home-manager module
 
 The module pins `root = homeRoot` (you do not re-specify `root`). Each
