@@ -8,6 +8,7 @@ threatens:
   - "REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3"
   - "REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a"
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
+  - "REQ-068f2fb3-5459-4325-9359-c931b5049e0d"
 likelihood: medium
 impact: high
 level: high
@@ -31,6 +32,8 @@ level: high
 - **オプションの配線漏れ** — モジュールのオプション（退避の有効化とそのサフィックス）が、
   engine の起動時のフラグとして届かない。既定値を省略したときに既定が入らない、という形でも
   起きる
+- **subdir の配線漏れ** — config に指定した subdir がその config の target に前置されない、
+  または別の config の target へ漏れる
 - **config ごとの独立性の喪失** — 名前つきの config ごとに独立した profile を取れず、役割
   分離が崩れる。hm 経路の検証は評価アサート（`checks.hm-module`）・実 activate（e2e
   `05-hm`）とも複数 config を通しており、この崩れ方は RISK-6e20efa1-7947-4dc9-aefd-8d4d9a97d110
