@@ -64,6 +64,7 @@ manifest をエンジンへ渡す。エンジンは `manifest.json` を唯一の
 - [REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7](requirements/20260802-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7-entry-identity-by-target-key.md) — entry の識別子は属性キー = target とし一意性は Nix が担保する
 - [REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4](requirements/20260802-4ec3accc-8bb6-461f-9024-dcf0027849e4-root-explicit-required.md) — root は明示必須で暗黙デフォルトを持たない
 - [REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66](requirements/20260802-37b56673-6e40-4a1b-a2a7-5d3c084e3e66-root-marker-kinds.md) — root は 3 マーカーと絶対パス文字列の union を取る
+- [REQ-08c8f639-790c-4970-a954-c9567538cf9b](requirements/20261021-08c8f639-790c-4970-a954-c9567538cf9b-root-marker-subdir-sugar.md) — root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない
 
 ### マーカー構築子
 
