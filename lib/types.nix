@@ -26,11 +26,12 @@ let
     merge = mergeEqualOption;
   };
 
-  # rootType = either str rootMarker. Used only by `mkManifest`; modules pin root.
+  # rootType = either str rootMarker, where a marker may carry an optional string subdir.
+  # Used only by `mkManifest`; modules pin root.
   rootType = types.mkOptionType {
     name = "layatRoot";
-    description = "absolute path string or root marker (projectRoot / homeRoot / systemRoot)";
-    check = x: isString x || isRootMarker x;
+    description = "absolute path string or root marker (projectRoot / homeRoot / systemRoot, optionally applied to { subdir })";
+    check = x: isString x || (isRootMarker x && (!(x ? subdir) || isString x.subdir));
     merge = mergeEqualOption;
   };
 
