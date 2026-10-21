@@ -28,6 +28,7 @@ RISK-3de9753f-3fd3-4364-b1ab-64c68c15ec77（評価スイート自身の盲点）
 ## 覆う CASE
 
 - CASE-7fb33044-b68c-4518-bd93-b258072235ee（`tests/namaka/manifest-project/expr.nix`）
+- CASE-9e44bd6d-f6b4-4d12-990e-349a4b5c0dda（`tests/namaka/manifest-subdir/expr.nix`）
 
 ## 出典
 
