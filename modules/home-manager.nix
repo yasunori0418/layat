@@ -1,5 +1,5 @@
-# home-manager module: builds one link-farm per layat.configs.<name> with root = homeRoot and
-# passes them all to a single `layat apply --all` from home.activation.
+# home-manager module: builds one link-farm per layat.configs.<name> with root = homeRoot (applied to
+# { subdir } when the config sets one) and passes them all to a single `layat apply --all` from home.activation.
 # layatPackage (the pinned layat CLI) is injected as _module.args by flake.nix.
 {
   config,
@@ -17,7 +17,7 @@ let
     _: c:
     layatLib.mkManifest {
       inherit pkgs;
-      root = layatLib.homeRoot;
+      root = if c.subdir == null then layatLib.homeRoot else layatLib.homeRoot { subdir = c.subdir; };
       entries = c.entries;
     }
   ) cfg.configs;
