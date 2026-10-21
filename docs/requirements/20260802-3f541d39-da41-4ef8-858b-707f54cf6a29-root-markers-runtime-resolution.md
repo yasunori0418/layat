@@ -53,5 +53,6 @@ systemRoot  :: marker   # /（distro 構想・将来）
 > ADR-0036 は本 item の `justifies` の対象にしない（当該規範を持つ REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 側で
 > 接続している）。
 >
-> **marker の関数適用形（`subdir`）**: 適用形 `homeRoot { subdir = ".config"; }` の規範は
-> REQ-08c8f639-790c-4970-a954-c9567538cf9b が持つ。本 item は原文の範囲（marker が kind を運ぶこと）に留まる。
+> **marker の関数適用形（`subdir`）**: 適用形 `homeRoot { subdir = ".config"; }` は本 item の
+> 担当範囲外で、その規範は REQ-08c8f639-790c-4970-a954-c9567538cf9b が持つ。本 item は原文の範囲
+> （marker が kind を運ぶこと）に留まる。
