@@ -272,6 +272,26 @@
                 configs.default.entries.".claude/skills/nix" = skill;
                 recopy = true;
               };
+              # subdir は指定した config の target にだけ前置される。
+              subdir = mkHm {
+                configs.nvim = {
+                  subdir = ".config";
+                  entries."nvim" = skill;
+                };
+                configs.default.entries.".claude/skills/nix" = skill;
+              };
+              # 不正な subdir は lib の検査で eval が失敗する（tryEval の成否だけを見る）。
+              badSubdir =
+                v:
+                lib.boolToString
+                  (builtins.tryEval
+                    (mkHm {
+                      configs.default = {
+                        subdir = v;
+                        entries.".claude/skills/nix" = skill;
+                      };
+                    }).home.activation.layat.data
+                  ).success;
               # home.activation の dag entry の生スクリプト。
               activationScript = pkgs.writeText "layat-activation" multi.home.activation.layat.data;
             in
@@ -284,6 +304,12 @@
                 emptyLaunches = lib.boolToString (empty.home.activation ? layat);
                 jobs3Activation = jobs3.home.activation.layat.data;
                 recopyActivation = recopy.home.activation.layat.data;
+                subdirActivation = subdir.home.activation.layat.data;
+                badSubdirs = lib.concatMapStringsSep " " badSubdir [
+                  "/abs"
+                  "../x"
+                  ""
+                ];
               }
               ''
                 script=${activationScript}
@@ -332,6 +358,20 @@
                 # (6) config が 1 つも無いとき activation は layat を起動しないこと。
                 test "$emptyLaunches" = false \
                   || { echo "FAIL: configs が空でも activation が layat を起動します"; exit 1; }
+
+                # (7) subdir 付き config だけ target に subdir が前置され、root は home のままであること。
+                nvimJson="$(grep -oE "nvim=/nix/store/[^ ']+" <<<"$subdirActivation" | cut -d= -f2)/manifest.json"
+                defaultJson="$(grep -oE "default=/nix/store/[^ ']+" <<<"$subdirActivation" | cut -d= -f2)/manifest.json"
+                grep -qF '".config/nvim"' "$nvimJson" && grep -q '"rootKind":"home"' "$nvimJson" \
+                  || { echo "FAIL: subdir が nvim の target に前置されていません"; cat "$nvimJson"; exit 1; }
+                ! grep -qF '"subdir"' "$nvimJson" \
+                  || { echo "FAIL: manifest に subdir キーが漏れています"; cat "$nvimJson"; exit 1; }
+                grep -qF '".claude/skills/nix"' "$defaultJson" && ! grep -qF '.config/' "$defaultJson" \
+                  || { echo "FAIL: subdir が別 config に漏れています"; cat "$defaultJson"; exit 1; }
+
+                # (8) 不正な subdir（絶対パス・.. 脱出・空）は eval が失敗すること。
+                test "$badSubdirs" = "false false false" \
+                  || { echo "FAIL: 不正な subdir の eval が成功します（/abs ../x \"\" の順）: $badSubdirs"; exit 1; }
 
                 touch "$out"
               '';
