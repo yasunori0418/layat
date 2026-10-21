@@ -201,6 +201,17 @@ layat = {
 };
 ```
 
+config ごとのオプション:
+
+- `layat.configs.<name>.subdir`(nullable な文字列、既定 `null`)——その config の全 target を `$HOME/<subdir>/` 配下に置く。root は home に pin されたまま。絶対パス・`..` による脱出・`""` は eval エラーになる。
+
+```nix
+layat.configs.nvim = {
+  subdir = ".config";
+  entries."nvim" = { src = inputs.nvim-config; };  # -> ~/.config/nvim
+};
+```
+
 全 config に共通のオプション:
 
 - `layat.recopy`(bool、既定 `false`)——activation のたびに `--recopy` を付け、全 copy target を `src` から上書きする(ローカル編集は失われる)。

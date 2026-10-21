@@ -35,6 +35,10 @@ references:
 > 停止する」は、activation の `apply --all` 前段検査で停止する形へ変わり、module eval では検出しない。根拠節の
 > 「CLI 拡張をしない理由」と棄却案末尾の「activation を 1 回の engine 起動に集約」の棄却は反転した（→ ADR-0060）。
 
+> **2026-10-22 改訂注記（ADR-0064）**: §1 の「1 config = 1 profile = 1 manifest」と `layat.entries` の糖衣は不変。
+> ただし §1 の submodule 形 `{ entries }` は `{ entries, subdir }` へ広がった。`subdir :: nullOr str`（既定 null）が
+> 非 null の config は、root を home に pin したまま全 target が `$HOME/<subdir>/` 配下になる（→ ADR-0064）。
+
 ## 背景
 
 ADR-0024 §2 / ADR-0025 §2 は HM モジュールを単一 `layat.entries` = 1 profile（固定名 `default`）に限定し、役割分離（役割ごとに独立した profile・個別 rollback）は standalone CLI 経路のみとした。将来 seam として `layat.configs.<name>.entries`（attrsOf）形が明記されている。

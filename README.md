@@ -238,6 +238,19 @@ layat = {
 };
 ```
 
+Per-config option:
+
+- `layat.configs.<name>.subdir` (nullable string, default `null`) — places every target of that
+  config under `$HOME/<subdir>/`; the root stays pinned to home. An absolute path, a `..` escape
+  or `""` is an eval error.
+
+```nix
+layat.configs.nvim = {
+  subdir = ".config";
+  entries."nvim" = { src = inputs.nvim-config; };  # -> ~/.config/nvim
+};
+```
+
 Options shared by every config:
 
 - `layat.recopy` (bool, default `false`) — every activation passes `--recopy`, overwriting

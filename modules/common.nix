@@ -35,6 +35,17 @@ in
               error (→ docs/spec.md "entries schema").
             '';
           };
+          options.subdir = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            example = ".config";
+            description = ''
+              Relative directory under the module's root that every target of this config is
+              placed under (root stays pinned; e.g. ".config" places "nvim" at ~/.config/nvim).
+              null = targets are relative to the root itself. Absolute paths, `..` escapes and
+              the empty string are eval errors.
+            '';
+          };
         }
       );
       default = { };

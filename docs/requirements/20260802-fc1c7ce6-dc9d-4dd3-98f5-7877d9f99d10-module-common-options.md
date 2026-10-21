@@ -7,8 +7,8 @@ derives_from:
 specification: |
   Every module (home-manager / NixOS / nix-darwin) SHALL expose the same set of common
   options: `layat.enable :: bool` defaulting to false, `layat.configs :: attrsOf (submodule
-  { entries :: attrsOf entry; })` defaulting to `{}` and with `entries` likewise
-  defaulting to `{}`, `layat.backup.enable :: bool` defaulting to false,
+  { entries :: attrsOf entry; subdir :: nullOr str; })` defaulting to `{}`, with `entries`
+  likewise defaulting to `{}` and `subdir` defaulting to null, `layat.backup.enable :: bool` defaulting to false,
   `layat.backup.suffix :: str` defaulting to `"layat-backup"`, `layat.recopy :: bool`
   defaulting to false, and `layat.jobs :: ints.unsigned` defaulting to 0, where 0 means the
   logical CPU count. The bare `layat.entries` SHALL
@@ -23,8 +23,8 @@ specification: |
 specification_ja: |
   全モジュール（home-manager / NixOS / nix-darwin）は共通オプションとして同一の集合を
   公開しなければならない: `layat.enable :: bool`（デフォルト false）・
-  `layat.configs :: attrsOf (submodule { entries :: attrsOf entry; })`（デフォルト `{}`・
-  `entries` のデフォルトも `{}`）・`layat.backup.enable :: bool`（デフォルト false）・
+  `layat.configs :: attrsOf (submodule { entries :: attrsOf entry; subdir :: nullOr str; })`
+  （デフォルト `{}`・`entries` のデフォルトも `{}`・`subdir` のデフォルトは null）・`layat.backup.enable :: bool`（デフォルト false）・
   `layat.backup.suffix :: str`（デフォルト `"layat-backup"`）・`layat.recopy :: bool`
   （デフォルト false）・`layat.jobs :: ints.unsigned`（デフォルト 0。0 は論理 CPU 数）。
   素の `layat.entries` は
@@ -63,6 +63,10 @@ layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-0045�
 >
 > **2026-10-15 追記（ADR-0061）**: 写しの表に無い `layat.recopy` / `layat.jobs` は ADR-0061 が
 > 共通オプションへ足した（規範は frontmatter）。
+>
+> **2026-10-22 追記（ADR-0064）**: 写しの表に無い `layat.configs.<name>.subdir` は ADR-0064 が
+> `configs` submodule へ足した（型とデフォルトの規範は frontmatter）。subdir から root の適用形を
+> 組む HM の配線は REQ-068f2fb3-5459-4325-9359-c931b5049e0d の担当で、root pin の条文は変わらない。
 >
 > **写しの `layat.entries` を canonical としない理由**: **ADR-0035 §1〜§2 は
 > `layat.configs.<name>.entries` を canonical とし、素の `layat.entries` を
