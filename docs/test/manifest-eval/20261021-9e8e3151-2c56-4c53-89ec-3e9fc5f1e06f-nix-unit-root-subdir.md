@@ -29,6 +29,11 @@ root マーカーの subdir 適用形を、marker 単体と `normalizeManifest` 
 - `"/abs"`・`"../x"`・`""`・`"."`・`"a/.."` の `subdir` が `"root subdir"` を含む `ThrownError` になる。
   entries が空でも `root` の参照で同じエラーになる
 - `subdir = "a"` の下でも target `"../x"` が `"invalid target"` で拒否される
+- root 相対 src との重なりは前置後の target で判定する。前置後と一致する src は `"overlaps target"` で
+  拒否され、前置前の target とだけ一致する src は受理される
+- `subdir = null` と非文字列の `subdir` が型検査（`"is not of type"`）で拒否される
+- 正規化ヘルパ `__internal.normalizeRelPath` が `.`・空成分・末尾スラッシュを除き、`..` を親へ畳み、
+  何も残らない値を `""` にする
 
 ## 出典
 

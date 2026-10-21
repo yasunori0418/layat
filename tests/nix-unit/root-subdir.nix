@@ -214,4 +214,65 @@ in
     expectedError.type = "ThrownError";
     expectedError.msg = "invalid target";
   };
+
+  # root 相対 src との重なりは前置後の target（実際の配置先）で見る。
+  testRootSubdirRootRelativeOverlapRejected = {
+    expr =
+      (norm (layat.homeRoot { subdir = ".config"; }) {
+        "nvim" = {
+          src = layat.mkRootRelativeSymlink ".config/nvim";
+        };
+      }).entries;
+    expectedError.type = "ThrownError";
+    expectedError.msg = "overlaps target";
+  };
+
+  # 前置前の target とだけ一致する src は重ならない。
+  testRootSubdirRootRelativeUnprefixedTargetAccepted = {
+    expr = targetsOf (
+      norm (layat.homeRoot { subdir = ".config"; }) {
+        "nvim" = {
+          src = layat.mkRootRelativeSymlink "nvim";
+        };
+      }
+    );
+    expected = [ ".config/nvim" ];
+  };
+
+  # ---- subdir の型 ------------------------------------------------------------------
+  testRootSubdirNullRejected = {
+    expr = (norm (layat.homeRoot { subdir = null; }) twoEntries).root;
+    expectedError.type = "ThrownError";
+    expectedError.msg = "is not of type";
+  };
+
+  testRootSubdirNonStringRejected = {
+    expr = (norm (layat.homeRoot { subdir = 1; }) twoEntries).root;
+    expectedError.type = "ThrownError";
+    expectedError.msg = "is not of type";
+  };
+
+  # ---- subdir の正規化ヘルパ ---------------------------------------------------------
+  testRootSubdirNormalizeRelPathDropsDotAndSlash = {
+    expr = layat.__internal.normalizeRelPath lib "./a//b/";
+    expected = "a/b";
+  };
+
+  testRootSubdirNormalizeRelPathFoldsDotDot = {
+    expr = layat.__internal.normalizeRelPath lib "a/b/../c";
+    expected = "a/c";
+  };
+
+  testRootSubdirNormalizeRelPathEmpty = {
+    expr = map (layat.__internal.normalizeRelPath lib) [
+      ""
+      "."
+      "a/.."
+    ];
+    expected = [
+      ""
+      ""
+      ""
+    ];
+  };
 }
