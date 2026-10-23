@@ -122,6 +122,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed](requirements/20260823-42fe312c-927c-4da3-9346-f7ca2f3a58ed-prune-safety-gates.md) — prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る
 - [REQ-05abce3e-9797-432b-b93f-37c55d09afde](requirements/20260802-05abce3e-9797-432b-b93f-37c55d09afde-rollback-list-generations-home-only.md) — rollback と list-generations は home / system mode 限定にする
 - [REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796](requirements/20260802-89c7baf9-9be0-417b-bd2d-b2e4edabe796-rollback-named-only.md) — rollback は名指し必須で --all に対応しない
+- [REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173](requirements/20261023-e8d911ff-8ee2-4d68-87d0-26f6d6817173-status-command.md) — status は記録基底を走査して last-applied 記録を読み取り専用で表示する
 - [REQ-a480c183-40ce-4201-93b5-65a7a59c1b9e](requirements/20260802-a480c183-40ce-4201-93b5-65a7a59c1b9e-gitignore-anchored-output.md) — gitignore は配置 target を stdout へ列挙するだけでファイルを書き込まない
 - [REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9](requirements/20260802-eaa8c0df-af44-4f52-9603-cd2bc22a67e9-gitignore-project-mode-only.md) — gitignore は project mode 限定で非 project config を指定したらエラーで停止する
 - [REQ-60787ed2-4176-4bdd-800f-1600c0315551](requirements/20260802-60787ed2-4176-4bdd-800f-1600c0315551-gitignore-includes-copy-targets.md) — gitignore は method を区別せず copy target も含めて全 target を列挙する
