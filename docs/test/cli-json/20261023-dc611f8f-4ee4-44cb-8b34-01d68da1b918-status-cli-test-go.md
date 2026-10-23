@@ -39,15 +39,23 @@ stderr は `captureOutErr` で取る。
 
 **フィルタ**
 
-- `[name]` は `<name>` 部分の完全一致で mode・root を問わずに絞り、前方一致にならない
+- `[name]` は `<name>` 部分の完全一致で mode・root を問わずに絞る。前方一致にも、subject 名
+  全体（`home:docs` など）との一致にもならない
 - 系列全体で 1 件として返る系列の error subject は `[name]` を指定しても残る。一致する config が
   無くてもこの subject が出て、一致 0 件の通知は出ず、exit 1 になる
+- 別の `<name>` の error subject は絞り込みで落ち、残った subject が全て読めれば exit 0
 
 **一致 0 件**
 
-- テキストでも `--json` でも stdout は空で、stderr に `layat: status: no applied config named <name>`
-  の 1 行を出して exit 0。`--json` のエンベロープは `status: success`・`results: []` で
-  conformance を通る
+- テキストでも `--json` でも stdout は空で、stderr に通知を 1 行出して exit 0。通知は `[name]`
+  指定時が `layat: status: no applied config named <name>`、記録が 1 件も無いときが
+  `layat: status: no applied config`。`--json` のエンベロープは `status: success`・`results: []`
+  で conformance を通る
+
+**engine の失敗**
+
+- engine の `Status` 自体が失敗する（user の記録基底が読めない）と、subject を作る前に error を
+  返す。`--json` ではトップレベルの `errors[]` に 1 件載り、エンベロープの status は error
 
 **`--json` の形とストリームの排他**
 
