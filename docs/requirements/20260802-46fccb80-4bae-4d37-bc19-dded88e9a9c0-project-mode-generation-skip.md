@@ -105,7 +105,7 @@ specification_ja: |
 > lstat 検査の「記録通り」も記録を優先した baseline に照らす。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 >
 > **2026-10-24 追記**: 上の写しの「世代スキップは project mode 限定」は「project / system mode 限定」と読み替える。
-> system mode も同じ条件で世代を積まずドリフト修復だけ行い、home mode だけが適用のたびに新世代を積む。
+> system mode も同じ条件で世代を積まずドリフト修復だけ行い、home / fixed mode は従来どおり適用のたびに新世代を積む。
 > NixOS の activation は boot のたびにも走るため、system mode で毎回世代を積むと boot ごとに世代が増える。
 
 ## 出典
