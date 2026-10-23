@@ -1,7 +1,7 @@
 ---
 id: "REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0"
 type: requirement
-name: "project mode は世代を非公開にし、derivation 同一なら世代を積まず lstat ドリフト修復だけ行う"
+name: "project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う"
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
@@ -20,9 +20,11 @@ specification: |
   skip SHALL never be taken when no profile exists, and while the profile and the record
   disagree the full apply path SHALL run instead. Skipping is mandatory, since under
   devShell / direnv the `shellHook` runs on every shell re-entry and stacking a generation
-  each time would make them grow without bound. Home mode SHALL remain as it is, stacking
-  a new generation on every application, the generation skip being confined to project
-  mode. Even when the generation is skipped, a lightweight filesystem inspection SHALL
+  each time would make them grow without bound. The same generation skip and drift repair
+  SHALL apply in system mode, since NixOS activation also runs on every boot and stacking a
+  generation each time would make them grow with every boot. Home mode SHALL remain as it
+  is, stacking a new generation on every application, the generation skip being confined
+  to project and system mode. Even when the generation is skipped, a lightweight filesystem inspection SHALL
   still be performed rather than making it a complete no-op: the target of each entry
   SHALL be inspected with `lstat` against the baseline (the last-applied record when one
   exists, otherwise the current generation of the profile), and any entry that is not as
@@ -48,9 +50,10 @@ specification_ja: |
   current 世代に一致し、last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）が
   あればその `linkFarm` にも一致するなら新世代を積んではならない。profile が無ければ skip
   してはならず、profile と記録が食い違う間は通常の apply 経路を走らせなければならない。skip は必須であり、devShell / direnv 運用では `shellHook` がシェル
-  再入のたびに走るため、毎回新世代を積むと世代が無限増殖するからである。home mode は従来通り
-  「適用のたびに新世代」のままでなければならず、世代スキップは project mode 限定としなければ
-  ならない。ただし世代スキップ時も完全 no-op にせず、FS 検査だけは軽量に行わなければならない。
+  再入のたびに走るため、毎回新世代を積むと世代が無限増殖するからである。system mode でも同じ
+  世代スキップとドリフト修復を行わなければならない。NixOS の activation は boot のたびにも走り、
+  毎回新世代を積むと boot ごとに世代が増えるからである。home mode は従来通り「適用のたびに
+  新世代」のままでなければならず、世代スキップは project / system mode 限定としなければならない。ただし世代スキップ時も完全 no-op にせず、FS 検査だけは軽量に行わなければならない。
   各 entry の target を baseline（last-applied 記録があれば記録、無ければ profile の current
   世代）に照らして `lstat` で検査しなければならず、記録通りでない（foreign tool に
   書き換えられた・消えた）entry があればその entry だけ再張りしなければならない
@@ -61,7 +64,7 @@ specification_ja: |
   （ユーザー編集）場合は触ってはならない（home mode の place-once と振る舞いを一致させる）。
   src 追従は `apply --recopy` 限定としなければならず、内容ハッシュ比較はしてはならない。
 ---
-# REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0: project mode は世代を非公開にし、derivation 同一なら世代を積まず lstat ドリフト修復だけ行う
+# REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0: project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う
 
 ## 仕様
 
@@ -100,6 +103,10 @@ specification_ja: |
 > profile の current 世代に一致し、last-applied 記録があればその `linkFarm` にも一致するなら、と読み替える
 > （profile が無ければ skip しない）。profile と記録が食い違う間は通常経路で記録を baseline に stale 除去とコミットを行う。
 > lstat 検査の「記録通り」も記録を優先した baseline に照らす。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
+>
+> **2026-10-24 追記**: 上の写しの「世代スキップは project mode 限定」は「project / system mode 限定」と読み替える。
+> system mode も同じ条件で世代を積まずドリフト修復だけ行い、home mode だけが適用のたびに新世代を積む。
+> NixOS の activation は boot のたびにも走るため、system mode で毎回世代を積むと boot ごとに世代が増える。
 
 ## 出典
 
