@@ -296,6 +296,30 @@ func TestStatusUnreadableSeries(t *testing.T) {
 		assertStatusKeys(t, got, []statusKey{{Mode: "home", RootHash: h, HasErr: true}})
 	})
 
+	t.Run("whole series sits at its roothash with both reasons", func(t *testing.T) {
+		state := realTempDir(t)
+		user := filepath.Join(state, "layat")
+		root := realTempDir(t)
+		h := paths.RootHash(root)
+		n := putStatusRecord(t, state, "n", root, false, "/nix/store/lf", projectManifest())
+		zz := putStatusRecord(t, state, "zz", "/home/me", false, "/nix/store/lf", homeManifest())
+		// "0" sorts before any other roothash and "zz" after every roothash.
+		whole := filepath.Join(user, "0")
+		writeStatusFile(t, filepath.Join(whole, ".root"), root+"\n")
+		chmodStatus(t, whole, 0o000)
+
+		var warnings []string
+		got := runStatus(t, state, realTempDir(t), &warnings)
+		assertStatusKeys(t, got, []statusKey{
+			{Mode: "home", Name: "zz", RecordFile: zz.File},
+			{Mode: "home", RootHash: "0", HasErr: true},
+			{Mode: "project", Name: "n", Root: root, RootHash: h, RecordFile: n.File},
+		})
+		if msg := got[1].Err.Error(); !strings.Contains(msg, "backref") || !strings.Contains(msg, "cannot list series") {
+			t.Errorf("Err = %q; want both the backref and the listing reason", msg)
+		}
+	})
+
 	t.Run("unsearchable name-keyed dir is listed once", func(t *testing.T) {
 		state := realTempDir(t)
 		putStatusRecord(t, state, "a", "/home/me", false, "/nix/store/lf", homeManifest())
