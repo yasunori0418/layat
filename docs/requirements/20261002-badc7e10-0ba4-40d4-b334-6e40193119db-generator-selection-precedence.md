@@ -27,8 +27,8 @@ specification: |
   as `E_INPUT` and SHALL keep the classification of its read failure (`E_PERMISSION`,
   `E_IO`). An unknown generator name, an invalid configuration file, and the flag
   combinations `--generator` with `--manifest`, `-f` with `--manifest` and `--all` with
-  the `<link-farm>` form of `--manifest` SHALL be reported as `E_INPUT` under `--json`. `prune` and `init` SHALL
-  ignore `--generator` without validating its value, and SHALL NOT read the environment
+  the `<link-farm>` form of `--manifest` SHALL be reported as `E_INPUT` under `--json`. `prune`, `init` and `status`
+  SHALL ignore `--generator` without validating its value, and SHALL NOT read the environment
   variable or any configuration file.
 specification_ja: |
   CLI は manifest 生成器を明示指定のみで選ばなければならず、どの entrypoint ファイルが
@@ -49,7 +49,7 @@ specification_ja: |
   （`E_PERMISSION` / `E_IO`）を保たなければならない。
   未知の生成器名・設定ファイルの不正・フラグの組み合わせ（`--generator` + `--manifest`、
   `-f` + `--manifest`、`--all` + `<link-farm>` 形の `--manifest`）は `--json` で `E_INPUT` として報告しなければ
-  ならない。`prune` と `init` は `--generator` の値を検証せずに無視し、環境変数・設定
+  ならない。`prune`・`init`・`status` は `--generator` の値を検証せずに無視し、環境変数・設定
   ファイルを読んではならない。
 ---
 # REQ-badc7e10-0ba4-40d4-b334-6e40193119db: 生成器は明示指定のみで選び、フラグ・環境変数・設定ファイル・既定の順に解決する
@@ -58,7 +58,7 @@ specification_ja: |
 
 | 優先 | 指定元 | 備考 |
 |---|---|---|
-| 1 | `--generator <name>` | persistent flag。prune / init は値を検証せず無視し、2〜4 も読まない |
+| 1 | `--generator <name>` | persistent flag。prune / init / status は値を検証せず無視し、2〜4 も読まない |
 | 2 | `LAYAT_GENERATOR` | 空文字は指定なし |
 | 3 | `layat.toml` | `-f` のディレクトリ（ファイルならその親）、無ければ cwd。上方向探索なし。`-f` を stat できなければ 3・4 を読まない |
 | 4 | `$XDG_CONFIG_HOME/layat/config.toml` | 未設定時は `~/.config/layat/config.toml`。どちらも解決できなければ飛ばす |

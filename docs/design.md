@@ -106,6 +106,7 @@ layat 自身の flake outputs は packages / templates / 各モジュール / fl
 - [DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68](design/20260810-8b96869c-842e-4f78-8ff7-df1f1d6c1a68-planner-engine-split.md) — 配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する
 - [DSG-096dc893-21f4-45e3-9347-986e9275b4d1](design/20260823-096dc893-21f4-45e3-9347-986e9275b4d1-prune-orphan-series.md) — prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする
 - [DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296](design/20261012-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296-root-relative-linkdest.md) — rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは preflight だけにする
+- [DSG-85439cb5-a149-422e-8596-fc4e860bc3a5](design/20261023-85439cb5-a149-422e-8596-fc4e860bc3a5-status-scans-record-bases.md) — status を engine の記録基底走査と CLI の絞り込み・出力に分ける
 
 `lib` の API・`entries` スキーマ・`manifest.json` の内容・CLI の実行モデルは仕様（requirement）の
 領分（→ `docs/spec.md`「lib API」「entries スキーマ仕様」「manifest.json スキーマ」「CLI 仕様」）。

@@ -14,7 +14,7 @@ specification: |
   config SHALL check that the effective user ID is 0 before creating any directory, taking
   the flock or otherwise touching the filesystem, and when it is not 0 they SHALL stop with
   an error that wraps the permission-denied condition and tells the user to rerun with root
-  privileges. `apply --dryrun`, `reset --dryrun` and `list-generations` SHALL NOT perform
+  privileges. `apply --dryrun`, `reset --dryrun`, `list-generations` and `status` SHALL NOT perform
   this check. The locations of the profileDir and the record of home, project and fixed
   configs SHALL NOT change.
 specification_ja: |
@@ -28,7 +28,7 @@ specification_ja: |
   （`apply` / `reset` / `rollback`）は、ディレクトリの作成・flock の取得・その他 FS への接触
   より前に実効ユーザー ID が 0 であることを検査しなければならず、0 でなければ権限不足を wrap し
   root 権限での再実行を案内するエラーで停止しなければならない。`apply --dryrun` /
-  `reset --dryrun` / `list-generations` はこの検査をしてはならない。home / project / fixed の
+  `reset --dryrun` / `list-generations` / `status` はこの検査をしてはならない。home / project / fixed の
   config の profileDir と記録の置き場は変えてはならない。
 derives_from:
   - "UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d"
@@ -52,8 +52,8 @@ derives_from:
   以外のとき profileDir の解決直後、`rollback` は profileDir の解決直後に検査する。どれも
   flock を取らず、ディレクトリも記録も作らないまま止まる。エラーは `fs.ErrPermission` を wrap
   する（CLI はこれを `E_PERMISSION` に写す）。
-- **検査しない経路**: `apply --dryrun` / `reset --dryrun` / `list-generations` は読み取りだけで
-  動くので、非 root でも計画確認と世代閲覧ができる。
+- **検査しない経路**: `apply --dryrun` / `reset --dryrun` / `list-generations` / `status` は
+  読み取りだけで動くので、非 root でも計画確認・世代閲覧・配置内容の確認ができる。
 - **変えないもの**: home / project / fixed の profileDir と記録の置き場。
 
 profileDir の鍵の一般規則は REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81 の担当。記録の内容・
