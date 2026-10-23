@@ -196,8 +196,8 @@ func TestStatusUserBaseUnreadableFails(t *testing.T) {
 	chmodStatus(t, filepath.Join(state, "layat"), 0o000)
 
 	got, err := Status(StatusOptions{StateDir: state, SystemStateDir: sysState, Warnf: func(string, ...any) {}})
-	if err == nil {
-		t.Fatalf("Status = %+v, nil; want an error for the unreadable user base", statusKeys(got))
+	if err == nil || !strings.Contains(err.Error(), "cannot list the record base") {
+		t.Fatalf("Status = %+v, %v; want an error naming the unreadable record base", statusKeys(got), err)
 	}
 }
 
@@ -213,8 +213,8 @@ func TestStatusSystemBaseUnreadableWarns(t *testing.T) {
 	var warnings []string
 	got := runStatus(t, state, sysState, &warnings)
 	assertStatusKeys(t, got, []statusKey{{Mode: "home", Name: "a", RecordFile: rec.File}})
-	if len(warnings) != 1 || !strings.Contains(warnings[0], system) {
-		t.Fatalf("warnings = %q; want one line naming %s", warnings, system)
+	if len(warnings) != 1 || !strings.Contains(warnings[0], "cannot list the record base ("+system+")") {
+		t.Fatalf("warnings = %q; want one line naming the record base %s", warnings, system)
 	}
 }
 
@@ -303,10 +303,12 @@ func TestStatusUnreadableSeries(t *testing.T) {
 		h := paths.RootHash(root)
 		n := putStatusRecord(t, state, "n", root, false, "/nix/store/lf", projectManifest())
 		zz := putStatusRecord(t, state, "zz", "/home/me", false, "/nix/store/lf", homeManifest())
-		// "0" sorts before any other roothash and "zz" after every roothash.
-		whole := filepath.Join(user, "0")
-		writeStatusFile(t, filepath.Join(whole, ".root"), root+"\n")
-		chmodStatus(t, whole, 0o000)
+		// "0" sorts before any other roothash, "zz" and "zzz" after every roothash.
+		for _, name := range []string{"0", "zzz"} {
+			whole := filepath.Join(user, name)
+			writeStatusFile(t, filepath.Join(whole, ".root"), root+"\n")
+			chmodStatus(t, whole, 0o000)
+		}
 
 		var warnings []string
 		got := runStatus(t, state, realTempDir(t), &warnings)
@@ -314,6 +316,7 @@ func TestStatusUnreadableSeries(t *testing.T) {
 			{Mode: "home", Name: "zz", RecordFile: zz.File},
 			{Mode: "home", RootHash: "0", HasErr: true},
 			{Mode: "project", Name: "n", Root: root, RootHash: h, RecordFile: n.File},
+			{Mode: "home", RootHash: "zzz", HasErr: true},
 		})
 		if msg := got[1].Err.Error(); !strings.Contains(msg, "backref") || !strings.Contains(msg, "cannot list series") {
 			t.Errorf("Err = %q; want both the backref and the listing reason", msg)
