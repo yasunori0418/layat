@@ -39,6 +39,17 @@ specification: |
   Under `list-generations --all` every `results[i].subject.name` SHALL be
   `<mode>:<name>`, the mode being `home` for the user base and `system` for the system base.
 
+  `status [name]` SHALL emit one subject per listed config, with
+  `results[i].result.info = {mode, root, appliedAt, linkFarm, entries}`, each element of
+  `entries` being `{target, method, srcKind, src, subpath}` taken from the recorded
+  manifest, and `items: []`; it SHALL NOT emit the `SubjectResult.generation` slot. Even
+  for a manifest without entries it SHALL state `"entries": []` explicitly. Every
+  `results[i].subject.name` SHALL be `<mode>:<name>` for a `<name>`-keyed record and
+  `<mode>:<name>@<root>` for a record of a `<roothash>` series. A config whose record or
+  backref cannot be read or is invalid SHALL carry the error in its own
+  `results[i].errors[]`, the other subjects SHALL be emitted as usual, and the top-level
+  `status` SHALL be `error`.
+
   `gitignore <name>` SHALL emit `results[i].result.info.paths` as anchored targets (with a
   leading `/`) and `items: []`. Even with zero entries it SHALL state `"paths": []`
   explicitly.
@@ -47,7 +58,7 @@ specification: |
   in the top-level `info`. Because the info is fixed before the expansion is executed, it
   SHALL remain alongside the top-level `errors[]` on failure as well.
 
-  The `dryRun` of the read-only commands (list-generations / gitignore / init) SHALL
+  The `dryRun` of the read-only commands (list-generations / status / gitignore / init) SHALL
   always be `false`: `dryRun` SHALL be limited to reflecting the `--dryrun` flag and SHALL
   NOT be used to express the absence of side effects.
 specification_ja: |
@@ -80,6 +91,16 @@ specification_ja: |
   出さなければならない。`list-generations --all` では全ての `results[i].subject.name` を
   `<mode>:<name>`（user 基底は `home`、system 基底は `system`）としなければならない。
 
+  `status [name]` は列挙する config ごとに 1 つの subject を出し、
+  `results[i].result.info = {mode, root, appliedAt, linkFarm, entries}`（`entries` の各要素は
+  記録の manifest から取った `{target, method, srcKind, src, subpath}`）と `items: []` を
+  出さなければならず、`SubjectResult.generation` スロットは出してはならない。entry を持たない
+  manifest でも `"entries": []` を明示しなければならない。`results[i].subject.name` は
+  `<name>` 直キーの記録なら `<mode>:<name>`、`<roothash>` 系列の記録なら
+  `<mode>:<name>@<root>` としなければならない。記録や backref が読めない・不正な config は、
+  その error を自分の `results[i].errors[]` に持たなければならず、他の subject は通常どおり
+  出さなければならず、トップレベルの `status` は `error` としなければならない。
+
   `gitignore <name>` は `results[i].result.info.paths` に anchor 形 target（先頭 `/`）と
   `items: []` を出さなければならない。entry 0 件でも `"paths": []` を明示しなければ
   ならない。
@@ -88,7 +109,7 @@ specification_ja: |
   `{template, ref}` を載せなければならない。info は展開実行前に確定するため、失敗時も
   トップ `errors[]` と並んで残さなければならない。
 
-  読み取り系（list-generations / gitignore / init）の `dryRun` は常に `false` としなければ
+  読み取り系（list-generations / status / gitignore / init）の `dryRun` は常に `false` としなければ
   ならない。`dryRun` は `--dryrun` フラグの反映に限定し、副作用の無さを `dryRun` で表現
   してはならない。
 ---
@@ -121,13 +142,21 @@ specification_ja: |
   `list-generations --all` は user 基底と system 基底を走査し、同名 config が両方にあっても
   subject 名が 1 エンベロープ内で重複しないよう、全 subject を `home:<name>` /
   `system:<name>` と名付ける（単発の `list-generations <name>` は素の `<name>`）。
+- **`status [name]`**: 列挙する config ごとに 1 subject。`results[i].result.info =
+  {mode, root, appliedAt, linkFarm, entries}`・`items: []`。`entries[]` は記録の manifest の
+  `{target, method, srcKind, src, subpath}` で、0 件でも `"entries": []` を明示する。
+  `SubjectResult.generation` スロットは出さない（status は profile を読まず世代番号を持たない）。
+  subject 名は `<name>` 直キーが `<mode>:<name>`（mode は user 基底 `home` / system 基底
+  `system`）、`<roothash>` 系列が `<mode>:<name>@<root>`（mode は記録の `rootKind`、root は
+  backref `.root`）。記録・backref が読めない・不正な config は、その subject の `errors[]` に
+  error を置き、他の subject は通常どおり出す（トップの `status` は `error`、exit 1）。
 - **`gitignore <name>`**: `results[i].result.info.paths` = anchor 形 target（先頭 `/`）・
   `items: []`。デフォルトの行指向 stdout は不変（`--json` は opt-in の第 2 契約）。
   entry 0 件でも `"paths": []` を明示する。
 - **`init <template>`**: 主体（config）を持たないため `results: []` のまま、トップレベル
   `info` に `{template, ref}`（展開テンプレート名と flake ref）を載せる。info は展開実行前に
   確定するため、失敗時もトップ `errors[]` と並んで「何を展開しようとしたか」が残る。
-- **読み取り系の `dryRun` は常に `false`**（list-generations / gitignore / init）。
+- **読み取り系の `dryRun` は常に `false`**（list-generations / status / gitignore / init）。
   `dryRun` は `--dryrun` フラグの反映に限定し、副作用の無さを `dryRun` で表現しない。
 
 変更系ペイロード（item 形・warnings 一覧・部分失敗の写像）は REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62 の担当。
@@ -137,5 +166,6 @@ specification_ja: |
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「読み取り系ペイロード（#132）」とその配下の全項目。
 
-決定の実体は ADR-0043（読み取り系の info インベントリ・`init` の top-level info）と、
+決定の実体は ADR-0043（読み取り系の info インベントリ・`init` の top-level info）、
+status の info の形を定めた ADR-0065 と、
 `--recopy` が planner の分類ではなく engine の materialize 経路であることを定めた ADR-0020。
