@@ -465,6 +465,7 @@ layat gitignore <name>          # print placement targets for .gitignore to stdo
 layat gitignore --all           # sorted + deduped targets for all projectRoot configs
 layat prune                     # delete the orphan profile series whose recorded root is gone (no name; lists the roots and confirms)
 layat prune --dryrun            # show the series that would be deleted; zero side effects
+layat status [name]             # show what is currently applied, from the last-applied records (read-only; no nix)
 layat init <template>           # wrapper over `nix flake init -t github:yasunori0418/layat#<template>`
 ```
 
@@ -504,7 +505,7 @@ An empty value or a settings file without `generator` counts as unset. An unknow
 syntax error, or an unknown generator name exits 1 with one line on stderr (`E_INPUT` under
 `--json`). `apply --manifest` reads none of these and rejects `--generator` and `-f`; combined with
 `--all`, it takes `--manifest <name>=<link-farm>` once per config in place of the plain `<link-farm>` form.
-`prune` and `init` ignore the mechanism.
+`prune`, `init` and `status` ignore the mechanism.
 
 ### Output and exit codes
 
@@ -566,7 +567,7 @@ expose it as a pure function you control."**
 
 | Area | Status |
 |---|---|
-| Standalone CLI (`apply` / `reset` / `rollback` / `list-generations` / `gitignore` / `prune` / `init`) | implemented (core) |
+| Standalone CLI (`apply` / `reset` / `rollback` / `list-generations` / `gitignore` / `prune` / `status` / `init`) | implemented (core) |
 | project mode (`projectRoot`) | implemented (core) |
 | home mode (`homeRoot`) | implemented |
 | home-manager module | implemented — one profile per `layat.configs.<name>` |
