@@ -43,14 +43,14 @@ type StatusOptions struct {
 
 type StatusSeries struct {
     Mode       string             // home / project / fixed / system
-    Name       string             // <name>
-    Root       string             // <roothash> 系列の backref .root の値。直キーと backref が読めない系列では空
+    Name       string             // <name>。<name> を列挙できない系列では空
+    Root       string             // <roothash> 系列の backref .root の値。直キー・backref が読めない系列・<name> を列挙できない系列では空
     RootHash   string             // <roothash> 系列のディレクトリ名。直キーでは空
     RecordFile string             // last-applied.json の絶対パス
     AppliedAt  string
     LinkFarm   string
     Manifest   *manifest.Manifest
-    Err        error              // 記録・backref が読めないとき。他のフィールドより先に見る
+    Err        error              // 記録・backref が読めない、または <name> を列挙できないとき。他のフィールドより先に見る
 }
 
 func Status(opts StatusOptions) ([]StatusSeries, error)
@@ -64,7 +64,8 @@ apply が記録を書くときと同じ値で、CLI は `LAYAT_SYSTEM_STATE_DIR`
 
 基底ごとに次の 2 段で集め、連結する。
 
-1. **`<name>` 直キー**: 基底直下のディレクトリのうち、`last-applied.json` を直下に持つもの。
+1. **`<name>` 直キー**: 基底直下のディレクトリのうち、段 2 の `ListRootHashSeries` が系列として
+   返さなかったもので、`last-applied.json` を直下に持つもの。
    Mode は基底に応じて `home`（user 基底）/ `system`（system 基底）、Root は空。
 2. **`<roothash>` 系列**: `ListRootHashSeries(base)` が返す系列の各 `<name>` のうち、
    `last-applied.json` を直下に持つもの。Mode は記録の manifest の `rootKind`、Root は系列の
@@ -74,8 +75,11 @@ apply が記録を書くときと同じ値で、CLI は `LAYAT_SYSTEM_STATE_DIR`
 後など）は列挙しない。記録を持つかどうかは `last-applied.json` の存在で決め、存在するのに
 読めない・不正な記録は次々節の `Err` に回す。
 
-2 つの段は `.root` の有無で排他になる。`.root` を持つディレクトリは段 1 で
-`last-applied.json` を直下に持たないので拾われず、段 2 だけが拾う。どちらの段も名前の昇順に
+2 つの段は、段 1 が段 2 の系列を除いた残りから拾うことで排他になる。`ListRootHashSeries` は
+`.root` の lstat が `fs.ErrNotExist` 以外で失敗したディレクトリも `BackrefErr` 付きの系列として
+返すので、`.root` の有無を判定できないディレクトリは段 2 だけが扱う。段 1 で
+`last-applied.json` の stat が `fs.ErrNotExist` 以外で失敗したときは、その `<name>` を `Err`
+付きで返す。どちらの段も名前の昇順に
 並べる（段 2 は `<roothash>`、その中の `<name>` の順）。並び順は `ListRootHashSeries` が返す
 順に依存させず、engine 側で並べる（同関数は順序を契約に含めていない）。
 
@@ -96,10 +100,11 @@ apply が記録を書くときと同じ値で、CLI は `LAYAT_SYSTEM_STATE_DIR`
 系列は記録の manifest から `rootKind` を取れないので、Mode には基底に応じた `home` / `system`
 を入れる。
 
-- **`BackrefErr`**: root が決まらないので Root は空のまま、`<name>` ごとに `Err` を立てて
-  返す。RootHash は通常どおり入れる
-- **`NamesErr`**: `<name>` が分からないので、系列全体を Name が空の 1 件として返す。
-  RootHash と `Err` を入れる
+- **`BackrefErr`**: root が決まらないので Root は空のまま、記録を持つ `<name>` ごとに `Err` を
+  立てて返す。RootHash は通常どおり入れる。記録を持つ `<name>` が 1 つも無い系列は、表示する
+  apply 済みの config が無いので列挙しない
+- **`NamesErr`**: `<name>` が分からないので、系列全体を Name と Root が空の 1 件として返す。
+  RootHash と `Err` を入れる。`BackrefErr` と同時に立ったときもこの 1 件にまとめる
 
 直キーと `<roothash>` 系列は Root ではなく RootHash の有無で見分ける。`BackrefErr` の系列は
 Root が空なので、Root で見分けると直キーと取り違える。
@@ -115,14 +120,17 @@ Root が空なので、Root で見分けると直キーと取り違える。
 - `[name]` は `StatusSeries.Name` との完全一致で絞る。ただし Name が空の 1 件（`NamesErr` の
   系列）は、求めた名前が入っている可能性があるので落とさない。0 件なら stdout に一覧を出さず、
   stderr に 1 行出して exit 0。
-- subject 名は次の表で決める。
+- subject 名は次の表で決める。行は上から順に評価し、最初に当てはまった行を採る。
 
   | 系列 | 条件 | subject 名 |
   |---|---|---|
   | 直キー | RootHash が空 | `<Mode>:<Name>` |
-  | `<roothash>` 系列 | Root が空でない | `<Mode>:<Name>@<Root>` |
-  | backref が読めない | RootHash があり Root が空、Name が空でない | `<Mode>:<Name>@<RootHash>` |
-  | `<name>` を列挙できない | RootHash があり Name が空 | `<Mode>:@<RootHash>` |
+  | `<name>` を列挙できない | Name が空 | `<Mode>:@<RootHash>` |
+  | backref が読めない | Root が空 | `<Mode>:<Name>@<RootHash>` |
+  | `<roothash>` 系列 | 上記以外 | `<Mode>:<Name>@<Root>` |
+
+  `[name]` を指定して一致する config が無くても、`<name>` を列挙できない系列の error subject が
+  あれば、それを出力して exit 1 にする（一致 0 件の扱いにはしない）。
 
 - テキストは subject ごとに見出し行と、manifest の entry ごとに `<target>\t<method>\t<dest>`
   （dest は `planner.LinkDest`）を出す。`Err` を持つ subject は stderr に error を出す。

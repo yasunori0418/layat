@@ -19,6 +19,7 @@ engine の `Status` が記録基底を走査した結果について、網羅・
 - 並びは user 基底 → system 基底、基底内は直キー（`<name>` の昇順）→ `<roothash>` 系列
   （`<roothash>`、続けて `<name>` の昇順）で、実行ごとに変わらない
 - `last-applied.json` を持たない `<name>` は列挙しない
+- `<name>` を列挙できない系列の 1 件は、その `<roothash>` の位置に並ぶ
 - 基底が無ければその基底を空として扱い、error にしない
 - system 基底が読めなければ warning を 1 行出してその基底を飛ばし、user 基底の結果は返す
 - user 基底が存在するのに読めなければ error を返す
@@ -32,12 +33,15 @@ engine の `Status` が記録基底を走査した結果について、網羅・
   その系列に error を立てて他の系列と並べ、列挙を止めない。「記録なし」として落とさない
 - backref が読めない系列は、`<name>` ごとに error を立て、Root は空、RootHash は系列の
   ディレクトリ名、Mode は基底に応じた `home` / `system` で返す
-- `<name>` を列挙できない系列は、Name が空で RootHash と error を持つ 1 件として返す
+- `<name>` を列挙できない系列は、Name と Root が空で、RootHash と error を持ち、Mode が基底に
+  応じた `home` / `system` の 1 件として返す。backref も読めない系列も同じ 1 件にまとめる
+- backref が読めず、記録を持つ `<name>` も無い系列は列挙しない
 
 **読み取り専用**
 
 - 実行の前後で `StateDir` と `SystemStateDir` の配下全体（`StateDir` 側は記録基底と profile
   基底の両方）のエントリ一覧が増減しない（flock・profileDir・`.pending`・`.root`・記録を作らない）
 - 実行の前後で記録ファイルの内容が変わらない（記録を書き換えない）
+- profileDir の lock を別に保持した状態でも、`Status` は待たずに返る（flock を取らない）
 
 上位の規範は TP-e7c25263-6d2d-4a37-8275-26906889d912（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。

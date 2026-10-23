@@ -16,7 +16,8 @@ mitigates:
 
 - `[name]` は `<name>` 部分の完全一致で、基底・mode・root を問わずに絞る（前方一致や
   subject 名全体との一致にならない）
-- `<name>` を列挙できない系列の error subject は、`[name]` を指定しても落とさない
+- `<name>` を列挙できない系列の error subject は、`[name]` を指定しても落とさない。一致する
+  config が無くてもこの subject があれば、一致 0 件の扱いにせず、それを出して exit 1
 - 一致が 0 件なら stdout に一覧を出さず、stderr に 1 行出して exit 0（`--json` では
   `results: []` のエンベロープを出し、exit 0）
 

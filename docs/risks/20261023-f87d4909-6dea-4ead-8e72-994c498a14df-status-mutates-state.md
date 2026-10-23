@@ -46,5 +46,6 @@ system 基底では lock ファイルを作れず、非 root の status が失�
 
 ## 緩和
 
-TC-076bd7b4-6427-4a35-9bab-86daaaada504 が、実行の前後で基底配下のエントリが増減しないことを
-検証して緩和する。
+TC-076bd7b4-6427-4a35-9bab-86daaaada504 が緩和する。実行の前後で `StateDir` / `SystemStateDir`
+配下のエントリが増減しないこと、記録ファイルの内容が変わらないこと、profileDir の lock を
+保持した状態でも待たずに返ることを検証する。
