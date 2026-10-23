@@ -43,14 +43,14 @@ type StatusOptions struct {
 
 type StatusSeries struct {
     Mode       string             // home / project / fixed / system
-    Name       string             // <name>。<name> を列挙できない系列では空
-    Root       string             // <roothash> 系列の backref .root の値。直キー・backref が読めない系列・<name> を列挙できない系列では空
+    Name       string             // <name>。系列全体で 1 件として返す系列では空
+    Root       string             // <roothash> 系列の backref .root の値。直キー・backref が読めない系列・系列全体で 1 件として返す系列では空
     RootHash   string             // <roothash> 系列のディレクトリ名。直キーでは空
     RecordFile string             // last-applied.json の絶対パス
     AppliedAt  string
     LinkFarm   string
     Manifest   *manifest.Manifest
-    Err        error              // 記録・backref が読めない、または <name> を列挙できないとき。他のフィールドより先に見る
+    Err        error              // 記録・backref が読めない、または <name> を列挙できない・見つからないとき。他のフィールドより先に見る
 }
 
 func Status(opts StatusOptions) ([]StatusSeries, error)
@@ -117,19 +117,19 @@ Root が空なので、Root で見分けると直キーと取り違える。
 
 ### CLI 側
 
-- `[name]` は `StatusSeries.Name` との完全一致で絞る。ただし Name が空の 1 件（`NamesErr` の
-  系列）は、求めた名前が入っている可能性があるので落とさない。0 件なら stdout に一覧を出さず、
+- `[name]` は `StatusSeries.Name` との完全一致で絞る。ただし Name が空の 1 件（系列全体で 1 件として
+  返す系列）は、求めた名前が入っている可能性があるので落とさない。0 件なら stdout に一覧を出さず、
   stderr に 1 行出して exit 0。
 - subject 名は次の表で決める。行は上から順に評価し、最初に当てはまった行を採る。
 
   | 系列 | 条件 | subject 名 |
   |---|---|---|
   | 直キー | RootHash が空 | `<Mode>:<Name>` |
-  | `<name>` を列挙できない | Name が空 | `<Mode>:@<RootHash>` |
+  | 系列全体で 1 件として返す | Name が空 | `<Mode>:@<RootHash>` |
   | backref が読めない | Root が空 | `<Mode>:<Name>@<RootHash>` |
   | `<roothash>` 系列 | 上記以外 | `<Mode>:<Name>@<Root>` |
 
-  `[name]` を指定して一致する config が無くても、`<name>` を列挙できない系列の error subject が
+  `[name]` を指定して一致する config が無くても、系列全体で 1 件として返す系列の error subject が
   あれば、それを出力して exit 1 にする（一致 0 件の扱いにはしない）。
 
 - テキストは subject ごとに見出し行と、manifest の entry ごとに `<target>\t<method>\t<dest>`
