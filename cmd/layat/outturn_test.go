@@ -71,6 +71,9 @@ func newInitTestRun() (*initRun, *bytes.Buffer) {
 func newPruneTestRun() (*pruneRun, *bytes.Buffer) {
 	return newTestRun[*struct{}, *pruneInfo]("prune")
 }
+func newStatusTestRun() (*statusRun, *bytes.Buffer) {
+	return newTestRun[*statusInfo, *struct{}]("status")
+}
 
 // decodeEnvelope asserts buf holds exactly one JSON document with a trailing newline and
 // returns it decoded (UseNumber, so nothing degrades to float64).
@@ -454,6 +457,7 @@ func TestBeginRunPublishesEveryCommand(t *testing.T) {
 		"gitignore":        func(c string) emitter { return beginGitignoreRun(c) },
 		"init":             func(c string) emitter { return beginInitRun(c) },
 		"prune":            func(c string) emitter { return beginPruneRun(c) },
+		"status":           func(c string) emitter { return beginStatusRun(c) },
 	}
 	for command, begin := range begins {
 		t.Run(command, func(t *testing.T) {
