@@ -268,6 +268,8 @@ Options shared by every config:
 A `systemRoot` config places at `/`. `apply` / `reset` / `rollback` on it require root
 (`sudo layat apply <name>`); `--dryrun` and `list-generations` do not. Its profile lives under
 `/nix/var/nix/profiles/layat/` and its last-applied record under `/var/lib/layat/`.
+Re-applying an unchanged configuration (as NixOS activation does on every boot) stacks no new
+generation; it only repairs placements that drifted.
 `list-generations --all` lists the home profiles, then the system ones (headed
 `# <name> (system)`; under `--json` the subjects are named `home:<name>` / `system:<name>`).
 
