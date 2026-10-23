@@ -37,6 +37,10 @@ references:
 > system mode の置き場を **`/var/lib/layat/<鍵>`**（鍵は profileDir と同型）に決めた。engine の profile 基底と記録基底は
 > 入力 `SystemDir` / `SystemStateDir` で上書きでき、CLI はテスト用の環境変数だけをその口にする（→ ADR-0062）。
 
+> **2026-10-24 改訂注記（ADR-0066）**: 本 ADR の engine / CLI 側の system mode（root 解決・euid ゲート・profile 基底）は不変。
+> 本文で「将来・別マイルストーン」とした NixOS / nix-darwin モジュールは、`systemRoot` を pin して activation から
+> `apply --all --manifest` を起動する配線として実装した。本文の `runNixOSTest` も `checks.nixos-vm` として追加する（→ ADR-0066）。
+
 ## 背景
 
 `systemRoot` マーカーは ADR-0004/0007 で distro 構想の seam として正式 API 化されたが、ADR-0013 §5 により `normalizeManifest` が「system mode は未実装（予定）」で eval 時 throw する据え置き状態だった。NixOS / nix-darwin モジュール（将来拡張）の前提となる engine / CLI 側の system mode を、モジュール実装に先行して standalone CLI から使える形で実装する。
