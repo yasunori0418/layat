@@ -27,7 +27,7 @@ references:
 
 ## 背景
 
-NixOS の activation は switch のときだけでなく、boot のたびにも走る（stage-2 が `$systemConfig/activate` を実行する）。NixOS モジュール（→ ADR-0066）はこの activation から `layat apply --all --manifest …` を起動するので、構成を変えていなくても boot のたびに engine が呼ばれる。
+NixOS の activation は switch のときだけでなく、boot のたびにも実行される（stage-2 が `$systemConfig/activate` を実行する）。NixOS モジュール（→ ADR-0066）はこの activation から `layat apply --all --manifest …` を起動するので、構成を変えていなくても boot のたびに engine が呼ばれる。
 
 engine が世代を積まずに済ませる世代スキップは project mode に限られており（→ ADR-0005）、system mode では apply のたびに新しい世代を積む。このままでは、boot を重ねるだけで system mode の profile の世代が増え続ける。
 

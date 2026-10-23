@@ -45,7 +45,7 @@ references:
 ### 2. activation の hook
 
 - NixOS は `system.activationScripts.layat` を `deps = [ "etc" "users" ]`・`supportsDryActivation = true` で定義する。
-- nix-darwin は `system.activationScripts.postActivation.text` へ起動を追記する。nix-darwin は固定名のスクリプトだけを連結して実行するため、独自名のスクリプトは走らない。
+- nix-darwin は `system.activationScripts.postActivation.text` へ起動を追記する。nix-darwin は固定名のスクリプトだけを連結して実行するため、独自名のスクリプトは実行されない。
 
 ### 3. 起動の形は HM と同じにし、組み立てを `modules/kick.nix` へ集約する
 
@@ -61,20 +61,20 @@ references:
 
 ### 5. rollback と検証
 
-- ユーザー向けの rollback は host の世代（`nixos-rebuild` / `darwin-rebuild`）に一本化し、layat の profile は前進だけで追従する（HM と同じ）。boot のたびに走る再 activation で世代が増えない扱いは ADR-0067 が決める。
+- ユーザー向けの rollback は host の世代（`nixos-rebuild` / `darwin-rebuild`）に一本化し、layat の profile は前進だけで追従する（HM と同じ）。boot のたびに実行される再 activation で世代が増えないようにする扱いは ADR-0067 が決める。
 - モジュールの評価結果は eval アサートの flake check（`checks.nixos-module` / `checks.darwin-module`）で、NixOS の実 activate は `runNixOSTest` の VM テスト（`checks.nixos-vm`。x86_64-linux のみ）で検証する。どちらも `tests/e2e/` のハーネスとは別系統に置く。nix-darwin の flake input は check 専用とし、`lib/` とモジュール本体へ依存を持ち込まない。
 
 ## 根拠
 
-- **system mode 一本にする理由**: host の activation は root で走る。ここから user home へ配置すると、所有者の扱い・ユーザーの解決・profile 基底の選択をモジュール側で抱えることになる。home への配置は HM モジュールが既に担っており、同じ home へ入る経路を 2 本にしない。
+- **system mode 一本にする理由**: host の activation は root 権限で実行される。ここから user home へ配置すると、所有者の扱い・ユーザーの解決・profile 基底の選択をモジュール側で抱えることになる。home への配置は HM モジュールが既に担っており、同じ home へ配置する経路を 2 本にしない。
 - **`postActivation` へ追記する理由**: nix-darwin では独自名の activation script が実行されない。`text` は `types.lines` なので、利用者の追記とも共存できる。
 - **`kick.nix` へ集約する理由**: `--manifest` / `--jobs` / `--recopy` / `--backup` の規則を 3 モジュールが別々に組むと、片方だけが変わって分岐する。
-- **dry-activate で `--dryrun` を付ける理由**: dry-activate は FS を変えないことが前提の操作であり、layat もその前提に合わせる。`supportsDryActivation = true` が無いと、スクリプトが dry-activate 用の activate に含まれず分岐自体が走らない。
+- **dry-activate で `--dryrun` を付ける理由**: dry-activate は FS を変えないことが前提の操作であり、layat もその前提に合わせる。`supportsDryActivation = true` が無いと、スクリプトが dry-activate 用の activate に含まれず、分岐自体が実行されない。
 
 ## 既知の注意点
 
 - **macOS には `/var/lib` が無く、engine が root で `/var/lib/layat` を作る**。system mode の記録基底（→ ADR-0062）は darwin でも変えず、`/var/db` へ切り替える分岐は足さない。
-- nix-darwin は boot 時に activation を走らせない（checks / etc / keyboard だけ）。再起動後の配置は次の `darwin-rebuild switch` まで検査されない。
+- nix-darwin は boot 時に activation のうち checks / etc / keyboard しか実行しない。再起動後の配置は次の `darwin-rebuild switch` まで検査されない。
 
 ## 影響
 

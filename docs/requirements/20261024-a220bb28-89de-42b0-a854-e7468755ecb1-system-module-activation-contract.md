@@ -47,7 +47,7 @@ specification_ja: |
 > 一本化することは REQ-844ee375-919f-4341-81e1-a5f89fd32840 の担当。
 >
 > `supportsDryActivation = true` が無いと、スクリプトは dry-activate 用の activate に含まれず
-> `NIXOS_ACTION` の分岐が走らない。`PATH` の前置は、engine が世代コミットで呼ぶ `nix-env` が
+> `NIXOS_ACTION` の分岐が実行されない。`PATH` の前置は、engine が世代コミットで呼ぶ `nix-env` が
 > NixOS の activation の `PATH` に無いため。nix-darwin は固定名のスクリプトだけを実行するので、
 > 独自名ではなく `postActivation` へ追記する。
 

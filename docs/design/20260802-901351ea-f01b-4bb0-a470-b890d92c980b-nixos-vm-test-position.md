@@ -20,8 +20,8 @@ TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2 が「NixOS / nix-darwin モジュール
 要るからである。同じハーネスへ押し込むと、前提の異なるシナリオが 1 つの実行系に混ざる。
 
 **`runNixOSTest` を選ぶ**のは、`system.activationScripts.layat` からの engine 起動を
-検証するには実際に system activation を走らせる必要があり、nixpkgs が提供する
-VM テストがその唯一の現実的な手段だからである。boot のたびに走る再 activation で世代が
+検証するには実際に system activation を実行する必要があり、nixpkgs が提供する
+VM テストがその唯一の現実的な手段だからである。boot のたびに実行される再 activation で世代が
 増えないこと（ADR-0067）も、同じ VM 上で確かめられる。
 
 **検証の分担**は次の通り。
