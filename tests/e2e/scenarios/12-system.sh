@@ -94,6 +94,17 @@ assert_absent "$SYSROOT/.cfg/a"
 assert_symlink "$SERIES/sys/profile-2-link"
 if [ "$(gens_count)" -eq 2 ]; then e2e_pass "世代が 2 件"; else e2e_fail "世代が 2 件でない"; fi
 
+e2e_step "世代 2 と同じ構成で root 再 apply → 世代を積まず、配置は不変"
+# 記録は再 apply で書き直されるため、比較は sysroot と profile ディレクトリに限る。
+PLACED_BEFORE="$(find "$SYSROOT" "$SERIES/sys" -printf '%p %y %l\n' | sort)"
+as_root layat apply sys --root "$SYSROOT"
+if [ "$(gens_count)" -eq 2 ]; then e2e_pass "再 apply 後も世代が 2 件"; else e2e_fail "再 apply が世代を積んだ"; fi
+if [ "$(find "$SYSROOT" "$SERIES/sys" -printf '%p %y %l\n' | sort)" = "$PLACED_BEFORE" ]; then
+	e2e_pass "再 apply の前後で sysroot・profile ディレクトリが不変"
+else
+	e2e_fail "再 apply が sysroot・profile ディレクトリを変えた"
+fi
+
 e2e_step "非 root: apply / rollback / reset --yes は E_PERMISSION で止まり何も変えない"
 BEFORE="$(snapshot)"
 i=0

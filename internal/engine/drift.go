@@ -7,7 +7,7 @@ import (
 	"github.com/yasunori0418/layat/internal/planner"
 )
 
-// Generation skip + lstat drift repair (project mode only): when the new link-farm equals the
+// Generation skip + lstat drift repair (project / system mode only): when the new link-farm equals the
 // previous generation no generation is committed, and only drifted entries are re-converged.
 
 // generationUnchanged reports whether the new link-farm resolves to the same store path as the

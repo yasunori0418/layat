@@ -96,7 +96,7 @@ type Result struct {
 	// path and on the non-dryrun conflict stop, where the partial Result is returned alongside
 	// the aggregate error.
 	Conflicts []planner.Conflict
-	// GenerationSkipped indicates that the project-mode generation skip committed no new
+	// GenerationSkipped indicates that the project / system-mode generation skip committed no new
 	// generation (omitted the commit) and only drifted entries were repaired.
 	GenerationSkipped bool
 
@@ -266,10 +266,10 @@ func Apply(opts Options) (*Result, error) {
 		return nil, err
 	}
 
-	// 7. project mode only: if the new link-farm equals both the profile's current generation and
-	//    the record, commit nothing (omit the commit) and only repair drifted entries. Other root
-	//    kinds commit every time.
-	if rootKind == manifest.RootKindProject && prev != nil {
+	// 7. project / system mode only: if the new link-farm equals both the profile's current
+	//    generation and the record, commit nothing (omit the commit) and only repair drifted
+	//    entries. Other root kinds commit every time.
+	if (rootKind == manifest.RootKindProject || rootKind == manifest.RootKindSystem) && prev != nil {
 		same, err := generationUnchanged(base, a.opts.LinkFarm)
 		if err != nil {
 			// When the previous generation's link-farm cannot be resolved, fall back to the safe side: normal apply (commit a new generation).
