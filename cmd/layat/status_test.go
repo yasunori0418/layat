@@ -144,6 +144,7 @@ func TestStatusFilter(t *testing.T) {
 		{"docs", []string{"home:docs", "project:docs@/home/u/src/proj", "system:@3333"}},
 		{"web", []string{"home:web@2222", "system:@3333"}},
 		{"doc", []string{"system:@3333"}},
+		{"home:docs", []string{"system:@3333"}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			stubStatus(t, statusFixture())
@@ -170,40 +171,103 @@ func TestStatusFilter(t *testing.T) {
 	}
 }
 
+// TestStatusFilterDropsOtherErrors: an error subject of another <name> is filtered out like any
+// other config, so it does not fail the command.
+func TestStatusFilterDropsOtherErrors(t *testing.T) {
+	withJSONFlag(t, true)
+	stubStatus(t, statusFixture()[:3])
+	run, buf := newStatusTestRun()
+	var err error
+	captureOutErr(t, func() { err = runStatus(run, []string{"docs"}) })
+	if err != nil {
+		t.Errorf("runStatus = %v, want nil (home:web@2222 is filtered out)", err)
+	}
+	if emitErr := run.emit(err); emitErr != nil {
+		t.Fatalf("emit: %v", emitErr)
+	}
+	_, names := subjectResults(t, buf)
+	if want := []string{"home:docs", "project:docs@/home/u/src/proj"}; !slices.Equal(names, want) {
+		t.Errorf("subjects = %v, want %v", names, want)
+	}
+}
+
+// TestStatusEngineError: a failure of engine.Status itself (an unreadable user record base) fails
+// the command before any subject, so --json carries it in the top-level errors[].
+func TestStatusEngineError(t *testing.T) {
+	withJSONFlag(t, true)
+	orig := statusFn
+	t.Cleanup(func() { statusFn = orig })
+	statusFn = func(engine.StatusOptions) ([]engine.StatusSeries, error) {
+		return nil, errors.New("layat: cannot read the record base (/s/layat): permission denied")
+	}
+	run, buf := newStatusTestRun()
+	var err error
+	out, _ := captureOutErr(t, func() { err = runStatus(run, nil) })
+	if err == nil {
+		t.Fatal("runStatus = nil, want the engine error")
+	}
+	if out != "" {
+		t.Errorf("stdout = %q, want empty", out)
+	}
+	if emitErr := run.emit(err); emitErr != nil {
+		t.Fatalf("emit: %v", emitErr)
+	}
+	checkConformance(t, buf)
+	doc := decodeEnvelope(t, buf)
+	if doc["status"] != "error" {
+		t.Errorf("status = %v, want error", doc["status"])
+	}
+	if errs, ok := doc["errors"].([]any); !ok || len(errs) != 1 {
+		t.Errorf("errors = %#v, want one top-level error", doc["errors"])
+	}
+}
+
 // TestStatusZeroMatch: with nothing listed, stdout stays empty, stderr carries one notice line
 // and the command exits 0; --json emits results: [].
 func TestStatusZeroMatch(t *testing.T) {
-	series := statusFixture()[:2]
-	for _, jsonMode := range []bool{false, true} {
-		withJSONFlag(t, jsonMode)
-		stubStatus(t, series)
-		run, buf := newStatusTestRun()
-		var err error
-		out, errOut := captureOutErr(t, func() { err = runStatus(run, []string{"nope"}) })
-		if err != nil {
-			t.Errorf("json=%v: runStatus = %v, want nil (exit 0)", jsonMode, err)
+	for _, tc := range []struct {
+		series []engine.StatusSeries
+		args   []string
+		notice string
+	}{
+		{statusFixture()[:2], []string{"nope"}, "layat: status: no applied config named nope\n"},
+		{nil, nil, "layat: status: no applied config\n"},
+	} {
+		for _, jsonMode := range []bool{false, true} {
+			testStatusZeroMatch(t, tc.series, tc.args, tc.notice, jsonMode)
 		}
-		if out != "" {
-			t.Errorf("json=%v: stdout = %q, want empty", jsonMode, out)
-		}
-		if errOut != "layat: status: no applied config named nope\n" {
-			t.Errorf("json=%v: stderr = %q, want one notice line", jsonMode, errOut)
-		}
-		if !jsonMode {
-			continue
-		}
-		if emitErr := run.emit(err); emitErr != nil {
-			t.Fatalf("emit: %v", emitErr)
-		}
-		checkConformance(t, buf)
-		doc := decodeEnvelope(t, buf)
-		if doc["status"] != "success" {
-			t.Errorf("status = %v, want success", doc["status"])
-		}
-		results, ok := doc["results"].([]any)
-		if !ok || len(results) != 0 {
-			t.Errorf("results = %#v, want []", doc["results"])
-		}
+	}
+}
+
+func testStatusZeroMatch(t *testing.T, series []engine.StatusSeries, args []string, notice string, jsonMode bool) {
+	t.Helper()
+	withJSONFlag(t, jsonMode)
+	stubStatus(t, series)
+	run, buf := newStatusTestRun()
+	var err error
+	out, errOut := captureOutErr(t, func() { err = runStatus(run, args) })
+	if err != nil {
+		t.Errorf("args=%v json=%v: runStatus = %v, want nil (exit 0)", args, jsonMode, err)
+	}
+	if out != "" {
+		t.Errorf("args=%v json=%v: stdout = %q, want empty", args, jsonMode, out)
+	}
+	if errOut != notice {
+		t.Errorf("args=%v json=%v: stderr = %q, want %q", args, jsonMode, errOut, notice)
+	}
+	if !jsonMode {
+		return
+	}
+	if emitErr := run.emit(err); emitErr != nil {
+		t.Fatalf("emit: %v", emitErr)
+	}
+	checkConformance(t, buf)
+	doc := decodeEnvelope(t, buf)
+	if doc["status"] != "success" {
+		t.Errorf("args=%v: status = %v, want success", args, doc["status"])
+	}
+	if results, ok := doc["results"].([]any); !ok || len(results) != 0 {
+		t.Errorf("args=%v: results = %#v, want []", args, doc["results"])
 	}
 }
 
