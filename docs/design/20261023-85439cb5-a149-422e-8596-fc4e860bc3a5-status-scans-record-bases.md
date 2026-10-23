@@ -27,7 +27,7 @@ apply が baseline を読むときと同じ厳格な検査（壊れた JSON・�
 `ListRootHashSeries` を記録基底に対して呼ぶ。この関数は「`.root` を持つディレクトリ」を系列と
 みなすだけで、基底が profile 基底か記録基底かを問わない。記録基底も `<roothash>` 階層に
 backref `.root` を置く同型のレイアウトなので（→ REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）、
-そのまま通る。`<name>` 直キーの列挙は status だけが使うので、`internal/engine/status.go` の中に
+そのまま使える。`<name>` 直キーの列挙は status だけが使うので、`internal/engine/status.go` の中に
 閉じる。
 
 **`cmd/layat`** は engine の結果を絞り込んで出力するだけで、FS を読まない。
@@ -109,5 +109,5 @@ apply が記録を書くときと同じ値で、CLI は `LAYAT_SYSTEM_STATE_DIR`
 ### この設計が引き受ける代償
 
 `ListRootHashSeries` を profile 基底と記録基底の両方で共有するので、その列挙条件が変わると
-prune と status の両方に効く。status 側の取りこぼしは RISK-e92487a5-fff9-40db-844d-6590f1f36dec が
+prune と status の両方の列挙結果が変わる。status 側の取りこぼしは RISK-e92487a5-fff9-40db-844d-6590f1f36dec が
 扱う。

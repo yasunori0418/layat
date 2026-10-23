@@ -17,12 +17,12 @@ engine には記録や profileDir を扱う関数が既にあり、その多く�
 ディレクトリを作るか lock を取る。status がそれらを流用すると、読むだけのはずの操作が
 状態を変える。
 
-**flock の取得** — status が profileDir の lock を取ると、同時に走る apply・reset を待たせる。
+**flock の取得** — status が profileDir の lock を取ると、同時に実行される apply・reset を待たせる。
 system 基底では lock ファイルを作れず、非 root の status が失敗する。
 
-**ディレクトリ・ファイルの生成** — profileDir・`.pending`・backref `.root` を作ると、記録基底に
-apply していない系列の痕跡が残る。`.root` だけの系列は prune の走査対象になり、status を
-実行しただけで prune の候補が増える。非 root で system 基底に書こうとすれば権限エラーで止まる。
+**ディレクトリ・ファイルの生成** — profileDir・`.pending`・backref `.root` を作ると、profile 基底や
+記録基底に apply していない系列の痕跡が残る。profile 基底に `.root` だけの系列ができれば prune の
+走査対象になり、status を実行しただけで prune の候補が増える。非 root で system 基底に書こうとすれば権限エラーで止まる。
 
 **記録の書き換え** — 記録を書き直すと `appliedAt` が status の実行時刻になり、manifest や
 `linkFarm` を取り違えれば、次の apply の stale 除去が誤った baseline から始まる。
