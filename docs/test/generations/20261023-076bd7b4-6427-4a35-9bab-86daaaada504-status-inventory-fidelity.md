@@ -16,10 +16,12 @@ engine の `Status` が記録基底を走査した結果について、網羅・
 **網羅と並び順**
 
 - user 基底と system 基底の両方の、`<name>` 直キーと `<roothash>` 系列を全て返す
-- 並びは user 基底 → system 基底、基底内は直キー → `<roothash>` 系列、それぞれ名前の昇順で、
-  実行ごとに変わらない
+- 並びは user 基底 → system 基底、基底内は直キー（`<name>` の昇順）→ `<roothash>` 系列
+  （`<roothash>`、続けて `<name>` の昇順）で、実行ごとに変わらない
+- `last-applied.json` を持たない `<name>` は列挙しない
 - 基底が無ければその基底を空として扱い、error にしない
 - system 基底が読めなければ warning を 1 行出してその基底を飛ばし、user 基底の結果は返す
+- user 基底が存在するのに読めなければ error を返す
 
 **内容の反映**
 
@@ -31,6 +33,8 @@ engine の `Status` が記録基底を走査した結果について、網羅・
 
 **読み取り専用**
 
-- 実行の前後で基底配下のエントリ一覧が増減しない（flock・`.pending`・`.root`・記録を作らない）
+- 実行の前後で `StateDir` と `SystemStateDir` の配下全体（`StateDir` 側は記録基底と profile
+  基底の両方）のエントリ一覧が増減しない（flock・profileDir・`.pending`・`.root`・記録を作らない）
+- 実行の前後で記録ファイルの内容が変わらない（記録を書き換えない）
 
 上位の規範は TP-e7c25263-6d2d-4a37-8275-26906889d912（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。

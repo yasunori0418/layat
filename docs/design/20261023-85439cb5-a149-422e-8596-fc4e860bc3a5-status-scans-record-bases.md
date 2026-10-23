@@ -65,13 +65,18 @@ apply が記録を書くときと同じ値で、CLI は `LAYAT_SYSTEM_STATE_DIR`
 
 1. **`<name>` 直キー**: 基底直下のディレクトリのうち、`last-applied.json` を直下に持つもの。
    Mode は基底に応じて `home`（user 基底）/ `system`（system 基底）、Root は空。
-2. **`<roothash>` 系列**: `ListRootHashSeries(base)` が返す系列の各 `<name>`。Mode は記録の
-   manifest の `rootKind`、Root は系列の `Root`（backref `.root` の値）。
+2. **`<roothash>` 系列**: `ListRootHashSeries(base)` が返す系列の各 `<name>` のうち、
+   `last-applied.json` を直下に持つもの。Mode は記録の manifest の `rootKind`、Root は系列の
+   `Root`（backref `.root` の値）。
+
+どちらの段も、`last-applied.json` を持たない `<name>`（reset が全 entry を撤去して記録を消した
+後など）は列挙しない。記録を持つかどうかは `last-applied.json` の存在で決め、存在するのに
+読めない・不正な記録は次々節の `Err` に回す。
 
 2 つの段は `.root` の有無で排他になる。`.root` を持つディレクトリは段 1 で
 `last-applied.json` を直下に持たないので拾われず、段 2 だけが拾う。どちらの段も名前の昇順に
-並べる（段 2 は `<roothash>`、その中の `<name>` の順）。`ListRootHashSeries` の `Names` は
-`os.ReadDir` の順なので、engine 側で並べ直す。
+並べる（段 2 は `<roothash>`、その中の `<name>` の順）。並び順は `ListRootHashSeries` が返す
+順に依存させず、engine 側で並べる（同関数は順序を契約に含めていない）。
 
 ### 基底の不在と読めない基底
 

@@ -16,7 +16,13 @@ mitigates:
 
 - `[name]` は `<name>` 部分の完全一致で、基底・mode・root を問わずに絞る（前方一致や
   subject 名全体との一致にならない）
-- 一致が 0 件なら stdout に一覧を出さず、stderr に 1 行出して exit 0
+- 一致が 0 件なら stdout に一覧を出さず、stderr に 1 行出して exit 0（`--json` では
+  `results: []` のエンベロープを出し、exit 0）
+
+**system 基底の受け渡し**
+
+- `LAYAT_SYSTEM_STATE_DIR` があればその値を engine の `SystemStateDir` へ渡し、無ければ空で
+  渡す（engine が既定の `/var/lib` を使う）
 
 **subject 名とテキスト出力**
 
@@ -34,6 +40,8 @@ mitigates:
 
 - 不正な記録を持つ subject は `errors[]` に error を持ち、他の subject は通常どおり並ぶ。
   エンベロープの status は error、exit 1
+- `--json` なしでは、不正な記録を持つ subject の error を stderr に出し、他の subject は
+  通常どおり stdout に出して exit 1
 
 上位の規範は TP-d3000054-42d9-4bac-912a-dd3abc38d3e9（エンベロープ適合と payload 意味論）と
 TP-e7c25263-6d2d-4a37-8275-26906889d912（CLI 層の判断）。
