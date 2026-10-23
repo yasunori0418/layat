@@ -64,11 +64,13 @@ else
 fi
 
 e2e_step "layat status proj: proj だけに絞る"
-FILTERED="$(layat status proj | grep '^# ' | sed 's/ (applied .*)$//' || true)"
-if [ "$FILTERED" = "# project:proj@$PROJ_ROOT" ]; then
-	e2e_pass "status proj は project:proj@<root> だけを出す"
+FILTERED_CODE=0
+FILTERED_TEXT="$(layat status proj)" || FILTERED_CODE=$?
+FILTERED="$(printf '%s\n' "$FILTERED_TEXT" | grep '^# ' | sed 's/ (applied .*)$//' || true)"
+if [ "$FILTERED_CODE" -eq 0 ] && [ "$FILTERED" = "# project:proj@$PROJ_ROOT" ]; then
+	e2e_pass "status proj は exit 0 で project:proj@<root> だけを出す"
 else
-	e2e_fail "status proj の見出しが期待と不一致: '$FILTERED'"
+	e2e_fail "status proj が期待と不一致: exit=$FILTERED_CODE 見出し='$FILTERED'"
 fi
 
 e2e_step "layat status nope: 一致 0 件は stdout 空・stderr に 1 行・exit 0"
@@ -105,11 +107,13 @@ assert_json "$ENV_SYS" "system 基底の記録が user 基底の後に system:sy
 	"[.results[].subject.name] == [\"home:home\", \"project:proj@$PROJ_ROOT\", \"system:sys\"]"
 assert_json "$ENV_SYS" "system:sys の info.mode は system" \
 	'first(.results[] | select(.subject.name == "system:sys")).result.info.mode == "system"'
-SYS_FILTERED="$(layat status sys | grep '^# ' | sed 's/ (applied .*)$//' || true)"
-if [ "$SYS_FILTERED" = "# system:sys" ]; then
-	e2e_pass "status sys は system:sys だけを出す"
+SYS_CODE=0
+SYS_TEXT="$(layat status sys)" || SYS_CODE=$?
+SYS_FILTERED="$(printf '%s\n' "$SYS_TEXT" | grep '^# ' | sed 's/ (applied .*)$//' || true)"
+if [ "$SYS_CODE" -eq 0 ] && [ "$SYS_FILTERED" = "# system:sys" ]; then
+	e2e_pass "status sys は exit 0 で system:sys だけを出す"
 else
-	e2e_fail "status sys の見出しが期待と不一致: '$SYS_FILTERED'"
+	e2e_fail "status sys が期待と不一致: exit=$SYS_CODE 見出し='$SYS_FILTERED'"
 fi
 
 e2e_finish
