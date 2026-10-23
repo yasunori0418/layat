@@ -26,7 +26,7 @@ specification_ja: |
 | standalone | `$HOME`（実行時のシェル環境変数）| OS 問わず動作 |
 | home-manager | `$HOME`（HM が内部解決・モジュールが `homeRoot` を pin）| OS 問わず動作 |
 
-> **上は原文の写しで、規範は frontmatter が正**。`homeRoot` が marker であり kind を運ぶこと
+> **上は原文の写しを ADR-0066 に合わせて改めたもので、規範は frontmatter が正**。`homeRoot` が marker であり kind を運ぶこと
 > （実体パス解決は engine の実行時責務）は REQ-3f541d39-da41-4ef8-858b-707f54cf6a29 / REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66、`--root` による全モード
 > 共通の上書きは REQ-61c05e09-0bde-4f74-9a96-03185f9df606、
 > home mode の profileDir キーは REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81 の担当。**モジュールが `homeRoot` を pin する

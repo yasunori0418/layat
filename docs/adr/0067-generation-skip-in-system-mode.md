@@ -43,7 +43,8 @@ engine が世代を積まずに済ませる世代スキップは project mode �
 
 - **system mode へ広げる理由**: boot 時の再 activation は、内容の同じ apply を高い頻度で繰り返す点で devShell の `shellHook` と同じ性質を持つ。project mode で世代の無限増殖を止めた理由が、そのまま当てはまる。
 - **同じ機構を使う理由**: スキップ判定とドリフト修復は project mode で実装・検証済みで、判定条件を mode ごとに変える理由が無い。boot 時に foreign tool が target を書き換えていても、lstat 検査がそれを直す。
-- **home mode を据え置く理由**: home mode は standalone の rollback で世代をユーザーへ公開する（→ ADR-0002）。同じ内容の apply でも世代を残す従来の挙動を、この変更のついでに変えない。
+- **home mode を据え置く理由**: 本 ADR の動機である boot 時の再 activation が home mode には無い。HM の activation は switch のときだけ実行される。そのため、同じ内容の apply でも世代を残す従来の挙動を、この変更のついでに変えない。
+- **system mode の世代公開との関係**: system mode も standalone では rollback / list-generations を公開する（→ ADR-0036）。スキップは新しい世代を積まないだけで既存の世代を消さないので、rollback 先は失われない。
 - **host rollback との関係**: host が旧構成へ戻すと旧 link-farm は profile の current 世代と異なるので、スキップされず新しい世代が積まれる。module での「layat の profile は前進だけで追従する」は変わらない。
 
 ## 影響

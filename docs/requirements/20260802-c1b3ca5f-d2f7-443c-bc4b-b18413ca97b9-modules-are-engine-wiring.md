@@ -62,7 +62,8 @@ engine + store マニフェスト。
 `docs/spec.md`「モジュール別動作仕様」の前文と、「NixOS モジュール（将来拡張）」
 「nix-darwin モジュール（将来拡張）」節。将来拡張 2 節のうち root の供給元は REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b、
 rollback の一本化は REQ-844ee375-919f-4341-81e1-a5f89fd32840 が担当し、残る「activation フックから engine を起動する
-配線に徹する」を本 item に畳んだ。
+配線に徹する」を本 item に畳んだ。NixOS / nix-darwin の root は、その後 ADR-0066 で
+REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 の `systemRoot` pin へ移った。
 
 決定の実体は ADR-0003「配置ロジックは全層 layat エンジンが所有し、モジュールは配線に徹する」で、
 モジュール対応を一括 switch 用途に限る positioning は ADR-0007「汎用 layat CLI を一次 UX に

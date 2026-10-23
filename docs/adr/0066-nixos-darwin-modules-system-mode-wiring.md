@@ -13,6 +13,9 @@ justifies:
   - "REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b"
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
   - "DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda"
+  - "DSG-aeb5e219-4784-4950-845c-35f9bab9179c"
+  - "DSG-901351ea-f01b-4bb0-a470-b890d92c980b"
+  - "TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2"
 revises:
   - "ADR-0003"
   - "ADR-0036"
