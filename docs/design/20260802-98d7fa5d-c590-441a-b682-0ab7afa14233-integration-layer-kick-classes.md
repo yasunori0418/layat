@@ -19,7 +19,7 @@ satisfies:
 | クラス | 該当層 | link-farm の取得 |
 |---|---|---|
 | **entrypoint 駆動** | standalone CLI / devShell | ユーザーが `layat.<name>` を entrypoint に公開し、CLI が発見 → `nix eval`（rootKind 先取り）→ `nix build` |
-| **ビルド済み manifest** | home-manager（将来の NixOS / nix-darwin）| モジュール評価時に `mkManifest` でビルドした link-farm を、activation から `layat apply --manifest <link-farm>` へ渡す |
+| **ビルド済み manifest** | home-manager / NixOS / nix-darwin | モジュール評価時に `mkManifest` でビルドした link-farm を、activation から `layat apply --manifest <link-farm>` へ渡す |
 
 層ごとのクラス割り当てと起動方法は次の通り。
 
@@ -28,10 +28,10 @@ satisfies:
 | standalone（CLI）| entrypoint 駆動 | `layat apply <name>` を明示実行 |
 | devShell | entrypoint 駆動 | `shellHook` から `layat apply <name>` |
 | home-manager | ビルド済み manifest | `home.activation` から `apply --manifest` |
-| NixOS（将来）| ビルド済み manifest | `system.activationScripts` から `apply --manifest` |
-| nix-darwin（将来）| ビルド済み manifest | `system.activationScripts` から `apply --manifest` |
+| NixOS | ビルド済み manifest | `system.activationScripts.layat` から `apply --manifest` |
+| nix-darwin | ビルド済み manifest | `system.activationScripts.postActivation` への追記から `apply --manifest` |
 
-層ごとの root の供給元は REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b / REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e / REQ-c2654ca5-62c2-4e4b-ad67-ffc5468f429b、ユーザー向け
+層ごとの root の供給元は REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b / REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e / REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、ユーザー向け
 rollback を公開する層は REQ-05abce3e-9797-432b-b93f-37c55d09afde / REQ-844ee375-919f-4341-81e1-a5f89fd32840 が定める。どちらも起動クラスとは
 独立に決まるため、本 item の担当ではない。
 

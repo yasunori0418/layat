@@ -1,13 +1,13 @@
 ---
 id: "DSG-4a84f282-76ea-47c9-aede-deac12ff5257"
 type: design
-name: "実装スコープを standalone CLI + project mode + home mode + system mode とし、NixOS / nix-darwin モジュールは将来拡張に置く"
+name: "実装スコープを standalone CLI + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする"
 satisfies:
   - "REQ-14f0aec9-abae-4621-82f3-40536a1ad904"
   - "TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2"
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
 ---
-# DSG-4a84f282-76ea-47c9-aede-deac12ff5257: 実装スコープを standalone CLI + project mode + home mode + system mode とし、NixOS / nix-darwin モジュールは将来拡張に置く
+# DSG-4a84f282-76ea-47c9-aede-deac12ff5257: 実装スコープを standalone CLI + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする
 
 ## 設計
 
@@ -16,7 +16,7 @@ satisfies:
 | standalone CLI（起動形態。配置モードは root マーカーが決める）| 実装する |
 | project mode（devShell / `projectRoot`）| 実装する（コア）|
 | home-manager モジュール | 実装する |
-| NixOS / nix-darwin モジュール | 将来拡張（スタブ公開のみ・→ DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda）|
+| NixOS / nix-darwin モジュール | 実装する（system mode の配線・→ DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda）|
 | system mode（`systemRoot`）| 実装する（変更系操作は root 権限が要る）|
 
 REQ-14f0aec9-abae-4621-82f3-40536a1ad904 が layat CLI を一次 UX に据え、project mode を devShell 同梱で canonical と
@@ -28,14 +28,11 @@ system mode（`systemRoot`）は、root マーカーの union に最初から含
 requirement 側の担当）、engine の root 解決・profile 基底・記録基底に分岐を足して実装している。
 変更系操作（`apply` / `reset` / `rollback`）は engine が root 権限を検査する。
 
-将来拡張へ置くのは NixOS / nix-darwin モジュールで、「engine 側の追加を必要としない」ことを
-条件に選んでいる。
-
-- **NixOS / nix-darwin モジュール**: REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 の通り配線に過ぎず、
-  home-manager モジュールで確立する engine kick の形（DSG-98d7fa5d-c590-441a-b682-0ab7afa14233 の
-  ビルド済み manifest クラス）をそのまま流用できる。実装が後になっても
-  engine の設計が変わらない。実 activate を E2E で検証しないことは
-  TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2 が定めている
+NixOS / nix-darwin モジュールは、REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 の通り配線に過ぎない。home-manager モジュールで
+確立した engine kick の形（DSG-98d7fa5d-c590-441a-b682-0ab7afa14233 のビルド済み manifest クラス）をそのまま使い、
+root を `systemRoot` に pin する（DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda）。engine 側で足したのは、boot のたびに走る
+再 activation で世代が増えないよう世代スキップを system mode へ広げたことだけである（ADR-0067）。
+実 activate を `tests/e2e/` のハーネスで検証しないことは TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2 が定めている。
 
 **モジュール対応の位置づけ**も同じ線引きから来る。モジュール層は他のモジュールシステムの
 switch と一括で動いてほしいユースケースを拾うために存在するのであって、各モジュールの
