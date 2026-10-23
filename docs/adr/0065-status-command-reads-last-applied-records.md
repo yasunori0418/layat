@@ -54,6 +54,9 @@ store を辿らずに配置内容を読める。
 - 直キーは `<mode>:<name>`（mode は基底に応じて `home` / `system`）、`<roothash>` 系列は
   `<mode>:<name>@<root>`（mode は記録の manifest の `rootKind`、root は backref `.root` の値）。
   記録が読めず `rootKind` が取れない系列の mode は、基底に応じた `home` / `system` で代用する。
+- backref が読めない系列は、root の代わりに系列のディレクトリ名を使って
+  `<mode>:<name>@<roothash>` とする。`<name>` を列挙できない系列は、系列全体を 1 件の error
+  subject `<mode>:@<roothash>` とし、`[name]` を指定したときも含める。
 - `[name]` は `<name>` 部分の完全一致で絞り込み、mode / root を問わない。一致が 0 件なら
   stdout に一覧を出さず、stderr に 1 行通知して exit 0 にする。
 

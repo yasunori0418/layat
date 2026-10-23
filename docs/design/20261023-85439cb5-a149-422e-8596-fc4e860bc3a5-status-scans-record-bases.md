@@ -44,7 +44,8 @@ type StatusOptions struct {
 type StatusSeries struct {
     Mode       string             // home / project / fixed / system
     Name       string             // <name>
-    Root       string             // <roothash> 系列の backref .root の値。直キーでは空
+    Root       string             // <roothash> 系列の backref .root の値。直キーと backref が読めない系列では空
+    RootHash   string             // <roothash> 系列のディレクトリ名。直キーでは空
     RecordFile string             // last-applied.json の絶対パス
     AppliedAt  string
     LinkFarm   string
@@ -95,6 +96,14 @@ apply が記録を書くときと同じ値で、CLI は `LAYAT_SYSTEM_STATE_DIR`
 系列は記録の manifest から `rootKind` を取れないので、Mode には基底に応じた `home` / `system`
 を入れる。
 
+- **`BackrefErr`**: root が決まらないので Root は空のまま、`<name>` ごとに `Err` を立てて
+  返す。RootHash は通常どおり入れる
+- **`NamesErr`**: `<name>` が分からないので、系列全体を Name が空の 1 件として返す。
+  RootHash と `Err` を入れる
+
+直キーと `<roothash>` 系列は Root ではなく RootHash の有無で見分ける。`BackrefErr` の系列は
+Root が空なので、Root で見分けると直キーと取り違える。
+
 ### 読み取り専用
 
 `Status` は `os.Stat` / `os.ReadDir` / ファイルの読み取りだけを使う。apply・reset が使う
@@ -103,9 +112,18 @@ apply が記録を書くときと同じ値で、CLI は `LAYAT_SYSTEM_STATE_DIR`
 
 ### CLI 側
 
-- `[name]` は `StatusSeries.Name` との完全一致で絞る。0 件なら stdout に一覧を出さず、stderr に
-  1 行出して exit 0。
-- subject 名は `Root` が空なら `<Mode>:<Name>`、空でなければ `<Mode>:<Name>@<Root>`。
+- `[name]` は `StatusSeries.Name` との完全一致で絞る。ただし Name が空の 1 件（`NamesErr` の
+  系列）は、求めた名前が入っている可能性があるので落とさない。0 件なら stdout に一覧を出さず、
+  stderr に 1 行出して exit 0。
+- subject 名は次の表で決める。
+
+  | 系列 | 条件 | subject 名 |
+  |---|---|---|
+  | 直キー | RootHash が空 | `<Mode>:<Name>` |
+  | `<roothash>` 系列 | Root が空でない | `<Mode>:<Name>@<Root>` |
+  | backref が読めない | RootHash があり Root が空、Name が空でない | `<Mode>:<Name>@<RootHash>` |
+  | `<name>` を列挙できない | RootHash があり Name が空 | `<Mode>:@<RootHash>` |
+
 - テキストは subject ごとに見出し行と、manifest の entry ごとに `<target>\t<method>\t<dest>`
   （dest は `planner.LinkDest`）を出す。`Err` を持つ subject は stderr に error を出す。
 - `--json` は `results[i].result.info` に `{mode, root, appliedAt, linkFarm, entries}` を載せ

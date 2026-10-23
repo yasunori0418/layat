@@ -30,6 +30,9 @@ engine の `Status` が記録基底を走査した結果について、網羅・
 - `AppliedAt`・`LinkFarm`・manifest の entry は記録の値と一致する
 - 不正な記録（壊れた JSON・未知のフィールド・`recordVersion` ≠ 1 など）と読めない backref は、
   その系列に error を立てて他の系列と並べ、列挙を止めない。「記録なし」として落とさない
+- backref が読めない系列は、`<name>` ごとに error を立て、Root は空、RootHash は系列の
+  ディレクトリ名、Mode は基底に応じた `home` / `system` で返す
+- `<name>` を列挙できない系列は、Name が空で RootHash と error を持つ 1 件として返す
 
 **読み取り専用**
 

@@ -45,7 +45,10 @@ specification: |
   manifest, and `items: []`; it SHALL NOT emit the `SubjectResult.generation` slot. Even
   for a manifest without entries it SHALL state `"entries": []` explicitly. Every
   `results[i].subject.name` SHALL be `<mode>:<name>` for a `<name>`-keyed record and
-  `<mode>:<name>@<root>` for a record of a `<roothash>` series. A config whose record or
+  `<mode>:<name>@<root>` for a record of a `<roothash>` series; for a series whose backref
+  cannot be read it SHALL be `<mode>:<name>@<roothash>`, and a series whose `<name>`
+  entries cannot be listed SHALL be one subject named `<mode>:@<roothash>`, the mode of
+  both being `home` for the user base and `system` for the system base. A config whose record or
   backref cannot be read or is invalid SHALL carry the error in its own
   `results[i].errors[]`, the other subjects SHALL be emitted as usual, and the top-level
   `status` SHALL be `error`.
@@ -97,7 +100,10 @@ specification_ja: |
   出さなければならず、`SubjectResult.generation` スロットは出してはならない。entry を持たない
   manifest でも `"entries": []` を明示しなければならない。`results[i].subject.name` は
   `<name>` 直キーの記録なら `<mode>:<name>`、`<roothash>` 系列の記録なら
-  `<mode>:<name>@<root>` としなければならない。記録や backref が読めない・不正な config は、
+  `<mode>:<name>@<root>` としなければならない。backref が読めない系列では
+  `<mode>:<name>@<roothash>` とし、`<name>` を列挙できない系列は `<mode>:@<roothash>` という
+  1 つの subject としなければならず、どちらの mode も user 基底なら `home`、system 基底なら
+  `system` としなければならない。記録や backref が読めない・不正な config は、
   その error を自分の `results[i].errors[]` に持たなければならず、他の subject は通常どおり
   出さなければならず、トップレベルの `status` は `error` としなければならない。
 
@@ -148,7 +154,9 @@ specification_ja: |
   `SubjectResult.generation` スロットは出さない（status は profile を読まず世代番号を持たない）。
   subject 名は `<name>` 直キーが `<mode>:<name>`（mode は user 基底 `home` / system 基底
   `system`）、`<roothash>` 系列が `<mode>:<name>@<root>`（mode は記録の `rootKind`、root は
-  backref `.root`）。記録・backref が読めない・不正な config は、その subject の `errors[]` に
+  backref `.root`）。backref が読めない系列は `<mode>:<name>@<roothash>`、`<name>` を列挙
+  できない系列は系列全体で 1 件の `<mode>:@<roothash>`（どちらも mode は基底に応じた
+  `home` / `system`）。記録・backref が読めない・不正な config は、その subject の `errors[]` に
   error を置き、他の subject は通常どおり出す（トップの `status` は `error`、exit 1）。
 - **`gitignore <name>`**: `results[i].result.info.paths` = anchor 形 target（先頭 `/`）・
   `items: []`。デフォルトの行指向 stdout は不変（`--json` は opt-in の第 2 契約）。
