@@ -73,14 +73,13 @@ apply が記録を書くときと同じ値で、CLI は `LAYAT_SYSTEM_STATE_DIR`
 
 どちらの段も、`last-applied.json` を持たない `<name>`（reset が全 entry を撤去して記録を消した
 後など）は列挙しない。記録を持つかどうかは `last-applied.json` の存在で決め、存在するのに
-読めない・不正な記録は次々節の `Err` に回す。
+読めない・不正な記録は次々節の `Err` に回す。`last-applied.json` の stat が `fs.ErrNotExist`
+以外で失敗した `<name>` も、記録の有無が分からないので落とさず、`Err` 付きで返す。
 
 2 つの段は、段 1 が段 2 の系列を除いた残りから拾うことで排他になる。`ListRootHashSeries` は
 `.root` の lstat が `fs.ErrNotExist` 以外で失敗したディレクトリも `BackrefErr` 付きの系列として
-返すので、`.root` の有無を判定できないディレクトリは段 2 だけが扱う。段 1 で
-`last-applied.json` の stat が `fs.ErrNotExist` 以外で失敗したときは、その `<name>` を `Err`
-付きで返す。どちらの段も名前の昇順に
-並べる（段 2 は `<roothash>`、その中の `<name>` の順）。並び順は `ListRootHashSeries` が返す
+返すので、`.root` の有無を判定できないディレクトリは段 2 だけが扱う。どちらの段も名前の
+昇順に並べる（段 2 は `<roothash>`、その中の `<name>` の順）。並び順は `ListRootHashSeries` が返す
 順に依存させず、engine 側で並べる（同関数は順序を契約に含めていない）。
 
 ### 基底の不在と読めない基底
