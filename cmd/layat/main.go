@@ -89,7 +89,7 @@ Generator selection (the manifest generator; only nix today), first match wins:
   4. $XDG_CONFIG_HOME/layat/config.toml (~/.config/layat/config.toml when unset)
   5. nix
 Settings files take only the key generator = "<name>"; an unknown key or name is an input error.
-apply --manifest reads none of these; prune and init ignore them.`
+apply --manifest reads none of these; prune, init and status ignore them.`
 
 func newRootCmd() *cobra.Command {
 	root := &cobra.Command{
@@ -114,7 +114,7 @@ func newRootCmd() *cobra.Command {
 	pf.StringVar(&flagGenerator, "generator", "",
 		"Manifest generator (nix). Precedence: --generator > LAYAT_GENERATOR > layat.toml (-f dir, else CWD) > "+
 			"$XDG_CONFIG_HOME/layat/config.toml > nix; the settings files take only generator = \"<name>\"; "+
-			"ignored by prune / init, rejected with apply --manifest")
+			"ignored by prune / init / status, rejected with apply --manifest")
 	pf.BoolVarP(&flagYes, "yes", "y", false, "Skip the confirmation prompt of a destructive command (reset / prune; for scripts / CI)")
 	pf.BoolVar(&flagProjectRoot, "project-root", false, "Modifier for apply --all: apply only projectRoot configs")
 	pf.BoolVar(&flagHomeRoot, "home-root", false, "Modifier for apply --all: apply only homeRoot configs")
@@ -127,6 +127,7 @@ func newRootCmd() *cobra.Command {
 	root.AddCommand(newListGenerationsCmd())
 	root.AddCommand(newGitignoreCmd())
 	root.AddCommand(newPruneCmd())
+	root.AddCommand(newStatusCmd())
 	return root
 }
 
