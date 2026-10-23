@@ -100,8 +100,9 @@ apply が記録を書くときと同じ値で、CLI は `LAYAT_SYSTEM_STATE_DIR`
 を入れる。
 
 - **`BackrefErr`**: root が決まらないので Root は空のまま、記録を持つ `<name>` ごとに `Err` を
-  立てて返す。RootHash は通常どおり入れる。記録を持つ `<name>` が 1 つも無い系列は、表示する
-  apply 済みの config が無いので列挙しない
+  立てて返す。RootHash は通常どおり入れる。記録を持つ `<name>` が 1 つも見つからない系列は、
+  `NamesErr` と同じく Name と Root が空の 1 件として返す。検索権限の無い `<name>` 直キーの
+  ディレクトリも `.root` の lstat が失敗してここに来るので、落とすと記録が黙って消える
 - **`NamesErr`**: `<name>` が分からないので、系列全体を Name と Root が空の 1 件として返す。
   RootHash と `Err` を入れる。`BackrefErr` と同時に立ったときもこの 1 件にまとめる
 
