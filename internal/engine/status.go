@@ -85,13 +85,13 @@ func statusBase(base, mode string) ([]StatusSeries, error) {
 	} else if err != nil {
 		return nil, fmt.Errorf("layat: cannot read the record base (%s): %w", base, err)
 	}
-	series, err := paths.ListRootHashSeries(base)
-	if err != nil {
-		return nil, err
-	}
 	entries, err := os.ReadDir(base)
 	if err != nil {
 		return nil, fmt.Errorf("layat: cannot list the record base (%s): %w", base, err)
+	}
+	series, err := paths.ListRootHashSeries(base)
+	if err != nil {
+		return nil, err
 	}
 	sort.Slice(series, func(i, j int) bool { return series[i].RootHash < series[j].RootHash })
 
