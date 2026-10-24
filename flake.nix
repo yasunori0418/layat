@@ -34,6 +34,11 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # checks.darwin-module 専用。lib/ もモジュール本体も nix-darwin に依存しない。
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # lib 評価テスト。
     nix-unit = {
@@ -375,6 +380,24 @@
 
                 touch "$out"
               '';
+
+          # NixOS / nix-darwin モジュールの評価アサート。非対象 system では空の派生に差し替える。
+          checks.nixos-module =
+            if pkgs.stdenv.hostPlatform.isLinux then
+              import ./tests/modules/nixos-module.nix {
+                inherit inputs pkgs lib;
+                layatPackage = config.packages.layat;
+              }
+            else
+              pkgs.runCommandLocal "layat-nixos-module-check-skipped" { } "touch \"$out\"";
+          checks.darwin-module =
+            if pkgs.stdenv.hostPlatform.isDarwin then
+              import ./tests/modules/darwin-module.nix {
+                inherit inputs pkgs lib;
+                layatPackage = config.packages.layat;
+              }
+            else
+              pkgs.runCommandLocal "layat-darwin-module-check-skipped" { } "touch \"$out\"";
         };
       flake = {
         lib = layatLib;

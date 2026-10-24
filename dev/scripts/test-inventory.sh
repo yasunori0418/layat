@@ -58,11 +58,13 @@ cd "$(testdoc_repo_root)" || exit 1
 # flake check の静的リスト（`nix eval` を避けるため列挙を持つ）。
 # flake.nix / dev/flake.nix の checks 定義との突合は dev/tests/test-doc-map.sh の §5 が行う。
 FLAKE_CHECKS=(
+  checks.darwin-module
   checks.go-vet
   checks.golangci-lint
   checks.hm-module
   checks.namaka
   checks.nix-unit
+  checks.nixos-module
   checks.layat
   checks.treefmt
   dev:checks.risk-matrix
