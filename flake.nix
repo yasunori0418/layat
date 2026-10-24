@@ -403,7 +403,13 @@
             imports = [ ./modules/home-manager.nix ];
             _module.args.layatPackage = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.layat;
           };
-        nixosModules.default = ./modules/nixos.nix;
+        # NixOS / nix-darwin モジュールにも同じく pin 版 layat CLI を注入する。
+        nixosModules.default =
+          { pkgs, ... }:
+          {
+            imports = [ ./modules/nixos.nix ];
+            _module.args.layatPackage = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.layat;
+          };
         darwinModules.default = ./modules/nix-darwin.nix;
       };
     };
