@@ -10,8 +10,8 @@ generate configuration. `root` is chosen explicitly with the `projectRoot` / `ho
 `systemRoot` markers (there is **no implicit default**).
 
 > **Status: MVP / implementation phase.** The implemented scope is the standalone CLI +
-> **project mode** as the core, with **home mode** and **system mode** also supported.
-> NixOS / nix-darwin modules are future work. See [MVP status](#mvp-status) for the full
+> **project mode** as the core, with **home mode** and **system mode** also supported, along
+> with home-manager / NixOS / nix-darwin modules. See [MVP status](#mvp-status) for the full
 > matrix. APIs may still change.
 
 ---
@@ -282,6 +282,40 @@ user: its profile and record split between the two users' state and the baseline
 
 `LAYAT_SYSTEM_PROFILE_BASE` / `LAYAT_SYSTEM_STATE_DIR` point the system profile base and record
 base elsewhere for tests and isolated harnesses; they are not a supported setting.
+
+### NixOS / nix-darwin modules
+
+Both modules pin `root = systemRoot` (system mode; a config's `subdir` places its targets under
+`/<subdir>/`). They take the same `layat.configs.<name>` / `layat.jobs` / `layat.recopy` /
+`layat.backup` options as the home-manager module and kick the engine the same way — one
+`layat apply --all --manifest <name>=<link-farm> … --jobs <n>` per activation, nothing when no
+config is set. There is no `layat.user`: place into a user's home with the home-manager module.
+
+```nix
+# NixOS
+imports = [ inputs.layat.nixosModules.default ];
+# nix-darwin
+imports = [ inputs.layat.darwinModules.default ];
+
+layat = {
+  enable = true;
+  configs.etc-tools = {
+    subdir = "etc";
+    entries."tool/config" = { src = inputs.tool-config; };  # -> /etc/tool/config
+  };
+};
+```
+
+- **NixOS** runs it from `system.activationScripts.layat`, after `etc` and `users`. Activation
+  also runs on every boot; an unchanged configuration stacks no new layat generation.
+  `nixos-rebuild dry-activate` runs it with `--dryrun`, so nothing is placed.
+- **nix-darwin** appends it to `system.activationScripts.postActivation` (your own
+  `postActivation` text is kept). nix-darwin does not run it at boot, so drift is repaired on the
+  next `darwin-rebuild switch`. There is no `--dryrun` path. On macOS the engine creates
+  `/var/lib/layat` for its records.
+- layat keeps its own profiles as an **internal mechanism**; user-facing rollback is unified on
+  the host (`nixos-rebuild --rollback` / `darwin-rebuild --rollback`), whose activation re-applies
+  the older link-farms.
 
 ### Adding layat to an existing flake
 
@@ -579,7 +613,7 @@ expose it as a pure function you control."**
 | flake-parts module | implemented |
 | `manifest.json` schema | v1 only; no migration / backward-compat machinery yet |
 | `--json` machine-readable output | implemented — outturn-conformant envelope on every subcommand, with per-command payloads (items / changes / info) and one `SubjectResult` per config under `--all`; `reset --dryrun` still emits the minimal shape |
-| NixOS / nix-darwin modules | future |
+| NixOS / nix-darwin modules | implemented — system mode (`systemRoot`), one profile per `layat.configs.<name>` |
 
 **Known limitations / honest caveats**
 

@@ -39,7 +39,7 @@ The Nix config file the layat CLI reads: one of `flake.nix`, `shell.nix`, or `de
 - **Avoid**: saying "layat discovers the config contents from the CWD" — it discovers the entrypoint *file*; the config is fixed by Nix evaluation.
 
 ### module
-An integration layer such as standalone, home-manager, a future NixOS module, or a devShell `shellHook`. It is purely the wiring that kicks the engine; it never places files itself and never translates to `home.file` or `systemd.tmpfiles`.
+An integration layer such as standalone, home-manager, the NixOS / nix-darwin modules, or a devShell `shellHook`. It is purely the wiring that kicks the engine; it never places files itself and never translates to `home.file` or `systemd.tmpfiles`.
 - **Avoid**: "the module places files", "the module translates to native mechanisms".
 
 ## Placement input and output
