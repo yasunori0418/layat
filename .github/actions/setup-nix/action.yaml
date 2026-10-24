@@ -7,7 +7,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    # Lets the nix build users boot the checks.nixos-vm VM with KVM.
+    # checks.nixos-vm の VM を nix のビルドユーザーから KVM で起動できるようにする。
     - name: Enable KVM
       if: runner.os == 'Linux' && runner.arch == 'X64'
       shell: bash
