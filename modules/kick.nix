@@ -1,4 +1,4 @@
-# Engine kick shared by the HM / NixOS / nix-darwin modules (a plain function, not a module):
+# Engine kick for the layat modules (a plain function, not a module; each caller pins root via mkRoot):
 # builds one link-farm per layat.configs.<name> with root = mkRoot <subdir or null> and the single
 # `layat apply --all` command line that places them all.
 {
