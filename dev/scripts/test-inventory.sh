@@ -65,6 +65,7 @@ FLAKE_CHECKS=(
   checks.namaka
   checks.nix-unit
   checks.nixos-module
+  checks.nixos-vm
   checks.layat
   checks.treefmt
   dev:checks.risk-matrix

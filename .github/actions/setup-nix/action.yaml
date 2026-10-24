@@ -7,10 +7,21 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    # checks.nixos-vm の VM を nix のビルドユーザーから KVM で起動できるようにする。
+    - name: Enable KVM
+      if: runner.os == 'Linux' && runner.arch == 'X64'
+      shell: bash
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+
     - name: Install Nix
       uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3 # v31.10.6
       with:
         github_access_token: ${{ github.token }}
+        extra_nix_config: |
+          system-features = nixos-test benchmark big-parallel kvm
 
     - name: Setup Cachix (yasunori)
       uses: cachix/cachix-action@5f2d7c5294214f71b873db4b969586b980625e71 # v17
