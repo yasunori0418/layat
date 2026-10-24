@@ -29,6 +29,7 @@ in
 {
   inherit manifests;
 
+  # Callers run it only when cfg.configs is non-empty (with none it would take the entrypoint path).
   # --jobs is always explicit (0 included); --recopy and a shell-quoted --backup=<suffix> only when enabled.
   command = "${lib.getExe layatPackage} apply --all ${manifestArgs} --jobs ${toString cfg.jobs}${lib.optionalString cfg.recopy " --recopy"}${lib.optionalString cfg.backup.enable " --backup=${lib.escapeShellArg cfg.backup.suffix}"}";
 }
