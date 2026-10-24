@@ -410,7 +410,12 @@
             imports = [ ./modules/nixos.nix ];
             _module.args.layatPackage = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.layat;
           };
-        darwinModules.default = ./modules/nix-darwin.nix;
+        darwinModules.default =
+          { pkgs, ... }:
+          {
+            imports = [ ./modules/nix-darwin.nix ];
+            _module.args.layatPackage = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.layat;
+          };
       };
     };
 }
