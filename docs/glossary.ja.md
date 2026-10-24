@@ -39,7 +39,7 @@ layat CLI が読む Nix の config ファイル。`flake.nix` / `shell.nix` / `d
 - **Avoid**: 「layat が CWD から config の内容を発見する」と説明すること——発見するのは entrypoint *ファイル* であり、config は Nix 評価で確定する。
 
 ### module
-standalone・home-manager・将来の NixOS モジュール・devShell の `shellHook` といった統合層。エンジンを起動する配線（wiring）に徹し、自身ではファイルを配置せず、`home.file` や `systemd.tmpfiles` へ翻訳することもない。
+standalone・home-manager・NixOS / nix-darwin モジュール・devShell の `shellHook` といった統合層。エンジンを起動する配線（wiring）に徹し、自身ではファイルを配置せず、`home.file` や `systemd.tmpfiles` へ翻訳することもない。
 - **Avoid**: 「the module places files（モジュールがファイルを配置する）」「the module translates to native mechanisms（モジュールがネイティブ機構へ翻訳する）」。
 
 ## 配置の入出力
