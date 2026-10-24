@@ -398,6 +398,15 @@
               }
             else
               pkgs.runCommandLocal "layat-darwin-module-check-skipped" { } "touch \"$out\"";
+          # NixOS モジュールの実 activate を VM で検証する。KVM を使える x86_64-linux でだけ走らせる。
+          checks.nixos-vm =
+            if pkgs.stdenv.hostPlatform.system == "x86_64-linux" then
+              import ./tests/modules/nixos-vm.nix {
+                inherit pkgs;
+                layatPackage = config.packages.layat;
+              }
+            else
+              pkgs.runCommandLocal "layat-nixos-vm-check-skipped" { } "touch \"$out\"";
         };
       flake = {
         lib = layatLib;
