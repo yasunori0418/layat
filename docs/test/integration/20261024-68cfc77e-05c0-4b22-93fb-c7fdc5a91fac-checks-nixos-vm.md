@@ -16,7 +16,7 @@ x86_64-linux 以外の system では空の派生に差し替わる
 
 ## 検証内容
 
-entry だけが違う 2 つの構成（a / b）を用意し、a の VM だけを起動する。b の toplevel は
+layat の entry を差し替えた 2 つの構成（a / b）を用意し、a の VM だけを起動する。b の toplevel は
 VM の nix DB に登録して switch 先に使う。boot 完了後に次を順に確かめる。
 
 - a の `switch-to-configuration switch` で `/etc` 配下の target が store の配置元を指す
@@ -24,7 +24,7 @@ VM の nix DB に登録して switch 先に使う。boot 完了後に次を順�
   `/var/lib/layat/<name>/last-applied.json` が立ち、世代が 1 件であること
 - 同じ構成で `/run/current-system/activate` を再実行しても、配置が保たれ世代が 1 件のままであること
 - b の `switch-to-configuration switch` で b の target が配置され、a の target が除去され、
-  世代が 2 件になること
+  世代が 2 件になり、続けて再 activate しても 2 件のままであること
 - a の `switch-to-configuration switch` を再実行すると a の target が戻り、b の target が除去されること
 
 初回 boot 時の activation の結果はアサートしない。配置元は VM 内で中身を確かめられる
