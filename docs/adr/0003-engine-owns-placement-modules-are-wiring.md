@@ -7,7 +7,6 @@ status_note: "2026-06-11 改訂: エンジンを Go バイナリ + ネイティ�
 justifies:
   - "REQ-eb363122-385a-499c-a074-c95efb949d07"
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
-  - "REQ-c2654ca5-62c2-4e4b-ad67-ffc5468f429b"
   - "REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b"
   - "REQ-81249072-56b8-42f5-807b-ea623c1efe99"
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
@@ -32,6 +31,11 @@ references:
 > **2026-06-17 改訂注記（ADR-0026）**: 「モジュールは配線に徹し switch 時に engine を起動する」とした**起動方法**を確定。
 > HM 等のモジュールは `home.activation` / `system.activationScripts` から **`layat apply --manifest <link-farm>`** で engine を
 > kick する（モジュール評価時に `mkManifest` でビルドした link-farm を渡す・entrypoint 駆動の standalone / devShell とは別クラス・→ ADR-0026）。
+
+> **2026-10-24 改訂注記（ADR-0066）**: 「決定」のモジュールが root と activation タイミングだけを供給する配線に徹することは不変。
+> ただし NixOS / nix-darwin の root は `config.users.users.<user>.home` ではなく **`systemRoot`**（system mode）に pin し、
+> `layat.user` オプションは設けない。activation は NixOS が `system.activationScripts.layat`、nix-darwin が
+> `system.activationScripts.postActivation` への追記になった（→ ADR-0066）。
 
 ## 背景
 

@@ -66,7 +66,7 @@ design item が持つ**。ここは軸の名前と着眼点だけを並べ、満
 - [DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5](design/20260802-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5-lib-module-split.md) — lib は公開 API・型定義・manifest 生成・マーカー構築子の 4 ファイルへ分割する
 - [DSG-7d354fe0-a333-495b-9f4b-14bba316dc47](design/20260802-7d354fe0-a333-495b-9f4b-14bba316dc47-go-package-split.md) — Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする
 - [DSG-aeb5e219-4784-4950-845c-35f9bab9179c](design/20260802-aeb5e219-4784-4950-845c-35f9bab9179c-modules-file-split.md) — modules は common.nix に共通オプションを集約し、統合層ごとに 1 ファイルへ分ける
-- [DSG-4a84f282-76ea-47c9-aede-deac12ff5257](design/20260802-4a84f282-76ea-47c9-aede-deac12ff5257-implementation-scope.md) — 実装スコープを standalone CLI + project mode + home mode + system mode とし、NixOS / nix-darwin モジュールは将来拡張に置く
+- [DSG-4a84f282-76ea-47c9-aede-deac12ff5257](design/20260802-4a84f282-76ea-47c9-aede-deac12ff5257-implementation-scope.md) — 実装スコープを standalone CLI + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする
 
 ---
 
@@ -90,7 +90,7 @@ layat 自身の flake outputs は packages / templates / 各モジュール / fl
 2 経路が同一の derivation を生む（→ ADR-0007, ADR-0029, ADR-0032）。
 
 - [DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58](design/20260802-16373ec2-3496-4b12-b3b1-ef74e0435b58-flake-outputs-attrs.md) — layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する
-- [DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda](design/20260802-0e186e89-c8c6-4bca-9daa-03855e8d5cda-module-stubs.md) — NixOS / nix-darwin モジュールは中身を将来拡張としたままスタブとして公開する
+- [DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda](design/20260802-0e186e89-c8c6-4bca-9daa-03855e8d5cda-module-stubs.md) — NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする
 - [DSG-d2e17f4f-0d32-45c1-8125-17e589664c85](design/20260802-d2e17f4f-0d32-45c1-8125-17e589664c85-lib-no-dynamic-entries.md) — 動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す
 - [DSG-92f54490-872a-42ac-bbd7-d06e9ee381c6](design/20260802-92f54490-872a-42ac-bbd7-d06e9ee381c6-legacy-nix-invocation-reuse.md) — legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する
 - [DSG-f286746c-56ca-4f0c-bb95-7c74d0cea7c0](design/20260906-f286746c-56ca-4f0c-bb95-7c74d0cea7c0-hook-composition-idioms.md) — hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす
@@ -141,7 +141,7 @@ E2E で検証する（→ ADR-0006, ADR-0007, ADR-0012）。
 - [DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3](design/20260802-836aa5cb-0389-4adb-990b-144fe5aeffe3-engine-test-go-unit-tmpdir.md) — engine は nix を使わない tmpdir 統合テストで検証し、stale 除去の安全不変条件を table-driven に重点配分する
 - [DSG-2947b4a5-ba5c-4218-8478-624cba156116](design/20260802-2947b4a5-ba5c-4218-8478-624cba156116-e2e-harness-shape.md) — E2E は tests/e2e の bash ハーネスに置き、シナリオの詳細は同ディレクトリの README へ委譲する
 - [DSG-bb6e03fd-e1c4-47c4-bfa0-a73e9457b184](design/20260802-bb6e03fd-e1c4-47c4-bfa0-a73e9457b184-e2e-legacy-entrypoint.md) — E2E に legacy entrypoint シナリオを置き、NIX_PATH を flake.lock の nixpkgs に pin して検証する
-- [DSG-901351ea-f01b-4bb0-a470-b890d92c980b](design/20260802-901351ea-f01b-4bb0-a470-b890d92c980b-nixos-vm-test-position.md) — NixOS VM テストは runNixOSTest でモジュール経路の実装時に追加し、E2E ハーネスとは別系統に置く
+- [DSG-901351ea-f01b-4bb0-a470-b890d92c980b](design/20260802-901351ea-f01b-4bb0-a470-b890d92c980b-nixos-vm-test-position.md) — NixOS モジュールの実 activate は runNixOSTest の checks.nixos-vm で検証し、E2E ハーネスとは別系統に置く
 
 CI での実行基盤・キャッシュ・リリースは infrastructure item の領分。
 

@@ -16,7 +16,8 @@ specification: |
   These SHALL be defined jointly for every module, so that the set does not diverge per
   module. What the `<name>` dimension of `configs` means for the granularity of profiles
   is stated by REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a and is not restated here. A module SHALL pin the root by its
-  own nature — home-manager to `homeRoot`, a devShell to `projectRoot` — and SHALL NOT
+  own nature — home-manager to `homeRoot`, NixOS and nix-darwin to `systemRoot`, a devShell
+  to `projectRoot` — and SHALL NOT
   expose a `root` option, so that a user of a module never restates it. This is a
   departure from `mkManifest` and the CLI entrypoint, where `root` is required to be
   stated explicitly (REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4).
@@ -33,7 +34,8 @@ specification_ja: |
   これらは全モジュール共通に定義し、モジュールごとに集合が分岐しないようにしなければ
   ならない。`configs` の `<name>` 次元が profile の粒度にとって何を意味するかは
   REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a の担当で、本 item では規定しない。モジュールは自分の性質で root を pin
-  しなければならず（home-manager は `homeRoot`・devShell は `projectRoot`）、`root`
+  しなければならず（home-manager は `homeRoot`・NixOS / nix-darwin は `systemRoot`・
+  devShell は `projectRoot`）、`root`
   オプションを公開してはならない。モジュール利用者が root を再指定しないようにするため
   である。これは `root` を明示必須とする `mkManifest` / CLI entrypoint の層
   （REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4）との差分である。
@@ -51,7 +53,7 @@ layat.backup.enable :: bool    # デフォルト: false（→ ADR-0045）
 layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-0045）
 ```
 
-モジュールは自分の性質で root を pin する（HM → `homeRoot` / devShell → `projectRoot`）ため、
+モジュールは自分の性質で root を pin する（HM → `homeRoot` / NixOS / nix-darwin → `systemRoot` / devShell → `projectRoot`）ため、
 モジュール利用者は `root` を再指定しない。
 
 > **上は原文の写しで、規範は frontmatter が正**。`entries` の属性キーが target であることと
@@ -67,6 +69,9 @@ layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-0045�
 > **2026-10-22 追記（ADR-0064）**: 写しの表に無い `layat.configs.<name>.subdir` は ADR-0064 が
 > `configs` submodule へ足した（型とデフォルトの規範は frontmatter）。subdir から root の適用形を
 > 組む HM の配線は REQ-068f2fb3-5459-4325-9359-c931b5049e0d の担当で、root pin の条文は変わらない。
+>
+> **2026-10-24 追記（ADR-0066）**: root pin の条文に NixOS / nix-darwin → `systemRoot` を足した。両モジュールは
+> `layat.user` を持たず、subdir から `systemRoot` の適用形を組む配線は REQ-a220bb28-89de-42b0-a854-e7468755ecb1 の担当。
 >
 > **写しの `layat.entries` を canonical としない理由**: **ADR-0035 §1〜§2 は
 > `layat.configs.<name>.entries` を canonical とし、素の `layat.entries` を
@@ -94,4 +99,4 @@ layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-0045�
 決定の実体は root 明示必須とモジュール側 pin を定めた ADR-0007「汎用 layat CLI を一次 UX に
 昇格し、entrypoint 発見＋root 明示モデルへ移行する」と、配置ロジックを engine が所有し
 モジュールは配線に徹すると定めた ADR-0003。`layat.backup` の追加は ADR-0045、`layat.configs`
-の新設と `layat.entries` の糖衣化は ADR-0035、`layat.recopy` / `layat.jobs` の追加は ADR-0061。
+の新設と `layat.entries` の糖衣化は ADR-0035、`layat.recopy` / `layat.jobs` の追加は ADR-0061、NixOS / nix-darwin の `systemRoot` pin は ADR-0066。

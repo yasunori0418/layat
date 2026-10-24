@@ -273,11 +273,11 @@ root は評価時にパスへ展開せず、マーカーが運ぶ kind をエン
 - [REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3](requirements/20260802-e1e1114b-ba07-4d57-8e04-6e30e39a5da3-backup-wiring-layer.md) — layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない
 - [REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c](requirements/20261015-d37d8433-a0c0-4387-aee9-9526f5cef70c-recopy-wiring-layer.md) — layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける
 - [REQ-068f2fb3-5459-4325-9359-c931b5049e0d](requirements/20261022-068f2fb3-5459-4325-9359-c931b5049e0d-hm-config-subdir-wiring.md) — HM モジュールは configs.<name>.subdir が非 null の config を homeRoot の subdir 適用形で組み、全 target を $HOME/<subdir>/ 配下に置く
-- [REQ-c2654ca5-62c2-4e4b-ad67-ffc5468f429b](requirements/20260802-c2654ca5-62c2-4e4b-ad67-ffc5468f429b-module-user-option.md) — NixOS / nix-darwin モジュールは配置先ユーザーを特定する user オプションを必須で取る
 - [REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9](requirements/20260802-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9-modules-are-engine-wiring.md) — 全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない
 - [REQ-8085f194-c903-4ecb-abd8-c719fe7b3292](requirements/20260802-8085f194-c903-4ecb-abd8-c719fe7b3292-hm-activation-contract.md) — home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める
 - [REQ-c847d1af-a437-46bb-bd64-42083810d034](requirements/20260803-c847d1af-a437-46bb-bd64-42083810d034-hm-activation-per-config-kick.md) — HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う
 - [REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44](requirements/20260803-5923ac79-4a2d-43cd-b56c-2f1000c01b44-hm-configs-target-collision-assertion.md) — 単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段検査で停止する
+- [REQ-a220bb28-89de-42b0-a854-e7468755ecb1](requirements/20261024-a220bb28-89de-42b0-a854-e7468755ecb1-system-module-activation-contract.md) — NixOS / nix-darwin モジュールは activation から全 config のビルド済み link-farm を systemRoot で 1 回の起動に渡す
 - [REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9](requirements/20260802-a0bdf6db-6c0c-476c-916a-61ee4e4510d9-devshell-wiring.md) — devShell は shellHook から engine を起動する配線で、シェル入室のたびに project mode で配置する
 
 ---

@@ -79,6 +79,9 @@ references:
 > 実行フロー 6 の `nix-env --set` は契約の Commit と読むこと。却下案「エンジンが世代 symlink を直接管理」は、契約の
 > 別実装として再評価の対象になった（ADR-0057 の範囲では実装しない。→ ADR-0057）。
 
+> **2026-10-24 改訂注記（ADR-0067）**: 実行フロー 4 の世代スキップは project mode に加えて system mode でも発火する。
+> home mode は従来どおり適用のたびに新世代を積む（→ ADR-0067）。
+
 ## 背景
 
 初期設計（ADR-0002）では `mkActivationScript` が `pkgs.writeShellApplication` で **config ごとに entries を埋め込んだ
