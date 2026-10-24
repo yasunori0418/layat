@@ -8,7 +8,7 @@ let
     echo AAA >"$out/a/file"
     echo BBB >"$out/b/file"
   '';
-  # 構成 a / b は layat の entry だけが違う。hostName を揃え、switch で無関係な unit を動かさない。
+  # 構成 a / b の土台。layat の entry を差し替え、hostName は node 名によらず揃える。
   mkNode = target: subpath: {
     imports = [ ../../modules/nixos.nix ];
     _module.args.layatPackage = layatPackage;
@@ -72,6 +72,8 @@ pkgs.testers.runNixOSTest {
           assert_placed("/etc/layat-b", "b", "BBB")
           machine.fail("test -e /etc/layat-a || test -L /etc/layat-a")
           assert gens() == 2, f"世代が 2 件ではありません: {gens()}"
+          machine.succeed("/run/current-system/activate")
+          assert gens() == 2, f"b の再 activate が世代を積みました: {gens()}"
 
       with subtest("(4) 構成 a の switch 再実行で配置が a に収束する"):
           machine.succeed(f"{a}/bin/switch-to-configuration switch")
