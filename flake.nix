@@ -34,6 +34,11 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # checks.darwin-module 専用。lib/ もモジュール本体も nix-darwin に依存しない。
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # lib 評価テスト。
     nix-unit = {
@@ -375,6 +380,33 @@
 
                 touch "$out"
               '';
+
+          # NixOS / nix-darwin モジュールの評価アサート。非対象 system では空の派生に差し替える。
+          checks.nixos-module =
+            if pkgs.stdenv.hostPlatform.isLinux then
+              import ./tests/modules/nixos-module.nix {
+                inherit inputs pkgs lib;
+                layatPackage = config.packages.layat;
+              }
+            else
+              pkgs.runCommandLocal "layat-nixos-module-check-skipped" { } "touch \"$out\"";
+          checks.darwin-module =
+            if pkgs.stdenv.hostPlatform.isDarwin then
+              import ./tests/modules/darwin-module.nix {
+                inherit inputs pkgs lib;
+                layatPackage = config.packages.layat;
+              }
+            else
+              pkgs.runCommandLocal "layat-darwin-module-check-skipped" { } "touch \"$out\"";
+          # NixOS モジュールの実 activate を VM で検証する。KVM を使える x86_64-linux でだけ走らせる。
+          checks.nixos-vm =
+            if pkgs.stdenv.hostPlatform.system == "x86_64-linux" then
+              import ./tests/modules/nixos-vm.nix {
+                inherit pkgs;
+                layatPackage = config.packages.layat;
+              }
+            else
+              pkgs.runCommandLocal "layat-nixos-vm-check-skipped" { } "touch \"$out\"";
         };
       flake = {
         lib = layatLib;
@@ -403,8 +435,19 @@
             imports = [ ./modules/home-manager.nix ];
             _module.args.layatPackage = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.layat;
           };
-        nixosModules.default = ./modules/nixos.nix;
-        darwinModules.default = ./modules/nix-darwin.nix;
+        # NixOS / nix-darwin モジュールにも同じく pin 版 layat CLI を注入する。
+        nixosModules.default =
+          { pkgs, ... }:
+          {
+            imports = [ ./modules/nixos.nix ];
+            _module.args.layatPackage = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.layat;
+          };
+        darwinModules.default =
+          { pkgs, ... }:
+          {
+            imports = [ ./modules/nix-darwin.nix ];
+            _module.args.layatPackage = inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.layat;
+          };
       };
     };
 }

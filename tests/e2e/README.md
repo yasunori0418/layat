@@ -40,6 +40,7 @@ fixture flake は `layat` を `path:<repo>` input で参照し、`nixpkgs` / `ho
 | `11-root-relative` | root 相対 out-of-store（`mkRootRelativeSymlink`）。project mode で apply → readlink が target 起点の相対文字列で内容へ到達できること、再 apply が warning 無しで冪等なこと、リポジトリを移動しても readlink が不変で、移動先での再 apply が foreign の last-wins 置換と記録なしの warning だけで成功すること、`--root` で上書きした root に対して src の実在判定と配置が行われること、entry を外した apply で stale 除去されることを検証 |
 | `12-system` | system mode。root を user namespace（`unshare -Ur`、不可なら `sudo -n`）で取り、`systemRoot` の config を `--root` の sysroot へ apply → 隔離した system 基底に `<roothash>/<name>` の profile・backref と記録が立つこと、世代 2 から `rollback` で世代 1 へ戻り `reset --yes` で撤去されること、`--all` が `<roothash>` 系列を除外することを検証。非 root の `apply` / `rollback` / `reset --yes` が `E_PERMISSION` で何も変えずに止まり、`apply --dryrun` / `list-generations` は通ることも見る |
 | `13-status` | status。home mode と project mode の config を 1 つずつ apply し、`layat status` が `home:<name>` と `project:<name>@<root>` を見出し行と entry 行で出すこと、`[name]` で片方に絞れること・一致 0 件が stdout 空と stderr 1 行で exit 0 になること、`--json` の `info`（mode・root・entries の target）を検証。隔離した system の記録基底に置いた記録が user 基底の後に `system:<name>` で出ることも見る |
+| `14-flake-parts` | flake-parts + `lib.mkApplyCommand`。`flakeModules.default` を import した fixture に projectRoot と homeRoot の config を 1 つずつ持たせ、devShell の shellHook に `mkApplyCommand { …; manifests = config.layat; root = "project"; }` へ `--no-wait` を足した文字列を埋める。git repo のサブディレクトリで `nix develop -c true` を実行すると、project 側が git toplevel 配下に配置され、home 側は CLI の `--project-root` で外れて隔離した `$HOME` に何も出ないことを検証 |
 
 ## 将来拡張
 

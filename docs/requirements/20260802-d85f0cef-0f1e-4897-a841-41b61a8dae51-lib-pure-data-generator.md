@@ -7,20 +7,20 @@ derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
 specification: |
-  `lib` (`mkManifest` and the marker functions) SHALL be a pure data generator that
+  `lib` (`mkManifest`, `mkApplyCommand` and the marker functions) SHALL be a pure data generator that
   depends only on nixpkgs.lib. It SHALL NOT carry placement logic (filesystem operations,
   profile swap, stale removal), and SHALL NOT introduce a dependency on home-manager,
   NixOS or nix-darwin.
 specification_ja: |
-  `lib`（`mkManifest` / マーカー群）は nixpkgs.lib のみに依存する純データ生成器で
-  なければならない。配置ロジック（FS 操作・profile swap・stale 除去）を持ってはならず、
+  `lib`（`mkManifest` / `mkApplyCommand` / マーカー群）は nixpkgs.lib のみに依存する
+  純データ生成器でなければならない。配置ロジック（FS 操作・profile swap・stale 除去）を持ってはならず、
   home-manager / NixOS / nix-darwin への依存を持ち込んではならない。
 ---
 # REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51: lib は nixpkgs.lib のみに依存する純データ生成器である
 
 ## 仕様
 
-`lib`（`mkManifest` / マーカー群）は nixpkgs.lib のみに依存する純データ生成器。
+`lib`（`mkManifest` / `mkApplyCommand` / マーカー群）は nixpkgs.lib のみに依存する純データ生成器。
 配置ロジックは持たない。
 
 - 依存は nixpkgs.lib に限る。`lib.types` / `mkOption` / `evalModules` は nixpkgs.lib の

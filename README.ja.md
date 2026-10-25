@@ -7,7 +7,7 @@
 
 layat は、**フェッチ済みの Nix store パスの内容を `root` 相対の target へ配置する** Nix ライブラリ・モジュール群(symlink もしくは copy)。設定の生成は **行わない**。`root` は `projectRoot` / `homeRoot` / `systemRoot` マーカーで**明示的に**選ぶ(**暗黙のデフォルトは持たない**)。
 
-> **ステータス: MVP / 実装フェーズ。** 実装済みの範囲は standalone CLI ＋ **project mode** をコアとし、**home mode** と **system mode** もサポート。NixOS / nix-darwin モジュールは将来対応。全体のマトリクスは [MVP ステータス](#mvp-ステータス) を参照。API は今後も変わりうる。
+> **ステータス: MVP / 実装フェーズ。** 実装済みの範囲は standalone CLI ＋ **project mode** をコアとし、**home mode** と **system mode**、home-manager / NixOS / nix-darwin モジュールもサポート。全体のマトリクスは [MVP ステータス](#mvp-ステータス) を参照。API は今後も変わりうる。
 
 ---
 
@@ -72,6 +72,19 @@ devShells.${system}.default = pkgs.mkShell {
 };
 ```
 
+`layat.lib.mkApplyCommand` を使えば、config 群を `apply --all --manifest <name>=<farm> …` の 1 行へ事前展開でき、shell に入るたびの eval / build / entrypoint 探索を省ける(link-farm は devShell のビルド依存になる)。`root` は必須(`"all"` / `"project"` / `"home"` / `"system"`)で、`--no-wait` などの実行時フラグは後ろに足す。
+
+```nix
+devShells.${system}.default = pkgs.mkShell {
+  shellHook = layat.lib.mkApplyCommand {
+    inherit pkgs;
+    layatPackage = layat.packages.${system}.layat;   # 固定した layat を store パスで参照
+    manifests = self.layat.${system};
+    root = "project";                                # --project-root を付ける
+  } + " --no-wait";
+};
+```
+
 ### 新規プロジェクトの scaffold
 
 `layat init` は `nix flake init -t` の透過的なラッパー。layat 自身は何も生成せず、既存ファイルを上書きしない。
@@ -130,6 +143,7 @@ layat gitignore skills >> .gitignore
 
 - ここでは世代は内部機構であり、`rollback` / `list-generations` は project mode では **公開されない**(ephemeral な配置に rollback は無意味)。
 - devShell では **named apply**(`layat apply skills`)か `layat apply --all --project-root` を使う。裸の `--all` は home-mode config も `$HOME` へ配置してしまうため、混在 entrypoint では footgun。
+  `mkApplyCommand` の `root = "all"` も同じ。
 
 ### Home mode(standalone、役割を別 profile に分ける)
 
@@ -222,11 +236,34 @@ layat.configs.nvim = {
 
 ### System mode
 
-`systemRoot` の config は `/` に配置する。この config への `apply` / `reset` / `rollback` は root が必要(`sudo layat apply <name>`)で、`--dryrun` と `list-generations` は不要。profile は `/nix/var/nix/profiles/layat/` 下に、last-applied 記録は `/var/lib/layat/` 下に置かれる。`list-generations --all` は home の profile を一覧したあと、system の profile を一覧する(見出しは `# <name> (system)`。`--json` では subject 名が `home:<name>` / `system:<name>` になる)。
+`systemRoot` の config は `/` に配置する。この config への `apply` / `reset` / `rollback` は root が必要(`sudo layat apply <name>`)で、`--dryrun` と `list-generations` は不要。profile は `/nix/var/nix/profiles/layat/` 下に、last-applied 記録は `/var/lib/layat/` 下に置かれる。構成が変わらないまま再 apply しても(NixOS の activation は boot のたびに走る)新しい世代は積まず、ずれた配置だけを直す。`list-generations --all` は home の profile を一覧したあと、system の profile を一覧する(見出しは `# <name> (system)`。`--json` では subject 名が `home:<name>` / `system:<name>` になる)。
 
 1 つの entrypoint に system と home / project の config が混在するときは、実行を分ける。`sudo layat apply --all --system-root` のあと、自分のユーザーで `layat apply --all --home-root`(または `--project-root`)を実行する。home / project の config を root で適用すると、配置物は root 所有になり、世代は root の state に記録される。そのため root が絞り込みなしで実行した `apply --all` の選択にそれらが含まれると、warning が出る。同じ config(fixed も含む)を root と自分のユーザーの両方で適用しないこと。profile と記録が 2 ユーザーの state に分かれ、baseline が食い違う。
 
 `LAYAT_SYSTEM_PROFILE_BASE` / `LAYAT_SYSTEM_STATE_DIR` は、テストや隔離したハーネスのために system の profile 基底と記録の基底を別の場所に差し替える。サポート対象の設定ではない。
+
+### NixOS / nix-darwin モジュール
+
+どちらのモジュールも `root = systemRoot` に固定される(system mode。config の `subdir` はその target を `/<subdir>/` 配下に置く)。オプションは home-manager モジュールと同じ `layat.configs.<name>` / `layat.jobs` / `layat.recopy` / `layat.backup` で、エンジンの起動も同じ形をとる。activation ごとに `layat apply --all --manifest <name>=<link-farm> … --jobs <n>` を 1 回だけ起動し、config が無ければ起動しない。`layat.user` は持たない。ユーザーの home へ配置するには home-manager モジュールを使う。
+
+```nix
+# NixOS
+imports = [ inputs.layat.nixosModules.default ];
+# nix-darwin
+imports = [ inputs.layat.darwinModules.default ];
+
+layat = {
+  enable = true;
+  configs.etc-tools = {
+    subdir = "etc";
+    entries."tool/config" = { src = inputs.tool-config; };  # -> /etc/tool/config
+  };
+};
+```
+
+- **NixOS** では `system.activationScripts.layat` から、`etc` と `users` の後に起動する。activation は boot のたびにも走るが、構成が変わらなければ layat の世代は増えない。`nixos-rebuild dry-activate` では `--dryrun` 付きで起動するので、何も配置しない。
+- **nix-darwin** では `system.activationScripts.postActivation` へ起動を追記する(利用者が書いた `postActivation` も残る)。nix-darwin は boot 時にこれを走らせないため、ずれた配置は次の `darwin-rebuild switch` で直る。`--dryrun` の経路は無い。macOS ではエンジンが記録用に `/var/lib/layat` を作る。
+- layat は自前の profile を **内部機構** として保持するが、ユーザー公開の rollback はホスト側に一本化される(`nixos-rebuild --rollback` / `darwin-rebuild --rollback`)。ホストの activation が古い link-farm を適用し直す。
 
 ### 既存の flake に layat を追加する
 
@@ -251,6 +288,8 @@ perSystem = { pkgs, ... }: {
 };
 # flake-parts はこれを flake.layat.<system>.<name> へ転置する — CLI のアドレッシングは変わらない。
 ```
+
+`mkApplyCommand` を使うときは、`perSystem` から `manifests = config.layat;` を渡す。
 
 > `nix flake check` は `warning: unknown flake output 'layat'` を報告するが exit 0(無害・想定どおり——`layat` 名前空間は manifest を `packages` の外に保つ)。成果物は `nix build .#layat.<system>.<name>` で検証する。
 
@@ -477,7 +516,7 @@ generator = "nix"
 | flake-parts モジュール | 実装済み |
 | `manifest.json` スキーマ | v1 のみ。migration / 後方互換の仕組みはまだ無い |
 | `--json` 機械可読出力 | 実装済み — 全サブコマンドで outturn 準拠エンベロープを返し、コマンドごとのペイロード(items / changes / info)と `--all` の config ごと `SubjectResult` も載る。最小形のまま残るのは `reset --dryrun` のみ |
-| NixOS / nix-darwin モジュール | 将来 |
+| NixOS / nix-darwin モジュール | 実装済み — system mode(`systemRoot`)、`layat.configs.<name>` ごとに 1 profile |
 
 **既知の制限 / 正直な注意点**
 

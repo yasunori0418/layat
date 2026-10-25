@@ -72,6 +72,10 @@ manifest をエンジンへ渡す。エンジンは `manifest.json` を唯一の
 - [REQ-a77181dd-a59c-40bb-855e-3430ad970eb6](requirements/20261012-a77181dd-a59c-40bb-855e-3430ad970eb6-root-relative-symlink-marker.md) — mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る
 - [REQ-3f541d39-da41-4ef8-858b-707f54cf6a29](requirements/20260802-3f541d39-da41-4ef8-858b-707f54cf6a29-root-markers-runtime-resolution.md) — root マーカーは kind を運ぶ入れ物でパス解決は engine が行う
 
+### `lib.mkApplyCommand`
+
+- [REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f](requirements/20261025-6c51facc-fa7a-4b5e-939b-44e7578d7a4f-lib-apply-command.md) — lib.mkApplyCommand は事前展開した apply --all --manifest のコマンド行を返す
+
 ### 入力検査（`evalModules` + `normalizeManifest`）
 
 - [REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34](requirements/20260802-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34-mkmanifest-input-validation.md) — mkManifest 自身が evalModules で入力を検査する単一ゲートになる
@@ -243,7 +247,7 @@ stale 除去は前世代 manifest の記録通りを指す symlink だけに限�
 - [REQ-9d622539-a1e5-4719-af51-e0cd85b66f35](requirements/20261011-9d622539-a1e5-4719-af51-e0cd85b66f35-last-applied-record.md) — apply は最後に配置した manifest を last-applied 記録に書き、stale 除去の baseline は記録を優先して読む
 - [REQ-0e341430-17f0-498b-9439-65491652163a](requirements/20260802-0e341430-17f0-498b-9439-65491652163a-rollback-refit-then-pointer.md) — rollback は FS を先に収束させてから profile ポインタを最後に移す
 - [REQ-844ee375-919f-4341-81e1-a5f89fd32840](requirements/20260802-844ee375-919f-4341-81e1-a5f89fd32840-module-mode-profile-internal.md) — module 時は rollback を host へ一本化し、layat profile は前進のみで追従する
-- [REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0](requirements/20260802-46fccb80-4bae-4d37-bc19-dded88e9a9c0-project-mode-generation-skip.md) — project mode は世代を非公開にし、derivation 同一なら世代を積まず lstat ドリフト修復だけ行う
+- [REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0](requirements/20260802-46fccb80-4bae-4d37-bc19-dded88e9a9c0-project-mode-generation-skip.md) — project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う
 - [REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4](requirements/20260802-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4-project-mode-orphan-profile.md) — 孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する
 - [REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693](requirements/20260802-fc1118b1-b0e8-4ddf-80f6-c70956651693-cross-config-target-oscillation.md) — 同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める
 

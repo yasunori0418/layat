@@ -12,7 +12,7 @@ import (
 
 // tmpdir integration tests for generation skip + lstat drift repair (real FS · no nix · generation.Fake).
 // The Fake points the profile at a generation link of the link-farm, so applying the same link-farm twice
-// makes generationUnchanged hold (project mode only) and runs only the lstat repair.
+// makes generationUnchanged hold (project / system mode only) and runs only the lstat repair.
 
 // applyOnce is a shared helper that runs a single apply in project mode (roothash key).
 func applyOnce(t *testing.T, lf, name, root, state string, fake *generation.Fake, warns *[]string) *Result {
@@ -196,7 +196,56 @@ func TestApplyGenerationSkipKeepsEditedCopy(t *testing.T) {
 	}
 }
 
-func TestApplyGenerationSkipOnlyProjectMode(t *testing.T) {
+func TestApplyGenerationSkipSystemModeRepairsDrift(t *testing.T) {
+	// system mode skips generations like project mode: re-applying the same link-farm commits
+	// nothing and only re-links the drifted symlink.
+	root, state, sys, sysState := realTempDir(t), realTempDir(t), realTempDir(t), realTempDir(t)
+	srcA, srcB := makeSrc(t, "a"), makeSrc(t, "b")
+	lf := writeLinkFarm(t, systemManifest(storeEntry(srcA, ".", "etc/a"), storeEntry(srcB, ".", "etc/b")))
+
+	fake := &generation.Fake{System: sys}
+	apply := func() *Result {
+		res, err := Apply(Options{
+			LinkFarm: lf, Name: "sys", RootOverride: root, StateDir: state, SystemStateDir: sysState,
+			Backend: fake, Geteuid: euid(0),
+		})
+		if err != nil {
+			t.Fatalf("Apply: %v", err)
+		}
+		return res
+	}
+
+	apply()
+	if len(fake.Commits) != 1 {
+		t.Fatalf("first apply commit calls = %d, want 1", len(fake.Commits))
+	}
+	tgtA := filepath.Join(root, "etc", "a")
+	if err := os.Remove(tgtA); err != nil {
+		t.Fatal(err)
+	}
+
+	res := apply()
+	if !res.GenerationSkipped {
+		t.Errorf("GenerationSkipped = false, want true (system mode, same link-farm)")
+	}
+	if len(fake.Commits) != 1 {
+		t.Errorf("commit calls = %d, want 1 (no new generation)", len(fake.Commits))
+	}
+	if len(res.Placed) != 1 || res.Placed[0] != "etc/a" {
+		t.Errorf("Placed = %v, want [etc/a] (only the drifted symlink)", res.Placed)
+	}
+	if len(res.Replaced)+len(res.Removed) != 0 {
+		t.Errorf("in-sync entries should be untouched: Replaced=%v Removed=%v", res.Replaced, res.Removed)
+	}
+	if dest, _ := os.Readlink(tgtA); dest != srcA {
+		t.Errorf("re-placed dest = %q, want %q", dest, srcA)
+	}
+	if dest, _ := os.Readlink(filepath.Join(root, "etc", "b")); dest != srcB {
+		t.Errorf("in-sync dest = %q, want %q", dest, srcB)
+	}
+}
+
+func TestApplyGenerationSkipNotInHomeMode(t *testing.T) {
 	// home mode does not skip generations (a new generation every time). In home mode the commit count grows even with the same link-farm.
 	root := realTempDir(t)
 	state := realTempDir(t)

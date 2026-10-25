@@ -63,7 +63,7 @@ design item が持つ**。ここは軸の名前と着眼点だけを並べ、満
 徹する（→ ADR-0006, ADR-0007）。
 
 - [DSG-1361df1a-31c4-46ed-a6ce-92938f94ac02](design/20260802-1361df1a-31c4-46ed-a6ce-92938f94ac02-repo-layout.md) — リポジトリを lib / cmd / internal / templates / modules のトップレベル 5 ディレクトリへ分ける
-- [DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5](design/20260802-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5-lib-module-split.md) — lib は公開 API・型定義・manifest 生成・マーカー構築子の 4 ファイルへ分割する
+- [DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5](design/20260802-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5-lib-module-split.md) — lib は公開 API・型定義・manifest 生成・マーカー構築子・apply コマンド組み立ての 5 ファイルへ分割する
 - [DSG-7d354fe0-a333-495b-9f4b-14bba316dc47](design/20260802-7d354fe0-a333-495b-9f4b-14bba316dc47-go-package-split.md) — Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする
 - [DSG-aeb5e219-4784-4950-845c-35f9bab9179c](design/20260802-aeb5e219-4784-4950-845c-35f9bab9179c-modules-file-split.md) — modules は common.nix に共通オプションを集約し、統合層ごとに 1 ファイルへ分ける
 - [DSG-4a84f282-76ea-47c9-aede-deac12ff5257](design/20260802-4a84f282-76ea-47c9-aede-deac12ff5257-implementation-scope.md) — 実装スコープを standalone CLI + project mode + home mode + system mode とし、NixOS / nix-darwin モジュールは将来拡張に置く
