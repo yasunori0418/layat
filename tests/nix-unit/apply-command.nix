@@ -99,4 +99,22 @@ in
     expectedError.type = "ThrownError";
     expectedError.msg = "invalid root";
   };
+
+  # 文字列でない root も enum の外として throw する（attr 名の照合へ進まない）。
+  testApplyCommandRootNonStringRejected = {
+    expr = mk 1;
+    expectedError.type = "ThrownError";
+    expectedError.msg = "invalid root";
+  };
+
+  # manifests が空なら --manifest を 1 つも出さない（CLI は entrypoint 経路へ落ちる）。
+  testApplyCommandEmptyManifests = {
+    expr = layat.mkApplyCommand {
+      pkgs = fakePkgs;
+      layatPackage = fakeLayat;
+      manifests = { };
+      root = "all";
+    };
+    expected = "${exe} apply --all ";
+  };
 }
