@@ -2,6 +2,7 @@
 let
   markers = import ./out-of-store.nix;
   manifest = import ./manifest.nix;
+  applyCommand = import ./apply-command.nix;
 in
 {
   # Private helpers exposed only for unit tests. Not a stable public API.
@@ -12,6 +13,10 @@ in
 
   # normalizeManifest { lib, root, entries } -> attrset (validated pure data)
   inherit (manifest) normalizeManifest;
+
+  # lib.mkApplyCommand { pkgs, layatPackage, manifests, root } -> string (`layat apply --all --manifest …`)
+  # root is required: "all" (no filter) / "project" / "home" / "system" (adds --<root>-root)
+  inherit (applyCommand) mkApplyCommand;
 
   # lib.mkOutOfStoreSymlink "/abs/path" -> marker (passed to src)
   # lib.mkRootRelativeSymlink "rel/path" -> marker (passed to src; relative to the placement root)
