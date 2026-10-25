@@ -30,6 +30,9 @@ references:
 > **2026-06-14 改訂注記（ADR-0019）**: project mode の **copy target も ephemeral 扱い**と確定した。`gitignore` は method を区別せず全 target を列挙し、
 > copy target も各 clone で place-once 再マテリアライズされ編集は clone local / 使い捨て（`git clean` で消える）。committed（vendoring）は layat の責務外（→ ADR-0019）。
 
+> **2026-10-24 改訂注記（ADR-0067）**: 「世代スキップ短絡を project mode の必須要件にする」の判定と動作、および home mode の
+> 「適用のたびに新世代」は不変。ただし「世代スキップは project mode 限定」を改め、system mode でも同じ機構で発火させる（→ ADR-0067）。
+
 ## 背景
 
 これまで layat の公開 API は root = `$HOME` 固定で、配置先は `$HOME` 相対の target だけを想定していた（ADR-0004）。

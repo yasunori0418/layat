@@ -1,48 +1,48 @@
 ---
 id: "DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda"
 type: design
-name: "NixOS / nix-darwin モジュールは中身を将来拡張としたままスタブとして公開する"
+name: "NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする"
 satisfies:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
+  - "REQ-a220bb28-89de-42b0-a854-e7468755ecb1"
 ---
-# DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda: NixOS / nix-darwin モジュールは中身を将来拡張としたままスタブとして公開する
+# DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda: NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする
 
 ## 設計
 
-`nixosModules.default` / `darwinModules.default` を flake outputs に**公開はする**が、
-中身（`system.activationScripts` からの engine 起動）は将来拡張として実装しない。
+`nixosModules.default`（`modules/nixos.nix`）と `darwinModules.default`（`modules/nix-darwin.nix`）は、
+`common.nix` の共通オプションを import し、`modules/kick.nix` が返す起動文字列を activation へ
+置くだけの配線である。
 
 ```nix
-nixosModules.default  = ./modules/nixos.nix;      # スタブとして公開済み・中身は将来拡張
-darwinModules.default = ./modules/nix-darwin.nix; # スタブとして公開済み・中身は将来拡張
+# modules/kick.nix（module ではなく純粋関数）
+{ lib, pkgs, layatPackage, cfg, mkRoot }:   # cfg = config.layat / mkRoot = subdir → root マーカー
+{ manifests = { <name> = <link-farm>; … };
+  command   = "layat apply --all --manifest <name>=<farm> … --jobs <n>[ --recopy][ --backup=<suffix>]"; }
 ```
 
-「公開しない」でも「実装する」でもなく**スタブで公開する**のを選ぶ理由は次の 2 つ。
+| 層 | `mkRoot` | activation |
+|---|---|---|
+| home-manager | `homeRoot`（subdir 適用形を含む）| `home.activation.layat` |
+| NixOS | `systemRoot`（subdir 適用形を含む）| `system.activationScripts.layat`（`deps = [ "etc" "users" ]`・`supportsDryActivation = true`）|
+| nix-darwin | `systemRoot`（subdir 適用形を含む）| `system.activationScripts.postActivation.text` へ追記 |
 
-- **共通オプション集合の同一性を先に固定できる**。REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 は全モジュールが
-  共通オプションの同一集合を公開することを求める。スタブでもファイルが存在し
-  `common.nix` を import していれば、この集合が最初から 3 モジュール分そろい、
-  後から実装する段で集合が分岐する余地が消える。本 item が同 REQ について担うのは
-  この**集合の同一性を先に固定する**ところまでで、オプション自体の定義（`configs`
-  経由の `entries`・素の `entries` の deprecated 糖衣・root を pin してオプションを
-  公開しないこと）は DSG-aeb5e219-4784-4950-845c-35f9bab9179c の担当。REQ-c2654ca5-62c2-4e4b-ad67-ffc5468f429b が要求する `user` は
-  `common.nix` を通らず各モジュール内で定義されるため（DSG-aeb5e219-4784-4950-845c-35f9bab9179c）、この機構では
-  そろわない
-- **配線の実装分が本当に「配線だけ」であることを検証可能にする**。REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 が
-  求めるのは全モジュールが engine をキックするだけの配線であること。先に外形を
-  置いておけば、将来の実装で埋まるのが activation フックと root の供給元だけであり、
-  配置ロジックが入り込む余地が無いことが差分として見える
+- **起動の組み立てを `kick.nix` 1 か所に置く**。REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 が求める共通オプション集合は
+  `common.nix` の import で、その集合から起動を組む規則は `kick.nix` で全モジュールにそろう。
+  モジュールごとに残るのは root マーカーと hook だけで、REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 の「配線に徹する」が
+  ファイルの中身として見える
+- **NixOS 固有の起動環境はモジュールが持つ**。`PATH` への `config.nix.package` の前置と、
+  `NIXOS_ACTION=dry-activate` のときの `--dryrun` は `nixos.nix` が `command` の外側で付ける
+  （REQ-a220bb28-89de-42b0-a854-e7468755ecb1）。nix-darwin は dry run で分岐しない
+- **`layatPackage` は flake の wrapper が注入する**。HM と同じく `_module.args.layatPackage` で渡し、
+  `layat.package` オプションは公開しない
 
-実装しない側の代償は、公開されているが動かない output が存在すること。これは
-実装スコープの線引き（DSG-4a84f282-76ea-47c9-aede-deac12ff5257）が対象を standalone CLI + project mode +
-home mode に限ることの帰結で、E2E の対象外である旨は TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2 が定めている。
+モジュールの評価結果は eval アサートの check、NixOS の実 activate は VM テストで検証する
+（DSG-901351ea-f01b-4bb0-a470-b890d92c980b）。
 
 ## 出典
 
-分割時点の原文（縮退前）の `docs/design.md`「flake.nix outputs 設計」のモジュール統合の項。
-
-> **本 item の根拠は ADR ではなく同原文の当該記述**: 中身を将来拡張としたまま
-> スタブで公開する判断を決めた ADR は存在しない（ADR-0004 は system mode を将来拡張と
-> 位置づけるが、outputs での公開有無には触れない）。`justifies` を受けていないのは
-> 張り漏れではなく、根拠が ADR 以外にあることによる。
+ADR-0066「NixOS / nix-darwin モジュールを system mode の配線として実装する」§1〜§4。
+本 item は分割時点の原文の「flake.nix outputs 設計」にあったスタブ公開の項から起こし、
+同 ADR で実装の形へ書き換えた。
