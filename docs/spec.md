@@ -49,8 +49,8 @@ manifest をエンジンへ渡す。エンジンは `manifest.json` を唯一の
 
 ## lib API
 
-`lib`（`mkManifest` / マーカー群）は nixpkgs.lib のみに依存する純データ生成器で、配置ロジックは
-持たない（→ ADR-0006）。入力検査は `mkManifest` 自身が `evalModules` + `normalizeManifest` で
+`lib`（`mkManifest` / `mkApplyCommand` / マーカー群）は nixpkgs.lib のみに依存する純データ生成器で、
+配置ロジックは持たない（→ ADR-0006）。入力検査は `mkManifest` 自身が `evalModules` + `normalizeManifest` で
 行う単一ゲートに集約する。
 
 - [REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51](requirements/20260802-d85f0cef-0f1e-4897-a841-41b61a8dae51-lib-pure-data-generator.md) — lib は nixpkgs.lib のみに依存する純データ生成器である
@@ -71,6 +71,10 @@ manifest をエンジンへ渡す。エンジンは `manifest.json` を唯一の
 - [REQ-eb363122-385a-499c-a074-c95efb949d07](requirements/20260802-eb363122-385a-499c-a074-c95efb949d07-mkoutofstoresymlink-marker.md) — mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す
 - [REQ-a77181dd-a59c-40bb-855e-3430ad970eb6](requirements/20261012-a77181dd-a59c-40bb-855e-3430ad970eb6-root-relative-symlink-marker.md) — mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る
 - [REQ-3f541d39-da41-4ef8-858b-707f54cf6a29](requirements/20260802-3f541d39-da41-4ef8-858b-707f54cf6a29-root-markers-runtime-resolution.md) — root マーカーは kind を運ぶ入れ物でパス解決は engine が行う
+
+### `lib.mkApplyCommand`
+
+- [REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f](requirements/20261025-6c51facc-fa7a-4b5e-939b-44e7578d7a4f-lib-apply-command.md) — lib.mkApplyCommand は事前展開した apply --all --manifest のコマンド行を返す
 
 ### 入力検査（`evalModules` + `normalizeManifest`）
 
