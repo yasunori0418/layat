@@ -22,13 +22,13 @@ references:
 
 ## 背景
 
-project mode の devShell は `shellHook` で `layat apply <name>` を打つ。CLI はそのたびに
-entrypoint を cwd から探し、`nix eval` / `nix build` を回す。HM / NixOS / nix-darwin モジュールの
+project mode の devShell は `shellHook` で `layat apply <name>` を実行する。CLI はそのたびに
+entrypoint を cwd から探し、`nix eval` / `nix build` を実行する。HM / NixOS / nix-darwin モジュールの
 `modules/kick.nix` は、link-farm を評価時に作り `apply --all --manifest <name>=<farm> …` の 1 行を
 組んで、これらを省いている。ただしこの組み立ては modules の内部にあり、devShell からは使えない。
 
-`apply --all --manifest` の経路は rootKind を制限せず、`--project-root` などの root フィルタも
-効く。一方 `lib/` は nixpkgs.lib だけに依存する規約なので、pin 版 CLI（`packages.<system>.layat`）を
+`apply --all --manifest` は rootKind を制限せず、`--project-root` などの root フィルタも
+使える。一方 `lib/` は nixpkgs.lib だけに依存する規約なので、pin 版 CLI（`packages.<system>.layat`）を
 `lib/` の中から参照できない。
 
 ## 決定
@@ -61,10 +61,10 @@ entrypoint を cwd から探し、`nix eval` / `nix build` を回す。HM / NixO
 
 ## 根拠
 
-- **事前展開**: devShell の依存として farm を先にビルドすれば、入室のたびの eval / build /
+- **事前展開**: devShell の依存として farm を先にビルドすれば、devShell に入るたびの eval / build /
   entrypoint 探索が要らなくなり、cwd にも依存しない。
 - **CLI を引数で受ける**: `lib/` を純粋に保ったまま、利用者が pin した CLI を使える。
-- **root を必須にする**: 素の `--all` を devShell から打つと home mode の config まで `$HOME` に
+- **root を必須にする**: 素の `--all` を devShell から実行すると home mode の config まで `$HOME` に
   置かれる。既定値を持たせず、どの root を置くかを呼び出し側に明示させる。
 - **CLI だけで選別する**: rootKind による選別は CLI がすでに持つ。Nix 側にも持つと、同じ判定が
   2 箇所に分かれる。

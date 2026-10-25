@@ -30,7 +30,7 @@ specification_ja: |
 ## 仕様
 
 `mkApplyCommand` は link-farm の集合を `apply --all --manifest` の 1 行へ事前展開する。
-devShell の `shellHook` に埋めれば、入室のたびの eval / build / entrypoint 探索が要らなくなり、
+devShell の `shellHook` に埋めれば、devShell に入るたびの eval / build / entrypoint 探索が要らなくなり、
 farm は devShell の依存として先にビルドされる。
 
 - `manifests` は config 名 → link-farm の attrset。flake-parts なら `config.layat`、素の flake

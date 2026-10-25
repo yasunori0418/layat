@@ -40,7 +40,7 @@ lib/
   後者はマーカーという不活性なデータ構造を返すだけで、依存の向きが一方向（manifest → marker）に
   なるため
 - **`apply-command.nix` を分ける**のは、REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f の `mkApplyCommand` が
-  manifest を作らず、出来上がった link-farm の集合を CLI のコマンド行へ写すだけで、manifest の
+  manifest を作らず、出来上がった link-farm の集合から CLI のコマンド行を組むだけで、manifest の
   生成ロジックにもマーカーにも依存しないため。`modules/kick.nix` もこの関数を使う
 
 いずれのファイルも nixpkgs.lib のみに依存し、REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51 の依存制約をファイル単位で保つ。
