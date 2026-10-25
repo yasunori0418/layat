@@ -49,8 +49,8 @@ manifest をエンジンへ渡す。エンジンは `manifest.json` を唯一の
 
 ## lib API
 
-`lib`（`mkManifest` / `mkApplyCommand` / マーカー群）は nixpkgs.lib のみに依存する純データ生成器で、
-配置ロジックは持たない（→ ADR-0006）。入力検査は `mkManifest` 自身が `evalModules` + `normalizeManifest` で
+`lib`（`mkManifest` / マーカー群）は nixpkgs.lib のみに依存する純データ生成器で、配置ロジックは
+持たない（→ ADR-0006）。入力検査は `mkManifest` 自身が `evalModules` + `normalizeManifest` で
 行う単一ゲートに集約する。
 
 - [REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51](requirements/20260802-d85f0cef-0f1e-4897-a841-41b61a8dae51-lib-pure-data-generator.md) — lib は nixpkgs.lib のみに依存する純データ生成器である
