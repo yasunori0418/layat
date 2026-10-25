@@ -92,6 +92,22 @@ devShells.${system}.default = pkgs.mkShell {
 };
 ```
 
+Alternatively, `layat.lib.mkApplyCommand` pre-expands the configs into one
+`apply --all --manifest <name>=<farm> …` line, which skips the eval / build / entrypoint lookup
+on every shell entry (the link-farms become build inputs of the devShell). `root` is required
+(`"all"` / `"project"` / `"home"` / `"system"`); runtime flags such as `--no-wait` go after it:
+
+```nix
+devShells.${system}.default = pkgs.mkShell {
+  shellHook = layat.lib.mkApplyCommand {
+    inherit pkgs;
+    layatPackage = layat.packages.${system}.layat;   # pinned layat, referenced by store path
+    manifests = self.layat.${system};
+    root = "project";                                # adds --project-root
+  } + " --no-wait";
+};
+```
+
 ### Scaffold a new project
 
 `layat init` is a transparent wrapper over `nix flake init -t`; layat itself generates
@@ -157,6 +173,7 @@ layat gitignore skills >> .gitignore
 - In a devShell, use a **named apply** (`layat apply skills`) or
   `layat apply --all --project-root`. A bare `--all` would also place any home-mode configs
   into `$HOME` — a footgun in mixed entrypoints.
+  The same holds for `mkApplyCommand` with `root = "all"`.
 
 ### Home mode (standalone, roles as separate profiles)
 
@@ -342,6 +359,8 @@ perSystem = { pkgs, ... }: {
 };
 # flake-parts transposes this to flake.layat.<system>.<name> — the CLI addressing is unchanged.
 ```
+
+With `mkApplyCommand`, pass `manifests = config.layat;` from `perSystem`.
 
 > `nix flake check` reports `warning: unknown flake output 'layat'` but exits 0 (harmless,
 > expected — the `layat` namespace keeps manifests out of `packages`). Verify artifacts with

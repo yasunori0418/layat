@@ -72,6 +72,19 @@ devShells.${system}.default = pkgs.mkShell {
 };
 ```
 
+`layat.lib.mkApplyCommand` を使えば、config 群を `apply --all --manifest <name>=<farm> …` の 1 行へ事前展開でき、shell に入るたびの eval / build / entrypoint 探索を省ける(link-farm は devShell のビルド依存になる)。`root` は必須(`"all"` / `"project"` / `"home"` / `"system"`)で、`--no-wait` などの実行時フラグは後ろに足す。
+
+```nix
+devShells.${system}.default = pkgs.mkShell {
+  shellHook = layat.lib.mkApplyCommand {
+    inherit pkgs;
+    layatPackage = layat.packages.${system}.layat;   # 固定した layat を store パスで参照
+    manifests = self.layat.${system};
+    root = "project";                                # --project-root を付ける
+  } + " --no-wait";
+};
+```
+
 ### 新規プロジェクトの scaffold
 
 `layat init` は `nix flake init -t` の透過的なラッパー。layat 自身は何も生成せず、既存ファイルを上書きしない。
@@ -130,6 +143,7 @@ layat gitignore skills >> .gitignore
 
 - ここでは世代は内部機構であり、`rollback` / `list-generations` は project mode では **公開されない**(ephemeral な配置に rollback は無意味)。
 - devShell では **named apply**(`layat apply skills`)か `layat apply --all --project-root` を使う。裸の `--all` は home-mode config も `$HOME` へ配置してしまうため、混在 entrypoint では footgun。
+  `mkApplyCommand` の `root = "all"` も同じ。
 
 ### Home mode(standalone、役割を別 profile に分ける)
 
@@ -274,6 +288,8 @@ perSystem = { pkgs, ... }: {
 };
 # flake-parts はこれを flake.layat.<system>.<name> へ転置する — CLI のアドレッシングは変わらない。
 ```
+
+`mkApplyCommand` を使うときは、`perSystem` から `manifests = config.layat;` を渡す。
 
 > `nix flake check` は `warning: unknown flake output 'layat'` を報告するが exit 0(無害・想定どおり——`layat` 名前空間は manifest を `packages` の外に保つ)。成果物は `nix build .#layat.<system>.<name>` で検証する。
 
