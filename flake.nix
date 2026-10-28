@@ -118,7 +118,7 @@
             pname = "layat";
             inherit version;
             src = goSrc;
-            vendorHash = "sha256-EccvwJdTFOG6vvu68Ex8n4xCSm3Q7secBN5UFX3vY6c=";
+            vendorHash = "sha256-2iRx+oLX7Wz5bQMrW1Lttg0jQpjeJ2ftrPZBB5XmBI0=";
             doCheck = true;
             env.GOTOOLCHAIN = "local";
             # VERSION の値を main.version へ埋め込む。素の go build では "dev" のまま。
