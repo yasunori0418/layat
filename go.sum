@@ -13,8 +13,8 @@ github.com/spf13/cobra v1.10.2/go.mod h1:7C1pvHqHw5A4vrJfjNwvOdzYu0Gml16OCs2GRiT
 github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
 github.com/spf13/pflag v1.0.10 h1:4EBh2KAYBwaONj6b2Ye1GiHfwjqyROoF4RwYO+vPwFk=
 github.com/spf13/pflag v1.0.10/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
-github.com/yasunori0418/outturn/go v0.0.0-20261022151913-3ef0495c2bbd h1:1n7zHivANJI+gquZszRobviFfXchaAkWatjhXEU1EQM=
-github.com/yasunori0418/outturn/go v0.0.0-20261022151913-3ef0495c2bbd/go.mod h1:U9q98bALi9xcjJc9xXqcNtag3/MlZOnwO01U9BswP7A=
+github.com/yasunori0418/outturn/go v0.0.0-20261028144323-200bfc69f9cc h1:wq/aA5aY+jHxsOdi3sacI0TzFbRqAG12aClCKL7m1dk=
+github.com/yasunori0418/outturn/go v0.0.0-20261028144323-200bfc69f9cc/go.mod h1:VXA30NwFsdMkGzxvXmHnJJ14kRNWv0phyDVJ9b1uE4A=
 go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
 golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
 golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
