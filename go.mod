@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/pelletier/go-toml/v2 v2.4.3
 	github.com/spf13/cobra v1.10.2
-	github.com/yasunori0418/outturn/go v0.0.0-20261022151345-123a03cd5baa
+	github.com/yasunori0418/outturn/go v0.0.0-20261022151913-3ef0495c2bbd
 )
 
 require (
