@@ -172,12 +172,14 @@ item_types:
     parent_types: []
     fields:
       # supersedes を定義していないので「廃止」は持たない。
+      # 不採用は提案を棄却した決定の記録で、ADR 自体は有効。
       - name: status
         display_name: Status
         field_type: !enum
           values:
             - 提案
             - 採用
+            - 不採用
         required: true
         placeholder: 採用
       # ステータス行のカッコ書き注記。
