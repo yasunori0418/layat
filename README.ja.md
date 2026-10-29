@@ -192,6 +192,26 @@ nvim = layat.lib.mkManifest {
 };
 ```
 
+#### `PATH` に載せるパッケージ環境
+
+layat はこのための専用関数を持たない。`pkgs.buildEnv` の結果を entry の `src` に置く。
+
+```nix
+dev-tools = layat.lib.mkManifest {
+  inherit pkgs;
+  root = layat.lib.homeRoot;
+  entries.".local/share/layat/envs/dev-tools" = {
+    src = pkgs.buildEnv {
+      name = "dev-tools";
+      paths = with pkgs; [ ripgrep fd ];
+      extraOutputsToInstall = [ "man" ];
+    };
+  };
+};
+```
+
+nixpkgs の多くのパッケージは man を別 output に分けており、素の `buildEnv` では `share/man` が空になる。man が要るなら `extraOutputsToInstall = [ "man" ]` を指定する。環境変数の配線(`env.sh`・`environment.d`・`.envrc` など)は利用者が自分で書く。layat は生成しない。書き方は[配線の idiom](docs/design/20261030-f1d4c295-54ae-4def-951c-901b42dea008-buildenv-placement-env-wiring-idioms.md) を参照。
+
 ### home-manager モジュール
 
 モジュールは `root = homeRoot` に固定される(`root` を再指定しない)。`layat.configs.<name>` ごとに link-farm と profile `<name>` が別々に作られるので、standalone の `layat.<name>` と同じく役割を分けられる。`home.activation` は `layat apply --all --manifest <name>=<link-farm> … --jobs <n>` の 1 回の起動でエンジンを駆動し、`home.file` へは委譲しない。2 つの config が同じ target を持つと、何も配置せずに activation が止まる。layat は自前の profile を **内部機構** として保持するが、ユーザー公開の rollback はホスト側に一本化される(`home-manager --rollback`)。
