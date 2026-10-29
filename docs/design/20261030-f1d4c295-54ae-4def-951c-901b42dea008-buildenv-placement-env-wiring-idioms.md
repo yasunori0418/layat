@@ -76,19 +76,12 @@ paths = with pkgs; [ ripgrep fd ] ++ [
 for f in ~/.local/share/layat/envs/*/env.sh(N); do source "$f"; done
 ```
 
-- glob は名前順に展開される。順序が要るなら env 名に番号 prefix を付ける（`envs/10-dev-tools`）
-- zsh の補完は `compinit` より前に fpath へ足す必要がある（`.zshrc` で
-  `fpath=(~/.local/share/layat/envs/*/share/zsh/site-functions(N) $fpath)` → `compinit`）
-
 **systemd user service（`environment.d`）** — フラグメントを置く。
 
 ```ini
 # ~/.config/environment.d/50-layat-dev-tools.conf
 PATH=${HOME}/.local/share/layat/envs/dev-tools/bin:${PATH}
 ```
-
-- environment.d は `%h` 等の unit 指定子を解釈しない。`${HOME}` で書く（`%h` を解釈するのは unit
-  ファイルの `Environment=`）
 
 **direnv（project mode）** — `.envrc` で配置してから注入する。
 
@@ -104,17 +97,8 @@ if [ -d .layat/envs/dev-tools ]; then
 fi
 ```
 
-- `layat apply <name>` は冪等で、変化が無ければ何もしない。cd のたびに実行してよい
-- `watch_file` で flake の変更時に `.envrc` を再評価させる
-- devShell に layat が無いとき、`--no-wait` が lock 競合で apply をスキップしたとき、apply が
-  失敗したときは、配置がまだ無いことがある。存在を確かめてから `PATH_add` する
-
 ### 4. 制約
 
-- **direnv が注入できるのは環境変数だけ**。zsh の fpath / compinit はシェル内部の状態なので、
-  project に居る間だけ補完を有効にする用途はスコープ外とする
-- **`LD_LIBRARY_PATH` は設定しない**。Nix のバイナリは RPATH でライブラリを解決するので不要で、
-  設定すると他のバイナリまで別版のライブラリを読み込むので、むしろ有害
 - **layat は配線ファイルを生成しない**。env.sh / environment.d / `.envrc` は利用者の Nix 式や
   スクリプトで作る
 
