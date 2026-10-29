@@ -106,7 +106,8 @@ fi
 
 - `layat apply <name>` は冪等で、変化が無ければ何もしない。cd のたびに実行してよい
 - `watch_file` で flake の変更時に `.envrc` を再評価させる
-- devShell に layat が無い・`--no-wait` で lock 競合をスキップした・apply が失敗した、のいずれかでは配置が無いことがある。存在チェックで分岐し、無ければ `PATH_add` をしない
+- devShell に layat が無いとき、`--no-wait` が lock 競合で apply をスキップしたとき、apply が
+  失敗したときは、配置がまだ無いことがある。存在を確かめてから `PATH_add` する
 
 ### 4. 制約
 
