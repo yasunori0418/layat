@@ -94,6 +94,7 @@ layat 自身の flake outputs は packages / templates / 各モジュール / fl
 - [DSG-d2e17f4f-0d32-45c1-8125-17e589664c85](design/20260802-d2e17f4f-0d32-45c1-8125-17e589664c85-lib-no-dynamic-entries.md) — 動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す
 - [DSG-92f54490-872a-42ac-bbd7-d06e9ee381c6](design/20260802-92f54490-872a-42ac-bbd7-d06e9ee381c6-legacy-nix-invocation-reuse.md) — legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する
 - [DSG-f286746c-56ca-4f0c-bb95-7c74d0cea7c0](design/20260906-f286746c-56ca-4f0c-bb95-7c74d0cea7c0-hook-composition-idioms.md) — hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす
+- [DSG-f1d4c295-54ae-4def-951c-901b42dea008](design/20261030-f1d4c295-54ae-4def-951c-901b42dea008-buildenv-placement-env-wiring-idioms.md) — buildEnv の合成環境は entry の src に置く配置 idiom で扱い、環境変数の配線は利用者側の idiom で行う
 
 ---
 
