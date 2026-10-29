@@ -3,6 +3,7 @@ id: "ADR-0048"
 type: adr
 name: "ドキュメントは sara でグラフ構造化する — model.yaml の全面置換・UUIDv4 二層 ID・CI 非必須開始"
 status: 採用
+status_note: "2026-10-30 改訂: adr の status に `不採用` を追加 → ADR-0069"
 issues:
   - "#203"
   - "#206"
@@ -16,7 +17,7 @@ references:
 ---
 # ADR-0048: ドキュメントは sara でグラフ構造化する — model.yaml の全面置換・UUIDv4 二層 ID・CI 非必須開始
 
-- ステータス: 採用
+- ステータス: 採用（2026-10-30 改訂: adr の status に `不採用` を追加 → ADR-0069）
 - 日付: 2026-08-02
 - 関連: ADR-0030, ADR-0037, ADR-0049, ADR-0050, ADR-0053, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `docs/adr/README.md`, GitHub Issue #203, #206, #207
 - 改訂対象: なし（新領域。「仕様とテストの全体像把握」= quality-observability（→ Issue #203）の実現手段を
@@ -51,6 +52,11 @@ references:
 > する」は不変**だが、その採番手順は `sara init adr` への委譲へ変わり、下の 2026-08-16 追記節
 > （`sara-id` は廃止しない・存在理由は 8 文字 prefix の重複チェックへ移る）も同時に失効した。
 > §1 / §2 / §3 と §5 の CI 方針そのものは不変（→ ADR-0053）。
+
+> **2026-10-30 改訂注記（ADR-0069）**: 改訂対象は本 ADR **§2 の adr の `status` enum だけ**。
+> 値に `不採用` が加わり `{提案, 採用, 不採用}` になった。提案を棄却した決定を記録する ADR が使い、
+> `status_note` のカッコ書きは付けない。`status_note` を受け皿に持つ判断と、「廃止」を当面持たない
+> 判断は不変。§1 / §3 / §4 / §5 も不変（→ ADR-0069）。
 
 ## 背景
 
@@ -125,6 +131,9 @@ skills リポジトリか専用リポジトリへ切り出して横展開する�
 `docs/model.yaml` のコメントに残す。
 
 sara の item にできない外部参照は text フィールドへ逃がす（adr の `issues: !list text` / `origin: text`）。
+
+> **2026-10-30 追記（ADR-0069）**: この段落の enum は `{提案, 採用, 不採用}` に改訂された
+> （→ 冒頭の 2026-10-30 改訂注記）。
 
 adr の `status` は実データの表記に合わせ、`!enum {提案, 採用}` の**日本語値**とする。本 ADR を含む
 全 48 本が `採用` で、`accepted` 等の英語表記は 1 本も無い。組み込みの `proposed` / `accepted` /

@@ -9,6 +9,8 @@ issues:
 origin: "Issue #162 の job-plan grilling（2026-10-30）"
 justifies:
   - "DSG-f1d4c295-54ae-4def-951c-901b42dea008"
+revises:
+  - "ADR-0048"
 references:
   - "ADR-0004"
   - "ADR-0040"
@@ -19,7 +21,7 @@ references:
 - ステータス: 不採用
 - 日付: 2026-10-30
 - 関連: ADR-0004, ADR-0040, ADR-0041, Issue #162, Issue #537, `docs/concept.md`
-- 改訂対象: なし（新規提案の棄却判断）
+- 改訂対象: ADR-0048（adr の status enum に不採用を追加）
 - 起点: Issue #162 の job-plan grilling（2026-10-30）
 
 ## 背景
@@ -56,6 +58,12 @@ Issue #162 は `pkgs.buildEnv` で合成したパッケージ環境（bin / shar
 3. **ADR-0041 と同型の判断**。ADR-0041 は hook 需要を engine に持ち込まず、配線層の idiom で
    満たした。`PATH` 管理も、配置は既存プリミティブ、環境変数の設定はシェル・systemd・direnv の
    機構で足りる。layat が配線まで担う理由は無い
+
+### 付随する決定: adr の status に `不採用` を足す
+
+提案を棄却した決定を記録する ADR は、status を `不採用` とする。棄却したことを `status_note` の
+カッコ書きでは表さない。これは ADR-0048 §2 の「adr の `status` は `{提案, 採用}`」を改訂する。
+「廃止」は引き続き持たない。`supersedes` が未定義のままなので、ADR-0048 のこの判断は維持する。
 
 ## 影響
 
