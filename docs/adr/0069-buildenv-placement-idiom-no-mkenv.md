@@ -2,8 +2,7 @@
 id: "ADR-0069"
 type: adr
 name: "`mkEnv` を足さず、buildEnv の合成環境は entry の配置 idiom で満たす"
-status: 採用
-status_note: "提案 mkEnv を棄却する判断"
+status: 不採用
 issues:
   - "#162"
   - "#537"
@@ -17,7 +16,7 @@ references:
 ---
 # ADR-0069: `mkEnv` を足さず、buildEnv の合成環境は entry の配置 idiom で満たす
 
-- ステータス: 採用（提案 `mkEnv` を棄却する判断）
+- ステータス: 不採用
 - 日付: 2026-10-30
 - 関連: ADR-0004, ADR-0040, ADR-0041, Issue #162, Issue #537, `docs/concept.md`
 - 改訂対象: なし（新規提案の棄却判断）

@@ -2,8 +2,7 @@
 id: "ADR-0041"
 type: adr
 name: "engine イベント hook スクリプト機構を採用しない（合成 idiom を docs に置く）"
-status: 採用
-status_note: "提案 engine イベント hook を棄却する判断"
+status: 不採用
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。「engine が稼動する中で発生する複数のイベントに対して hook スクリプトを設定したい。ただしコンセプトから反れる可能性があった場合、計画は中止とする」という条件付き提案"
 justifies:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
@@ -17,7 +16,7 @@ references:
 ---
 # ADR-0041: engine イベント hook スクリプト機構を採用しない（合成 idiom を docs に置く）
 
-- ステータス: 採用（提案 engine イベント hook を棄却する判断）
+- ステータス: 不採用
 - 日付: 2026-07-04
 - 関連: ADR-0003, ADR-0006, ADR-0031, ADR-0033, `docs/concept.md`, `CONTEXT.md`
 - 改訂対象: なし（新規提案の棄却判断）
