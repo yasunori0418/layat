@@ -59,7 +59,7 @@ dev-tools = layat.lib.mkManifest {
 
 以下のファイルは全て利用者が書く。layat の entry として配置してもよい。
 
-**ログインシェル（`.zshenv`）** — env ごとの `env.sh` を source するループ。`env.sh` を buildEnv の
+**zsh（`.zshenv`）** — env ごとの `env.sh` を source するループ。`env.sh` を buildEnv の
 `paths` に混ぜれば、配置先の `envs/<name>/env.sh` に置かれる。
 
 ```nix
@@ -106,7 +106,7 @@ fi
 
 - `layat apply <name>` は冪等で、変化が無ければ何もしない。cd のたびに実行してよい
 - `watch_file` で flake の変更時に `.envrc` を再評価させる
-- 初回 cd では layat もまだ無く、配置もされていない。存在チェックで分岐し、無ければ `PATH_add` をしない
+- devShell に layat が無い・`--no-wait` で lock 競合をスキップした・apply が失敗した、のいずれかでは配置が無いことがある。存在チェックで分岐し、無ければ `PATH_add` をしない
 
 ### 4. 制約
 

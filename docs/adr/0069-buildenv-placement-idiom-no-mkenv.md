@@ -11,6 +11,7 @@ origin: "Issue #162 の job-plan grilling（2026-10-30）"
 justifies:
   - "DSG-f1d4c295-54ae-4def-951c-901b42dea008"
 references:
+  - "ADR-0004"
   - "ADR-0040"
   - "ADR-0041"
 ---
@@ -18,7 +19,7 @@ references:
 
 - ステータス: 採用（不採用の記録）
 - 日付: 2026-10-30
-- 関連: ADR-0040, ADR-0041, Issue #162, Issue #537, `docs/concept.md`
+- 関連: ADR-0004, ADR-0040, ADR-0041, Issue #162, Issue #537, `docs/concept.md`
 - 改訂対象: なし（新規提案の棄却判断）
 - 起点: Issue #162 の job-plan grilling（2026-10-30）
 
