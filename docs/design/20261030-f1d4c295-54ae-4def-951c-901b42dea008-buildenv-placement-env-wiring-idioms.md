@@ -41,7 +41,7 @@ dev-tools = layat.lib.mkManifest {
   man を別 output に分けており、素の buildEnv では `share/man` が空になる。closure が大きく
   なるので既定にはせず、利用者が判断する
 - **rollback の粒度は config 全体になる**。buildEnv の entry を他の entry と同じ config に混ぜると、
-  巻き戻しも世代も config 単位でまとめて動く
+  世代も rollback も config 単位になる
 - **独立して update / rollback したい role は、上の例のように専用の config に 1 entry で置く**。
   config ごとに独立した profile になる
 
@@ -60,7 +60,7 @@ dev-tools = layat.lib.mkManifest {
 以下のファイルは全て利用者が書く。layat の entry として配置してもよい。
 
 **ログインシェル（`.zshenv`）** — env ごとの `env.sh` を source するループ。`env.sh` を buildEnv の
-`paths` に混ぜれば、配置先の `envs/<name>/env.sh` に現れる。
+`paths` に混ぜれば、配置先の `envs/<name>/env.sh` に置かれる。
 
 ```nix
 paths = with pkgs; [ ripgrep fd ] ++ [
@@ -87,7 +87,7 @@ for f in ~/.local/share/layat/envs/*/env.sh(N); do source "$f"; done
 PATH=${HOME}/.local/share/layat/envs/dev-tools/bin:${PATH}
 ```
 
-- environment.d は `%h` 等の unit 指定子を解釈しない。`${HOME}` で書く（`%h` が効くのは unit
+- environment.d は `%h` 等の unit 指定子を解釈しない。`${HOME}` で書く（`%h` を解釈するのは unit
   ファイルの `Environment=`）
 
 **direnv（project mode）** — `.envrc` で配置してから注入する。
@@ -104,21 +104,21 @@ if [ -d .layat/envs/dev-tools ]; then
 fi
 ```
 
-- `layat apply <name>` は冪等で、変化が無ければ何もしない。cd のたびに走らせてよい
+- `layat apply <name>` は冪等で、変化が無ければ何もしない。cd のたびに実行してよい
 - `watch_file` で flake の変更時に `.envrc` を再評価させる
-- 初回 cd では layat もまだ無く、配置もされていない。存在チェックで分岐し、無ければ注入を飛ばす
+- 初回 cd では layat もまだ無く、配置もされていない。存在チェックで分岐し、無ければ `PATH_add` をしない
 
 ### 4. 制約
 
 - **direnv が注入できるのは環境変数だけ**。zsh の fpath / compinit はシェル内部の状態なので、
   project に居る間だけ補完を有効にする用途はスコープ外とする
 - **`LD_LIBRARY_PATH` は設定しない**。Nix のバイナリは RPATH でライブラリを解決するので不要で、
-  設定すると他のバイナリが別のライブラリを拾い、むしろ有害
+  設定すると他のバイナリまで別版のライブラリを読み込むので、むしろ有害
 - **layat は配線ファイルを生成しない**。env.sh / environment.d / `.envrc` は利用者の Nix 式や
   スクリプトで作る
 
 ## 出典
 
 ADR-0069「`mkEnv` を足さず、buildEnv の合成環境は entry の配置 idiom で満たす」の決定節。
-同 ADR は配置と環境変数配線の書き方を idiom として docs に置くことを帰結として定めており、
+同 ADR は配置と環境変数配線の書き方を idiom として docs に置くと決めており、
 本 item がその実体。

@@ -37,7 +37,7 @@ Issue #162 は `pkgs.buildEnv` で合成したパッケージ環境（bin / shar
 `pkgs.buildEnv { … }` を置く配置 idiom で満たす。
 
 - 配置は entry の `src = pkgs.buildEnv { … }` で書く。現行スキーマの `src` は derivation を取れるので、
-  この書き方は今日そのまま動く
+  この書き方は今のスキーマでそのまま動く
 - env.sh / environment.d フラグメント / `.envrc` などの配線ファイルは layat が生成しない。
   利用者が自分の Nix 式やスクリプトで書く
 - engine / manifest schema / passthru は変えない
@@ -45,17 +45,17 @@ Issue #162 は `pkgs.buildEnv` で合成したパッケージ環境（bin / shar
 
 ### 判断根拠
 
-1. **`mkEnv` が足すのは糖衣と派生文字列だけ**。`mkEnv` は 1 entry の mkManifest へ脱糖する
+1. **`mkEnv` が足すのは糖衣と派生パスだけ**。`mkEnv` は 1 entry の mkManifest へ脱糖する
    設計で、engine・schema・passthru（`rootKind` / `targets`）に差が出ない。足されるのは
    buildEnv 呼び出しの短縮と、`binDir` / `manDir` 等の派生パスの passthru だけ。派生パスも、
    利用者が `target` に書いた値から算術的に導けるので、新しい情報を持たない
 2. **B 案の却下理由が `mkEnv` 自身にも当たる**。#162 では薄関数 `mkEnvEntry`（B 案）を
    「buildEnv 呼び出しの短縮以上の価値がなく、API 表面積だけが増える」として却下した。
-   `mkEnv` もこの評価を同じ強さで受ける。doc-comments・docs site・テストの面が増える一方、
-   素の buildEnv 式を書く経路より表現力は狭まる（nested buildEnv・`postBuild` 等）
+   `mkEnv` もこの評価を同じ強さで受ける。doc-comments・docs site・テストが増える一方、
+   素の buildEnv 式を書くより表現力は狭まる（nested buildEnv・`postBuild` 等）
 3. **ADR-0041 と同型の判断**。ADR-0041 は hook 需要を engine に持ち込まず、配線層の idiom で
    満たした。`PATH` 管理も、配置は既存プリミティブ、環境変数の設定はシェル・systemd・direnv の
-   機構で足りる。layat が配線を背負う理由が無い
+   機構で足りる。layat が配線まで担う理由は無い
 
 ## 影響
 
@@ -71,7 +71,7 @@ Issue #162 は `pkgs.buildEnv` で合成したパッケージ環境（bin / shar
 
 - **A 案: `mkEnv` = 1 entry の mkManifest への脱糖 + 派生パスの passthru**（#162 の実装対象案）:
   ADR-0040（root marker `subdir`）と同じく lib 層の糖衣で engine を変えない案。role 別の独立
-  profile は得られるが、それは専用 config に 1 entry を置くだけで今日得られる。判断根拠 1・2 の
+  profile は得られるが、それは専用 config に 1 entry を置くだけで今でも得られる。判断根拠 1・2 の
   とおり、API 表面積に見合う価値が無い
 - **薄関数 `mkEnvEntry`**（#162 の B 案）: entry 1 個を返す関数。buildEnv 呼び出しの短縮しか
   足さず、buildEnv の引数を透過的に使える素の式より劣る
