@@ -132,7 +132,7 @@ fi
 
 ## 出典
 
-ADR-0041「engine イベント hook スクリプト機構を採用しない（合成 idiom を docs に置く）」の
+ADR-0041「engine の実行イベントにユーザー定義スクリプトを掛ける hook 機構を導入する」の
 「代替: 合成 idiom を docs に 1 節置く」節。同 ADR は hook が欲しくなる場面ごとに層別 idiom
 （`shellHook` / activation DAG / shell 合成 + 終了コード / `--json` 消費）を示す節を docs へ
 追加することを帰結として定めており、本 item がその実体。
