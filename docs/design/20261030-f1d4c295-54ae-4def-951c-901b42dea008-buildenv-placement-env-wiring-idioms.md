@@ -104,6 +104,6 @@ fi
 
 ## 出典
 
-ADR-0069「`mkEnv` を足さず、buildEnv の合成環境は entry の配置 idiom で満たす」の決定節。
+ADR-0069「`layat.lib.mkEnv` で buildEnv の合成環境を配置し、role 別に `PATH` を管理する」の決定節。
 同 ADR は配置と環境変数配線の書き方を idiom として docs に置くと決めており、
 本 item がその実体。

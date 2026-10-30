@@ -1,7 +1,7 @@
 ---
 id: "ADR-0069"
 type: adr
-name: "`mkEnv` を足さず、buildEnv の合成環境は entry の配置 idiom で満たす"
+name: "`layat.lib.mkEnv` で buildEnv の合成環境を配置し、role 別に `PATH` を管理する"
 status: 不採用
 issues:
   - "#162"
@@ -16,7 +16,7 @@ references:
   - "ADR-0040"
   - "ADR-0041"
 ---
-# ADR-0069: `mkEnv` を足さず、buildEnv の合成環境は entry の配置 idiom で満たす
+# ADR-0069: `layat.lib.mkEnv` で buildEnv の合成環境を配置し、role 別に `PATH` を管理する
 
 - ステータス: 不採用
 - 日付: 2026-10-30
