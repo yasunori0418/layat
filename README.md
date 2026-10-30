@@ -226,6 +226,30 @@ nvim = layat.lib.mkManifest {
 };
 ```
 
+#### Package environments on PATH
+
+layat has no dedicated function for this: put a `pkgs.buildEnv` result in an entry's `src`.
+
+```nix
+dev-tools = layat.lib.mkManifest {
+  inherit pkgs;
+  root = layat.lib.homeRoot;
+  entries.".local/share/layat/envs/dev-tools" = {
+    src = pkgs.buildEnv {
+      name = "dev-tools";
+      paths = with pkgs; [ ripgrep fd ];
+      extraOutputsToInstall = [ "man" ];
+    };
+  };
+};
+```
+
+Many nixpkgs packages split man pages into a separate output, so a bare `buildEnv` leaves
+`share/man` empty; set `extraOutputsToInstall = [ "man" ]` when you need them. You write the
+environment-variable wiring (`env.sh`, `environment.d`, `.envrc`, …) yourself; layat does not
+generate it. See
+[the wiring idioms](docs/design/20261030-f1d4c295-54ae-4def-951c-901b42dea008-buildenv-placement-env-wiring-idioms.md).
+
 ### home-manager module
 
 The module pins `root = homeRoot` (you do not re-specify `root`). Each

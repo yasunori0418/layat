@@ -69,7 +69,7 @@ blockquote 群を参照。
 id: "ADR-0049"
 type: adr
 name: "<タイトル行から `# ADR-0049: ` を除いた部分>"
-status: 採用            # 提案 / 採用
+status: 採用            # 提案 / 採用 / 不採用
 status_note: "…"        # ステータス行のカッコ書きがあるときだけ
 issues:                 # 「関連:」「起点 Issue:」「起点:」の GitHub Issue 番号
   - "#123"
@@ -86,6 +86,9 @@ references:             # 「関連:」の ADR
 フィールドの順序は上記のとおり（`id` / `type` / `name` / `status` / `status_note` /
 `issues` / `origin` / `justifies` / `revises` / `references`）。`justifies` は
 `origin` の後・`revises` の前に置く。
+
+提案を棄却した決定を記録する ADR は `status: 不採用` とし、本文のステータス行も `不採用` と書く。
+棄却したことはステータスが表すので、`status_note` のカッコ書きは付けない。
 
 対応関係と分類の規則:
 
