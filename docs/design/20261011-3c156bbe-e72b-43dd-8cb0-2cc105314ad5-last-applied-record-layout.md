@@ -22,12 +22,12 @@ satisfies:
   "linkFarm": "/nix/store/<hash>-layat-<name>",
   "appliedAt": "2026-10-11T12:34:56+09:00",
   "manifest": { ...配置した manifest.json をそのまま... },
-  "origin": { "generator": "nix", "entrypoint": "/home/<user>/dotfiles/flake.nix" }
+  "origin": { "generator": "nix", "entrypoint": "/home/<user>/dotfiles/flake.nix", "identity": "dotfiles" }
 }
 ```
 
 `origin` は prebuilt 生成器（`--manifest`）なら `{ "generator": "prebuilt" }` で、`entrypoint` を
-持たない。reset / rollback が版 1 の記録を書き直す場合や、記録が無く profile から baseline を
+持たない。`identity` は配置した manifest の `identity` の写しで、manifest が持たなければ省く。reset / rollback が版 1 の記録を書き直す場合や、記録が無く profile から baseline を
 取って書き直す場合のように、出所が分からないときは `origin` 自体を省く。
 
 - **鍵の解決は `internal/paths`** が profileDir と同じ規則で行う（基底だけが
@@ -57,6 +57,7 @@ satisfies:
 - **出所の比較**: apply（`--dryrun` と generation skip 経路を含む）は記録の `origin` と
   今回の origin が両方あって食い違えば、stderr に 1 行と
   subject 警告 `W_LAYAT_ORIGIN_MISMATCH`（`detail = {recorded, current}`）を出して続行する。
+  両方に `identity` があれば `identity` だけで、どちらかに無ければ `generator` / `entrypoint` で比べる。
   記録に `origin` が無ければ比べない。reset / rollback の書き直しは記録済みの `origin` を
   そのまま引き継ぐ。
 - 記録を flock の鍵にしない。flock の鍵・prune の対象・`--json` の payload は従来どおり
