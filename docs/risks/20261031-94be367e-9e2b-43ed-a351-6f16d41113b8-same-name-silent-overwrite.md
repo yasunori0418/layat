@@ -28,7 +28,8 @@ nix 生成器）が同じ名前を使うと、片方の apply がもう片方の
 
 impact を medium とするのは、除去されるのが stale として扱われる symlink で、消えた entry は
 もう片方の経路で apply を再実行すれば戻るため。気付かれないまま続くことは impact では評価せず、
-上のリスクとして書いた。likelihood を medium とするのは、出所の比較が engine・生成器・CLI に
-またがり、`--dryrun` と generation skip を含む経路ごとに入れる必要があるため。どれか 1 経路で
-比較が抜けても、既存のテストでは見つからない。残る 2 つの方向も、apply が止まるか警告が過不足するだけで、版や記録を直して再実行すれば戻るので
-medium を超えない。likelihood medium × impact medium から level は medium。
+上のリスクとして書いた。「版の読み違い」と「書き直しでの出所の喪失」も、apply が止まるか
+警告が過不足するだけで、版や記録を直して再実行すれば戻るので medium を超えない。
+likelihood を medium とするのは、出所の比較が engine・生成器・CLI にまたがり、`--dryrun` と
+generation skip を含む経路ごとに入れる必要があるため。どれか 1 経路で比較が抜けても、既存の
+テストでは見つからない。likelihood medium × impact medium から level は medium。

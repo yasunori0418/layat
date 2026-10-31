@@ -38,8 +38,8 @@ specification_ja: |
   が `nix` のときは発見した entrypoint の絶対パスとし、`prebuilt` のときは省略しなければ
   ならない。apply は `recordVersion` 2 と今回の実行の origin で記録を書かなければならない。
   読みは `recordVersion` 1 と 2 を受け付けなければならず、それ以外の版と未知のフィールドは
-  従来どおり error としなければならない。`origin` の中でも、`generator` の欠落・型違い・
-  未知のフィールドは同じく error としなければならない。それ以外の `generator` と `entrypoint` の
+  従来どおり error としなければならない。`origin` の中でも、`generator` の欠落・各フィールドの
+  型違い・未知のフィールドは同じく error としなければならない。それ以外の `generator` と `entrypoint` の
   値は読んだまま受け付け、比較に使わなければならない。版 1 の記録は origin 無しとして
   読まなければならない。
   apply（`--dryrun` と generation skip 経路を含む）は、配置の前に記録の origin と今回の
@@ -63,7 +63,7 @@ specification_ja: |
   entrypoint の絶対パスで、`prebuilt` では省く。
 - **版**: apply は `recordVersion` 2 で書く。読みは 1 と 2 を受け付け、1 は origin 無しとして
   読む。それ以外の版と未知のフィールドは従来どおり error。`origin` の中の `generator` の
-  欠落・型違い・未知のフィールドも error。それ以外の値は読んだまま比較に使う。
+  欠落・各フィールドの型違い・未知のフィールドも error。それ以外の値は読んだまま比較に使う。
 - **食い違いの警告**: apply（`--dryrun` と generation skip 経路を含む）は配置の前に記録の
   origin と今回の origin を比べる。両方あって食い違えば stderr に 1 行、`--json` では
   `subjectResult.warnings` に `W_LAYAT_ORIGIN_MISMATCH`（`detail = {recorded, current}`）を出して
