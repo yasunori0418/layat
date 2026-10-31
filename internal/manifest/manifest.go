@@ -54,11 +54,13 @@ type Entry struct {
 	Method  string `json:"method"`
 }
 
-// Manifest is the top level of manifest.json.
+// Manifest is the top level of manifest.json. Identity is the optional user-declared identifier
+// of the config; empty when left out.
 type Manifest struct {
 	SchemaVersion int     `json:"schemaVersion"`
 	Root          Root    `json:"root"`
 	Entries       []Entry `json:"entries"`
+	Identity      string  `json:"identity,omitempty"`
 }
 
 // Load reads manifest.json inside the link-farm directory and validates schemaVersion.

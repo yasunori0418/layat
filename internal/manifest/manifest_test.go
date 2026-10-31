@@ -186,6 +186,28 @@ func TestLoadFixedRootHasPath(t *testing.T) {
 	}
 }
 
+// identity is an optional top-level field: read as given, the empty string when left out.
+func TestLoadIdentity(t *testing.T) {
+	for _, tt := range []struct {
+		name     string
+		identity string
+		want     string
+	}{
+		{"with identity", `, "identity": "dotfiles"`, "dotfiles"},
+		{"without identity", "", ""},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			m, err := Load(writeManifest(t, `{ "schemaVersion": 1, "root": { "rootKind": "home" }, "entries": []`+tt.identity+` }`))
+			if err != nil {
+				t.Fatalf("Load: %v", err)
+			}
+			if m.Identity != tt.want {
+				t.Errorf("identity = %q, want %q", m.Identity, tt.want)
+			}
+		})
+	}
+}
+
 // TestLoadRejectsUnknownEnumValues covers the known-value check on srcKind, method, and rootKind.
 func TestLoadRejectsUnknownEnumValues(t *testing.T) {
 	for _, tt := range []struct {
