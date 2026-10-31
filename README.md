@@ -601,7 +601,7 @@ syntax error, or an unknown generator name exits 1 with one line on stderr (`E_I
 - **`--json`** writes a [outturn](https://github.com/yasunori0418/outturn)-conformant JSON
   envelope (a single document) to stdout at command completion — the machine-readable
   second contract, orthogonal to `-v` (every subcommand carries its payload; `--all` lists one
-  `SubjectResult` per config. `reset --dryrun` is the one path still on the minimal shape).
+  `SubjectResult` per config).
 - **Stream discipline**: stdout is reserved for machine-readable output (`gitignore`
   listings, `apply --dryrun` plans) — printed even at the default verbosity, so
   `layat gitignore <name> >> .gitignore` and `layat apply <name> --dryrun | ...` pipe safely.
@@ -663,7 +663,7 @@ expose it as a pure function you control."**
 | copy (place-once) / out-of-store symlink | implemented |
 | flake-parts module | implemented |
 | `manifest.json` schema | v1 only; no migration / backward-compat machinery yet |
-| `--json` machine-readable output | implemented — outturn-conformant envelope on every subcommand, with per-command payloads (items / changes / info) and one `SubjectResult` per config under `--all`; `reset --dryrun` still emits the minimal shape |
+| `--json` machine-readable output | implemented — outturn-conformant envelope on every subcommand, with per-command payloads (items / changes / info) and one `SubjectResult` per config under `--all` |
 | NixOS / nix-darwin modules | implemented — system mode (`systemRoot`), one profile per `layat.configs.<name>` |
 
 **Known limitations / honest caveats**

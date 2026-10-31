@@ -22,13 +22,19 @@ specification: |
   perform the re-link, it does not observe the on-disk destination just before it, so a
   planned re-link to the recorded destination SHALL remain a `modify`. The overwrite of
   `--recopy` SHALL NOT appear in the dryrun plan, the planner classifying only place-once
-  while recopy is on the materialize path of the engine. Every change appearing in a
-  dryrun SHALL be `reversible: true`. Empty-parent-directory pruning
+  while recopy is on the materialize path of the engine. Every change appearing in an
+  apply dryrun SHALL be `reversible: true`. Empty-parent-directory pruning
   and the rename aside of `--backup` have no entry identity and SHALL produce neither an
   item nor a change. `generation` SHALL be an observation record with before == after,
   since no switch occurs; when the profile has not been created yet, both `before` and
   `after` SHALL be omitted and only `profile` emitted. The mapping and routing of warnings
   SHALL be shared with apply.
+
+  `reset --dryrun` SHALL have dryRun parity with reset: its `items` SHALL be every selected
+  entry, in the same item shape as reset, and its `changes` SHALL be the planned removals
+  (a symlink removal maps to a reversible `remove`, a copy deletion to an irreversible
+  `remove`). It SHALL NOT emit the `SubjectResult.generation` slot. The mapping and routing
+  of warnings SHALL be shared with reset.
 
   `list-generations <name>` SHALL emit
   `results[i].result.info.generations = [{number, date, current}]` (`date` being the raw
@@ -80,12 +86,18 @@ specification_ja: |
   `modify` に合体）。dryrun は re-link を実行しないため re-link 直前の on-disk dest を
   観測せず、記録どおりの dest への予定 re-link も `modify` として残さなければならない。
   `--recopy` の上書きは dryrun の plan に現れてはならない（planner は place-once 分類のみで
-  recopy は engine の materialize 側経路のため）。dryrun に現れる change は全て
+  recopy は engine の materialize 側経路のため）。apply の dryrun に現れる change は全て
   `reversible: true` としなければならない。
   空親ディレクトリ剪定と `--backup` の rename 退避は entry 識別を持たず item /
   change を生んではならない。`generation` は観測記録とし、切替が起きないため
   before = after、profile 未作成の初回 plan では `before` / `after` を両省略し `profile`
   のみとしなければならない。warnings の写像・振り分けは apply と共通としなければならない。
+
+  `reset --dryrun` は reset と dryRun パリティを持たなければならない。`items` は選択済みの
+  全 entry とし、item 形は reset と同一としなければならない。`changes` は撤去予定とし
+  なければならない（symlink の撤去は可逆な `remove`、copy の削除は不可逆な `remove`）。
+  `SubjectResult.generation` スロットは出してはならない。warnings の写像・振り分けは reset と
+  共通としなければならない。
 
   `list-generations <name>` は `results[i].result.info.generations = [{number, date,
   current}]`（`date` は nix-env 表示の生文字列）と `items: []` を出さなければならず、
@@ -139,10 +151,13 @@ specification_ja: |
   `modify` として残る（テキスト plan の replace 行と同写像・実 apply の noop 抑止とは
   意図的な非対称）。`--recopy` の上書きは dryrun の plan に現れない（planner は place-once
   分類のみで recopy は engine の materialize 側経路）。reversible は変更系と同じ規則
-  （dryrun に現れる change は全て `true`）。空親ディレクトリ剪定（rmdir）と `--backup` の
+  （apply の dryrun に現れる change は全て `true`）。空親ディレクトリ剪定（rmdir）と `--backup` の
   rename 退避は entry 識別を持たず item / change を生まない。`generation` = 観測記録
   （切替が起きないため **before = after**・profile 未作成の初回 plan では **before / after を
   両省略**し `profile` のみ）。warnings の写像・振り分けは変更系と共通。
+- **`reset --dryrun`**: reset と **dryRun パリティ**。`items` = 選択済みの全 entry（item 形は
+  reset と同一）、`changes` = 撤去予定（symlink は可逆な `remove`・copy は不可逆な `remove`）。
+  `SubjectResult.generation` スロットは出さない。warnings の写像・振り分けは reset と共通。
 - **`list-generations <name>`**: `results[i].result.info.generations = [{number, date,
   current}]`（`date` は nix-env 表示の生文字列）・`items: []`。`SubjectResult.generation`
   スロットは出さない（世代番号の二重符号化回避）。空 profile でも `"generations": []` を

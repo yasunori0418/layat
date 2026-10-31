@@ -227,6 +227,27 @@ fi
 assert_symlink "$HOME/.cfg/a"
 assert_file_eq "$HOME/.cfg/a/file" "AAA"
 
+e2e_step "layat reset --dryrun --json: 実 reset と同じ items / changes を運び、FS・profile・記録は動かない"
+DRYRUN_PROFILE_BEFORE="$(readlink "$PROFILE")"
+RECORD_BEFORE="$(cat "$RECORD")"
+ENV_RESET_DRYRUN="$E2E_WORK/reset-dryrun.json"
+run_json 0 "$ENV_RESET_DRYRUN" reset home --dryrun
+assert_json "$ENV_RESET_DRYRUN" "status=success・dryRun=true・command=reset" \
+	'.status == "success" and .dryRun == true and .command == "reset"'
+assert_json "$ENV_RESET_DRYRUN" "items は選択済み entry（.cfg/a）1 件で status は success" \
+	'.results[0].result.items | map({kind, target: .info.target, status}) == [{kind: "entry", target: ".cfg/a", status: "success"}]'
+assert_json "$ENV_RESET_DRYRUN" "changes は全て remove（.cfg/a の可逆な撤去予定 1 件）" \
+	'.results[0].result as $r
+	 | ($r.items | map({key: .id, value: .info.target}) | from_entries) as $t
+	 | [$r.changes[] | {kind, reversible, target: $t[.itemId]}]
+	   == [{kind: "remove", reversible: true, target: ".cfg/a"}]'
+assert_json "$ENV_RESET_DRYRUN" "generation スロットを持たない" \
+	'.results[0] | has("generation") | not'
+assert_symlink "$HOME/.cfg/a"
+assert_file_eq "$HOME/.cfg/a/file" "AAA"
+assert_symlink "$PROFILE" "$DRYRUN_PROFILE_BEFORE"
+assert_file_eq "$RECORD" "$RECORD_BEFORE"
+
 e2e_step "layat reset --json --yes: FS のみを撤去し profile / 世代は動かない"
 # 撤去対象は profile が指す世代の manifest 由来。rollback で世代 1 に戻った後なので .cfg/a が対象。
 PROFILE_BEFORE="$(readlink "$PROFILE")"

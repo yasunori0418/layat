@@ -489,7 +489,7 @@ generator = "nix"
 ### 出力と終了コード
 
 - **既定では成功時サイレント。** 配置レポート、try-lock のスキップ通知、`apply --all` のサマリには `-v` が要る。`--debug` は内部 nix コマンドを表示する。`--quiet` は無い。
-- **`--json`** はコマンド完了時に [outturn](https://github.com/yasunori0418/outturn) 準拠の JSON エンベロープ(1 文書)を stdout へ書く機械可読の第 2 契約。`-v`(stderr・人間向け)とは直交(全サブコマンドがペイロードを載せ、`--all` は config ごとに `SubjectResult` を列挙する。最小形のまま残るのは `reset --dryrun` のみ)。
+- **`--json`** はコマンド完了時に [outturn](https://github.com/yasunori0418/outturn) 準拠の JSON エンベロープ(1 文書)を stdout へ書く機械可読の第 2 契約。`-v`(stderr・人間向け)とは直交(全サブコマンドがペイロードを載せ、`--all` は config ごとに `SubjectResult` を列挙する)。
 - **ストリーム規律**：stdout は機械可読出力(`gitignore` 一覧、`apply --dryrun` 計画)専用で、既定 verbosity でも出力される。よって `layat gitignore <name> >> .gitignore` や `layat apply <name> --dryrun | ...` は安全にパイプできる。**警告とエラーは常に stderr へ出力され、サイレンスされない。**
 
 | 終了コード | 意味 |
@@ -538,7 +538,7 @@ generator = "nix"
 | copy(place-once)/ out-of-store symlink | 実装済み |
 | flake-parts モジュール | 実装済み |
 | `manifest.json` スキーマ | v1 のみ。migration / 後方互換の仕組みはまだ無い |
-| `--json` 機械可読出力 | 実装済み — 全サブコマンドで outturn 準拠エンベロープを返し、コマンドごとのペイロード(items / changes / info)と `--all` の config ごと `SubjectResult` も載る。最小形のまま残るのは `reset --dryrun` のみ |
+| `--json` 機械可読出力 | 実装済み — 全サブコマンドで outturn 準拠エンベロープを返し、コマンドごとのペイロード(items / changes / info)と `--all` の config ごと `SubjectResult` も載る |
 | NixOS / nix-darwin モジュール | 実装済み — system mode(`systemRoot`)、`layat.configs.<name>` ごとに 1 profile |
 
 **既知の制限 / 正直な注意点**

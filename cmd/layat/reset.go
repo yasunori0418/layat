@@ -80,6 +80,7 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 		if err != nil {
 			return err
 		}
+		attachResetPayload(subject, res, nil)
 		printResetPlan(res)
 		return nil
 	}
