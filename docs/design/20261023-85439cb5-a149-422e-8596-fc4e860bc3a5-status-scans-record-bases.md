@@ -20,7 +20,7 @@ cmd/layat/         ← [name] の絞り込み、subject 名の組み立て、テ
 
 **`internal/engine`** が走査と読み取りを持つ。記録を読む `readRecord` は engine の非公開関数で、
 apply が baseline を読むときと同じ厳格な検査（壊れた JSON・フィールドの欠落や型違い・未知の
-フィールド・`recordVersion` ≠ 1 を error にする）を持つ。status 用に検査を緩めた読み取りを
+フィールド・`recordVersion` が 1 でも 2 でもない記録を error にする）を持つ。status 用に検査を緩めた読み取りを
 別に作らず、engine の中で同じ関数を呼ぶ。
 
 **`internal/paths`** には関数を足さない。`<roothash>` 系列の列挙は prune が使う
