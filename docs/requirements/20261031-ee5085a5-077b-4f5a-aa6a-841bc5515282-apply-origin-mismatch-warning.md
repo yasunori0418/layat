@@ -62,8 +62,8 @@ specification_ja: |
 
 想定する食い違いは、home-manager モジュール（`apply --all --manifest`・prebuilt 生成器）と
 standalone の CLI（entrypoint 経由・nix 生成器）が同じ config 名を使い、profileDir と
-last-applied 記録を共有する場合。互いの entry を stale として除去し合うのを止めはせず、
-起きていることを見えるようにする。
+last-applied 記録を共有する場合。互いの entry を stale として除去し合うこと自体は止めず、
+それが起きていることを warning で知らせる。
 
 記録の置き場・残りの内容・書き込みの規則は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35、
 警告コードの一覧と payload 上の置き場は REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62、

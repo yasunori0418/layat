@@ -17,12 +17,12 @@ home mode の profileDir と last-applied 記録の鍵は config 名だけで決
 モジュール（`apply --all --manifest`・prebuilt 生成器）と standalone の CLI（entrypoint 経由・
 nix 生成器）が同じ名前を使うと、片方の apply がもう片方の置いた entry を stale として除去する。
 
-- **黙った除去** — target の衝突ではないので foreign symlink の warning に掛からない。出所の
-  比較が効かないと、交互の apply で entry が消えたり戻ったりしても何も出ない
-- **版の読み違い** — 版 1 の記録を拒むと既存利用者の apply が止まる。逆に版 1 を出所ありとして
-  比べると、版を上げた直後の apply で全員に偽の警告が出る
-- **書き直しでの出所の喪失** — reset / rollback が `origin` を落とすと、次の apply で比較が
-  効かず、食い違いを見逃す
+- **黙った除去** — target の衝突ではないので foreign symlink の warning に掛からない。出所を
+  比べなければ、交互の apply で entry が消えたり戻ったりしても warning は出ない
+- **版の読み違い** — 版 1 の記録を拒むと既存利用者の apply が止まる。逆に版 1 の記録を今回の出所と
+  比べると、版を上げた直後の apply で全員に誤った警告が出る
+- **書き直しでの出所の喪失** — reset / rollback が `origin` を省くと、次の apply は出所を
+  比べられず、食い違いを見逃す
 
 ## 影響
 
