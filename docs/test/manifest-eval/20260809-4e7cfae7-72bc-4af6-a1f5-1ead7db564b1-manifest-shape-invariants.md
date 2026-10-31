@@ -20,6 +20,8 @@ mitigates:
 - out-of-store marker を与えた entry が `srcKind = "outOfStore"` と marker の絶対パスへ
   変換され、判別タグ `_layatMarker` が文書に漏れないこと。こちらも exact 一致で見るので、
   余分なキーの混入は store-backed 側と同じく検出される
+- `identity` の有無でトップレベルの形が変わること。与えなければ `identity` キー自体を持たず、
+  与えればその値を持ち、空文字は評価で止まる
 
 **この条件の適用範囲は project root に限る**。fixed root での絶対パス併記は TC-f9e927d0-8e10-4b8e-9870-5b5486949af6 が
 持ち、`homeRoot` の `rootKind` を実際の HM 統合で見る分は `checks.hm-module` と E2E
