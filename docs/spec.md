@@ -245,6 +245,7 @@ stale 除去は前世代 manifest の記録通りを指す symlink だけに限�
 - [REQ-706de717-4e47-471a-a1c0-448635be159c](requirements/20260802-706de717-4e47-471a-a1c0-448635be159c-generation-gc.md) — 世代操作は世代バックエンドの契約越しに行い、GC root の間引きと store 解放は nix コマンドへ分けて委譲する
 - [REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b](requirements/20261011-833205ca-adfc-4c86-bf66-ae4d8fe4885b-generation-backend-contract.md) — engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う
 - [REQ-9d622539-a1e5-4719-af51-e0cd85b66f35](requirements/20261011-9d622539-a1e5-4719-af51-e0cd85b66f35-last-applied-record.md) — apply は最後に配置した manifest を last-applied 記録に書き、stale 除去の baseline は記録を優先して読む
+- [REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282](requirements/20261031-ee5085a5-077b-4f5a-aa6a-841bc5515282-apply-origin-mismatch-warning.md) — apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する
 - [REQ-0e341430-17f0-498b-9439-65491652163a](requirements/20260802-0e341430-17f0-498b-9439-65491652163a-rollback-refit-then-pointer.md) — rollback は FS を先に収束させてから profile ポインタを最後に移す
 - [REQ-844ee375-919f-4341-81e1-a5f89fd32840](requirements/20260802-844ee375-919f-4341-81e1-a5f89fd32840-module-mode-profile-internal.md) — module 時は rollback を host へ一本化し、layat profile は前進のみで追従する
 - [REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0](requirements/20260802-46fccb80-4bae-4d37-bc19-dded88e9a9c0-project-mode-generation-skip.md) — project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う
