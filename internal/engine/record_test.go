@@ -833,3 +833,81 @@ func TestRecordRewritesCarryOrigin(t *testing.T) {
 		})
 	}
 }
+
+// TestApplyReportsOriginMismatch verifies apply, its dryrun and its generation skip report a
+// recorded origin that differs from this run's, and stay silent when either side has none.
+func TestApplyReportsOriginMismatch(t *testing.T) {
+	nix := Origin{Generator: "nix", Entrypoint: "/home/me/dotfiles"}
+	prebuilt := Origin{Generator: "prebuilt"}
+	for _, tc := range []struct {
+		desc             string
+		recorded, cur    Origin
+		v1, dryRun, skip bool
+		want             bool
+	}{
+		{desc: "apply", recorded: nix, cur: prebuilt, want: true},
+		{desc: "dryrun", recorded: nix, cur: prebuilt, dryRun: true, want: true},
+		{desc: "generation skip", recorded: prebuilt, cur: nix, skip: true, want: true},
+		{desc: "other entrypoint", recorded: nix, cur: Origin{Generator: "nix", Entrypoint: "/x"}, want: true},
+		{desc: "same origin", recorded: nix, cur: nix},
+		{desc: "v1 record", recorded: nix, cur: prebuilt, v1: true},
+		{desc: "no recorded origin", cur: prebuilt},
+		{desc: "no current origin", recorded: nix},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			root, state := realTempDir(t), realTempDir(t)
+			lf := writeLinkFarm(t, projectManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+			fake := &generation.Fake{}
+			if _, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake, Origin: tc.recorded}); err != nil {
+				t.Fatal(err)
+			}
+			if tc.v1 {
+				rec := projectRecord(state, root)
+				data, err := os.ReadFile(rec.File)
+				if err != nil {
+					t.Fatal(err)
+				}
+				var v1 map[string]any
+				if err := json.Unmarshal(data, &v1); err != nil {
+					t.Fatal(err)
+				}
+				v1["recordVersion"] = 1
+				data, _ = json.Marshal(v1)
+				if err := os.WriteFile(rec.File, data, 0o644); err != nil {
+					t.Fatal(err)
+				}
+			}
+			if !tc.skip {
+				lf = writeLinkFarm(t, projectManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+			}
+
+			var warns []string
+			res, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
+				Origin: tc.cur, DryRun: tc.dryRun, Warnf: collectFormatted(&warns)})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if res.GenerationSkipped != tc.skip {
+				t.Errorf("GenerationSkipped = %v, want %v", res.GenerationSkipped, tc.skip)
+			}
+			var got []string
+			for _, w := range warns {
+				if strings.Contains(w, "origin") {
+					got = append(got, w)
+				}
+			}
+			if !tc.want {
+				if res.OriginMismatch != nil || len(got) != 0 {
+					t.Errorf("OriginMismatch = %+v, warnings = %q; want none", res.OriginMismatch, got)
+				}
+				return
+			}
+			if want := (OriginMismatch{Recorded: tc.recorded, Current: tc.cur}); res.OriginMismatch == nil || *res.OriginMismatch != want {
+				t.Errorf("OriginMismatch = %+v, want %+v", res.OriginMismatch, want)
+			}
+			if len(got) != 1 {
+				t.Errorf("origin warnings = %q, want one line", got)
+			}
+		})
+	}
+}

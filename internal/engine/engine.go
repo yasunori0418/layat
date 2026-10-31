@@ -129,6 +129,14 @@ type Result struct {
 	// nil when unobservable (no profile yet, or a link that is not a generation link).
 	GenBefore *int
 	GenAfter  *int
+	// OriginMismatch is set when the last-applied record and this run name different origins.
+	OriginMismatch *OriginMismatch
+}
+
+// OriginMismatch is the recorded origin and this run's origin when they differ.
+type OriginMismatch struct {
+	Recorded Origin
+	Current  Origin
 }
 
 // ErrSkipped indicates a skip on the NoWait path because another apply is in progress.
@@ -582,11 +590,17 @@ func (a *applier) ensureProfileDir() error {
 
 // readBaseline reads the baseline for stale removal and drift repair. Without a record, a
 // profile manifest that cannot be read gives up stale removal instead of blocking placement.
+// A recorded origin that differs from this run's is reported and the run goes on.
 func (a *applier) readBaseline() (baseline, error) {
 	b, err := loadBaseline(a.record.File, a.profile.Profile, a.opts.Warnf)
 	if err == nil && b.profileUnreadable() {
 		a.opts.Warnf("layat: could not read the previous generation's manifest; skipping stale removal: %v", b.profileErr)
 		b.manifest = nil
+	}
+	if recorded := recordedOrigin(b.record); recorded != (Origin{}) && a.opts.Origin != (Origin{}) && recorded != a.opts.Origin {
+		a.result.OriginMismatch = &OriginMismatch{Recorded: recorded, Current: a.opts.Origin}
+		a.opts.Warnf("layat: this apply's origin (generator %q, entrypoint %q) differs from the last-applied record's (generator %q, entrypoint %q); the later apply wins",
+			a.opts.Origin.Generator, a.opts.Origin.Entrypoint, recorded.Generator, recorded.Entrypoint)
 	}
 	return b, err
 }
