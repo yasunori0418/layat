@@ -63,7 +63,8 @@ specification: |
   `W_LAYAT_FOREIGN_SYMLINK`, `W_LAYAT_COPY_FOREIGN`, `W_LAYAT_STALE_MISMATCH`,
   `W_LAYAT_STALE_NON_SYMLINK`, `W_LAYAT_COPY_ORPHAN` and `W_LAYAT_UNWOUND`, with
   `detail = {target}`. The subject warning `W_LAYAT_ORIGIN_MISMATCH` SHALL be placed in
-  `subjectResult.warnings` with `detail = {recorded, current}` when the last-applied record
+  `subjectResult.warnings` with `detail = {recorded, current}`, each an origin object
+  carrying `generator`, `entrypoint` and `identity` (each omitted when empty), when the last-applied record
   has an origin and it differs from the origin of the current apply (the comparison rule is
   REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282). The human-facing text
   on stderr SHALL always coexist.
@@ -119,8 +120,8 @@ specification_ja: |
   `W_LAYAT_STALE_MISMATCH` / `W_LAYAT_STALE_NON_SYMLINK` / `W_LAYAT_COPY_ORPHAN` /
   `W_LAYAT_UNWOUND` としなければならず、`detail = {target}` を付けなければならない。
   last-applied 記録に出所があり、今回の apply の出所と食い違うときは、subject 警告
-  `W_LAYAT_ORIGIN_MISMATCH` を `detail = {recorded, current}` で `subjectResult.warnings` に
-  載せなければならない。比較の規則は REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282 の担当。stderr の人間向けテキストは常時併存させなければならない。
+  `W_LAYAT_ORIGIN_MISMATCH` を `detail = {recorded, current}`（各 origin は `generator`・`entrypoint`・
+  `identity` を持ち、空なら省く）で `subjectResult.warnings` に載せなければならない。比較の規則は REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282 の担当。stderr の人間向けテキストは常時併存させなければならない。
 
   `reset` の changes は実際に除去したもののみでなければならない。`--backup` の退避と
   空親ディレクトリ剪定は entry の状態遷移ではないため changes / items に載せてはならない。
@@ -175,7 +176,7 @@ specification_ja: |
   success のまま = 方針による不作為）/ `W_LAYAT_COPY_ORPHAN`（copy orphan・subject 級）/
   `W_LAYAT_UNWOUND`（上記・subject 級）。`detail = {target}`。加えて
   `W_LAYAT_ORIGIN_MISMATCH`（last-applied 記録と今回の出所の食い違い・subject 級。
-  `detail = {recorded, current}`。規則は REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282）。stderr の人間向けテキストは
+  `detail = {recorded, current}`。各 origin は `identity` も持つ。規則は REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282）。stderr の人間向けテキストは
   常時併存。
 - **`reset` の changes**: 実際に除去したもののみ（symlink remove = `reversible:true` +
   `info.old` = 記録 dest、copy 削除 = `reversible:false`・info なし）。確認プロンプトで

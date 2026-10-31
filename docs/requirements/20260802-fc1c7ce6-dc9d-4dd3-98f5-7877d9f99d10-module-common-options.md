@@ -7,12 +7,13 @@ derives_from:
 specification: |
   Every module (home-manager / NixOS / nix-darwin) SHALL expose the same set of common
   options: `layat.enable :: bool` defaulting to false, `layat.configs :: attrsOf (submodule
-  { entries :: attrsOf entry; subdir :: nullOr str; })` defaulting to `{}`, with `entries`
-  likewise defaulting to `{}` and `subdir` defaulting to null, `layat.backup.enable :: bool` defaulting to false,
+  { entries :: attrsOf entry; subdir :: nullOr str; identity :: nullOr str; })` defaulting to `{}`, with `entries`
+  likewise defaulting to `{}` and `subdir` and `identity` defaulting to null, `layat.backup.enable :: bool` defaulting to false,
   `layat.backup.suffix :: str` defaulting to `"layat-backup"`, `layat.recopy :: bool`
   defaulting to false, and `layat.jobs :: ints.unsigned` defaulting to 0, where 0 means the
   logical CPU count. The bare `layat.entries` SHALL
   be kept as a sugar renaming onto `configs.default.entries`, non-breaking and deprecated.
+  A module SHALL pass `configs.<name>.identity` unchanged to `mkManifest` as `identity`.
   These SHALL be defined jointly for every module, so that the set does not diverge per
   module. What the `<name>` dimension of `configs` means for the granularity of profiles
   is stated by REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a and is not restated here. A module SHALL pin the root by its
@@ -24,13 +25,14 @@ specification: |
 specification_ja: |
   全モジュール（home-manager / NixOS / nix-darwin）は共通オプションとして同一の集合を
   公開しなければならない: `layat.enable :: bool`（デフォルト false）・
-  `layat.configs :: attrsOf (submodule { entries :: attrsOf entry; subdir :: nullOr str; })`
-  （デフォルト `{}`・`entries` のデフォルトも `{}`・`subdir` のデフォルトは null）・`layat.backup.enable :: bool`（デフォルト false）・
+  `layat.configs :: attrsOf (submodule { entries :: attrsOf entry; subdir :: nullOr str; identity :: nullOr str; })`
+  （デフォルト `{}`・`entries` のデフォルトも `{}`・`subdir` と `identity` のデフォルトは null）・`layat.backup.enable :: bool`（デフォルト false）・
   `layat.backup.suffix :: str`（デフォルト `"layat-backup"`）・`layat.recopy :: bool`
   （デフォルト false）・`layat.jobs :: ints.unsigned`（デフォルト 0。0 は論理 CPU 数）。
   素の `layat.entries` は
   `configs.default.entries` への rename 糖衣として非破壊に残さなければならず、deprecated と
-  しなければならない。
+  しなければならない。モジュールは `configs.<name>.identity` をそのまま `mkManifest` の
+  `identity` へ渡さなければならない。
   これらは全モジュール共通に定義し、モジュールごとに集合が分岐しないようにしなければ
   ならない。`configs` の `<name>` 次元が profile の粒度にとって何を意味するかは
   REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a の担当で、本 item では規定しない。モジュールは自分の性質で root を pin
