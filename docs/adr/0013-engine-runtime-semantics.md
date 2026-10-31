@@ -62,6 +62,10 @@ references:
 > out-of-store src は farm アンカーを持たないことは不変。ただし `srcKind` の列挙に `"rootRelative"`（`src` は配置 root 相対の
 > 文字列）が加わり、engine の `validate()` が `srcKind` / `method` / `rootKind` の未知値を明示エラーにする。§4 の
 > 「copy + out-of-store marker は eval 時エラー」は root 相対マーカー（`mkRootRelativeSymlink`）にも同じく適用する（→ ADR-0059）。
+>
+> **2026-10-31 改訂注記（ADR-0070）**: 本 ADR §2 の同一 profileDir の後勝ちは不変。ただし home-manager モジュールと
+> standalone の CLI のように出所の異なる apply が同じ profileDir を共有したときは、last-applied 記録に残した出所と今回の出所を
+> 比べ、食い違えば apply が warning（`--json` では `W_LAYAT_ORIGIN_MISMATCH`）を出して続行する（→ ADR-0070）。
 
 ## 背景
 
