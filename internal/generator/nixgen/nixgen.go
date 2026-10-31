@@ -180,6 +180,18 @@ func (g *Generator) Discover(file string) error {
 	return nil
 }
 
+// Entrypoint is the discovered flake's directory or legacy file, "" before Discover.
+func (g *Generator) Entrypoint() string {
+	switch {
+	case g.ep == nil:
+		return ""
+	case g.ep.kind == entrypointLegacy:
+		return g.ep.legacyPath
+	default:
+		return g.ep.flakeRef
+	}
+}
+
 // discoverError tags a discovery failure as Stage discover, keeping err as the cause.
 func discoverError(err error) error {
 	return generator.NewError(generator.NameNix, generator.StageDiscover, generator.KindFailed, err.Error(), "", "", err)

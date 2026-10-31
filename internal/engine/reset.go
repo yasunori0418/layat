@@ -282,7 +282,7 @@ func recordAfterReset(rec paths.Record, root string, b baseline, selected []mani
 	if err != nil {
 		return fmt.Errorf("layat: cannot encode the manifest for the last-applied record: %w", err)
 	}
-	return writeRecord(rec, root, b.linkFarm(), raw, time.Now())
+	return writeRecord(rec, root, b.linkFarm(), recordedOrigin(b.record), raw, time.Now())
 }
 
 // resetUnreached lists the planned removals never attempted once a symlink-stage failure

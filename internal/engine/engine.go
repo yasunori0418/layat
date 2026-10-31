@@ -76,6 +76,9 @@ type Options struct {
 	Backend generation.Backend
 	// Warnf is the warning output sink (nil = stderr). Used to surface foreign symlinks etc.
 	Warnf func(format string, args ...any)
+	// Origin is where this run's link-farm came from, written to the last-applied record (zero = unknown).
+	// Its Identity is taken from the loaded manifest.
+	Origin Origin
 }
 
 // Result is the result report of Apply (for dryrun / report display · test verification).
@@ -127,6 +130,14 @@ type Result struct {
 	// nil when unobservable (no profile yet, or a link that is not a generation link).
 	GenBefore *int
 	GenAfter  *int
+	// OriginMismatch is set when the last-applied record and this run name different origins.
+	OriginMismatch *OriginMismatch
+}
+
+// OriginMismatch is the recorded origin and this run's origin when they differ.
+type OriginMismatch struct {
+	Recorded Origin
+	Current  Origin
 }
 
 // ErrSkipped indicates a skip on the NoWait path because another apply is in progress.
@@ -163,6 +174,7 @@ func Apply(opts Options) (*Result, error) {
 			return nil, fmt.Errorf("layat: cannot read the link-farm's manifest (%s): %w", opts.LinkFarm, err)
 		}
 		a.manifest = m
+		a.opts.Origin.Identity = m.Identity
 		if rootKind == "" {
 			rootKind = m.Root.RootKind
 		}
@@ -233,6 +245,7 @@ func Apply(opts Options) (*Result, error) {
 		}
 		a.opts.LinkFarm = linkFarm
 		a.manifest = m
+		a.opts.Origin.Identity = m.Identity
 	}
 
 	// 5. read the baseline: the last-applied record, else the profile's current generation
@@ -461,6 +474,7 @@ func (a *applier) dryRun() (*Result, error) {
 		}
 		a.opts.LinkFarm = linkFarm
 		a.manifest = m
+		a.opts.Origin.Identity = m.Identity
 	}
 
 	base, err := a.readBaseline()
@@ -580,11 +594,24 @@ func (a *applier) ensureProfileDir() error {
 
 // readBaseline reads the baseline for stale removal and drift repair. Without a record, a
 // profile manifest that cannot be read gives up stale removal instead of blocking placement.
+// A recorded origin that differs from this run's is reported and the run goes on.
 func (a *applier) readBaseline() (baseline, error) {
 	b, err := loadBaseline(a.record.File, a.profile.Profile, a.opts.Warnf)
 	if err == nil && b.profileUnreadable() {
 		a.opts.Warnf("layat: could not read the previous generation's manifest; skipping stale removal: %v", b.profileErr)
 		b.manifest = nil
+	}
+	if recorded := recordedOrigin(b.record); recorded != (Origin{}) && a.opts.Origin != (Origin{}) && originsDiffer(recorded, a.opts.Origin) {
+		a.result.OriginMismatch = &OriginMismatch{Recorded: recorded, Current: a.opts.Origin}
+		curID, recID := "", ""
+		if a.opts.Origin.Identity != "" {
+			curID = fmt.Sprintf(", identity %q", a.opts.Origin.Identity)
+		}
+		if recorded.Identity != "" {
+			recID = fmt.Sprintf(", identity %q", recorded.Identity)
+		}
+		a.opts.Warnf("layat: this apply's origin (generator %q, entrypoint %q%s) differs from the last-applied record's (generator %q, entrypoint %q%s); the later apply wins",
+			a.opts.Origin.Generator, a.opts.Origin.Entrypoint, curID, recorded.Generator, recorded.Entrypoint, recID)
 	}
 	return b, err
 }
@@ -599,7 +626,7 @@ func (a *applier) recordPlacement(linkFarm string) error {
 	if err != nil {
 		return fmt.Errorf("layat: cannot read the manifest for the last-applied record: %w", err)
 	}
-	return writeRecord(a.record, a.root, resolved, raw, time.Now())
+	return writeRecord(a.record, a.root, resolved, a.opts.Origin, raw, time.Now())
 }
 
 // reportConflicts lists every planner-detected conflict to stderr (warnf), each followed by a

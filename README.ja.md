@@ -192,6 +192,8 @@ nvim = layat.lib.mkManifest {
 };
 ```
 
+`mkManifest` は任意の `identity`(config を識別する空でない自由文字列)も受け取る。同じ config を home-manager モジュールからも適用するなら、ここと `layat.configs.<name>.identity` に同じ `identity` を与える。home-manager と standalone から交互に apply しても、出所の食い違いの警告は出ない。
+
 #### `PATH` に載せるパッケージ環境
 
 layat はこのための専用関数を持たない。`pkgs.buildEnv` の結果を entry の `src` に置く。
@@ -238,6 +240,7 @@ layat = {
 config ごとのオプション:
 
 - `layat.configs.<name>.subdir`(nullable な文字列、既定 `null`)——その config の全 target を `$HOME/<subdir>/` 配下に置く。root は home に pin されたまま。絶対パス・`..` による脱出・`""` は eval エラーになる。
+- `layat.configs.<name>.identity`(nullable な文字列、既定 `null`)——`mkManifest` の `identity` へそのまま渡る。同じ `identity` を持つ manifest は、home-manager と standalone を跨いで apply しても出所の食い違いを警告しない。`""` は eval エラーになる。
 
 ```nix
 layat.configs.nvim = {

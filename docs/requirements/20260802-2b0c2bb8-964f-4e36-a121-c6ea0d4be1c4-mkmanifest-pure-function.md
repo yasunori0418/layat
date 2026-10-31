@@ -7,14 +7,14 @@ derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
   `lib.mkManifest` SHALL be a pure function with the signature
-  `mkManifest :: { pkgs, entries, root } -> derivation`. It SHALL NOT have side effects;
+  `mkManifest :: { pkgs, entries, root, identity ? null } -> derivation`. It SHALL NOT have side effects;
   profile swap and filesystem placement SHALL be the engine's runtime responsibility.
   The entrypoint SHALL expose it at `layat.<name>`, which the layat CLI builds with
   `nix build` and hands to the engine. `mkManifest` SHALL also be a unit-test target for
   the Nix evaluation tests (nix-unit / namaka). What the returned derivation contains is
   stated by REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281 and is NOT restated here.
 specification_ja: |
-  `lib.mkManifest` はシグネチャ `mkManifest :: { pkgs, entries, root } -> derivation` の
+  `lib.mkManifest` はシグネチャ `mkManifest :: { pkgs, entries, root, identity ? null } -> derivation` の
   純粋関数でなければならない。副作用（profile swap・FS 配置）を持ってはならず、それらは
   engine の実行時責務でなければならない。entrypoint は `layat.<name>` に公開しなければ
   ならず、layat CLI がこれを `nix build` してエンジンへ渡す。また Nix 評価テスト
@@ -30,7 +30,7 @@ specification_ja: |
 REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281 が正で、本 item では規定しない。
 
 ```
-mkManifest :: { pkgs, entries, root } -> derivation
+mkManifest :: { pkgs, entries, root, identity ? null } -> derivation
 ```
 
 - entrypoint が `layat.<name>` に公開し、layat CLI が `nix build` してエンジンに渡す。

@@ -17,15 +17,43 @@ import (
 // The last-applied record is what layat last placed under a root: the baseline for stale
 // removal, drift repair, reset and rollback, read ahead of the profile's current generation.
 
-// recordVersion is the only last-applied record format the engine reads and writes.
-const recordVersion = 1
+// recordVersion is the last-applied record format the engine writes; it also reads version 1,
+// which carries no origin.
+const recordVersion = 2
+
+// Origin is where the link-farm of an apply came from: the generator's name, for the nix
+// generator the absolute path of the discovered entrypoint, and the manifest's identity when it
+// declares one. The zero Origin is unknown.
+type Origin struct {
+	Generator  string `json:"generator"`
+	Entrypoint string `json:"entrypoint,omitempty"`
+	Identity   string `json:"identity,omitempty"`
+}
+
+// originsDiffer reports whether two known origins name different sources: by identity alone
+// when both carry one, otherwise by generator and entrypoint.
+func originsDiffer(recorded, current Origin) bool {
+	if recorded.Identity != "" && current.Identity != "" {
+		return recorded.Identity != current.Identity
+	}
+	return recorded.Generator != current.Generator || recorded.Entrypoint != current.Entrypoint
+}
 
 // lastApplied is the on-disk last-applied record.
 type lastApplied struct {
 	RecordVersion int             `json:"recordVersion"`
 	LinkFarm      string          `json:"linkFarm"`
 	AppliedAt     string          `json:"appliedAt"`
+	Origin        *Origin         `json:"origin,omitempty"`
 	Manifest      json.RawMessage `json:"manifest"`
+}
+
+// recordedOrigin is the origin rec was written with, the zero Origin when there is none.
+func recordedOrigin(rec *lastApplied) Origin {
+	if rec == nil || rec.Origin == nil {
+		return Origin{}
+	}
+	return *rec.Origin
 }
 
 // defaultSystemStateDir is the record base <state> for system mode (records under /var/lib/layat).
@@ -50,7 +78,7 @@ func recordFor(stateDir, systemStateDir, name, rootKind, root string, rootOverri
 }
 
 // readRecord reads the record at file and its embedded manifest. An absent record is nil with
-// no error; a record that is not valid JSON, lacks a field, or has another version is an error.
+// no error; a record that is not valid JSON, lacks a field, or has an unread version is an error.
 func readRecord(file string) (*lastApplied, *manifest.Manifest, error) {
 	data, err := os.ReadFile(file)
 	if errors.Is(err, fs.ErrNotExist) {
@@ -68,10 +96,15 @@ func readRecord(file string) (*lastApplied, *manifest.Manifest, error) {
 
 func parseRecord(data []byte) (*lastApplied, *manifest.Manifest, error) {
 	var raw struct {
-		RecordVersion *int            `json:"recordVersion"`
-		LinkFarm      *string         `json:"linkFarm"`
-		AppliedAt     *string         `json:"appliedAt"`
-		Manifest      json.RawMessage `json:"manifest"`
+		RecordVersion *int    `json:"recordVersion"`
+		LinkFarm      *string `json:"linkFarm"`
+		AppliedAt     *string `json:"appliedAt"`
+		Origin        *struct {
+			Generator  *string `json:"generator"`
+			Entrypoint string  `json:"entrypoint"`
+			Identity   string  `json:"identity"`
+		} `json:"origin"`
+		Manifest json.RawMessage `json:"manifest"`
 	}
 	if err := strictDecode(data, &raw); err != nil {
 		return nil, nil, err
@@ -79,14 +112,16 @@ func parseRecord(data []byte) (*lastApplied, *manifest.Manifest, error) {
 	switch {
 	case raw.RecordVersion == nil:
 		return nil, nil, errors.New("recordVersion is missing")
-	case *raw.RecordVersion != recordVersion:
-		return nil, nil, fmt.Errorf("recordVersion %d is unsupported (this engine reads v%d)", *raw.RecordVersion, recordVersion)
+	case *raw.RecordVersion != 1 && *raw.RecordVersion != recordVersion:
+		return nil, nil, fmt.Errorf("recordVersion %d is unsupported (this engine reads v1 and v%d)", *raw.RecordVersion, recordVersion)
 	case raw.LinkFarm == nil || *raw.LinkFarm == "":
 		return nil, nil, errors.New("linkFarm is missing")
 	case raw.AppliedAt == nil:
 		return nil, nil, errors.New("appliedAt is missing")
 	case len(raw.Manifest) == 0 || bytes.Equal(raw.Manifest, []byte("null")):
 		return nil, nil, errors.New("manifest is missing")
+	case raw.Origin != nil && raw.Origin.Generator == nil:
+		return nil, nil, errors.New("origin.generator is missing")
 	}
 	var m manifest.Manifest
 	if err := strictDecode(raw.Manifest, &m); err != nil {
@@ -101,6 +136,9 @@ func parseRecord(data []byte) (*lastApplied, *manifest.Manifest, error) {
 		AppliedAt:     *raw.AppliedAt,
 		Manifest:      raw.Manifest,
 	}
+	if raw.Origin != nil && *raw.RecordVersion == recordVersion {
+		rec.Origin = &Origin{Generator: *raw.Origin.Generator, Entrypoint: raw.Origin.Entrypoint, Identity: raw.Origin.Identity}
+	}
 	return rec, &m, nil
 }
 
@@ -110,15 +148,19 @@ func strictDecode(data []byte, v any) error {
 	return dec.Decode(v)
 }
 
-// writeRecord atomically replaces the record with manifestJSON placed from linkFarm at time at,
-// creating the record directory and, for a roothash series, its backref.
-func writeRecord(rec paths.Record, root, linkFarm string, manifestJSON []byte, at time.Time) error {
-	data, err := json.Marshal(lastApplied{
+// writeRecord atomically replaces the record with manifestJSON placed from linkFarm at time at by
+// origin (left out when unknown), creating the record directory and, for a roothash series, its backref.
+func writeRecord(rec paths.Record, root, linkFarm string, origin Origin, manifestJSON []byte, at time.Time) error {
+	record := lastApplied{
 		RecordVersion: recordVersion,
 		LinkFarm:      linkFarm,
 		AppliedAt:     at.Format(time.RFC3339),
 		Manifest:      manifestJSON,
-	})
+	}
+	if origin != (Origin{}) {
+		record.Origin = &origin
+	}
+	data, err := json.Marshal(record)
 	if err != nil {
 		return fmt.Errorf("layat: cannot encode the last-applied record: %w", err)
 	}

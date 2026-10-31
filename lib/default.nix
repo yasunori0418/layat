@@ -8,10 +8,10 @@ in
   # Private helpers exposed only for unit tests. Not a stable public API.
   __internal = import ./__internal.nix;
 
-  # lib.mkManifest { pkgs, root, entries } -> derivation (manifest.json + symlink farm)
+  # lib.mkManifest { pkgs, root, entries, identity ? null } -> derivation (manifest.json + symlink farm)
   inherit (manifest) mkManifest;
 
-  # normalizeManifest { lib, root, entries } -> attrset (validated pure data)
+  # normalizeManifest { lib, root, entries, identity ? null } -> attrset (validated pure data)
   inherit (manifest) normalizeManifest;
 
   # lib.mkApplyCommand { pkgs, layatPackage, manifests, root } -> string (`layat apply --all --manifest …`)

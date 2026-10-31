@@ -78,3 +78,6 @@ func (f *Fake) DryBuild(name string) (string, error) {
 	}
 	return f.DryBuildFunc(name)
 }
+
+// Entrypoint is "" and is not recorded.
+func (f *Fake) Entrypoint() string { return "" }

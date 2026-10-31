@@ -143,7 +143,7 @@ func changeInfoOrNil(old, new string) *outturnChangeInfo {
 
 // mutationPayload maps an apply / rollback engine.Result onto the outturn payload: the full item
 // inventory, the changes that happened in op order, the generation observation, and warnings
-// (plus W_LAYAT_UNWOUND when the run was rolled back).
+// (plus W_LAYAT_UNWOUND when the run was rolled back and W_LAYAT_ORIGIN_MISMATCH on an origin mismatch).
 func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*outturnPayload[TInfo], error) {
 	statuses := newItemStatuses(res.FailedTarget, res.Unreached, res.Conflicts, cmdErr)
 	p := &outturnPayload[TInfo]{itemBorne: res.FailedTarget != "" || len(res.Conflicts) > 0}
@@ -257,6 +257,21 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*outturnPaylo
 		p.warnings = append(p.warnings, outturn.Warning{
 			Code:    "W_LAYAT_UNWOUND",
 			Message: "the undo journal rolled this run's filesystem changes back after the failure; the listed changes did not survive on disk",
+		})
+	}
+	if m := res.OriginMismatch; m != nil {
+		curID, recID := "", ""
+		if m.Current.Identity != "" {
+			curID = fmt.Sprintf(", identity %q", m.Current.Identity)
+		}
+		if m.Recorded.Identity != "" {
+			recID = fmt.Sprintf(", identity %q", m.Recorded.Identity)
+		}
+		p.warnings = append(p.warnings, outturn.Warning{
+			Code: "W_LAYAT_ORIGIN_MISMATCH",
+			Message: fmt.Sprintf("this apply's origin (generator %q, entrypoint %q%s) differs from the last-applied record's (generator %q, entrypoint %q%s); the later apply wins",
+				m.Current.Generator, m.Current.Entrypoint, curID, m.Recorded.Generator, m.Recorded.Entrypoint, recID),
+			Detail: map[string]any{"recorded": m.Recorded, "current": m.Current},
 		})
 	}
 	return p, nil

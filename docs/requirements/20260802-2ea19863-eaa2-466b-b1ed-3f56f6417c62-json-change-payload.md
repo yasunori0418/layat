@@ -62,7 +62,12 @@ specification: |
   `subjectResult.warnings` when it is outside it. The codes SHALL be
   `W_LAYAT_FOREIGN_SYMLINK`, `W_LAYAT_COPY_FOREIGN`, `W_LAYAT_STALE_MISMATCH`,
   `W_LAYAT_STALE_NON_SYMLINK`, `W_LAYAT_COPY_ORPHAN` and `W_LAYAT_UNWOUND`, with
-  `detail = {target}`. The human-facing text on stderr SHALL always coexist.
+  `detail = {target}`. The subject warning `W_LAYAT_ORIGIN_MISMATCH` SHALL be placed in
+  `subjectResult.warnings` with `detail = {recorded, current}`, each an origin object
+  carrying `generator`, `entrypoint` and `identity` (each omitted when empty), when the last-applied record
+  has an origin and it differs from the origin of the current apply (the comparison rule is
+  REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282). The human-facing text
+  on stderr SHALL always coexist.
 
   The changes of `reset` SHALL be only what was actually removed. A rename aside by
   `--backup` and empty-parent-directory pruning are not state transitions of an entry and
@@ -114,7 +119,9 @@ specification_ja: |
   振り分けなければならない。コードは `W_LAYAT_FOREIGN_SYMLINK` / `W_LAYAT_COPY_FOREIGN` /
   `W_LAYAT_STALE_MISMATCH` / `W_LAYAT_STALE_NON_SYMLINK` / `W_LAYAT_COPY_ORPHAN` /
   `W_LAYAT_UNWOUND` としなければならず、`detail = {target}` を付けなければならない。
-  stderr の人間向けテキストは常時併存させなければならない。
+  last-applied 記録に出所があり、今回の apply の出所と食い違うときは、subject 警告
+  `W_LAYAT_ORIGIN_MISMATCH` を `detail = {recorded, current}`（各 origin は `generator`・`entrypoint`・
+  `identity` を持ち、空なら省く）で `subjectResult.warnings` に載せなければならない。比較の規則は REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282 の担当。stderr の人間向けテキストは常時併存させなければならない。
 
   `reset` の changes は実際に除去したもののみでなければならない。`--backup` の退避と
   空親ディレクトリ剪定は entry の状態遷移ではないため changes / items に載せてはならない。
@@ -167,7 +174,9 @@ specification_ja: |
   残した stale symlink）/ `W_LAYAT_STALE_NON_SYMLINK`（symlink でないため残した stale
   target）（後 2 者 = 保守的不変条件による keep・reset の kept-foreign も同じ。当該 item は
   success のまま = 方針による不作為）/ `W_LAYAT_COPY_ORPHAN`（copy orphan・subject 級）/
-  `W_LAYAT_UNWOUND`（上記・subject 級）。`detail = {target}`。stderr の人間向けテキストは
+  `W_LAYAT_UNWOUND`（上記・subject 級）。`detail = {target}`。加えて
+  `W_LAYAT_ORIGIN_MISMATCH`（last-applied 記録と今回の出所の食い違い・subject 級。
+  `detail = {recorded, current}`。各 origin は `identity` も持つ。規則は REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282）。stderr の人間向けテキストは
   常時併存。
 - **`reset` の changes**: 実際に除去したもののみ（symlink remove = `reversible:true` +
   `info.old` = 記録 dest、copy 削除 = `reversible:false`・info なし）。確認プロンプトで
@@ -176,8 +185,8 @@ specification_ja: |
   ないため changes / items に載らない**（`-v` / stderr のみ）。
 
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する実装 issue の進捗
-> （#131 時点の非対象・`reset --dryrun` は最小形のまま followup・`--all` は #164）は
-> 要求ではなく履歴の注記で、`apply --dryrun` のペイロードは REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303、`--all` は
+> （#131 時点の非対象・`--all` は #164）は
+> 要求ではなく履歴の注記で、`apply --dryrun` と `reset --dryrun` のペイロードは REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303、`--all` は
 > REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5 の担当。undo ジャーナルそのものの規範（→ ADR-0044）は REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の担当。
 
 > **注記（規範ではない）— items / changes / 部分失敗 / conflict / generation / warnings を
@@ -192,4 +201,4 @@ specification_ja: |
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「#131 変更系ペイロード」とその配下の全項目。
 
-決定の実体は ADR-0043 §4 / §6 / §8。
+決定の実体は ADR-0043 §4 / §6 / §8。`W_LAYAT_ORIGIN_MISMATCH` は ADR-0070 §3。

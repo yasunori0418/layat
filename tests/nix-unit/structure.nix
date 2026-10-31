@@ -7,6 +7,12 @@ let
     outPath = "/nix/store/00000000000000000000000000000000-fake-src";
   };
   norm = root: entries: layat.normalizeManifest { inherit lib root entries; };
+  normIdentity =
+    identity:
+    layat.normalizeManifest {
+      inherit lib identity;
+      root = layat.projectRoot;
+    };
 
   # passthru 検証用の fake pkgs（farm-entries.nix と同じイディオム）。runCommandLocal の attrs から
   # passthru だけを持ち帰り、derivation を組まずに `mkManifest` の passthru を純評価で取り出す。
@@ -36,6 +42,23 @@ in
   testSchemaVersion = {
     expr = basic.schemaVersion;
     expected = 1;
+  };
+
+  # identity 非指定ではトップレベルに key 自体が無い。
+  testIdentityAbsentByDefault = {
+    expr = basic ? identity;
+    expected = false;
+  };
+
+  testIdentityRecorded = {
+    expr = (normIdentity "dotfiles").identity;
+    expected = "dotfiles";
+  };
+
+  # 空文字の identity は評価で止まる。
+  testIdentityEmptyRejected = {
+    expr = (builtins.tryEval (builtins.deepSeq (normIdentity "") null)).success;
+    expected = false;
   };
 
   testRootKindProject = {

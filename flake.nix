@@ -285,6 +285,14 @@
                 };
                 configs.default.entries.".claude/skills/nix" = skill;
               };
+              # identity は与えた config の manifest にだけ載る。
+              identity = mkHm {
+                configs.default = {
+                  identity = "dotfiles";
+                  entries.".claude/skills/nix" = skill;
+                };
+                configs.work.entries.".config/work" = skill;
+              };
               # 不正な subdir は lib の検査で eval が失敗する（tryEval の成否だけを見る）。
               badSubdir =
                 v:
@@ -310,6 +318,7 @@
                 jobs3Activation = jobs3.home.activation.layat.data;
                 recopyActivation = recopy.home.activation.layat.data;
                 subdirActivation = subdir.home.activation.layat.data;
+                identityActivation = identity.home.activation.layat.data;
                 badSubdirs = lib.concatMapStringsSep " " badSubdir [
                   "/abs"
                   "../x"
@@ -377,6 +386,14 @@
                 # (8) 不正な subdir（絶対パス・.. 脱出・空）は eval が失敗すること。
                 test "$badSubdirs" = "false false false" \
                   || { echo "FAIL: 不正な subdir の eval が成功します（/abs ../x \"\" の順）: $badSubdirs"; exit 1; }
+
+                # (9) configs.<name>.identity は与えた config の manifest にだけ載ること。
+                identityJson="$(grep -oE "default=/nix/store/[^ ']+" <<<"$identityActivation" | cut -d= -f2)/manifest.json"
+                noIdentityJson="$(grep -oE "work=/nix/store/[^ ']+" <<<"$identityActivation" | cut -d= -f2)/manifest.json"
+                grep -qF '"identity":"dotfiles"' "$identityJson" \
+                  || { echo "FAIL: configs.default.identity が manifest に載っていません"; cat "$identityJson"; exit 1; }
+                ! grep -qF '"identity"' "$noIdentityJson" \
+                  || { echo "FAIL: identity を与えない config の manifest に identity があります"; cat "$noIdentityJson"; exit 1; }
 
                 touch "$out"
               '';

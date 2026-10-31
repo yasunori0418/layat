@@ -21,7 +21,7 @@ threatens:
 
 `manifest.json` は Nix 側と engine の唯一の安定契約（REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b）で、`schemaVersion` は
 1 に固定され v1 のみを発行・受理する（REQ-250d936c-1df0-491d-a7af-708f38b61f33）。`normalizeManifest` が出す文書の形
-——トップレベル 3 フィールド（REQ-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f）・`rootKind` と fixed 時のみの絶対パス併記
+——トップレベルの必須 3 フィールドと任意の `identity`（REQ-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f）・`rootKind` と fixed 時のみの絶対パス併記
 （REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb）・entry の 5 フィールドと辞書順の配列化（REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336）・marker の判別タグを
 漏らさないこと（REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7）——が、評価層の変更で気づかれずに変わりうる。
 

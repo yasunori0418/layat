@@ -32,7 +32,7 @@ engine の `Status` が記録基底を走査した結果について、網羅・
 - 記録が読めない・不正な `<roothash>` 系列の config は、Mode が基底に応じた `home` / `system`、
   Root が backref `.root` の値
 - `AppliedAt`・`LinkFarm`・manifest の entry は記録の値と一致する
-- 不正な記録（壊れた JSON・未知のフィールド・`recordVersion` ≠ 1 など）と読めない backref は、
+- 不正な記録（壊れた JSON・未知のフィールド・`recordVersion` が 1 でも 2 でもない記録など）と読めない backref は、
   その系列に error を立てて他の系列と並べ、列挙を止めない。「記録なし」として落とさない
 - `last-applied.json` の stat が不在以外の理由で失敗した `<name>` は、直キー・`<roothash>`
   系列のどちらでも error を立てて返し、落とさない（`<roothash>` 系列では `<name>` ディレクトリに

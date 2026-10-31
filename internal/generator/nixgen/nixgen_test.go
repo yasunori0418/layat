@@ -252,6 +252,30 @@ func TestDiscoverFailureIsDiscoverStage(t *testing.T) {
 	}
 }
 
+// TestEntrypointIsDiscoveredPath verifies Entrypoint is the discovered flake's directory or the
+// legacy file's absolute path, and "" before discovery.
+func TestEntrypointIsDiscoveredPath(t *testing.T) {
+	if got := New(io.Discard, false).Entrypoint(); got != "" {
+		t.Errorf("Entrypoint before Discover = %q, want empty", got)
+	}
+	for _, tc := range []struct{ desc, file, want string }{
+		{"flake", "flake.nix", "."},
+		{"legacy", "shell.nix", "shell.nix"},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			dir := t.TempDir()
+			writeFile(t, dir, tc.file)
+			g := New(io.Discard, false)
+			if err := g.Discover(dir); err != nil {
+				t.Fatal(err)
+			}
+			if want := filepath.Join(dir, tc.want); g.Entrypoint() != want {
+				t.Errorf("Entrypoint = %q, want %q", g.Entrypoint(), want)
+			}
+		})
+	}
+}
+
 // TestRootsCommandFailure pins a failed nix eval as Stage roots whose one-line Message names the
 // failed subcommand, with nix's stderr kept in Stderr instead.
 func TestRootsCommandFailure(t *testing.T) {

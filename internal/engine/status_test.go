@@ -27,7 +27,7 @@ func putStatusRecord(t *testing.T, state, name, root string, rootOverride bool, 
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := writeRecord(rec, root, linkFarm, raw, statusAt); err != nil {
+	if err := writeRecord(rec, root, linkFarm, Origin{}, raw, statusAt); err != nil {
 		t.Fatal(err)
 	}
 	return rec
@@ -232,7 +232,7 @@ func TestStatusInvalidRecordListedWithErr(t *testing.T) {
 		`{"recordVersion":1,"linkFarm":"/nix/store/lf","appliedAt":"x","manifest":{"schemaVersion":1,"root":{"rootKind":"home"},"entries":[]},"extra":1}`)
 	x := putStatusRecord(t, state, "x", root, false, "/nix/store/lf", projectManifest())
 	writeStatusFile(t, filepath.Join(user, h, "y", "last-applied.json"),
-		`{"recordVersion":2,"linkFarm":"/nix/store/lf","appliedAt":"x","manifest":{"schemaVersion":1,"root":{"rootKind":"project"},"entries":[]}}`)
+		`{"recordVersion":3,"linkFarm":"/nix/store/lf","appliedAt":"x","manifest":{"schemaVersion":1,"root":{"rootKind":"project"},"entries":[]}}`)
 	writeStatusFile(t, filepath.Join(system, "s", "last-applied.json"), "")
 
 	var warnings []string

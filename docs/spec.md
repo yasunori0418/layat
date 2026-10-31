@@ -58,7 +58,7 @@ manifest をエンジンへ渡す。エンジンは `manifest.json` を唯一の
 ### `lib.mkManifest`
 
 - [REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4](requirements/20260802-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4-mkmanifest-pure-function.md) — mkManifest は配置データを生成する純粋関数である
-- [REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d](requirements/20260802-97c1e088-a17e-46d9-a9a1-83d1757d0f7d-mkmanifest-arguments.md) — mkManifest の引数は pkgs / entries / root の 3 つとする
+- [REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d](requirements/20260802-97c1e088-a17e-46d9-a9a1-83d1757d0f7d-mkmanifest-arguments.md) — mkManifest の引数は必須の pkgs / entries / root と任意の identity とする
 - [REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281](requirements/20260802-60e6b49c-9ba1-4552-a0ec-d340421ec281-mkmanifest-return-value.md) — mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す
 - [REQ-2f9205ee-cec5-4072-ac3e-890caae79904](requirements/20260802-2f9205ee-cec5-4072-ac3e-890caae79904-mkmanifest-passthru-rootkind.md) — mkManifest の返り値は passthru で root kind を露出する
 - [REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7](requirements/20260802-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7-entry-identity-by-target-key.md) — entry の識別子は属性キー = target とし一意性は Nix が担保する
@@ -193,7 +193,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 
 - [REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b](requirements/20260802-79ce0a09-f9bd-4e61-ba7f-45fb5643137b-manifest-single-stable-contract.md) — manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する
 - [REQ-250d936c-1df0-491d-a7af-708f38b61f33](requirements/20260802-250d936c-1df0-491d-a7af-708f38b61f33-manifest-v1-only-no-migration.md) — MVP は manifest v1 のみを発行・受理しマイグレーション機構を持たない
-- [REQ-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f](requirements/20260802-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f-manifest-toplevel-fields.md) — manifest.json のトップレベルは schemaVersion / root / entries の 3 フィールドとする
+- [REQ-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f](requirements/20260802-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f-manifest-toplevel-fields.md) — manifest.json のトップレベルは必須の schemaVersion / root / entries と任意の identity とする
 - [REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb](requirements/20260802-dd10d820-e453-4099-a47a-ffb9a7de02fb-manifest-root-object.md) — manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する
 - [REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336](requirements/20260802-0b0cd1e3-bfeb-45c1-978d-e2e11c568336-manifest-entries-array.md) — manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する
 - [REQ-b12fc3c0-d7fe-4003-922c-f3ac0d969b66](requirements/20260802-b12fc3c0-d7fe-4003-922c-f3ac0d969b66-farm-gc-anchor-only.md) — symlink farm は GC アンカー専用でアンカーは store-backed な symlink entry に限る
@@ -245,6 +245,7 @@ stale 除去は前世代 manifest の記録通りを指す symlink だけに限�
 - [REQ-706de717-4e47-471a-a1c0-448635be159c](requirements/20260802-706de717-4e47-471a-a1c0-448635be159c-generation-gc.md) — 世代操作は世代バックエンドの契約越しに行い、GC root の間引きと store 解放は nix コマンドへ分けて委譲する
 - [REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b](requirements/20261011-833205ca-adfc-4c86-bf66-ae4d8fe4885b-generation-backend-contract.md) — engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う
 - [REQ-9d622539-a1e5-4719-af51-e0cd85b66f35](requirements/20261011-9d622539-a1e5-4719-af51-e0cd85b66f35-last-applied-record.md) — apply は最後に配置した manifest を last-applied 記録に書き、stale 除去の baseline は記録を優先して読む
+- [REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282](requirements/20261031-ee5085a5-077b-4f5a-aa6a-841bc5515282-apply-origin-mismatch-warning.md) — apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する
 - [REQ-0e341430-17f0-498b-9439-65491652163a](requirements/20260802-0e341430-17f0-498b-9439-65491652163a-rollback-refit-then-pointer.md) — rollback は FS を先に収束させてから profile ポインタを最後に移す
 - [REQ-844ee375-919f-4341-81e1-a5f89fd32840](requirements/20260802-844ee375-919f-4341-81e1-a5f89fd32840-module-mode-profile-internal.md) — module 時は rollback を host へ一本化し、layat profile は前進のみで追従する
 - [REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0](requirements/20260802-46fccb80-4bae-4d37-bc19-dded88e9a9c0-project-mode-generation-skip.md) — project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う

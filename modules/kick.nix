@@ -18,6 +18,7 @@ let
       inherit pkgs;
       root = mkRoot c.subdir;
       entries = c.entries;
+      identity = c.identity;
     }
   ) cfg.configs;
 

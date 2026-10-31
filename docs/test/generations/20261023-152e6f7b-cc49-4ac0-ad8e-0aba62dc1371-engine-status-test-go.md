@@ -33,7 +33,7 @@ covers:
 
 **読めない記録・系列**
 
-- 壊れた JSON・未知のフィールド・`recordVersion` ≠ 1・空の記録は `Err` を立てて他の系列と並ぶ。
+- 壊れた JSON・未知のフィールド・`recordVersion` が 1 でも 2 でもない記録・空の記録は `Err` を立てて他の系列と並ぶ。
   `<roothash>` 系列では Mode が基底に応じた値、Root が backref の値になる
 - backref が読めない系列は、記録を持つ `<name>` ごとに Root 空・RootHash 入りの `Err` を返す。
   記録を持つ `<name>` が無ければ、Name と Root が空の 1 件として返す
