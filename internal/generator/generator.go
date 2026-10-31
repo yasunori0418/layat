@@ -21,6 +21,8 @@ type Generator interface {
 	// DryBuild returns the config's link-farm path without laying down a gcroot (--dryrun and
 	// gitignore).
 	DryBuild(name string) (string, error)
+	// Entrypoint is the absolute path of the discovered entrypoint, "" when the generator has none.
+	Entrypoint() string
 }
 
 // Generator names carried by Error.Generator.

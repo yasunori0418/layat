@@ -110,3 +110,6 @@ func (p *Prebuilt) Build(name, _ string) (string, error) { return p.farm(name, S
 
 // DryBuild returns the config's pre-built link-farm.
 func (p *Prebuilt) DryBuild(name string) (string, error) { return p.farm(name, StageBuild) }
+
+// Entrypoint is "": a pre-built link-farm has no entrypoint.
+func (p *Prebuilt) Entrypoint() string { return "" }
