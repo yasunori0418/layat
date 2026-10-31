@@ -27,8 +27,8 @@ satisfies:
 ```
 
 `origin` は prebuilt 生成器（`--manifest`）なら `{ "generator": "prebuilt" }` で、`entrypoint` を
-持たない。出所が分からない書き直し（版 1 の記録を reset / rollback が書き直す場合）では `origin`
-自体を省く。
+持たない。出所が分からない書き直し（版 1 の記録や、記録が無く profile から baseline を取ったときに
+reset / rollback が書き直す場合）では `origin` 自体を省く。
 
 - **鍵の解決は `internal/paths`** が profileDir と同じ規則で行う（基底だけが
   `<state>/layat`）。backref `.root` も同じ階層に置く。
@@ -52,8 +52,8 @@ satisfies:
   だけがあるときは flock の鍵である profileDir（roothash 系列は backref `.root` も）を apply
   と同じ手順で作ってから flock を取る）。`appliedAt` は書いた操作の時刻。rollback の target（N-1）は引き続き
   `profile-<N-1>-link` から読む。
-- **出所の比較**: apply（`--dryrun` と generation skip
-  経路を含む）は記録の `origin` と今回の origin が両方あって食い違えば、stderr に 1 行と
+- **出所の比較**: apply（`--dryrun` と generation skip 経路を含む）は記録の `origin` と
+  今回の origin が両方あって食い違えば、stderr に 1 行と
   subject 警告 `W_LAYAT_ORIGIN_MISMATCH`（`detail = {recorded, current}`）を出して続行する。
   記録に `origin` が無ければ比べない。reset / rollback の書き直しは記録済みの `origin` を
   そのまま引き継ぐ。

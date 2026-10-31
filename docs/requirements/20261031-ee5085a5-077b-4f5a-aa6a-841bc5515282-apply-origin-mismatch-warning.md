@@ -6,14 +6,16 @@ derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
 specification: |
-  The last-applied record SHALL carry `origin = {generator, entrypoint}` identifying where
-  the placed manifest came from. `generator` SHALL be `nix` when the link-farm was built by
+  The last-applied record SHALL carry `origin = {generator, entrypoint}` identifying the
+  source of the last apply that generated and placed the manifest. `generator` SHALL be `nix` when the link-farm was built by
   the nix generator and `prebuilt` when it was given through `--manifest`. `entrypoint`
   SHALL be the absolute path of the discovered entrypoint when `generator` is `nix`, and
   SHALL be omitted when `generator` is `prebuilt`. apply SHALL write the record with
   `recordVersion` 2 and the origin of the current run.
   Reading SHALL accept `recordVersion` 1 and 2; any other version and any unknown field
-  SHALL remain an error. A version 1 record SHALL be read as having no origin.
+  SHALL remain an error; inside `origin`, a missing `generator`, a field of the wrong type
+  or an unknown field SHALL likewise be an error. A version 1 record SHALL be read as
+  having no origin.
   apply, including `--dryrun` and the generation-skip path, SHALL compare the origin in the
   record with the origin of the current run before placing. When both exist and differ in
   `generator` or `entrypoint`, apply SHALL write one warning line to stderr and SHALL emit
@@ -26,13 +28,15 @@ specification: |
   `status` SHALL NOT expose the origin, and no mode that stops apply on a mismatch SHALL be
   provided.
 specification_ja: |
-  last-applied 記録は、配置した manifest の出所を表す `origin = {generator, entrypoint}` を
-  持たなければならない。`generator` は、link-farm を nix 生成器が組んだときは `nix`、
+  last-applied 記録は、manifest を生成して配置した直近の apply の出所を表す
+  `origin = {generator, entrypoint}` を持たなければならない。`generator` は、link-farm を nix 生成器が組んだときは `nix`、
   `--manifest` で渡されたときは `prebuilt` としなければならない。`entrypoint` は `generator`
   が `nix` のときは発見した entrypoint の絶対パスとし、`prebuilt` のときは省略しなければ
   ならない。apply は `recordVersion` 2 と今回の実行の origin で記録を書かなければならない。
   読みは `recordVersion` 1 と 2 を受け付けなければならず、それ以外の版と未知のフィールドは
-  従来どおり error としなければならない。版 1 の記録は origin 無しとして読まなければならない。
+  従来どおり error としなければならない。`origin` の中でも、`generator` の欠落・型違い・
+  未知のフィールドは同じく error としなければならない。版 1 の記録は origin 無しとして
+  読まなければならない。
   apply（`--dryrun` と generation skip 経路を含む）は、配置の前に記録の origin と今回の
   origin を比べなければならない。両方あって `generator` か `entrypoint` が食い違えば、stderr へ
   warning を 1 行出し、`subjectResult.warnings` に subject 警告 `W_LAYAT_ORIGIN_MISMATCH`
@@ -47,11 +51,13 @@ specification_ja: |
 
 ## 仕様
 
-- **出所（origin）**: `{generator, entrypoint}`。`generator` は `nix`（nix 生成器が link-farm を
+- **出所（origin）**: manifest を生成して配置した直近の apply の出所 `{generator, entrypoint}`。
+  reset / rollback は manifest を生成しないので、出所を変えない。`generator` は `nix`（nix 生成器が link-farm を
   組んだ）か `prebuilt`（`--manifest` で渡された）。`entrypoint` は `nix` のとき発見した
   entrypoint の絶対パスで、`prebuilt` では省く。
 - **版**: apply は `recordVersion` 2 で書く。読みは 1 と 2 を受け付け、1 は origin 無しとして
-  読む。それ以外の版と未知のフィールドは従来どおり error。
+  読む。それ以外の版と未知のフィールドは従来どおり error。`origin` の中の `generator` の
+  欠落・型違い・未知のフィールドも error。
 - **食い違いの警告**: apply（`--dryrun` と generation skip 経路を含む）は配置の前に記録の
   origin と今回の origin を比べる。両方あって食い違えば stderr に 1 行、`--json` では
   `subjectResult.warnings` に `W_LAYAT_ORIGIN_MISMATCH`（`detail = {recorded, current}`）を出して

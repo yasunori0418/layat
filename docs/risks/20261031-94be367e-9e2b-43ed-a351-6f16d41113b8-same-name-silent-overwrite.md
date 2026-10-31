@@ -3,8 +3,8 @@ id: "RISK-94be367e-9e2b-43ed-a351-6f16d41113b8"
 type: risk
 name: "出所の異なる apply が同名 config の記録を共有し、互いの entry を黙って stale 除去し合う"
 likelihood: medium
-impact: high
-level: high
+impact: medium
+level: medium
 threatens:
   - "REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282"
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
@@ -26,7 +26,8 @@ nix 生成器）が同じ名前を使うと、片方の apply がもう片方の
 
 ## 影響
 
-impact を high とするのは、利用者の `$HOME` から設定ファイルの symlink が予告なく消え、どちらの
-経路が消したかも分からないため。likelihood を medium とするのは、両経路の併用は移行期や
-試用に限られる一方、`default` という名前を両方で使う構成は珍しくないため。likelihood medium ×
-impact high から level は high。
+impact を medium とするのは、除去されるのが stale として扱われる symlink で、消えた entry は
+もう片方の経路で apply を再実行すれば戻るため。気付かれないまま続くことは impact では評価せず、
+上のリスクとして書いた。likelihood を medium とするのは、出所の比較が engine・生成器・CLI に
+またがり、`--dryrun` と generation skip を含む経路ごとに入れる必要があるため。どれか 1 経路で
+比較が抜けても、既存のテストでは見つからない。likelihood medium × impact medium から level は medium。

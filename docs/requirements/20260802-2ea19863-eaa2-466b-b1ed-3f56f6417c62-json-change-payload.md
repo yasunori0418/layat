@@ -63,8 +63,9 @@ specification: |
   `W_LAYAT_FOREIGN_SYMLINK`, `W_LAYAT_COPY_FOREIGN`, `W_LAYAT_STALE_MISMATCH`,
   `W_LAYAT_STALE_NON_SYMLINK`, `W_LAYAT_COPY_ORPHAN` and `W_LAYAT_UNWOUND`, with
   `detail = {target}`. The subject warning `W_LAYAT_ORIGIN_MISMATCH` SHALL be placed in
-  `subjectResult.warnings` with `detail = {recorded, current}` when the origin in the
-  last-applied record differs from the origin of the current apply. The human-facing text
+  `subjectResult.warnings` with `detail = {recorded, current}` when the last-applied record
+  has an origin and it differs from the origin of the current apply (the comparison rule is
+  REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282). The human-facing text
   on stderr SHALL always coexist.
 
   The changes of `reset` SHALL be only what was actually removed. A rename aside by
@@ -117,7 +118,8 @@ specification_ja: |
   振り分けなければならない。コードは `W_LAYAT_FOREIGN_SYMLINK` / `W_LAYAT_COPY_FOREIGN` /
   `W_LAYAT_STALE_MISMATCH` / `W_LAYAT_STALE_NON_SYMLINK` / `W_LAYAT_COPY_ORPHAN` /
   `W_LAYAT_UNWOUND` としなければならず、`detail = {target}` を付けなければならない。
-  last-applied 記録の出所と今回の apply の出所が食い違うときは、subject 警告
+  last-applied 記録に出所があり、今回の apply の出所と食い違うときは（比較の規則は
+  REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282）、subject 警告
   `W_LAYAT_ORIGIN_MISMATCH` を `detail = {recorded, current}` で `subjectResult.warnings` に
   載せなければならない。stderr の人間向けテキストは常時併存させなければならない。
 
