@@ -227,17 +227,8 @@ fi
 assert_symlink "$HOME/.cfg/a"
 assert_file_eq "$HOME/.cfg/a/file" "AAA"
 
-e2e_step "layat reset --json --yes: FS のみを撤去し profile / 世代は動かない"
-# 撤去対象は profile が指す世代の manifest 由来。rollback で世代 1 に戻った後なので .cfg/a が対象。
-PROFILE_BEFORE="$(readlink "$PROFILE")"
-GENS_BEFORE="$(gens_count)"
-# 前後一致の基準（世代 2 本）を非 JSON 経路でも観測できることを先に固定する。
-if [ "$GENS_BEFORE" -eq 2 ]; then
-	e2e_pass "reset 前の世代は 2 件"
-else
-	e2e_fail "reset 前の世代が 2 件でない: $GENS_BEFORE"
-fi
-# dryrun は非 dryrun と同じ items / changes を運び、FS・profile・記録を動かさない。
+e2e_step "layat reset --dryrun --json: 実 reset と同じ items / changes を運び、FS・profile・記録は動かない"
+DRYRUN_PROFILE_BEFORE="$(readlink "$PROFILE")"
 RECORD_BEFORE="$(cat "$RECORD")"
 ENV_RESET_DRYRUN="$E2E_WORK/reset-dryrun.json"
 run_json 0 "$ENV_RESET_DRYRUN" reset home --dryrun
@@ -251,8 +242,19 @@ assert_json "$ENV_RESET_DRYRUN" "generation スロットを持たない" \
 	'.results[0] | has("generation") | not'
 assert_symlink "$HOME/.cfg/a"
 assert_file_eq "$HOME/.cfg/a/file" "AAA"
-assert_symlink "$PROFILE" "$PROFILE_BEFORE"
+assert_symlink "$PROFILE" "$DRYRUN_PROFILE_BEFORE"
 assert_file_eq "$RECORD" "$RECORD_BEFORE"
+
+e2e_step "layat reset --json --yes: FS のみを撤去し profile / 世代は動かない"
+# 撤去対象は profile が指す世代の manifest 由来。rollback で世代 1 に戻った後なので .cfg/a が対象。
+PROFILE_BEFORE="$(readlink "$PROFILE")"
+GENS_BEFORE="$(gens_count)"
+# 前後一致の基準（世代 2 本）を非 JSON 経路でも観測できることを先に固定する。
+if [ "$GENS_BEFORE" -eq 2 ]; then
+	e2e_pass "reset 前の世代は 2 件"
+else
+	e2e_fail "reset 前の世代が 2 件でない: $GENS_BEFORE"
+fi
 ENV_RESET="$E2E_WORK/reset.json"
 run_json 0 "$ENV_RESET" reset home --yes
 assert_absent "$HOME/.cfg/a"
