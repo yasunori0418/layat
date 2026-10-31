@@ -108,6 +108,7 @@ func runApplyManifest(subject *applySubject, name string) error {
 	res, err := engine.Apply(engine.Options{
 		Name:           name,
 		LinkFarm:       linkFarm,
+		Origin:         engine.Origin{Generator: generator.NamePrebuilt, Entrypoint: gen.Entrypoint()},
 		RootOverride:   flagRoot,
 		NoWait:         flagNoWait,
 		Recopy:         flagRecopy,
@@ -149,10 +150,11 @@ func runApply(run *applyRun, name string) error {
 		return runApplyManifest(subject, name)
 	}
 
-	gen, err := newGenerator()
+	genName, err := selectGenerator()
 	if err != nil {
 		return err
 	}
+	gen := newGeneratorTo(genName, os.Stderr)
 	if err := gen.Discover(flagFile); err != nil {
 		return err
 	}
@@ -176,6 +178,7 @@ func runApply(run *applyRun, name string) error {
 			BackupSuffix:   flagBackup,
 			DryRun:         true,
 			Build:          dryBuildFunc(gen, name),
+			Origin:         engine.Origin{Generator: genName, Entrypoint: gen.Entrypoint()},
 			Backend:        newGenerationBackend(),
 			SystemDir:      systemDirOverride(),
 			SystemStateDir: systemStateDirOverride(),
@@ -195,7 +198,7 @@ func runApply(run *applyRun, name string) error {
 	}
 
 	// 2. Drive the engine (flock, in-lock build, placement, commit and .pending removal).
-	res, err := applyOne(gen, name, rootKind, fixedRoot)
+	res, err := applyOne(gen, genName, name, rootKind, fixedRoot)
 	if res != nil {
 		// A partial result on failure still carries the reached items and the changes made.
 		attachMutationPayload(subject, res, err)
@@ -249,7 +252,7 @@ func fprintApplyPlan(w io.Writer, res *engine.Result) {
 }
 
 // applyOne runs engine.Apply for one config; only build is done per config.
-func applyOne(gen generator.Generator, name, rootKind, fixedRoot string) (*engine.Result, error) {
+func applyOne(gen generator.Generator, genName, name, rootKind, fixedRoot string) (*engine.Result, error) {
 	return engine.Apply(engine.Options{
 		Name:           name,
 		RootKind:       rootKind,
@@ -260,6 +263,7 @@ func applyOne(gen generator.Generator, name, rootKind, fixedRoot string) (*engin
 		Backup:         flagBackupEnabled,
 		BackupSuffix:   flagBackup,
 		Build:          func(pending string) (string, error) { return gen.Build(name, pending) },
+		Origin:         engine.Origin{Generator: genName, Entrypoint: gen.Entrypoint()},
 		Backend:        newGenerationBackend(),
 		SystemDir:      systemDirOverride(),
 		SystemStateDir: systemStateDirOverride(),
@@ -345,13 +349,13 @@ func runApplyAll(run *applyRun) error {
 
 	// 2.5 --dryrun previews without side effects and decides the exit code error(1) > conflict(2) > 0.
 	if flagDryrun {
-		return runApplyAllDryRun(run, gen, selected, jobs, roots, built)
+		return runApplyAllDryRun(run, gen, genName, selected, jobs, roots, built)
 	}
 
 	// 3. Stage 2: apply the configs in parallel, each independently atomic.
 	applied, skipped, failures := aggregateApply(run, selected, jobs, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
 		ri := roots[name]
-		return applyOne(gen, name, ri.RootKind, ri.Root)
+		return applyOne(gen, genName, name, ri.RootKind, ri.Root)
 	}))
 
 	// 4. Aggregate report and exit code.
@@ -431,7 +435,7 @@ func detectCrossConfigConflicts(roots map[string]manifest.Root, selected []strin
 // runApplyAllDryRun drives apply --all --dryrun: it plans each config read-only and returns the
 // exit code error(1) > conflict(2) > 0 in an empty-msg exitError. Configs whose prebuild failed
 // are not planned.
-func runApplyAllDryRun(run *applyRun, gen generator.Generator, selected []string, jobs int, roots map[string]manifest.Root, built map[string]prebuildResult) error {
+func runApplyAllDryRun(run *applyRun, gen generator.Generator, genName string, selected []string, jobs int, roots map[string]manifest.Root, built map[string]prebuildResult) error {
 	code := aggregateDryRun(run, selected, jobs, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
 		ri := roots[name]
 		return engine.Apply(engine.Options{
@@ -444,6 +448,7 @@ func runApplyAllDryRun(run *applyRun, gen generator.Generator, selected []string
 			BackupSuffix:   flagBackup,
 			DryRun:         true,
 			Build:          dryBuildFunc(gen, name),
+			Origin:         engine.Origin{Generator: genName, Entrypoint: gen.Entrypoint()},
 			Backend:        newGenerationBackend(),
 			SystemDir:      systemDirOverride(),
 			SystemStateDir: systemStateDirOverride(),
