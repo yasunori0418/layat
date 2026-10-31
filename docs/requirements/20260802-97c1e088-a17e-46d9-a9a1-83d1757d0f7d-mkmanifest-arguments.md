@@ -1,12 +1,15 @@
 ---
 id: "REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d"
 type: requirement
-name: "mkManifest の引数は pkgs / entries / root の 3 つとする"
+name: "mkManifest の引数は必須の pkgs / entries / root と任意の identity とする"
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
-  `lib.mkManifest` SHALL accept exactly three arguments: `pkgs`, `entries` and `root`.
+  `lib.mkManifest` SHALL accept the three required arguments `pkgs`, `entries` and `root`,
+  and MAY additionally be given the optional fourth argument `identity` (a non-empty string,
+  defaulting to null). When `identity` is null, `mkManifest` SHALL NOT emit `identity` in
+  `manifest.json`.
   `pkgs` SHALL be an nixpkgs attrset used for derivation building (such as
   `runCommandLocal`) and to obtain `pkgs.lib`, and it SHALL be REQUIRED with no default.
   `entries` SHALL be an attrset of placement definitions. `root` SHALL be the base of the
@@ -14,15 +17,16 @@ specification: |
   its type is `string | marker` — are stated by REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4 and REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 and are NOT
   restated here.
 specification_ja: |
-  `lib.mkManifest` は引数として `pkgs` / `entries` / `root` の 3 つを取らなければ
-  ならない。`pkgs` は derivation ビルド（`runCommandLocal` 等）と `pkgs.lib` の取得に
+  `lib.mkManifest` は必須の引数として `pkgs` / `entries` / `root` の 3 つを取らなければ
+  ならず、加えて任意の 4 番目の引数 `identity`（空でない文字列・デフォルト null）を与えてもよい。
+  `identity` が null のとき、`mkManifest` は `manifest.json` に `identity` を出してはならない。`pkgs` は derivation ビルド（`runCommandLocal` 等）と `pkgs.lib` の取得に
   使う nixpkgs の attrset でなければならず、デフォルトを持たない必須引数でなければ
   ならない。`entries` は配置定義の attrset でなければならない。`root` は配置先の基準で
   なければならない。`root` 固有の規範（明示必須であること・
   型が `string | marker` であること）は REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4 と REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 が規定しており、
   本 item では重ねて規定しない。
 ---
-# REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d: mkManifest の引数は pkgs / entries / root の 3 つとする
+# REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d: mkManifest の引数は必須の pkgs / entries / root と任意の identity とする
 
 ## 仕様
 
@@ -31,6 +35,7 @@ specification_ja: |
 | `pkgs` | attrset（nixpkgs） | **なし（必須）** | derivation ビルド（`runCommandLocal` 等）と `pkgs.lib` の取得に使う |
 | `entries` | attrset of entry | — | 配置定義の attrset。**属性キー = target パス**が識別子 |
 | `root` | string \| marker | **なし（必須）** | 配置先の基準。暗黙デフォルトを持たない |
+| `identity` | null \| string | `null` | 設定の同一性の識別子。null なら manifest に出さない |
 
 `pkgs` を引数で受け取るのは lib 層が unparameterized（`lib` / `pkgs` を自身で保持しない）
 であるため。各関数が呼び出し時に必要なものを明示引数として要求する。

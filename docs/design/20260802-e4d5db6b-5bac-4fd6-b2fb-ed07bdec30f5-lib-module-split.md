@@ -28,7 +28,7 @@ lib/
 分割の軸は「公開 API 面 / 型 / 生成ロジック / マーカー / コマンド組み立て」の 5 つで、次の理由による。
 
 - **`default.nix` を公開 API のまとめに限る**ことで、REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d（`mkManifest` の引数は
-  pkgs / entries / root の 3 つ）・REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281（返り値）・REQ-eb363122-385a-499c-a074-c95efb949d07
+  必須の pkgs / entries / root と任意の identity）・REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281（返り値）・REQ-eb363122-385a-499c-a074-c95efb949d07
   （`mkOutOfStoreSymlink`）・REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66（root マーカー 3 種）が定める API 面が 1 ファイルを
   読めば分かる。`__internal` はここから露出するが安定 API ではなく、TP-403c55c7-d996-4951-8e6b-c3a7dddd387c が定める
   テスト seam に限る

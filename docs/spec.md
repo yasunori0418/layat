@@ -58,7 +58,7 @@ manifest をエンジンへ渡す。エンジンは `manifest.json` を唯一の
 ### `lib.mkManifest`
 
 - [REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4](requirements/20260802-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4-mkmanifest-pure-function.md) — mkManifest は配置データを生成する純粋関数である
-- [REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d](requirements/20260802-97c1e088-a17e-46d9-a9a1-83d1757d0f7d-mkmanifest-arguments.md) — mkManifest の引数は pkgs / entries / root の 3 つとする
+- [REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d](requirements/20260802-97c1e088-a17e-46d9-a9a1-83d1757d0f7d-mkmanifest-arguments.md) — mkManifest の引数は必須の pkgs / entries / root と任意の identity とする
 - [REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281](requirements/20260802-60e6b49c-9ba1-4552-a0ec-d340421ec281-mkmanifest-return-value.md) — mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す
 - [REQ-2f9205ee-cec5-4072-ac3e-890caae79904](requirements/20260802-2f9205ee-cec5-4072-ac3e-890caae79904-mkmanifest-passthru-rootkind.md) — mkManifest の返り値は passthru で root kind を露出する
 - [REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7](requirements/20260802-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7-entry-identity-by-target-key.md) — entry の識別子は属性キー = target とし一意性は Nix が担保する
@@ -193,7 +193,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 
 - [REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b](requirements/20260802-79ce0a09-f9bd-4e61-ba7f-45fb5643137b-manifest-single-stable-contract.md) — manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する
 - [REQ-250d936c-1df0-491d-a7af-708f38b61f33](requirements/20260802-250d936c-1df0-491d-a7af-708f38b61f33-manifest-v1-only-no-migration.md) — MVP は manifest v1 のみを発行・受理しマイグレーション機構を持たない
-- [REQ-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f](requirements/20260802-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f-manifest-toplevel-fields.md) — manifest.json のトップレベルは schemaVersion / root / entries の 3 フィールドとする
+- [REQ-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f](requirements/20260802-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f-manifest-toplevel-fields.md) — manifest.json のトップレベルは必須の schemaVersion / root / entries と任意の identity とする
 - [REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb](requirements/20260802-dd10d820-e453-4099-a47a-ffb9a7de02fb-manifest-root-object.md) — manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する
 - [REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336](requirements/20260802-0b0cd1e3-bfeb-45c1-978d-e2e11c568336-manifest-entries-array.md) — manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する
 - [REQ-b12fc3c0-d7fe-4003-922c-f3ac0d969b66](requirements/20260802-b12fc3c0-d7fe-4003-922c-f3ac0d969b66-farm-gc-anchor-only.md) — symlink farm は GC アンカー専用でアンカーは store-backed な symlink entry に限る
