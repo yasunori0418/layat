@@ -260,10 +260,17 @@ func mutationPayload[TInfo any](res *engine.Result, cmdErr error) (*outturnPaylo
 		})
 	}
 	if m := res.OriginMismatch; m != nil {
+		curID, recID := "", ""
+		if m.Current.Identity != "" {
+			curID = fmt.Sprintf(", identity %q", m.Current.Identity)
+		}
+		if m.Recorded.Identity != "" {
+			recID = fmt.Sprintf(", identity %q", m.Recorded.Identity)
+		}
 		p.warnings = append(p.warnings, outturn.Warning{
 			Code: "W_LAYAT_ORIGIN_MISMATCH",
-			Message: fmt.Sprintf("this apply's origin (generator %q, entrypoint %q) differs from the last-applied record's (generator %q, entrypoint %q); the later apply wins",
-				m.Current.Generator, m.Current.Entrypoint, m.Recorded.Generator, m.Recorded.Entrypoint),
+			Message: fmt.Sprintf("this apply's origin (generator %q, entrypoint %q%s) differs from the last-applied record's (generator %q, entrypoint %q%s); the later apply wins",
+				m.Current.Generator, m.Current.Entrypoint, curID, m.Recorded.Generator, m.Recorded.Entrypoint, recID),
 			Detail: map[string]any{"recorded": m.Recorded, "current": m.Current},
 		})
 	}

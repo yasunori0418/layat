@@ -428,6 +428,37 @@ func TestMutationPayloadOriginMismatch(t *testing.T) {
 	}
 }
 
+// TestMutationPayloadOriginMismatchIdentity pins a non-empty identity into both the message and
+// the origins of detail, and its absence on the side that has none.
+func TestMutationPayloadOriginMismatchIdentity(t *testing.T) {
+	res := &engine.Result{
+		Profile: "/p",
+		Entries: []manifest.Entry{{SrcKind: "store", Src: "/nix/store/a", Target: "a", Method: "symlink"}},
+		OriginMismatch: &engine.OriginMismatch{
+			Recorded: engine.Origin{Generator: "nix", Entrypoint: "/home/me/dotfiles", Identity: "dotfiles"},
+			Current:  engine.Origin{Generator: "prebuilt", Identity: "other"},
+		},
+	}
+	p, err := mutationPayload[*applyResultInfo](res, nil)
+	if err != nil {
+		t.Fatalf("mutationPayload: %v", err)
+	}
+	const msg = `this apply's origin (generator "prebuilt", entrypoint "", identity "other") differs from the last-applied record's (generator "nix", entrypoint "/home/me/dotfiles", identity "dotfiles"); the later apply wins`
+	if len(p.warnings) != 1 || p.warnings[0].Code != "W_LAYAT_ORIGIN_MISMATCH" || p.warnings[0].Message != msg {
+		t.Fatalf("subject warnings = %+v, want one W_LAYAT_ORIGIN_MISMATCH with %q", p.warnings, msg)
+	}
+
+	sr := subjectResultOf(t, emitPayloadDoc(t, newApplyTestRun, p, nil))
+	warnings, _ := sr["warnings"].([]any)
+	if len(warnings) != 1 {
+		t.Fatalf("subjectResult.warnings = %v, want one", sr["warnings"])
+	}
+	detail, _ := json.Marshal(warnings[0].(map[string]any)["detail"])
+	if want := `{"current":{"generator":"prebuilt","identity":"other"},"recorded":{"entrypoint":"/home/me/dotfiles","generator":"nix","identity":"dotfiles"}}`; string(detail) != want {
+		t.Errorf("detail = %s, want %s", detail, want)
+	}
+}
+
 // TestMutationPayloadPartialFailure pins the reached-state partition: the failed entry carries the
 // error, unreached entries are skipped, completed ones keep their changes, W_LAYAT_UNWOUND is on the
 // subject, and the error is not duplicated in subjectResult.errors[].
