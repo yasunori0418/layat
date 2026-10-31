@@ -33,7 +33,7 @@ references:
 > **`/var/lib/layat/<鍵>`** に切り替わる。鍵は system mode の profileDir と同型で、`--root` なしは `<name>` 直キーになる（→ ADR-0062）。
 >
 > **2026-10-31 改訂注記（ADR-0070）**: 本 ADR §1 の置き場と鍵・§3 の baseline の優先順位・§4 の書き込みの時機と失敗規則は不変。
-> ただし §2 の内容に出所 `origin = {generator, entrypoint}` が加わり、`recordVersion` は 2 になる。§4 の読みは版 1 と 2 を受け付け
+> ただし §2 の内容に出所 `origin = {generator, entrypoint, identity}` が加わり、`recordVersion` は 2 になる。§4 の読みは版 1 と 2 を受け付け
 > （版 1 は origin 無しとして読む）、それ以外の版と未知のフィールドは従来どおり error にする。reset / rollback の書き直しは
 > 記録済みの origin を引き継ぐ（→ ADR-0070）。
 
