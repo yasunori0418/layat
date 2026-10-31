@@ -76,6 +76,8 @@ type Options struct {
 	Backend generation.Backend
 	// Warnf is the warning output sink (nil = stderr). Used to surface foreign symlinks etc.
 	Warnf func(format string, args ...any)
+	// Origin is where this run's link-farm came from, written to the last-applied record (zero = unknown).
+	Origin Origin
 }
 
 // Result is the result report of Apply (for dryrun / report display · test verification).
@@ -599,7 +601,7 @@ func (a *applier) recordPlacement(linkFarm string) error {
 	if err != nil {
 		return fmt.Errorf("layat: cannot read the manifest for the last-applied record: %w", err)
 	}
-	return writeRecord(a.record, a.root, resolved, raw, time.Now())
+	return writeRecord(a.record, a.root, resolved, a.opts.Origin, raw, time.Now())
 }
 
 // reportConflicts lists every planner-detected conflict to stderr (warnf), each followed by a

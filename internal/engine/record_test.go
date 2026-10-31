@@ -25,7 +25,7 @@ func putRecord(t *testing.T, rec paths.Record, linkFarm string, m manifest.Manif
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := writeRecord(rec, "/home/me", linkFarm, raw, time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)); err != nil {
+	if err := writeRecord(rec, "/home/me", linkFarm, Origin{}, raw, time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -69,7 +69,8 @@ func TestWriteRecordRoundTrip(t *testing.T) {
 	m := projectManifest(storeEntry("/nix/store/x", ".", "a"))
 	raw, _ := json.Marshal(m)
 	at := time.Date(2026, 10, 11, 12, 0, 0, 0, time.UTC)
-	if err := writeRecord(rec, root, "/nix/store/lf", raw, at); err != nil {
+	origin := Origin{Generator: "nix", Entrypoint: "/home/me/dotfiles"}
+	if err := writeRecord(rec, root, "/nix/store/lf", origin, raw, at); err != nil {
 		t.Fatal(err)
 	}
 
@@ -77,8 +78,11 @@ func TestWriteRecordRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got.RecordVersion != 1 || got.LinkFarm != "/nix/store/lf" || got.AppliedAt != at.Format(time.RFC3339) {
+	if got.RecordVersion != 2 || got.LinkFarm != "/nix/store/lf" || got.AppliedAt != at.Format(time.RFC3339) {
 		t.Errorf("record = %+v", got)
+	}
+	if got.Origin == nil || *got.Origin != origin {
+		t.Errorf("origin = %+v, want %+v", got.Origin, origin)
 	}
 	if entryTargets(gotM) != "a" {
 		t.Errorf("manifest entries = %s, want a", entryTargets(gotM))
@@ -96,6 +100,62 @@ func TestWriteRecordRoundTrip(t *testing.T) {
 	ents, _ := os.ReadDir(rec.Dir)
 	if len(ents) != 1 || ents[0].Name() != "last-applied.json" {
 		t.Errorf("record dir holds %v, want only last-applied.json", ents)
+	}
+}
+
+// TestWriteRecordOmitsUnknownOrigin verifies an empty entrypoint is left out of origin and an
+// unknown origin leaves origin itself out.
+func TestWriteRecordOmitsUnknownOrigin(t *testing.T) {
+	for _, tc := range []struct {
+		desc   string
+		origin Origin
+		want   string
+	}{
+		{"prebuilt", Origin{Generator: "prebuilt"}, `"origin":{"generator":"prebuilt"}`},
+		{"unknown", Origin{}, ""},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			rec := testRecord(realTempDir(t), "c")
+			if err := writeRecord(rec, "/home/me", "/nix/store/lf", tc.origin, []byte(`{"schemaVersion":1,"root":{"rootKind":"home"},"entries":[]}`), time.Now()); err != nil {
+				t.Fatal(err)
+			}
+			data, err := os.ReadFile(rec.File)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !strings.Contains(string(data), `"recordVersion":2`) {
+				t.Errorf("record = %s, want recordVersion 2", data)
+			}
+			if tc.want == "" && strings.Contains(string(data), `"origin"`) || tc.want != "" && !strings.Contains(string(data), tc.want) {
+				t.Errorf("record = %s, want origin %q", data, tc.want)
+			}
+		})
+	}
+}
+
+// TestReadRecordVersions verifies versions 1 and 2 are read, version 1 and a null or absent
+// origin as no origin, and other origin values as given.
+func TestReadRecordVersions(t *testing.T) {
+	const rest = `"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","manifest":{"schemaVersion":1,"root":{"rootKind":"home"},"entries":[]}`
+	for _, tc := range []struct {
+		desc, body string
+		want       *Origin
+	}{
+		{"v1", `{"recordVersion":1,` + rest + `}`, nil},
+		{"v2 nix", `{"recordVersion":2,"origin":{"generator":"nix","entrypoint":"/e"},` + rest + `}`, &Origin{Generator: "nix", Entrypoint: "/e"}},
+		{"v2 other generator", `{"recordVersion":2,"origin":{"generator":"x"},` + rest + `}`, &Origin{Generator: "x"}},
+		{"v2 origin null", `{"recordVersion":2,"origin":null,` + rest + `}`, nil},
+		{"v2 origin absent", `{"recordVersion":2,` + rest + `}`, nil},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			rec, _, err := parseRecord([]byte(tc.body))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if (rec.Origin == nil) != (tc.want == nil) || rec.Origin != nil && *rec.Origin != *tc.want {
+				t.Errorf("origin = %+v, want %+v", rec.Origin, tc.want)
+			}
+		})
 	}
 }
 
@@ -119,7 +179,7 @@ func TestReadRecordRejectsInvalid(t *testing.T) {
 	for _, tc := range []struct{ desc, body string }{
 		{"broken JSON", `{"recordVersion":1,`},
 		{"recordVersion missing", `{"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","manifest":` + m + `}`},
-		{"recordVersion 2", `{"recordVersion":2,"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","manifest":` + m + `}`},
+		{"recordVersion 3", `{"recordVersion":3,"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","manifest":` + m + `}`},
 		{"linkFarm missing", `{"recordVersion":1,"appliedAt":"2026-10-11T00:00:00Z","manifest":` + m + `}`},
 		{"linkFarm wrong type", `{"recordVersion":1,"linkFarm":3,"appliedAt":"2026-10-11T00:00:00Z","manifest":` + m + `}`},
 		{"appliedAt missing", `{"recordVersion":1,"linkFarm":"/lf","manifest":` + m + `}`},
@@ -127,6 +187,10 @@ func TestReadRecordRejectsInvalid(t *testing.T) {
 		{"manifest null", `{"recordVersion":1,"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","manifest":null}`},
 		{"manifest wrong type", `{"recordVersion":1,"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","manifest":"x"}`},
 		{"unknown field", `{"recordVersion":1,"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","extra":true,"manifest":` + m + `}`},
+		{"origin wrong type", `{"recordVersion":2,"origin":"nix","linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","manifest":` + m + `}`},
+		{"origin without generator", `{"recordVersion":2,"origin":{"entrypoint":"/e"},"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","manifest":` + m + `}`},
+		{"origin entrypoint wrong type", `{"recordVersion":2,"origin":{"generator":"nix","entrypoint":1},"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","manifest":` + m + `}`},
+		{"origin unknown field", `{"recordVersion":2,"origin":{"generator":"nix","extra":1},"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","manifest":` + m + `}`},
 		{"manifest without rootKind", `{"recordVersion":1,"linkFarm":"/lf","appliedAt":"2026-10-11T00:00:00Z","manifest":{"schemaVersion":1,"root":{},"entries":[]}}`},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
@@ -662,8 +726,8 @@ func TestResetRecordFromProfile(t *testing.T) {
 	if _, err := Reset(resetOpts(root, state, []string{"a"}, false, nil)); err != nil {
 		t.Fatal(err)
 	}
-	if got, m := mustReadRecord(t, rec); got.LinkFarm != lf.LinkFarm || entryTargets(m) != "b" {
-		t.Errorf("record = %s / %s, want %s / b", got.LinkFarm, entryTargets(m), lf.LinkFarm)
+	if got, m := mustReadRecord(t, rec); got.LinkFarm != lf.LinkFarm || entryTargets(m) != "b" || got.Origin != nil {
+		t.Errorf("record = %s / %s / origin %+v, want %s / b / no origin", got.LinkFarm, entryTargets(m), got.Origin, lf.LinkFarm)
 	}
 }
 
@@ -729,5 +793,43 @@ func TestResetPartialFailureJoinsRecordError(t *testing.T) {
 	_, err := Reset(resetOpts(root, state, nil, false, nil))
 	if err == nil || !strings.Contains(err.Error(), "cannot remove copy target") || !isRecordErr(err) {
 		t.Fatalf("Reset = %v, want the removal error joined with the record write failure", err)
+	}
+}
+
+// TestRecordRewritesCarryOrigin verifies reset and rollback rewrite the record with the origin
+// the last apply recorded.
+func TestRecordRewritesCarryOrigin(t *testing.T) {
+	origin := Origin{Generator: "nix", Entrypoint: "/home/me/dotfiles"}
+	for _, tc := range []struct {
+		desc    string
+		rewrite func(root, state string, fake *generation.Fake) error
+		want    string
+	}{
+		{"rollback", func(root, state string, fake *generation.Fake) error {
+			_, err := Rollback(RollbackOptions{Name: "cfg", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state, Backend: fake})
+			return err
+		}, "a,a2"},
+		{"reset", func(root, state string, fake *generation.Fake) error {
+			_, err := Reset(resetOpts(root, state, []string{"a"}, false, nil))
+			return err
+		}, "b2"},
+	} {
+		t.Run(tc.desc, func(t *testing.T) {
+			root, state := realTempDir(t), realTempDir(t)
+			fake := &generation.Fake{}
+			for _, target := range []string{"a2", "b2"} {
+				lf := writeLinkFarm(t, homeManifest(storeEntry(makeSrc(t, "x"), ".", "a"), storeEntry(makeSrc(t, "x"), ".", target)))
+				if _, err := Apply(Options{LinkFarm: lf, Name: "cfg", RootOverride: root, StateDir: state, Backend: fake, Origin: origin}); err != nil {
+					t.Fatal(err)
+				}
+			}
+			if err := tc.rewrite(root, state, fake); err != nil {
+				t.Fatal(err)
+			}
+			got, m := mustReadRecord(t, paths.ResolveRecord(state, "cfg", manifest.RootKindHome, root, true))
+			if entryTargets(m) != tc.want || got.Origin == nil || *got.Origin != origin {
+				t.Errorf("record = %s / origin %+v, want %s / %+v", entryTargets(m), got.Origin, tc.want, origin)
+			}
+		})
 	}
 }

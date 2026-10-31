@@ -206,7 +206,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 
 	// 6. reflect the plan onto the FS in Apply's stages: PreRemove, symlinks, place-once copies
 	//    (recopy always off), then stale removal. There is no Backup stage.
-	a := &applier{opts: Options{Warnf: warnf}, result: &Result{Root: root, ProfileDir: prof.Dir, Profile: prof.Profile}}
+	a := &applier{opts: Options{Warnf: warnf, Origin: recordedOrigin(b.record)}, result: &Result{Root: root, ProfileDir: prof.Dir, Profile: prof.Profile}}
 	a.profile = prof
 	a.record = rec
 	a.root = root
