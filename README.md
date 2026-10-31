@@ -226,6 +226,11 @@ nvim = layat.lib.mkManifest {
 };
 ```
 
+`mkManifest` also takes an optional `identity` (a free-form, non-empty string naming the
+config). Give the same `identity` here and to `layat.configs.<name>.identity` of the
+home-manager module when both apply the same config: applying it alternately from
+home-manager and standalone then does not warn that the origin differs.
+
 #### Package environments on PATH
 
 layat has no dedicated function for this: put a `pkgs.buildEnv` result in an entry's `src`.
@@ -284,6 +289,9 @@ Per-config option:
 - `layat.configs.<name>.subdir` (nullable string, default `null`) — places every target of that
   config under `$HOME/<subdir>/`; the root stays pinned to home. An absolute path, a `..` escape
   or `""` is an eval error.
+- `layat.configs.<name>.identity` (nullable string, default `null`) — passed to `mkManifest` as
+  `identity`. Manifests with the same `identity` do not warn of an origin mismatch when applied
+  across home-manager and standalone. `""` is an eval error.
 
 ```nix
 layat.configs.nvim = {
