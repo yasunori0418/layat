@@ -113,6 +113,7 @@ func TestWriteRecordOmitsUnknownOrigin(t *testing.T) {
 		want   string
 	}{
 		{"prebuilt", Origin{Generator: "prebuilt"}, `"origin":{"generator":"prebuilt"}`},
+		{"identity", Origin{Generator: "prebuilt", Identity: "dotfiles"}, `"origin":{"generator":"prebuilt","identity":"dotfiles"}`},
 		{"unknown", Origin{}, ""},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
@@ -145,6 +146,7 @@ func TestReadRecordVersions(t *testing.T) {
 		{"v1", `{"recordVersion":1,` + rest + `}`, nil},
 		{"v2 nix", `{"recordVersion":2,"origin":{"generator":"nix","entrypoint":"/e"},` + rest + `}`, &Origin{Generator: "nix", Entrypoint: "/e"}},
 		{"v2 other generator", `{"recordVersion":2,"origin":{"generator":"x"},` + rest + `}`, &Origin{Generator: "x"}},
+		{"v2 identity", `{"recordVersion":2,"origin":{"generator":"nix","entrypoint":"/e","identity":"dotfiles"},` + rest + `}`, &Origin{Generator: "nix", Entrypoint: "/e", Identity: "dotfiles"}},
 		{"v2 origin null", `{"recordVersion":2,"origin":null,` + rest + `}`, nil},
 		{"v2 origin absent", `{"recordVersion":2,` + rest + `}`, nil},
 	} {
@@ -798,9 +800,10 @@ func TestResetPartialFailureJoinsRecordError(t *testing.T) {
 }
 
 // TestRecordRewritesCarryOrigin verifies reset and rollback rewrite the record with the origin
-// the last apply recorded.
+// the last apply recorded, its manifest's identity included.
 func TestRecordRewritesCarryOrigin(t *testing.T) {
 	origin := Origin{Generator: "nix", Entrypoint: "/home/me/dotfiles"}
+	want := Origin{Generator: "nix", Entrypoint: "/home/me/dotfiles", Identity: "dotfiles"}
 	for _, tc := range []struct {
 		desc    string
 		rewrite func(root, state string, fake *generation.Fake) error
@@ -819,7 +822,9 @@ func TestRecordRewritesCarryOrigin(t *testing.T) {
 			root, state := realTempDir(t), realTempDir(t)
 			fake := &generation.Fake{}
 			for _, target := range []string{"a2", "b2"} {
-				lf := writeLinkFarm(t, homeManifest(storeEntry(makeSrc(t, "x"), ".", "a"), storeEntry(makeSrc(t, "x"), ".", target)))
+				m := homeManifest(storeEntry(makeSrc(t, "x"), ".", "a"), storeEntry(makeSrc(t, "x"), ".", target))
+				m.Identity = "dotfiles"
+				lf := writeLinkFarm(t, m)
 				if _, err := Apply(Options{LinkFarm: lf, Name: "cfg", RootOverride: root, StateDir: state, Backend: fake, Origin: origin}); err != nil {
 					t.Fatal(err)
 				}
@@ -828,21 +833,23 @@ func TestRecordRewritesCarryOrigin(t *testing.T) {
 				t.Fatal(err)
 			}
 			got, m := mustReadRecord(t, paths.ResolveRecord(state, "cfg", manifest.RootKindHome, root, true))
-			if entryTargets(m) != tc.want || got.Origin == nil || *got.Origin != origin {
-				t.Errorf("record = %s / origin %+v, want %s / %+v", entryTargets(m), got.Origin, tc.want, origin)
+			if entryTargets(m) != tc.want || got.Origin == nil || *got.Origin != want {
+				t.Errorf("record = %s / origin %+v, want %s / %+v", entryTargets(m), got.Origin, tc.want, want)
 			}
 		})
 	}
 }
 
 // TestApplyReportsOriginMismatch verifies apply, its dryrun and its generation skip report a
-// recorded origin that differs from this run's, and stay silent when either side has none.
+// recorded origin that differs from this run's, and stay silent when either side has none. When
+// both sides carry a manifest identity, only the identities are compared.
 func TestApplyReportsOriginMismatch(t *testing.T) {
 	nix := Origin{Generator: "nix", Entrypoint: "/home/me/dotfiles"}
 	prebuilt := Origin{Generator: "prebuilt"}
 	for _, tc := range []struct {
 		desc             string
 		recorded, cur    Origin
+		recID, curID     string
 		v1, dryRun, skip bool
 		want             bool
 	}{
@@ -854,10 +861,23 @@ func TestApplyReportsOriginMismatch(t *testing.T) {
 		{desc: "v1 record", recorded: nix, cur: prebuilt, v1: true},
 		{desc: "no recorded origin", cur: prebuilt},
 		{desc: "no current origin", recorded: nix},
+		{desc: "same identity", recorded: nix, cur: prebuilt, recID: "dotfiles", curID: "dotfiles"},
+		{desc: "same identity dryrun", recorded: nix, cur: prebuilt, recID: "dotfiles", curID: "dotfiles", dryRun: true},
+		{desc: "same identity generation skip", recorded: prebuilt, cur: nix, recID: "dotfiles", curID: "dotfiles", skip: true},
+		{desc: "other identity", recorded: nix, cur: nix, recID: "dotfiles", curID: "other", want: true},
+		{desc: "other identity dryrun", recorded: nix, cur: nix, recID: "dotfiles", curID: "other", dryRun: true, want: true},
+		{desc: "no recorded identity", recorded: nix, cur: prebuilt, curID: "dotfiles", want: true},
+		{desc: "no current identity", recorded: nix, cur: prebuilt, recID: "dotfiles", want: true},
+		{desc: "one identity same origin", recorded: nix, cur: nix, recID: "dotfiles"},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
+			farm := func(identity string) string {
+				m := projectManifest(storeEntry(makeSrc(t, "x"), ".", "a"))
+				m.Identity = identity
+				return writeLinkFarm(t, m)
+			}
 			root, state := realTempDir(t), realTempDir(t)
-			lf := writeLinkFarm(t, projectManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+			lf := farm(tc.recID)
 			fake := &generation.Fake{}
 			if _, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake, Origin: tc.recorded}); err != nil {
 				t.Fatal(err)
@@ -879,7 +899,14 @@ func TestApplyReportsOriginMismatch(t *testing.T) {
 				}
 			}
 			if !tc.skip {
-				lf = writeLinkFarm(t, projectManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+				lf = farm(tc.curID)
+			}
+			recorded, cur := tc.recorded, tc.cur
+			if tc.recorded != (Origin{}) {
+				recorded.Identity = tc.recID
+			}
+			if tc.cur != (Origin{}) {
+				cur.Identity = tc.curID
 			}
 
 			var warns []string
@@ -891,9 +918,9 @@ func TestApplyReportsOriginMismatch(t *testing.T) {
 			if res.GenerationSkipped != tc.skip {
 				t.Errorf("GenerationSkipped = %v, want %v", res.GenerationSkipped, tc.skip)
 			}
-			wantOrigin := tc.cur
+			wantOrigin := cur
 			if tc.dryRun {
-				wantOrigin = tc.recorded
+				wantOrigin = recorded
 			}
 			if got, _ := mustReadRecord(t, projectRecord(state, root)); recordedOrigin(got) != wantOrigin {
 				t.Errorf("recorded origin = %+v, want %+v", got.Origin, wantOrigin)
@@ -910,11 +937,18 @@ func TestApplyReportsOriginMismatch(t *testing.T) {
 				}
 				return
 			}
-			if want := (OriginMismatch{Recorded: tc.recorded, Current: tc.cur}); res.OriginMismatch == nil || *res.OriginMismatch != want {
+			if want := (OriginMismatch{Recorded: recorded, Current: cur}); res.OriginMismatch == nil || *res.OriginMismatch != want {
 				t.Errorf("OriginMismatch = %+v, want %+v", res.OriginMismatch, want)
 			}
-			want := fmt.Sprintf(`layat: this apply's origin (generator %q, entrypoint %q) differs from the last-applied record's (generator %q, entrypoint %q); the later apply wins`,
-				tc.cur.Generator, tc.cur.Entrypoint, tc.recorded.Generator, tc.recorded.Entrypoint)
+			describe := func(o Origin) string {
+				s := fmt.Sprintf("generator %q, entrypoint %q", o.Generator, o.Entrypoint)
+				if o.Identity != "" {
+					s += fmt.Sprintf(", identity %q", o.Identity)
+				}
+				return s
+			}
+			want := fmt.Sprintf(`layat: this apply's origin (%s) differs from the last-applied record's (%s); the later apply wins`,
+				describe(cur), describe(recorded))
 			if len(got) != 1 || got[0] != want {
 				t.Errorf("origin warnings = %q, want [%q]", got, want)
 			}

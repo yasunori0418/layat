@@ -77,6 +77,7 @@ type Options struct {
 	// Warnf is the warning output sink (nil = stderr). Used to surface foreign symlinks etc.
 	Warnf func(format string, args ...any)
 	// Origin is where this run's link-farm came from, written to the last-applied record (zero = unknown).
+	// Its Identity is taken from the loaded manifest.
 	Origin Origin
 }
 
@@ -173,6 +174,7 @@ func Apply(opts Options) (*Result, error) {
 			return nil, fmt.Errorf("layat: cannot read the link-farm's manifest (%s): %w", opts.LinkFarm, err)
 		}
 		a.manifest = m
+		a.opts.Origin.Identity = m.Identity
 		if rootKind == "" {
 			rootKind = m.Root.RootKind
 		}
@@ -243,6 +245,7 @@ func Apply(opts Options) (*Result, error) {
 		}
 		a.opts.LinkFarm = linkFarm
 		a.manifest = m
+		a.opts.Origin.Identity = m.Identity
 	}
 
 	// 5. read the baseline: the last-applied record, else the profile's current generation
@@ -471,6 +474,7 @@ func (a *applier) dryRun() (*Result, error) {
 		}
 		a.opts.LinkFarm = linkFarm
 		a.manifest = m
+		a.opts.Origin.Identity = m.Identity
 	}
 
 	base, err := a.readBaseline()
@@ -597,10 +601,17 @@ func (a *applier) readBaseline() (baseline, error) {
 		a.opts.Warnf("layat: could not read the previous generation's manifest; skipping stale removal: %v", b.profileErr)
 		b.manifest = nil
 	}
-	if recorded := recordedOrigin(b.record); recorded != (Origin{}) && a.opts.Origin != (Origin{}) && recorded != a.opts.Origin {
+	if recorded := recordedOrigin(b.record); recorded != (Origin{}) && a.opts.Origin != (Origin{}) && originsDiffer(recorded, a.opts.Origin) {
 		a.result.OriginMismatch = &OriginMismatch{Recorded: recorded, Current: a.opts.Origin}
-		a.opts.Warnf("layat: this apply's origin (generator %q, entrypoint %q) differs from the last-applied record's (generator %q, entrypoint %q); the later apply wins",
-			a.opts.Origin.Generator, a.opts.Origin.Entrypoint, recorded.Generator, recorded.Entrypoint)
+		curID, recID := "", ""
+		if a.opts.Origin.Identity != "" {
+			curID = fmt.Sprintf(", identity %q", a.opts.Origin.Identity)
+		}
+		if recorded.Identity != "" {
+			recID = fmt.Sprintf(", identity %q", recorded.Identity)
+		}
+		a.opts.Warnf("layat: this apply's origin (generator %q, entrypoint %q%s) differs from the last-applied record's (generator %q, entrypoint %q%s); the later apply wins",
+			a.opts.Origin.Generator, a.opts.Origin.Entrypoint, curID, recorded.Generator, recorded.Entrypoint, recID)
 	}
 	return b, err
 }

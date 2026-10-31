@@ -21,11 +21,22 @@ import (
 // which carries no origin.
 const recordVersion = 2
 
-// Origin is where the link-farm of an apply came from: the generator's name and, for the nix
-// generator, the absolute path of the discovered entrypoint. The zero Origin is unknown.
+// Origin is where the link-farm of an apply came from: the generator's name, for the nix
+// generator the absolute path of the discovered entrypoint, and the manifest's identity when it
+// declares one. The zero Origin is unknown.
 type Origin struct {
 	Generator  string `json:"generator"`
 	Entrypoint string `json:"entrypoint,omitempty"`
+	Identity   string `json:"identity,omitempty"`
+}
+
+// originsDiffer reports whether two known origins name different sources: by identity alone
+// when both carry one, otherwise by generator and entrypoint.
+func originsDiffer(recorded, current Origin) bool {
+	if recorded.Identity != "" && current.Identity != "" {
+		return recorded.Identity != current.Identity
+	}
+	return recorded.Generator != current.Generator || recorded.Entrypoint != current.Entrypoint
 }
 
 // lastApplied is the on-disk last-applied record.
@@ -91,6 +102,7 @@ func parseRecord(data []byte) (*lastApplied, *manifest.Manifest, error) {
 		Origin        *struct {
 			Generator  *string `json:"generator"`
 			Entrypoint string  `json:"entrypoint"`
+			Identity   string  `json:"identity"`
 		} `json:"origin"`
 		Manifest json.RawMessage `json:"manifest"`
 	}
@@ -125,7 +137,7 @@ func parseRecord(data []byte) (*lastApplied, *manifest.Manifest, error) {
 		Manifest:      raw.Manifest,
 	}
 	if raw.Origin != nil && *raw.RecordVersion == recordVersion {
-		rec.Origin = &Origin{Generator: *raw.Origin.Generator, Entrypoint: raw.Origin.Entrypoint}
+		rec.Origin = &Origin{Generator: *raw.Origin.Generator, Entrypoint: raw.Origin.Entrypoint, Identity: raw.Origin.Identity}
 	}
 	return rec, &m, nil
 }
