@@ -672,6 +672,61 @@ func TestResetPayload(t *testing.T) {
 	}
 }
 
+// TestResetDryrunPayload: a dryrun reset carries the same items and planned-removal changes as a
+// real one, under dryRun true and without a generation slot.
+func TestResetDryrunPayload(t *testing.T) {
+	res := &engine.ResetResult{
+		DryRun: true,
+		Entries: []manifest.Entry{
+			{SrcKind: "store", Src: "/nix/store/s1", Subpath: "f", Target: "s1", Method: "symlink"},
+			{SrcKind: "store", Src: "/nix/store/c1", Target: "c1", Method: "copy"},
+		},
+		RemovedSymlinks: []string{"s1"},
+		RemovedCopies:   []string{"c1"},
+	}
+	p, err := resetPayload[*resetResultInfo](res, nil) // the dryrun wiring passes cmdErr nil (→ runReset)
+	if err != nil {
+		t.Fatalf("resetPayload: %v", err)
+	}
+	if len(p.items) != 2 {
+		t.Fatalf("items = %+v, want every selected entry", p.items)
+	}
+	s1 := findItem(t, p.items, "s1")
+	if s1.Kind != "entry" || s1.Status != outturn.ItemSuccess || s1.Info.Method != "symlink" || s1.Info.Subpath != "f" {
+		t.Errorf("symlink item = %+v, want a success entry with method/subpath", s1)
+	}
+	if c1 := findItem(t, p.items, "c1"); c1.Kind != "entry" || c1.Status != outturn.ItemSuccess || c1.Info.Method != "copy" {
+		t.Errorf("copy item = %+v, want a success entry with method copy", c1)
+	}
+	if cs := changesFor(t, p.changes, "s1"); len(cs) != 1 || cs[0].Kind != outturn.ChangeRemove || !cs[0].Reversible {
+		t.Errorf("planned symlink removal = %+v, want one reversible remove", cs)
+	}
+	if cs := changesFor(t, p.changes, "c1"); len(cs) != 1 || cs[0].Kind != outturn.ChangeRemove || cs[0].Reversible {
+		t.Errorf("planned copy removal = %+v, want one irreversible remove", cs)
+	}
+
+	r, buf := newResetTestRun()
+	r.dryRun = true
+	r.beginSubject("default").setPayload(p)
+	if err := r.emit(nil); err != nil {
+		t.Fatalf("emit: %v", err)
+	}
+	checker, err := conformance.NewDefaultChecker()
+	if err != nil {
+		t.Fatalf("conformance.NewDefaultChecker: %v", err)
+	}
+	if findings := checker.Check(buf.Bytes()); len(findings) > 0 {
+		t.Fatalf("conformance findings:\n%s\ndocument: %s", strings.Join(findings, "\n"), buf.String())
+	}
+	doc := decodeEnvelope(t, buf)
+	if doc["status"] != "success" || doc["dryRun"] != true {
+		t.Errorf("status/dryRun = %v/%v, want success/true", doc["status"], doc["dryRun"])
+	}
+	if gen, ok := subjectResultOf(t, doc)["generation"]; ok {
+		t.Errorf("generation = %v, want the slot absent for reset --dryrun", gen)
+	}
+}
+
 // TestResetPayloadPartialFailure: removed-so-far keeps its changes, the failing target carries the
 // error, and the rest is skipped.
 func TestResetPayloadPartialFailure(t *testing.T) {
