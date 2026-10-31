@@ -436,14 +436,14 @@ func TestMutationPayloadOriginMismatchIdentity(t *testing.T) {
 		Entries: []manifest.Entry{{SrcKind: "store", Src: "/nix/store/a", Target: "a", Method: "symlink"}},
 		OriginMismatch: &engine.OriginMismatch{
 			Recorded: engine.Origin{Generator: "nix", Entrypoint: "/home/me/dotfiles", Identity: "dotfiles"},
-			Current:  engine.Origin{Generator: "prebuilt", Identity: "other"},
+			Current:  engine.Origin{Generator: "prebuilt"},
 		},
 	}
 	p, err := mutationPayload[*applyResultInfo](res, nil)
 	if err != nil {
 		t.Fatalf("mutationPayload: %v", err)
 	}
-	const msg = `this apply's origin (generator "prebuilt", entrypoint "", identity "other") differs from the last-applied record's (generator "nix", entrypoint "/home/me/dotfiles", identity "dotfiles"); the later apply wins`
+	const msg = `this apply's origin (generator "prebuilt", entrypoint "") differs from the last-applied record's (generator "nix", entrypoint "/home/me/dotfiles", identity "dotfiles"); the later apply wins`
 	if len(p.warnings) != 1 || p.warnings[0].Code != "W_LAYAT_ORIGIN_MISMATCH" || p.warnings[0].Message != msg {
 		t.Fatalf("subject warnings = %+v, want one W_LAYAT_ORIGIN_MISMATCH with %q", p.warnings, msg)
 	}
@@ -454,7 +454,7 @@ func TestMutationPayloadOriginMismatchIdentity(t *testing.T) {
 		t.Fatalf("subjectResult.warnings = %v, want one", sr["warnings"])
 	}
 	detail, _ := json.Marshal(warnings[0].(map[string]any)["detail"])
-	if want := `{"current":{"generator":"prebuilt","identity":"other"},"recorded":{"entrypoint":"/home/me/dotfiles","generator":"nix","identity":"dotfiles"}}`; string(detail) != want {
+	if want := `{"current":{"generator":"prebuilt"},"recorded":{"entrypoint":"/home/me/dotfiles","generator":"nix","identity":"dotfiles"}}`; string(detail) != want {
 		t.Errorf("detail = %s, want %s", detail, want)
 	}
 }

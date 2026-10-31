@@ -847,11 +847,11 @@ func TestApplyReportsOriginMismatch(t *testing.T) {
 	nix := Origin{Generator: "nix", Entrypoint: "/home/me/dotfiles"}
 	prebuilt := Origin{Generator: "prebuilt"}
 	for _, tc := range []struct {
-		desc             string
-		recorded, cur    Origin
-		recID, curID     string
-		v1, dryRun, skip bool
-		want             bool
+		desc                    string
+		recorded, cur           Origin
+		recID, curID            string
+		v1, dryRun, skip, build bool
+		want                    bool
 	}{
 		{desc: "apply", recorded: nix, cur: prebuilt, want: true},
 		{desc: "dryrun", recorded: nix, cur: prebuilt, dryRun: true, want: true},
@@ -869,6 +869,11 @@ func TestApplyReportsOriginMismatch(t *testing.T) {
 		{desc: "no recorded identity", recorded: nix, cur: prebuilt, curID: "dotfiles", want: true},
 		{desc: "no current identity", recorded: nix, cur: prebuilt, recID: "dotfiles", want: true},
 		{desc: "one identity same origin", recorded: nix, cur: nix, recID: "dotfiles"},
+		{desc: "one current identity same origin", recorded: nix, cur: nix, curID: "dotfiles"},
+		{desc: "same identity build", recorded: nix, cur: prebuilt, recID: "dotfiles", curID: "dotfiles", build: true},
+		{desc: "other identity build", recorded: nix, cur: nix, recID: "dotfiles", curID: "other", build: true, want: true},
+		{desc: "same identity dryrun build", recorded: nix, cur: prebuilt, recID: "dotfiles", curID: "dotfiles", dryRun: true, build: true},
+		{desc: "other identity dryrun build", recorded: nix, cur: nix, recID: "dotfiles", curID: "other", dryRun: true, build: true, want: true},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			farm := func(identity string) string {
@@ -910,8 +915,14 @@ func TestApplyReportsOriginMismatch(t *testing.T) {
 			}
 
 			var warns []string
-			res, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
-				Origin: tc.cur, DryRun: tc.dryRun, Warnf: collectFormatted(&warns)})
+			opts := Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake,
+				Origin: tc.cur, DryRun: tc.dryRun, Warnf: collectFormatted(&warns)}
+			if tc.build {
+				built := lf
+				opts.LinkFarm, opts.RootKind = "", manifest.RootKindProject
+				opts.Build = func(string) (string, error) { return built, nil }
+			}
+			res, err := Apply(opts)
 			if err != nil {
 				t.Fatal(err)
 			}
