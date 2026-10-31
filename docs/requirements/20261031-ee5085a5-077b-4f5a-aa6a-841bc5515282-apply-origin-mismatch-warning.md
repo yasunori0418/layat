@@ -14,7 +14,8 @@ specification: |
   SHALL be omitted when `generator` is `prebuilt`. apply SHALL write the record with
   `recordVersion` 2 and the origin of the current run.
   Reading SHALL accept `recordVersion` 1 and 2; any other version and any unknown field
-  SHALL remain an error; inside `origin`, a missing `generator`, a field of the wrong type
+  SHALL remain an error; an `origin` that is neither an object nor `null` SHALL be an error
+  (`null` is read as no origin), and inside `origin`, a missing `generator`, a field of the wrong type
   or an unknown field SHALL likewise be an error. Other values of `generator` and
   `entrypoint` SHALL be read as given and used in the comparison. A version 1 record SHALL
   be read as having no origin.
@@ -28,8 +29,6 @@ specification: |
   When reset or rollback rewrites the record, it SHALL carry over the recorded origin; when
   there is no recorded origin (including when no record exists and the baseline was taken
   from the profile), it SHALL write `recordVersion` 2 with `origin` omitted.
-  `status` SHALL NOT expose the origin, and no mode that stops apply on a mismatch SHALL be
-  provided.
 specification_ja: |
   last-applied 記録は、直近に記録を書いた apply の出所（reset と rollback は apply ではなく、
   出所を変えない）を表す
@@ -38,7 +37,8 @@ specification_ja: |
   が `nix` のときは発見した entrypoint の絶対パスとし、`prebuilt` のときは省略しなければ
   ならない。apply は `recordVersion` 2 と今回の実行の origin で記録を書かなければならない。
   読みは `recordVersion` 1 と 2 を受け付けなければならず、それ以外の版と未知のフィールドは
-  従来どおり error としなければならない。`origin` の中でも、`generator` の欠落・各フィールドの
+  従来どおり error としなければならない。`origin` がオブジェクトでも `null` でもなければ error
+  としなければならない（`null` は origin 無しとして読む）。`origin` の中でも、`generator` の欠落・各フィールドの
   型違い・未知のフィールドは同じく error としなければならない。それ以外の `generator` と `entrypoint` の
   値は読んだまま受け付け、比較に使わなければならない。版 1 の記録は origin 無しとして
   読まなければならない。
@@ -51,7 +51,6 @@ specification_ja: |
   reset と rollback が記録を書き直すときは記録済みの origin を引き継がなければならない。
   記録済みの origin が無ければ（記録が無く profile から baseline を取った場合を含む）、
   `origin` を省いて `recordVersion` 2 で書かなければならない。
-  `status` は origin を出してはならず、食い違いで apply を止めるモードを設けてはならない。
 ---
 # REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282: apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する
 
@@ -62,7 +61,8 @@ specification_ja: |
   組んだ）か `prebuilt`（`--manifest` で渡された）。`entrypoint` は `nix` のとき発見した
   entrypoint の絶対パスで、`prebuilt` では省く。
 - **版**: apply は `recordVersion` 2 で書く。読みは 1 と 2 を受け付け、1 は origin 無しとして
-  読む。それ以外の版と未知のフィールドは従来どおり error。`origin` の中の `generator` の
+  読む。それ以外の版と未知のフィールドは従来どおり error。`origin` がオブジェクトでも `null`
+  でもなければ error（`null` は origin 無し）。`origin` の中の `generator` の
   欠落・各フィールドの型違い・未知のフィールドも error。それ以外の値は読んだまま比較に使う。
 - **食い違いの警告**: apply（`--dryrun` と generation skip 経路を含む）は配置の前に記録の
   origin と今回の origin を比べる。両方あって食い違えば stderr に 1 行、`--json` では
