@@ -9,6 +9,7 @@ let
       lib,
       root,
       entries ? { },
+      identity ? null,
     }:
     let
       t = import ./types.nix lib;
@@ -58,6 +59,7 @@ let
 
       # ---- Cross-field / path validation ----
       assertions = lib.concatLists [
+        (lib.optional (identity == "") "layat: identity must not be empty")
         # A root subdir must stay inside root and must not normalize to empty.
         (lib.optional subdirInvalid "layat: invalid root subdir (absolute path, escapes root via `..`, or empty): ${rawSubdir}")
         # method = "copy" cannot be combined with an out-of-store / root-relative marker.
@@ -106,7 +108,8 @@ let
         schemaVersion = 1;
         root = rootInfo;
         entries = normEntries;
-      };
+      }
+      // lib.optionalAttrs (identity != null) { inherit identity; };
     in
     # Run every assertion through the evaluation gate with throwIf.
     lib.foldl' (acc: msg: lib.throwIf true msg acc) result assertions;
@@ -116,10 +119,18 @@ let
       pkgs,
       root,
       entries ? { },
+      identity ? null,
     }:
     let
       lib = pkgs.lib;
-      norm = normalizeManifest { inherit lib root entries; };
+      norm = normalizeManifest {
+        inherit
+          lib
+          root
+          entries
+          identity
+          ;
+      };
 
       manifestJson = pkgs.writeText "manifest.json" (builtins.toJSON norm);
 
