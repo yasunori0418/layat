@@ -2,6 +2,7 @@ package engine
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -890,9 +891,16 @@ func TestApplyReportsOriginMismatch(t *testing.T) {
 			if res.GenerationSkipped != tc.skip {
 				t.Errorf("GenerationSkipped = %v, want %v", res.GenerationSkipped, tc.skip)
 			}
+			wantOrigin := tc.cur
+			if tc.dryRun {
+				wantOrigin = tc.recorded
+			}
+			if got, _ := mustReadRecord(t, projectRecord(state, root)); recordedOrigin(got) != wantOrigin {
+				t.Errorf("recorded origin = %+v, want %+v", got.Origin, wantOrigin)
+			}
 			var got []string
 			for _, w := range warns {
-				if strings.Contains(w, "origin") {
+				if strings.HasPrefix(w, "layat: this apply's origin") {
 					got = append(got, w)
 				}
 			}
@@ -905,8 +913,10 @@ func TestApplyReportsOriginMismatch(t *testing.T) {
 			if want := (OriginMismatch{Recorded: tc.recorded, Current: tc.cur}); res.OriginMismatch == nil || *res.OriginMismatch != want {
 				t.Errorf("OriginMismatch = %+v, want %+v", res.OriginMismatch, want)
 			}
-			if len(got) != 1 {
-				t.Errorf("origin warnings = %q, want one line", got)
+			want := fmt.Sprintf(`layat: this apply's origin (generator %q, entrypoint %q) differs from the last-applied record's (generator %q, entrypoint %q); the later apply wins`,
+				tc.cur.Generator, tc.cur.Entrypoint, tc.recorded.Generator, tc.recorded.Entrypoint)
+			if len(got) != 1 || got[0] != want {
+				t.Errorf("origin warnings = %q, want [%q]", got, want)
 			}
 		})
 	}
