@@ -192,7 +192,7 @@ nvim = layat.lib.mkManifest {
 };
 ```
 
-`mkManifest` は任意の `identity`(config を名指す空でない自由文字列)も受け取る。同じ config を home-manager モジュールからも適用するなら、ここと `layat.configs.<name>.identity` に同じ `identity` を与える。home-manager と standalone から交互に apply しても、出所の食い違いの警告は出ない。
+`mkManifest` は任意の `identity`(config を識別する空でない自由文字列)も受け取る。同じ config を home-manager モジュールからも適用するなら、ここと `layat.configs.<name>.identity` に同じ `identity` を与える。home-manager と standalone から交互に apply しても、出所の食い違いの警告は出ない。
 
 #### `PATH` に載せるパッケージ環境
 
