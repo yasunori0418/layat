@@ -237,6 +237,22 @@ if [ "$GENS_BEFORE" -eq 2 ]; then
 else
 	e2e_fail "reset 前の世代が 2 件でない: $GENS_BEFORE"
 fi
+# dryrun は非 dryrun と同じ items / changes を運び、FS・profile・記録を動かさない。
+RECORD_BEFORE="$(cat "$RECORD")"
+ENV_RESET_DRYRUN="$E2E_WORK/reset-dryrun.json"
+run_json 0 "$ENV_RESET_DRYRUN" reset home --dryrun
+assert_json "$ENV_RESET_DRYRUN" "status=success・dryRun=true・command=reset" \
+	'.status == "success" and .dryRun == true and .command == "reset"'
+assert_json "$ENV_RESET_DRYRUN" "items は選択済み entry（.cfg/a）1 件で status は success" \
+	'.results[0].result.items | map({kind, target: .info.target, status}) == [{kind: "entry", target: ".cfg/a", status: "success"}]'
+assert_json "$ENV_RESET_DRYRUN" "changes は全て remove（.cfg/a の可逆な撤去予定 1 件）" \
+	'.results[0].result.changes | (length == 1) and all(.kind == "remove" and .reversible == true)'
+assert_json "$ENV_RESET_DRYRUN" "generation スロットを持たない" \
+	'.results[0] | has("generation") | not'
+assert_symlink "$HOME/.cfg/a"
+assert_file_eq "$HOME/.cfg/a/file" "AAA"
+assert_symlink "$PROFILE" "$PROFILE_BEFORE"
+assert_file_eq "$RECORD" "$RECORD_BEFORE"
 ENV_RESET="$E2E_WORK/reset.json"
 run_json 0 "$ENV_RESET" reset home --yes
 assert_absent "$HOME/.cfg/a"
