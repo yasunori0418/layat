@@ -237,7 +237,10 @@ assert_json "$ENV_RESET_DRYRUN" "status=success・dryRun=true・command=reset" \
 assert_json "$ENV_RESET_DRYRUN" "items は選択済み entry（.cfg/a）1 件で status は success" \
 	'.results[0].result.items | map({kind, target: .info.target, status}) == [{kind: "entry", target: ".cfg/a", status: "success"}]'
 assert_json "$ENV_RESET_DRYRUN" "changes は全て remove（.cfg/a の可逆な撤去予定 1 件）" \
-	'.results[0].result.changes | (length == 1) and all(.kind == "remove" and .reversible == true)'
+	'.results[0].result as $r
+	 | ($r.items | map({key: .id, value: .info.target}) | from_entries) as $t
+	 | [$r.changes[] | {kind, reversible, target: $t[.itemId]}]
+	   == [{kind: "remove", reversible: true, target: ".cfg/a"}]'
 assert_json "$ENV_RESET_DRYRUN" "generation スロットを持たない" \
 	'.results[0] | has("generation") | not'
 assert_symlink "$HOME/.cfg/a"
