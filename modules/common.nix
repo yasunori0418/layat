@@ -46,6 +46,16 @@ in
               the empty string are eval errors.
             '';
           };
+          options.identity = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            example = "dotfiles";
+            description = ''
+              Free-form identifier of this config, recorded in its manifest.json. When the last-applied
+              record and this apply both carry one, only the identifiers are compared for an origin
+              mismatch. null = no identifier. The empty string is an eval error.
+            '';
+          };
         }
       );
       default = { };
