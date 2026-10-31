@@ -248,4 +248,19 @@ else
 	e2e_fail "reset が世代の本数を動かしてはいけない: $GENS_BEFORE → $GENS_AFTER"
 fi
 
+e2e_step "last-applied 記録の出所: nix 生成器の apply は recordVersion 2 と origin を書く"
+layat apply home
+assert_json "$RECORD" "記録は recordVersion 2・origin.generator は nix・origin.entrypoint は絶対パス" \
+	'.recordVersion == 2 and .origin.generator == "nix" and (.origin.entrypoint | startswith("/"))'
+
+e2e_step "apply --manifest --json: 記録と出所が食い違えば警告して後勝ちで続行する"
+ORIGIN_PLACED_BEFORE="$(readlink "$HOME/.cfg/b")"
+ENV_ORIGIN="$E2E_WORK/origin-mismatch.json"
+run_json 0 "$ENV_ORIGIN" apply home --manifest "$(jq -r .linkFarm "$RECORD")"
+assert_json "$ENV_ORIGIN" "subject 警告に W_LAYAT_ORIGIN_MISMATCH を含む" \
+	'[.results[0].warnings[]?.code] | index("W_LAYAT_ORIGIN_MISMATCH") != null'
+assert_symlink "$HOME/.cfg/b" "$ORIGIN_PLACED_BEFORE"
+assert_json "$RECORD" "後勝ちで記録の origin.generator が prebuilt になる" \
+	'.origin.generator == "prebuilt"'
+
 e2e_finish
