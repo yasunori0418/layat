@@ -34,7 +34,8 @@ reset / rollback が書き直す場合）では `origin` 自体を省く。
   `<state>/layat`）。backref `.root` も同じ階層に置く。
 - **読み書きは engine が持つ**。読みは壊れた JSON・必須フィールドの欠落や型違い・
   未知のフィールド・`recordVersion` が 1 でも 2 でもない記録を error にする（「記録なし」に
-  倒さない）。`origin` の中の `generator` の欠落・各フィールドの型違い・未知のフィールドも error で、それ以外の
+  倒さない）。`origin` がオブジェクトでも `null` でもなければ error で、`null` は `origin` 無しとして
+  読む。`origin` の中の `generator` の欠落・各フィールドの型違い・未知のフィールドも error で、それ以外の
   値は読んだまま比較に使う。版 1 は `origin` 無しとして読む。書きは常に版 2。
   書きは temp + rename で atomic に行い、全 FS 操作の成功直後・世代 commit の前に呼ぶ。
   記録ファイルは rename 前に 0644 にする（root kind で分けない。ディレクトリは無ければ 0755 で作り、umask に従う）。

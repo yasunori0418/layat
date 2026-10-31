@@ -17,7 +17,7 @@ last-applied 記録の出所（`origin`）の書き・読み・比較・引き�
 | 版 1 と 2 の読み | 版 1 と版 2 の記録はどちらも読める。版 1 は `origin` 無しとして読む。それ以外の版と未知のフィールドは error。`origin` がオブジェクトでも `null` でもなければ error で、`null` は `origin` 無しとして読む。`origin` の中の `generator` の欠落・各フィールドの型違い・未知のフィールドも error。それ以外の値は読んだまま比較に使う |
 | 出所の引き継ぎ | reset / rollback の書き直しは記録済みの `origin` を残す。記録に `origin` が無いとき（記録が無く profile から baseline を取ったときを含む）は、`origin` を省いて版 2 で書く |
 | 食い違い時の警告 | 記録と今回の `origin` が `generator` で違うとき、`entrypoint` だけが違うときのどちらでも、apply（`--dryrun` と generation skip 経路を含む）は stderr に 1 行と `W_LAYAT_ORIGIN_MISMATCH`（`detail = {recorded, current}`）を出し、配置は続行して後勝ちになる。一致すれば警告しない |
-| `origin` の無い記録の比較スキップ | 記録に `origin` が無ければ（版 1、または `origin` を省いた版 2）比べず、警告を出さない |
+| `origin` の無い記録の比較スキップ | 記録に `origin` が無ければ（版 1、`origin` を省いた版 2、`origin: null` の版 2）比べず、警告を出さない |
 
 ## 対応する CASE
 
