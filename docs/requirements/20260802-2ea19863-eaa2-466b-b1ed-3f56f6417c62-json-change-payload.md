@@ -118,10 +118,9 @@ specification_ja: |
   振り分けなければならない。コードは `W_LAYAT_FOREIGN_SYMLINK` / `W_LAYAT_COPY_FOREIGN` /
   `W_LAYAT_STALE_MISMATCH` / `W_LAYAT_STALE_NON_SYMLINK` / `W_LAYAT_COPY_ORPHAN` /
   `W_LAYAT_UNWOUND` としなければならず、`detail = {target}` を付けなければならない。
-  last-applied 記録に出所があり、今回の apply の出所と食い違うときは（比較の規則は
-  REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282）、subject 警告
+  last-applied 記録に出所があり、今回の apply の出所と食い違うときは、subject 警告
   `W_LAYAT_ORIGIN_MISMATCH` を `detail = {recorded, current}` で `subjectResult.warnings` に
-  載せなければならない。stderr の人間向けテキストは常時併存させなければならない。
+  載せなければならない。比較の規則は REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282 の担当。stderr の人間向けテキストは常時併存させなければならない。
 
   `reset` の changes は実際に除去したもののみでなければならない。`--backup` の退避と
   空親ディレクトリ剪定は entry の状態遷移ではないため changes / items に載せてはならない。

@@ -27,8 +27,8 @@ satisfies:
 ```
 
 `origin` は prebuilt 生成器（`--manifest`）なら `{ "generator": "prebuilt" }` で、`entrypoint` を
-持たない。出所が分からない書き直し（版 1 の記録や、記録が無く profile から baseline を取ったときに
-reset / rollback が書き直す場合）では `origin` 自体を省く。
+持たない。reset / rollback が版 1 の記録を書き直す場合や、記録が無く profile から baseline を
+取って書き直す場合のように、出所が分からないときは `origin` 自体を省く。
 
 - **鍵の解決は `internal/paths`** が profileDir と同じ規則で行う（基底だけが
   `<state>/layat`）。backref `.root` も同じ階層に置く。

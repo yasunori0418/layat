@@ -24,11 +24,11 @@ references:
 ## 背景
 
 home mode の config は名前だけで profileDir と last-applied 記録の鍵が決まる（→ ADR-0058 §1）。
-home-manager モジュールは `apply --all --manifest` で prebuilt 生成器を通り、standalone の CLI は
-entrypoint を発見して nix 生成器を通る。両者が同じ config 名（典型は `default`）を使うと、
+home-manager モジュールは `apply --all --manifest` で prebuilt 生成器を使い、standalone の CLI は
+entrypoint を発見して nix 生成器を使う。両者が同じ config 名（典型は `default`）を使うと、
 profileDir と記録を共有する。片方の apply は、もう片方が置いた entry を「前回置いたが今回の
-manifest に無い」ものとして stale 除去する。交互に走らせると互いの entry を除去し合うが、
-target の衝突ではないので foreign symlink の warning（→ ADR-0015）にも掛からず、何も出ない。
+manifest に無い」ものとして stale 除去する。交互に実行すると互いの entry を除去し合うが、
+target の衝突ではないので foreign symlink の warning（→ ADR-0015）の対象にもならず、何も出ない。
 
 同一 profileDir の後勝ちは ADR-0013 §2 が決めた方針で、これ自体は覆さない。欠けているのは、
 後勝ちが「別の出所からの上書き」として起きていることを利用者が知る手段である。
@@ -61,7 +61,7 @@ reset と rollback が記録を書き直すときは記録済みの origin を�
 ### 5. 版 1 しか読めない engine との非互換を受容する
 
 版 1 しか読めない engine は版 2 の記録で error になる。home-manager が pin した `layatPackage` と
-PATH 上の CLI の版がずれる場合がこれに当たる。pre-1.0 の既知事項として受容する。
+PATH 上の CLI のバージョンがずれる場合がこれに当たる。pre-1.0 の既知事項として受容する。
 
 ### 6. status への露出と停止モードは採らない
 
@@ -91,7 +91,7 @@ PATH 上の CLI の版がずれる場合がこれに当たる。pre-1.0 の既�
 
 - **食い違いを error にして止める**: 移行の正当な操作も止まり、解除フラグが要る。後勝ちの方針
   （ADR-0013）を実質的に覆す。
-- **`status` に出所を出す**: 気付くのは `status` を打った利用者だけで、上書きが起きた apply の時点
+- **`status` に出所を出す**: 気付くのは `status` を実行した利用者だけで、上書きが起きた apply の時点
   では見えない。警告を apply に出せば足りる。
 - **鍵に出所を含めて profileDir を分ける**: 共有そのものは無くなるが、移行時に旧 profileDir と
   記録が孤立し、旧出所が置いた entry を誰も撤去しなくなる。

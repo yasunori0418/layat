@@ -30,9 +30,8 @@ specification: |
   there is no recorded origin (including when no record exists and the baseline was taken
   from the profile), it SHALL write `recordVersion` 2 with `origin` omitted.
 specification_ja: |
-  last-applied 記録は、直近に記録を書いた apply の出所（reset と rollback は apply ではなく、
-  出所を変えない）を表す
-  `origin = {generator, entrypoint}` を持たなければならない。`generator` は、link-farm を nix 生成器が組んだときは `nix`、
+  last-applied 記録は、直近に記録を書いた apply の出所を表す `origin = {generator, entrypoint}`
+  を持たなければならない。reset と rollback は apply ではなく、出所を変えない。`generator` は、link-farm を nix 生成器が組んだときは `nix`、
   `--manifest` で渡されたときは `prebuilt` としなければならない。`entrypoint` は `generator`
   が `nix` のときは発見した entrypoint の絶対パスとし、`prebuilt` のときは省略しなければ
   ならない。apply は `recordVersion` 2 と今回の実行の origin で記録を書かなければならない。
@@ -44,8 +43,8 @@ specification_ja: |
   読まなければならない。
   apply（`--dryrun` と generation skip 経路を含む）は、配置の前に記録の origin と今回の
   origin を比べなければならない。両方あって `generator` か `entrypoint` が食い違えば、stderr へ
-  warning を 1 行出し、`subjectResult.warnings` に subject 警告 `W_LAYAT_ORIGIN_MISMATCH`
-  （`detail = {recorded, current}`。どちらも origin のオブジェクト）を載せて続行しなければ
+  warning を 1 行出し、`subjectResult.warnings` に subject 警告 `W_LAYAT_ORIGIN_MISMATCH` を
+  `detail = {recorded, current}`（どちらも origin のオブジェクト）付きで載せて続行しなければ
   ならない。profileDir を共有する他の場合と同じく後勝ちとしなければならない。記録に origin
   が無いときは比べてはならず、警告してはならない。
   reset と rollback が記録を書き直すときは記録済みの origin を引き継がなければならない。
