@@ -62,7 +62,10 @@ specification: |
   `subjectResult.warnings` when it is outside it. The codes SHALL be
   `W_LAYAT_FOREIGN_SYMLINK`, `W_LAYAT_COPY_FOREIGN`, `W_LAYAT_STALE_MISMATCH`,
   `W_LAYAT_STALE_NON_SYMLINK`, `W_LAYAT_COPY_ORPHAN` and `W_LAYAT_UNWOUND`, with
-  `detail = {target}`. The human-facing text on stderr SHALL always coexist.
+  `detail = {target}`. The subject warning `W_LAYAT_ORIGIN_MISMATCH` SHALL be placed in
+  `subjectResult.warnings` with `detail = {recorded, current}` when the origin in the
+  last-applied record differs from the origin of the current apply. The human-facing text
+  on stderr SHALL always coexist.
 
   The changes of `reset` SHALL be only what was actually removed. A rename aside by
   `--backup` and empty-parent-directory pruning are not state transitions of an entry and
@@ -114,7 +117,9 @@ specification_ja: |
   振り分けなければならない。コードは `W_LAYAT_FOREIGN_SYMLINK` / `W_LAYAT_COPY_FOREIGN` /
   `W_LAYAT_STALE_MISMATCH` / `W_LAYAT_STALE_NON_SYMLINK` / `W_LAYAT_COPY_ORPHAN` /
   `W_LAYAT_UNWOUND` としなければならず、`detail = {target}` を付けなければならない。
-  stderr の人間向けテキストは常時併存させなければならない。
+  last-applied 記録の出所と今回の apply の出所が食い違うときは、subject 警告
+  `W_LAYAT_ORIGIN_MISMATCH` を `detail = {recorded, current}` で `subjectResult.warnings` に
+  載せなければならない。stderr の人間向けテキストは常時併存させなければならない。
 
   `reset` の changes は実際に除去したもののみでなければならない。`--backup` の退避と
   空親ディレクトリ剪定は entry の状態遷移ではないため changes / items に載せてはならない。
@@ -167,7 +172,9 @@ specification_ja: |
   残した stale symlink）/ `W_LAYAT_STALE_NON_SYMLINK`（symlink でないため残した stale
   target）（後 2 者 = 保守的不変条件による keep・reset の kept-foreign も同じ。当該 item は
   success のまま = 方針による不作為）/ `W_LAYAT_COPY_ORPHAN`（copy orphan・subject 級）/
-  `W_LAYAT_UNWOUND`（上記・subject 級）。`detail = {target}`。stderr の人間向けテキストは
+  `W_LAYAT_UNWOUND`（上記・subject 級）。`detail = {target}`。加えて
+  `W_LAYAT_ORIGIN_MISMATCH`（last-applied 記録と今回の出所の食い違い・subject 級。
+  `detail = {recorded, current}`。規則は REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282）。stderr の人間向けテキストは
   常時併存。
 - **`reset` の changes**: 実際に除去したもののみ（symlink remove = `reversible:true` +
   `info.old` = 記録 dest、copy 削除 = `reversible:false`・info なし）。確認プロンプトで
@@ -192,4 +199,4 @@ specification_ja: |
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「#131 変更系ペイロード」とその配下の全項目。
 
-決定の実体は ADR-0043 §4 / §6 / §8。
+決定の実体は ADR-0043 §4 / §6 / §8。`W_LAYAT_ORIGIN_MISMATCH` は ADR-0070 §3。
