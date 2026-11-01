@@ -662,6 +662,34 @@ either: delete its targets (listed by `layat status`) by hand, then continue fro
 
 ---
 
+## Migrating from home-manager
+
+When a `home.file` entry and a layat entry aim at the same target, layat decides by its own
+record, not by where the existing link points:
+
+| What is at the target | Without `--backup` | With `--backup` |
+|---|---|---|
+| a symlink this config's previous generation recorded, still pointing as recorded | replaced silently | same |
+| any other symlink (foreign — e.g. one `home.file` placed) | replaced with a warning (last-wins) | same; a symlink is never renamed aside |
+| a regular file, or a real directory holding foreign entries (e.g. `recursive = true`) | conflict; nothing is placed and apply exits 1 | renamed to `<target>.layat-backup`, then placed |
+
+The foreign warning reads `layat: overwriting an unrecorded symlink (foreign; last-wins): <target>`.
+Once replaced, the link is in layat's record and later applies are silent. A leftover
+`<target>.layat-backup` makes `--backup` stop with a conflict instead of overwriting it.
+
+To move a target from `home.file` to layat:
+
+1. Delete the entry from `home.file` and add the same target to a `layat.configs.<name>.entries`
+   (or a standalone `layat.<name>`) in the same change, so the two never both declare it.
+2. Check what sits at each target first. For a standalone `layat.<name>`,
+   `layat apply <name> --dryrun` lists each action with no side effects and exits 2 on a
+   conflict. With the module, set `layat.backup.enable = true` if a regular file or directory
+   sits at a target.
+3. Switch (or `layat apply <name>`). A `home.file` link still there is replaced with the foreign
+   warning above; that warning is expected once per migrated target.
+
+---
+
 ## Comparison with other tools
 
 The axis is not "feature presence" but **"hide placement behind a module abstraction, or

@@ -528,6 +528,26 @@ generator = "nix"
 
 ---
 
+## home-manager からの移行
+
+`home.file` の entry と layat の entry が同じ target を狙うとき、layat は既存の link の向き先ではなく、自分の記録で扱いを決める。
+
+| target にあるもの | `--backup` なし | `--backup` あり |
+|---|---|---|
+| この config の前世代が記録し、記録どおりを指している symlink | 黙って置き換える | 同じ |
+| それ以外の symlink(foreign。`home.file` が置いたものなど) | warning を出して置き換える(後勝ち) | 同じ。symlink は退避しない |
+| 通常ファイル、または foreign なものを含む実ディレクトリ(`recursive = true` など) | conflict。何も配置せず exit 1 | `<target>.layat-backup` へ退避してから配置する |
+
+foreign の warning は `layat: overwriting an unrecorded symlink (foreign; last-wins): <target>` と出る。一度置き換えた link は layat の記録に入るので、次の apply からは出ない。`<target>.layat-backup` が残っていると、`--backup` は上書きせずに conflict で止まる。
+
+target を `home.file` から layat へ移す手順:
+
+1. `home.file` から entry を消し、同じ target を `layat.configs.<name>.entries`(standalone なら `layat.<name>`)へ足す。両方が同時に宣言する状態を作らないよう、1 回の変更で行う。
+2. 先に各 target に何があるかを確かめる。standalone の `layat.<name>` なら、`layat apply <name> --dryrun` が副作用なしで各操作を一覧し、conflict があれば exit 2 で終わる。モジュールで、target に通常ファイルやディレクトリがあるなら `layat.backup.enable = true` にする。
+3. switch する(または `layat apply <name>`)。`home.file` の link が残っていれば、上の foreign の warning を出して置き換える。移した target ごとに 1 回出るのは想定どおり。
+
+---
+
 ## 他ツールとの比較
 
 軸は「機能の有無」ではなく、**「配置をモジュール抽象の裏に隠すか、ユーザーが制御する純粋関数として露出させるか」**。
