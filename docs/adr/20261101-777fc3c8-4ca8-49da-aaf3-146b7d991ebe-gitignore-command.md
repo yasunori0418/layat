@@ -1,7 +1,7 @@
 ---
 id: "ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe"
 type: adr
-name: "gitignore コマンド"
+name: "配置 target を gitignore コマンドで stdout へ列挙する"
 status: 採用
 origin: "ADR-0005 の決定「.gitignore 生成は専用コマンドで stdout 出力のみ」・ADR-0013 §6・ADR-0023 §5 の (5a) を書き直した"
 justifies:
@@ -10,7 +10,7 @@ justifies:
 references:
   - "ADR-4dca6ef4-2791-48d5-aa82-7037630968a6"
 ---
-# ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe: gitignore コマンド
+# ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe: 配置 target を gitignore コマンドで stdout へ列挙する
 
 - ステータス: 採用
 - 日付: 2026-11-01

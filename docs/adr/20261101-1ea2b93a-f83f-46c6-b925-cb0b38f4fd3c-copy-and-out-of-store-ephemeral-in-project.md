@@ -1,7 +1,7 @@
 ---
 id: "ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c"
 type: adr
-name: "project mode の copy / out-of-store は ephemeral"
+name: "project mode では copy と out-of-store も ephemeral として扱う"
 status: 採用
 origin: "ADR-0005 の決定「copy / out-of-store も同原則を継承」と ADR-0019 §3 を書き直した"
 justifies:
@@ -10,7 +10,7 @@ references:
   - "ADR-c4ad9987-850e-4834-bbea-d8de3b073548"
   - "ADR-4dca6ef4-2791-48d5-aa82-7037630968a6"
 ---
-# ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c: project mode の copy / out-of-store は ephemeral
+# ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c: project mode では copy と out-of-store も ephemeral として扱う
 
 - ステータス: 採用
 - 日付: 2026-11-01

@@ -1,7 +1,7 @@
 ---
 id: "ADR-c4ad9987-850e-4834-bbea-d8de3b073548"
 type: adr
-name: "copy は世代外で place-once"
+name: "copy は世代の外に place-once で置く"
 status: 採用
 origin: "ADR-0002 の決定「copy は世代から除外する」と「copy の扱い」節を書き直した"
 justifies:
@@ -11,7 +11,7 @@ justifies:
 references:
   - "ADR-0020"
 ---
-# ADR-c4ad9987-850e-4834-bbea-d8de3b073548: copy は世代外で place-once
+# ADR-c4ad9987-850e-4834-bbea-d8de3b073548: copy は世代の外に place-once で置く
 
 - ステータス: 採用
 - 日付: 2026-11-01
