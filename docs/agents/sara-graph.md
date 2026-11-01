@@ -20,7 +20,7 @@ flowchart BT
     QA[quality]
     TP[test_plan]
     INF[infrastructure]
-    ADR[adr]
+    ADR["adr / sara_adr / legacy_adr"]
     RISK[risk]
     TC[test_condition]
     CASE[test_case]
@@ -45,27 +45,34 @@ flowchart BT
 ```
 
 Solid arrows point from an item to its parent side; the only roots are `solution` and
-`adr`. Dotted arrows are `justifies`, which ties the otherwise-independent `adr` root into
+the three ADR types. Dotted arrows are `justifies`, which ties the otherwise-independent ADR roots into
 the tree (one edge minimum per ADR — an ADR without one is an orphan warning). Two
 families of relations are deliberately absent from the figure: the peer `depends_on`
 (`requirement`, `design`, `quality`, `test_plan` and `infrastructure` may each depend on
 an item of their own type), and the downstream inverses (`is_refined_by`, `derives`, …),
 which mirror the primary direction one-to-one.
 
-ADR-to-ADR peer relations are drawn separately. Both correspond to a header line in the
-ADR document (see `docs/adr/README.md`):
+ADR-to-ADR peer relations are drawn separately (rules in `docs/agents/adr-rules.md`, their
+mapping to the ADR document in `docs/adr/README.md`). `supersedes` replaces a whole ADR,
+whose status becomes `廃止`; `revises` survives only on the frozen `legacy_adr`:
 
 ```mermaid
 flowchart LR
-    subgraph rev["ADR header 「改訂対象:」"]
-        A["adr (revising side)"] -.->|revises| B["adr (revised side)"]
-        B -.->|is_revised_by| A
+    subgraph sup["whole-document replacement"]
+        A["adr / sara_adr (successor)"] -.->|supersedes| B["adr / sara_adr / legacy_adr (廃止)"]
+        B -.->|superseded_by| A
+    end
+    subgraph rev["legacy_adr header 「改訂対象:」"]
+        E["legacy_adr (revising side)"] -.->|revises| F["legacy_adr (revised side)"]
+        F -.->|is_revised_by| E
     end
     subgraph ref["ADR header 「関連:」"]
-        C[adr] -.->|references| D[adr]
+        C["adr / sara_adr / legacy_adr"] -.->|references| D["adr / sara_adr / legacy_adr"]
         D -.->|is_referenced_by| C
     end
 ```
+
+A `legacy_adr` may only reference another `legacy_adr`.
 
 ## Where a norm belongs: `requirement`, `quality` or `test_plan`
 

@@ -6,11 +6,11 @@
 
 - [型と prefix・配置ディレクトリ・親の一覧と ID 規約](../CLAUDE.md)（「ドキュメント」節）
 - [型グラフの図と、item をどの型・どこへ張るかの判断規約](agents/sara-graph.md)
-- [ADR の運用と `justifies` の選定基準](adr/README.md)
+- [ADR の規則と `justifies` の選定基準](agents/adr-rules.md)・[layat への当てはめ](adr/README.md)
 
 ## 型構成
 
-型は 11 個。各型が書くものは次のとおり。
+型は 13 個。各型が書くものは次のとおり。
 
 | 型 | 書くもの |
 |---|---|
@@ -22,6 +22,8 @@
 | `test_plan` | テスト計画活動の成果物（テストスコープ・スコープ外宣言・テストレベル・アプローチ・テスト容易性）|
 | `infrastructure` | 開発・提供・稼働を支える技術基盤（CI/CD・リリース・開発環境・配信・ホスティング・クラウド）。開発基盤は `quality` を、稼働基盤は `design` を満たす |
 | `adr` | 意思決定の記録。仕様ツリーから独立し、`justifies` で決めた item へ接続する |
+| `sara_adr` | sara による品質管理機構についての意思決定の記録。`adr` と同じフィールドと関係を持つ |
+| `legacy_adr` | 連番で採番していた凍結済みの意思決定の記録。新規には起こさない |
 | `risk` | 満たされない懸念。`requirement` か `design` を脅かす |
 | `test_condition` | リスクを潰すためのテスト条件 |
 | `test_case` | 具体的なテストケース（テスト資産 1 つに 1 件）|
@@ -37,8 +39,12 @@
 ## ID 形式
 
 ID の表記・ファイル名・起票手順（`sara-new`）は [CLAUDE.md](../CLAUDE.md) の「ID 規約」節が持つ。
-`model.yaml` の `id_format` はその規約をテンプレートで表したもので、`adr` だけが
+`model.yaml` の `id_format` はその規約をテンプレートで表したもので、`legacy_adr` だけが
 `{prefix}-{seq:04}`（連番）、他の型は `{prefix}-{uuid4}` を使う。
+
+`adr` と `legacy_adr` は prefix `ADR` を共有し、`id_format` の違い（UUID か連番か）で区別する。
+`sara init` は prefix を小文字にした別名（`adr`）を先に宣言された型へ解決するので、`model.yaml` では
+`adr` を `legacy_adr` より前に置く。
 
 sara 0.10.0 以降は `id_format` が採番・補完・検証を駆動する。パースできないテンプレートは
 schema のロード時に拒否され、sara は組み込みモデルへ戻るため、カスタム型が全て unknown item
@@ -52,9 +58,8 @@ type になる。使えるプレースホルダは `{prefix}` / `{id}` / `{seq[:
 | `requirement` / `quality` / `test_plan` | `specification` | 英語の規範文。RFC2119 キーワードを含める |
 | `requirement` / `quality` / `test_plan` | `specification_ja` | `specification` と対になる日本語の規範文。sara はこのフィールドを検査しない |
 | `infrastructure` | `dod` | `docs/dev/definition-of-done.md` の項目 ID（`DOD-01` …）のリスト。任意 |
-| `adr` | `status` | `提案` / `採用` の 2 値 |
-| `adr` | `status_note` | ステータス行のカッコ書き注記 |
-| `adr` | `issues` / `origin` | item にできない外部参照（GitHub Issue 番号・起点となったセッション等）|
+| `adr` / `sara_adr` / `legacy_adr` | `status` | `提案` / `採用` / `不採用` / `廃止` の 4 値 |
+| `adr` / `sara_adr` / `legacy_adr` | `issues` / `origin` | item にできない外部参照（GitHub Issue 番号・起点となったセッション等）|
 | `risk` | `likelihood` / `impact` / `level` | `high` / `medium` / `low`。採点規約と `level` の導出は [sara-graph.md](agents/sara-graph.md) |
 | `test_case` | `target` | 対応するテスト資産の正準表記（単一値）|
 
@@ -64,8 +69,9 @@ type になる。使えるプレースホルダは `{prefix}` / `{id}` / `{seq[:
 `dod` の値が実在する DoD 項目かは検証されない。sara は text フィールドの中身を見ないので、
 存在しない項目 ID を書いても `sara check` は通る。
 
-`adr` の `status` に「廃止」は無い。ADR 全体の失効を表す `supersedes` を定義していないためで、
-両者は対で扱う。
+`status` の `廃止` と関係の `supersedes` は対で扱う。`supersedes` で指された ADR は `廃止` で、
+`廃止` の ADR は 1 本以上の `supersedes` から指される。sara はこの対応を検証しないので、
+`dev/tests/adr-supersede.sh` が frontmatter から確かめる。
 
 ### `test_case` の `target`
 
@@ -92,9 +98,11 @@ CASE とテスト資産の 1:1 を照合する。本文の `## 対象` 節は人
 | `mitigates` | upstream | 緩和 |
 | `covers` | upstream | 網羅 |
 | `depends_on` | peer | 同じ型の item どうしの依存 |
-| `revises` | peer | ADR ヘッダの「改訂対象:」。節単位の部分改訂 |
+| `supersedes` | peer | `adr` / `sara_adr` から置き換えた ADR へ。文書丸ごとの失効 |
+| `revises` | peer | `legacy_adr` ヘッダの「改訂対象:」。節単位の部分改訂 |
 | `references` | peer | ADR ヘッダの「関連:」。改訂を伴わない参照 |
 
-`refines` / `derives_from` / `satisfies` / `depends_on` / `justifies` は組み込み由来、
+`refines` / `derives_from` / `satisfies` / `depends_on` / `justifies` / `supersedes` は組み込み由来、
 `revises` / `references` / `threatens` / `mitigates` / `covers` は独自定義。
-組み込みの `supersedes`（ADR 全体の失効）は定義せず、改訂は `revises` で表す。
+`adr` と `sara_adr` は `revises` を持たず、決定を変えるときは ADR を丸ごと書き直して `supersedes` で
+置き換える。
