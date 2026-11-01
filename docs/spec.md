@@ -155,7 +155,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [REQ-5c2e64c3-09a7-4ae8-b60c-4f1ccabce4fd](requirements/20260802-5c2e64c3-09a7-4ae8-b60c-4f1ccabce4fd-json-emit-timing.md) — エンベロープはコマンド完了時に 1 回だけ出し成立条件を満たさない実行では出さない
 - [REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62](requirements/20260802-2ea19863-eaa2-466b-b1ed-3f56f6417c62-json-change-payload.md) — 変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く
 - [REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303](requirements/20260802-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303-json-readonly-payload.md) — 読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す
-- [REQ-a47fbfb0-c808-42e9-b2ad-767c933494d6](requirements/20261101-a47fbfb0-c808-42e9-b2ad-767c933494d6-prune-json-payload.md) — prune --json は削除系列と残した系列をトップレベル info の removed / skipped に載せる
+- [REQ-a47fbfb0-c808-42e9-b2ad-767c933494d6](requirements/20261101-a47fbfb0-c808-42e9-b2ad-767c933494d6-prune-json-payload.md) — prune --json はトップレベル info の removed に削除系列を、skipped に判定か削除に至れず残した系列を載せる
 - [REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5](requirements/20260802-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5-json-all-subject-results.md) — --all は config ごとの SubjectResult を単一実行と同一形状で積む
 - [REQ-9341fa5d-836e-4023-af53-cc7d273438d1](requirements/20260802-9341fa5d-836e-4023-af53-cc7d273438d1-json-error-layering.md) — エンベロープのエラーは主体の有無で層を分けコードを分類する
 - [REQ-57137302-de29-4f71-a565-034cd5de080b](requirements/20260802-57137302-de29-4f71-a565-034cd5de080b-json-item-id-derivation.md) — item id は identity の JCS を SHA-256 した小文字 hex とする
