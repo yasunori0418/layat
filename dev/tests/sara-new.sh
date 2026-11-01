@@ -73,7 +73,8 @@ prefix_unique=1
 for pair in "${model_pairs[@]}"; do
   model_type="${pair%% *}"
   model_p="${pair##* }"
-  if [[ -n "${model_type_of_prefix[$model_p]:-}" && "$model_type" != legacy_adr && "${model_type_of_prefix[$model_p]}" != legacy_adr ]]; then
+  shared="${model_type_of_prefix[$model_p]:-}"
+  if [[ -n "$shared" && ! ("$model_p" == ADR && "$shared $model_type" =~ ^(adr\ legacy_adr|legacy_adr\ adr)$) ]]; then
     fault "model.yaml の prefix $model_p が重複している（${model_type_of_prefix[$model_p]} と $model_type）"
     prefix_unique=0
   fi
