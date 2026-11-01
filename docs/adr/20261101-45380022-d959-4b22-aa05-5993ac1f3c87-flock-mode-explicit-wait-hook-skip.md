@@ -1,7 +1,7 @@
 ---
 id: "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"
 type: adr
-name: "flock は明示実行で wait、hook 実行で skip"
+name: "flock は明示実行で待ち、hook 実行でスキップする"
 status: 採用
 origin: "engine の設計と実行時セマンティクスの確定（2026-06-11〜06-13）。ADR-0006 §「決定」の並行実行・ADR-0013 §2 を書き直した"
 justifies:
@@ -10,12 +10,13 @@ justifies:
 references:
   - "ADR-0021"
   - "ADR-0022"
+  - "ADR-0031"
 ---
-# ADR-45380022-d959-4b22-aa05-5993ac1f3c87: flock は明示実行で wait、hook 実行で skip
+# ADR-45380022-d959-4b22-aa05-5993ac1f3c87: flock は明示実行で待ち、hook 実行でスキップする
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0021, ADR-0022
+- 関連: ADR-0021, ADR-0022, ADR-0031
 - 起点: engine の設計と実行時セマンティクスの確定（2026-06-11〜06-13）。ADR-0006 §「決定」の並行実行・ADR-0013 §2 を書き直した
 
 ## 背景

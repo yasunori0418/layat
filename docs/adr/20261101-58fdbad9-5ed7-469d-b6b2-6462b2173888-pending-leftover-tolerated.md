@@ -18,7 +18,7 @@ references:
 
 ## 背景
 
-apply は link-farm を profileDir の `.pending` に out-link を張って build し、世代のコミットに成功したら
+apply は link-farm を profileDir の `.pending` に out-link を張って build し、適用に成功したら
 `.pending` を消す。コミットの前に apply が失敗すると `.pending` が残り、使われない link-farm を GC から
 守り続ける。
 
