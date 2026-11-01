@@ -19,15 +19,15 @@ justifies:
 
 `lib.mkManifest` の入力（`entries` と `root`）が流れ込む経路は 2 つある。CLI や entrypoint から
 `mkManifest` を直接呼ぶ経路と、home-manager / NixOS のモジュールの `layat.entries` オプションを
-通る経路である。`mkOption` に型を書いても、型の検査が走るのは `lib.evalModules` を通したときだけ
-なので、型をオプションに書くだけでは直接呼ぶ経路が検査されずに素通りする。
+通る経路である。`mkOption` に型を書いても、型の検査が行われるのは `lib.evalModules` を通したときだけ
+なので、型をオプションに書くだけでは直接呼ぶ経路の入力が検査されないまま通る。
 
 `lib.types`・`mkOption`・`lib.evalModules` は nixpkgs の lib の中核で、NixOS や home-manager の
 ものではない。
 
 ## 決定
 
-`mkManifest` 自身が `lib.evalModules` を回して `entries` と `root` を検査・正規化する。設定だけで
+`mkManifest` 自身が `lib.evalModules` で `entries` と `root` を検査・正規化する。設定だけで
 判定できる誤りは、この検査で評価時に止める。
 
 検査の主体と層の分け方の規範は REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34・
@@ -36,7 +36,7 @@ REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a に置く。
 ## 根拠
 
 layat の中心の使い方は、CLI と project mode で `mkManifest` を直接呼ぶ経路である。ここを検査
-しなければ型定義の意味が薄れる。`mkManifest` が検査を持てば、どちらの経路でも検査が効く。
+しなければ型定義の意味が薄れる。`mkManifest` が検査を持てば、どちらの経路でも検査が行われる。
 
 モジュールシステムは nixpkgs の lib だけで使えるので、「lib は nixpkgs の lib だけに依存する」という
 制約を破らない。既定値の適用・未知キーの検出・型エラーのメッセージを、自前で書かずに得られる。
@@ -45,7 +45,7 @@ layat の中心の使い方は、CLI と project mode で `mkManifest` を直接
 
 ### 型をモジュールのオプションに書くだけにする
 
-検査がモジュール経路でしか効かず、中心の使い方である直接呼ぶ経路が無検査になる。
+検査がモジュール経路でしか行われず、中心の使い方である直接呼ぶ経路が無検査になる。
 
 ### 全ての検査を手書きの `assert` / `throw` で行う
 

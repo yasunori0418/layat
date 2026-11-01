@@ -18,7 +18,7 @@ justifies:
 
 lib の型検査は、`src` / `root` に渡された値が marker か derivation かを、marker に持たせた判別タグ
 `_layatMarker` で見分ける。一方 engine が読む `manifest.json` にも、配置元が store 由来か out-of-store か、
-root がどの kind かを記録する必要がある。判別タグをそのまま契約に載せるかどうかを決める必要があった。
+root の種別を記録する必要がある。判別タグをそのまま契約に載せるかどうかを決める必要があった。
 
 ## 決定
 
@@ -31,7 +31,7 @@ marker と enum の対応は REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7 に置く�
 ## 根拠
 
 判別タグの名前や構造は Nix 側の型実装の都合で決まる。契約に漏らさなければ、型実装を変えても
-engine との契約は壊れない。
+engine との契約は変わらない。
 
 engine は文字列を受け取るだけで済み、store パスを得るために `nix eval` を呼び直さなくてよい。
 
@@ -39,4 +39,4 @@ engine は文字列を受け取るだけで済み、store パスを得るため�
 
 ### `_layatMarker` をそのまま `manifest.json` に出す
 
-engine の契約が Nix 側の型実装の詳細に結び付き、タグの名前や構造を変えると契約が壊れる。
+engine の契約が Nix 側の型実装の詳細に結び付き、タグの名前や構造を変えるたびに契約も変えなければならない。
