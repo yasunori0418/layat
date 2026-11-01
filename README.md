@@ -677,9 +677,11 @@ target, layat decides by its own record, not by where the existing link points:
 The foreign warning reads `layat: overwriting an unrecorded symlink (foreign; last-wins): <target>`.
 Once replaced, the link is in layat's record and later applies are silent. A leftover
 `<target>.layat-backup` makes `--backup` stop with a conflict instead of overwriting it.
-A `method = "copy"` entry differs: it places once, so an unrecorded file or symlink at its
-target is skipped with a warning (a conflict when only one of `src` and the target is a
-directory), and `--backup` renames it aside before copying.
+A `method = "copy"` entry differs: it places once, so an unrecorded file, directory or symlink
+at its target is skipped with a warning (a conflict when only one of `src` and the target is a
+directory), and `--backup` renames it aside before copying. A skipped target is still recorded
+as the entry's copy: later applies leave it alone, and `layat reset` deletes it even though
+layat never copied it. Use `--backup` if that file must survive a reset.
 
 To move a target from `home.file` to layat:
 
