@@ -8,6 +8,8 @@ issues:
 origin: "epic #203 の grilling セッション（2026-07-31・2026-08-01）で確定。ADR-0048 §2 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+supersedes:
+  - "ADR-0048"
 references:
   - "ADR-0049"
   - "ADR-0051"
