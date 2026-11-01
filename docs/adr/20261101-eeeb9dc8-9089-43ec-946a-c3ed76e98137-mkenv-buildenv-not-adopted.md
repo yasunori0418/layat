@@ -9,6 +9,8 @@ issues:
 origin: "Issue #162 の job-plan grilling（2026-10-30）。ADR-0069 の本題を書き直した"
 justifies:
   - "DSG-f1d4c295-54ae-4def-951c-901b42dea008"
+supersedes:
+  - "ADR-0069"
 references:
   - "ADR-0004"
   - "ADR-0040"

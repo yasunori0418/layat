@@ -2,7 +2,7 @@
 id: "ADR-0069"
 type: legacy_adr
 name: "`layat.lib.mkEnv` で buildEnv の合成環境を配置し、role 別に `PATH` を管理する"
-status: 不採用
+status: 廃止
 issues:
   - "#162"
   - "#537"
@@ -18,7 +18,12 @@ references:
 ---
 # ADR-0069: `layat.lib.mkEnv` で buildEnv の合成環境を配置し、role 別に `PATH` を管理する
 
-- ステータス: 不採用
+> **廃止（2026-11-01）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 決定（`mkEnv` / `mkEnvEntry` を lib に足さない）→ ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137
+> - 付随する決定（adr の status に `不採用` を足す）→ SDR-d5304533-00ae-423b-a459-7c67c1cf093c
+
+- ステータス: 廃止
 - 日付: 2026-10-30
 - 関連: ADR-0004, ADR-0040, ADR-0041, Issue #162, Issue #537, `docs/concept.md`
 - 改訂対象: ADR-0048（adr の status enum に不採用を追加）

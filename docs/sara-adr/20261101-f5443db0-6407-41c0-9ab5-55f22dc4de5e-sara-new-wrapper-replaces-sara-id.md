@@ -9,6 +9,8 @@ issues:
 origin: "epic #364 の着手前 grilling（2026-08-17）で確定。ADR-0053 §3 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+supersedes:
+  - "ADR-0053"
 ---
 # SDR-f5443db0-6407-41c0-9ab5-55f22dc4de5e: sara-id を廃止し sara init を包む起票ラッパーを使う
 
