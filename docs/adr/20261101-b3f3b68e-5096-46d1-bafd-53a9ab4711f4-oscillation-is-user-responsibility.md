@@ -12,19 +12,20 @@ references:
   - "ADR-0017"
   - "ADR-0031"
   - "ADR-0038"
+  - "ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d"
 ---
 # ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4: 配置の振動はユーザー責任とし、文書で注意するに留める
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0017, ADR-0031, ADR-0038, GitHub Issue #550
+- 関連: ADR-0017, ADR-0031, ADR-0038, ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d, GitHub Issue #550
 - 起点: 実装前残セマンティクス確定の第5巡（2026-06-14）で確定。ADR-0023 §5（5b）と ADR-0024 §10 を書き直した
 
 ## 背景
 
-別の config A と B が同じ target を狙うと、ドリフト修復（ADR-0017）と cross-config の後勝ちが
-組み合わさって、配置が往復し続ける。A が置き、B が foreign として奪い、次の shellHook で A が
-取り戻す、という動きである。1 回きりの後勝ちと違い、シェルに入るたびに繰り返す。そのたびに
+別の config A と B が同じ target を狙うと、ドリフト修復（ADR-0017）と cross-config の後勝ち
+（ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d）が組み合わさって、配置が往復し続ける。A が置き、
+B が foreign として奪い、次の shellHook で A が取り戻す、という動きである。1 回きりの後勝ちと違い、シェルに入るたびに繰り返す。そのたびに
 foreign symlink の warning も出る。
 
 ## 決定
