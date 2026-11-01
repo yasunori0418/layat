@@ -1,0 +1,45 @@
+---
+id: "ADR-4dca6ef4-2791-48d5-aa82-7037630968a6"
+type: adr
+name: "ephemeral 配置は git に干渉しない"
+status: 採用
+origin: "ADR-0005 の決定「ephemeral 配置原則 — 配置物はコミット対象外」を書き直した"
+justifies:
+  - "REQ-e79178f5-5865-4444-a05d-3ab06f33cd6d"
+---
+# ADR-4dca6ef4-2791-48d5-aa82-7037630968a6: ephemeral 配置は git に干渉しない
+
+- ステータス: 採用
+- 日付: 2026-11-01
+- 関連: `docs/concept.md`, `docs/spec.md`
+- 起点: ADR-0005 の決定「ephemeral 配置原則 — 配置物はコミット対象外」を書き直した
+
+## 背景
+
+project mode は git リポジトリの作業ツリーの中へ配置する。配置物をコミットするのか、
+`.gitignore` や git の追跡状態に layat が関わるのかを決める必要があった。git で追跡されている
+ファイルと layat の stale 除去がぶつかる可能性もあった。
+
+## 決定
+
+project mode の配置物は ephemeral とし、リポジトリにコミットしない。clone ごとに置き直す。
+activation は git の状態に干渉せず、`.gitignore` に触れず、target が git で追跡されているかも
+検査しない。規範の細目は REQ-e79178f5-5865-4444-a05d-3ab06f33cd6d に置く。
+
+## 根拠
+
+配置物が常に追跡されていないことを原則として固定すれば、保守的な stale 除去が git で追跡された
+ファイルとぶつかる事態は原理的に起きない。activation に git の検査を持ち込まずに済み、
+activation は置くことだけに専念できる。
+
+## 棄却した代替案
+
+### activation が `.gitignore` へ自動で追記する
+
+利用者の手間は減るが、layat が配置以外のファイルを書き換えるツールになり、設定を生成しない
+という方針に反する。
+
+### activation が target の git 追跡状態を検査する
+
+コミット済みのファイルとの衝突を個別に検出できるが、activation が git に依存し、毎回の実行が
+重くなる。原則で衝突を消せるので要らない。
