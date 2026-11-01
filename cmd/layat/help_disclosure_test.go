@@ -206,48 +206,64 @@ func TestHelpDisclosureMatchesNixCalls(t *testing.T) {
 }
 
 // TestHelpDisclosesNoNixSubcommands requires the --help sentence on prune / status, and that they
-// succeed over a profile and a record without running nix.
+// succeed over a record and an orphan series without running nix; prune --yes deletes the series.
 func TestHelpDisclosesNoNixSubcommands(t *testing.T) {
 	if !strings.Contains(rootCmdLong, "\n"+noNixLine+"\n") {
 		t.Errorf("rootCmdLong lacks the line %q", noNixLine)
 	}
-	cases := map[string]func() error{
-		"prune --dryrun": func() error { r, _ := newPruneTestRun(); return runPrune(r, true, false) },
-		"prune --yes":    func() error { r, _ := newPruneTestRun(); return runPrune(r, false, false) },
-		"status":         func() error { r, _ := newStatusTestRun(); return runStatus(r, nil) },
+	cases := []struct {
+		name        string
+		run         func() error
+		wantDeleted bool
+	}{
+		{"prune --dryrun", func() error { r, _ := newPruneTestRun(); return runPrune(r, true, false) }, false},
+		{"prune --yes", func() error { r, _ := newPruneTestRun(); return runPrune(r, false, false) }, true},
+		{"status", func() error { r, _ := newStatusTestRun(); return runStatus(r, nil) }, false},
 	}
-	for name, f := range cases {
-		t.Run(name, func(t *testing.T) {
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
 			withFlakeEntrypoint(t)
 			origDebug, origJSON, origYes := flagDebug, flagJSON, flagYes
 			t.Cleanup(func() { flagDebug, flagJSON, flagYes = origDebug, origJSON, origYes })
 			flagDebug, flagJSON, flagYes = false, false, true
 			t.Setenv(systemBaseEnv, t.TempDir())
 			t.Setenv(systemStateEnv, t.TempDir())
-			makeHomeProfiles(t, installFakeBackend(t, ""), "a")
-			writeAppliedRecord(t, "a")
+			state := t.TempDir()
+			t.Setenv("XDG_STATE_HOME", state)
+			series := writeNoNixFixture(t, installFakeBackend(t, "").UserBase(state), state)
 			log := stubNixRecorder(t, "home")
-			if err := f(); err != nil {
-				t.Fatalf("%s: %v", name, err)
+			if err := tc.run(); err != nil {
+				t.Fatalf("%s: %v", tc.name, err)
 			}
 			if calls := recordedCalls(t, log, flagFile, "", ""); len(calls) != 0 {
-				t.Errorf("%s ran nix: %q", name, calls)
+				t.Errorf("%s ran nix: %q", tc.name, calls)
+			}
+			if _, err := os.Lstat(series); os.IsNotExist(err) != tc.wantDeleted {
+				t.Errorf("%s: orphan series deleted = %v, want %v", tc.name, os.IsNotExist(err), tc.wantDeleted)
 			}
 		})
 	}
 }
 
-// writeAppliedRecord puts a home last-applied record for name under XDG_STATE_HOME, so status has
-// a record to read.
-func writeAppliedRecord(t *testing.T, name string) {
+// writeNoNixFixture puts a home last-applied record for "a" under state and an orphan <roothash>
+// series (its root is missing) under base, and returns the series directory.
+func writeNoNixFixture(t *testing.T, base, state string) string {
 	t.Helper()
-	dir := filepath.Join(os.Getenv("XDG_STATE_HOME"), "layat", name)
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		t.Fatalf("mkdir %s: %v", dir, err)
+	write := func(path, data string) {
+		if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+			t.Fatalf("mkdir %s: %v", filepath.Dir(path), err)
+		}
+		if err := os.WriteFile(path, []byte(data), 0o644); err != nil {
+			t.Fatalf("write %s: %v", path, err)
+		}
 	}
-	record := `{"recordVersion":1,"linkFarm":"/nix/store/stub-link-farm","appliedAt":"2026-11-01T00:00:00Z",` +
-		`"origin":{"generator":"nix"},"manifest":{"schemaVersion":1,"root":{"rootKind":"home"},"entries":[]}}`
-	if err := os.WriteFile(filepath.Join(dir, "last-applied.json"), []byte(record), 0o644); err != nil {
-		t.Fatalf("write record: %v", err)
+	write(filepath.Join(state, "layat", "a", "last-applied.json"),
+		`{"recordVersion":2,"linkFarm":"/nix/store/stub-link-farm","appliedAt":"2026-11-01T00:00:00Z",`+
+			`"origin":{"generator":"nix"},"manifest":{"schemaVersion":1,"root":{"rootKind":"home"},"entries":[]}}`)
+	series := filepath.Join(base, "orphanhash")
+	write(filepath.Join(series, ".root"), filepath.Join(t.TempDir(), "gone")+"\n")
+	if err := os.MkdirAll(filepath.Join(series, "a"), 0o755); err != nil {
+		t.Fatalf("mkdir series profileDir: %v", err)
 	}
+	return series
 }
