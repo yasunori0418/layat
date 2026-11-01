@@ -21,7 +21,7 @@ references:
 ## 背景
 
 apply は link-farm を build して store path を受け取り、そこを指す symlink を配置してから世代をコミットする。
-build してからコミットするまでの間に `nix-collect-garbage` が走ると、まだどの世代からも参照されていない
+build してからコミットするまでの間に `nix-collect-garbage` が実行されると、まだどの世代からも参照されていない
 link-farm が回収され、配置したばかりの symlink が dangling になる。
 
 profileDir に素の symlink を置いても GC root にはならない。

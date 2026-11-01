@@ -22,7 +22,7 @@ references:
 `profileDir` という語が、profile リンクそのものと、それを収めるディレクトリの 2 つの意味で使われていた。
 `nix-env --profile P` は P を profile リンクとして扱い、世代を兄弟の `P-N-link` として P の親ディレクトリに
 作る。P が store の世代を指すリンクなら、`<profileDir>/.pending` のように P の下へ out-link を置くと
-read-only な store の中を貫通して壊れる。
+read-only な store の中にリンクを作ろうとして失敗する。
 
 `<roothash>` 階層には backref と複数の config が同居するので、ロックの単位が root 単位なのか config 単位
 なのかも曖昧だった。
@@ -37,7 +37,7 @@ backref は `<roothash>` 階層に置き、同じ root の config で共有す�
 
 ## 根拠
 
-世代のリンクと pending out-link が profile リンクの兄弟として並ぶので、read-only な store を貫通する破綻が
+世代のリンクと pending out-link が profile リンクの兄弟として並ぶので、read-only な store の中にリンクを作ろうとする失敗が
 構造的に起きない。profile リンク・世代・pending がどの config のものかは、ディレクトリを見れば分かる。
 
 config ごとにディレクトリが 1 つなので、pending out-link は 1 個で足り、名前に config 名を含める必要もない。
@@ -49,7 +49,7 @@ config ごとにディレクトリが 1 つなので、pending out-link は 1 �
 
 ### `profileDir` を profile リンクそのものにする
 
-pending out-link を profile リンクの下に置くことになり、read-only な store を貫通して壊れる。
+pending out-link を profile リンクの下に置くことになり、read-only な store の中にリンクを作ろうとして失敗する。
 
 ### 共有ディレクトリに config 名を前置した兄弟を並べる
 
