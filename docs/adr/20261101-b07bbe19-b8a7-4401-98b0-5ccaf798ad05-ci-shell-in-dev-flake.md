@@ -22,8 +22,7 @@ CI の E2E ハーネスは、layat・git・jq・`outturn-validate` などのツ�
 ## 決定
 
 `dev/flake.nix` に CI 用の devShell `ci` を置き、E2E ハーネスが使うツールだけを入れた最小の
-環境を提供する。CI はハーネスを `nix develop '.?dir=dev#ci' -c <cmd>` で実行する。sandbox で
-成立するテストは devShell を挟まず、`nix flake check` と `nix build` で実行する。
+環境を提供する。CI はハーネスを `nix develop '.?dir=dev#ci' -c <cmd>` で実行する。
 
 CI のジョブ構成は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 に置く。
 
@@ -35,6 +34,4 @@ CI と手元が同じ flake からツールを得るので、版がずれない�
 
 ## 棄却した代替案
 
-### ツールをジョブごとに個別の action で入れる
-
-手元の devShell とツールの版がずれ、CI でだけ通る、または CI でだけ落ちる状態が生じうる。
+旧 ADR-0012 §2 は、この決定について代替案を記録していない。

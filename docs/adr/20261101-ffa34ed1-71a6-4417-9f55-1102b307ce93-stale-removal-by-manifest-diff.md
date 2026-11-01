@@ -40,6 +40,11 @@ store に埋め込んだ manifest は変わらず、世代が GC root なので�
 
 ## 棄却した代替案
 
+### store に manifest を持たず、store 外の可変 JSON だけで配置を記録する
+
+世代に manifest が無いので、rollback で戻る世代の内容を世代から読めない。last-applied 記録は
+最後に置いたものを持つ補助の記録で、世代ごとの store manifest を置き換えない（ADR-0058）。
+
 ### 新しい manifest に無い target を全て除去する
 
 前回の記録と比べないので、layat が置いていないファイルまで消しうる。

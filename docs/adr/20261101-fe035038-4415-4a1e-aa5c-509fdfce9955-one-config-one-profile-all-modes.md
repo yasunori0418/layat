@@ -9,18 +9,20 @@ justifies:
   - "REQ-844ee375-919f-4341-81e1-a5f89fd32840"
 references:
   - "ADR-0007"
+  - "ADR-0058"
 ---
 # ADR-fe035038-4415-4a1e-aa5c-509fdfce9955: 1 config = 1 profile を全モードで自前に持つ
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0007
+- 関連: ADR-0007, ADR-0058
 - 起点: ADR-0002 §決定（全モードで自前 profile を持つ・粒度 = 1 profile）を書き直した
 
 ## 背景
 
-stale 除去には「前回何を置いたか」の記録が要り、last-applied 記録が無いときは前世代から読む。module 経由（home-manager / NixOS / nix-darwin）で
-動くときは host が自前の世代を持つので、host の前世代（oldGenPath）から前回の配置を読む道もある。
+stale 除去には「前回何を置いたか」の記録が要る。last-applied 記録（ADR-0058）が無いときは、
+前世代から読む。module 経由（home-manager / NixOS / nix-darwin）で動くときは host が自前の世代を
+持つので、host の前世代（oldGenPath）から前回の配置を読む道もある。
 あわせて、profile をどの粒度で分けるかを決める必要がある。
 
 ## 決定
@@ -35,8 +37,8 @@ profile と前世代の読み方の細目は REQ-1be4d678-959c-44d7-a346-44bfd95
 
 ## 根拠
 
-last-applied 記録が無いときに読む前世代の出所が、全モードで「自 profile の前世代」にそろい、host ごとに違う oldGenPath の配管を
-持たずに済む。他のモジュールの内部事情に依存しないという方針とも合う。home-manager が NixOS の
+last-applied 記録が無いときに読む前世代の出所が、全モードで「自 profile の前世代」にそろう。
+host ごとに違う oldGenPath の配管を持たずに済む。他のモジュールの内部事情に依存しないという方針とも合う。home-manager が NixOS の
 submodule として動くときにも自前の profile を持つのと同じやり方で、実績がある。
 
 粒度を config にすると、世代が atomic に切り替わる単位と、独立して rollback できる単位が一致する。

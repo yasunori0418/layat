@@ -6,6 +6,7 @@ status: 採用
 origin: "参照: ~/src/github.com/yasunori0418/cryoflow の CI 構成（同一メンテナの実績構成）。ADR-0012 §4 を書き直した"
 justifies:
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
+  - "INF-af33c5a1-f846-4f09-8e43-c6ea042d6e06"
 references:
   - "ADR-0028"
 ---
