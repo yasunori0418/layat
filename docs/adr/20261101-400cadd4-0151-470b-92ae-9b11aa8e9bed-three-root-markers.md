@@ -5,7 +5,7 @@ name: "root は 3 つの marker で表す"
 status: 採用
 issues:
   - "#2"
-origin: "起点 Issue: #2（root デフォルト）。ADR-0007 §2 の 3 マーカーと ADR-0013 §5 を書き直した"
+origin: "Issue #2（root デフォルト）。ADR-0007 §2 の 3 マーカーと ADR-0013 §5 を書き直した"
 justifies:
   - "REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66"
   - "REQ-3f541d39-da41-4ef8-858b-707f54cf6a29"
@@ -20,7 +20,7 @@ references:
 - ステータス: 採用
 - 日付: 2026-11-01
 - 関連: ADR-0036, ADR-0040, ADR-f85f1afd-9b87-4f7a-922e-97c62554f198, GitHub Issue #2, `docs/spec.md`
-- 起点: 起点 Issue: #2（root デフォルト）。ADR-0007 §2 の 3 マーカーと ADR-0013 §5 を書き直した
+- 起点: Issue #2（root デフォルト）。ADR-0007 §2 の 3 マーカーと ADR-0013 §5 を書き直した
 
 ## 背景
 
@@ -56,4 +56,5 @@ REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b に置く。
 
 ### `systemRoot` を API に載せない
 
-marker を project と home の 2 つに絞れるが、`/` へ配置する手段が無くなる。
+marker を project と home の 2 つに絞れる。`/` は固定の絶対パスとして書けるが、root 権限の検査や
+system 用の profile の置き場所といった system mode の扱いを、marker で選べなくなる。

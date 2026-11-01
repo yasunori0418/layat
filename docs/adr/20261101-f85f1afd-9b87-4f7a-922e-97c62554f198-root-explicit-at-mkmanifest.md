@@ -5,7 +5,7 @@ name: "root は mkManifest 層で明示必須"
 status: 採用
 issues:
   - "#2"
-origin: "起点 Issue: #2（root デフォルト）。ADR-0007 §2 の root の明示必須とモジュールによる pin を書き直した"
+origin: "Issue #2（root デフォルト）。ADR-0007 §2 の root の明示必須とモジュールによる pin を書き直した"
 justifies:
   - "REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4"
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
@@ -15,7 +15,7 @@ justifies:
 - ステータス: 採用
 - 日付: 2026-11-01
 - 関連: GitHub Issue #2, `docs/concept.md`, `docs/spec.md`
-- 起点: 起点 Issue: #2（root デフォルト）。ADR-0007 §2 の root の明示必須とモジュールによる pin を書き直した
+- 起点: Issue #2（root デフォルト）。ADR-0007 §2 の root の明示必須とモジュールによる pin を書き直した
 
 ## 背景
 
