@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -213,12 +214,26 @@ func TestHelpDisclosesNoNixSubcommands(t *testing.T) {
 	}
 	cases := []struct {
 		name        string
-		run         func() error
+		run         func(t *testing.T) error
 		wantDeleted bool
 	}{
-		{"prune --dryrun", func() error { r, _ := newPruneTestRun(); return runPrune(r, true, false) }, false},
-		{"prune --yes", func() error { r, _ := newPruneTestRun(); return runPrune(r, false, false) }, true},
-		{"status", func() error { r, _ := newStatusTestRun(); return runStatus(r, nil) }, false},
+		{"prune --dryrun", func(*testing.T) error { r, _ := newPruneTestRun(); return runPrune(r, true, false) }, false},
+		{"prune --yes", func(*testing.T) error { r, _ := newPruneTestRun(); return runPrune(r, false, false) }, true},
+		{"status", func(t *testing.T) error {
+			r, buf := newStatusTestRun()
+			flagJSON = true // restored by the subtest's cleanup
+			if err := runStatus(r, nil); err != nil {
+				return err
+			}
+			if err := r.emit(nil); err != nil {
+				return err
+			}
+			// The fixture's record must be the one listed, or the run proves nothing.
+			if results, _ := decodeEnvelope(t, buf)["results"].([]any); len(results) != 1 {
+				return fmt.Errorf("status listed %d records, want the fixture's 1", len(results))
+			}
+			return nil
+		}, false},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -232,7 +247,7 @@ func TestHelpDisclosesNoNixSubcommands(t *testing.T) {
 			t.Setenv("XDG_STATE_HOME", state)
 			series := writeNoNixFixture(t, installFakeBackend(t, "").UserBase(state), state)
 			log := stubNixRecorder(t, "home")
-			if err := tc.run(); err != nil {
+			if err := tc.run(t); err != nil {
 				t.Fatalf("%s: %v", tc.name, err)
 			}
 			if calls := recordedCalls(t, log, flagFile, "", ""); len(calls) != 0 {
