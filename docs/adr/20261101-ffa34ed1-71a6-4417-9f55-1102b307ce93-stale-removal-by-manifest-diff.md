@@ -34,16 +34,11 @@ manifest の置き場所と baseline の選び方は REQ-1be4d678-959c-44d7-a346
 
 ## 根拠
 
-store に埋め込んだ manifest は変わらず、世代が GC root なので世代とともに残る。home-manager が
-同じ方式で前世代と新世代を比べており、実績がある。前回の内容を世代から読めるので、別の
-状態ファイルを正として保守せずに済む。
+store に埋め込んだ manifest は変わらず、世代が GC root なので世代とともに残る。last-applied 記録が
+無いときも、前回の内容を自 profile の世代から読める。記録を優先する理由と優先順は ADR-0058 が
+決めている。home-manager も前世代と新世代の manifest を比べて除去しており、実績がある。
 
 ## 棄却した代替案
-
-### store 外の可変 JSON だけで配置の記録を持つ
-
-store に manifest を持たないと、世代から前回の内容を読めない。GC root も作らないので、記録が
-指す store パスが GC で消えうる。
 
 ### 新しい manifest に無い target を全て除去する
 

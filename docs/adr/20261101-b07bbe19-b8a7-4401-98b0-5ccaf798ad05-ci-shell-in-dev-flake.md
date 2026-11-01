@@ -15,14 +15,15 @@ justifies:
 
 ## 背景
 
-CI のジョブには、go・nix-unit・namaka や E2E のハーネスが使うツールが要る。これらをジョブごとに
-用意すると、手元の開発環境と版がずれうる。リポジトリは成果物を root の `flake.nix` に、開発用の
-環境を `dev/flake.nix` に分けている。
+CI の E2E ハーネスは、layat・git・jq・`outturn-validate` などのツールを必要とする。これらをジョブ
+ごとに用意すると、手元の開発環境と版がずれうる。リポジトリは成果物を root の `flake.nix` に、
+開発用の環境を `dev/flake.nix` に分けている。
 
 ## 決定
 
-`dev/flake.nix` に CI 用の devShell `ci` を置き、開発専用のツールを除いた最小のツールチェインを
-提供する。ツールを要する CI の手順は `nix develop '.?dir=dev#ci' -c <cmd>` で実行する。
+`dev/flake.nix` に CI 用の devShell `ci` を置き、E2E ハーネスが使うツールだけを入れた最小の
+環境を提供する。CI はハーネスを `nix develop '.?dir=dev#ci' -c <cmd>` で実行する。sandbox で
+成立するテストは devShell を挟まず、`nix flake check` と `nix build` で実行する。
 
 CI のジョブ構成は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 に置く。
 

@@ -19,7 +19,7 @@ references:
 
 ## 背景
 
-stale 除去には「前回何を置いたか」の記録が要る。module 経由（home-manager / NixOS / nix-darwin）で
+stale 除去には「前回何を置いたか」の記録が要り、last-applied 記録が無いときは前世代から読む。module 経由（home-manager / NixOS / nix-darwin）で
 動くときは host が自前の世代を持つので、host の前世代（oldGenPath）から前回の配置を読む道もある。
 あわせて、profile をどの粒度で分けるかを決める必要がある。
 
@@ -35,7 +35,7 @@ profile と前世代の読み方の細目は REQ-1be4d678-959c-44d7-a346-44bfd95
 
 ## 根拠
 
-前世代の出所が全モードで「自 profile の前世代」にそろい、host ごとに違う oldGenPath の配管を
+last-applied 記録が無いときに読む前世代の出所が、全モードで「自 profile の前世代」にそろい、host ごとに違う oldGenPath の配管を
 持たずに済む。他のモジュールの内部事情に依存しないという方針とも合う。home-manager が NixOS の
 submodule として動くときにも自前の profile を持つのと同じやり方で、実績がある。
 

@@ -19,14 +19,13 @@ references:
 ## 背景
 
 layat は配置を世代として積み、前の世代へ戻せるようにする。世代管理には profile symlink の
-差し替えや GC root の登録といった副作用が要る。一方で、配置データを作る lib は純粋関数のまま
-保ちたい。世代の実体を何で持ち、純粋な生成と副作用をどこで分けるかを決める必要がある。
+差し替えや GC root の登録が要る。世代の実体を何で持つかを決める必要がある。
 
 ## 決定
 
 1 回の適用で置くものを、lib が生成する store 内の link farm derivation 1 つにまとめる。engine は
 これを layat の profile の新しい世代としてコミットし、世代番号・GC root・rollback を Nix の profile
-機構から得る。lib は derivation を生成するだけで、世代の差し替えは engine が実行時に行う副作用とする。
+機構から得る。
 
 コミットは世代バックエンドの契約越しに行い、既定のバックエンドが nix profile を更新する。
 link farm の中身とコミットの手順は REQ-1be4d678-959c-44d7-a346-44bfd95af56e に置く。
