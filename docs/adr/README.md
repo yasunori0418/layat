@@ -146,10 +146,10 @@ ADR-0055 → 0057 / 0060
   ADR-0033 と `tool.version` の供給元である ADR-0042 が張る
 - item が `justifies` を受けない理由を明記している: `DSG-d2e17f4f-0d32-45c1-8125-17e589664c85` の
   「根拠が ADR 以外にあることによる」。一方 `REQ-3f541d39-da41-4ef8-858b-707f54cf6a29` の「`subdir`
-  適用形は担当範囲外」は規範に含めないという宣言で、ADR に依拠していないことではない（線引きの実例は
+  適用形は担当範囲外」は規範に含めないという宣言で、ADR に依拠していないことではない（区別の実例は
   ADR-0040 本文の 2026-08-08 注記）
 - 背景で前提として言及するだけ: ADR-0039 → `REQ-535b811d-dfc5-4eac-92db-737e70eb5415` の一括 eval
-- 出典節が ADR を名指ししない item: `REQ-4fc98fa6-fd5f-4f25-8b10-60755bf49bd2` は ADR-0002 の決定節から引いた
+- 出典節が ADR を名指ししない item: `REQ-4fc98fa6-fd5f-4f25-8b10-60755bf49bd2` は ADR-0002 の決定節から見つけた
 - 委譲先で回収済みとして撤去した: ADR-0002 → `REQ-c847d1af-a437-46bb-bd64-42083810d034`・ADR-0026 →
   `REQ-c847d1af-a437-46bb-bd64-42083810d034`・ADR-0015 → `REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44`
   （それぞれ `REQ-844ee375-919f-4341-81e1-a5f89fd32840` / `REQ-dec58330-6dad-47f7-8f56-2402764a89c7` /
@@ -180,7 +180,7 @@ rg -n 'justifies' docs/requirements/ docs/design/ docs/infrastructure/ docs/test
 
 ## セルフチェック
 
-ADR を書き終えたら、グラフ全体の検証と、`廃止` と `supersedes` の対応の検証を走らせる。
+ADR を書き終えたら、グラフ全体の検証と、`廃止` と `supersedes` の対応の検証を実行する。
 
 ```bash
 nix develop '.?dir=dev#sara' -c sara check
@@ -194,5 +194,5 @@ nix develop '.?dir=dev#sara' -c dev/tests/adr-supersede.sh
 なく `Broken reference` として落ちる。
 
 `adr-supersede.sh` は、`supersedes` で指された ADR が `廃止` であることと、`廃止` の ADR が 1 本以上の
-`supersedes` から指されていることを確かめる。どちらも CI の `sara` job が走らせるが、required status
+`supersedes` から指されていることを確かめる。どちらも CI の `sara` job が実行するが、required status
 check ではないため、赤くなってもマージはブロックしない（→ ADR-0050）。
