@@ -548,6 +548,20 @@ target を `home.file` から layat へ移す手順:
 
 ---
 
+## トラブルシューティング
+
+| 症状 | 原因 | 対処 |
+|---|---|---|
+| `apply` / `reset` / `rollback` が終わらない | 別の layat(別シェルの shellHook、activation、並行する apply)が同じ config の lock を握っている | 待つ。その実行が終われば先へ進む。shellHook では `--no-wait` を使う |
+| `--no-wait -v` で `layat: skipped because another apply is in progress` | 同じ lock が握られていたので、スキップして exit 0 で終わった | 他の実行が終わってから `layat apply <name>` を実行する |
+| `layat: keeping stale symlink because it mismatches the record: <target>` | entry は消えたが、link が layat の記録どおりを指していない | layat は触らない。要らなければ手で消す |
+| `layat: the last-applied record (…) disagrees with the profile (…); using the record as the baseline` | layat を通さずに profile が動いた(profile への `nix-env --switch-generation` など) | stale 除去は記録を基準にする。`layat status` と `layat list-generations <name>` で確かめる |
+| `layat: no last-applied record; starting from an empty baseline` | その config の初回 apply か、state を消した | この実行では stale として何も消さない。初回 apply なら想定どおり |
+| `layat: this apply's origin (…) differs from the last-applied record's (…); the later apply wins` | 1 つの config を 2 つの経路(home-manager モジュールと standalone の entrypoint など)から apply している | 経路を 1 つにするか、両方に同じ `identity` を付ける([home-manager モジュール](#home-manager-モジュール)) |
+| 原因の見当がつかない eval / build エラー | 生成器が内部で実行した nix コマンドが失敗した | `--debug` を付けて再実行する。内部コマンドが `layat: + nix …` の形で stderr に出て、生成器のエラーには生成器名が付く。そのコマンドを手で実行する |
+
+---
+
 ## 他ツールとの比較
 
 軸は「機能の有無」ではなく、**「配置をモジュール抽象の裏に隠すか、ユーザーが制御する純粋関数として露出させるか」**。

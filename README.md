@@ -690,6 +690,20 @@ To move a target from `home.file` to layat:
 
 ---
 
+## Troubleshooting
+
+| Symptom | Cause | What to do |
+|---|---|---|
+| `apply` / `reset` / `rollback` does not return | another layat run (a shellHook in another shell, an activation, a parallel apply) holds the lock of the same config | wait; it proceeds once that run ends. In a shellHook use `--no-wait` |
+| with `--no-wait -v`: `layat: skipped because another apply is in progress` | the same lock was held, so the run skipped and exited 0 | run `layat apply <name>` after the other run ends |
+| `layat: keeping stale symlink because it mismatches the record: <target>` | the entry was dropped, but the link no longer points where layat recorded it | layat leaves it alone; delete it by hand if you do not need it |
+| `layat: the last-applied record (…) disagrees with the profile (…); using the record as the baseline` | the profile moved without layat (e.g. `nix-env --switch-generation` on it) | the record wins for stale removal; check `layat status` and `layat list-generations <name>` |
+| `layat: no last-applied record; starting from an empty baseline` | the config's first apply, or its state was deleted | nothing is removed as stale on this run; expected on a first apply |
+| `layat: this apply's origin (…) differs from the last-applied record's (…); the later apply wins` | one config is applied from two routes (e.g. the home-manager module and a standalone entrypoint) | apply it from one route, or give both the same `identity` (see [home-manager module](#home-manager-module)) |
+| an eval / build error you cannot place | the generator's internal nix command failed | rerun with `--debug`: each internal command is printed on stderr as `layat: + nix …`, and a generator error names its generator; run the command by hand |
+
+---
+
 ## Comparison with other tools
 
 The axis is not "feature presence" but **"hide placement behind a module abstraction, or
