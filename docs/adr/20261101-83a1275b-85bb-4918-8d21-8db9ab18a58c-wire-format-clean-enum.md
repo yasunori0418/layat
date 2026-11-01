@@ -1,13 +1,13 @@
 ---
 id: "ADR-83a1275b-85bb-4918-8d21-8db9ab18a58c"
 type: adr
-name: "manifest.json には marker の内部タグを出さず clean enum で写す"
+name: "manifest.json へ marker を clean enum で写す"
 status: 採用
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §5（manifest.json ワイヤ形式）を書き直した"
 justifies:
   - "REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7"
 ---
-# ADR-83a1275b-85bb-4918-8d21-8db9ab18a58c: manifest.json には marker の内部タグを出さず clean enum で写す
+# ADR-83a1275b-85bb-4918-8d21-8db9ab18a58c: manifest.json へ marker を clean enum で写す
 
 - ステータス: 採用
 - 日付: 2026-11-01
@@ -17,8 +17,8 @@ justifies:
 ## 背景
 
 lib の型検査は、`src` / `root` に渡された値が marker か derivation かを、marker に持たせた判別タグ
-`_layatMarker` で見分ける。一方 engine が読む `manifest.json` にも、配置元が store 由来か out-of-store か、
-root の種別を記録する必要がある。判別タグをそのまま契約に載せるかどうかを決める必要があった。
+`_layatMarker` で見分ける。一方 engine が読む `manifest.json` にも、配置元の種別と root の種別を
+記録する必要がある。判別タグをそのまま契約に載せるかどうかを決める必要があった。
 
 ## 決定
 

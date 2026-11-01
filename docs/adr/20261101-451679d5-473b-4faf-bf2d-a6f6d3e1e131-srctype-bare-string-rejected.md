@@ -6,6 +6,7 @@ status: 採用
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の srcType の項を書き直した"
 justifies:
   - "REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74"
+  - "REQ-99ca5381-6c53-426c-b145-7b4297c53868"
 references:
   - "ADR-0001"
 ---
@@ -30,7 +31,8 @@ out-of-store の配置は、明示の関数が返す marker を渡したとき�
 `src` の型は store 由来の値（path・derivation・`outPath` を持つ attrset）と marker だけを受け付け、
 素の文字列は評価時のエラーにする。path と set は型の上で分けない。
 
-`src` のフィールドの型は REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74 に置く。
+`src` のフィールドの型は REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74 に、`src` が取る値の種別は
+REQ-99ca5381-6c53-426c-b145-7b4297c53868 に置く。
 
 ## 根拠
 

@@ -1,14 +1,14 @@
 ---
 id: "ADR-2e454c1f-6cad-41d8-8311-2c8e5b8efdf6"
 type: adr
-name: "mkManifest 自身が evalModules で入力を検査する"
+name: "mkManifest の入力を evalModules で検査する"
 status: 採用
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §1（検査機構）を書き直した"
 justifies:
   - "REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34"
   - "REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a"
 ---
-# ADR-2e454c1f-6cad-41d8-8311-2c8e5b8efdf6: mkManifest 自身が evalModules で入力を検査する
+# ADR-2e454c1f-6cad-41d8-8311-2c8e5b8efdf6: mkManifest の入力を evalModules で検査する
 
 - ステータス: 採用
 - 日付: 2026-11-01
@@ -18,8 +18,8 @@ justifies:
 ## 背景
 
 `lib.mkManifest` の入力（`entries` と `root`）が流れ込む経路は 2 つある。CLI や entrypoint から
-`mkManifest` を直接呼ぶ経路と、home-manager / NixOS のモジュールの `layat.entries` オプションを
-通る経路である。`mkOption` に型を書いても、型の検査が行われるのは `lib.evalModules` を通したときだけ
+`mkManifest` を直接呼ぶ経路と、home-manager / NixOS のモジュールの entries オプション
+（`layat.configs.<name>.entries`）を通る経路である。`mkOption` に型を書いても、型の検査が行われるのは `lib.evalModules` を通したときだけ
 なので、型をオプションに書くだけでは直接呼ぶ経路の入力が検査されないまま通る。
 
 `lib.types`・`mkOption`・`lib.evalModules` は nixpkgs の lib の中核で、NixOS や home-manager の
@@ -27,7 +27,8 @@ justifies:
 
 ## 決定
 
-`mkManifest` 自身が `lib.evalModules` で `entries` と `root` を検査・正規化する。設定だけで
+`mkManifest` は、前段で呼ぶ `normalizeManifest` の中で `entries` と `root` を `lib.evalModules` に
+通して検査・正規化する。設定だけで
 判定できる誤りは、この検査で評価時に止める。
 
 検査の主体と層の分け方の規範は REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34・
