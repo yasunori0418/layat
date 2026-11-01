@@ -37,9 +37,10 @@ layat が「何を満たすべきか」の全体像と、個別仕様（requirem
 ## アーキテクチャ概要
 
 layat は **CLI とエンジンの 2 層**で構成する（→ ADR-0006, ADR-0007）。CLI は manifest 生成器
-（→ ADR-0055、既定 `nix`）を通じて entrypoint を発見し、生成器が build した link-farm の store path
-を受け取ってエンジンへ渡す。エンジンは `manifest.json` を唯一の入力とし、ネイティブ FS 操作で配置と
-stale 除去を行い、世代の切替は世代バックエンド（→ ADR-0057、既定 nixprofile）に任せる。
+（→ ADR-0055、既定 `nix`）を通じて entrypoint を発見し、生成器の Build をエンジンへ渡す。エンジンは
+ロック内で Build を呼び、生成器が build した link-farm のパス（既定の nixprofile では store path）を
+受け取る。エンジンは `manifest.json` を唯一の入力とし、ネイティブ FS 操作で配置と stale 除去を行う。
+世代のコミットと切替は世代バックエンド（→ ADR-0057、既定 nixprofile）に任せる。
 層の境界は `manifest.json` だけ。
 
 - [REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645](requirements/20260802-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645-two-layer-architecture.md) — layat は CLI とエンジンの 2 層で構成する

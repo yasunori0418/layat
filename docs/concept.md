@@ -78,9 +78,9 @@ layat は他のツール群と stdout / stdin の JSON パイプで合成する�
 機械可読出力（`--json`）は **すべての機能で** outturn specVersion 1 規約に準拠する（→ ADR-0043）。
 
 **スコープの線引き**: standalone CLI + project mode をコアとし、home mode と system mode
-（`systemRoot` で `/` 配下へ root 権限で配置。NixOS / nix-darwin module が activation から起動する。
-→ ADR-0036, ADR-0066）も実装済み。「関数ベースのパッケージ導入・PATH 追加」に専用機構は持たない。
-`pkgs.buildEnv` の合成環境を entry として配置し、環境変数の配線は利用者側で行う（→ ADR-0069）。
+（`systemRoot` で `/` 配下へ root 権限で配置。CLI を root で実行するか、NixOS / nix-darwin module の
+activation から起動する。→ ADR-0036, ADR-0066）も実装済み。「関数ベースのパッケージ導入・PATH 追加」に
+専用機構は持たない。`pkgs.buildEnv` の合成環境を entry として配置し、環境変数の配線は利用者側で行う（→ ADR-0069）。
 ブート / init / FS / パーティションの層は本構想でも空白であり、layat が担う領域ではない。
 
 ---
@@ -146,7 +146,8 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 ### 名前の由来
 
 旧名 **nput** の「n」は **nix** を指していたが、engine の契約は `manifest.json` 1 本で生成者を
-問わない。nix に依存するのは生成器と世代バックエンドで、engine ではないため、「n」が指すものは曖昧だった。現名 **layat** は
+問わない。nix に依存するのは既定の生成器（nix）と世代バックエンド（nixprofile）で、engine ではない
+ため、「n」が指すものは曖昧だった。現名 **layat** は
 "**lay** \<src\> **at** \<target\>" の圧縮造語で、manifest の通りに src を target へ置く動作を
 一語で表す（`chroot`・`getopt` と同じ動詞句の圧縮）。
 
