@@ -8,6 +8,7 @@ issues:
 origin: "Issue #3（CLI 化）と、engine / CLI の技術スタックの確定。ADR-0006「ソース配置」節・ADR-0007 §7・ADR-0011 §3 を書き直した"
 justifies:
   - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
+  - "REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b"
   - "REQ-b74a118a-1272-44eb-944c-7725163211c6"
   - "DSG-1361df1a-31c4-46ed-a6ce-92938f94ac02"
   - "DSG-7d354fe0-a333-495b-9f4b-14bba316dc47"
@@ -31,7 +32,8 @@ engine は `internal/` に置き、外部から import できない内部の層�
 engine を import し、両者を 1 つのバイナリとして配布する。外部に対する安定した面は `manifest.json` の
 入力契約だけにする。
 
-2 層構成は REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 に、engine を内部の層に閉じることは
+2 層構成は REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 に、`manifest.json` が唯一の安定した契約であることは
+REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b に、engine を内部の層に閉じることは
 REQ-b74a118a-1272-44eb-944c-7725163211c6 に、ディレクトリとパッケージの構成は
 DSG-1361df1a-31c4-46ed-a6ce-92938f94ac02 と DSG-7d354fe0-a333-495b-9f4b-14bba316dc47 に置く。
 
@@ -51,8 +53,8 @@ import を Go のコンパイラが禁じるので、公開 API の semver 互�
 
 ### CLI と engine を別のバイナリに分ける
 
-配布物が増える。ライブラリの境界と単一のバイナリで、責務の分離とテストのしやすさは両立する。
+配布物が増える。`internal/` の層の境界と単一のバイナリで、責務の分離とテストのしやすさは両立する。
 
-### CLI と engine を区切らずに 1 つのバイナリへ混ぜる
+### CLI と engine をパッケージの層に分けずに書く
 
 engine が `manifest.json` だけを受け取るという契約を保てず、評価のテストと配置のテストの境界が曖昧になる。
