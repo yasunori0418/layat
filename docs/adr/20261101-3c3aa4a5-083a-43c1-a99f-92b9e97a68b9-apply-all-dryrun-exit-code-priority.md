@@ -19,7 +19,7 @@ justifies:
 ## 背景
 
 `--dryrun` は conflict を見つけると 2 で、エラーなら 1 で終える。`apply --all --dryrun` では
-config ごとに結果が分かれるので、error の config と conflict の config が混ざったときに、全体の
+config ごとに結果が分かれるので、error の config と conflict の config が両方あるときに、全体の
 終了コードをどちらにするかを決める必要がある。
 
 ## 決定
@@ -38,4 +38,4 @@ eval や engine のエラーは conflict より深刻で、CI では先に気付
 
 ### config ごとの終了コードの最大値を取る
 
-実装は最も単純だが、conflict（2）が error（1）を隠し、CI で深刻なエラーを見落とす。
+実装は最も単純だが、conflict（2）が error（1）を隠し、深刻なエラーに CI で気付けなくなる。
