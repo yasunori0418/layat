@@ -1,7 +1,7 @@
 ---
 id: "ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a"
 type: adr
-name: "キャッシュ投入は matrix ビルド"
+name: "キャッシュは 3 system の matrix ビルドで投入する"
 status: 採用
 origin: "参照: ~/src/github.com/yasunori0418/cryoflow の CI 構成（同一メンテナの実績構成）。ADR-0012 §4 を書き直した"
 justifies:
@@ -9,7 +9,7 @@ justifies:
 references:
   - "ADR-0028"
 ---
-# ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a: キャッシュ投入は matrix ビルド
+# ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a: キャッシュは 3 system の matrix ビルドで投入する
 
 - ステータス: 採用
 - 日付: 2026-11-01

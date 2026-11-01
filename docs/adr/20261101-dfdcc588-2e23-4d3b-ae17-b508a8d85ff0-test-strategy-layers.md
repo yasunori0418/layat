@@ -1,7 +1,7 @@
 ---
 id: "ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0"
 type: adr
-name: "テスト層の分け方"
+name: "テストを sandbox 可否で flake check と E2E に分ける"
 status: 採用
 origin: "ADR-0006 §テスト戦略・ADR-0012 §3 を書き直した"
 justifies:
@@ -15,7 +15,7 @@ justifies:
   - "DSG-2947b4a5-ba5c-4218-8478-624cba156116"
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
 ---
-# ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0: テスト層の分け方
+# ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0: テストを sandbox 可否で flake check と E2E に分ける
 
 - ステータス: 採用
 - 日付: 2026-11-01

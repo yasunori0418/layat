@@ -1,7 +1,7 @@
 ---
 id: "ADR-d97154cd-a2e5-4853-a682-800ff9435c89"
 type: adr
-name: "rollback の baseline とポインタ移動の順序"
+name: "rollback は FS を収束させてからポインタを動かす"
 status: 採用
 origin: "ドキュメント計画段階の最終レビュー（grill）で surfaced した「実装前に決めておくべき」残細目の束。ADR-0015 §5 を書き直した"
 justifies:
@@ -10,7 +10,7 @@ references:
   - "ADR-0057"
   - "ADR-0058"
 ---
-# ADR-d97154cd-a2e5-4853-a682-800ff9435c89: rollback の baseline とポインタ移動の順序
+# ADR-d97154cd-a2e5-4853-a682-800ff9435c89: rollback は FS を収束させてからポインタを動かす
 
 - ステータス: 採用
 - 日付: 2026-11-01
