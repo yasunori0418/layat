@@ -77,10 +77,11 @@ Arch / Gentoo 的なミニマル Linux ディストリビューションの基�
 layat は他のツール群と stdout / stdin の JSON パイプで合成するエコシステムの一員でもある。
 機械可読出力（`--json`）は **すべての機能で** outturn specVersion 1 規約に準拠する（→ ADR-0043）。
 
-**スコープの線引き**: 実装スコープは standalone CLI + project mode をコアとし home mode も
-対象、system 配置は将来拡張（→ ADR-0007）。「関数ベースのパッケージ導入・PATH 追加」に専用機構は
-持たない。`pkgs.buildEnv` の合成環境を entry として配置し、環境変数の配線は利用者側で行う
-（→ ADR-0069）。ブート / init / FS / パーティションの層は本構想でも空白であり、layat が担う領域ではない。
+**スコープの線引き**: standalone CLI + project mode をコアとし、home mode と system mode
+（`systemRoot` で `/` 配下へ root 権限で配置。NixOS / nix-darwin module が activation から起動する。
+→ ADR-0036, ADR-0066）も実装済み。「関数ベースのパッケージ導入・PATH 追加」に専用機構は持たない。
+`pkgs.buildEnv` の合成環境を entry として配置し、環境変数の配線は利用者側で行う（→ ADR-0069）。
+ブート / init / FS / パーティションの層は本構想でも空白であり、layat が担う領域ではない。
 
 ---
 

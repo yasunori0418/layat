@@ -46,7 +46,7 @@
 | e2e ハーネス（`tests/e2e/run.sh` 01-06、実 nix build/eval/`nix-env --set`） | 6/6 PASS |
 | spec ↔ 実装 乖離（2026-06-22 検証時点） | 0 件 |
 
-**結論: MVP（standalone CLI + project mode + home mode）は完成している。** system mode / NixOS / nix-darwin は設計通り MVP 外（将来拡張）。
+**結論: MVP（standalone CLI + project mode + home mode）は完成している。** system mode と NixOS / nix-darwin module は MVP 外として後から実装済み（`systemRoot` で `/` 配下へ root 権限で配置し、module は activation から同じ engine を起動する）。
 
 > 「spec ↔ 実装 乖離 0 件」は上記検証日時点の結果。公開後の epic #107（ドキュメント横断分析）で spec ↔ 実装の乖離が再検出されており、現在の乖離状況は #107 配下（#111 等）および tracking #91 を参照する。
 
