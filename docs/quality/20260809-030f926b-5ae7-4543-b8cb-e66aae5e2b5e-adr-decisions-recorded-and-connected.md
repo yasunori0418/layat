@@ -41,8 +41,8 @@ specification_ja: |
 接続を空のまま残さない規範は、**空を埋め忘れとして機械判定できる状態**を保つためにある。
 接続の非空性は QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c の機械検証が拾い、`廃止` と `supersedes` の対応は
 `dev/tests/adr-supersede.sh` が拾う。どちらも frontmatter しか見ないので、廃止にする ADR の全決定に
-後継が揃っているかは視野の外にあり、そこは人手のレビューで守る（確認の手順は `docs/adr/README.md`
-のセルフチェック節が持つ）。
+後継が揃っているかは視野の外にあり、そこは人手のレビューで守る（判定の条件は
+`docs/agents/adr-rules.md` の「廃止にできる条件」節が持つ）。
 
 ADR の粒度・置き換えの手順・接続先の型の一覧は本 item の規範に含めない。規則は
 `docs/agents/adr-rules.md` が、layat への当てはめは `docs/adr/README.md` が、接続可能な型は
