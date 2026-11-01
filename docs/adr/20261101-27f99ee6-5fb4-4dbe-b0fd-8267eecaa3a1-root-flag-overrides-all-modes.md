@@ -18,7 +18,7 @@ references:
 
 ## 背景
 
-engine は marker が運ぶ kind から root を実行時に解決する（ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed）。
+engine は marker が運ぶ種別から root を実行時に解決する（ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed）。
 CLI の `--root <path>` は解決した root を上書きするフラグで、当初は project mode の root を
 差し替える用途だけを想定していた。home mode や fixed root の config に渡したときの扱いを
 決める必要があった。
@@ -41,4 +41,4 @@ home mode の root が変わらないことは守れるが、テストなどの�
 
 ### project mode 以外では無視して warning を出す
 
-指定したのに効かないという驚きを生む。
+指定したのに root が変わらないという驚きを生む。

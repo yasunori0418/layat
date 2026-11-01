@@ -30,7 +30,7 @@ copy は世代管理の対象外とし、target が無いときだけ実体化�
 既にあれば上書きしない。stale 除去は copy target を消さず、entry から外れた copy は orphan として
 警告するにとどめる。
 
-store の更新を copy target へ反映する経路と copy target を消す経路は、利用者が明示したときに限る
+store の更新を copy target へ反映することと copy target を消すことは、利用者が明示したときに限る
 （ADR-0020 の `apply --recopy` と `layat reset`）。規範の細目は REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9・
 REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe・REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2 に置く。
 

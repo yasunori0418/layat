@@ -32,15 +32,15 @@ root は明示が必須である（ADR-f85f1afd-9b87-4f7a-922e-97c62554f198）�
 
 `root` は、3 つの marker（`projectRoot` / `homeRoot` / `systemRoot`）と、評価時に固定する
 絶対パス文字列の union にする。`projectRoot` は git toplevel、`homeRoot` は `$HOME`、`systemRoot`
-は `/` に、それぞれ engine が実行時に解決する。marker はパスを返す糖衣ではなく、解決の種別
-（kind）を運ぶ入れ物で、kind は `manifest.json` に記録される。`systemRoot` の実装は ADR-0036、
+は `/` に、それぞれ engine が実行時に解決する。marker はパスを返す糖衣ではなく、解決の種別を
+運ぶ入れ物で、種別は `manifest.json` の `rootKind` に記録される。`systemRoot` の実装は ADR-0036、
 marker の `subdir` 適用形は ADR-0040 が定める。規範の細目は
 REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66・REQ-3f541d39-da41-4ef8-858b-707f54cf6a29・
 REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b に置く。
 
 ## 根拠
 
-kind だけを評価時に決め、パスの解決を engine に任せれば、clone の場所やユーザーごとに違う root
+種別だけを評価時に決め、パスの解決を engine に任せれば、clone の場所やユーザーごとに違う root
 を、pure な評価のまま扱える。project の root を git toplevel にすれば、どのサブディレクトリから
 実行しても同じ root に解決される。絶対パス文字列を残すことで、任意の固定 root も書ける。
 
@@ -56,4 +56,4 @@ kind だけを評価時に決め、パスの解決を engine に任せれば、c
 
 ### `systemRoot` を API に載せない
 
-marker を project と home の 2 つに絞れるが、`/` へ配置する入口が無くなる。
+marker を project と home の 2 つに絞れるが、`/` へ配置する手段が無くなる。
