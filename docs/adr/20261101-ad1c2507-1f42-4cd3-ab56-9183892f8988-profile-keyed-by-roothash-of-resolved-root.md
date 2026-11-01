@@ -8,6 +8,7 @@ justifies:
   - "REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81"
   - "REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0"
   - "REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4"
+  - "REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3"
 references:
   - "ADR-0017"
   - "ADR-0034"
@@ -22,7 +23,7 @@ references:
 
 ## 背景
 
-layat は config ごとに profile（世代の系列）を持ち、前世代の manifest との差分で、不要になった配置を除去する。
+layat は config ごとに profile（世代の系列）を持ち、前回適用した manifest との差分で、不要になった配置を除去する。
 profile を config 名だけでキーすると、同じ config を別の root へ配置したときに 1 つの系列を共有する。
 同一 entrypoint の複数クローン、`--root` で配置先を差し替えた適用、`root` に絶対パスを渡した fixed root が
 これに当たる。
@@ -38,11 +39,12 @@ profileDir を config 名で直接キーするのは、root が 1 つに定ま�
 `<roothash>` 階層には元の root パスを記録した backref ファイルを置く。
 
 キーの対応表は REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81、`<roothash>` の定義は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、
-backref による孤児の逆引きは REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4 に置く。
+backref による孤児の逆引きは REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4、backref の置き場所は
+REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3 に置く。
 
 ## 根拠
 
-root ごとに系列を分ければ、クローン間や root 間で 不要な配置の除去が互いの配置を壊すことも、前回の root の
+root ごとに系列を分ければ、クローン間や root 間で不要な配置の除去が互いの配置を壊すことも、前回の root の
 配置物が気付かれずに残ることも構造的に起きない。home と system は root が 1 つに決まるので、直キーでも
 衝突せず、「1 ユーザー 1 profile」の分かりやすさを保てる。
 
