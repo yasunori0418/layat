@@ -10,12 +10,14 @@ justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
 supersedes:
   - "ADR-0048"
+references:
+  - "SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd"
 ---
 # SDR-3ff9f355-a667-476e-b10d-087248cdbfcf: ADR の失効は supersedes と 廃止 で表す
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: GitHub Issue #499, `docs/agents/adr-rules.md`, `docs/adr/README.md`
+- 関連: SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd, GitHub Issue #499, `docs/agents/adr-rules.md`, `docs/adr/README.md`
 - 起点: Issue #499 の grilling（2026-11-01）で確定。ADR-0048 §2・§3 を書き直した
 
 ## 背景
@@ -30,7 +32,7 @@ ADR の実例が無く、実例の無い関係を先に置くと部分改訂に�
 ## 決定
 
 ADR の失効は、後継の ADR から張る `supersedes` と、失効した側のステータス `廃止` で表す。新しく
-起こす ADR は `revises` と改訂注記を持たない。
+起こす ADR は `revises` と改訂注記を持たない。改訂を伴わない参照は、これまでどおり `references` で表す。
 
 `廃止` にできる条件・`supersedes` を張る時期・廃止した ADR に残すものは
 `docs/agents/adr-rules.md` の「改訂は丸ごとの置き換えで表す」節に置く。`廃止` と `supersedes` の

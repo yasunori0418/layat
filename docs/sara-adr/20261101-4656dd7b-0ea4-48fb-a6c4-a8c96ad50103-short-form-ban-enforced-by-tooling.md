@@ -11,12 +11,14 @@ justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
 supersedes:
   - "ADR-0053"
+references:
+  - "SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb"
 ---
 # SDR-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103: 省略形の禁止は起票の機械化と全面移行で担保する
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: GitHub Issue #366, #364
+- 関連: SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb, GitHub Issue #366, #364
 - 起点: epic #364 の着手前 grilling（2026-08-17）で確定。ADR-0053 §2 を書き直した
 
 ## 背景
