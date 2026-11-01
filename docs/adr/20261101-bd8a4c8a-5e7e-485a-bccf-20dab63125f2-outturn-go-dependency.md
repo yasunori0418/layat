@@ -10,6 +10,7 @@ origin: "layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の�
 justifies:
   - "REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62"
   - "REQ-57137302-de29-4f71-a565-034cd5de080b"
+  - "REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0"
 references:
   - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
   - "ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7"
@@ -34,7 +35,7 @@ CLI 層は `github.com/yasunori0418/outturn/go` に依存し、エンベロー�
 詰め替える。
 
 DTO を経た payload の生成は REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62 に、id の導出は
-REQ-57137302-de29-4f71-a565-034cd5de080b に置く。
+REQ-57137302-de29-4f71-a565-034cd5de080b に、CLI の依存の許可範囲は REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0 に置く。
 
 ## 根拠
 
