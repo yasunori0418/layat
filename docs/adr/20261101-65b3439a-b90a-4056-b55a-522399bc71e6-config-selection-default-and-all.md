@@ -4,6 +4,8 @@ type: adr
 name: "apply の config は名前省略で default を選び、--all で全件を選ぶ"
 status: 採用
 issues:
+  - "#2"
+  - "#3"
   - "#4"
   - "#550"
 origin: "CLI 化と entrypoint の再設計（Issue #2・#3・#4、2026-06-13）で確定。ADR-0007 §4 を書き直した"
@@ -14,7 +16,7 @@ justifies:
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: GitHub Issue #4, #550
+- 関連: GitHub Issue #2, #3, #4, #550
 - 起点: CLI 化と entrypoint の再設計（Issue #2・#3・#4、2026-06-13）で確定。ADR-0007 §4 を書き直した
 
 ## 背景

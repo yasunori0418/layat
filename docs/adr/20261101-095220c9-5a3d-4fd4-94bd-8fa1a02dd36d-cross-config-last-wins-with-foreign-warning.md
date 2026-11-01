@@ -9,15 +9,15 @@ origin: "ドキュメント計画段階の最終レビュー（2026-06-14）で�
 justifies:
   - "REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557"
   - "REQ-5c6b07da-3d06-414d-8770-4f438234b322"
+  - "REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7"
 references:
   - "ADR-0038"
-  - "ADR-0047"
 ---
 # ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d: cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0038, ADR-0047, GitHub Issue #550
+- 関連: ADR-0038, GitHub Issue #550
 - 起点: ドキュメント計画段階の最終レビュー（2026-06-14）で確定。ADR-0015 §2 を書き直した
 
 ## 背景
@@ -33,7 +33,9 @@ manifest に記録の無い symlink（foreign）を置き換えるときに warn
 
 target の状態ごとの扱い（不在・自分の記録した symlink・foreign symlink・実ファイルや実ディレクトリ）は
 REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557 に置く。同一 manifest 内の衝突を eval で止めるか、
-この実行時の後勝ちで扱うかの分け方は REQ-5c6b07da-3d06-414d-8770-4f438234b322 に置く。
+この実行時の後勝ちで扱うかの分け方は REQ-5c6b07da-3d06-414d-8770-4f438234b322 に置く。copy が
+foreign の実ファイルを見つけて配置を見送るときの、symlink 側と対になる warning は
+REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7 に置く。
 
 ## 根拠
 
@@ -41,8 +43,8 @@ REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557 に置く。同一 manifest 内の衝�
 世代の manifest にしか持たない方針で、その方針を変えてまで防ぐ価値は無い。
 
 warning にとどめれば、意図しない上書きは見えるようになり、意図した乗り換え（別ツールから layat への
-移行など）は止まらない。同じ entrypoint の `apply --all` で選ばれた config どうしの衝突は eval の段階で
-分かるので、ADR-0038 が前段で止める。この ADR の後勝ちが受け持つのは、それ以外の eval で分からない
+移行など）は止まらない。1 回の `apply --all` に載る config どうしの衝突は eval の段階で分かるので、
+ADR-0038 が前段で止める。この ADR の後勝ちが受け持つのは、それ以外の eval で分からない
 衝突である。
 
 ## 棄却した代替案

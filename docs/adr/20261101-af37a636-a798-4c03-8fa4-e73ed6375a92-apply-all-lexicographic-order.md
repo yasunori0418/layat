@@ -21,9 +21,8 @@ references:
 
 ## 背景
 
-`apply --all` の結果の表示と、失敗の集約には、決まった並び順が要る。当初は entrypoint の
-`layat.*` の定義順にするつもりだったが、`layat.*` は attrset で、Nix の attrset は定義順を
-保持しない。
+`apply --all` の結果の表示と、失敗の集約には、決まった並び順が要る。entrypoint の `layat.*` は
+attrset で、Nix の attrset は定義順を保持しない。
 
 ## 決定
 

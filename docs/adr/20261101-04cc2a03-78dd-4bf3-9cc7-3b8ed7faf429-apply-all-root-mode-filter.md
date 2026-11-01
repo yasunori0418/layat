@@ -28,7 +28,7 @@ shellHook から素の `apply --all` を打つと、project の config だけで
 
 `apply --all` に、root マーカーの名前に揃えた `--project-root` / `--home-root` / `--system-root` の
 フィルタを持たせる。フィルタを付けると、その root モードの config だけを適用する。素の `--all` は
-これまでどおり全 config を適用し、フィルタは opt-in の修飾にとどめる。
+全 config を適用し、フィルタは opt-in の修飾にとどめる。
 
 フィルタの規範（名指し apply との関係、root 権限で絞らずに実行したときの warning を含む）は
 REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b に置く。
@@ -36,11 +36,11 @@ REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b に置く。
 ## 根拠
 
 フィルタを opt-in にすれば、混在した entrypoint の footgun を塞ぎつつ、素の `--all` で全件を
-適用する既存の使い方は変わらない。devShell は `apply --all --project-root` を使えば、home mode の
+適用する使い方も残る。devShell は `apply --all --project-root` を使えば、home mode の
 config に触れない。
 
 フラグ名を root マーカーと揃えると、config の書き方と CLI の指定が 1 対 1 に対応する。
-`--system-root` は、system mode の実装（ADR-0036）で該当する config を持つようになった。
+`--system-root` は system mode（ADR-0036）の config を選ぶ。
 
 ## 棄却した代替案
 
