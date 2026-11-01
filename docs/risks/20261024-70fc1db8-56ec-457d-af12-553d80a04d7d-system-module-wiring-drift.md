@@ -7,6 +7,7 @@ impact: high
 level: high
 threatens:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
+  - "REQ-a220bb28-89de-42b0-a854-e7468755ecb1"
 ---
 # RISK-70fc1db8-56ec-457d-af12-553d80a04d7d: NixOS / nix-darwin モジュールが system mode の engine 起動の配線から外れる
 
@@ -28,6 +29,9 @@ NixOS / nix-darwin のモジュールは、host の activation から system roo
   または含まれても `--dryrun` が付かず、FS を変えない前提の操作で実配置が走る
 - **起動環境の欠落** — activation の PATH に `nix` が無いまま起動し、世代コミットが失敗する。
   `etc` / `users` より前に走る
+
+いずれも、activation から全 config の link-farm を 1 回の起動に渡す契約
+（→ REQ-a220bb28-89de-42b0-a854-e7468755ecb1）からの逸脱として現れる。
 
 ## 影響
 
