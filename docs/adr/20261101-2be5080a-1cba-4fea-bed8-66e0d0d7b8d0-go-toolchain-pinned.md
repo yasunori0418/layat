@@ -21,7 +21,7 @@ references:
 ## 背景
 
 Go のビルドで使う toolchain は、nixpkgs が提供する go と、`go.mod` の `toolchain` ディレクティブの
-2 つの経路で指定できる。Nix のサンドボックスはネットワークを遮断するので、toolchain の自動ダウンロードは
+どちらでも指定できる。Nix のサンドボックスはネットワークを遮断するので、toolchain の自動ダウンロードは
 失敗する。
 
 ## 決定

@@ -22,7 +22,7 @@ references:
 ## 背景
 
 outturn は item の `id` を、identity（`{kind, key}`）を JCS で正規化して SHA-256 した値で導く。
-layat の entry は config ごとに独立していて、別の config が同じ target を持つことがある。key に何を
+layat の entry は config ごとに独立していて、別の config に同じ target があることもある。key に何を
 含めるかで、id がどの範囲で一意になるかが決まる。
 
 ## 決定
