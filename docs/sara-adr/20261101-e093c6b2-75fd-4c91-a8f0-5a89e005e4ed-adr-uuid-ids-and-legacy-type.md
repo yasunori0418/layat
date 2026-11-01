@@ -11,12 +11,14 @@ justifies:
 supersedes:
   - "ADR-0048"
   - "ADR-0053"
+references:
+  - "SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd"
 ---
 # SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed: ADR も UUID で採番し、連番の旧 ADR は legacy_adr 型に凍結する
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: GitHub Issue #499, `docs/adr/README.md`
+- 関連: SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd, GitHub Issue #499, `docs/adr/README.md`
 - 起点: Issue #499 の grilling（2026-11-01）で確定。ADR-0048 §4・ADR-0053 §4 を書き直した
 
 ## 背景
@@ -33,7 +35,7 @@ ID は UUID 形式の検証を通らない。
 
 新しく起こす ADR は他の item と同じく UUID で採番する（`ADR-<フル UUIDv4>`）。既存の連番 ADR は、
 `id_format` を連番のまま持つ別の型 `legacy_adr` へ付け替えて凍結する。`legacy_adr` は新規に起こさず、
-本文も書き換えない。
+廃止にするときを除いて本文も書き換えない。
 
 型・ファイル名・起票の手順と `legacy_adr` の扱いは `docs/adr/README.md` に置く。
 

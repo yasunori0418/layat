@@ -10,12 +10,14 @@ justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
 supersedes:
   - "ADR-0048"
+references:
+  - "SDR-3ff9f355-a667-476e-b10d-087248cdbfcf"
 ---
 # SDR-fa7eff8e-788f-48e7-951d-4cfbf95d5a1f: adr の status_note を持たない
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: GitHub Issue #499
+- 関連: SDR-3ff9f355-a667-476e-b10d-087248cdbfcf, GitHub Issue #499
 - 起点: Issue #499 の grilling（2026-11-01）で確定。ADR-0048 §2 を書き直した
 
 ## 背景
