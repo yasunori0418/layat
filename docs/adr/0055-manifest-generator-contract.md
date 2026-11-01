@@ -1,6 +1,6 @@
 ---
 id: "ADR-0055"
-type: adr
+type: legacy_adr
 name: "manifest 生成器の契約"
 status: 採用
 issues:

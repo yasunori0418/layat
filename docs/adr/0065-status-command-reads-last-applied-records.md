@@ -1,6 +1,6 @@
 ---
 id: "ADR-0065"
-type: adr
+type: legacy_adr
 name: "status は last-applied 記録を走査して表示する"
 status: 採用
 issues:

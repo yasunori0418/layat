@@ -1,6 +1,6 @@
 ---
 id: "ADR-0061"
-type: adr
+type: legacy_adr
 name: "モジュールに `layat.recopy` オプションを足し、`layat.jobs` とともに共通オプションへ載せる"
 status: 採用
 issues:

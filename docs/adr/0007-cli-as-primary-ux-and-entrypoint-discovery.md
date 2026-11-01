@@ -1,9 +1,8 @@
 ---
 id: "ADR-0007"
-type: adr
+type: legacy_adr
 name: "汎用 layat CLI を一次 UX に昇格し、entrypoint 発見＋root 明示モデルへ移行する"
 status: 採用
-status_note: "2026-06-14 追記: project mode の `layat` は devShell 同梱が canonical → ADR-0015／2026-07-03 改訂: legacy entrypoint の addressing を `nix build -f` に統一 → ADR-0032"
 issues:
   - "#2"
   - "#3"
@@ -40,7 +39,7 @@ references:
 ---
 # ADR-0007: 汎用 layat CLI を一次 UX に昇格し、entrypoint 発見＋root 明示モデルへ移行する
 
-- ステータス: 採用（2026-06-14 追記: project mode の `layat` は devShell 同梱が canonical → ADR-0015／2026-07-03 改訂: legacy entrypoint の addressing を `nix build -f` に統一 → ADR-0032）
+- ステータス: 採用
 - 日付: 2026-06-13
 - 関連: ADR-0002, ADR-0003, ADR-0004, ADR-0005, ADR-0006, ADR-0015, ADR-0055, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
 - 改訂対象: ADR-0006「layat の露出と環境セットアップ」節と棄却案（本 ADR が反転）、ADR-0004 / ADR-0005 の root モデル

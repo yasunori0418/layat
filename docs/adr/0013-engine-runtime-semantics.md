@@ -1,9 +1,8 @@
 ---
 id: "ADR-0013"
-type: adr
+type: legacy_adr
 name: "engine 実行時セマンティクスの細目を確定する（manifest v1 / flock / --all / copy+marker / systemRoot / gitignore / roothash）"
 status: 採用
-status_note: "2026-06-14 拡張: 配置セマンティクスに foreign symlink warning・祖先 symlink error を追加 → ADR-0015／2026-10-12 拡張: `srcKind` に `\"rootRelative\"` を追加し copy 併用の eval 時エラーを適用 → ADR-0059"
 origin: "ドキュメント計画段階のレビューで surfaced した「実装前に決めておくべき」細目の束"
 justifies:
   - "REQ-16faf428-77f3-492f-b858-222c5274cbf7"
@@ -31,7 +30,7 @@ references:
 ---
 # ADR-0013: engine 実行時セマンティクスの細目を確定する（manifest v1 / flock / --all / copy+marker / systemRoot / gitignore / roothash）
 
-- ステータス: 採用（2026-06-14 拡張: 配置セマンティクスに foreign symlink warning・祖先 symlink error を追加 → ADR-0015／2026-10-12 拡張: `srcKind` に `"rootRelative"` を追加し copy 併用の eval 時エラーを適用 → ADR-0059）
+- ステータス: 採用
 - 日付: 2026-06-13
 - 関連: ADR-0002, ADR-0005, ADR-0006, ADR-0007, ADR-0010, ADR-0011, ADR-0015, ADR-0059, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`
 - 起点: ドキュメント計画段階のレビューで surfaced した「実装前に決めておくべき」細目の束

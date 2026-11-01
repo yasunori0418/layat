@@ -1,9 +1,8 @@
 ---
 id: "ADR-0004"
-type: adr
+type: legacy_adr
 name: "root 一般化と「純粋関数プリミティブ」としての positioning"
 status: 採用
-status_note: "2026-06-11 改訂: root を公開引数へ昇格 → ADR-0005／2026-06-13 改訂: root を明示必須・3 マーカー化 → ADR-0007"
 justifies:
   - "REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4"
   - "REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51"
@@ -15,7 +14,7 @@ references:
 ---
 # ADR-0004: root 一般化と「純粋関数プリミティブ」としての positioning
 
-- ステータス: 採用（2026-06-11 改訂: root を公開引数へ昇格 → ADR-0005／2026-06-13 改訂: root を明示必須・3 マーカー化 → ADR-0007）
+- ステータス: 採用
 - 日付: 2026-06-07
 - 関連: ADR-0002, ADR-0003, ADR-0005, ADR-0007, `docs/concept.md`, `docs/design.md`（mkActivationScript シグネチャ）
 

@@ -1,6 +1,6 @@
 ---
 id: "ADR-0028"
-type: adr
+type: legacy_adr
 name: "cachix push を main push の os マトリクスで実装する（ADR-0012 §4 の実装補足）"
 status: 採用
 origin: "参照: `~/src/github.com/yasunori0418/nur-packages` の `.github/workflows/cachix-push.yml`"

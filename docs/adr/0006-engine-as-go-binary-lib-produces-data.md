@@ -1,9 +1,8 @@
 ---
 id: "ADR-0006"
-type: adr
+type: legacy_adr
 name: "エンジンを固定の Go バイナリにし、lib はデータ生成に徹する（生成 bash を廃する）"
 status: 採用
-status_note: "2026-06-13 一部改訂: 「layat の露出と環境セットアップ」節・実行フロー・該当棄却案を ADR-0007 が反転"
 justifies:
   - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
   - "REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564"
@@ -30,7 +29,7 @@ references:
 ---
 # ADR-0006: エンジンを固定の Go バイナリにし、lib はデータ生成に徹する（生成 bash を廃する）
 
-- ステータス: 採用（2026-06-13 一部改訂: 「layat の露出と環境セットアップ」節・実行フロー・該当棄却案を ADR-0007 が反転）
+- ステータス: 採用
 - 日付: 2026-06-11
 - 関連: ADR-0002, ADR-0003, ADR-0005, ADR-0007, ADR-0012, ADR-0013, ADR-0055, ADR-0056, ADR-0057, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
 

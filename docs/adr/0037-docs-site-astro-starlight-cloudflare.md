@@ -1,6 +1,6 @@
 ---
 id: "ADR-0037"
-type: adr
+type: legacy_adr
 name: "ドキュメントサイトは Astro Starlight + 同一リポジトリ + Cloudflare Pages（ビルド時生成・英語ルート i18n）で構築する"
 status: 採用
 issues:

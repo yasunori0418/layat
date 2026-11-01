@@ -1,6 +1,6 @@
 ---
 id: "ADR-0047"
-type: adr
+type: legacy_adr
 name: "配置前除去（PreRemove）の一般化 — 配置を塞ぐ自己記録 stale の migration と空 dir の除去"
 status: 採用
 issues:

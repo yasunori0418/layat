@@ -1,6 +1,6 @@
 ---
 id: "ADR-0066"
-type: adr
+type: legacy_adr
 name: "NixOS / nix-darwin モジュールを system mode の配線として実装する"
 status: 採用
 issues:

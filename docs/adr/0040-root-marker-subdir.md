@@ -1,6 +1,6 @@
 ---
 id: "ADR-0040"
-type: adr
+type: legacy_adr
 name: "root marker に `subdir` 適用形を追加する（実体は target 前置の eval 時糖衣）"
 status: 採用
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。「root マーカーの解決位置を宣言的にずらしたい」要望を、grilling で「root 配下のサブディレクトリを基点にする」意図（配下方向）と確認した"

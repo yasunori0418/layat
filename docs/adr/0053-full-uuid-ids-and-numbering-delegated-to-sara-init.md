@@ -1,6 +1,6 @@
 ---
 id: "ADR-0053"
-type: adr
+type: legacy_adr
 name: "採番責務を sara init へ再配置し、ID をフル UUID へ統一する — 8 文字二層構成の廃止・ADR 連番の維持"
 status: 採用
 issues:

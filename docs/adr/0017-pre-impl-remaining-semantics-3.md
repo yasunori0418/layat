@@ -1,6 +1,6 @@
 ---
 id: "ADR-0017"
-type: adr
+type: legacy_adr
 name: "実装前レビュー第 3 巡で surfaced した残セマンティクスを確定する（--all の root モードフィルタ / --root の適用範囲 / 世代スキップとドリフト修復 / 張替えの atomic 性）"
 status: 採用
 origin: "ADR-0016 に続く実装前レビュー第 3 巡（grill）で surfaced した残細目の束"

@@ -1,6 +1,6 @@
 ---
 id: "ADR-0067"
-type: adr
+type: legacy_adr
 name: "世代スキップを system mode へ拡張する"
 status: 採用
 issues:

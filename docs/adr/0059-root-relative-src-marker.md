@@ -1,6 +1,6 @@
 ---
 id: "ADR-0059"
-type: adr
+type: legacy_adr
 name: "root 相対 out-of-store マーカー"
 status: 採用
 issues:

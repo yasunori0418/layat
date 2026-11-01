@@ -1,6 +1,6 @@
 ---
 id: "ADR-0019"
-type: adr
+type: legacy_adr
 name: "パス安全性・copy の farm/gitignore 扱い・空 entries の挙動を確定する"
 status: 採用
 origin: "ADR-0018 後の横断検証で surfaced した「3 巡で詰め切れていなかった」残 4 点"

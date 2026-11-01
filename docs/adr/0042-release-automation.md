@@ -1,6 +1,6 @@
 ---
 id: "ADR-0042"
-type: adr
+type: legacy_adr
 name: "リリースを bump PR 起点で自動化する（VERSION ファイル + 自動タグ + 自動リリースノート）"
 status: 採用
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。参照実装として同作者の cryoflow リポジトリのリリース自動化（bump workflow + release workflow）を採用する"

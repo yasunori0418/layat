@@ -1,6 +1,6 @@
 ---
 id: "ADR-0054"
-type: adr
+type: legacy_adr
 name: "nput を layat へ改名し、2 週間の改名予告期間を挟む"
 status: 採用
 issues:

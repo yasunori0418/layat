@@ -1,6 +1,6 @@
 ---
 id: "ADR-0070"
-type: adr
+type: legacy_adr
 name: "記録の出所と同名 config の警告"
 status: 採用
 issues:

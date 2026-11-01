@@ -1,6 +1,6 @@
 ---
 id: "ADR-0064"
-type: adr
+type: legacy_adr
 name: "HM モジュールに `layat.configs.<name>.subdir` を足し、root marker の subdir 適用形へ配線する"
 status: 採用
 issues:

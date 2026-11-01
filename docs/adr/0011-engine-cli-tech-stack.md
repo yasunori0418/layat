@@ -1,6 +1,6 @@
 ---
 id: "ADR-0011"
-type: adr
+type: legacy_adr
 name: "engine / CLI の技術スタックを確定する（依存方針・cobra・store path 取得・vendorHash・ロック）"
 status: 採用
 justifies:

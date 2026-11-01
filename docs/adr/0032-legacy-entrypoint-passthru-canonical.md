@@ -1,6 +1,6 @@
 ---
 id: "ADR-0032"
-type: adr
+type: legacy_adr
 name: "legacy entrypoint（shell.nix / default.nix）は mkShell passthru を canonical とし、addressing を `nix build -f` に統一する"
 status: 採用
 issues:

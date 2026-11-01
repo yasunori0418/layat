@@ -1,6 +1,6 @@
 ---
 id: "ADR-0043"
-type: adr
+type: legacy_adr
 name: "`--json` 機械可読出力を outturn 規約準拠にし、JSON 出力の outturn 準拠を恒常原則とする"
 status: 採用
 issues:

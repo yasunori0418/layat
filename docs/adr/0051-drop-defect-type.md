@@ -1,6 +1,6 @@
 ---
 id: "ADR-0051"
-type: adr
+type: legacy_adr
 name: "defect 型を廃止する — 欠陥は GitHub Issues で管理し、グラフは規範のみを持つ"
 status: 採用
 issues:

@@ -1,9 +1,8 @@
 ---
 id: "ADR-0048"
-type: adr
+type: legacy_adr
 name: "ドキュメントは sara でグラフ構造化する — model.yaml の全面置換・UUIDv4 二層 ID・CI 非必須開始"
 status: 採用
-status_note: "2026-10-30 改訂: adr の status に `不採用` を追加 → ADR-0069"
 issues:
   - "#203"
   - "#206"
@@ -17,7 +16,7 @@ references:
 ---
 # ADR-0048: ドキュメントは sara でグラフ構造化する — model.yaml の全面置換・UUIDv4 二層 ID・CI 非必須開始
 
-- ステータス: 採用（2026-10-30 改訂: adr の status に `不採用` を追加 → ADR-0069）
+- ステータス: 採用
 - 日付: 2026-08-02
 - 関連: ADR-0030, ADR-0037, ADR-0049, ADR-0050, ADR-0053, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `docs/adr/README.md`, GitHub Issue #203, #206, #207
 - 改訂対象: なし（新領域。「仕様とテストの全体像把握」= quality-observability（→ Issue #203）の実現手段を

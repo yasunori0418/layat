@@ -1,6 +1,6 @@
 ---
 id: "ADR-0025"
-type: adr
+type: legacy_adr
 name: "実装前残セマンティクス第7巡（nix experimental-features 前提・HM profile 制約明記と seam・layat init 固定 ref・profile 専用ディレクトリレイアウト・reset 非TTY・Go fmt/lint・main 直コミット撤廃トリガ）"
 status: 採用
 origin: "ADR-0024 までの第6巡で設計は実装着手の閾値に達したが、`/grill-me` による横断検査で骨格に直結する未決・揺れ・考慮漏れが7点残っていた（実装前残セマンティクス確定の第7巡）"

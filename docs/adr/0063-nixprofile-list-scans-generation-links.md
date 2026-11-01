@@ -1,6 +1,6 @@
 ---
 id: "ADR-0063"
-type: adr
+type: legacy_adr
 name: "nixprofile の List は nix-env を経由せず世代リンクを走査する"
 status: 採用
 issues:

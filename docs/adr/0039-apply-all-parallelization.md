@@ -1,6 +1,6 @@
 ---
 id: "ADR-0039"
-type: adr
+type: legacy_adr
 name: "`apply --all` を build・配置の両段階で並列化する（ADR-0038 の前段衝突検査を前提）"
 status: 採用
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。複数 profile / manifest 処理の高速化要望"
