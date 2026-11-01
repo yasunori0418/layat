@@ -16,7 +16,7 @@ threatens:
 
 root 相対 src は `target` と同じ配置 root に対して解決され、`target` の親から
 `<src>/<subpath>` への相対リンクとして張られる（→ REQ-a77181dd-a59c-40bb-855e-3430ad970eb6・
-DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296）。これが崩れる形は 3 つある。
+DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296）。これが崩れる形は 4 つある。
 
 - **基準点の取り違え** — `LinkDest` が `target` の親ではなく root や cwd を起点に相対化する、
   あるいは preflight が root ではなく cwd を基準に実在を確かめる。リンクは別の場所を指すか

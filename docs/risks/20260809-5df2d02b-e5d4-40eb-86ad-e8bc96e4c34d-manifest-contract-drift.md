@@ -15,6 +15,7 @@ threatens:
   - "REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7"
   - "REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe"
   - "REQ-eb363122-385a-499c-a074-c95efb949d07"
+  - "REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d"
 ---
 # RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d: manifest.json の形が engine の読む契約から静かにずれる
 
@@ -34,7 +35,8 @@ E2E まで落ちてこないと検出できない（REQ-2b0c2bb8-964f-4e36-a121-
 （REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe）や defaults の適用（REQ-b232ec98-af3b-41f3-a050-29d417322002）が変われば、世代管理下に置くつもりの entry が
 世代外へ回る。`mkOutOfStoreSymlink` が返すマーカー（REQ-eb363122-385a-499c-a074-c95efb949d07）の形が
 変われば、manifest の `srcKind` と local path の写しがずれ、engine は out-of-store の entry を別の
-種類として読む。
+種類として読む。`identity` を null のまま渡したときに manifest へ `identity` を出す
+（→ REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d）のも、文書の形のずれに当たる。
 
 ## 評価
 

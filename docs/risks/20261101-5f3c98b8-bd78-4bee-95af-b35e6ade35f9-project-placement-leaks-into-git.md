@@ -43,6 +43,6 @@ likelihood medium × impact medium から level は medium。
 ## 緩和
 
 TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12 が、名前の省略・単一・全件という対象選択の経路の区別を
-緩和する。anchor 形への変換と重複除去は `cmd/layat/gitignore_test.go` が確かめているが、それを
-束ねる検証条件は無い。copy target を列挙に含むこと、project mode 以外の config で止まること、
+確かめ、「全件出力の揺れ」のうち名前つきと全件の経路の取り違えを緩和する。anchor 形への変換と
+重複除去は `cmd/layat/gitignore_test.go` が確かめているが、それを束ねる検証条件は無い。copy target を列挙に含むこと、project mode 以外の config で止まること、
 activation が `.gitignore` に触れないことを確かめる検証条件も無く、これらは残余として残る。
