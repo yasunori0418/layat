@@ -8,6 +8,7 @@ issues:
   - "yasunori0418/outturn#1"
 origin: "layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §6 を書き直した"
 justifies:
+  - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
   - "REQ-9341fa5d-836e-4023-af53-cc7d273438d1"
   - "REQ-0a123b89-0399-4f76-b988-56a5f7e0becf"
 references:
@@ -30,8 +31,9 @@ layat はエラーを stderr の人間向けテキストで出す。outturn は�
 
 `--json` のエラーはエンベロープに構造化して載せ、同時に stderr の人間向けテキストも常に出す。置き場は
 主体の有無で分ける。主体が決まる前の失敗はトップの `errors[]`、主体に紐づく失敗はその主体の
-`results[i].errors[]`、item 起因の失敗は `item.error` に置く。終了コードの体系は変えず、outturn の
-`status` を exit 0 で `success`、非 0 で `error` に連動させる。
+`results[i].errors[]`、item 起因の失敗は `item.error` に置く。outturn の `status` は、終了コード 0 で `success`、非 0 で
+`error` に連動させる。`--json` は stdout に、`-v` の配置レポート（ADR-0031）は stderr に出るので、
+両者は併用できる。
 
 置き場の細目は REQ-9341fa5d-836e-4023-af53-cc7d273438d1 に、`-v` との直交は
 REQ-0a123b89-0399-4f76-b988-56a5f7e0becf に置く。

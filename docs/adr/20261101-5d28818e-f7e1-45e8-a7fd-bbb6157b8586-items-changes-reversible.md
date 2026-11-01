@@ -43,10 +43,6 @@ outturn §4 が「`reversible:false` を警告として扱うべき」と定め�
 
 ## 棄却した代替案
 
-### `items` を差分のある entry に絞る
-
-変更の無い entry が出力から消え、全体の状態を出力だけで追えない。
-
 ### 不可逆な変更に `W_IRREVERSIBLE` を付ける
 
 `change.reversible` との二重符号化になる。outturn#1 で棄却した。

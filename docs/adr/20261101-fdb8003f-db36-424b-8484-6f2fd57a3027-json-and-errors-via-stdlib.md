@@ -1,21 +1,19 @@
 ---
 id: "ADR-fdb8003f-db36-424b-8484-6f2fd57a3027"
 type: adr
-name: "JSON とエラーは標準ライブラリで扱う"
+name: "engine は JSON とエラーを標準ライブラリで扱う"
 status: 採用
 issues:
   - "#552"
 origin: "engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §7 の JSON とエラー処理を書き直した"
 justifies:
   - "REQ-b74a118a-1272-44eb-944c-7725163211c6"
-references:
-  - "ADR-0006"
 ---
-# ADR-fdb8003f-db36-424b-8484-6f2fd57a3027: JSON とエラーは標準ライブラリで扱う
+# ADR-fdb8003f-db36-424b-8484-6f2fd57a3027: engine は JSON とエラーを標準ライブラリで扱う
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0006, GitHub Issue #552
+- 関連: GitHub Issue #552
 - 起点: engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §7 の JSON とエラー処理を書き直した
 
 ## 背景
@@ -25,7 +23,7 @@ JSON の扱いとエラー処理をどう実装するかを決める必要があ
 
 ## 決定
 
-JSON は `encoding/json` で扱う。エラーは `fmt.Errorf` の `%w` でラップし、`errors.Is` / `errors.As` で
+engine は、JSON を `encoding/json` で扱う。エラーは `fmt.Errorf` の `%w` でラップし、`errors.Is` / `errors.As` で
 判別する。どちらも標準ライブラリで完結させる。
 
 engine の依存の規範は REQ-b74a118a-1272-44eb-944c-7725163211c6 に置く。
@@ -37,6 +35,4 @@ engine の依存の規範は REQ-b74a118a-1272-44eb-944c-7725163211c6 に置く�
 
 ## 棄却した代替案
 
-### エラー処理に第三者ライブラリを使う
-
-標準の `%w` と `errors.Is` / `errors.As` で足りる。engine が第三者依存を持たないという方針にも反する。
+元の検討では、代替案を記録していない。
