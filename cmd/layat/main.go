@@ -71,11 +71,15 @@ Internal nix commands (disclosed for transparency; you can run them by hand sele
   apply <name>      nix eval <ep>#layat.<system>.<name>.rootKind --raw
                     nix build <ep>#layat.<system>.<name> --out-link <profileDir>/.pending
   apply --all       nix eval <ep>#layat.<system> --apply '<rootKind map>' --json
-                    nix build <ep>#layat.<system>.<name> (per config)
+                    nix build <ep>#layat.<system>.<name> --no-link --print-out-paths (per config)
+                    nix build <ep>#layat.<system>.<name> --out-link <profileDir>/.pending (per config)
   gitignore <name>  nix eval <ep>#layat.<system>.<name>.rootKind --raw
                     nix build <ep>#layat.<system>.<name> --no-link --print-out-paths
-  rollback /        nix eval <ep>#layat.<system>.<name>.rootKind --raw
+  reset /           nix eval <ep>#layat.<system>.<name>.rootKind --raw
+  rollback /
   list-generations
+
+prune and status run no nix commands.
 
 For a legacy entrypoint (shell.nix / default.nix; no per-system dimension), the
 above take the -f form instead: nix eval -f <ep> layat.<name>.rootKind / nix build -f <ep> layat.<name> ...
