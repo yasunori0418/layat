@@ -64,7 +64,7 @@ _Avoid_: 「`$HOME` 固定」「既定は home mode」「root 省略時の既定
 ### 配置モード
 
 **home mode**:
-**root** = `$HOME` の配置モード。`homeRoot` マーカーで明示選択する（旧: `root` 省略時の既定。暗黙デフォルトは廃止）。standalone も home-manager 等の module もこのモード。世代を毎回積み、standalone では `layat rollback` をユーザーに公開する。module では公開せず、ユーザー向け rollback は host（`home-manager --rollback` 等）に一本化し、layat profile は旧内容の新世代を積んで前進だけで追従する（→ ADR-0002）。
+**root** = `$HOME` の配置モード。`homeRoot` マーカーで明示選択する（旧: `root` 省略時の既定。暗黙デフォルトは廃止）。standalone も home-manager 等の module もこのモード。世代を毎回積み、standalone では `layat rollback` をユーザーに公開する。module では公開せず、ユーザー向け rollback は host（`home-manager --rollback` 等）に一本化し、layat profile は旧内容の新世代を積む形で前進だけを続ける（→ ADR-0002）。
 _Avoid_: 「standalone 専用」「`root` 省略時の既定」と説明すること
 
 **project mode**:
