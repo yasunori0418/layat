@@ -19,8 +19,9 @@ justifies:
 
 `lib.mkManifest` の入力（`entries` と `root`）が流れ込む経路は 2 つある。CLI や entrypoint から
 `mkManifest` を直接呼ぶ経路と、home-manager / NixOS のモジュールの entries オプション
-（`layat.configs.<name>.entries`）を通る経路である。`mkOption` に型を書いても、型の検査が行われるのは `lib.evalModules` を通したときだけ
-なので、型をオプションに書くだけでは直接呼ぶ経路の入力が検査されないまま通る。
+（`layat.configs.<name>.entries`）を通る経路である。`mkOption` に型を書いても、型の検査が
+行われるのは `lib.evalModules` を通したときだけなので、型をオプションに書くだけでは直接呼ぶ
+経路の入力が検査されないまま通る。
 
 `lib.types`・`mkOption`・`lib.evalModules` は nixpkgs の lib の中核で、NixOS や home-manager の
 ものではない。
@@ -28,8 +29,7 @@ justifies:
 ## 決定
 
 `mkManifest` は、前段で呼ぶ `normalizeManifest` の中で `entries` と `root` を `lib.evalModules` に
-通して検査・正規化する。設定だけで
-判定できる誤りは、この検査で評価時に止める。
+通して検査・正規化する。設定だけで判定できる誤りは、この検査で評価時に止める。
 
 検査の主体と層の分け方の規範は REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34・
 REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a に置く。

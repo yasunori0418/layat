@@ -16,9 +16,9 @@ justifies:
 
 ## 背景
 
-モジュール経路では、entries オプション（`layat.configs.<name>.entries`）がまずホスト（home-manager / NixOS）の `evalModules` で検査
-され、その後 `mkManifest` の `evalModules` でもう一度検査される。同じ entry を 2 回検査することに
-なる。
+モジュール経路では、entries オプション（`layat.configs.<name>.entries`）がまずホスト
+（home-manager / NixOS）の `evalModules` で検査され、その後 `mkManifest` の `evalModules` でもう一度
+検査される。同じ entry を 2 回検査することになる。
 
 ## 決定
 
