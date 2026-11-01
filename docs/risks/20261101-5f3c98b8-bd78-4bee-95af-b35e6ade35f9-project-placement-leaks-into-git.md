@@ -42,9 +42,14 @@ likelihood medium × impact medium から level は medium。
 
 ## 緩和
 
-TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12 は対象選択の経路（名前の省略・単一・全件）の区別を確かめ、
-`gitignore <name>` と `gitignore --all` が意図した config を対象に取ることを緩和する。行指向の
-`--all` の並び替えと重複除去は e2e 01-project と `cmd/layat/gitignore_test.go` が確かめているが、
-TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12 の条件には含まれず、それを条件に持つ TC も無い。copy target を
-列挙に含むこと、project mode 以外の config で止まること、activation が `.gitignore` に触れないことを
-確かめる検証条件も無く、これらは残余として残る。
+4 つの崩れ方ごとの緩和と残余は次のとおり。
+
+- **列挙の漏れ** — copy target を列挙に含むことを確かめる検証条件は無く、残余として残る
+- **全件出力の揺れ** — TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12 が対象選択の経路（名前の省略・単一・全件）の
+  区別を確かめ、全件経路が正しい config の集合を取ることだけを緩和する。行指向の `--all` の
+  並び替えと重複除去は e2e 01-project と `cmd/layat/gitignore_test.go` が確かめているが、それを
+  条件に持つ TC が無いので残余として残る
+- **project mode 外での出力** — project mode 以外の config で止まることを確かめる検証条件は無く、
+  残余として残る
+- **activation の干渉** — activation が `.gitignore` と git の index に触れないことを確かめる検証条件は
+  無く、残余として残る
