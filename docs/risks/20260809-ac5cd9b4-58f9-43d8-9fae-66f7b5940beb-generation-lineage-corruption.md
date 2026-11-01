@@ -45,7 +45,7 @@ profileDir を読めない失敗を黙認して「世代 0 件」と見なすの
 
 キーイングの前提と世代の操作経路も同じ系統にある。build 前に profileDir を決めるための
 `passthru.rootKind`（→ REQ-2f9205ee-cec5-4072-ac3e-890caae79904）が評価時に取れないか実際の root と
-食い違うと、flock と前世代の読み取りが別の profileDir に向く。build しないコマンドが eval 先行を
+食い違うと、flock と前世代の読み取りが別の profileDir に対して行われる。build しないコマンドが eval 先行を
 省くか、`--root` で作った世代を同じ `--root` 無しで操作できてしまうと、別の系列を読む
 （→ REQ-9c111c32-8f6c-4eda-859c-dae02c0624fc）。世代の commit・列挙・切替が世代バックエンドの契約
 （→ REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）を迂回するか、世代の間引きが契約と nix コマンドの

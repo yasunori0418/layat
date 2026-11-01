@@ -22,9 +22,9 @@ project mode の配置物は commit の対象外で、activation は `.gitignore
 - **列挙の漏れ** — `gitignore` が `method` で target を選り分け、copy target を出さない
   （→ REQ-60787ed2-4176-4bdd-800f-1600c0315551）。copy の配置物は通常ファイルなので、
   `git add -A` でそのまま commit に入る
-- **全件出力の揺れ** — 行指向の `gitignore --all` が config ごとの出力を並べたままにするか、
+- **全件出力の重複と並び順** — 行指向の `gitignore --all` が config ごとの出力を並べたままにするか、
   並び替えと重複除去を欠く（→ REQ-1f128917-4424-4e37-8a88-e0bb23a09da7）。同じ target が二重に現れ、
-  出力を取り込むたびに `.gitignore` の差分が揺れる
+  出力を取り込むたびに `.gitignore` に余計な差分が出る
 - **project mode 外での出力** — home / fixed の config を指定しても止まらず、git toplevel を
   前提にした anchor 形の行を出す（→ REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9）。`.gitignore` の
   位置と無関係な行が書き込まれ、意図しないパスが追跡から外れる
@@ -45,8 +45,8 @@ likelihood medium × impact medium から level は medium。
 4 つの崩れ方ごとの緩和と残余は次のとおり。
 
 - **列挙の漏れ** — copy target を列挙に含むことを確かめる検証条件は無く、残余として残る
-- **全件出力の揺れ** — TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12 が対象選択の経路（名前の省略・単一・全件）の
-  区別を確かめ、全件経路が正しい config の集合を取ることだけを緩和する。行指向の `--all` の
+- **全件出力の重複と並び順** — TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12 が対象選択の経路（名前の省略・単一・全件）の
+  区別を確かめ、全件指定が対象の config をすべて選ぶことだけを緩和する。行指向の `--all` の
   並び替えと重複除去は e2e 01-project と `cmd/layat/gitignore_test.go` が確かめているが、それを
   条件に持つ TC が無いので残余として残る
 - **project mode 外での出力** — project mode 以外の config で止まることを確かめる検証条件は無く、

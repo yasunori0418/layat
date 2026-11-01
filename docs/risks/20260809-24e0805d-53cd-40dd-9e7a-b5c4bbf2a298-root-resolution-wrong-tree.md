@@ -32,7 +32,7 @@ git から root を解決できないときに engine 実行時ではなく評�
 - home mode の root 供給元が層ごとに揃わず、HM 経由と CLI 経由で配置先が分岐する
 - profile ディレクトリの作成・backref 書き込みの失敗が握り潰され、逆引き不能な状態で配置が進む
 - `--root` を渡しても、project mode が git toplevel、home mode が `$HOME` を採り続け、明示した
-  root が効かない（→ REQ-61c05e09-0bde-4f74-9a96-03185f9df606）
+  root が使われない（→ REQ-61c05e09-0bde-4f74-9a96-03185f9df606）
 
 ## 評価
 

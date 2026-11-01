@@ -33,7 +33,7 @@ try-lock になっていれば競合時に黙って何もせず「成功した�
 なるのも、呼び出し側がスキップを失敗と誤認する形で本リスクに含む。
 
 `reset` も解決した profileDir を鍵に blocking flock を取る（→ REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4）。
-reset が lock を取らないか別の鍵で取ると、同時に走る apply と互いの配置を壊す。
+reset が lock を取らないか別の鍵で取ると、同時に実行される apply と互いの配置を壊す。
 
 ## 実現性
 
