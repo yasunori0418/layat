@@ -511,7 +511,7 @@ generator = "nix"
 
 次の順に消す。後の手順で消す記録や profile を、前の手順が使うためだ。
 
-1. **config ごとに配置を撤去する。** `reset` には `--all` が無く、root を entrypoint の `layat.<name>` から解決するので、apply したときと同じ場所から config ごとに実行する(`systemRoot` の config は root で)。記録どおりの link だけを消し、profile には触れない。
+1. **config ごとに配置を撤去する。** `reset` には `--all` が無く、root を entrypoint の `layat.<name>` から解決するので、apply したときと同じ場所から config ごとに実行する(`systemRoot` の config は root で)。symlink は記録どおりのものだけを消し(foreign は残す)、copy target はすべて消す。残したい copy は先に退避しておく。`layat reset <name> --dryrun` で両方を確かめられる。profile には触れない。
 
    ```bash
    layat status                    # last-applied 記録を持つ全 config と、その target
@@ -530,7 +530,7 @@ generator = "nix"
 
 ## home-manager からの移行
 
-`home.file` の entry と layat の entry が同じ target を狙うとき、layat は既存の link の向き先ではなく、自分の記録で扱いを決める。
+`home.file` の entry と layat の symlink の entry(既定の `method`)が同じ target を狙うとき、layat は既存の link の向き先ではなく、自分の記録で扱いを決める。
 
 | target にあるもの | `--backup` なし | `--backup` あり |
 |---|---|---|
@@ -538,7 +538,7 @@ generator = "nix"
 | それ以外の symlink(foreign。`home.file` が置いたものなど) | warning を出して置き換える(後勝ち) | 同じ。symlink は退避しない |
 | 通常ファイル、または foreign なものを含む実ディレクトリ(`recursive = true` など) | conflict。何も配置せず exit 1 | `<target>.layat-backup` へ退避してから配置する |
 
-foreign の warning は `layat: overwriting an unrecorded symlink (foreign; last-wins): <target>` と出る。一度置き換えた link は layat の記録に入るので、次の apply からは出ない。`<target>.layat-backup` が残っていると、`--backup` は上書きせずに conflict で止まる。
+foreign の warning は `layat: overwriting an unrecorded symlink (foreign; last-wins): <target>` と出る。一度置き換えた link は layat の記録に入るので、次の apply からは出ない。`<target>.layat-backup` が残っていると、`--backup` は上書きせずに conflict で止まる。`method = "copy"` の entry は扱いが違う。配置は 1 回だけなので、target にある記録外のファイルや symlink は warning を出してスキップし(`src` と target の片方だけがディレクトリなら conflict)、`--backup` があれば退避してから copy する。
 
 target を `home.file` から layat へ移す手順:
 
@@ -553,7 +553,7 @@ target を `home.file` から layat へ移す手順:
 | 症状 | 原因 | 対処 |
 |---|---|---|
 | `apply` / `reset` / `rollback` が終わらない | 別の layat(別シェルの shellHook、activation、並行する apply)が同じ config の lock を保持している | 待つ。その実行が終われば先へ進む。shellHook では `--no-wait` を使う |
-| `--no-wait -v` で `layat: skipped because another apply is in progress` | 同じ lock が保持されていたので、スキップして exit 0 で終わった | 他の実行が終わってから `layat apply <name>` を実行する |
+| `--no-wait -v` で `layat: skipped because another apply is in progress (…)`、`--all` では `layat: skipped apply <name> (another apply is in progress)` | 同じ lock が保持されていたので、スキップして exit 0 で終わった | 他の実行が終わってから `layat apply <name>` を実行する |
 | `layat: keeping stale symlink because it mismatches the record: <target>` | entry は消えたが、link が layat の記録どおりを指していない | layat はその link を消さない。要らなければ手で消す |
 | `layat: the last-applied record (…) disagrees with the profile (…); using the record as the baseline` | layat を使わずに profile の現行世代が切り替わった(profile への `nix-env --switch-generation` など) | 古いリンクの除去は記録を基準にする。`layat status` と `layat list-generations <name>` で確かめる |
 | `layat: no last-applied record; starting from an empty baseline` | その config の初回 apply か、state を消した | この実行では古いリンクとして何も消さない。初回 apply なら想定どおり |

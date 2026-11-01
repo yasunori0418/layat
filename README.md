@@ -637,8 +637,9 @@ Remove layat in this order: earlier steps read the records and profiles that lat
 
 1. **Tear down each config's placements.** `reset` has no `--all`, and it resolves the root from
    `layat.<name>` in the entrypoint, so run it per config from where you applied it
-   (`systemRoot` configs as root). It removes only the links that still match the record and
-   leaves the profile untouched.
+   (`systemRoot` configs as root). It removes the symlinks that still match the record (a
+   foreign one stays) and deletes every copy target, so move aside any copy you want to keep
+   first; `layat reset <name> --dryrun` lists both. It leaves the profile untouched.
 
    ```bash
    layat status                    # every config that has a last-applied record, with its targets
@@ -664,8 +665,8 @@ either: delete its targets (listed by `layat status`) by hand, then continue fro
 
 ## Migrating from home-manager
 
-When a `home.file` entry and a layat entry aim at the same target, layat decides by its own
-record, not by where the existing link points:
+When a `home.file` entry and a layat symlink entry (the default `method`) aim at the same
+target, layat decides by its own record, not by where the existing link points:
 
 | What is at the target | Without `--backup` | With `--backup` |
 |---|---|---|
@@ -676,6 +677,9 @@ record, not by where the existing link points:
 The foreign warning reads `layat: overwriting an unrecorded symlink (foreign; last-wins): <target>`.
 Once replaced, the link is in layat's record and later applies are silent. A leftover
 `<target>.layat-backup` makes `--backup` stop with a conflict instead of overwriting it.
+A `method = "copy"` entry differs: it places once, so an unrecorded file or symlink at its
+target is skipped with a warning (a conflict when only one of `src` and the target is a
+directory), and `--backup` renames it aside before copying.
 
 To move a target from `home.file` to layat:
 
@@ -695,7 +699,7 @@ To move a target from `home.file` to layat:
 | Symptom | Cause | What to do |
 |---|---|---|
 | `apply` / `reset` / `rollback` does not return | another layat run (a shellHook in another shell, an activation, a parallel apply) holds the lock of the same config | wait; it proceeds once that run ends. In a shellHook use `--no-wait` |
-| with `--no-wait -v`: `layat: skipped because another apply is in progress` | the same lock was held, so the run skipped and exited 0 | run `layat apply <name>` after the other run ends |
+| with `--no-wait -v`: `layat: skipped because another apply is in progress (…)`, or under `--all`, `layat: skipped apply <name> (another apply is in progress)` | the same lock was held, so the run skipped and exited 0 | run `layat apply <name>` after the other run ends |
 | `layat: keeping stale symlink because it mismatches the record: <target>` | the entry was dropped, but the link no longer points where layat recorded it | layat leaves it alone; delete it by hand if you do not need it |
 | `layat: the last-applied record (…) disagrees with the profile (…); using the record as the baseline` | the profile's current generation changed without layat (e.g. `nix-env --switch-generation` on it) | the record wins for stale removal; check `layat status` and `layat list-generations <name>` |
 | `layat: no last-applied record; starting from an empty baseline` | the config's first apply, or its state was deleted | nothing is removed as stale on this run; expected on a first apply |
