@@ -631,6 +631,37 @@ syntax error, or an unknown generator name exits 1 with one line on stderr (`E_I
 
 ---
 
+## Uninstall
+
+Remove layat in this order; each step relies on what the previous one still has.
+
+1. **Tear down each config's placements.** `reset` has no `--all`, and it resolves the root from
+   `layat.<name>` in the entrypoint, so run it per config from where you applied it
+   (`systemRoot` configs as root). It removes only the links that still match the record and
+   leaves the profile untouched.
+
+   ```bash
+   layat status                    # every config that has a last-applied record, with its targets
+   layat reset <name> --yes        # per config (add -f <entrypoint> outside its directory)
+   sudo layat reset <name> --yes   # systemRoot configs
+   ```
+
+2. **Delete orphaned series.** `layat prune` deletes the profile series whose project root no
+   longer exists, after listing them and asking for confirmation.
+3. **Delete the state.** On the user side, `<state>/nix/profiles/layat` (profiles and generations)
+   and `<state>/layat` (last-applied records), where `<state>` is `$XDG_STATE_HOME` or
+   `~/.local/state`. On the system side, `/nix/var/nix/profiles/layat` and `/var/lib/layat`.
+4. **Remove the CLI.** `nix profile remove layat` if you installed it with `nix profile install`;
+   for project mode, drop the package from the devShell.
+5. **Collect garbage.** `nix-collect-garbage` frees the store paths the deleted generations held.
+
+**Removing the home-manager module does not remove the placements.** Without any
+`layat.configs`, activation never invokes `layat`, so everything it placed stays. A config defined
+only in the module has no `layat.<name>` in an entrypoint, so `layat reset` cannot take it by name
+either: delete its targets (listed by `layat status`) by hand, then continue from step 3.
+
+---
+
 ## Comparison with other tools
 
 The axis is not "feature presence" but **"hide placement behind a module abstraction, or

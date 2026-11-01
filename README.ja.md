@@ -507,6 +507,27 @@ generator = "nix"
 
 ---
 
+## アンインストール
+
+次の順に消す。各手順は、前の手順がまだ残しているものを使う。
+
+1. **config ごとに配置を撤去する。** `reset` には `--all` が無く、root を entrypoint の `layat.<name>` から解決するので、apply したときと同じ場所から config ごとに実行する(`systemRoot` の config は root で)。記録どおりの link だけを消し、profile には触れない。
+
+   ```bash
+   layat status                    # last-applied 記録を持つ全 config と、その target
+   layat reset <name> --yes        # config ごと(そのディレクトリの外では -f <entrypoint> を付ける)
+   sudo layat reset <name> --yes   # systemRoot の config
+   ```
+
+2. **孤児の系列を消す。** `layat prune` は、project root が無くなった profile 系列を一覧して確認を取ってから消す。
+3. **state を消す。** ユーザー側は `<state>/nix/profiles/layat`(profile と世代)と `<state>/layat`(last-applied 記録)。`<state>` は `$XDG_STATE_HOME`、無ければ `~/.local/state`。system 側は `/nix/var/nix/profiles/layat` と `/var/lib/layat`。
+4. **CLI を外す。** `nix profile install` で入れたなら `nix profile remove layat`。project mode なら devShell からパッケージを外す。
+5. **GC する。** `nix-collect-garbage` で、消した世代が保持していた store パスを解放する。
+
+**home-manager モジュールを外しても配置物は消えない。** `layat.configs` が 1 つも無ければ activation は `layat` を起動しないので、配置したものはそのまま残る。モジュールの中だけで定義した config は entrypoint に `layat.<name>` を持たないため、`layat reset` で名前を指定して撤去することもできない。`layat status` に出る target を手で消してから、手順 3 へ進む。
+
+---
+
 ## 他ツールとの比較
 
 軸は「機能の有無」ではなく、**「配置をモジュール抽象の裏に隠すか、ユーザーが制御する純粋関数として露出させるか」**。
