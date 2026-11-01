@@ -509,7 +509,7 @@ generator = "nix"
 
 ## アンインストール
 
-次の順に消す。各手順は、前の手順がまだ残しているものを使う。
+次の順に消す。後の手順で消す記録や profile を、前の手順が使うためだ。
 
 1. **config ごとに配置を撤去する。** `reset` には `--all` が無く、root を entrypoint の `layat.<name>` から解決するので、apply したときと同じ場所から config ごとに実行する(`systemRoot` の config は root で)。記録どおりの link だけを消し、profile には触れない。
 
@@ -534,7 +534,7 @@ generator = "nix"
 
 | target にあるもの | `--backup` なし | `--backup` あり |
 |---|---|---|
-| この config の前世代が記録し、記録どおりを指している symlink | 黙って置き換える | 同じ |
+| この config の前世代が記録し、記録どおりを指している symlink | warning を出さずに置き換える | 同じ |
 | それ以外の symlink(foreign。`home.file` が置いたものなど) | warning を出して置き換える(後勝ち) | 同じ。symlink は退避しない |
 | 通常ファイル、または foreign なものを含む実ディレクトリ(`recursive = true` など) | conflict。何も配置せず exit 1 | `<target>.layat-backup` へ退避してから配置する |
 
@@ -542,8 +542,8 @@ foreign の warning は `layat: overwriting an unrecorded symlink (foreign; last
 
 target を `home.file` から layat へ移す手順:
 
-1. `home.file` から entry を消し、同じ target を `layat.configs.<name>.entries`(standalone なら `layat.<name>`)へ足す。両方が同時に宣言する状態を作らないよう、1 回の変更で行う。
-2. 先に各 target に何があるかを確かめる。standalone の `layat.<name>` なら、`layat apply <name> --dryrun` が副作用なしで各操作を一覧し、conflict があれば exit 2 で終わる。モジュールで、target に通常ファイルやディレクトリがあるなら `layat.backup.enable = true` にする。
+1. `home.file` から entry を消し、同じ target を `layat.configs.<name>.entries`(モジュールを使わないなら entrypoint の `layat.<name>`)へ足す。両方が同時に宣言する状態を作らないよう、1 回の変更で行う。
+2. 先に各 target に何があるかを確かめる。entrypoint の `layat.<name>` なら、`layat apply <name> --dryrun` が副作用なしで各操作を一覧し、conflict があれば exit 2 で終わる。モジュールで、target に通常ファイルやディレクトリがあるなら `layat.backup.enable = true` にする。
 3. switch する(または `layat apply <name>`)。`home.file` の link が残っていれば、上の foreign の warning を出して置き換える。移した target ごとに 1 回出るのは想定どおり。
 
 ---
@@ -552,12 +552,12 @@ target を `home.file` から layat へ移す手順:
 
 | 症状 | 原因 | 対処 |
 |---|---|---|
-| `apply` / `reset` / `rollback` が終わらない | 別の layat(別シェルの shellHook、activation、並行する apply)が同じ config の lock を握っている | 待つ。その実行が終われば先へ進む。shellHook では `--no-wait` を使う |
-| `--no-wait -v` で `layat: skipped because another apply is in progress` | 同じ lock が握られていたので、スキップして exit 0 で終わった | 他の実行が終わってから `layat apply <name>` を実行する |
-| `layat: keeping stale symlink because it mismatches the record: <target>` | entry は消えたが、link が layat の記録どおりを指していない | layat は触らない。要らなければ手で消す |
-| `layat: the last-applied record (…) disagrees with the profile (…); using the record as the baseline` | layat を通さずに profile が動いた(profile への `nix-env --switch-generation` など) | stale 除去は記録を基準にする。`layat status` と `layat list-generations <name>` で確かめる |
-| `layat: no last-applied record; starting from an empty baseline` | その config の初回 apply か、state を消した | この実行では stale として何も消さない。初回 apply なら想定どおり |
-| `layat: this apply's origin (…) differs from the last-applied record's (…); the later apply wins` | 1 つの config を 2 つの経路(home-manager モジュールと standalone の entrypoint など)から apply している | 経路を 1 つにするか、両方に同じ `identity` を付ける([home-manager モジュール](#home-manager-モジュール)) |
+| `apply` / `reset` / `rollback` が終わらない | 別の layat(別シェルの shellHook、activation、並行する apply)が同じ config の lock を保持している | 待つ。その実行が終われば先へ進む。shellHook では `--no-wait` を使う |
+| `--no-wait -v` で `layat: skipped because another apply is in progress` | 同じ lock が保持されていたので、スキップして exit 0 で終わった | 他の実行が終わってから `layat apply <name>` を実行する |
+| `layat: keeping stale symlink because it mismatches the record: <target>` | entry は消えたが、link が layat の記録どおりを指していない | layat はその link を消さない。要らなければ手で消す |
+| `layat: the last-applied record (…) disagrees with the profile (…); using the record as the baseline` | layat を使わずに profile の現行世代が切り替わった(profile への `nix-env --switch-generation` など) | 古いリンクの除去は記録を基準にする。`layat status` と `layat list-generations <name>` で確かめる |
+| `layat: no last-applied record; starting from an empty baseline` | その config の初回 apply か、state を消した | この実行では古いリンクとして何も消さない。初回 apply なら想定どおり |
+| `layat: this apply's origin (…) differs from the last-applied record's (…); the later apply wins` | 1 つの config を、home-manager モジュールと entrypoint の両方から apply している | どちらか一方からだけ apply するか、両方に同じ `identity` を付ける([home-manager モジュール](#home-manager-モジュール)) |
 | 原因の見当がつかない eval / build エラー | 生成器が内部で実行した nix コマンドが失敗した | `--debug` を付けて再実行する。内部コマンドが `layat: + nix …` の形で stderr に出て、生成器のエラーには生成器名が付く。そのコマンドを手で実行する |
 
 ---

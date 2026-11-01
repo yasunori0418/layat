@@ -633,7 +633,7 @@ syntax error, or an unknown generator name exits 1 with one line on stderr (`E_I
 
 ## Uninstall
 
-Remove layat in this order; each step relies on what the previous one still has.
+Remove layat in this order: earlier steps read the records and profiles that later steps delete.
 
 1. **Tear down each config's placements.** `reset` has no `--all`, and it resolves the root from
    `layat.<name>` in the entrypoint, so run it per config from where you applied it
@@ -697,9 +697,9 @@ To move a target from `home.file` to layat:
 | `apply` / `reset` / `rollback` does not return | another layat run (a shellHook in another shell, an activation, a parallel apply) holds the lock of the same config | wait; it proceeds once that run ends. In a shellHook use `--no-wait` |
 | with `--no-wait -v`: `layat: skipped because another apply is in progress` | the same lock was held, so the run skipped and exited 0 | run `layat apply <name>` after the other run ends |
 | `layat: keeping stale symlink because it mismatches the record: <target>` | the entry was dropped, but the link no longer points where layat recorded it | layat leaves it alone; delete it by hand if you do not need it |
-| `layat: the last-applied record (…) disagrees with the profile (…); using the record as the baseline` | the profile moved without layat (e.g. `nix-env --switch-generation` on it) | the record wins for stale removal; check `layat status` and `layat list-generations <name>` |
+| `layat: the last-applied record (…) disagrees with the profile (…); using the record as the baseline` | the profile's current generation changed without layat (e.g. `nix-env --switch-generation` on it) | the record wins for stale removal; check `layat status` and `layat list-generations <name>` |
 | `layat: no last-applied record; starting from an empty baseline` | the config's first apply, or its state was deleted | nothing is removed as stale on this run; expected on a first apply |
-| `layat: this apply's origin (…) differs from the last-applied record's (…); the later apply wins` | one config is applied from two routes (e.g. the home-manager module and a standalone entrypoint) | apply it from one route, or give both the same `identity` (see [home-manager module](#home-manager-module)) |
+| `layat: this apply's origin (…) differs from the last-applied record's (…); the later apply wins` | one config is applied both from the home-manager module and from an entrypoint | apply it from only one of them, or give both the same `identity` (see [home-manager module](#home-manager-module)) |
 | an eval / build error you cannot place | the generator's internal nix command failed | rerun with `--debug`: each internal command is printed on stderr as `layat: + nix …`, and a generator error names its generator; run the command by hand |
 
 ---
