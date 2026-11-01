@@ -3,7 +3,7 @@
 #
 #   sara-new <型> <slug> <配置ディレクトリ> [-- <sara init のオプション>...]
 #
-# ID は sara init が採番する。ADR は対象外（`sara init adr <パス>` を直接使う）。
+# ID は sara init が採番する。凍結した legacy_adr は対象外。
 
 set -euo pipefail
 
@@ -11,7 +11,7 @@ usage() {
   cat >&2 <<'EOF'
 usage: sara-new <type> <slug> <dir> [-- <sara init options>...]
 
-  type   sara の型名（requirement / test_case / test-case …）。ADR は対象外
+  type   sara の型名（requirement / test_case / adr / sara_adr …）。legacy_adr は対象外
   slug   ファイル名に使う短い識別子（英小文字・数字・ハイフン）
   dir    配置ディレクトリ（カレントからの相対。無ければ作る）
   --     以降を sara init へそのまま渡す（--name / --specification …）
@@ -19,12 +19,13 @@ usage: sara-new <type> <slug> <dir> [-- <sara init options>...]
 例:
   sara-new requirement lock-ordering docs/requirements
   sara-new test-case engine-lock docs/test/atomicity -- --name "engine の lock"
+  sara-new adr lock-ordering docs/adr -- --status 採用
 
 出力（機械可読の 2 行）:
   id:   採番された正式 ID
   file: 起票したファイルのパス
 
-注: ADR は連番を維持するため対象外（sara init adr <パス> を直接使う）
+注: 連番の legacy_adr は凍結しており新規に起票しない
 EOF
 }
 
@@ -55,10 +56,10 @@ if [ "$#" -gt 0 ]; then
   shift
 fi
 
-# ADR は連番を維持するため拒否する。
+# 連番の legacy_adr は凍結しているため拒否する。
 case "$type" in
-  adr | ADR)
-    echo "sara-new: ADR は連番を維持する（sara init adr <パス> を直接使う）" >&2
+  legacy_adr | legacy-adr)
+    echo "sara-new: legacy_adr は凍結しており新規に起票しない（adr を使う）" >&2
     exit 2
     ;;
 esac

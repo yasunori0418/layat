@@ -45,6 +45,7 @@ uuid_re='[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
 # --- 0. model.yaml の型 ⟷ prefix の一意性 -------------------------------------
 #
 # 2 つの型が同じ prefix を持たないことを確かめる。抽出は awk で行い、`- id:` の行数と組の数を突合する。
+# 例外は legacy_adr だけで、adr と prefix ADR を共有し id_format（連番か UUID か）で区別する。
 mapfile -t model_pairs < <(
   awk '
     /^item_types:/  { in_types = 1; next }
@@ -72,14 +73,14 @@ prefix_unique=1
 for pair in "${model_pairs[@]}"; do
   model_type="${pair%% *}"
   model_p="${pair##* }"
-  if [[ -n "${model_type_of_prefix[$model_p]:-}" ]]; then
+  if [[ -n "${model_type_of_prefix[$model_p]:-}" && "$model_type" != legacy_adr && "${model_type_of_prefix[$model_p]}" != legacy_adr ]]; then
     fault "model.yaml の prefix $model_p が重複している（${model_type_of_prefix[$model_p]} と $model_type）"
     prefix_unique=0
   fi
   model_type_of_prefix["$model_p"]="$model_type"
 done
 if [[ "$prefix_unique" -eq 1 && "${#model_pairs[@]}" -gt 0 ]]; then
-  pass "model.yaml の prefix が型ごとに一意（型 ⟷ prefix が 1:1）"
+  pass "model.yaml の prefix が型ごとに一意（legacy_adr を除き型 ⟷ prefix が 1:1）"
 fi
 
 # SUT が PATH に無ければ異常系の節が自明に緑になるため、ここで存在を確かめて落とす。
@@ -253,25 +254,37 @@ else
   fault "英小文字・数字・ハイフンの slug を受理し、ファイル名へ入れる（exit=$status_capture file=$valid_slug_file）"
 fi
 
-# --- 6. ADR は連番維持のため拒否する ------------------------------------------
+# --- 6. ADR の型 ---------------------------------------------------------------
 #
-# ADR だけ id_format が {prefix}-{seq:04} で、`sara init adr` を直接使う。
+# adr と sara_adr は UUID で起票し、凍結した legacy_adr は拒否する。
 
 repo6="$work/adr"
 make_repo "$repo6"
-run_sara_new "$repo6" sara-new adr some-decision docs/adr
-adr_status="$status_capture"
-adr_files="$(find "$repo6/docs" -name '*.md' -type f | wc -l)"
-if [[ "$adr_status" -eq 2 ]]; then
-  pass "ADR は exit 2 で拒否する（連番維持）"
-else
-  fault "ADR は exit 2 で拒否する（実際: exit=$adr_status）"
-fi
-if [[ "$adr_files" -eq 0 ]]; then
-  pass "ADR 拒否時はファイルを作らない"
-else
-  fault "ADR 拒否時はファイルを作らない（実際: $adr_files 件）"
-fi
+for spec in "adr ADR docs/adr" "sara_adr SDR docs/sara-adr" "sara-adr SDR docs/sara-adr"; do
+  read -r adr_type adr_prefix adr_dir <<<"$spec"
+  run_sara_new "$repo6" sara-new "$adr_type" some-decision "$adr_dir" -- --status 採用
+  adr_id="$(field id)"
+  adr_file="$(field file)"
+  if [[ "$status_capture" -eq 0 && "$adr_id" =~ ^${adr_prefix}-${uuid_re}$ \
+    && "$adr_file" == "$adr_dir/"*"-${adr_id#"$adr_prefix"-}-some-decision.md" && -f "$repo6/$adr_file" ]]; then
+    pass "$adr_type を ${adr_prefix}-<フル UUIDv4> で起票する"
+  else
+    fault "$adr_type を ${adr_prefix}-<フル UUIDv4> で起票する（exit=$status_capture id=$adr_id file=$adr_file stderr: $stderr_capture）"
+  fi
+done
+
+repo6b="$work/legacy-adr"
+make_repo "$repo6b"
+for legacy in legacy_adr legacy-adr; do
+  run_sara_new "$repo6b" sara-new "$legacy" some-decision docs/adr
+  legacy_status="$status_capture"
+  legacy_files="$(find "$repo6b/docs" -name '*.md' -type f | wc -l)"
+  if [[ "$legacy_status" -eq 2 && "$legacy_files" -eq 0 ]]; then
+    pass "$legacy は exit 2 で拒否し、ファイルを作らない（凍結した型）"
+  else
+    fault "$legacy は exit 2 で拒否し、ファイルを作らない（exit=$legacy_status 残 $legacy_files 件）"
+  fi
+done
 
 # --- 7. sara init の失敗を伝播する --------------------------------------------
 #
