@@ -35,7 +35,8 @@ layat はエラーを stderr の人間向けテキストで出す。outturn は�
 `error` に連動させる。`--json` は stdout に、`-v` の配置レポート（ADR-0031）は stderr に出るので、
 両者は併用できる。
 
-置き場の細目は REQ-9341fa5d-836e-4023-af53-cc7d273438d1 に、`-v` との直交は
+stderr との併存と `status` の連動は REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead に、置き場の細目は
+REQ-9341fa5d-836e-4023-af53-cc7d273438d1 に、`-v` との直交は
 REQ-0a123b89-0399-4f76-b988-56a5f7e0becf に置く。
 
 ## 根拠
