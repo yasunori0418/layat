@@ -31,20 +31,21 @@ item では必ず 2 つを書き分ける。既定は store link で、out-of-st
 
 ### 種別ごとの扱い
 
-| | 世代（apply / rollback / stale 除去）| reset | gitignore |
+| | 世代（apply / rollback）| reset | gitignore |
 |---|---|---|---|
-| store link | リンク先の store パスごと世代が版管理する。rollback で戻り先世代の store パスを指し直す。entry が消えたら stale 除去で外す | 記録どおりを指すものだけを外す | 列挙する |
-| out-of-store symlink | 世代が版管理するのは「どのパスを指すか」だけで、指す先の内容は版管理しない。entry が消えたら stale 除去で外す | 記録どおりを指すものだけを外す | 列挙する |
+| store link | リンク先の store パスごと世代が版管理する。rollback で戻り先世代の store パスを指し直す。entry が消えたら除去する | 記録どおりを指すものだけを除去する | 列挙する |
+| out-of-store symlink | 世代が版管理するのは「どのパスを指すか」だけで、指す先の内容は版管理しない。entry が消えたら除去する | 記録どおりを指すものだけを除去する | 列挙する |
 | copy | 世代管理の対象外。apply も rollback も target が不在のときだけ place-once で置く。entry が消えても消さず、orphan を警告する | 削除する（copy を消す唯一の明示手段）| 列挙する |
 
 - **世代** — store link は内容が不変の store パスを指すので、マッピングを戻せば内容も戻る。
   out-of-store symlink は指す先がライブなので、戻るのはマッピングだけ
   （→ REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa）。copy はユーザー所有のデータとして扱い、
   世代を移っても内容を書き換えない。store の更新を反映するのは `apply --recopy` か、
-  `reset` してから再 apply する経路だけ（→ REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9）。
-  stale 除去の保守的な不変条件は REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2 が持つ
-- **reset** — profile と世代に触れない FS-only の撤去で、2 種の symlink は stale 除去と同じ
-  不変条件で外し、copy は削除する。いずれの撤去後も空の親ディレクトリを剪定する
+  `reset` してから再 apply するかの 2 つだけ（→ REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9）。
+  entry が消えたときに何を除去してよいかの保守的な不変条件は
+  REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2 が持つ
+- **reset** — profile と世代に触れない FS-only の撤去で、2 種の symlink は entry が消えたときと
+  同じ不変条件で除去し、copy は削除する。いずれの撤去後も空の親ディレクトリを剪定する
   （→ REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6）
 - **gitignore** — 種別を区別せず全 target を列挙する。project mode の copy も clone ごとに
   再マテリアライズされる ephemeral な配置物で、コミット対象にしない
@@ -56,5 +57,5 @@ item では必ず 2 つを書き分ける。既定は store link で、out-of-st
 
 ## 出典
 
-`docs/glossary.md`「Placement kinds」と SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e「解決策の核心」の
+`docs/glossary.md`「Placement kinds」と SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e が述べる
 種別の定義を、上掲の REQ が個別に定める世代・reset・gitignore の振る舞いと 1 枚の表に束ねた。
