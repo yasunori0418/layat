@@ -25,8 +25,8 @@ NixOS / nix-darwin のモジュールは、host の activation から system roo
 - **root の取り違え** — 配置先が system root に固定されず、subdir が target に前置されない、
   または別の config へ漏れる
 - **起動の形の分岐** — `--manifest` / `--jobs` / `--recopy` / `--backup` の規則が
-  home-manager モジュールと食い違う。`layat.recopy` が false でも `--recopy` が付く
-  （→ REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c）。config が無いのに engine を起動する
+  home-manager モジュールと食い違う。`layat.recopy` が false でも `--recopy` が付くか、
+  true でも付かない（→ REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c）。config が無いのに engine を起動する
 - **dry-activate の取りこぼし** — NixOS の dry-activate 用スクリプトに起動が含まれない、
   または含まれても `--dryrun` が付かず、FS を変えない前提の操作で実配置が走る
 - **起動環境の欠落** — activation の PATH に `nix` が無いまま起動し、世代コミットが失敗する。

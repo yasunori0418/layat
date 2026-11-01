@@ -70,8 +70,7 @@ profileDir を読めない失敗を黙認して「世代 0 件」と見なすの
 TC-40b762fc-3b48-471c-b495-c5ffe1f584b5（`<state>` 解決・profileDir キーイング・世代リンク命名）と
 TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7（世代リンクの走査）が緩和する。
 
-キーイングの前提と世代の操作経路の面では、`--root` 上書きのキーイングを TC-40b762fc-3b48-471c-b495-c5ffe1f584b5 が、
-世代バックエンドの列挙と 2 基底を TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7 が覆う。`passthru.rootKind` の値は
-RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d 側の TC-4e7cfae7-72bc-4af6-a1f5-1ead7db564b1 が、`.pending` の後始末は engine の
-テストが見るが、どちらもこの risk の TC には入っていない。build しないコマンドの eval 先行と、
-世代の間引きを契約越しに行うことを確かめる検証条件は無く、残余として残る。
+キーイングの前提と世代の操作経路の面のうち、`--root` 上書きのキーイングは
+TC-40b762fc-3b48-471c-b495-c5ffe1f584b5 が、世代の列挙は TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7 が覆う。
+`passthru.rootKind` の値、build しないコマンドの eval 先行、commit・切替・間引きが契約を迂回しないこと、
+`.pending` が config あたり 1 個に収まることを確かめる検証条件はこの risk に無く、残余として残る。
