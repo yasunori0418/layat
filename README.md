@@ -681,7 +681,8 @@ A `method = "copy"` entry differs: it places once, so an unrecorded file, direct
 at its target is skipped with a warning (a conflict when only one of `src` and the target is a
 directory), and `--backup` renames it aside before copying. A skipped target is still recorded
 as the entry's copy: later applies leave it alone, and `layat reset` deletes it even though
-layat never copied it. Use `--backup` if that file must survive a reset.
+layat never copied it. If that file must survive a reset, pass `--backup` on the first apply
+that meets it: once the target is recorded, a later `--backup` no longer renames it aside.
 
 To move a target from `home.file` to layat:
 

@@ -538,7 +538,7 @@ generator = "nix"
 | それ以外の symlink(foreign。`home.file` が置いたものなど) | warning を出して置き換える(後勝ち) | 同じ。symlink は退避しない |
 | 通常ファイル、または foreign なものを含む実ディレクトリ(`recursive = true` など) | conflict。何も配置せず exit 1 | `<target>.layat-backup` へ退避してから配置する |
 
-foreign の warning は `layat: overwriting an unrecorded symlink (foreign; last-wins): <target>` と出る。一度置き換えた link は layat の記録に入るので、次の apply からは出ない。`<target>.layat-backup` が残っていると、`--backup` は上書きせずに conflict で止まる。`method = "copy"` の entry は扱いが違う。配置は 1 回だけなので、target にある記録外のファイル・ディレクトリ・symlink は warning を出してスキップし(`src` と target の片方だけがディレクトリなら conflict)、`--backup` があれば退避してから copy する。スキップした target も、その entry の copy として記録に入る。以降の apply はそれに触れず、`layat reset` は layat がコピーしていなくても消す。reset で消えては困るファイルなら `--backup` を使う。
+foreign の warning は `layat: overwriting an unrecorded symlink (foreign; last-wins): <target>` と出る。一度置き換えた link は layat の記録に入るので、次の apply からは出ない。`<target>.layat-backup` が残っていると、`--backup` は上書きせずに conflict で止まる。`method = "copy"` の entry は扱いが違う。配置は 1 回だけなので、target にある記録外のファイル・ディレクトリ・symlink は warning を出してスキップし(`src` と target の片方だけがディレクトリなら conflict)、`--backup` があれば退避してから copy する。スキップした target も、その entry の copy として記録に入る。以降の apply はそれに触れず、`layat reset` は layat がコピーしていなくても消す。reset で消えては困るファイルなら、そのファイルに当たる最初の apply で `--backup` を付ける。一度記録に入った target は、後から `--backup` を付けても退避されない。
 
 target を `home.file` から layat へ移す手順:
 
