@@ -6,6 +6,7 @@ derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
+  - "UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d"
 specification: |
   `apply --dryrun` SHALL have dryRun parity with apply: it SHALL go through the same
   conversion as apply, so that the schemas agree structurally and only the observed values
