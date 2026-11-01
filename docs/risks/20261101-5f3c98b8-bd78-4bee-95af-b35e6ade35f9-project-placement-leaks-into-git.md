@@ -42,8 +42,7 @@ likelihood medium × impact medium から level は medium。
 
 ## 緩和
 
-TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12 は名前つき単一指定の対象選択を確かめ、`gitignore <name>` が
-指定した config を列挙することを緩和する。行指向の `--all` の並び替えと重複除去は
-`cmd/layat/gitignore_test.go` と e2e 01-project が確かめているが、それを束ねる検証条件は無い。
-copy target を列挙に含むこと、project mode 以外の config で止まること、activation が `.gitignore` に
-触れないことを確かめる検証条件も無く、これらは残余として残る。
+TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12 が対象選択の経路の区別を確かめ、これを covers する e2e 01-project が
+`gitignore <name>` と行指向の `gitignore --all`（並び替えと重複除去）を通すので、「全件出力の揺れ」を
+緩和する。copy target を列挙に含むこと、project mode 以外の config で止まること、activation が
+`.gitignore` に触れないことを確かめる検証条件は無く、これらは残余として残る。
