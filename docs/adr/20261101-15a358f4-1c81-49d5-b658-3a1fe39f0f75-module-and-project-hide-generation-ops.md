@@ -21,7 +21,7 @@ references:
 ## 背景
 
 layat は全モードで自前の profile を持つが、その世代を rollback や一覧としてユーザーに見せるべきかは
-経路によって事情が違う。module 経由では host が自前の rollback を持つ。project mode の配置物は
+適用のしかたによって事情が違う。module 経由では host が自前の rollback を持つ。project mode の配置物は
 リポジトリに残さない ephemeral なもので、devShell から起動されたときには戻し先になる host の世代も無い。
 
 ## 決定
@@ -40,7 +40,7 @@ REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 に置く。
 
 module で layat が独自に rollback できると、host の世代と layat の世代がずれる。host の rollback で
 layat を再起動すれば FS は旧 config の状態へ収束するので、独自の rollback は要らない。
-home-manager が NixOS の submodule として動くときと同じ構図になる。
+home-manager が NixOS の submodule として動くときと同じやり方になる。
 
 project mode の配置物は ephemeral で、前の状態へ戻す意味が薄い。公開しなければ、利用者に見える
 世代操作の面を home / system mode の永続的な配置だけに絞れる。

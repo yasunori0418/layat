@@ -24,7 +24,7 @@ justifies:
 ## 背景
 
 layat は Nix の lib、Go の engine と CLI、実際の nix と FS を使う配置の 3 層からなる。層ごとに
-検証の手段と、検証を走らせる場所を決める必要がある。nix の sandbox で成立するテストと、
+検証の手段と、検証を実行する場所を決める必要がある。nix の sandbox で成立するテストと、
 nix profile や実 FS を書き換えるために sandbox では成立しないテストがある。
 
 ## 決定
@@ -34,8 +34,8 @@ nix を使わない実 FS の Go テストで検証し、tmpdir での統合テ�
 不変条件は table-driven で厚く検証する。非 NixOS でも nix があれば動くという主張は、実際の nix を
 使う E2E で検証する。
 
-sandbox で成立する lib と Go のテストは `nix flake check` に集めて PR ごとに走らせる。E2E は
-`nix flake check` の外の別ジョブで走らせる。NixOS モジュールの実際の activate は runNixOSTest の
+sandbox で成立する lib と Go のテストは `nix flake check` に集めて PR ごとに実行する。E2E は
+`nix flake check` の外の別ジョブで実行する。NixOS モジュールの実際の activate は runNixOSTest の
 check で検証し、E2E のハーネスとは別系統に置く。
 
 層ごとの検証範囲は TP-36e90d5d-4524-4294-bc72-ee263bb02782・TP-e7c25263-6d2d-4a37-8275-26906889d912・
@@ -56,7 +56,7 @@ stale 除去は利用者のファイルを消しうる、最も安全性が問�
 
 ## 棄却した代替案
 
-### 全ての層を CI 用 devShell の 1 ジョブで走らせる
+### 全ての層を CI 用 devShell の 1 ジョブで実行する
 
 純粋な評価で済む lib と Go のテストまで `nix flake check` の外に出て、PR ごとの常時チェックと
 手元での同じ判定を失う。

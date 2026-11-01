@@ -29,7 +29,7 @@ CI のジョブ構成は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 に置く。
 ## 根拠
 
 CI と手元が同じ flake からツールを得るので、版がずれない。CI 用の devShell を `dev/flake.nix` に
-置けば、開発だけで使う依存が root の flake の成果物に混ざらない。同じメンテナの cryoflow と
+置けば、開発だけで使う依存が root の flake の成果物に含まれない。同じメンテナの cryoflow と
 同じ構成で、保守のやり方もそろう。
 
 ## 棄却した代替案

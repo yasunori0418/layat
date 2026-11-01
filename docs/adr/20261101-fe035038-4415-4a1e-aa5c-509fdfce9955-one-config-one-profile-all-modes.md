@@ -37,7 +37,7 @@ profile と前世代の読み方の細目は REQ-1be4d678-959c-44d7-a346-44bfd95
 
 前世代の出所が全モードで「自 profile の前世代」にそろい、host ごとに違う oldGenPath の配管を
 持たずに済む。他のモジュールの内部事情に依存しないという方針とも合う。home-manager が NixOS の
-submodule として動くときにも自前の profile を持つのと同じ構図で、実績がある。
+submodule として動くときにも自前の profile を持つのと同じやり方で、実績がある。
 
 粒度を config にすると、世代が atomic に切り替わる単位と、独立して rollback できる単位が一致する。
 

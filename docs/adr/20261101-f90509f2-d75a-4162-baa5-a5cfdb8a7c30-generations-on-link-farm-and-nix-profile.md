@@ -42,7 +42,7 @@ nix profile は profile symlink の差し替えだけで atomic な切り替え�
 
 ### store 外の可変 JSON マニフェストで世代を表す
 
-実装は単純だが、GC root を作らない。参照中の store パスが GC で消えて rollback が壊れるか、
+実装は単純だが、GC root を作らない。参照中の store パスが GC で消えて rollback できなくなるか、
 GC root の管理を自前で持つことになる。
 
 ### 独自の軽量な世代ログを持つ
