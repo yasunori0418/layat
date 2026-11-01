@@ -32,7 +32,7 @@ flake と legacy の entrypoint の eval と再現性の区別は REQ-67095391-e
 ## 根拠
 
 flake を使わない利用者も layat を使えるようにするには、legacy の entrypoint を読む必要がある。
-その再現性まで layat が担おうとすると、入力を固定する機構を CLI が抱えることになる。npins・
+その再現性まで layat が担おうとすると、入力を固定する機構を CLI が持つことになる。npins・
 fetchTarball・flake-compat など固定の手段は既にあり、推奨として案内すれば足りる。
 
 flake の側は、root を engine の実行時に解決するので、eval を pure のまま保てる。

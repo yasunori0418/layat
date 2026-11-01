@@ -24,8 +24,8 @@ references:
 
 ## 決定
 
-`nix-command`（flake の entrypoint ではさらに `flakes`）の experimental-features は、利用者の環境で有効化済みであることを前提にする。
-layat は `--extra-experimental-features` を自動で付けない。有効化されていないときは、前提条件と
+`nix-command`（flake の entrypoint ではさらに `flakes`）の experimental-features は、利用者の環境で
+有効化済みであることを前提にする。layat は `--extra-experimental-features` を自動で付けない。有効化されていないときは、前提条件と
 有効化の方法を案内するエラーで止まる。判定と案内文を nix 生成器に閉じることは ADR-0055 が決める。
 
 前提条件とエラーの規範は REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6 に置く。
@@ -33,12 +33,12 @@ layat は `--extra-experimental-features` を自動で付けない。有効化�
 ## 根拠
 
 experimental-features は nix.conf・Determinate Nix・組織のポリシーで管理されていることがある。layat が
-フラグを自動で付けると、その設定を黙って上書きし、環境の違いを隠してしまう。余計な前提や state を
+フラグを自動で付けると、その設定を利用者に知らせずに上書きし、環境の違いを隠してしまう。余計な前提や state を
 持ち込まないという layat の方針にも反する。前提を明示して、案内付きのエラーで止まるほうが透明である。
 
 ## 棄却した代替案
 
 ### `--extra-experimental-features` を自動で付ける
 
-未設定の環境でも追加の手間なく動くが、利用者や組織による experimental-features の管理を黙って
+未設定の環境でも追加の手間なく動くが、利用者や組織による experimental-features の管理を知らせずに
 上書きし、設定の違いを隠す。

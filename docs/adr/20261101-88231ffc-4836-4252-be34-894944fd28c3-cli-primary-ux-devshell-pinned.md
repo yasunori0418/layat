@@ -18,7 +18,7 @@ justifies:
 
 ## 背景
 
-配置を行う engine は固定のバイナリで、利用者はそれを何らかの入口から起動する。config ごとに起動用の
+配置を行う engine は固定のバイナリで、利用者はそれを何らかのコマンドから起動する。config ごとに起動用の
 ラッパーを用意させる形では、ラッパーを作らないと layat を使えず、flake 以外の entrypoint にも
 対応しにくい（#3）。
 
@@ -27,7 +27,7 @@ CLI を PATH に置くと、今度は CLI の版と、利用者の flake が pin
 
 ## 決定
 
-`layat` CLI（`packages.layat`）を PATH に常駐する一次 UX にする。project mode の正規の導入経路は、
+`layat` CLI（`packages.layat`）を PATH に常駐する一次 UX にする。project mode の正規の導入方法は、
 `templates/project` の devShell に flake.lock で pin した `layat` を同梱することとする。グローバルな
 導入（`nix profile install`）は standalone の利便として残す。
 
@@ -44,9 +44,9 @@ flake.lock による再現性が CLI まで届き、project-first の方針と�
 
 ## 棄却した代替案
 
-### config ごとのラッパーを主経路にする
+### config ごとのラッパーを主な起動手段にする
 
-`nix run .#<config>` で起動するラッパーを主経路にする案。ラッパーを作らないと engine を起動できず、
+`nix run .#<config>` で起動するラッパーを主な起動手段にする案。ラッパーを作らないと engine を起動できず、
 flake 以外の entrypoint や standalone での使い勝手の要求を満たせない。
 
 ### project mode でもグローバルな導入を前提にする

@@ -24,7 +24,7 @@ justifies:
 配線を備えた starter の flake が要る。layat は「設定を生成しない」ことを方針にしており、layat 自身が
 ファイルを書き出すとこの方針を損なう。
 
-`layat init` からテンプレートを引くには、layat のリポジトリを指す flake ref をどう決めるかも
+`layat init` でテンプレートを取得するには、layat のリポジトリを指す flake ref をどう決めるかも
 定める必要があった。
 
 ## 決定
@@ -56,9 +56,9 @@ CLI の版とテンプレートの版のずれ（常に最新の main を参照�
 
 ### nix registry の `layat` エントリを参照する
 
-ref が最も短いが、registry に登録していない環境では壊れる。
+ref が最も短いが、registry に登録していない環境では動かない。
 
 ### ビルド時に自身の ref を ldflags で埋め込む
 
-`init` が CLI と同じ版のテンプレートを引けるが、`buildGoModule` への ref の注入と、flake / legacy の
+`init` が CLI と同じ版のテンプレートを取得できるが、`buildGoModule` への ref の注入と、flake / legacy の
 両方への対応が重い。版の一致は devShell の pin が担うので、そこまでは要らない。
