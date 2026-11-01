@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"regexp"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -135,9 +136,9 @@ func recordedCalls(t *testing.T, log, ep, ref, template string) []string {
 	return calls
 }
 
-// TestHelpDisclosureMatchesNixgen runs each disclosed subcommand against a recording nix and
+// TestHelpDisclosureMatchesNixCalls runs each disclosed subcommand against a recording nix and
 // requires the --help block to list exactly the nix calls it made, label for label.
-func TestHelpDisclosureMatchesNixgen(t *testing.T) {
+func TestHelpDisclosureMatchesNixCalls(t *testing.T) {
 	const ref, template = "github:example/templates", "standalone"
 	run := func(t *testing.T, kind string, f func() error) []string {
 		t.Helper()
@@ -198,31 +199,55 @@ func TestHelpDisclosureMatchesNixgen(t *testing.T) {
 		})
 	}
 	for label := range observed {
-		if !strings.Contains(strings.Join(labels, "\n")+"\n", label+"\n") {
+		if !slices.Contains(labels, label) {
 			t.Errorf("--help no longer discloses %q", label)
 		}
 	}
 }
 
 // TestHelpDisclosesNoNixSubcommands requires the --help sentence on prune / status, and that they
-// indeed run no nix.
+// succeed over a profile and a record without running nix.
 func TestHelpDisclosesNoNixSubcommands(t *testing.T) {
 	if !strings.Contains(rootCmdLong, "\n"+noNixLine+"\n") {
 		t.Errorf("rootCmdLong lacks the line %q", noNixLine)
 	}
 	cases := map[string]func() error{
 		"prune --dryrun": func() error { r, _ := newPruneTestRun(); return runPrune(r, true, false) },
+		"prune --yes":    func() error { r, _ := newPruneTestRun(); return runPrune(r, false, false) },
 		"status":         func() error { r, _ := newStatusTestRun(); return runStatus(r, nil) },
 	}
 	for name, f := range cases {
 		t.Run(name, func(t *testing.T) {
 			withFlakeEntrypoint(t)
-			installFakeBackend(t, "")
+			origDebug, origJSON, origYes := flagDebug, flagJSON, flagYes
+			t.Cleanup(func() { flagDebug, flagJSON, flagYes = origDebug, origJSON, origYes })
+			flagDebug, flagJSON, flagYes = false, false, true
+			t.Setenv(systemBaseEnv, t.TempDir())
+			t.Setenv(systemStateEnv, t.TempDir())
+			makeHomeProfiles(t, installFakeBackend(t, ""), "a")
+			writeAppliedRecord(t, "a")
 			log := stubNixRecorder(t, "home")
-			_ = f()
+			if err := f(); err != nil {
+				t.Fatalf("%s: %v", name, err)
+			}
 			if calls := recordedCalls(t, log, flagFile, "", ""); len(calls) != 0 {
 				t.Errorf("%s ran nix: %q", name, calls)
 			}
 		})
+	}
+}
+
+// writeAppliedRecord puts a home last-applied record for name under XDG_STATE_HOME, so status has
+// a record to read.
+func writeAppliedRecord(t *testing.T, name string) {
+	t.Helper()
+	dir := filepath.Join(os.Getenv("XDG_STATE_HOME"), "layat", name)
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatalf("mkdir %s: %v", dir, err)
+	}
+	record := `{"recordVersion":1,"linkFarm":"/nix/store/stub-link-farm","appliedAt":"2026-11-01T00:00:00Z",` +
+		`"origin":{"generator":"nix"},"manifest":{"schemaVersion":1,"root":{"rootKind":"home"},"entries":[]}}`
+	if err := os.WriteFile(filepath.Join(dir, "last-applied.json"), []byte(record), 0o644); err != nil {
+		t.Fatalf("write record: %v", err)
 	}
 }
