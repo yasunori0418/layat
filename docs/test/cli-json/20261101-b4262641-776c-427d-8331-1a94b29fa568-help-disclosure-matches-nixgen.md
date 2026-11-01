@@ -19,7 +19,8 @@ mitigates:
   installable、フラグ。`--out-link` / `--no-link --print-out-paths` / `--apply` / `--json` /
   `--raw` を含む）と順序まで一致する。実際の値は placeholder（`<ep>` / `<system>` / `<name>` /
   `<profileDir>` / `<ref>` / `<template>` / `'<rootKind map>'`）へ正規化して比べる
-- nix を実行しないサブコマンド（prune / status）は、profile と記録がある状態で実行しても
-  nix を一度も呼ばずに成功し、`--help` にその旨の 1 行がある
+- nix を実行しないサブコマンド（prune / status）は、記録と root の消えた系列がある状態で
+  実行しても nix を一度も呼ばずに成功し（prune `--yes` はその系列を削除まで進める）、`--help` に
+  その旨の 1 行がある
 
 優先度は mitigates 先の RISK-81cadaa3-3ed2-4cb0-bc74-72ff3afa9cce の level（low）に従う。
