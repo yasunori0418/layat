@@ -2,7 +2,7 @@
 # ADR の status: 廃止 と supersedes の対応を frontmatter だけから確かめる。
 #
 # 実行:
-#   nix develop '.?dir=dev#sara' -c dev/tests/adr-supersede.sh [docs ディレクトリ]
+#   nix develop '.?dir=dev#sara' -c dev/tests/adr-supersede.sh
 set -uo pipefail
 
 fail=0
@@ -12,7 +12,7 @@ fault() {
   fail=1
 }
 
-docs_dir="${1:-$(git rev-parse --show-toplevel 2>/dev/null || printf '.')/docs}"
+docs_dir="$(dirname "$0")/../../docs"
 if [[ ! -d "$docs_dir" ]]; then
   fault "docs ディレクトリが無い（$docs_dir）"
   exit 1
