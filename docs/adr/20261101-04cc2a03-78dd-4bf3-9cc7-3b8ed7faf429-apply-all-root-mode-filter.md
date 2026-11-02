@@ -35,7 +35,7 @@ REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b に置く。
 
 ## 根拠
 
-フィルタを opt-in にすれば、混在した entrypoint で home mode の config まで適用してしまう事故を
+フィルタを opt-in にすれば、混在した entrypoint で home mode の config まで適用してしまうのを
 防ぎつつ、素の `--all` で全件を適用する使い方も残る。devShell は `apply --all --project-root` を
 使えば、home mode の config に触れない。
 
