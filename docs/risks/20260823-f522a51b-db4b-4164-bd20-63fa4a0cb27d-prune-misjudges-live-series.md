@@ -4,6 +4,7 @@ type: risk
 name: "prune が生存系列や判定不能な系列を孤児と読み、不可逆に削除する"
 threatens:
   - "REQ-c44433a1-7ee7-459a-9aae-7cc42166876f"
+  - "REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4"
 likelihood: high
 impact: high
 level: high
@@ -38,6 +39,10 @@ system 基底 `/nix/var/nix/profiles/layat/` → ADR-0036 §3）ぶん、基底�
 **判定不能を削除へ倒す** — backref が読めない・空・絶対パスでない、root の stat が権限等で
 失敗する。これらは「孤児と確認できていない」だけであって「孤児である」ではない。skip + warning
 以外へ倒すと、判定材料が欠けたときに最も危険な方向へ落ちる。
+
+**孤児の逆引きの喪失** — clone を消した後の profile が backref `.root` を失うか `<roothash>` の階層に
+置かれず、どの root 由来か辿れなくなる。prune はその系列を判定できず、孤児は手で消すしかなくなる
+（→ REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4）。
 
 ## 実現性
 

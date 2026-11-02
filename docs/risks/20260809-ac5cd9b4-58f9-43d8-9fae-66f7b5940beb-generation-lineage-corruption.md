@@ -6,6 +6,11 @@ threatens:
   - "REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81"
   - "REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3"
   - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
+  - "REQ-9c111c32-8f6c-4eda-859c-dae02c0624fc"
+  - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"
+  - "REQ-2f9205ee-cec5-4072-ac3e-890caae79904"
+  - "REQ-706de717-4e47-471a-a1c0-448635be159c"
+  - "REQ-840b3641-6e76-46da-82e9-680cabd65abe"
 likelihood: medium
 impact: high
 level: high
@@ -38,6 +43,16 @@ apply のたびに新しい世代系列が生まれ、前世代が永久に見�
 profileDir を読めない失敗を黙認して「世代 0 件」と見なすのは、前世代が無いという最も
 危険な結論を沈黙で作る。
 
+キーイングの前提と世代の操作経路も同じ系統にある。build 前に profileDir を決めるための
+`passthru.rootKind`（→ REQ-2f9205ee-cec5-4072-ac3e-890caae79904）が評価時に取れないか実際の root と
+食い違うと、flock と前世代の読み取りが別の profileDir に対して行われる。build しないコマンドが eval 先行を
+省くか、`--root` で作った世代を同じ `--root` 無しで操作できてしまうと、別の系列を読む
+（→ REQ-9c111c32-8f6c-4eda-859c-dae02c0624fc）。世代の commit・列挙・切替が世代バックエンドの契約
+（→ REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）を迂回するか、世代の間引きが契約と nix コマンドの
+外で行われると（→ REQ-706de717-4e47-471a-a1c0-448635be159c）、同じ系列を経路ごとに違う形で読み書き
+する。失敗時に残る `.pending` が同名で上書きされず config あたり 1 個を超えて溜まるのも、
+同じディレクトリ規約の崩れである（→ REQ-840b3641-6e76-46da-82e9-680cabd65abe）。
+
 ## 実現性
 
 **likelihood: medium** — キーイング規則はモード（home / project / fixed）と `--root` の
@@ -54,3 +69,8 @@ profileDir を読めない失敗を黙認して「世代 0 件」と見なすの
 
 TC-40b762fc-3b48-471c-b495-c5ffe1f584b5（`<state>` 解決・profileDir キーイング・世代リンク命名）と
 TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7（世代リンクの走査）が緩和する。
+
+キーイングの前提と世代の操作経路の面のうち、`--root` 上書きのキーイングは
+TC-40b762fc-3b48-471c-b495-c5ffe1f584b5 が、世代の列挙は TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7 が覆う。
+`passthru.rootKind` の値、build しないコマンドの eval 先行、commit・切替・間引きが契約を迂回しないこと、
+`.pending` が config あたり 1 個に収まることを確かめる検証条件はこの risk に無く、残余として残る。
