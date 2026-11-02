@@ -42,6 +42,7 @@ references:
 > - §9 `--quiet` は stdout に触れない → 撤回（ADR-0031）
 > - §10 振動の foreign warning は document-only → ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4
 > - §11 cleanup コマンドは MVP 非対応 → 撤回（ADR-0034）
+> - 決定の後継ではないが、ADR-ef9e4099-0cf4-409a-9e73-518866aea676 は起点の文脈として本 ADR を名指しし supersedes を張っている
 
 - ステータス: 廃止
 - 日付: 2026-06-14

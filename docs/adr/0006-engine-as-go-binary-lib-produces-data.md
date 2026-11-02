@@ -33,7 +33,7 @@ references:
 >
 > - エンジン = 単一の固定 Go バイナリ → ADR-2119433e-de69-4447-85a5-575d58246007
 > - lib は純データ生成器に徹する → ADR-521765d7-7e31-42f4-b548-979185a7586a
-> - `mkActivationScript` は薄いラッパー → ADR-86a77232-dc99-4c04-bd6d-2127410e8828
+> - `mkActivationScript` は薄いラッパー → 撤回（ADR-0007 §3 → ADR-86a77232-dc99-4c04-bd6d-2127410e8828）
 > - Nix↔Go の契約 = `manifest.json`（`schemaVersion`） → ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd
 > - GC アンカー = `manifest.json` + symlink farm → ADR-30f105c7-85a8-4fab-9dea-3277d932b524
 > - FS 操作はネイティブ Go・`nix` と `git` だけをサブプロセスで叩く → ADR-0057
