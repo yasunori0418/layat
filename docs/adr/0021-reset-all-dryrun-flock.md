@@ -1,6 +1,6 @@
 ---
 id: "ADR-0021"
-type: adr
+type: legacy_adr
 name: "reset の `--all` 非対応・`--dryrun` 対応・flock / recopy 合成を確定する"
 status: 採用
 origin: "ADR-0020 で `reset` / `apply --recopy` を追加したことで開いた二次的な細目（`--all` 対応・`--dryrun`・flock・合成）"

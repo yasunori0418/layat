@@ -1,6 +1,6 @@
 ---
 id: "ADR-0062"
-type: adr
+type: legacy_adr
 name: "system mode の last-applied 記録を `/var/lib/layat` に置く"
 status: 採用
 issues:

@@ -1,6 +1,6 @@
 ---
 id: "ADR-0045"
-type: adr
+type: legacy_adr
 name: "`apply --backup[=suffix]` — 配置を塞ぐ記録外実体の rename 退避"
 status: 採用
 issues:

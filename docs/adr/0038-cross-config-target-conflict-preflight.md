@@ -1,6 +1,6 @@
 ---
 id: "ADR-0038"
-type: adr
+type: legacy_adr
 name: "同一 entrypoint 内の cross-config target 衝突を `apply --all` 前段で検出し error 停止する"
 status: 採用
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。`apply --all` 並列化（→ ADR-0039）の検討中に「複数 config / profile / manifest 間の target 衝突をどう扱うか」が独立の前提問題として切り出された"

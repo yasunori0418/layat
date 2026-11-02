@@ -1,6 +1,6 @@
 ---
 id: "ADR-0044"
-type: adr
+type: legacy_adr
 name: "apply 途中失敗の完全巻き戻し — インメモリ undo ジャーナル"
 status: 採用
 issues:

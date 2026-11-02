@@ -1,6 +1,6 @@
 ---
 id: "ADR-0020"
-type: adr
+type: legacy_adr
 name: "copy の明示上書き（`apply --recopy`）と配置物のリセット（`layat reset`）を追加する"
 status: 採用
 origin: "「copy で配置した物を参照元更新に追従させたい」「entry の配置物を無い状態に戻したい（リセット）」という 2 つのユースケース未対応"

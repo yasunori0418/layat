@@ -1,6 +1,6 @@
 ---
 id: "ADR-0031"
-type: adr
+type: legacy_adr
 name: "成功時デフォルト沈黙化・`-v` で配置レポート opt-in・`--debug` で nix コマンド開示・`--quiet` 廃止（ADR-0023 §2 改訂）"
 status: 採用
 justifies:

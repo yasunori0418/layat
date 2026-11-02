@@ -1,6 +1,6 @@
 ---
 id: "ADR-0009"
-type: adr
+type: legacy_adr
 name: "`listFilesInRepo` を `listFilesInSrc` に改名する"
 status: 採用
 origin: "「`listFilesInRepo` は初期コンセプト（git リポジトリを fetch して配置）由来の名で、`pkgs.hello` 等の store パッケージも走査できる今の射程より狭い」という指摘"

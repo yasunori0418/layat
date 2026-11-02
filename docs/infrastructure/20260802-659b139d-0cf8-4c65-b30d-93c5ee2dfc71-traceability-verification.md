@@ -53,8 +53,8 @@ CI 用の devShell も sara 専用のものへ分ける。
 表記が全面で一致するので、目に付いた ID をそのまま grep しても `sara query` へ渡しても
 同じものに当たる。
 
-ADR のみ連番（`ADR-NNNN`）を維持する。既存 ADR の相互参照・`docs/adr/README.md` の運用・Issue
-言及を壊さないため。採番は `sara init adr` へ委譲する（→ ADR-0053）。
+ADR も同じ形式で採番する（`ADR-<フル UUIDv4>`・`SDR-<フル UUIDv4>`）。連番の `ADR-NNNN` は
+凍結した `legacy_adr` 型にだけ残り、新規には採番しない。
 
 ## 検証の強度
 

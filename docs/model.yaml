@@ -1,6 +1,6 @@
 # sara カスタムモデルスキーマ（layat）。sara の組み込みモデルを全面的に置き換える。
 # 型構成・ID 形式・フィールドと関係の読み方は docs/model.md を参照。
-# id_format は ADR だけ連番、他は UUIDv4。採番は sara-new / `sara init adr` が行う。
+# id_format は legacy_adr だけ連番、他は UUIDv4。採番は sara-new が行う。
 
 item_types:
   # ---- 仕様の系統（solution → use_case → requirement → design）----
@@ -164,14 +164,15 @@ item_types:
   # ---- 独立した根 ----
 
   # 意思決定の記録。docs/adr/。justifies で 1 本以上の item へ接続する
-  # （選定基準は docs/adr/README.md の `justifies` の項）。
+  # （規則は docs/agents/adr-rules.md、当てはめは docs/adr/README.md）。
+  # legacy_adr と prefix を共有するので、sara init adr がこの型へ解決するよう先に置く。
   - id: adr
     display_name: Architecture Decision Record
     prefix: ADR
-    id_format: '{prefix}-{seq:04}'
+    id_format: '{prefix}-{uuid4}'
     parent_types: []
-    fields:
-      # supersedes を定義していないので「廃止」は持たない。
+    fields: &adr_fields
+      # 廃止は supersedes で後継に置き換えられた ADR に付ける。
       # 不採用は提案を棄却した決定の記録で、ADR 自体は有効。
       - name: status
         display_name: Status
@@ -180,13 +181,9 @@ item_types:
             - 提案
             - 採用
             - 不採用
+            - 廃止
         required: true
         placeholder: 採用
-      # ステータス行のカッコ書き注記。
-      - name: status_note
-        display_name: Status note
-        field_type: text
-        required: false
       # item にできない外部参照（GitHub Issue 番号・起点となったセッション等）。
       - name: issues
         display_name: Issues
@@ -196,6 +193,43 @@ item_types:
         display_name: Origin
         field_type: text
         required: false
+    allowed_targets: &adr_targets
+      - relation: justifies
+        targets:
+          - requirement
+          - design
+          - infrastructure
+          - quality
+          - test_plan
+      # 置き換えた ADR。文書丸ごとの失効を表す。
+      - relation: supersedes
+        targets:
+          - adr
+          - legacy_adr
+          - sara_adr
+      # ADR ヘッダの「関連:」。
+      - relation: references
+        targets:
+          - adr
+          - legacy_adr
+          - sara_adr
+
+  # sara 品質管理機構についての意思決定の記録。docs/sara-adr/。
+  - id: sara_adr
+    display_name: sara Decision Record
+    prefix: SDR
+    id_format: '{prefix}-{uuid4}'
+    parent_types: []
+    fields: *adr_fields
+    allowed_targets: *adr_targets
+
+  # 連番で採番した凍結済みの ADR。docs/adr/ の `NNNN-<slug>.md`。新規には起こさない。
+  - id: legacy_adr
+    display_name: Legacy Architecture Decision Record
+    prefix: ADR
+    id_format: '{prefix}-{seq:04}'
+    parent_types: []
+    fields: *adr_fields
     allowed_targets:
       - relation: justifies
         targets:
@@ -207,11 +241,11 @@ item_types:
       # ADR ヘッダの「改訂対象:」。
       - relation: revises
         targets:
-          - adr
+          - legacy_adr
       # ADR ヘッダの「関連:」。
       - relation: references
         targets:
-          - adr
+          - legacy_adr
 
   # ---- リスクとテストの系統（risk → test_condition → test_case）----
 
@@ -350,8 +384,19 @@ relations:
     primary: false
 
   # ---- 独自定義: ADR 間の peer 関係 ----
-  # ADR ヘッダの「改訂対象:」に対応する節単位の部分改訂。
-  # 組み込みの supersedes（ADR 全体の失効）は定義しない。
+  # 後継の ADR から置き換えた ADR へ張る。置き換えられた側は status が 廃止 になる。
+  - id: supersedes
+    display_name: Supersedes
+    inverse: superseded_by
+    direction: peer
+    primary: true
+  - id: superseded_by
+    display_name: Superseded by
+    inverse: supersedes
+    direction: peer
+    primary: false
+
+  # legacy_adr ヘッダの「改訂対象:」に対応する節単位の部分改訂。
   - id: revises
     display_name: Revises
     inverse: is_revised_by

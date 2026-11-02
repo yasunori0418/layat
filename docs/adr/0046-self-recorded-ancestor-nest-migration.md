@@ -1,6 +1,6 @@
 ---
 id: "ADR-0046"
-type: adr
+type: legacy_adr
 name: "自己記録の祖先 symlink 配下ネストを許可する — 前世代 manifest 判定の祖先拡張 + 配置前除去（PreRemove）"
 status: 採用
 issues:

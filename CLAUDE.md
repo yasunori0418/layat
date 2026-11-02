@@ -32,9 +32,12 @@ item を新設し、概要文書にはリンクを 1 行足すに留める。
 | `docs/test/<対象>/` | test_condition | `TC` | risk |
 | `docs/test/<対象>/` | test_case | `CASE` | test_condition |
 | `docs/adr/` | adr | `ADR` | なし（分離型）|
+| `docs/sara-adr/` | sara_adr | `SDR` | なし（分離型）|
+| `docs/adr/` | legacy_adr | `ADR` | なし（分離型・凍結）|
 
-型・関係・フィールドの定義は `docs/model.yaml` が持つ。親を持たない根は **solution と adr のみ**で、
-他の型は upstream relation を 1 本以上張る（張り忘れは `sara check` の orphan warning で出る）。
+型・関係・フィールドの定義は `docs/model.yaml` が持つ。親を持たない根は **solution と
+ADR の 3 型（adr / sara_adr / legacy_adr）のみ**で、他の型は upstream relation を 1 本以上張る
+（張り忘れは `sara check` の orphan warning で出る）。
 検出した欠陥（defect）は型として持たず、GitHub Issues（`bug` label）で管理する
 （→ ADR-0051。運用規約は `docs/agents/issue-tracker.md` の「Defect issues」節）。
 
@@ -97,7 +100,7 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
 散文・relation リストの表記が一致するので、ID をそのまま grep しても `sara query` へ渡しても
 同じものに当たる（省略形と正式 ID を突き合わせる手順が要らない）。
 
-- 起票は **ADR を除き** devShell 同梱の `sara-new` コマンドで行う。採番（`sara init` が引く
+- 起票は ADR を含め devShell 同梱の `sara-new` コマンドで行う。採番（`sara init` が引く
   UUIDv4）とファイル名規約の適用を一手で済ませ、`id:` と `file:` の 2 行を返す。連番を手で
   振らない（並列レーンでの採番衝突を構造的に避けるため）
 
@@ -106,10 +109,9 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
   sara-new requirement lock-ordering docs/requirements
   ```
 
-- **ADR のみ連番を維持する**。既存 ADR の相互参照・`docs/adr/README.md` の運用・Issue 言及・
-  編集不能なコミットメッセージの言及を壊さないため（→ ADR-0053）。**採番は `sara init adr` へ
-  委譲する**（`docs/adr/` の最大値を目で数えて + 1 しない）。手順と、並列レーンで同時採番した
-  ときの直し方は `docs/adr/README.md`
+- ADR も UUID で採番する（`ADR-<フル UUIDv4>`、sara 品質管理機構の決定は `SDR-<フル UUIDv4>`）。
+  連番の `ADR-NNNN` は凍結した `legacy_adr` 型で、新規には起こさない（`sara-new` が拒否する）。
+  ADR の規則は `docs/agents/adr-rules.md`、layat への当てはめは `docs/adr/README.md`
 - `specification` フィールドを持つ型（requirement / quality / test_plan）は**英語で書く**。
   sara が RFC2119 キーワード（MUST / SHALL / SHOULD …）の存在をハードコードで検証するため。
   対になる日本語の規範文は `specification_ja` に併記する。ただし検証が効くのは requirement
@@ -155,7 +157,7 @@ nix develop ./dev -c dev/scripts/test-doc-matrix.sh out.md  # 対応表の生成
 - `lib/` は nixpkgs のみに依存する。home-manager / NixOS / nix-darwin への依存を持ち込まない
 - **ドキュメントの配置ルール・ID 規約はこのプロジェクトの規約が優先する**（→「ドキュメント」節）。
   要求は `docs/requirements/`、リスクは `docs/risks/`、テスト成果物は `docs/test/<対象>/` へ
-  1 ファイル 1 item で置き、起票は `sara-new` で行う（ADR のみ連番で、`sara init adr` が採る）。
+  1 ファイル 1 item で置き、起票は ADR を含め `sara-new` で行う。
   スキル既定の出力先・採番方式（散文への ID 直書き・連番）がこれと食い違う場合はプロジェクト規約に従う
 - **コメント規約**:
   - 連続するコメント行の散文は 3 行以内（箇条書きも散文に数える）

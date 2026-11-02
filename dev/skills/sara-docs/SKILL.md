@@ -1,6 +1,6 @@
 ---
 name: sara-docs
-description: sara ドキュメントグラフの基盤知識・規約スキル。次のコンテキストが現れたら作業前に必ず読み込む — ① sara.toml と docs/model.yaml を持つリポジトリで docs/ 配下の item（YAML frontmatter に id / type / relation を持つ Markdown）を作成・編集・削除しようとしている。② REQ- / DSG- / RISK- / TC- / CASE- / TP- / QA- / INF- / UC- / SOL- / ADR- 形式の ID、または threatens / mitigates / covers / derives_from / satisfies / refines / justifies といった relation が依頼・ファイル・エラーに現れた。③ sara / sara-new / sara-gap コマンドを実行しようとしている、または sara check の orphan・broken reference エラーを直そうとしている。④ 要求・設計・リスク・テスト条件・テストケース・ADR を「item として起こして」と依頼された。工程スキル（/test-plan・/test-analyze 等）が前提とする型・relation・ID・specification 規約の正本。sara を使わないリポジトリの Markdown ドキュメント一般は対象外。
+description: sara ドキュメントグラフの基盤知識・規約スキル。次のコンテキストが現れたら作業前に必ず読み込む — ① sara.toml と docs/model.yaml を持つリポジトリで docs/ 配下の item（YAML frontmatter に id / type / relation を持つ Markdown）を作成・編集・削除しようとしている。② REQ- / DSG- / RISK- / TC- / CASE- / TP- / QA- / INF- / UC- / SOL- / ADR- / SDR- 形式の ID、または threatens / mitigates / covers / derives_from / satisfies / refines / justifies といった relation が依頼・ファイル・エラーに現れた。③ sara / sara-new / sara-gap コマンドを実行しようとしている、または sara check の orphan・broken reference エラーを直そうとしている。④ 要求・設計・リスク・テスト条件・テストケース・ADR を「item として起こして」と依頼された。工程スキル（/test-plan・/test-analyze 等）が前提とする型・relation・ID・specification 規約の正本。sara を使わないリポジトリの Markdown ドキュメント一般は対象外。
 license: MIT
 ---
 
@@ -31,6 +31,8 @@ sara（Requirements Knowledge Graph CLI）で管理する `docs/` の読み書�
 | test_plan | `TP` | `docs/test-plan/` | solution（`derives_from`）|
 | infrastructure | `INF` | `docs/infrastructure/` | quality / design（`satisfies`）|
 | adr | `ADR` | `docs/adr/` | なし（分離型。`justifies` で 1 本以上接続）|
+| sara_adr | `SDR` | `docs/sara-adr/` | なし（adr と同じ。sara 品質管理機構の決定）|
+| legacy_adr | `ADR` | `docs/adr/` | なし（連番で凍結。新規に起こさない）|
 | risk | `RISK` | `docs/risks/` | requirement / design（`threatens`）|
 | test_condition | `TC` | `docs/test/…` | risk（`mitigates`）|
 | test_case | `CASE` | `docs/test/…` | test_condition（`covers`）|
@@ -39,7 +41,7 @@ sara（Requirements Knowledge Graph CLI）で管理する `docs/` の読み書�
 切り方）と、CASE の `target`（テスト資産の正準表記）の規則はプロジェクト規約
 （CLAUDE.md 等）に委ねる。
 
-親を持たない根は solution と adr のみ。他の型は upstream relation を 1 本以上張る
+親を持たない根は solution と ADR の 3 型（adr / sara_adr / legacy_adr）のみ。他の型は upstream relation を 1 本以上張る
 （張り忘れは strict check の orphan error になる）。frontmatter は手書きせず
 **`sara-new` で生成する**（`sara init` を包んで採番とファイル名規約の適用まで行う。
 relation・型別フィールドはオプションで渡す。手順は
@@ -71,13 +73,13 @@ relation は**起こした側（下流）の frontmatter に宣言する**（`sa
 - **どの面でもフル ID をそのまま書く**（→ ADR-0053）。8 文字省略形は使わない。relation
   リスト・ファイル名・散文の表記が一致するので、ID をそのまま grep しても `sara query` へ
   渡しても同じものに当たる。
-- 起票は **ADR を除き `sara-new` コマンド**。採番とファイル名規約の適用、`sara init` の
+- 起票は ADR を含め **`sara-new` コマンド**。採番とファイル名規約の適用、`sara init` の
   呼び出しまでを一手で済ませ、`id:` / `file:` の 2 行を返す。連番を手で振らない
   （並列レーンでの採番衝突を構造的に避けるため）。手順は
   [references/sara-cli.md](references/sara-cli.md)。
-- **ADR のみ連番**（`ADR-NNNN`）を維持する。`sara-new` は ADR を対象外とするので、
-  `sara init adr <パス>` を直接使って採番を委譲する（`docs/adr/` の最大値を目で数えて
-  + 1 しない）。
+- ADR も UUID で採番する（`ADR-<フル UUIDv4>` / `SDR-<フル UUIDv4>`）。連番の `ADR-NNNN` は
+  凍結した `legacy_adr` 型で、`sara-new` は拒否する。ADR の規則（粒度・`supersedes` と `廃止`・
+  `justifies` の選定基準）は `docs/agents/adr-rules.md`。
 
 ## risk の評価と優先度の導出
 

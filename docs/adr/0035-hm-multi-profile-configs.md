@@ -1,6 +1,6 @@
 ---
 id: "ADR-0035"
-type: adr
+type: legacy_adr
 name: "HM モジュールに `layat.configs.<name>` を導入し複数 profile（役割分離）を可能にする"
 status: 採用
 origin: "次期マイルストーン計画の grilling（2026-07-04）。ADR-0025 §2 が「消費側の要求が出た時点で追加」とした HM 複数 profile 化を実施する"

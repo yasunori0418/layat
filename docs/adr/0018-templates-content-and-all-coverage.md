@@ -1,6 +1,6 @@
 ---
 id: "ADR-0018"
-type: adr
+type: legacy_adr
 name: "templates の具体内容と `--all` のサブコマンド対応範囲を確定する"
 status: 採用
 origin: "ADR-0017 に続く実装前レビューで「templates の具体内容」「`gitignore` / `rollback` / `list-generations` の `--all` 対応」が未定義だった"

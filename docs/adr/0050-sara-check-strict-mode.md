@@ -1,6 +1,6 @@
 ---
 id: "ADR-0050"
-type: adr
+type: legacy_adr
 name: "sara check を strict 化する — required status check 化と型別ゲートは見送り"
 status: 採用
 issues:

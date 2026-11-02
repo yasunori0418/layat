@@ -1,6 +1,6 @@
 ---
 id: "ADR-0052"
-type: adr
+type: legacy_adr
 name: "risk の impact スケールを検出後の回復可能性へ純化する — detectability 第 2 軸は採らない"
 status: 採用
 issues:

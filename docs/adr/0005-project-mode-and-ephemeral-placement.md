@@ -1,9 +1,8 @@
 ---
 id: "ADR-0005"
-type: adr
+type: legacy_adr
 name: "project mode（プロジェクト相対配置）と ephemeral 配置原則"
 status: 採用
-status_note: "2026-06-13 改訂: 「既定 `$HOME`（home mode）」前提を撤回し root 明示必須へ → ADR-0007"
 justifies:
   - "REQ-05abce3e-9797-432b-b93f-37c55d09afde"
   - "REQ-a480c183-40ce-4201-93b5-65a7a59c1b9e"
@@ -19,7 +18,7 @@ references:
 ---
 # ADR-0005: project mode（プロジェクト相対配置）と ephemeral 配置原則
 
-- ステータス: 採用（2026-06-13 改訂: 「既定 `$HOME`（home mode）」前提を撤回し root 明示必須へ → ADR-0007）
+- ステータス: 採用
 - 日付: 2026-06-11
 - 関連: ADR-0002, ADR-0003, ADR-0004, ADR-0007, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
 

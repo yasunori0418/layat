@@ -1,6 +1,6 @@
 ---
 id: "ADR-0034"
-type: adr
+type: legacy_adr
 name: "`layat prune` を孤児 profile 系列の削除に限定して実装する"
 status: 採用
 origin: "次期マイルストーン計画の grilling（2026-07-04）。公開後の実運用（プロジェクトのクローン削除・`--root` 使い分け）で孤児系列が実際に蓄積し始めたことを「消費側の要求」と判断した"

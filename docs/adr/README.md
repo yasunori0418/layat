@@ -1,307 +1,198 @@
-# ADR 改訂注記の運用
+# layat の ADR
 
-このリポジトリの ADR は **当面 supersede を使わない**（恒久的な排除ではない）。後続 ADR が既存 ADR の決定を
-反転・精緻化・拡張したときも、旧 ADR のステータスは「採用」のまま残し、旧 ADR 本文に blockquote 注記
-（back-reference）を追記して読者を後続 ADR へ誘導する。ADR-0008 が起点。
+ADR の粒度・ステータス・`supersedes` と `廃止`・`justifies` の選定基準といった汎用の規則は
+[adr-rules.md](../agents/adr-rules.md) が持つ。この文書はそれを layat へ当てはめた部分
+（型とディレクトリ・起票の手順・frontmatter の対応表・検算用の実データ）だけを持つ。
 
-supersede を使わないのは、現状の改訂が全て**節単位の部分改訂**で、文書丸ごとの失効を意味する `supersedes` で
-表現できる実例が無いため（改訂実態の調査 2026-08-01: 最も近い ADR-0033 ← ADR-0043 でも、タイトルになった決定
-自体は存続している）。実例の無い関係を先に定義すると、部分改訂に `supersedes` を誤用して「旧 ADR は読まなくて
-よい」と誤読させる。**全節が実質失効した ADR が現れた時点で、`supersedes` +「廃止」ステータスの追加を再検討する**
-（→ ADR-0048、Issue #203）。
+## 型とディレクトリ
 
-同様に、**訂正系 ADR（先行 ADR の誤りを直すためだけに起きた ADR）を後から 1 本へ統合することもしない**。
-訂正として起きた ADR も実態は独立した機能決定であり、統合は履歴の書き換えにあたる（→ Issue #243 の判断記録）。
-読者の誘導は上記の blockquote 注記と `revises` / `references` が担う。
+| 型 | prefix | ID | ファイル | 置き場所 |
+|---|---|---|---|---|
+| `adr` | `ADR` | `ADR-<フル UUIDv4>` | `<YYYYMMDD>-<フル UUIDv4>-<slug>.md` | `docs/adr/` |
+| `sara_adr` | `SDR` | `SDR-<フル UUIDv4>` | `<YYYYMMDD>-<フル UUIDv4>-<slug>.md` | `docs/sara-adr/` |
+| `legacy_adr` | `ADR` | `ADR-NNNN`（連番）| `NNNN-<slug>.md` | `docs/adr/` |
 
-ADR-0021 以降、後続 ADR が自分のヘッダの「改訂対象」欄で旧 ADR を名指ししているのに、旧 ADR 側に対応する
-注記が無いケースが積み重なった（当時の調査で ADR-0023/ADR-0024/ADR-0025/ADR-0028/ADR-0031 と対象旧 ADR の
-間を挙げた）。旧 ADR だけを読むと当時の（後に上書きされた）内容を最新仕様と誤認し、誤実装につながる。
-このドキュメントはその再発防止。
+- `adr` は layat の設計判断を記録する
+- `sara_adr` は sara による品質管理機構（`docs/model.yaml`・グラフの検証・起票ラッパー・item の運用規約）
+  の設計判断を記録する。layat 本体とは別に切り出せる単位として分けている
+- `legacy_adr` は連番で採番していた既存の ADR で、凍結している（→「`legacy_adr` の扱い」）
 
-2026-08-02 に frontmatter の `revises` を全件へ張った際、`revises` の全ペアを機械突合した。上の 5 本は
-いずれも解消済みで、残っていた漏れは ADR-0020 ← ADR-0021 の 1 件だった（同じ変更の中で追記済み）。
-以降は下の「セルフチェック」の手順で検出する。
+## 起票
 
-2026-10 に旧名（→ ADR-0054）の字句を全 ADR で layat へ一括置換した（決定内容は不変）。旧 ADR 本文を書き換えない
-この運用の例外で、ADR-0054 本体・ADR-0054 の改訂注記・`legacy-nput` タグは旧名のまま残す。
+`adr` と `sara_adr` は他の item と同じく `sara-new` で起票する。採番とファイル名の規約の適用が
+一手で済む。
 
-## いつ書くか
-
-新しい ADR を書き、その中で既存 ADR の決定に触れる（反転する・精緻化する・表を拡張する・語を改名する等）場合、
-**同じ変更の中で**対象の旧 ADR 側にも blockquote 注記を追記する。「後で追記する」は崩壊の原因になるため許容しない。
-
-対象の見つけ方: 新しい ADR のヘッダに `改訂対象:` 行を書く（例: `ADR-0011 §4 / ADR-0013 §2 の flock/build 順序を具体化`）。
-この行に挙げた ADR 全てに、同じコミット・同じ PR で注記を書き戻す。
-
-## 書式
-
-対象 ADR の本文メタデータ行（ステータス／日付／関連／改訂対象／起点）と `## 背景` の間に、時系列順で
-blockquote を積む（frontmatter はさらにその上・下の「frontmatter」節を参照）。
-
-```markdown
-> **YYYY-MM-DD 改訂注記（ADR-XXXX）**: <本 ADR の何 (§節番号があれば明記) が対象か>。
-> <何が不変で、何がどう変わったか>（→ ADR-XXXX）。
+```bash
+nix develop '.?dir=dev#sara' -c sara-new adr <slug> docs/adr -- \
+  --name '<タイトル>' --status 採用 \
+  --issues '#<sub-issue>' --origin '…' \
+  --justifies '<ID>' [--supersedes '<ADR>'] [--references '<ADR>']
 ```
 
-- **日付**は改訂した側（新しい）ADR の日付。
-- 文体は「決定 X は不変。ただし Y は Z に変わった」のように、**生きている部分**と**上書きされた部分**を両方明示する。
-  読者が旧 ADR 本文をそのまま実装に使ってよい範囲を判別できるようにする。
-- 複数の改訂が積み重なった場合は、古い ADR の注記から新しい ADR の注記へ**時系列順**に並べる。
-- **ステータス行 (`- ステータス: 採用`) は変更しない**。カッコ書きで一言添えるかどうかは任意（例:
-  ADR-0002/0006/0007/0013 のように主要な反転だけをステータス行にも要約する運用もあるが、必須ではない。
-  ADR-0010 のように blockquote だけで運用している例も「正しい運用例」として扱う）。
-- 影響範囲がセクション単位で分かる場合（「§2」「実行フロー」など）は注記内で言及し、後続 ADR 側の該当箇所を
-  探しやすくする。
+`sara_adr` は型を `sara_adr`、配置ディレクトリを `docs/sara-adr` にする。本文のタイトル行は
+`# ADR-<フル UUIDv4>: <タイトル>`（`sara_adr` は `# SDR-…`）とし、採番結果の ID で書く。
 
-## 良い例
-
-ADR-0002, ADR-0003, ADR-0004, ADR-0005, ADR-0006, ADR-0007, ADR-0010, ADR-0013, ADR-0014 のヘッダ直後の
-blockquote 群を参照。
+`--name` は必須フィールドなので省略しない。`--issues` は `!list text` なので、複数の issue を
+持つときはフラグを繰り返す。`legacy_adr` は `sara-new` が拒否する（新規には起こさない）。
 
 ## frontmatter
 
-各 ADR は本文のメタデータ行に加えて、機械検証用の YAML frontmatter を持つ（→ ADR-0048、Issue #203）。
-本文のメタデータ行が人の読む一次情報で、frontmatter はその二重化。**両方を同じ変更の中で更新する**。
+各 ADR は本文のメタデータ行に加えて、機械検証用の YAML frontmatter を持つ。本文のメタデータ行が
+人の読む一次情報で、frontmatter はその二重化。**両方を同じ変更の中で更新する**。
 
 ```yaml
 ---
-id: "ADR-0049"
+id: "ADR-<フル UUIDv4>"
 type: adr
-name: "<タイトル行から `# ADR-0049: ` を除いた部分>"
-status: 採用            # 提案 / 採用 / 不採用
-status_note: "…"        # ステータス行のカッコ書きがあるときだけ
+name: "<タイトル行から `# ADR-…: ` を除いた部分>"
+status: 採用            # 提案 / 採用 / 不採用 / 廃止
 issues:                 # 「関連:」「起点 Issue:」「起点:」の GitHub Issue 番号
   - "#123"
 origin: "…"             # 「起点:」の内容（無ければ「起点 Issue:」「参照:」）
-justifies:              # この ADR が決めた item（必須・1 本以上。→ 下の `justifies` の項）
+justifies:              # この ADR が決めた item（必須・1 本以上）
   - "REQ-8521e8f8-99cc-47f0-b7d0-70c24c837612"
-revises:                # 「改訂対象:」の ADR
+supersedes:             # 置き換えた ADR（置き換えた側を 廃止 にする変更の中でだけ張る）
   - "ADR-0020"
 references:             # 「関連:」の ADR
   - "ADR-0013"
 ---
 ```
 
-フィールドの順序は上記のとおり（`id` / `type` / `name` / `status` / `status_note` /
-`issues` / `origin` / `justifies` / `revises` / `references`）。`justifies` は
-`origin` の後・`revises` の前に置く。
+フィールドの順序は上記のとおり（`id` / `type` / `name` / `status` / `issues` / `origin` /
+`justifies` / `supersedes` / `references`）。`legacy_adr` は `supersedes` の位置に `revises` を持つ。
 
-提案を棄却した決定を記録する ADR は `status: 不採用` とし、本文のステータス行も `不採用` と書く。
-棄却したことはステータスが表すので、`status_note` のカッコ書きは付けない。
+`supersedes` だけは本文のメタデータ行を持たず、frontmatter にだけ書く。読者への誘導は、置き換えられた
+側の冒頭に置く後継一覧のバナーが担う。
 
-対応関係と分類の規則:
+本文のメタデータ行との対応:
 
-- `- 日付:` は frontmatter に持たせない（機械検証に使わないため本文のみ）。
-- `- 関連:` のうち **ADR 参照**は `references`、**GitHub Issue 参照**は `issues`、**`docs/*.md` 参照**は
-  本文に残す。
-  - `docs/*.md` 参照の除去は、その ADR が参照する**記述が全て item へ分割され終わった時点**で行う
-    （→ #213）。分割が終わっていない ADR では、`justifies` を張っていても本文の `関連:` に
-    `docs/spec.md` 等が残る。1 本の ADR が複数の記述に影響しているのが通例で、一部だけ
-    分割された時点で参照を消すと、未分割の記述への導線を失うため。なお 3 文書は #213 で
-    概要 + item リンク集へ縮退済みなので、残った参照が指す記述は分割時点の原文（縮退
-    コミットの親）にある。原文の辿り方は `docs/spec.md` 冒頭の規約が持つ手順に従う
-    （item の出典と同じ手順）。`docs/spec.md` / `docs/design.md` を指す参照は分割完了に
-    より除去条件を満たすが、実際の除去は未着手で残っている（別 issue で回収する・未起票）。
-    `docs/concept.md` を指す参照は保留する。「設計の哲学」「既存ツールとの比較」
-    「north-star」「設計の変遷」は item を立てず本文書に残す方針で除去条件が成立しないが、
-    `関連:` の concept 参照は節名を持たない裸のパスなので、どの節を指すかは ADR 本文を
-    読まないと判定できないため。
-  - **他リポジトリの ADR は入れない**。`関連:` にリポジトリ名を前置した ADR 参照（例: ADR-0043 の
-    `outturn ADR-0013`）が混ざることがある。ID 空間が別なので `references` に入れると自リポジトリの
-    同番号 ADR への誤った辺になる（`sara check` は実在する ID なので通してしまう）。本文に残す。
-  - **他リポジトリの Issue は逆に `issues` へ入れる**（`関連:` / `起点:` / `起点 Issue:` のどの行にあっても）。
-    `owner/repo#N` 形式にすれば ID 空間の衝突が無く曖昧さが残らないため（例: ADR-0043 の
-    `yasunori0418/outturn#1`）。ADR とは扱いが逆になる。
-  - `起点:` 行の Issue は原則 `origin` のテキストに残すが、**行が `Issue #N` で始まる（その ADR の直接の
-    起点である）ときは `issues` にも入れる**（例: ADR-0026 の `- 起点: Issue #17（…）`）。経緯として
-    言及されるだけの Issue は入れない（例: ADR-0044 / ADR-0045 の「旧 epic #167 から統合された」の `#167`）。
-- `origin` は `- 起点:` 行の内容を入れる。**`起点:` 行が無ければ `- 起点 Issue:` → `- 参照:` の順に
-  フォールバックする**（実データでは `起点:` 31 本 / `起点 Issue:` 4 本 / `参照:` 5 本）。フォールバック時は
-  `"起点 Issue: #26"` `"参照: PR #40, …"` のようにラベルを残して由来が分かるようにする。`- 参照:` は
-  外部リポジトリ・PR の参照で、ADR / Issue のような item にできないため text へ逃がす。
-- 同じ ADR が `関連:` と `改訂対象:` の両方に挙がっているときは **`revises` を優先し `references` からは除く**
-  （同一ペアに同じ relation を二重に張らない）。
-- `revises` は本文の `改訂対象:` 行が**改訂の対象として挙げた ADR**に従う（方向は本文が決める）。
-  - 同じ行で「〜は不変」として言及されるだけの ADR は含めない（例: ADR-0035 の `改訂対象:` 行は
-    ADR-0024 / ADR-0025 を改訂対象に挙げつつ ADR-0002 を「atomic 性は不変」と述べる。`revises` は
-    0024 / 0025 のみ）。この ADR が `関連:` にも無ければ `references` にも入れず本文に残す
-    （ADR-0035 の ADR-0002 が該当）。
-  - 番号順とは限らない: ADR-0044 は `revises: ADR-0046, ADR-0047` と番号を逆行しているが、起票は
-    0046 → 0047 → 0044 の順で 0044 が後発なので正しい。番号の前後を見て手を入れないこと。
-- `references` は**後発 → 先行の片方向**に張る。同一ペアに `references` を相互に張ると `sara check` が cycle と
-  して error にするため。先行 ADR 側からは `sara query` の `Is referenced by` で逆引きできる。
-  - **先発・後発は ADR 番号ではなく実際の起票順で判定する**。番号と起票順は食い違うことがある
-    （ADR-0044〜0047 は番号順 0044 → 0047 に対し起票順は 0046 → 0047 → 0044 → 0045）。番号順で機械的に
-    判定すると後発側の辺を取りこぼす。判定には **author date** を使う:
+| 本文 | frontmatter |
+|---|---|
+| `- ステータス:` | `status`（カッコ書きは付けない）|
+| `- 日付:` | 持たない（機械検証に使わないため本文のみ）|
+| `- 関連:` の ADR 参照 | `references` |
+| `- 関連:` の GitHub Issue 参照 | `issues` |
+| `- 関連:` の `docs/*.md` 参照 | 持たない（本文に残す）|
+| `- 起点:` | `origin`。行が `Issue #N` で始まるときは `issues` にも入れる |
+| `- 起点 Issue:` / `- 参照:` | `起点:` 行が無いときだけ `origin` へ入れる |
+| `- 改訂対象:`（`legacy_adr` のみ）| `revises` |
 
-    ```bash
-    git log --diff-filter=A --format=%at -1 -- docs/adr/<file>
-    ```
+分類の細則:
 
-    `git log` の既定表示（committer date）は rebase で潰れるため使わない。実データでは ADR-0033〜0042 の
-    10 本が committer date では同一時刻になる。
+- **他リポジトリの ADR は `references` に入れない**。`関連:` にリポジトリ名を前置した ADR 参照
+  （例: ADR-0043 の `outturn ADR-0013`）は ID 空間が別なので、`references` に入れると自リポジトリの
+  同番号 ADR への誤った辺になる（`sara check` は実在する ID なので通してしまう）。本文に残す
+- **他リポジトリの Issue は `issues` へ入れる**（`関連:` / `起点:` / `起点 Issue:` のどの行にあっても）。
+  `owner/repo#N` 形式にすれば ID 空間が衝突しない（例: ADR-0043 の `yasunori0418/outturn#1`）
+- `起点:` 行の Issue は原則 `origin` のテキストに残す。行が `Issue #N` で始まる（その ADR の直接の
+  起点である）ときだけ `issues` にも入れる（例: ADR-0026 の `- 起点: Issue #17（…）`）。経緯として
+  言及されるだけの Issue は入れない（例: ADR-0044 / ADR-0045 の「旧 epic #167 から統合された」の `#167`）
+- `origin` のフォールバックは `起点:` → `起点 Issue:` → `参照:` の順（`legacy_adr` の実データでは
+  `起点:` 31 本 / `起点 Issue:` 4 本 / `参照:` 5 本）。フォールバック時は `"起点 Issue: #26"`
+  `"参照: PR #40, …"` のようにラベルを残す
+- 同じ ADR を `supersedes`（`legacy_adr` では `revises`）と `references` の両方に入れない。
+  前者を優先する（同一ペアに relation を二重に張らない）
+- `docs/*.md` 参照は、その ADR が参照する記述が全て item へ分割され終わってから除く（→ #213）。
+  `docs/concept.md` を指す参照は、「設計の哲学」など item を立てない節を指しうるので保留する
 
-    **いま書いている ADR 自身は常に最後発として扱う**。未コミットなのでこのコマンドは空を返す。判定が要る
-    のは既存 ADR 同士の順序だけで、新規起票時は `関連:` の ADR を（上の除外規則を適用したうえで）そのまま
-    `references` に入れてよい。
+### `references` の向きと同着判定
 
-    **先行 ADR 側に自分への参照を追記するときは、本文 `関連:` 行だけを直し frontmatter は触らない**。
-    冒頭の「本文と frontmatter の両方を同じ変更の中で更新する」の唯一の例外。ここで先行 ADR の
-    `references` にも新 ADR を足すと相互参照になり `sara check` が cycle として error にする。
-  - **起票時刻が同着になった場合は ADR 番号順を後発とみなす**。author date での同着は 5 群ある
-    （ADR-0001〜0004 / ADR-0011・0012 / ADR-0033〜0037 / ADR-0038・0039 / ADR-0040〜0042）。同一コミットとは
-    限らず、別コミットでも rebase で同着になる（ADR-0038 と 0039 は別コミットで同時刻）。
-  - この結果、**先行 ADR が後から追記した前方参照（本文 `関連:` にある、起票順で後発の ADR）は `references`
-    に入らない**。上の除外規則（`revises` 優先・他リポジトリの ADR）を適用してもなお本文と frontmatter が
-    一対一にならないのはこの類型だけ。多くは後発側の `references` / `revises` が同じ関係を表現するが、
-    **後発側の本文 `関連:` にその辺が無ければどちらにも現れない**（ADR-0038 → 0040 が該当。ADR-0040 の
-    `関連:` に ADR-0038 は無く、本文に無い辺を frontmatter へ足すことはしない）。
+`references` は**後発 → 先行の片方向**に張る。同一ペアに相互に張ると `sara check` が cycle として
+error にする。先行 ADR 側からは `sara query` の `Is referenced by` で逆引きできる。新しく起こす ADR は
+常に最後発なので、`関連:` の ADR をそのまま `references` に入れてよい。
 
-    以下は規則を再適用したときの検算リスト。列挙にある辺が frontmatter に無いのは規則どおりで、張り忘れ
-    ではない。**既存 ADR の `関連:` に後発 ADR を追記したときはこのリストにも追記する**（新しい ADR を
-    足すだけでは増えない）。現在の該当は 23 本 46 辺:
+`legacy_adr` どうしの先発・後発は、ADR 番号ではなく **author date** で判定する（committer date は
+rebase で潰れる。`ADR-0033`〜`0042` の 10 本は committer date が同一時刻になる）。
 
-    ```
-    ADR-0001 → 0059
-    ADR-0002 → 0003 / 0006 / 0015 / 0057 / 0058
-    ADR-0003 → 0004 / 0006            ADR-0004 → 0005 / 0007
-    ADR-0005 → 0007
-    ADR-0006 → 0007 / 0012 / 0013 / 0055 / 0056 / 0057
-    ADR-0007 → 0015 / 0055            ADR-0011 → 0055 / 0056 / 0057
-    ADR-0013 → 0015 / 0059            ADR-0014 → 0015
-    ADR-0015 → 0057 / 0058            ADR-0017 → 0058
-    ADR-0023 → 0055                   ADR-0025 → 0055
-    ADR-0026 → 0055 / 0060            ADR-0031 → 0055
-    ADR-0035 → 0060                   ADR-0036 → 0057
-    ADR-0038 → 0039 / 0040 / 0060     ADR-0039 → 0060
-    ADR-0043 → 0055 / 0056            ADR-0048 → 0049 / 0050 / 0053
-    ADR-0055 → 0057 / 0060
-    ```
-- **`justifies` は必須**。その ADR が決めた item を 1 本以上張る。対象型は `model.yaml` の
-  `justifies` の `allowed_targets`。**空 = 埋め忘れ**を `sara check` の orphan warning で機械判定
-  できる状態を保つため、空のまま出さない（→ #212、#243）。張る先の item がまだ無い
-  場合は、**その ADR と同じ変更の中で item を起こしてから張る**。「後で張る」は許容しない
-  （改訂注記と同じく、遅延は崩壊の原因になるため）。決定を item に落とせない ADR は、そもそも
-  決定が定まっていないか ADR の粒度が大きすぎるので、先にそちらを解く。
+```bash
+git log --diff-filter=A --format=%at -1 -- docs/adr/<file>
+```
 
-  必須の規範と選定基準（次項）は本 README が持ち、`model.yaml` は対象型の一覧（`allowed_targets`）の
-  典拠を担う（コメントも必須で一致 → #260）。
-- **どの item を張るかの選定基準は「その規範の形成に実質的に寄与したか」**。決定の実体である
-  ADR 1 本だけが張る運用ではなく、**寄与した ADR は複数張ってよい**（→ #243、#254）。実例:
-  `REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0` は ADR-0005 / 0013 / 0017 / 0022 の 4 本が張る。`REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead` は帰属
-  ADR-0043 に加え、`--json` を導入した ADR-0033 と `tool.version` の供給元である ADR-0042 の
-  計 3 本が張る。
-  逆に、次の 2 つは寄与が成立しないので張らない。
-  1. **接続先 item 側が「`justifies` を受けない理由」を本文へ明記している**（例: `DSG-d2e17f4f-0d32-45c1-8125-17e589664c85`
-     の「根拠が ADR 以外にあることによる」）。ただし *その item の規範に含めない* という宣言
-     （例: `REQ-3f541d39-da41-4ef8-858b-707f54cf6a29` の「`subdir` 適用形は担当範囲外」）と、*その ADR が依拠していない* ことは
-     別なので、注記の文面を読んで判定する（線引きの実例は ADR-0040 本文の 2026-08-08 注記）。
-  2. **ADR が当該規範を決定していない**。背景節で既存前提として言及するだけの ADR は張らない
-     （例: ADR-0039 → `REQ-535b811d-dfc5-4eac-92db-737e70eb5415` の一括 eval は前提として参照しているだけ）。
+番号と起票順は食い違うことがある（`ADR-0044`〜`0047` は起票順が 0046 → 0047 → 0044 → 0045）。
+author date が同着の群は 5 つあり（ADR-0001〜0004 / ADR-0011・0012 / ADR-0033〜0037 /
+ADR-0038・0039 / ADR-0040〜0042）、同着の中は ADR 番号順を後発とみなす。
 
-  既存 ADR の網羅性を監査する手順（#254）。候補は 2 方向から挙げる。**ADR の決定節を上から順に
-  見て規範ごとに張り先を探す**方向と、**接続先 item の「出典」節が「決定の実体は ADR-X で、〜は
-  ADR-Y が定めている」と名指しする ADR-Y** から引く方向。出典節が ADR を名指ししない item もある
-  ので、後者だけでは拾い切れない（例: `REQ-4fc98fa6-fd5f-4f25-8b10-60755bf49bd2` は ADR-0002 決定節から引いた）。
+この規則の結果、`legacy_adr` の本文 `関連:` にある前方参照（起票順で後発の ADR への参照）は
+`references` に入らない。次はその検算リストで、列挙にある辺が frontmatter に無いのは規則どおり
+（張り忘れではない）。23 本 46 辺:
 
-  挙げた候補は**基準 2 で必ず絞る**。出典節の名指しは item 自身の規範だけでなく周辺規範の淵源も
-  含むため、名指しがあることは寄与の証明にならない。判定は「**その ADR の決定節に、当該 item の
-  規範そのものを決めた決定文があるか**」で行い、次の 2 類型は原則張らない（それぞれの但し書きに
-  当たるときだけ張る）。
+```
+ADR-0001 → 0059
+ADR-0002 → 0003 / 0006 / 0015 / 0057 / 0058
+ADR-0003 → 0004 / 0006            ADR-0004 → 0005 / 0007
+ADR-0005 → 0007
+ADR-0006 → 0007 / 0012 / 0013 / 0055 / 0056 / 0057
+ADR-0007 → 0015 / 0055            ADR-0011 → 0055 / 0056 / 0057
+ADR-0013 → 0015 / 0059            ADR-0014 → 0015
+ADR-0015 → 0057 / 0058            ADR-0017 → 0058
+ADR-0023 → 0055                   ADR-0025 → 0055
+ADR-0026 → 0055 / 0060            ADR-0031 → 0055
+ADR-0035 → 0060                   ADR-0036 → 0057
+ADR-0038 → 0039 / 0040 / 0060     ADR-0039 → 0060
+ADR-0043 → 0055 / 0056            ADR-0048 → 0049 / 0050 / 0053
+ADR-0055 → 0057 / 0060
+```
 
-  - item 本文の「他 item との担当分界」注記が、その規範を**別 item へ委譲している**もの。
-    委譲先の item に当該 ADR が既に張られていれば寄与は回収済み（#254 で ADR-0002 →
-    `REQ-c847d1af-a437-46bb-bd64-42083810d034`・ADR-0026 → `REQ-c847d1af-a437-46bb-bd64-42083810d034`・ADR-0015 → `REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44` の 3 件がこれで撤去
-    された。それぞれ `REQ-844ee375-919f-4341-81e1-a5f89fd32840` / `REQ-dec58330-6dad-47f7-8f56-2402764a89c7` / `REQ-5c6b07da-3d06-414d-8770-4f438234b322` 側で回収済み）。
-    ただし **item の `specification`（frontmatter）自身が、その ADR が決めた規範を対称化・拡張の
-    対象として直に述べているときは張る**。`REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7` は symlink 側の foreign 警告を
-    `REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557` へ委譲する一方、規範文が "symmetrically with the foreign warning for
-    symlinks" とその警告を名指しして copy 側を対称化しているので ADR-0015 を張る。
-    **他 item を経由した参照はこれに当たらない**。撤去した `REQ-c847d1af-a437-46bb-bd64-42083810d034` の規範文は他 item
-    （`REQ-8085f194-c903-4ecb-abd8-c719fe7b3292` / `REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a` / `REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af`）のみを参照する。`REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44` は
-    `REQ-5c6b07da-3d06-414d-8770-4f438234b322` の eval 時検出の "natural extension" と述べるが、参照先は item であって
-    ADR-0024 の決定文ではなく、cross-config 側は "not restated or altered here" と自分の規範外に
-    置いている（ADR-0024 は eval 時検出そのものを決めたので別途張る）。
-    **判定材料は本文の注記ではなく `specification` に置く**（本文注記は周辺規範にも触れるため）。
-  - 「淵源」「姿勢」といった**態度の供給元**としてのみ挙がるもの（例: ADR-0018 → `REQ-c847d1af-a437-46bb-bd64-42083810d034`
-    の「部分失敗を集約する姿勢の淵源」）。ただし語で判定せず、決定節に対応する決定文があるかで
-    見る（例: ADR-0006 → `REQ-61856da1-8883-401e-ad57-9f326b96d400` の「冪等再実行による収束の前提」は決定節が実際に
-    決めているので張る）。
+後発側の本文 `関連:` にその辺が無ければ、どちらの frontmatter にも現れない（ADR-0038 → 0040 が該当）。
+本文に無い辺を frontmatter へ足すことはしない。
 
-  基準 1 に該当する item（散文で `justifies` を受けない理由に言及しているもの）は次で列挙できる。
+## `justifies` の実例
 
-  ```bash
-  rg -n 'justifies' docs/requirements/ docs/design/ docs/infrastructure/ docs/test-plan/
-  ```
+選定基準（寄与の有無・張らない 2 条件・監査の 2 方向）は [adr-rules.md](../agents/adr-rules.md) が
+持つ。layat での判定の実例:
 
-  **網羅性は `sara check` では判定できない**。orphan warning は「1 本以上張ってあるか」しか見ず、
-  「その ADR が決めた規範を全て張っているか」は機械判定の対象外。新しい ADR を書いたときは決定節を
-  上から順に見て、規範ごとに張り先を確かめる。
-- ID は連番を維持する（`ADR-0049`）。ファイル名も `NNNN-<slug>.md` のまま。他の型はフル UUIDv4 を
-  使うが、ADR だけは既存の相互参照・本ドキュメントの運用・Issue 言及・**編集不能なコミット
-  メッセージ**の言及を壊さないため連番のまま（→ ADR-0053）。
-- **採番は `sara init adr` へ委譲する**。`docs/adr/` の最大値を目で数えて + 1 する運用は採らない
-  （→ ADR-0053 §4）。番号は実行するまで分からないので、**本文だけを書いたファイルを仮の名前で
-  作り、採番結果を見て `git mv` する**。frontmatter は同じコマンドで一度に埋まる。
+- 寄与した ADR が複数張る: `REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0` は ADR-0005 / 0013 / 0017 / 0022 の
+  4 本が張る。`REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead` は帰属 ADR-0043 に加え、`--json` を導入した
+  ADR-0033 と `tool.version` の供給元である ADR-0042 が張る
+- item が `justifies` を受けない理由を明記している: `DSG-d2e17f4f-0d32-45c1-8125-17e589664c85` の
+  「根拠が ADR 以外にあることによる」。一方 `REQ-3f541d39-da41-4ef8-858b-707f54cf6a29` の「`subdir`
+  適用形は担当範囲外」は規範に含めないという宣言で、ADR に依拠していないことではない（区別の実例は
+  ADR-0040 本文の 2026-08-08 注記）
+- 背景で前提として言及するだけ: ADR-0039 → `REQ-535b811d-dfc5-4eac-92db-737e70eb5415` の一括 eval
+- 出典節が ADR を名指ししない item: `REQ-4fc98fa6-fd5f-4f25-8b10-60755bf49bd2` は ADR-0002 の決定節から見つけた
+- 委譲先で回収済みとして撤去した: ADR-0002 → `REQ-c847d1af-a437-46bb-bd64-42083810d034`・ADR-0026 →
+  `REQ-c847d1af-a437-46bb-bd64-42083810d034`・ADR-0015 → `REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44`
+  （それぞれ `REQ-844ee375-919f-4341-81e1-a5f89fd32840` / `REQ-dec58330-6dad-47f7-8f56-2402764a89c7` /
+  `REQ-5c6b07da-3d06-414d-8770-4f438234b322` 側で回収済み。→ #254）
+- 規範文が対称化の対象として直に述べるので張る: `REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7` は symlink 側の
+  foreign 警告を `REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557` へ委譲しつつ、規範文が "symmetrically with the
+  foreign warning for symlinks" と名指しするので ADR-0015 を張る
+- 態度の供給元としてだけ挙がるので張らない: ADR-0018 → `REQ-c847d1af-a437-46bb-bd64-42083810d034` の
+  「部分失敗を集約する姿勢の淵源」。決定節が実際に決めているので張る: ADR-0006 →
+  `REQ-61856da1-8883-401e-ad57-9f326b96d400` の「冪等再実行による収束の前提」
 
-  ```bash
-  # 1. 本文（タイトル行とメタデータ行）を仮名のファイルへ書く。
-  #    タイトル行の番号は採番前なので `# ADR-NNNN: <タイトル>` のまま置いておく
-  #    → docs/adr/DRAFT-<slug>.md
-  # 2. 採番と frontmatter 生成をまとめて実行する
-  nix develop '.?dir=dev#sara' -c sara init adr docs/adr/DRAFT-<slug>.md \
-    --name '<タイトル行から `# ADR-NNNN: ` を除いた部分>' \
-    --status 採用 --issues '#<sub-issue>' --issues '#<epic>' --origin '…' \
-    --justifies '<ID>' [--revises '<ADR>'] [--references '<ADR>']
-  # 3. 出力された ID（ADR-NNNN）で、ファイル名と本文タイトル行の両方を確定させる
-  git mv docs/adr/DRAFT-<slug>.md docs/adr/<NNNN>-<slug>.md
-  #    本文の `# ADR-NNNN: ` も採番結果へ置換する（frontmatter の id は init が埋めるが、
-  #    本文タイトル行は触られないため手で直す）
-  ```
+`justifies` を受けない理由を散文で書いている item は次で列挙できる。
 
-  `--name` は必須フィールドなので省略しない（省略するとタイトル行から推測されるが、
-  `# ADR-NNNN: ` の prefix が付いたまま入る）。`--issues` は `!list text` なので複数の
-  issue を持つときはフラグを繰り返す。`--id` を渡せば番号を明示できるが、手で数えた番号を
-  渡すのは委譲の意味を失うので使わない。
+```bash
+rg -n 'justifies' docs/requirements/ docs/design/ docs/infrastructure/ docs/test-plan/
+```
 
-  **並列レーンでの同時採番は防げない**。`suggest_next_id` は自分のワークツリーのグラフしか
-  見ないため、2 レーンが同時に採ると同じ番号になる。検出はマージ後の `sara check`
-  （`Duplicate identifier` = error）が担う。衝突したら後から気付いた側が番号を採り直し、
-  その ADR への参照（本文・frontmatter・ファイル名）を揃えて直す。
+## `legacy_adr` の扱い
+
+`legacy_adr` は凍結している。新規には起こさず、本文も書き換えない。既存の `revises` と本文の blockquote
+注記は当時の記録としてそのまま残り、新しくは足さない。
+
+`legacy_adr` の決定を変えるときや、改訂を重ねた `legacy_adr` を整理するときは、
+[adr-rules.md](../agents/adr-rules.md) の「統合と分割の手順」に従って決定ごとに `adr` を起こす。
+全決定に後継が揃ったら、後継の `adr` から `supersedes` を張り、`legacy_adr` を `廃止` にする。
+そのとき `legacy_adr` で変えるのは、本文のステータス行・frontmatter の `status`・冒頭の後継一覧の
+バナーだけ。
 
 ## セルフチェック
 
-新しい ADR を書き終えたら、`sara check` で参照の実在と重複 ID を機械検証する。
+ADR を書き終えたら、グラフ全体の検証と、`廃止` と `supersedes` の対応の検証を実行する。
 
 ```bash
 nix develop '.?dir=dev#sara' -c sara check
+nix develop '.?dir=dev#sara' -c dev/tests/adr-supersede.sh
 ```
 
-合格条件は **warning / error とも 0 件で exit 0 になること**。`sara.toml` は `strict_mode = true`
-（→ ADR-0050）なので、`Orphan item`（接続漏れ）も `Broken reference`（存在しない ID への参照）・
-`Duplicate identifier`・`Circular reference detected` と同様に error として exit 1 を落とす。
-ADR で orphan が出るのは `justifies` の埋め忘れなので、張ってから完了とする（→「frontmatter」節の
-`justifies` の項）。
+`sara check` の合格条件は **warning / error とも 0 件で exit 0 になること**。`sara.toml` は
+`strict_mode = true`（→ ADR-0050）なので、`Orphan item`（接続漏れ）も `Broken reference`・
+`Duplicate identifier`・`Circular reference detected` と同様に error になる。ADR で orphan が出るのは
+`justifies` の埋め忘れなので、張ってから完了とする。`justifies` に書いた ID のタイポは orphan では
+なく `Broken reference` として落ちる。
 
-orphan の出どころを型で切り分けたいときは、**目視の補助**として出力を絞れる。パイプの exit code は
-`sara` のものではなくなるので、判定には使わない（判定は素の実行の exit code で行う）。
-
-```bash
-nix develop '.?dir=dev#sara' -c sara check | grep 'Orphan item' | grep 'ADR-'
-```
-
-`justifies` に書いた ID のタイポは orphan ではなく `Broken reference` として落ちる
-（orphan は非空であることしか見ないため）。CI の `sara` job は上と同じコマンドを走らせるが、
-required status check ではないため、赤くなってもマージはブロックしない（→ ADR-0050）。
-
-**注記漏れの確認は `sara check` では代替できない**。sara は frontmatter しか見ず、旧 ADR 側の blockquote
-注記が本文に書かれているかを検証しないため。`revises` に挙げた旧 ADR それぞれについて、逆引きで関係を
-確かめたうえで**本文に注記があるかを目で見る**。
-
-```bash
-nix develop '.?dir=dev#sara' -c sara query ADR-<旧ADR番号>
-```
-
-`Is revised by` に新しい ADR が出ていれば frontmatter の対は張れている。そのうえで旧 ADR 本文に対応する
-blockquote 注記が無ければ注記漏れ。同じ変更の中で追記してから完了とする。
+`adr-supersede.sh` は、`supersedes` で指された ADR が `廃止` であることと、`廃止` の ADR が 1 本以上の
+`supersedes` から指されていることを確かめる。どちらも CI の `sara` job が実行するが、required status
+check ではないため、赤くなってもマージはブロックしない（→ ADR-0050）。

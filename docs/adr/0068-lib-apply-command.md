@@ -1,6 +1,6 @@
 ---
 id: "ADR-0068"
-type: adr
+type: legacy_adr
 name: "lib に事前展開した apply コマンドを組む関数を公開する"
 status: 採用
 issues:

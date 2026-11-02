@@ -1,6 +1,6 @@
 ---
 id: "ADR-0026"
-type: adr
+type: legacy_adr
 name: "モジュール activation の engine kick は `apply --manifest`（ビルド済み link-farm 直接適用）で行う"
 status: 採用
 issues:

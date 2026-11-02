@@ -1,6 +1,6 @@
 ---
 id: "ADR-0069"
-type: adr
+type: legacy_adr
 name: "`layat.lib.mkEnv` で buildEnv の合成環境を配置し、role 別に `PATH` を管理する"
 status: 不採用
 issues:

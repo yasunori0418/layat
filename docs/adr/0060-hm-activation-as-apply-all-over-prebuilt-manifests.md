@@ -1,6 +1,6 @@
 ---
 id: "ADR-0060"
-type: adr
+type: legacy_adr
 name: "HM activation を prebuilt manifest 群への `apply --all` 1 回起動にし、configs 間の衝突検出を CLI 前段へ委譲する"
 status: 採用
 issues:

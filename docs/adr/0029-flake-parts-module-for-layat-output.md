@@ -1,6 +1,6 @@
 ---
 id: "ADR-0029"
-type: adr
+type: legacy_adr
 name: "layat output を flake-parts module 化し flakeModules.default を公開する"
 status: 採用
 issues:

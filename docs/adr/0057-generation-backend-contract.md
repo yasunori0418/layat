@@ -1,6 +1,6 @@
 ---
 id: "ADR-0057"
-type: adr
+type: legacy_adr
 name: "世代バックエンドの契約"
 status: 採用
 issues:

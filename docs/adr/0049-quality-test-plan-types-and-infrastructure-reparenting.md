@@ -1,6 +1,6 @@
 ---
 id: "ADR-0049"
-type: adr
+type: legacy_adr
 name: "型構成を 12 型へ改訂する — quality / test_plan の新設・infrastructure の再接続・design→test_plan の satisfies"
 status: 採用
 issues:

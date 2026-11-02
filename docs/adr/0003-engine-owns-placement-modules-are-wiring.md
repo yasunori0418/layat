@@ -1,9 +1,8 @@
 ---
 id: "ADR-0003"
-type: adr
+type: legacy_adr
 name: "配置ロジックは全層 layat エンジンが所有し、モジュールは配線に徹する"
 status: 採用
-status_note: "2026-06-11 改訂: エンジンを Go バイナリ + ネイティブ FS に具体化 → ADR-0006"
 justifies:
   - "REQ-eb363122-385a-499c-a074-c95efb949d07"
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
@@ -19,7 +18,7 @@ references:
 ---
 # ADR-0003: 配置ロジックは全層 layat エンジンが所有し、モジュールは配線に徹する
 
-- ステータス: 採用（2026-06-11 改訂: エンジンを Go バイナリ + ネイティブ FS に具体化 → ADR-0006）
+- ステータス: 採用
 - 日付: 2026-06-07
 - 関連: ADR-0001, ADR-0002, ADR-0004, ADR-0006, `docs/design.md`（レイヤー構成 / 各統合層の変換先）, `docs/spec.md`（モジュール別動作仕様）
 

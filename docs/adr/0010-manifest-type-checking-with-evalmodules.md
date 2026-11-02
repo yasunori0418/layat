@@ -1,6 +1,6 @@
 ---
 id: "ADR-0010"
-type: adr
+type: legacy_adr
 name: "manifest の型検査を `evalModules` + marker タグ方式で行う"
 status: 採用
 origin: "「manifest 内にセットする各 attrset（entries / root）の型検査に、NixOS モジュールシステムの `lib.types` / `mkOption` を再利用できるか」という確認"

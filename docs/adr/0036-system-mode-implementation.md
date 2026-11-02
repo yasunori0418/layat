@@ -1,6 +1,6 @@
 ---
 id: "ADR-0036"
-type: adr
+type: legacy_adr
 name: "system mode（`root = systemRoot`）を実装する（root 権限チェック・profile は `/nix/var/nix/profiles` 配下・世代公開）"
 status: 採用
 origin: "次期マイルストーン計画の grilling（2026-07-04）。NixOS / nix-darwin モジュール実装（将来・別マイルストーン）に先行して、lib / engine / CLI の system mode 対応だけを縦に通す"

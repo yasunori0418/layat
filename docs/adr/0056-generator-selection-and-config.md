@@ -1,6 +1,6 @@
 ---
 id: "ADR-0056"
-type: adr
+type: legacy_adr
 name: "生成器の選択と設定ファイル"
 status: 採用
 issues:
