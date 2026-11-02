@@ -3,7 +3,7 @@ id: "ADR-ab400e58-afbd-40a0-8eae-239d3cfda211"
 type: adr
 name: "CI の nix インストーラは cryoflow 踏襲"
 status: 採用
-origin: "参照: ~/src/github.com/yasunori0418/cryoflow の CI 構成（同一メンテナの実績構成）。ADR-0012 §1 を書き直した"
+origin: "参照: https://github.com/yasunori0418/cryoflow の CI 構成（同一メンテナの実績構成）。ADR-0012 §1 を書き直した"
 justifies:
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
 ---
@@ -11,7 +11,7 @@ justifies:
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 起点: 参照: ~/src/github.com/yasunori0418/cryoflow の CI 構成（同一メンテナの実績構成）。ADR-0012 §1 を書き直した
+- 起点: 参照: https://github.com/yasunori0418/cryoflow の CI 構成（同一メンテナの実績構成）。ADR-0012 §1 を書き直した
 
 ## 背景
 
