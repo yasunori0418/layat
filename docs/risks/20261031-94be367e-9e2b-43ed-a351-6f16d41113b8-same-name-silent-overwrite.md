@@ -8,6 +8,7 @@ level: medium
 threatens:
   - "REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282"
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
+  - "DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5"
 ---
 # RISK-94be367e-9e2b-43ed-a351-6f16d41113b8: 出所の異なる apply が同名 config の記録を共有し、互いの entry を黙って stale 除去し合う
 
@@ -23,6 +24,10 @@ nix 生成器）が同じ名前を使うと、片方の apply がもう片方の
   比べると、版を上げた直後の apply で全員に誤った警告が出る
 - **書き直しでの出所の喪失** — reset / rollback が `origin` を省くと、次の apply は出所を
   比べられず、食い違いを見逃す
+
+記録の鍵と `origin` の形は DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5 の記録レイアウトが決める。記録を
+profile と別の場所へ鍵で置き、baseline を記録 → profile → 空の順に読むという選択に固有の脅威でも
+あるので、この design にも張る。
 
 ## 影響
 
