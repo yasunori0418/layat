@@ -40,7 +40,8 @@ engine), and keeps placement behavior in a **single core** that you drive explic
   · drives the engine to place, prune stale links, and swap the profile
    ↓ manifest.json
 [engine]    a Go library (stdlib-only)
-  · takes manifest.json as input; invokes only `nix` (profile) and `git` (toplevel)
+  · takes manifest.json as input; invokes only `git` (toplevel) as an external command
+  · commits / switches generations through the generation backend (default: nixprofile, which runs nix-env)
   · native filesystem operations for place / replace / remove + conservative stale removal
 ```
 
