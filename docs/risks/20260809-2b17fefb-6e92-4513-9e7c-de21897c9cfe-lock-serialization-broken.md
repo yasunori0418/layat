@@ -5,6 +5,7 @@ name: "flock による直列化が破れ、同一 config への同時実行が�
 threatens:
   - "REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461"
   - "REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9"
+  - "REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4"
 likelihood: medium
 impact: high
 level: high
@@ -30,6 +31,9 @@ try-lock になっていれば競合時に黙って何もせず「成功した�
 あり、早すぎる解放は上の同時実行を許し、解放漏れは以後の全 run を永久にブロックする。
 スキップを表す `ErrSkipped` が `fmt.Errorf("%w")` のラップ越しに `errors.Is` で届かなく
 なるのも、呼び出し側がスキップを失敗と誤認する形で本リスクに含む。
+
+`reset` も解決した profileDir を鍵に blocking flock を取る（→ REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4）。
+reset が lock を取らないか別の鍵で取ると、同時に実行される apply と互いの配置を壊す。
 
 ## 実現性
 

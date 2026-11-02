@@ -36,10 +36,12 @@ layat が「何を満たすべきか」の全体像と、個別仕様（requirem
 
 ## アーキテクチャ概要
 
-layat は **CLI とエンジンの 2 層**で構成する（→ ADR-0006, ADR-0007）。CLI は entrypoint
-（`flake.nix` / `shell.nix` / `default.nix`）を発見して `nix build` / `nix eval` を回し、得た
-manifest をエンジンへ渡す。エンジンは `manifest.json` を唯一の入力とし、ネイティブ FS 操作で
-配置・stale 除去・profile swap を行う。層の境界は `manifest.json` だけ。
+layat は **CLI とエンジンの 2 層**で構成する（→ ADR-0006, ADR-0007）。CLI は manifest 生成器
+（→ ADR-0055、既定 `nix`）を通じて entrypoint を発見し、生成器の Build をエンジンへ渡す。エンジンは
+ロック内で Build を呼び、生成器が build した link-farm のパス（既定の nixprofile では store path）を
+受け取る。エンジンは配置内容（entry）を `manifest.json` から読み、ネイティブ FS 操作で配置と stale 除去を行う。
+世代のコミットと切替は世代バックエンド（→ ADR-0057、既定 nixprofile）に任せる。
+配置内容をエンジンへ渡すのは `manifest.json` だけ。
 
 - [REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645](requirements/20260802-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645-two-layer-architecture.md) — layat は CLI とエンジンの 2 層で構成する
 - [REQ-1767b250-b475-4276-a551-20dc79e75a30](requirements/20260802-1767b250-b475-4276-a551-20dc79e75a30-config-written-in-nix.md) — config は Nix で書き nix build で評価する
@@ -155,6 +157,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [REQ-5c2e64c3-09a7-4ae8-b60c-4f1ccabce4fd](requirements/20260802-5c2e64c3-09a7-4ae8-b60c-4f1ccabce4fd-json-emit-timing.md) — エンベロープはコマンド完了時に 1 回だけ出し成立条件を満たさない実行では出さない
 - [REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62](requirements/20260802-2ea19863-eaa2-466b-b1ed-3f56f6417c62-json-change-payload.md) — 変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く
 - [REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303](requirements/20260802-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303-json-readonly-payload.md) — 読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す
+- [REQ-a47fbfb0-c808-42e9-b2ad-767c933494d6](requirements/20261101-a47fbfb0-c808-42e9-b2ad-767c933494d6-prune-json-payload.md) — prune --json はトップレベル info の removed に削除系列を、skipped に判定か削除に至れず残した系列を載せる
 - [REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5](requirements/20260802-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5-json-all-subject-results.md) — --all は config ごとの SubjectResult を単一実行と同一形状で積む
 - [REQ-9341fa5d-836e-4023-af53-cc7d273438d1](requirements/20260802-9341fa5d-836e-4023-af53-cc7d273438d1-json-error-layering.md) — エンベロープのエラーは主体の有無で層を分けコードを分類する
 - [REQ-57137302-de29-4f71-a565-034cd5de080b](requirements/20260802-57137302-de29-4f71-a565-034cd5de080b-json-item-id-derivation.md) — item id は identity の JCS を SHA-256 した小文字 hex とする

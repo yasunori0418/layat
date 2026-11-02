@@ -6,6 +6,7 @@ threatens:
   - "REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e"
   - "REQ-6506bc82-d1e1-4dbf-8c57-d5d1babf218a"
   - "REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b"
+  - "REQ-61c05e09-0bde-4f74-9a96-03185f9df606"
 likelihood: low
 impact: high
 level: medium
@@ -30,6 +31,8 @@ git から root を解決できないときに engine 実行時ではなく評�
   側にしか現れない）
 - home mode の root 供給元が層ごとに揃わず、HM 経由と CLI 経由で配置先が分岐する
 - profile ディレクトリの作成・backref 書き込みの失敗が握り潰され、逆引き不能な状態で配置が進む
+- `--root` を渡しても、project mode が git toplevel、home mode が `$HOME` を採り続け、明示した
+  root が使われない（→ REQ-61c05e09-0bde-4f74-9a96-03185f9df606）
 
 ## 評価
 
@@ -44,5 +47,5 @@ git から root を解決できないときに engine 実行時ではなく評�
 
 ## 張り先の判断
 
-3 本とも requirement へ張る。root をどこから解決するかはユーザーが直接触れる契約であり、
+4 本とも requirement へ張る。root をどこから解決するかはユーザーが直接触れる契約であり、
 解決経路の実装を差し替えても「意図しないツリーへ配置される」懸念は消えない。

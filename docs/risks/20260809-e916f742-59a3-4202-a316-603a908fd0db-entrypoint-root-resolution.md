@@ -8,6 +8,7 @@ threatens:
   - "REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da"
   - "REQ-da253cab-34d4-4d6e-96f0-de99e012b376"
   - "DSG-92f54490-872a-42ac-bbd7-d06e9ee381c6"
+  - "REQ-c50df875-2cb0-4e72-8a21-858359a11cae"
 likelihood: medium
 impact: high
 level: high
@@ -34,6 +35,9 @@ project mode ではさらに git から root を解決する。入口が増え�
 - **store 化の差の取り違え** — flake 経路では相対パスの配置元が store へ入るのに対し、
   legacy の impure な評価では作業木のパスのまま解決される。この差は意図されたものであり、
   同一の性質を両経路へ期待すると誤った検証をすることになる
+- **flake-parts 経路の分岐** — `perSystem.layat.<name>` の transpose が直書きと別の derivation を
+  生むか、perSystem と別の `pkgs` で評価され、flake-parts を使うときだけ CLI のアドレッシングが
+  変わる（→ REQ-c50df875-2cb0-4e72-8a21-858359a11cae）
 
 ## 影響
 
