@@ -4,6 +4,7 @@ type: requirement
 name: "rollback と list-generations は home / system mode 限定にする"
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
+  - "UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d"
 specification: |
   `layat rollback` and `layat list-generations` SHALL be restricted to home mode and system
   mode. In project mode and fixed mode generations SHALL be kept as an internal mechanism and

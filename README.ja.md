@@ -31,7 +31,8 @@ layat は **フェッチ**(`src` は store パス)と **配置**(固定の実行
   · エンジンを駆動して配置・stale link 除去・profile 切替を行う
    ↓ manifest.json
 [engine]    Go ライブラリ(stdlib-only)
-  · manifest.json を入力に取り、`nix`(profile)と `git`(toplevel)のみを叩く
+  · manifest.json を入力に取り、外部コマンドは `git`(toplevel)のみを叩く
+  · 世代のコミット・切替は世代バックエンド(既定 nixprofile。内部で nix-env を実行)を通す
   · place / replace / remove のネイティブなファイルシステム操作 ＋ 保守的な stale 除去
 ```
 
@@ -504,6 +505,61 @@ generator = "nix"
 - **世代** は既定の nixprofile バックエンドが layat 自前の Nix profile に乗せ、`nix-env` / `nix-collect-garbage` で操作する。project mode は link-farm が不変なら新世代をコミットしないが、drift は修復する。layat が最後に配置したものは last-applied 記録(`<state>/layat/<name>/last-applied.json`。`--root` なしの home mode の場合。それ以外は `<state>/layat/<roothash>/<name>/` 下)にも残り、stale 除去は profile より先にこれを読む。
 - **`apply --all`** は各 config を自分の profile 上で atomic に適用し、失敗しても続行し、いずれかが失敗すれば非ゼロで終了する。全体としては **atomic ではない**。
 - **`reset`** は layat 管理 symlink と copy target を削除する(copy を消す唯一の手段)。name と確認または `-y` が必須で、profile / 世代には触れない。ただし profile が無く last-applied 記録だけがあるときは、lock を取るために profileDir(roothash 系列は backref `.root` も)を作る。
+
+---
+
+## アンインストール
+
+次の順に消す。後の手順で消す記録や profile を、前の手順が使うためだ。
+
+1. **config ごとに配置を撤去する。** `reset` には `--all` が無く、root を entrypoint の `layat.<name>` から解決するので、apply したときと同じ場所から config ごとに実行する(`systemRoot` の config は root で)。symlink は記録どおりのものだけを消し(foreign は残す)、copy target はすべて消す。残したい copy は先に退避しておく。`layat reset <name> --dryrun` で両方を確かめられる。profile には触れない。
+
+   ```bash
+   layat status                    # last-applied 記録を持つ全 config と、その target
+   layat reset <name> --yes        # config ごと(そのディレクトリの外では -f <entrypoint> を付ける)
+   sudo layat reset <name> --yes   # systemRoot の config
+   ```
+
+2. **孤児の系列を消す。** `layat prune` は、project root が無くなった profile 系列を一覧して確認を取ってから消す。
+3. **state を消す。** ユーザー側は `<state>/nix/profiles/layat`(profile と世代)と `<state>/layat`(last-applied 記録)。`<state>` は `$XDG_STATE_HOME`、無ければ `~/.local/state`。system 側は `/nix/var/nix/profiles/layat` と `/var/lib/layat`。
+4. **CLI を外す。** `nix profile install` で入れたなら `nix profile remove layat`。project mode なら devShell からパッケージを外す。
+5. **GC する。** `nix-collect-garbage` で、消した世代が保持していた store パスを解放する。
+
+**home-manager モジュールを外しても配置物は消えない。** `layat.configs` が 1 つも無ければ activation は `layat` を起動しないので、配置したものはそのまま残る。モジュールの中だけで定義した config は entrypoint に `layat.<name>` を持たないため、`layat reset` で名前を指定して撤去することもできない。`layat status` に出る target を手で消してから、手順 3 へ進む。
+
+---
+
+## home-manager からの移行
+
+`home.file` の entry と layat の symlink の entry(既定の `method`)が同じ target を狙うとき、layat は既存の link の向き先ではなく、自分の記録で扱いを決める。
+
+| target にあるもの | `--backup` なし | `--backup` あり |
+|---|---|---|
+| この config の前世代が記録し、記録どおりを指している symlink | warning を出さずに置き換える | 同じ |
+| それ以外の symlink(foreign。`home.file` が置いたものなど) | warning を出して置き換える(後勝ち) | 同じ。symlink は退避しない |
+| 通常ファイル、または foreign なものを含む実ディレクトリ(`recursive = true` など) | conflict。何も配置せず exit 1 | `<target>.layat-backup` へ退避してから配置する |
+
+foreign の warning は `layat: overwriting an unrecorded symlink (foreign; last-wins): <target>` と出る。一度置き換えた link は layat の記録に入るので、次の apply からは出ない。`<target>.layat-backup` が残っていると、`--backup` は上書きせずに conflict で止まる。`method = "copy"` の entry は扱いが違う。配置は 1 回だけなので、target にある記録外のファイル・ディレクトリ・symlink は warning を出してスキップし(`src` と target の片方だけがディレクトリなら conflict)、`--backup` があれば退避してから copy する。スキップした target も、その entry の copy として記録に入る。以降の apply はそれに触れず、`layat reset` は layat がコピーしていなくても消す。reset で消えては困るファイルなら、そのファイルに当たる最初の apply で `--backup` を付ける。一度記録に入った target は、後から `--backup` を付けても退避されない。
+
+target を `home.file` から layat へ移す手順:
+
+1. `home.file` から entry を消し、同じ target を `layat.configs.<name>.entries`(モジュールを使わないなら entrypoint の `layat.<name>`)へ足す。両方が同時に宣言する状態を作らないよう、1 回の変更で行う。
+2. 先に各 target に何があるかを確かめる。entrypoint の `layat.<name>` なら、`layat apply <name> --dryrun` が副作用なしで各操作を一覧し、conflict があれば exit 2 で終わる。モジュールで、target に通常ファイルやディレクトリがあるなら `layat.backup.enable = true` にする。
+3. switch する(または `layat apply <name>`)。`home.file` の link が残っていれば、上の foreign の warning を出して置き換える。移した target ごとに 1 回出るのは想定どおり。
+
+---
+
+## トラブルシューティング
+
+| 症状 | 原因 | 対処 |
+|---|---|---|
+| `apply` / `reset` / `rollback` が終わらない | 別の layat(別シェルの shellHook、activation、並行する apply)が同じ config の lock を保持している | 待つ。その実行が終われば先へ進む。shellHook では `--no-wait` を使う |
+| `--no-wait -v` で `layat: skipped because another apply is in progress (…)`、`--all` では `layat: skipped apply <name> (another apply is in progress)` | 同じ lock が保持されていたので、スキップして exit 0 で終わった | 他の実行が終わってから `layat apply <name>` を実行する |
+| `layat: keeping stale symlink because it mismatches the record: <target>` | entry は消えたが、link が layat の記録どおりを指していない | layat はその link を消さない。要らなければ手で消す |
+| `layat: the last-applied record (…) disagrees with the profile (…); using the record as the baseline` | layat を使わずに profile の現行世代が切り替わった(profile への `nix-env --switch-generation` など) | 古いリンクの除去は記録を基準にする。`layat status` と `layat list-generations <name>` で確かめる |
+| `layat: no last-applied record; starting from an empty baseline` | その config の初回 apply か、state を消した | この実行では古いリンクとして何も消さない。初回 apply なら想定どおり |
+| `layat: this apply's origin (…) differs from the last-applied record's (…); the later apply wins` | 1 つの config を、home-manager モジュールと entrypoint の両方から apply している | どちらか一方からだけ apply するか、両方に同じ `identity` を付ける([home-manager モジュール](#home-manager-モジュール)) |
+| 原因の見当がつかない eval / build エラー | 生成器が内部で実行した nix コマンドが失敗した | `--debug` を付けて再実行する。内部コマンドが `layat: + nix …` の形で stderr に出て、生成器のエラーには生成器名が付く。そのコマンドを手で実行する |
 
 ---
 

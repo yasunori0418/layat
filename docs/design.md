@@ -103,6 +103,7 @@ layat 自身の flake outputs は packages / templates / 各モジュール / fl
 `lib.mkManifest` が link farm derivation（`manifest.json` + symlink ツリー）を生成し、エンジンが
 実行時に前世代 manifest と diff して配置・stale 除去・profile swap を行う（→ ADR-0002, ADR-0006）。
 
+- [DSG-107c19ea-bc90-4914-aaaa-5f2da4f3e082](design/20261101-107c19ea-bc90-4914-aaaa-5f2da4f3e082-placement-primitives.md) — 配置プリミティブを store link・copy・out-of-store symlink の 3 種に定め、世代・reset・gitignore での扱いを種別ごとに固定する
 - [DSG-0b94308c-6b15-46d1-854c-5945ae587b0d](design/20260802-0b94308c-6b15-46d1-854c-5945ae587b0d-cleanup-from-home-manager.md) — 配置と cleanup のアルゴリズムは home-manager の linkGeneration / cleanup を範として Go で再実装する
 - [DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68](design/20260810-8b96869c-842e-4f78-8ff7-df1f1d6c1a68-planner-engine-split.md) — 配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する
 - [DSG-096dc893-21f4-45e3-9347-986e9275b4d1](design/20260823-096dc893-21f4-45e3-9347-986e9275b4d1-prune-orphan-series.md) — prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする
