@@ -2,7 +2,7 @@
 id: "ADR-0012"
 type: legacy_adr
 name: "CI・テスト実行基盤を cryoflow 構成踏襲で確定する（flake check と E2E ジョブの分離）"
-status: 採用
+status: 廃止
 origin: "参照: `~/src/github.com/yasunori0418/cryoflow` の CI 構成（同一メンテナの実績構成）"
 justifies:
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
@@ -16,7 +16,14 @@ references:
 ---
 # ADR-0012: CI・テスト実行基盤を cryoflow 構成踏襲で確定する（flake check と E2E ジョブの分離）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 nix インストーラと共通化 = cryoflow 踏襲 → ADR-ab400e58-afbd-40a0-8eae-239d3cfda211
+> - §2 CI シェルを `dev/flake.nix` に公開 → ADR-b07bbe19-b8a7-4401-98b0-5ccaf798ad05
+> - §3 テスト層の分け方 → ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0
+> - §4 キャッシュ投入 = matrix ビルド → ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a
+
+- ステータス: 廃止
 - 日付: 2026-06-13
 - 関連: ADR-0006, ADR-0011, `docs/spec.md`
 - 参照: `~/src/github.com/yasunori0418/cryoflow` の CI 構成（同一メンテナの実績構成）

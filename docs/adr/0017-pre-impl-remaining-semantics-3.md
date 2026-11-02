@@ -2,7 +2,7 @@
 id: "ADR-0017"
 type: legacy_adr
 name: "実装前レビュー第 3 巡で surfaced した残セマンティクスを確定する（--all の root モードフィルタ / --root の適用範囲 / 世代スキップとドリフト修復 / 張替えの atomic 性）"
-status: 採用
+status: 廃止
 origin: "ADR-0016 に続く実装前レビュー第 3 巡（grill）で surfaced した残細目の束"
 justifies:
   - "REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b"
@@ -20,7 +20,14 @@ references:
 ---
 # ADR-0017: 実装前レビュー第 3 巡で surfaced した残セマンティクスを確定する（--all の root モードフィルタ / --root の適用範囲 / 世代スキップとドリフト修復 / 張替えの atomic 性）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 `apply --all` の root モードフィルタ → ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429
+> - §2 `--root` は全モードで root を上書き → ADR-27f99ee6-5fb4-4dbe-b0fd-8267eecaa3a1
+> - §3 世代スキップ時の FS 検査とドリフト修復 → ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d
+> - §4 symlink 張替えは unlink + symlink → ADR-3aebefee-405d-4342-b754-eef8eac29b1b
+
+- ステータス: 廃止
 - 日付: 2026-06-14
 - 関連: ADR-0002, ADR-0005, ADR-0006, ADR-0013, ADR-0015, ADR-0016, ADR-0058, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `CONTEXT.md`
 - 改訂対象: **ADR-0013**「`--all` は全 config を適用」に root モードフィルタを追加。**ADR-0005 / ADR-0006**「project mode の世代スキップ = 完全 no-op」を「lstat 検査 + 必要時のみ再張り」へ精緻化

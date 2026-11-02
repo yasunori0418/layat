@@ -2,7 +2,7 @@
 id: "ADR-0007"
 type: legacy_adr
 name: "汎用 layat CLI を一次 UX に昇格し、entrypoint 発見＋root 明示モデルへ移行する"
-status: 採用
+status: 廃止
 issues:
   - "#2"
   - "#3"
@@ -39,7 +39,24 @@ references:
 ---
 # ADR-0007: 汎用 layat CLI を一次 UX に昇格し、entrypoint 発見＋root 明示モデルへ移行する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 project-first → ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e
+> - §2 root の明示必須とモジュールによる pin → ADR-f85f1afd-9b87-4f7a-922e-97c62554f198
+> - §2 3 つの root マーカー → ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed
+> - §3 CLI を PATH に常駐させ一次 UX にする → ADR-88231ffc-4836-4252-be34-894944fd28c3
+> - §3 `mkActivationScript` の廃止 → ADR-86a77232-dc99-4c04-bd6d-2127410e8828
+> - §3 entrypoint の発見順と `-f` → ADR-0055
+> - §3 内部の `nix build` / `nix eval` → ADR-0055
+> - §3 内部コマンドの開示（透明性） → ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246
+> - §4 `layat.<name>` 名前空間 → ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1
+> - §4 legacy entrypoint のアドレッシング → ADR-0032
+> - §4 config 選択（`default` と `--all`） → ADR-65b3439a-b90a-4056-b55a-522399bc71e6
+> - §5 shell.nix / default.nix は best-effort → ADR-955c2601-88fb-4be8-85de-ec7d0a8c727d
+> - §6 `layat init` → ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d
+> - §7 エンジンのライブラリ化と CLI からの import → ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3
+
+- ステータス: 廃止
 - 日付: 2026-06-13
 - 関連: ADR-0002, ADR-0003, ADR-0004, ADR-0005, ADR-0006, ADR-0015, ADR-0055, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
 - 改訂対象: ADR-0006「layat の露出と環境セットアップ」節と棄却案（本 ADR が反転）、ADR-0004 / ADR-0005 の root モデル

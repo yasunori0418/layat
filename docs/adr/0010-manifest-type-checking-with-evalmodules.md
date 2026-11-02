@@ -2,7 +2,7 @@
 id: "ADR-0010"
 type: legacy_adr
 name: "manifest の型検査を `evalModules` + marker タグ方式で行う"
-status: 採用
+status: 廃止
 origin: "「manifest 内にセットする各 attrset（entries / root）の型検査に、NixOS モジュールシステムの `lib.types` / `mkOption` を再利用できるか」という確認"
 justifies:
   - "REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34"
@@ -21,7 +21,21 @@ references:
 ---
 # ADR-0010: manifest の型検査を `evalModules` + marker タグ方式で行う
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 検査機構: `mkManifest` 内で `evalModules` → ADR-2e454c1f-6cad-41d8-8311-2c8e5b8efdf6
+> - 型定義: entry submodule（`listOf`・`name`） → ADR-0014
+> - 型定義: 未知キーを strict に拒否 → ADR-12ad7852-e689-44d7-b9fe-0667effb3d13
+> - 型定義: marker はタグ方式 → ADR-d9cad6f6-d694-4c1d-afee-b57b129955dc
+> - 型定義: srcType の素文字列を拒否 → ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131
+> - 型定義: rootType は `mkManifest` 専用 → ADR-59f63d1f-25df-4290-913f-02804c5eeade
+> - クロスエントリ制約: 重複 name の throwIf → 撤回（ADR-0014）
+> - クロスエントリ制約: root 必須 → ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3
+> - クロスエントリ制約: 二重検査を許容 → ADR-f66cddc5-6b4f-40e4-a85a-ce1a85cd9a0c
+> - 2 段分割: `normalizeManifest` + `mkManifest` → ADR-92258e55-0204-4ee3-ae0e-d76a8e7343ec
+> - `manifest.json` ワイヤ形式 → ADR-83a1275b-85bb-4918-8d21-8db9ab18a58c
+
+- ステータス: 廃止
 - 日付: 2026-06-13
 - 関連: ADR-0001（out-of-store を明示関数に降格）, ADR-0003（配置ロジックはエンジンが所有・モジュールは配線）, ADR-0006（lib は純データ生成・`manifest.json` 契約）, ADR-0007（root 明示必須・CLI 一次 UX）, ADR-0008（`src` / `subpath` 命名）, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`
 - 起点: 「manifest 内にセットする各 attrset（entries / root）の型検査に、NixOS モジュールシステムの `lib.types` / `mkOption` を再利用できるか」という確認

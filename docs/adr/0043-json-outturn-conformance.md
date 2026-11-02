@@ -2,7 +2,7 @@
 id: "ADR-0043"
 type: legacy_adr
 name: "`--json` 機械可読出力を outturn 規約準拠にし、JSON 出力の outturn 準拠を恒常原則とする"
-status: 採用
+status: 廃止
 issues:
   - "yasunori0418/outturn#1"
 origin: "layat の outturn 準拠化 grilling（2026-07-06）と、それを受けた outturn 側 grilling による outturn#1 の方針確定（batch エンベロープ + subject + §5 参照キー規約の 3 層化）。参照: outturn specVersion 1（yasunori0418/outturn）, outturn ADR-0013（mode 廃止・subject 常時必須）"
@@ -30,7 +30,21 @@ references:
 ---
 # ADR-0043: `--json` 機械可読出力を outturn 規約準拠にし、JSON 出力の outturn 準拠を恒常原則とする
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 outturn 準拠の恒常原則 → ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71
+> - §2 常時 `results[]` エンベロープ → ADR-feb60906-1517-46b8-8fa5-e007df4d3e11
+> - §3 subject-scoped な id → ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7
+> - §4 items / changes / reversible → ADR-5d28818e-f7e1-45e8-a7fd-bbb6157b8586
+> - §5 read-only 列挙は `result.info` → ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc
+> - §6 エラーの構造化と stderr の併存 → ADR-9e328362-2e90-441a-8eca-40081ce71b1b
+> - §7 `--all` は複数 `SubjectResult` → ADR-baf6346d-783b-4607-ab1c-c2c93c09e064
+> - §8 outturn/go への依存 → ADR-bd8a4c8a-5e7e-485a-bccf-20dab63125f2
+> - §8 エラーコード体系 → ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9
+> - §8 `reset --json` は `--yes` 必須 → ADR-acc31876-df36-485e-b356-92ae60e26db7
+> - §8 実装 gate → 完了済みのプロセス決定（後継を持たない）
+
+- ステータス: 廃止
 - 日付: 2026-07-07
 - 関連: ADR-0033, ADR-0023, ADR-0031, ADR-0018, ADR-0042, ADR-0004, ADR-0055, ADR-0056, `docs/concept.md`, `docs/design.md`, `docs/spec.md`, outturn specVersion 1（yasunori0418/outturn）, outturn ADR-0013（mode 廃止・subject 常時必須）, yasunori0418/outturn#1
 - 改訂対象: ADR-0033 §1-3（独自エンベロープ `{"version":1,...}` を outturn エンベロープ準拠へ）/ ADR-0023 §2（「エラーは stdout に畳み込まず stderr 専有」を再改訂）。ストリーム規律の骨子（stdout=機械可読専有・warning/error 常時 stderr）と終了コード表 0/1/2 は不変

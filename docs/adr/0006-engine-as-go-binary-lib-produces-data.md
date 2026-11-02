@@ -2,7 +2,7 @@
 id: "ADR-0006"
 type: legacy_adr
 name: "エンジンを固定の Go バイナリにし、lib はデータ生成に徹する（生成 bash を廃する）"
-status: 採用
+status: 廃止
 justifies:
   - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
   - "REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564"
@@ -29,7 +29,27 @@ references:
 ---
 # ADR-0006: エンジンを固定の Go バイナリにし、lib はデータ生成に徹する（生成 bash を廃する）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - エンジン = 単一の固定 Go バイナリ → ADR-2119433e-de69-4447-85a5-575d58246007
+> - lib は純データ生成器に徹する → ADR-521765d7-7e31-42f4-b548-979185a7586a
+> - `mkActivationScript` は薄いラッパー → ADR-86a77232-dc99-4c04-bd6d-2127410e8828
+> - Nix↔Go の契約 = `manifest.json`（`schemaVersion`） → ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd
+> - GC アンカー = `manifest.json` + symlink farm → ADR-30f105c7-85a8-4fab-9dea-3277d932b524
+> - FS 操作はネイティブ Go・`nix` と `git` だけをサブプロセスで叩く → ADR-0057
+> - profile 操作 = `nix-env --profile <dir> --set` → ADR-0057
+> - 並行実行 = `profileDir` 単位の flock → ADR-45380022-d959-4b22-aa05-5993ac1f3c87
+> - 部分失敗 = コミット最後・配置順 → ADR-74423bb8-1453-4689-a25e-30bf46536afc
+> - CLI 構造（サブコマンド体系） → ADR-a51897c5-f709-4b7a-8db2-61e6ebb0040c
+> - dry-run（`--dryrun` フラグ） → ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1
+> - layat の露出: PATH に常駐しない → 撤回（ADR-0007 §3 → ADR-88231ffc-4836-4252-be34-894944fd28c3）
+> - layat の露出: config を発見する機構を足さない → 撤回（ADR-0007 §3 → ADR-0055）
+> - 環境セットアップは `templates` output で提供する → ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d
+> - 実行フロー → ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9
+> - テスト戦略 → ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0
+> - ソース配置（`cmd/` + `internal/`） → ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3
+
+- ステータス: 廃止
 - 日付: 2026-06-11
 - 関連: ADR-0002, ADR-0003, ADR-0005, ADR-0007, ADR-0012, ADR-0013, ADR-0055, ADR-0056, ADR-0057, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
 

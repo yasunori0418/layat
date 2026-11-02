@@ -2,7 +2,7 @@
 id: "ADR-0015"
 type: legacy_adr
 name: "実装前レビューで surfaced した残セマンティクスを確定する（devShell 同梱 / cross-config 衝突 / nix-env 統一 / 祖先 symlink / rollback diff / mode→method / flake check）"
-status: 採用
+status: 廃止
 origin: "ドキュメント計画段階の最終レビュー（grill）で surfaced した「実装前に決めておくべき」残細目の束"
 justifies:
   - "REQ-5c6b07da-3d06-414d-8770-4f438234b322"
@@ -28,7 +28,18 @@ references:
 ---
 # ADR-0015: 実装前レビューで surfaced した残セマンティクスを確定する（devShell 同梱 / cross-config 衝突 / nix-env 統一 / 祖先 symlink / rollback diff / mode→method / flake check）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 devShell に pin 版 `layat` を同梱 → ADR-88231ffc-4836-4252-be34-894944fd28c3
+> - §2 cross-config は後勝ち + foreign 警告 → ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d
+> - §3 世代操作は `nix-env --profile` 系で統一 → ADR-0057
+> - §4 祖先 component が symlink なら error → ADR-0046
+> - §5 rollback の baseline とポインタ移動の順序 → ADR-d97154cd-a2e5-4853-a682-800ff9435c89
+> - §6 `mode` を `method` に改名 → ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a
+> - §7 `schemaVersion` は v1 のみ → ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd
+> - §8 `nix flake check` の警告を許容 → ADR-40dd7945-5792-4b80-bdfa-43f95f482554
+
+- ステータス: 廃止
 - 日付: 2026-06-14
 - 関連: ADR-0002, ADR-0005, ADR-0007, ADR-0010, ADR-0011, ADR-0013, ADR-0014, ADR-0057, ADR-0058, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `CONTEXT.md`
 - 改訂対象: **ADR-0002**「世代 GC / rollback を `nix profile`（新CLI）/ `nix-collect-garbage` に委譲」を `nix-env` 系統一へ訂正。**ADR-0007 / templates** に devShell 同梱を canonical として追記。**ADR-0013** の配置セマンティクス（foreign symlink・祖先 symlink）を拡張。**ADR-0010 / ADR-0014** の entry フィールド `mode` を `method` に改名

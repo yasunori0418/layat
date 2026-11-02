@@ -2,7 +2,7 @@
 id: "ADR-0025"
 type: legacy_adr
 name: "実装前残セマンティクス第7巡（nix experimental-features 前提・HM profile 制約明記と seam・layat init 固定 ref・profile 専用ディレクトリレイアウト・reset 非TTY・Go fmt/lint・main 直コミット撤廃トリガ）"
-status: 採用
+status: 廃止
 origin: "ADR-0024 までの第6巡で設計は実装着手の閾値に達したが、`/grill-me` による横断検査で骨格に直結する未決・揺れ・考慮漏れが7点残っていた（実装前残セマンティクス確定の第7巡）"
 justifies:
   - "REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6"
@@ -28,7 +28,17 @@ references:
 ---
 # ADR-0025: 実装前残セマンティクス第7巡（nix experimental-features 前提・HM profile 制約明記と seam・layat init 固定 ref・profile 専用ディレクトリレイアウト・reset 非TTY・Go fmt/lint・main 直コミット撤廃トリガ）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 experimental-features はユーザー前提 → ADR-63039f93-cd78-4356-8cd3-82c2f49a1aaa
+> - §2 HM モジュールは単一 `layat.entries` → ADR-0035
+> - §3 `layat init` は固定 ref を参照 → ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d
+> - §4 profile の専用ディレクトリレイアウト → ADR-419914ba-9896-4dd1-853b-fb514fcb9f38
+> - §5 `reset` は非 TTY で `--yes` 必須 → ADR-acc31876-df36-485e-b356-92ae60e26db7
+> - §6 gofmt + go vet / golangci-lint → ADR-ef9e4099-0cf4-409a-9e73-518866aea676
+> - §7 branch / PR 運用への切替 → 完了済みのプロセス決定（後継を持たない）
+
+- ステータス: 廃止
 - 日付: 2026-06-14
 - 関連: ADR-0002, ADR-0005, ADR-0007, ADR-0011, ADR-0012, ADR-0013, ADR-0016, ADR-0020, ADR-0021, ADR-0022, ADR-0023, ADR-0024, ADR-0055, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`, `CLAUDE.md`
 - 改訂対象: ADR-0022/0023 の `--out-link <profileDir>/.pending-<name>` 命名と ADR-0023 §3・ADR-0024 §1 の profileDir 表が暗黙に持っていた「profileDir = profile リンクそのもの」という用語の二義性を、専用ディレクトリレイアウトへ確定（pending out-link 名 `.pending-<name>` → `.pending`）。ADR-0024 §2 の HM profile 粒度に「role 分離不可」のユーザー視点制約と将来 seam を明示追加（決定の反転なし）。

@@ -2,7 +2,7 @@
 id: "ADR-0013"
 type: legacy_adr
 name: "engine 実行時セマンティクスの細目を確定する（manifest v1 / flock / --all / copy+marker / systemRoot / gitignore / roothash）"
-status: 採用
+status: 廃止
 origin: "ドキュメント計画段階のレビューで surfaced した「実装前に決めておくべき」細目の束"
 justifies:
   - "REQ-16faf428-77f3-492f-b858-222c5274cbf7"
@@ -30,7 +30,22 @@ references:
 ---
 # ADR-0013: engine 実行時セマンティクスの細目を確定する（manifest v1 / flock / --all / copy+marker / systemRoot / gitignore / roothash）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 `manifest.json` v1 の pin → ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd
+> - §1 symlink farm は GC アンカー専用 → ADR-30f105c7-85a8-4fab-9dea-3277d932b524
+> - §2 flock は明示 = wait / shellHook = skip → ADR-45380022-d959-4b22-aa05-5993ac1f3c87
+> - §2 ロックキーは解決後の profileDir → ADR-ac648001-7e22-4fe2-a457-596064e32717
+> - §2 同一 profileDir の target 衝突は後勝ち → ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e
+> - §3 `apply --all` は continue + 集約 + 非ゼロ終了 → ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56
+> - §3 `apply --all` の適用順 → ADR-af37a636-a798-4c03-8fa4-e73ed6375a92
+> - §4 `copy` + out-of-store marker は eval エラー → ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967
+> - §5 `systemRoot` を API に残す → ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed
+> - §5 `systemRoot` の使用は eval エラー → 撤回（ADR-0036）
+> - §6 `layat gitignore` は先頭 `/` アンカー → ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe
+> - §7 roothash と backref → ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988
+
+- ステータス: 廃止
 - 日付: 2026-06-13
 - 関連: ADR-0002, ADR-0005, ADR-0006, ADR-0007, ADR-0010, ADR-0011, ADR-0015, ADR-0059, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`
 - 起点: ドキュメント計画段階のレビューで surfaced した「実装前に決めておくべき」細目の束
