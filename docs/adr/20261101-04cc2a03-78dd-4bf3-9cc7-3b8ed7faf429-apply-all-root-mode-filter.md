@@ -35,9 +35,9 @@ REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b に置く。
 
 ## 根拠
 
-フィルタを opt-in にすれば、混在した entrypoint の footgun を塞ぎつつ、素の `--all` で全件を
-適用する使い方も残る。devShell は `apply --all --project-root` を使えば、home mode の
-config に触れない。
+フィルタを opt-in にすれば、混在した entrypoint で home mode の config まで適用してしまう事故を
+防ぎつつ、素の `--all` で全件を適用する使い方も残る。devShell は `apply --all --project-root` を
+使えば、home mode の config に触れない。
 
 フラグ名を root マーカーと揃えると、config の書き方と CLI の指定が 1 対 1 に対応する。
 `--system-root` は system mode（ADR-0036）の config を選ぶ。
@@ -46,11 +46,11 @@ config に触れない。
 
 ### `--all` を root モードに依らないまま残し、文書で注意する
 
-footgun を利用者の注意だけに頼ることになる。
+誤適用を防ぐのを利用者の注意だけに頼ることになる。
 
 ### 混在した entrypoint で `--all` をエラーにする
 
-footgun は確実に塞げるが、home と project を 1 つのリポジトリで管理する正当な使い方を妨げる。
+誤適用は確実に防げるが、home と project を 1 つのリポジトリで管理する正当な使い方を妨げる。
 
 ### 値付きの `--all=<mode>` にする
 
