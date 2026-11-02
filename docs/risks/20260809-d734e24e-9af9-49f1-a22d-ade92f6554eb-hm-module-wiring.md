@@ -9,6 +9,8 @@ threatens:
   - "REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a"
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
   - "REQ-068f2fb3-5459-4325-9359-c931b5049e0d"
+  - "REQ-844ee375-919f-4341-81e1-a5f89fd32840"
+  - "REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c"
 likelihood: medium
 impact: high
 level: high
@@ -38,6 +40,11 @@ level: high
   分離が崩れる。hm 経路の検証は評価アサート（`checks.hm-module`）・実 activate（e2e
   `05-hm`）とも複数 config を通しており、この崩れ方は RISK-6e20efa1-7947-4dc9-aefd-8d4d9a97d110
   と TC-17fb5cfd-a691-475e-84e8-aa1853711b16 が受ける
+- **rollback の二重化** — モジュール下で `layat rollback` が露出する、あるいは host の rollback 後の
+  再 kick で layat の profile が前進せず前世代へ戻り、host と layat の世代が食い違う
+  （→ REQ-844ee375-919f-4341-81e1-a5f89fd32840）
+- **recopy の配線の取り違え** — `layat.recopy` が false でも activation の起動に `--recopy` が付くか、
+  true でも付かない（→ REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c）
 
 これらは評価の時点で決まるが、実際に activate するまで観測できない性質を持つ。activate を
 伴わない検証層が無ければ、統合先の実環境でしか壊れが露見しない。

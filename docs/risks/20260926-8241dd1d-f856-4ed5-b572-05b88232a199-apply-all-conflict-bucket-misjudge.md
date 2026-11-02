@@ -4,6 +4,7 @@ type: risk
 name: "前段衝突検査のバケット判定を誤り衝突をすり抜けさせるか誤って停止させる"
 threatens:
   - "REQ-38506419-c23d-4fce-b167-30715ce6a69d"
+  - "REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693"
 likelihood: medium
 impact: medium
 level: medium
@@ -25,6 +26,11 @@ level: medium
 
 加えて、停止の位置がずれると検査の意味が失われる。build や配置の後に判定すると、止めた
 時点で一部の config が既に置かれている。`--dryrun` 経路だけ検査を迂回する実装も同じ。
+
+別々の config が同じ target を狙うことによる振動は、engine の実行時には止めない
+（→ REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693）。1 回の `apply --all` に載る config どうしでは、この
+前段検査が配置前に止める唯一の場所になる。検査が衝突を取りこぼすと、apply のたびに config どうしが
+target を取り合い、foreign 警告が出続ける。
 
 ## 影響
 
