@@ -2,7 +2,7 @@
 id: "ADR-0048"
 type: legacy_adr
 name: "ドキュメントは sara でグラフ構造化する — model.yaml の全面置換・UUIDv4 二層 ID・CI 非必須開始"
-status: 採用
+status: 廃止
 issues:
   - "#203"
   - "#206"
@@ -16,7 +16,22 @@ references:
 ---
 # ADR-0048: ドキュメントは sara でグラフ構造化する — model.yaml の全面置換・UUIDv4 二層 ID・CI 非必須開始
 
-- ステータス: 採用
+> **廃止（2026-11-01）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 sara の採用と item への分割 → SDR-5ea31001-96f8-4324-a40b-647cdfa5cc9d
+> - §1 3 文書のリンク集への縮退 → SDR-536848bb-8901-4e73-8c66-861de3f91bcd
+> - §2 model.yaml の全面置換と汎用の型名 → SDR-2457aa00-fab7-4c99-af53-2e6643c21c79
+> - §2 型定義表 → ADR-0049・ADR-0051
+> - §2 外部参照の text フィールド → SDR-9f2ef734-a9a7-4b93-92a7-e8ed1c7cf8fe
+> - §2 status の日本語 enum → SDR-d5304533-00ae-423b-a459-7c67c1cf093c
+> - §2 `status_note` → SDR-fa7eff8e-788f-48e7-951d-4cfbf95d5a1f
+> - §2「廃止」を持たない判断・§3 `supersedes` と `revises` → SDR-3ff9f355-a667-476e-b10d-087248cdbfcf
+> - §3 リスクとテストの relation → ADR-0051
+> - §4 ID の二層構成 → SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb
+> - §4 ADR のみ連番 → SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed
+> - §5 CI を非必須で始める → ADR-0050
+
+- ステータス: 廃止
 - 日付: 2026-08-02
 - 関連: ADR-0030, ADR-0037, ADR-0049, ADR-0050, ADR-0053, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `docs/adr/README.md`, GitHub Issue #203, #206, #207
 - 改訂対象: なし（新領域。「仕様とテストの全体像把握」= quality-observability（→ Issue #203）の実現手段を

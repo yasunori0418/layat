@@ -2,7 +2,7 @@
 id: "ADR-0053"
 type: legacy_adr
 name: "採番責務を sara init へ再配置し、ID をフル UUID へ統一する — 8 文字二層構成の廃止・ADR 連番の維持"
-status: 採用
+status: 廃止
 issues:
   - "#366"
   - "#364"
@@ -14,7 +14,15 @@ revises:
 ---
 # ADR-0053: 採番責務を sara init へ再配置し、ID をフル UUID へ統一する — 8 文字二層構成の廃止・ADR 連番の維持
 
-- ステータス: 採用
+> **廃止（2026-11-01）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 フル UUID への統一と省略形の禁止 → SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb
+> - §2 省略形の禁止の担保 → SDR-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103
+> - §3 `sara-id` の廃止と起票ラッパー → SDR-f5443db0-6407-41c0-9ab5-55f22dc4de5e
+> - §4 ADR の連番と採番 → SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed
+> - §5 sara 0.10.0 の breaking change の調査 → 完了した調査のため後継なし
+
+- ステータス: 廃止
 - 日付: 2026-08-17
 - 関連: ADR-0048, GitHub Issue #366, #364, PR #363
 - 改訂対象: ADR-0048 §4（UUIDv4 二層構成の廃止・`sara-id` による採番の廃止。ADR の連番維持は不変）
