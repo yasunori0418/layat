@@ -6,6 +6,7 @@ threatens:
   - "REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557"
   - "REQ-053cfed2-265a-4997-a27b-97b0bed10d8a"
   - "REQ-95e97d01-5c34-44b3-bc85-9ca53472bc3d"
+  - "REQ-9dc7dac7-4e9e-494a-a17b-73853c119653"
 likelihood: medium
 impact: high
 level: high
@@ -30,6 +31,8 @@ conflict 検出時に「最初の 1 件で止めて残りを報告しない」�
 - conflict が複数あるとき 1 件しか報告せず、対処ガイダンスも欠く
 - out-of-store のリンク先が不在のまま配置し、dangling symlink を残す（また、検査自体が
   失敗しただけの状況をリンク先不在と誤って報告する）
+- 配置元の実在を判定できる層で検査せず、store path の `src` の不在が評価を通るか、out-of-store
+  のリンク先や `src` 内の `subpath` の不在が engine を止めない（→ REQ-9dc7dac7-4e9e-494a-a17b-73853c119653）
 
 ## 評価
 
@@ -43,6 +46,6 @@ conflict 検出時に「最初の 1 件で止めて残りを報告しない」�
 
 ## 張り先の判断
 
-3 本とも requirement へ張る。いずれも「target を上書きしない」「foreign は警告して後勝ち」
-「conflict は全件列挙する」というプロダクトの観測可能な振る舞いそのものへの懸念であり、
-配置アルゴリズムを別設計へ差し替えても懸念は残る（→ `docs/agents/sara-graph.md`）。
+4 本とも requirement へ張る。いずれも「target を上書きしない」「foreign は警告して後勝ち」
+「conflict は全件列挙する」「配置元の不在で停止する」というプロダクトの観測可能な振る舞い
+そのものへの懸念であり、配置アルゴリズムを別設計へ差し替えても懸念は残る（→ `docs/agents/sara-graph.md`）。

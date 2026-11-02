@@ -8,6 +8,7 @@ level: medium
 threatens:
   - "REQ-a77181dd-a59c-40bb-855e-3430ad970eb6"
   - "DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296"
+  - "REQ-81249072-56b8-42f5-807b-ea623c1efe99"
 ---
 # RISK-238bc9da-353b-4699-94f2-ea871e305f45: root 相対 src が誤った基準点に解決される、または target と重なって symlink ループになる
 
@@ -15,7 +16,7 @@ threatens:
 
 root 相対 src は `target` と同じ配置 root に対して解決され、`target` の親から
 `<src>/<subpath>` への相対リンクとして張られる（→ REQ-a77181dd-a59c-40bb-855e-3430ad970eb6・
-DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296）。これが崩れる形は 3 つある。
+DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296）。これが崩れる形は 4 つある。
 
 - **基準点の取り違え** — `LinkDest` が `target` の親ではなく root や cwd を起点に相対化する、
   あるいは preflight が root ではなく cwd を基準に実在を確かめる。リンクは別の場所を指すか
@@ -25,6 +26,9 @@ DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296）。これが崩れる形は 3 つあ�
   置換の warning を出し、entry を外しても stale 除去されずに残る
 - **target との重なり** — `<src>/<subpath>` と `target` が一致するか一方が他方の祖先のとき、
   評価時ゲートが漏れるとリンクが自分自身か自分の祖先を指し、symlink ループになる
+- **2 つの形の混同** — `outOfStore` の評価時に確定した絶対パスが `target` 側の root 解決に影響する、
+  あるいは `rootRelative` が `target` と別の root に対して解決される
+  （→ REQ-81249072-56b8-42f5-807b-ea623c1efe99）
 
 ## 影響
 
