@@ -6,6 +6,7 @@ threatens:
   - "REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9"
   - "REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065"
   - "REQ-b4e4b65d-6e35-40c3-a00e-20c14043df6f"
+  - "REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c"
 likelihood: medium
 impact: high
 level: high
@@ -28,6 +29,8 @@ copy は「target 不在のときにだけマテリアライズし、以後は�
 - `--recopy` の上書きが削除ベースで行われ、途中失敗で target を失う
 - 構造不一致（subpath がディレクトリ / target が通常ファイル、またはその逆）が停止せず、
   不整合なまま書き込む
+- モジュールの `layat.recopy` が false でも activation の起動に `--recopy` が付き、ローカル編集を
+  利用者の同意なく破棄する（→ REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c）
 
 ## 評価
 
@@ -39,7 +42,7 @@ copy は「target 不在のときにだけマテリアライズし、以後は�
 
 ## 張り先の判断
 
-3 本とも requirement へ張る。place-once も recopy の上書き手段もユーザーが直接触れる契約で
+4 本とも requirement へ張る。place-once も recopy の上書き手段とその配線もユーザーが直接触れる契約で
 あり、コピーの実装手段を差し替えても懸念は残る。
 
 ただし「想定する失敗」3 点目（`--recopy` の削除ベース上書き）を受けるテスト条件は `copy` 対象に
