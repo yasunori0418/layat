@@ -1,7 +1,7 @@
 ---
 id: "ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137"
 type: adr
-name: "layat.lib.mkEnv による buildEnv 合成環境は採らない"
+name: "layat.lib.mkEnv で buildEnv 合成環境を提供する"
 status: 不採用
 issues:
   - "#162"
@@ -16,7 +16,7 @@ references:
   - "ADR-0040"
   - "ADR-0041"
 ---
-# ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137: layat.lib.mkEnv による buildEnv 合成環境は採らない
+# ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137: layat.lib.mkEnv で buildEnv 合成環境を提供する
 
 - ステータス: 不採用
 - 日付: 2026-11-01
@@ -53,11 +53,11 @@ hook の需要を engine に持ち込まず配線層の idiom で満たした AD
 
 ## 棄却した代替案
 
-### `mkEnv` を 1 entry の mkManifest への脱糖として足す
+### 提案どおり `mkEnv` を提供する
 
-#162 が実装の対象にした案。ADR-0040 の root marker `subdir` と同じく lib 層の糖衣で、engine は
-変えない。role ごとに独立した profile は得られるが、それは専用の config に 1 entry を置けば今でも
-得られる。API の表面積に見合う価値が無い。
+#162 が実装の対象にした案で、`mkEnv` を 1 entry の mkManifest へ脱糖する。ADR-0040 の root marker
+`subdir` と同じく lib 層の糖衣で、engine は変えない。role ごとに独立した profile は得られるが、
+それは専用の config に 1 entry を置けば今でも得られる。API の表面積に見合う価値が無い。
 
 ### 薄関数 `mkEnvEntry` を足す
 
