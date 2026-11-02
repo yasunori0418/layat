@@ -632,6 +632,86 @@ syntax error, or an unknown generator name exits 1 with one line on stderr (`E_I
 
 ---
 
+## Uninstall
+
+Remove layat in this order: earlier steps read the records and profiles that later steps delete.
+
+1. **Tear down each config's placements.** `reset` has no `--all`, and it resolves the root from
+   `layat.<name>` in the entrypoint, so run it per config from where you applied it
+   (`systemRoot` configs as root). It removes the symlinks that still match the record (a
+   foreign one stays) and deletes every copy target, so move aside any copy you want to keep
+   first; `layat reset <name> --dryrun` lists both. It leaves the profile untouched.
+
+   ```bash
+   layat status                    # every config that has a last-applied record, with its targets
+   layat reset <name> --yes        # per config (add -f <entrypoint> outside its directory)
+   sudo layat reset <name> --yes   # systemRoot configs
+   ```
+
+2. **Delete orphaned series.** `layat prune` deletes the profile series whose project root no
+   longer exists, after listing them and asking for confirmation.
+3. **Delete the state.** On the user side, `<state>/nix/profiles/layat` (profiles and generations)
+   and `<state>/layat` (last-applied records), where `<state>` is `$XDG_STATE_HOME` or
+   `~/.local/state`. On the system side, `/nix/var/nix/profiles/layat` and `/var/lib/layat`.
+4. **Remove the CLI.** `nix profile remove layat` if you installed it with `nix profile install`;
+   for project mode, drop the package from the devShell.
+5. **Collect garbage.** `nix-collect-garbage` frees the store paths the deleted generations held.
+
+**Removing the home-manager module does not remove the placements.** Without any
+`layat.configs`, activation never invokes `layat`, so everything it placed stays. A config defined
+only in the module has no `layat.<name>` in an entrypoint, so `layat reset` cannot take it by name
+either: delete its targets (listed by `layat status`) by hand, then continue from step 3.
+
+---
+
+## Migrating from home-manager
+
+When a `home.file` entry and a layat symlink entry (the default `method`) aim at the same
+target, layat decides by its own record, not by where the existing link points:
+
+| What is at the target | Without `--backup` | With `--backup` |
+|---|---|---|
+| a symlink this config's previous generation recorded, still pointing as recorded | replaced silently | same |
+| any other symlink (foreign — e.g. one `home.file` placed) | replaced with a warning (last-wins) | same; a symlink is never renamed aside |
+| a regular file, or a real directory holding foreign entries (e.g. `recursive = true`) | conflict; nothing is placed and apply exits 1 | renamed to `<target>.layat-backup`, then placed |
+
+The foreign warning reads `layat: overwriting an unrecorded symlink (foreign; last-wins): <target>`.
+Once replaced, the link is in layat's record and later applies are silent. A leftover
+`<target>.layat-backup` makes `--backup` stop with a conflict instead of overwriting it.
+A `method = "copy"` entry differs: it places once, so an unrecorded file, directory or symlink
+at its target is skipped with a warning (a conflict when only one of `src` and the target is a
+directory), and `--backup` renames it aside before copying. A skipped target is still recorded
+as the entry's copy: later applies leave it alone, and `layat reset` deletes it even though
+layat never copied it. If that file must survive a reset, pass `--backup` on the first apply
+that meets it: once the target is recorded, a later `--backup` no longer renames it aside.
+
+To move a target from `home.file` to layat:
+
+1. Delete the entry from `home.file` and add the same target to a `layat.configs.<name>.entries`
+   (or a standalone `layat.<name>`) in the same change, so the two never both declare it.
+2. Check what sits at each target first. For a standalone `layat.<name>`,
+   `layat apply <name> --dryrun` lists each action with no side effects and exits 2 on a
+   conflict. With the module, set `layat.backup.enable = true` if a regular file or directory
+   sits at a target.
+3. Switch (or `layat apply <name>`). A `home.file` link still there is replaced with the foreign
+   warning above; that warning is expected once per migrated target.
+
+---
+
+## Troubleshooting
+
+| Symptom | Cause | What to do |
+|---|---|---|
+| `apply` / `reset` / `rollback` does not return | another layat run (a shellHook in another shell, an activation, a parallel apply) holds the lock of the same config | wait; it proceeds once that run ends. In a shellHook use `--no-wait` |
+| with `--no-wait -v`: `layat: skipped because another apply is in progress (…)`, or under `--all`, `layat: skipped apply <name> (another apply is in progress)` | the same lock was held, so the run skipped and exited 0 | run `layat apply <name>` after the other run ends |
+| `layat: keeping stale symlink because it mismatches the record: <target>` | the entry was dropped, but the link no longer points where layat recorded it | layat leaves it alone; delete it by hand if you do not need it |
+| `layat: the last-applied record (…) disagrees with the profile (…); using the record as the baseline` | the profile's current generation changed without layat (e.g. `nix-env --switch-generation` on it) | the record wins for stale removal; check `layat status` and `layat list-generations <name>` |
+| `layat: no last-applied record; starting from an empty baseline` | the config's first apply, or its state was deleted | nothing is removed as stale on this run; expected on a first apply |
+| `layat: this apply's origin (…) differs from the last-applied record's (…); the later apply wins` | one config is applied both from the home-manager module and from an entrypoint | apply it from only one of them, or give both the same `identity` (see [home-manager module](#home-manager-module)) |
+| an eval / build error you cannot place | the generator's internal nix command failed | rerun with `--debug`: each internal command is printed on stderr as `layat: + nix …`, and a generator error names its generator; run the command by hand |
+
+---
+
 ## Comparison with other tools
 
 The axis is not "feature presence" but **"hide placement behind a module abstraction, or
