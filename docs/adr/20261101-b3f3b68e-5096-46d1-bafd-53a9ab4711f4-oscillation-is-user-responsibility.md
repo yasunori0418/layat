@@ -8,6 +8,9 @@ issues:
 origin: "実装前残セマンティクス確定の第5巡（2026-06-14）で確定。ADR-0023 §5（5b）と ADR-0024 §10 を書き直した"
 justifies:
   - "REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693"
+supersedes:
+  - "ADR-0023"
+  - "ADR-0024"
 references:
   - "ADR-0017"
   - "ADR-0031"

@@ -6,6 +6,9 @@ status: 採用
 origin: "ADR-0005 の決定「世代スキップ短絡を project mode の必須要件にする」と ADR-0017 §3 を書き直した"
 justifies:
   - "REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0"
+supersedes:
+  - "ADR-0005"
+  - "ADR-0017"
 references:
   - "ADR-0058"
   - "ADR-0067"

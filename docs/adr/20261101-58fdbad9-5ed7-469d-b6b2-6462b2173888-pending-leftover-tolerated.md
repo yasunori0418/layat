@@ -6,6 +6,8 @@ status: 採用
 origin: "実装前レビューの第 2 巡（2026-06-14）。ADR-0016 §6 を書き直した"
 justifies:
   - "REQ-840b3641-6e76-46da-82e9-680cabd65abe"
+supersedes:
+  - "ADR-0016"
 references:
   - "ADR-0057"
 ---

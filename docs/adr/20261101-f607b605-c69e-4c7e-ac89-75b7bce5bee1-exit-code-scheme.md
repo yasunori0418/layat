@@ -9,6 +9,9 @@ origin: "実装前残セマンティクス確定の第5巡（2026-06-14）で確
 justifies:
   - "REQ-2c5a10d8-112b-4f96-947a-aba7164779c4"
   - "REQ-02a33511-0941-4813-b289-a05eb8e9aa57"
+supersedes:
+  - "ADR-0006"
+  - "ADR-0023"
 references:
   - "ADR-0043"
 ---

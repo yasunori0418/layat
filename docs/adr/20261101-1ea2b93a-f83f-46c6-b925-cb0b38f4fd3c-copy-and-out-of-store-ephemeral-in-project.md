@@ -6,6 +6,9 @@ status: 採用
 origin: "ADR-0005 の決定「copy / out-of-store も同原則を継承」と ADR-0019 §3 を書き直した"
 justifies:
   - "REQ-60787ed2-4176-4bdd-800f-1600c0315551"
+supersedes:
+  - "ADR-0005"
+  - "ADR-0019"
 references:
   - "ADR-c4ad9987-850e-4834-bbea-d8de3b073548"
   - "ADR-4dca6ef4-2791-48d5-aa82-7037630968a6"

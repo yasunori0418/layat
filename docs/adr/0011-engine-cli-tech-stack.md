@@ -22,7 +22,7 @@ references:
 
 > **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
 >
-> - §1 依存ポリシーを層で分ける → ADR-0056・ADR-bd8a4c8a-5e7e-485a-bccf-20dab63125f2
+> - §1 依存ポリシーを層で分ける → ADR-0056・ADR-0043 §8 → ADR-bd8a4c8a-5e7e-485a-bccf-20dab63125f2
 > - §2 CLI フレームワーク = cobra → ADR-6b7becf0-f029-41e3-895e-b672dce94d3d
 > - §2 dryrun 色付け = fatih/color → 撤回（#111。保持する ADR なし）
 > - §3 engine は `internal/` に留める → ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3

@@ -6,6 +6,8 @@ status: 採用
 origin: "ADR-0013 §4 を書き直した"
 justifies:
   - "REQ-16faf428-77f3-492f-b858-222c5274cbf7"
+supersedes:
+  - "ADR-0013"
 references:
   - "ADR-0059"
 ---

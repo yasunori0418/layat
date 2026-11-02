@@ -8,6 +8,8 @@ issues:
 origin: "Issue #3（CLI 化）。ADR-0007 §3 を書き直した"
 justifies:
   - "REQ-4ffda99a-7062-4c00-915f-70b525cb215b"
+supersedes:
+  - "ADR-0007"
 references:
   - "ADR-0055"
 ---

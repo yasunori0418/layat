@@ -11,6 +11,8 @@ issues:
 origin: "CLI 化と entrypoint の再設計（Issue #2・#3・#4、2026-06-13）で確定。ADR-0007 §4 を書き直した"
 justifies:
   - "REQ-c2d44626-d8f4-446a-a80a-319a500129b4"
+supersedes:
+  - "ADR-0007"
 ---
 # ADR-65b3439a-b90a-4056-b55a-522399bc71e6: apply の config は名前省略で default を選び、--all で全件を選ぶ
 

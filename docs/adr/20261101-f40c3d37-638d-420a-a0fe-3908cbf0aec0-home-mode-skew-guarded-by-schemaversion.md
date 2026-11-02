@@ -6,6 +6,8 @@ status: 採用
 origin: "実装前のレビュー第 2 巡で詰めた残りの細目。ADR-0016 §4 を書き直した"
 justifies:
   - "REQ-14f0aec9-abae-4621-82f3-40536a1ad904"
+supersedes:
+  - "ADR-0016"
 references:
   - "ADR-0007"
   - "ADR-0059"

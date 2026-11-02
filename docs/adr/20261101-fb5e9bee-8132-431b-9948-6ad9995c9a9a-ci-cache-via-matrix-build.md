@@ -7,6 +7,8 @@ origin: "参照: https://github.com/yasunori0418/cryoflow の CI 構成（同一
 justifies:
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
   - "INF-af33c5a1-f846-4f09-8e43-c6ea042d6e06"
+supersedes:
+  - "ADR-0012"
 references:
   - "ADR-0028"
 ---

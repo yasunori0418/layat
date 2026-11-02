@@ -21,6 +21,7 @@ references:
 > - nix profile に乗せる → ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30
 > - 純粋性と副作用の両立 → ADR-521765d7-7e31-42f4-b548-979185a7586a
 > - 全モードで自前 profile を持つ・粒度 = 1 profile → ADR-fe035038-4415-4a1e-aa5c-509fdfce9955
+> - `mkActivationScript` を profile の単位にする → ADR-86a77232-dc99-4c04-bd6d-2127410e8828
 > - module の profile は内部機構（rollback を公開しない） → ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75
 > - standalone は世代を常時 ON → ADR-74bf4a1f-bb74-44a7-a3cb-3b3e87c24f95
 > - CLI は最小・世代切替と GC は委譲 → ADR-a51897c5-f709-4b7a-8db2-61e6ebb0040c・ADR-0057
