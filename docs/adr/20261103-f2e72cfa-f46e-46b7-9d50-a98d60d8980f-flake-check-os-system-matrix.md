@@ -15,14 +15,14 @@ justifies:
 
 ## 背景
 
-lib のテストと engine の Go の検査は `nix flake check` に集約してある。flake の `perSystem` は
+lib のテストと engine の Go の静的解析は `nix flake check` に集約してある。flake の `perSystem` は
 4 つの system を定義しているが、CI のランナーで用意できる環境は限られる。どの system の上で
 flake check を実行するかを決める必要がある。
 
 ## 決定
 
 `nix flake check -L` を、x86_64-linux・aarch64-linux・aarch64-darwin の 3 環境の os×system
-matrix で実行する。x86_64-darwin は CI の対象から外し、`perSystem` の 4 system の定義は残す。
+matrix で実行する。x86_64-darwin は CI の対象から外す。`perSystem` の 4 system の定義は残す。
 
 ランナーと system の対応は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 に置く。
 

@@ -29,12 +29,12 @@ docs だけを変える PR で、flake check の 3 環境の matrix と E2E を�
 
 `test.yml` はトリガ段の `paths` フィルタを持たず、全ての PR で起動する。変更の検出は専用の
 composite action にまとめ、`changes` ジョブがそれを呼ぶ。後続のジョブは `changes` の outputs で
-ゲートし、対象外の PR では nix を実行せずに skip する。
+実行の可否を決め、対象外の PR では nix を実行せずに skip する。
 
-ゲートを置く段はジョブで分ける。matrix を持つ `flake-check` はステップ段の `if:` でゲートし、
-3 つの check を必ず生成する。`e2e` と `go-coverage` はジョブ段の `if:` でゲートする。
+実行の可否を判定する段はジョブごとに分ける。matrix を持つ `flake-check` はステップ段の `if:` で判定し、
+3 つの check を必ず生成する。`e2e` と `go-coverage` はジョブ段の `if:` で判定する。
 
-ジョブごとのゲートの段は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 に、required status check
+ジョブごとの判定の段は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 に、required status check
 との関係は INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6 に置く。
 
 ## 根拠
@@ -44,7 +44,7 @@ skip した check が成功として扱われる挙動を使えば、docs だけ
 規則が 1 箇所にまとまる。
 
 ジョブ段の `if:` で skip すると matrix が展開されず、ruleset が要求する `(os, system)` 付きの
-3 つの check が生成されない。そのため `flake-check` だけはステップ段でゲートする。
+3 つの check が生成されない。そのため `flake-check` だけはステップ段で判定する。
 
 ## 棄却した代替案
 
@@ -60,7 +60,7 @@ docs だけの PR でも 3 環境の flake check と E2E が実行され、CI �
 
 skip 用にも matrix を重ねて定義することになり、保守が二重になる。
 
-### `flake-check` もジョブ段の `if:` でゲートする
+### `flake-check` もジョブ段の `if:` で判定する
 
 skip すると matrix が展開されず、必須の 3 つの check が `Expected` のまま残ってマージを
 ブロックする。
