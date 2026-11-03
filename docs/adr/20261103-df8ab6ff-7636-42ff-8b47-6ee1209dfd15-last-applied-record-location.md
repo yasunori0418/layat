@@ -22,10 +22,11 @@ references:
 
 ## 背景
 
-stale 除去・drift 修復・reset・rollback は、「前回 layat がこの root に何を置いたか」を baseline
-として使う。この baseline は nix profile の current 世代の manifest から読んでいた。
+不要になった entry の除去・drift 修復・reset・rollback は、「前回 layat がこの root
+に何を置いたか」を比較の基準として使う。この比較の基準は nix profile の current 世代の manifest
+から読んでいた。
 
-世代管理が layat の外へ出る終着点では、profile は layat の所有物でなくなる。baseline を profile
+世代管理が layat の外へ出る終着点では、profile は layat の所有物でなくなる。比較の基準を profile
 から読み続けると、layat は配置のために世代管理 CLI の内部レイアウトへ依存し続ける。「この root
 に最後に置いたもの」は世代の概念ではなく FS の事実なので、layat
 が自分で記録すれば世代の側に訊かずに済む。

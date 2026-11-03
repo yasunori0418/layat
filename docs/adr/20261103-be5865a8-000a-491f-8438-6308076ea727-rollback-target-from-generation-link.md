@@ -22,14 +22,14 @@ references:
 
 ## 背景
 
-rollback は、離れる世代 N を baseline、戻る世代 N-1 を target
-とした配置として行う（ADR-d97154cd-a2e5-4853-a682-800ff9435c89）。baseline
-は記録を優先して読むようになった。target も記録から読めるのかを決める必要がある。
+rollback は、離れる世代 N を比較の基準、戻る世代 N-1 を target
+とした配置として行う（ADR-d97154cd-a2e5-4853-a682-800ff9435c89）。
+比較の基準は記録を優先して読むようになった。target も記録から読めるのかを決める必要がある。
 
 ## 決定
 
-rollback の target（N-1 の manifest）は、引き続き世代リンクから読む。記録は baseline
-の読み出しにだけ使う。
+rollback の target（N-1 の manifest）は、引き続き世代リンクから読む。
+記録は比較の基準の読み出しにだけ使う。
 
 ## 根拠
 

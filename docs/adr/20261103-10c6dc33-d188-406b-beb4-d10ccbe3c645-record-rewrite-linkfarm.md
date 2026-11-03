@@ -26,7 +26,7 @@ justifies:
 ## 決定
 
 rollback で書き直すときの `linkFarm` は、戻り先の世代 N-1 の link-farm にする。reset
-で書き直すときは記録済みの値を保ち、記録が無く profile から baseline を取ったときは、その current
+で書き直すときは記録済みの値を保ち、記録が無く profile から比較の基準を取ったときは、その current
 世代の link-farm を入れる。`appliedAt` は、どの操作でもその操作の時刻に更新する。
 
 ## 根拠
