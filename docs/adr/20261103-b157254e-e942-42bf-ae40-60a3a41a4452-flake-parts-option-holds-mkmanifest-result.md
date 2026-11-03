@@ -38,7 +38,7 @@ flake-parts 経路の規範は REQ-c50df875-2cb0-4e72-8a21-858359a11cae に置�
 転置先が derivation でなければならないという制約から、option に derivation を入れる形が導かれる。
 この形なら公式のヘルパーがそのまま使え、module に変換の処理が要らない。
 
-`mkManifest` が直書きの経路と flake-parts の経路で共通の唯一の公開 API になり、利用者が覚える
+`mkManifest` が直書きでも flake-parts module 経由でも共通の唯一の公開 API になり、利用者が覚える
 API の面が 1 つで済む。`pkgs` は perSystem から来るので、`packages.layat` と同じ `pkgs`（将来の
 overlay や config を含む）を使い、二重に解決しない。
 
@@ -52,5 +52,5 @@ derivation にするために、公式ヘルパーを使わず自前の転置と
 
 ### flake-parts 経路のために `mkManifest` のシグネチャを変える
 
-`pkgs` を module から渡す形にすれば利用者の記述は減るが、直書きの経路と引数が食い違い、
-`mkManifest` が経路ごとに別の API になる。
+`pkgs` を module から渡す形にすれば利用者の記述は減るが、直書きのときと引数が食い違い、
+`mkManifest` が書き方ごとに別の API になる。

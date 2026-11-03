@@ -22,7 +22,7 @@ references:
 ## 背景
 
 flake-parts module（ADR-e6820da0-fce3-4aef-8b79-d53abbca6051）を import する利用者は、同じ
-`inputs.layat` から `lib` も参照できる。module に便宜の機能を足す余地は 2 つある。`mkManifest` や
+`inputs.layat` から `lib` も参照できる。module に便宜の機能を足すなら、候補は 2 つある。`mkManifest` や
 root マーカーを perSystem の引数として注入することと、事前展開した apply コマンドを devShell へ
 注入する option を持たせることである。
 
@@ -50,5 +50,5 @@ devShell への注入は、module が devShell の形を決めることになる
 
 ### devShell 用の option を足して apply コマンドを注入する
 
-利用者の記述は減るが、devShell の構成を module が握ることになる。利用者が自分の devShell の
+利用者の記述は減るが、devShell の構成を module が決めることになる。利用者が自分の devShell の
 組み方を選べなくなる。

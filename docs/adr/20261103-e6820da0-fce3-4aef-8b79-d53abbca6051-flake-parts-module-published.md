@@ -49,7 +49,7 @@ DSG-aeb5e219-4784-4950-845c-35f9bab9179c に置く。
 module は数行で済み、flake-parts 側の変更にも追従しやすい。
 
 公開すれば、flake-parts を使う利用者も `pkgs` の二重解決を避けられる。dogfood が公開版と同じ
-module を通るので、利用者が使う経路を layat 自身が毎回評価して確かめることになる。
+module を使うので、利用者と同じ使い方を layat 自身が毎回評価して確かめることになる。
 
 同じパスを直接 import するのは、`self` の outputs を評価する途中で `self` の outputs を参照する
 循環を避けるためである。

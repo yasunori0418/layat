@@ -33,7 +33,7 @@ HM / NixOS / nix-darwin のモジュールは、`modules/kick.nix` で link-farm
 
 ## 根拠
 
-コマンド行の組み立てを 1 か所に寄せれば、モジュールと devShell の間で行の形がずれない。
+コマンド行の組み立てを 1 か所にまとめれば、モジュールと devShell の間で行の形がずれない。
 `--manifest` の並べ方を変えるときも、直すのは `mkApplyCommand` だけで済む。
 
 ## 棄却した代替案
