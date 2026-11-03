@@ -31,7 +31,7 @@ option の型は package の lazy な attrset にし、利用者が perSystem �
 呼んだ結果（derivation）をそのまま入れる。module は `mkManifest` を内部で呼ばず、`mkManifest` の
 シグネチャも flake-parts のために変えない。
 
-flake-parts 経路の規範は REQ-c50df875-2cb0-4e72-8a21-858359a11cae に置く。
+flake-parts module を使う書き方の規範は REQ-c50df875-2cb0-4e72-8a21-858359a11cae に置く。
 
 ## 根拠
 
@@ -50,7 +50,7 @@ overlay や config を含む）を使い、二重に解決しない。
 derivation にするために、公式ヘルパーを使わず自前の転置と submodule から derivation への変換が
 要る。`mkManifest` の直呼びと並んで API の面が 2 つになる。
 
-### flake-parts 経路のために `mkManifest` のシグネチャを変える
+### flake-parts module のために `mkManifest` のシグネチャを変える
 
 `pkgs` を module から渡す形にすれば利用者の記述は減るが、直書きのときと引数が食い違い、
 `mkManifest` が書き方ごとに別の API になる。

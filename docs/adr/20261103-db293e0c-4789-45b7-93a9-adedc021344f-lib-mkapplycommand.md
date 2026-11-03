@@ -49,7 +49,7 @@ CLI を引数で受ければ、`lib` を nixpkgs.lib だけの依存に保った
 
 ## 棄却した代替案
 
-### `lib` の output に pin 版 CLI を既定で注入する
+### `layatPackage` を省いたときに `lib` が pin 版 CLI を使う
 
 利用者は CLI を渡さずに済むが、`lib` が layat 自身の flake の packages に依存し、nixpkgs.lib だけに
 依存する規約が崩れる。
