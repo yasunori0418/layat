@@ -33,7 +33,7 @@ legacy entrypoint で named manifest を公開する形は REQ-c890ce4a-6528-4ab
 ## 根拠
 
 世代の単位は 1 config に 1 profile である。複数の manifest を 1 つの profile に混ぜると、stale が
-どの manifest に由来するかが曖昧になり、rollback と stale 除去の意味が崩れる。
+どの manifest に由来するかが曖昧になり、rollback と stale 除去で何を戻し何を除くかが決まらなくなる。
 
 複数の config をまとめて処理したいときは `apply --all` で足り、合成は要らない。
 

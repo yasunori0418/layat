@@ -44,7 +44,7 @@ entrypoint を同じファイルに置ける。
 
 ### トップレベルの attrset 形を正準にする
 
-`mkShell` を返さない前提になり、project の devShell を兼ねる主要な使い方で `nix-shell` が壊れる。
+`mkShell` を返さない前提になり、project の devShell を兼ねる主要な使い方で `nix-shell` から入室できなくなる。
 
 ### トップレベルの attrset 形を廃止する
 

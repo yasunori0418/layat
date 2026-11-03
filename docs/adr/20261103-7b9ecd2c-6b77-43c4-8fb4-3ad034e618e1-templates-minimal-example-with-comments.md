@@ -22,7 +22,7 @@ justifies:
 ## 決定
 
 各 template は動く example を 1 config だけ置き、書き方のバリエーションはコメントで示す。
-standalone は homeRoot の例を 1 つ、project は projectRoot の例を 1 つと devShell を置く。
+`standalone` は homeRoot の例を 1 つ、`project` は projectRoot の例を 1 つと devShell を置く。
 
 各 template のファイル構成とコメントで示す範囲は REQ-196ddabf-6569-4303-942e-050872972501 に置く。
 
@@ -33,7 +33,7 @@ template は利用者が書き換えて使う出発点で、動く例が多い�
 最小形に留めるのが筋が通る。
 
 コメントは評価に影響しないので、例を増やさずに書き方を示せる。動く例が 1 つなら、展開した直後に
-そのまま `layat apply` が通る。
+そのまま `layat apply` が成功する。
 
 ## 棄却した代替案
 

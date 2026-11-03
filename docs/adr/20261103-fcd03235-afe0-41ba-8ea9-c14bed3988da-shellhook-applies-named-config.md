@@ -38,4 +38,4 @@ template の example は 1 config なので、名指しが最も明示的で、�
 ### `--all` を shellHook の既定にする
 
 config を足しても shellHook を書き換えずに済むが、`--project-root` を付け忘れると別の mode の
-config を配置しうる。example が 1 config の template では、一括の利点も生きない。
+config を配置しうる。example が 1 config の template では、一括で置く利点も無い。
