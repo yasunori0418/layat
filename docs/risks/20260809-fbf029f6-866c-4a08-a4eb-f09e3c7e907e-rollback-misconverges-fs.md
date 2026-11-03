@@ -25,11 +25,11 @@ N-2 と読んで stale 除去を誤る。
 収束の失敗形は経路ごとに異なる。**祖先 symlink の migration** — 世代 N が配下 entries を
 まとめて祖先 symlink へ移行していた場合、戻り先 N-1 の配下 entries を置くには先にその
 祖先 symlink を除去する必要がある（plan の PreRemove を落とすと、symlink 越しに解決した
-store パスへ書こうとして EEXIST / EROFS で落ちる → ADR-0046、issue #173）。**途中失敗の
+store パスへ書こうとして EEXIST / EROFS で落ちる → ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b、issue #173）。**途中失敗の
 巻き戻し** — rollback も apply と同じ undo journal を使う必要があり、migration だけ済んで
 配置が失敗した状態を残してはならない。**ポインタ移動の失敗** — 世代バックエンドの
 `Switch` の失敗時点では FS の書き込みが全て成功しているため巻き戻さない（apply の commit 失敗と同じ
-非対称性 → ADR-0044 §2）。ここで unwind すると整合状態を壊す。
+非対称性 → ADR-f29d1256-5e14-4b83-ac77-4717b2210193）。ここで unwind すると整合状態を壊す。
 
 前提が満たされない場合に静かに進むのも本リスクに含む。前世代が無い（最古世代）・profile が
 そもそも無い（未 apply）・戻り先の target が foreign な実体で塞がれている、のいずれも

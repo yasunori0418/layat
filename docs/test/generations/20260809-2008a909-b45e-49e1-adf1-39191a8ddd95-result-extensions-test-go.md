@@ -35,7 +35,7 @@ profile リンク）を symlink だけで作るため、世代番号を読み戻
   entry も、`materializeCopies` 到達前に失敗した run では `Unreached` に載る
   （recopy の実行対象は plan ではなく manifest であるため）
 - **commit 失敗の形** — インベントリは埋まり、到達状態フィールドは空（entry スコープの
-  失敗ではない）、`Unwound` は false（→ ADR-0044 §2）、世代は nil のまま。配置済み
+  失敗ではない）、`Unwound` は false（→ ADR-f29d1256-5e14-4b83-ac77-4717b2210193）、世代は nil のまま。配置済み
   symlink は残る
 - **conflict / 部分失敗の部分結果** — apply の conflict、reset の部分失敗、rollback の
   conflict のいずれも部分の結果を返す。`Apply` は張替えた dest と除去 entry も記録する

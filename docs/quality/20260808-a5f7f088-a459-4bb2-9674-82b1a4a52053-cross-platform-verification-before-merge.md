@@ -50,6 +50,10 @@ layat は複数の OS / system で動くことを主張するツールであり�
 
 ## 出典
 
-ADR-0012（CI・テスト実行基盤の確定）、ADR-0027（flake check の CI マトリクスとトリガ）、
-ADR-0030（テスト成功を main マージの必須条件にする）が置いた方針を、基盤（INF）から分離して
+ADR-ab400e58-afbd-40a0-8eae-239d3cfda211、ADR-b07bbe19-b8a7-4401-98b0-5ccaf798ad05、
+ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0、ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a、
+ADR-f2e72cfa-f46e-46b7-9d50-a98d60d8980f、ADR-3eb35e63-5465-44cd-8299-c2ac3e6034de、
+ADR-cb010758-7887-470a-ba61-19b2e99f0053、ADR-6f0383d9-0176-47c4-a9da-1a41e1fd3747、
+ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511、ADR-8035e7c6-7dc5-4aa8-9a37-403998fa7f9b が置いた方針を、
+基盤（INF）から分離して
 quality item として立てたもの。具体的なジョブ構成・check 名・ruleset の設定は上記 INF が持つ。

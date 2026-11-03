@@ -22,13 +22,13 @@ prevDest を復元しない・PreRemove が消した実ディレクトリを作�
 
 被害は「失敗した apply が痕跡を残さない」という保証の喪失に留まらない。失敗 run が
 新規に置いた symlink は前世代 manifest に記録が無いため、次の apply の stale 除去でも
-拾えず、FS 上に恒久的なゴミとして残る（→ ADR-0044 背景）。PreRemove の migration が
+拾えず、FS 上に恒久的なゴミとして残る（→ ADR-56325270-20bb-4959-8498-e3223c35e24b の背景）。PreRemove の migration が
 半分だけ進んだ状態は更に悪く、実ディレクトリが消えたまま新しい dir symlink も無い、
 という配置前より劣化した状態を作る。
 
 逆に、巻き戻すべきでない段で巻き戻すのも同じ深刻度の欠陥である。commit（`nix-env
 --set`）の失敗時点では FS の全書き込みが成功しており整合しているため、ここで unwind
-すると整合状態を壊す（→ ADR-0044 §2）。この非対称性が崩れる方向の欠陥も本リスクに含む。
+すると整合状態を壊す（→ ADR-f29d1256-5e14-4b83-ac77-4717b2210193）。この非対称性が崩れる方向の欠陥も本リスクに含む。
 
 `design` ではなく `requirement` へ張るのは、undo ジャーナルという機構そのものが
 REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の `specification` に「インメモリ undo ジャーナルへ逆操作を 1 件記録する」と
@@ -40,8 +40,8 @@ REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の `specification` に「インメモ�
 **likelihood: high** — 逆操作は 6 種（unlinkNew / relinkOld / removeCopy / restoreRename /
 mkdir / backup 戻し）あり、それぞれの前方操作が置かれる段（PreRemove / Backup / place /
 materializeCopies / removeStale）と組み合わせで機能する。段の追加・順序変更のたびに
-journal 記録漏れが入りうる構造で、実際に ADR-0046 / ADR-0047 の PreRemove 追加時に
-journal 側の対応が必要になっている。
+journal 記録漏れが入りうる構造で、実際に PreRemove の追加時に journal 側の対応が必要になっている
+（現在の決定は → ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c / ADR-77312c71-fa32-481b-ad80-c91e5b282edc）。
 
 **impact: high** — 復旧はユーザーの手作業になり、消えた実ディレクトリは復旧手段が無い。
 

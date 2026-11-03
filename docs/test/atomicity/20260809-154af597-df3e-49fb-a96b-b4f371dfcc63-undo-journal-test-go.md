@@ -18,7 +18,7 @@ covers:
 が対象ディレクトリを mode 0o555 で作り、plan 時の `Lstat` / `ReadDir` は通したまま
 execute 時の書き込みだけを EACCES で落とす（通常ファイルで置き換える手法だと plan 時に
 ENOTDIR で落ち、「バッチ途中の失敗」にならない）。root では権限チェックが迂回されるため
-`os.Geteuid() == 0` を検出して skip する（→ ADR-0044、TP-deb05610-44bc-4962-8939-952392e5fbd0）。
+`os.Geteuid() == 0` を検出して skip する（→ ADR-56325270-20bb-4959-8498-e3223c35e24b、TP-deb05610-44bc-4962-8939-952392e5fbd0）。
 
 ## 検証内容
 
@@ -37,8 +37,8 @@ ENOTDIR で落ち、「バッチ途中の失敗」にならない）。root で�
 
 **commit 失敗の非対称性**（TC-e048211f-0844-4446-9957-fb444c1da4e5）
 
-- commit 失敗では配置が巻き戻らず、そのまま残る（冪等な再実行が収束する → ADR-0006、
-  ADR-0017）
+- commit 失敗では配置が巻き戻らず、そのまま残る（冪等な再実行が収束する → ADR-74423bb8-1453-4689-a25e-30bf46536afc、
+  ADR-3aebefee-405d-4342-b754-eef8eac29b1b）
 - commit 失敗後は `--recopy` の退避ファイルも残る（discardJournal は commit 成功後に
   しか走らず、unwind も起きない）
 
@@ -46,4 +46,4 @@ ENOTDIR で落ち、「バッチ途中の失敗」にならない）。root で�
 
 - `preRemove` を直接駆動し、RemoveUnlink と RemoveRmdir を含むバッチ（children before
   parents）の journal が、LIFO 巻き戻しで親を先に復元する順で記録される
-  （→ ADR-0044 §5、ADR-0047）
+  （→ ADR-4f08aa18-6a38-49fd-a784-450677d80e1a、ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b）

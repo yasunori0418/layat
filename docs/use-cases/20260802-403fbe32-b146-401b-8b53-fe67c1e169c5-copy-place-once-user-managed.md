@@ -18,7 +18,7 @@ symlink は read-only で編集できないため、この用途には copy を�
 copy は **place-once**（初回マテリアライズしたら以後 layat は触らない）。target が既に在れば
 上書きせず、編集済みの内容は不可触である。`src` 側の更新を反映したいときは
 `layat apply --recopy`（全 copy target を src から無条件上書き）か、`layat reset` で撤去して
-再 apply する（→ ADR-0020）。
+再 apply する（→ ADR-fb01d942-2875-4dcb-a7df-879e18f63883 / ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7）。
 
 ```bash
 layat apply <name> --recopy   # copy target を src から無条件に上書き再コピー

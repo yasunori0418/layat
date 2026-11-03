@@ -30,7 +30,8 @@ specification_ja: |
 
 ## 出典
 
-ADR-0037（ドキュメントサイトは Astro Starlight + 同一リポジトリ + Cloudflare Pages で構築する）が
+ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4、ADR-f82e33bd-0534-4266-89bf-f1d9a2dbe258、
+ADR-da7b74a6-bab4-43ea-8f1c-cf843b8b58cc、ADR-1e010fa2-a3d9-42b5-9641-d68d9db9f405 が
 置いた方針を、基盤（INF）から分離して quality item として立てたもの。当初は
 QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c（ドキュメントグラフの機械検証）と 1 件にまとめていたが、根拠 ADR も支える基盤も
 別で片方だけ改訂され得るため、Issue #242 のレビューで 2 件へ分けた。

@@ -43,6 +43,13 @@ satisfies:
 
 ## 出典
 
-ADR-0066「NixOS / nix-darwin モジュールを system mode の配線として実装する」§1〜§4。
+ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c「NixOS / nix-darwin モジュールは root を systemRoot に固定する」、
+ADR-68f453b3-e6c7-4e0d-9978-32b5a00f627e「NixOS モジュールは system.activationScripts.layat から起動する」、
+ADR-eee039fc-40af-42ac-bc65-979d6eaa0d06「nix-darwin モジュールは postActivation に起動を追記する」、
+ADR-f58e9981-bacc-4937-98b8-bddce0a057db「モジュールの activation は apply --all --manifest を 1 回だけ起動する」、
+ADR-a0d0cf15-8234-42be-b83e-9b8271850475「activation の起動文字列を modules/kick.nix で組み立てる」、
+ADR-1338a293-3f69-48f5-9164-efb4ec6994d6「モジュールは configs 間の target 衝突を評価時に確認しない」、
+ADR-1743c957-a732-4a44-a89a-4c03ab277f0c「NixOS の dry-activate では --dryrun を付けて起動する」、
+ADR-0da9d817-c870-4f48-8a6d-8fb9b55e2a70「NixOS の activation の PATH に nix を前置する」。
 本 item は分割時点の原文の「flake.nix outputs 設計」にあったスタブ公開の項から起こし、
 同 ADR で実装の形へ書き換えた。

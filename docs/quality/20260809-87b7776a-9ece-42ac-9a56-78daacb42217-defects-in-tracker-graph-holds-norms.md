@@ -51,7 +51,7 @@ QA-67715bb3-1162-4ccf-8441-2f44257a57da が持つ。
 
 ## 出典
 
-ADR-0051（欠陥は型として持たず GitHub Issues で管理する）が置いた方針と、
+SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed、SDR-9bec5976-67cd-407a-afa9-3d394a6204ca が置いた方針と、
 `docs/agents/issue-tracker.md` の Defect issues 節（片方向参照・クローズ前の shift-left
 ループ）、`docs/agents/triage-labels.md` の分類語彙、`.github/ISSUE_TEMPLATE/config.yml` の
 blank issue 禁止設定が実運用してきた規範を、Issue #272 で quality item として立てたもの。

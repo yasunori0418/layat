@@ -50,5 +50,5 @@ lib/
 分割時点の原文（縮退前）の `docs/design.md`「プロジェクト構成」の `lib/` 内訳。
 
 > **元の 4 ファイルの分割の根拠は ADR ではなく同原文のツリーそのもの**: その判断を決めた
-> ADR は存在しない。`apply-command.nix` の追加は ADR-0068 が根拠で、`justifies` はこの追加分に
+> ADR は存在しない。`apply-command.nix` の追加は ADR-db293e0c-4789-45b7-93a9-adedc021344f が根拠で、`justifies` はこの追加分に
 > 対して張られている。

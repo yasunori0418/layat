@@ -26,7 +26,7 @@ root 不在なら同じく削除される。世代の有無を条件にしてい
 
 **`.root` を持たない dir** — home mode / system mode の `<name>` 直キー系列は走査に混ざらない。
 判定すべき root パスが導けないため構造的に対象外という前提を、実際の列挙で確かめる。走査基底が
-2 つある（ユーザー state 基底と system 基底 → ADR-0036 §3）ので、**両方の基底で同じ列挙条件が
+2 つある（ユーザー state 基底と system 基底 → ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e）ので、**両方の基底で同じ列挙条件が
 効くこと**も見る。基底はどちらも `PruneOptions` のフィールドで受けるので、system 基底も tmpdir へ
 差し替えて駆動する（→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1。実 `/nix/var/nix/profiles/` は
 触らない）。列挙そのもの（`ListRootHashSeries`）と backref 読み取り（`ReadBackref`）は

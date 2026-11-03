@@ -33,11 +33,11 @@ QA-a5f7f088-a459-4bb2-9674-82b1a4a52053 は「マージ前の自動検証を必�
 実装形（宣言的なチェック定義など）は基盤の担当で、規範として固定するのは性質の側になる。
 
 対象言語ごとの整形器・解析器の選定、チェックの実装形、どのジョブで走らせるかは本 item の
-規範に含めない。ADR-0025 と `flake.nix` のチェック定義、INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 が持つ。
+規範に含めない。ADR-ef9e4099-0cf4-409a-9e73-518866aea676 と `flake.nix` のチェック定義、INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 が持つ。
 
 ## 出典
 
-ADR-0025 §6（整形は treefmt へ gofmt を追加し、静的解析は go vet + golangci-lint の check
+ADR-ef9e4099-0cf4-409a-9e73-518866aea676（整形は treefmt へ gofmt を追加し、静的解析は go vet + golangci-lint の check
 derivation として `nix flake check` に載せる）が置いた方針と、`flake.nix` の checks 定義・
 `.github/workflows/test.yml` の flake check ジョブが実運用してきた規範を、Issue #272 で
 quality item として立てたもの。

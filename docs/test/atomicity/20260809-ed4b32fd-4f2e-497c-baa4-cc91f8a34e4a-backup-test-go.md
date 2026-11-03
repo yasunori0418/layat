@@ -13,7 +13,7 @@ covers:
 
 `internal/engine/backup_test.go`
 
-`apply --backup` の rename 退避（→ ADR-0045、issue #169）を tmpdir 上の実 FS で検証する
+`apply --backup` の rename 退避（→ ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f、issue #169）を tmpdir 上の実 FS で検証する
 統合テスト。大半は `Apply` を通した end-to-end だが、plan / execute 間の窓を作る 1 本だけ
 `applier.backup` を直接駆動する。
 
@@ -29,7 +29,7 @@ covers:
 **run 終了後の扱い**（TC-ed4992c0-8513-4383-be0a-e45acbbc229f）
 
 - commit 成功後も退避物が残る（`--recopy` の退避と異なり、ユーザーのバックアップとして
-  無期限に保持する → ADR-0045「reset は復元しない」）
+  無期限に保持する → ADR-18267548-27d0-430b-8149-b6124d02ce56「退避物を成功後も残して利用者の所有物にする」）
 - 同一バッチの後続配置が失敗すると退避が rename で戻り、target が pre-apply の内容へ
   復元され、退避先パスは消える
 
@@ -49,4 +49,4 @@ covers:
 - plan 時点で `<target>.<suffix>` が既存なら conflict で停止し、黙って上書きしない
 - plan 時に不在だった退避先が execute 時点で存在する（TOCTOU 窓）ケースを
   `applier.backup` の直接駆動で作り、rename 直前の再検証が並行生成物を検出して
-  loud に中断する（→ ADR-0017、ADR-0045）
+  loud に中断する（→ ADR-37191429-2099-4217-a552-47b16a7e504c）

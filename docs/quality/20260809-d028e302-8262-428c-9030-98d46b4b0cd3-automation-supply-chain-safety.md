@@ -54,5 +54,5 @@ INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 が、リリース系 2 workflow（`bum
 
 `.github/workflows/` の各 workflow が実運用してきた規範（外部 action の SHA ピンと版名注記の
 併記・workflow ごとに絞った `permissions`・`bump-version.yml` と `release.yml` のバージョン
-入力検証）を、ADR-0042 のリリース自動化の決定とあわせて、Issue #272 で quality item として
+入力検証）を、ADR-2fcf26b4-bce6-4ed6-a374-3afe560ead21 のリリース自動化の決定とあわせて、Issue #272 で quality item として
 立てたもの。

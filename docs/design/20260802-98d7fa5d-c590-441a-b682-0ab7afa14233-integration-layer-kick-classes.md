@@ -56,5 +56,5 @@ rollback を公開する層は REQ-05abce3e-9797-432b-b93f-37c55d09afde / REQ-84
 
 なお同原文の統合層テーブルは home-manager 行に「MVP は profile `<name>` =
 `default` 固定の 1 profile・役割分離は不可」と書いているが、本 item はこれを採らない。
-ADR-0035 が `layat.configs.<name>` を導入し、REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a が HM 経由でも役割分離した
+ADR-01abcd5a-464f-4c44-8afd-30950631487c が `layat.configs.<name>` を導入し、REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a が HM 経由でも役割分離した
 独立 profile を取れることを規範化しているため。

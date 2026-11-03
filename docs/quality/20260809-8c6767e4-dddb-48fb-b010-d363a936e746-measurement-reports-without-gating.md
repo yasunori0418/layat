@@ -43,7 +43,7 @@ QA-a5f7f088-a459-4bb2-9674-82b1a4a52053 が「マージ前の自動検証を必�
 
 **「計測でない = 必須」ではない。** 本 item が定めるのは計測を必須条件にしないことだけで、
 何を必須にするかは QA-a5f7f088-a459-4bb2-9674-82b1a4a52053 の担当になる。実際、`sara check` は壊れていることを検出する
-検証でありながら required status check にしない判断が別途置かれている（→ ADR-0050）。本 item
+検証でありながら required status check にしない判断が別途置かれている（→ SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef）。本 item
 の規範をその判断の否定として読んではならない。
 
 どの指標を計測するか・報告先・計測の実装は本 item の規範に含めない。`.github/workflows/` と
@@ -51,8 +51,8 @@ INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 が持つ。
 
 ## 出典
 
-ADR-0050（`sara check` を strict 化するが required status check 化はしない — 検出は機械・
-判断は人）が置いた方針と、`.github/workflows/test.yml` の go-coverage / sara ジョブ
+SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626、SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef が置いた方針と、
+`.github/workflows/test.yml` の go-coverage / sara ジョブ
 （閾値ゲートを持たず Job Summary へ報告する）・`docs/dev/definition-of-done.md`（閾値ゲートを
 持たない計測は完成の定義に入れない）・`sara.toml` が実運用してきた規範を、Issue #272 で
 quality item として立てたもの。

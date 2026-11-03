@@ -76,7 +76,11 @@ item id の導出規則そのものは REQ-57137302-de29-4f71-a565-034cd5de080b 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「適合検証」。
 
-決定の実体は ADR-0043。
+決定の実体は ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71、ADR-feb60906-1517-46b8-8fa5-e007df4d3e11、
+ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7、ADR-5d28818e-f7e1-45e8-a7fd-bbb6157b8586、
+ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc、ADR-9e328362-2e90-441a-8eca-40081ce71b1b、
+ADR-baf6346d-783b-4607-ab1c-c2c93c09e064、ADR-bd8a4c8a-5e7e-485a-bccf-20dab63125f2、
+ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9、ADR-acc31876-df36-485e-b356-92ae60e26db7。
 
 > **2026-08-09 追補（→ Issue #273）**: E2E の `--json` 検証範囲を追補した。原文が挙げるのは
 > `outturn-validate` による適合検証と id-vectors の突き合わせだけだったが、実装（`tests/e2e/

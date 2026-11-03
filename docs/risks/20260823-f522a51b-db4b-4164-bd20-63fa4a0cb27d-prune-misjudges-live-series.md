@@ -24,7 +24,7 @@ level: high
 **`.root` を持たない系列への波及** — home mode / system mode の `<name>` 直キー系列は判定すべき
 root パスを持たないため構造的に対象外だが、列挙が `.root` の有無ではなくディレクトリの形で
 行われると、`$HOME` の profile 系列が走査に混ざる。走査基底が 2 つある（ユーザー state 基底と
-system 基底 `/nix/var/nix/profiles/layat/` → ADR-0036 §3）ぶん、基底ごとに列挙条件がずれる余地も
+system 基底 `/nix/var/nix/profiles/layat/` → ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e）ぶん、基底ごとに列挙条件がずれる余地も
 ある。
 
 **system 基底が権限で読めない場合** — 非 root 実行では system 基底の列挙そのものが失敗しうる。
@@ -34,7 +34,7 @@ system 基底 `/nix/var/nix/profiles/layat/` → ADR-0036 §3）ぶん、基底�
 
 **アンマウント中 root の誤判定** — リムーバブルディスク・ネットワークマウント上のプロジェクトは
 アンマウント中「一時的に実在しない」。機械側でマウントポイント判定は行わない設計なので
-（→ ADR-0034 §2）、判定そのものはこの誤りを含んだまま通る。
+（→ ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66）、判定そのものはこの誤りを含んだまま通る。
 
 **判定不能を削除へ倒す** — backref が読めない・空・絶対パスでない、root の stat が権限等で
 失敗する。これらは「孤児と確認できていない」だけであって「孤児である」ではない。skip + warning
@@ -47,7 +47,9 @@ system 基底 `/nix/var/nix/profiles/layat/` → ADR-0036 §3）ぶん、基底�
 ## 実現性
 
 **likelihood: high** — 変更頻度の側では、判定が依存する profile レイアウト（`<roothash>` 階層・
-backref `.root` の位置・走査基底）が ADR-0025 / ADR-0034 / ADR-0036 と繰り返し動いてきた領域で、
+backref `.root` の位置・走査基底）が繰り返し動いてきた領域で
+（現在の決定は → ADR-419914ba-9896-4dd1-853b-fb514fcb9f38 / ADR-b4be88b8-1c19-426d-885d-f5d80b95252f /
+ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203）、
 `layat status`（→ #198）が同じ列挙に相乗りする予定もあるため、この先も触られる。検証ゲートの
 側では、判定ロジックが新規で既存の配置系ゲート（planner の分類・stale 除去の保守的不変条件
 → RISK-e3d42a21-1f43-4ac6-835e-a5caf8d86363）のどれにも乗らず、blind spot にあたる。両軸とも

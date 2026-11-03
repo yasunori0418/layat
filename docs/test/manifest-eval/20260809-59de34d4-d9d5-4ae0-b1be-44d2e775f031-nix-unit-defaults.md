@@ -28,4 +28,5 @@ covers:
 ## 出典
 
 `tests/nix-unit/defaults.nix` の現行実装からの逆算（→ Issue #273「L1〜L4」節）。既定と
-辞書順の設計判断は ADR-0010 / ADR-0014 / ADR-0016 が持つ。
+辞書順の設計判断は ADR-92258e55-0204-4ee3-ae0e-d76a8e7343ec / ADR-c494e86e-ceb9-4380-b983-4e09553b01d6 /
+ADR-af37a636-a798-4c03-8fa4-e73ed6375a92 が持つ。

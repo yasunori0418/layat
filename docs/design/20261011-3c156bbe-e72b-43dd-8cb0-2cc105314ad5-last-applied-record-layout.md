@@ -65,4 +65,18 @@ satisfies:
 
 ## 出典
 
-ADR-0058「last-applied 記録」§1〜§4。`origin` と版 2 は ADR-0070「記録の出所と同名 config の警告」§1〜§4。
+ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15「last-applied 記録を profileDir と同じ鍵で state 基底に置く」、
+ADR-52423842-bacf-4773-bbca-bcb34ae71013「last-applied 記録は manifest を内容ごと持つ」、
+ADR-10c6dc33-d188-406b-beb4-d10ccbe3c645「記録を書き直す操作ごとに linkFarm の値を定める」、
+ADR-a91585ad-971a-4558-9f25-b7fcd6e57671「古くなった配置の除去は、比較の基準を記録から優先して読む」、
+ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444「世代スキップには profile に加え記録の一致も要する」、
+ADR-be5865a8-000a-491f-8438-6308076ea727「rollback の戻り先は世代リンクから読む」、
+ADR-facd3173-a5ce-4d81-90a9-370fb26428ff「apply は世代の commit の前に記録を書く」、
+ADR-f3d06307-ae5b-4f17-94ad-db92e80e3415「rollback はポインタ移動の前に戻り先の manifest で記録を書き直す」、
+ADR-fd3353cf-00af-4343-bd3f-3369c21d7194「reset は撤去できなかった entry を残して記録を書き直す」、
+ADR-8e253f2e-c255-482a-a0f8-0837e122e80f「記録の読みは不正な記録を error にする」。
+`origin` と版 2 は
+ADR-0db061d1-fa30-436d-91d7-c0cec8804c52「last-applied 記録に出所を持たせる」、
+ADR-8e253f2e-c255-482a-a0f8-0837e122e80f「記録の読みは不正な記録を error にする」、
+ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8「出所の食い違いは警告して apply を続ける」、
+ADR-17f29974-4fdb-4596-8afa-368a8f3971eb「記録を書き直す操作は記録済みの出所を引き継ぐ」。

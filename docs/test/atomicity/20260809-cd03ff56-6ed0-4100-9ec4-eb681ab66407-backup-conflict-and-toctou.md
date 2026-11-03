@@ -18,7 +18,7 @@ mitigates:
 **plan と execute の間に出現（TOCTOU）** — plan 計算時には退避先が存在せず、`backup()`
 が実行される時点までに他プロセスがそこを作った場合、rename 直前の再検証がその並行生成物を
 検出して停止する。plan 時の判定を信じて rename すれば、並行して作られた実データを黙って
-潰す（→ ADR-0017 の実行直前再検証、ADR-0045）。
+潰す（→ ADR-37191429-2099-4217-a552-47b16a7e504c）。
 
 この条件は full `Apply` では窓を作れないため、`BackupAction` を組み立てて `applier.backup`
 を直接駆動し、plan 済みの状態から execute までの間に退避先を作る、という形で検証する。

@@ -13,12 +13,12 @@ refines:
 CLI としてではなくモジュールとして組み込み、host の activation（`home-manager switch` /
 `nixos-rebuild switch` 等）に layat の配置を載せる。flake-parts を使っているプロジェクト向け
 には `perSystem.layat` を `flake.layat.<system>` へ transpose する flakeModule も提供する
-（→ ADR-0029）。
+（→ ADR-e6820da0-fce3-4aef-8b79-d53abbca6051）。
 
 統合はあくまで**オプション**である。コアロジックはモジュールシステムに依存しない純粋関数
 として実装され、統合層はコアの薄いラッパーに過ぎない。配置の実体は全層で layat 自身の固定
 Go エンジンが実行し、`home.file` / `systemd.tmpfiles` などプラットフォームのネイティブ機構
-へは委譲しない（→ ADR-0003 / ADR-0006）。
+へは委譲しない（→ ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7 / ADR-2119433e-de69-4447-85a5-575d58246007）。
 
 ```
 layat コア（配置エンジン）= 振る舞いの単一の源

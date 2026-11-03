@@ -10,9 +10,9 @@ refines:
 ## 使われ方
 
 layat の**中心的な配置モード**。任意のプロジェクトに layat を組み込み、root をプロジェクト
-ルートに解決して repo 内の任意パスへ nix store の物を配置する（→ ADR-0005 / ADR-0007）。
+ルートに解決して repo 内の任意パスへ nix store の物を配置する（→ ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed / ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e）。
 新規プロジェクトは `layat init project`、既に `flake.nix` がある既存 repo へは手動で組み込む
-（→ ADR-0024）。
+（→ ADR-9fde06e2-fe42-4274-8af3-da2298cdaeae）。
 
 具体例:
 
@@ -22,7 +22,7 @@ layat の**中心的な配置モード**。任意のプロジェクトに layat 
 
 主トリガは devShell。`devShells.<name>` の `shellHook` から layat をキックし、`nix develop` /
 direnv でプロジェクトに入った瞬間に配置される。CLI 本体は devShell の `packages` に pin 版
-`layat` を同梱するのが canonical（→ ADR-0015）。
+`layat` を同梱するのが canonical（→ ADR-88231ffc-4836-4252-be34-894944fd28c3）。
 
 ```nix
 # entrypoint(flake.nix)が manifest を公開し、devShell で layat apply する

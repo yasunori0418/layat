@@ -47,5 +47,5 @@ TC-7d713505-5673-4e15-99bf-e98965e18892（全 target への正規化済みの前
 
 ## 出典
 
-ADR-0040 の決定 §1 / §2 と、`tests/nix-unit/root-subdir.nix` /
+ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509 / ADR-433b9539-21d9-46c5-91a1-fc2b04d5eb47 / ADR-6669c002-1b90-47a2-8a84-a0f7bddfd965 / ADR-d89c2ede-1aba-46fa-9f14-8dcf8a266e0e と、`tests/nix-unit/root-subdir.nix` /
 `tests/namaka/manifest-subdir/expr.nix` の実装。
