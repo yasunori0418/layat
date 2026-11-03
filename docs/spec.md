@@ -36,11 +36,11 @@ layat が「何を満たすべきか」の全体像と、個別仕様（requirem
 
 ## アーキテクチャ概要
 
-layat は **CLI とエンジンの 2 層**で構成する（→ ADR-0006, ADR-0007）。CLI は manifest 生成器
-（→ ADR-0055、既定 `nix`）を通じて entrypoint を発見し、生成器の Build をエンジンへ渡す。エンジンは
+layat は **CLI とエンジンの 2 層**で構成する（→ ADR-2119433e-de69-4447-85a5-575d58246007, ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3）。CLI は manifest 生成器
+（→ ADR-87a2cf34-9592-4c81-8980-246bca579ca0、既定 `nix`）を通じて entrypoint を発見し、生成器の Build をエンジンへ渡す。エンジンは
 ロック内で Build を呼び、生成器が build した link-farm のパス（既定の nixprofile では store path）を
 受け取る。エンジンは配置内容（entry）を `manifest.json` から読み、ネイティブ FS 操作で配置と stale 除去を行う。
-世代のコミットと切替は世代バックエンド（→ ADR-0057、既定 nixprofile）に任せる。
+世代のコミットと切替は世代バックエンド（→ ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8、既定 nixprofile）に任せる。
 配置内容をエンジンへ渡すのは `manifest.json` だけ。
 
 - [REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645](requirements/20260802-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645-two-layer-architecture.md) — layat は CLI とエンジンの 2 層で構成する
@@ -52,7 +52,7 @@ layat は **CLI とエンジンの 2 層**で構成する（→ ADR-0006, ADR-00
 ## lib API
 
 `lib`（`mkManifest` / `mkApplyCommand` / マーカー群）は nixpkgs.lib のみに依存する純データ生成器で、配置ロジックは
-持たない（→ ADR-0006）。入力検査は `mkManifest` 自身が `evalModules` + `normalizeManifest` で
+持たない（→ ADR-521765d7-7e31-42f4-b548-979185a7586a）。入力検査は `mkManifest` 自身が `evalModules` + `normalizeManifest` で
 行う単一ゲートに集約する。
 
 - [REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51](requirements/20260802-d85f0cef-0f1e-4897-a841-41b61a8dae51-lib-pure-data-generator.md) — lib は nixpkgs.lib のみに依存する純データ生成器である
@@ -91,7 +91,7 @@ layat は **CLI とエンジンの 2 層**で構成する（→ ADR-0006, ADR-00
 
 ## CLI 仕様（一次 UX）
 
-`layat` CLI は PATH に常駐する一次 UX（→ ADR-0007）。entrypoint を発見し、rootKind を先取り
+`layat` CLI は PATH に常駐する一次 UX（→ ADR-88231ffc-4836-4252-be34-894944fd28c3）。entrypoint を発見し、rootKind を先取り
 eval して root を解決し、flock を取ってから `nix build` をロック内で回してエンジンを駆動する。
 
 - [REQ-14f0aec9-abae-4621-82f3-40536a1ad904](requirements/20260802-14f0aec9-abae-4621-82f3-40536a1ad904-cli-primary-ux-installation.md) — layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする
@@ -150,7 +150,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [REQ-2c5a10d8-112b-4f96-947a-aba7164779c4](requirements/20260802-2c5a10d8-112b-4f96-947a-aba7164779c4-exit-codes.md) — 終了コードは 0 = 成功 / 1 = 一般エラー / 2 = dryrun の conflict とする
 - [REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32](requirements/20260802-b7bb09d6-74c4-44d6-905f-cb5e8383ea32-apply-all-dryrun-exit-code-priority.md) — apply --all --dryrun の終了コードは error を conflict より優先する
 
-#### outturn 準拠の `--json`（第 2 契約・→ ADR-0043）
+#### outturn 準拠の `--json`（第 2 契約・→ ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71）
 
 - [REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead](requirements/20260802-a5053191-1c6a-449b-9c5e-5ff49dc5aead-json-outturn-envelope.md) — --json は outturn 規約準拠のエンベロープを出す第 2 契約とする
 - [REQ-2353259f-5878-452a-8e11-3445de69abc2](requirements/20260802-2353259f-5878-452a-8e11-3445de69abc2-json-stdout-exclusive.md) — --json 指定時は行指向 stdout を出さずエンベロープが stdout を専有する
@@ -180,7 +180,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 
 ## entries スキーマ仕様
 
-`entries` は **属性キー = target の attrset**で、キーが識別子になる（→ ADR-0014）。
+`entries` は **属性キー = target の attrset**で、キーが識別子になる（→ ADR-c494e86e-ceb9-4380-b983-4e09553b01d6）。
 
 - [REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74](requirements/20260802-a33a11e3-830d-4142-88ed-4c1fc35e7f74-entry-submodule-fields.md) — entry submodule のフィールドは src / subpath / target / method の 4 つとする
 - [REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51](requirements/20260802-3e446ad9-a6f4-4229-b5c5-184754b0ef51-entry-submodule-strict.md) — entry submodule は strict とし未知キーと旧名を評価時エラーにする
@@ -192,7 +192,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 
 ## manifest.json スキーマ（v1・Nix↔Go 契約）
 
-`manifest.json` は Nix とエンジンの唯一の安定契約（→ ADR-0010, ADR-0013）。
+`manifest.json` は Nix とエンジンの唯一の安定契約（→ ADR-83a1275b-85bb-4918-8d21-8db9ab18a58c, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd）。
 
 - [REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b](requirements/20260802-79ce0a09-f9bd-4e61-ba7f-45fb5643137b-manifest-single-stable-contract.md) — manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する
 - [REQ-250d936c-1df0-491d-a7af-708f38b61f33](requirements/20260802-250d936c-1df0-491d-a7af-708f38b61f33-manifest-v1-only-no-migration.md) — MVP は manifest v1 のみを発行・受理しマイグレーション機構を持たない
@@ -207,7 +207,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 ## 配置動作仕様
 
 symlink は配置前除去 → 配置 → stale 除去の順で進み、途中失敗はインメモリ undo ジャーナルで
-巻き戻す（→ ADR-0044, ADR-0046, ADR-0047）。copy は place-once でユーザー管理に委ねる。
+巻き戻す（→ ADR-56325270-20bb-4959-8498-e3223c35e24b, ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b）。copy は place-once でユーザー管理に委ねる。
 
 ### symlink モード
 
@@ -238,7 +238,7 @@ symlink は配置前除去 → 配置 → stale 除去の順で進み、途中�
 
 ## 世代管理仕様
 
-世代は link farm derivation を layat 自前の profile へコミットして積む（→ ADR-0002, ADR-0025）。
+世代は link farm derivation を layat 自前の profile へコミットして積む（→ ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30, ADR-419914ba-9896-4dd1-853b-fb514fcb9f38）。
 stale 除去は前世代 manifest の記録通りを指す symlink だけに限る保守的な操作。
 
 - [REQ-1be4d678-959c-44d7-a346-44bfd95af56e](requirements/20260802-1be4d678-959c-44d7-a346-44bfd95af56e-generation-mechanism-link-farm-manifest.md) — 世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から stale を除去する
@@ -260,7 +260,7 @@ stale 除去は前世代 manifest の記録通りを指す symlink だけに限�
 ## root の解決
 
 root は評価時にパスへ展開せず、マーカーが運ぶ kind をエンジンが実行時に解決する
-（→ ADR-0005, ADR-0007）。
+（→ ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed）。
 
 - [REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b](requirements/20260802-8d965ca2-f8fd-44a4-87f3-94e850e9f85b-home-mode-root-resolution.md) — home mode の root は層ごとに定まった供給元から解決する
 - [REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e](requirements/20260802-9cb26ffd-071e-4c68-a6fc-faac6373b75e-project-mode-root-resolution.md) — project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない
@@ -274,7 +274,7 @@ root は評価時にパスへ展開せず、マーカーが運ぶ kind をエン
 ## モジュールオプション仕様・モジュール別動作仕様
 
 全モジュール（HM / NixOS / nix-darwin）と devShell は、root と activation タイミングを供給して
-エンジンを起動する薄い配線に徹する（→ ADR-0003）。ネイティブ機構へは翻訳しない。
+エンジンを起動する薄い配線に徹する（→ ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880）。ネイティブ機構へは翻訳しない。
 
 - [REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10](requirements/20260802-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10-module-common-options.md) — 全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する
 - [REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a](requirements/20260802-c6891aeb-13c0-4ae7-9ad1-5c343735266a-hm-named-configs-profiles.md) — HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる

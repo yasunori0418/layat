@@ -38,7 +38,7 @@ layat はフレームワークではなく **配置プリミティブ**である
 ## 想定する使われ方
 
 中心は project mode（プロジェクト内配置）。`$HOME` 配置（home mode）・system 配置は明示マーカーで
-opt-in する例外として位置づける（→ ADR-0007）。
+opt-in する例外として位置づける（→ ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e）。
 
 - [UC-19a90989-0ae3-438f-8a75-4e1e2637f81c](use-cases/20260802-19a90989-0ae3-438f-8a75-4e1e2637f81c-project-mode-in-repo-placement.md) — プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する
 - [UC-f2436d68-91ff-4c48-b1df-47acefe4f464](use-cases/20260802-f2436d68-91ff-4c48-b1df-47acefe4f464-home-mode-pinned-repo-placement.md) — home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する
@@ -58,7 +58,7 @@ opt-in する例外として位置づける（→ ADR-0007）。
 ストアパスを受け取る」設計にすることで、取得方法の変化から独立する。
 
 **配置ロジックはコアが所有し、モジュールは配線に徹する**: 配置の実体は全層で layat 自身の
-固定 Go エンジンが実行し（→ ADR-0003, ADR-0006）、`home.file` / `systemd.tmpfiles` などの
+固定 Go エンジンが実行し（→ ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7, ADR-2119433e-de69-4447-85a5-575d58246007）、`home.file` / `systemd.tmpfiles` などの
 ネイティブ機構には委譲しない。振る舞いが単一コアに集約され、テストと一貫性を担保できる。
 
 **home-manager に依存しない**: どの環境でも同じ設定定義で動き、統合層はコアの薄いラッパー。
@@ -71,16 +71,16 @@ opt-in する例外として位置づける（→ ADR-0007）。
 ## north-star: 配置プリミティブから組むミニマル distro
 
 長期的な狙いは、nixpkgs のパッケージ群（＝ストアパス）を活かしつつ配置だけをユーザーに操作させ、
-Arch / Gentoo 的なミニマル Linux ディストリビューションの基盤を作ること（→ ADR-0004）。
+Arch / Gentoo 的なミニマル Linux ディストリビューションの基盤を作ること（→ ADR-10dcf5a9-f298-4123-9a50-24f43e25d30c）。
 このためコアの中心抽象は root を `$HOME` に固定せず一般化する。
 
 layat は他のツール群と stdout / stdin の JSON パイプで合成するエコシステムの一員でもある。
-機械可読出力（`--json`）は **すべての機能で** outturn specVersion 1 規約に準拠する（→ ADR-0043）。
+機械可読出力（`--json`）は **すべての機能で** outturn specVersion 1 規約に準拠する（→ ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71）。
 
 **スコープの線引き**: standalone CLI + project mode をコアとし、home mode と system mode
 （`systemRoot` で `/` 配下へ root 権限で配置。CLI を root で実行するか、NixOS / nix-darwin module の
-activation から起動する。→ ADR-0036, ADR-0066）も実装済み。「関数ベースのパッケージ導入・PATH 追加」に
-専用機構は持たない。`pkgs.buildEnv` の合成環境を entry として配置し、環境変数の配線は利用者側で行う（→ ADR-0069）。
+activation から起動する。→ ADR-25d54346-f13a-4c12-9895-ab93dc6c183b, ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c）も実装済み。「関数ベースのパッケージ導入・PATH 追加」に
+専用機構は持たない。`pkgs.buildEnv` の合成環境を entry として配置し、環境変数の配線は利用者側で行う（→ ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137）。
 ブート / init / FS / パーティションの層は本構想でも空白であり、layat が担う領域ではない。
 
 ---
@@ -111,7 +111,7 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 
 `home.file` と layat はどちらも前世代との diff で stale を除去するが、layat は前世代の
 **自己記録の manifest** を一次情報に持ち、HM は on-disk の readlink パターンマッチで判定する
-（HM 現行実装〔2026-07 時点〕との比較・→ ADR-0046, ADR-0047）。差は次の 5 点に表れる。
+（HM 現行実装〔2026-07 時点〕との比較・→ ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c, ADR-2d4fdda4-b2e1-4161-8b71-3cff5b265f2f）。差は次の 5 点に表れる。
 
 1. **同名 leaf を含む per-file → dir symlink 遷移の自動移行** — HM は旧 leaf の残存を誤認して失敗しうるが、layat は manifest 記録との一致判定（recorded ∧ stale）で安全に移行する
 2. **所有判定の厳密さ** — HM は readlink の glob マッチ、layat は記録済みの配置先のうち readlink が記録 dest と完全一致するものだけを所有とみなす
@@ -127,21 +127,21 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 
 主要な設計判断の記録。全件は `docs/adr/` を参照。
 
-- [ADR-0001](adr/0001-out-of-store-as-explicit-function.md) — store link をデフォルトに統一し、out-of-store は明示関数へ降格
-- [ADR-0002](adr/0002-generations-on-nix-profile.md) — nix profile に乗せた standalone 世代管理。copy は世代外
-- [ADR-0003](adr/0003-engine-owns-placement-modules-are-wiring.md) — 配置ロジックは全層でエンジンが所有し、モジュールは配線に徹する
-- [ADR-0004](adr/0004-root-generalization-and-distro-positioning.md) — root を一般化し配置プリミティブにする
-- [ADR-0005](adr/0005-project-mode-and-ephemeral-placement.md) — git toplevel 相対の project mode
-- [ADR-0006](adr/0006-engine-as-go-binary-lib-produces-data.md) — 配置ロジックを固定 Go エンジンに集約し、契約は manifest.json
-- [ADR-0007](adr/0007-cli-as-primary-ux-and-entrypoint-discovery.md) — 汎用 `layat` CLI を一次 UX にし、root は明示必須
-- [ADR-0008](adr/0008-source-to-subpath-and-whole-repo-by-omission.md) — `subpath` で取り出し、全体選択は省略で表す
-- [ADR-0014](adr/0014-entries-as-target-keyed-attrset.md) — `entries` は target キーの attrset
-- [ADR-0020](adr/0020-copy-recopy-and-entry-reset.md) — `method = "copy"`（世代外・place-once）・`--recopy`・`reset`（関連: ADR-0019, ADR-0021）
-- [ADR-0026](adr/0026-module-activation-applies-prebuilt-manifest.md) — モジュールはビルド済み link-farm を `apply --manifest` で直接適用する
-- [ADR-0031](adr/0031-silent-on-success-output-discipline.md) — 成功時はデフォルト沈黙。`-v` で opt-in 表示
-- [ADR-0057](adr/0057-generation-backend-contract.md) — 世代操作を世代バックエンドの契約越しにし、engine から nix-env と profile 基底の固定を外す
-- [ADR-0058](adr/0058-last-applied-record.md) — 最後に配置した manifest を last-applied 記録に持ち、stale 除去の baseline を世代の概念から FS の事実へ移す
-- [ADR-0059](adr/0059-root-relative-src-marker.md) — 配置 root 相対の src を `mkRootRelativeSymlink` で宣言し、engine が target 起点の相対 symlink として張る
+- [ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c](adr/20261103-73c24620-d2c0-4249-97fa-1b6296f1e79c-store-link-default-out-of-store-opt-in.md) — store link をデフォルトに統一し、out-of-store は明示関数へ降格
+- [ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30](adr/20261101-f90509f2-d75a-4162-baa5-a5cfdb8a7c30-generations-on-link-farm-and-nix-profile.md), [ADR-74bf4a1f-bb74-44a7-a3cb-3b3e87c24f95](adr/20261101-74bf4a1f-bb74-44a7-a3cb-3b3e87c24f95-standalone-generations-always-on.md), [ADR-c4ad9987-850e-4834-bbea-d8de3b073548](adr/20261101-c4ad9987-850e-4834-bbea-d8de3b073548-copy-outside-generations-place-once.md) — nix profile に乗せた standalone 世代管理。copy は世代外
+- [ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7](adr/20261103-3d450af1-1c79-48ce-8ee9-b989dcb41ad7-engine-owns-placement-no-native-translation.md), [ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880](adr/20261103-ad5bd91d-e061-4a1e-9eef-651f4c9ce880-modules-wire-engine-kick-only.md) — 配置ロジックは全層でエンジンが所有し、モジュールは配線に徹する
+- [ADR-10dcf5a9-f298-4123-9a50-24f43e25d30c](adr/20261103-10dcf5a9-f298-4123-9a50-24f43e25d30c-core-as-placement-primitive.md), [ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed](adr/20261101-400cadd4-0151-470b-92ae-9b11aa8e9bed-three-root-markers.md), [ADR-f85f1afd-9b87-4f7a-922e-97c62554f198](adr/20261101-f85f1afd-9b87-4f7a-922e-97c62554f198-root-explicit-at-mkmanifest.md) — root を一般化し配置プリミティブにする
+- [ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed](adr/20261101-400cadd4-0151-470b-92ae-9b11aa8e9bed-three-root-markers.md) — git toplevel 相対の project mode
+- [ADR-2119433e-de69-4447-85a5-575d58246007](adr/20261101-2119433e-de69-4447-85a5-575d58246007-engine-fixed-go-binary.md), [ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd](adr/20261101-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd-manifest-json-contract-schemaversion-v1.md) — 配置ロジックを固定 Go エンジンに集約し、契約は manifest.json
+- [ADR-88231ffc-4836-4252-be34-894944fd28c3](adr/20261101-88231ffc-4836-4252-be34-894944fd28c3-cli-primary-ux-devshell-pinned.md), [ADR-f85f1afd-9b87-4f7a-922e-97c62554f198](adr/20261101-f85f1afd-9b87-4f7a-922e-97c62554f198-root-explicit-at-mkmanifest.md) — 汎用 `layat` CLI を一次 UX にし、root は明示必須
+- [ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab](adr/20261103-3417c5b0-8c5f-4c2c-827a-6f56bce301ab-subpath-naming-across-layers.md), [ADR-2f5b8825-f13b-4f73-bdf1-fe14e0098d57](adr/20261103-2f5b8825-f13b-4f73-bdf1-fe14e0098d57-whole-repo-by-omitting-subpath.md) — `subpath` で取り出し、全体選択は省略で表す
+- [ADR-c494e86e-ceb9-4380-b983-4e09553b01d6](adr/20261103-c494e86e-ceb9-4380-b983-4e09553b01d6-entries-keyed-by-target.md) — `entries` は target キーの attrset
+- [ADR-fb01d942-2875-4dcb-a7df-879e18f63883](adr/20261103-fb01d942-2875-4dcb-a7df-879e18f63883-apply-recopy-overwrites-copies.md), [ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7](adr/20261103-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7-reset-fs-only-teardown.md) — `method = "copy"`（世代外・place-once）・`--recopy`・`reset`（関連: ADR-00cc3497-654f-420a-928f-99f201e7efb0, ADR-30f105c7-85a8-4fab-9dea-3277d932b524, ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c, ADR-5fc58c8f-dc0e-4c1d-8c1e-17d7ac7f0385, ADR-56ac6298-db67-4f63-8b60-f14af3b9570a, ADR-a86a8492-57fb-49d0-ba77-200f6dc49c3a, ADR-45380022-d959-4b22-aa05-5993ac1f3c87, ADR-b08479ba-0eae-4668-a4a2-910cd40bd316）
+- [ADR-24488788-a5e6-47a5-9074-97192880642a](adr/20261103-24488788-a5e6-47a5-9074-97192880642a-apply-manifest-prebuilt-link-farm.md), [ADR-f58e9981-bacc-4937-98b8-bddce0a057db](adr/20261103-f58e9981-bacc-4937-98b8-bddce0a057db-module-activation-single-apply-all.md) — モジュールはビルド済み link-farm を `apply --manifest` で直接適用する
+- [ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5](adr/20261103-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5-silent-on-success.md), [ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9](adr/20261103-3dc21349-5504-48a4-ab88-812b92c3bdf9-verbose-opts-into-placement-report.md) — 成功時はデフォルト沈黙。`-v` で opt-in 表示
+- [ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8](adr/20261103-62540f8f-a8ba-4441-97b0-36b50d7862d8-generation-backend-contract-paths-and-ints.md), [ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7](adr/20261103-1908099c-87f7-4df1-bda5-7731df7d9ed7-engine-external-command-git-only.md) — 世代操作を世代バックエンドの契約越しにし、engine から nix-env と profile 基底の固定を外す
+- [ADR-52423842-bacf-4773-bbca-bcb34ae71013](adr/20261103-52423842-bacf-4773-bbca-bcb34ae71013-record-embeds-manifest.md), [ADR-a91585ad-971a-4558-9f25-b7fcd6e57671](adr/20261103-a91585ad-971a-4558-9f25-b7fcd6e57671-baseline-prefers-record.md) — 最後に配置した manifest を last-applied 記録に持ち、stale 除去の baseline を世代の概念から FS の事実へ移す
+- [ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb](adr/20261103-8e3cad97-e0c8-460b-89da-62e031f93ebb-mkrootrelativesymlink-separate-function.md), [ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7](adr/20261103-b7f9b972-69b7-4bbe-affc-97978e1a55f7-root-relative-link-as-relative-path.md) — 配置 root 相対の src を `mkRootRelativeSymlink` で宣言し、engine が target 起点の相対 symlink として張る
 
 ### 名前の由来
 
@@ -151,7 +151,7 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 "**lay** \<src\> **at** \<target\>" の圧縮造語で、manifest の通りに src を target へ置く動作を
 一語で表す（`chroot`・`getopt` と同じ動詞句の圧縮）。
 
-- [ADR-0054](adr/0054-rename-nput-to-layat.md) — nput を layat へ改名し、2 週間の改名予告期間を挟む（命名条件・棄却した候補・移行方針）
+- [ADR-6cd587e8-7aa2-4624-be78-7f6501bf0d6f](adr/20261103-6cd587e8-7aa2-4624-be78-7f6501bf0d6f-tool-named-layat.md) — nput を layat へ改名し、2 週間の改名予告期間を挟む（命名条件・棄却した候補・移行方針）
 
 ---
 
