@@ -54,7 +54,7 @@ CI 用の devShell も sara 専用のものへ分ける。
 同じものに当たる。
 
 ADR も同じ形式で採番する（`ADR-<フル UUIDv4>`・`SDR-<フル UUIDv4>`）。連番の `ADR-NNNN` は
-凍結した `legacy_adr` 型にだけ残り、新規には採番しない。
+削除済みで、新 ADR の `origin` と「起点:」行に来歴として残る。
 
 ## 検証の強度
 
