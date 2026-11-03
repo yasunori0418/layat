@@ -23,17 +23,16 @@ cmd 層が注入を忘れても、本番では nix-env を直接呼ぶ挙動と�
 
 ## 決定
 
-profileDir を解決する engine の全入口（apply・rollback・reset・prune・profile の解決）は、世代バックエンドの
-注入を必須とし、注入が無ければ error にする。nix-env への暗黙のフォールバックは持たない。cmd 層は常に
-nixprofile を注入する。
+profileDir を解決する engine の処理（apply・rollback・reset・prune・profile の解決）は、どれも世代バックエンドの注入を必須とし、注入が無ければ error にする。
+nix-env への暗黙のフォールバックは持たない。
+cmd 層は常に nixprofile を注入する。
 
-規範は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b、engine と cmd 層での受け渡しは
-DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814 に置く。
+規範は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b、engine と cmd 層での受け渡しは DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814 に置く。
 
 ## 根拠
 
-注入し忘れを error にすれば、全入口に注入されていることをテストで確かめられる。フォールバックがあると、
-注入し忘れが nix-env の直叩きとして本番の挙動に紛れ込む。
+注入し忘れを error にすれば、これらの処理のすべてに注入されていることをテストで確かめられる。
+フォールバックがあると、注入し忘れが nix-env の直叩きとして本番の挙動に紛れ込む。
 
 ## 棄却した代替案
 
