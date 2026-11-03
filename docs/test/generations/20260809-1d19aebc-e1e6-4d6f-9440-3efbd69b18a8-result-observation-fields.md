@@ -33,7 +33,7 @@ TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7 が扱う、profileDir の世代リン�
 対象は plan ではなく manifest であるため）。
 
 **commit 失敗の形** — 全 FS 操作が成功しているため到達状態のフィールドは空
-（entry スコープの失敗ではない）、`Unwound` は false（→ ADR-0044 §2）、世代は動かない。
+（entry スコープの失敗ではない）、`Unwound` は false（→ ADR-f29d1256-5e14-4b83-ac77-4717b2210193）、世代は動かない。
 
 **conflict と部分失敗** — apply の conflict、reset の部分失敗、rollback の conflict の
 いずれでも部分の結果が返る。`Apply` は張替えた dest と除去 entry も記録する。
