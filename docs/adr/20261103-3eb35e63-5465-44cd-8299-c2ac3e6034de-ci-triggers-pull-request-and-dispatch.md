@@ -34,7 +34,8 @@ main に入る変更は PR のチェックを通っている。テスト系の�
 PR のチェックと重複して CI の時間を浪費する。手動の再実行は `workflow_dispatch` で足りる。
 
 `test-doc-matrix` は全体のインベントリを要し、PR ごとに払うには重い。マージ後の状態から作れば
-足りるので、main への push と `workflow_dispatch` に負担させる。GitHub Actions には push の対象
+足りるので、main への push と `workflow_dispatch` に負担させる。ただし生成の入力を変える PR では、
+生成が失敗しないことをマージ前に確かめるため、PR の上でも実行する。GitHub Actions には push の対象
 ジョブをトリガ段で絞る手段が無いため、除外はジョブ段で書く。
 
 ## 棄却した代替案
