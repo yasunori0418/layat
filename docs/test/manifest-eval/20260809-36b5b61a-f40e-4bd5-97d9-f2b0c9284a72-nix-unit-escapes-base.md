@@ -31,4 +31,4 @@ helper `escapesBase` / `pathChecks.isUnsafe` を直接叩く）
 ## 出典
 
 `tests/nix-unit/escapes-base.nix` の現行実装からの逆算（→ Issue #273「L1〜L4」節）。
-パス安全性検査の設計判断は ADR-0019 が持つ。
+パス安全性検査の設計判断は ADR-00cc3497-654f-420a-928f-99f201e7efb0 が持つ。

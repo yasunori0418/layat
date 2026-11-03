@@ -36,6 +36,8 @@ specification_ja: |
 
 ## 出典
 
-ADR-0042（リリースを bump PR 起点で自動化する）が置いた方針を、基盤（INF）から分離して
+ADR-9ab223eb-99dc-4aa2-a671-c07f75f7ff3c、ADR-0dd4036d-594b-4f36-a509-e5498b231cf7、
+ADR-2fcf26b4-bce6-4ed6-a374-3afe560ead21、ADR-c2f0cdc9-284e-4425-8f60-15f3aa423ed4 が置いた方針を、
+基盤（INF）から分離して
 quality item として立てたもの。一次情報のファイル名・workflow の分割・成果物を添付しない
 判断は INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43 が持つ。

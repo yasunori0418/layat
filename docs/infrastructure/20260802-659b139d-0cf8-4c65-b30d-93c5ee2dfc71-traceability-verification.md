@@ -49,7 +49,7 @@ CI 用の devShell も sara 専用のものへ分ける。
 ## ID 規約
 
 正式 ID は `<PREFIX>-<フル UUIDv4>`。ファイル名・散文中の参照を含め**どの面でもフル ID を
-そのまま書く**（→ ADR-0053）。乱数 ID により並列レーンでの採番衝突を構造的に回避する。
+そのまま書く**（→ SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb）。乱数 ID により並列レーンでの採番衝突を構造的に回避する。
 表記が全面で一致するので、目に付いた ID をそのまま grep しても `sara query` へ渡しても
 同じものに当たる。
 
@@ -60,17 +60,27 @@ ADR も同じ形式で採番する（`ADR-<フル UUIDv4>`・`SDR-<フル UUIDv4
 
 **`strict_mode = true` の非必須チェック**。検査自体は strict で、orphan を含む全 warning が
 error となり `sara check` は exit 1 を返す（epic #203 の移行完了・warning 0 到達を受けて有効化
-→ ADR-0050）。合格条件は「warning 0 件」に一本化されている。
+→ SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626）。合格条件は「warning 0 件」に一本化されている。
 
 一方でマージゲート（INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6）の required status check には登録せず、DoD にも入れない。
 これは移行中の暫定措置ではなく「**検出は機械・判断は人**」という分担を保つための恒久判断で、
 接続漏れの修正が自明でないケース（item 新設を伴う等）を CI が赤いままレビューで扱える余地を
-残す。再検討条件は ADR-0050 が持つ。
+残す。再検討条件は廃止した旧 ADR が持っていた（現在の決定は → SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef）。
 
 閾値ゲートを持たない点は CI パイプライン（INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27）の `go-coverage` ジョブと同方針で、
 他 PR とのマージ順依存を避けるためでもある。
 
 ## 出典
 
-ADR-0048（ドキュメントは sara でグラフ構造化する）。設計は epic GitHub Issue #203 の grilling
+SDR-5ea31001-96f8-4324-a40b-647cdfa5cc9d、SDR-536848bb-8901-4e73-8c66-861de3f91bcd、
+SDR-2457aa00-fab7-4c99-af53-2e6643c21c79、SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed、
+SDR-c15921a9-7aea-407c-a34b-7465783b1af1、SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed、
+SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb、SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626、
+SDR-34916a83-0cff-4524-a8ff-5a3195af52c3、SDR-f3f9491f-d6f4-4742-82da-4933ad3d8db1、
+SDR-29ef8bb4-9349-47db-9e79-926bc71bbdd0、SDR-933a9191-f60e-45bc-bebc-bc09af8154cc、
+SDR-35636015-710a-4cf8-b6ba-48ca047efed0、SDR-1d295034-9bab-4e30-9ead-173e5f56c396、
+SDR-9bec5976-67cd-407a-afa9-3d394a6204ca、SDR-9f2ef734-a9a7-4b93-92a7-e8ed1c7cf8fe、
+SDR-d5304533-00ae-423b-a459-7c67c1cf093c、SDR-fa7eff8e-788f-48e7-951d-4cfbf95d5a1f、
+SDR-3ff9f355-a667-476e-b10d-087248cdbfcf、SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb、
+SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef。設計は epic GitHub Issue #203 の grilling
 セッション（2026-07-31・2026-08-01）で確定した。

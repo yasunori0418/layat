@@ -41,4 +41,10 @@ LinkDest(e) = filepath.Rel(filepath.Dir(e.Target), filepath.Join(e.Src, e.Subpat
 
 ## 出典
 
-ADR-0059「root 相対 out-of-store マーカー」の決定 1・2・3・5・6・7。
+ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7「root 相対マーカーのリンクを target 起点の相対パスで張る」、
+ADR-29c0838b-3e25-4b09-a479-9ebbbc4466c7「root 相対マーカーの基準点を manifest の配置 root にする」、
+ADR-b5431ecf-fe60-4b29-86af-9857478ce663「srcKind の列挙値は schemaVersion を上げずに足す」、
+ADR-d89c2ede-1aba-46fa-9f14-8dcf8a266e0e「root 相対で指定するパスすべてにパス安全性の確認を課す」、
+ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967「copy と out-of-store の併用を eval 時に拒否する」、
+ADR-796508e6-2845-467d-83f8-386930a48bfb「src が target に重なる root 相対 entry を評価時に拒否する」、
+ADR-5d85f49f-c136-425f-bea4-ad8ab8dd8632「root 相対 entry で engine が root を使うのは配置前の実在確認だけにする」。

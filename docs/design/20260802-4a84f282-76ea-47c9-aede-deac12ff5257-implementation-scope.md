@@ -31,7 +31,7 @@ requirement 側の担当）、engine の root 解決・profile 基底・記録�
 NixOS / nix-darwin モジュールは、REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 の通り配線に過ぎない。home-manager モジュールで
 確立した engine kick の形（DSG-98d7fa5d-c590-441a-b682-0ab7afa14233 のビルド済み manifest クラス）をそのまま使い、
 root を `systemRoot` に pin する（DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda）。engine 側で足したのは、boot のたびに実行される
-再 activation で世代が増えないよう世代スキップを system mode へ広げたことだけである（ADR-0067）。
+再 activation で世代が増えないよう世代スキップを system mode へ広げたことだけである（ADR-5265f879-e623-44f9-9c58-8c14598e8b10）。
 実 activate を `tests/e2e/` のハーネスで検証しないことは TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2 が定めている。
 
 **モジュール対応の位置づけ**も同じ線引きから来る。モジュール層は他のモジュールシステムの

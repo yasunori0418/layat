@@ -18,14 +18,14 @@ layat rollback <name>         # 前世代へ戻す
 layat list-generations <name> # 世代一覧
 ```
 
-世代は nix profile に乗る（→ ADR-0002）。純粋関数 `lib.mkManifest` が link farm derivation
+世代は nix profile に乗る（→ ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30）。純粋関数 `lib.mkManifest` が link farm derivation
 （`manifest.json` + ストア内の symlink ツリー）を生成し、engine が nix profile に登録する
 ことで、世代番号・GC root・ロールバックを Nix 標準機構から得る。粒度は `layat.<name>`
 単位 = 1 profile なので、役割ごとに独立したロールバック系列を持つ。
 
 ```
 純粋関数:  lib.mkManifest が link farm derivation（manifest.json + symlink farm）を生成（副作用なし）
-実行時:    固定 Go エンジンが配置し profile を swap（副作用はここだけ・→ ADR-0006）
+実行時:    固定 Go エンジンが配置し profile を swap（副作用はここだけ・→ ADR-521765d7-7e31-42f4-b548-979185a7586a）
 ```
 
 世代管理の対象になるのは symlink 配置。out-of-store symlink はリンク先のみが世代管理され

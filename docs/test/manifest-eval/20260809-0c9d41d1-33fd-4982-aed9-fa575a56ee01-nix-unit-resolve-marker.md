@@ -41,4 +41,5 @@ store / out-of-store / root 相対それぞれに重ねて置く。どの段で�
 ## 出典
 
 `tests/nix-unit/resolve-marker.nix` の現行実装からの逆算（→ Issue #273「L1〜L4」節）。
-marker の設計判断は ADR-0001 / ADR-0010 / ADR-0013 が持つ。
+marker の設計判断は ADR-70debe94-c7ce-492b-b938-4c62f7a781e7 / ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb /
+ADR-d9cad6f6-d694-4c1d-afee-b57b129955dc / ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed が持つ。

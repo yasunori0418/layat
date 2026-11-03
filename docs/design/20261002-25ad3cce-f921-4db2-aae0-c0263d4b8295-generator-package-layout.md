@@ -35,5 +35,5 @@ cmd/layat                       ← 生成器の選択と注入だけ（newGener
 
 ## 出典
 
-ADR-0055「manifest 生成器の契約」§1 と、Issue #395 の計画（2026-09-26）の裁定「テストダブル
+ADR-87a2cf34-9592-4c81-8980-246bca579ca0「manifest の取得をプロセス内の Go インターフェイスの生成器越しにする」と、Issue #395 の計画（2026-09-26）の裁定「テストダブル
 `Fake` は `internal/generator/fake.go`（非 `_test` ファイル）に置く」。

@@ -56,4 +56,11 @@ type Backend interface {
 
 ## 出典
 
-ADR-0057「世代バックエンドの契約」§2〜§4・§7。
+ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」、
+ADR-1cbacca1-1930-46ca-bf82-30310f82216e「世代の一覧を nix-env を経由せず世代リンクの走査で得る」、
+ADR-4c8d459a-c371-4f0d-b009-16e2ca096e49「世代バックエンドのテストダブルを FS ベースの Fake に統一する」、
+ADR-eb1aa25f-a0ca-4efe-bcd9-4cbe11368764「世代バックエンドの注入を必須にし nix-env への暗黙のフォールバックを持たない」、
+ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd「profileDir の内部レイアウトを世代バックエンド契約の固定部分にする」、
+ADR-8b8c9109-a479-4571-8b10-5a6079127441「前世代の読み取りは契約に載せず engine が直接読む」、
+ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7「engine が直接叩く外部コマンドを git に限る」、
+ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818「.pending の後片付けを gcroot を知らない engine の FS 操作として行う」。

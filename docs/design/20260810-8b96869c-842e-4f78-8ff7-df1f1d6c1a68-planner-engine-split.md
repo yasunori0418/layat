@@ -26,7 +26,7 @@ planner が読む FS は判定材料としてのプローブ（実体が symlink
 どおりか）に限り、実行時は実 FS の実装を差し込む。**engine は planner の分類をやり直さず、
 plan をそのまま実行する**。例外は `apply --recopy` の上書きで、これは plan を経由せず engine が
 manifest の copy entry を直接走査する（配置の可否は plan の conflict gate が先に判定済み・
-→ ADR-0020）。
+→ ADR-fb01d942-2875-4dcb-a7df-879e18f63883）。
 
 この分け方が実現手段として効くのは次の点。
 

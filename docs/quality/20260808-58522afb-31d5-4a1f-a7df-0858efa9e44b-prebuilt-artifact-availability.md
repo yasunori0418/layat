@@ -37,6 +37,8 @@ layat は flake input として消費されるツールであり、消費側の 
 
 ## 出典
 
-ADR-0028（cachix push を main push の os マトリクスで実装する）が置いた方針を、基盤（INF）から
+ADR-6c477b0f-cd25-417d-91a0-172dd0ed084f、ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a、
+ADR-21570c09-066c-471b-b605-3364265c8736 が置いた方針を、
+基盤（INF）から
 分離して quality item として立てたもの。投入先のキャッシュ名・マトリクス構成・トリガの
 `paths` は INF-af33c5a1-f846-4f09-8e43-c6ea042d6e06 が持つ。

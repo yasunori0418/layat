@@ -69,14 +69,14 @@ layat モデル:
 
 `home.file` 相当（root = `$HOME`）はこのプリミティブの一適用に過ぎず、root は
 `projectRoot` / `homeRoot` / `systemRoot` で明示的に選ぶ（暗黙デフォルトは持たない・
-→ ADR-0004 改訂 / ADR-0007）。
+→ ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed / ADR-f85f1afd-9b87-4f7a-922e-97c62554f198）。
 
 positioning は **project-first**。中心的な使い方はプロジェクト内に組み込んで repo 内の
 任意パスへ配置する project mode であり、`$HOME` 配置・system 配置は明示マーカーで opt-in
-する例外として位置づける（→ ADR-0007）。ユーザーは PATH 常駐の `layat` CLI を叩き、CLI が
+する例外として位置づける（→ ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e）。ユーザーは PATH 常駐の `layat` CLI を叩き、CLI が
 entrypoint（`flake.nix` / `shell.nix` / `default.nix`）を発見して配置する。
 
-配置先のデフォルトは常に Nix ストアへの symlink であり、再現性を担保する（→ ADR-0001）。
+配置先のデフォルトは常に Nix ストアへの symlink であり、再現性を担保する（→ ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c）。
 手元の dotfiles を直接参照してライブ編集したい場合に限り、明示関数
 `layat.lib.mkOutOfStoreSymlink "/abs/path"` で Nix ストアを経由しない退避路を選べる。
 

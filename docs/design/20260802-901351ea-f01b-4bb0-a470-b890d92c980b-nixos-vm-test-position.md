@@ -22,7 +22,7 @@ TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2 が「NixOS / nix-darwin モジュール
 **`runNixOSTest` を選ぶ**のは、`system.activationScripts.layat` からの engine 起動を
 検証するには実際に system activation を実行する必要があり、nixpkgs が提供する
 VM テストがその唯一の現実的な手段だからである。同一構成で activate を再実行しても世代が
-増えないこと（ADR-0067）も、同じ VM 上で確かめられる。
+増えないこと（ADR-5265f879-e623-44f9-9c58-8c14598e8b10）も、同じ VM 上で確かめられる。
 
 **検証の分担**は次の通り。
 
@@ -37,5 +37,6 @@ activate は VM で回せないため、評価結果のアサートに留める�
 
 ## 出典
 
-`docs/design.md`「テスト戦略」の NixOS VM テストの段落と、ADR-0066「NixOS / nix-darwin
-モジュールを system mode の配線として実装する」§5。
+`docs/design.md`「テスト戦略」の NixOS VM テストの段落と、
+ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75「module と project では世代操作を公開しない」、
+ADR-d01223d3-47a2-4bdd-ac5d-26370d553f7c「モジュールの検証を flake check と VM テストに置く」。

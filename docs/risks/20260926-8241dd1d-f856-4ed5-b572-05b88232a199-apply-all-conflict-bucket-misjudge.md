@@ -40,5 +40,5 @@ foreign symlink warning に落ちるだけで、config の重複を解消して�
 不可逆に壊さない。すり抜けは warning 以外に何も知らせないため沈黙しやすい。
 
 likelihood を medium とするのは、判定は純粋関数に切り出されテストで覆われている一方、
-`runApplyAll` は後続の並列化（ADR-0039）で build・配置の段が大きく組み替わり、検査の
+`runApplyAll` は後続の並列化（ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e / ADR-e7a57f51-41da-460c-8f51-c84e94643f3d）で build・配置の段が大きく組み替わり、検査の
 呼び出し位置（root フィルタ適用後・`--dryrun` 分岐と build の前）がずれる余地があるため。

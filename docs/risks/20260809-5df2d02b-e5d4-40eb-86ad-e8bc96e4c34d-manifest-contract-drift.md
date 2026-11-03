@@ -79,7 +79,7 @@ REQ 側に無い（REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb / REQ-37b56673-6e40-
 文書の形そのものではない。
 
 第三に、`rootKind = "system"` は REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb が定める 4 値の 1 つで、`normalizeManifest` は
-`systemRoot` を `{ rootKind = "system"; }` へ変換して通す（→ ADR-0036）。この発行は
+`systemRoot` を `{ rootKind = "system"; }` へ変換して通す（→ ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c）。この発行は
 CASE-7a6c4957-9365-4490-b48f-9725f42162f2 の変換テストがアサートするが、文書の形を条件とする TC-4e7cfae7-72bc-4af6-a1f5-1ead7db564b1 の適用範囲は
 project root に限られ、system の変換を受ける TC はまだ無い。`system` は規範側に所在を持つが、
 条件側には持たない。
@@ -100,4 +100,4 @@ derivation 層の担当で、本区分の TC 群は見ない（TC-f9e927d0-8e10-
 
 `tests/nix-unit/structure.nix` / `defaults.nix` / `resolve-marker.nix` と
 `tests/namaka/manifest-project/expr.nix` の現行実装からの逆算（→ Issue #273「L1〜L4」節）。
-manifest 契約の設計判断は ADR-0010 / ADR-0014 が持つ。
+manifest 契約の設計判断は ADR-83a1275b-85bb-4918-8d21-8db9ab18a58c / ADR-1848079b-7011-4653-b7cd-c279205262c4 が持つ。

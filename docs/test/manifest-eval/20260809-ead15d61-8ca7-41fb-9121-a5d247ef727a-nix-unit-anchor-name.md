@@ -29,4 +29,4 @@ covers:
 ## 出典
 
 `tests/nix-unit/anchor-name.nix` の現行実装からの逆算（→ Issue #273「L1〜L4」節）。
-アンカー名を target の sha256 とする設計判断は ADR-0016 が持つ。
+アンカー名を target の sha256 とする設計判断は ADR-30f105c7-85a8-4fab-9dea-3277d932b524 が持つ。

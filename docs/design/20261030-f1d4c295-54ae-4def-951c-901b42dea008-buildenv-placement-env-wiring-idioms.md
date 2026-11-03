@@ -11,7 +11,7 @@ satisfies:
 ## 設計
 
 「パッケージ群を `PATH` に載せたい」需要に対し、layat は専用の関数（`mkEnv` 等）を持たない
-（→ ADR-0069）。`pkgs.buildEnv` の結果を entry の `src` に置けば、既存の配置プリミティブで
+（→ ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137）。`pkgs.buildEnv` の結果を entry の `src` に置けば、既存の配置プリミティブで
 そのまま満たせるため。
 
 - **REQ-99ca5381-6c53-426c-b145-7b4297c53868（`src` は path / set / marker の 3 種）**:
@@ -104,6 +104,6 @@ fi
 
 ## 出典
 
-ADR-0069「`layat.lib.mkEnv` で buildEnv の合成環境を配置し、role 別に `PATH` を管理する」の決定節。
+ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137「layat.lib.mkEnv で buildEnv 合成環境を提供する」。
 同 ADR は配置と環境変数配線の書き方を idiom として docs に置くと決めており、
 本 item がその実体。
