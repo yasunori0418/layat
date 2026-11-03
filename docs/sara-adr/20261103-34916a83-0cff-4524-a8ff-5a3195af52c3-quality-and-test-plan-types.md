@@ -20,8 +20,8 @@ justifies:
 
 ## 背景
 
-テスト計画や品質方針にあたる文書は、受け皿の型が無いため requirement として置かれていた。
-requirement の親は use_case だが、これらの文書は「ユーザーがどう使うか」から導かれないので親を持てず、
+テスト計画や品質方針にあたる文書は、受け皿の型が無いため `requirement` として置かれていた。
+`requirement` の親は use_case だが、これらの文書は「ユーザーがどう使うか」から導かれないので親を持てず、
 orphan のまま残っていた。
 
 テスト系の型（risk / test_condition / test_case）は ISTQB のテスト分析以降に対応する。テスト計画に
@@ -33,9 +33,9 @@ orphan のまま残っていた。
 test_plan はテスト計画活動の成果物（スコープ・テストレベル・アプローチ・テスト容易性の要求）を、quality は
 品質方針・規約・プロセス横断のガバナンスを受ける。
 
-どちらも solution を親に `derives_from` で張り、requirement と同じ `specification` /
+どちらも solution を親に `derives_from` で張り、`requirement` と同じ `specification` /
 `specification_ja` を持つ。`specification` は英語の規範文で書く。sara の RFC2119 キーワード検証は
-requirement だけを対象にするので、この 2 型の様式はレビューで守る。
+`requirement` だけを対象にするので、この 2 型の様式はレビューで守る。
 
 ## 根拠
 

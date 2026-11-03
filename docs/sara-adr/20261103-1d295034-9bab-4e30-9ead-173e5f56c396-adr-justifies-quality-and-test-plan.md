@@ -22,12 +22,12 @@ references:
 
 ## 背景
 
-ADR 系の型の `justifies` は、requirement / design / infrastructure だけを対象にしていた。quality と
+ADR 系の型の `justifies` は、`requirement` / `design` / `infrastructure` だけを対象にしていた。quality と
 test_plan を設けた（SDR-34916a83-0cff-4524-a8ff-5a3195af52c3）ことで、規範の文を持つ型が増えた。
 
 ## 決定
 
-ADR 系の型の `justifies` の対象を requirement / design / infrastructure / quality / test_plan にする。
+ADR 系の型の `justifies` の対象を `requirement` / `design` / `infrastructure` / `quality` / `test_plan` にする。
 `specification` を持つ型には、どれにも ADR から接続できる。
 
 ## 根拠
@@ -37,6 +37,6 @@ ADR は「なぜその規範にしたか」を残し、規範そのものは `ju
 
 ## 棄却した代替案
 
-### 対象を requirement / design / infrastructure のまま据え置く
+### 対象を `requirement` / `design` / `infrastructure` のまま据え置く
 
 quality と test_plan の規範を決める ADR が、その item へ接続できない。

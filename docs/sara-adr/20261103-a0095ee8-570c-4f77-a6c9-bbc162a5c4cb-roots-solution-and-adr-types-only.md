@@ -27,13 +27,13 @@ sara の orphan 判定は、item が `direction: upstream` の relation を実�
 決まる。型単位・item 単位で orphan warning を抑止する設定は無い。
 
 親を持たない型（root）の item は、構造上いつも orphan になる。root の型が増えるほど、warning の中で
-張り忘れではない常在の項目の割合が増え、本物の接続漏れが埋もれる。
+張り忘れではない常在の項目の割合が増え、本物の張り忘れが埋もれる。
 
 ## 決定
 
 親を持たない型は solution と ADR 系の型だけにする。それ以外の型は
-`parent_types` を持ち、各 item は upstream relation を 1 本以上張る。これで「接続漏れ = orphan
-warning」が全型で成り立つ。型と relation の正本は `docs/model.yaml` に置く。
+`parent_types` を持ち、各 item は upstream relation を 1 本以上張る。これで「張り忘れ = orphan
+warning」が全型で成り立つ。型と relation の定義は `docs/model.yaml` に置く。
 
 ## 根拠
 
@@ -51,4 +51,4 @@ sara に抑止の設定が無い。仮にあっても、抑止した型では本
 
 ### 受け皿の無い item を root の型に置いたままにする
 
-その型の item が構造上ずっと orphan になり、warning が接続漏れの信号としてはたらかなくなる。
+その型の item が構造上ずっと orphan になり、warning が張り忘れの信号としてはたらかなくなる。

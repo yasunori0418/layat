@@ -27,7 +27,7 @@ test_plan を設けた（SDR-34916a83-0cff-4524-a8ff-5a3195af52c3）ことで、
 
 ## 決定
 
-risk の `parent_types` は requirement と design だけにし、test_plan を含めない。
+risk の `parent_types` は `requirement` と `design` だけにし、test_plan を含めない。
 
 ## 根拠
 
