@@ -12,6 +12,7 @@ justifies:
   - "REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4"
   - "REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3"
   - "DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814"
+  - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
 ---
 # ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883: state の基底を設定で上書きさせない
 
@@ -34,9 +35,10 @@ engine の入力と、CLI がそれへ渡すテスト用の環境変数 `LAYAT_S
 から上書きできる。用途は、root 権限を user namespace で得る e2e が、実システムの基底を汚さずに配置と世代を
 検証することに限る。
 
-設定キーを設けない規範は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b と REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3、
-system mode の基底は REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4、環境変数を engine の入力へ渡す配線は
-DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814 に置く。
+設定キーを設けない規範は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b、基底を世代バックエンドが与える規範は
+REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3、system mode の基底は REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4 に置く。
+profile 基底の上書きを engine の入力へ渡す配線は DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814、記録基底を
+engine の入力で上書きする規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 に置く。
 
 ## 根拠
 

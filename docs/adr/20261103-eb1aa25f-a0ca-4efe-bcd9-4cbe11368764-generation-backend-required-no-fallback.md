@@ -8,6 +8,7 @@ issues:
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §2d を書き直した"
 justifies:
   - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"
+  - "DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814"
 ---
 # ADR-eb1aa25f-a0ca-4efe-bcd9-4cbe11368764: 世代バックエンドの注入を必須にし nix-env への暗黙のフォールバックを持たない
 
@@ -26,7 +27,8 @@ profileDir を解決する engine の全入口（apply・rollback・reset・prun
 注入を必須とし、注入が無ければ error にする。nix-env への暗黙のフォールバックは持たない。cmd 層は常に
 nixprofile を注入する。
 
-規範は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b に置く。
+規範は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b、engine と cmd 層での受け渡しは
+DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814 に置く。
 
 ## 根拠
 
