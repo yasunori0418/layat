@@ -206,6 +206,6 @@ warnings / info）の写像規則は単一 config と同一で、`--all` 固有�
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「`--all` の複数 `SubjectResult`（#164）」とその配下の全項目。
 
-決定の実体は ADR-0043 §7（`--all` の複数 `SubjectResult`）・§6（conflict 1 件でも
+決定の実体は ADR-baf6346d-783b-4607-ab1c-c2c93c09e064（`--all` の複数 `SubjectResult`）・ADR-9e328362-2e90-441a-8eca-40081ce71b1b（conflict 1 件でも
 `status:error`）。system profile 基底と subject 名は原文に無く、決定の実体は ADR-0036
 （system mode の実装と `list-generations` の home / system 公開）。

@@ -51,4 +51,4 @@ specification_ja: |
 
 決定の実体は ADR-0045「`apply --backup[=suffix]` — 配置を塞ぐ記録外実体の rename 退避」で、
 module 経路への配線は同 ADR が Issue #169 とともに定めている。配線先を全 config の
-`apply --all --manifest <name>=<link-farm> …` 起動にしたのは ADR-0060 §1。
+`apply --all --manifest <name>=<link-farm> …` 起動にしたのは ADR-f58e9981-bacc-4937-98b8-bddce0a057db。

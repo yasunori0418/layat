@@ -42,5 +42,4 @@ specification_ja: |
 
 ## 出典
 
-ADR-0061「モジュールに `layat.recopy` オプションを足し、`layat.jobs` とともに共通オプションへ
-載せる」§1・§3。`--recopy` そのものは ADR-0020 §1 が定めている。
+ADR-9506276e-2108-4962-9f90-efe82fec7f66・ADR-7b9e4a7b-56d3-4356-9f67-bedbde8f0a52。`--recopy` そのものは ADR-fb01d942-2875-4dcb-a7df-879e18f63883 が定めている。

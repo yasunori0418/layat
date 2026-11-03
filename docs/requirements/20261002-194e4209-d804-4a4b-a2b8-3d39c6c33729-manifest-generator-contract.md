@@ -74,6 +74,6 @@ REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd の担当。
 
 ## 出典
 
-ADR-0055「manifest 生成器の契約」§1〜§5。Build 事後条件の文言は ADR-0057「世代バックエンドの
-契約」§5 が「選択中の世代バックエンドがコミット可能な link-farm のパス」へ緩和した。prebuilt
-生成器が名前付き集合を持つのは ADR-0060 §2。
+ADR-87a2cf34-9592-4c81-8980-246bca579ca0・ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2・ADR-02170bb7-d3b6-49ae-8426-de2113951637・ADR-efa7685c-6fa4-45df-b7a3-8f3f58e4118c・ADR-1ddf424a-db2c-4bcb-8823-bf7e4326b980。Build 事後条件の文言は
+ADR-efa7685c-6fa4-45df-b7a3-8f3f58e4118c が「選択中の世代バックエンドがコミット可能な link-farm のパス」へ緩和した。prebuilt
+生成器が名前付き集合を持つのは ADR-24488788-a5e6-47a5-9074-97192880642a。

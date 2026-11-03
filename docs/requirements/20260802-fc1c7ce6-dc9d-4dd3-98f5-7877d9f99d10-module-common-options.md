@@ -75,10 +75,10 @@ layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-0045�
 > **2026-10-24 追記（ADR-0066）**: root pin の条文に NixOS / nix-darwin → `systemRoot` を足した。両モジュールは
 > `layat.user` を持たず、subdir から `systemRoot` の適用形を組む配線は REQ-a220bb28-89de-42b0-a854-e7468755ecb1 の担当。
 >
-> **写しの `layat.entries` を canonical としない理由**: **ADR-0035 §1〜§2 は
+> **写しの `layat.entries` を canonical としない理由**: **ADR-01abcd5a-464f-4c44-8afd-30950631487c・ADR-3447db4a-cdec-4573-bbad-05bbffc34a65 は
 > `layat.configs.<name>.entries` を canonical とし、素の `layat.entries` を
 > `configs.default.entries` への deprecated 糖衣へ降格することを決定済み**で、`docs/spec.md`
-> の当該表はこれに未追従。ADR-0035 §1 は `configs` の定義先を `modules/common.nix`
+> の当該表はこれに未追従。ADR-01abcd5a-464f-4c44-8afd-30950631487c は `configs` の定義先を `modules/common.nix`
 > （全モジュール共通）と定めているため、これは HM 固有ではなく共通オプション集合の一部で
 > あり、本 item の規範に含めた（REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 / REQ-16faf428-77f3-492f-b858-222c5274cbf7 で ADR-0036 由来の未追従を
 > 扱ったのと同じ扱い）。`configs` の `<name>` 次元が profile の粒度にとって何を意味するか

@@ -62,5 +62,5 @@ profileDir の鍵の一般規則は REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81 の
 
 ## 出典
 
-ADR-0036「system mode を実装する」§1〜§3、ADR-0062「system mode の last-applied 記録を
-`/var/lib/layat` に置く」。
+ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c・ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed・ADR-25d54346-f13a-4c12-9895-ab93dc6c183b・ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203・ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988・ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e、
+ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c・ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883。

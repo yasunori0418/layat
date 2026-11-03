@@ -86,5 +86,5 @@ REQ-9341fa5d-836e-4023-af53-cc7d273438d1 の担当。
 
 ## 出典
 
-ADR-0055「manifest 生成器の契約」§6〜§8。起点は Issue #396（成功時に評価器の stderr を捨てる
+ADR-6687c0dc-957d-4913-99c6-168b0fe552ad・ADR-964e99a8-4aaa-46f6-b4ee-26270fc04649・ADR-cd139de9-06a4-49a2-8bea-4801c8acc518・ADR-494b6477-9d5b-4e29-879d-f7d16be5d466・ADR-5be36ff2-ed08-4e8e-8476-62ff2b08a9dd。起点は Issue #396（成功時に評価器の stderr を捨てる
 現状と nix 固有のエラー分類）。

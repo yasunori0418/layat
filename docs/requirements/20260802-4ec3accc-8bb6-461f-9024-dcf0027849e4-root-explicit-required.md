@@ -22,7 +22,7 @@ specification_ja: |
 - 「省略したら `$HOME`」のような暗黙の既定値は置かない。
 - 明示必須は `mkManifest` / CLI entrypoint の層に課す。モジュール（home-manager →
   `homeRoot` / devShell → `projectRoot`）は自分の性質で root を pin するため、
-  モジュール利用者は root を再指定しない（→ ADR-0007 §2）。
+  モジュール利用者は root を再指定しない（→ ADR-f85f1afd-9b87-4f7a-922e-97c62554f198）。
 
 > **原文「root の解決」節の導入文の残る規範の所在**: root が target を絶対パスへ変換する基準で
 > あることは target を root 相対と定める REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336、配置の実体を全層で engine が実行する

@@ -58,4 +58,4 @@ specification_ja: |
 `docs/spec.md`「世代管理仕様」→「stale 除去の対象と安全不変条件」節の導入文と表。
 
 決定の実体は ADR-0002「世代管理を nix profile に乗せる」の保守的削除方針。baseline を
-last-applied 記録から優先して読むのは ADR-0058「last-applied 記録」§3。
+last-applied 記録から優先して読むのは ADR-a91585ad-971a-4558-9f25-b7fcd6e57671「古くなった配置の除去は、比較の基準を記録から優先して読む」。

@@ -51,7 +51,7 @@ specification_ja: |
 fixed root / `--root` 上書きで生じた `<roothash>` 系列だけ。基底は世代バックエンドが与え
 （REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）、既定の nixprofile ではユーザー state 基底が
 `<state>/nix/profiles/layat/`、system 基底が `/nix/var/nix/profiles/layat/`。基底が 2 つあるのは、
-system mode の profile 状態がユーザー state 基底とは別の場所に住むため（→ ADR-0036 §3）。
+system mode の profile 状態がユーザー state 基底とは別の場所に住むため（→ ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203）。
 
 `.root` を持たない `<name>` 直キーの系列（home mode の root = `$HOME`・system mode の
 root = `/`）は、判定すべき root パスが導けないため構造的に対象外になる。system mode でも
@@ -79,7 +79,7 @@ system 基底を扱うコマンドも同じ値を使う）。state 基底は
 ときに削除へ倒す経路を持たない。
 
 **削除段で安全側へ倒す場合** — 削除すると決めた系列でも、権限が無くて**削除に着手すらできない**
-ときは残して warning を出す（→ ADR-0036 §3。system 基底の系列を非 root で実行したときに起きる）。
+ときは残して warning を出す（→ ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e。system 基底の系列を非 root で実行したときに起きる）。
 判定段の条件が「削除するか決められない」なのに対し、こちらは「削除すると決めたが 1 つも消せ
 なかった」で発生する段が違う。どちらも残す点は同じで、1 系列を残したことが他の系列の処理を
 止めることもない。
@@ -103,11 +103,11 @@ store の回収は `nix-collect-garbage` に委ねる。
 
 ## 出典
 
-決定の実体は ADR-0034 §1「削除対象 = 「root パスが実在しない」roothash 系列のみ」。
+決定の実体は ADR-b4be88b8-1c19-426d-885d-f5d80b95252f「prune は root が実在しない roothash 系列だけを削除する」。
 out-of-store な root がアンマウント中に「一時的に実在しない」と誤判定されうる caveat は
 同 §2 にあり、機械側で区別せず確認プロンプトの root パス一覧で防ぐ（→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed）。
 
 走査対象に system 基底 `/nix/var/nix/profiles/layat/` を加えることと、非 root 実行で削除権限が
-無い系列を warning 付きで skip することは ADR-0036 §3 が定めている（ADR-0034 は system mode の
+無い系列を warning 付きで skip することは ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e が定めている（ADR-0034 は system mode の
 実装決定より前の 2026-07-04 で、当時は root = `/` が常に実在することだけを理由に対象外として
-いた）。基底の所有を世代バックエンドへ移したのは ADR-0057「世代バックエンドの契約」§6。
+いた）。基底の所有を世代バックエンドへ移したのは ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883「state の基底を設定で上書きさせない」。

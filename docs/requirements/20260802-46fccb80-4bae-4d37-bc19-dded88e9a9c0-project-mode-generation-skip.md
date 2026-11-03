@@ -116,4 +116,4 @@ specification_ja: |
 非公開・ephemeral）と ADR-0017「実装前レビュー第 3 巡」（世代スキップとドリフト修復）。
 profile を解決済み root でキーすることと `<roothash>` の定義は ADR-0013、`<state>` の確定は
 ADR-0022、copy のドリフト修復の限定は ADR-0022 が定めている。世代スキップの判定元を profile と
-last-applied 記録の両方一致にし、baseline を記録優先にしたのは ADR-0058「last-applied 記録」§3。
+last-applied 記録の両方一致にし、baseline を記録優先にしたのは ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444・ADR-a91585ad-971a-4558-9f25-b7fcd6e57671。

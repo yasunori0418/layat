@@ -73,8 +73,7 @@ specification_ja: |
 
 ## 出典
 
-ADR-0060「HM activation を prebuilt manifest 群への `apply --all` 1 回起動にし、configs 間の
-衝突検出を CLI 前段へ委譲する」§1。`layat.jobs` の定義は ADR-0061 §2。
+ADR-f58e9981-bacc-4937-98b8-bddce0a057db「モジュールの activation は apply --all --manifest を 1 回だけ起動する」。`layat.jobs` の定義は ADR-e8bb6153-2528-419e-8be0-c862a3eb4e05。
 
 `docs/spec.md` には対応記述が無いため、原文の写しは持たない（規範は frontmatter が正で、
 上の箇条書きは ADR 本文の要約）。旧版（config ごとに起動し bash で集約する形）の出典は

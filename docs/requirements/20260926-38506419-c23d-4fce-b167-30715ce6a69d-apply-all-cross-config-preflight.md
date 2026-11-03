@@ -59,5 +59,5 @@ specification_ja: |
 
 ## 出典
 
-ADR-0038「同一 entrypoint 内の cross-config target 衝突を `apply --all` 前段で検出し error 停止する」
-§1〜§3（Issue #152 で起票）。prebuilt 集合を検査対象に含めるのは ADR-0060 §2〜§3。
+ADR-75df92ae-0694-452b-8fb4-350994e31b25・ADR-7f4fd2f6-672d-4d8c-a881-31024ad1d7c3・ADR-1338a293-3f69-48f5-9164-efb4ec6994d6
+（Issue #152 で起票）。prebuilt 集合を検査対象に含めるのは ADR-24488788-a5e6-47a5-9074-97192880642a・ADR-1338a293-3f69-48f5-9164-efb4ec6994d6。

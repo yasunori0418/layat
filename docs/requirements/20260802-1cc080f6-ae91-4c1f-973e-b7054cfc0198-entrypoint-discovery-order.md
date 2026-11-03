@@ -32,5 +32,5 @@ CLI は **entrypoint ファイル**（`layat.<name>` に named manifest を公�
 
 `docs/spec.md`「CLI 仕様」→「entrypoint の発見」。
 
-決定の実体は ADR-0007 §3「CLI の責務」1.（既定: CWD で `flake.nix` → `shell.nix` →
+決定の実体は ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2「生成器の契約を Discover / Roots / Build / DryBuild の 4 操作にする」（既定: CWD で `flake.nix` → `shell.nix` →
 `default.nix` の優先順。`-f` / `--file <path>` で明示上書き）。

@@ -57,5 +57,5 @@ REQ-2b48620a-abaa-43df-a106-954bbba3de56 の担当。
 `docs/spec.md`「配置動作仕様」→「symlink モード」の手順 0。
 
 決定の実体は ADR-0046「自己記録の祖先 symlink 配下ネストを許可する — 前世代 manifest
-判定の祖先拡張 + 配置前除去（PreRemove）」で、foreign 祖先のエラー停止は ADR-0015 §4 が
+判定の祖先拡張 + 配置前除去（PreRemove）」で、foreign 祖先のエラー停止は ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c が
 定めている。

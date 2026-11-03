@@ -201,4 +201,4 @@ specification_ja: |
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「#131 変更系ペイロード」とその配下の全項目。
 
-決定の実体は ADR-0043 §4 / §6 / §8。`W_LAYAT_ORIGIN_MISMATCH` は ADR-0070 §3。
+決定の実体は ADR-5d28818e-f7e1-45e8-a7fd-bbb6157b8586 / ADR-9e328362-2e90-441a-8eca-40081ce71b1b / ADR-bd8a4c8a-5e7e-485a-bccf-20dab63125f2・ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9。`W_LAYAT_ORIGIN_MISMATCH` は ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8。

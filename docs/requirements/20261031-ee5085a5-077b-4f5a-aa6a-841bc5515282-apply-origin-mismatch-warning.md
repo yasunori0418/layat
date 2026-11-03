@@ -88,4 +88,4 @@ last-applied 記録を共有する場合。互いの entry を stale として�
 
 ## 出典
 
-ADR-0070「記録の出所と同名 config の警告」§1〜§4・§6。
+ADR-0db061d1-fa30-436d-91d7-c0cec8804c52・ADR-8e253f2e-c255-482a-a0f8-0837e122e80f・ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8・ADR-17f29974-4fdb-4596-8afa-368a8f3971eb。

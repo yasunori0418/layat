@@ -45,5 +45,5 @@ REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd の担当。
 
 `docs/spec.md`「CLI 仕様（一次 UX）」の blockquote「前提条件: nix experimental-features」。
 
-決定の実体は ADR-0025「nix experimental-features 前提」。主語を nix 生成器に絞ったのは
-ADR-0055「manifest 生成器の契約」§6。
+決定の実体は ADR-63039f93-cd78-4356-8cd3-82c2f49a1aaa「nix の experimental-features は利用者が有効にしておく前提にする」。主語を nix 生成器に絞ったのは
+ADR-cd139de9-06a4-49a2-8bea-4801c8acc518「nix 固有の失敗判定と案内文を nix 生成器の中に閉じる」。

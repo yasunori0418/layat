@@ -73,7 +73,7 @@ specification_ja: |
 >   `layat.entries` はその糖衣）→ REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、1 config が 1 manifest = 1 profile に対応する
 >   ことと profile 粒度 → REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a。本 item の写しにある `layat.entries` は原文逐語であり、
 >   規範文では供給元を「config の entries」と述べて ADR-0035 と衝突しない形にしている。
->   activation が全 config を 1 回の `apply --all` 起動へ渡す規律（ADR-0060 §1・`<name>` の
+>   activation が全 config を 1 回の `apply --all` 起動へ渡す規律（ADR-f58e9981-bacc-4937-98b8-bddce0a057db・`<name>` の
 >   辞書順・`--jobs`・部分失敗の集約）は原文に対応記述が無いため本 item の写しには現れないが、
 >   規範は REQ-c847d1af-a437-46bb-bd64-42083810d034 が持つ
 > - flock を既定 blocking で取ること → REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461。レポートと warning を stderr へ出す
@@ -99,4 +99,4 @@ specification_ja: |
 
 決定の実体は ADR-0026「モジュール activation の engine kick は `apply --manifest`
 （ビルド済み link-farm 直接適用）で行う」。モジュールを配線に徹させることは ADR-0003 が
-定めている。全 config を `apply --all` の 1 回の起動で渡す形は ADR-0060 §1。
+定めている。全 config を `apply --all` の 1 回の起動で渡す形は ADR-f58e9981-bacc-4937-98b8-bddce0a057db。

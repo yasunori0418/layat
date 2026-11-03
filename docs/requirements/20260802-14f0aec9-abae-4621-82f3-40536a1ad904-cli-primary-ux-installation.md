@@ -60,5 +60,5 @@ specification_ja: |
 
 `docs/spec.md`「CLI 仕様（一次 UX）」の導入 2 項目。
 
-決定の実体は ADR-0007 §3「汎用 layat CLI を一次 UX に昇格する」（PATH 常駐・
-`packages.layat`）と ADR-0015「project mode の `layat` は devShell 同梱が canonical」。
+決定の実体は ADR-88231ffc-4836-4252-be34-894944fd28c3「CLI が一次 UX で devShell に pin 版を同梱する」（PATH 常駐・
+`packages.layat`・project mode では devShell 同梱が canonical）。

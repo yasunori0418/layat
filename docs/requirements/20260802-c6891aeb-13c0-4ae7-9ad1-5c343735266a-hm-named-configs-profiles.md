@@ -55,7 +55,7 @@ specification_ja: |
 > `docs/spec.md` の追従は本 item の担当範囲外。
 >
 > **原文の残る規範の所在**: `layat.configs` / `layat.entries` のオプション定義そのものは
-> REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10（ADR-0035 §1 が定義先を `modules/common.nix` としているため全モジュール共通の
+> REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10（ADR-01abcd5a-464f-4c44-8afd-30950631487c が定義先を `modules/common.nix` としているため全モジュール共通の
 > 集合に属する）、profile dir レイアウトの物理形は REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3、home mode が `<name>` 直キーで
 > あることは REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81、standalone が `layat.<name>` で複数 profile を持てることは
 > REQ-496b1a07-5b74-416b-9e5f-3952b4c03737、1 起動あたりの activation 契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、module 経路で rollback を host へ

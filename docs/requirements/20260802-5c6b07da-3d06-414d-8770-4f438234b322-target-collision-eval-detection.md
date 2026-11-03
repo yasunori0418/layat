@@ -57,8 +57,8 @@ cross-config（別 profile・別 manifest）の同一 target 衝突は eval で�
 
 `docs/spec.md`「lib API」→「入力検査（`evalModules` + `normalizeManifest`）」。
 
-決定の実体は同一 manifest 内の target 衝突を eval 時に検出すると定めた ADR-0024
-「実装前残セマンティクス第6巡」§5 で、cross-config を「単一の eval に載らない場合」へ限定した
+決定の実体は同一 manifest 内の target 衝突を eval 時に検出すると定めた
+ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0「manifest 内の target の衝突を評価時に検出する」で、cross-config を「単一の eval に載らない場合」へ限定した
 のは ADR-0035「HM モジュールに `layat.configs.<name>` を導入し複数 profile（役割分離）を
 可能にする」§4（単一のモジュール eval に載る config 間は静的検出が可能）。例外の条件を「単一の起動」へ改めたのは ADR-0060「HM activation を
 prebuilt manifest 群への `apply --all` 1 回起動にし、configs 間の衝突検出を CLI 前段へ委譲する」§3。

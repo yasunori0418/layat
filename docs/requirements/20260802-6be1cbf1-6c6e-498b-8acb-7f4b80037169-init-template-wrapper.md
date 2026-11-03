@@ -39,4 +39,4 @@ REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303 の担当。
 `docs/spec.md`「CLI 仕様」→「`layat init`（テンプレート展開）」のコードブロックと
 箇条書き第 1・2 項。
 
-決定の実体は ADR-0007 §6「`layat init` でテンプレートを展開する」。
+決定の実体は ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d「templates と layat init は固定 ref で導入する」。

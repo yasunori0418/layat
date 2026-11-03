@@ -57,6 +57,6 @@ specification_ja: |
 この item の規範を決めていないため、側面の根拠として `justifies` は張らない（位置づけそのものの
 帰属は REQ-14f0aec9-abae-4621-82f3-40536a1ad904 / REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 が担当する）。
 
-go-toml/v2 の許可は ADR-0056「生成器の選択と設定ファイル」§4 が定めている。
+go-toml/v2 の許可は ADR-aec6bd1d-f776-4d7c-9337-1ed78fee6180「CLI の依存に go-toml/v2 を許可する」が定めている。
 
-outturn/go の許可は ADR-0043「`--json` 機械可読出力を outturn 規約準拠にし、JSON 出力の outturn 準拠を恒常原則とする」§8 が定めている。
+outturn/go の許可は ADR-bd8a4c8a-5e7e-485a-bccf-20dab63125f2「CLI は outturn/go に依存する」が定めている。
