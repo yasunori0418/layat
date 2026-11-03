@@ -23,7 +23,7 @@ justifies:
 root 相対マーカーを manifest に載せるには、`srcKind` に新しい値 `"rootRelative"` が要る。
 `manifest.json` は Nix と engine の間の唯一の安定契約で、`schemaVersion` は 1 である。当時の
 engine の検証は `schemaVersion` と root だけを見ており、`srcKind` / `method` / `rootKind` の値は
-検査していなかった。そのため未知の値を読むと、黙って誤った配置をしうる状態だった。
+検査していなかった。そのため未知の値を読むと、エラーにならずに誤った配置をしうる状態だった。
 
 ## 決定
 
@@ -35,8 +35,8 @@ REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b、値の検査は DSG-fd39b9ee-a5d2-46c
 
 ## 根拠
 
-CLI と lib は devShell に同梱されるので、古い engine が新しい manifest を読む経路は構造的に無い。
-値の検査を足せば、仮にその経路ができても、未知の `srcKind` は誤配置されずに明示のエラーで止まる。
+CLI と lib は devShell に同梱されるので、古い engine が新しい manifest を読むことは構造的に起きない。
+値の検査を足せば、仮にそれが起きても、未知の `srcKind` は誤配置されずに明示のエラーで止まる。
 既存の manifest は全て既知の値なので、検査を足しても挙動は変わらない。
 
 ## 棄却した代替案

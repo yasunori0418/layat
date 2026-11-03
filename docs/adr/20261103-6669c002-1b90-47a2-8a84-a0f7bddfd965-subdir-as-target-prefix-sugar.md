@@ -22,9 +22,9 @@ root マーカーの適用形が持つ `subdir` を、どこで実現するか�
 照合キー・foreign symlink の判定・祖先 symlink の検査・`gitignore` の anchor 形は、どれも target の
 文字列で動くからだ。
 
-root を実際に動かすと、`manifest.json` に新しいフィールドが要る。古い engine が黙って無視すると
-誤配置になるので、`schemaVersion` も上げなければならない。profileDir の鍵にも、同じ名前の config が
-`subdir` 違いで世代の系列を共有するという落とし穴が生まれる。
+root を実際に動かすと、`manifest.json` に新しいフィールドが要る。古い engine がエラーにせず無視すると
+誤配置になるので、`schemaVersion` も上げなければならない。profileDir の鍵は root から作るので、同じ名前の
+config が `subdir` 違いで世代の系列を共有してしまう。
 
 ## 決定
 
@@ -44,5 +44,5 @@ root が動かないので profileDir の鍵も変わらず、既存の検査と
 
 ### root を実際に動かす（manifest に subdir のフィールドを足す）
 
-`schemaVersion` の版上げ、profileDir の鍵の落とし穴、engine の分岐が増える。糖衣との機能の
-差は無い。
+`schemaVersion` の版上げが要り、同じ名前の config が `subdir` 違いで世代の系列を共有し、engine の
+分岐も増える。糖衣との機能の差は無い。

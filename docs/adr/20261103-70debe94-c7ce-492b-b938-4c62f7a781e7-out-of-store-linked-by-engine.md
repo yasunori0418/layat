@@ -19,7 +19,7 @@ justifies:
 
 out-of-store を明示関数で選ばせると決めると、その関数が何をするかを決める必要がある。
 home-manager の `config.lib.file.mkOutOfStoreSymlink` は、外部パスを指す symlink を持つ
-derivation を作り、`home.file` の配置に乗せる。layat の lib は nixpkgs だけに依存し、
+derivation を作り、`home.file` で配置する。layat の lib は nixpkgs だけに依存し、
 配置は全層で engine が行う。HM モジュールの中でだけ HM の関数へ委ねると、out-of-store の配置が
 層によって別の機構になる。
 
@@ -34,7 +34,7 @@ REQ-81249072-56b8-42f5-807b-ea623c1efe99 に置く。
 
 lib を純粋関数に留めれば、nixpkgs だけに依存する制約を保ったまま nix-unit で検査できる。
 リンクの生成を engine に集めれば、out-of-store の配置・stale 除去・drift 修復が store link と
-同じ 1 本の経路を通り、どの統合層から使っても挙動が変わらない。
+同じ engine の処理で行われ、どの統合層から使っても挙動が変わらない。
 
 ## 棄却した代替案
 
