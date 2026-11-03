@@ -8,6 +8,7 @@ issues:
 origin: "Issue #140（epic #129: system mode の実装）の計画（2026-10-18）。ADR-0062 §1・ADR-0066 の既知の注意点（macOS の記録基底）を書き直した"
 justifies:
   - "REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4"
+  - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
 references:
   - "ADR-0036"
   - "ADR-0058"
@@ -28,7 +29,7 @@ profile は、システムの状態が root の個人領域に住む形を避け
 
 一方で記録は nix profile ではなく、GC root でもない。profile と同じ基底に置く理由も無い。
 
-macOS には `/var/lib` が無く、記録の置き場には `/var/db` を使う慣習がある。
+macOS には `/var/lib` が無い。
 
 ## 決定
 
@@ -36,9 +37,10 @@ system mode の last-applied 記録は `/var/lib/layat` の下に、profileDir �
 基底は `/var/lib/layat` のままとし、`/var/db` へ切り替える分岐は足さない。`/var/lib/layat` が無ければ
 root で実行する engine が作る。
 
-home / project / fixed の記録の置き場と、記録の内容・書き込みの手順は system mode でも変えない。
+home / project / fixed の記録の置き場と、記録の内容・書き込みの手順・baseline の優先順位は system mode でも変えない。
 
-置き場のパスと鍵の形は REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4 に置く。
+置き場のパスと鍵の形は REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4 と
+REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 に置く。
 
 ## 根拠
 
@@ -49,8 +51,8 @@ profile の基底は世代バックエンドの所有物で、記録は世代と
 記録（`<state>/layat`）と profile（`<state>/nix/profiles/layat`）は別の基底にある。同居させると、
 `layat prune` の走査対象に記録のディレクトリが入る。
 
-macOS で分岐しなければ、記録の置き場が OS ごとに分かれず、engine の解決と e2e の検証が 1 通りで済む。
-`/var/lib` が無くても、root の engine が作れば足りる。
+macOS でも分岐を足さないので、記録の置き場は OS によらず 1 つになる。`/var/lib` が無くても、root で
+実行する engine が作る。
 
 ## 棄却した代替案
 
@@ -62,7 +64,3 @@ root なら `/root/.local/state/layat` になる。実装の差分は無いが�
 ### `/nix/var/nix/profiles/layat` の下に同居させる
 
 置き場の数は減るが、世代バックエンドの所有する基底に layat 自前の状態を持ち込み、prune の走査と衝突する。
-
-### macOS では `/var/db/layat` に置く
-
-macOS の慣習には合うが、記録の置き場が OS ごとに分かれ、解決と検証を OS ごとに 2 通り持つことになる。

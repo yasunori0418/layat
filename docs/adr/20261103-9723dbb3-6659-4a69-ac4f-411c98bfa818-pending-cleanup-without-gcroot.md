@@ -7,6 +7,7 @@ issues:
   - "#406"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §7 を書き直した"
 justifies:
+  - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"
   - "REQ-840b3641-6e76-46da-82e9-680cabd65abe"
 references:
   - "ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1"
@@ -31,7 +32,8 @@ nix の事情で、世代操作を契約へ切り出す際に、この後片付�
 渡さない。engine はこれを build 出力の一時リンクの片付けとして扱い、gcroot の概念を持たない。pending を
 gcroot として張るのは生成器の事情として生成器に閉じる。
 
-失敗時に残る pending の扱いは REQ-840b3641-6e76-46da-82e9-680cabd65abe に置く。
+engine が `.pending` を消す規範は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b、失敗時に残る pending の扱いは
+REQ-840b3641-6e76-46da-82e9-680cabd65abe に置く。
 
 ## 根拠
 

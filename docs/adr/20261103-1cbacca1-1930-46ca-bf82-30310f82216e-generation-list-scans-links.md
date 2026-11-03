@@ -8,6 +8,7 @@ issues:
 origin: "system mode の e2e で、root 所有の profileDir を非 root が `list-generations` すると nix-env の lock 取得で失敗することが分かった（2026-10-18）。ADR-0063 §1・§2 を書き直した"
 justifies:
   - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"
+  - "DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814"
 references:
   - "ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd"
   - "ADR-4c8d459a-c371-4f0d-b009-16e2ca096e49"
@@ -37,7 +38,7 @@ nixprofile の List は nix-env を起動せず、profileDir の世代リンク�
 current の判定で、`profile` のリンク先が世代の名前でないときに実体の一致で探す規則は、Fake から引き継いだ
 補助の規則として残す。nix-env の作る profile は常に世代の名前を指すので、本番ではこの分岐に入らない。
 
-List の規範は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b に置く。
+List の規範は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b、走査の共用は DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814 に置く。
 
 ## 根拠
 

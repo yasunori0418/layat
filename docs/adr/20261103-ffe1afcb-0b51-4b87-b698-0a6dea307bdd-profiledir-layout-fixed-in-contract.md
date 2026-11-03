@@ -7,6 +7,7 @@ issues:
   - "#406"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §3a を書き直した"
 justifies:
+  - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"
   - "REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3"
 references:
   - "ADR-419914ba-9896-4dd1-853b-fb514fcb9f38"
@@ -30,7 +31,8 @@ profileDir の内部レイアウトは世代バックエンドの契約の固定
 定義は `internal/paths` に置き、engine とバックエンドの双方がそれに従う。
 
 並びそのものは ADR-419914ba-9896-4dd1-853b-fb514fcb9f38 が決めており、細目は
-REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3 に置く。
+REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3 に置く。レイアウトを契約の固定部分とする規範は
+REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b に置く。
 
 ## 根拠
 
