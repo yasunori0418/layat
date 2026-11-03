@@ -29,7 +29,7 @@ references:
 `list-generations` の世代一覧と `gitignore` の対象パスは、副作用の無い列挙である。outturn の item は
 処理単位の実行結果の記録で、id を identity から導く。世代番号のような値には identity の key に置き場が無い。
 
-`gitignore` は、`--json` が無ければ行指向のテキストを出す。`--json` は、それとは別に opt-in で選ぶ第 2 契約である（ADR-0033）。
+`gitignore` は、`--json` が無ければ行指向のテキストを出す。`--json` は、それとは別に opt-in で選ぶ第 2 契約である（ADR-7c8a0152-e034-4f16-9cf8-d5435be187e2）。
 
 ## 決定
 

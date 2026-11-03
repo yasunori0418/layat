@@ -33,7 +33,7 @@ sara は組み込みのモデル（型と relation）を持ち、カスタムス
 ハードウェア系の型と、対応する中間層の無い `scenario` / `system_architecture` は定義しない。
 
 型名とフィールド名は layat 固有の語を混ぜず、汎用の名前にする（例: `requirement` / `design` / `adr`）。
-型の内訳と relation は `docs/model.yaml` に置き、その変遷は ADR-0049・ADR-0051 などが持つ。
+型の内訳と relation は `docs/model.yaml` に置き、その変遷は SDR-34916a83-0cff-4524-a8ff-5a3195af52c3・SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed などが持つ。
 
 ## 根拠
 

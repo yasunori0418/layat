@@ -21,7 +21,7 @@ references:
 
 ## 背景
 
-`entries` は target をキーにした attrset で、キーの一意性は Nix が保証する（ADR-0014）。ただし entry は
+`entries` は target をキーにした attrset で、キーの一意性は Nix が保証する（ADR-c494e86e-ceb9-4380-b983-4e09553b01d6）。ただし entry は
 `target` フィールドでキーと違う target を明示できるので、別々のキーの entry が同じ target を指す
 ことがある。この衝突は、正規化した後の target の文字列を比べれば、ファイルシステムを見なくても
 判定できる。

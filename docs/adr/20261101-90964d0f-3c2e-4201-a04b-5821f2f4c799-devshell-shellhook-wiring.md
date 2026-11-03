@@ -26,7 +26,7 @@ references:
 
 project mode の主な用途は、リポジトリに入ったら repo 内の決まったパスへ自動で配置されることで
 ある。HM・NixOS・nix-darwin の各モジュールは engine を起動するだけの配線で、root と起動の
-タイミングを供給する（ADR-0003）。project mode にも、同じ役割を担う起動のきっかけが要った。
+タイミングを供給する（ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880）。project mode にも、同じ役割を担う起動のきっかけが要った。
 
 ## 決定
 

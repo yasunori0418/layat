@@ -26,7 +26,7 @@ references:
 ## 背景
 
 outturn（specVersion 1）は、エコシステムの各ツールを stdout / stdin の JSON パイプで合成するための
-共通規格である。単一責務のツールを outturn のパイプで組み立てることが、ADR-0004 の north-star に
+共通規格である。単一責務のツールを outturn のパイプで組み立てることが、ADR-10dcf5a9-f298-4123-9a50-24f43e25d30c の north-star に
 向かう手段になる。各ツールの出力を固定順に合成し、失敗時は逆順に rollback する
 オーケストレーションツールが構想されており、layat はその最初の適合実装にあたる。
 

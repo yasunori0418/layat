@@ -33,7 +33,7 @@ references:
 
 ## 背景
 
-stale 除去には「前回何を置いたか」の記録が要る。last-applied 記録（ADR-0058）が無いときは、
+stale 除去には「前回何を置いたか」の記録が要る。last-applied 記録（ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15）が無いときは、
 前世代から読む。module 経由（home-manager / NixOS / nix-darwin）で動くときは host が自前の世代を
 持つので、host の前世代（oldGenPath）から前回の配置を読む道もある。
 あわせて、profile をどの粒度で分けるかを決める必要がある。

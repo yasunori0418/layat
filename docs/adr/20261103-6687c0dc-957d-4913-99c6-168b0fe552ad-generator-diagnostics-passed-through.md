@@ -35,7 +35,7 @@ references:
 
 nix の eval は成功時に子プロセスの stderr を捨てていたため、`mkManifest` の `lib.warn` のような
 評価器の警告が利用者に届かなかった。build は stderr を素通ししていて、eval と build で挙動が
-食い違っていた。一方 CLI は成功時に何も出さない規律を持つ（→ ADR-0031）。
+食い違っていた。一方 CLI は成功時に何も出さない規律を持つ（→ ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5）。
 
 ## 決定
 

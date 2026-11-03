@@ -43,7 +43,7 @@ REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b に置く。
 使えば、home mode の config に触れない。
 
 フラグ名を root マーカーと揃えると、config の書き方と CLI の指定が 1 対 1 に対応する。
-`--system-root` は system mode（ADR-0036）の config を選ぶ。
+`--system-root` は system mode（ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c）の config を選ぶ。
 
 ## 棄却した代替案
 

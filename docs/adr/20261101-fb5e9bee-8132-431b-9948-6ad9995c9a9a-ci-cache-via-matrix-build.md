@@ -25,7 +25,7 @@ layat を使う側（activation や CI）は layat のバイナリを必要と�
 ## 決定
 
 キャッシュへの投入は、x86_64-linux・aarch64-linux・aarch64-darwin の matrix で `nix build .#layat` を
-実行し、cachix のキャッシュ `yasunori0418` へ送って行う。投入の契機とジョブの組み方は ADR-0028 が
+実行し、cachix のキャッシュ `yasunori0418` へ送って行う。投入の契機は ADR-6c477b0f-cd25-417d-91a0-172dd0ed084f、ジョブの組み方は ADR-21570c09-066c-471b-b605-3364265c8736 が
 決めている。
 
 検証の matrix は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27、キャッシュ投入の構成は

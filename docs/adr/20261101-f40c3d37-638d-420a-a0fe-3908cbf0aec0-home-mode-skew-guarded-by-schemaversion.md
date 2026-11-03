@@ -40,7 +40,7 @@ project mode では、devShell に pin した `layat` を同梱するので、CL
 
 home mode の版ずれは強制的には防がない。CLI と flake が pin する `layat` を同じ入力から揃えることを
 推奨として文書に書くに留める。ずれたときは、engine が manifest を読むときの検査に任せる。engine は対応版より
-新しい `schemaVersion` を拒否し、同じ版の中で知らない列挙値も拒否する（ADR-0059）。
+新しい `schemaVersion` を拒否し、同じ版の中で知らない列挙値も拒否する（ADR-b5431ecf-fe60-4b29-86af-9857478ce663）。
 
 推奨の規範は REQ-14f0aec9-abae-4621-82f3-40536a1ad904 に置く。
 

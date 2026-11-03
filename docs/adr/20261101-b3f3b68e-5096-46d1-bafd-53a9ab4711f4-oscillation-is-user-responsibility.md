@@ -27,7 +27,7 @@ references:
 
 ## 背景
 
-別の config A と B が同じ target を狙うと、ドリフト修復（ADR-0017）と cross-config の後勝ち
+別の config A と B が同じ target を狙うと、ドリフト修復（ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d）と cross-config の後勝ち
 （ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d）が組み合わさって、配置が往復し続ける。A が置き、
 B が foreign として奪い、次の shellHook で A が取り戻す、という動きである。1 回きりの後勝ちと違い、シェルに入るたびに繰り返す。そのたびに
 foreign symlink の warning も出る。
@@ -39,14 +39,14 @@ foreign symlink の warning も出る。
 まとめたりする機構も持たない。直し方（config 間の target の重複を解消する）は文書で注意するに留める。
 
 1 回の `apply --all` に載る config どうしの衝突のうち、eval で検出できるものは配置の前に止める
-（ADR-0038）。この決定が扱うのは、それ以外の衝突である。
+（ADR-75df92ae-0694-452b-8fb4-350994e31b25）。この決定が扱うのは、それ以外の衝突である。
 
 振動を可視化する warning の規範は REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 に置く。
 
 ## 根拠
 
 振動は設定ミスの症状で、warning が出続けることがそのシグナルになる。抑えたりまとめたりすると、
-直すべき設定ミスが見えにくくなる。warning は成功時に沈黙する出力規律（ADR-0031）でも常に stderr に
+直すべき設定ミスが見えにくくなる。warning は成功時に沈黙する出力規律（ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5）でも常に stderr に
 出るので、ユーザーの目に届く。
 
 振動を止めるには、どちらの config が正しいかを engine が判断する必要がある。その判断材料は engine に

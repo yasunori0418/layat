@@ -19,7 +19,7 @@ supersedes:
 
 初期の spec では、config の一部の entry だけを適用する `--only` を CLI に持たせていた。
 
-ADR-0002 で世代管理を nix profile に乗せると決めた際、この提案は実装に入る前に棄却された。
+世代管理を nix profile に乗せると決めた際（ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30）、この提案は実装に入る前に棄却された。
 profile の世代は manifest 全体を単位に atomic に切り替わるので、一部の entry だけを適用すると
 世代の記録と実際の配置がずれるためである。CLI に `--only` が実装されたことは無い。
 

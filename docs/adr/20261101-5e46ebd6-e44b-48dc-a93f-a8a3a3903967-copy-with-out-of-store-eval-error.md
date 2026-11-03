@@ -20,7 +20,7 @@ supersedes:
 
 ## 背景
 
-entry の `src` に out-of-store マーカー（`mkOutOfStoreSymlink` や、ADR-0059 の root 相対マーカー
+entry の `src` に out-of-store マーカー（`mkOutOfStoreSymlink` や、ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb の root 相対マーカー
 `mkRootRelativeSymlink`）を渡し、`method = "copy"` を指定することは、型の上では書ける。この
 組み合わせで engine が何をするかを決める必要があった。
 
