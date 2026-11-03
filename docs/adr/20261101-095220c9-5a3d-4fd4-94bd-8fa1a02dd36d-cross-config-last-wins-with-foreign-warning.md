@@ -10,6 +10,8 @@ justifies:
   - "REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557"
   - "REQ-5c6b07da-3d06-414d-8770-4f438234b322"
   - "REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7"
+supersedes:
+  - "ADR-0015"
 references:
   - "ADR-0038"
 ---

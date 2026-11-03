@@ -9,6 +9,8 @@ issues:
 origin: "layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §7 を書き直した"
 justifies:
   - "REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5"
+supersedes:
+  - "ADR-0043"
 references:
   - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
   - "ADR-feb60906-1517-46b8-8fa5-e007df4d3e11"

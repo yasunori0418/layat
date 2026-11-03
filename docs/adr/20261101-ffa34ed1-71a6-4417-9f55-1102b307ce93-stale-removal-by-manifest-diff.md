@@ -7,6 +7,8 @@ origin: "ADR-0002 §決定（stale 除去は世代由来の store マニフェ�
 justifies:
   - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
   - "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
+supersedes:
+  - "ADR-0002"
 references:
   - "ADR-0058"
 ---

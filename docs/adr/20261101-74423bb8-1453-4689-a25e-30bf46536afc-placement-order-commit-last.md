@@ -7,6 +7,8 @@ origin: "ADR-0006 §決定（部分失敗 = コミット最後）を書き直し
 justifies:
   - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
   - "REQ-61856da1-8883-401e-ad57-9f326b96d400"
+supersedes:
+  - "ADR-0006"
 references:
   - "ADR-0044"
   - "ADR-0057"

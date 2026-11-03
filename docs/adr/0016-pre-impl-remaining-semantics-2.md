@@ -2,7 +2,7 @@
 id: "ADR-0016"
 type: legacy_adr
 name: "実装前レビュー第 2 巡で surfaced した残セマンティクスを確定する（copy の編集可能性 / --all 適用順 / copy 内 symlink / home mode skew / farm アンカー名 / pending gcroot）"
-status: 採用
+status: 廃止
 origin: "ADR-0015 に続く実装前レビュー第 2 巡（grill）で surfaced した「実装前に決めておくべき」残細目の束"
 justifies:
   - "REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af"
@@ -22,7 +22,16 @@ references:
 ---
 # ADR-0016: 実装前レビュー第 2 巡で surfaced した残セマンティクスを確定する（copy の編集可能性 / --all 適用順 / copy 内 symlink / home mode skew / farm アンカー名 / pending gcroot）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 copy は mode 保存 + owner-write → ADR-f27830a5-4d13-4f61-be9e-3f04240ff322
+> - §2 `apply --all` の適用順は辞書順 → ADR-af37a636-a798-4c03-8fa4-e73ed6375a92
+> - §3 copy 内の symlink は symlink のまま → ADR-6d7e2201-3101-4d67-9112-a7e85d8c2ea0
+> - §4 home mode の version skew → ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0
+> - §5 symlink farm の GC アンカー名 → ADR-30f105c7-85a8-4fab-9dea-3277d932b524
+> - §6 `.pending-<name>` 残留の許容 → ADR-58fdbad9-5ed7-469d-b6b2-6462b2173888
+
+- ステータス: 廃止
 - 日付: 2026-06-14
 - 関連: ADR-0002, ADR-0005, ADR-0006, ADR-0011, ADR-0013, ADR-0014, ADR-0015, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `CONTEXT.md`
 - 改訂対象: **ADR-0011**「再帰コピーは mode 保存」を「mode 保存 + owner-write 付与」へ拡張。**ADR-0013**「`--all` は定義順」を「辞書順（キーソート）」へ訂正

@@ -6,6 +6,8 @@ status: 採用
 origin: "ドキュメント計画段階の最終レビュー（grill）で surfaced した「実装前に決めておくべき」残細目の束。ADR-0015 §5 を書き直した"
 justifies:
   - "REQ-0e341430-17f0-498b-9439-65491652163a"
+supersedes:
+  - "ADR-0015"
 references:
   - "ADR-0057"
   - "ADR-0058"

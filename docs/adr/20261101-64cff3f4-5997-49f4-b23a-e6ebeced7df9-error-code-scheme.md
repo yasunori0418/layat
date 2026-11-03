@@ -10,6 +10,8 @@ origin: "layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の�
 justifies:
   - "REQ-9341fa5d-836e-4023-af53-cc7d273438d1"
   - "REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62"
+supersedes:
+  - "ADR-0043"
 references:
   - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
   - "ADR-9e328362-2e90-441a-8eca-40081ce71b1b"

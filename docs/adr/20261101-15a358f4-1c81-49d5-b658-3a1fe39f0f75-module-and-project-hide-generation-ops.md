@@ -8,6 +8,9 @@ justifies:
   - "REQ-844ee375-919f-4341-81e1-a5f89fd32840"
   - "REQ-05abce3e-9797-432b-b93f-37c55d09afde"
   - "REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0"
+supersedes:
+  - "ADR-0002"
+  - "ADR-0005"
 references:
   - "ADR-0036"
 ---

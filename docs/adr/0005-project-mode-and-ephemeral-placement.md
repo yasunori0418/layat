@@ -2,7 +2,7 @@
 id: "ADR-0005"
 type: legacy_adr
 name: "project mode（プロジェクト相対配置）と ephemeral 配置原則"
-status: 採用
+status: 廃止
 justifies:
   - "REQ-05abce3e-9797-432b-b93f-37c55d09afde"
   - "REQ-a480c183-40ce-4201-93b5-65a7a59c1b9e"
@@ -18,7 +18,18 @@ references:
 ---
 # ADR-0005: project mode（プロジェクト相対配置）と ephemeral 配置原則
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - project mode を導入する → ADR-0007 §2 → ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed
+> - profile は解決済み root でキーする → ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988
+> - project mode の世代はユーザー露出しない → ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75
+> - 世代スキップ短絡を project mode の必須要件にする → ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d
+> - devShell shellHook を正式な配線レイヤーに加える → ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799
+> - ephemeral 配置原則 → ADR-4dca6ef4-2791-48d5-aa82-7037630968a6
+> - `.gitignore` 生成は専用コマンドで stdout 出力のみ → ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe
+> - copy / out-of-store も同原則を継承 → ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c
+
+- ステータス: 廃止
 - 日付: 2026-06-11
 - 関連: ADR-0002, ADR-0003, ADR-0004, ADR-0007, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
 

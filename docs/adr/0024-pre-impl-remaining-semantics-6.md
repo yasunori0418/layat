@@ -2,7 +2,7 @@
 id: "ADR-0024"
 type: legacy_adr
 name: "実装前残セマンティクス第6巡（fixed root キーイング・HM profile 粒度・非 build コマンドの eval 先行・listFilesInSrc 型ガード・target 衝突 eval 検出・既存 flake 組込・終了コード優先・--all 一括 eval・--quiet 規律・振動 warning・cleanup seam）"
-status: 採用
+status: 廃止
 origin: "ADR-0023 までの第5巡で潰し切れていない11点を、垂直トレーサー弾（ADR-0023 §4）着手の直前に再度の横断検査で洗い出した（実装前残セマンティクス確定の第6巡）"
 justifies:
   - "REQ-5c6b07da-3d06-414d-8770-4f438234b322"
@@ -29,7 +29,22 @@ references:
 ---
 # ADR-0024: 実装前残セマンティクス第6巡（fixed root キーイング・HM profile 粒度・非 build コマンドの eval 先行・listFilesInSrc 型ガード・target 衝突 eval 検出・既存 flake 組込・終了コード優先・--all 一括 eval・--quiet 規律・振動 warning・cleanup seam）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 fixed root も roothash でキー → ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988
+> - §2 HM モジュールは固定名 1 profile → ADR-0035
+> - §3 非 build コマンドも eval 先行 → ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9
+> - §4 `listFilesInSrc` で `set` も拒否 → 撤回（lib から除去済み。docs/publication-roadmap.md ①）
+> - §5 同一 manifest 内 target 衝突は eval 時に検出 → ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0
+> - §6 既存 flake への組み込み手順を docs に置く → ADR-9fde06e2-fe42-4274-8af3-da2298cdaeae
+> - §7 `--all --dryrun` の終了コード優先順 → ADR-3c3aa4a5-083a-43c1-a99f-92b9e97a68b9
+> - §8 `apply --all` は一括 eval → ADR-28605860-770e-41df-95dd-7dc05b20497a
+> - §9 `--quiet` は stdout に触れない → 撤回（ADR-0031）
+> - §10 振動の foreign warning は document-only → ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4
+> - §11 cleanup コマンドは MVP 非対応 → 撤回（ADR-0034）
+> - 決定の後継ではないが、ADR-ef9e4099-0cf4-409a-9e73-518866aea676 は起点の文脈として本 ADR を名指しし supersedes を張っている
+
+- ステータス: 廃止
 - 日付: 2026-06-14
 - 関連: ADR-0005, ADR-0007, ADR-0010, ADR-0011, ADR-0013, ADR-0015, ADR-0017, ADR-0019, ADR-0023, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `CONTEXT.md`
 - 改訂対象: ADR-0023 §3 の profileDir キーイング表に fixed（`--root` なし）行を補う。ADR-0023 §1 の eval 先行フローを非 build コマンドへ拡張。ADR-0010 の早期エラー方針へ target 衝突検出を回収（決定の反転なし）。

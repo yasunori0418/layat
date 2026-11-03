@@ -2,7 +2,7 @@
 id: "ADR-0023"
 type: legacy_adr
 name: "実装前残セマンティクス第5巡（実行フロー順序・出力/終了コード規約・--root キーイング・実装順序・gitignore モード）"
-status: 採用
+status: 廃止
 origin: "実装着手前（ドキュメントのみの計画段階を抜ける直前）の横断検査で、ADR-0022 までで潰し切れていない5点を洗い出した（ADR-0015/0016/0017/0022 と同系列の「実装前残セマンティクス」確定の第5巡）"
 justifies:
   - "REQ-2f9205ee-cec5-4072-ac3e-890caae79904"
@@ -26,7 +26,21 @@ references:
 ---
 # ADR-0023: 実装前残セマンティクス第5巡（実行フロー順序・出力/終了コード規約・--root キーイング・実装順序・gitignore モード）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 実行順序（eval 先行・flock・build） → ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9
+> - §1 rootKind の先読み → ADR-0055・ADR-0032
+> - §2 stdout 専有・stderr の規律 → ADR-0043 §6 → ADR-9e328362-2e90-441a-8eca-40081ce71b1b・ADR-feb60906-1517-46b8-8fa5-e007df4d3e11
+> - §2 終了コード表（0 / 1 / 2） → ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1
+> - §2 `--json` は将来送り → 撤回（ADR-0033）
+> - §2 `--quiet` / `--verbose` → 撤回（ADR-0031）
+> - §3 `--root` 明示時の roothash キー → ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988
+> - §4 垂直トレーサー弾 → 完了済みのプロセス決定（後継を持たない）
+> - §5 gitignore は project mode 限定 → ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe
+> - §5 振動はユーザー責任 → ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4
+> - §5 `listFilesInSrc` は path 限定 → 撤回（lib から除去済み。docs/publication-roadmap.md ①）
+
+- ステータス: 廃止
 - 日付: 2026-06-14
 - 関連: ADR-0005, ADR-0006, ADR-0007, ADR-0011, ADR-0013, ADR-0017, ADR-0018, ADR-0022, ADR-0055, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `CONTEXT.md`
 - 改訂対象: ADR-0011 / ADR-0013 の apply 実行フロー順序を「eval 先行」に具体化（決定の反転なし）。ADR-0017 の `--root` profile キーイングを home / fixed mode へ拡張。

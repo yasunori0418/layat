@@ -6,6 +6,8 @@ status: 採用
 origin: "ADR-0002 §決定（削除の安全不変条件）を書き直した"
 justifies:
   - "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
+supersedes:
+  - "ADR-0002"
 ---
 # ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c: stale 除去は記録どおりの symlink だけに限る
 

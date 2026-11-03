@@ -7,6 +7,8 @@ origin: "ADR-0002 §決定（全モードで自前 profile を持つ・粒度 = 
 justifies:
   - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
   - "REQ-844ee375-919f-4341-81e1-a5f89fd32840"
+supersedes:
+  - "ADR-0002"
 references:
   - "ADR-0007"
   - "ADR-0058"

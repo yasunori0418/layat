@@ -2,7 +2,7 @@
 id: "ADR-0011"
 type: legacy_adr
 name: "engine / CLI の技術スタックを確定する（依存方針・cobra・store path 取得・vendorHash・ロック）"
-status: 採用
+status: 廃止
 justifies:
   - "REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9"
   - "REQ-7a71a049-5876-4cfc-a65e-44e9a0349856"
@@ -20,7 +20,20 @@ references:
 ---
 # ADR-0011: engine / CLI の技術スタックを確定する（依存方針・cobra・store path 取得・vendorHash・ロック）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 依存ポリシーを層で分ける → ADR-0056・ADR-0043 §8 → ADR-bd8a4c8a-5e7e-485a-bccf-20dab63125f2
+> - §2 CLI フレームワーク = cobra → ADR-6b7becf0-f029-41e3-895e-b672dce94d3d
+> - §2 dryrun 色付け = fatih/color → 撤回（#111。保持する ADR なし）
+> - §3 engine は `internal/` に留める → ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3
+> - §4 store path は out-link で受け取る → ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1
+> - §5 `buildGoModule` + vendorHash → ADR-97edd9af-befb-4a9f-a8ef-de038c76336a
+> - §6 `syscall.Flock` → ADR-a0bac33b-d195-4dfd-9e74-61673c655873
+> - §7 再帰コピー → ADR-f27830a5-4d13-4f61-be9e-3f04240ff322
+> - §7 JSON / エラー処理は stdlib → ADR-fdb8003f-db36-424b-8484-6f2fd57a3027
+> - §8 Go toolchain の pin → ADR-2be5080a-1cba-4fea-bed8-66e0d0d7b8d0
+
+- ステータス: 廃止
 - 日付: 2026-06-13
 - 関連: ADR-0006, ADR-0007, ADR-0010, ADR-0055, ADR-0056, ADR-0057, `docs/spec.md`, `docs/concept.md`
 - 改訂対象: ADR-0007「store path 取得」を out-link 方式に具体化。ADR-0006 / ADR-0007 の「Go ライブラリ」語を `internal/` 層分離と明文化

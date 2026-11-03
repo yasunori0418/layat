@@ -2,7 +2,7 @@
 id: "ADR-0019"
 type: legacy_adr
 name: "パス安全性・copy の farm/gitignore 扱い・空 entries の挙動を確定する"
-status: 採用
+status: 廃止
 origin: "ADR-0018 後の横断検証で surfaced した「3 巡で詰め切れていなかった」残 4 点"
 justifies:
   - "REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f"
@@ -21,7 +21,14 @@ references:
 ---
 # ADR-0019: パス安全性・copy の farm/gitignore 扱い・空 entries の挙動を確定する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 絶対パス・`..` エスケープを eval 時に拒否 → ADR-00cc3497-654f-420a-928f-99f201e7efb0
+> - §2 copy entry は GC アンカーを持たない → ADR-30f105c7-85a8-4fab-9dea-3277d932b524
+> - §3 project mode の copy target は ephemeral → ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c
+> - §4 空 entries は正当な全クリア → ADR-5fc58c8f-dc0e-4c1d-8c1e-17d7ac7f0385
+
+- ステータス: 廃止
 - 日付: 2026-06-14
 - 関連: ADR-0002, ADR-0005, ADR-0006, ADR-0010, ADR-0013, ADR-0014, ADR-0016, `docs/spec.md`, `docs/design.md`, `docs/concept.md`
 - 改訂対象: **ADR-0010**（normalizeManifest の検査）にパス安全性検査を追加。**ADR-0006**（GC アンカー = manifest + farm）に copy 非アンカーを明記。**ADR-0005**（project mode ephemeral）に copy target の扱いを明記

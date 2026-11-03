@@ -6,6 +6,8 @@ status: 採用
 origin: "ADR-0002 §決定（nix profile に乗せる）を書き直した"
 justifies:
   - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
+supersedes:
+  - "ADR-0002"
 references:
   - "ADR-0057"
 ---

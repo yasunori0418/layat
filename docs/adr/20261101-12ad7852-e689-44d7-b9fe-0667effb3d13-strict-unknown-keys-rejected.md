@@ -6,6 +6,8 @@ status: 採用
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の strict の項を書き直した"
 justifies:
   - "REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51"
+supersedes:
+  - "ADR-0010"
 references:
   - "ADR-0008"
 ---

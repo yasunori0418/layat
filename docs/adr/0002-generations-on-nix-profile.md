@@ -2,7 +2,7 @@
 id: "ADR-0002"
 type: legacy_adr
 name: "世代管理を nix profile に乗せる（全モード自前 profile / rollback は standalone 中心）"
-status: 採用
+status: 廃止
 justifies:
   - "REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe"
   - "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
@@ -16,7 +16,23 @@ references:
 ---
 # ADR-0002: 世代管理を nix profile に乗せる（全モード自前 profile / rollback は standalone 中心）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - nix profile に乗せる → ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30
+> - 純粋性と副作用の両立 → ADR-521765d7-7e31-42f4-b548-979185a7586a
+> - 全モードで自前 profile を持つ・粒度 = 1 profile → ADR-fe035038-4415-4a1e-aa5c-509fdfce9955
+> - `mkActivationScript` を profile の単位にする → 撤回（ADR-0007 §3 → ADR-86a77232-dc99-4c04-bd6d-2127410e8828）
+> - module の profile は内部機構（rollback を公開しない） → ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75
+> - standalone は世代を常時 ON → ADR-74bf4a1f-bb74-44a7-a3cb-3b3e87c24f95
+> - CLI は最小・世代切替と GC は委譲 → ADR-0006「CLI 構造」→ ADR-a51897c5-f709-4b7a-8db2-61e6ebb0040c・ADR-0015 §3 → ADR-0057
+> - `--only` を廃止する → ADR-cbac86c1-d774-4cf3-abe6-ca8a7c2f1995
+> - copy は世代から除外する・「copy の扱い」節 → ADR-c4ad9987-850e-4834-bbea-d8de3b073548
+> - out-of-store はマッピングだけを追跡する → ADR-6d2327f7-f513-42c3-89f8-808467db1914
+> - stale 除去は世代由来の store マニフェストの diff → ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93
+> - 削除の安全不変条件 → ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c
+> - GC とストレージ解放 → ADR-0057
+
+- ステータス: 廃止
 - 日付: 2026-06-07
 - 関連: ADR-0001, ADR-0003, ADR-0006, ADR-0015, ADR-0057, ADR-0058, `docs/concept.md`, `docs/spec.md`（世代管理仕様）
 

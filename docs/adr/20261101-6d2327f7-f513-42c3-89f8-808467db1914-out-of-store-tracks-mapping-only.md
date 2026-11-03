@@ -6,6 +6,8 @@ status: 採用
 origin: "ADR-0002 の決定「out-of-store は世代追跡する」を書き直した"
 justifies:
   - "REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa"
+supersedes:
+  - "ADR-0002"
 references:
   - "ADR-0059"
 ---
