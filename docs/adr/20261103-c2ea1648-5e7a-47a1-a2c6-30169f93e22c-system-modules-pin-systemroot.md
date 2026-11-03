@@ -43,7 +43,7 @@ REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 に置く。
 
 host の activation は root 権限で実行される。ここからユーザーの home へ配置すると、ファイルの所有者の扱い・
 ユーザーの解決・profile 基底の選び方をモジュールが抱えることになる。home への配置は home-manager
-モジュールが担っており、同じ home へ配置する経路を 2 本にしない。
+モジュールが担っており、同じ home へ配置する手段を 2 つ持たない。
 
 `subdir` の扱いを home-manager モジュールの `homeRoot` と同じ形にそろえるので、利用者は統合層を
 変えても config の書き方を変えずに済む。
@@ -52,4 +52,4 @@ host の activation は root 権限で実行される。ここからユーザー
 
 ### `layat.user` を受け取り、そのユーザーの home へ home mode で配置する
 
-当初の想定。home-manager モジュールと重なる経路を root 権限で持つことになる。
+当初の想定。home-manager モジュールと重なる配置の手段を root 権限で持つことになる。
