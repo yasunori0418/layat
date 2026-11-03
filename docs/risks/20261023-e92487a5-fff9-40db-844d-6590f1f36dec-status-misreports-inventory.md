@@ -31,8 +31,8 @@ config が一覧から消える。system 基底が読めないのを「記録 0 
 
 ## 実現性
 
-**likelihood: medium** — 変更頻度の側では、記録基底のレイアウトは ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15 / ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c で
-最近動いた領域で、`ListRootHashSeries` は prune と共有するので、prune 側の都合で列挙条件が
+**likelihood: medium** — 変更頻度の側では、記録基底のレイアウトは最近動いた領域で
+（現在の決定は → ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15 / ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c）、`ListRootHashSeries` は prune と共有するので、prune 側の都合で列挙条件が
 変わりうる。検証ゲートの側では、status の走査は新規のコードで、既存のテストはどれも覆って
 いない。ただし列挙と並び順は tmpdir の実 FS で決定的に検証でき、blind spot に
 なりにくい。両軸を合わせて medium。

@@ -40,8 +40,8 @@ REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の `specification` に「インメモ�
 **likelihood: high** — 逆操作は 6 種（unlinkNew / relinkOld / removeCopy / restoreRename /
 mkdir / backup 戻し）あり、それぞれの前方操作が置かれる段（PreRemove / Backup / place /
 materializeCopies / removeStale）と組み合わせで機能する。段の追加・順序変更のたびに
-journal 記録漏れが入りうる構造で、実際に ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c / ADR-77312c71-fa32-481b-ad80-c91e5b282edc の PreRemove 追加時に
-journal 側の対応が必要になっている。
+journal 記録漏れが入りうる構造で、実際に PreRemove の追加時に journal 側の対応が必要になっている
+（現在の決定は → ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c / ADR-77312c71-fa32-481b-ad80-c91e5b282edc）。
 
 **impact: high** — 復旧はユーザーの手作業になり、消えた実ディレクトリは復旧手段が無い。
 
