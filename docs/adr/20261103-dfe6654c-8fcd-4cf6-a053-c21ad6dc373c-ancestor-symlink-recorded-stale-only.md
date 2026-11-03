@@ -1,7 +1,7 @@
 ---
 id: "ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c"
 type: adr
-name: "祖先 symlink は自己記録の stale だけを移行する"
+name: "祖先 symlink は自分が記録して古くなったものだけを移行する"
 status: 採用
 issues:
   - "#170"
@@ -12,7 +12,7 @@ references:
   - "ADR-0015"
   - "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
 ---
-# ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c: 祖先 symlink は自己記録の stale だけを移行する
+# ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c: 祖先 symlink は自分が記録して古くなったものだけを移行する
 
 - ステータス: 採用
 - 日付: 2026-11-03
@@ -33,9 +33,10 @@ target の祖先が symlink なら、それが自分の前世代の置いた sym
 
 ## 決定
 
-祖先の symlink の conflict を外して移行へ回すのは、その祖先が recorded かつ stale のときに
-限る。recorded は、前世代の manifest がその祖先を entry として記録し、on-disk の symlink が
-記録の dest と一致すること。stale は、その祖先が次世代の manifest に無いこと。foreign な祖先、
+祖先の symlink の conflict を外して移行へ回すのは、その祖先が記録済みで、しかも古くなって
+いるときに限る。記録済みとは、前世代の manifest がその祖先を entry として記録し、on-disk の
+symlink が記録の dest と一致すること。古くなっているとは、その祖先が次世代の manifest に
+無いこと。foreign な祖先、
 前世代が無いとき、次世代にも祖先の entry が残る自己矛盾の manifest は、これまでどおり error で
 止める。
 
@@ -43,12 +44,12 @@ target の祖先が symlink なら、それが自分の前世代の置いた sym
 
 ## 根拠
 
-recorded と stale の両方を求めれば、自分で置いて自分で消すという既知で安全な場合だけを最小の
-条件で切り出せる。recorded の判定は、stale 除去が記録どおりの symlink だけを消すときの不変条件
+記録済みと古くなっていることの両方を求めれば、自分で置いて自分で消すという既知で安全な場合だけを最小の
+条件で切り出せる。記録済みの判定は、古くなった配置の除去が記録どおりの symlink だけを消すときの不変条件
 （ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c）と同じである。
 
-recorded だけで緩めると、次世代にも祖先が残る自己矛盾の manifest まで通してしまう。親を消せない
-のに子を置くことになる。stale だけで緩めると foreign な祖先まで通し、store の汚染が戻る。
+記録済みだけを条件に緩めると、次世代にも祖先が残る自己矛盾の manifest まで通してしまう。親を消せない
+のに子を置くことになる。古くなっていることだけを条件に緩めると foreign な祖先まで通し、store の汚染が戻る。
 既知のものだけ移行し、未知のものでは安全に止まる、という非対称を保つ。
 
 前世代の manifest は state ディレクトリに永続しているので、この判定は mode によらず成り立つ。
@@ -64,6 +65,6 @@ recorded だけで緩めると、次世代にも祖先が残る自己矛盾の m
 
 foreign な symlink の配下への誤ったネスト（store の汚染）まで通してしまう。
 
-### recorded だけを条件にする
+### 記録済みだけを条件にする
 
 次世代にも祖先が残る自己矛盾の manifest まで緩め、親を消せないのに子を置く矛盾を生む。
