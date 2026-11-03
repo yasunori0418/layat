@@ -29,7 +29,7 @@ project mode では、新しい link farm が前回適用したものと同一�
 entry だけを置き直す（世代スキップ）。devShell の `shellHook` は、シェルに入るたびに apply を実行するからである。
 
 NixOS の activation は switch のときだけでなく、boot のたびにも実行される。NixOS モジュールはこの activation
-から engine を起動するので、構成を変えていなくても boot のたびに system mode の apply が走る。世代スキップが
+から engine を起動するので、構成を変えていなくても boot のたびに system mode の apply が実行される。世代スキップが
 project mode に限られていると、boot を重ねるだけで system mode の profile の世代が増え続ける。
 
 世代スキップのときに置き直す対象をどこまでにするかも決める必要があった。copy で置いた entry は、

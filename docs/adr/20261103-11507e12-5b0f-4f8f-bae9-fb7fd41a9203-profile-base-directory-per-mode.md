@@ -35,7 +35,7 @@ profile の基底は、system mode の config では `/nix/var/nix/profiles/laya
 無ければ `~/.local/state` とする。基底は世代バックエンドの契約が与える。
 
 基底の値とその下の並びは REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3 と
-REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4、契約の口は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b に置く。
+REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4、基底を返す契約の操作は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b に置く。
 
 ## 根拠
 

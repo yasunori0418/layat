@@ -48,5 +48,5 @@ host の nix と版がずれうる。host が nix の版を選んでいるのに
 
 ### `nix-env` を絶対パスで呼ぶよう engine を変える
 
-engine が NixOS の activation という 1 つの起動環境の都合を抱えることになる。起動環境を整えるのは配線である
+NixOS の activation という 1 つの起動環境のために、engine の処理を変えることになる。起動環境を整えるのは配線である
 モジュールの役目である。
