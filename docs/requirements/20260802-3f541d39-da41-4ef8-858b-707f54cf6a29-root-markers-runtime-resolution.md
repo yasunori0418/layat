@@ -50,7 +50,7 @@ systemRoot  :: marker   # /（distro 構想・将来）
 > 解決する）で、`docs/spec.md` がこの改訂に追従できていない。原文の限定を規範に採らない
 > 扱いは REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 と同じ。ただし本 item の規範は「marker が kind を運ぶこと」に
 > 留まり、`systemRoot` が実行時に `/` へ解決することまでは主張しない。そのため
-> ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c は本 item の `justifies` の対象にしない（当該規範は REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 が
+> ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed の決定のうち `/` への解決は本 item の `justifies` の根拠に含めない（当該規範は REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 が
 > 持つ）。
 >
 > **marker の関数適用形（`subdir`）**: 適用形 `homeRoot { subdir = ".config"; }` は本 item の
