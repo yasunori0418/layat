@@ -26,8 +26,8 @@ references:
 sara の orphan 判定は、item が `direction: upstream` の relation を実際に 1 本でも張っているかだけで
 決まる。型単位・item 単位で orphan warning を抑止する設定は無い。
 
-親を持たない型（root）の item は、構造上いつも orphan になる。root の型が増えるほど、warning の中に
-張り忘れではない常在の項目が混ざり、本物の接続漏れが埋もれる。
+親を持たない型（root）の item は、構造上いつも orphan になる。root の型が増えるほど、warning の中で
+張り忘れではない常在の項目の割合が増え、本物の接続漏れが埋もれる。
 
 ## 決定
 

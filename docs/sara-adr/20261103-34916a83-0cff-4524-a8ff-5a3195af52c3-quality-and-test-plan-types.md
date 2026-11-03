@@ -35,7 +35,7 @@ test_plan はテスト計画活動の成果物（スコープ・テストレベ�
 
 どちらも solution を親に `derives_from` で張り、requirement と同じ `specification` /
 `specification_ja` を持つ。`specification` は英語の規範文で書く。sara の RFC2119 キーワード検証は
-requirement にしか効かないので、この 2 型の様式はレビューで守る。
+requirement だけを対象にするので、この 2 型の様式はレビューで守る。
 
 ## 根拠
 
@@ -54,4 +54,4 @@ requirement にしか効かないので、この 2 型の様式はレビュー�
 
 ### quality / test_plan の `specification` を日本語で書く
 
-`docs/requirements/` と書き方が分かれ、規範文の読み方が型ごとに変わる。機械検証が効かなくても様式は揃える。
+`docs/requirements/` と書き方が分かれ、規範文の読み方が型ごとに変わる。機械検証の対象外でも様式は揃える。
