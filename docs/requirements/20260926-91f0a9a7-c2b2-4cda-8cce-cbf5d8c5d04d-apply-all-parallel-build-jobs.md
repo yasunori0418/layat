@@ -60,4 +60,4 @@ specification_ja: |
 
 ## 出典
 
-ADR-0039「`apply --all` を build・配置の両段階で並列化する」の build 段階（Issue #153 で起票）。
+ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e「apply --all の build を worker pool で並列に実行する」（Issue #153 で起票）。

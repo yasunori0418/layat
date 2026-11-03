@@ -40,6 +40,6 @@ engine は `manifest.json` を入力に取り、外部コマンドは `git`（to
 （「`manifest.json` を入力に取り nix(profile)/git(toplevel)のみ叩く」「ネイティブ FS
 操作で place/replace/remove、保守的 stale 除去、nix-env --set」）。
 
-決定の実体は ADR-0006「決定」節で、`rsync` / `ln` の runtime 依存を落とし FS 操作を
+決定の実体は ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7「engine が直接叩く外部コマンドを git に限る」で、`rsync` / `ln` の runtime 依存を落とし FS 操作を
 ネイティブ Go（`os.Symlink` / ネイティブ再帰コピー）で行うことを定めている。外部コマンドを
 `git` のみに限り、profile 操作を世代バックエンドの契約へ移したのは ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7。

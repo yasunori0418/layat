@@ -61,4 +61,4 @@ src と target root の時点の関係は REQ-81249072-56b8-42f5-807b-ea623c1efe
 
 ## 出典
 
-ADR-0059「root 相対 out-of-store マーカー」。
+ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb・ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7・ADR-29c0838b-3e25-4b09-a479-9ebbbc4466c7・ADR-d89c2ede-1aba-46fa-9f14-8dcf8a266e0e・ADR-796508e6-2845-467d-83f8-386930a48bfb。

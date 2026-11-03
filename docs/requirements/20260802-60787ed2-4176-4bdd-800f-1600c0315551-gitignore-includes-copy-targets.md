@@ -33,4 +33,4 @@ project mode の copy target も ephemeral 扱いで、各 clone で place-once 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `gitignore` の `method` 非区別の
 箇条書き。
 
-決定の実体は ADR-0019「copy の farm/gitignore 扱い」。
+決定の実体は ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c「project mode では copy と out-of-store も ephemeral として扱う」。

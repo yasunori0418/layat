@@ -29,7 +29,7 @@ specification_ja: |
 - `method = "copy"` かつ out-of-store marker の組み合わせを拒否する。
 
 規範は frontmatter が正。`root = systemRoot`（system mode）は `rootKind = "system"` として
-評価を通り、このチェックの対象ではない（→ ADR-0036）。
+評価を通り、このチェックの対象ではない（→ ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c）。
 
 単一フィールドの optionType では表現できない条件のため、型検査とは別に `throwIf` で
 評価時に停止させる。out-of-store は「ライブ symlink」、copy は「place-once

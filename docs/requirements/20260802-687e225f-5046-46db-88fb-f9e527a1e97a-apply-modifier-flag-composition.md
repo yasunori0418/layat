@@ -31,4 +31,4 @@ specification_ja: |
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply --all --recopy` の箇条書き。
 
-決定の実体は ADR-0021「recopy 合成」と、`--backup` について同じ直交性を定めた ADR-0045。
+決定の実体は ADR-b08479ba-0eae-4668-a4a2-910cd40bd316「apply の修飾フラグを --all と合成できるようにする」と、`--backup` について同じ直交性を定めた ADR-33d8c466-6b38-46b6-8696-ad7521c72786。

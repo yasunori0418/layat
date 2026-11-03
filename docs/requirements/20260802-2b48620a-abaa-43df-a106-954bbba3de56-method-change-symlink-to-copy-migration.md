@@ -41,7 +41,7 @@ method 変更 copy→symlink は**自動移行しない**（ユーザー編集�
 > REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 の担当。
 
 祖先 symlink の migration は REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575、実 dir target の migration は REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26 の
-担当。除去を既定 silent とし `-v` で可視化するという出力規律そのもの（→ ADR-0031）は
+担当。除去を既定 silent とし `-v` で可視化するという出力規律そのもの（→ ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5・ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）は
 REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 / REQ-0a123b89-0399-4f76-b988-56a5f7e0becf の担当で、本 item は「この除去を warning にせず配置レポート側で
 扱う」ことだけを規範とする。
 
@@ -50,4 +50,4 @@ REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 / REQ-0a123b89-0399-4f76-b988-56a5f7e0b
 `docs/spec.md`「配置動作仕様」→「symlink モード」の手順 0.6 と、同節の箇条書き
 「method 変更 copy→symlink は自動移行しない」。
 
-決定の実体は ADR-0047「配置前除去（PreRemove）の一般化」の D5。
+決定の実体は ADR-fc28d09c-9d52-4539-8838-e9ae5a414594・ADR-02ed93fa-c59f-4790-805d-759501017d2b。

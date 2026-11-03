@@ -56,6 +56,6 @@ devShells.default = pkgs.mkShell {
 
 `docs/spec.md`「モジュール別動作仕様」→「devShell（配線）」節。
 
-決定の実体は ADR-0005「project mode（プロジェクト相対配置）と ephemeral 配置原則」
+決定の実体は ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799「devShell の shellHook で配線する」
 （devShell からの project mode キックと世代スキップ）と、devShell を配線層として位置づける
-ADR-0007。
+ADR-f85f1afd-9b87-4f7a-922e-97c62554f198。

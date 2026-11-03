@@ -40,5 +40,5 @@ eval プロセス起動コストを N→1 に固定する。
 
 `docs/spec.md`「CLI 仕様」→「実行フロー」の `apply --all` 一括 eval の箇条書き。
 
-決定の実体は ADR-0024「`--all` 一括 eval」で、legacy entrypoint の eval 形は ADR-0032。
-`targets` を取得に加えたのは ADR-0038（前段衝突検査 REQ-38506419-c23d-4fce-b167-30715ce6a69d が使う）。
+決定の実体は ADR-28605860-770e-41df-95dd-7dc05b20497a「apply --all は config ごとの情報を 1 回の eval でまとめて取る」で、legacy entrypoint の eval 形は ADR-c5ebc6d9-d218-45f7-bce1-4dd481766843。
+`targets` を取得に加えたのは ADR-7f4fd2f6-672d-4d8c-a881-31024ad1d7c3（前段衝突検査 REQ-38506419-c23d-4fce-b167-30715ce6a69d が使う）。

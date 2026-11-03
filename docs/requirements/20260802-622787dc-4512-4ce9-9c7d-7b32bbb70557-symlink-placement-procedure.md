@@ -64,7 +64,7 @@ specification_ja: |
 > REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575 / REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26 / REQ-2b48620a-abaa-43df-a106-954bbba3de56 / REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98、張替えを unlink + symlink の
 > 2 操作で行うことは REQ-61856da1-8883-401e-ad57-9f326b96d400 の担当。`shellHook` 再入で起きる cross-config の振動は
 > REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 の担当。記録済み symlink の張替えを既定 silent とし `-v` で可視化するという
-> 出力規律そのもの（→ ADR-0031）は REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 / REQ-0a123b89-0399-4f76-b988-56a5f7e0becf の担当で、本 item は
+> 出力規律そのもの（→ ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5・ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）は REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 / REQ-0a123b89-0399-4f76-b988-56a5f7e0becf の担当で、本 item は
 > 「記録済みは warning にせず配置レポート側で扱い、foreign は warning を出す」という
 > 対比だけを規範とする。
 
@@ -73,6 +73,4 @@ specification_ja: |
 `docs/spec.md`「配置動作仕様」→「symlink モード」の手順 1〜3 と、同節の箇条書き
 第 3・4 項。
 
-決定の実体は ADR-0015「実装前レビューで surfaced した残セマンティクス」の foreign symlink
-warning と cross-config 衝突（後勝ち）。root 相対の配置元は ADR-0059「root 相対 out-of-store
-マーカー」が加えた。
+決定の実体は ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d「cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する」。root 相対の配置元は ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7「root 相対マーカーのリンクを target 起点の相対パスで張る」が加えた。

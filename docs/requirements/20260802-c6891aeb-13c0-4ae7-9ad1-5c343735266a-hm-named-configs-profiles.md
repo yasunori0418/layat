@@ -48,10 +48,10 @@ specification_ja: |
 > 単一 manifest = 1 profile（固定名 `default`）で `<name>` 次元を持たず、**HM モジュール経由では
 > 役割分離はできない**。役割ごとに分けたいユーザーは standalone CLI 経路を使う。HM の複数
 > profile 化（`layat.configs.<name>.entries` 等）は将来拡張の seam として残す」と述べるが、
-> この MVP 限定は **ADR-0035 が実装決定済み**（seam を実装へ進め、`layat.entries` を
+> この MVP 限定は **ADR-01abcd5a-464f-4c44-8afd-30950631487c・ADR-3447db4a-cdec-4573-bbad-05bbffc34a65 が実装決定済み**（seam を実装へ進め、`layat.entries` を
 > `configs.default.entries` への糖衣にする）で反転している。`docs/spec.md` 側がこの改訂に
 > 追従できていないため、分割にあたって原文の MVP 限定を規範へ持ち込まない判断をした
-> （REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 / REQ-16faf428-77f3-492f-b858-222c5274cbf7 で ADR-0036 由来の未追従を扱ったのと同じ扱い）。
+> （REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 / REQ-16faf428-77f3-492f-b858-222c5274cbf7 で ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c 由来の未追従を扱ったのと同じ扱い）。
 > `docs/spec.md` の追従は本 item の担当範囲外。
 >
 > **原文の残る規範の所在**: `layat.configs` / `layat.entries` のオプション定義そのものは
@@ -61,13 +61,13 @@ specification_ja: |
 > REQ-496b1a07-5b74-416b-9e5f-3952b4c03737、1 起動あたりの activation 契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、module 経路で rollback を host へ
 > 一本化することは REQ-844ee375-919f-4341-81e1-a5f89fd32840 の担当。
 >
-> **ADR-0035 §3〜§4 を本 item に含めない理由**: 同 ADR は §3 で activation が `configs` を
+> **旧決定の activation と衝突検出の項を本 item に含めない理由**: 旧決定は activation が `configs` を
 > 走査して profile ごとに engine を kick すること（辞書順・1 profile の失敗で後続を止めず
-> 最後に集約）、§4 で単一 HM config 内の `configs` 間の正規化後 target 衝突を eval 時
-> assertion で停止することも決めている（ADR-0060 が §3 を `apply --all` 1 回起動へ、§4 を
+> 最後に集約）、単一 HM config 内の `configs` 間の正規化後 target 衝突を eval 時
+> assertion で停止することも決めている（ADR-f58e9981-bacc-4937-98b8-bddce0a057db が前者を `apply --all` 1 回起動へ、ADR-1338a293-3f69-48f5-9164-efb4ec6994d6 が後者を
 > activation の `apply --all` 前段検査へ改めた）が、いずれも `docs/spec.md` に対応記述が無い
-> （原文が ADR-0035 未追従のため）。本 item は原文 blockquote の担当範囲＝profile 粒度に
-> 留め、**§3 の規範は REQ-c847d1af-a437-46bb-bd64-42083810d034、§4 の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 が持つ**。なお §4 の前段
+> （原文が旧決定に未追従のため）。本 item は原文 blockquote の担当範囲＝profile 粒度に
+> 留め、**前者の規範は REQ-c847d1af-a437-46bb-bd64-42083810d034、後者の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 が持つ**。なお後者の前段
 > 検出は、別 entrypoint・別 manifest の cross-config を「eval では検出不可・実行時の
 > 後勝ち + foreign warning」とする REQ-5c6b07da-3d06-414d-8770-4f438234b322 / REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 に対する**例外**（HM の
 > `configs` は全 config が activation の単一の `apply --all` 起動に載るため配置前に検出できる）
@@ -78,8 +78,8 @@ specification_ja: |
 `docs/spec.md`「モジュールオプション仕様」→「共通オプション（全モジュール）」節の
 blockquote「HM モジュールの profile 粒度（MVP）」。
 
-決定の実体は ADR-0035「HM モジュールに `layat.configs.<name>` を導入し複数 profile
-（役割分離）を可能にする」§1〜§2（ADR-0024 §2 / ADR-0025 §2 の MVP 限定を改訂）。`<name>` 次元と
-atomic 性・合成ヘルパ不提供は §1、`default` が従来と同じ profile に解決され続ける非破壊性は
-§1（profile dir が `<name>` 直キーに乗ること）と §2（`layat.entries` を `configs.default.entries`
+決定の実体は ADR-01abcd5a-464f-4c44-8afd-30950631487c「HM モジュールは layat.configs.<name> ごとに独立した profile を持つ」と
+ADR-3447db4a-cdec-4573-bbad-05bbffc34a65「layat.entries を configs.default.entries への rename 糖衣として残す」（旧決定の MVP 限定を改訂）。`<name>` 次元と
+atomic 性・合成ヘルパ不提供は ADR-01abcd5a-464f-4c44-8afd-30950631487c、`default` が従来と同じ profile に解決され続ける非破壊性は
+ADR-01abcd5a-464f-4c44-8afd-30950631487c（profile dir が `<name>` 直キーに乗ること）と ADR-3447db4a-cdec-4573-bbad-05bbffc34a65（`layat.entries` を `configs.default.entries`
 への糖衣とすること）の双方に依る。

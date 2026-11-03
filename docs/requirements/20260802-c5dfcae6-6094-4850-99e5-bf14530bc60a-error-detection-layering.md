@@ -51,19 +51,17 @@ attrset のため Nix のキー重複不可で担保され、**重複 `name` と
 > - `mkManifest` が入力検査の単一ゲートであること → REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34
 >
 > `root = systemRoot`（system mode）は `rootKind = "system"` として評価を通り、評価時エラーには
-> ならない（→ ADR-0036）。
+> ならない（→ ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c）。
 
 ## 出典
 
 `docs/spec.md`「エラー仕様」節の導入文と、同節の表のうち評価時エラー行・engine 実行時
 エラー行の別。
 
-決定の実体は ADR-0010「manifest の型検査を `evalModules` + marker タグ方式で行う」（設定の
+決定の実体は ADR-2e454c1f-6cad-41d8-8311-2c8e5b8efdf6「mkManifest の入力を evalModules で検査する」（設定の
 誤りを `mkManifest` の評価時に閉じる）と、native に担保される性質へ検査を置かない根拠と
-なる ADR-0014「entries を target キーの attrset にし、手動 name と手動一意性チェックを
-廃する」。
+なる ADR-c494e86e-ceb9-4380-b983-4e09553b01d6「entries を target をキーにした attrset にする」。
 
-実体依存の判定を engine 実行時へ回すことは、ADR-0013「engine 実行時セマンティクスの細目を
-確定する」が個別の決定（copy + marker の eval エラー等）で示す層の分かれ方を、節の導入文が
-一般則としてまとめたものである。この一般則そのものを表明した ADR は無いため、同 ADR からは
+実体依存の判定を engine 実行時へ回すことは、ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967「copy と out-of-store の併用を eval 時に拒否する」などの個別の決定に現れる層の分かれ方を、節の導入文が
+一般則としてまとめたものである。この一般則そのものを表明した ADR は無いため、これらの ADR からは
 側面の根拠として `justifies` は張らない（個別の決定の帰属は REQ-16faf428-77f3-492f-b858-222c5274cbf7 が担当する）。

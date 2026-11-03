@@ -37,6 +37,6 @@ specification_ja: |
 この 2 行が挙げる解決失敗時の停止そのものに対応する決定を持つ ADR は無く、
 `docs/spec.md` が一次記述にあたる。よって本 item に `justifies` は張られないが、これは
 張り漏れではない。前提となる「project root を git toplevel に置く」ことは
-ADR-0005「project mode（プロジェクト相対配置）と ephemeral 配置原則」が定めるが、同 ADR は
+ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed「root は 3 つの marker で表す」が定めるが、同 ADR は
 解決に失敗したときの扱いを決めていないため、側面の根拠として `justifies` は張らない
 （前提そのものの帰属は REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e が担当する）。

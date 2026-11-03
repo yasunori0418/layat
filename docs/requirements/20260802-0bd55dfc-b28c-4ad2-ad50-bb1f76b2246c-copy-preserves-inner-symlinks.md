@@ -31,5 +31,4 @@ place-once そのものは REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9、recopy そ
 `docs/spec.md`「配置動作仕様」→「copy モード（place-once・ユーザー管理）」節の箇条書き第 5 項
 （および「recopy」節の「symlink 複製は通常 copy と同じ」）。
 
-決定の実体は ADR-0016「実装前レビュー第 2 巡で surfaced した残セマンティクス」の
-「copy 内 symlink」。
+決定の実体は ADR-6d7e2201-3101-4d67-9112-a7e85d8c2ea0「copy 内の symlink は symlink のまま複製する」。

@@ -60,12 +60,11 @@ manifest を合成するヘルパは持たない（1 profile = 1 config の atom
 >
 > - legacy entrypoint の addressing がフラットな `layat.<name>` になること → REQ-496b1a07-5b74-416b-9e5f-3952b4c03737
 > - `apply --all` の一括 eval そのもの → REQ-535b811d-dfc5-4eac-92db-737e70eb5415
-> - 1 profile = 1 config の atomic 性（→ ADR-0002）→ REQ-1be4d678-959c-44d7-a346-44bfd95af56e
+> - 1 profile = 1 config の atomic 性（→ ADR-fe035038-4415-4a1e-aa5c-509fdfce9955）→ REQ-1be4d678-959c-44d7-a346-44bfd95af56e
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「アドレッシング」の blockquote「legacy entrypoint の
 canonical 形」。
 
-決定の実体は ADR-0032「legacy entrypoint（shell.nix / default.nix）は mkShell passthru を
-canonical とし、addressing を `nix build -f` に統一する」。
+決定の実体は ADR-925b0011-e2a2-43ac-a5d3-5e4a10f52470・ADR-08a6e1be-e424-4cfe-a529-e123a50cd6ca・ADR-c973a6e3-b6d9-45d3-b237-83fb1b361b22。

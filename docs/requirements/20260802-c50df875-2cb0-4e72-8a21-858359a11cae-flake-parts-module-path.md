@@ -43,5 +43,4 @@ flake-parts 利用者にはこちらが canonical で、直書きは plain flake
 
 `docs/spec.md`「CLI 仕様」→「アドレッシング」の blockquote「flake-parts 経路」。
 
-決定の実体は ADR-0029「layat output を flake-parts module 化し flakeModules.default を
-公開する」。
+決定の実体は ADR-e6820da0-fce3-4aef-8b79-d53abbca6051・ADR-b157254e-e942-42bf-ae40-60a3a41a4452・ADR-ef5eac75-c65f-45b3-a8b4-748e0e767989・ADR-d2da8a69-f92b-4bb3-9ed9-9a1f7e8297ff。

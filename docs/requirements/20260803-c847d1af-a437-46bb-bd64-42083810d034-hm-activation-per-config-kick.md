@@ -76,5 +76,5 @@ specification_ja: |
 ADR-f58e9981-bacc-4937-98b8-bddce0a057db「モジュールの activation は apply --all --manifest を 1 回だけ起動する」。`layat.jobs` の定義は ADR-e8bb6153-2528-419e-8be0-c862a3eb4e05。
 
 `docs/spec.md` には対応記述が無いため、原文の写しは持たない（規範は frontmatter が正で、
-上の箇条書きは ADR 本文の要約）。旧版（config ごとに起動し bash で集約する形）の出典は
-ADR-0035 §3 で、ADR-0060 が改訂した。
+上の箇条書きは ADR 本文の要約）。旧版（config ごとに起動し bash で集約する形）は
+ADR-f58e9981-bacc-4937-98b8-bddce0a057db で改められた。

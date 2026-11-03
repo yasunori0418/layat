@@ -72,5 +72,5 @@ manifest / derivation の変化を伴わず、shell 再入間でも起こり得�
 `docs/spec.md`「配置動作仕様」→「symlink モード」の手順 0.7 と、「途中失敗時の巻き戻し」節の
 箇条書き第 4 項（世代スキップ経路の drift 修復と Backup）。
 
-決定の実体は ADR-0045「`apply --backup[=suffix]` — 配置を塞ぐ記録外実体の rename 退避」で、
-PreRemove がドリフト修復経路に到達しない不変条件は ADR-0046 / ADR-0047 が定めている。
+決定の実体は ADR-3f97fc1d-188d-4013-bff0-16b67250f68e「退避を配置前除去の後の段として undo ジャーナルに載せる」で、
+PreRemove がドリフト修復経路に到達しない不変条件は ADR-2d4fdda4-b2e1-4161-8b71-3cff5b265f2f が定めている。

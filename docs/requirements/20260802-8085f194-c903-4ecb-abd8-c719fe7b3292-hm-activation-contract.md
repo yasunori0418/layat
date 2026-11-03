@@ -72,7 +72,7 @@ specification_ja: |
 > - manifest を供給するオプションの定義（canonical は `layat.configs.<name>.entries`・
 >   `layat.entries` はその糖衣）→ REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、1 config が 1 manifest = 1 profile に対応する
 >   ことと profile 粒度 → REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a。本 item の写しにある `layat.entries` は原文逐語であり、
->   規範文では供給元を「config の entries」と述べて ADR-0035 と衝突しない形にしている。
+>   規範文では供給元を「config の entries」と述べて ADR-01abcd5a-464f-4c44-8afd-30950631487c と衝突しない形にしている。
 >   activation が全 config を 1 回の `apply --all` 起動へ渡す規律（ADR-f58e9981-bacc-4937-98b8-bddce0a057db・`<name>` の
 >   辞書順・`--jobs`・部分失敗の集約）は原文に対応記述が無いため本 item の写しには現れないが、
 >   規範は REQ-c847d1af-a437-46bb-bd64-42083810d034 が持つ
@@ -85,11 +85,11 @@ specification_ja: |
 >   起きない」ことだけを規定する
 >
 > 原文が世代の箇条書きに併記する「MVP は固定名 `default` の単一 profile
-> （`<state>/nix/profiles/layat/default`）」は、**ADR-0035 が `layat.configs.<name>` の実装を
+> （`<state>/nix/profiles/layat/default`）」は、**ADR-01abcd5a-464f-4c44-8afd-30950631487c が `layat.configs.<name>` の実装を
 > 決定済み**で反転しているため写しから落とした（REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a / REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81 と同じ扱い）。
 > `docs/spec.md` の追従は本 item の担当範囲外。
 >
-> **2026-10-15 追記（ADR-0060）**: 上の写しの `layat apply --manifest <link-farm>` は、全 config の
+> **2026-10-15 追記（ADR-f58e9981-bacc-4937-98b8-bddce0a057db）**: 上の写しの `layat apply --manifest <link-farm>` は、全 config の
 > link-farm を渡す `layat apply --all --manifest <name>=<link-farm> …` の 1 回起動と読み替える。
 > blocking flock・レポート可視・非 0 終了で switch を止める点は変わらない。
 
@@ -97,6 +97,6 @@ specification_ja: |
 
 `docs/spec.md`「モジュール別動作仕様」→「home-manager モジュール」節の表と箇条書き。
 
-決定の実体は ADR-0026「モジュール activation の engine kick は `apply --manifest`
-（ビルド済み link-farm 直接適用）で行う」。モジュールを配線に徹させることは ADR-0003 が
+決定の実体は ADR-f58e9981-bacc-4937-98b8-bddce0a057db「モジュールの activation は apply --all --manifest を 1 回だけ起動する」と
+ADR-2aaf72ab-1dfc-4cde-852d-4b1f9916780b「モジュールの activation は lock を待ち、失敗したら switch を止める」。モジュールを配線に徹させることは ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880 が
 定めている。全 config を `apply --all` の 1 回の起動で渡す形は ADR-f58e9981-bacc-4937-98b8-bddce0a057db。

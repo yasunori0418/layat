@@ -63,9 +63,9 @@ home / project 両モード可。
 >
 > - 保守的不変条件の中身 → REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2、空親ディレクトリ剪定の規則 → REQ-8409db86-a1ba-4053-86dc-588985cc1ca7。
 >   本 item はそれらを reset にも適用することだけを規定する
-> - project mode の lstat 検査による復帰（→ ADR-0017）→ REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0
+> - project mode の lstat 検査による復帰（→ ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d）→ REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0
 > - 確認プロンプトを stdin が TTY のときだけ出し、非 TTY で同意が無ければ即エラー停止
->   すること（→ ADR-0025）→ REQ-31dae599-f3a3-4bbe-b367-c955535265da
+>   すること（→ ADR-acc31876-df36-485e-b356-92ae60e26db7）→ REQ-31dae599-f3a3-4bbe-b367-c955535265da
 >
 > 逆に、上の写しには現れないが規範文が持つものが 1 つある。同意を取る手段の短縮形
 > `-y` で、原文はこの箇条書きでは `--yes` としか書かない。短縮形はグローバルフラグ表
@@ -73,12 +73,12 @@ home / project 両モード可。
 > `-f` / `--file`・`-v` / `--verbose` が短縮形込みで規範化されているのに揃えて、
 > 規範文では `-y` / `--yes` と書いた。
 >
-> **2026-10-11 追記（ADR-0058）**: 撤去対象の entry と manifest が記録する配置先は、last-applied 記録があれば記録から、無ければ
+> **2026-10-11 追記（ADR-fd3353cf-00af-4343-bd3f-3369c21d7194）**: 撤去対象の entry と manifest が記録する配置先は、last-applied 記録があれば記録から、無ければ
 > profile の current 世代から取る。reset は profile / 世代を触らないが、撤去で target が消えた entry を除いた
 > manifest で記録を書き直す（全撤去なら記録を削除する）。profile が無く記録だけがあるときは flock の鍵である
 > profileDir（roothash 系列は backref `.root` も）を作る。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 >
-> **2026-10-11 追記（ADR-0057）**: 上の写しの「profile 完全除去は `nix-env --profile <profileDir>/profile
+> **2026-10-11 追記（ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8）**: 上の写しの「profile 完全除去は `nix-env --profile <profileDir>/profile
 > --delete-generations`」は、既定の世代バックエンド nixprofile の profile に対して利用者が叩く nix コマンドで、
 > layat のサブコマンドではない（世代の間引きを nix コマンドへ委譲することは
 > REQ-706de717-4e47-471a-a1c0-448635be159c の担当）。
@@ -90,6 +90,6 @@ home / project 両モード可。
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `reset <name> [target...]` の箇条書きと、
 同節グローバルフラグ表の `-y, --yes`。
 
-決定の実体は ADR-0020「配置物のリセット（`layat reset`）を追加する」で、`-y` / `--yes` に
-よる同意もここで決まっている。撤去対象を last-applied 記録から優先して取り、記録を書き直すのは
+決定の実体は ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7「reset で profile を触らずに配置物を撤去する」で、`-y` / `--yes` に
+よる同意は ADR-acc31876-df36-485e-b356-92ae60e26db7 が決めている。撤去対象を last-applied 記録から優先して取り、記録を書き直すのは
 ADR-a91585ad-971a-4558-9f25-b7fcd6e57671・ADR-fd3353cf-00af-4343-bd3f-3369c21d7194。

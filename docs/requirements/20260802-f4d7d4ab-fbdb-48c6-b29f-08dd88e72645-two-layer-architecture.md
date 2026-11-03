@@ -54,12 +54,12 @@ engine は Nix の評価結果へ直接依存しない。
 > - engine が叩く外部コマンドの限定とネイティブ FS 操作 → REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564、世代のコミット →
 >   REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b
 >
-> **2026-10-02 追記（ADR-0055）**: 図の「内部で nix build/eval を回し」は、manifest 生成器
+> **2026-10-02 追記（ADR-87a2cf34-9592-4c81-8980-246bca579ca0）**: 図の「内部で nix build/eval を回し」は、manifest 生成器
 > （既定 nix）経由で named manifest の store path を得る、に読み替える。entrypoint の発見も
 > 生成器の Discover 操作になる。生成器の契約は REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729、パッケージ構成は
 > DSG-25ad3cce-f921-4db2-aae0-c0263d4b8295 の担当。層の境界が `manifest.json` だけであることは変わらない。
 >
-> **2026-10-11 追記（ADR-0057）**: 図の engine 欄の「nix(profile)/git(toplevel)のみ叩く」と「nix-env --set」は、
+> **2026-10-11 追記（ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7 / ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8）**: 図の engine 欄の「nix(profile)/git(toplevel)のみ叩く」と「nix-env --set」は、
 > engine が直接叩く外部コマンドは `git` だけで、世代のコミットは世代バックエンドの契約越しに行う、と読み替える
 > （`nix-env` は既定実装 nixprofile の内側に閉じる）。契約は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b の担当。
 
@@ -70,5 +70,5 @@ engine は Nix の評価結果へ直接依存しない。
 （`manifest.json` を「engine が読む唯一の安定契約」と明示するのは同「manifest.json
 スキーマ（v1）」節で、当該節は後続 PR の担当）。
 
-manifest の取得を生成器経由にしたのは ADR-0055「manifest 生成器の契約」、世代のコミットを
-世代バックエンドの契約越しにしたのは ADR-0057「世代バックエンドの契約」。
+manifest の取得を生成器経由にしたのは ADR-87a2cf34-9592-4c81-8980-246bca579ca0「manifest の取得をプロセス内の Go インターフェイスの生成器越しにする」、世代のコミットを
+世代バックエンドの契約越しにしたのは ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」。

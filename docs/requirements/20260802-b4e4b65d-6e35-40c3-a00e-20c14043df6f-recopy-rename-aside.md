@@ -45,5 +45,5 @@ config 内の各 copy entry について:
 `docs/spec.md`「配置動作仕様」→「recopy（`apply --recopy`）・reset（`layat reset`）」節の
 recopy コードブロックと、同節箇条書き第 3 項。
 
-決定の実体は ADR-0044「apply 途中失敗の完全巻き戻し — インメモリ undo ジャーナル」（rename
-退避による上書きと復元）で、`--recopy` の追加自体は ADR-0020 が決めている。
+決定の実体は ADR-56325270-20bb-4959-8498-e3223c35e24b「途中失敗した apply をインメモリ undo ジャーナルで巻き戻す」（rename
+退避による上書きと復元）で、`--recopy` の追加自体は ADR-fb01d942-2875-4dcb-a7df-879e18f63883 が決めている。

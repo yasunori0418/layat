@@ -90,7 +90,7 @@ specification_ja: |
 > `cleanup` を参考に Go で再実装する（`home.file` 自体は再利用しない）」は実装方針の注記で
 > 要求ではなく、「`nix` / `git` 以外はサブプロセスを使わない」は REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564 の担当。
 
-> **2026-10-11 追記（ADR-0057 / ADR-0058）**: 上の写しの手順 3「`nix-env --profile <profileDir>/profile
+> **2026-10-11 追記（ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8 / ADR-a91585ad-971a-4558-9f25-b7fcd6e57671）**: 上の写しの手順 3「`nix-env --profile <profileDir>/profile
 > --set` で layat の nix profile を更新」は、世代バックエンドの契約の Commit と読み替える（`nix-env` は
 > 既定実装 nixprofile の内側に閉じる。REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）。「store 外の可変 JSON は
 > 持たない」は last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）に限って覆し、手順 1 の前世代
@@ -110,9 +110,9 @@ REQ-c2d44626-d8f4-446a-a80a-319a500129b4 と、これを論拠として引く RE
 「layat は全モードで自前 profile を持つ」段落。atomic 性のみ同「CLI 仕様」→
 「サブコマンド体系」の `apply` の箇条書き（上の注記を参照）。
 
-決定の実体は ADR-0002「世代管理を nix profile に乗せる（全モード自前 profile / rollback は
-standalone 中心）」と ADR-0006「エンジンを固定の Go バイナリにし、lib はデータ生成に徹する」
-（link farm derivation への manifest 埋め込み・コミット最後）。全モードのコミットを
-`nix-env --profile <profileDir>/profile --set` に統一することは ADR-0025 が定めている。
-コミットを世代バックエンドの契約越しにしたのは ADR-0057「世代バックエンドの契約」、
-last-applied 記録を store 外の唯一の可変 JSON として認めたのは ADR-0058「last-applied 記録」。
+決定の実体は ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30「世代は link farm と nix profile に乗せる」と
+ADR-30f105c7-85a8-4fab-9dea-3277d932b524「symlink farm を GC アンカー専用にする」（link farm derivation への manifest 埋め込み）・
+ADR-74423bb8-1453-4689-a25e-30bf46536afc「新規配置と張替えを先に、世代のコミットを最後に行う」（コミット最後）。全モードのコミットを
+`nix-env --profile <profileDir>/profile --set` に統一することは旧決定が定めていた。
+コミットを世代バックエンドの契約越しにしたのは ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」、
+last-applied 記録を store 外の唯一の可変 JSON として認めたのは ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15「last-applied 記録を profileDir と同じ鍵で state 基底に置く」。

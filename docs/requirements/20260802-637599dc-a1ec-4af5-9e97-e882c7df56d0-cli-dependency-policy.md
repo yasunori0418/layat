@@ -41,19 +41,18 @@ specification_ja: |
 > engine の import に触れるのは、第三者依存を最小限に抑えられる前提が「配置を自前で
 > 持たず engine に委ねること」にあるためで、その役割分担自体を規範化するものではない。
 
-> **2026-10-02 追記（ADR-0056）**: 許可する第三者依存に `github.com/pelletier/go-toml/v2`
+> **2026-10-02 追記（ADR-aec6bd1d-f776-4d7c-9337-1ed78fee6180）**: 許可する第三者依存に `github.com/pelletier/go-toml/v2`
 > （生成器を選ぶ設定ファイル `layat.toml` / `config.toml` のパーサ）を足した。import は
 > `cmd/layat` に閉じ、engine の stdlib-only は変わらない。表の「`nix`（build / eval）
-> オーケストレーション」は manifest 生成器（既定 nix）経由に読み替える（→ ADR-0055）。
+> オーケストレーション」は manifest 生成器（既定 nix）経由に読み替える（→ ADR-87a2cf34-9592-4c81-8980-246bca579ca0）。
 
 ## 出典
 
 `docs/spec.md`「依存関係」節の表の `cmd/layat` 行。
 
-決定の実体は ADR-0011「engine / CLI の技術スタックを確定する」で、CLI に cobra を許可し
+決定の実体は ADR-6b7becf0-f029-41e3-895e-b672dce94d3d「CLI は cobra で組む」・ADR-97edd9af-befb-4a9f-a8ef-de038c76336a「layat は buildGoModule と vendorHash でビルドする」・ADR-2be5080a-1cba-4fea-bed8-66e0d0d7b8d0「Go toolchain は nixpkgs の go に pin する」で、CLI に cobra を許可し
 `buildGoModule` + vendorHash・Go の pin でビルドを固定することを定めている。CLI を一次 UX と
-する位置づけは ADR-0007「汎用 layat CLI を一次 UX に昇格し、entrypoint 発見＋root 明示モデルへ
-移行する」が定めるが、同 ADR は cobra / vendorHash / Go の pin のいずれにも触れておらず、
+する位置づけは ADR-88231ffc-4836-4252-be34-894944fd28c3「CLI が一次 UX で devShell に pin 版を同梱する」が定めるが、同 ADR は cobra / vendorHash / Go の pin のいずれにも触れておらず、
 この item の規範を決めていないため、側面の根拠として `justifies` は張らない（位置づけそのものの
 帰属は REQ-14f0aec9-abae-4621-82f3-40536a1ad904 / REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 が担当する）。
 

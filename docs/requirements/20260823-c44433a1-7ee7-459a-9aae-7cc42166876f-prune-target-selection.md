@@ -105,9 +105,9 @@ store の回収は `nix-collect-garbage` に委ねる。
 
 決定の実体は ADR-b4be88b8-1c19-426d-885d-f5d80b95252f「prune は root が実在しない roothash 系列だけを削除する」。
 out-of-store な root がアンマウント中に「一時的に実在しない」と誤判定されうる caveat は
-同 §2 にあり、機械側で区別せず確認プロンプトの root パス一覧で防ぐ（→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed）。
+ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66 にあり、機械側で区別せず確認プロンプトの root パス一覧で防ぐ（→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed）。
 
 走査対象に system 基底 `/nix/var/nix/profiles/layat/` を加えることと、非 root 実行で削除権限が
-無い系列を warning 付きで skip することは ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e が定めている（ADR-0034 は system mode の
+無い系列を warning 付きで skip することは ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e が定めている（prune の旧決定は system mode の
 実装決定より前の 2026-07-04 で、当時は root = `/` が常に実在することだけを理由に対象外として
 いた）。基底の所有を世代バックエンドへ移したのは ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883「state の基底を設定で上書きさせない」。

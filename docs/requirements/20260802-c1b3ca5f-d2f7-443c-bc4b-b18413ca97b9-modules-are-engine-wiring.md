@@ -47,7 +47,7 @@ engine + store マニフェスト。
   関心外
 - nix-darwin モジュールは `system.activationScripts.postActivation` への追記から engine を起動する
 
-> **上は原文の写しを ADR-0066 に合わせて改めたもので、規範は frontmatter が正**。各層が供給する
+> **上は原文の写しを ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c に合わせて改めたもので、規範は frontmatter が正**。各層が供給する
 > root の具体は REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b（HM の `$HOME`）と REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10（NixOS / nix-darwin の `systemRoot`）、HM の
 > activation フックと起動契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、NixOS / nix-darwin の起動契約は REQ-a220bb28-89de-42b0-a854-e7468755ecb1、devShell の起動タイミングは REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9、
 > module 経路の rollback を host 世代へ一本化することは REQ-844ee375-919f-4341-81e1-a5f89fd32840、engine 自身が
@@ -62,10 +62,9 @@ engine + store マニフェスト。
 `docs/spec.md`「モジュール別動作仕様」の前文と、「NixOS モジュール（将来拡張）」
 「nix-darwin モジュール（将来拡張）」節。将来拡張 2 節のうち root の供給元は REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b、
 rollback の一本化は REQ-844ee375-919f-4341-81e1-a5f89fd32840 が担当し、残る「activation フックから engine を起動する
-配線に徹する」を本 item に畳んだ。NixOS / nix-darwin の root は、その後 ADR-0066 で
+配線に徹する」を本 item に畳んだ。NixOS / nix-darwin の root は、その後 ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c で
 REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 の `systemRoot` pin へ移った。
 
-決定の実体は ADR-0003「配置ロジックは全層 layat エンジンが所有し、モジュールは配線に徹する」で、
-モジュール対応を一括 switch 用途に限る positioning は ADR-0007「汎用 layat CLI を一次 UX に
-昇格し、entrypoint 発見＋root 明示モデルへ移行する」が定めている。NixOS / nix-darwin の hook を
-具体化したのは ADR-0066「NixOS / nix-darwin モジュールを system mode の配線として実装する」。
+決定の実体は ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880「モジュールは root と起動の時機だけを供給して engine を起動する」で、
+モジュール対応を一括 switch 用途に限る positioning は ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e「project mode を第一の使い方とする」が定めている。NixOS / nix-darwin の hook を
+具体化したのは ADR-68f453b3-e6c7-4e0d-9978-32b5a00f627e・ADR-eee039fc-40af-42ac-bc65-979d6eaa0d06。

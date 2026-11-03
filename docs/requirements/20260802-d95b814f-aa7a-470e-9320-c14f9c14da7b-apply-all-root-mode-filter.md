@@ -58,5 +58,5 @@ home mode で置く用途は正当）。fixed mode と system mode の config �
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply --all --project-root` の
 箇条書き、およびグローバルフラグ表の `--project-root` / `--home-root` / `--system-root`。
 
-決定の実体は ADR-0017「`--all` の root モードフィルタ」。root 混在時の warning は ADR-0036 の
-system mode 実装で足した。
+決定の実体は ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429「apply --all に root モードのフィルタを持たせる」。root 混在時の warning は system mode の
+実装時に足した。

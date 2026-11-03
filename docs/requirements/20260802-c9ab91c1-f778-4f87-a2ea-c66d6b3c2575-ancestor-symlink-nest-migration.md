@@ -43,7 +43,7 @@ target の各祖先 component を lstat で walk。symlink の祖先があれば
 > **上は原文の写しで、規範は frontmatter が正**。原文が参照する次の規範は本 item の
 > 担当ではない。
 >
-> - 既定 silent と `-v` による可視化の出力規律そのもの（→ ADR-0031）→ REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 /
+> - 既定 silent と `-v` による可視化の出力規律そのもの（→ ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5・ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）→ REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 /
 >   REQ-0a123b89-0399-4f76-b988-56a5f7e0becf。本 item は「この除去を warning にせず配置レポート側で扱う」ことだけを
 >   規範とし、そのレポートを既定で出すか `-v` で出すかは委譲する
 > - `--backup` 有効時にこのエラー停止がどう変わるか → 祖先 symlink conflict は
@@ -56,6 +56,5 @@ REQ-2b48620a-abaa-43df-a106-954bbba3de56 の担当。
 
 `docs/spec.md`「配置動作仕様」→「symlink モード」の手順 0。
 
-決定の実体は ADR-0046「自己記録の祖先 symlink 配下ネストを許可する — 前世代 manifest
-判定の祖先拡張 + 配置前除去（PreRemove）」で、foreign 祖先のエラー停止は ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c が
+決定の実体は ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c・ADR-8b7cd75f-5521-4805-b7bc-105b5c56ee38・ADR-8357b519-cb23-4984-ba56-254046779f47で、foreign 祖先のエラー停止は ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c が
 定めている。

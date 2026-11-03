@@ -62,6 +62,6 @@ REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51 が持つ。
 
 同表の他行と異なり原文の当該行は ADR 参照を伴わず、`modules/common.nix` の依存制約
 そのものを決定した ADR も無いため、`justifies` は張らない（側面としては、lib を
-データ生成に徹させる ADR-0006、entry submodule の型定義を `lib/types.nix` と
-`modules/common.nix` で共有すると定めた ADR-0010、モジュールを配線に徹させる ADR-0003 が
+データ生成に徹させる ADR-521765d7-7e31-42f4-b548-979185a7586a、entry submodule の型定義を `lib/types.nix` と
+`modules/common.nix` で共有すると定めた ADR-0d8f691f-304a-4b36-8393-d6aeddc4b32a、モジュールを配線に徹させる ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880 が
 この制約と整合する）。

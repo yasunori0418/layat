@@ -156,12 +156,12 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 > - 2a の flock を blocking で取るか try-lock で取るか（`LOCK_EX` / `LOCK_NB`・
 >   skip 時の stderr 通知）→ REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461。本 item はフロー上の位置（2a）だけを規定する
 >
-> **2026-10-11 追記（ADR-0057）**: 上の図の f「`nix-env --profile <profileDir>/profile --set`」は、
+> **2026-10-11 追記（ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8 / ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818）**: 上の図の f「`nix-env --profile <profileDir>/profile --set`」は、
 > 世代バックエンドの契約の Commit と読み替える（`nix-env` は既定実装 nixprofile の内側に閉じる。
 > REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）。g の `.pending` 削除は build 出力の一時リンクの片付けで、
 > engine の素の FS 操作。gcroot の引き継ぎは nixprofile の世代リンクの性質で、engine は gcroot を扱わない。
 >
-> **2026-10-11 追記（ADR-0058）**: 上の図の c「profileDir の前世代 manifest.json を読む」は、last-applied 記録が
+> **2026-10-11 追記（ADR-a91585ad-971a-4558-9f25-b7fcd6e57671）**: 上の図の c「profileDir の前世代 manifest.json を読む」は、last-applied 記録が
 > あれば記録の manifest を baseline に採り、無ければ profileDir の current 世代から読む、と読み替える。記録は
 > e の後・f の前に書き、世代スキップ経路では d のドリフト修復の後に書く。d の世代スキップの判定元は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 
@@ -170,9 +170,9 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 `docs/spec.md`「CLI 仕様」→「実行フロー」の本文・コードブロックと、
 `apply --manifest` の skip を述べる最終箇条書き。
 
-決定の実体は ADR-0023「実行フロー順序」（eval 先行 → flock → build）で、out-link に
-よる indirect gcroot は ADR-0011、同一 profileDir 同時実行の後勝ちは ADR-0013、
-`apply --manifest` の skip は ADR-0026。2a の flock を blocking で取るか try-lock で取るか
+決定の実体は ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9「eval を先に行い、flock を取ってから build する」で、out-link に
+よる indirect gcroot は ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1、同一 profileDir 同時実行の後勝ちは ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e、
+`apply --manifest` の skip は ADR-24488788-a5e6-47a5-9074-97192880642a。2a の flock を blocking で取るか try-lock で取るか
 （shellHook の skip 通知を含む）は REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461 の担当で、その決定元となる ADR は
 本 item の出典には含めない。世代のコミットを世代バックエンドの契約越しにし、`.pending` の
 削除を engine の FS 操作として位置づけたのは ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8・ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818、baseline を

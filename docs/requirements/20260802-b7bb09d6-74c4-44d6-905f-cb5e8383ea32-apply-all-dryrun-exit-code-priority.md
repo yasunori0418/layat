@@ -32,4 +32,4 @@ specification_ja: |
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」の最終箇条書き。
 
-決定の実体は ADR-0024「終了コード優先」。
+決定の実体は ADR-3c3aa4a5-083a-43c1-a99f-92b9e97a68b9「apply --all --dryrun の終了コードは error を conflict より優先する」。

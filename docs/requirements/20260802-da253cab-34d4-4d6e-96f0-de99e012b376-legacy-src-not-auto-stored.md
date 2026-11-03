@@ -38,4 +38,4 @@ legacy（`-f` eval）にはこの事前コピーが無く、相対 path はフ�
 `docs/spec.md`「CLI 仕様」→「アドレッシング」の blockquote 末尾「`src` の store 化は
 自動ではない」。
 
-決定の実体は ADR-0032。
+決定の実体は ADR-955c2601-88fb-4be8-85de-ec7d0a8c727d「shell.nix / default.nix の再現性は利用者の責任にする」。

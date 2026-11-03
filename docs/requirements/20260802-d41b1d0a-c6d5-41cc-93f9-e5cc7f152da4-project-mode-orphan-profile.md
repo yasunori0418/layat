@@ -44,6 +44,6 @@ specification_ja: |
 
 `docs/spec.md`「世代管理仕様」→「project mode の世代」節の箇条書き最終項。
 
-決定の実体は ADR-0005「project mode（プロジェクト相対配置）と ephemeral 配置原則」（孤児 profile の
-放置許容）で、backref による逆引きは ADR-0013 が定めている。cleanup を持たず seam に留める判断は
-ADR-0024 にあったが、ADR-0034 がこれを改訂し `layat prune` の実装決定へ進めた。
+決定の実体は ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988「profile は解決済み root の roothash でキーする」（孤児 profile の
+放置許容）で、backref による逆引きも同じ ADR が定めている。cleanup を持たず seam に留めていた判断は、
+ADR-b4be88b8-1c19-426d-885d-f5d80b95252f「prune は root が実在しない roothash 系列だけを削除する」で `layat prune` の実装に進めた。
