@@ -2,7 +2,7 @@
 id: "ADR-0042"
 type: legacy_adr
 name: "リリースを bump PR 起点で自動化する（VERSION ファイル + 自動タグ + 自動リリースノート）"
-status: 採用
+status: 廃止
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。参照実装として同作者の cryoflow リポジトリのリリース自動化（bump workflow + release workflow）を採用する"
 justifies:
   - "INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43"
@@ -15,7 +15,14 @@ references:
 ---
 # ADR-0042: リリースを bump PR 起点で自動化する（VERSION ファイル + 自動タグ + 自動リリースノート）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 VERSION ファイルが一次情報 → ADR-9ab223eb-99dc-4aa2-a671-c07f75f7ff3c
+> - §2 bump-version.yml で bump PR → ADR-0dd4036d-594b-4f36-a509-e5498b231cf7
+> - §3 VERSION 変更で release 作成 → ADR-2fcf26b4-bce6-4ed6-a374-3afe560ead21
+> - §4 成果物を添付しない → ADR-c2f0cdc9-284e-4425-8f60-15f3aa423ed4
+
+- ステータス: 廃止
 - 日付: 2026-07-04
 - 関連: ADR-0027, ADR-0028, ADR-0030, `.github/workflows/`
 - 改訂対象: なし（新規領域）

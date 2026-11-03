@@ -2,7 +2,7 @@
 id: "ADR-0027"
 type: legacy_adr
 name: "flake check を CI で os×system マトリクス実行する（ADR-0012 の実装補足）"
-status: 採用
+status: 廃止
 origin: "参照: PR #40, `~/src/github.com/yasunori0418/cryoflow` の CI 構成"
 justifies:
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
@@ -13,7 +13,14 @@ references:
 ---
 # ADR-0027: flake check を CI で os×system マトリクス実行する（ADR-0012 の実装補足）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 flake check を 3 環境 matrix → ADR-f2e72cfa-f46e-46b7-9d50-a98d60d8980f
+> - §2a トリガは PR と dispatch → ADR-3eb35e63-5465-44cd-8299-c2ac3e6034de
+> - §2b paths フィルタで docs-only 除外 → ADR-cb010758-7887-470a-ba61-19b2e99f0053
+> - §3 Go check は CGO_ENABLED=0 → ADR-6f0383d9-0176-47c4-a9da-1a41e1fd3747
+
+- ステータス: 廃止
 - 日付: 2026-06-20
 - 関連: ADR-0012, ADR-0011（cgo 未使用 / stdlib-only）, ADR-0006
 - 参照: PR #40, `~/src/github.com/yasunori0418/cryoflow` の CI 構成

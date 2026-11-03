@@ -2,7 +2,7 @@
 id: "ADR-0030"
 type: legacy_adr
 name: "テスト成功を main マージの必須条件にする（ruleset で required status check）"
-status: 採用
+status: 廃止
 origin: "参照: 現行 `.github/workflows/test.yml`, `.github/actions/setup-nix`"
 justifies:
   - "INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6"
@@ -14,7 +14,13 @@ references:
 ---
 # ADR-0030: テスト成功を main マージの必須条件にする（ruleset で required status check）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1a ruleset で 4 check を必須化 → ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511
+> - §1b main への直 push を禁止 → ADR-8035e7c6-7dc5-4aa8-9a37-403998fa7f9b
+> - §2 変更検出+if スキップ → ADR-cb010758-7887-470a-ba61-19b2e99f0053
+
+- ステータス: 廃止
 - 日付: 2026-06-21
 - 関連: ADR-0027（flake check CI マトリクス / トリガ・本 ADR が §2 を補足訂正）, ADR-0012（CI とテスト実行）, ADR-0028（cachix push）
 - 改訂対象: ADR-0027 §2 のトリガ段 `paths` フィルタ記述と docs-only の `workflow_dispatch` 回避策を補足訂正

@@ -2,7 +2,7 @@
 id: "ADR-0063"
 type: legacy_adr
 name: "nixprofile の List は nix-env を経由せず世代リンクを走査する"
-status: 採用
+status: 廃止
 issues:
   - "#129"
 origin: "system mode の e2e で、root 所有の profileDir を非 root が `list-generations` すると nix-env の lock 取得で失敗することが分かった（2026-10-18）"
@@ -15,7 +15,12 @@ references:
 ---
 # ADR-0063: nixprofile の List は nix-env を経由せず世代リンクを走査する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 List は世代リンクを読み取り専用で走査 → ADR-1cbacca1-1930-46ca-bf82-30310f82216e
+> - §2 current 判定の補助規則は Fake 由来 → ADR-1cbacca1-1930-46ca-bf82-30310f82216e
+
+- ステータス: 廃止
 - 日付: 2026-10-18
 - 関連: ADR-0062, GitHub Issue #129
 - 改訂対象: ADR-0057 §2 の「nixprofile は nix-env 3 コマンドと世代一覧のパースを所有する」のうち、List を `nix-env --list-generations` のパースから profileDir の世代リンクの読み取り専用の走査へ改める（Commit / Switch の nix-env・契約の 5 操作・Fake の位置づけは不変）

@@ -2,7 +2,7 @@
 id: "ADR-0021"
 type: legacy_adr
 name: "reset の `--all` 非対応・`--dryrun` 対応・flock / recopy 合成を確定する"
-status: 採用
+status: 廃止
 origin: "ADR-0020 で `reset` / `apply --recopy` を追加したことで開いた二次的な細目（`--all` 対応・`--dryrun`・flock・合成）"
 justifies:
   - "REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4"
@@ -18,7 +18,14 @@ references:
 ---
 # ADR-0021: reset の `--all` 非対応・`--dryrun` 対応・flock / recopy 合成を確定する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 reset は名指し必須・--all 無し → ADR-56ac6298-db67-4f63-8b60-f14af3b9570a
+> - §2 reset --dryrun は副作用ゼロ・exit 0 → ADR-a86a8492-57fb-49d0-ba77-200f6dc49c3a
+> - §3a reset は blocking flock を取る → ADR-45380022-d959-4b22-aa05-5993ac1f3c87
+> - §3b --recopy は --all と合成可 → ADR-b08479ba-0eae-4668-a4a2-910cd40bd316
+
+- ステータス: 廃止
 - 日付: 2026-06-14
 - 関連: ADR-0006, ADR-0013, ADR-0017, ADR-0018, ADR-0020, `docs/spec.md`, `docs/design.md`
 - 改訂対象: ADR-0020 の `reset` / `--recopy` を細目で補完（新規決定の追加であり反転なし）

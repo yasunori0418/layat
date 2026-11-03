@@ -2,7 +2,7 @@
 id: "ADR-0037"
 type: legacy_adr
 name: "ドキュメントサイトは Astro Starlight + 同一リポジトリ + Cloudflare Pages（ビルド時生成・英語ルート i18n）で構築する"
-status: 採用
+status: 廃止
 issues:
   - "#57"
 origin: "起点 Issue: #57"
@@ -14,7 +14,14 @@ references:
 ---
 # ADR-0037: ドキュメントサイトは Astro Starlight + 同一リポジトリ + Cloudflare Pages（ビルド時生成・英語ルート i18n）で構築する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 サイトは同一 repo の site/ → ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4
+> - §2 Cloudflare Pages に配備 → ADR-f82e33bd-0534-4266-89bf-f1d9a2dbe258
+> - §3 リファレンスはビルド時生成 → ADR-da7b74a6-bab4-43ea-8f1c-cf843b8b58cc
+> - §4 i18n は英語ルート+/ja/ → ADR-1e010fa2-a3d9-42b5-9641-d68d9db9f405
+
+- ステータス: 廃止
 - 日付: 2026-07-04
 - 関連: ADR-0027, ADR-0028, `docs/publication-roadmap.md` §4-A, `docs/glossary.md`
 - 改訂対象: なし（新領域。publication-roadmap §4-A の計画を具体化する）

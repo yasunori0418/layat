@@ -2,7 +2,7 @@
 id: "ADR-0036"
 type: legacy_adr
 name: "system mode（`root = systemRoot`）を実装する（root 権限チェック・profile は `/nix/var/nix/profiles` 配下・世代公開）"
-status: 採用
+status: 廃止
 origin: "次期マイルストーン計画の grilling（2026-07-04）。NixOS / nix-darwin モジュール実装（将来・別マイルストーン）に先行して、lib / engine / CLI の system mode 対応だけを縦に通す"
 justifies:
   - "REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66"
@@ -21,7 +21,17 @@ references:
 ---
 # ADR-0036: system mode（`root = systemRoot`）を実装する（root 権限チェック・profile は `/nix/var/nix/profiles` 配下・世代公開）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1a rootKind=system を v1 に追加 → ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c
+> - §1b systemRoot は実行時に / へ解決 → ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed
+> - §2 変更系は engine で euid 0 を確認 → ADR-25d54346-f13a-4c12-9895-ab93dc6c183b
+> - §3a system の profile 基底は /nix/var/nix/profiles/layat → ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203
+> - §3b system も name 直キー・--root 時 roothash → ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988
+> - §3c prune は system 基底も走査し権限不足は skip → ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e
+> - §4 世代公開の基準は配置の永続性 → ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75
+
+- ステータス: 廃止
 - 日付: 2026-07-04
 - 関連: ADR-0004, ADR-0005, ADR-0007, ADR-0023, ADR-0024, ADR-0034, ADR-0057, `docs/spec.md`, `docs/design.md`
 - 改訂対象: ADR-0013 §5 の「`root = systemRoot` は eval 時エラー（未実装拒否）」を撤回し実装へ。ADR-0015 §5 の「rollback は home mode 限定」・ADR-0018 §4 の「`list-generations --all` は homeRoot の config を対象」を home / system の両モードへ拡張。ADR-0025 §4 の profile 専用ディレクトリレイアウトに system mode の state 基底（`/nix/var/nix/profiles`）を追加（ユーザー state 基底のレイアウト自体は不変）

@@ -2,7 +2,7 @@
 id: "ADR-0050"
 type: legacy_adr
 name: "sara check を strict 化する — required status check 化と型別ゲートは見送り"
-status: 採用
+status: 廃止
 issues:
   - "#255"
   - "#203"
@@ -16,7 +16,13 @@ references:
 ---
 # ADR-0050: sara check を strict 化する — required status check 化と型別ゲートは見送り
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 strict_mode を true にする → SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626
+> - §2 required status check にしない → SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef
+> - §3 型別の CI の条件を設けない → SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626
+
+- ステータス: 廃止
 - 日付: 2026-08-09
 - 関連: ADR-0048, ADR-0030, GitHub Issue #255, #203
 - 改訂対象: **ADR-0048 §5 の `strict_mode = false` の決定だけ**。§5 のそれ以外の決定

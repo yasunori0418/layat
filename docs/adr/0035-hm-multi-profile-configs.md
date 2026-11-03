@@ -2,7 +2,7 @@
 id: "ADR-0035"
 type: legacy_adr
 name: "HM モジュールに `layat.configs.<name>` を導入し複数 profile（役割分離）を可能にする"
-status: 採用
+status: 廃止
 origin: "次期マイルストーン計画の grilling（2026-07-04）。ADR-0025 §2 が「消費側の要求が出た時点で追加」とした HM 複数 profile 化を実施する"
 justifies:
   - "REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a"
@@ -22,7 +22,15 @@ references:
 ---
 # ADR-0035: HM モジュールに `layat.configs.<name>` を導入し複数 profile（役割分離）を可能にする
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 layat.configs.<name>.entries を新設 → ADR-01abcd5a-464f-4c44-8afd-30950631487c
+> - §2 layat.entries は rename 糖衣・deprecated → ADR-3447db4a-cdec-4573-bbad-05bbffc34a65
+> - §3a profile ごとに独立起動・bash で集約 → ADR-f58e9981-bacc-4937-98b8-bddce0a057db
+> - §3b rollback は host に一本化 → ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75
+> - §4 configs 間衝突は eval assertion で停止 → ADR-1338a293-3f69-48f5-9164-efb4ec6994d6
+
+- ステータス: 廃止
 - 日付: 2026-07-04
 - 関連: ADR-0007, ADR-0014, ADR-0026, ADR-0010, ADR-0060（§3・§4 の改訂）, `docs/spec.md`, `modules/common.nix`, `modules/home-manager.nix`
 - 改訂対象: ADR-0024 §2 の「HM モジュール経由は MVP で固定名 1 profile（`default`）、複数化は将来」と ADR-0025 §2 の「単一 `layat.entries` 据え置き・role 分離不可・将来 `layat.configs.<name>.entries` seam」を、本 ADR で seam の実装決定へ進める。「1 config = 1 profile = 1 manifest」の atomic 性（ADR-0002）は不変

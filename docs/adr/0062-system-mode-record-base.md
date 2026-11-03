@@ -2,7 +2,7 @@
 id: "ADR-0062"
 type: legacy_adr
 name: "system mode の last-applied 記録を `/var/lib/layat` に置く"
-status: 採用
+status: 廃止
 issues:
   - "#140"
   - "#129"
@@ -18,7 +18,12 @@ references:
 ---
 # ADR-0062: system mode の last-applied 記録を `/var/lib/layat` に置く
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 system の記録基底は /var/lib → ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c
+> - §2 基底の上書きはテスト用の口のみ → ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883
+
+- ステータス: 廃止
 - 日付: 2026-10-18
 - 関連: ADR-0025, ADR-0057, GitHub Issue #140, #129
 - 改訂対象: ADR-0036 §3 の system mode の状態の置き場に、last-applied 記録の基底 `/var/lib/layat` を足す（profile の基底 `/nix/var/nix/profiles/layat` と鍵は不変）。ADR-0058 §1 の記録の置き場 `<state>/layat/<鍵>` を、system mode に限って `/var/lib/layat/<鍵>` へ切り替える（鍵の規則・記録の内容は不変）

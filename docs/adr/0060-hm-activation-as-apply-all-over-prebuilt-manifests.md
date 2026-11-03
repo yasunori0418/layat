@@ -2,7 +2,7 @@
 id: "ADR-0060"
 type: legacy_adr
 name: "HM activation を prebuilt manifest 群への `apply --all` 1 回起動にし、configs 間の衝突検出を CLI 前段へ委譲する"
-status: 採用
+status: 廃止
 issues:
   - "#128"
   - "#471"
@@ -28,7 +28,13 @@ references:
 ---
 # ADR-0060: HM activation を prebuilt manifest 群への `apply --all` 1 回起動にし、configs 間の衝突検出を CLI 前段へ委譲する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 HM activation は apply --all 1 回起動 → ADR-f58e9981-bacc-4937-98b8-bddce0a057db
+> - §2 --all 合成時は name=link-farm を繰り返す → ADR-24488788-a5e6-47a5-9074-97192880642a
+> - §3 configs 間衝突は CLI の前段の確認に委ねる → ADR-1338a293-3f69-48f5-9164-efb4ec6994d6
+
+- ステータス: 廃止
 - 日付: 2026-10-15
 - 関連: ADR-0045, GitHub Issue #128, #471
 - 改訂対象: ADR-0035 §3（profile ごとに独立した engine 起動・bash 側の部分失敗集約）と §4（configs 間 target 衝突の eval 時 assertion）を、`apply --all` 1 回起動と CLI 前段検査へ改める。ADR-0026 §2（`--manifest` と `--all` の排他）と §3（activation の invocation 形）を、`<name>=<link-farm>` の繰り返し指定で `--all` と合成できる形へ改める。ADR-0038 §2 末尾（HM は nix 側で検出）を CLI 前段検査へ寄せ、§1 の検査集合に prebuilt 集合を加える。ADR-0039 §3（複数 manifest を 1 コマンドに渡さない・HM activation の並列化はスコープ外）を反転する。ADR-0055 §2 / §5（prebuilt 生成器は単一 link-farm・`--all` との排他は不変）を、名前付き link-farm 集合を扱う形へ改める

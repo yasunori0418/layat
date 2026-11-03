@@ -2,7 +2,7 @@
 id: "ADR-0065"
 type: legacy_adr
 name: "status は last-applied 記録を走査して表示する"
-status: 採用
+status: 廃止
 issues:
   - "#512"
   - "#198"
@@ -19,7 +19,15 @@ references:
 ---
 # ADR-0065: status は last-applied 記録を走査して表示する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1a status は 2 つの記録基底を走査 → ADR-7abe9cc7-30cd-49c9-b10e-bb5e1790ff0d
+> - §1b 記録の確認を apply より緩めない → ADR-ad1dd4ef-0b71-42cf-bc30-03eb11e5485c
+> - §2 [name] の完全一致で絞り込む → ADR-c2131901-290d-4311-8f84-64edb33e8897
+> - §3 テキストと --json info の出力形 → ADR-11918a81-f98d-466d-8310-d990c59f59e1
+> - §4 flock を取らず何も書かない → ADR-54f09f52-1c2c-4b84-8f18-717fd93e4342
+
+- ステータス: 廃止
 - 日付: 2026-10-23
 - 関連: ADR-0036, ADR-0043, ADR-0058, ADR-0062, GitHub Issue #198, #512
 - 起点: Issue #198（`layat status [name]`）の実装前に、2026-07-19 の grilling 以後の実装の変化を差分 grilling で反映した（2026-10-23）

@@ -2,7 +2,7 @@
 id: "ADR-0034"
 type: legacy_adr
 name: "`layat prune` を孤児 profile 系列の削除に限定して実装する"
-status: 採用
+status: 廃止
 origin: "次期マイルストーン計画の grilling（2026-07-04）。公開後の実運用（プロジェクトのクローン削除・`--root` 使い分け）で孤児系列が実際に蓄積し始めたことを「消費側の要求」と判断した"
 justifies:
   - "REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4"
@@ -16,7 +16,17 @@ references:
 ---
 # ADR-0034: `layat prune` を孤児 profile 系列の削除に限定して実装する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1a root 不在の roothash 系列だけ削除 → ADR-b4be88b8-1c19-426d-885d-f5d80b95252f
+> - §1b system 基底も走査し権限不足は skip → ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e
+> - §1c 配置物に触れず store 回収は GC へ → ADR-95b45d12-d4a7-4374-8624-f5ceed7044ee
+> - §2a dryrun と root 一覧付き確認プロンプト → ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66
+> - §2b ロック中の系列は try-lock で skip → ADR-8517e311-c461-41aa-80ac-48760a7762b2
+> - §2c prune の --json に新設時から対応 → ADR-63ec1446-d328-42d2-b8d2-e8a11d752ed7
+> - §3 引数なしで eval / build しない → ADR-e630482a-bc11-4ba6-a9cc-1ef46f54104d
+
+- ステータス: 廃止
 - 日付: 2026-07-04
 - 関連: ADR-0013 §7, ADR-0021, ADR-0025 §4, ADR-0033, `docs/spec.md`
 - 改訂対象: ADR-0024 §11 の「cleanup コマンドは MVP 非対応・将来 `layat prune` の seam を残す（消費側の要求が出た時点で追加）」を、本 ADR で実装決定へ進める。seam の設計（backref `.root` による逆引き）自体は不変

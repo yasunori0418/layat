@@ -2,7 +2,7 @@
 id: "ADR-0068"
 type: legacy_adr
 name: "lib に事前展開した apply コマンドを組む関数を公開する"
-status: 採用
+status: 廃止
 issues:
   - "#530"
   - "#493"
@@ -15,7 +15,16 @@ references:
 ---
 # ADR-0068: lib に事前展開した apply コマンドを組む関数を公開する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 lib.mkApplyCommand を公開 → ADR-db293e0c-4789-45b7-93a9-adedc021344f
+> - §2 root は必須の enum → ADR-ca24e802-cc57-40c5-ad03-a1c5f0b6e498
+> - §3 config の選別は CLI だけ → ADR-7f064851-02e3-40bf-aca3-9de2b0b4f6a7
+> - §4 実行時フラグは引数にしない → ADR-bc334f0c-ac3b-44cf-8d0d-31034ef420ac
+> - §5a kick も mkApplyCommand で組む → ADR-ffbb755c-f548-4ee4-8cea-f6a9b6d98adb
+> - §5b flake-parts module に注入しない → ADR-ef5eac75-c65f-45b3-a8b4-748e0e767989
+
+- ステータス: 廃止
 - 日付: 2026-10-25
 - 関連: ADR-0029, GitHub Issue #530, #493
 - 起点: Issue #530 の grilling（2026-10-25）

@@ -2,7 +2,7 @@
 id: "ADR-0059"
 type: legacy_adr
 name: "root 相対 out-of-store マーカー"
-status: 採用
+status: 廃止
 issues:
   - "#460"
   - "#362"
@@ -27,7 +27,21 @@ references:
 ---
 # ADR-0059: root 相対 out-of-store マーカー
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 リンクは target 起点の相対パス → ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7
+> - §2 基準点は manifest の配置 root → ADR-29c0838b-3e25-4b09-a479-9ebbbc4466c7
+> - §3 祖先 symlink の不変条件に依存 → ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7
+> - §4 別関数 mkRootRelativeSymlink → ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb
+> - §5a srcKind 追加で版を上げない → ADR-b5431ecf-fe60-4b29-86af-9857478ce663
+> - §5b engine が未知の列挙値を拒否 → ADR-b5431ecf-fe60-4b29-86af-9857478ce663
+> - §6a root 相対 src のパス安全性 → ADR-d89c2ede-1aba-46fa-9f14-8dcf8a266e0e
+> - §6b copy との併用を評価時に拒否 → ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967
+> - §6c src と target の重なりを拒否 → ADR-796508e6-2845-467d-83f8-386930a48bfb
+> - §7 root は配置前の確認だけで使う → ADR-5d85f49f-c136-425f-bea4-ad8ab8dd8632
+> - §8 要求と設計の置き場 → 完了済み
+
+- ステータス: 廃止
 - 日付: 2026-10-12
 - 関連: ADR-0003（link 生成は engine が担う）, ADR-0015（祖先 symlink error・devShell 同梱で CLI と lib の版ずれが起きない）, ADR-0046（自己記録の祖先 symlink は配置前に除去）, ADR-0058（last-applied 記録は manifest をそのまま保持）, #460, #362
 - 改訂対象: ADR-0001 の `src` の型 `path | set | marker` のうち marker を、`mkOutOfStoreSymlink`（絶対パス）と `mkRootRelativeSymlink`（配置 root 相対）の 2 構築子へ拡張する（out-of-store を明示関数でのみ opt-in する決定は不変）。ADR-0013 §1 の `srcKind` 列挙に `"rootRelative"` を加え（`schemaVersion = 1` は不変）、§4 の copy + out-of-store marker の eval 時エラーを root 相対マーカーにも適用する

@@ -2,7 +2,7 @@
 id: "ADR-0008"
 type: legacy_adr
 name: "entries の `source` を `subpath` に改名し、リポジトリ全体は subpath 省略で表す"
-status: 採用
+status: 廃止
 origin: "「リポジトリ全体を示す文字列として `\".\"` 以外の表現は無いか」という問いの設計検討"
 justifies:
   - "REQ-27b75fe6-6c36-44a8-8cd3-5cc98043022a"
@@ -16,7 +16,15 @@ references:
 ---
 # ADR-0008: entries の `source` を `subpath` に改名し、リポジトリ全体は subpath 省略で表す
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 source を subpath に改名する → ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab
+> - §2 listFilesInRepo の dir も subpath → 撤回
+> - §3 リポジトリ全体は subpath 省略 → ADR-2f5b8825-f13b-4f73-bdf1-fe14e0098d57
+> - §4 wholeRepo marker を採らない → ADR-2f5b8825-f13b-4f73-bdf1-fe14e0098d57
+> - §5 manifest.json のキーも subpath → ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab
+
+- ステータス: 廃止
 - 日付: 2026-06-13
 - 関連: ADR-0001（marker パターンの起点）, ADR-0004 / ADR-0005 / ADR-0007（root マーカー）, ADR-0006（`manifest.json` 契約）, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`
 - 起点: 「リポジトリ全体を示す文字列として `"."` 以外の表現は無いか」という問いの設計検討

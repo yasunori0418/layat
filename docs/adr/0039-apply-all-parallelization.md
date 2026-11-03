@@ -2,7 +2,7 @@
 id: "ADR-0039"
 type: legacy_adr
 name: "`apply --all` を build・配置の両段階で並列化する（ADR-0038 の前段衝突検査を前提）"
-status: 採用
+status: 廃止
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。複数 profile / manifest 処理の高速化要望"
 justifies:
   - "REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af"
@@ -17,7 +17,15 @@ references:
 ---
 # ADR-0039: `apply --all` を build・配置の両段階で並列化する（ADR-0038 の前段衝突検査を前提）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 build を worker pool で並列化 → ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e
+> - §2a 配置も config 単位で並列化 → ADR-e7a57f51-41da-460c-8f51-c84e94643f3d
+> - §2b 集約表示・results[] は辞書順 → ADR-af37a636-a798-4c03-8fa4-e73ed6375a92
+> - §3a 複数 manifest を 1 起動に渡さない → ADR-24488788-a5e6-47a5-9074-97192880642a
+> - §3b engine 内 entry 単位は並列化しない → ADR-e7a57f51-41da-460c-8f51-c84e94643f3d
+
+- ステータス: 廃止
 - 日付: 2026-07-04
 - 関連: ADR-0013, ADR-0033, ADR-0035, ADR-0038（前提: 前段衝突検査）, ADR-0060（§3 の改訂）, `docs/spec.md`, `cmd/layat/apply.go`
 - 改訂対象: ADR-0016 §2 の「`apply --all` の適用順は辞書順（キーソート・決定的）」を並列適用（実行順非決定・完了後の集約表示は辞書順）へ改訂

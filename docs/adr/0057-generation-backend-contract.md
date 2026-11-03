@@ -2,7 +2,7 @@
 id: "ADR-0057"
 type: legacy_adr
 name: "世代バックエンドの契約"
-status: 採用
+status: 廃止
 issues:
   - "#444"
   - "#406"
@@ -32,7 +32,22 @@ references:
 ---
 # ADR-0057: 世代バックエンドの契約
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 差し替え可能化まで・非 nix 実装なし → ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9
+> - §2a 契約は 5 操作・パスと整数のみ → ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8
+> - §2b nixprofile が一覧パースを所有 → ADR-1cbacca1-1930-46ca-bf82-30310f82216e
+> - §2c テストダブルは FS ベース Fake に統一 → ADR-4c8d459a-c371-4f0d-b009-16e2ca096e49
+> - §2d Backend 必須・nil フォールバック廃止 → ADR-eb1aa25f-a0ca-4efe-bcd9-4cbe11368764
+> - §3a profileDir レイアウトは契約の固定部分 → ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd
+> - §3b 読み操作は契約外・実在時に移す → ADR-8b8c9109-a479-4571-8b10-5a6079127441
+> - §4 engine の外部コマンドは git のみ → ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7
+> - §5 Build 事後条件をコミット可能パスへ緩和 → ADR-efa7685c-6fa4-45df-b7a3-8f3f58e4118c
+> - §6a バックエンドの選択機構を作らない → ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9
+> - §6b state 基底を設定で上書きさせない → ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883
+> - §7 .pending 後片付けは engine に残す → ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818
+
+- ステータス: 廃止
 - 日付: 2026-10-11
 - 関連: ADR-0002（世代管理を nix profile に乗せる）, ADR-0006（engine は `nix`（profile）と `git` をサブプロセスで叩く・却下案「エンジンが世代 symlink を直接管理」）, ADR-0011（`.pending` out-link と `nix-env --set` 後の削除）, ADR-0015（世代操作の `nix-env --profile` 系統一）, ADR-0023（eval 先行 → flock → build）, ADR-0025（profileDir の専用ディレクトリレイアウト）, ADR-0034（`layat prune` の走査基底）, ADR-0036（system mode の state 基底）, ADR-0043（`--json` の outturn 準拠）, ADR-0055（manifest 生成器の契約・Build 事後条件）, ADR-0056（生成器の選択機構）
 - 改訂対象: ADR-0002 / ADR-0015 §3 が「世代操作は `nix-env --profile <dir>` 系」とした主体を世代バックエンドの契約へ移す（nix-env はその既定実装 nixprofile になる）。ADR-0006 の「`nix`（profile）と `git` のみサブプロセスで叩く」を `git` のみへ改訂し、却下案「エンジンが世代 symlink を直接管理」を契約の実装として再評価する。ADR-0011 §4 の「`nix-env --set` 成功後に `.pending` を削除する」の主体を engine の FS 操作として位置づけ直す。ADR-0036 §3 の system 基底 `/nix/var/nix/profiles/layat` の所有者を nixprofile にする。ADR-0055 §4 の Build 事後条件「世代コミット可能な store path」を「選択中の世代バックエンドがコミット可能な link-farm のパス」へ緩和する（文言のみ）

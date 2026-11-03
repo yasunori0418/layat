@@ -2,7 +2,7 @@
 id: "ADR-0067"
 type: legacy_adr
 name: "世代スキップを system mode へ拡張する"
-status: 採用
+status: 廃止
 issues:
   - "#519"
   - "#493"
@@ -20,7 +20,11 @@ references:
 ---
 # ADR-0067: 世代スキップを system mode へ拡張する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 世代スキップを project と system で発火 → ADR-5265f879-e623-44f9-9c58-8c14598e8b10
+
+- ステータス: 廃止
 - 日付: 2026-10-24
 - 関連: ADR-0017, ADR-0036, ADR-0058, ADR-0066, GitHub Issue #519, #493
 - 改訂対象: ADR-0005「世代スキップ短絡を project mode の必須要件にする」の「世代スキップは project mode 限定」を project / system mode へ広げる（home mode の「適用のたびに新世代」は不変）。ADR-0006「実行フロー」4 の「project mode かつ」を「project / system mode かつ」へ改める

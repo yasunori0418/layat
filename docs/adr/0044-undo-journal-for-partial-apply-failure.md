@@ -2,7 +2,7 @@
 id: "ADR-0044"
 type: legacy_adr
 name: "apply 途中失敗の完全巻き戻し — インメモリ undo ジャーナル"
-status: 採用
+status: 廃止
 issues:
   - "#168"
   - "#172"
@@ -26,7 +26,16 @@ references:
 ---
 # ADR-0044: apply 途中失敗の完全巻き戻し — インメモリ undo ジャーナル
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1a インメモリ undo で逆順に戻す → ADR-56325270-20bb-4959-8498-e3223c35e24b
+> - §1b 中間ディレクトリは journal 化しない → ADR-c45921e1-e543-47ef-8d34-b52f2810eee3
+> - §2 発火は FS 反映段のみ・commit 後は対象外 → ADR-f29d1256-5e14-4b83-ac77-4717b2210193
+> - §3 undo の失敗は続行して全件報告 → ADR-a00bb2de-a8c5-4816-892b-4fa1f5299935
+> - §4 クラッシュは対象外・永続 WAL なし → ADR-509e15a2-9097-404d-bc3c-171fe63dd3c8
+> - §5 配置前除去も undo の対象 → ADR-4f08aa18-6a38-49fd-a784-450677d80e1a
+
+- ステータス: 廃止
 - 日付: 2026-07-12
 - 関連: ADR-0002, ADR-0006, ADR-0015, ADR-0017, ADR-0020, ADR-0031, ADR-0046, ADR-0047, `docs/spec.md`, GitHub Issue #168, #172
 - 改訂対象: **ADR-0046 §5**「#168 に hard 依存させず本 ADR 単独で出荷する」/ **ADR-0047 影響節**「#168（undo ジャーナル）は本 ADR の Unlink/Rmdir 両方を undo 対象に含める前提で設計する」を実装として満たす。両 ADR の PreRemove（祖先 symlink・実 dir target・method 変更）の意味論自体は不変。

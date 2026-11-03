@@ -2,7 +2,7 @@
 id: "ADR-0056"
 type: legacy_adr
 name: "生成器の選択と設定ファイル"
-status: 採用
+status: 廃止
 issues:
   - "#401"
   - "#395"
@@ -22,7 +22,17 @@ references:
 ---
 # ADR-0056: 生成器の選択と設定ファイル
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 生成器は明示指定のみで選ぶ → ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964
+> - §2 enum は nix のみ → ADR-9acd3e01-58f1-48ca-b84f-f33a5bc1aaa5
+> - §3 設定ファイルは上方向探索なし → ADR-5908eb28-40a5-49d5-a09e-15b35082b970
+> - §4a 設定は strict な TOML → ADR-e88f074e-95f4-4e04-97fc-eae2d0c695a3
+> - §4b CLI 依存に go-toml/v2 → ADR-aec6bd1d-f776-4d7c-9337-1ed78fee6180
+> - §5 入力不正は E_INPUT → ADR-c4a3d9be-19ea-461d-ab0f-2037adc494e1
+> - §6 --generator は prune/init で無視 → ADR-3878ea60-4f4f-48a3-a389-3b7fbb672897
+
+- ステータス: 廃止
 - 日付: 2026-10-02
 - 関連: ADR-0006（設定ファイルから config を発見する機構は足さない）, ADR-0007（entrypoint 発見の規律）, ADR-0011（CLI の依存許可と vendorHash）, ADR-0026（`--manifest` 経路と `-f` / `--all` との排他）, ADR-0043（`E_INPUT` の予約）, ADR-0055（manifest 生成器の契約）
 - 改訂対象: ADR-0006 の「設定ファイルから config を発見する機構は足さない」に、生成器の選択に限って設定ファイルを読む例外を足す（config の発見は引き続き足さない）。ADR-0043 §8 が予約した共通コード `E_INPUT` を初めて実装し、入力不正の分類先にする。ADR-0011 §1 の CLI 層の許可依存に `github.com/pelletier/go-toml/v2` を加える

@@ -2,7 +2,7 @@
 id: "ADR-0066"
 type: legacy_adr
 name: "NixOS / nix-darwin モジュールを system mode の配線として実装する"
-status: 採用
+status: 廃止
 issues:
   - "#519"
   - "#493"
@@ -26,7 +26,21 @@ references:
 ---
 # ADR-0066: NixOS / nix-darwin モジュールを system mode の配線として実装する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 NixOS/darwin は systemRoot 一本 → ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c
+> - §2a NixOS は activationScripts.layat から起動 → ADR-68f453b3-e6c7-4e0d-9978-32b5a00f627e
+> - §2b darwin は postActivation.text へ追記 → ADR-eee039fc-40af-42ac-bc65-979d6eaa0d06
+> - §3a 起動形は HM と同じ apply --all 1 回 → ADR-f58e9981-bacc-4937-98b8-bddce0a057db
+> - §3b 起動の組み立ては modules/kick.nix → ADR-a0d0cf15-8234-42be-b83e-9b8271850475
+> - §3c module 評価時に assertions を書かない → ADR-1338a293-3f69-48f5-9164-efb4ec6994d6
+> - §4a dry-activate のときだけ --dryrun → ADR-1743c957-a732-4a44-a89a-4c03ab277f0c
+> - §4b activation の PATH に nix を前置 → ADR-0da9d817-c870-4f48-8a6d-8fb9b55e2a70
+> - §5a rollback は host 世代に一本化 → ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75
+> - §5b 検証は eval check と nixos-vm → ADR-d01223d3-47a2-4bdd-ac5d-26370d553f7c
+> - 注意点a macOS でも記録基底は /var/lib/layat → ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c
+
+- ステータス: 廃止
 - 日付: 2026-10-24
 - 関連: ADR-0026, ADR-0062, ADR-0064, GitHub Issue #519, #493
 - 改訂対象: ADR-0003「決定」の NixOS / nix-darwin の root 供給元（`config.users.users.<user>.home`）を `systemRoot` に改める（モジュールが配線に徹することは不変）。ADR-0036 の「NixOS / nix-darwin モジュールは将来・別マイルストーン」を実装済みへ改める

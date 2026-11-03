@@ -2,7 +2,7 @@
 id: "ADR-0018"
 type: legacy_adr
 name: "templates の具体内容と `--all` のサブコマンド対応範囲を確定する"
-status: 採用
+status: 廃止
 origin: "ADR-0017 に続く実装前レビューで「templates の具体内容」「`gitignore` / `rollback` / `list-generations` の `--all` 対応」が未定義だった"
 justifies:
   - "REQ-196ddabf-6569-4303-942e-050872972501"
@@ -21,7 +21,18 @@ references:
 ---
 # ADR-0018: templates の具体内容と `--all` のサブコマンド対応範囲を確定する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 template は最小+コメント → ADR-7b9ecd2c-6b77-43c4-8fb4-3ad034e618e1
+> - §2 .gitignore ガイドはコメント → ADR-75d1dcc2-e270-4193-a72c-863a57967baf
+> - §3a shellHook は名指し apply → ADR-fcd03235-afe0-41ba-8ea9-c14bed3988da
+> - §3b devShell に pin 版を同梱 → ADR-88231ffc-4836-4252-be34-894944fd28c3
+> - §3c .envrc を同梱しない → ADR-653e6a28-76dd-44b3-99e2-3be189a3c1c4
+> - §4a gitignore --all はソート+重複除去 → ADR-d504b89e-9a2b-440f-83c1-be372b12241b
+> - §4b list-generations --all の対象 → ADR-cfd13fb6-d11e-4f3b-b0c6-40ee21b6b212
+> - §4c rollback --all 非対応・名指し必須 → ADR-997c2459-f2ab-4025-ac92-e9ce836fc9ed
+
+- ステータス: 廃止
 - 日付: 2026-06-14
 - 関連: ADR-0005, ADR-0006, ADR-0007, ADR-0013, ADR-0015, ADR-0016, ADR-0017, `docs/spec.md`, `docs/design.md`, `docs/concept.md`
 - 起点: ADR-0017 に続く実装前レビューで「templates の具体内容」「`gitignore` / `rollback` / `list-generations` の `--all` 対応」が未定義だった

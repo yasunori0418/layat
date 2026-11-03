@@ -2,7 +2,7 @@
 id: "ADR-0040"
 type: legacy_adr
 name: "root marker に `subdir` 適用形を追加する（実体は target 前置の eval 時糖衣）"
-status: 採用
+status: 廃止
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。「root マーカーの解決位置を宣言的にずらしたい」要望を、grilling で「root 配下のサブディレクトリを基点にする」意図（配下方向）と確認した"
 justifies:
   - "REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66"
@@ -18,7 +18,14 @@ references:
 ---
 # ADR-0040: root marker に `subdir` 適用形を追加する（実体は target 前置の eval 時糖衣）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1a root マーカーの subdir 適用形 → ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509
+> - §1b fixed root には subdir 無し → ADR-433b9539-21d9-46c5-91a1-fc2b04d5eb47
+> - §2a subdir は target 前置の糖衣 → ADR-6669c002-1b90-47a2-8a84-a0f7bddfd965
+> - §2b subdir にもパス安全性の確認 → ADR-d89c2ede-1aba-46fa-9f14-8dcf8a266e0e
+
+- ステータス: 廃止
 - 日付: 2026-07-04
 - 関連: ADR-0004, ADR-0014, ADR-0017, ADR-0019, `docs/spec.md`, `lib/types.nix`, `lib/manifest.nix`
 - 改訂対象: ADR-0007 の 3 root マーカー（projectRoot / homeRoot / systemRoot）の形を「引数適用可能（`homeRoot { subdir = ...; }`）」へ拡張（決定の反転なし・単体使用は不変）

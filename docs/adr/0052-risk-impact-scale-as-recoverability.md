@@ -2,7 +2,7 @@
 id: "ADR-0052"
 type: legacy_adr
 name: "risk の impact スケールを検出後の回復可能性へ純化する — detectability 第 2 軸は採らない"
-status: 採用
+status: 廃止
 issues:
   - "#303"
   - "#292"
@@ -12,7 +12,16 @@ justifies:
 ---
 # ADR-0052: risk の impact スケールを検出後の回復可能性へ純化する — detectability 第 2 軸は採らない
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1a impact は回復可能性の一軸 → SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac
+> - §1b 最も重い失敗方向で採点する → SDR-1a02013e-c57b-4079-9c72-8e9fe99e499a
+> - §1c 沈黙性は散文に残しスコア外 → SDR-7178b787-cf37-4753-9cea-12a0d65df410
+> - §2 形骸化した条件は impact を継承 → SDR-c2989d44-2ba4-4a42-9f4f-35871405be65
+> - §3 likelihood と level は触らない → 完了済み
+> - 題名 detectability 第 2 軸を採らない → SDR-7178b787-cf37-4753-9cea-12a0d65df410
+
+- ステータス: 廃止
 - 日付: 2026-08-13
 - 関連: GitHub Issue #303, #292, PR #299, PR #302
 - 改訂対象: なし（ADR を持たない規約の改訂。`docs/agents/sara-graph.md`「How a risk is scored」節の

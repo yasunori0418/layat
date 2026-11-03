@@ -2,7 +2,7 @@
 id: "ADR-0014"
 type: legacy_adr
 name: "entries を target キーの attrset にし、手動 name と手動一意性チェックを廃する"
-status: 採用
+status: 廃止
 origin: "参照: home-manager `modules/lib/file-type.nix`（`home.file` の識別子モデル）"
 justifies:
   - "REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7"
@@ -20,7 +20,20 @@ references:
 ---
 # ADR-0014: entries を target キーの attrset にし、手動 name と手動一意性チェックを廃する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 entries は target キーの attrset → ADR-c494e86e-ceb9-4380-b983-4e09553b01d6
+> - §2a 一意性は attrset が担保する → ADR-c494e86e-ceb9-4380-b983-4e09553b01d6
+> - §2b 別名キー同一 target は engine 検出 → ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0
+> - §2c copy と oos の併用は throwIf → ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967
+> - §2d systemRoot 未実装の throwIf → 撤回
+> - §3a 古くなった配置の除去で比べるキーは target → ADR-95b04ff7-8f9d-4ed1-a6e3-c22e4901c895
+> - §3b manifest entry は name を持たない → ADR-1848079b-7011-4653-b7cd-c279205262c4
+> - §3c GC アンカー名は target のサニタイズ → ADR-30f105c7-85a8-4fab-9dea-3277d932b524
+> - §4 モジュールの entries も同じ型 → ADR-0d8f691f-304a-4b36-8393-d6aeddc4b32a
+> - §5 動的生成は listToAttrs で組む → ADR-c494e86e-ceb9-4380-b983-4e09553b01d6
+
+- ステータス: 廃止
 - 日付: 2026-06-14
 - 関連: ADR-0001, ADR-0008, ADR-0010, ADR-0013, ADR-0015, `docs/spec.md`, `docs/design.md`, `docs/concept.md`, `CONTEXT.md`
 - 改訂対象: **ADR-0010**「entries を `attrsOf (submodule …)` でモデル化」の棄却を反転。entry submodule の `name` 必須フィールドと重複 `name` の `lib.throwIf` を廃止
