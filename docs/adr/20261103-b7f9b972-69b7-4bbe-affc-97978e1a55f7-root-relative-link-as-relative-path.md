@@ -26,20 +26,20 @@ justifies:
 symlink で置きたいという需要が出た。`mkOutOfStoreSymlink` の引数は評価時に決まる絶対パスで、
 pure eval の flake は自分のチェックアウトの絶対パスを得られない。
 
-engine の前世代との照合・stale 除去・drift 修復・`--json` の `old` / `new` は、どれもディスクの
+engine の前世代との比較・古い配置物の除去・drift 修復・`--json` の `old` / `new` は、どれもディスクの
 readlink の結果と、Entry だけから計算するリンク先の文字列の完全一致で判定している。
 
 ## 決定
 
 engine は root 相対マーカーの entry を、target の親ディレクトリから `src/subpath` への相対パスを
 中身とする symlink として張る。この形は、配置の時点で target の祖先が実ディレクトリであるという
-不変条件に依存する。foreign な祖先 symlink は配置前に止め、自己記録の stale な祖先 symlink は
+不変条件に依存する。foreign な祖先 symlink は配置前に止め、自己記録の 古くなった祖先 symlink は
 配置前に除く。リンク先の計算は DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296、祖先 symlink の扱いは
 REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575 に置く。
 
 ## 根拠
 
-リンク先が root を含まない文字列になるので、照合する処理に手を入れずに済む。planner・stale 除去・
+リンク先が root を含まない文字列になるので、比較する処理に手を入れずに済む。planner・古い配置物の除去・
 drift 修復・`--json` は相対の文字列をそのまま比べ、前世代の記録からも同じ文字列を計算し直せる。
 リンクの中身が root の絶対パスを含まないから、worktree を動かしたり改名したりしてもリンクは
 有効なまま残る。home mode でも HOME に依らない書き方になる。
@@ -51,6 +51,6 @@ drift 修復・`--json` は相対の文字列をそのまま比べ、前世代�
 
 ### engine が `<root>/<src>/<subpath>` を絶対パスにして張る
 
-リンク先の計算に root が要り、planner・stale 除去・drift 修復・`--json` の照合する処理を全て
+リンク先の計算に root が要り、planner・古い配置物の除去・drift 修復・`--json` の比較する処理を全て
 root 付きに書き換えることになる。worktree を動かすとリンクが切れ、home mode では HOME に依存する
 文字列が残る。

@@ -20,8 +20,8 @@ references:
 ## 背景
 
 root マーカーの適用形が持つ `subdir` を、どこで実現するかを決める必要がある。layat の意味論では、
-基点を `root/sub` にすることと、全 target に `sub/` を前置することは等価である。stale 除去の
-照合キー・foreign symlink の判定・祖先 symlink の検査・`gitignore` の anchor 形は、どれも target の
+基点を `root/sub` にすることと、全 target に `sub/` を前置することは等価である。古い配置物を除くときに
+比べるキー・foreign symlink の判定・祖先 symlink の確認・`gitignore` の anchor 形は、どれも target の
 文字列で動くからだ。
 
 root を実際に動かすと、`manifest.json` に新しいフィールドが要る。古い engine がエラーにせず無視すると
@@ -39,7 +39,7 @@ root の解決値・`rootKind`・`manifest.json` のスキーマ・`schemaVersio
 
 等価なので、root を動かす実装は複雑さだけを増やし、機能では何も得ない。糖衣にすれば実装は
 `normalizeManifest` の 1 か所に閉じ、engine の変更も `manifest.json` の版上げも要らない。
-root が動かないので profileDir の鍵も変わらず、既存の検査と意味論は前置後の target でそのまま
+root が動かないので profileDir の鍵も変わらず、既存の確認と意味論は前置後の target でそのまま
 正しく動く。
 
 ## 棄却した代替案

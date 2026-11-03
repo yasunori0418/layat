@@ -26,30 +26,30 @@ references:
 root 相対マーカーを manifest に載せるには、`srcKind` に新しい値 `"rootRelative"` が要る。
 `manifest.json` は Nix と engine の間の唯一の安定契約で、`schemaVersion` は 1 である。当時の
 engine の検証は `schemaVersion` と root だけを見ており、`srcKind` / `method` / `rootKind` の値は
-検査していなかった。そのため未知の値を読むと、エラーにならずに誤った配置をしうる状態だった。
+確認していなかった。そのため未知の値を読むと、エラーにならずに誤った配置をしうる状態だった。
 
 ## 決定
 
 `srcKind` に `"rootRelative"` を足し、`schemaVersion` は 1 のまま据え置く。代わりに engine は
-manifest を読むとき、entry ごとに `srcKind` / `method` / `rootKind` の値を検査し、未知の値を
+manifest を読むとき、entry ごとに `srcKind` / `method` / `rootKind` の値を確認し、未知の値を
 明示のエラーにする。列挙値の一覧は REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336、版の固定は
-REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b、値の検査は DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296
+REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b、値の確認は DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296
 に置く。
 
 ## 根拠
 
 project mode では CLI と lib が devShell に同梱されるので、古い engine が新しい manifest を読むことは
 構造的に起きない。home mode ではグローバルな CLI と flake が pin する lib が別の入力になり、版がずれうる。
-この場合も値の検査があれば、未知の `srcKind` は誤配置されずに明示のエラーで止まる。
-既存の manifest は全て既知の値なので、検査を足しても挙動は変わらない。
+この場合も値の確認があれば、未知の `srcKind` は誤配置されずに明示のエラーで止まる。
+既存の manifest は全て既知の値なので、確認を足しても挙動は変わらない。
 
 ## 棄却した代替案
 
 ### `schemaVersion` を 2 に上げる
 
-版ずれは project mode では起きず、home mode で起きても値の検査が誤配置を止める。全利用者の
+版ずれは project mode では起きず、home mode で起きても値の確認が誤配置を止める。全利用者の
 manifest の版を上げる代償に見合う保護が無い。
 
-### 値の検査を足さずに列挙値だけ足す
+### 値の確認を足さずに列挙値だけ足す
 
 古い engine が新しい値を読んだとき、エラーにならずに誤った配置をしうる余地が残る。
