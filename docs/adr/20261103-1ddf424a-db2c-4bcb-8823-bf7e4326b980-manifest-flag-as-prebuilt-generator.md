@@ -20,9 +20,9 @@ references:
 
 ## 背景
 
-`apply --manifest` は、build 済みの link-farm を直接適用する経路である。HM などのモジュールの
-activation はこの経路で engine を起動する。manifest の取得を生成器の 4 操作越しにする
-（→ ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2）と、この経路だけが生成器の外に残る。
+`apply --manifest` は、build 済みの link-farm を直接適用する。HM などのモジュールの
+activation は `apply --manifest` で engine を起動する。manifest の取得を生成器の 4 操作越しにする
+（→ ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2）と、`--manifest` の処理だけが生成器の外に残る。
 
 ## 決定
 
@@ -35,12 +35,12 @@ Roots は name ごとの root を返し、Build と DryBuild は name で link-f
 
 ## 根拠
 
-`--manifest` を生成器の外の特別な経路として残すと、engine への注入経路が 2 本になり、root の種別の
-読み方や `Targets` の導出が経路ごとに別の実装になる。prebuilt 生成器にすれば、nix 生成器・テスト
-ダブルと同じ契約で扱え、外面を変えずに内部の経路だけを揃えられる。
+`--manifest` の処理を生成器の外に残すと、engine へ manifest を渡す道筋が 2 本になり、root の種別の
+読み方や `Targets` の導出がそれぞれ別の実装になる。prebuilt 生成器にすれば、nix 生成器・テスト
+ダブルと同じ契約で扱え、外面を変えずに内部の処理だけを揃えられる。
 
 ## 棄却した代替案
 
-### `--manifest` を生成器の外の経路として残す
+### `--manifest` の処理を生成器の外に残す
 
-root の種別の取得と `Targets` の導出を、生成器の経路と `--manifest` の経路で二重に持つことになる。
+root の種別の取得と `Targets` の導出を、生成器と `--manifest` の処理で二重に持つことになる。
