@@ -28,13 +28,15 @@ references:
 衝突はいつまでも解消しない。stale 除去の保守的な条件は衝突があっても保たれるので、実害は
 どちらの symlink が残るかに限られる。それでも設定の誤りであることに変わりはない。
 
-一方、`apply --all` が扱う config はすべて同じ entrypoint に載っており、正規化後の target を build
-の前に一括 eval で取れる（ADR-28605860-770e-41df-95dd-7dc05b20497a）。
+一方、`apply --all` が扱う config の正規化後 target は、build の前に分かる。同じ entrypoint から
+選んだ config なら一括 eval で取れ（ADR-28605860-770e-41df-95dd-7dc05b20497a）、`--manifest` で渡された
+ビルド済みの集合なら各 link-farm の `manifest.json` から読める。
 
 ## 決定
 
 `apply --all` は、選択した config 群の正規化後 target に重複が無いかを build の前に検査し、
-重複があれば build にも配置にも入らずエラーで止める。名指しの `apply <name>` は検査しない。
+重複があれば build にも配置にも入らずエラーで止める。`--manifest` で渡されたビルド済みの集合も
+同じ検査を通る。名指しの `apply <name>` は検査しない。
 この検査で見えない衝突は、これまでどおり実行時の後勝ちと foreign symlink の warning で扱う。
 
 検査の対象・バケットの分け方・終了コードは REQ-38506419-c23d-4fce-b167-30715ce6a69d に、

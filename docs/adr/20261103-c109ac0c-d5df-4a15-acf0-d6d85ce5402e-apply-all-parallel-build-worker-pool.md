@@ -29,7 +29,7 @@ nix daemon が守る。target の衝突を調べるのは eval の段と配置�
 ## 決定
 
 `apply --all` は、選択した全 config の build を配置より先に、同時実行数に上限を設けた worker pool で
-並列に実行する。上限は `--jobs` で指定でき、既定は論理 CPU の数とする。build に失敗した config は
+並列に実行する。上限は `--jobs` で指定できる。build に失敗した config は
 配置へ進めず、部分失敗として集約する。
 
 段の分け方・`--jobs` の解決・失敗の扱いは REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d に置く。

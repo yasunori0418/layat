@@ -32,7 +32,8 @@ references:
 ## 決定
 
 正規化後の target は lib が manifest の passthru として算出し、CLI が `apply --all` の一括 eval で
-rootKind と一緒に受け取る。重複の判定は CLI が行う。engine には手を入れず、config 間の衝突を
+rootKind と一緒に受け取る。`--manifest` で渡されたビルド済みの集合では、CLI が
+各 link-farm の `manifest.json` から target を読む。重複の判定は CLI が行う。engine には手を入れず、config 間の衝突を
 engine へ持ち込まない。
 
 一括 eval で取る値と式は REQ-535b811d-dfc5-4eac-92db-737e70eb5415 に置く。
