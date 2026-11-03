@@ -31,7 +31,7 @@ sara の orphan 判定は、item が `direction: upstream` の relation を実�
 
 ## 決定
 
-親を持たない型は solution と ADR 系の型（adr / sara_adr / legacy_adr）だけにする。それ以外の型は
+親を持たない型は solution と ADR 系の型だけにする。それ以外の型は
 `parent_types` を持ち、各 item は upstream relation を 1 本以上張る。これで「接続漏れ = orphan
 warning」が全型で成り立つ。型と relation の正本は `docs/model.yaml` に置く。
 

@@ -51,4 +51,4 @@ strict にすれば orphan は型を問わず error になる。型を限った�
 
 ### ADR の orphan だけを CI の grep で落とす
 
-strict の検査に含まれる。同じ判定を 2 箇所で持つと、片方だけ直したときに食い違う。
+strict の検査に含まれ、冗長になる。

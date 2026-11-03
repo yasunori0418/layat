@@ -35,9 +35,6 @@ ADR 系の型の `justifies` の対象を requirement / design / infrastructure 
 ADR は「なぜその規範にしたか」を残し、規範そのものは `justifies` の先の item が持つ。品質方針やテスト計画の
 規範も決定から生まれるので、その決定を記録した ADR から辿れる必要がある。
 
-対象に無い型の規範を決めた ADR は、決めた item へ張れない。別の型の item へ迂回して張ると、
-`sara query` で辿った結果が実際の決定の範囲とずれる。
-
 ## 棄却した代替案
 
 ### 対象を requirement / design / infrastructure のまま据え置く
