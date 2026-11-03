@@ -27,7 +27,7 @@ justifies:
 「対象 config なし」の通知を既定では出さない。warning と error は常に stderr に出す。既定が沈黙なので
 `--quiet` は持たない。
 
-沈黙の対象と対象外（warning / error・`reset` の確認プロンプト）は
+warning / error と `reset` の確認プロンプトを沈黙の対象外にすることは
 REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 に、`--quiet` を提供しないことは
 REQ-0a123b89-0399-4f76-b988-56a5f7e0becf に置く。
 
