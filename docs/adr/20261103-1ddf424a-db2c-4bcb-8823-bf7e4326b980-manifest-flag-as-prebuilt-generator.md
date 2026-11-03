@@ -31,7 +31,7 @@ activation は `apply --manifest` で engine を起動する。manifest の取�
 `--manifest <name>=<link-farm>` の繰り返しでは、prebuilt 生成器が名前付き link-farm の集合を持ち、
 Roots は name ごとの root を返し、Build と DryBuild は name で link-farm を選ぶ。
 
-`--manifest` の外面は変えない。prebuilt 生成器の規範は REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729 に置く。
+prebuilt 生成器に写しても、`--manifest` のフラグと挙動は変わらない。prebuilt 生成器の規範は REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729 に置く。
 
 ## 根拠
 

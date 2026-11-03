@@ -31,7 +31,11 @@ manifest の取得は、プロセス内の Go インターフェイスとして�
 cmd 層に残すのは生成器の選択と engine への注入だけにする。engine は既存の注入用の関数（`BuildFunc`
 など）をそのまま使い、変更しない。
 
-生成器を経由するサブコマンドの範囲と契約の規範は REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729、
+生成器を経由するのは manifest を得るサブコマンドの全て（apply（`--dryrun` を含む）・gitignore・
+list-generations・reset・rollback）とする。prune は nix を使わないので経由せず、`nix flake init` を
+呼ぶ init は生成器化の範囲外にする。
+
+生成器の契約の規範は REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729、
 パッケージ構成は DSG-25ad3cce-f921-4db2-aae0-c0263d4b8295、engine と CLI の 2 層構成は
 REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 に置く。
 

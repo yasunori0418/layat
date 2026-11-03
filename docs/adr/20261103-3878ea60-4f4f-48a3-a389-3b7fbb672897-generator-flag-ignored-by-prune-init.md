@@ -23,7 +23,7 @@ references:
 
 生成器は `--generator` フラグ・環境変数・設定ファイルから選ぶ（→ ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964）。
 サブコマンドの中には manifest を得ないものがある。prune は世代の系列だけを扱い、init は生成器を
-経由しない（→ ADR-87a2cf34-9592-4c81-8980-246bca579ca0）。
+経由しない（→ ADR-87a2cf34-9592-4c81-8980-246bca579ca0）。status も manifest を得ずに動く。
 
 ## 決定
 
