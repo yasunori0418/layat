@@ -23,7 +23,7 @@ justifies:
 
 モジュールは config ごとにビルド済みの link-farm を持つ。これを engine へ渡す形として、config ごとに
 `apply --manifest` を起動し、部分失敗を bash で集約する形も考えられる。一方で `apply --all` は、
-config の集合について前段の衝突チェック・build と配置の並列化・部分失敗の集約をすでに CLI に持つ。
+config の集合について前段の衝突の確認・build と配置の並列化・部分失敗の集約をすでに CLI に持つ。
 
 ## 決定
 

@@ -43,7 +43,7 @@ REQ-068f2fb3-5459-4325-9359-c931b5049e0d に置く。
 - モジュールが自分の性質で root を pin し、`root` オプションを公開しない原則と両立する。subdir 適用形は
   root を動かさず、target だけを変える
 - subdir は評価時に target へ前置されるので、manifest には前置後の target が載る。configs 間の衝突の
-  チェックは、engine と `manifest.json` のスキーマを変えずにそのまま追従する
+  確認は、engine と `manifest.json` のスキーマを変えずにそのまま追従する
 - 共通オプションの集合に置き、モジュールごとに集合を分岐させない
 
 ## 棄却した代替案
