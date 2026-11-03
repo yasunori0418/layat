@@ -12,12 +12,13 @@ justifies:
   - "DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296"
 references:
   - "ADR-88231ffc-4836-4252-be34-894944fd28c3"
+  - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
 ---
 # ADR-b5431ecf-fe60-4b29-86af-9857478ce663: srcKind の列挙値は schemaVersion を上げずに足す
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-88231ffc-4836-4252-be34-894944fd28c3, `docs/spec.md`
+- 関連: ADR-88231ffc-4836-4252-be34-894944fd28c3, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, `docs/spec.md`
 - 起点: Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §5a と §5b を書き直した
 
 ## 背景
@@ -37,16 +38,17 @@ REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b、値の検査は DSG-fd39b9ee-a5d2-46c
 
 ## 根拠
 
-CLI と lib は devShell に同梱されるので、古い engine が新しい manifest を読むことは構造的に起きない。
-値の検査を足せば、仮にそれが起きても、未知の `srcKind` は誤配置されずに明示のエラーで止まる。
+project mode では CLI と lib が devShell に同梱されるので、古い engine が新しい manifest を読むことは
+構造的に起きない。home mode ではグローバルな CLI と flake が pin する lib が別の入力になり、版がずれうる。
+この場合も値の検査があれば、未知の `srcKind` は誤配置されずに明示のエラーで止まる。
 既存の manifest は全て既知の値なので、検査を足しても挙動は変わらない。
 
 ## 棄却した代替案
 
 ### `schemaVersion` を 2 に上げる
 
-版ずれが起きない以上、全利用者の manifest の版を上げる代償に見合う保護が無い。未知の値を
-明示のエラーにする保護は、値の検査で得られる。
+版ずれは project mode では起きず、home mode で起きても値の検査が誤配置を止める。全利用者の
+manifest の版を上げる代償に見合う保護が無い。
 
 ### 値の検査を足さずに列挙値だけ足す
 
