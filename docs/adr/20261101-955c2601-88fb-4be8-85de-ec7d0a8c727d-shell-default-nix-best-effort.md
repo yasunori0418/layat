@@ -8,6 +8,7 @@ issues:
 origin: "Issue #4（flake.nix 以外の entrypoint）。ADR-0007 §5 を書き直した"
 justifies:
   - "REQ-67095391-eab2-45d2-b75b-b428d481bcc2"
+  - "REQ-da253cab-34d4-4d6e-96f0-de99e012b376"
 supersedes:
   - "ADR-0007"
 ---
