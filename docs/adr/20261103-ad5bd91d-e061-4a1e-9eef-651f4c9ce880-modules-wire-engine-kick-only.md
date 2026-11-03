@@ -30,8 +30,7 @@ justifies:
 
 モジュールは、root と起動の時機（`home.activation` / `system.activationScripts`）だけを供給し、
 switch のときに engine を起動する配線に徹する。配置・衝突の検出・stale 除去・世代のコミットは
-モジュールに持たせない。root はモジュールが自分の性質で pin する（home-manager は `homeRoot`、
-NixOS / nix-darwin は `systemRoot`）。
+モジュールに持たせない。
 
 root の解決は REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b と
 REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、起動の契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、

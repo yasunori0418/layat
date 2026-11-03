@@ -25,7 +25,7 @@ HM モジュールが 1 つの entries（= 1 つの profile）しか持たない
 
 ## 決定
 
-HM モジュールに `layat.configs.<name>` を設け、`<name>` を profile 名とする。config ごとに
+モジュールの共通オプションに `layat.configs.<name>` を設け、`<name>` を profile 名とする。config ごとに
 `mkManifest` を呼んで独立した link-farm を作り、1 config = 1 manifest = 1 profile とする。複数の
 config を 1 つの manifest へ合成するヘルパーは提供しない。
 
@@ -51,4 +51,4 @@ REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a に置く。
 
 ### 複数の config を 1 つの manifest へ合成するヘルパーを提供する
 
-世代の単位が曖昧になり、部分失敗のときの状態も説明しにくくなる。
+1 config = 1 manifest = 1 profile の対応が崩れ、世代の単位が曖昧になる。
