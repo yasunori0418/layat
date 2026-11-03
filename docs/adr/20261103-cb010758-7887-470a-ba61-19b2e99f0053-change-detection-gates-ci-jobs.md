@@ -3,7 +3,7 @@ id: "ADR-cb010758-7887-470a-ba61-19b2e99f0053"
 type: adr
 name: "変更検出で nix を回さない PR の必須チェックを skip で通す"
 status: 採用
-origin: "ADR-0030 §2 と ADR-0027 §2b を書き直した"
+origin: "ADR-0030 §2 と ADR-0027 §2b（docs だけの変更で nix を回さない）を書き直した"
 justifies:
   - "INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6"
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
@@ -15,7 +15,7 @@ references:
 - ステータス: 採用
 - 日付: 2026-11-03
 - 関連: ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511
-- 起点: ADR-0030 §2 と ADR-0027 §2b を書き直した
+- 起点: ADR-0030 §2 と ADR-0027 §2b（docs だけの変更で nix を回さない）を書き直した
 
 ## 背景
 

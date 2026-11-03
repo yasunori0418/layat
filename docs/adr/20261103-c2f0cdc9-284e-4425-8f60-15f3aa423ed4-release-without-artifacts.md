@@ -3,7 +3,7 @@ id: "ADR-c2f0cdc9-284e-4425-8f60-15f3aa423ed4"
 type: adr
 name: "release に成果物を添付しない"
 status: 採用
-origin: "参照: https://github.com/yasunori0418/cryoflow のリリース自動化（bump workflow と release workflow）。ADR-0042 §4 を書き直した"
+origin: "次期マイルストーン追加計画の grilling（2026-07-04）。参照実装: https://github.com/yasunori0418/cryoflow のリリース自動化（bump workflow と release workflow）。ADR-0042 §4 を書き直した"
 justifies:
   - "INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43"
 references:
@@ -14,7 +14,7 @@ references:
 - ステータス: 採用
 - 日付: 2026-11-03
 - 関連: ADR-2fcf26b4-bce6-4ed6-a374-3afe560ead21
-- 起点: 参照: https://github.com/yasunori0418/cryoflow のリリース自動化（bump workflow と release workflow）。ADR-0042 §4 を書き直した
+- 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。参照実装: https://github.com/yasunori0418/cryoflow のリリース自動化（bump workflow と release workflow）。ADR-0042 §4 を書き直した
 
 ## 背景
 

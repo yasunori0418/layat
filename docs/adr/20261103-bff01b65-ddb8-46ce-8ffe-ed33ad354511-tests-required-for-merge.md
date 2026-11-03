@@ -3,7 +3,7 @@ id: "ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511"
 type: adr
 name: "main へのマージにテストの成功を必須にする"
 status: 採用
-origin: "ADR-0030 §1a を書き直した"
+origin: "ADR-0030 §1a（main の ruleset で required status check を課す）を書き直した"
 justifies:
   - "INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6"
 ---
@@ -11,7 +11,7 @@ justifies:
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 起点: ADR-0030 §1a を書き直した
+- 起点: ADR-0030 §1a（main の ruleset で required status check を課す）を書き直した
 
 ## 背景
 
