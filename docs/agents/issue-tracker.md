@@ -59,7 +59,7 @@ Run `gh issue view <number> --comments`.
 ## Defect issues
 
 Defects found in the product are managed here, not in the document graph — there is no
-`defect` item type (→ ADR-0051). The graph holds norms (what should hold); a defect is an
+`defect` item type (→ SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed). The graph holds norms (what should hold); a defect is an
 event, and events belong to the tracker.
 
 - **File** a defect as a GitHub issue with the `bug` label.

@@ -48,7 +48,7 @@ parents `docs/model.yaml` permits: `infrastructure` may hang off a `design` as w
 
 Every type but `solution` and the three ADR types hangs off at least one upstream relation, so a missing link
 shows up as an orphan warning, with no exceptions. Defects found in the product are not graph
-items: they live in GitHub Issues under the `bug` label (→ ADR-0051; conventions in
+items: they live in GitHub Issues under the `bug` label (→ SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed; conventions in
 `docs/agents/issue-tracker.md`, "Defect issues").
 
 Start from the overview that matches the topic (spec for behaviour, design for structure, concept
@@ -72,7 +72,7 @@ sara report matrix           # traceability matrix
 ```
 
 **`sara query` only accepts the full ID** — and that is what prose, filenames, and relation
-lists all carry (see ADR-0053; short forms are not used), so an ID you spot anywhere can be
+lists all carry (see SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb; short forms are not used), so an ID you spot anywhere can be
 passed straight to sara or grepped as-is to resolve both the declaring item and every
 reference to it:
 
@@ -144,7 +144,7 @@ If the concept you need isn't in the glossary yet, that's a signal — either yo
 
 If your output contradicts an existing ADR, surface it explicitly rather than silently overriding:
 
-> _Contradicts ADR-0007 (event-sourced orders) — but worth reopening because…_
+> _Contradicts ADR-<uuid> (event-sourced orders) — but worth reopening because…_
 
 The same applies to a `requirement` item: its `specification` is normative, so contradicting it is a
 spec change, not an implementation detail. Say which item you're contradicting by its short ID.

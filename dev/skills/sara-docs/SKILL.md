@@ -70,7 +70,7 @@ relation は**起こした側（下流）の frontmatter に宣言する**（`sa
 | ファイル名 | `<YYYYMMDD>-<フル UUIDv4>-<slug>.md` | `20260802-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4-mkmanifest-pure-function.md` |
 | 散文中の参照 | `<PREFIX>-<フル UUIDv4>` | `REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4` |
 
-- **どの面でもフル ID をそのまま書く**（→ ADR-0053）。8 文字省略形は使わない。relation
+- **どの面でもフル ID をそのまま書く**（→ SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb）。8 文字省略形は使わない。relation
   リスト・ファイル名・散文の表記が一致するので、ID をそのまま grep しても `sara query` へ
   渡しても同じものに当たる。
 - 起票は ADR を含め **`sara-new` コマンド**。採番とファイル名規約の適用、`sara init` の

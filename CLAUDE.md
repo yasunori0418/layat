@@ -39,7 +39,7 @@ item を新設し、概要文書にはリンクを 1 行足すに留める。
 ADR の 3 型（adr / sara_adr / legacy_adr）のみ**で、他の型は upstream relation を 1 本以上張る
 （張り忘れは `sara check` の orphan warning で出る）。
 検出した欠陥（defect）は型として持たず、GitHub Issues（`bug` label）で管理する
-（→ ADR-0051。運用規約は `docs/agents/issue-tracker.md` の「Defect issues」節）。
+（→ SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed。運用規約は `docs/agents/issue-tracker.md` の「Defect issues」節）。
 
 risk を `requirement` と `design` のどちらに張るかの使い分けは `docs/agents/sara-graph.md`。
 
@@ -96,7 +96,7 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
 | ファイル名 | `<YYYYMMDD>-<フル UUIDv4>-<slug>.md` | `20260802-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4-mkmanifest-pure-function.md` |
 | 散文中の参照 | `<PREFIX>-<フル UUIDv4>` | `REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4` |
 
-**どの面でもフル ID をそのまま書く**（→ ADR-0053）。8 文字省略形は使わない。ファイル名・
+**どの面でもフル ID をそのまま書く**（→ SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb）。8 文字省略形は使わない。ファイル名・
 散文・relation リストの表記が一致するので、ID をそのまま grep しても `sara query` へ渡しても
 同じものに当たる（省略形と正式 ID を突き合わせる手順が要らない）。
 
