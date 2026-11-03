@@ -28,7 +28,8 @@ nix の失敗は、エラー文字列を見て初めて種類が分かる。expe
 ## 決定
 
 nix 固有のエラー文字列による判定・案内文・config 名が見つからないときの前置文は、nix 生成器
-（`internal/generator/nixgen`）の中に閉じ、外へ出さない。CLI はエラー文字列を判定せず、生成器が返す構造化した値だけを見る。
+（`internal/generator/nixgen`）の中に閉じ、外へ出さない。CLI はエラー文字列を判定せず、生成器が
+返す構造化した値だけを見る。
 
 experimental-features の前提と案内の規範は REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6 に置く。
 

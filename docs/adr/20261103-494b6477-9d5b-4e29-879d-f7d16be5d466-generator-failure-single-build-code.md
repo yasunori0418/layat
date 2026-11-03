@@ -28,9 +28,9 @@ layat 固有の失敗は `E_LAYAT_*` のコードで表す（→ ADR-64cff3f4-59
 
 ## 決定
 
-`E_LAYAT_BUILD` を「生成器の失敗」と読み、新しいコードは足さない。`E_LAYAT_BUILD` に分類するのは、
-prebuilt 以外の生成器が roots / build の段階で manifest を評価・生成できなかった失敗に限る。discover の
-段階の失敗と prebuilt 生成器の失敗は、生成器を導入する前と同じく、原因の error から従来の規則で分類する。
+生成器が manifest を評価・生成できなかった失敗は、`--json` で `E_LAYAT_BUILD` 1 本に分類し、新しい
+コードは足さない。対象は prebuilt 以外の生成器の roots / build の段階の失敗に限る。discover の段階の
+失敗と prebuilt 生成器の失敗は、生成器を導入する前と同じく、原因の error から従来の規則で分類する。
 失敗の種類はコードに写さず、エンベロープに生成器名を出さない。
 
 エンベロープのコードの層分けは REQ-9341fa5d-836e-4023-af53-cc7d273438d1、生成器の失敗の分類の細目は
