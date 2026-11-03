@@ -51,7 +51,7 @@ specification_ja: |
 > この MVP 限定は **ADR-01abcd5a-464f-4c44-8afd-30950631487c・ADR-3447db4a-cdec-4573-bbad-05bbffc34a65 が実装決定済み**（seam を実装へ進め、`layat.entries` を
 > `configs.default.entries` への糖衣にする）で反転している。`docs/spec.md` 側がこの改訂に
 > 追従できていないため、分割にあたって原文の MVP 限定を規範へ持ち込まない判断をした
-> （REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 / REQ-16faf428-77f3-492f-b858-222c5274cbf7 で ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed 由来の未追従を扱ったのと同じ扱い）。
+> （REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 / REQ-16faf428-77f3-492f-b858-222c5274cbf7 で ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c・ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed 由来の未追従を扱ったのと同じ扱い）。
 > `docs/spec.md` の追従は本 item の担当範囲外。
 >
 > **原文の残る規範の所在**: `layat.configs` / `layat.entries` のオプション定義そのものは

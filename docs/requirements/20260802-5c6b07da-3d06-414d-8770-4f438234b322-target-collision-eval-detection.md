@@ -44,7 +44,7 @@ cross-config（別 profile・別 manifest）の同一 target 衝突は eval で�
 > 別ツール）へ限定した。**旧決定（ADR-1338a293-3f69-48f5-9164-efb4ec6994d6 で改訂）が、1 つのモジュール config 内の `layat.configs.<A>` と
 > `<B>` は全 config が同一のモジュール eval に載るため正規化後 target の衝突を静的に検出でき、
 > eval 時 assertion で停止すると決定済み**で、原文の無条件な言い切りはこれを否定してしまう
-> （原文が旧決定に未追従・REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 / REQ-16faf428-77f3-492f-b858-222c5274cbf7 で ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed 由来の未追従を扱ったのと
+> （原文が旧決定に未追従・REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 / REQ-16faf428-77f3-492f-b858-222c5274cbf7 で ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c・ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed 由来の未追従を扱ったのと
 > 同じ扱い）。本 item は静的検出が可能な場合を妨げないことまでを規範とし、その場合に実際に
 > eval 停止する規範（旧決定）そのものは持たない。**その規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 が
 > 持つ**。`docs/spec.md` の追従は本 item の担当範囲外。

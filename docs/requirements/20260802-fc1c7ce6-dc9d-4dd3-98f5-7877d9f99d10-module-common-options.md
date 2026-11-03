@@ -80,7 +80,7 @@ layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-5af37
 > `configs.default.entries` への deprecated 糖衣へ降格することを決定済み**で、`docs/spec.md`
 > の当該表はこれに未追従。ADR-01abcd5a-464f-4c44-8afd-30950631487c は `configs` の定義先を `modules/common.nix`
 > （全モジュール共通）と定めているため、これは HM 固有ではなく共通オプション集合の一部で
-> あり、本 item の規範に含めた（REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 / REQ-16faf428-77f3-492f-b858-222c5274cbf7 で ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed 由来の未追従を
+> あり、本 item の規範に含めた（REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 / REQ-16faf428-77f3-492f-b858-222c5274cbf7 で ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c・ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed 由来の未追従を
 > 扱ったのと同じ扱い）。`configs` の `<name>` 次元が profile の粒度にとって何を意味するか
 > （役割分離が可能になること・`<name>` 次元の導入が非破壊であること）は REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a、
 > profile dir をどうキーするかは REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81 の担当。`docs/spec.md` の追従は本 item の
