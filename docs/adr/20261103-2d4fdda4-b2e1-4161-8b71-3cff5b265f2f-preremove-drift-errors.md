@@ -11,6 +11,7 @@ origin: "grilling セッション（2026-07-11・2026-07-12）で確定。ADR-00
 justifies:
   - "REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26"
   - "DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68"
+  - "REQ-0e341430-17f0-498b-9439-65491652163a"
 references:
   - "ADR-0015"
   - "ADR-74423bb8-1453-4689-a25e-30bf46536afc"
@@ -41,7 +42,8 @@ symlink、実ディレクトリの target の配下、method の変更）に共�
 変えない。
 
 除去の手順は REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26 と
-DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68 に置く。
+DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68 に、rollback の配置前除去も drift で error に
+することは REQ-0e341430-17f0-498b-9439-65491652163a に置く。
 
 ## 根拠
 
