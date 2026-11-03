@@ -22,7 +22,7 @@ references:
 ## 背景
 
 `apply --all` は、選択した config 間の target 重複を build の前に止める
-（ADR-75df92ae-0694-452b-8fb4-350994e31b25）。このチェックに要る正規化後の target をどこで算出し、
+（ADR-75df92ae-0694-452b-8fb4-350994e31b25）。この確認に要る正規化後の target をどこで算出し、
 重複の判定をどの層に置くかを決める必要があった。
 
 `apply --all` は build の前に、config ごとの情報を 1 回の eval でまとめて取っている
@@ -40,7 +40,7 @@ engine へ持ち込まない。
 
 ## 根拠
 
-チェックの対象になる集合は、CLI のフィルタで選んだ config に依存する。選択の処理が CLI にある以上、判定も
+確認の対象になる集合は、CLI のフィルタで選んだ config に依存する。選択の処理が CLI にある以上、判定も
 CLI に置くのが素直である。エラーメッセージを組み立てるのも CLI のほうが制御しやすい。
 
 target を passthru で取れば、rootKind と同じく build せずに安い eval で先取りできる。一括 eval の
