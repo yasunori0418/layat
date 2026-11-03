@@ -1,0 +1,60 @@
+---
+id: "ADR-a91585ad-971a-4558-9f25-b7fcd6e57671"
+type: adr
+name: "stale 除去の baseline は記録を優先して読む"
+status: 採用
+issues:
+  - "#580"
+  - "#406"
+origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §3a を書き直した"
+justifies:
+  - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
+  - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
+  - "DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5"
+references:
+  - "ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93"
+---
+# ADR-a91585ad-971a-4558-9f25-b7fcd6e57671: stale 除去の baseline は記録を優先して読む
+
+- ステータス: 採用
+- 日付: 2026-11-03
+- 関連: ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93, GitHub Issue #580, #406
+- 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §3a を書き直した
+
+## 背景
+
+stale 除去は、前回の manifest（baseline）と新しい manifest
+の差分で行う（ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93）。last-applied 記録を導入しても、
+記録を持たない既存の環境はある。記録と profile が両方あって食い違うこともある。記録は世代の commit
+より前に書くので、commit が失敗すると記録が新しく、profile が古いまま残る。
+
+## 決定
+
+baseline は、記録があれば記録の manifest、無ければ profile の current 世代から読み、
+どちらも無ければ空（初回）とする。記録と profile が両方あって `linkFarm` が食い違えば記録を採り、
+warning を 1 行出す。記録が無いときも warning を 1 行出す。
+
+この順序を使う経路（apply の stale 除去と drift 修復・reset の撤去対象・rollback の baseline）と
+warning の細目は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 と
+DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5 に、世代機構の側の読み方は
+REQ-1be4d678-959c-44d7-a346-44bfd95af56e に置く。
+
+## 根拠
+
+記録は FS に最後に置いたものを表すので、profile より FS の事実に近い。commit
+が失敗して両者がずれたときに記録を採れば、コミットされなかった試行が置いた entry も stale
+除去の対象に入る。
+
+profile へ後退するのは、記録を持たない環境を止めないための互換で、記録が揃えば使われなくなる。
+warning は沈黙規律の対象外で stderr に出るので、食い違いや記録の欠落に利用者が気付ける。
+
+## 棄却した代替案
+
+### profile を優先し、記録は profile が無いときだけ読む
+
+commit の失敗後に、コミットされなかった試行が置いた entry を撤去し損ねる。profile が layat
+の外へ出る終着点でも成り立たない。
+
+### 記録が無ければ error にする
+
+記録を持たない既存の環境で、更新した直後の apply が全部止まる。

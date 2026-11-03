@@ -1,0 +1,58 @@
+---
+id: "ADR-fd3353cf-00af-4343-bd3f-3369c21d7194"
+type: adr
+name: "reset は撤去できなかった entry を残して記録を書き直す"
+status: 採用
+issues:
+  - "#580"
+  - "#406"
+origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §4c を書き直した"
+justifies:
+  - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
+---
+# ADR-fd3353cf-00af-4343-bd3f-3369c21d7194: reset は撤去できなかった entry を残して記録を書き直す
+
+- ステータス: 採用
+- 日付: 2026-11-03
+- 関連: GitHub Issue #580, #406
+- 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §4c を書き直した
+
+## 背景
+
+reset は名指しした config の配置物を撤去する。foreign や drift として撤去せずに残す entry があり、
+途中で失敗することもある。reset は undo journal を持たないので、失敗しても FS は reset
+が残した状態のままになる。
+
+記録だけが残り profile が無い環境もある。この場合、flock の鍵になる profileDir が存在しない。
+
+## 決定
+
+reset は、撤去対象のうち target が消えた entry だけを除いた manifest で記録を書き直す。FS
+操作が途中で失敗しても同じ規則で書き直し、全 entry が除かれたら記録ファイルを削除する。profile
+が無く記録だけがあるときは、apply と同じ手順で profileDir（roothash 系列では backref も）
+を作ってから flock を取る。
+
+書き直しの失敗の報告を含む細目は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 に置く。
+
+## 根拠
+
+記録は FS に何が残っているかを表す。撤去できた entry だけを除けば、残した entry を次の apply や
+reset が引き続き追える。reset には undo journal が無いので、失敗したときも FS
+に合わせて記録を書き直すしかない。
+
+flock の鍵は profileDir なので、記録だけが残った環境でも鍵を作れば、
+同時に動くほかの実行と排他できる。
+
+## 棄却した代替案
+
+### reset の後は記録ファイルを丸ごと削除する
+
+foreign や drift として残した entry と、途中の失敗で手が届かなかった entry を追えなくなる。
+
+### 途中で失敗したら記録に触れない
+
+撤去済みの entry が記録に残り、記録と FS がずれる。
+
+### profile が無いときは flock を取らずに撤去する
+
+同時に動く apply と競合する。

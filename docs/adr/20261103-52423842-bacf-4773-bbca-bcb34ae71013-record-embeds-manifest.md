@@ -1,0 +1,47 @@
+---
+id: "ADR-52423842-bacf-4773-bbca-bcb34ae71013"
+type: adr
+name: "last-applied 記録は manifest を内容ごと持つ"
+status: 採用
+issues:
+  - "#580"
+  - "#406"
+origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §2a を書き直した"
+justifies:
+  - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
+  - "DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5"
+---
+# ADR-52423842-bacf-4773-bbca-bcb34ae71013: last-applied 記録は manifest を内容ごと持つ
+
+- ステータス: 採用
+- 日付: 2026-11-03
+- 関連: GitHub Issue #580, #406
+- 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §2a を書き直した
+
+## 背景
+
+baseline を store の外に記録する案は、以前「store 外の可変 JSON」として却下したことがある。その案は
+manifest を store パスの参照で持ったので、参照先が GC で消えると baseline を読めなくなり、rollback
+が壊れた。記録を持つなら、この問題を避ける形にする必要がある。
+
+## 決定
+
+last-applied 記録は、配置した manifest を参照ではなく内容ごと埋め込む。あわせて、その manifest
+を組んだ link-farm の store パス（`linkFarm`）と、記録した時刻（`appliedAt`）を持つ。
+フィールドの一覧と版は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 と
+DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5 に置く。
+
+## 根拠
+
+manifest を内容ごと持てば、参照していた store パスが GC で消えても baseline を読める。
+記録の有効性は GC と無関係になる。GC root は引き続き世代が担い、記録は baseline
+の読み出しだけを受け持つ。記録があるから GC が安全になるわけではない。
+
+`linkFarm` は profile との突き合わせに使う。記録と profile が食い違ったときに、
+それを見つける手掛かりになる。
+
+## 棄却した代替案
+
+### manifest を store パスの参照で持つ
+
+参照先が GC で消えると baseline を読めず、以前に却下した案と同じ問題が出る。
