@@ -10,12 +10,14 @@ justifies:
   - "REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336"
   - "REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b"
   - "DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296"
+references:
+  - "ADR-88231ffc-4836-4252-be34-894944fd28c3"
 ---
 # ADR-b5431ecf-fe60-4b29-86af-9857478ce663: srcKind の列挙値は schemaVersion を上げずに足す
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: `docs/spec.md`
+- 関連: ADR-88231ffc-4836-4252-be34-894944fd28c3, `docs/spec.md`
 - 起点: Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §5a と §5b を書き直した
 
 ## 背景

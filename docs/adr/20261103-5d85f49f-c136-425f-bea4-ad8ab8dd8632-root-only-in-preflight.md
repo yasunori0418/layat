@@ -8,12 +8,15 @@ issues:
 origin: "Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §7 を書き直した"
 justifies:
   - "DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296"
+references:
+  - "ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7"
+  - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
 ---
 # ADR-5d85f49f-c136-425f-bea4-ad8ab8dd8632: engine が root を使うのは preflight の実在検査だけにする
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: `docs/design.md`
+- 関連: ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7, ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, `docs/design.md`
 - 起点: Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §7 を書き直した
 
 ## 背景

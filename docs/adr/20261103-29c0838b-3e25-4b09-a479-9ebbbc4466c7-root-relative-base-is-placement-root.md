@@ -9,12 +9,14 @@ origin: "Issue #362（src 側のプロジェクトルート実行時解決）の
 justifies:
   - "REQ-81249072-56b8-42f5-807b-ea623c1efe99"
   - "REQ-a77181dd-a59c-40bb-855e-3430ad970eb6"
+references:
+  - "ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7"
 ---
 # ADR-29c0838b-3e25-4b09-a479-9ebbbc4466c7: root 相対マーカーの基準点を manifest の配置 root にする
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: `docs/spec.md`
+- 関連: ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7, `docs/spec.md`
 - 起点: Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §2 を書き直した
 
 ## 背景
@@ -26,7 +28,7 @@ root 相対マーカーの `src` は、どこかの root からの相対パス�
 ## 決定
 
 root 相対マーカーの `src` の基準点は、その manifest の配置 root とする。engine が実行時に解決した
-値（project / home / fixed。`--root` による上書きを含む）を使い、`src` の側で root の種別を選ぶ
+値（root の種別を問わず、`--root` による上書きを含む）を使い、`src` の側で root の種別を選ぶ
 引数は設けない。src の解決の時点は REQ-81249072-56b8-42f5-807b-ea623c1efe99、マーカーの規則は
 REQ-a77181dd-a59c-40bb-855e-3430ad970eb6 に置く。
 

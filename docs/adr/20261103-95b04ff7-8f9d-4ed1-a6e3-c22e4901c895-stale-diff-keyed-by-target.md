@@ -7,12 +7,14 @@ origin: "ADR-0014 §3a を書き直した"
 justifies:
   - "REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336"
   - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
+references:
+  - "ADR-c494e86e-ceb9-4380-b983-4e09553b01d6"
 ---
 # ADR-95b04ff7-8f9d-4ed1-a6e3-c22e4901c895: stale 除去の照合キーを解決後の target にする
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: `docs/spec.md`
+- 関連: ADR-c494e86e-ceb9-4380-b983-4e09553b01d6, `docs/spec.md`
 - 起点: ADR-0014 §3a を書き直した
 
 ## 背景

@@ -6,12 +6,14 @@ status: 採用
 origin: "ADR-0014 §3b を書き直した"
 justifies:
   - "REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336"
+references:
+  - "ADR-c494e86e-ceb9-4380-b983-4e09553b01d6"
 ---
 # ADR-1848079b-7011-4653-b7cd-c279205262c4: manifest.json の entry は target を識別子にして name を持たない
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: `docs/spec.md`
+- 関連: ADR-c494e86e-ceb9-4380-b983-4e09553b01d6, `docs/spec.md`
 - 起点: ADR-0014 §3b を書き直した
 
 ## 背景

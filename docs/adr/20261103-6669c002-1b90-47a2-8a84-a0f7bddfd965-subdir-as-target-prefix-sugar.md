@@ -7,12 +7,14 @@ origin: "次期マイルストーン追加計画の grilling（2026-07-04）。A
 justifies:
   - "REQ-08c8f639-790c-4970-a954-c9567538cf9b"
   - "REQ-3f541d39-da41-4ef8-858b-707f54cf6a29"
+references:
+  - "ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509"
 ---
 # ADR-6669c002-1b90-47a2-8a84-a0f7bddfd965: subdir は全 target へ前置する評価時の糖衣にし、root を動かさない
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: `docs/spec.md`
+- 関連: ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509, `docs/spec.md`
 - 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。ADR-0040 §2a を書き直した
 
 ## 背景
@@ -23,8 +25,8 @@ root マーカーの適用形が持つ `subdir` を、どこで実現するか�
 文字列で動くからだ。
 
 root を実際に動かすと、`manifest.json` に新しいフィールドが要る。古い engine がエラーにせず無視すると
-誤配置になるので、`schemaVersion` も上げなければならない。profileDir の鍵は root から作るので、同じ名前の
-config が `subdir` 違いで世代の系列を共有してしまう。
+誤配置になるので、`schemaVersion` も上げなければならない。home と system の mode では profileDir を
+config の名前だけで鍵にするので、同じ名前の config が `subdir` 違いで世代の系列を共有してしまう。
 
 ## 決定
 
