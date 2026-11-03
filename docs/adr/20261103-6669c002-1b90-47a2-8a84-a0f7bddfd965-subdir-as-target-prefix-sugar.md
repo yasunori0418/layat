@@ -1,0 +1,48 @@
+---
+id: "ADR-6669c002-1b90-47a2-8a84-a0f7bddfd965"
+type: adr
+name: "subdir は全 target へ前置する評価時の糖衣にし、root を動かさない"
+status: 採用
+origin: "次期マイルストーン追加計画の grilling（2026-07-04）。ADR-0040 §2a を書き直した"
+justifies:
+  - "REQ-08c8f639-790c-4970-a954-c9567538cf9b"
+  - "REQ-3f541d39-da41-4ef8-858b-707f54cf6a29"
+---
+# ADR-6669c002-1b90-47a2-8a84-a0f7bddfd965: subdir は全 target へ前置する評価時の糖衣にし、root を動かさない
+
+- ステータス: 採用
+- 日付: 2026-11-03
+- 関連: `docs/spec.md`
+- 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。ADR-0040 §2a を書き直した
+
+## 背景
+
+root マーカーの適用形が持つ `subdir` を、どこで実現するかを決める必要がある。layat の意味論では、
+基点を `root/sub` にすることと、全 target に `sub/` を前置することは等価である。stale 除去の
+照合キー・foreign symlink の判定・祖先 symlink の検査・`gitignore` の anchor 形は、どれも target の
+文字列で動くからだ。
+
+root を実際に動かすと、`manifest.json` に新しいフィールドが要る。古い engine が黙って無視すると
+誤配置になるので、`schemaVersion` も上げなければならない。profileDir の鍵にも、同じ名前の config が
+`subdir` 違いで世代の系列を共有するという落とし穴が生まれる。
+
+## 決定
+
+`subdir` は `normalizeManifest` が全 entry の正規化後の target に前置する、評価時の糖衣とする。
+root の解決値・`rootKind`・`manifest.json` のスキーマ・`schemaVersion` は変えず、engine は
+`subdir` を知らない。前置の規則は REQ-08c8f639-790c-4970-a954-c9567538cf9b、root マーカーが
+種別だけを運び解決を engine が行うことは REQ-3f541d39-da41-4ef8-858b-707f54cf6a29 に置く。
+
+## 根拠
+
+等価なので、root を動かす実装は複雑さだけを増やし、機能では何も得ない。糖衣にすれば実装は
+`normalizeManifest` の 1 か所に閉じ、engine の変更も `manifest.json` の版上げも要らない。
+root が動かないので profileDir の鍵も変わらず、既存の検査と意味論は前置後の target でそのまま
+正しく動く。
+
+## 棄却した代替案
+
+### root を実際に動かす（manifest に subdir のフィールドを足す）
+
+`schemaVersion` の版上げ、profileDir の鍵の落とし穴、engine の分岐が増える。糖衣との機能の
+差は無い。
