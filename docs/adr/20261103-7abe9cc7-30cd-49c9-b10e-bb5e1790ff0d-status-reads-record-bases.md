@@ -10,12 +10,14 @@ origin: "Issue #198（`layat status [name]`）の実装前に、2026-07-19 の g
 justifies:
   - "REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173"
   - "DSG-85439cb5-a149-422e-8596-fc4e860bc3a5"
+references:
+  - "ADR-52423842-bacf-4773-bbca-bcb34ae71013"
 ---
 # ADR-7abe9cc7-30cd-49c9-b10e-bb5e1790ff0d: status は 2 つの記録基底を走査して表示する
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: GitHub Issue #580, #198
+- 関連: ADR-52423842-bacf-4773-bbca-bcb34ae71013, GitHub Issue #580, #198
 - 起点: Issue #198（`layat status [name]`）の実装前に、2026-07-19 の grilling 以後の実装の変化を差分 grilling で反映した（2026-10-23）。ADR-0065 §1a を書き直した
 
 ## 背景

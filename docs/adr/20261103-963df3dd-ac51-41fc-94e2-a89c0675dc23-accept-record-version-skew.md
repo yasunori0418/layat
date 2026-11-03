@@ -9,12 +9,14 @@ issues:
 origin: "Issue #498（epic: v1.0 前に残っている挙動の穴を埋める）の grilling（2026-10-31）。ADR-0070 §5a を書き直した"
 justifies:
   - "REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282"
+references:
+  - "ADR-8e253f2e-c255-482a-a0f8-0837e122e80f"
 ---
 # ADR-963df3dd-ac51-41fc-94e2-a89c0675dc23: 版 1 しか読めない engine との非互換を受け入れる
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: GitHub Issue #580, #498
+- 関連: ADR-8e253f2e-c255-482a-a0f8-0837e122e80f, GitHub Issue #580, #498
 - 起点: Issue #498（epic: v1.0 前に残っている挙動の穴を埋める）の grilling（2026-10-31）。ADR-0070 §5a を書き直した
 
 ## 背景

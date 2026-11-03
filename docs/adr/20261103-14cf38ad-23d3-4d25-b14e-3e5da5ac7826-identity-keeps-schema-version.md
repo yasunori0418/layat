@@ -12,12 +12,13 @@ justifies:
   - "REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d"
 references:
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
+  - "ADR-0db061d1-fa30-436d-91d7-c0cec8804c52"
 ---
 # ADR-14cf38ad-23d3-4d25-b14e-3e5da5ac7826: manifest に identity を足しても schemaVersion を据え置く
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, GitHub Issue #580, #498
+- 関連: ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-0db061d1-fa30-436d-91d7-c0cec8804c52, GitHub Issue #580, #498
 - 起点: Issue #498（epic: v1.0 前に残っている挙動の穴を埋める）の grilling（2026-10-31）。ADR-0070 §5b を書き直した
 
 ## 背景

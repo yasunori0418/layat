@@ -33,8 +33,7 @@ stale 除去・drift 修復・reset・rollback は、「前回 layat がこの r
 ## 決定
 
 apply は、最後に配置した manifest を layat 自前の last-applied 記録に書く。記録は state
-基底の下に置き、鍵は profileDir と同じ規則（home mode は `<name>` 直、それ以外は
-`<roothash>/<name>` と backref `.root`）で決める（ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988）。
+基底の下に置き、鍵は profileDir と同じ規則で決める（ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988）。
 パスとレイアウトの細目は DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5 に置く。
 
 ## 根拠
