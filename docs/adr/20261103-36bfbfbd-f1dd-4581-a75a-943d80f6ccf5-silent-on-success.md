@@ -23,8 +23,9 @@ justifies:
 
 ## 決定
 
-`apply` / `reset` / `rollback` が成功したとき、配置レポート・skip の通知・`--all` の完了サマリを
-既定では出さない。warning と error は常に stderr に出す。既定が沈黙なので `--quiet` は持たない。
+`apply` / `reset` / `rollback` が成功したとき、配置レポート・skip の通知・`--all` の完了サマリ・
+「対象 config なし」の通知を既定では出さない。warning と error は常に stderr に出す。既定が沈黙なので
+`--quiet` は持たない。
 
 沈黙の対象と対象外（warning / error・`reset` の確認プロンプト）は
 REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 に、`--quiet` を提供しないことは
