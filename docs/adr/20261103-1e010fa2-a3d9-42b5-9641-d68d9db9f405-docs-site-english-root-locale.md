@@ -8,12 +8,14 @@ issues:
 origin: "Issue #57 のサイト設計。ADR-0037 §4 を書き直した"
 justifies:
   - "INF-0865477b-21b2-4feb-9c06-1a882a4e595a"
+references:
+  - "ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4"
 ---
 # ADR-1e010fa2-a3d9-42b5-9641-d68d9db9f405: ドキュメントサイトは英語をルートのロケールにする
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: GitHub Issue #57, `docs/glossary.md`, `docs/glossary.ja.md`
+- 関連: ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4, GitHub Issue #57, `docs/glossary.md`, `docs/glossary.ja.md`
 - 起点: Issue #57 のサイト設計。ADR-0037 §4 を書き直した
 
 ## 背景
