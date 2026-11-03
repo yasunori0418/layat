@@ -22,7 +22,7 @@ references:
 
 ## 背景
 
-配置した物を明示的に無い状態へ戻す手段が無かった。stale 除去は config から消えた entry の
+配置した物を明示的に無い状態へ戻す手段が無かった。古い配置の除去は config から消えた entry の
 symlink を保守的に消すが（ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c）、copy は世代の外に置くので
 自動では決して消さない（ADR-c4ad9987-850e-4834-bbea-d8de3b073548）。copy を消す手段はどこにも
 無かった。
@@ -32,7 +32,7 @@ profile の世代は manifest 全体を単位にしているので、一部の e
 ## 決定
 
 サブコマンド `layat reset <name> [target...]` を設け、config の全 entry、または指定した entry の
-配置物を撤去する。symlink は stale 除去と同じ保守的な条件で消し、copy target は削除する。
+配置物を撤去する。symlink は古い配置の除去と同じ保守的な条件で消し、copy target は削除する。
 profile と世代には触れない。config に entry が残っていれば、次の apply で配置し直される。
 
 撤去の対象と条件は REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6 に置く。削除前の確認は
@@ -41,7 +41,7 @@ ADR-acc31876-df36-485e-b356-92ae60e26db7 が定める。
 ## 根拠
 
 reset を FS の撤去だけに限れば、entry 単位の指定と矛盾しない。世代は変わらないので、apply を
-やり直せばいつでも元へ戻せる。project mode では、次に devShell へ入ったときの検査で自然に復帰する。
+やり直せばいつでも元へ戻せる。project mode では、次に devShell へ入ったときのチェックで自然に復帰する。
 
 copy は reset が消す唯一の手段になる。利用者が編集した内容や、もともとあったファイルを消すおそれは
 確認で守る。symlink は従来の保守的な条件のままにし、記録に無い物を壊さない。
