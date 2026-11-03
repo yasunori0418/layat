@@ -30,7 +30,7 @@ layat は「テスト可能な純粋関数群で、利用者が配置を明示�
 
 ## 決定
 
-配置は、standalone・devShell・各モジュールのどの層でも layat の engine
+配置は、CLI の単独実行・devShell・各モジュールのどの層でも layat の engine
 （ADR-2119433e-de69-4447-85a5-575d58246007）が manifest に従って root の下へ行う。`home.file`・
 `systemd.tmpfiles`・`environment.etc` などのネイティブ機構には翻訳も委譲もしない。layat は OS が
 自身の宣言的なファイル管理に使う機構とは別の機構として動く。
@@ -48,20 +48,20 @@ layat は NixOS の宣言性を担おうとしていないので、ネイティ�
 懸念はそもそも当たらない。stow や git を NixOS で動かすのに tmpfiles が関係ないのと同じで、NixOS で
 layat を使うことは layat を実行することにすぎない。
 
-`systemd.tmpfiles` は作成しか宣言的に扱わず、規則が消えたときに stale を除去しない。削除はどのみち
+`systemd.tmpfiles` は作成しか宣言的に扱わず、規則が消えたときに古くなったリンクを消さない。削除はどのみち
 layat が担う必要があり（ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c）、tmpfiles を併用しても機構が
 二重になるだけである。
 
 ネイティブ機構の恩恵（プラットフォーム標準の追跡と GC、`home.file` の宣言性）は全層で手放す。
-stale の追跡は世代に残す manifest で home-manager と同等の正確さを保つ。
+古くなった配置の追跡は、世代に残す manifest で home-manager と同等の正確さを保つ。
 
 ## 棄却した代替案
 
-### standalone は engine、モジュールはネイティブ機構へ翻訳する
+### CLI の単独実行では engine を使い、モジュールはネイティブ機構へ翻訳する
 
 ネイティブ統合の恩恵は得られるが、振る舞いが層ごとに二重になる。1 つのコアで利用者が管理する
 という方針に逆行する。
 
 ### NixOS の system パスの symlink だけ tmpfiles を使う
 
-tmpfiles は作成しかしないので、stale の除去に layat の manifest が別途要り、機構が二重になる。
+tmpfiles は作成しかしないので、古くなった配置の除去に layat の manifest が別途要り、機構が二重になる。

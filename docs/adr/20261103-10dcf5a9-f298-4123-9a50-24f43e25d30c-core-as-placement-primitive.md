@@ -18,8 +18,8 @@ references:
 
 ## 背景
 
-layat には north-star として、nixpkgs のパッケージ群（store パス）を活かしつつ配置だけを利用者に
-操作させ、Arch や Gentoo のようなミニマル Linux ディストリビューションの基盤を作るという構想がある。
+layat には north-star となる構想がある。nixpkgs のパッケージ群（store パス）を活かしつつ、配置だけを
+利用者に操作させて、Arch や Gentoo のようなミニマル Linux ディストリビューションの基盤を作ることである。
 これを踏まえて、コアの中心となる抽象を決める必要があった。
 
 ## 決定
