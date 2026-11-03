@@ -30,8 +30,8 @@ justifies:
 
 ## 根拠
 
-main に入る変更は PR のチェックを通っている。テスト系のジョブを main への push でもう一度回すと、
-PR のチェックと重複して CI の時間を浪費する。手動の再実行は `workflow_dispatch` で足りる。
+main に入る変更は PR の確認を通っている。テスト系のジョブを main への push でもう一度回すと、
+PR の確認と重複して CI の時間を浪費する。手動の再実行は `workflow_dispatch` で足りる。
 
 `test-doc-matrix` は全体のインベントリを要し、PR ごとに払うには重い。マージ後の状態から作れば
 足りるので、main への push と `workflow_dispatch` に負担させる。ただし生成の入力を変える PR では、
@@ -42,7 +42,7 @@ PR のチェックと重複して CI の時間を浪費する。手動の再実�
 
 ### `push`（branches-ignore: main）をトリガに併用する
 
-PR のチェックと重複して CI の時間を浪費する。
+PR の確認と重複して CI の時間を浪費する。
 
 ### `test-doc-matrix` を全ての PR で回す
 

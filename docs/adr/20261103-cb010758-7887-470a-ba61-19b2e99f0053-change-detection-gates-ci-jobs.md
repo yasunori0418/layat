@@ -1,7 +1,7 @@
 ---
 id: "ADR-cb010758-7887-470a-ba61-19b2e99f0053"
 type: adr
-name: "変更検出で nix を回さない PR の必須チェックを skip で通す"
+name: "変更検出で nix を回さない PR の必須の確認を skip で通す"
 status: 採用
 origin: "ADR-0030 §2 と ADR-0027 §2b（docs だけの変更で nix を回さない）を書き直した"
 justifies:
@@ -10,7 +10,7 @@ justifies:
 references:
   - "ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511"
 ---
-# ADR-cb010758-7887-470a-ba61-19b2e99f0053: 変更検出で nix を回さない PR の必須チェックを skip で通す
+# ADR-cb010758-7887-470a-ba61-19b2e99f0053: 変更検出で nix を回さない PR の必須の確認を skip で通す
 
 - ステータス: 採用
 - 日付: 2026-11-03
@@ -28,13 +28,13 @@ docs だけを変える PR で、flake check の 3 環境の matrix と E2E を�
 ## 決定
 
 `test.yml` はトリガ段の `paths` フィルタを持たず、全ての PR で起動する。変更の検出は専用の
-composite action にまとめ、`changes` ジョブがそれを呼ぶ。後続のジョブは `changes` の outputs で
-実行の可否を決め、対象外の PR では nix を実行せずに skip する。
+composite action にまとめ、`changes` ジョブがそれを呼ぶ。後続のジョブは `changes` の outputs を
+実行の条件にし、対象外の PR では nix を実行せずに skip する。
 
-実行の可否を判定する段はジョブごとに分ける。matrix を持つ `flake-check` はステップ段の `if:` で判定し、
-3 つの check を必ず生成する。`e2e` と `go-coverage` はジョブ段の `if:` で判定する。
+実行の条件を置く段はジョブごとに分ける。matrix を持つ `flake-check` はステップ段の `if:` に条件を置き、
+3 つの check を必ず生成する。`e2e` と `go-coverage` はジョブ段の `if:` に条件を置く。
 
-ジョブごとの判定の段は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 に、required status check
+ジョブごとの条件の段は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 に、required status check
 との関係は INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6 に置く。
 
 ## 根拠
@@ -44,7 +44,7 @@ skip した check が成功として扱われる挙動を使えば、docs だけ
 規則が 1 箇所にまとまる。
 
 ジョブ段の `if:` で skip すると matrix が展開されず、ruleset が要求する `(os, system)` 付きの
-3 つの check が生成されない。そのため `flake-check` だけはステップ段で判定する。
+3 つの check が生成されない。そのため `flake-check` だけはステップ段に条件を置く。
 
 ## 棄却した代替案
 
@@ -60,7 +60,7 @@ docs だけの PR でも 3 環境の flake check と E2E が実行され、CI �
 
 skip 用にも matrix を重ねて定義することになり、保守が二重になる。
 
-### `flake-check` もジョブ段の `if:` で判定する
+### `flake-check` もジョブ段の `if:` に条件を置く
 
 skip すると matrix が展開されず、必須の 3 つの check が `Expected` のまま残ってマージを
 ブロックする。
