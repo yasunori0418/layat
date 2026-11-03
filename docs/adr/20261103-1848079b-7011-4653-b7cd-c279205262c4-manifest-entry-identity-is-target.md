@@ -6,8 +6,6 @@ status: 採用
 origin: "ADR-0014 §3b を書き直した"
 justifies:
   - "REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336"
-supersedes:
-  - "ADR-0014"
 references:
   - "ADR-c494e86e-ceb9-4380-b983-4e09553b01d6"
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"

@@ -8,8 +8,6 @@ issues:
 origin: "Issue #499 の grilling（2026-11-01）で確定。ADR-0048 §2 を書き直した"
 justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
-supersedes:
-  - "ADR-0048"
 references:
   - "SDR-3ff9f355-a667-476e-b10d-087248cdbfcf"
 ---

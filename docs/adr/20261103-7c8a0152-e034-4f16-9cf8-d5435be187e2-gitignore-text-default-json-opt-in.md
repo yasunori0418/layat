@@ -7,8 +7,6 @@ origin: "ADR-0033 §1b を書き直した"
 justifies:
   - "REQ-2353259f-5878-452a-8e11-3445de69abc2"
   - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
-supersedes:
-  - "ADR-0033"
 references:
   - "ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc"
 ---

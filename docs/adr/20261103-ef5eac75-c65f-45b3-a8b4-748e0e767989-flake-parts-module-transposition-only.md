@@ -9,9 +9,6 @@ issues:
 origin: "Issue #26 と Issue #530 の grilling（2026-10-25）。ADR-0029 §5 と ADR-0068 §5b を書き直した"
 justifies:
   - "REQ-c50df875-2cb0-4e72-8a21-858359a11cae"
-supersedes:
-  - "ADR-0029"
-  - "ADR-0068"
 references:
   - "ADR-e6820da0-fce3-4aef-8b79-d53abbca6051"
   - "ADR-db293e0c-4789-45b7-93a9-adedc021344f"

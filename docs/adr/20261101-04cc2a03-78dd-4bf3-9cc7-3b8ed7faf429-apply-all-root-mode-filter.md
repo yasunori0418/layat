@@ -8,8 +8,6 @@ issues:
 origin: "実装前レビュー第 3 巡（2026-06-14）で確定。ADR-0017 §1 を書き直した"
 justifies:
   - "REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b"
-supersedes:
-  - "ADR-0017"
 references:
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
   - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"

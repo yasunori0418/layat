@@ -6,8 +6,6 @@ status: 採用
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §5（manifest.json ワイヤ形式）を書き直した"
 justifies:
   - "REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7"
-supersedes:
-  - "ADR-0010"
 ---
 # ADR-83a1275b-85bb-4918-8d21-8db9ab18a58c: manifest.json へ marker を clean enum で写す
 

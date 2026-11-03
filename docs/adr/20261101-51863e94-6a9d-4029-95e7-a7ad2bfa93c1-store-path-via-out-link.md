@@ -7,8 +7,6 @@ origin: "engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 
 justifies:
   - "REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9"
   - "REQ-7a71a049-5876-4cfc-a65e-44e9a0349856"
-supersedes:
-  - "ADR-0011"
 ---
 # ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1: store path は out-link で受け取る
 

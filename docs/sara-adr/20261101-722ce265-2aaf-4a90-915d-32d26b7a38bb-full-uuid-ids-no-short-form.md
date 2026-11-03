@@ -9,8 +9,6 @@ issues:
 origin: "epic #364 の着手前 grilling（2026-08-17）で確定。ADR-0053 §1 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
-supersedes:
-  - "ADR-0053"
 ---
 # SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb: ID はフル UUID に統一し 8 文字省略形を使わない
 

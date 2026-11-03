@@ -11,11 +11,6 @@ justifies:
   - "REQ-8085f194-c903-4ecb-abd8-c719fe7b3292"
   - "REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3"
   - "REQ-a220bb28-89de-42b0-a854-e7468755ecb1"
-supersedes:
-  - "ADR-0026"
-  - "ADR-0035"
-  - "ADR-0060"
-  - "ADR-0066"
 ---
 # ADR-f58e9981-bacc-4937-98b8-bddce0a057db: モジュールの activation は apply --all --manifest を 1 回だけ起動する
 

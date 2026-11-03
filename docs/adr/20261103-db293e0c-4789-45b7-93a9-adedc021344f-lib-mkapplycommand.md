@@ -10,8 +10,6 @@ origin: "Issue #530 の grilling（2026-10-25）。ADR-0068 §1 を書き直し�
 justifies:
   - "REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f"
   - "DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5"
-supersedes:
-  - "ADR-0068"
 references:
   - "ADR-521765d7-7e31-42f4-b548-979185a7586a"
   - "ADR-88231ffc-4836-4252-be34-894944fd28c3"

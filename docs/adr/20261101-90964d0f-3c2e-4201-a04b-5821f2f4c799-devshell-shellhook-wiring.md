@@ -6,8 +6,6 @@ status: 採用
 origin: "ADR-0005 の決定「devShell shellHook を正式な配線レイヤーに加える」を書き直した"
 justifies:
   - "REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9"
-supersedes:
-  - "ADR-0005"
 references:
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
   - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"

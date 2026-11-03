@@ -9,8 +9,6 @@ issues:
 origin: "旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0044 §1（インメモリ undo ジャーナル）の中間ディレクトリの扱いを書き直した"
 justifies:
   - "REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940"
-supersedes:
-  - "ADR-0044"
 references:
   - "ADR-56325270-20bb-4959-8498-e3223c35e24b"
   - "ADR-74423bb8-1453-4689-a25e-30bf46536afc"

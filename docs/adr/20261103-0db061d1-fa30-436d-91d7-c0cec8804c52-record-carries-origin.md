@@ -9,8 +9,6 @@ issues:
 origin: "Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §1 を書き直した"
 justifies:
   - "REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282"
-supersedes:
-  - "ADR-0070"
 references:
   - "ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e"
 ---

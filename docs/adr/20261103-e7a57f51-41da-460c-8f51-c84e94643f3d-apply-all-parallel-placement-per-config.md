@@ -8,8 +8,6 @@ issues:
 origin: "ADR-0039 §2a（配置段階も config 単位の goroutine で並列化する）と §3b（単一 config 内の entry 単位は並列化しない）を書き直した"
 justifies:
   - "REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af"
-supersedes:
-  - "ADR-0039"
 references:
   - "ADR-75df92ae-0694-452b-8fb4-350994e31b25"
   - "ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e"

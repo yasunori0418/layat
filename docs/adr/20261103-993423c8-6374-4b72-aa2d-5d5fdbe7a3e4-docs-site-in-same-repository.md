@@ -8,8 +8,6 @@ issues:
 origin: "Issue #57 のサイト設計。ADR-0037 §1 を書き直した"
 justifies:
   - "INF-0865477b-21b2-4feb-9c06-1a882a4e595a"
-supersedes:
-  - "ADR-0037"
 ---
 # ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4: ドキュメントサイトのソースを同じリポジトリの site/ に置く
 

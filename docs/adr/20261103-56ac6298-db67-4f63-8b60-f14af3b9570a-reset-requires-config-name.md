@@ -8,8 +8,6 @@ issues:
 origin: "ADR-0021 §1（reset は名指し必須で --all に対応しない）を書き直した"
 justifies:
   - "REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4"
-supersedes:
-  - "ADR-0021"
 references:
   - "ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7"
   - "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"

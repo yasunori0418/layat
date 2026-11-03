@@ -9,9 +9,6 @@ issues:
 origin: "Issue #493（epic: NixOS / nix-darwin モジュールの実装）の grilling（2026-10-24）と実装前の残セマンティクス確定の第 4 巡（2026-06-14）。ADR-0067 §1 と ADR-0022 §2 を書き直した"
 justifies:
   - "REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0"
-supersedes:
-  - "ADR-0022"
-  - "ADR-0067"
 references:
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
   - "ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203"

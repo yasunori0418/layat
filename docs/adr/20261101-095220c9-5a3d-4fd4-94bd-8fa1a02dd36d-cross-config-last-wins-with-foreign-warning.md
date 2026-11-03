@@ -10,8 +10,6 @@ justifies:
   - "REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557"
   - "REQ-5c6b07da-3d06-414d-8770-4f438234b322"
   - "REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7"
-supersedes:
-  - "ADR-0015"
 ---
 # ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d: cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する
 

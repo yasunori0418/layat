@@ -7,9 +7,6 @@ origin: "ADR-0030 §2 と ADR-0027 §2b（docs だけの変更で nix を回さ�
 justifies:
   - "INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6"
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
-supersedes:
-  - "ADR-0027"
-  - "ADR-0030"
 references:
   - "ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511"
 ---

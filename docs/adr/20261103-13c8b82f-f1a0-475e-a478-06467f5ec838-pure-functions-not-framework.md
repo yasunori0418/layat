@@ -7,8 +7,6 @@ origin: "ADR-0004 §d を書き直した"
 justifies:
   - "REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4"
   - "REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51"
-supersedes:
-  - "ADR-0004"
 references:
   - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
   - "ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137"

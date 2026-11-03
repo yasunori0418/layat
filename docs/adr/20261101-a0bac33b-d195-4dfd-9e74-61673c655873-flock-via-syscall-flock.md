@@ -6,8 +6,6 @@ status: 採用
 origin: "engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §6 を書き直した"
 justifies:
   - "REQ-b74a118a-1272-44eb-944c-7725163211c6"
-supersedes:
-  - "ADR-0011"
 ---
 # ADR-a0bac33b-d195-4dfd-9e74-61673c655873: flock は syscall.Flock で実装する
 

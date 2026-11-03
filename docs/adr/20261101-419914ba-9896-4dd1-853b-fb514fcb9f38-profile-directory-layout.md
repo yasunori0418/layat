@@ -6,9 +6,6 @@ status: 採用
 origin: "実装前の残セマンティクス確定の第 7 巡（2026-06-14）。ADR-0025 §4 を書き直した"
 justifies:
   - "REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3"
-supersedes:
-  - "ADR-0022"
-  - "ADR-0025"
 references:
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
   - "ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988"

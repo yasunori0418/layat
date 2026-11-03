@@ -7,8 +7,6 @@ origin: "manifest の型検査を NixOS モジュールシステムで行える�
 justifies:
   - "REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34"
   - "REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4"
-supersedes:
-  - "ADR-0010"
 references:
   - "ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e"
   - "ADR-f85f1afd-9b87-4f7a-922e-97c62554f198"

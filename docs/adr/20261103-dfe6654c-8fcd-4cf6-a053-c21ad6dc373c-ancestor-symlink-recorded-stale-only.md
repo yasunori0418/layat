@@ -8,8 +8,6 @@ issues:
 origin: "dotfiles 側での実遭遇（#170）と、次期マイルストーンの grilling セッション（2026-07-11）で設計確定。ADR-0046 §1 を書き直した"
 justifies:
   - "REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575"
-supersedes:
-  - "ADR-0046"
 references:
   - "ADR-88231ffc-4836-4252-be34-894944fd28c3"
   - "ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d"

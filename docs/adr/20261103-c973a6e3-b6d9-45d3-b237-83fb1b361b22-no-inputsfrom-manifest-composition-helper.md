@@ -9,8 +9,6 @@ issues:
 origin: "ADR-0032 §3b を書き直した"
 justifies:
   - "REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da"
-supersedes:
-  - "ADR-0032"
 references:
   - "ADR-28605860-770e-41df-95dd-7dc05b20497a"
   - "ADR-6b7becf0-f029-41e3-895e-b672dce94d3d"

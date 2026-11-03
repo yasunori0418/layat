@@ -6,8 +6,6 @@ status: 採用
 origin: "ADR-0018 の後に行った docs の横断検証で残っていた細目。ADR-0019 §4 を書き直した"
 justifies:
   - "REQ-fc64de4c-c82b-419c-8706-07d8d97daa37"
-supersedes:
-  - "ADR-0019"
 references:
   - "ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30"
   - "ADR-521765d7-7e31-42f4-b548-979185a7586a"

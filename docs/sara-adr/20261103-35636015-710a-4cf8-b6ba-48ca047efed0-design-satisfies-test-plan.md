@@ -10,8 +10,6 @@ issues:
 origin: "epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §4 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
-supersedes:
-  - "ADR-0049"
 references:
   - "SDR-34916a83-0cff-4524-a8ff-5a3195af52c3"
   - "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"

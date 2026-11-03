@@ -8,8 +8,6 @@ issues:
 origin: "Issue #530 の grilling（2026-10-25）。ADR-0068 §5a を書き直した"
 justifies:
   - "DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5"
-supersedes:
-  - "ADR-0068"
 references:
   - "ADR-db293e0c-4789-45b7-93a9-adedc021344f"
 ---

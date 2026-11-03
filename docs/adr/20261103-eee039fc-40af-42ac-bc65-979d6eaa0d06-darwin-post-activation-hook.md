@@ -9,8 +9,6 @@ issues:
 origin: "Issue #493（epic: NixOS / nix-darwin モジュールの実装）の grilling（2026-10-24）。ADR-0066 §2b を書き直した"
 justifies:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
-supersedes:
-  - "ADR-0066"
 references:
   - "ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c"
   - "ADR-68f453b3-e6c7-4e0d-9978-32b5a00f627e"

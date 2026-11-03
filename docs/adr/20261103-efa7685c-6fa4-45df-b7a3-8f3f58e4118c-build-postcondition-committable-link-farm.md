@@ -8,9 +8,6 @@ issues:
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §5・ADR-0055 §4 を書き直した"
 justifies:
   - "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"
-supersedes:
-  - "ADR-0055"
-  - "ADR-0057"
 references:
   - "ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1"
   - "ADR-28605860-770e-41df-95dd-7dc05b20497a"

@@ -7,8 +7,6 @@ origin: "ADR-0003 §a（決定節の第 1 項）と「layat は OS のファイ�
 justifies:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
   - "DSG-17db0831-d7da-446d-ba3e-404df64c582d"
-supersedes:
-  - "ADR-0003"
 references:
   - "ADR-2119433e-de69-4447-85a5-575d58246007"
   - "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"

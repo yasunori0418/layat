@@ -8,8 +8,6 @@ issues:
 origin: "ADR-0035 §2 を書き直した"
 justifies:
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
-supersedes:
-  - "ADR-0035"
 ---
 # ADR-3447db4a-cdec-4573-bbad-05bbffc34a65: layat.entries を configs.default.entries への rename 糖衣として残す
 

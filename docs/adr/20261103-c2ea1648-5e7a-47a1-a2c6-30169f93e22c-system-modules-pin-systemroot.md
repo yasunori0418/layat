@@ -10,8 +10,6 @@ origin: "Issue #493（epic: NixOS / nix-darwin モジュールの実装）の gr
 justifies:
   - "REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b"
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
-supersedes:
-  - "ADR-0066"
 references:
   - "ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7"
   - "ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880"

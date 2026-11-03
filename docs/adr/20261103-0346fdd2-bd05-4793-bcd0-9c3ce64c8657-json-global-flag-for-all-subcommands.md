@@ -6,8 +6,6 @@ status: 採用
 origin: "ADR-0033 §1a を書き直した"
 justifies:
   - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
-supersedes:
-  - "ADR-0033"
 references:
   - "ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc"
 ---

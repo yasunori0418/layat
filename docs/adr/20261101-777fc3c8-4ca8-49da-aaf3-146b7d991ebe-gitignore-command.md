@@ -7,10 +7,6 @@ origin: "ADR-0005 の決定「.gitignore 生成は専用コマンドで stdout �
 justifies:
   - "REQ-a480c183-40ce-4201-93b5-65a7a59c1b9e"
   - "REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9"
-supersedes:
-  - "ADR-0005"
-  - "ADR-0013"
-  - "ADR-0023"
 references:
   - "ADR-4dca6ef4-2791-48d5-aa82-7037630968a6"
 ---

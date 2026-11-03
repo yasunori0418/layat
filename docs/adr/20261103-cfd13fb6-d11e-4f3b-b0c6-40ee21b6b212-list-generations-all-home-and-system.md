@@ -6,8 +6,6 @@ status: 採用
 origin: "ADR-0018 §4b を書き直した"
 justifies:
   - "REQ-05abce3e-9797-432b-b93f-37c55d09afde"
-supersedes:
-  - "ADR-0018"
 references:
   - "ADR-baf6346d-783b-4607-ab1c-c2c93c09e064"
 ---

@@ -10,10 +10,6 @@ origin: "実装前残セマンティクス確定の第7巡（2026-06-14）で確
 justifies:
   - "REQ-31dae599-f3a3-4bbe-b367-c955535265da"
   - "REQ-2a613337-7646-4ced-8807-e43bca18acf3"
-supersedes:
-  - "ADR-0020"
-  - "ADR-0025"
-  - "ADR-0043"
 ---
 # ADR-acc31876-df36-485e-b356-92ae60e26db7: reset は非対話の実行で --yes を必須にする
 
