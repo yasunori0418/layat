@@ -20,7 +20,7 @@ references:
 
 ## 背景
 
-`apply --all` は一括 eval の後、config ごとに `nix build` と配置を順に回していた。所要時間の大半は
+`apply --all` は一括 eval の後、config ごとに `nix build` と配置を順に処理していた。所要時間の大半は
 config ごとの `nix build` で、config の数に比例して直列に伸びる。
 
 build は link-farm の derivation を store に実現するだけで、配置先には触れない。store の整合は
@@ -36,10 +36,10 @@ nix daemon が守る。target の衝突を調べるのは eval の段と配置�
 
 ## 根拠
 
-build は所要時間の大半を占め、配置先に触れないので、並列に流しても配置の意味は変わらない。
+build は所要時間の大半を占め、配置先に触れないので、並列に実行しても配置の意味は変わらない。
 衝突の検査は build の前に済んでいる（ADR-75df92ae-0694-452b-8fb4-350994e31b25）。
 
-上限は layat が同時に投げる build プロセスの数を抑えるもので、nix daemon 側のビルド並列度とは
+上限は layat が同時に起動する build プロセスの数を抑えるもので、nix daemon 側のビルド並列度とは
 別の軸である。二重に制御することにはならない。
 
 ## 棄却した代替案

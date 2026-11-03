@@ -22,7 +22,7 @@ references:
 ## 背景
 
 copy は place-once で、target が既にあれば触らない（ADR-c4ad9987-850e-4834-bbea-d8de3b073548）。
-target にある実ファイルが layat の置いた物でなくても、黙って見送っていた。利用者には、layat が
+target にある実ファイルが layat の置いた物でなくても、warning を出さずに見送っていた。利用者には、layat が
 中身を置いたように見えてしまう。
 
 symlink の側では、記録に無い symlink を上書きするときに warning を出す
@@ -56,6 +56,6 @@ devShell の shellHook から呼ぶ project mode では入室のたびに失敗�
 symlink の foreign 実ファイルと同じ扱いになるが、copy はもともと上書きしない方針である。
 既存のファイル 1 つで apply 全体が止まり、shellHook から呼ぶと毎回失敗する。
 
-### これまでどおり黙って見送る
+### これまでどおり warning を出さずに見送る
 
 実装は変わらないが、layat が中身を置いたという誤解が残る。
