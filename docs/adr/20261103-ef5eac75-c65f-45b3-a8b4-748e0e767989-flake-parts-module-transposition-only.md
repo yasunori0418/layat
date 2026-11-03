@@ -11,12 +11,13 @@ justifies:
   - "REQ-c50df875-2cb0-4e72-8a21-858359a11cae"
 references:
   - "ADR-e6820da0-fce3-4aef-8b79-d53abbca6051"
+  - "ADR-db293e0c-4789-45b7-93a9-adedc021344f"
 ---
 # ADR-ef5eac75-c65f-45b3-a8b4-748e0e767989: flake-parts module は transposition だけを行う
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-e6820da0-fce3-4aef-8b79-d53abbca6051, GitHub Issue #26, #530
+- 関連: ADR-e6820da0-fce3-4aef-8b79-d53abbca6051, ADR-db293e0c-4789-45b7-93a9-adedc021344f, GitHub Issue #26, #530
 - 起点: Issue #26 と Issue #530 の grilling（2026-10-25）。ADR-0029 §5 と ADR-0068 §5b を書き直した
 
 ## 背景
@@ -32,7 +33,8 @@ flake-parts module は `perSystem.layat` の転置だけを行う。`lib` の関
 注入せず、devShell へ apply コマンドを注入する option も持たない。利用者は `inputs.layat.lib` を
 直接参照する。
 
-module が担う範囲の規範は REQ-c50df875-2cb0-4e72-8a21-858359a11cae に置く。
+option が `mkManifest` の derivation を入れるだけであることの規範は
+REQ-c50df875-2cb0-4e72-8a21-858359a11cae に置く。
 
 ## 根拠
 
@@ -40,7 +42,7 @@ module が担う範囲の規範は REQ-c50df875-2cb0-4e72-8a21-858359a11cae に�
 足りる。注入すると、どこから来たか読み取れない引数が perSystem に増え、module も複雑になる。
 
 devShell への注入は、module が devShell の形を決めることになる。apply コマンドを組む関数を `lib` に
-公開しておけば、利用者は任意の shell に自分で埋め込める。
+公開しておけば（ADR-db293e0c-4789-45b7-93a9-adedc021344f）、利用者は任意の shell に自分で埋め込める。
 
 ## 棄却した代替案
 
