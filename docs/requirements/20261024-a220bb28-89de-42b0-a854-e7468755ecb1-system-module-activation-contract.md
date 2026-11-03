@@ -53,4 +53,4 @@ specification_ja: |
 
 ## 出典
 
-ADR-0066「NixOS / nix-darwin モジュールを system mode の配線として実装する」§1〜§4。
+ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c・ADR-68f453b3-e6c7-4e0d-9978-32b5a00f627e・ADR-eee039fc-40af-42ac-bc65-979d6eaa0d06・ADR-f58e9981-bacc-4937-98b8-bddce0a057db・ADR-a0d0cf15-8234-42be-b83e-9b8271850475・ADR-1338a293-3f69-48f5-9164-efb4ec6994d6・ADR-1743c957-a732-4a44-a89a-4c03ab277f0c・ADR-0da9d817-c870-4f48-8a6d-8fb9b55e2a70。

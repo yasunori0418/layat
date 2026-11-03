@@ -34,4 +34,4 @@ specification_ja: |
 
 `docs/spec.md`「配置動作仕様」→「recopy・reset」節の reset 箇条書き第 1 項。
 
-決定の実体は ADR-0025「実装前残セマンティクス第7巡」の「reset 非TTY」。
+決定の実体は ADR-acc31876-df36-485e-b356-92ae60e26db7「reset は非対話の実行で --yes を必須にする」。

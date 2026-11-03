@@ -192,6 +192,6 @@ specification_ja: |
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「読み取り系ペイロード（#132）」とその配下の全項目。
 
-決定の実体は ADR-0043（読み取り系の info インベントリ・`init` の top-level info）、
-status の info の形を定めた ADR-0065 と、
-`--recopy` が planner の分類ではなく engine の materialize 経路であることを定めた ADR-0020。
+決定の実体は ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc（読み取り系の info インベントリ・`init` の top-level info）、
+status の info の形を定めた ADR-11918a81-f98d-466d-8310-d990c59f59e1 と、
+`--recopy` が planner の分類ではなく engine の materialize 経路であることを定めた ADR-fb01d942-2875-4dcb-a7df-879e18f63883。

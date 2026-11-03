@@ -25,4 +25,4 @@ footgun、途中失敗で状態が不揃いになり得るため。
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `rollback` 名指し必須の箇条書き。
 
-決定の実体は ADR-0018「`--all` のサブコマンド対応範囲」（`rollback --all` は非対応）。
+決定の実体は ADR-997c2459-f2ab-4025-ac92-e9ce836fc9ed「rollback に config の名指しを必須にする」。

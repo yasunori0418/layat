@@ -26,7 +26,7 @@ specification_ja: |
 | standalone | `$HOME`（実行時のシェル環境変数）| OS 問わず動作 |
 | home-manager | `$HOME`（HM が内部解決・モジュールが `homeRoot` を pin）| OS 問わず動作 |
 
-> **上は原文の写しを ADR-0066 に合わせて改めたもので、規範は frontmatter が正**。`homeRoot` が marker であり kind を運ぶこと
+> **上は原文の写しを ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c に合わせて改めたもので、規範は frontmatter が正**。`homeRoot` が marker であり kind を運ぶこと
 > （実体パス解決は engine の実行時責務）は REQ-3f541d39-da41-4ef8-858b-707f54cf6a29 / REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66、`--root` による全モード
 > 共通の上書きは REQ-61c05e09-0bde-4f74-9a96-03185f9df606、
 > home mode の profileDir キーは REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81 の担当。**モジュールが `homeRoot` を pin する
@@ -35,7 +35,7 @@ specification_ja: |
 > 解決する）ことを説明する従属節であり、pin そのものを規範化するものではない。
 >
 > 原文の表にあった NixOS / nix-darwin 行（`config.users.users.${cfg.user}.home`）は規範に採らない。
-> 両モジュールは home mode の root を供給せず `systemRoot` を pin する（→ ADR-0066・
+> 両モジュールは home mode の root を供給せず `systemRoot` を pin する（→ ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c・
 > REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10）。
 
 ## 出典
@@ -43,6 +43,5 @@ specification_ja: |
 `docs/spec.md`「root の解決」→「home mode（`root = homeRoot`）」節の表。
 
 決定の実体は root を 3 マーカーへ昇格し `$HOME` を `homeRoot` としたうえで各層が root を
-供給すると定めた ADR-0007「汎用 layat CLI を一次 UX に昇格し、entrypoint 発見＋root 明示
-モデルへ移行する」と、各層を配線に徹させ root と activation タイミングだけを供給させる
-ADR-0003。
+供給すると定めた ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed「root は 3 つの marker で表す」と、各層を配線に徹させ root と activation タイミングだけを供給させる
+ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880。

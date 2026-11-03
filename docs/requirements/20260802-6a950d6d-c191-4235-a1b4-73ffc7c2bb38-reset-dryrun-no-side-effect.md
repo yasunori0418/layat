@@ -35,4 +35,4 @@ exit する（FS 削除・confirm・flock いずれも行わない・`apply --dr
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `reset <name> --dryrun` の箇条書き。
 
-決定の実体は ADR-0021「reset の `--dryrun` 対応」。
+決定の実体は ADR-a86a8492-57fb-49d0-ba77-200f6dc49c3a「reset --dryrun は副作用なしで撤去対象を示す」。

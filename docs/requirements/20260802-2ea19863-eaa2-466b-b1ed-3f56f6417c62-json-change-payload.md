@@ -187,7 +187,7 @@ specification_ja: |
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する実装 issue の進捗
 > （#131 時点の非対象・`--all` は #164）は
 > 要求ではなく履歴の注記で、`apply --dryrun` と `reset --dryrun` のペイロードは REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303、`--all` は
-> REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5 の担当。undo ジャーナルそのものの規範（→ ADR-0044）は REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の担当。
+> REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5 の担当。undo ジャーナルそのものの規範（→ ADR-56325270-20bb-4959-8498-e3223c35e24b）は REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の担当。
 
 > **注記（規範ではない）— items / changes / 部分失敗 / conflict / generation / warnings を
 > 1 item に束ねる理由**: これらは「同一の payload builder が engine 結果から生成する
@@ -201,4 +201,4 @@ specification_ja: |
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「#131 変更系ペイロード」とその配下の全項目。
 
-決定の実体は ADR-0043 §4 / §6 / §8。`W_LAYAT_ORIGIN_MISMATCH` は ADR-0070 §3。
+決定の実体は ADR-5d28818e-f7e1-45e8-a7fd-bbb6157b8586 / ADR-9e328362-2e90-441a-8eca-40081ce71b1b / ADR-bd8a4c8a-5e7e-485a-bccf-20dab63125f2・ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9。`W_LAYAT_ORIGIN_MISMATCH` は ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8。

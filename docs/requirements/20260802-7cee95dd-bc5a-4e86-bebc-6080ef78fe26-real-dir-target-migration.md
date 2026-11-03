@@ -48,7 +48,7 @@ target 自身が実 dir のとき、配下（任意深さ）の全 leaf を判�
 
 祖先 symlink の migration は REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575、method 変更 symlink→copy の migration は
 REQ-2b48620a-abaa-43df-a106-954bbba3de56 の担当。除去を既定 silent とし `-v` で可視化するという出力規律そのもの
-（→ ADR-0031）は REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 / REQ-0a123b89-0399-4f76-b988-56a5f7e0becf の担当で、本 item は「この除去を warning に
+（→ ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5・ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）は REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 / REQ-0a123b89-0399-4f76-b988-56a5f7e0becf の担当で、本 item は「この除去を warning に
 せず配置レポート側で扱う」ことだけを規範とする。
 
 ## 出典
@@ -57,4 +57,4 @@ REQ-2b48620a-abaa-43df-a106-954bbba3de56 の担当。除去を既定 silent と�
 「target に通常ファイルまたはディレクトリが存在する場合はエラーで停止（上書きしない）。
 ただし実 dir は §0.5 の条件を満たせば例外的に PreRemove で除去して配置する」。
 
-決定の実体は ADR-0047「配置前除去（PreRemove）の一般化」の D2。
+決定の実体は ADR-77312c71-fa32-481b-ad80-c91e5b282edc「実ディレクトリの target は全 leaf を除去できるときだけ移行する」。

@@ -34,4 +34,4 @@ legacy entrypoint で `src` が自動で store 化されないことは REQ-da25
 
 `docs/spec.md`「CLI 仕様」→「再現性スタンス」の表。
 
-決定の実体は ADR-0007 §5「shell.nix / default.nix は best-effort（再現性はユーザー責任）」。
+決定の実体は ADR-955c2601-88fb-4be8-85de-ec7d0a8c727d「shell.nix / default.nix の再現性は利用者の責任にする」。

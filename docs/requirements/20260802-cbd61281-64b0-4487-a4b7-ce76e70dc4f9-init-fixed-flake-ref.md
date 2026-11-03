@@ -29,4 +29,4 @@ CLI 版と template 版のズレ（常に latest main 参照）は許容する�
 
 `docs/spec.md`「CLI 仕様」→「`layat init`（テンプレート展開）」の箇条書き第 3 項。
 
-決定の実体は ADR-0025「layat init 固定 ref」。
+決定の実体は ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d「templates と layat init は固定 ref で導入する」。

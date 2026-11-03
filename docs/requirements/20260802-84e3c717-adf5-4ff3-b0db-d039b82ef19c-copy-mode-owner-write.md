@@ -35,5 +35,4 @@ group/other）は保ちつつ所有者が編集できる状態にする。
 `docs/spec.md`「配置動作仕様」→「copy モード（place-once・ユーザー管理）」節の箇条書き第 4 項
 （および同節コードブロック・「recopy」節の「mode 保存 + owner-write 付与」）。
 
-決定の実体は ADR-0016「実装前レビュー第 2 巡で surfaced した残セマンティクス」の
-「copy の編集可能性」。
+決定の実体は ADR-f27830a5-4d13-4f61-be9e-3f04240ff322「copy は再帰コピーで mode を保存し owner-write にする」。

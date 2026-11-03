@@ -34,4 +34,4 @@ specification_ja: |
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `gitignore` project mode 限定の
 箇条書き。
 
-決定の実体は ADR-0023「gitignore モード」。
+決定の実体は ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe「配置 target を gitignore コマンドで stdout へ列挙する」。

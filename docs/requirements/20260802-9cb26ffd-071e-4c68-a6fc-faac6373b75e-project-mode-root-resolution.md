@@ -46,5 +46,5 @@ specification_ja: |
 `docs/spec.md`「root の解決」→「project mode（`root = projectRoot`）」節の表と、
 同節の箇条書き第 1〜2 項。
 
-決定の実体は ADR-0005「project mode（プロジェクト相対配置）と ephemeral 配置原則」
-（git toplevel 解決・config 相対と CWD 相対の棄却）。
+決定の実体は ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed「root は 3 つの marker で表す」
+（git toplevel 解決。config 相対と CWD 相対を棄却したのは旧決定）。

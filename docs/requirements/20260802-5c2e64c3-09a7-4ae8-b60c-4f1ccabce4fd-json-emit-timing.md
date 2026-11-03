@@ -45,4 +45,4 @@ specification_ja: |
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「emit タイミングと成立条件」。
 
-決定の実体は ADR-0043。
+決定の実体は ADR-feb60906-1517-46b8-8fa5-e007df4d3e11「--json は常に results[] エンベロープを出す」。

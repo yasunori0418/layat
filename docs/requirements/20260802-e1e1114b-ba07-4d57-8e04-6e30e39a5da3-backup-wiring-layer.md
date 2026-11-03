@@ -37,10 +37,10 @@ specification_ja: |
 > REQ-8085f194-c903-4ecb-abd8-c719fe7b3292 の担当。本 item は `layat.backup` が manifest ではなく起動側に効くという
 > レイヤーの所属と、その**配線の発動条件**（`enable` が true のときに限る）を規定する。
 > 発動条件は REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 が定めるオプションの型・デフォルト値とは別の規範で、退避が
-> ユーザーの明示 opt-in であるという ADR-0045 の設計意図（既定 false・記録外実体を勝手に
+> ユーザーの明示 opt-in であるという ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3 の設計意図（既定 false・記録外実体を勝手に
 > 動かさない）を担保する。
 >
-> **2026-10-15 追記（ADR-0060）**: 上の写しの `layat apply --manifest` 起動は、全 config を渡す
+> **2026-10-15 追記（ADR-f58e9981-bacc-4937-98b8-bddce0a057db）**: 上の写しの `layat apply --manifest` 起動は、全 config を渡す
 > `layat apply --all --manifest <name>=<link-farm> …` の 1 回起動と読み替える。`--backup` は
 > その起動に載る全 config へ一律に付く。
 
@@ -49,6 +49,6 @@ specification_ja: |
 `docs/spec.md`「モジュールオプション仕様」→「共通オプション（全モジュール）」節の
 `layat.backup` の段落。
 
-決定の実体は ADR-0045「`apply --backup[=suffix]` — 配置を塞ぐ記録外実体の rename 退避」で、
+決定の実体は ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3「モジュールに layat.backup を起動配線のオプションとして持つ」で、
 module 経路への配線は同 ADR が Issue #169 とともに定めている。配線先を全 config の
-`apply --all --manifest <name>=<link-farm> …` 起動にしたのは ADR-0060 §1。
+`apply --all --manifest <name>=<link-farm> …` 起動にしたのは ADR-f58e9981-bacc-4937-98b8-bddce0a057db。

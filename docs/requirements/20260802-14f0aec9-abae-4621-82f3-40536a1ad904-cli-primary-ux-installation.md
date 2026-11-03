@@ -51,7 +51,7 @@ specification_ja: |
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する次の 2 点は本 item の
 > 規範ではない。
 >
-> - engine が自身の対応版より新しい `schemaVersion` を拒否すること（→ ADR-0006）は
+> - engine が自身の対応版より新しい `schemaVersion` を拒否すること（→ ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd）は
 >   REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b、MVP が v1 のみであることは REQ-250d936c-1df0-491d-a7af-708f38b61f33 の担当
 > - devShell 同梱そのものの配線（`templates/project` の内容）→
 >   「`layat init`」→「テンプレートの内容」節の担当（REQ-196ddabf-6569-4303-942e-050872972501）
@@ -60,5 +60,5 @@ specification_ja: |
 
 `docs/spec.md`「CLI 仕様（一次 UX）」の導入 2 項目。
 
-決定の実体は ADR-0007 §3「汎用 layat CLI を一次 UX に昇格する」（PATH 常駐・
-`packages.layat`）と ADR-0015「project mode の `layat` は devShell 同梱が canonical」。
+決定の実体は ADR-88231ffc-4836-4252-be34-894944fd28c3「CLI が一次 UX で devShell に pin 版を同梱する」（PATH 常駐・
+`packages.layat`・project mode では devShell 同梱が canonical）。

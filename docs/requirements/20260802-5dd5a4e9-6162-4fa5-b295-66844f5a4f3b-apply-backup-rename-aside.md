@@ -54,7 +54,7 @@ copy→symlink）を `<target>.<suffix>` へ rename 退避してから配置す�
 しない**（ユーザー所有物として残置。復元は手動 `mv`）。
 
 > **上は原文の写しで、規範は frontmatter が正**。undo ジャーナルそのものの規範
-> （→ ADR-0044）は REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の担当で、本 item は「退避もその対象である」ことだけを
+> （→ ADR-56325270-20bb-4959-8498-e3223c35e24b）は REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の担当で、本 item は「退避もその対象である」ことだけを
 > 規定する。退避が配置手順のどの段に入るか（PreRemove の後・配置の前）と、ドリフト修復
 > 経路でも実施されることは REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 の担当。
 >
@@ -76,4 +76,4 @@ copy→symlink）を `<target>.<suffix>` へ rename 退避してから配置す�
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply <name> --backup` の箇条書きと、
 グローバルフラグ表の `--backup[=<suffix>]`。
 
-決定の実体は ADR-0045「`apply --backup[=suffix]` — 配置を塞ぐ記録外実体の rename 退避」。
+決定の実体は ADR-33d8c466-6b38-46b6-8696-ad7521c72786・ADR-65e41903-5eee-4a00-a154-be8c830cdca9・ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f・ADR-37191429-2099-4217-a552-47b16a7e504c・ADR-18267548-27d0-430b-8149-b6124d02ce56・ADR-c0a91b81-f54f-4790-9295-f90656f53de8。

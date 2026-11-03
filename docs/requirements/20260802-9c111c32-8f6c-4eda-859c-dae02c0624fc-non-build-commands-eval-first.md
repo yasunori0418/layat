@@ -42,4 +42,4 @@ apply を含む実行フロー全体の順序規範は REQ-60c6b7ea-e936-4ce8-bd
 
 `docs/spec.md`「CLI 仕様」→「実行フロー」の非 build コマンドの箇条書き。
 
-決定の実体は ADR-0024「非 build コマンドの eval 先行」。
+決定の実体は ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9「eval を先に行い、flock を取ってから build する」。

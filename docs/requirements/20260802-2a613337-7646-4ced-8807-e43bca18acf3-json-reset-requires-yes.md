@@ -31,4 +31,4 @@ TTY でもプロンプトを出さず、`--yes` が無ければ即 `status:"erro
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「`reset --json` は `--yes` 必須」。
 
-決定の実体は ADR-0043 §8。
+決定の実体は ADR-acc31876-df36-485e-b356-92ae60e26db7「reset は非対話の実行で --yes を必須にする」。

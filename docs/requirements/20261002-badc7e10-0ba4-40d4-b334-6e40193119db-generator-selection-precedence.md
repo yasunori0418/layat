@@ -85,4 +85,4 @@ generator = "nix"
 
 ## 出典
 
-ADR-0056「生成器の選択と設定ファイル」§1〜§6。
+ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964・ADR-9acd3e01-58f1-48ca-b84f-f33a5bc1aaa5・ADR-5908eb28-40a5-49d5-a09e-15b35082b970・ADR-e88f074e-95f4-4e04-97fc-eae2d0c695a3・ADR-aec6bd1d-f776-4d7c-9337-1ed78fee6180・ADR-c4a3d9be-19ea-461d-ab0f-2037adc494e1・ADR-3878ea60-4f4f-48a3-a389-3b7fbb672897。

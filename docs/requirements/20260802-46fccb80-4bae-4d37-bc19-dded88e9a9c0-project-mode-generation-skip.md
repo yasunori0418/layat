@@ -99,7 +99,7 @@ specification_ja: |
 > - `rollback` / `list-generations` が home / system mode 限定であること（CLI 側の規範）→ REQ-05abce3e-9797-432b-b93f-37c55d09afde
 > - foreign symlink の warning そのもの → REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557、place-once そのもの → REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9
 >
-> **2026-10-11 追記（ADR-0058）**: 上の写しの「新 link farm derivation が前世代と同一なら」は、新 link-farm が
+> **2026-10-11 追記（ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444）**: 上の写しの「新 link farm derivation が前世代と同一なら」は、新 link-farm が
 > profile の current 世代に一致し、last-applied 記録があればその `linkFarm` にも一致するなら、と読み替える
 > （profile が無ければ skip しない）。profile と記録が食い違う間は通常経路で記録を baseline に stale 除去とコミットを行う。
 > lstat 検査の「記録通り」も記録を優先した baseline に照らす。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
@@ -112,8 +112,8 @@ specification_ja: |
 
 `docs/spec.md`「世代管理仕様」→「project mode の世代」節の箇条書き第 1〜4 項。
 
-決定の実体は ADR-0005「project mode（プロジェクト相対配置）と ephemeral 配置原則」（世代の
-非公開・ephemeral）と ADR-0017「実装前レビュー第 3 巡」（世代スキップとドリフト修復）。
-profile を解決済み root でキーすることと `<roothash>` の定義は ADR-0013、`<state>` の確定は
-ADR-0022、copy のドリフト修復の限定は ADR-0022 が定めている。世代スキップの判定元を profile と
-last-applied 記録の両方一致にし、baseline を記録優先にしたのは ADR-0058「last-applied 記録」§3。
+決定の実体は ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75「module と project では世代操作を公開しない」、
+ADR-4dca6ef4-2791-48d5-aa82-7037630968a6「ephemeral 配置は git に干渉しない」と ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d「project mode では同じ link farm なら世代を積まず drift だけを直す」。
+profile を解決済み root でキーすることと `<roothash>` の定義は ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988、`<state>` の確定は
+ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203、copy のドリフト修復の限定は ADR-5265f879-e623-44f9-9c58-8c14598e8b10 が定めている。世代スキップの判定元を profile と
+last-applied 記録の両方一致にし、baseline を記録優先にしたのは ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444・ADR-a91585ad-971a-4558-9f25-b7fcd6e57671。

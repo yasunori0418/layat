@@ -42,5 +42,4 @@ layat apply <name> --recopy     # 通常 apply に加え config 内の全 copy t
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply <name> --recopy` の箇条書き。
 
-決定の実体は ADR-0020「copy の明示上書き（`apply --recopy`）と配置物のリセット
-（`layat reset`）を追加する」。
+決定の実体は ADR-fb01d942-2875-4dcb-a7df-879e18f63883「apply --recopy で全 copy target を src から無条件に上書きする」。

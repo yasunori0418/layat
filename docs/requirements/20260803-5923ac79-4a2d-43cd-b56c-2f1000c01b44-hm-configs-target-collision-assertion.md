@@ -66,10 +66,9 @@ specification_ja: |
 
 ## 出典
 
-ADR-0060「HM activation を prebuilt manifest 群への `apply --all` 1 回起動にし、configs 間の
-衝突検出を CLI 前段へ委譲する」§3。旧版（module eval の assertion で停止する形）の出典は
-ADR-0035 §4 で、ADR-0060 が改訂した。
+ADR-1338a293-3f69-48f5-9164-efb4ec6994d6「モジュールは configs 間の target 衝突を評価時に確認しない」。旧版（module eval の assertion で停止する形）は
+同じ ADR で改められた。
 
 `docs/spec.md` には対応記述が無いため、原文の写しは持たない（規範は frontmatter が正で、
 上の箇条書きは ADR 本文の要約）。cross-config を engine 実行時の後勝ち + foreign symlink
-warning とするのは ADR-0015、`apply --all` の前段検査は ADR-0038 が定めている。
+warning とするのは ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d、`apply --all` の前段検査は ADR-75df92ae-0694-452b-8fb4-350994e31b25 が定めている。

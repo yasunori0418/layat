@@ -46,6 +46,5 @@ roothash キー）。`reset` はさらに entries 読みのため entrypoint eva
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `reset` 名指し必須の箇条書き。
 
-決定の実体は ADR-0021「reset の `--all` 非対応・`--dryrun` 対応・flock / recopy 合成を
-確定する」と、`--all` 非対応の一貫性を与える ADR-0018。flock の直列化は ADR-0013、
-非 build コマンドの eval 先行は ADR-0024。
+決定の実体は ADR-56ac6298-db67-4f63-8b60-f14af3b9570a「reset は config の名指しを必須にする」と、`--all` 非対応の一貫性を与える ADR-997c2459-f2ab-4025-ac92-e9ce836fc9ed。flock の直列化は ADR-45380022-d959-4b22-aa05-5993ac1f3c87、
+非 build コマンドの eval 先行は ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9。

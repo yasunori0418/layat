@@ -44,4 +44,4 @@ farm は devShell の依存として先にビルドされる。
 
 ## 出典
 
-ADR-0068「lib に事前展開した apply コマンドを組む関数を公開する」。
+ADR-db293e0c-4789-45b7-93a9-adedc021344f・ADR-ca24e802-cc57-40c5-ad03-a1c5f0b6e498・ADR-7f064851-02e3-40bf-aca3-9de2b0b4f6a7・ADR-bc334f0c-ac3b-44cf-8d0d-31034ef420ac。

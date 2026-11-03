@@ -47,5 +47,5 @@ system 基底が無ければ空として扱い、読めなければ warning を�
 nix profile による世代管理を行い `rollback` / `list-generations` を提供する）。後者は
 独立 item を立てず本 item に畳んだ。
 
-決定の実体は ADR-0005「project mode は世代を内部機構に留めユーザーに公開しない」と、
-`list-generations --all` を追加した ADR-0018。home / system への公開は ADR-0036。
+決定の実体は ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75「module と project では世代操作を公開しない」と、
+`list-generations --all` を追加した ADR-cfd13fb6-d11e-4f3b-b0c6-40ee21b6b212。home / system への公開は ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75。

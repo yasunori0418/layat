@@ -73,12 +73,12 @@ specification_ja: |
 > （解決済み root でキーすること）とその理由・`<roothash>`（解決後の絶対 root パスの sha256
 > 短縮 hex）の定義が REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、孤児 profile の扱いが REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4 の担当。
 > HM モジュール経由も home mode の `<name>` 直キーに乗る（原文が挙げる「固定名 `default`」の
-> MVP 限定は ADR-0035 が反転済み・REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a）。本 item は「キーで指す先が
+> MVP 限定は ADR-01abcd5a-464f-4c44-8afd-30950631487c が反転済み・REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a）。本 item は「キーで指す先が
 > ディレクトリであり、その中に何をどう並べるか」という物理形を規定する。flock を blocking で
 > 取るか try-lock で取るかは REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461、pending out-link が gcroot を持ち config あたり
 > 最大 1 に抑えられることは REQ-840b3641-6e76-46da-82e9-680cabd65abe の担当。
 
-> **2026-10-11 追記（ADR-0057）**: 上の写しの `nix-env --profile <profileDir>/profile ...` と
+> **2026-10-11 追記（ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd）**: 上の写しの `nix-env --profile <profileDir>/profile ...` と
 > 基底 `<state>/nix/profiles/layat` は、既定の世代バックエンド nixprofile の内部と読み替える。
 > profile リンク・世代 `profile-N-link`・`.pending` が兄弟として並ぶレイアウトは世代バックエンドの
 > 契約の固定部分で（REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）、engine はこれを直接読む。基底は
@@ -89,7 +89,6 @@ specification_ja: |
 `docs/spec.md`「世代管理仕様」→「機構」→「profile のオンディスクレイアウト」節と、
 同「機構」節の機構表直後の blockquote（`<state>` の定義）。
 
-決定の実体は ADR-0025「実装前残セマンティクス第7巡」の「profile 専用ディレクトリレイアウト」
-（ADR-0022 / ADR-0023 の `.pending-<name>` を改訂）。`<state>` の定義は ADR-0022、backref
-`.root` による孤児逆引きは ADR-0013 が定めている。基底の所有を世代バックエンドへ移し、レイアウトを
-契約の固定部分としたのは ADR-0057「世代バックエンドの契約」§3・§6。
+決定の実体は ADR-419914ba-9896-4dd1-853b-fb514fcb9f38「profile は専用ディレクトリレイアウトに置く」。`<state>` の定義は ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203、backref
+`.root` による孤児逆引きは ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988 が定めている。基底の所有を世代バックエンドへ移し、レイアウトを
+契約の固定部分としたのは ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd・ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883。
