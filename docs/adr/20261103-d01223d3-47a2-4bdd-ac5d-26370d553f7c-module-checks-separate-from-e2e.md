@@ -54,5 +54,5 @@ nix-darwin の input を check 専用にするのは、`lib/` が nixpkgs のみ
 
 ### 評価結果のアサートだけで済ませる
 
-フックに起動文字列が入ることは確かめられるが、activation の `PATH` や `deps` の順序のように、実際に
+フックに起動文字列が入ることは確かめられるが、activation の `PATH` に `nix` が無いといった、実際に
 activate しないと分からない失敗を見逃す。

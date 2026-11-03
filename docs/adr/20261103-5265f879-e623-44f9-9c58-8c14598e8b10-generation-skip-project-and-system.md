@@ -37,7 +37,7 @@ project mode に限られていると、boot を重ねるだけで system mode �
 
 ## 決定
 
-世代スキップは project mode と system mode の両方で行い、home mode では行わない。判定と置き直しの
+世代スキップは project mode と system mode の両方で行い、home mode と fixed mode では行わない。判定と置き直しの
 機構は両モードで同じものを使い、新しい CLI フラグは足さない。世代スキップのときの置き直しは symlink と
 copy の両方を対象にし、copy は target が無いときだけ置き直して、内容が異なるときは触らない。
 
@@ -58,8 +58,8 @@ copy を target が無いときだけ置き直すのは、home mode で apply �
 copy が戻るのと振る舞いを揃えるためである。内容まで比べて戻すと、place-once の方針に反して利用者の
 編集を壊す。src への追従は `apply --recopy` に限る。
 
-home mode を据え置くのは、この決定が扱うのが system mode の boot による世代の増加だからである。
-同じ内容の apply でも世代を残す home mode の振る舞いは、この変更のついでに変えない。
+home mode と fixed mode を据え置くのは、この決定が扱うのが system mode の boot による世代の増加だからである。
+同じ内容の apply でも世代を残す両モードの振る舞いは、この変更のついでに変えない。
 
 ## 棄却した代替案
 

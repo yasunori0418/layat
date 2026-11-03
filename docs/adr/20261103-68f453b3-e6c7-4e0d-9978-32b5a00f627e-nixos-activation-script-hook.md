@@ -34,15 +34,11 @@ NixOS モジュールは `system.activationScripts.layat` を定義し、そこ�
 
 ## 根拠
 
-layat 専用の名前でスクリプトを持てば、他のスクリプトと独立に順序を付けられ、利用者の設定とも衝突しない。
-`deps` に `etc` と `users` を入れることで、配置先のディレクトリやファイルの所有者が揃ったあとに engine が動く。
+`deps` に `etc` と `users` を入れるので、engine は `/etc` とユーザーが用意されたあとに動く。
 
 `supportsDryActivation = true` が無いと、スクリプトは dry-activate 用の activate に含まれず、
 dry-activate のときに何も示せない。
 
 ## 棄却した代替案
 
-### `postActivation` のような既存の固定名スクリプトへ追記する
-
-NixOS では名前付きのスクリプトを足せるので、固定名のスクリプトを使う理由が無い。追記にすると `deps` で順序を
-付けられない。
+旧 ADR-0066 §2a は、この決定について代替案を記録していない。

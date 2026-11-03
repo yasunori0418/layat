@@ -34,19 +34,11 @@ NixOS モジュールは、engine を起動する前に activation の `PATH` �
 
 ## 根拠
 
-`config.nix.package` は host が実際に使っている nix である。これを使えば、host の nix daemon と同じ版の
-`nix-env` で世代をコミットでき、host の構成から外れた nix を持ち込まない。
+`config.nix.package` は host の構成が使う nix である。これを前置すれば、世代のコミットに要る `nix-env` が
+activation の中でも見つかる。
 
 前置は layat の起動 1 行に限るので、他の activation スクリプトの `PATH` には影響しない。
 
 ## 棄却した代替案
 
-### layat のパッケージに nix を同梱する
-
-host の nix と版がずれうる。host が nix の版を選んでいるのに、layat がそれと別の nix で profile を
-書き換えることになる。
-
-### `nix-env` を絶対パスで呼ぶよう engine を変える
-
-NixOS の activation という 1 つの起動環境のために、engine の処理を変えることになる。起動環境を整えるのは配線である
-モジュールの役目である。
+旧 ADR-0066 §4b は、この決定について代替案を記録していない。
