@@ -6,6 +6,8 @@ status: 採用
 origin: "ADR-0018 §3a を書き直した"
 justifies:
   - "REQ-196ddabf-6569-4303-942e-050872972501"
+supersedes:
+  - "ADR-0018"
 ---
 # ADR-fcd03235-afe0-41ba-8ea9-c14bed3988da: devShell の shellHook は config を名指しして apply する
 

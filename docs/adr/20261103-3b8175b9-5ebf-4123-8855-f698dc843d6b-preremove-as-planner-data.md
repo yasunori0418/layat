@@ -11,6 +11,9 @@ origin: "dotfiles 側での実遭遇（#170）と grilling セッション（202
 justifies:
   - "REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98"
   - "DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68"
+supersedes:
+  - "ADR-0046"
+  - "ADR-0047"
 references:
   - "ADR-74423bb8-1453-4689-a25e-30bf46536afc"
   - "ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c"

@@ -9,6 +9,8 @@ issues:
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §2b を書き直した"
 justifies:
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
+supersedes:
+  - "ADR-0058"
 ---
 # ADR-10c6dc33-d188-406b-beb4-d10ccbe3c645: 記録を書き直す操作ごとに linkFarm の値を定める
 

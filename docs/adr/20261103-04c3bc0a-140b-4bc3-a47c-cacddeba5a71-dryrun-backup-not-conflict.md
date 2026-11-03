@@ -9,6 +9,8 @@ issues:
 origin: "旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §6（出力規律）の dryrun の扱いを書き直した"
 justifies:
   - "REQ-02a33511-0941-4813-b289-a05eb8e9aa57"
+supersedes:
+  - "ADR-0045"
 references:
   - "ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1"
   - "ADR-37191429-2099-4217-a552-47b16a7e504c"

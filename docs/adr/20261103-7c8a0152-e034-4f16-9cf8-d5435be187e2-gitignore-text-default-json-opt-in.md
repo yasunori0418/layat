@@ -7,6 +7,8 @@ origin: "ADR-0033 §1b を書き直した"
 justifies:
   - "REQ-2353259f-5878-452a-8e11-3445de69abc2"
   - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
+supersedes:
+  - "ADR-0033"
 ---
 # ADR-7c8a0152-e034-4f16-9cf8-d5435be187e2: gitignore は行指向の出力を既定のまま JSON を opt-in にする
 

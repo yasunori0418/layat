@@ -11,6 +11,8 @@ justifies:
   - "REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b"
   - "REQ-8085f194-c903-4ecb-abd8-c719fe7b3292"
   - "DSG-98d7fa5d-c590-441a-b682-0ab7afa14233"
+supersedes:
+  - "ADR-0003"
 ---
 # ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880: モジュールは root と起動の時機だけを供給して engine を起動する
 

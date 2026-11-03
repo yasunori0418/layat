@@ -8,6 +8,8 @@ issues:
 origin: "ADR-0022 §4（copy が foreign 実ファイルに当たったら warning を出して skip する）を書き直した"
 justifies:
   - "REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7"
+supersedes:
+  - "ADR-0022"
 references:
   - "ADR-c4ad9987-850e-4834-bbea-d8de3b073548"
   - "ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d"

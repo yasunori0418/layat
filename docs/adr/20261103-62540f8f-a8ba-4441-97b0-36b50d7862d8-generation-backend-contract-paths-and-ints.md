@@ -11,6 +11,8 @@ justifies:
   - "REQ-706de717-4e47-471a-a1c0-448635be159c"
   - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
   - "DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814"
+supersedes:
+  - "ADR-0057"
 references:
   - "ADR-0055"
 ---

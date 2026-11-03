@@ -8,6 +8,8 @@ issues:
 origin: "次期マイルストーン計画の grilling（2026-07-04）。公開後の実運用で孤児系列が溜まり始めたことを消費側の要求と判断した。ADR-0034 §2a を書き直した"
 justifies:
   - "REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed"
+supersedes:
+  - "ADR-0034"
 references:
   - "ADR-acc31876-df36-485e-b356-92ae60e26db7"
 ---

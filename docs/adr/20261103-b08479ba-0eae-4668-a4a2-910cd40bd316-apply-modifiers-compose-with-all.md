@@ -8,6 +8,8 @@ issues:
 origin: "ADR-0021 §3b（apply --all --recopy を合成できるようにする）を書き直した"
 justifies:
   - "REQ-687e225f-5046-46db-88fb-f9e527a1e97a"
+supersedes:
+  - "ADR-0021"
 references:
   - "ADR-fb01d942-2875-4dcb-a7df-879e18f63883"
   - "ADR-a51897c5-f709-4b7a-8db2-61e6ebb0040c"

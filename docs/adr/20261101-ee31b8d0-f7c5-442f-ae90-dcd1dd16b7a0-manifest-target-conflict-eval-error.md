@@ -7,6 +7,7 @@ origin: "垂直トレーサー弾の着手前に行った実装前のレビュ�
 justifies:
   - "REQ-5c6b07da-3d06-414d-8770-4f438234b322"
 supersedes:
+  - "ADR-0014"
   - "ADR-0024"
 references:
   - "ADR-0014"

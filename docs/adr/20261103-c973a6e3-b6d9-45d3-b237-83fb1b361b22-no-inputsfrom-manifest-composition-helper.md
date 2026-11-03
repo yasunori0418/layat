@@ -9,6 +9,8 @@ issues:
 origin: "ADR-0032 §3b を書き直した"
 justifies:
   - "REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da"
+supersedes:
+  - "ADR-0032"
 ---
 # ADR-c973a6e3-b6d9-45d3-b237-83fb1b361b22: 複数の manifest を inputsFrom で合成するヘルパを持たない
 

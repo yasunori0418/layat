@@ -6,6 +6,8 @@ status: 採用
 origin: "ADR-0018 §2 を書き直した"
 justifies:
   - "REQ-196ddabf-6569-4303-942e-050872972501"
+supersedes:
+  - "ADR-0018"
 ---
 # ADR-75d1dcc2-e270-4193-a72c-863a57967baf: project template の .gitignore 手順をコード近くのコメントで示す
 

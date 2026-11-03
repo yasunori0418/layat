@@ -8,6 +8,8 @@ issues:
 origin: "Issue #396（評価器の診断の扱い）の結論。ADR-0055 §6 の診断の出力先を書き直した"
 justifies:
   - "REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd"
+supersedes:
+  - "ADR-0055"
 references:
   - "ADR-0031"
 ---

@@ -7,6 +7,9 @@ origin: "ADR-0031 §1・§4 を書き直した"
 justifies:
   - "REQ-8ef34101-8150-4124-92d5-94fabe6b5d90"
   - "REQ-0a123b89-0399-4f76-b988-56a5f7e0becf"
+supersedes:
+  - "ADR-0026"
+  - "ADR-0031"
 ---
 # ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5: 指定が無いときは成功時に何も出力しない
 

@@ -10,6 +10,11 @@ justifies:
   - "REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44"
   - "REQ-5c6b07da-3d06-414d-8770-4f438234b322"
   - "REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693"
+supersedes:
+  - "ADR-0035"
+  - "ADR-0038"
+  - "ADR-0060"
+  - "ADR-0066"
 ---
 # ADR-1338a293-3f69-48f5-9164-efb4ec6994d6: モジュールは configs 間の target 衝突を評価時に確認しない
 

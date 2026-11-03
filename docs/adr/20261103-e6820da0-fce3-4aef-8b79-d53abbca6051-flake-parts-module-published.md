@@ -9,6 +9,8 @@ origin: "Issue #26。ADR-0029 §1 と ADR-0029 §4 を書き直した"
 justifies:
   - "DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58"
   - "DSG-aeb5e219-4784-4950-845c-35f9bab9179c"
+supersedes:
+  - "ADR-0029"
 references:
   - "ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1"
 ---

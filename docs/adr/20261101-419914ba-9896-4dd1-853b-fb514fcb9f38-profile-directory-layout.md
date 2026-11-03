@@ -7,6 +7,7 @@ origin: "実装前の残セマンティクス確定の第 7 巡（2026-06-14）�
 justifies:
   - "REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3"
 supersedes:
+  - "ADR-0022"
   - "ADR-0025"
 references:
   - "ADR-0036"

@@ -9,6 +9,8 @@ issues:
 origin: "ADR-0032 §1 を書き直した"
 justifies:
   - "REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da"
+supersedes:
+  - "ADR-0032"
 ---
 # ADR-925b0011-e2a2-43ac-a5d3-5e4a10f52470: legacy entrypoint は mkShell の passthru 形を正準にする
 

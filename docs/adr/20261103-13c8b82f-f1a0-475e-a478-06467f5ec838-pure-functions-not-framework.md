@@ -7,6 +7,8 @@ origin: "ADR-0004 §d を書き直した"
 justifies:
   - "REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4"
   - "REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51"
+supersedes:
+  - "ADR-0004"
 ---
 # ADR-13c8b82f-f1a0-475e-a478-06467f5ec838: layat をフレームワークではなく純粋関数群として提供する
 

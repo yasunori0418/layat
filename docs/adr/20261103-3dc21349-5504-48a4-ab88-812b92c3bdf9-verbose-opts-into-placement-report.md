@@ -6,6 +6,9 @@ status: 採用
 origin: "ADR-0031 §2・ADR-0033 §2d を書き直した"
 justifies:
   - "REQ-0a123b89-0399-4f76-b988-56a5f7e0becf"
+supersedes:
+  - "ADR-0031"
+  - "ADR-0033"
 ---
 # ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9: -v で配置レポートを opt-in で出す
 

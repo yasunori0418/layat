@@ -8,6 +8,8 @@ issues:
 origin: "ADR-0021 §2（reset の --dryrun を副作用なしのプレビューにする）を書き直した"
 justifies:
   - "REQ-6a950d6d-c191-4235-a1b4-73ffc7c2bb38"
+supersedes:
+  - "ADR-0021"
 references:
   - "ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7"
   - "ADR-acc31876-df36-485e-b356-92ae60e26db7"

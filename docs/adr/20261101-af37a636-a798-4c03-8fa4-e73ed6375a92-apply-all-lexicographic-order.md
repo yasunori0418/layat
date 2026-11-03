@@ -11,6 +11,7 @@ justifies:
 supersedes:
   - "ADR-0013"
   - "ADR-0016"
+  - "ADR-0039"
 references:
   - "ADR-0038"
   - "ADR-0039"

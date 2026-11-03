@@ -6,6 +6,8 @@ status: 採用
 origin: "ADR-0018 §3c を書き直した"
 justifies:
   - "REQ-196ddabf-6569-4303-942e-050872972501"
+supersedes:
+  - "ADR-0018"
 ---
 # ADR-653e6a28-76dd-44b3-99e2-3be189a3c1c4: template に .envrc を同梱しない
 

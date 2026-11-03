@@ -11,6 +11,8 @@ justifies:
   - "REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da"
   - "REQ-496b1a07-5b74-416b-9e5f-3952b4c03737"
   - "DSG-92f54490-872a-42ac-bbd7-d06e9ee381c6"
+supersedes:
+  - "ADR-0032"
 ---
 # ADR-08a6e1be-e424-4cfe-a529-e123a50cd6ca: CLI が叩く attr path を legacy entrypoint の書き方で分岐させない
 

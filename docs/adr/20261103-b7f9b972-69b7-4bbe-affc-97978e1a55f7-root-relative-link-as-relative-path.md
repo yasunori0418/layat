@@ -12,6 +12,8 @@ justifies:
   - "REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa"
   - "REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557"
   - "REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575"
+supersedes:
+  - "ADR-0059"
 ---
 # ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7: root 相対マーカーのリンクを target 起点の相対パスで張る
 

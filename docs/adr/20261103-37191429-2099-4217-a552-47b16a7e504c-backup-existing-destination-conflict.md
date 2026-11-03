@@ -10,6 +10,8 @@ origin: "旧 epic #167 から統合された epic #172 の grilling セッショ
 justifies:
   - "REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b"
   - "REQ-95e97d01-5c34-44b3-bc85-9ca53472bc3d"
+supersedes:
+  - "ADR-0045"
 references:
   - "ADR-65e41903-5eee-4a00-a154-be8c830cdca9"
 ---

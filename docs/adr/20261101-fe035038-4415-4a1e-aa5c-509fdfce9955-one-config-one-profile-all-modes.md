@@ -9,6 +9,7 @@ justifies:
   - "REQ-844ee375-919f-4341-81e1-a5f89fd32840"
 supersedes:
   - "ADR-0002"
+  - "ADR-0003"
 references:
   - "ADR-0007"
   - "ADR-0058"
