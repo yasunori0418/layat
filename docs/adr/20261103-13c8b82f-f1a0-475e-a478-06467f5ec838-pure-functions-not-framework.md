@@ -19,8 +19,8 @@ justifies:
 
 layat の north-star は、配置のプリミティブからミニマルな distro の基盤を組むことにある。同じ領域には
 numtide/system-manager があり、NixOS 風のモジュールシステム（`lib.evalModules`）でパッケージ・
-systemd の unit・`/etc` を宣言的に作る。ブートローダ・カーネル・init・FS には関与せず、既存の distro に
-乗る補強の層である。
+systemd の unit・`/etc` を宣言的に作る。ブートローダ・カーネル・init・FS には関与せず、既存の distro の
+上に足す層である。
 
 layat がこの領域にどういう形で関わるか、既存のツールとの違いをどこに置くかを決める必要があった。
 

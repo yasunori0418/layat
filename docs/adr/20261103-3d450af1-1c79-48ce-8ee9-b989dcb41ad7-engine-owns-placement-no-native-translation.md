@@ -31,7 +31,7 @@ layat は「テスト可能な純粋関数群で、利用者が配置を明示�
 ## 決定
 
 配置は、standalone・devShell・各モジュールのどの層でも layat の engine
-（ADR-2119433e-de69-4447-85a5-575d58246007）が manifest を root に突き合わせて行う。`home.file`・
+（ADR-2119433e-de69-4447-85a5-575d58246007）が manifest に従って root の下へ行う。`home.file`・
 `systemd.tmpfiles`・`environment.etc` などのネイティブ機構には翻訳も委譲もしない。layat は OS が
 自身の宣言的なファイル管理に使う機構とは別の機構として動く。
 
