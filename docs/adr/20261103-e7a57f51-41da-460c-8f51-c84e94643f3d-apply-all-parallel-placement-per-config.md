@@ -1,0 +1,64 @@
+---
+id: "ADR-e7a57f51-41da-460c-8f51-c84e94643f3d"
+type: adr
+name: "apply --all の配置を config 単位で並列に行う"
+status: 採用
+issues:
+  - "#584"
+origin: "ADR-0039 §2a（配置段階も config 単位の goroutine で並列化する）と §3b（単一 config 内の entry 単位は並列化しない）を書き直した"
+justifies:
+  - "REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af"
+references:
+  - "ADR-75df92ae-0694-452b-8fb4-350994e31b25"
+  - "ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e"
+  - "ADR-ac648001-7e22-4fe2-a457-596064e32717"
+  - "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"
+---
+# ADR-e7a57f51-41da-460c-8f51-c84e94643f3d: apply --all の配置を config 単位で並列に行う
+
+- ステータス: 採用
+- 日付: 2026-11-03
+- 関連: ADR-75df92ae-0694-452b-8fb4-350994e31b25, ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e, ADR-ac648001-7e22-4fe2-a457-596064e32717, ADR-af37a636-a798-4c03-8fa4-e73ed6375a92
+- 起点: ADR-0039 §2a（配置段階も config 単位の goroutine で並列化する）と §3b（単一 config 内の entry 単位は並列化しない）を書き直した
+
+## 背景
+
+`apply --all` の build は worker pool で並列に流す（ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e）。
+配置は config ごとに順に回していたが、`method = "copy"` の大きなツリーでは配置の時間も無視できない。
+
+ロックのキーは解決後の profileDir で（ADR-ac648001-7e22-4fe2-a457-596064e32717）、`--all` が扱う
+config は名前が一意なので profileDir も一意になる。同じプロセスの中で同じロックを取り合うことは
+起きない。
+
+配置を並列にしたときに変わりうるのは、config 間で同じ target を取り合ったときの後勝ちの順序だけ
+である。同じ entrypoint の中の衝突は、build の前の検査で取り除かれている
+（ADR-75df92ae-0694-452b-8fb4-350994e31b25）。
+
+## 決定
+
+`apply --all` は配置も config 単位で並列に行う。1 つの config の中の配置は engine が順に行い、
+並列にしない。
+
+並列に適用したときの集約と部分失敗の扱いは REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af に置く。
+集約の並び順は ADR-af37a636-a798-4c03-8fa4-e73ed6375a92 が定める。
+
+## 根拠
+
+ロックも stale 除去の保守的な条件も config ごとに完全に独立している。前段の検査で後勝ちの順序の
+問題も消えたので、copy の大きなツリーでの実益を捨てる理由が無い。残る非決定は別の entrypoint
+などとの衝突で、これはもともと競合だった領域である。
+
+engine の保守的な条件は、祖先の検査・配置・stale 除去を 1 つの manifest の中で順に行うことを
+前提にしている。並列にする粒度をロックの境界である config に揃えれば、この前提に踏み込まずに済む。
+
+## 棄却した代替案
+
+### build だけを並列にし、配置は順に回す
+
+安全側の折衷だが、前段の検査で配置を並列にする意味上の負担は消えている。copy の大きなツリーで
+得られる短縮を捨てることになる。
+
+### 1 つの config の中の entry 単位まで配置を並列にする
+
+stale 除去や祖先の symlink 検査の順序に踏み込むことになり、保守的な条件が保たれることを示すのが
+難しくなる。symlink が主体の配置では得るものも無い。
