@@ -49,7 +49,3 @@ nix-darwin に同じ分岐を持たせても使われない。
 ### `NIXOS_ACTION` が `switch` のときだけ通常どおり起動する
 
 変数が設定されない boot のときに起動しなくなり、配置のずれを直す機会を失う。
-
-### dry-activate では engine を起動しない
-
-FS は変えずに済むが、layat の配置の予定が dry-activate の出力に現れない。
