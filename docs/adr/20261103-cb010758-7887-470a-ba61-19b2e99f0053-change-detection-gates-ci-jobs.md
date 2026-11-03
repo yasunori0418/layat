@@ -48,13 +48,13 @@ skip した check が成功として扱われる挙動を使えば、docs だけ
 
 ## 棄却した代替案
 
-### トリガ段の `paths` フィルタで docs だけの PR を弾く
+### トリガ段の `paths` フィルタで docs だけの PR を除外する
 
 workflow ごと起動しないので必須の check が生成されず、docs だけの PR がマージできなくなる。
 
 ### 変更検出をやめ、全ての PR で nix を実行する
 
-docs だけの PR でも 3 環境の flake check と E2E が走り、CI の時間を浪費する。
+docs だけの PR でも 3 環境の flake check と E2E が実行され、CI の時間を浪費する。
 
 ### `paths` と `paths-ignore` で同じ名前の check を持つ workflow を 2 つ定義する
 

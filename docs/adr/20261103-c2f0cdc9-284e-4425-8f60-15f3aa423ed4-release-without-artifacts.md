@@ -24,7 +24,7 @@ references:
 
 ## 決定
 
-GitHub Release に成果物を添付しない。配布の正規の経路は、タグで pin できる flake ref とする。
+GitHub Release に成果物を添付しない。配布の正規の手段は、タグで pin できる flake ref とする。
 需要が出たら `release.yml` にステップを足せる余地は残し、添付を禁じはしない。
 
 成果物の扱いは INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43 に置く。

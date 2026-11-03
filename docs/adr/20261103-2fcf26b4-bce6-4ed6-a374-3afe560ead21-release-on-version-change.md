@@ -27,7 +27,7 @@ Release をいつ、どうやって作るかを決める必要がある。
 
 `release.yml` は、main への push のうち `VERSION` が変わったものだけで発火する。`VERSION` を
 読み、タグ `vX.Y.Z` と GitHub Release を作り、リリースノートは GitHub 標準の自動生成に任せる。
-CHANGELOG.md はコミットしない。`release.yml` は main への push の後に走るので、required status
+CHANGELOG.md はコミットしない。`release.yml` は main への push の後に実行されるので、required status
 check の対象にしない。
 
 workflow の構成は INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43 に置く。
@@ -35,7 +35,7 @@ workflow の構成は INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43 に置く。
 ## 根拠
 
 bump の PR のマージがリリースを駆動するので、タグの打ち忘れや、タグと内容の食い違いが構造的に
-起きない。マージゲートが効くのは bump の PR の側で、リリースの作業はマージの後に走る。
+起きない。マージゲートの対象は bump の PR の側で、リリースの作業はマージの後に実行される。
 
 このリポジトリは Conventional Commits で履歴を書いているので、GitHub 標準の自動生成で十分に
 読めるリリースノートになる。
@@ -45,7 +45,7 @@ bump の PR のマージがリリースを駆動するので、タグの打ち�
 ### 手でタグを push して release を作る
 
 構成は最小だが、タグの打ち忘れやタグの位置の誤りを人の注意力に頼ることになる。bump の PR を
-起点にする方が、既存のレビューの動線に乗る。
+起点にすれば、リリースの判断が既存のレビューを通る。
 
 ### release-please や git-cliff で CHANGELOG.md をコミットする
 
