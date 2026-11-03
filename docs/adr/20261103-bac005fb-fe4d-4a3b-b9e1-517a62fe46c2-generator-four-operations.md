@@ -22,12 +22,12 @@ references:
 ## 背景
 
 manifest の取得は生成器越しに行う（→ ADR-87a2cf34-9592-4c81-8980-246bca579ca0）。CLI が生成器に頼む
-仕事は、entrypoint を見つける、build せずに root の種別を知る、link-farm を build する、gcroot を
-張らずに link-farm の store path を得る、の 4 つに分かれる。
+仕事は 4 つに分かれる。entrypoint を見つける、build せずに root の種別を知る、link-farm を build する、
+gcroot を張らずに link-farm の store path を得る、の 4 つである。
 
 ## 決定
 
-生成器の契約は Discover / Roots / Build / DryBuild の 4 操作にし、引数は config 名 `name` だけにする。
+生成器の契約は Discover / Roots / Build / DryBuild の 4 操作にし、引数は config 名 `name` だけにして、
 `system` のような生成器固有の概念は生成器の内部に隠す。
 
 entrypoint の発見規則は Discover を実装する生成器が持つ。nix 生成器は、`-f` が無ければ cwd で
@@ -40,14 +40,14 @@ REQ-1cc080f6-ae91-4c1f-973e-b7054cfc0198 に置く。
 
 ## 根拠
 
-既存の nix 呼び出しは全てこの 4 つに写る（entrypoint の発見 → Discover、rootKind の先読み eval →
-Roots、out-link 付きの build → Build、gcroot を張らない build → DryBuild）。
+既存の nix 呼び出しは全てこの 4 つに写る。entrypoint の発見は Discover、rootKind の先読み eval は
+Roots、out-link 付きの build は Build、gcroot を張らない build は DryBuild に当たる。
 
 発見規則は entrypoint の形とともに生成器ごとに変わるので、CLI ではなく生成器が持つ。nix 生成器の
 順序は flake を優先し、legacy の `shell.nix` / `default.nix` を後に置く。
 
-`Targets` の消費者は `apply --all` の cross-config の target 衝突検査だけで、単一 config の Roots で
-返すと nix 生成器の eval が 1 本増える。
+`Targets` を使うのは、`apply --all` の cross-config の target の衝突の確認だけである。単一 config の
+Roots で返すと、nix 生成器の eval が 1 本増える。
 
 ## 棄却した代替案
 
