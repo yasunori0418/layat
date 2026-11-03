@@ -23,7 +23,7 @@ references:
 manifest 生成器の Build は link-farm を build し、pending に張ってそのパスを返す。返したパスは世代として
 コミットされる。nix profile への世代のコミット（`nix-env --set`）は store 外のパスを拒否する。
 
-pending に張るのは、build からコミットまでの間に GC が走っても link-farm が dangling にならないようにするため
+pending に張るのは、build からコミットまでの間に GC が実行されても link-farm が dangling にならないようにするため
 （→ ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1）。
 
 世代操作は世代バックエンドの契約越しになったが、Build の事後条件を「store path」と書くと、生成器の契約が
