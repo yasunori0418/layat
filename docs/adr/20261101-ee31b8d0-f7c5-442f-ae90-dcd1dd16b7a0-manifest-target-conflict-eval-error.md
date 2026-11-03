@@ -10,18 +10,18 @@ supersedes:
   - "ADR-0014"
   - "ADR-0024"
 references:
-  - "ADR-0014"
+  - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
 ---
 # ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0: manifest 内の target の衝突を評価時に検出する
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0014, `docs/spec.md`
+- 関連: ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, `docs/spec.md`
 - 起点: 垂直トレーサー弾の着手前に行った実装前のレビュー第 6 巡。ADR-0024 §5 を書き直した
 
 ## 背景
 
-`entries` は target をキーにした attrset で、キーの一意性は Nix が保証する（ADR-0014）。ただし entry は
+`entries` は target をキーにした attrset で、キーの一意性は Nix が保証する（ADR-c494e86e-ceb9-4380-b983-4e09553b01d6）。ただし entry は
 `target` フィールドでキーと違う target を明示できるので、別々のキーの entry が同じ target を指す
 ことがある。この衝突は、正規化した後の target の文字列を比べれば、ファイルシステムを見なくても
 判定できる。

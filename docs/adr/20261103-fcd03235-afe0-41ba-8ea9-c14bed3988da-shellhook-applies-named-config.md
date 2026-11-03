@@ -8,11 +8,14 @@ justifies:
   - "REQ-196ddabf-6569-4303-942e-050872972501"
 supersedes:
   - "ADR-0018"
+references:
+  - "ADR-baf6346d-783b-4607-ab1c-c2c93c09e064"
 ---
 # ADR-fcd03235-afe0-41ba-8ea9-c14bed3988da: devShell の shellHook は config を名指しして apply する
 
 - ステータス: 採用
 - 日付: 2026-11-03
+- 関連: ADR-baf6346d-783b-4607-ab1c-c2c93c09e064
 - 起点: ADR-0018 §3a を書き直した
 
 ## 背景

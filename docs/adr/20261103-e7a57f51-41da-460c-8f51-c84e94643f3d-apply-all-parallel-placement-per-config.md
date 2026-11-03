@@ -15,12 +15,13 @@ references:
   - "ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e"
   - "ADR-ac648001-7e22-4fe2-a457-596064e32717"
   - "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"
+  - "ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56"
 ---
 # ADR-e7a57f51-41da-460c-8f51-c84e94643f3d: apply --all の配置を config 単位で並列に行う
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-75df92ae-0694-452b-8fb4-350994e31b25, ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e, ADR-ac648001-7e22-4fe2-a457-596064e32717, ADR-af37a636-a798-4c03-8fa4-e73ed6375a92
+- 関連: ADR-75df92ae-0694-452b-8fb4-350994e31b25, ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e, ADR-ac648001-7e22-4fe2-a457-596064e32717, ADR-af37a636-a798-4c03-8fa4-e73ed6375a92, ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56
 - 起点: ADR-0039 §2a（配置段階も config 単位の goroutine で並列化する）と §3b（単一 config 内の entry 単位は並列化しない）を書き直した
 
 ## 背景

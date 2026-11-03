@@ -11,13 +11,13 @@ justifies:
 supersedes:
   - "ADR-0002"
 references:
-  - "ADR-0020"
+  - "ADR-acc31876-df36-485e-b356-92ae60e26db7"
 ---
 # ADR-c4ad9987-850e-4834-bbea-d8de3b073548: copy は世代の外に place-once で置く
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0020, `docs/concept.md`, `docs/spec.md`
+- 関連: ADR-acc31876-df36-485e-b356-92ae60e26db7, `docs/concept.md`, `docs/spec.md`
 - 起点: ADR-0002 の決定「copy は世代から除外する」と「copy の扱い」節を書き直した
 
 ## 背景
@@ -33,7 +33,7 @@ copy は世代管理の対象外とし、target が無いときだけ実体化�
 警告するにとどめる。
 
 store の更新を copy target へ反映することと copy target を消すことは、利用者が明示したときに限る
-（ADR-0020 の `apply --recopy` と `layat reset`）。規範の細目は REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9・
+（ADR-fb01d942-2875-4dcb-a7df-879e18f63883 の `apply --recopy` と ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7 の `layat reset`）。規範の細目は REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9・
 REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe・REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2 に置く。
 
 ## 根拠

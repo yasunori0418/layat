@@ -15,12 +15,13 @@ supersedes:
 references:
   - "SDR-c15921a9-7aea-407c-a34b-7465783b1af1"
   - "SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed"
+  - "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"
 ---
 # SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb: root は solution と ADR 系の型だけにする
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: SDR-c15921a9-7aea-407c-a34b-7465783b1af1, SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed, GitHub Issue #583, #237, #203, `docs/model.yaml`
+- 関連: SDR-c15921a9-7aea-407c-a34b-7465783b1af1, SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #237, #203, `docs/model.yaml`
 - 起点: epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §1b を書き直した
 
 ## 背景

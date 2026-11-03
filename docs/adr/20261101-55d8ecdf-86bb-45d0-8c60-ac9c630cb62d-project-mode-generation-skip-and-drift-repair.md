@@ -9,15 +9,12 @@ justifies:
 supersedes:
   - "ADR-0005"
   - "ADR-0017"
-references:
-  - "ADR-0058"
-  - "ADR-0067"
 ---
 # ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d: project mode では同じ link farm なら世代を積まず drift だけを直す
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0058, ADR-0067, `docs/spec.md`
+- 関連: `docs/spec.md`
 - 起点: ADR-0005 の決定「世代スキップ短絡を project mode の必須要件にする」と ADR-0017 §3 を書き直した
 
 ## 背景
@@ -30,7 +27,7 @@ target を書き換えたり消したりしていることはある。
 
 project mode では、新しい link farm が前回適用したものと同一なら新しい世代を積まない。その場合も
 各 entry の target を `lstat` で検査し、記録どおりでない entry（書き換えられたもの・消えたもの）
-だけを置き直す。同一かどうかの判定元は ADR-0058、system mode への適用は ADR-0067 が定める。
+だけを置き直す。同一かどうかの判定元は ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444、system mode への適用は ADR-5265f879-e623-44f9-9c58-8c14598e8b10 が定める。
 規範の細目は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 に置く。
 
 ## 根拠

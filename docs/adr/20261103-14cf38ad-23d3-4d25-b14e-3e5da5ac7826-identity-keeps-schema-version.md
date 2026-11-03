@@ -15,12 +15,13 @@ supersedes:
 references:
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
   - "ADR-0db061d1-fa30-436d-91d7-c0cec8804c52"
+  - "ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e"
 ---
 # ADR-14cf38ad-23d3-4d25-b14e-3e5da5ac7826: manifest に identity を足しても schemaVersion を据え置く
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-0db061d1-fa30-436d-91d7-c0cec8804c52, GitHub Issue #580, #498
+- 関連: ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-0db061d1-fa30-436d-91d7-c0cec8804c52, ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e, GitHub Issue #580, #498
 - 起点: Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §5b を書き直した
 
 ## 背景

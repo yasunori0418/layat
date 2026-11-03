@@ -8,14 +8,11 @@ justifies:
   - "REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6"
 supersedes:
   - "ADR-0025"
-references:
-  - "ADR-0055"
 ---
 # ADR-63039f93-cd78-4356-8cd3-82c2f49a1aaa: nix の experimental-features は利用者が有効にしておく前提にする
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0055
 - 起点: /grill-me による実装前の横断検査（実装前残セマンティクスの第 7 巡）。ADR-0025 §1 を書き直した
 
 ## 背景
@@ -28,7 +25,7 @@ references:
 
 `nix-command`（flake の entrypoint ではさらに `flakes`）の experimental-features は、利用者の環境で
 有効化済みであることを前提にする。layat は `--extra-experimental-features` を自動で付けない。有効化されていないときは、前提条件と
-有効化の方法を案内するエラーで止まる。判定と案内文を nix 生成器に閉じることは ADR-0055 が決める。
+有効化の方法を案内するエラーで止まる。判定と案内文を nix 生成器に閉じることは ADR-cd139de9-06a4-49a2-8bea-4801c8acc518 が決める。
 
 前提条件とエラーの規範は REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6 に置く。
 

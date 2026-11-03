@@ -11,12 +11,17 @@ justifies:
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
 supersedes:
   - "ADR-0058"
+references:
+  - "ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d"
+  - "ADR-d97154cd-a2e5-4853-a682-800ff9435c89"
+  - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
+  - "ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93"
 ---
 # ADR-10c6dc33-d188-406b-beb4-d10ccbe3c645: 記録を書き直す操作ごとに linkFarm の値を定める
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: GitHub Issue #580, #406
+- 関連: ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-d97154cd-a2e5-4853-a682-800ff9435c89, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93, GitHub Issue #580, #406
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §2b を書き直した
 
 ## 背景

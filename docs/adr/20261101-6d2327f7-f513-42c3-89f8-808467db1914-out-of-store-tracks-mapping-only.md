@@ -9,13 +9,13 @@ justifies:
 supersedes:
   - "ADR-0002"
 references:
-  - "ADR-0059"
+  - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
 ---
 # ADR-6d2327f7-f513-42c3-89f8-808467db1914: out-of-store はマッピングだけを追跡する
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0059, `docs/spec.md`
+- 関連: ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, `docs/spec.md`
 - 起点: ADR-0002 の決定「out-of-store は世代追跡する」を書き直した
 
 ## 背景
@@ -28,7 +28,7 @@ out-of-store symlink は、store ではなく作業ツリーやホームの中�
 
 out-of-store symlink は世代で追跡する。ただし版管理するのは target からリンク先へのマッピング
 だけで、リンク先の内容はスナップショットしない。リンク先は絶対パスでも、配置 root に対する
-相対パス（ADR-0059）でもよい。規範の細目は REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa に置く。
+相対パス（ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7）でもよい。規範の細目は REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa に置く。
 
 ## 根拠
 

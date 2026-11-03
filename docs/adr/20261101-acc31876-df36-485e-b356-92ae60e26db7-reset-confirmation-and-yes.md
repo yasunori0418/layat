@@ -14,19 +14,17 @@ supersedes:
   - "ADR-0020"
   - "ADR-0025"
   - "ADR-0043"
-references:
-  - "ADR-0020"
 ---
 # ADR-acc31876-df36-485e-b356-92ae60e26db7: reset は非対話の実行で --yes を必須にする
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0020, GitHub Issue #550, yasunori0418/outturn#1
+- 関連: GitHub Issue #550, yasunori0418/outturn#1
 - 起点: 実装前残セマンティクス確定の第7巡（2026-06-14）で確定。ADR-0025 §5 と ADR-0043 §8 の reset --json を書き直した
 
 ## 背景
 
-`reset` は配置物を消す破壊的な操作で（ADR-0020）、実行前に確認のプロンプトを出す。CI・direnv・
+`reset` は配置物を消す破壊的な操作で（ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7）、実行前に確認のプロンプトを出す。CI・direnv・
 パイプのように stdin が TTY でない環境では、プロンプトが入力を待ってハングするか、空の入力を同意と
 取り違えて削除してしまうおそれがある。`--json` の出力を機械が読む場合も、プロンプトには誰も答えない。
 

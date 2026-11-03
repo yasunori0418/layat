@@ -10,19 +10,17 @@ justifies:
 supersedes:
   - "ADR-0001"
   - "ADR-0010"
-references:
-  - "ADR-0001"
 ---
 # ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131: src の型で素の文字列を拒否する
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0001, `docs/spec.md`
+- 関連: `docs/spec.md`
 - 起点: manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の srcType の項を書き直した
 
 ## 背景
 
-out-of-store の配置は、明示の関数が返す marker を渡したときだけ選べる（ADR-0001）。`src` に文字列を
+out-of-store の配置は、明示の関数が返す marker を渡したときだけ選べる（ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c）。`src` に文字列を
 直接渡すと暗黙に out-of-store になる形は提供しない。この取り決めを、文書だけでなく型でも守らせるか
 を決める必要があった。
 

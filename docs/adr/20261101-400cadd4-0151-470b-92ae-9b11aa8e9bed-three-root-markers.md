@@ -16,15 +16,14 @@ supersedes:
   - "ADR-0013"
   - "ADR-0036"
 references:
-  - "ADR-0036"
-  - "ADR-0040"
+  - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
   - "ADR-f85f1afd-9b87-4f7a-922e-97c62554f198"
 ---
 # ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed: root は 3 つの marker で表す
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0036, ADR-0040, ADR-f85f1afd-9b87-4f7a-922e-97c62554f198, GitHub Issue #2, `docs/spec.md`
+- 関連: ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75, ADR-f85f1afd-9b87-4f7a-922e-97c62554f198, GitHub Issue #2, `docs/spec.md`
 - 起点: Issue #2（root デフォルト）。ADR-0007 §2 の 3 マーカーと ADR-0013 §5 を書き直した
 
 ## 背景
@@ -38,8 +37,8 @@ root は明示が必須である（ADR-f85f1afd-9b87-4f7a-922e-97c62554f198）�
 `root` は、3 つの marker（`projectRoot` / `homeRoot` / `systemRoot`）と、評価時に固定する
 絶対パス文字列の union にする。`projectRoot` は git toplevel、`homeRoot` は `$HOME`、`systemRoot`
 は `/` に、それぞれ engine が実行時に解決する。marker はパスを返す糖衣ではなく、解決の種別を
-運ぶ入れ物で、種別は `manifest.json` の `rootKind` に記録される。`systemRoot` の実装は ADR-0036、
-marker の `subdir` 適用形は ADR-0040 が定める。規範の細目は
+運ぶ入れ物で、種別は `manifest.json` の `rootKind` に記録される。`systemRoot` の実装は ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c、
+marker の `subdir` 適用形は ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509 が定める。規範の細目は
 REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66・REQ-3f541d39-da41-4ef8-858b-707f54cf6a29・
 REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b に置く。
 

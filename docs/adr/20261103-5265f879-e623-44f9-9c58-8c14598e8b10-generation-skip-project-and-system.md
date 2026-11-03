@@ -13,17 +13,39 @@ supersedes:
   - "ADR-0022"
   - "ADR-0067"
 references:
-  - "ADR-0022"
-  - "ADR-0058"
-  - "ADR-0066"
-  - "ADR-0067"
+  - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
+  - "ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203"
+  - "ADR-419914ba-9896-4dd1-853b-fb514fcb9f38"
+  - "ADR-41d506b4-2c5c-4a17-9954-b0de37e97de5"
+  - "ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15"
+  - "ADR-52423842-bacf-4773-bbca-bcb34ae71013"
+  - "ADR-10c6dc33-d188-406b-beb4-d10ccbe3c645"
+  - "ADR-a91585ad-971a-4558-9f25-b7fcd6e57671"
+  - "ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444"
+  - "ADR-be5865a8-000a-491f-8438-6308076ea727"
+  - "ADR-facd3173-a5ce-4d81-90a9-370fb26428ff"
+  - "ADR-f3d06307-ae5b-4f17-94ad-db92e80e3415"
+  - "ADR-fd3353cf-00af-4343-bd3f-3369c21d7194"
+  - "ADR-8e253f2e-c255-482a-a0f8-0837e122e80f"
+  - "ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c"
+  - "ADR-68f453b3-e6c7-4e0d-9978-32b5a00f627e"
+  - "ADR-eee039fc-40af-42ac-bc65-979d6eaa0d06"
+  - "ADR-f58e9981-bacc-4937-98b8-bddce0a057db"
+  - "ADR-a0d0cf15-8234-42be-b83e-9b8271850475"
+  - "ADR-1338a293-3f69-48f5-9164-efb4ec6994d6"
+  - "ADR-1743c957-a732-4a44-a89a-4c03ab277f0c"
+  - "ADR-0da9d817-c870-4f48-8a6d-8fb9b55e2a70"
+  - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
+  - "ADR-d01223d3-47a2-4bdd-ac5d-26370d553f7c"
+  - "ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c"
   - "ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d"
+  - "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"
 ---
 # ADR-5265f879-e623-44f9-9c58-8c14598e8b10: 世代スキップを project mode と system mode で行う
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-0022, ADR-0058, ADR-0066, ADR-0067, ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, GitHub Issue #519, #493
+- 関連: ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203, ADR-419914ba-9896-4dd1-853b-fb514fcb9f38, ADR-41d506b4-2c5c-4a17-9954-b0de37e97de5, ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15, ADR-52423842-bacf-4773-bbca-bcb34ae71013, ADR-10c6dc33-d188-406b-beb4-d10ccbe3c645, ADR-a91585ad-971a-4558-9f25-b7fcd6e57671, ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444, ADR-be5865a8-000a-491f-8438-6308076ea727, ADR-facd3173-a5ce-4d81-90a9-370fb26428ff, ADR-f3d06307-ae5b-4f17-94ad-db92e80e3415, ADR-fd3353cf-00af-4343-bd3f-3369c21d7194, ADR-8e253f2e-c255-482a-a0f8-0837e122e80f, ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c, ADR-68f453b3-e6c7-4e0d-9978-32b5a00f627e, ADR-eee039fc-40af-42ac-bc65-979d6eaa0d06, ADR-f58e9981-bacc-4937-98b8-bddce0a057db, ADR-a0d0cf15-8234-42be-b83e-9b8271850475, ADR-1338a293-3f69-48f5-9164-efb4ec6994d6, ADR-1743c957-a732-4a44-a89a-4c03ab277f0c, ADR-0da9d817-c870-4f48-8a6d-8fb9b55e2a70, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75, ADR-d01223d3-47a2-4bdd-ac5d-26370d553f7c, ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c, ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-45380022-d959-4b22-aa05-5993ac1f3c87, GitHub Issue #519, #493
 - 起点: Issue #493（epic: NixOS / nix-darwin モジュールの実装）の grilling（2026-10-24）と実装前の残セマンティクス確定の第 4 巡（2026-06-14）。ADR-0067 §1 と ADR-0022 §2 を書き直した
 
 ## 背景

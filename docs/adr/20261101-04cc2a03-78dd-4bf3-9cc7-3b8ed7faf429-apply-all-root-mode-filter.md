@@ -11,13 +11,14 @@ justifies:
 supersedes:
   - "ADR-0017"
 references:
-  - "ADR-0036"
+  - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
+  - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
 ---
 # ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429: apply --all に root モードのフィルタを持たせる
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0036, GitHub Issue #550
+- 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75, GitHub Issue #550
 - 起点: 実装前レビュー第 3 巡（2026-06-14）で確定。ADR-0017 §1 を書き直した
 
 ## 背景
@@ -42,7 +43,7 @@ REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b に置く。
 使えば、home mode の config に触れない。
 
 フラグ名を root マーカーと揃えると、config の書き方と CLI の指定が 1 対 1 に対応する。
-`--system-root` は system mode（ADR-0036）の config を選ぶ。
+`--system-root` は system mode（ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c）の config を選ぶ。
 
 ## 棄却した代替案
 

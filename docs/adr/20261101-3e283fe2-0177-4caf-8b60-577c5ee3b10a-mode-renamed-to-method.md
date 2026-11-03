@@ -8,15 +8,12 @@ justifies:
   - "REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51"
 supersedes:
   - "ADR-0015"
-references:
-  - "ADR-0008"
-  - "ADR-0009"
 ---
 # ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a: entry の配置種別のフィールドを method と名付ける
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0008, ADR-0009, `docs/spec.md`, `CONTEXT.md`
+- 関連: `docs/spec.md`, `CONTEXT.md`
 - 起点: 実装前の最終レビューで詰めた残りの細目。ADR-0015 §6 を書き直した
 
 ## 背景
@@ -32,7 +29,7 @@ entry は配置の種別（`"symlink"` か `"copy"`）を 1 つのフィール�
 ## 根拠
 
 `mode` はファイルのパーミッションを強く連想させ、配置種別の enum と紛らわしい。読み違えの芽は、
-実装が無く `schemaVersion` も初期のうちに摘むのが最も安い。ADR-0008・ADR-0009 の改名と同じ理屈。
+実装が無く `schemaVersion` も初期のうちに摘むのが最も安い。ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab の改名と同じ理屈。
 
 entry は未知のキーを拒否するので、旧名を書いた設定は評価時のエラーになり、その場で気付ける
 （REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51）。

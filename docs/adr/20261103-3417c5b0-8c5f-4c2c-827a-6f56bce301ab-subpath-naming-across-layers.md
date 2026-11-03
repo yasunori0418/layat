@@ -9,12 +9,15 @@ justifies:
   - "REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336"
 supersedes:
   - "ADR-0008"
+references:
+  - "ADR-12ad7852-e689-44d7-b9fe-0667effb3d13"
+  - "ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a"
 ---
 # ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab: 配置元の中のパスを全層で subpath と呼ぶ
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: `docs/spec.md`, `CONTEXT.md`
+- 関連: ADR-12ad7852-e689-44d7-b9fe-0667effb3d13, ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a, `docs/spec.md`, `CONTEXT.md`
 - 起点: 「リポジトリ全体を示す文字列として `"."` 以外の表現は無いか」という問いの設計検討。ADR-0008 §1 と §5 を書き直した
 
 ## 背景

@@ -8,14 +8,12 @@ justifies:
   - "REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51"
 supersedes:
   - "ADR-0010"
-references:
-  - "ADR-0008"
 ---
 # ADR-12ad7852-e689-44d7-b9fe-0667effb3d13: entry の未知のキーを評価時に拒否する
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0008, `docs/spec.md`
+- 関連: `docs/spec.md`
 - 起点: manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の strict の項を書き直した
 
 ## 背景

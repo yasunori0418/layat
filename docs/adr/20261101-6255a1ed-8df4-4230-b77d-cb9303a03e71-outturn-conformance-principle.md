@@ -13,19 +13,20 @@ justifies:
 supersedes:
   - "ADR-0043"
 references:
-  - "ADR-0004"
+  - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
+  - "ADR-f85f1afd-9b87-4f7a-922e-97c62554f198"
 ---
 # ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71: --json は outturn 規約に常時準拠する
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0004, GitHub Issue #552, yasunori0418/outturn#1, outturn specVersion 1（yasunori0418/outturn）
+- 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-f85f1afd-9b87-4f7a-922e-97c62554f198, GitHub Issue #552, yasunori0418/outturn#1, outturn specVersion 1（yasunori0418/outturn）
 - 起点: layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §1 を書き直した
 
 ## 背景
 
 outturn（specVersion 1）は、エコシステムの各ツールを stdout / stdin の JSON パイプで合成するための
-共通規格である。単一責務のツールを outturn のパイプで組み立てることが、ADR-0004 の north-star に
+共通規格である。単一責務のツールを outturn のパイプで組み立てることが、ADR-10dcf5a9-f298-4123-9a50-24f43e25d30c の north-star に
 向かう手段になる。各ツールの出力を固定順に合成し、失敗時は逆順に rollback する
 オーケストレーションツールが構想されており、layat はその最初の適合実装にあたる。
 

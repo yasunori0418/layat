@@ -14,14 +14,21 @@ supersedes:
   - "ADR-0026"
   - "ADR-0045"
 references:
-  - "ADR-0026"
+  - "ADR-24488788-a5e6-47a5-9074-97192880642a"
+  - "ADR-f58e9981-bacc-4937-98b8-bddce0a057db"
+  - "ADR-2aaf72ab-1dfc-4cde-852d-4b1f9916780b"
+  - "ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5"
+  - "ADR-01abcd5a-464f-4c44-8afd-30950631487c"
+  - "ADR-9506276e-2108-4962-9f90-efe82fec7f66"
+  - "ADR-e8bb6153-2528-419e-8be0-c862a3eb4e05"
+  - "ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98"
   - "ADR-33d8c466-6b38-46b6-8696-ad7521c72786"
 ---
 # ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3: モジュールに layat.backup を起動配線のオプションとして持つ
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-0026, ADR-33d8c466-6b38-46b6-8696-ad7521c72786, GitHub Issue #169, #172
+- 関連: ADR-24488788-a5e6-47a5-9074-97192880642a, ADR-f58e9981-bacc-4937-98b8-bddce0a057db, ADR-2aaf72ab-1dfc-4cde-852d-4b1f9916780b, ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5, ADR-01abcd5a-464f-4c44-8afd-30950631487c, ADR-9506276e-2108-4962-9f90-efe82fec7f66, ADR-e8bb6153-2528-419e-8be0-c862a3eb4e05, ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98, ADR-33d8c466-6b38-46b6-8696-ad7521c72786, GitHub Issue #169, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §8 を書き直した
 
 ## 背景
@@ -43,7 +50,7 @@ REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3 に置く。
 
 `--backup` は配置のロジックの一部ではなく、起動時の修飾である。モジュールは engine の CLI
 引数を組み立てるだけで、engine の判定には関わらない。build 済みの link farm を `--manifest` で
-渡す設計（ADR-0026）と同じ分担になる。
+渡す設計（ADR-24488788-a5e6-47a5-9074-97192880642a）と同じ分担になる。
 
 CLI の `--backup` が apply 全体の修飾なので、モジュールのオプションも全体に 1 つとする。
 

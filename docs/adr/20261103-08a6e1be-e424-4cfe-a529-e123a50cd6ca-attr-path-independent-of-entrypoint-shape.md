@@ -13,12 +13,19 @@ justifies:
   - "DSG-92f54490-872a-42ac-bbd7-d06e9ee381c6"
 supersedes:
   - "ADR-0032"
+references:
+  - "ADR-28605860-770e-41df-95dd-7dc05b20497a"
+  - "ADR-6b7becf0-f029-41e3-895e-b672dce94d3d"
+  - "ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3"
+  - "ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1"
+  - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
+  - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
 ---
 # ADR-08a6e1be-e424-4cfe-a529-e123a50cd6ca: CLI が叩く attr path を legacy entrypoint の書き方で分岐させない
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: GitHub Issue #112, #107
+- 関連: ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-6b7becf0-f029-41e3-895e-b672dce94d3d, ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3, ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, GitHub Issue #112, #107
 - 起点: ADR-0032 §2 を書き直した
 
 ## 背景

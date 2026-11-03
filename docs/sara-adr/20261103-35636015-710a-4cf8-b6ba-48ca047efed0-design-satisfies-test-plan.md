@@ -14,12 +14,13 @@ supersedes:
   - "ADR-0049"
 references:
   - "SDR-34916a83-0cff-4524-a8ff-5a3195af52c3"
+  - "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"
 ---
 # SDR-35636015-710a-4cf8-b6ba-48ca047efed0: design の satisfies 対象に test_plan を含める
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: SDR-34916a83-0cff-4524-a8ff-5a3195af52c3, GitHub Issue #583, #237, #203, `docs/model.yaml`
+- 関連: SDR-34916a83-0cff-4524-a8ff-5a3195af52c3, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #237, #203, `docs/model.yaml`
 - 起点: epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §4 を書き直した
 
 ## 背景

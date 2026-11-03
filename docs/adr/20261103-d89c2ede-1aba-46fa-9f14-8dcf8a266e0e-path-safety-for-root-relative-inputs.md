@@ -12,12 +12,18 @@ supersedes:
   - "ADR-0059"
 references:
   - "ADR-00cc3497-654f-420a-928f-99f201e7efb0"
+  - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
+  - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
+  - "ADR-6d2327f7-f513-42c3-89f8-808467db1914"
+  - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
+  - "ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137"
+  - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
 ---
 # ADR-d89c2ede-1aba-46fa-9f14-8dcf8a266e0e: root 相対で指定するパスすべてにパス安全性の確認を課す
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-00cc3497-654f-420a-928f-99f201e7efb0, `docs/spec.md`
+- 関連: ADR-00cc3497-654f-420a-928f-99f201e7efb0, ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, ADR-6d2327f7-f513-42c3-89f8-808467db1914, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, `docs/spec.md`
 - 起点: 次期マイルストーン追加計画の grilling（2026-07-04）と Issue #362 の grilling（2026-10-12）。ADR-0040 §2b と ADR-0059 §6a を書き直した
 
 ## 背景

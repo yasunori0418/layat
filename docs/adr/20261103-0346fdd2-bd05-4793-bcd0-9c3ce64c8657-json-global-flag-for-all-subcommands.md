@@ -8,11 +8,14 @@ justifies:
   - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
 supersedes:
   - "ADR-0033"
+references:
+  - "ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc"
 ---
 # ADR-0346fdd2-bd05-4793-bcd0-9c3ce64c8657: --json を全サブコマンド共通の persistent フラグにする
 
 - ステータス: 採用
 - 日付: 2026-11-03
+- 関連: ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc
 - 起点: ADR-0033 §1a を書き直した
 
 ## 背景

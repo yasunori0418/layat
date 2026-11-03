@@ -11,12 +11,14 @@ supersedes:
   - "ADR-0040"
 references:
   - "ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509"
+  - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
+  - "ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137"
 ---
 # ADR-6669c002-1b90-47a2-8a84-a0f7bddfd965: subdir は全 target へ前置する評価時の糖衣にし、root を動かさない
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509, `docs/spec.md`
+- 関連: ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509, ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137, `docs/spec.md`
 - 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。ADR-0040 §2a を書き直した
 
 ## 背景

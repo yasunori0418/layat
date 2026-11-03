@@ -16,14 +16,14 @@ supersedes:
   - "ADR-0015"
   - "ADR-0022"
 references:
-  - "ADR-0014"
-  - "ADR-0059"
+  - "ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0"
+  - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
 ---
 # ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd: manifest.json を schemaVersion 1 の唯一の契約として固定する
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0014, ADR-0059, `docs/spec.md`
+- 関連: ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0, ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, `docs/spec.md`
 - 起点: 実装前のレビューで詰めた manifest 契約の細目。ADR-0006 の決定節（Nix↔Go の契約の項）・ADR-0013 §1・ADR-0015 §7 を書き直した
 
 ## 背景
@@ -50,7 +50,7 @@ REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb・REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568
 
 `schemaVersion` があれば、古い engine が新しい形式の manifest を読み違えることを、明示的なエラーで
 止められる。版を上げずに列挙値を足したときは、engine が未知の値を拒否する検査で同じように
-止める（ADR-0059）。後継版がまだ無いうちに移行方式を設計しても、必要になる形を当てられないので、v1 だけを
+止める（ADR-b5431ecf-fe60-4b29-86af-9857478ce663）。後継版がまだ無いうちに移行方式を設計しても、必要になる形を当てられないので、v1 だけを
 対象にする。
 
 ## 棄却した代替案

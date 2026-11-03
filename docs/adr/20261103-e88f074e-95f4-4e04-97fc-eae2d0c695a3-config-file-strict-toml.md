@@ -12,12 +12,13 @@ supersedes:
   - "ADR-0056"
 references:
   - "ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964"
+  - "ADR-ef9e4099-0cf4-409a-9e73-518866aea676"
 ---
 # ADR-e88f074e-95f4-4e04-97fc-eae2d0c695a3: 設定ファイルを strict な TOML で書く
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964, GitHub Issue #395
+- 関連: ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964, ADR-ef9e4099-0cf4-409a-9e73-518866aea676, GitHub Issue #395
 - 起点: Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §4 の形式を書き直した
 
 ## 背景

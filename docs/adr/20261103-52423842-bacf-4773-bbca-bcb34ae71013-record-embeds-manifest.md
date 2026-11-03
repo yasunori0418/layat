@@ -12,12 +12,17 @@ justifies:
   - "DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5"
 supersedes:
   - "ADR-0058"
+references:
+  - "ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d"
+  - "ADR-d97154cd-a2e5-4853-a682-800ff9435c89"
+  - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
+  - "ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93"
 ---
 # ADR-52423842-bacf-4773-bbca-bcb34ae71013: last-applied 記録は manifest を内容ごと持つ
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: GitHub Issue #580, #406
+- 関連: ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-d97154cd-a2e5-4853-a682-800ff9435c89, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93, GitHub Issue #580, #406
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §2a を書き直した
 
 ## 背景

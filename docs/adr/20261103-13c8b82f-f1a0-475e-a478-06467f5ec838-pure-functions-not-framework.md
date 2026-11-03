@@ -9,12 +9,15 @@ justifies:
   - "REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51"
 supersedes:
   - "ADR-0004"
+references:
+  - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
+  - "ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137"
 ---
 # ADR-13c8b82f-f1a0-475e-a478-06467f5ec838: layat をフレームワークではなく純粋関数群として提供する
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: `docs/concept.md`
+- 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137, `docs/concept.md`
 - 起点: ADR-0004 §d を書き直した
 
 ## 背景
