@@ -2,7 +2,7 @@
 # (1行1パターン / basename に対する glob / 祖先にもマッチ)
 #
 # .claude: layat が .claude/skills/<name> へ個別配置するため、.claude/skills を
-#          ディレクトリ symlink 化されると祖先 symlink 検出 (→ ADR-0015) で
+#          ディレクトリ symlink 化されると祖先 symlink 検出 (→ ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c) で
 #          `layat apply skills` が conflict で停止する。
 #          配下の settings.local.json / scheduled_tasks.lock も worktree ごとに
 #          独立していて共有の必要がないので .claude ごとスキップする。

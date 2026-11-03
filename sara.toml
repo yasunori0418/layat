@@ -1,5 +1,5 @@
 # sara（ドキュメントのナレッジグラフ検証 CLI）の設定。
-# 型定義は docs/model.yaml で組み込みモデルを全面置換する（→ ADR-0048・epic #203）。
+# 型定義は docs/model.yaml で組み込みモデルを全面置換する（→ SDR-2457aa00-fab7-4c99-af53-2e6643c21c79・epic #203）。
 
 model_schema = "docs/model.yaml"
 
@@ -10,7 +10,7 @@ paths = ["./docs"]
 
 [validation]
 # strict 有効。orphan（接続漏れ）を含む全 warning が error になり exit 1 を返す
-# （epic #203 の移行完了・warning 0 到達を受けて有効化 → ADR-0050）。
-# CI の sara job は required status check にはしない（検出は機械・判断は人 → ADR-0050）。
-# テスト系型の着手で defect（構造的 orphan）が現れたら再検討する（→ ADR-0050 再検討条件）。
+# （epic #203 の移行完了・warning 0 到達を受けて有効化 → SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626）。
+# CI の sara job は required status check にはしない（検出は機械・判断は人 → SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef）。
+# テスト系型の着手で defect（構造的 orphan）が現れたら再検討する（→ SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626）。
 strict_mode = true

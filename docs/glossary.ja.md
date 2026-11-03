@@ -15,7 +15,7 @@ layat のコア。`root` 相対の `target` に Nix store のパスを配置す�
 - **Avoid**: 「per-config generated bash script（config ごとに生成される bash スクリプト）」「per-layer placement logic（層ごとの配置ロジック）」「a single flat implementation fused with the CLI（CLI と一体の平らな単一実装）」「importing the engine as a public Go module（engine を公開 Go モジュールとして import する）」。
 
 ### layat
-ツールそのものの名前。"**lay** \<src\> **at** \<target\>"（manifest の言うとおりに src を target へ置く）の圧縮造語。`chroot`（change root）・`getopt`（get options）と同じ、動詞句をコマンド名へ圧縮する UNIX の伝統的な造語法に従う。旧名は **nput** で、その「n」は *nix* を指していたが、engine の契約が生成者を問わない `manifest.json` 1 本へ収束した時点でツールを記述しなくなった（→ [ADR-0054](adr/0054-rename-nput-to-layat.md)）。文頭でも小文字で表記する。
+ツールそのものの名前。"**lay** \<src\> **at** \<target\>"（manifest の言うとおりに src を target へ置く）の圧縮造語。`chroot`（change root）・`getopt`（get options）と同じ、動詞句をコマンド名へ圧縮する UNIX の伝統的な造語法に従う。旧名は **nput** で、その「n」は *nix* を指していたが、engine の契約が生成者を問わない `manifest.json` 1 本へ収束した時点でツールを記述しなくなった（→ [ADR-6cd587e8-7aa2-4624-be78-7f6501bf0d6f](adr/20261103-6cd587e8-7aa2-4624-be78-7f6501bf0d6f-tool-named-layat.md)）。文頭でも小文字で表記する。
 - **Avoid**: 移行文脈の旧名以外で「nput」を使うこと、「Layat」「LayAt」「layAt」と書くこと、名前を nix 固有のものと読むこと。
 
 ### layat CLI
@@ -23,15 +23,15 @@ layat のコア。`root` 相対の `target` に Nix store のパスを配置す�
 - **Avoid**: config ごとの `nix run .#x` ラッパーを一次 UX と説明すること、`apply` を「常に entrypoint を build する」と説明すること（ビルド済み link-farm は `--manifest` で適用できる）。
 
 ### generator
-**layat CLI** が manifest を得る相手（生成器）。契約は `internal/generator` に置く 4 操作で、Discover（entrypoint の発見）・Roots（build せずに root の種別と root を返す）・Build（世代コミット可能な link-farm = store path を pending に張る）・DryBuild（gcroot を張らずに store path を返す）。nix 実装（nixgen・`internal/generator/nixgen`）が既定。生成器は明示指定でのみ選ばれ、`--generator`・`LAYAT_GENERATOR`・`layat.toml`・`$XDG_CONFIG_HOME/layat/config.toml`・既定 `nix` の順に解決する。エンジンはどの生成器が manifest を作ったかに関知しない（→ [ADR-0055](adr/0055-manifest-generator-contract.md), [ADR-0056](adr/0056-generator-selection-and-config.md)）。
+**layat CLI** が manifest を得る相手（生成器）。契約は `internal/generator` に置く 4 操作で、Discover（entrypoint の発見）・Roots（build せずに root の種別と root を返す）・Build（世代コミット可能な link-farm = store path を pending に張る）・DryBuild（gcroot を張らずに store path を返す）。nix 実装（nixgen・`internal/generator/nixgen`）が既定。生成器は明示指定でのみ選ばれ、`--generator`・`LAYAT_GENERATOR`・`layat.toml`・`$XDG_CONFIG_HOME/layat/config.toml`・既定 `nix` の順に解決する。エンジンはどの生成器が manifest を作ったかに関知しない（→ [ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2](adr/20261103-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2-generator-four-operations.md), [ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964](adr/20261103-36cb1e78-90c0-47d2-bbb1-4bfec5db2964-generator-chosen-explicitly-only.md)）。
 - **Avoid**: CLI 自身が `nix build` / `nix eval` を回すと説明すること（回すのは nix 生成器）、置かれているファイルから生成器が推測されると説明すること。
 
 ### prebuilt
-`apply --manifest <link-farm>` の実体である生成器。Discover は与えられたパス、Roots はその link-farm の `manifest.json` を読み、Build / DryBuild はそのパスを返す。`--generator` の選択肢には出ない（→ [ADR-0055](adr/0055-manifest-generator-contract.md)）。
+`apply --manifest <link-farm>` の実体である生成器。Discover は与えられたパス、Roots はその link-farm の `manifest.json` を読み、Build / DryBuild はそのパスを返す。`--generator` の選択肢には出ない（→ [ADR-1ddf424a-db2c-4bcb-8823-bf7e4326b980](adr/20261103-1ddf424a-db2c-4bcb-8823-bf7e4326b980-manifest-flag-as-prebuilt-generator.md)）。
 - **Avoid**: `--generator` の値として挙げること、`--manifest` を生成器とは別の取得経路と説明すること。
 
 ### generation backend
-**engine** が世代の記録・一覧・切替を委ねる相手（世代バックエンド）。契約は `internal/generation` に置く 5 操作で、入出力はパスと整数のみ。Commit（link-farm を新世代として記録し profile を向ける）・List（世代の一覧と current）・Switch（既存の世代へ profile を向ける）・UserBase（user state の profileDir の基底）・SystemBase（system mode の profileDir の基底）。nix 実装（nixprofile・`internal/generation/nixprofile`）が既定かつ唯一の実装で、`nix-env` を叩くのはここだけ（基底は `<state>/nix/profiles/layat` と `/nix/var/nix/profiles/layat`）。CLI は常に nixprofile を注入し、engine はバックエンドが渡されなければ error にする。エンジンは誰が世代を管理するかに関知しない。profileDir 内部のレイアウト（`profile` / `profile-<N>-link` / `.pending`）は契約の固定部分で、エンジンが直接読む。バックエンドを選ぶフラグ・環境変数・`layat.toml` キーも、基底を上書きする設定キーも持たない（→ [ADR-0057](adr/0057-generation-backend-contract.md)）。
+**engine** が世代の記録・一覧・切替を委ねる相手（世代バックエンド）。契約は `internal/generation` に置く 5 操作で、入出力はパスと整数のみ。Commit（link-farm を新世代として記録し profile を向ける）・List（世代の一覧と current）・Switch（既存の世代へ profile を向ける）・UserBase（user state の profileDir の基底）・SystemBase（system mode の profileDir の基底）。nix 実装（nixprofile・`internal/generation/nixprofile`）が既定かつ唯一の実装で、`nix-env` を叩くのはここだけ（基底は `<state>/nix/profiles/layat` と `/nix/var/nix/profiles/layat`）。CLI は常に nixprofile を注入し、engine はバックエンドが渡されなければ error にする。エンジンは誰が世代を管理するかに関知しない。profileDir 内部のレイアウト（`profile` / `profile-<N>-link` / `.pending`）は契約の固定部分で、エンジンが直接読む。バックエンドを選ぶフラグ・環境変数・`layat.toml` キーも、基底を上書きする設定キーも持たない（→ [ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8](adr/20261103-62540f8f-a8ba-4441-97b0-36b50d7862d8-generation-backend-contract-paths-and-ints.md), [ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9](adr/20261103-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9-single-nix-generation-backend.md), [ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883](adr/20261103-764ffff1-6b5a-4ed7-89d0-5700eb3ee883-state-bases-not-configurable.md)）。
 - **Avoid**: エンジンが `nix-env` を叩くと説明すること、バックエンドの選択手段や基底の設定キーがあると説明すること。
 
 ### entrypoint
@@ -85,7 +85,7 @@ standalone・home-manager・NixOS / nix-darwin モジュール・devShell の `s
 - **Avoid**: 適用形の root が `$HOME/.config` へ解決されると説明すること。
 
 ### systemRoot
-**system mode**（root = `/`）を選ぶ root マーカー。ADR-0004 が「将来の絶対パス文字列 seam」と呼んでいたものを第一級のマーカーへ昇格したもの。適用形 `systemRoot { subdir = "..."; }` も受け付ける（意味は **root** の項）。
+**system mode**（root = `/`）を選ぶ root マーカー。「将来の絶対パス文字列 seam」とされていたものを第一級のマーカーへ昇格したもの（→ [ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed](adr/20261101-400cadd4-0151-470b-92ae-9b11aa8e9bed-three-root-markers.md)）。適用形 `systemRoot { subdir = "..."; }` も受け付ける（意味は **root** の項）。
 
 ### ephemeral placement
 **project mode** における配置物の性質。クローンごとに再生成される前提で、プロジェクトにコミットされない。ゆえに activation は git 状態に干渉しない。
@@ -112,7 +112,7 @@ rollback の単位。既定の **generation backend** である nixprofile が l
 「layat が何を配置したか」を記録する世代由来のデータ。実体は link-farm derivation 内の `manifest.json`（`schemaVersion` を持つ）で、Nix（`lib.mkManifest`）が生成し Go エンジンが読む——Nix↔Go の契約。エンジンの保守的な stale 除去（記録通りを指す layat 管理 symlink だけを削除し、ユーザーの実ファイルには決して触れない）を支える。
 
 ### last-applied record
-「この root に layat が最後に置いたもの」という FS の事実を layat 自身が持つ記録（last-applied 記録）。世代ではない。置き場は `<state>/layat/<鍵>/last-applied.json` で、鍵は profileDir と同じ規則（`--root` なしの home は `<name>` 直、それ以外は `<roothash>/<name>` + backref `.root`）。内容は `recordVersion`（2。読みは 1 と 2 を受け付ける）・`linkFarm`・`appliedAt`・`manifest`（配置した `manifest.json` をそのまま（内容を変えずに）埋め込む）・`origin`（直近に記録を書いた apply の出所 `{generator, entrypoint, identity}`。`identity` は manifest が宣言していればその写し）で、store の GC に依存しない。記録に `origin` があり今回の出所と食い違えば（両方に `identity` があれば `identity` だけで比べる）、apply は warning を出して続行する（→ [ADR-0070](adr/0070-record-origin-and-same-name-warning.md)）。apply（generation skip を含む）と rollback は FS 操作の成功後・世代操作の前に、reset は撤去の後に書き直し、reset で全 entry が消えれば削除する。stale 除去・drift 修復・reset の撤去対象・rollback の離れる世代の baseline は**記録 → profile の current → 空**の順に取り、記録と profile の `linkFarm` が食い違えば記録を採って warning を 1 行出す。初回（どちらも無い）は baseline を空とし、「last-applied 記録なし」の warning を 1 行出す。壊れた記録は「記録なし」に倒さず error にする（→ [ADR-0058](adr/0058-last-applied-record.md)）。
+「この root に layat が最後に置いたもの」という FS の事実を layat 自身が持つ記録（last-applied 記録）。世代ではない。置き場は `<state>/layat/<鍵>/last-applied.json` で、鍵は profileDir と同じ規則（`--root` なしの home は `<name>` 直、それ以外は `<roothash>/<name>` + backref `.root`）。内容は `recordVersion`（2。読みは 1 と 2 を受け付ける）・`linkFarm`・`appliedAt`・`manifest`（配置した `manifest.json` をそのまま（内容を変えずに）埋め込む）・`origin`（直近に記録を書いた apply の出所 `{generator, entrypoint, identity}`。`identity` は manifest が宣言していればその写し）で、store の GC に依存しない。記録に `origin` があり今回の出所と食い違えば（両方に `identity` があれば `identity` だけで比べる）、apply は warning を出して続行する（→ [ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8](adr/20261103-ab47f502-0fc8-4714-9af4-61e0a64732f8-origin-mismatch-warns-and-continues.md)）。apply（generation skip を含む）と rollback は FS 操作の成功後・世代操作の前に、reset は撤去の後に書き直し、reset で全 entry が消えれば削除する。stale 除去・drift 修復・reset の撤去対象・rollback の離れる世代の baseline は**記録 → profile の current → 空**の順に取り、記録と profile の `linkFarm` が食い違えば記録を採って warning を 1 行出す。初回（どちらも無い）は baseline を空とし、「last-applied 記録なし」の warning を 1 行出す。壊れた記録は「記録なし」に倒さず error にする（→ [ADR-8e253f2e-c255-482a-a0f8-0837e122e80f](adr/20261103-8e253f2e-c255-482a-a0f8-0837e122e80f-record-read-strictly.md)）。
 - **Avoid**: 記録を世代と呼ぶこと（rollback の target は世代リンクから読む）、記録を flock の鍵と説明すること（鍵は profileDir）。
 
 ### method

@@ -30,7 +30,7 @@ nix store のパス（リポジトリ全体・サブディレクトリ・単一�
 symlink または copy で配置する Nix ライブラリ・モジュール群。配置ロジックはテスト可能な純粋関数 +
 単一の配置エンジンとして実装し、ユーザーが配置を明示的に握る。home-manager に依存せず単体で
 動作しつつ、HM / NixOS / nix-darwin のモジュールとも統合できる。ただし統合層は配置ロジックを
-持たず、エンジンを起動する薄い配線に徹する（→ ADR-0003）。
+持たず、エンジンを起動する薄い配線に徹する（→ ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880）。
 
 layat が何であるか・何のために作るかは solution / use_case の領分。→ `docs/concept.md`。
 
@@ -60,7 +60,7 @@ design item が持つ**。ここは軸の名前と着眼点だけを並べ、満
 
 リポジトリはトップレベル 5 ディレクトリ（`lib/` / `cmd/` / `internal/` / `templates/` /
 `modules/`）に分ける。配置ロジックは Go エンジンが単一の源として所有し、`lib/` はデータ生成に
-徹する（→ ADR-0006, ADR-0007）。
+徹する（→ ADR-521765d7-7e31-42f4-b548-979185a7586a, ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3）。
 
 - [DSG-1361df1a-31c4-46ed-a6ce-92938f94ac02](design/20260802-1361df1a-31c4-46ed-a6ce-92938f94ac02-repo-layout.md) — リポジトリを lib / cmd / internal / templates / modules のトップレベル 5 ディレクトリへ分ける
 - [DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5](design/20260802-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5-lib-module-split.md) — lib は公開 API・型定義・manifest 生成・マーカー構築子・apply コマンド組み立ての 5 ファイルへ分割する
@@ -74,7 +74,7 @@ design item が持つ**。ここは軸の名前と着眼点だけを並べ、満
 
 CLI / engine / lib / `common.nix` / 統合層の 5 段に積み、依存は呼ぶ側から呼ばれる側への一方向に
 限る。配置の振る舞いは全層でエンジンが単一の源であり、各層はネイティブ機構へ翻訳しない
-（→ ADR-0003, ADR-0006）。
+（→ ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7, ADR-2119433e-de69-4447-85a5-575d58246007）。
 
 - [DSG-17db0831-d7da-446d-ba3e-404df64c582d](design/20260802-17db0831-d7da-446d-ba3e-404df64c582d-layer-stack-dependency.md) — 層を CLI / engine / lib / common.nix / 統合層の 5 段に積み、依存を呼ぶ側から呼ばれる側への一方向に限る
 - [DSG-25ad3cce-f921-4db2-aae0-c0263d4b8295](design/20261002-25ad3cce-f921-4db2-aae0-c0263d4b8295-generator-package-layout.md) — internal/generator は契約・prebuilt・Fake を親パッケージに、nix 実装を nixgen サブパッケージに置き、cmd 層は注入点だけを持つ
@@ -87,7 +87,7 @@ CLI / engine / lib / `common.nix` / 統合層の 5 段に積み、依存は呼�
 
 layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統。
 ユーザーの entrypoint 側は `layat.<name>` に named manifest を公開し、直書きと flake-parts の
-2 経路が同一の derivation を生む（→ ADR-0007, ADR-0029, ADR-0032）。
+2 経路が同一の derivation を生む（→ ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1, ADR-b157254e-e942-42bf-ae40-60a3a41a4452, ADR-08a6e1be-e424-4cfe-a529-e123a50cd6ca）。
 
 - [DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58](design/20260802-16373ec2-3496-4b12-b3b1-ef74e0435b58-flake-outputs-attrs.md) — layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する
 - [DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda](design/20260802-0e186e89-c8c6-4bca-9daa-03855e8d5cda-module-stubs.md) — NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする
@@ -101,7 +101,7 @@ layat 自身の flake outputs は packages / templates / 各モジュール / fl
 ## コアロジック設計（lib データ生成 + Go エンジン）
 
 `lib.mkManifest` が link farm derivation（`manifest.json` + symlink ツリー）を生成し、エンジンが
-実行時に前世代 manifest と diff して配置・stale 除去・profile swap を行う（→ ADR-0002, ADR-0006）。
+実行時に前世代 manifest と diff して配置・stale 除去・profile swap を行う（→ ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd）。
 
 - [DSG-107c19ea-bc90-4914-aaaa-5f2da4f3e082](design/20261101-107c19ea-bc90-4914-aaaa-5f2da4f3e082-placement-primitives.md) — 配置プリミティブを store link・copy・out-of-store symlink の 3 種に定め、世代・reset・gitignore での扱いを種別ごとに固定する
 - [DSG-0b94308c-6b15-46d1-854c-5945ae587b0d](design/20260802-0b94308c-6b15-46d1-854c-5945ae587b0d-cleanup-from-home-manager.md) — 配置と cleanup のアルゴリズムは home-manager の linkGeneration / cleanup を範として Go で再実装する
@@ -118,7 +118,7 @@ layat 自身の flake outputs は packages / templates / 各モジュール / fl
 ## モジュール統合設計
 
 全モジュールと devShell は root と activation タイミングを供給してエンジンを起動する薄い配線。
-起動の差は link-farm の取得方法だけに閉じる（→ ADR-0003, ADR-0026）。
+起動の差は link-farm の取得方法だけに閉じる（→ ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880, ADR-24488788-a5e6-47a5-9074-97192880642a）。
 
 - [DSG-98d7fa5d-c590-441a-b682-0ab7afa14233](design/20260802-98d7fa5d-c590-441a-b682-0ab7afa14233-integration-layer-kick-classes.md) — engine の起動を entrypoint 駆動とビルド済み manifest の 2 クラスに束ね、統合層の差を link-farm の取得方法だけに閉じる
 
@@ -137,7 +137,7 @@ layat 自身の flake outputs は packages / templates / 各モジュール / fl
 ## テスト戦略
 
 lib は Nix 評価テスト、エンジンは実 FS の tmpdir 統合テスト、非 NixOS で動く主張は実 nix の
-E2E で検証する（→ ADR-0006, ADR-0007, ADR-0012）。
+E2E で検証する（→ ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0）。
 
 - [DSG-fb49e36c-eb20-4efa-8cac-88ef0873db8e](design/20260802-fb49e36c-eb20-4efa-8cac-88ef0873db8e-lib-test-nix-unit-namaka.md) — lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する
 - [DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3](design/20260802-836aa5cb-0389-4adb-990b-144fe5aeffe3-engine-test-go-unit-tmpdir.md) — engine は nix を使わない tmpdir 統合テストで検証し、stale 除去の安全不変条件を table-driven に重点配分する
