@@ -37,7 +37,7 @@ system mode の last-applied 記録は `/var/lib/layat` の下に、profileDir �
 基底は `/var/lib/layat` のままとし、`/var/db` へ切り替える分岐は足さない。`/var/lib/layat` が無ければ
 root で実行する engine が作る。
 
-home / project / fixed の記録の置き場と、記録の内容・書き込みの手順・古い配置を除くときの基準をどこから読むかの優先順位は system mode でも変えない。
+home / project / fixed の記録の置き場と、記録の内容・書き込みの手順・古くなった配置を除去するときの基準をどこから読むかの優先順位は system mode でも変えない。
 
 置き場のパスと鍵の形は REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4 と
 REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 に置く。
