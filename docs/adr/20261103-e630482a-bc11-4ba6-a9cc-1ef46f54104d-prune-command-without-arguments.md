@@ -30,7 +30,7 @@ build を行わず、profile の状態だけを見る。mode を絞るフラグ�
 ## 根拠
 
 孤児系列の entrypoint はクローンごと消えていることが多く、
-名指しを求めると消したい系列を指定できない。eval / build をしないので、手元に壊れた entrypoint
+名指しを求めると消したい系列を指定できない。eval / build をしないので、手元に eval できない entrypoint
 があっても prune は動く。
 
 対象は roothash 系列に構造的に限られるので、rollback や list-generations のように mode
