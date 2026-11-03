@@ -25,7 +25,7 @@ justifies:
 ## 決定
 
 3 つとも global のオプションとし、`configs.<name>` ごとの上書きは持たない。1 回の起動に載る
-全 config へ一律に効く。
+全 config へ一律に適用される。
 
 `--recopy` の配線は REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c、`--backup` の配線は
 REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3 に置く。

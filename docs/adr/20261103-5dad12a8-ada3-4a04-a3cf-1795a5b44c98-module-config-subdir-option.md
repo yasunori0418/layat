@@ -30,7 +30,7 @@ root marker には subdir 適用形（`homeRoot { subdir = "..."; }`）があり
 
 共通オプション `layat.configs.<name>.subdir :: nullOr str`（既定 null）を設ける。モジュールは
 subdir が null なら素の root marker を、非 null なら subdir 適用形を組み、その config の
-`mkManifest` に root として渡す。root は pin したまま、target だけが `<subdir>/` の下に寄る。
+`mkManifest` に root として渡す。root は pin したまま、target だけが `<subdir>/` の下に置かれる。
 全 config 共通の `layat.subdir` は設けない。
 
 共通オプションの型は REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、home-manager での配線は

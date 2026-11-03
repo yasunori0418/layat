@@ -40,7 +40,7 @@ REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 に置く。
 
 - 同じ規則の検出器を 2 つ持つと、正規化の規則（属性キーの既定値・`target` の上書き・`subdir` の前置）を
   2 か所で揃え続けることになり、片方だけの変更が見逃しや誤検出を生む
-- standalone の `apply --all` とモジュールの activation が同じ検査を通る
+- standalone の `apply --all` とモジュールの activation が同じ検査を受ける
 - 代償は、止まる時機が評価時から activation に移ることだけである。どの config も配置されずに
   switch が失敗するので、誤った設定を通さない点は評価時に止めるのと変わらない
 
