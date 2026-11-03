@@ -6,7 +6,7 @@ status: 採用
 issues:
   - "#580"
   - "#498"
-origin: "Issue #498（v1.0 前に残っている挙動の不備を直す epic）の grilling（2026-10-31）。ADR-0070 §4 を書き直した"
+origin: "Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §4 を書き直した"
 justifies:
   - "REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282"
 references:
@@ -18,7 +18,7 @@ references:
 - ステータス: 採用
 - 日付: 2026-11-03
 - 関連: ADR-8e253f2e-c255-482a-a0f8-0837e122e80f, ADR-0db061d1-fa30-436d-91d7-c0cec8804c52, GitHub Issue #580, #498
-- 起点: Issue #498（v1.0 前に残っている挙動の不備を直す epic）の grilling（2026-10-31）。ADR-0070 §4 を書き直した
+- 起点: Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §4 を書き直した
 
 ## 背景
 

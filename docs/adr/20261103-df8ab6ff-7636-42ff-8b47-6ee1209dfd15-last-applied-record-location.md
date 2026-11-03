@@ -22,7 +22,7 @@ references:
 
 ## 背景
 
-不要になった entry の除去・drift 修復・reset・rollback は、「前回 layat がこの root
+古くなった配置の除去・drift 修復・reset・rollback は、「前回 layat がこの root
 に何を置いたか」を比較の基準として使う。この比較の基準は nix profile の current 世代の manifest
 から読んでいた。
 

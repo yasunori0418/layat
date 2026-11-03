@@ -33,7 +33,7 @@ rollback で書き直すときの `linkFarm` は、戻り先の世代 N-1 の li
 
 `linkFarm` は、FS に残っている entry がどの link-farm から来たかを表す。rollback の後の FS は N-1
 の link-farm の内容になるので N-1 を入れる。reset は entry を減らすだけで、残った entry
-の出所は変わらないので値を保つ。こうしておけば、記録と profile の突き合わせが操作の後も意味を保つ。
+の出所は変わらないので値を保つ。こうしておけば、記録と profile の比較が操作の後も意味を保つ。
 
 `appliedAt` は FS を最後に変えた時刻として読めるよう、その操作の時刻にする。
 
@@ -41,7 +41,7 @@ rollback で書き直すときの `linkFarm` は、戻り先の世代 N-1 の li
 
 ### reset で書き直すときに `linkFarm` を空にする
 
-残った entry の出所が失われ、profile との突き合わせができなくなる。
+残った entry の出所が失われ、profile との比較ができなくなる。
 
 ### `appliedAt` を apply のときだけ更新する
 

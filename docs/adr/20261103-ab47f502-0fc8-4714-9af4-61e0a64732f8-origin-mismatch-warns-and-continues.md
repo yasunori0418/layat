@@ -6,7 +6,7 @@ status: 採用
 issues:
   - "#580"
   - "#498"
-origin: "Issue #498（v1.0 前に残っている挙動の不備を直す epic）の grilling（2026-10-31）。ADR-0070 §3 と §6 を書き直した"
+origin: "Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §3 と §6 を書き直した"
 justifies:
   - "REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282"
 references:
@@ -18,14 +18,14 @@ references:
 - ステータス: 採用
 - 日付: 2026-11-03
 - 関連: ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e, ADR-0db061d1-fa30-436d-91d7-c0cec8804c52, GitHub Issue #580, #498
-- 起点: Issue #498（v1.0 前に残っている挙動の不備を直す epic）の grilling（2026-10-31）。ADR-0070 §3 と §6 を書き直した
+- 起点: Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §3 と §6 を書き直した
 
 ## 背景
 
 同じ profileDir への apply は後勝ちにしている（ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e）。
 欠けているのは、後勝ちが別の出所からの上書きとして起きていることを利用者が知る手段である。
 
-同じ設定を home-manager と単体の CLI の両方から使う場合、generator と entrypoint
+同じ設定を home-manager と CLI 単体の両方から使う場合、generator と entrypoint
 は使い方ごとに必ず違う。
 
 ## 決定
@@ -39,7 +39,7 @@ REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282 に置く。
 
 ## 根拠
 
-共有を error にすると、モジュールから単体の CLI へ（またはその逆へ）移行する正当な操作も止まる。
+共有を error にすると、モジュールから CLI 単体へ（またはその逆へ）移行する正当な操作も止まる。
 警告なら移行は通り、意図しない共有だけが気付かれる。
 
 `identity` を優先するのは、同じ設定かどうかを知っているのが利用者だけだからである。
