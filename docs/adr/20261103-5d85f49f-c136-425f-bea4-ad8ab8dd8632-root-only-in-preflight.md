@@ -1,7 +1,7 @@
 ---
 id: "ADR-5d85f49f-c136-425f-bea4-ad8ab8dd8632"
 type: adr
-name: "engine が root を使うのは preflight の実在検査だけにする"
+name: "root 相対 entry で engine が root を使うのは preflight の実在検査だけにする"
 status: 採用
 issues:
   - "#362"
@@ -12,7 +12,7 @@ references:
   - "ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7"
   - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
 ---
-# ADR-5d85f49f-c136-425f-bea4-ad8ab8dd8632: engine が root を使うのは preflight の実在検査だけにする
+# ADR-5d85f49f-c136-425f-bea4-ad8ab8dd8632: root 相対 entry で engine が root を使うのは preflight の実在検査だけにする
 
 - ステータス: 採用
 - 日付: 2026-11-03
