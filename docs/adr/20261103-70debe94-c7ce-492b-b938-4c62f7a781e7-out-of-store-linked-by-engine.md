@@ -35,14 +35,14 @@ REQ-81249072-56b8-42f5-807b-ea623c1efe99 に置く。
 ## 根拠
 
 lib を純粋関数に留めれば、nixpkgs だけに依存する制約を保ったまま nix-unit で確かめられる。
-リンクの生成を engine に集めれば、out-of-store の配置・古い配置物の除去・drift 修復が store link と
+リンクの生成を engine に集めれば、out-of-store の配置・古くなった配置の除去・drift 修復が store link と
 同じ engine の処理で行われ、どの統合層から使っても挙動が変わらない。
 
 ## 棄却した代替案
 
 ### HM モジュールでは HM の `mkOutOfStoreSymlink` へ委ねる
 
-HM の上でだけ配置の機構が変わり、モジュールを使わない構成や他のモジュールと挙動が分かれる。古い配置物の除去も
+HM の上でだけ配置の機構が変わり、CLI 単体や他のモジュールと挙動が分かれる。古くなった配置の除去も
 HM と layat の 2 か所に分かれる。
 
 ### lib が外部パスを指す symlink の derivation を作る

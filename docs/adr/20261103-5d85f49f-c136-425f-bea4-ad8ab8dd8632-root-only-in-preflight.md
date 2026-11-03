@@ -34,7 +34,7 @@ DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296 に置く。
 
 ## 根拠
 
-`LinkDest` が純粋関数のままなら、planner・古い配置物の除去・drift 修復・`--json` は root を持ち回らずに
+`LinkDest` が純粋関数のままなら、planner・古くなった配置の除去・drift 修復・`--json` は root を持ち回らずに
 同じ文字列で比較できる。root への依存を配置前の確認の 1 か所に閉じれば、root の値が変わったときに
 影響を受ける箇所がそこだけになる。copy との併用は評価時に拒否しているので、copy の処理は触らない。
 

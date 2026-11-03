@@ -20,8 +20,8 @@ references:
 ## 背景
 
 root マーカーの適用形が持つ `subdir` を、どこで実現するかを決める必要がある。layat の意味論では、
-基点を `root/sub` にすることと、全 target に `sub/` を前置することは等価である。古い配置物を除くときに
-比べるキー・foreign symlink の判定・祖先 symlink の確認・`gitignore` の anchor 形は、どれも target の
+基点を `root/sub` にすることと、全 target に `sub/` を前置することは等価である。古くなった配置の除去で使う
+比較のキー・foreign symlink の判定・祖先 symlink の確認・`gitignore` の anchor 形は、どれも target の
 文字列で動くからだ。
 
 root を実際に動かすと、`manifest.json` に新しいフィールドが要る。古い engine がエラーにせず無視すると
