@@ -32,7 +32,7 @@ references:
 ## 決定
 
 `sara.toml` の `strict_mode` を `true` にする。orphan を含む全 warning が error になり、`sara check` は
-張り忘れで exit 1 を返す。型を限った別のチェック（ADR の orphan だけを見る CI の grep など）や、frontmatter を
+張り忘れで exit 1 を返す。型を限った別の確認（ADR の orphan だけを見る CI の grep など）や、frontmatter を
 単体で検証するテストは設けない。
 
 ## 根拠
@@ -41,7 +41,7 @@ references:
 残っていた時期には、これが strict 化を退ける理由だった。warning 0 件が成り立った今は、一括で全部落とす
 挙動がそのまま望む挙動になる。既存の状態を壊さずに、以後の張り忘れだけを機械的に落とせる。
 
-strict にすれば orphan は型を問わず error になる。型を限ったチェックはその部分集合を二重に確かめるだけになる。
+strict にすれば orphan は型を問わず error になる。型を限った確認はその部分集合を二重に確認するだけになる。
 
 ## 棄却した代替案
 
@@ -51,4 +51,4 @@ strict にすれば orphan は型を問わず error になる。型を限った�
 
 ### ADR の orphan だけを CI の grep で落とす
 
-strict のチェックに含まれ、冗長になる。
+strict の確認に含まれ、冗長になる。
