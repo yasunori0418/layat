@@ -19,8 +19,8 @@ justifies:
 
 ## 背景
 
-standalone では entrypoint の `layat.<name>` ごとに profile を分け、役割ごとに独立して世代を積める。
-HM モジュールが 1 つの entries（= 1 つの profile）しか持たないと、standalone で複数の profile を
+CLI を単体で使う場合は entrypoint の `layat.<name>` ごとに profile を分け、役割ごとに独立して世代を積める。
+HM モジュールが 1 つの entries（= 1 つの profile）しか持たないと、CLI 単体で複数の profile を
 使い分けている利用者は、HM へ移るときに同じ構成を表せない。
 
 ## 決定
@@ -34,16 +34,16 @@ REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a に置く。
 
 ## 根拠
 
-- `<name>` は standalone の `layat.<name>` と同じ「config 名」の次元で、home mode の profile dir の鍵に
+- `<name>` は CLI 単体で使う `layat.<name>` と同じ「config 名」の次元で、home mode の profile dir の鍵に
   そのまま乗る。profile dir のレイアウトは変わらない
-- 世代の単位を profile に保つ。合成すると 1 つの世代に複数の役割が混ざり、片方だけを戻せなくなる
+- 世代の単位を profile に保つ。合成すると 1 つの世代に複数の役割が含まれ、片方だけを戻せなくなる
 - 名前を `configs` にするのは、spec の用語（config = named manifest）と揃えるためである
 
 ## 棄却した代替案
 
 ### 1 つの entries のまま留める
 
-役割ごとの profile の分離が standalone だけのものになり、HM へ移る利用者の障壁になる。
+役割ごとの profile の分離が CLI 単体での利用だけのものになり、HM へ移る利用者の障壁になる。
 
 ### `layat.profiles.<name>` と名付ける
 

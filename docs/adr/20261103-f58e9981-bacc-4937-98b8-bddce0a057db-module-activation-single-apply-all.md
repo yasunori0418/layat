@@ -23,7 +23,7 @@ justifies:
 
 モジュールは config ごとにビルド済みの link-farm を持つ。これを engine へ渡す形として、config ごとに
 `apply --manifest` を起動し、部分失敗を bash で集約する形も考えられる。一方で `apply --all` は、
-config の集合について前段の衝突検査・build と配置の並列化・部分失敗の集約をすでに CLI に持つ。
+config の集合について前段の衝突チェック・build と配置の並列化・部分失敗の集約をすでに CLI に持つ。
 
 ## 決定
 
@@ -45,7 +45,7 @@ REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3 に置く。
   全体を atomic にしない。`<name>=<link-farm>` の 1 組が 1 つの profile の世代になる
 - activation も `--jobs` による並列化に乗れる
 - 3 つのモジュールで起動の形を揃えるので、起動の規則がモジュールごとに分岐しない
-- config が無いときに起動しないのは、`--manifest` の無い `apply --all` が entrypoint 経路になるからである
+- config が無いときに起動しないのは、`--manifest` の無い `apply --all` が entrypoint から link-farm を得る動作になるからである
 
 ## 棄却した代替案
 
