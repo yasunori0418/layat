@@ -17,8 +17,7 @@ justifies:
 
 `list-generations` は世代を利用者に公開する mode でだけ使える。project mode は世代を内部の機構に
 留め、公開しない。`--all` を `list-generations` でも受けるか、受けるならどの config を対象にするかは
-決まっていなかった。当初の対象は home mode だけだったが、system mode でも世代を公開するようになり、
-対象もそれに合わせて広がった。
+決まっていなかった。
 
 ## 決定
 
@@ -39,7 +38,7 @@ justifies:
 
 ### home mode の config だけを対象にする
 
-当初の範囲だが、system mode の世代は名指しでは一覧できるのに `--all` には出ず、公開範囲と食い違う。
+system mode の世代は名指しでは一覧できるのに `--all` には出ず、公開範囲と食い違う。
 
 ### 名指しだけを受ける
 
