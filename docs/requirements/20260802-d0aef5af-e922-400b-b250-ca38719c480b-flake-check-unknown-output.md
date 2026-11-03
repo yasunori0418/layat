@@ -48,5 +48,5 @@ specification_ja: |
 `docs/spec.md`「CLI 仕様」→「再現性スタンス」節の blockquote「`nix flake check` と `layat`
 カスタム output」。
 
-決定の実体は ADR-40dd7945-5792-4b80-bdfa-43f95f482554「flake check の警告は無害として許容する」（unknown 警告は想定内・主検証は `nix build`）と、
-transpose しても警告が消えないことを確認した ADR-ef5eac75-c65f-45b3-a8b4-748e0e767989。
+決定の実体は ADR-40dd7945-5792-4b80-bdfa-43f95f482554「flake check の警告は無害として許容する」（unknown 警告は想定内・主検証は `nix build`。
+transpose しても警告が消えないことの確認を含む）。

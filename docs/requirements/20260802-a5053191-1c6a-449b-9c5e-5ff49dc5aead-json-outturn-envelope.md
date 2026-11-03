@@ -76,4 +76,4 @@ read-only 列挙（`list-generations` の世代・`gitignore` のパス）は
 出力」箇条書き（親項目）と、そのサブ項目「時刻」、およびサブコマンド体系節の
 `--json` に関する blockquote。
 
-決定の実体は ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71「--json は outturn 規約に常時準拠する」。`tool.version` の供給元は ADR-9ab223eb-99dc-4aa2-a671-c07f75f7ff3c。
+決定の実体は ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71「--json は outturn 規約に常時準拠する」・ADR-feb60906-1517-46b8-8fa5-e007df4d3e11・ADR-9e328362-2e90-441a-8eca-40081ce71b1b。`tool.version` の供給元は ADR-9ab223eb-99dc-4aa2-a671-c07f75f7ff3c。

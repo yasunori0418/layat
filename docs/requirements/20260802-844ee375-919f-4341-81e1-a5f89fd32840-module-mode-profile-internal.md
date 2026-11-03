@@ -44,4 +44,4 @@ oldGenPath 配管は不要。
 持ち、ユーザー向け rollback は host 世代へ一本化する）も本 item の担当で、独立 item を立てず
 本 item に畳んだ。
 
-決定の実体は ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75「module と project では世代操作を公開しない」。
+決定の実体は ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75「module と project では世代操作を公開しない」・ADR-fe035038-4415-4a1e-aa5c-509fdfce9955。

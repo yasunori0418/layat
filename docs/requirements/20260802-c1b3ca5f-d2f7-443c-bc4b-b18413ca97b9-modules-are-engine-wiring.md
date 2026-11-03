@@ -65,6 +65,6 @@ rollback の一本化は REQ-844ee375-919f-4341-81e1-a5f89fd32840 が担当し�
 配線に徹する」を本 item に畳んだ。NixOS / nix-darwin の root は、その後 ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c で
 REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 の `systemRoot` pin へ移った。
 
-決定の実体は ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880「モジュールは root と起動の時機だけを供給して engine を起動する」で、
+決定の実体は ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880「モジュールは root と起動の時機だけを供給して engine を起動する」・ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7で、
 モジュール対応を一括 switch 用途に限る positioning は ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e「project mode を第一の使い方とする」が定めている。NixOS / nix-darwin の hook を
 具体化したのは ADR-68f453b3-e6c7-4e0d-9978-32b5a00f627e・ADR-eee039fc-40af-42ac-bc65-979d6eaa0d06。

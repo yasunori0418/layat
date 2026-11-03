@@ -47,4 +47,4 @@ specification_ja: |
 同節の箇条書き第 1〜2 項。
 
 決定の実体は ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed「root は 3 つの marker で表す」
-（git toplevel 解決・config 相対と CWD 相対の棄却）。
+（git toplevel 解決。config 相対と CWD 相対を棄却したのは旧決定）。

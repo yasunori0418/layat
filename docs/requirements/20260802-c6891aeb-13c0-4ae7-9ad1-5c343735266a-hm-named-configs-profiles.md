@@ -51,7 +51,7 @@ specification_ja: |
 > この MVP 限定は **ADR-01abcd5a-464f-4c44-8afd-30950631487c・ADR-3447db4a-cdec-4573-bbad-05bbffc34a65 が実装決定済み**（seam を実装へ進め、`layat.entries` を
 > `configs.default.entries` への糖衣にする）で反転している。`docs/spec.md` 側がこの改訂に
 > 追従できていないため、分割にあたって原文の MVP 限定を規範へ持ち込まない判断をした
-> （REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 / REQ-16faf428-77f3-492f-b858-222c5274cbf7 で ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c 由来の未追従を扱ったのと同じ扱い）。
+> （REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 / REQ-16faf428-77f3-492f-b858-222c5274cbf7 で ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed 由来の未追従を扱ったのと同じ扱い）。
 > `docs/spec.md` の追従は本 item の担当範囲外。
 >
 > **原文の残る規範の所在**: `layat.configs` / `layat.entries` のオプション定義そのものは
@@ -61,7 +61,7 @@ specification_ja: |
 > REQ-496b1a07-5b74-416b-9e5f-3952b4c03737、1 起動あたりの activation 契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、module 経路で rollback を host へ
 > 一本化することは REQ-844ee375-919f-4341-81e1-a5f89fd32840 の担当。
 >
-> **旧決定の activation と衝突検出の項を本 item に含めない理由**: 旧決定は activation が `configs` を
+> **configs を導入した旧決定の activation と衝突検出の項を本 item に含めない理由**: その旧決定は activation が `configs` を
 > 走査して profile ごとに engine を kick すること（辞書順・1 profile の失敗で後続を止めず
 > 最後に集約）、単一 HM config 内の `configs` 間の正規化後 target 衝突を eval 時
 > assertion で停止することも決めている（ADR-f58e9981-bacc-4937-98b8-bddce0a057db が前者を `apply --all` 1 回起動へ、ADR-1338a293-3f69-48f5-9164-efb4ec6994d6 が後者を
@@ -79,7 +79,7 @@ specification_ja: |
 blockquote「HM モジュールの profile 粒度（MVP）」。
 
 決定の実体は ADR-01abcd5a-464f-4c44-8afd-30950631487c「HM モジュールは layat.configs.<name> ごとに独立した profile を持つ」と
-ADR-3447db4a-cdec-4573-bbad-05bbffc34a65「layat.entries を configs.default.entries への rename 糖衣として残す」（旧決定の MVP 限定を改訂）。`<name>` 次元と
+ADR-3447db4a-cdec-4573-bbad-05bbffc34a65「layat.entries を configs.default.entries への rename 糖衣として残す」（MVP 限定の旧決定を改訂）。`<name>` 次元と
 atomic 性・合成ヘルパ不提供は ADR-01abcd5a-464f-4c44-8afd-30950631487c、`default` が従来と同じ profile に解決され続ける非破壊性は
 ADR-01abcd5a-464f-4c44-8afd-30950631487c（profile dir が `<name>` 直キーに乗ること）と ADR-3447db4a-cdec-4573-bbad-05bbffc34a65（`layat.entries` を `configs.default.entries`
 への糖衣とすること）の双方に依る。

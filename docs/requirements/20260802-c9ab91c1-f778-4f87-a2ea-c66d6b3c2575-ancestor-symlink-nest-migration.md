@@ -56,5 +56,5 @@ REQ-2b48620a-abaa-43df-a106-954bbba3de56 の担当。
 
 `docs/spec.md`「配置動作仕様」→「symlink モード」の手順 0。
 
-決定の実体は ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c・ADR-8b7cd75f-5521-4805-b7bc-105b5c56ee38・ADR-8357b519-cb23-4984-ba56-254046779f47で、foreign 祖先のエラー停止は ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c が
+決定の実体は ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c・ADR-8b7cd75f-5521-4805-b7bc-105b5c56ee38・ADR-8357b519-cb23-4984-ba56-254046779f47 で、foreign 祖先のエラー停止は ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c が
 定めている。
