@@ -6,6 +6,8 @@ status: 採用
 origin: "ADR-0018 §1 を書き直した"
 justifies:
   - "REQ-196ddabf-6569-4303-942e-050872972501"
+supersedes:
+  - "ADR-0018"
 ---
 # ADR-7b9ecd2c-6b77-43c4-8fb4-3ad034e618e1: template に置く動く example を 1 config に絞る
 

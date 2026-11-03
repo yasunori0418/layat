@@ -8,6 +8,8 @@ issues:
 origin: "Issue #57 のサイト設計。ADR-0037 §2 を書き直した"
 justifies:
   - "INF-0865477b-21b2-4feb-9c06-1a882a4e595a"
+supersedes:
+  - "ADR-0037"
 references:
   - "ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4"
   - "ADR-da7b74a6-bab4-43ea-8f1c-cf843b8b58cc"

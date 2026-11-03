@@ -2,7 +2,7 @@
 id: "ADR-0055"
 type: legacy_adr
 name: "manifest 生成器の契約"
-status: 採用
+status: 廃止
 issues:
   - "#401"
   - "#396"
@@ -31,7 +31,20 @@ references:
 ---
 # ADR-0055: manifest 生成器の契約
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 生成器はプロセス内 Go IF → ADR-87a2cf34-9592-4c81-8980-246bca579ca0
+> - §2 必須 4 操作・引数は name → ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2
+> - §3 Roots 先読みは前提条件 → ADR-02170bb7-d3b6-49ae-8426-de2113951637
+> - §4 Build 事後条件はコミット可能 → ADR-efa7685c-6fa4-45df-b7a3-8f3f58e4118c
+> - §5 --manifest は prebuilt 生成器 → ADR-1ddf424a-db2c-4bcb-8823-bf7e4326b980
+> - §6a 診断は成功時も素通し → ADR-6687c0dc-957d-4913-99c6-168b0fe552ad
+> - §6b 失敗は構造化・表示は CLI → ADR-964e99a8-4aaa-46f6-b4ee-26270fc04649
+> - §6c nix 固有判定は nixgen に閉じる → ADR-cd139de9-06a4-49a2-8bea-4801c8acc518
+> - §7 生成器失敗は E_LAYAT_BUILD → ADR-494b6477-9d5b-4e29-879d-f7d16be5d466
+> - §8 内部コマンド開示の分担 → ADR-5be36ff2-ed08-4e8e-8476-62ff2b08a9dd
+
+- ステータス: 廃止
 - 日付: 2026-10-02
 - 関連: ADR-0006（engine の契約は `manifest.json` 1 本）, ADR-0007（CLI の責務・透明性）, ADR-0011（pending out-link による GC 窓の封鎖）, ADR-0023（eval 先行 → flock → build）, ADR-0025（experimental-features の案内）, ADR-0026（`--manifest` 経路）, ADR-0031（成功時沈黙・`--debug`）, ADR-0043（`--json` の outturn 準拠）, ADR-0054（改名。manifest の生成は nix でなくてもよい）, ADR-0057（世代バックエンドの契約。Build 事後条件の緩和）, ADR-0060（prebuilt 集合と `--all` の合成）
 - 改訂対象: ADR-0006 / ADR-0007 が「CLI が内部で `nix build` / `nix eval` を回す」とした manifest 取得の主体を生成器インターフェイスへ移す。ADR-0023 §1 の rootKind 先読みを生成器の契約の前提条件に位置づける。ADR-0026 の `--manifest` 経路を prebuilt 生成器として再定義する（外面は不変）。ADR-0031 §3 の「内部 nix コマンド開示」の主体を生成器にし、生成器の stderr を沈黙規律の対象外にする。ADR-0043 の `E_*_BUILD` を「生成器の失敗」へ読み替える。ADR-0011 §4 の out-link による store path 取得の主体を nixgen の Build に移す。ADR-0025 §1 の experimental-features の判定と案内を nixgen に閉じる

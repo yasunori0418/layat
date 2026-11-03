@@ -10,6 +10,8 @@ origin: "Issue #198（`layat status [name]`）の実装前に、2026-07-19 の g
 justifies:
   - "REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173"
   - "DSG-85439cb5-a149-422e-8596-fc4e860bc3a5"
+supersedes:
+  - "ADR-0065"
 references:
   - "ADR-52423842-bacf-4773-bbca-bcb34ae71013"
 ---

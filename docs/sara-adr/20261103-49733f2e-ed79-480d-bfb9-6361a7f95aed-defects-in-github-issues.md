@@ -11,6 +11,9 @@ issues:
 origin: "Issue #268（epic #203 残ブロッカー）の判断（2026-08-09）で確定。ADR-0051 §1・§2 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+supersedes:
+  - "ADR-0049"
+  - "ADR-0051"
 references:
   - "SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb"
   - "SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626"

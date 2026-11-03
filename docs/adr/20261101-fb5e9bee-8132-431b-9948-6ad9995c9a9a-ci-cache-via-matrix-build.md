@@ -9,6 +9,7 @@ justifies:
   - "INF-af33c5a1-f846-4f09-8e43-c6ea042d6e06"
 supersedes:
   - "ADR-0012"
+  - "ADR-0028"
 references:
   - "ADR-0028"
 ---

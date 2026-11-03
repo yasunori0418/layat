@@ -2,7 +2,7 @@
 id: "ADR-0054"
 type: legacy_adr
 name: "nput を layat へ改名し、2 週間の改名予告期間を挟む"
-status: 採用
+status: 廃止
 issues:
   - "#387"
   - "#385"
@@ -29,7 +29,19 @@ references:
 ---
 # ADR-0054: nput を layat へ改名し、2 週間の改名予告期間を挟む
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 新名は layat → ADR-6cd587e8-7aa2-4624-be78-7f6501bf0d6f
+> - §2 命名条件 4 項目 → 完了済み
+> - §3 棄却した候補 → 完了済み
+> - §4 保持候補 laydo / setz → 完了済み
+> - §5 機械的全置換の適用範囲 → 完了済み
+> - §6 互換シムなし・2 週間予告 → 完了済み
+> - §7 annotated tag legacy-nput → 完了済み
+> - §8 状態ディレクトリを移行しない → 完了済み
+> - §9 改名後の初回 apply の挙動 → 完了済み
+
+- ステータス: 廃止
 - 日付: 2026-09-05
 - 関連: ADR-0007（`nput` CLI 一次 UX・`nput.<name>` 名前空間・`nput init`）, ADR-0024（HM profile dir レイアウト）, ADR-0025（`nput init` の固定 ref・profile 専用ディレクトリ）, ADR-0029（flake-parts `name = "nput"`）, ADR-0042（`nput --version` の出力書式）, ADR-0043（`E_NPUT_*` / `tool.name`）, ADR-0045（`--backup` の既定 suffix `nput-backup`）, ADR-0015（foreign symlink の後勝ち置換）, ADR-0053（ADR のみ連番を維持する ID 規約）
 - 改訂対象: ADR-0007 §3 / §4 / §6・ADR-0024 §2・ADR-0025 §3 / §4・ADR-0029・ADR-0042・ADR-0043 §6・ADR-0045 §1 が固定した「nput」という字句（CLI 名・名前空間・on-disk 名・エラーコード接頭辞・既定 suffix・固定 flake ref）を、決定の内容を変えずに「layat」へ改名する

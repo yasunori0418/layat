@@ -9,6 +9,8 @@ origin: "Issue #406（epic: 世代バックエンドのインターフェイス�
 justifies:
   - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"
   - "DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814"
+supersedes:
+  - "ADR-0057"
 ---
 # ADR-eb1aa25f-a0ca-4efe-bcd9-4cbe11368764: 世代バックエンドの注入を必須にし nix-env への暗黙のフォールバックを持たない
 

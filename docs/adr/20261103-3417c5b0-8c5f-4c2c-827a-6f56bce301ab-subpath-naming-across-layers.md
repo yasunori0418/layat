@@ -7,6 +7,8 @@ origin: "「リポジトリ全体を示す文字列として \".\" 以外の表�
 justifies:
   - "REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51"
   - "REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336"
+supersedes:
+  - "ADR-0008"
 ---
 # ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab: 配置元の中のパスを全層で subpath と呼ぶ
 

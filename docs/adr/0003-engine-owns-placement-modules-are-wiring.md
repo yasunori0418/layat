@@ -2,7 +2,7 @@
 id: "ADR-0003"
 type: legacy_adr
 name: "配置ロジックは全層 layat エンジンが所有し、モジュールは配線に徹する"
-status: 採用
+status: 廃止
 justifies:
   - "REQ-eb363122-385a-499c-a074-c95efb949d07"
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
@@ -18,7 +18,17 @@ references:
 ---
 # ADR-0003: 配置ロジックは全層 layat エンジンが所有し、モジュールは配線に徹する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §a 配置は全層で engine が行う → ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7
+> - §b モジュールは配線に徹する → ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880
+> - §c 全モード自前 profile・rollback → ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75
+> - §d out-of-store も engine が張る → ADR-70debe94-c7ce-492b-b938-4c62f7a781e7
+> - §e1 保守的削除の不変条件 → ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c
+> - §e2 HM を参考に配置と cleanup を再実装 → ADR-2119433e-de69-4447-85a5-575d58246007
+> - 節:OS機構 OS のファイル管理機構とは別 → ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7
+
+- ステータス: 廃止
 - 日付: 2026-06-07
 - 関連: ADR-0001, ADR-0002, ADR-0004, ADR-0006, `docs/design.md`（レイヤー構成 / 各統合層の変換先）, `docs/spec.md`（モジュール別動作仕様）
 

@@ -10,6 +10,8 @@ origin: "ADR-0032 §4 を書き直した"
 justifies:
   - "REQ-496b1a07-5b74-416b-9e5f-3952b4c03737"
   - "DSG-92f54490-872a-42ac-bbd7-d06e9ee381c6"
+supersedes:
+  - "ADR-0032"
 ---
 # ADR-c5ebc6d9-d218-45f7-bce1-4dd481766843: legacy entrypoint の eval と build は新 CLI の -f 形で行う
 

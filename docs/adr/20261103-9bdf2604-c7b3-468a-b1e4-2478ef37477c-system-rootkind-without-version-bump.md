@@ -6,6 +6,8 @@ status: 採用
 origin: "次期マイルストーン計画の grilling（2026-07-04）。ADR-0036 §1a を書き直した"
 justifies:
   - "REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb"
+supersedes:
+  - "ADR-0036"
 references:
   - "ADR-0036"
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"

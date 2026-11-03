@@ -10,6 +10,7 @@ justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
 supersedes:
   - "ADR-0048"
+  - "ADR-0049"
   - "ADR-0053"
 references:
   - "SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd"

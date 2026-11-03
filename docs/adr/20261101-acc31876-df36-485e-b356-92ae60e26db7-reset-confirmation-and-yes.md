@@ -11,6 +11,7 @@ justifies:
   - "REQ-31dae599-f3a3-4bbe-b367-c955535265da"
   - "REQ-2a613337-7646-4ced-8807-e43bca18acf3"
 supersedes:
+  - "ADR-0020"
   - "ADR-0025"
   - "ADR-0043"
 references:

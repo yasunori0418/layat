@@ -6,6 +6,8 @@ status: 採用
 origin: "ADR-0018 §4a を書き直した"
 justifies:
   - "REQ-1f128917-4424-4e37-8a88-e0bb23a09da7"
+supersedes:
+  - "ADR-0018"
 ---
 # ADR-d504b89e-9a2b-440f-83c1-be372b12241b: gitignore --all は project mode の全 config の target を重複なく整列して出す
 

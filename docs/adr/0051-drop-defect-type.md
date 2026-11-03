@@ -2,7 +2,7 @@
 id: "ADR-0051"
 type: legacy_adr
 name: "defect 型を廃止する — 欠陥は GitHub Issues で管理し、グラフは規範のみを持つ"
-status: 採用
+status: 廃止
 issues:
   - "#268"
   - "#203"
@@ -17,7 +17,14 @@ revises:
 ---
 # ADR-0051: defect 型を廃止する — 欠陥は GitHub Issues で管理し、グラフは規範のみを持つ
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 defect 型と reveals を削除 → SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed
+> - §2 欠陥は GitHub Issues で管理 → SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed
+> - §3 クローズ時に risk / TC を追補 → SDR-9bec5976-67cd-407a-afa9-3d394a6204ca
+> - §4 #268 の論点の消滅 → 完了済み
+
+- ステータス: 廃止
 - 日付: 2026-08-09
 - 関連: ADR-0048, ADR-0049, ADR-0050, GitHub Issue #268, #203, #267
 - 改訂対象: ADR-0048 の型テーブルから defect を除去（12 型 → 11 型）。ADR-0049 §1 の

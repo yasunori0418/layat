@@ -2,7 +2,7 @@
 id: "ADR-0058"
 type: legacy_adr
 name: "last-applied 記録"
-status: 採用
+status: 廃止
 issues:
   - "#444"
   - "#406"
@@ -22,7 +22,20 @@ references:
 ---
 # ADR-0058: last-applied 記録
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 記録の置き場と鍵は profileDir と同規則 → ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15
+> - §2a 記録は manifest を内容ごと持つ → ADR-52423842-bacf-4773-bbca-bcb34ae71013
+> - §2b 書き直し時の linkFarm の値 → ADR-10c6dc33-d188-406b-beb4-d10ccbe3c645
+> - §3a 基準世代は記録→profile→空の順 → ADR-a91585ad-971a-4558-9f25-b7fcd6e57671
+> - §3b 世代スキップは profile と記録の両一致 → ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444
+> - §3c rollback の戻り先は世代リンクから → ADR-be5865a8-000a-491f-8438-6308076ea727
+> - §4a apply は commit 前に記録を書く → ADR-facd3173-a5ce-4d81-90a9-370fb26428ff
+> - §4b rollback はポインタ移動前に書き直す → ADR-f3d06307-ae5b-4f17-94ad-db92e80e3415
+> - §4c reset は残った entry で書き直す → ADR-fd3353cf-00af-4343-bd3f-3369c21d7194
+> - §4d 不正・未知フィールド・版違いは error → ADR-8e253f2e-c255-482a-a0f8-0837e122e80f
+
+- ステータス: 廃止
 - 日付: 2026-10-11
 - 関連: ADR-0002（stale 除去の baseline は世代由来の store manifest・却下案「store 外の可変 JSON」）, ADR-0015（rollback は baseline = 離れる世代・ポインタ移動は最後）, ADR-0017（世代スキップと lstat ドリフト修復）, ADR-0020（`reset` の FS-only teardown）, ADR-0025（profileDir の鍵と backref `.root`）, ADR-0057（世代バックエンドの契約・終着点で layat 側に残る baseline の取得）
 - 改訂対象: ADR-0002 の「可変 JSON ファイルは持たない」「記録は世代に捕捉され rollback で記録も巻き戻る」を、last-applied 記録に限って覆す（stale 除去の baseline を世代の概念から FS の事実へ移す）。ADR-0015 §5 の rollback の baseline（離れる世代 N の manifest）の供給元を、世代リンクから記録優先へ変える（baseline = 離れる世代・ポインタ移動は最後という順序は不変）

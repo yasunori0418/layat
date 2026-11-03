@@ -8,6 +8,8 @@ issues:
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §2c を書き直した"
 justifies:
   - "DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814"
+supersedes:
+  - "ADR-0057"
 ---
 # ADR-4c8d459a-c371-4f0d-b009-16e2ca096e49: 世代バックエンドのテストダブルを FS ベースの Fake に統一する
 

@@ -2,7 +2,7 @@
 id: "ADR-0031"
 type: legacy_adr
 name: "成功時デフォルト沈黙化・`-v` で配置レポート opt-in・`--debug` で nix コマンド開示・`--quiet` 廃止（ADR-0023 §2 改訂）"
-status: 採用
+status: 廃止
 justifies:
   - "REQ-8ef34101-8150-4124-92d5-94fabe6b5d90"
   - "REQ-0a123b89-0399-4f76-b988-56a5f7e0becf"
@@ -17,7 +17,14 @@ references:
 ---
 # ADR-0031: 成功時デフォルト沈黙化・`-v` で配置レポート opt-in・`--debug` で nix コマンド開示・`--quiet` 廃止（ADR-0023 §2 改訂）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 成功時はデフォルト沈黙 → ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5
+> - §2 -v は配置レポートの opt-in → ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9
+> - §3 内部コマンド開示は --debug → ADR-a19bf484-368d-4d01-b539-52de32510fa5
+> - §4 --quiet を廃止 → ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5
+
+- ステータス: 廃止
 - 日付: 2026-06-23
 - 関連: ADR-0007, ADR-0023, ADR-0024, ADR-0026, ADR-0055, `docs/spec.md`, `docs/design.md`
 - 改訂対象: ADR-0023 §2「出力ストリーム規律・冗長度フラグ」の冗長度方針を反転（既定 ON → 既定沈黙）。ストリーム規律（stdout 機械可読専有・warning/error は stderr）と終了コード表は不変。

@@ -2,7 +2,7 @@
 id: "ADR-0028"
 type: legacy_adr
 name: "cachix push を main push の os マトリクスで実装する（ADR-0012 §4 の実装補足）"
-status: 採用
+status: 廃止
 origin: "参照: `~/src/github.com/yasunori0418/nur-packages` の `.github/workflows/cachix-push.yml`"
 justifies:
   - "INF-af33c5a1-f846-4f09-8e43-c6ea042d6e06"
@@ -13,7 +13,13 @@ references:
 ---
 # ADR-0028: cachix push を main push の os マトリクスで実装する（ADR-0012 §4 の実装補足）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 投入は push:main+paths → ADR-6c477b0f-cd25-417d-91a0-172dd0ed084f
+> - §2a 3 環境 matrix でビルド → ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a
+> - §2b cachix-action の自動 push → ADR-21570c09-066c-471b-b605-3364265c8736
+
+- ステータス: 廃止
 - 日付: 2026-06-20
 - 関連: ADR-0012（§4 キャッシュ投入）, ADR-0027（CI 実装補足）, ADR-0011（stdlib-only Go）
 - 参照: `~/src/github.com/yasunori0418/nur-packages` の `.github/workflows/cachix-push.yml`

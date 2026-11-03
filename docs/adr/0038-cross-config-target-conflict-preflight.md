@@ -2,7 +2,7 @@
 id: "ADR-0038"
 type: legacy_adr
 name: "同一 entrypoint 内の cross-config target 衝突を `apply --all` 前段で検出し error 停止する"
-status: 採用
+status: 廃止
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。`apply --all` 並列化（→ ADR-0039）の検討中に「複数 config / profile / manifest 間の target 衝突をどう扱うか」が独立の前提問題として切り出された"
 justifies:
   - "REQ-5c6b07da-3d06-414d-8770-4f438234b322"
@@ -19,7 +19,14 @@ references:
 ---
 # ADR-0038: 同一 entrypoint 内の cross-config target 衝突を `apply --all` 前段で検出し error 停止する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 --all 選択集合の target 重複を build 前に停止 → ADR-75df92ae-0694-452b-8fb4-350994e31b25
+> - §2a 算出は nix・判定は CLI・engine 不変 → ADR-7f4fd2f6-672d-4d8c-a881-31024ad1d7c3
+> - §2b HM は module eval の assertion で検出 → ADR-1338a293-3f69-48f5-9164-efb4ec6994d6
+> - §3 単一 apply は確認せず・検出できないものは後勝ち → ADR-75df92ae-0694-452b-8fb4-350994e31b25
+
+- ステータス: 廃止
 - 日付: 2026-07-04
 - 関連: ADR-0013, ADR-0023, ADR-0035, ADR-0039（本検査を前提に並列化）, ADR-0040, ADR-0060（HM の検出を前段検査へ）, `docs/spec.md`
 - 改訂対象: ADR-0015 §2 の「cross-config 同一 target は実行時後勝ち + foreign symlink warning」のうち、**同一 entrypoint 内**（`apply --all` の対象 config 間）の衝突を前段検出・error 停止へ改訂（別 entrypoint / 別ツールの衝突は実行時後勝ちのまま不変）。ADR-0024 §8 の `--all` 一括 eval を「rootKind に加え正規化後 target 一覧も取得」へ拡張

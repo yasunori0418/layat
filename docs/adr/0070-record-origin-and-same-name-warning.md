@@ -2,7 +2,7 @@
 id: "ADR-0070"
 type: legacy_adr
 name: "記録の出所と同名 config の警告"
-status: 採用
+status: 廃止
 issues:
   - "#498"
 origin: "Issue #498（epic: v1.0 前に残っている挙動の穴を埋める）の grilling（2026-10-31）"
@@ -15,7 +15,17 @@ references:
 ---
 # ADR-0070: 記録の出所と同名 config の警告
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 記録に origin を持たせる → ADR-0db061d1-fa30-436d-91d7-c0cec8804c52
+> - §2 版 2 で書き版 1 と 2 を読む → ADR-8e253f2e-c255-482a-a0f8-0837e122e80f
+> - §3 origin の食い違いは警告して続行 → ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8
+> - §4 書き直しは origin を引き継ぐ → ADR-17f29974-4fdb-4596-8afa-368a8f3971eb
+> - §5a 旧 engine との版の非互換を受容 → ADR-963df3dd-ac51-41fc-94e2-a89c0675dc23
+> - §5b identity 追加で版を据え置く → ADR-14cf38ad-23d3-4d25-b14e-3e5da5ac7826
+> - §6 status に出さず停止モードも持たない → ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8
+
+- ステータス: 廃止
 - 日付: 2026-10-31
 - 関連: ADR-0013（同一 profileDir は後勝ち）, Issue #498
 - 改訂対象: ADR-0058 §2 の記録の内容（`origin` を足し `recordVersion` を 2 に上げる）と §4 の読みの規則（版 1 と 2 を受け付ける）

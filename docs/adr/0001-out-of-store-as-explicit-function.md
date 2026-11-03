@@ -2,14 +2,22 @@
 id: "ADR-0001"
 type: legacy_adr
 name: "out-of-store symlink を明示関数に降格し store link に統一する"
-status: 採用
+status: 廃止
 justifies:
   - "REQ-eb363122-385a-499c-a074-c95efb949d07"
   - "REQ-99ca5381-6c53-426c-b145-7b4297c53868"
 ---
 # ADR-0001: out-of-store symlink を明示関数に降格し store link に統一する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §a store link をコア・既定にする → ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c
+> - §b out-of-store は明示関数でのみ選ぶ → ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c
+> - §c src は 1 フィールドで marker も取る → ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb, ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131
+> - §d mkOutOfStoreSymlink は包むだけ → ADR-70debe94-c7ce-492b-b938-4c62f7a781e7
+> - §e concept で out-of-store を降格 → 完了済み
+
+- ステータス: 廃止
 - 日付: 2026-06-07
 - 関連: ADR-0059, `docs/concept.md`, `docs/spec.md`（entries スキーマ / `src`）
 

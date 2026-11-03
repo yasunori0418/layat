@@ -6,6 +6,8 @@ status: 採用
 origin: "ADR-0033 §1a を書き直した"
 justifies:
   - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
+supersedes:
+  - "ADR-0033"
 ---
 # ADR-0346fdd2-bd05-4793-bcd0-9c3ce64c8657: --json を全サブコマンド共通の persistent フラグにする
 

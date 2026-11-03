@@ -8,6 +8,8 @@ issues:
 origin: "Issue #26。ADR-0029 §6a と ADR-0029 §6b を書き直した"
 justifies:
   - "REQ-c50df875-2cb0-4e72-8a21-858359a11cae"
+supersedes:
+  - "ADR-0029"
 references:
   - "ADR-e6820da0-fce3-4aef-8b79-d53abbca6051"
 ---

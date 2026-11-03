@@ -2,7 +2,7 @@
 id: "ADR-0022"
 type: legacy_adr
 name: "実装前残セマンティクス第4巡（schema 互換・copy ドリフト修復・profile パス・copy foreign 衝突・shellHook skip 通知）"
-status: 採用
+status: 廃止
 origin: "実装着手前のドキュメント検査で、各文書が沈黙していた5つの細目を洗い出した（ADR-0015/0016/0017 と同系列の「実装前残セマンティクス」確定）"
 justifies:
   - "REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461"
@@ -22,7 +22,16 @@ references:
 ---
 # ADR-0022: 実装前残セマンティクス第4巡（schema 互換・copy ドリフト修復・profile パス・copy foreign 衝突・shellHook skip 通知）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 schema マイグレーションは v2 まで作らない → ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd
+> - §2 世代スキップ時 copy は不在のみ復帰 → ADR-5265f879-e623-44f9-9c58-8c14598e8b10
+> - §3a profile 基底は $XDG_STATE_HOME 尊重 → ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203
+> - §3b home/project の profile パス形 → ADR-419914ba-9896-4dd1-853b-fb514fcb9f38
+> - §4 copy の foreign 実ファイルは warning+skip → ADR-41d506b4-2c5c-4a17-9954-b0de37e97de5
+> - §5 shellHook の skip を stderr に 1 行通知 → ADR-45380022-d959-4b22-aa05-5993ac1f3c87
+
+- ステータス: 廃止
 - 日付: 2026-06-14
 - 関連: ADR-0002, ADR-0005, ADR-0006, ADR-0013, ADR-0016, ADR-0017, ADR-0019, ADR-0020, `docs/spec.md`, `docs/concept.md`, `docs/design.md`
 - 改訂対象: なし（既存決定の細目補完・反転なし）

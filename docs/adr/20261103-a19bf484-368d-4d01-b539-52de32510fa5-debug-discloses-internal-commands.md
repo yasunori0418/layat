@@ -6,6 +6,8 @@ status: 採用
 origin: "ADR-0031 §3 を書き直した"
 justifies:
   - "REQ-0a123b89-0399-4f76-b988-56a5f7e0becf"
+supersedes:
+  - "ADR-0031"
 ---
 # ADR-a19bf484-368d-4d01-b539-52de32510fa5: 内部コマンドの開示を --debug に分ける
 

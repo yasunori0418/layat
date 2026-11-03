@@ -10,6 +10,8 @@ origin: "Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §5b を書
 justifies:
   - "REQ-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f"
   - "REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d"
+supersedes:
+  - "ADR-0070"
 references:
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
   - "ADR-0db061d1-fa30-436d-91d7-c0cec8804c52"

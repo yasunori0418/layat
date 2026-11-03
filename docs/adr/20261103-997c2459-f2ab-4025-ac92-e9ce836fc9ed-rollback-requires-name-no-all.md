@@ -6,6 +6,8 @@ status: 採用
 origin: "ADR-0018 §4c を書き直した"
 justifies:
   - "REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796"
+supersedes:
+  - "ADR-0018"
 ---
 # ADR-997c2459-f2ab-4025-ac92-e9ce836fc9ed: rollback に config の名指しを必須にする
 

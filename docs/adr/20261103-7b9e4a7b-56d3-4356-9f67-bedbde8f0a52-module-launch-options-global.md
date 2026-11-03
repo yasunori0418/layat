@@ -9,6 +9,8 @@ origin: "ADR-0061 §3 を書き直した"
 justifies:
   - "REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c"
   - "REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3"
+supersedes:
+  - "ADR-0061"
 ---
 # ADR-7b9e4a7b-56d3-4356-9f67-bedbde8f0a52: モジュールの起動修飾オプションを config ごとに持たない
 

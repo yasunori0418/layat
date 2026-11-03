@@ -2,7 +2,7 @@
 id: "ADR-0046"
 type: legacy_adr
 name: "自己記録の祖先 symlink 配下ネストを許可する — 前世代 manifest 判定の祖先拡張 + 配置前除去（PreRemove）"
-status: 採用
+status: 廃止
 issues:
   - "#170"
 origin: "dotfiles 側での実遭遇（#170）と、次期マイルストーンの grilling セッション（2026-07-11）で設計確定"
@@ -23,7 +23,17 @@ references:
 ---
 # ADR-0046: 自己記録の祖先 symlink 配下ネストを許可する — 前世代 manifest 判定の祖先拡張 + 配置前除去（PreRemove）
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 緩和条件は recorded かつ古くなったもの → ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c
+> - §2 配下の子 entry は不在として配置 → ADR-8b7cd75f-5521-4805-b7bc-105b5c56ee38
+> - §3a 配置前除去を planner のデータに → ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b
+> - §3b 配置前除去は drift で error → ADR-2d4fdda4-b2e1-4161-8b71-3cff5b265f2f
+> - §4 移行は silent・-v で可視 → ADR-8357b519-cb23-4984-ba56-254046779f47
+> - §5a 途中失敗は冪等再実行で収束 → ADR-4f08aa18-6a38-49fd-a784-450677d80e1a
+> - §5b #168 に依存させず単独で出荷 → 完了済み
+
+- ステータス: 廃止
 - 日付: 2026-07-12
 - 関連: ADR-0002, ADR-0003, ADR-0006, ADR-0013, ADR-0015, ADR-0017, ADR-0031, ADR-0038, `docs/spec.md`, GitHub Issue #170
 - 改訂対象: **ADR-0015 §4**「target の祖先 component が symlink なら配置前に一律 error 停止」を「**foreign 祖先のみ error / 自己記録 stale 祖先は migration（配置前除去）**」へ改訂。**ADR-0015 §2**「前世代 manifest 記録の symlink は置換可（silent・後勝ち）」の判定を祖先へ拡張。

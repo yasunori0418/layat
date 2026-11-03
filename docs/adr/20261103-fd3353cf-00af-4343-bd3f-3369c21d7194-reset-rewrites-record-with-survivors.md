@@ -9,6 +9,8 @@ issues:
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §4c を書き直した"
 justifies:
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
+supersedes:
+  - "ADR-0058"
 ---
 # ADR-fd3353cf-00af-4343-bd3f-3369c21d7194: reset は撤去できなかった entry を残して記録を書き直す
 

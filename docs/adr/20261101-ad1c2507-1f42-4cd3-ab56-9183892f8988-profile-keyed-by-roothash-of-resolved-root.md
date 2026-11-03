@@ -14,6 +14,7 @@ supersedes:
   - "ADR-0013"
   - "ADR-0023"
   - "ADR-0024"
+  - "ADR-0036"
 references:
   - "ADR-0017"
   - "ADR-0034"

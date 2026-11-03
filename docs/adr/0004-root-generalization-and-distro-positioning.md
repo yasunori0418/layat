@@ -2,7 +2,7 @@
 id: "ADR-0004"
 type: legacy_adr
 name: "root 一般化と「純粋関数プリミティブ」としての positioning"
-status: 採用
+status: 廃止
 justifies:
   - "REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4"
   - "REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51"
@@ -14,7 +14,14 @@ references:
 ---
 # ADR-0004: root 一般化と「純粋関数プリミティブ」としての positioning
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §a コアは配置プリミティブ → ADR-10dcf5a9-f298-4123-9a50-24f43e25d30c
+> - §b root を内部でパラメータ化する → ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-f85f1afd-9b87-4f7a-922e-97c62554f198
+> - §c 実装スコープは CLI 単体と HM → 完了済み
+> - §d フレームワークでなく純粋関数群 → ADR-13c8b82f-f1a0-475e-a478-06467f5ec838
+
+- ステータス: 廃止
 - 日付: 2026-06-07
 - 関連: ADR-0002, ADR-0003, ADR-0005, ADR-0007, `docs/concept.md`, `docs/design.md`（mkActivationScript シグネチャ）
 

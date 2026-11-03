@@ -7,6 +7,9 @@ origin: "ADR-0001 §a と §b を書き直した"
 justifies:
   - "REQ-99ca5381-6c53-426c-b145-7b4297c53868"
   - "REQ-eb363122-385a-499c-a074-c95efb949d07"
+supersedes:
+  - "ADR-0001"
+  - "ADR-0009"
 ---
 # ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c: store link を既定にし、out-of-store は明示関数でのみ選ばせる
 

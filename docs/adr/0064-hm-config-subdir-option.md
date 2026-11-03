@@ -2,7 +2,7 @@
 id: "ADR-0064"
 type: legacy_adr
 name: "HM モジュールに `layat.configs.<name>.subdir` を足し、root marker の subdir 適用形へ配線する"
-status: 採用
+status: 廃止
 issues:
   - "#507"
   - "#150"
@@ -19,7 +19,13 @@ references:
 ---
 # ADR-0064: HM モジュールに `layat.configs.<name>.subdir` を足し、root marker の subdir 適用形へ配線する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 configs.<name>.subdir オプション → ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98
+> - §2 HM は subdir から homeRoot 適用形を組む → ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98
+> - §3 subdir の確認は lib に委ねる → ADR-2230e78f-770a-447e-9c5d-6eba1e9a7359
+
+- ステータス: 廃止
 - 日付: 2026-10-22
 - 関連: ADR-0007, ADR-0040, ADR-0061, GitHub Issue #507, #150
 - 改訂対象: ADR-0035 §1 の `configs` submodule の形 `{ entries }` を `{ entries, subdir }` へ広げる。「1 config = 1 profile = 1 manifest」と `layat.entries` の糖衣は不変

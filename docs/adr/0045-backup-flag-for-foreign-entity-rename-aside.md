@@ -2,7 +2,7 @@
 id: "ADR-0045"
 type: legacy_adr
 name: "`apply --backup[=suffix]` — 配置を塞ぐ記録外実体の rename 退避"
-status: 採用
+status: 廃止
 issues:
   - "#169"
   - "#172"
@@ -27,7 +27,21 @@ references:
 ---
 # ADR-0045: `apply --backup[=suffix]` — 配置を塞ぐ記録外実体の rename 退避
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1a --backup は省略可能な値を取る → ADR-33d8c466-6b38-46b6-8696-ad7521c72786
+> - §1b 退避先は <target>.<suffix> 固定 → ADR-65e41903-5eee-4a00-a154-be8c830cdca9
+> - §2 配置を塞ぐ記録外実体を退避・祖先は対象外 → ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f
+> - §3 退避先が既存なら conflict で停止 → ADR-37191429-2099-4217-a552-47b16a7e504c
+> - §4a 退避は配置前除去の後で undo 対象 → ADR-3f97fc1d-188d-4013-bff0-16b67250f68e
+> - §4b 世代スキップの処理でも Backup を行う → ADR-97248450-c19e-4857-94fb-2a10c2b1d80f
+> - §5 退避物は成功後も残し reset は復元しない → ADR-18267548-27d0-430b-8149-b6124d02ce56
+> - §6a 退避は常に stderr へ出す → ADR-c0a91b81-f54f-4790-9295-f90656f53de8
+> - §6b dryrun の退避は conflict にしない → ADR-04c3bc0a-140b-4bc3-a47c-cacddeba5a71
+> - §7 --json に backedUp を足す → 撤回
+> - §8 モジュールに layat.backup を持つ → ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3
+
+- ステータス: 廃止
 - 日付: 2026-07-12
 - 関連: ADR-0002, ADR-0006, ADR-0015, ADR-0017, ADR-0020, ADR-0044, ADR-0046, ADR-0047, `docs/spec.md`, GitHub Issue #169, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定

@@ -8,6 +8,8 @@ issues:
 origin: "Issue #396（評価器の診断の扱い）の結論。ADR-0055 §6 の nix 固有の判定の置き場所を書き直した"
 justifies:
   - "REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6"
+supersedes:
+  - "ADR-0055"
 references:
   - "ADR-63039f93-cd78-4356-8cd3-82c2f49a1aaa"
   - "ADR-964e99a8-4aaa-46f6-b4ee-26270fc04649"

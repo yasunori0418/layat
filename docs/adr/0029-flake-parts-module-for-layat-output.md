@@ -2,7 +2,7 @@
 id: "ADR-0029"
 type: legacy_adr
 name: "layat output を flake-parts module 化し flakeModules.default を公開する"
-status: 採用
+status: 廃止
 issues:
   - "#26"
 origin: "起点 Issue: #26"
@@ -19,7 +19,17 @@ references:
 ---
 # ADR-0029: layat output を flake-parts module 化し flakeModules.default を公開する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 flake-parts module を公開 → ADR-e6820da0-fce3-4aef-8b79-d53abbca6051
+> - §2 option に mkManifest の結果 → ADR-b157254e-e942-42bf-ae40-60a3a41a4452
+> - §3 mkManifest の pkgs 引数は不変 → ADR-b157254e-e942-42bf-ae40-60a3a41a4452
+> - §4 同一パス import で dogfood → ADR-e6820da0-fce3-4aef-8b79-d53abbca6051
+> - §5 module は transposition のみ → ADR-ef5eac75-c65f-45b3-a8b4-748e0e767989
+> - §6a flake-parts 利用者は module → ADR-d2da8a69-f92b-4bb3-9ed9-9a1f7e8297ff
+> - §6b templates は plain flake → ADR-d2da8a69-f92b-4bb3-9ed9-9a1f7e8297ff
+
+- ステータス: 廃止
 - 日付: 2026-06-21
 - 関連: ADR-0007（`layat.<name>` アドレッシング・専用 namespace）, ADR-0015（`nix flake check` の unknown output warning）, ADR-0006（lib は nixpkgs.lib のみ依存）, ADR-0023（passthru.rootKind）
 - 起点 Issue: #26

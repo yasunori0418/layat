@@ -2,7 +2,7 @@
 id: "ADR-0020"
 type: legacy_adr
 name: "copy の明示上書き（`apply --recopy`）と配置物のリセット（`layat reset`）を追加する"
-status: 採用
+status: 廃止
 origin: "「copy で配置した物を参照元更新に追従させたい」「entry の配置物を無い状態に戻したい（リセット）」という 2 つのユースケース未対応"
 justifies:
   - "REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065"
@@ -21,7 +21,13 @@ references:
 ---
 # ADR-0020: copy の明示上書き（`apply --recopy`）と配置物のリセット（`layat reset`）を追加する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 recopy は全 copy を無条件上書き → ADR-fb01d942-2875-4dcb-a7df-879e18f63883
+> - §2 reset は FS-only teardown で撤去 → ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7
+> - §3 --yes/-y で確認をスキップ → ADR-acc31876-df36-485e-b356-92ae60e26db7
+
+- ステータス: 廃止
 - 日付: 2026-06-14
 - 関連: ADR-0002, ADR-0005, ADR-0006, ADR-0013, ADR-0017, ADR-0019, `docs/spec.md`, `docs/design.md`, `docs/concept.md`
 - 改訂対象: **ADR-0002**（copy = place-once・世代外）に「明示フラグでの上書き経路」を追加。**ADR-0006**（サブコマンド体系）に `reset` を追加

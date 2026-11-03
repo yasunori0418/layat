@@ -2,7 +2,7 @@
 id: "ADR-0047"
 type: legacy_adr
 name: "配置前除去（PreRemove）の一般化 — 配置を塞ぐ自己記録 stale の migration と空 dir の除去"
-status: 採用
+status: 廃止
 issues:
   - "#175"
   - "#172"
@@ -26,7 +26,16 @@ references:
 ---
 # ADR-0047: 配置前除去（PreRemove）の一般化 — 配置を塞ぐ自己記録 stale の migration と空 dir の除去
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 実 dir は全 leaf 除去可能なら移行 → ADR-77312c71-fa32-481b-ad80-c91e5b282edc
+> - §2a symlink→copy は自動移行 → ADR-fc28d09c-9d52-4539-8838-e9ae5a414594
+> - §2b copy→symlink は移行しない → ADR-02ed93fa-c59f-4790-805d-759501017d2b
+> - §3 配置前除去全般が drift で error → ADR-2d4fdda4-b2e1-4161-8b71-3cff5b265f2f
+> - §4 RemoveAction.Kind とスライス順 → ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b
+> - §5 PreRemove は空祖先剪定を呼ばない → ADR-4dba7720-c179-4835-8644-d90b8022e474
+
+- ステータス: 廃止
 - 日付: 2026-07-12
 - 関連: ADR-0002, ADR-0003, ADR-0006, ADR-0015, ADR-0017, ADR-0020, ADR-0031, ADR-0046, `docs/spec.md`, GitHub Issue #175, #172
 - 改訂対象: **ADR-0046**「自己記録の祖先 symlink 配下ネストを許可する」を「配置を塞ぐ自己記録 stale 全般（実 dir target・method 変更）」へ一般化。**ADR-0015 §2**「前世代 manifest 記録の symlink は置換可（silent・後勝ち）」の判定を method 横断（symlink→copy）へ拡張。

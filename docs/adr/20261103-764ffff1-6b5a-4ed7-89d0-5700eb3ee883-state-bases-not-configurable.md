@@ -13,6 +13,9 @@ justifies:
   - "REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3"
   - "DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814"
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
+supersedes:
+  - "ADR-0057"
+  - "ADR-0062"
 ---
 # ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883: state の基底を設定で上書きさせない
 

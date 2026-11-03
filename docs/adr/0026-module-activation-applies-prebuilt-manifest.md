@@ -2,7 +2,7 @@
 id: "ADR-0026"
 type: legacy_adr
 name: "モジュール activation の engine kick は `apply --manifest`（ビルド済み link-farm 直接適用）で行う"
-status: 採用
+status: 廃止
 issues:
   - "#17"
 origin: "Issue #17（home-manager モジュール統合）の実装中に判明した計画外の仕様。docs（ADR-0003, ADR-0007, spec のモジュール別動作仕様）は「module は engine を kick する配線」とだけ述べ、具体的な invocation を一度も規定していなかった"
@@ -24,7 +24,19 @@ references:
 ---
 # ADR-0026: モジュール activation の engine kick は `apply --manifest`（ビルド済み link-farm 直接適用）で行う
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 --manifest で build 済み link-farm を直接適用 → ADR-24488788-a5e6-47a5-9074-97192880642a
+> - §2a --manifest と -f は排他 → ADR-24488788-a5e6-47a5-9074-97192880642a
+> - §2b --manifest と --all は排他 → ADR-24488788-a5e6-47a5-9074-97192880642a
+> - §2c 位置引数 name は --manifest と直交 → ADR-24488788-a5e6-47a5-9074-97192880642a
+> - §3a HM activation は単一 --manifest 起動 → ADR-f58e9981-bacc-4937-98b8-bddce0a057db
+> - §3b activation は lock を待ち失敗で switch 停止 → ADR-2aaf72ab-1dfc-4cde-852d-4b1f9916780b
+> - §3c activation のレポートを可視にする → ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5
+> - §3d options.layat は {enable; entries} に留める → ADR-01abcd5a-464f-4c44-8afd-30950631487c, ADR-9506276e-2108-4962-9f90-efe82fec7f66, ADR-e8bb6153-2528-419e-8be0-c862a3eb4e05, ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98, ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3
+> - §4 --manifest は公開・安定の CLI の差し替え点 → ADR-24488788-a5e6-47a5-9074-97192880642a
+
+- ステータス: 廃止
 - 日付: 2026-06-17
 - 関連: ADR-0002, ADR-0003, ADR-0006, ADR-0007, ADR-0011, ADR-0015, ADR-0023, ADR-0024, ADR-0025, ADR-0055, ADR-0060, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`
 - 改訂対象: ADR-0003 / ADR-0007 が「モジュールは switch 時に engine を起動する配線」とした**起動方法**を確定する（決定の反転なし・未定義だった invocation を埋める）。CONTEXT.md の `layat CLI` / `apply` / `module` 定義を拡張する。

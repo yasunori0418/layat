@@ -9,6 +9,9 @@ origin: "system mode の e2e で、root 所有の profileDir を非 root が `li
 justifies:
   - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"
   - "DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814"
+supersedes:
+  - "ADR-0057"
+  - "ADR-0063"
 references:
   - "ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd"
   - "ADR-4c8d459a-c371-4f0d-b009-16e2ca096e49"

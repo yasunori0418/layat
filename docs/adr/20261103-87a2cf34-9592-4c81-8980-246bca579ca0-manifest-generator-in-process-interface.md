@@ -10,6 +10,8 @@ justifies:
   - "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"
   - "DSG-25ad3cce-f921-4db2-aae0-c0263d4b8295"
   - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
+supersedes:
+  - "ADR-0055"
 ---
 # ADR-87a2cf34-9592-4c81-8980-246bca579ca0: manifest の取得をプロセス内の Go インターフェイスの生成器越しにする
 

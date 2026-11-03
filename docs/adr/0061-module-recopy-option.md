@@ -2,7 +2,7 @@
 id: "ADR-0061"
 type: legacy_adr
 name: "モジュールに `layat.recopy` オプションを足し、`layat.jobs` とともに共通オプションへ載せる"
-status: 採用
+status: 廃止
 issues:
   - "#128"
   - "#471"
@@ -17,7 +17,13 @@ references:
 ---
 # ADR-0061: モジュールに `layat.recopy` オプションを足し、`layat.jobs` とともに共通オプションへ載せる
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 layat.recopy オプション（既定 false） → ADR-9506276e-2108-4962-9f90-efe82fec7f66
+> - §2 layat.jobs オプション（既定 0） → ADR-e8bb6153-2528-419e-8be0-c862a3eb4e05
+> - §3 起動修飾オプションは global → ADR-7b9e4a7b-56d3-4356-9f67-bedbde8f0a52
+
+- ステータス: 廃止
 - 日付: 2026-10-15
 - 関連: ADR-0020, ADR-0045, ADR-0060, GitHub Issue #128, #471
 - 起点: Issue #128（HM 複数 profile・ADR-0035 の実装）の着手前 grilling（2026-10-15）

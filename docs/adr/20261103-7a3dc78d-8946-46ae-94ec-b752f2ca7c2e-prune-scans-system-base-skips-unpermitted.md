@@ -7,6 +7,9 @@ origin: "次期マイルストーン計画の grilling（2026-07-04）。ADR-003
 justifies:
   - "REQ-c44433a1-7ee7-459a-9aae-7cc42166876f"
   - "DSG-096dc893-21f4-45e3-9347-986e9275b4d1"
+supersedes:
+  - "ADR-0034"
+  - "ADR-0036"
 references:
   - "ADR-0034"
   - "ADR-0036"

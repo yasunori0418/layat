@@ -8,6 +8,8 @@ issues:
 origin: "Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §6c を書き直した"
 justifies:
   - "REQ-a77181dd-a59c-40bb-855e-3430ad970eb6"
+supersedes:
+  - "ADR-0059"
 ---
 # ADR-796508e6-2845-467d-83f8-386930a48bfb: src が target に重なる root 相対 entry を評価時に拒否する
 

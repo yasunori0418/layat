@@ -2,7 +2,7 @@
 id: "ADR-0032"
 type: legacy_adr
 name: "legacy entrypoint（shell.nix / default.nix）は mkShell passthru を canonical とし、addressing を `nix build -f` に統一する"
-status: 採用
+status: 廃止
 issues:
   - "#112"
   - "#107"
@@ -25,7 +25,17 @@ references:
 ---
 # ADR-0032: legacy entrypoint（shell.nix / default.nix）は mkShell passthru を canonical とし、addressing を `nix build -f` に統一する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1 passthru 形を canonical に → ADR-925b0011-e2a2-43ac-a5d3-5e4a10f52470
+> - §2 attr path は両形で同一 → ADR-08a6e1be-e424-4cfe-a529-e123a50cd6ca
+> - §3a 一括 eval は両形で同一 → ADR-28605860-770e-41df-95dd-7dc05b20497a
+> - §3b inputsFrom 合成ヘルパ不採用 → ADR-c973a6e3-b6d9-45d3-b237-83fb1b361b22
+> - §4 legacy は新 CLI の -f 形 → ADR-c5ebc6d9-d218-45f7-bce1-4dd481766843
+> - §5 legacy の相対 src は非 store → ADR-955c2601-88fb-4be8-85de-ec7d0a8c727d
+> - §6 発見順 flake→shell→default → ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2
+
+- ステータス: 廃止
 - 日付: 2026-07-03
 - 関連: ADR-0007, ADR-0002, ADR-0011, ADR-0023, ADR-0024, ADR-0025, `docs/spec.md`, `docs/design.md`
 - 改訂対象: ADR-0007 §4 の legacy entrypoint addressing 記述（`nix-build -A layat.<name>`）を `nix build -f <ep> layat.<name>` へ改訂。§5（best-effort・再現性はユーザー責任）の decision 自体は不変

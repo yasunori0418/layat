@@ -9,6 +9,8 @@ issues:
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §3c を書き直した"
 justifies:
   - "REQ-0e341430-17f0-498b-9439-65491652163a"
+supersedes:
+  - "ADR-0058"
 references:
   - "ADR-d97154cd-a2e5-4853-a682-800ff9435c89"
   - "ADR-a91585ad-971a-4558-9f25-b7fcd6e57671"

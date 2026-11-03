@@ -7,6 +7,9 @@ origin: "ADR-0001 §d と ADR-0003 §d を書き直した"
 justifies:
   - "REQ-eb363122-385a-499c-a074-c95efb949d07"
   - "REQ-81249072-56b8-42f5-807b-ea623c1efe99"
+supersedes:
+  - "ADR-0001"
+  - "ADR-0003"
 references:
   - "ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c"
 ---

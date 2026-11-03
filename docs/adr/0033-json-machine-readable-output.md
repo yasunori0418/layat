@@ -2,7 +2,7 @@
 id: "ADR-0033"
 type: legacy_adr
 name: "`--json` 機械可読出力を全サブコマンド一律のグローバルフラグとして導入する"
-status: 採用
+status: 廃止
 origin: "次期マイルストーン計画の grilling（2026-07-04）。ADR-0023 が「必要になった時点で追加」とした条件を、`layat prune` 新設（→ ADR-0034）や外部ツール連携（statusline / エディタ統合 / CI）の消費側要求で満たしたと判断した"
 justifies:
   - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
@@ -16,7 +16,18 @@ references:
 ---
 # ADR-0033: `--json` 機械可読出力を全サブコマンド一律のグローバルフラグとして導入する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1a --json は全コマンド一律 → ADR-0346fdd2-bd05-4793-bcd0-9c3ce64c8657
+> - §1b gitignore は行契約既定+JSON → ADR-7c8a0152-e034-4f16-9cf8-d5435be187e2
+> - §2a stdout に単一 JSON を 1 回 → ADR-feb60906-1517-46b8-8fa5-e007df4d3e11
+> - §2b トップに version フィールド → ADR-feb60906-1517-46b8-8fa5-e007df4d3e11
+> - §2c エラーは stderr のみ → ADR-9e328362-2e90-441a-8eca-40081ce71b1b
+> - §2d -v と --json は直交 → ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9
+> - §2e dryrun conflict も JSON+exit 2 → ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1
+> - §3 各コマンドのペイロード概形 → ADR-5d28818e-f7e1-45e8-a7fd-bbb6157b8586
+
+- ステータス: 廃止
 - 日付: 2026-07-04
 - 関連: ADR-0031, ADR-0023, ADR-0018, ADR-0021, `docs/spec.md`, `docs/design.md`
 - 改訂対象: ADR-0023 §2 の「`--json` は MVP では持たない（将来送り・必要になった時点で追加）」を撤回し、実装を決定。ストリーム規律・終了コード表そのものは不変

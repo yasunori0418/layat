@@ -9,6 +9,8 @@ issues:
 origin: "epic #172 の grilling セッション（2026-07-12）で確定。ADR-0047 §2 の copy から symlink への変更を書き直した"
 justifies:
   - "REQ-2b48620a-abaa-43df-a106-954bbba3de56"
+supersedes:
+  - "ADR-0047"
 references:
   - "ADR-c4ad9987-850e-4834-bbea-d8de3b073548"
   - "ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f"

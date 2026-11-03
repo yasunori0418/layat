@@ -2,7 +2,7 @@
 id: "ADR-0049"
 type: legacy_adr
 name: "型構成を 12 型へ改訂する — quality / test_plan の新設・infrastructure の再接続・design→test_plan の satisfies"
-status: 採用
+status: 廃止
 issues:
   - "#237"
   - "#203"
@@ -14,7 +14,21 @@ revises:
 ---
 # ADR-0049: 型構成を 12 型へ改訂する — quality / test_plan の新設・infrastructure の再接続・design→test_plan の satisfies
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §1a 型を 12 型にする型テーブル → SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed, SDR-c15921a9-7aea-407c-a34b-7465783b1af1, SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed
+> - §1b root は solution と ADR 型だけ → SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb
+> - §1c defect の orphan 例外と再検討 → 撤回
+> - §1d この ADR では strict 化しない → SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626
+> - §2a quality と test_plan を新設 → SDR-34916a83-0cff-4524-a8ff-5a3195af52c3
+> - §2b risk の親に test_plan を含めない → SDR-f3f9491f-d6f4-4742-82da-4933ad3d8db1
+> - §2c QA / TP も英語規範文で書く → SDR-34916a83-0cff-4524-a8ff-5a3195af52c3
+> - §3a infrastructure を再定義し非 root → SDR-29ef8bb4-9349-47db-9e79-926bc71bbdd0
+> - §3b infrastructure の名前を変えない → SDR-933a9191-f60e-45bc-bebc-bc09af8154cc
+> - §4 design が test_plan を satisfies → SDR-35636015-710a-4cf8-b6ba-48ca047efed0
+> - §5 ADR の justifies に QA / TP → SDR-1d295034-9bab-4e30-9ead-173e5f56c396
+
+- ステータス: 廃止
 - 日付: 2026-08-08
 - 関連: ADR-0048, GitHub Issue #237, #203
 - 改訂対象: **ADR-0048 §2 の型定義表だけ**（10 型 → 12 型）。§2 のそれ以外の決定（組み込みモデルの

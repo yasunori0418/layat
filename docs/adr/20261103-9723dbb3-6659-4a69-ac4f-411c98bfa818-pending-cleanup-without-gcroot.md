@@ -10,6 +10,8 @@ justifies:
   - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"
   - "REQ-840b3641-6e76-46da-82e9-680cabd65abe"
   - "DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814"
+supersedes:
+  - "ADR-0057"
 references:
   - "ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1"
 ---

@@ -9,6 +9,9 @@ origin: "Issue #395（epic: manifest 生成器のインターフェイス化）�
 justifies:
   - "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"
   - "REQ-1cc080f6-ae91-4c1f-973e-b7054cfc0198"
+supersedes:
+  - "ADR-0032"
+  - "ADR-0055"
 references:
   - "ADR-87a2cf34-9592-4c81-8980-246bca579ca0"
 ---

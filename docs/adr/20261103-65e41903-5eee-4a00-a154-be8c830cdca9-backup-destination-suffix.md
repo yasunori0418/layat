@@ -9,6 +9,8 @@ issues:
 origin: "旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §1（CLI）の退避先の決め方を書き直した"
 justifies:
   - "REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b"
+supersedes:
+  - "ADR-0045"
 references:
   - "ADR-33d8c466-6b38-46b6-8696-ad7521c72786"
 ---

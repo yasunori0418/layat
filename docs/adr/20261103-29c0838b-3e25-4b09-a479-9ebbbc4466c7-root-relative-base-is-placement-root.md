@@ -9,6 +9,8 @@ origin: "Issue #362（src 側のプロジェクトルート実行時解決）の
 justifies:
   - "REQ-81249072-56b8-42f5-807b-ea623c1efe99"
   - "REQ-a77181dd-a59c-40bb-855e-3430ad970eb6"
+supersedes:
+  - "ADR-0059"
 references:
   - "ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7"
 ---

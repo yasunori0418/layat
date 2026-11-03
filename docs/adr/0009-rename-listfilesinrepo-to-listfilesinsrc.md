@@ -2,7 +2,7 @@
 id: "ADR-0009"
 type: legacy_adr
 name: "`listFilesInRepo` を `listFilesInSrc` に改名する"
-status: 採用
+status: 廃止
 origin: "「`listFilesInRepo` は初期コンセプト（git リポジトリを fetch して配置）由来の名で、`pkgs.hello` 等の store パッケージも走査できる今の射程より狭い」という指摘"
 justifies:
   - "REQ-99ca5381-6c53-426c-b145-7b4297c53868"
@@ -11,7 +11,13 @@ references:
 ---
 # ADR-0009: `listFilesInRepo` を `listFilesInSrc` に改名する
 
-- ステータス: 採用
+> **廃止（2026-11-03）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - §a listFilesInSrc へ改名 → 撤回
+>
+> 文書としての後継（supersedes）は ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c が担う（REQ-99ca5381-6c53-426c-b145-7b4297c53868 の系譜）。
+
+- ステータス: 廃止
 - 日付: 2026-06-13
 - 関連: ADR-0008（lib 命名整理・`src` / `subpath`）, `docs/spec.md`, `docs/design.md`, `CONTEXT.md`
 - 起点: 「`listFilesInRepo` は初期コンセプト（git リポジトリを fetch して配置）由来の名で、`pkgs.hello` 等の store パッケージも走査できる今の射程より狭い」という指摘
