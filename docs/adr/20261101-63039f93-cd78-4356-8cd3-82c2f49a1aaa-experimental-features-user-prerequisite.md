@@ -8,14 +8,11 @@ justifies:
   - "REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6"
 supersedes:
   - "ADR-0025"
-references:
-  - "ADR-0055"
 ---
 # ADR-63039f93-cd78-4356-8cd3-82c2f49a1aaa: nix の experimental-features は利用者が有効にしておく前提にする
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0055
 - 起点: /grill-me による実装前の横断検査（実装前残セマンティクスの第 7 巡）。ADR-0025 §1 を書き直した
 
 ## 背景

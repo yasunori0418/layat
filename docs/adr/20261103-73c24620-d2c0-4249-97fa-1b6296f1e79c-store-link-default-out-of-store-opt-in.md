@@ -10,12 +10,15 @@ justifies:
 supersedes:
   - "ADR-0001"
   - "ADR-0009"
+references:
+  - "ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a"
+  - "ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131"
 ---
 # ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c: store link を既定にし、out-of-store は明示関数でのみ選ばせる
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: `docs/concept.md`, `docs/spec.md`
+- 関連: ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a, ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131, `docs/concept.md`, `docs/spec.md`
 - 起点: ADR-0001 §a と §b を書き直した
 
 ## 背景

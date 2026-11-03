@@ -14,12 +14,13 @@ supersedes:
   - "ADR-0049"
 references:
   - "SDR-34916a83-0cff-4524-a8ff-5a3195af52c3"
+  - "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"
 ---
 # SDR-f3f9491f-d6f4-4742-82da-4933ad3d8db1: risk の親に test_plan を含めない
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: SDR-34916a83-0cff-4524-a8ff-5a3195af52c3, GitHub Issue #583, #237, #203, `docs/model.yaml`, `docs/agents/sara-graph.md`
+- 関連: SDR-34916a83-0cff-4524-a8ff-5a3195af52c3, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #237, #203, `docs/model.yaml`, `docs/agents/sara-graph.md`
 - 起点: epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §2b を書き直した
 
 ## 背景

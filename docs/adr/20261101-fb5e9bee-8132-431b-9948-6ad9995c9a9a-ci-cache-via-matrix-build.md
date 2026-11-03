@@ -10,14 +10,11 @@ justifies:
 supersedes:
   - "ADR-0012"
   - "ADR-0028"
-references:
-  - "ADR-0028"
 ---
 # ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a: キャッシュは 3 system の matrix ビルドで投入する
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0028
 - 起点: 参照: https://github.com/yasunori0418/cryoflow の CI 構成（同一メンテナの実績構成）。ADR-0012 §4 を書き直した
 
 ## 背景

@@ -8,11 +8,16 @@ justifies:
   - "REQ-0a123b89-0399-4f76-b988-56a5f7e0becf"
 supersedes:
   - "ADR-0031"
+references:
+  - "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"
+  - "ADR-9e328362-2e90-441a-8eca-40081ce71b1b"
+  - "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
 ---
 # ADR-a19bf484-368d-4d01-b539-52de32510fa5: 内部コマンドの開示を --debug に分ける
 
 - ステータス: 採用
 - 日付: 2026-11-03
+- 関連: ADR-45380022-d959-4b22-aa05-5993ac1f3c87, ADR-9e328362-2e90-441a-8eca-40081ce71b1b, ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4
 - 起点: ADR-0031 §3 を書き直した
 
 ## 背景

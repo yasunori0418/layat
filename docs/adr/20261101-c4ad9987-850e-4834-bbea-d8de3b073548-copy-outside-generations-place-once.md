@@ -11,13 +11,13 @@ justifies:
 supersedes:
   - "ADR-0002"
 references:
-  - "ADR-0020"
+  - "ADR-acc31876-df36-485e-b356-92ae60e26db7"
 ---
 # ADR-c4ad9987-850e-4834-bbea-d8de3b073548: copy は世代の外に place-once で置く
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0020, `docs/concept.md`, `docs/spec.md`
+- 関連: ADR-acc31876-df36-485e-b356-92ae60e26db7, `docs/concept.md`, `docs/spec.md`
 - 起点: ADR-0002 の決定「copy は世代から除外する」と「copy の扱い」節を書き直した
 
 ## 背景

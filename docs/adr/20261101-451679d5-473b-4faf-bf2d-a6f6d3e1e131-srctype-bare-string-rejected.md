@@ -10,14 +10,12 @@ justifies:
 supersedes:
   - "ADR-0001"
   - "ADR-0010"
-references:
-  - "ADR-0001"
 ---
 # ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131: src の型で素の文字列を拒否する
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0001, `docs/spec.md`
+- 関連: `docs/spec.md`
 - 起点: manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の srcType の項を書き直した
 
 ## 背景

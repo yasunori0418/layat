@@ -15,12 +15,17 @@ supersedes:
   - "ADR-0038"
   - "ADR-0060"
   - "ADR-0066"
+references:
+  - "ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d"
+  - "ADR-28605860-770e-41df-95dd-7dc05b20497a"
+  - "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"
+  - "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
 ---
 # ADR-1338a293-3f69-48f5-9164-efb4ec6994d6: モジュールは configs 間の target 衝突を評価時に確認しない
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: GitHub Issue #585, `docs/spec.md`
+- 関連: ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d, ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-af37a636-a798-4c03-8fa4-e73ed6375a92, ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4, GitHub Issue #585, `docs/spec.md`
 - 起点: ADR-0060 §3 と ADR-0066 §3c を書き直した
 
 ## 背景

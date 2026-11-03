@@ -14,12 +14,17 @@ justifies:
   - "REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575"
 supersedes:
   - "ADR-0059"
+references:
+  - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
+  - "ADR-6d2327f7-f513-42c3-89f8-808467db1914"
+  - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
+  - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
 ---
 # ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7: root 相対マーカーのリンクを target 起点の相対パスで張る
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: `docs/design.md`
+- 関連: ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, ADR-6d2327f7-f513-42c3-89f8-808467db1914, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, `docs/design.md`
 - 起点: Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §1 と §3 を書き直した
 
 ## 背景

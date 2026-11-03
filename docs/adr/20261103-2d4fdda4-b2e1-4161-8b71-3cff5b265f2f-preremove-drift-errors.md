@@ -16,7 +16,25 @@ supersedes:
   - "ADR-0046"
   - "ADR-0047"
 references:
-  - "ADR-0015"
+  - "ADR-88231ffc-4836-4252-be34-894944fd28c3"
+  - "ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d"
+  - "ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9"
+  - "ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8"
+  - "ADR-1cbacca1-1930-46ca-bf82-30310f82216e"
+  - "ADR-4c8d459a-c371-4f0d-b009-16e2ca096e49"
+  - "ADR-eb1aa25f-a0ca-4efe-bcd9-4cbe11368764"
+  - "ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd"
+  - "ADR-8b8c9109-a479-4571-8b10-5a6079127441"
+  - "ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7"
+  - "ADR-efa7685c-6fa4-45df-b7a3-8f3f58e4118c"
+  - "ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883"
+  - "ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818"
+  - "ADR-8357b519-cb23-4984-ba56-254046779f47"
+  - "ADR-4f08aa18-6a38-49fd-a784-450677d80e1a"
+  - "ADR-d97154cd-a2e5-4853-a682-800ff9435c89"
+  - "ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a"
+  - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
+  - "ADR-40dd7945-5792-4b80-bdfa-43f95f482554"
   - "ADR-74423bb8-1453-4689-a25e-30bf46536afc"
   - "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
   - "ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b"
@@ -25,7 +43,7 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-0015, ADR-74423bb8-1453-4689-a25e-30bf46536afc, ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c, ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b, GitHub Issue #170, #175, #172
+- 関連: ADR-88231ffc-4836-4252-be34-894944fd28c3, ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d, ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9, ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8, ADR-1cbacca1-1930-46ca-bf82-30310f82216e, ADR-4c8d459a-c371-4f0d-b009-16e2ca096e49, ADR-eb1aa25f-a0ca-4efe-bcd9-4cbe11368764, ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd, ADR-8b8c9109-a479-4571-8b10-5a6079127441, ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7, ADR-efa7685c-6fa4-45df-b7a3-8f3f58e4118c, ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883, ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818, ADR-8357b519-cb23-4984-ba56-254046779f47, ADR-4f08aa18-6a38-49fd-a784-450677d80e1a, ADR-d97154cd-a2e5-4853-a682-800ff9435c89, ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-40dd7945-5792-4b80-bdfa-43f95f482554, ADR-74423bb8-1453-4689-a25e-30bf46536afc, ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c, ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b, GitHub Issue #170, #175, #172
 - 起点: grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0046 §3（配置前除去の drift の扱い）と ADR-0047 §3 を書き直した
 
 ## 背景

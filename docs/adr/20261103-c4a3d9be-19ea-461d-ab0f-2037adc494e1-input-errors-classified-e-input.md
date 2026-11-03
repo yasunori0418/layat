@@ -15,13 +15,16 @@ supersedes:
 references:
   - "ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9"
   - "ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964"
-  - "ADR-0060"
+  - "ADR-f58e9981-bacc-4937-98b8-bddce0a057db"
+  - "ADR-24488788-a5e6-47a5-9074-97192880642a"
+  - "ADR-1338a293-3f69-48f5-9164-efb4ec6994d6"
+  - "ADR-ef9e4099-0cf4-409a-9e73-518866aea676"
 ---
 # ADR-c4a3d9be-19ea-461d-ab0f-2037adc494e1: 入力の不正を E_INPUT に分類する
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9, ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964, ADR-0060, GitHub Issue #395
+- 関連: ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9, ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964, ADR-f58e9981-bacc-4937-98b8-bddce0a057db, ADR-24488788-a5e6-47a5-9074-97192880642a, ADR-1338a293-3f69-48f5-9164-efb4ec6994d6, ADR-ef9e4099-0cf4-409a-9e73-518866aea676, GitHub Issue #395
 - 起点: Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §5 を書き直した
 
 ## 背景

@@ -9,13 +9,13 @@ justifies:
 supersedes:
   - "ADR-0002"
 references:
-  - "ADR-0059"
+  - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
 ---
 # ADR-6d2327f7-f513-42c3-89f8-808467db1914: out-of-store はマッピングだけを追跡する
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0059, `docs/spec.md`
+- 関連: ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, `docs/spec.md`
 - 起点: ADR-0002 の決定「out-of-store は世代追跡する」を書き直した
 
 ## 背景

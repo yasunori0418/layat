@@ -13,12 +13,15 @@ supersedes:
 references:
   - "ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7"
   - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
+  - "ADR-6d2327f7-f513-42c3-89f8-808467db1914"
+  - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
+  - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
 ---
 # ADR-5d85f49f-c136-425f-bea4-ad8ab8dd8632: root 相対 entry で engine が root を使うのは配置前の実在確認だけにする
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7, ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, `docs/design.md`
+- 関連: ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7, ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, ADR-6d2327f7-f513-42c3-89f8-808467db1914, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, `docs/design.md`
 - 起点: Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §7 を書き直した
 
 ## 背景

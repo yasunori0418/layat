@@ -15,12 +15,13 @@ supersedes:
 references:
   - "SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb"
   - "SDR-34916a83-0cff-4524-a8ff-5a3195af52c3"
+  - "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"
 ---
 # SDR-29ef8bb4-9349-47db-9e79-926bc71bbdd0: infrastructure を技術基盤として再定義し root から外す
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb, SDR-34916a83-0cff-4524-a8ff-5a3195af52c3, GitHub Issue #583, #237, #203, `docs/model.yaml`
+- 関連: SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb, SDR-34916a83-0cff-4524-a8ff-5a3195af52c3, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #237, #203, `docs/model.yaml`
 - 起点: epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §3a を書き直した
 
 ## 背景

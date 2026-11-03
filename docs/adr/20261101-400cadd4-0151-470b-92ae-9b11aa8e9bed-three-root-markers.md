@@ -16,15 +16,14 @@ supersedes:
   - "ADR-0013"
   - "ADR-0036"
 references:
-  - "ADR-0036"
-  - "ADR-0040"
+  - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
   - "ADR-f85f1afd-9b87-4f7a-922e-97c62554f198"
 ---
 # ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed: root は 3 つの marker で表す
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0036, ADR-0040, ADR-f85f1afd-9b87-4f7a-922e-97c62554f198, GitHub Issue #2, `docs/spec.md`
+- 関連: ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75, ADR-f85f1afd-9b87-4f7a-922e-97c62554f198, GitHub Issue #2, `docs/spec.md`
 - 起点: Issue #2（root デフォルト）。ADR-0007 §2 の 3 マーカーと ADR-0013 §5 を書き直した
 
 ## 背景

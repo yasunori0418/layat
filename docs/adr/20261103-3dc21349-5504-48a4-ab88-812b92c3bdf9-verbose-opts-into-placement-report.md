@@ -9,11 +9,17 @@ justifies:
 supersedes:
   - "ADR-0031"
   - "ADR-0033"
+references:
+  - "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"
+  - "ADR-9e328362-2e90-441a-8eca-40081ce71b1b"
+  - "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
+  - "ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc"
 ---
 # ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9: -v で配置レポートを opt-in で出す
 
 - ステータス: 採用
 - 日付: 2026-11-03
+- 関連: ADR-45380022-d959-4b22-aa05-5993ac1f3c87, ADR-9e328362-2e90-441a-8eca-40081ce71b1b, ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4, ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc
 - 起点: ADR-0031 §2・ADR-0033 §2d を書き直した
 
 ## 背景

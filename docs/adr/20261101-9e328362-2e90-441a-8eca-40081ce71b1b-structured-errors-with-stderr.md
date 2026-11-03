@@ -16,13 +16,12 @@ supersedes:
   - "ADR-0043"
 references:
   - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
-  - "ADR-0031"
 ---
 # ADR-9e328362-2e90-441a-8eca-40081ce71b1b: エラーはエンベロープに構造化し stderr のテキストと併存させる
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, ADR-0031, GitHub Issue #552, yasunori0418/outturn#1
+- 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, GitHub Issue #552, yasunori0418/outturn#1
 - 起点: layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §6 を書き直した
 
 ## 背景

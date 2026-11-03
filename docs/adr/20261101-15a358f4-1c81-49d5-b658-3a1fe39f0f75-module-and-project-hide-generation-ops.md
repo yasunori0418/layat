@@ -15,14 +15,11 @@ supersedes:
   - "ADR-0035"
   - "ADR-0036"
   - "ADR-0066"
-references:
-  - "ADR-0036"
 ---
 # ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75: module と project では世代操作を公開しない
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0036
 - 起点: ADR-0002 §決定（module の profile は内部機構）・ADR-0005 §決定（project mode の世代はユーザー露出しない）を書き直した
 
 ## 背景

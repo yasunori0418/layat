@@ -12,14 +12,12 @@ justifies:
   - "REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7"
 supersedes:
   - "ADR-0015"
-references:
-  - "ADR-0038"
 ---
 # ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d: cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0038, GitHub Issue #550
+- 関連: GitHub Issue #550
 - 起点: ドキュメント計画段階の最終レビュー（2026-06-14）で確定。ADR-0015 §2 を書き直した
 
 ## 背景

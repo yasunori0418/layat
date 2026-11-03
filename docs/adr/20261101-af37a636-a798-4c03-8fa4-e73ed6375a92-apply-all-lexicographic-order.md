@@ -13,8 +13,6 @@ supersedes:
   - "ADR-0016"
   - "ADR-0039"
 references:
-  - "ADR-0038"
-  - "ADR-0039"
   - "ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d"
   - "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
 ---
@@ -22,7 +20,7 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0038, ADR-0039, ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d, ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4, GitHub Issue #550
+- 関連: ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d, ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4, GitHub Issue #550
 - 起点: ドキュメント計画段階のレビュー（2026-06-13）で確定。ADR-0013 §3 と ADR-0016 §2 を書き直した
 
 ## 背景

@@ -15,12 +15,17 @@ supersedes:
   - "ADR-0059"
 references:
   - "ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c"
+  - "ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131"
+  - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
+  - "ADR-6d2327f7-f513-42c3-89f8-808467db1914"
+  - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
+  - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
 ---
 # ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb: root 相対マーカーを別関数 mkRootRelativeSymlink で作る
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c, `docs/spec.md`
+- 関連: ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c, ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131, ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, ADR-6d2327f7-f513-42c3-89f8-808467db1914, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, `docs/spec.md`
 - 起点: Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §4 を書き直した
 
 ## 背景

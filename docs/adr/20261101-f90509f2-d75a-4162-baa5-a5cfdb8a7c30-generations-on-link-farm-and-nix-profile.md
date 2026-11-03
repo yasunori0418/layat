@@ -8,14 +8,11 @@ justifies:
   - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
 supersedes:
   - "ADR-0002"
-references:
-  - "ADR-0057"
 ---
 # ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30: 世代は link farm と nix profile に乗せる
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0057
 - 起点: ADR-0002 §決定（nix profile に乗せる）を書き直した
 
 ## 背景

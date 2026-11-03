@@ -12,12 +12,14 @@ justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
 supersedes:
   - "ADR-0049"
+references:
+  - "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"
 ---
 # SDR-34916a83-0cff-4524-a8ff-5a3195af52c3: テスト計画の型を品質方針の型から分けて設ける
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: GitHub Issue #583, #237, #203, `docs/model.yaml`
+- 関連: SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #237, #203, `docs/model.yaml`
 - 起点: epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §2a・§2c を書き直した
 
 ## 背景

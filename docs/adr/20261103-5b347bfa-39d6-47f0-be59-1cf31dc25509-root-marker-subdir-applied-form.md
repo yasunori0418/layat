@@ -11,12 +11,13 @@ supersedes:
   - "ADR-0040"
 references:
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
+  - "ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137"
 ---
 # ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509: root マーカーに subdir の適用形を持たせる
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, `docs/spec.md`, `CONTEXT.md`
+- 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137, `docs/spec.md`, `CONTEXT.md`
 - 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。ADR-0040 §1a を書き直した
 
 ## 背景

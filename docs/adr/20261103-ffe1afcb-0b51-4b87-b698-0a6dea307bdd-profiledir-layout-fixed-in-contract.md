@@ -13,12 +13,20 @@ supersedes:
   - "ADR-0057"
 references:
   - "ADR-419914ba-9896-4dd1-853b-fb514fcb9f38"
+  - "ADR-30f105c7-85a8-4fab-9dea-3277d932b524"
+  - "ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1"
+  - "ADR-58fdbad9-5ed7-469d-b6b2-6462b2173888"
+  - "ADR-5fc58c8f-dc0e-4c1d-8c1e-17d7ac7f0385"
+  - "ADR-74423bb8-1453-4689-a25e-30bf46536afc"
+  - "ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56"
+  - "ADR-d97154cd-a2e5-4853-a682-800ff9435c89"
+  - "ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30"
 ---
 # ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd: profileDir の内部レイアウトを世代バックエンド契約の固定部分にする
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-419914ba-9896-4dd1-853b-fb514fcb9f38
+- 関連: ADR-419914ba-9896-4dd1-853b-fb514fcb9f38, ADR-30f105c7-85a8-4fab-9dea-3277d932b524, ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1, ADR-58fdbad9-5ed7-469d-b6b2-6462b2173888, ADR-5fc58c8f-dc0e-4c1d-8c1e-17d7ac7f0385, ADR-74423bb8-1453-4689-a25e-30bf46536afc, ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56, ADR-d97154cd-a2e5-4853-a682-800ff9435c89, ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §3a を書き直した
 
 ## 背景

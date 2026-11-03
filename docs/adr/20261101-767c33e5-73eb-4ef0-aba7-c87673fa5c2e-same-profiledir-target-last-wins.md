@@ -11,14 +11,20 @@ justifies:
 supersedes:
   - "ADR-0013"
 references:
-  - "ADR-0005"
-  - "ADR-0070"
+  - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
+  - "ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988"
+  - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
+  - "ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d"
+  - "ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799"
+  - "ADR-4dca6ef4-2791-48d5-aa82-7037630968a6"
+  - "ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe"
+  - "ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c"
 ---
 # ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e: 同一 profileDir への同時実行は後勝ちにする
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: ADR-0005, ADR-0070, GitHub Issue #550
+- 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75, ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799, ADR-4dca6ef4-2791-48d5-aa82-7037630968a6, ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe, ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c, GitHub Issue #550
 - 起点: ドキュメント計画段階のレビュー（2026-06-13）で確定。ADR-0013 §2 を書き直した
 
 ## 背景
