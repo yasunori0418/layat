@@ -489,7 +489,7 @@ generator = "nix"
 
 ### 出力と終了コード
 
-- **フラグを指定しないときは成功時サイレント。** 配置レポート、try-lock のスキップ通知、`apply --all` のサマリには `-v` が要る。`--debug` は内部 nix コマンドを表示する。`--quiet` は無い。
+- **既定の verbosity では成功時サイレント。** 配置レポート、try-lock のスキップ通知、`apply --all` のサマリには `-v` が要る。`--debug` は内部 nix コマンドを表示する。`--quiet` は無い。
 - **`--json`** はコマンド完了時に [outturn](https://github.com/yasunori0418/outturn) 準拠の JSON エンベロープ(1 文書)を stdout へ書く機械可読の第 2 契約。`-v`(stderr・人間向け)とは直交(全サブコマンドがペイロードを載せ、`--all` は config ごとに `SubjectResult` を列挙する)。
 - **ストリーム規律**：stdout は機械可読出力(`gitignore` 一覧、`apply --dryrun` 計画)専用で、既定 verbosity でも出力される。よって `layat gitignore <name> >> .gitignore` や `layat apply <name> --dryrun | ...` は安全にパイプできる。**警告とエラーは常に stderr へ出力され、サイレンスされない。**
 

@@ -100,7 +100,7 @@ _Avoid_: デフォルト挙動として扱うこと、`src` の型による暗�
 ### 状態管理
 
 **generation (世代)**:
-ロールバック単位。既定の **generation backend**（nixprofile）が layat 自身の nix profile（`nix-env --profile <dir>` 式）に乗せて管理する（→ ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30, ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9）。nixprofile はコミット（`--set`）と切替（`--switch-generation`。rollback もこれを使う）を `nix-env --profile <dir>` で行い、一覧は nix-env を経由せず profileDir の世代リンク（`profile-<N>-link`）を読み取り専用で走査する。間引き（`--delete-generations`）と store GC（`nix-collect-garbage`）はユーザーが nix コマンドで行う（→ ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9）。`rollback` は profile dir ≠ 配置先のため再配置が必須で、古くなった配置の除去は基準世代=離れる世代・ポインタ移動は最後（→ ADR-d97154cd-a2e5-4853-a682-800ff9435c89）。
+ロールバック単位。既定の **generation backend**（nixprofile）が layat 自身の nix profile（`nix-env --profile <dir>` 式）に乗せて管理する（→ ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30, ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9）。nixprofile はコミット（`--set`）と切替（`--switch-generation`。rollback もこれを使う）を `nix-env --profile <dir>` で行い、一覧は nix-env を経由せず profileDir の世代リンク（`profile-<N>-link`）を読み取り専用で走査する。間引き（`--delete-generations`）と store GC（`nix-collect-garbage`）はユーザーが nix コマンドで行う（→ ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9）。`rollback` は profile dir ≠ 配置先のため再配置が必須で、古くなった配置の除去は baseline=離れる世代・ポインタ移動は最後（→ ADR-d97154cd-a2e5-4853-a682-800ff9435c89）。
 _Avoid_: 「stateless スクリプト」前提の語り（初期方針からは覆っている）、`nix profile`（新CLI: `list` / `wipe-history` / `rollback`）で管理すること（profile-manifest を要求し `nix-env --set` 製 profile では動かない・→ ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9）
 
 **store マニフェスト (store manifest)**:
