@@ -7,8 +7,6 @@ origin: "ADR-0014 §3a を書き直した"
 justifies:
   - "REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336"
   - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
-supersedes:
-  - "ADR-0014"
 references:
   - "ADR-c494e86e-ceb9-4380-b983-4e09553b01d6"
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"

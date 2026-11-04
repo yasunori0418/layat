@@ -12,9 +12,6 @@ justifies:
   - "REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26"
   - "DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68"
   - "REQ-0e341430-17f0-498b-9439-65491652163a"
-supersedes:
-  - "ADR-0046"
-  - "ADR-0047"
 references:
   - "ADR-88231ffc-4836-4252-be34-894944fd28c3"
   - "ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d"

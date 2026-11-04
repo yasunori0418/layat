@@ -33,10 +33,9 @@ item を新設し、概要文書にはリンクを 1 行足すに留める。
 | `docs/test/<対象>/` | test_case | `CASE` | test_condition |
 | `docs/adr/` | adr | `ADR` | なし（分離型）|
 | `docs/sara-adr/` | sara_adr | `SDR` | なし（分離型）|
-| `docs/adr/` | legacy_adr | `ADR` | なし（分離型・凍結）|
 
 型・関係・フィールドの定義は `docs/model.yaml` が持つ。親を持たない根は **solution と
-ADR の 3 型（adr / sara_adr / legacy_adr）のみ**で、他の型は upstream relation を 1 本以上張る
+ADR の 2 型（adr / sara_adr）のみ**で、他の型は upstream relation を 1 本以上張る
 （張り忘れは `sara check` の orphan warning で出る）。
 検出した欠陥（defect）は型として持たず、GitHub Issues（`bug` label）で管理する
 （→ SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed。運用規約は `docs/agents/issue-tracker.md` の「Defect issues」節）。
@@ -110,7 +109,7 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
   ```
 
 - ADR も UUID で採番する（`ADR-<フル UUIDv4>`、sara 品質管理機構の決定は `SDR-<フル UUIDv4>`）。
-  連番の `ADR-NNNN` は凍結した `legacy_adr` 型で、新規には起こさない（`sara-new` が拒否する）。
+  連番の `ADR-NNNN` は削除済みで、新 ADR の `origin` と「起点:」行に来歴として残る。
   ADR の規則は `docs/agents/adr-rules.md`、layat への当てはめは `docs/adr/README.md`
 - `specification` フィールドを持つ型（requirement / quality / test_plan）は**英語で書く**。
   sara が RFC2119 キーワード（MUST / SHALL / SHOULD …）の存在をハードコードで検証するため。

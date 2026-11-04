@@ -9,8 +9,6 @@ issues:
 origin: "epic #172 の grilling セッション（2026-07-12）で確定。ADR-0047 §5 を書き直した"
 justifies:
   - "REQ-8409db86-a1ba-4053-86dc-588985cc1ca7"
-supersedes:
-  - "ADR-0047"
 references:
   - "ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b"
 ---

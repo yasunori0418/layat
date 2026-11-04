@@ -8,10 +8,6 @@ issues:
 origin: "Issue #3（CLI 化）と、ドキュメント計画段階の最終レビュー（grill）。ADR-0007 §3・ADR-0015 §1 を書き直した"
 justifies:
   - "REQ-14f0aec9-abae-4621-82f3-40536a1ad904"
-supersedes:
-  - "ADR-0007"
-  - "ADR-0015"
-  - "ADR-0018"
 ---
 # ADR-88231ffc-4836-4252-be34-894944fd28c3: CLI が一次 UX で devShell に pin 版を同梱する
 

@@ -10,8 +10,6 @@ origin: "epic #172 の grilling セッション（2026-07-12）で確定。ADR-0
 justifies:
   - "REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26"
   - "REQ-053cfed2-265a-4997-a27b-97b0bed10d8a"
-supersedes:
-  - "ADR-0047"
 references:
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
   - "ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b"

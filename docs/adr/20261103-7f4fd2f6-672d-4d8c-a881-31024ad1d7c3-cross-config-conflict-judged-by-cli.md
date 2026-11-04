@@ -8,8 +8,6 @@ issues:
 origin: "ADR-0038 §2a（データ算出は nix・検出判定は Go CLI・engine は不変）を書き直した"
 justifies:
   - "REQ-535b811d-dfc5-4eac-92db-737e70eb5415"
-supersedes:
-  - "ADR-0038"
 references:
   - "ADR-75df92ae-0694-452b-8fb4-350994e31b25"
   - "ADR-28605860-770e-41df-95dd-7dc05b20497a"

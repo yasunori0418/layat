@@ -8,8 +8,6 @@ issues:
 origin: "ADR-0039 §1（build 段階を worker pool で並列化する）を書き直した"
 justifies:
   - "REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d"
-supersedes:
-  - "ADR-0039"
 references:
   - "ADR-75df92ae-0694-452b-8fb4-350994e31b25"
   - "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"

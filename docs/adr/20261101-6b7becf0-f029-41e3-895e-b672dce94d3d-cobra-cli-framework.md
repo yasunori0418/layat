@@ -8,8 +8,6 @@ issues:
 origin: "engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §2 を書き直した"
 justifies:
   - "REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0"
-supersedes:
-  - "ADR-0011"
 references:
   - "ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e"
   - "ADR-f85f1afd-9b87-4f7a-922e-97c62554f198"

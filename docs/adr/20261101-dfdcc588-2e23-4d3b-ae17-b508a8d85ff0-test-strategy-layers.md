@@ -14,9 +14,6 @@ justifies:
   - "DSG-901351ea-f01b-4bb0-a470-b890d92c980b"
   - "DSG-2947b4a5-ba5c-4218-8478-624cba156116"
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
-supersedes:
-  - "ADR-0006"
-  - "ADR-0012"
 ---
 # ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0: テストを sandbox 可否で flake check と E2E に分ける
 

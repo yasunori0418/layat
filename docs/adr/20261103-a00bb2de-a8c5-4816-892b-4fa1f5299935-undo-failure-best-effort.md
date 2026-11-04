@@ -9,8 +9,6 @@ issues:
 origin: "旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0044 §3 を書き直した"
 justifies:
   - "REQ-9fca28c9-d3b1-4ad7-8f24-13b2ec7aeab2"
-supersedes:
-  - "ADR-0044"
 references:
   - "ADR-56325270-20bb-4959-8498-e3223c35e24b"
   - "ADR-74423bb8-1453-4689-a25e-30bf46536afc"

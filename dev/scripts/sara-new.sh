@@ -3,7 +3,7 @@
 #
 #   sara-new <型> <slug> <配置ディレクトリ> [-- <sara init のオプション>...]
 #
-# ID は sara init が採番する。凍結した legacy_adr は対象外。
+# ID は sara init が採番する。
 
 set -euo pipefail
 
@@ -11,7 +11,7 @@ usage() {
   cat >&2 <<'EOF'
 usage: sara-new <type> <slug> <dir> [-- <sara init options>...]
 
-  type   sara の型名（requirement / test_case / adr / sara_adr …）。legacy_adr は対象外
+  type   sara の型名（requirement / test_case / adr / sara_adr …）
   slug   ファイル名に使う短い識別子（英小文字・数字・ハイフン）
   dir    配置ディレクトリ（カレントからの相対。無ければ作る）
   --     以降を sara init へそのまま渡す（--name / --specification …）
@@ -24,8 +24,6 @@ usage: sara-new <type> <slug> <dir> [-- <sara init options>...]
 出力（機械可読の 2 行）:
   id:   採番された正式 ID
   file: 起票したファイルのパス
-
-注: 連番の legacy_adr は凍結しており新規に起票しない
 EOF
 }
 
@@ -55,14 +53,6 @@ if [ "$#" -gt 0 ]; then
   fi
   shift
 fi
-
-# 連番の legacy_adr は凍結しているため拒否する。
-case "$type" in
-  legacy_adr | legacy-adr)
-    echo "sara-new: legacy_adr は凍結しており新規に起票しない（adr を使う）" >&2
-    exit 2
-    ;;
-esac
 
 # slug はファイル名へそのまま入るため、起票の前に文字種を検査する。
 case "$slug" in

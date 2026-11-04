@@ -9,9 +9,6 @@ origin: "Issue #140（epic #129: system mode の実装）の計画（2026-10-18�
 justifies:
   - "REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4"
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
-supersedes:
-  - "ADR-0062"
-  - "ADR-0066"
 references:
   - "ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c"
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"

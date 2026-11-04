@@ -7,11 +7,6 @@ origin: "engine の設計と実行時セマンティクスの確定（2026-06-11
 justifies:
   - "REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461"
   - "REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4"
-supersedes:
-  - "ADR-0006"
-  - "ADR-0013"
-  - "ADR-0021"
-  - "ADR-0022"
 references:
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
   - "ADR-419914ba-9896-4dd1-853b-fb514fcb9f38"

@@ -24,8 +24,7 @@ sara-new risk lock-ordering docs/risks -- \
   `sara init <型> --help` で確認する。requirement / quality / test_plan の
   `--specification` / `--specification-ja`、test_case の `--target` など、モデルの必須
   フィールドはここで渡す。
-- ADR は `adr` / `sara_adr` で起票する（`--status` を渡す）。連番の **`legacy_adr` は凍結しており
-  拒否される**（exit 2）。
+- ADR は `adr` / `sara_adr` で起票する（`--status` を渡す）。
 - 生成後に本文（`# <フル ID>: <name>` の見出し + 散文）を書き足し、`sara check` で green
   を確認する。
 - 既存 item のフィールド・relation の変更は `sara edit <フル ID> --<フィールド> ...`

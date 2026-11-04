@@ -7,9 +7,6 @@ origin: "ADR-0031 §1・§4 を書き直した"
 justifies:
   - "REQ-8ef34101-8150-4124-92d5-94fabe6b5d90"
   - "REQ-0a123b89-0399-4f76-b988-56a5f7e0becf"
-supersedes:
-  - "ADR-0026"
-  - "ADR-0031"
 references:
   - "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"
   - "ADR-9e328362-2e90-441a-8eca-40081ce71b1b"

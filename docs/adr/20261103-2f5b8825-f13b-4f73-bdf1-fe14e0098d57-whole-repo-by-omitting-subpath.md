@@ -6,8 +6,6 @@ status: 採用
 origin: "「リポジトリ全体を示す文字列として \".\" 以外の表現は無いか」という問いの設計検討。ADR-0008 §3 と §4 を書き直した"
 justifies:
   - "REQ-27b75fe6-6c36-44a8-8cd3-5cc98043022a"
-supersedes:
-  - "ADR-0008"
 references:
   - "ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab"
   - "ADR-12ad7852-e689-44d7-b9fe-0667effb3d13"

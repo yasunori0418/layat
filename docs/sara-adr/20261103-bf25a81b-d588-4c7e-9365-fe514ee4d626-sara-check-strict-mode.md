@@ -10,9 +10,6 @@ issues:
 origin: "epic #203 の移行完了（Batch 2・2026-08-08）を受けた残論点判断（Issue #255）で確定。ADR-0050 §1・§3 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
-supersedes:
-  - "ADR-0049"
-  - "ADR-0050"
 references:
   - "SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb"
   - "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"

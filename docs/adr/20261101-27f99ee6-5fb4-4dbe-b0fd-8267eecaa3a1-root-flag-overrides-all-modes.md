@@ -6,8 +6,6 @@ status: 採用
 origin: "ADR-0017 §2 を書き直した"
 justifies:
   - "REQ-61c05e09-0bde-4f74-9a96-03185f9df606"
-supersedes:
-  - "ADR-0017"
 references:
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
 ---

@@ -8,8 +8,6 @@ justifies:
   - "REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9"
   - "REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe"
   - "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
-supersedes:
-  - "ADR-0002"
 references:
   - "ADR-acc31876-df36-485e-b356-92ae60e26db7"
 ---

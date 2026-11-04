@@ -32,7 +32,6 @@ sara（Requirements Knowledge Graph CLI）で管理する `docs/` の読み書�
 | infrastructure | `INF` | `docs/infrastructure/` | quality / design（`satisfies`）|
 | adr | `ADR` | `docs/adr/` | なし（分離型。`justifies` で 1 本以上接続）|
 | sara_adr | `SDR` | `docs/sara-adr/` | なし（adr と同じ。sara 品質管理機構の決定）|
-| legacy_adr | `ADR` | `docs/adr/` | なし（連番で凍結。新規に起こさない）|
 | risk | `RISK` | `docs/risks/` | requirement / design（`threatens`）|
 | test_condition | `TC` | `docs/test/…` | risk（`mitigates`）|
 | test_case | `CASE` | `docs/test/…` | test_condition（`covers`）|
@@ -41,7 +40,7 @@ sara（Requirements Knowledge Graph CLI）で管理する `docs/` の読み書�
 切り方）と、CASE の `target`（テスト資産の正準表記）の規則はプロジェクト規約
 （CLAUDE.md 等）に委ねる。
 
-親を持たない根は solution と ADR の 3 型（adr / sara_adr / legacy_adr）のみ。他の型は upstream relation を 1 本以上張る
+親を持たない根は solution と ADR の 2 型（adr / sara_adr）のみ。他の型は upstream relation を 1 本以上張る
 （張り忘れは strict check の orphan error になる）。frontmatter は手書きせず
 **`sara-new` で生成する**（`sara init` を包んで採番とファイル名規約の適用まで行う。
 relation・型別フィールドはオプションで渡す。手順は
@@ -78,7 +77,7 @@ relation は**起こした側（下流）の frontmatter に宣言する**（`sa
   （並列レーンでの採番衝突を構造的に避けるため）。手順は
   [references/sara-cli.md](references/sara-cli.md)。
 - ADR も UUID で採番する（`ADR-<フル UUIDv4>` / `SDR-<フル UUIDv4>`）。連番の `ADR-NNNN` は
-  凍結した `legacy_adr` 型で、`sara-new` は拒否する。ADR の規則（粒度・`supersedes` と `廃止`・
+  削除済みで、新 ADR の `origin` と「起点:」行に来歴として残る。ADR の規則（粒度・`supersedes` と `廃止`・
   `justifies` の選定基準）は `docs/agents/adr-rules.md`。
 
 ## risk の評価と優先度の導出

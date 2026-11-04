@@ -7,9 +7,6 @@ origin: "次期マイルストーン追加計画の grilling（2026-07-04）と 
 justifies:
   - "REQ-08c8f639-790c-4970-a954-c9567538cf9b"
   - "REQ-a77181dd-a59c-40bb-855e-3430ad970eb6"
-supersedes:
-  - "ADR-0040"
-  - "ADR-0059"
 references:
   - "ADR-00cc3497-654f-420a-928f-99f201e7efb0"
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"

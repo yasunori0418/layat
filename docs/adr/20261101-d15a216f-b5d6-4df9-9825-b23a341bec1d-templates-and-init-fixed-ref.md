@@ -10,10 +10,6 @@ justifies:
   - "REQ-6be1cbf1-6c6e-498b-8acb-7f4b80037169"
   - "REQ-cbd61281-64b0-4487-a4b7-ce76e70dc4f9"
   - "DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58"
-supersedes:
-  - "ADR-0006"
-  - "ADR-0007"
-  - "ADR-0025"
 ---
 # ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d: templates と layat init は固定 ref で導入する
 

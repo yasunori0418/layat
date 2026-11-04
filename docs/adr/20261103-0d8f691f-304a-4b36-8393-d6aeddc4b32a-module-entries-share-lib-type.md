@@ -6,8 +6,6 @@ status: 採用
 origin: "ADR-0014 §4 を書き直した"
 justifies:
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
-supersedes:
-  - "ADR-0014"
 references:
   - "ADR-c494e86e-ceb9-4380-b983-4e09553b01d6"
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"

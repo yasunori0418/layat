@@ -6,8 +6,6 @@ status: 採用
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。参照実装: https://github.com/yasunori0418/cryoflow のリリース自動化（bump workflow と release workflow）。ADR-0042 §3 を書き直した"
 justifies:
   - "INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43"
-supersedes:
-  - "ADR-0042"
 references:
   - "ADR-9ab223eb-99dc-4aa2-a671-c07f75f7ff3c"
   - "ADR-0dd4036d-594b-4f36-a509-e5498b231cf7"

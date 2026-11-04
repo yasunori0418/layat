@@ -8,8 +8,6 @@ issues:
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §2c を書き直した"
 justifies:
   - "DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814"
-supersedes:
-  - "ADR-0057"
 references:
   - "ADR-30f105c7-85a8-4fab-9dea-3277d932b524"
   - "ADR-419914ba-9896-4dd1-853b-fb514fcb9f38"

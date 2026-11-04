@@ -7,8 +7,6 @@ origin: "「リポジトリ全体を示す文字列として \".\" 以外の表�
 justifies:
   - "REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51"
   - "REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336"
-supersedes:
-  - "ADR-0008"
 references:
   - "ADR-12ad7852-e689-44d7-b9fe-0667effb3d13"
   - "ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a"

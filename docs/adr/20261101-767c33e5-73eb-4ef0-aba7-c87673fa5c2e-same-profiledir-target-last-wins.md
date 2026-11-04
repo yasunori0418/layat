@@ -8,8 +8,6 @@ issues:
 origin: "ドキュメント計画段階のレビュー（2026-06-13）で確定。ADR-0013 §2 を書き直した"
 justifies:
   - "REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9"
-supersedes:
-  - "ADR-0013"
 references:
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
   - "ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988"

@@ -6,8 +6,6 @@ status: 採用
 origin: "ADR-0018 §3c を書き直した"
 justifies:
   - "REQ-196ddabf-6569-4303-942e-050872972501"
-supersedes:
-  - "ADR-0018"
 references:
   - "ADR-baf6346d-783b-4607-ab1c-c2c93c09e064"
 ---

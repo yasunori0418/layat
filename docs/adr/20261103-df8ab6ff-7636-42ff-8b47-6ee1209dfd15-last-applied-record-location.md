@@ -10,8 +10,6 @@ origin: "Issue #406（epic: 世代バックエンドのインターフェイス�
 justifies:
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
   - "DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5"
-supersedes:
-  - "ADR-0058"
 references:
   - "ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988"
   - "ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d"

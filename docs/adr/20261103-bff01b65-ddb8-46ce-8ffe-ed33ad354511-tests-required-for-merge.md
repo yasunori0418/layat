@@ -6,8 +6,6 @@ status: 採用
 origin: "ADR-0030 §1a（main の ruleset で required status check を課す）を書き直した"
 justifies:
   - "INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6"
-supersedes:
-  - "ADR-0030"
 ---
 # ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511: main へのマージにテストの成功を必須にする
 

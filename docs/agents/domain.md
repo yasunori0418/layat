@@ -36,7 +36,6 @@ don't skim it as an index.
 | `docs/test/<subject>/` | test_case | `CASE` | A concrete case under a condition — **not started** |
 | `docs/adr/` | adr | `ADR` | Decisions, linked by `justifies` |
 | `docs/sara-adr/` | sara_adr | `SDR` | Decisions on the sara quality-management machinery |
-| `docs/adr/` | legacy_adr | `ADR` | Frozen decisions numbered sequentially; none are added |
 
 The three types marked **not started** are defined in `docs/model.yaml` but have neither items nor
 directories yet; they get created when the test process is taken up, at which point the granularity
@@ -46,7 +45,7 @@ The Holds column above describes each type as the graph currently stands, not th
 parents `docs/model.yaml` permits: `infrastructure` may hang off a `design` as well as a
 `quality`, though every `INF` item satisfies a `QA` today.
 
-Every type but `solution` and the three ADR types hangs off at least one upstream relation, so a missing link
+Every type but `solution` and the two ADR types hangs off at least one upstream relation, so a missing link
 shows up as an orphan warning, with no exceptions. Defects found in the product are not graph
 items: they live in GitHub Issues under the `bug` label (→ SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed; conventions in
 `docs/agents/issue-tracker.md`, "Defect issues").
@@ -102,7 +101,7 @@ This repo (single-context, with the item graph under `docs/`):
     ├── infrastructure/                ← INF
     ├── risks/                         ← RISK (not started; no directory yet)
     ├── test/<subject>/                ← TC / CASE / D (not started; no directory yet)
-    ├── adr/                           ← ADR (legacy_adr keeps its frozen sequential IDs)
+    ├── adr/                           ← ADR
     └── sara-adr/                      ← SDR
 ```
 

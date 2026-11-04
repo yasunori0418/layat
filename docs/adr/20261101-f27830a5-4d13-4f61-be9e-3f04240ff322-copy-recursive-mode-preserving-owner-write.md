@@ -6,9 +6,6 @@ status: 採用
 origin: "ADR-0011 §7（再帰コピー）と ADR-0016 §1 を書き直した"
 justifies:
   - "REQ-84e3c717-adf5-4ff3-b0db-d039b82ef19c"
-supersedes:
-  - "ADR-0011"
-  - "ADR-0016"
 ---
 # ADR-f27830a5-4d13-4f61-be9e-3f04240ff322: copy は再帰コピーで mode を保存し owner-write にする
 

@@ -6,8 +6,6 @@ status: 採用
 origin: "ADR-0004 §a を書き直した"
 justifies:
   - "REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66"
-supersedes:
-  - "ADR-0004"
 references:
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
   - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"

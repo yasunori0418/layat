@@ -10,11 +10,6 @@ justifies:
   - "REQ-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f"
   - "REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb"
   - "REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336"
-supersedes:
-  - "ADR-0006"
-  - "ADR-0013"
-  - "ADR-0015"
-  - "ADR-0022"
 references:
   - "ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0"
   - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"

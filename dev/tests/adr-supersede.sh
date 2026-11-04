@@ -37,7 +37,7 @@ mapfile -t records < <(
       val = $0; sub(/^[A-Za-z_]+:/, "", val); val = unquote(val)
       if (key == "id") id = val
       else if (key == "status") status = val
-      else if (key == "type") is_adr = (val == "adr" || val == "legacy_adr" || val == "sara_adr")
+      else if (key == "type") is_adr = (val == "adr" || val == "sara_adr")
       next
     }
     key == "supersedes" && /^[[:space:]]+-[[:space:]]/ { v = $0; sub(/^[[:space:]]+-/, "", v); sup[++n] = unquote(v) }

@@ -8,8 +8,6 @@ issues:
 origin: "Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0055 §8 を書き直した"
 justifies:
   - "REQ-4ffda99a-7062-4c00-915f-70b525cb215b"
-supersedes:
-  - "ADR-0055"
 references:
   - "ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246"
   - "ADR-cd139de9-06a4-49a2-8bea-4801c8acc518"

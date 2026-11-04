@@ -6,8 +6,6 @@ status: 不採用
 origin: "ADR-0002 §決定で棄却された提案（実装前の spec にあった --only）を書き直した"
 justifies:
   - "REQ-4fc98fa6-fd5f-4f25-8b10-60755bf49bd2"
-supersedes:
-  - "ADR-0002"
 ---
 # ADR-cbac86c1-d774-4cf3-abe6-ca8a7c2f1995: 一部の entry だけを適用する --only を提供する
 

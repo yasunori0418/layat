@@ -9,8 +9,6 @@ origin: "ADR-0038 §1（--all で選択した config 集合内の正規化後 ta
 justifies:
   - "REQ-38506419-c23d-4fce-b167-30715ce6a69d"
   - "REQ-5c6b07da-3d06-414d-8770-4f438234b322"
-supersedes:
-  - "ADR-0038"
 references:
   - "ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d"
   - "ADR-28605860-770e-41df-95dd-7dc05b20497a"

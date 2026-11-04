@@ -8,8 +8,6 @@ issues:
 origin: "ADR-0020 §2（layat reset で配置物を無い状態へ戻す）を書き直した"
 justifies:
   - "REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6"
-supersedes:
-  - "ADR-0020"
 references:
   - "ADR-c4ad9987-850e-4834-bbea-d8de3b073548"
   - "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
