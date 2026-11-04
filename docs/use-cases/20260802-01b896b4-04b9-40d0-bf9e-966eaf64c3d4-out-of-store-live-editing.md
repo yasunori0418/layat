@@ -27,7 +27,7 @@ symlink であり、再現性を担保する（→ ADR-73c24620-d2c0-4249-97fa-1
 | `mkOutOfStoreSymlink "/abs/path"`（明示）| ファイル編集と同時（ライブ）| 開発中の手元 dotfiles |
 
 > **上表は分割時点の `docs/concept.md`（原文）からの写し**。use_case は規範を持たないため、
-> store link が既定で out-of-store が marker による opt-in であることの規範は
+> store link が既定であり、out-of-store が marker による opt-in であることの規範は
 > REQ-99ca5381-6c53-426c-b145-7b4297c53868 にある。
 
 指す先の内容は設計上ライブであり、版管理されるのはリンク先のマッピングのみ。世代管理は

@@ -30,21 +30,21 @@ satisfies:
 flake を対象にするため到達しない。CI の明示ステップとして固定する。
 
 `sara` ジョブは `test.yml` に同居するが、CI パイプライン（INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27）の変更検出ジョブは
-**再利用しない**。あちらの filter は nix / Go のソースを対象にするのに対し、この検査が最も効くのは
+**再利用しない**。あちらの filter は nix / Go のソースを対象にするのに対し、この確認が最も役立つのは
 docs のみの PR だからで、job ローカルの filter を別に置く。
 
-filter が拾うのは 3 種類。検査対象の文書とその設定（`docs/**` / `sara.toml`）、この検査自身の
+filter が対象にするのは 3 種類。確認の対象の文書とその設定（`docs/**` / `sara.toml`）、この確認自身の
 実行環境を決めるもの（sara 本体と dev ツールを供給する dev flake・その lock・契約テストの実装＝
 `dev/tests/**` とそれが依存する `dev/scripts/**`・この workflow 自身）、そして**契約テストが
 入力に取るテスト資産そのもの**（Go のテストファイル・`tests/**`・`flake.nix` の checks 定義）。
-3 つ目は `test-doc-map.sh` が「テスト資産 ⇔ CASE の 1:1」を検査する以上避けられない — テスト
+3 つ目は `test-doc-map.sh` が「テスト資産 ⇔ CASE の 1:1」を確認する以上避けられない — テスト
 ファイルを追加・改名しても CASE を更新しなければジョブごとスキップされ、検出したいはずの
 乖離がそのままマージされてしまう（→ Issue #304）。
 CI 用の devShell も sara 専用のものへ分ける。
 
-先行して試作された grep / awk による ID 突合は、参照先 ID の実在を検証しないという穴を抱えていた
+先行して試作された grep / awk による ID の比較は、参照先 ID の実在を検証しないという不足を抱えていた
 （存在しない `TC-999` を書いても検出されずカバー率に計上される）。sara の broken reference 検出が
-この穴を塞ぐ。
+この不足を補う。
 
 ## ID 規約
 
@@ -58,16 +58,16 @@ ADR も同じ形式で採番する（`ADR-<フル UUIDv4>`・`SDR-<フル UUIDv4
 
 ## 検証の強度
 
-**`strict_mode = true` の非必須チェック**。検査自体は strict で、orphan を含む全 warning が
+**`strict_mode = true` の非必須の確認**。確認自体は strict で、接続漏れを含む全 warning が
 error となり `sara check` は exit 1 を返す（epic #203 の移行完了・warning 0 到達を受けて有効化
 → SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626）。合格条件は「warning 0 件」に一本化されている。
 
-一方でマージゲート（INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6）の required status check には登録せず、DoD にも入れない。
+一方でマージの条件（INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6）の required status check には登録せず、DoD にも入れない。
 これは移行中の暫定措置ではなく「**検出は機械・判断は人**」という分担を保つための恒久判断で、
-接続漏れの修正が自明でないケース（item 新設を伴う等）を CI が赤いままレビューで扱える余地を
+張り忘れの修正が自明でないケース（item 新設を伴う等）を CI が赤いままレビューで扱える余地を
 残す。再検討条件は廃止した旧 ADR が持っていた（現在の決定は → SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef）。
 
-閾値ゲートを持たない点は CI パイプライン（INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27）の `go-coverage` ジョブと同方針で、
+閾値による条件を持たない点は CI パイプライン（INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27）の `go-coverage` ジョブと同方針で、
 他 PR とのマージ順依存を避けるためでもある。
 
 ## 出典

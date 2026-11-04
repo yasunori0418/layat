@@ -24,7 +24,7 @@ references:
 
 テスト計画や品質方針にあたる文書は、受け皿の型が無いため `requirement` として置かれていた。
 `requirement` の親は use_case だが、これらの文書は「ユーザーがどう使うか」から導かれないので親を持てず、
-orphan のまま残っていた。
+接続漏れのまま残っていた。
 
 テスト系の型（risk / test_condition / test_case）は ISTQB のテスト分析以降に対応する。テスト計画に
 対応する型は空いていた。

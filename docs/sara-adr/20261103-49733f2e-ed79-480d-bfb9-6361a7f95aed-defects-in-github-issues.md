@@ -28,7 +28,7 @@ references:
 グラフには欠陥を表す defect 型があった。defect は自分から upstream relation を張れず、親側の test_case が
 下流向きの `reveals` で接続する唯一の型だった。そのため次の例外を抱えていた。
 
-- defect item は作った時点で必ず orphan になる
+- defect item は作った時点で必ず接続漏れになる
 - `sara check` が strict（SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626）なので、defect を起こすと即座に
   exit 1 になる
 - 型の関係図を機械生成するとき、上流の辺だけを描く規約から `reveals` だけが外れる
@@ -48,14 +48,14 @@ docs のグラフは、要求・設計からリスクとテストの観点を前
 （あるべき姿）である。欠陥は規範ではなく、起きた出来事の記録になる。出来事の記録・状態の遷移・修正作業の
 追跡は issue tracker の領分である。
 
-defect の例外はこの食い違いの症状だった。型を外すと「張り忘れ = orphan warning」が例外なく全型で成り立ち
+defect の例外はこの食い違いの症状だった。型を外すと「張り忘れ = 接続漏れの warning」が例外なく全型で成り立ち
 （SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb）、strict とも無条件に両立する。
 
 ## 棄却した代替案
 
 ### defect に `is_revealed_by` を足して上流へ張れるようにする
 
-orphan と strict の衝突は解けるが、出来事の記録をグラフに持ち込む食い違いは残る。issue との二重管理も
+接続漏れと strict の衝突は解けるが、出来事の記録をグラフに持ち込む食い違いは残る。issue との二重管理も
 解消しない。
 
 ### issue を正として、defect item を接続用のスタブとして残す

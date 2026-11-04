@@ -9,8 +9,8 @@ refines:
 
 ## 使われ方
 
-既に home-manager / NixOS / nix-darwin で環境を管理しているユーザーが、layat を standalone
-CLI としてではなくモジュールとして組み込み、host の activation（`home-manager switch` /
+既に home-manager / NixOS / nix-darwin で環境を管理しているユーザーが、layat を CLI 単体
+としてではなくモジュールとして組み込み、host の activation（`home-manager switch` /
 `nixos-rebuild switch` 等）に layat の配置を載せる。flake-parts を使っているプロジェクト向け
 には `perSystem.layat` を `flake.layat.<system>` へ transpose する flakeModule も提供する
 （→ ADR-e6820da0-fce3-4aef-8b79-d53abbca6051）。
@@ -27,7 +27,7 @@ layat コア（配置エンジン）= 振る舞いの単一の源
 ```
 
 モジュール経由でも役割ごとに名前つき config を分けて独立した profile を取れる。ただし
-profile は**内部機構**（stale 追跡）に留め、ユーザー向け rollback は host に一本化する
+profile は**内部機構**（古くなった配置の追跡）に留め、ユーザー向け rollback は host に一本化する
 （host rollback は旧 config の再 activate で layat が自動追従する）。
 
 ## この使われ方が要求すること
@@ -35,12 +35,12 @@ profile は**内部機構**（stale 追跡）に留め、ユーザー向け roll
 - モジュールが root と activation タイミングを供給して engine をキックするだけの配線であり、
   ネイティブ機構へ翻訳しないこと
 - 全モジュールが共通オプションの同一集合を公開すること
-- モジュール経路では entrypoint 発見・eval を経ず、ビルド済み link-farm を engine へ直接
+- モジュールで使うときは entrypoint 発見・eval を経ず、ビルド済み link-farm を engine へ直接
   適用すること
 - 配置に失敗したとき host の switch が止まること
 - モジュール経由でも名前つき config ごとに独立した profile を取れること
 - ユーザー向け rollback を host へ一本化し、layat profile は前進のみで追従すること
-- flake-parts 経路が直書きと同一の derivation を生み、CLI のアドレッシングを変えないこと
+- flake-parts を使う場面でも直書きと同一の derivation が生まれ、CLI のアドレッシングが変わらないこと
 
 ## 出典
 
@@ -49,11 +49,11 @@ profile は**内部機構**（stale 追跡）に留め、ユーザー向け roll
 関する記述。
 
 同じ「設計の哲学」の「home-manager に依存しない」節は本 item の出典ではない。同節が述べるのは
-HM 不在の環境でも同じ設定定義で動くことであり、それを体現するのは統合ではなく standalone の
+HM 不在の環境でも同じ設定定義で動くことであり、それを体現するのは統合ではなく CLI 単体の
 使われ方（UC-f2436d68-91ff-4c48-b1df-47acefe4f464 / UC-19a90989-0ae3-438f-8a75-4e1e2637f81c）。本 item が引き受けるのは、そこから派生する
 「コアロジックはモジュールシステムに依存しない純粋関数で、統合層は薄いラッパーに過ぎない」
 という統合層側の含意に留まる。
 
 Issue #211 の素材リストにはこの項目が無いが、モジュール統合は concept.md が繰り返し述べる
-使われ方であり、統合層の requirement 群がこの use_case を持たないと orphan になるため
+使われ方であり、統合層の `requirement` 群がこの use_case を持たないと接続漏れになるため
 item 化した（2026-08-02 確定）。

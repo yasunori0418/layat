@@ -19,7 +19,7 @@ justifies:
 ## 背景
 
 ADR は GitHub の Issue や、決定の起点になったセッションを参照する。これらは sara の item ではないので、
-relation では表せない。relation の参照先は実在する item でなければならず、実在しない ID は壊れた
+relation では表せない。relation の参照先は実在する item でなければならず、実在しない ID は破損した
 参照として検出される。
 
 ## 決定
@@ -29,7 +29,7 @@ item にできない外部参照は text のフィールドに書く。ADR で�
 
 ## 根拠
 
-外部参照を relation から外せば、壊れた参照の検査が item どうしの参照だけを見るようになり、誤検出が
+外部参照を relation から外せば、破損した参照の確認が item どうしの参照だけを見るようになり、誤検出が
 起きない。text として frontmatter に残すので、Issue 番号で ADR を探す手段も失われない。
 
 ## 棄却した代替案

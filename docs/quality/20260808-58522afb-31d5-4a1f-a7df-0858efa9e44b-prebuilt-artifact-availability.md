@@ -23,7 +23,7 @@ specification_ja: |
 
 layat は flake input として消費されるツールであり、消費側の CI やローカル環境が layat を使う
 たびにソースからビルドするのは実用上のコストになる。最新 main の成果物を公開キャッシュから
-引ける状態を保つ。
+取得できる状態を保つ。
 
 投入の契機を**リリースタグではなく main の変更**に置く点が要点になる。タグに紐づけると
 リリース間の main 変更がキャッシュされず、「flake input として最新 main を追う」という
@@ -32,8 +32,8 @@ layat は flake input として消費されるツールであり、消費側の 
 > **受益者は消費側だが、型は quality に置いた。** この norm を落として困るのはビルド時間を
 > 払う消費側であり、`docs/agents/sara-graph.md` の quality の signature test（落ちて気づくのは
 > contributor だけ）とは張力がある。それでも quality に置くのは、落としても **shipped artifact も
-> 検証も変わらない**（同一 derivation をキャッシュから引くか実ビルドするかの差でしかない）ため。
-> requirement の signature test「layat の使い方が変わるか」は成立せず、対応する use_case も無い。
+> 検証も変わらない**（同一 derivation をキャッシュから取得するか実ビルドするかの差でしかない）ため。
+> `requirement` の signature test「layat の使い方が変わるか」は成立せず、対応する use_case も無い。
 
 ## 出典
 

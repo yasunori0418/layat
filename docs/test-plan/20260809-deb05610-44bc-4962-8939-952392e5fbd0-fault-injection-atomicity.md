@@ -49,7 +49,7 @@ specification_ja: |
 ## 仕様
 
 原子性の検証は故障注入で行い、故障はエラーを返す double ではなく実 FS の条件で誘発する。
-OS が実際に返すエラー値（EACCES / ENOTDIR / EISDIR / EINVAL）を経路に流すため。
+OS が実際に返すエラー値（EACCES / ENOTDIR / EISDIR / EINVAL）を処理に流すため。
 
 覆う不変条件は 4 つ。
 
@@ -69,7 +69,7 @@ OS が実際に返すエラー値（EACCES / ENOTDIR / EISDIR / EINVAL）を経�
   読ませて EISDIR、非 symlink を readlink して EINVAL
 
 権限による誘発は root で迂回されるため、`os.Geteuid() == 0` を検出して skip する（空虚に
-成功させない）。CI が root で走る場合に被覆が消える範囲を狭めるため、root でも成立する手法を
+成功させない）。CI を root で実行する場合に被覆が消える範囲を狭めるため、root でも成立する手法を
 取れるところではそちらを採る。
 
 **並行実行に対する原子性**では、覆う点が 5 つある。保持されたロックを 2 つめの実行が取得
