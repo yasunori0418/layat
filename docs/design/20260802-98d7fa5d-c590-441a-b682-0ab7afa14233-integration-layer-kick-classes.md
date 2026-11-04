@@ -12,20 +12,20 @@ satisfies:
 
 ## 設計
 
-統合層は 5 つ（standalone CLI / home-manager / devShell / NixOS / nix-darwin）あるが、
+統合層は 5 つ（CLI 単体 / home-manager / devShell / NixOS / nix-darwin）あるが、
 **engine の起動方法は 2 クラスに束ねられる**。配置から世代コミットまでは両クラスで
-同一の engine 経路を通り、異なるのは link-farm をどう手に入れるかだけになる。
+同一の engine の処理を通り、異なるのは link-farm をどう手に入れるかだけになる。
 
 | クラス | 該当層 | link-farm の取得 |
 |---|---|---|
-| **entrypoint 駆動** | standalone CLI / devShell | ユーザーが `layat.<name>` を entrypoint に公開し、CLI が発見 → `nix eval`（rootKind 先取り）→ `nix build` |
+| **entrypoint 駆動** | CLI 単体 / devShell | ユーザーが `layat.<name>` を entrypoint に公開し、CLI が発見 → `nix eval`（rootKind 先取り）→ `nix build` |
 | **ビルド済み manifest** | home-manager / NixOS / nix-darwin | モジュール評価時に `mkManifest` でビルドした link-farm を、activation から `layat apply --manifest <link-farm>` へ渡す |
 
 層ごとのクラス割り当てと起動方法は次の通り。
 
 | 層 | クラス | 起動方法 |
 |---|---|---|
-| standalone（CLI）| entrypoint 駆動 | `layat apply <name>` を明示実行 |
+| CLI 単体 | entrypoint 駆動 | `layat apply <name>` を明示実行 |
 | devShell | entrypoint 駆動 | `shellHook` から `layat apply <name>` |
 | home-manager | ビルド済み manifest | `home.activation` から `apply --manifest` |
 | NixOS | ビルド済み manifest | `system.activationScripts.layat` から `apply --manifest` |
@@ -38,15 +38,15 @@ rollback を公開する層は REQ-05abce3e-9797-432b-b93f-37c55d09afde / REQ-84
 **2 クラスに束ねる**ことが実現手段になっているのは次の点。
 
 - **REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 が求める「各層は engine をキックするだけの配線」**を、層の数（5）ではなく
-  クラスの数（2）で担保できる。層を増やしても新しい engine 経路が増えず、
+  クラスの数（2）で担保できる。層を増やしても新しい engine の処理が増えず、
   既存 2 クラスのどちらかへ割り当てるだけで済む
 - **クラスの分かれ目が「entrypoint を持つか」に一致する**。モジュールの `layat.configs` は
   モジュール config 内にあり flake output に現れないため、entrypoint 発見では到達できない。
   そこで REQ-dec58330-6dad-47f7-8f56-2402764a89c7 の `apply --manifest` と REQ-8085f194-c903-4ecb-abd8-c719fe7b3292 の activation kick が
   必要になる。逆に entrypoint 駆動側（REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9 の devShell 含む）は
-  activation 内で `nix build` / `eval` を行わない制約が無いので発見経路を使える
+  activation 内で `nix build` / `eval` を行わない制約が無いので entrypoint 発見の処理を使える
 - **層ごとに違う要素がクラスの分岐に持ち込まれない**。root の供給元は engine から見れば
-  `manifest.json` の root kind に還元され、rollback の公開有無は profile の使い方の差に
+  `manifest.json` の root の種類に還元され、rollback の公開有無は profile の使い方の差に
   留まる。どちらも link-farm の取得方法とは無関係なので、2 クラスの外側で決まる
 
 ## 出典

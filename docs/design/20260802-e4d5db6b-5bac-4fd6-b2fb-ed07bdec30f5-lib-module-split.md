@@ -31,12 +31,12 @@ lib/
   必須の pkgs / entries / root と任意の identity）・REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281（返り値）・REQ-eb363122-385a-499c-a074-c95efb949d07
   （`mkOutOfStoreSymlink`）・REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66（root マーカー 3 種）が定める API 面が 1 ファイルを
   読めば分かる。`__internal` はここから露出するが安定 API ではなく、TP-403c55c7-d996-4951-8e6b-c3a7dddd387c が定める
-  テスト seam に限る
+  テスト用の差し替え点に限る
 - **`types.nix` を独立させる**のは、entries の型定義を `lib` と `modules/` の双方が
   共有するため。共有できる形にしておかないと、モジュール側が型を再定義して二重管理になる
   （`modules/common.nix` からの共有は DSG-aeb5e219-4784-4950-845c-35f9bab9179c）
 - **`manifest.nix` と `out-of-store.nix` を分ける**のは、前者が REQ-b232ec98-af3b-41f3-a050-29d417322002 の
-  `normalizeManifest`（検査・デフォルト適用・marker 変換）と derivation 組み立てを持つのに対し、
+  `normalizeManifest`（確認・デフォルト適用・marker 変換）と derivation 組み立てを持つのに対し、
   後者はマーカーという不活性なデータ構造を返すだけで、依存の向きが一方向（manifest → marker）に
   なるため
 - **`apply-command.nix` を分ける**のは、REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f の `mkApplyCommand` が

@@ -33,12 +33,12 @@ HM   NixOS  darwin  devShell  standalone(CLI)
 
 REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 が規範化しているのは CLI と engine の 2 層境界（`manifest.json`）までで、
 lib・`common.nix`・統合層を含めた積み方と依存の向きは設計側の判断になる。この積み方が
-実現手段として効くのは次の点。
+実現手段になるのは次の点。
 
 - **lib から engine への依存を持たせない**ことで、
   REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51 の「lib は配置ロジックを持たず nixpkgs.lib のみに依存する」が
-  依存の向きとして表現される。lib が engine を呼べると、配置ロジックが
-  lib 側へ漏れ出す経路が開いてしまう
+  依存の向きとして表現される。lib が engine を呼べると、配置ロジックを
+  lib 側から呼ぶ処理が書けてしまう
 - **統合層が lib・engine を呼ぶ側に立ち、逆に engine から統合層を参照しない**ことで、
   REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 の「モジュールは engine をキックするだけの配線」が守られる。
   engine が統合層を参照すると、engine が層ごとの事情を知ることになり、

@@ -27,26 +27,26 @@ satisfies:
 ```
 
 `origin` は prebuilt 生成器（`--manifest`）なら `{ "generator": "prebuilt" }` で、`entrypoint` を
-持たない。`identity` は配置した manifest の `identity` の写しで、manifest が持たなければ省く。reset / rollback が版 1 の記録を書き直す場合や、記録が無く profile から baseline を
+持たない。`identity` は配置した manifest の `identity` の写しで、manifest が持たなければ省く。reset / rollback が版 1 の記録を書き直す場合や、記録が無く profile から比較の基準を
 取って書き直す場合のように、出所が分からないときは `origin` 自体を省く。
 
 - **鍵の解決は `internal/paths`** が profileDir と同じ規則で行う（基底だけが
   `<state>/layat`）。backref `.root` も同じ階層に置く。
-- **読み書きは engine が持つ**。読みは壊れた JSON・必須フィールドの欠落や型違い・
+- **読み書きは engine が持つ**。読みは破損した JSON・必須フィールドの欠落や型違い・
   未知のフィールド・`recordVersion` が 1 でも 2 でもない記録を error にする（「記録なし」に
   倒さない）。`origin` がオブジェクトでも `null` でもなければ error で、`null` は `origin` 無しとして
   読む。`origin` の中の `generator` の欠落・各フィールドの型違い・未知のフィールドも error で、それ以外の
   値は読んだまま比較に使う。版 1 は `origin` 無しとして読む。書きは常に版 2。
   書きは temp + rename で atomic に行い、全 FS 操作の成功直後・世代 commit の前に呼ぶ。
-  記録ファイルは rename 前に 0644 にする（root kind で分けない。ディレクトリは無ければ 0755 で作り、umask に従う）。
+  記録ファイルは rename 前に 0644 にする（root の種類で分けない。ディレクトリは無ければ 0755 で作り、umask に従う）。
   削除は reset の全撤去時だけ。
-- **baseline の優先順位は 1 つの関数に集める**。apply（stale 除去と drift 修復）・rollback
-  （離れる世代 N）・reset（撤去対象）が同じ関数で baseline を得る。記録があれば記録の
+- **比較の基準の優先順位は 1 つの関数に集める**。apply（古くなった配置の除去と drift 修復）・rollback
+  （離れる世代 N）・reset（撤去対象）が同じ関数で比較の基準を得る。記録があれば記録の
   manifest、無ければ profile リンクの current、どちらも無ければ空。両方あって `linkFarm` が
   profile の指す先と食い違えば記録を採り warning を 1 行出す。generation skip の判定は新
   link-farm を profile の current と比べ、記録があればその `linkFarm` とも比べる。どちらかが
-  食い違うか profile が無ければ（記録だけがあっても）skip せず通常経路に入る。
-- **更新する経路**: apply の通常経路と generation skip 経路（失敗規則は同じ）・rollback
+  食い違うか profile が無ければ（記録だけがあっても）skip せず通常の処理に入る。
+- **更新する処理**: apply の通常の処理と generation skip の処理（失敗規則は同じ）・rollback
   （FS 収束後・ポインタ移動前に N-1 の manifest と link-farm。失敗は undo journal で巻き戻す）・
   reset（撤去対象のうち target が消えた entry だけを除いた manifest。FS 操作の途中失敗でも
   書き直し、書き直しの失敗は撤去の error と併せて返す。`linkFarm` は保持。記録が無ければ
@@ -54,7 +54,7 @@ satisfies:
   だけがあるときは flock の鍵である profileDir（roothash 系列は backref `.root` も）を apply
   と同じ手順で作ってから flock を取る）。`appliedAt` は書いた操作の時刻。rollback の target（N-1）は引き続き
   `profile-<N-1>-link` から読む。
-- **出所の比較**: apply（`--dryrun` と generation skip 経路を含む）は記録の `origin` と
+- **出所の比較**: apply（`--dryrun` と generation skip の処理を含む）は記録の `origin` と
   今回の origin が両方あって食い違えば、stderr に 1 行と
   subject 警告 `W_LAYAT_ORIGIN_MISMATCH`（`detail = {recorded, current}`）を出して続行する。
   両方に `identity` があれば `identity` だけで、どちらかに無ければ `generator` / `entrypoint` で比べる。

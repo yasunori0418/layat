@@ -24,13 +24,13 @@ LinkDest(e) = filepath.Rel(filepath.Dir(e.Target), filepath.Join(e.Src, e.Subpat
   変えない。
 - **相対リンクが正しく解決される条件は「配置時点で `target` の祖先が実ディレクトリ」**。祖先が
   symlink なら相対リンクは symlink の先を起点に解決され、別の場所を指す。layat は foreign な
-  祖先 symlink を conflict として止め、自己記録の stale な祖先 symlink は配置前に除去する
+  祖先 symlink を conflict として止め、自己記録の古くなった祖先 symlink は配置前に除去する
   （REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575）ので、配置の時点でこの条件は常に成り立つ。
-- **planner・stale 除去・drift 修復・`--json` の `old` / `new` は手を入れない**。いずれも
+- **planner・古くなった配置の除去・drift 修復・`--json` の `old` / `new` は手を入れない**。いずれも
   ディスク上の readlink 結果と `LinkDest` の文字列完全一致で判定するので、相対の文字列が
   そのまま比較の両辺に乗る。last-applied 記録は manifest をそのまま保持するので、前世代の
   rootRelative entry からも同じ `LinkDest` が再計算できる。
-- **root が要るのは preflight だけ**。`checkOutOfStore` は rootRelative entry について
+- **root が要るのは配置前の確認だけ**。`checkOutOfStore` は rootRelative entry について
   `filepath.Join(root, e.Src, e.Subpath)` を Lstat し、不在なら dangling を作らずに停止する
   （エラー文は `target` と解決後の絶対パスを含む）。`copyStructureMismatch` は copy 専用で、
   rootRelative と copy の併用は評価時に拒否されるので触らない。
