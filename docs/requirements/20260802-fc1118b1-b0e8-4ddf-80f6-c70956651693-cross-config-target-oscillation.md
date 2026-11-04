@@ -30,7 +30,7 @@ specification_ja: |
   複数 config（activation の `apply --all` に載る 1 つのモジュール config の `layat.configs` など）
   については配置前の検出が可能であり、本 item はそれを妨げない。その場合の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の担当で、本 item
   では規定しない。例外として、同一 entrypoint の `apply --all` で選択された config 間の衝突は
-  REQ-38506419-c23d-4fce-b167-30715ce6a69d の前段検査で build 前に止まらなければならない。振動中の foreign warning は
+  REQ-38506419-c23d-4fce-b167-30715ce6a69d の前段の確認で build 前に止まらなければならない。振動中の foreign warning は
   `shellHook` の高頻度実行で出続けるが、これは設定ミスのシグナルとして正しいものと
   みなさなければならない。この warning は成功時沈黙の対象外でなければならず、`-v` の有無に
   関わらず常時出さなければならない。MVP では抑制 / 集約機構を持ってはならず、

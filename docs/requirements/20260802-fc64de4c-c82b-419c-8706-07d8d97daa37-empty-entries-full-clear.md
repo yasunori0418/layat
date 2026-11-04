@@ -11,9 +11,9 @@ specification: |
   removes is stated by REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2 and SHALL NOT be restated here.
 specification_ja: |
   `entries = {}` は正当な全クリアとして扱わなければならず、エラーにも警告にもして
-  はならない。前世代の全 layat symlink を保守的 stale 除去で除去しなければならず、
+  はならない。前世代の全 layat symlink を古くなった配置の保守的な除去で除去しなければならず、
   新世代は空でなければならない。
-  保守的 stale 除去が何を除去するかは REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2 の規範であり、ここでは再掲しない。
+  古くなった配置の保守的な除去が何を除去するかは REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2 の規範であり、ここでは再掲しない。
 ---
 # REQ-fc64de4c-c82b-419c-8706-07d8d97daa37: 空の entries は正当な全クリアとして扱い、エラーにも警告にもしない
 

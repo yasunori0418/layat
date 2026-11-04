@@ -13,7 +13,7 @@ specification: |
   of the operating system.
 specification_ja: |
   home mode（`root = homeRoot`）の root は、層ごとに定まった供給元から解決しなければならない。
-  standalone は実行時のシェル環境変数 `$HOME`、home-manager モジュールは HM が内部解決した
+  CLI 単体は実行時のシェル環境変数 `$HOME`、home-manager モジュールは HM が内部解決した
   `$HOME`（モジュールが `homeRoot` を pin する）から解決しなければならず、いずれも OS を
   問わず動作しなければならない。
 ---

@@ -27,7 +27,7 @@ specification_ja: |
   `home.activation.layat`（`entryAfter ["writeBoundary"]`）から
   `layat apply --all --manifest <name>=<link-farm> …` の 1 回の起動で engine を kick しなければ
   ならない。各 link-farm はモジュール評価時に config の entries から `mkManifest` でビルドし、
-  その store パスを activation script から渡す。activation は entrypoint 経路ではないため
+  その store パスを activation script から渡す。activation は entrypoint を通る処理ではないため
   `nix eval` / `nix build` を行ってはならない。flock は blocking で取り、配置レポートを可視とし、
   engine error（conflict 等）は非 0 終了で switch を止めなければならない（宣言的 switch・
   `home.file` の clobber エラーと同型）。pin 版 layat CLI（`packages.layat`）と `mkManifest` が

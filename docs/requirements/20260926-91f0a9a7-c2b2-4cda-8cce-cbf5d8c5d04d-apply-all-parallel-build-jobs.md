@@ -22,7 +22,7 @@ specification: |
   MAY appear in any order, since the builds run concurrently; nix's own output in stage 1
   is captured and SHALL surface only in the error of a failed config.
 specification_ja: |
-  `apply --all` は前段の cross-config 衝突検査の後、選択された config を 2 段で処理しなければ
+  `apply --all` は前段の cross-config 衝突の確認の後、選択された config を 2 段で処理しなければ
   ならない。stage 1 は選択された全 config の build を読み取り専用（out-link gcroot を置かない）
   で先行 realize し、同時実行数が `--jobs` の解決値 N を超えない worker pool で実行しなければ
   ならない。stage 2 はその後 REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af に従い config を並列に

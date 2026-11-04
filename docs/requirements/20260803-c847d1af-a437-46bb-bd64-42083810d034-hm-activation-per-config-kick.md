@@ -35,7 +35,7 @@ specification_ja: |
   集約してもならず、非ゼロ終了を `run` で返して switch を止めるだけにしなければならない。
   報告は `<name>` の辞書順で示さなければならず、配置の並列度は `--jobs` に従わなければ
   ならない。`layat.configs` に config が 1 つも無いときは、activation は `layat` を起動しては
-  ならない（`--manifest` の無い `apply --all` は entrypoint 経路になるため）。起動の契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、1 config が
+  ならない（`--manifest` の無い `apply --all` は entrypoint を通る処理になるため）。起動の契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、1 config が
   1 manifest = 1 profile に対応することは REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a の担当で、
   いずれも本 item では規定しない。
 ---

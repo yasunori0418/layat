@@ -19,7 +19,7 @@ specification_ja: |
   （`string`・省略可）・`method`（`"symlink" | "copy"`・省略可）の 4 つでなければ
   ならない。`target` は `mkManifest` で明示選択した `root` からの相対パスでなければ
   ならない。
-  各省略可フィールドの具体的なデフォルト値と、それを検査・適用する主体は
+  各省略可フィールドの具体的なデフォルト値と、それを確認・適用する主体は
   REQ-b232ec98-af3b-41f3-a050-29d417322002 / REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 / REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34 が規定しており、本 item では重ねて
   規定しない。
 ---

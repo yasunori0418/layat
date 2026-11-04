@@ -1,7 +1,7 @@
 ---
 id: "REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98"
 type: requirement
-name: "backup 退避は配置前除去の後・配置の前に置き、drift 修復経路でも同じく実施する"
+name: "backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する"
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -20,12 +20,12 @@ specification_ja: |
   `apply --backup` による rename 退避は、配置前除去（PreRemove）の後・配置の前の独立した
   段として置かなければならない。その対象は種別の列挙ではなく判定各段の結論で括らなければ
   ならず、各段が「エラーで停止」または「copy foreign スキップ」と判定した記録外実体で
-  なければならない（REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b が定める除外を除く）。ドリフト修復を行う世代スキップ経路
+  なければならない（REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b が定める除外を除く）。ドリフト修復を行う世代スキップの処理
   では、PreRemove はその不変条件により到達しないが、Backup 段は対象であり続け、通常 apply と
   同じく退避 + 配置を行わなければならない（target への記録外実体の出現は manifest /
   derivation の変化を伴わず、shell 再入間でも起こり得るため）。
 ---
-# REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98: backup 退避は配置前除去の後・配置の前に置き、drift 修復経路でも同じく実施する
+# REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98: backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する
 
 ## 仕様
 

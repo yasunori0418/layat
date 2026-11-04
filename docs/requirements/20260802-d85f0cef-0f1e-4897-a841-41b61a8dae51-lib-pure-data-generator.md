@@ -13,7 +13,7 @@ specification: |
   NixOS or nix-darwin.
 specification_ja: |
   `lib`（`mkManifest` / `mkApplyCommand` / マーカー群）は nixpkgs.lib のみに依存する
-  純データ生成器でなければならない。配置ロジック（FS 操作・profile swap・stale 除去）を持ってはならず、
+  純データ生成器でなければならない。配置ロジック（FS 操作・profile swap・古くなった配置の除去）を持ってはならず、
   home-manager / NixOS / nix-darwin への依存を持ち込んではならない。
 ---
 # REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51: lib は nixpkgs.lib のみに依存する純データ生成器である

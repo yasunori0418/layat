@@ -32,7 +32,7 @@ specification_ja: |
   profile リンクと link-farm のパスを取る Commit、profile リンクを取り世代（番号・日付・
   current か）を返す List、profile リンクと世代番号を取る Switch、state ディレクトリから
   ユーザー profile の基底を導く UserBase、system profile の基底を返す SystemBase。profileDir
-  を解決する engine の全入口はバックエンドを要求しなければならず、注入が無ければ error で
+  を解決する engine の全起点はバックエンドを要求しなければならず、注入が無ければ error で
   失敗しなければならない。`nix-env` への暗黙のフォールバックを持ってはならない。既定の
   バックエンドは nixprofile でなければならず、Commit と Switch を `nix-env --profile
   <profileLink>`（`--set` / `--switch-generation`）で実装し、List は `nix-env` を呼び出さず

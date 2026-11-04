@@ -19,12 +19,12 @@ specification: |
   `system.activationScripts.postActivation`; the hook the home-manager module uses is
   stated by REQ-8085f194-c903-4ecb-abd8-c719fe7b3292.
 specification_ja: |
-  基本的な利用は project mode（プロジェクト内配置）と standalone CLI を中心に考えなければ
+  基本的な利用は project mode（プロジェクト内配置）と CLI 単体を中心に考えなければ
   ならず、モジュール対応は、他のモジュールシステムの switch と一括で動いてほしいユースケースを
   拾うためだけに存在する。全モジュール（home-manager / NixOS / nix-darwin）と devShell は
   一律、layat エンジンをキックするだけの配線でなければならず、各層は root と activation
   タイミングだけを供給する。`systemd.tmpfiles` / `home.file` などプラットフォームの
-  ネイティブ機構へ翻訳してはならない。配置・stale 除去は全層で同一の engine + store
+  ネイティブ機構へ翻訳してはならない。配置・古くなった配置の除去は全層で同一の engine + store
   マニフェストが行わなければならず、振る舞いが層ごとに二重化しないようにする。OS の機構は
   layat の関心外でなければならない。NixOS モジュールは `system.activationScripts.layat` から、
   nix-darwin モジュールは `system.activationScripts.postActivation` への追記から engine を

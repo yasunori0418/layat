@@ -45,7 +45,7 @@ specification_ja: |
   型違い・未知のフィールドは同じく error としなければならない。それ以外の `generator`・`entrypoint`・`identity` の
   値は読んだまま受け付け、比較に使わなければならない。版 1 の記録は origin 無しとして
   読まなければならない。
-  apply（`--dryrun` と generation skip 経路を含む）は、配置の前に記録の origin と今回の
+  apply（`--dryrun` と generation skip の処理を含む）は、配置の前に記録の origin と今回の
   origin を比べなければならない。両方あるとき、両方が `identity` を持てば `identity` だけで、
   そうでなければ `generator` と `entrypoint` で比べなければならない。食い違えば、stderr へ
   warning を 1 行出し、`subjectResult.warnings` に subject 警告 `W_LAYAT_ORIGIN_MISMATCH` を

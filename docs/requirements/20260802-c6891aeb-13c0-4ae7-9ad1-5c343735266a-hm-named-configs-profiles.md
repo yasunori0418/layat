@@ -20,7 +20,7 @@ specification: |
   module; neither is restated here.
 specification_ja: |
   home-manager モジュールの利用者も、役割分離された複数の独立 profile（それぞれが自分の
-  世代を持つ）を取れなければならず、役割分離を standalone CLI 経路に限ってはならない。
+  世代を持つ）を取れなければならず、役割分離を CLI 単体での使い方に限ってはならない。
   `layat.configs` の `<name>` 1 つが 1 manifest = 1 profile に対応しなければならない。
   「1 config = 1 profile = 1 manifest」の atomic 性は保たなければならず、複数 config を
   合成するヘルパを提供してはならない。`<name>` 次元の導入は非破壊でなければならず、`default`

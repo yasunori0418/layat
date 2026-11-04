@@ -20,7 +20,7 @@ specification_ja: |
   使うため、ユーザー環境で `experimental-features = nix-command`（flake entrypoint は
   さらに `flakes`）が有効化済みであることを前提としなければならない。nix 生成器は
   `--extra-experimental-features` を自動付与してはならない（nix.conf / Determinate Nix /
-  組織ポリシーの設定を黙って上書きしないため）。未有効で nix が機能未有効エラーを
+  組織ポリシーの設定を利用者に知らせずに上書きしないため）。未有効で nix が機能未有効エラーを
   返したときは、nix 生成器が前提条件の未充足として有効化方法と共に報告し、CLI は前提条件と
   有効化方法を案内するエラーで停止しなければならず、生の nix エラーを握り潰してはならない。
 ---

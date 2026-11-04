@@ -14,7 +14,7 @@ specification: |
   either, since the placement destination would shift with the place of execution and
   break idempotency.
 specification_ja: |
-  project mode（`root = projectRoot`）の root は、既定で
+  project mode（`root = projectRoot`）の root は、指定が無いときは
   `git rev-parse --show-toplevel` から解決しなければならない（どのサブディレクトリから
   実行しても同じ root に解決される）。git 外で使う場合や別ルートを指す場合は
   `--root <path>` で明示しなければならない。config ファイル相対は採ってはならない

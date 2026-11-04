@@ -75,7 +75,7 @@ specification: |
 specification_ja: |
   `apply --dryrun` は apply と dryRun パリティを持たなければならない。apply と同一の変換を
   通すことでスキーマの一致を構造的に保証し、値（観測結果）だけが異なるようにしなければ
-  ならない。`items` は新 manifest の全 entry + stale 除去計画に載った旧 entry のフルイン
+  ならない。`items` は新 manifest の全 entry + 古くなった配置の除去計画に載った旧 entry のフルイン
   ベントリとし、item 形は apply と同一としなければならない。dryrun は何も実行しないため
   skipped 区分は現れてはならない。
   conflict の entry は `item.status:"failed"` + `error.code:"E_LAYAT_COLLISION"` とし、

@@ -18,7 +18,7 @@ specification_ja: |
   ならない。配置レポート（placed / replaced / removed / skipped）・warning・shellHook の
   skip 通知はすべて stderr へ出さなければならず、`layat gitignore <name> >> .gitignore` や
   `layat apply <name> --dryrun | ...` が安全にパイプできるようにする。成功時の沈黙化の
-  対象は stderr の配置レポートのみとし、stdout 専有の機械可読出力は既定でも `-v` 下でも
+  対象は stderr の配置レポートのみとし、stdout 専有の機械可読出力は指定が無いときも `-v` のときも
   常に出さなければならない。
 ---
 # REQ-fea038de-55eb-45ac-87fc-ec3a7287592a: stdout は機械可読出力を専有しレポートと warning は stderr へ出す
