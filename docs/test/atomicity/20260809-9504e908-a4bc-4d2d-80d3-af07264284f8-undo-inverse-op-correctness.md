@@ -15,7 +15,7 @@ undo ジャーナルの各エントリ種別に対応する逆操作を、`Apply
 | 逆操作 | 対応する前方操作 | 復元すべき状態 |
 |---|---|---|
 | unlinkNew | 新規 symlink 配置（PlaceNew）| symlink が無い状態 |
-| relinkOld | 張替え（PlaceReplace / PlaceForeign）・stale 除去・PreRemove の Unlink | 旧 dest を指す symlink |
+| relinkOld | 張替え（PlaceReplace / PlaceForeign）・古くなった配置の除去・PreRemove の Unlink | 旧 dest を指す symlink |
 | removeCopy | copy のマテリアライズ | copy tree が無い状態 |
 | restoreRename | `--recopy` の rename 退避 | 退避元パスに退避前の内容 |
 | mkdir | PreRemove の Rmdir | 空ディレクトリの再作成 |
