@@ -36,7 +36,7 @@ item を新設し、概要文書にはリンクを 1 行足すに留める。
 
 型・関係・フィールドの定義は `docs/model.yaml` が持つ。親を持たない根は **solution と
 ADR の 2 型（adr / sara_adr）のみ**で、他の型は upstream relation を 1 本以上張る
-（張り忘れは `sara check` の orphan warning で出る）。
+（張り忘れは `sara check` の接続漏れの warning で出る）。
 検出した欠陥（defect）は型として持たず、GitHub Issues（`bug` label）で管理する
 （→ SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed。運用規約は `docs/agents/issue-tracker.md` の「Defect issues」節）。
 

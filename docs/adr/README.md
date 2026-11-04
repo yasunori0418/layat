@@ -136,8 +136,8 @@ nix develop '.?dir=dev#sara' -c dev/tests/adr-supersede.sh
 
 `sara check` の合格条件は **warning / error とも 0 件で exit 0 になること**。`sara.toml` は
 `strict_mode = true`（→ SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626）なので、`Orphan item`（接続漏れ）も `Broken reference`・
-`Duplicate identifier`・`Circular reference detected` と同様に error になる。ADR で orphan が出るのは
-`justifies` の埋め忘れなので、張ってから完了とする。`justifies` に書いた ID のタイポは orphan では
+`Duplicate identifier`・`Circular reference detected` と同様に error になる。ADR で接続漏れが出るのは
+`justifies` の埋め忘れなので、張ってから完了とする。`justifies` に書いた ID のタイポは接続漏れでは
 なく `Broken reference` として落ちる。
 
 `adr-supersede.sh` は、`supersedes` で指された ADR が `廃止` であることと、`廃止` の ADR が 1 本以上の
