@@ -38,7 +38,7 @@ readlink の結果と、Entry だけから計算するリンク先の文字列�
 
 engine は root 相対マーカーの entry を、target の親ディレクトリから `src/subpath` への相対パスを
 中身とする symlink として張る。この形は、配置の時点で target の祖先が実ディレクトリであるという
-不変条件に依存する。foreign な祖先 symlink は配置前に止め、自己記録の 古くなった祖先 symlink は
+不変条件に依存する。foreign な祖先 symlink は配置前に止め、自己記録の古くなった祖先 symlink は
 配置前に除く。リンク先の計算は DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296、祖先 symlink の扱いは
 REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575 に置く。
 

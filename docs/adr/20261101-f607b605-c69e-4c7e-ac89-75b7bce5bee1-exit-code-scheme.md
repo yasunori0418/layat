@@ -30,7 +30,7 @@ references:
 
 ## 背景
 
-layat は CI の事前チェックと devShell の shellHook の両方から呼ばれる。CI は `--dryrun` で
+layat は CI の事前の確認と devShell の shellHook の両方から呼ばれる。CI は `--dryrun` で
 「apply できるか」を判定したい。shellHook は、別の apply の実行中に待たずスキップした場合を
 失敗として扱いたくない。呼び出し側がこれらを終了コードだけで区別できる必要がある。
 
@@ -45,7 +45,7 @@ conflict で非 0 になる規範は REQ-02a33511-0941-4813-b289-a05eb8e9aa57 �
 ## 根拠
 
 conflict を一般エラーと別の値にすると、CI は「apply すれば止まる箇所がある」と「layat 自体が
-失敗した」を区別できる。`--no-wait` のスキップを 0 にすれば、shellHook でシェルへの入室が失敗扱いに
+失敗した」を区別できる。`--no-wait` のスキップを 0 にすれば、shellHook でシェルに入ることが失敗扱いに
 ならない。
 
 値を 3 つに絞るのは、呼び出し側が分岐に使う区別がこの 3 つで足りるためである。`--json` の

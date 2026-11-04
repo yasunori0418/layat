@@ -1,7 +1,7 @@
 ---
 id: "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
 type: adr
-name: "home mode の CLI と lib の版ずれを manifest の検査に任せて許容する"
+name: "home mode の CLI と lib の版ずれを manifest の確認に任せて許容する"
 status: 採用
 origin: "実装前のレビュー第 2 巡で詰めた残りの細目。ADR-0016 §4 を書き直した"
 justifies:
@@ -21,7 +21,7 @@ references:
   - "ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3"
   - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
 ---
-# ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0: home mode の CLI と lib の版ずれを manifest の検査に任せて許容する
+# ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0: home mode の CLI と lib の版ずれを manifest の確認に任せて許容する
 
 - ステータス: 採用
 - 日付: 2026-11-01
@@ -37,14 +37,14 @@ project mode では、devShell に pin した `layat` を同梱するので、CL
 ## 決定
 
 home mode の版ずれは強制的には防がない。CLI と flake が pin する `layat` を同じ入力から揃えることを
-推奨として文書に書くに留める。ずれたときは、engine が manifest を読むときの検査に任せる。engine は対応版より
+推奨として文書に書くに留める。ずれたときは、engine が manifest を読むときの確認に任せる。engine は対応版より
 新しい `schemaVersion` を拒否し、同じ版の中で知らない列挙値も拒否する（ADR-b5431ecf-fe60-4b29-86af-9857478ce663）。
 
 推奨の規範は REQ-14f0aec9-abae-4621-82f3-40536a1ad904 に置く。
 
 ## 根拠
 
-版がずれても、版の新しい manifest と知らない列挙値は上の検査で明示的なエラーになる。
+版がずれても、版の新しい manifest と知らない列挙値は上の確認で明示的なエラーになる。
 同じ入力から揃える運用で回避もできる。
 
 home mode にも devShell や `nix run` 経由の起動を強制すれば版ずれは無くなるが、PATH に常駐する CLI の

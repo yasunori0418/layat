@@ -50,7 +50,7 @@ REQ-1cc080f6-ae91-4c1f-973e-b7054cfc0198 に置く。
 
 ## 根拠
 
-既存の nix 呼び出しは全てこの 4 つに写る。entrypoint の発見は Discover、rootKind の先読み eval は
+既存の nix 呼び出しは全てこの 4 つのどれかに当たる。entrypoint の発見は Discover、rootKind の先読み eval は
 Roots、out-link 付きの build は Build、gcroot を張らない build は DryBuild に当たる。
 
 発見規則は entrypoint の形とともに生成器ごとに変わるので、CLI ではなく生成器が持つ。nix 生成器の

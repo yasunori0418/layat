@@ -39,7 +39,7 @@ flake-parts module を使う書き方の規範は REQ-c50df875-2cb0-4e72-8a21-85
 この形なら公式のヘルパーがそのまま使え、module に変換の処理が要らない。
 
 `mkManifest` が直書きでも flake-parts module 経由でも共通の唯一の公開 API になり、利用者が覚える
-API の面が 1 つで済む。`pkgs` は perSystem から来るので、`packages.layat` と同じ `pkgs`（将来の
+API が 1 つで済む。`pkgs` は perSystem から来るので、`packages.layat` と同じ `pkgs`（将来の
 overlay や config を含む）を使い、二重に解決しない。
 
 ## 棄却した代替案
@@ -48,7 +48,7 @@ overlay や config を含む）を使い、二重に解決しない。
 
 利用者は `pkgs` を書かずに済み、HM モジュールの `layat.configs` に近い書き味になる。しかし転置先を
 derivation にするために、公式ヘルパーを使わず自前の転置と submodule から derivation への変換が
-要る。`mkManifest` の直呼びと並んで API の面が 2 つになる。
+要る。`mkManifest` の直呼びと並んで公開 API が 2 つになる。
 
 ### flake-parts module のために `mkManifest` のシグネチャを変える
 

@@ -30,14 +30,14 @@ references:
 
 ## 背景
 
-stale 除去には「前回何を置いたか」の記録が要る。last-applied 記録（ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15）が無いときは、
+古くなった配置の除去には「前回何を置いたか」の記録が要る。last-applied 記録（ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15）が無いときは、
 前世代から読む。module 経由（home-manager / NixOS / nix-darwin）で動くときは host が自前の世代を
 持つので、host の前世代（oldGenPath）から前回の配置を読む道もある。
 あわせて、profile をどの粒度で分けるかを決める必要がある。
 
 ## 決定
 
-layat は standalone と module のどちらでも、自前の profile を持つ。profile は config（entrypoint の
+layat は CLI 単体と module のどちらでも、自前の profile を持つ。profile は config（entrypoint の
 `layat.<name>`）1 つにつき 1 つで、適用は config 単位で atomic にする。host から layat へ求めるのは
 switch のときに layat を起動することだけで、host の oldGenPath には依存しない。役割ごとに独立した
 世代が欲しいときは config を分ける。
@@ -60,6 +60,6 @@ host ごとに違う oldGenPath の配管を持たずに済む。他のモジュ
 
 前世代の出所が host ごとの oldGenPath に依存し、対応する host ごとに配管が増える。
 
-### module では stale 除去をしない
+### module では古くなった配置の除去をしない
 
-前世代を持たないので dangling link が残り、standalone と振る舞いが食い違う。
+前世代を持たないので dangling link が残り、CLI 単体と振る舞いが食い違う。

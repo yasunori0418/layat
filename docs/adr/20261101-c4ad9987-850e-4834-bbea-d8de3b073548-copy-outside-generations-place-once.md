@@ -27,8 +27,8 @@ rollback で配置ごと戻せる。copy は target に実ファイルを置き�
 ## 決定
 
 copy は世代管理の対象外とし、target が無いときだけ実体化する place-once にする。target が
-既にあれば上書きしない。stale 除去は copy target を消さず、entry から外れた copy は orphan として
-警告するにとどめる。
+既にあれば上書きしない。古くなった配置の除去は copy target を消さず、entry から外れた copy は
+孤児として警告するにとどめる。
 
 store の更新を copy target へ反映することと copy target を消すことは、利用者が明示したときに限る
 （ADR-fb01d942-2875-4dcb-a7df-879e18f63883 の `apply --recopy` と ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7 の `layat reset`）。規範の細目は REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9・
