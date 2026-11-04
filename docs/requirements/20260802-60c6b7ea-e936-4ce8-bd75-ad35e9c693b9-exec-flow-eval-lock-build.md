@@ -144,10 +144,10 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 >
 > - profileDir のレイアウト（`<roothash>/<name>` 等）→ REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3、世代スキップ /
 >   ドリフト修復の詳細 → REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0
-> - 配置前除去（PreRemove）→ REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575 / REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26 / REQ-2b48620a-abaa-43df-a106-954bbba3de56、保守的 stale
+> - 配置前除去（PreRemove）→ REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575 / REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26 / REQ-2b48620a-abaa-43df-a106-954bbba3de56、保守的な古くなった配置の
 >   除去 → REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2、undo ジャーナル → REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940
 > - `--backup` の退避段（PreRemove の後・配置の前）→ REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 /
->   REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b。同段はフラグ有効時のみ走るため、**本 item は e の段数に含めない**
+>   REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b。同段はフラグ有効時のみ実行されるため、**本 item は e の段数に含めない**
 >   （undo ジャーナルの対象段としては REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 が退避を含む 5 段で数える）
 > - root 解決の各モードの規範 → 「root の解決」節の担当（#209-PR5）
 > - `apply --manifest` の契約（引数・併用エラー・entrypoint 発見と eval / build を
@@ -162,8 +162,8 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 > engine の素の FS 操作。gcroot の引き継ぎは nixprofile の世代リンクの性質で、engine は gcroot を扱わない。
 >
 > **2026-10-11 追記（ADR-a91585ad-971a-4558-9f25-b7fcd6e57671）**: 上の図の c「profileDir の前世代 manifest.json を読む」は、last-applied 記録が
-> あれば記録の manifest を baseline に採り、無ければ profileDir の current 世代から読む、と読み替える。記録は
-> e の後・f の前に書き、世代スキップ経路では d のドリフト修復の後に書く。d の世代スキップの判定元は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
+> あれば記録の manifest を基準世代に採り、無ければ profileDir の current 世代から読む、と読み替える。記録は
+> e の後・f の前に書き、世代スキップの処理では d のドリフト修復の後に書く。d の世代スキップの判定元は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 
 ## 出典
 
@@ -175,5 +175,5 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 `apply --manifest` の skip は ADR-24488788-a5e6-47a5-9074-97192880642a。2a の flock を blocking で取るか try-lock で取るか
 （shellHook の skip 通知を含む）は REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461 の担当で、その決定元となる ADR は
 本 item の出典には含めない。世代のコミットを世代バックエンドの契約越しにし、`.pending` の
-削除を engine の FS 操作として位置づけたのは ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8・ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818、baseline を
+削除を engine の FS 操作として位置づけたのは ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8・ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818、基準世代を
 last-applied 記録から優先して読むのは ADR-a91585ad-971a-4558-9f25-b7fcd6e57671「古くなった配置の除去は、比較の基準を記録から優先して読む」。

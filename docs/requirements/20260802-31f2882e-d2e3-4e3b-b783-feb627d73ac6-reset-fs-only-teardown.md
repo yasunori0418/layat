@@ -63,7 +63,7 @@ home / project 両モード可。
 >
 > - 保守的不変条件の中身 → REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2、空親ディレクトリ剪定の規則 → REQ-8409db86-a1ba-4053-86dc-588985cc1ca7。
 >   本 item はそれらを reset にも適用することだけを規定する
-> - project mode の lstat 検査による復帰（→ ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d）→ REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0
+> - project mode の lstat での確認による復帰（→ ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d）→ REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0
 > - 確認プロンプトを stdin が TTY のときだけ出し、非 TTY で同意が無ければ即エラー停止
 >   すること（→ ADR-acc31876-df36-485e-b356-92ae60e26db7）→ REQ-31dae599-f3a3-4bbe-b367-c955535265da
 >

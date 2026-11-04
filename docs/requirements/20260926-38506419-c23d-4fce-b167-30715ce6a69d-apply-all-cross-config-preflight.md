@@ -49,7 +49,7 @@ specification_ja: |
   `--root` 一律上書き時は全体 1 つ
 - **error 停止**: build にも配置にも入らず exit 1（`--dryrun` も同じ）。`--json` では
   subject 登録前の失敗としてトップレベル `errors[]` に載る
-- **検査しないもの**: 名指しの `apply <name>`・選択外の config
+- **確認しないもの**: 名指しの `apply <name>`・選択外の config
 - **検出不能な衝突**: 別 entrypoint・別ツール・fixed root と project root の偶然の一致は
   従来どおり実行時の後勝ち + foreign symlink warning（REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 / REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557）
 
@@ -60,4 +60,4 @@ specification_ja: |
 ## 出典
 
 ADR-75df92ae-0694-452b-8fb4-350994e31b25・ADR-7f4fd2f6-672d-4d8c-a881-31024ad1d7c3・ADR-1338a293-3f69-48f5-9164-efb4ec6994d6
-（Issue #152 で起票）。prebuilt 集合を検査対象に含めるのは ADR-24488788-a5e6-47a5-9074-97192880642a・ADR-1338a293-3f69-48f5-9164-efb4ec6994d6。
+（Issue #152 で起票）。prebuilt 集合を確認の対象に含めるのは ADR-24488788-a5e6-47a5-9074-97192880642a・ADR-1338a293-3f69-48f5-9164-efb4ec6994d6。

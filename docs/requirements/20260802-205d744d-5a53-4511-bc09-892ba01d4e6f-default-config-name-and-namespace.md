@@ -22,7 +22,7 @@ specification_ja: |
 
 `<name>` = `default` は flake の `default` 慣例に倣う特別な名前で、`layat apply`
 （name 省略）が解決先に使う。専用 `layat` 名前空間を使い `packages` を汚さない
-（manifest が通常パッケージとして `nix flake show` / `nix build` に混ざらない）。
+（manifest が通常パッケージとして `nix flake show` / `nix build` に含まれない）。
 
 name 省略時に `default` が未定義ならエラーになることは `layat apply` の config 選択の
 規範であり、REQ-c2d44626-d8f4-446a-a80a-319a500129b4 の担当。

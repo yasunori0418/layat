@@ -26,7 +26,7 @@ specification_ja: |
 
 engine は `manifest.json` を入力に取り、外部コマンドは `git`（toplevel の取得）だけを叩く。
 
-配置そのもの（place / replace / remove）と保守的 stale 除去は **ネイティブ FS 操作**で
+配置そのもの（place / replace / remove）と保守的な古くなった配置の除去は **ネイティブ FS 操作**で
 行う。世代操作（コミット・一覧・切替）は世代バックエンドの契約越しで、engine は世代を誰が
 管理するかに関知しない。既定バックエンド nixprofile が `nix-env` を自パッケージの内側で
 実行する（REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）。

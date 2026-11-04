@@ -22,7 +22,7 @@ specification_ja: |
 
 ## 仕様
 
-`normalizeManifest` は**パス安全性検査**を行う。
+`normalizeManifest` は**パス安全性の確認**を行う。
 
 - `target` / `subpath` が絶対パス（`/` 始まり）ならエラー。
 - `filepath.Clean` 相当で正規化し、`..` で root / src の外へ出るものを拒否する。

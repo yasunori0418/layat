@@ -51,7 +51,7 @@ specification_ja: |
 の併用・experimental-features 未有効）は、下記のとおり各担当 item が規範を持つため除く。
 
 この 3 行が挙げる停止そのものに対応する決定を持つ ADR は無く、`docs/spec.md` が一次記述に
-あたる。よって本 item に `justifies` は張られないが、これは張り漏れではない。前提となる
+あたる。よって本 item に `justifies` は張られないが、これは張り忘れではない。前提となる
 「CLI が entrypoint と named manifest を解決する」ことは旧決定が定めていた（現在は ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2 の生成器が担う）が、旧決定は解決できなかった
 ときの扱いを決めていないため、側面の根拠として `justifies` は張らない（前提そのものの帰属は
 REQ-1cc080f6-ae91-4c1f-973e-b7054cfc0198 / REQ-496b1a07-5b74-416b-9e5f-3952b4c03737 が担当する）。

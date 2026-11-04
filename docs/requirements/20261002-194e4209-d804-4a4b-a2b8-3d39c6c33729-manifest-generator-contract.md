@@ -66,7 +66,7 @@ specification_ja: |
   その外面（フラグ・`-f` との排他・`<name>=<link-farm>` の繰り返し）は
   REQ-dec58330-6dad-47f7-8f56-2402764a89c7 の担当。
 - `Targets` は Go 構造体 `manifest.Root` 側のフィールドで、manifest.json スキーマ v1 は変えない。
-  消費者は `apply --all` の cross-config target 衝突検査だけなので、課すのは一括取得と prebuilt に
+  消費者は `apply --all` の cross-config の target 衝突の確認だけなので、課すのは一括取得と prebuilt に
   限る（単一 config の Roots で返すと nix 実装の eval が 1 本増える）。
 
 生成器の選び方は REQ-badc7e10-0ba4-40d4-b334-6e40193119db、診断の扱いは

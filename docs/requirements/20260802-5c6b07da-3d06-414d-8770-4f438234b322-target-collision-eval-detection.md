@@ -50,7 +50,7 @@ cross-config（別 profile・別 manifest）の同一 target 衝突は eval で�
 > 持つ**。`docs/spec.md` の追従は本 item の担当範囲外。
 >
 > **2026-10-15 追記（ADR-1338a293-3f69-48f5-9164-efb4ec6994d6）**: 上の「eval 時 assertion で停止」は、activation の `apply --all`
-> 前段検査で停止する形へ改められた。本 item が妨げないとする対象も「単一の eval」から「単一の
+> 前段の確認で停止する形へ改められた。本 item が妨げないとする対象も「単一の eval」から「単一の
 > 起動」へ読み替える（規範は frontmatter）。
 
 ## 出典

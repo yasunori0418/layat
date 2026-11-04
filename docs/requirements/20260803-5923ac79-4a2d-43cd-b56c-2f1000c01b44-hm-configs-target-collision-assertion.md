@@ -39,7 +39,7 @@ specification_ja: |
 ## 仕様
 
 - 同一 HM config 内の `configs.<A>` と `configs.<B>` が**正規化後 target**を重複させた場合、
-  activation の `apply --all` 前段検査で、build・配置の前に停止する。activation は非ゼロで
+  activation の `apply --all` 前段の確認で、build・配置の前に停止する。activation は非ゼロで
   終わり switch が止まる
 - **モジュール eval では検出しない**（nix の `assertions` を持たない）
 - 一般の cross-config 衝突（別 entrypoint・別マシン・別ツール）が「engine 実行時の
@@ -49,19 +49,19 @@ specification_ja: |
 
 > **REQ-5c6b07da-3d06-414d-8770-4f438234b322 / REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 との整合**: 両 item は規範文を「単一の起動に載らない
 > 場合」へ限定し、単一の起動に載る複数 config については「配置前の検出を妨げない」までを
-> 述べる。本 item の検出はその場合にあたり、activation の `apply --all` 前段検査が配置の前に
+> 述べる。本 item の検出はその場合にあたり、activation の `apply --all` 前段の確認が配置の前に
 > 止めるので、両 item が engine 実行時に委ねる範囲の外にある。両 item が何を規定するかはそれぞれの specification が正で、
 > ここでは再掲しない。
 >
 > **REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a との整合**: 同 item が Nix 評価時に検出するのは、
 > `mkManifest` が 1 つの manifest の設定だけで判定できる誤りである。configs 間の衝突は複数の
-> manifest に跨るため `mkManifest` では判定できず、CLI の前段検査が engine の起動前に止める。
+> manifest に跨るため `mkManifest` では判定できず、CLI の前段の確認が engine の起動前に止める。
 > engine を起動させないという層分けの趣旨は保たれる。
 >
 > **他 item との担当分界**: 正規化後 target 文字列の同値判定と属性キー = target という
 > 識別の体系は REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 / REQ-b232ec98-af3b-41f3-a050-29d417322002、`layat.configs` オプションの定義は
 > REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、`<name>` 次元と役割分離そのものは REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a、foreign symlink warning
-> と単発の後勝ちは REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557、前段検査のバケット規則と
+> と単発の後勝ちは REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557、前段の確認のバケット規則と
 > エラーの形は REQ-38506419-c23d-4fce-b167-30715ce6a69d の担当。
 
 ## 出典
@@ -71,4 +71,4 @@ ADR-1338a293-3f69-48f5-9164-efb4ec6994d6「モジュールは configs 間の tar
 
 `docs/spec.md` には対応記述が無いため、原文の写しは持たない（規範は frontmatter が正で、
 上の箇条書きは ADR 本文の要約）。cross-config を engine 実行時の後勝ち + foreign symlink
-warning とするのは ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d、`apply --all` の前段検査は ADR-75df92ae-0694-452b-8fb4-350994e31b25 が定めている。
+warning とするのは ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d、`apply --all` の前段の確認は ADR-75df92ae-0694-452b-8fb4-350994e31b25 が定めている。
