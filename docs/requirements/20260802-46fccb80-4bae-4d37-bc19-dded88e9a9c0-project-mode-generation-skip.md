@@ -101,8 +101,8 @@ specification_ja: |
 >
 > **2026-10-11 追記（ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444）**: 上の写しの「新 link farm derivation が前世代と同一なら」は、新 link-farm が
 > profile の current 世代に一致し、last-applied 記録があればその `linkFarm` にも一致するなら、と読み替える
-> （profile が無ければ skip しない）。profile と記録が食い違う間は通常の処理で記録を baseline に古くなった配置の除去とコミットを行う。
-> lstat での確認の「記録通り」も記録を優先した baseline に照らす。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
+> （profile が無ければ skip しない）。profile と記録が食い違う間は通常の処理で記録を比較の基準に古くなった配置の除去とコミットを行う。
+> lstat での確認の「記録通り」も記録を優先した比較の基準に照らす。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 >
 > **2026-10-24 追記**: 上の写しの「世代スキップは project mode 限定」は「project / system mode 限定」と読み替える。
 > system mode も同じ条件で世代を積まずドリフト修復だけ行い、home / fixed mode は従来どおり適用のたびに新世代を積む。
@@ -116,4 +116,4 @@ specification_ja: |
 ADR-4dca6ef4-2791-48d5-aa82-7037630968a6「ephemeral 配置は git に干渉しない」と ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d「project mode では同じ link farm なら世代を積まず drift だけを直す」。
 profile を解決済み root でキーすることと `<roothash>` の定義は ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988、`<state>` の確定は
 ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203、copy のドリフト修復の限定は ADR-5265f879-e623-44f9-9c58-8c14598e8b10 が定めている。世代スキップの判定元を profile と
-last-applied 記録の両方一致にし、baseline を記録優先にしたのは ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444・ADR-a91585ad-971a-4558-9f25-b7fcd6e57671。
+last-applied 記録の両方一致にし、比較の基準を記録優先にしたのは ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444・ADR-a91585ad-971a-4558-9f25-b7fcd6e57671。
