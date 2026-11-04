@@ -43,7 +43,7 @@ Roots を持つ、という能力の宣言にはしない。Roots の規範は R
 
 eval 先行 → flock → build の順序は、build 前に profileDir を確定できることを前提にしている。先読みを
 任意にすると、先読みできない生成器では flock の前に build する流れが生まれ、ロックの外での build に
-よる out-link の競合が戻る。
+よる out-link の競合が再び起きる。
 
 ## 棄却した代替案
 

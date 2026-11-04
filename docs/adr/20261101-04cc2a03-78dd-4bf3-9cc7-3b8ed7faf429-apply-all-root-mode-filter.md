@@ -22,7 +22,7 @@ references:
 ## 背景
 
 1 つの entrypoint に home mode と project mode の config が混在することがある。devShell の
-shellHook から素の `apply --all` を打つと、project の config だけでなく home mode の config も
+shellHook から素の `apply --all` を実行すると、project の config だけでなく home mode の config も
 `$HOME` に配置されてしまう。
 
 ## 決定

@@ -39,7 +39,7 @@ REQ-9c111c32-8f6c-4eda-859c-dae02c0624fc、`--dryrun` の扱いは REQ-7a71a049-
 root の種別だけを build の前に安く取れば、profileDir ← root の解決 ← root の種別 ← build という循環が切れる。
 build がロックの内側に入るので、pending out-link の奪い合いも同時に消え、別の対策が要らない。
 
-build しないコマンドも同じ前段を持つので、`--root` を付けたときの profileDir の引き方が全コマンドで揃う。
+build しないコマンドも同じ前段を持つので、`--root` を付けたときの profileDir の決め方が全コマンドで揃う。
 
 ## 棄却した代替案
 

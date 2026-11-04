@@ -44,7 +44,7 @@ warning を出せば、layat が中身を置いていないことが利用者に
 扱いが揃う。
 
 copy は利用者のデータを上書きしない。既存のファイルが 1 つあるだけで apply 全体が止まると、
-devShell の shellHook から呼ぶ project mode では入室のたびに失敗する。見送って warning に留めれば、
+devShell の shellHook から呼ぶ project mode ではシェルに入るたびに失敗する。見送って warning に留めれば、
 データを守りながら apply を止めずに済む。
 
 前世代の manifest で判別すれば、内容を読まずに済む。copy の中身は利用者が編集してよいので、

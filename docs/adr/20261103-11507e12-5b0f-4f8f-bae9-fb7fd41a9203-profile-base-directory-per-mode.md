@@ -58,14 +58,14 @@ REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4、基底を返す契約の操作は REQ
 変えている利用者でも、nix の profile と layat の profile が別の場所に散らばらない。
 
 system mode の基底は、NixOS / nix-darwin が system の世代に使う `/nix/var/nix/profiles` に揃う。
-システムの状態が root の個人領域に住むことがなく、NixOS / nix-darwin モジュールも同じ場所をそのまま使える。
+システムの状態が root の個人領域に置かれることがなく、NixOS / nix-darwin モジュールも同じ場所をそのまま使える。
 
 ## 棄却した代替案
 
 ### system mode でもユーザー state 基底を使う
 
-実装の差分は無いが、root で実行すると `/root/.local/state` の下に置かれ、システムの状態が root の home に
-住む。後で場所を移すと、既存の世代が孤児になる。
+実装の差分は無いが、root で実行すると `/root/.local/state` の下、つまり root の home にシステムの
+状態が置かれる。後で場所を移すと、既存の世代が孤児になる。
 
 ### system mode の基底を `/var/lib/layat` に置く
 

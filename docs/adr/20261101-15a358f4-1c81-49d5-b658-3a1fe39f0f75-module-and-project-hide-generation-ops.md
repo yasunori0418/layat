@@ -26,7 +26,7 @@ layat は全モードで自前の profile を持つが、その世代を rollbac
 `layat rollback` と `layat list-generations` を公開するのは、配置が永続する home mode と system mode
 に限る。module 経由では layat の profile を内部機構に留め、ユーザー向けの rollback を host
 （`home-manager --rollback` など）に一本化する。layat の profile は前進だけを行い、host の rollback が
-旧 config で layat を再び起動することで追従する。project mode では profile を stale 除去と世代
+旧 config で layat を再び起動することで追従する。project mode では profile を古くなった配置の除去と世代
 スキップ判定のための内部機構に留める。
 
 モードごとの公開範囲は REQ-05abce3e-9797-432b-b93f-37c55d09afde、module での host との分担は
@@ -40,7 +40,7 @@ layat を再起動すれば FS は旧 config の状態へ収束するので、�
 home-manager が NixOS の submodule として動くときと同じやり方になる。
 
 project mode の配置物は ephemeral で、前の状態へ戻す意味が薄い。公開しなければ、利用者に見える
-世代操作の面を home / system mode の永続的な配置だけに絞れる。
+世代操作を home / system mode の永続的な配置だけに絞れる。
 
 ## 棄却した代替案
 

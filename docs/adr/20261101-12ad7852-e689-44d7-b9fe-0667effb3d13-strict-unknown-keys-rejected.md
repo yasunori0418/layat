@@ -16,7 +16,7 @@ justifies:
 
 ## 背景
 
-entry は `lib.types.submodule` で定義する。submodule は既定で、宣言していないキーをエラーにする。
+entry は `lib.types.submodule` で定義する。submodule は、指定が無いときは宣言していないキーをエラーにする。
 `freeformType` を付ければ、宣言していないキーも受け付けるように緩められる。
 
 entry のフィールドは改名を重ねており、旧名（`source` や `dir` など）を書いた設定が残り得る。
