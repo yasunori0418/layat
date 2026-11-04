@@ -39,8 +39,8 @@ specification_ja: |
 起こすか、決定が定まっていないものとして ADR の粒度を解き直すかのどちらかになる。
 
 接続を空のまま残さない規範は、**空を埋め忘れとして機械判定できる状態**を保つためにある。
-接続の非空性は QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c の機械検証が拾い、`廃止` と `supersedes` の対応は
-`dev/tests/adr-supersede.sh` が拾う。どちらも frontmatter しか見ないので、廃止にする ADR の全決定に
+接続の非空性は QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c の機械検証が見つけ、`廃止` と `supersedes` の対応は
+`dev/tests/adr-supersede.sh` が見つける。どちらも frontmatter しか見ないので、廃止にする ADR の全決定に
 後継が揃っているかは視野の外にあり、そこは人手のレビューで守る（判定の条件は
 `docs/agents/adr-rules.md` の「廃止にできる条件」節が持つ）。
 
