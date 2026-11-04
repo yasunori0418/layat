@@ -2,7 +2,7 @@
 
 layat の正準（canonical）英語用語を日本語で対訳したもの。README・コードコメント・コマンド出力で概念に言及するときは、ここで定義した **canonical 用語**（見出しの英語表記）を使い、列挙した別名を避けて、プロジェクト全体で表記をそろえる。正準の綴り自体は英語版 `docs/glossary.md` が一次（authoritative）の参照先。
 
-各エントリは canonical な綴りを 1 つ固定する。定義は意図的に短い。詳細な根拠は `docs/requirements/` の requirement item（索引は `docs/spec.md`）と `docs/adr/`（設計判断）を参照する。英語版（一次）は `docs/glossary.md` にある。
+各エントリは canonical な綴りを 1 つ固定する。定義は意図的に短い。詳細な根拠は `docs/requirements/` の `requirement` item（索引は `docs/spec.md`）と `docs/adr/`（設計判断）を参照する。英語版（一次）は `docs/glossary.md` にある。
 
 ## 配置の中心抽象
 
@@ -11,7 +11,7 @@ layat のコア。`root` 相対の `target` に Nix store のパスを配置す�
 - **Avoid**: 「placement framework（配置フレームワーク）」「configuration management（設定管理）」（layat は設定を生成しない）。
 
 ### engine
-配置（ネイティブなファイルシステム操作）と stale 除去の両方を一手に所有する配置コア。`manifest.json` を入力に取り、外部コマンドは `git`（toplevel）のみを叩く。世代の記録・切替は **generation backend（世代バックエンド）** に委ねる。**layat CLI** が駆動する Go ライブラリとして実装される。config ごとに bash スクリプトを生成しない。ここでの「ライブラリ」は `internal/` 配下のバイナリ内部の層分離を指し、公開 import 可能な再利用モジュールではない——安定面は `manifest.json` 契約に閉じる。エンジンは stdlib-only。
+配置（ネイティブなファイルシステム操作）と古くなった配置の除去の両方を一手に所有する配置コア。`manifest.json` を入力に取り、外部コマンドは `git`（toplevel）のみを叩く。世代の記録・切替は **generation backend（世代バックエンド）** に委ねる。**layat CLI** が駆動する Go ライブラリとして実装される。config ごとに bash スクリプトを生成しない。ここでの「ライブラリ」は `internal/` 配下のバイナリ内部の層分離を指し、公開 import 可能な再利用モジュールではない——安定面は `manifest.json` 契約に閉じる。エンジンは stdlib-only。
 - **Avoid**: 「per-config generated bash script（config ごとに生成される bash スクリプト）」「per-layer placement logic（層ごとの配置ロジック）」「a single flat implementation fused with the CLI（CLI と一体の平らな単一実装）」「importing the engine as a public Go module（engine を公開 Go モジュールとして import する）」。
 
 ### layat
@@ -39,7 +39,7 @@ layat CLI が読む Nix の config ファイル。`flake.nix` / `shell.nix` / `d
 - **Avoid**: 「layat が CWD から config の内容を発見する」と説明すること——発見するのは entrypoint *ファイル* であり、config は Nix 評価で確定する。
 
 ### module
-standalone・home-manager・NixOS / nix-darwin モジュール・devShell の `shellHook` といった統合層。エンジンを起動する配線（wiring）に徹し、自身ではファイルを配置せず、`home.file` や `systemd.tmpfiles` へ翻訳することもない。
+CLI 単体・home-manager・NixOS / nix-darwin モジュール・devShell の `shellHook` といった統合層。エンジンを起動する配線（wiring）に徹し、自身ではファイルを配置せず、`home.file` や `systemd.tmpfiles` へ翻訳することもない。
 - **Avoid**: 「the module places files（モジュールがファイルを配置する）」「the module translates to native mechanisms（モジュールがネイティブ機構へ翻訳する）」。
 
 ## 配置の入出力
@@ -57,7 +57,7 @@ standalone・home-manager・NixOS / nix-darwin モジュール・devShell の `s
 - **Avoid**: 旧名 `source` / `dir` を使うこと、**src** と混同すること、「全体を表すには専用のトークン / marker が要る」と考えること（省略で表せる）。
 
 ### target
-**entry** の配置先。**root** からの相対パスで指定する。`entries` の属性キーが既定の `target` であり、entry の identity（stale 除去の diff キーであり、一意性のキー）でもある。
+**entry** の配置先。**root** からの相対パスで指定する。`entries` の属性キーが既定の `target` であり、entry の identity（古くなった配置の除去の diff キーであり、一意性のキー）でもある。
 
 ### root
 配置の基準パス。公開 API の `root` 引数で**明示的に**選ぶ（**暗黙のデフォルトは持たない**）。型は `string`（絶対パス・評価時に固定）と `marker`（実行時に解決）の union。マーカーは **projectRoot** / **homeRoot** / **systemRoot**。各マーカーは適用形 `homeRoot { subdir = "..."; }` も受け付ける。適用形でも root は動かず、全 target へ `<subdir>/` を前置するのと等価な評価時の糖衣である。
@@ -66,7 +66,7 @@ standalone・home-manager・NixOS / nix-darwin モジュール・devShell の `s
 ## 配置モード
 
 ### home mode
-**root** = `$HOME` の配置モード。`homeRoot` マーカーで明示選択する。standalone も home-manager 等の module もこのモードを使う。世代を毎回コミットし、`--rollback` をユーザーに公開する。
+**root** = `$HOME` の配置モード。`homeRoot` マーカーで明示選択する。CLI 単体も home-manager 等の module もこのモードを使う。世代を毎回コミットし、`--rollback` をユーザーに公開する。
 - **Avoid**: 「standalone-only（standalone 専用）」「the default when `root` is omitted（`root` 省略時の既定）」と説明すること。
 
 ### project mode
@@ -94,7 +94,7 @@ standalone・home-manager・NixOS / nix-darwin モジュール・devShell の `s
 ## 配置の種別
 
 ### store link
-コア・デフォルトの配置。配置先が Nix store パスである symlink。再現性を担保するデフォルト経路。「unification（統一）」とは、ストアをデフォルト / コアにし、out-of-store を明示的な例外へ降格することを意味する。
+コア・デフォルトの配置。配置先が Nix store パスである symlink。再現性を担保するデフォルトの使い方。「unification（統一）」とは、ストアをデフォルト / コアにし、out-of-store を明示的な例外へ降格することを意味する。
 - **Avoid**: out-of-store symlink と混同すること、「copy（コピー）」と呼ぶこと。
 
 ### out-of-store symlink
@@ -109,10 +109,10 @@ rollback の単位。既定の **generation backend** である nixprofile が l
 - **Avoid**: 「stateless スクリプト」前提で語ること（初期方針からは覆っている）、新 `nix profile` CLI で管理すること（profile-manifest を要求し、`nix-env --set` 製の profile では動かない）。
 
 ### store manifest
-「layat が何を配置したか」を記録する世代由来のデータ。実体は link-farm derivation 内の `manifest.json`（`schemaVersion` を持つ）で、Nix（`lib.mkManifest`）が生成し Go エンジンが読む——Nix↔Go の契約。エンジンの保守的な stale 除去（記録通りを指す layat 管理 symlink だけを削除し、ユーザーの実ファイルには決して触れない）を支える。
+「layat が何を配置したか」を記録する世代由来のデータ。実体は link-farm derivation 内の `manifest.json`（`schemaVersion` を持つ）で、Nix（`lib.mkManifest`）が生成し Go エンジンが読む——Nix↔Go の契約。エンジンによる、古くなった配置の保守的な除去（記録通りを指す layat 管理 symlink だけを削除し、ユーザーの実ファイルには決して触れない）を支える。
 
 ### last-applied record
-「この root に layat が最後に置いたもの」という FS の事実を layat 自身が持つ記録（last-applied 記録）。世代ではない。置き場は `<state>/layat/<鍵>/last-applied.json` で、鍵は profileDir と同じ規則（`--root` なしの home は `<name>` 直、それ以外は `<roothash>/<name>` + backref `.root`）。内容は `recordVersion`（2。読みは 1 と 2 を受け付ける）・`linkFarm`・`appliedAt`・`manifest`（配置した `manifest.json` をそのまま（内容を変えずに）埋め込む）・`origin`（直近に記録を書いた apply の出所 `{generator, entrypoint, identity}`。`identity` は manifest が宣言していればその写し）で、store の GC に依存しない。記録に `origin` があり今回の出所と食い違えば（両方に `identity` があれば `identity` だけで比べる）、apply は warning を出して続行する（→ [ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8](adr/20261103-ab47f502-0fc8-4714-9af4-61e0a64732f8-origin-mismatch-warns-and-continues.md)）。apply（generation skip を含む）と rollback は FS 操作の成功後・世代操作の前に、reset は撤去の後に書き直し、reset で全 entry が消えれば削除する。stale 除去・drift 修復・reset の撤去対象・rollback の離れる世代の baseline は**記録 → profile の current → 空**の順に取り、記録と profile の `linkFarm` が食い違えば記録を採って warning を 1 行出す。初回（どちらも無い）は baseline を空とし、「last-applied 記録なし」の warning を 1 行出す。壊れた記録は「記録なし」に倒さず error にする（→ [ADR-8e253f2e-c255-482a-a0f8-0837e122e80f](adr/20261103-8e253f2e-c255-482a-a0f8-0837e122e80f-record-read-strictly.md)）。
+「この root に layat が最後に置いたもの」という FS の事実を layat 自身が持つ記録（last-applied 記録）。世代ではない。置き場は `<state>/layat/<鍵>/last-applied.json` で、鍵は profileDir と同じ規則（`--root` なしの home は `<name>` 直、それ以外は `<roothash>/<name>` + backref `.root`）。内容は `recordVersion`（2。読みは 1 と 2 を受け付ける）・`linkFarm`・`appliedAt`・`manifest`（配置した `manifest.json` をそのまま（内容を変えずに）埋め込む）・`origin`（直近に記録を書いた apply の出所 `{generator, entrypoint, identity}`。`identity` は manifest が宣言していればその写し）で、store の GC に依存しない。記録に `origin` があり今回の出所と食い違えば（両方に `identity` があれば `identity` だけで比べる）、apply は warning を出して続行する（→ [ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8](adr/20261103-ab47f502-0fc8-4714-9af4-61e0a64732f8-origin-mismatch-warns-and-continues.md)）。apply（generation skip を含む）と rollback は FS 操作の成功後・世代操作の前に、reset は撤去の後に書き直し、reset で全 entry が消えれば削除する。古くなった配置の除去・drift 修復・reset の撤去対象・rollback の離れる世代で使う比較の基準は**記録 → profile の current → 空**の順に取り、記録と profile の `linkFarm` が食い違えば記録を採って warning を 1 行出す。初回（どちらも無い）は比較の基準を空とし、「last-applied 記録なし」の warning を 1 行出す。破損した記録は「記録なし」として扱わず error にする（→ [ADR-8e253f2e-c255-482a-a0f8-0837e122e80f](adr/20261103-8e253f2e-c255-482a-a0f8-0837e122e80f-record-read-strictly.md)）。
 - **Avoid**: 記録を世代と呼ぶこと（rollback の target は世代リンクから読む）、記録を flock の鍵と説明すること（鍵は profileDir）。
 
 ### method
