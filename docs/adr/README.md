@@ -49,7 +49,7 @@ issues:                 # 「関連:」「起点 Issue:」「起点:」の GitHu
   - "#123"
 origin: "…"             # 「起点:」の内容（無ければ「起点 Issue:」「参照:」）
 justifies:              # この ADR が決めた item（必須・1 本以上）
-  - "REQ-8521e8f8-99cc-47f0-b7d0-70c24c837612"
+  - "REQ-<フル UUIDv4>"
 supersedes:             # 置き換えた ADR（置き換えた側を 廃止 にする変更の中でだけ張る）
   - "ADR-<フル UUIDv4>"
 references:             # 「関連:」の ADR
