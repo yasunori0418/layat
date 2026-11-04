@@ -1,7 +1,7 @@
 ---
 id: "TC-b9d4ffaf-ac91-4bf1-9f27-5ea3964466ad"
 type: test_condition
-name: "配置前除去による移行の可否判定が、自己記録 stale と method 変更の規則どおりであること"
+name: "配置前除去による移行の可否判定が、自己記録の古くなった配置と method 変更の規則どおりであること"
 mitigates:
   - "RISK-3e8dd093-f21f-49c6-8d8c-7d62a6fad1e5"
 ---

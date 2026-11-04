@@ -1,7 +1,7 @@
 ---
 id: "TC-8a1f4b19-0ece-4057-a8bf-f9717855cade"
 type: test_condition
-name: "plan から unlink までの drift が除去直前に再検証され、経路ごとに正しく分岐すること"
+name: "plan から unlink までの drift が除去直前に再検証され、処理ごとに正しく分岐すること"
 mitigates:
   - "RISK-e3d42a21-1f43-4ac6-835e-a5caf8d86363"
 ---

@@ -1,11 +1,11 @@
 ---
 id: "TC-be3d3dc9-1ead-4e2e-8eea-46e1c8884562"
 type: test_condition
-name: "system mode の root 解決・基底切替・euid ゲートが仕様どおりであること"
+name: "system mode の root 解決・基底切替・euid の条件が仕様どおりであること"
 mitigates:
   - "RISK-1a8f91c8-dfaa-4598-805a-a3b71cb967f0"
 ---
-# TC-be3d3dc9-1ead-4e2e-8eea-46e1c8884562: system mode の root 解決・基底切替・euid ゲート
+# TC-be3d3dc9-1ead-4e2e-8eea-46e1c8884562: system mode の root 解決・基底切替・euid の条件
 
 `rootKind=system` が root `/` に解決され、`--root` 上書きが優先されることを検証する。
 
