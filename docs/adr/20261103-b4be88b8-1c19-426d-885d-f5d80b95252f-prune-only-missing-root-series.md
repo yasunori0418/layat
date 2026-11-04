@@ -47,13 +47,13 @@ backref `.root` が root の絶対パスを記録する（ADR-ad1c2507-1f42-4cd3
 アンマウントは削除前の確認で防げる。
 
 世代の間引きは `nix-env --delete-generations` が既にできる仕事で、prune に持たせると二重になる。
-prune の仕事を「root が消えた系列の片付け」に絞れば、生きている系列には一切触れないと言い切れる。
+prune の仕事を「root が消えた系列の片付け」に絞れば、root が実在する系列には一切触れないと言い切れる。
 
 ## 棄却した代替案
 
 ### 世代の間引き（`--older-than` / `--keep N`）も prune に含める
 
-`nix-env --delete-generations` の仕事と二重になる。生きている系列の世代の管理は prune
+`nix-env --delete-generations` の仕事と二重になる。root が実在する系列の世代の管理は prune
 の仕事にしない。
 
 ### root が実在しても、entrypoint の消失などから使われていない系列を推定して候補に出す

@@ -30,7 +30,7 @@ justifies:
 ## 決定
 
 starter の flake は nix 標準の `templates` output（`standalone` / `project`）で提供する。`layat init
-<template>` は `nix flake init -t github:yasunori0418/layat#<template>` への透明なラッパーとし、参照する
+<template>` は `nix flake init -t github:yasunori0418/layat#<template>` をそのまま呼ぶラッパーとし、参照する
 flake ref はバイナリにハードコードした固定の文字列にする。
 
 ラッパーの規範は REQ-6be1cbf1-6c6e-498b-8acb-7f4b80037169 に、固定 ref は
@@ -40,8 +40,8 @@ DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58 に置く。
 ## 根拠
 
 ファイルを作るのは nix の templates の機構で、layat は 1 文字も生成しない。`nix flake init` の
-「既存ファイルを上書きしない」保守性もそのまま引き継げる。`init` は `nix flake init -t` を呼ぶだけなので
-実装も薄い。
+「既存ファイルを上書きしない」保守的な振る舞いもそのまま引き継げる。`init` は `nix flake init -t` を呼ぶだけなので
+実装も小さい。
 
 固定 ref は最も小さな実装で、利用者の環境の登録に左右されない。`init` は新規の立ち上げに使うもので、
 CLI の版とテンプレートの版のずれ（常に最新の main を参照する）は許容できる。適用時の `schemaVersion` の

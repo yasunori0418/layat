@@ -40,7 +40,7 @@ composite action にまとめ、`changes` ジョブがそれを呼ぶ。後続�
 ## 根拠
 
 skip した check が成功として扱われる挙動を使えば、docs だけの PR で nix を回さずに必須の check を
-満たせる。検出のロジックを composite action に閉じると、複数の workflow から使っても検出の
+満たせる。検出のロジックを composite action に集めると、複数の workflow から使っても検出の
 規則が 1 箇所にまとまる。
 
 ジョブ段の `if:` で skip すると matrix が展開されず、ruleset が要求する `(os, system)` 付きの

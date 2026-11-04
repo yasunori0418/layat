@@ -21,12 +21,12 @@ config から entry が消えたら、前回置いた symlink を除去しなけ
 
 ## 決定
 
-stale 除去は、前回の適用の manifest（baseline）と新しい manifest の差分から、消えた entry を
-判定して行う。「配置したもの」の manifest は link farm derivation の一部として store に埋め込む。
-baseline は last-applied 記録があれば記録の manifest、無ければ自 profile の current 世代の
-store manifest とし、host の世代は読まない。
+古くなった配置の除去は、前回の適用の manifest（比較の基準）と新しい manifest の差分から、
+消えた entry を判定して行う。「配置したもの」の manifest は link farm derivation の一部として
+store に埋め込む。比較の基準は last-applied 記録があれば記録の manifest、無ければ自 profile の
+current 世代の store manifest とし、host の世代は読まない。
 
-manifest の置き場所と baseline の選び方は REQ-1be4d678-959c-44d7-a346-44bfd95af56e、baseline を
+manifest の置き場所と比較の基準の選び方は REQ-1be4d678-959c-44d7-a346-44bfd95af56e、比較の基準を
 使った除去の条件は REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2 に置く。
 
 ## 根拠

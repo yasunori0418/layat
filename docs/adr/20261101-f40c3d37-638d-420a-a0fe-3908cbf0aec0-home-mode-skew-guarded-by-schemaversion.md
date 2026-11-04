@@ -37,14 +37,14 @@ project mode では、devShell に pin した `layat` を同梱するので、CL
 ## 決定
 
 home mode の版ずれは強制的には防がない。CLI と flake が pin する `layat` を同じ入力から揃えることを
-推奨として文書に書くに留める。ずれたときは、engine が manifest を読むときの検査に任せる。engine は対応版より
+推奨として文書に書くに留める。ずれたときは、engine が manifest を読むときの確認に任せる。engine は対応版より
 新しい `schemaVersion` を拒否し、同じ版の中で知らない列挙値も拒否する（ADR-b5431ecf-fe60-4b29-86af-9857478ce663）。
 
 推奨の規範は REQ-14f0aec9-abae-4621-82f3-40536a1ad904 に置く。
 
 ## 根拠
 
-版がずれても、版の新しい manifest と知らない列挙値は上の検査で明示的なエラーになる。
+版がずれても、版の新しい manifest と知らない列挙値は上の確認で明示的なエラーになる。
 同じ入力から揃える運用で回避もできる。
 
 home mode にも devShell や `nix run` 経由の起動を強制すれば版ずれは無くなるが、PATH に常駐する CLI の

@@ -18,7 +18,7 @@ justifies:
 
 `src` と `root` には、layat の関数が返す marker（out-of-store のマーカーや root のマーカー）を
 渡せる。`src` には derivation（`fetchFromGitHub` の戻り値など）も渡せる。marker も derivation も
-attrset なので、そのままでは型検査で区別できない。
+attrset なので、そのままでは型の確認で区別できない。
 
 ## 決定
 
@@ -29,7 +29,7 @@ derivation を見分ける。
 
 ## 根拠
 
-タグがあれば、attrset どうしでも型検査の段で確実に判別できる。タグの種類は、そのまま
+タグがあれば、attrset どうしでも型の確認の段で確実に判別できる。タグの種類は、そのまま
 `manifest.json` の `srcKind` / `rootKind` を決める材料にもなる。
 
 ## 棄却した代替案

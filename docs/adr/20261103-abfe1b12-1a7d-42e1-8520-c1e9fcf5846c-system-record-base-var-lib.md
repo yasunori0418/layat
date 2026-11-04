@@ -39,7 +39,7 @@ references:
 
 last-applied 記録は、実行ユーザーの state（`$XDG_STATE_HOME`、既定は `$HOME/.local/state`）の下に置く。
 このままだと、root で実行した system mode の記録は `/root/.local/state/layat` に置かれる。system mode の
-profile は、システムの状態が root の個人領域に住む形を避けて `/nix/var/nix/profiles/layat` に置いている。
+profile は、システムの状態が root の個人領域に置かれる形を避けて `/nix/var/nix/profiles/layat` に置いている。
 記録も同じ理由で個人領域に置けない。
 
 一方で記録は nix profile ではなく、GC root でもない。profile と同じ基底に置く理由も無い。
@@ -74,7 +74,7 @@ macOS でも分岐を足さないので、記録の置き場は OS によらず 
 ### 実行ユーザーの state のまま置く
 
 root なら `/root/.local/state/layat` になる。実装の差分は無いが、システムの状態が root の個人領域に置かれ、
-将来のモジュール導入時に記録を移す痛みが残る。
+将来のモジュール導入時に記録を移す手間が残る。
 
 ### `/nix/var/nix/profiles/layat` の下に同居させる
 
