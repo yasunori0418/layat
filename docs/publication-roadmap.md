@@ -123,7 +123,7 @@ cmd/layat が低いのは nix eval/build + cobra が一体で単体テストし�
 - ~~論点: テストのため内部を露出するか、公開面経由で振る舞いテストするか（公開後に決定）~~ → #58 で `lib.__internal` 経由の露出方針に確定し、sub-issue #71〜#75 で実装完了（親 #58 クローズ済み）。詳細は tracking #91 を参照
 
 ### C. Go テスト充実 — ✅ 完了（#59）
-- 最大効果: cmd/layat の orchestration ロジック（flag 検証 / `--all` 集約 / exit code 判定）を nix 呼び出しから分離し、nix を注入できる差し替え点を拡張して単体テスト可能にする（engine は既に `Commit` / `Git` / `Build` を注入できる設計）→ #81 として着手（後に engine リファクタ安定後着手が前提のため #60 配下へ移設・完了）
+- 最大効果: cmd/layat の orchestration ロジック（flag 検証 / `--all` 集約 / exit code 判定）を nix 呼び出しから分離し、nix インジェクション seam を拡張して単体テスト可能にする（engine は既に `Commit` / `Git` / `Build` を注入できる設計）→ #81 として着手（後に engine リファクタ安定後着手が前提のため #60 配下へ移設・完了）
 - 些末な不足: internal/paths の `StateDir()` / `GenerationLink()`（0%・数行で追加可能）→ #76 で対応
 - エラー処理の不足: engine の out-of-store Lstat 非 ENOENT / copy mkdir・chmod 失敗 / resolveRoot の project・fixed 分岐 / cleanupPending 再 flock 失敗 → #77〜#80 で対応
 - ~~CI / devShell へのカバレッジ計測組み込み（現状なし）~~ → #82 で導入済み

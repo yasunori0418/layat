@@ -66,7 +66,7 @@ layat が何であるか・何のために作るかは `solution` / `use_case` �
 - [DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5](design/20260802-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5-lib-module-split.md) — lib は公開 API・型定義・manifest 生成・マーカー構築子・apply コマンド組み立ての 5 ファイルへ分割する
 - [DSG-7d354fe0-a333-495b-9f4b-14bba316dc47](design/20260802-7d354fe0-a333-495b-9f4b-14bba316dc47-go-package-split.md) — Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする
 - [DSG-aeb5e219-4784-4950-845c-35f9bab9179c](design/20260802-aeb5e219-4784-4950-845c-35f9bab9179c-modules-file-split.md) — modules は common.nix に共通オプションを集約し、統合層ごとに 1 ファイルへ分ける
-- [DSG-4a84f282-76ea-47c9-aede-deac12ff5257](design/20260802-4a84f282-76ea-47c9-aede-deac12ff5257-implementation-scope.md) — 実装スコープを CLI 単体 + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする
+- [DSG-4a84f282-76ea-47c9-aede-deac12ff5257](design/20260802-4a84f282-76ea-47c9-aede-deac12ff5257-implementation-scope.md) — 実装スコープを standalone CLI + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする
 
 ---
 
@@ -79,7 +79,7 @@ CLI / engine / lib / `common.nix` / 統合層の 5 段に積み、依存は呼�
 - [DSG-17db0831-d7da-446d-ba3e-404df64c582d](design/20260802-17db0831-d7da-446d-ba3e-404df64c582d-layer-stack-dependency.md) — 層を CLI / engine / lib / common.nix / 統合層の 5 段に積み、依存を呼ぶ側から呼ばれる側への一方向に限る
 - [DSG-25ad3cce-f921-4db2-aae0-c0263d4b8295](design/20261002-25ad3cce-f921-4db2-aae0-c0263d4b8295-generator-package-layout.md) — internal/generator は契約・prebuilt・Fake を親パッケージに、nix 実装を nixgen サブパッケージに置き、cmd 層は注入点だけを持つ
 - [DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814](design/20261011-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814-generation-package-layout.md) — internal/generation は契約・Generation 型・FS ベースの Fake を親パッケージに、nix-env 実装を nixprofile サブパッケージに置き、engine は Backend 1 フィールドで受ける
-- [DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5](design/20261011-3c156bbe-e72b-43dd-8cb0-2cc105314ad5-last-applied-record-layout.md) — last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比べる基準は記録 → profile → 空の順に読む
+- [DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5](design/20261011-3c156bbe-e72b-43dd-8cb0-2cc105314ad5-last-applied-record-layout.md) — last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、baseline は記録 → profile → 空の順に読む
 
 ---
 
@@ -107,7 +107,7 @@ layat 自身の flake outputs は packages / templates / 各モジュール / fl
 - [DSG-0b94308c-6b15-46d1-854c-5945ae587b0d](design/20260802-0b94308c-6b15-46d1-854c-5945ae587b0d-cleanup-from-home-manager.md) — 配置と cleanup のアルゴリズムは home-manager の linkGeneration / cleanup を範として Go で再実装する
 - [DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68](design/20260810-8b96869c-842e-4f78-8ff7-df1f1d6c1a68-planner-engine-split.md) — 配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する
 - [DSG-096dc893-21f4-45e3-9347-986e9275b4d1](design/20260823-096dc893-21f4-45e3-9347-986e9275b4d1-prune-orphan-series.md) — prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする
-- [DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296](design/20261012-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296-root-relative-linkdest.md) — rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは配置前の確認だけにする
+- [DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296](design/20261012-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296-root-relative-linkdest.md) — rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは preflight だけにする
 - [DSG-85439cb5-a149-422e-8596-fc4e860bc3a5](design/20261023-85439cb5-a149-422e-8596-fc4e860bc3a5-status-scans-record-bases.md) — status を engine の記録基底走査と CLI の絞り込み・出力に分ける
 
 `lib` の API・`entries` スキーマ・`manifest.json` の内容・CLI の実行モデルは仕様（`requirement`）の
@@ -140,7 +140,7 @@ lib は Nix 評価テスト、エンジンは実 FS の tmpdir 統合テスト�
 E2E で検証する（→ ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0）。
 
 - [DSG-fb49e36c-eb20-4efa-8cac-88ef0873db8e](design/20260802-fb49e36c-eb20-4efa-8cac-88ef0873db8e-lib-test-nix-unit-namaka.md) — lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する
-- [DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3](design/20260802-836aa5cb-0389-4adb-990b-144fe5aeffe3-engine-test-go-unit-tmpdir.md) — engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する
+- [DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3](design/20260802-836aa5cb-0389-4adb-990b-144fe5aeffe3-engine-test-go-unit-tmpdir.md) — engine は nix を使わない tmpdir 統合テストで検証し、stale 除去の安全不変条件を table-driven に重点配分する
 - [DSG-2947b4a5-ba5c-4218-8478-624cba156116](design/20260802-2947b4a5-ba5c-4218-8478-624cba156116-e2e-harness-shape.md) — E2E は tests/e2e の bash ハーネスに置き、シナリオの詳細は同ディレクトリの README へ委譲する
 - [DSG-bb6e03fd-e1c4-47c4-bfa0-a73e9457b184](design/20260802-bb6e03fd-e1c4-47c4-bfa0-a73e9457b184-e2e-legacy-entrypoint.md) — E2E に legacy entrypoint シナリオを置き、NIX_PATH を flake.lock の nixpkgs に pin して検証する
 - [DSG-901351ea-f01b-4bb0-a470-b890d92c980b](design/20260802-901351ea-f01b-4bb0-a470-b890d92c980b-nixos-vm-test-position.md) — NixOS モジュールの実 activate は runNixOSTest の checks.nixos-vm で検証し、E2E ハーネスとは別系統に置く
@@ -150,7 +150,7 @@ CI での実行基盤・キャッシュ・リリースは `infrastructure` item 
 - [INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27](infrastructure/20260802-d1230e1f-8ba8-49d8-8386-409bfbb7dd27-ci-pipeline.md) — CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）
 - [INF-af33c5a1-f846-4f09-8e43-c6ea042d6e06](infrastructure/20260802-af33c5a1-f846-4f09-8e43-c6ea042d6e06-binary-cache.md) — バイナリキャッシュ（main push 時の cachix 投入）
 - [INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43](infrastructure/20260802-9878e9f5-1ec0-4ef2-879b-859ea538cc43-release-automation.md) — リリース自動化（VERSION ファイル起点の bump PR・自動タグ・自動リリースノート）
-- [INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6](infrastructure/20260802-8b97573f-d4d6-4abf-85e2-d859afbd96c6-merge-gate.md) — マージの条件（main の ruleset と required status checks）
+- [INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6](infrastructure/20260802-8b97573f-d4d6-4abf-85e2-d859afbd96c6-merge-gate.md) — マージゲート（main の ruleset と required status checks）
 - [INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71](infrastructure/20260802-659b139d-0cf8-4c65-b30d-93c5ee2dfc71-traceability-verification.md) — トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）
 - [INF-0865477b-21b2-4feb-9c06-1a882a4e595a](infrastructure/20260802-0865477b-21b2-4feb-9c06-1a882a4e595a-docs-site.md) — ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）
 

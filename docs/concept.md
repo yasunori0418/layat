@@ -44,7 +44,7 @@ opt-in する例外として位置づける（→ ADR-560852e1-3d07-46b9-ae1a-d1
 - [UC-f2436d68-91ff-4c48-b1df-47acefe4f464](use-cases/20260802-f2436d68-91ff-4c48-b1df-47acefe4f464-home-mode-pinned-repo-placement.md) — home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する
 - [UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d](use-cases/20261018-6b8d31ea-3d5a-4334-aac7-8706df190e7d-system-mode-root-placement.md) — system mode で `/` 配下へ配置し、root 権限で世代とともに管理する
 - [UC-1c280dce-7c72-44c0-95ea-d06344f62a47](use-cases/20260802-1c280dce-7c72-44c0-95ea-d06344f62a47-independent-update-cycles.md) — 役割ごとに config を分けて更新を独立させ、1 つの更新を他の役割へ波及させない
-- [UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6](use-cases/20260802-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6-generation-rollback-standalone.md) — 配置に失敗・後悔したとき CLI 単体で前の世代へロールバックして元の状態へ戻す
+- [UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6](use-cases/20260802-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6-generation-rollback-standalone.md) — 配置に失敗・後悔したとき standalone で前の世代へロールバックして元の状態へ戻す
 - [UC-403fbe32-b146-401b-8b53-fe67c1e169c5](use-cases/20260802-403fbe32-b146-401b-8b53-fe67c1e169c5-copy-place-once-user-managed.md) — リポジトリの内容を copy で初回だけ配置し、その後はユーザーが手で編集して育てる
 - [UC-01b896b4-04b9-40d0-bf9e-966eaf64c3d4](use-cases/20260802-01b896b4-04b9-40d0-bf9e-966eaf64c3d4-out-of-store-live-editing.md) — 開発中の手元 dotfiles を out-of-store symlink で参照し、編集と同時に反映しながら育てる
 - [UC-d39c1994-f9a5-4860-80ba-f6e584adaf14](use-cases/20260802-d39c1994-f9a5-4860-80ba-f6e584adaf14-module-integration.md) — 既に home-manager / NixOS / nix-darwin を使っている環境へ layat をモジュールとして組み込む
@@ -140,7 +140,7 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 - [ADR-24488788-a5e6-47a5-9074-97192880642a](adr/20261103-24488788-a5e6-47a5-9074-97192880642a-apply-manifest-prebuilt-link-farm.md), [ADR-f58e9981-bacc-4937-98b8-bddce0a057db](adr/20261103-f58e9981-bacc-4937-98b8-bddce0a057db-module-activation-single-apply-all.md) — モジュールはビルド済み link-farm を `apply --manifest` で直接適用する
 - [ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5](adr/20261103-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5-silent-on-success.md), [ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9](adr/20261103-3dc21349-5504-48a4-ab88-812b92c3bdf9-verbose-opts-into-placement-report.md) — 成功時はデフォルト沈黙。`-v` で opt-in 表示
 - [ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8](adr/20261103-62540f8f-a8ba-4441-97b0-36b50d7862d8-generation-backend-contract-paths-and-ints.md), [ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7](adr/20261103-1908099c-87f7-4df1-bda5-7731df7d9ed7-engine-external-command-git-only.md) — 世代操作を世代バックエンドの契約越しにし、engine から nix-env と profile 基底の固定を外す
-- [ADR-52423842-bacf-4773-bbca-bcb34ae71013](adr/20261103-52423842-bacf-4773-bbca-bcb34ae71013-record-embeds-manifest.md), [ADR-a91585ad-971a-4558-9f25-b7fcd6e57671](adr/20261103-a91585ad-971a-4558-9f25-b7fcd6e57671-baseline-prefers-record.md) — 最後に配置した manifest を last-applied 記録に持ち、古くなった配置の除去で比べる基準を世代の概念から FS の事実へ移す
+- [ADR-52423842-bacf-4773-bbca-bcb34ae71013](adr/20261103-52423842-bacf-4773-bbca-bcb34ae71013-record-embeds-manifest.md), [ADR-a91585ad-971a-4558-9f25-b7fcd6e57671](adr/20261103-a91585ad-971a-4558-9f25-b7fcd6e57671-baseline-prefers-record.md) — 最後に配置した manifest を last-applied 記録に持ち、古くなった配置の除去の基準を世代の概念から FS の事実へ移す
 - [ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb](adr/20261103-8e3cad97-e0c8-460b-89da-62e031f93ebb-mkrootrelativesymlink-separate-function.md), [ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7](adr/20261103-b7f9b972-69b7-4bbe-affc-97978e1a55f7-root-relative-link-as-relative-path.md) — 配置 root 相対の src を `mkRootRelativeSymlink` で宣言し、engine が target 起点の相対 symlink として張る
 
 ### 名前の由来
