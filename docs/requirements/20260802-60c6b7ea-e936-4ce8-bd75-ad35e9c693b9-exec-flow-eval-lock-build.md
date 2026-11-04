@@ -162,7 +162,7 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 > engine の素の FS 操作。gcroot の引き継ぎは nixprofile の世代リンクの性質で、engine は gcroot を扱わない。
 >
 > **2026-10-11 追記（ADR-a91585ad-971a-4558-9f25-b7fcd6e57671）**: 上の図の c「profileDir の前世代 manifest.json を読む」は、last-applied 記録が
-> あれば記録の manifest を基準世代に採り、無ければ profileDir の current 世代から読む、と読み替える。記録は
+> あれば記録の manifest を baseline に採り、無ければ profileDir の current 世代から読む、と読み替える。記録は
 > e の後・f の前に書き、世代スキップの処理では d のドリフト修復の後に書く。d の世代スキップの判定元は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 
 ## 出典
@@ -175,5 +175,5 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 `apply --manifest` の skip は ADR-24488788-a5e6-47a5-9074-97192880642a。2a の flock を blocking で取るか try-lock で取るか
 （shellHook の skip 通知を含む）は REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461 の担当で、その決定元となる ADR は
 本 item の出典には含めない。世代のコミットを世代バックエンドの契約越しにし、`.pending` の
-削除を engine の FS 操作として位置づけたのは ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8・ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818、基準世代を
+削除を engine の FS 操作として位置づけたのは ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8・ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818、baseline を
 last-applied 記録から優先して読むのは ADR-a91585ad-971a-4558-9f25-b7fcd6e57671「古くなった配置の除去は、比較の基準を記録から優先して読む」。

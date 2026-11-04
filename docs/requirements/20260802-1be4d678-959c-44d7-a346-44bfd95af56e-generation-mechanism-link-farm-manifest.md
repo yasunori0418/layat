@@ -94,7 +94,7 @@ specification_ja: |
 > --set` で layat の nix profile を更新」は、世代バックエンドの契約の Commit と読み替える（`nix-env` は
 > 既定実装 nixprofile の内側に閉じる。REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）。「store 外の可変 JSON は
 > 持たない」は last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）に限って覆し、手順 1 の前世代
-> manifest は記録があれば記録の manifest を基準世代に採る（profile の前世代から読むのは記録が無いとき）。
+> manifest は記録があれば記録の manifest を baseline に採る（profile の前世代から読むのは記録が無いとき）。
 > 世代由来の store マニフェストと機構表は不変。
 
 逆に、上の写しには現れないが規範文が持つものが 1 つある。**1 profile = 1 config の atomic

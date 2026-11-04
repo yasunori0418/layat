@@ -49,13 +49,13 @@ specification_ja: |
 > `reset` の symlink 除去にも適用されるが（REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6）、copy を明示的に消す唯一の手段が
 > `reset` であることも同 item の担当。
 >
-> **2026-10-11 追記（ADR-a91585ad-971a-4558-9f25-b7fcd6e57671）**: 上の写しの「前世代マニフェスト」は基準世代と読み替える。基準世代は
+> **2026-10-11 追記（ADR-a91585ad-971a-4558-9f25-b7fcd6e57671）**: 上の写しの「前世代マニフェスト」は baseline と読み替える。baseline は
 > last-applied 記録があれば記録の manifest、無ければ profile の current 世代の manifest で、「初回／記録なし」は
-> どちらも無く基準世代が空のときを指す。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
+> どちらも無く baseline が空のときを指す。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 
 ## 出典
 
 `docs/spec.md`「世代管理仕様」→「stale 除去の対象と安全不変条件」節の導入文と表。
 
-決定の実体は ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c「古くなった配置の除去は記録どおりの symlink だけに限る」。基準世代を
+決定の実体は ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c「古くなった配置の除去は記録どおりの symlink だけに限る」。baseline を
 last-applied 記録から優先して読むのは ADR-a91585ad-971a-4558-9f25-b7fcd6e57671「古くなった配置の除去は、比較の基準を記録から優先して読む」。
