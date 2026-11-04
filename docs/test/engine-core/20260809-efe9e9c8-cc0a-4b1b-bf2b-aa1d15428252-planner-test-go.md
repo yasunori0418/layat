@@ -25,8 +25,8 @@ table-driven テスト。実 FS へ触らずに分類の全パターンを列挙
 
 - **配置分類の網羅**: 初回 apply（前世代 manifest 無し）で除去ゼロ、自己記録 symlink の
   無警告張替え、foreign symlink の警告付き後勝ち、通常ファイル占有の conflict、祖先 symlink の
-  conflict、自己記録 stale 祖先の移行（複数子での祖先の重複排除を含む）
-- **stale 除去の分類**: 記録どおりを指す symlink の除去、空 manifest による全クリア（無警告）、
+  conflict、自己記録の古くなった祖先の移行（複数子での祖先の重複排除を含む）
+- **古くなった配置の除去の分類**: 記録どおりを指す symlink の除去、空 manifest による全クリア（無警告）、
   記録先と食い違う symlink の保持 + 警告、symlink でなくなった target の保持 + 警告、
   既に消えた target の no-op、copy entry の orphan 警告（除去しない）
 - **copy の分類**: target 不在での place-once コピー、記録済み target の no-op（place-once）、
