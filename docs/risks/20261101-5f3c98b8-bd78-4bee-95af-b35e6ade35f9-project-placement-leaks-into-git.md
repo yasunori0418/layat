@@ -1,7 +1,7 @@
 ---
 id: "RISK-5f3c98b8-bd78-4bee-95af-b35e6ade35f9"
 type: risk
-name: "project mode の配置物が ephemeral に保たれず、git の追跡対象へ漏れる"
+name: "project mode の配置物が ephemeral に保たれず、git の追跡対象に入る"
 likelihood: medium
 impact: medium
 level: medium
@@ -11,7 +11,7 @@ threatens:
   - "REQ-1f128917-4424-4e37-8a88-e0bb23a09da7"
   - "REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9"
 ---
-# RISK-5f3c98b8-bd78-4bee-95af-b35e6ade35f9: project mode の配置物が ephemeral に保たれず、git の追跡対象へ漏れる
+# RISK-5f3c98b8-bd78-4bee-95af-b35e6ade35f9: project mode の配置物が ephemeral に保たれず、git の追跡対象に入る
 
 ## リスク
 

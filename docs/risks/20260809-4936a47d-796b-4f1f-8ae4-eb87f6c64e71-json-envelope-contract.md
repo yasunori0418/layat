@@ -1,7 +1,7 @@
 ---
 id: "RISK-4936a47d-796b-4f1f-8ae4-eb87f6c64e71"
 type: risk
-name: "--json のエンベロープが outturn 規約から外れ機械可読出力の消費側が壊れる"
+name: "--json のエンベロープが outturn 規約から外れ機械可読出力の消費側が処理に失敗する"
 threatens:
   - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
   - "REQ-5c2e64c3-09a7-4ae8-b60c-4f1ccabce4fd"
@@ -12,7 +12,7 @@ likelihood: low
 impact: medium
 level: low
 ---
-# RISK-4936a47d-796b-4f1f-8ae4-eb87f6c64e71: --json のエンベロープが outturn 規約から外れ機械可読出力の消費側が壊れる
+# RISK-4936a47d-796b-4f1f-8ae4-eb87f6c64e71: --json のエンベロープが outturn 規約から外れ機械可読出力の消費側が処理に失敗する
 
 ## リスク
 

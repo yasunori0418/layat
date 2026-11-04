@@ -1,7 +1,7 @@
 ---
 id: "RISK-bb54245e-b284-4b4d-9896-8fec2b4e521c"
 type: risk
-name: "reset の teardown が管理外の実体まで消し、preview と同意のゲートも素通りする"
+name: "reset の teardown が管理外の実体まで消し、preview と同意の条件も機能しない"
 threatens:
   - "REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6"
   - "REQ-6a950d6d-c191-4235-a1b4-73ffc7c2bb38"
@@ -10,7 +10,7 @@ likelihood: medium
 impact: high
 level: high
 ---
-# RISK-bb54245e-b284-4b4d-9896-8fec2b4e521c: reset の teardown が管理外の実体まで消し、preview と同意のゲートも素通りする
+# RISK-bb54245e-b284-4b4d-9896-8fec2b4e521c: reset の teardown が管理外の実体まで消し、preview と同意の条件も機能しない
 
 ## リスク
 

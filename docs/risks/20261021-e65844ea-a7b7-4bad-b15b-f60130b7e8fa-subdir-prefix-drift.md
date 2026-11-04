@@ -1,7 +1,7 @@
 ---
 id: "RISK-e65844ea-a7b7-4bad-b15b-f60130b7e8fa"
 type: risk
-name: "subdir 適用形の前置が一部の target で抜ける、root 側へ漏れる、または単体 marker の形が変わる"
+name: "subdir 適用形の前置が一部の target で抜ける、root 側へ混入する、または単体 marker の形が変わる"
 likelihood: low
 impact: medium
 level: low
@@ -9,7 +9,7 @@ threatens:
   - "REQ-08c8f639-790c-4970-a954-c9567538cf9b"
   - "REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66"
 ---
-# RISK-e65844ea-a7b7-4bad-b15b-f60130b7e8fa: subdir 適用形の前置が一部の target で抜ける、root 側へ漏れる、または単体 marker の形が変わる
+# RISK-e65844ea-a7b7-4bad-b15b-f60130b7e8fa: subdir 適用形の前置が一部の target で抜ける、root 側へ混入する、または単体 marker の形が変わる
 
 ## リスク
 

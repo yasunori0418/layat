@@ -1,14 +1,14 @@
 ---
 id: "DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3"
 type: design
-name: "engine は nix を使わない tmpdir 統合テストで検証し、stale 除去の安全不変条件を table-driven に重点配分する"
+name: "engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する"
 satisfies:
   - "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
   - "REQ-b74a118a-1272-44eb-944c-7725163211c6"
   - "REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940"
   - "REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9"
 ---
-# DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3: engine は nix を使わない tmpdir 統合テストで検証し、stale 除去の安全不変条件を table-driven に重点配分する
+# DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3: engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する
 
 ## 設計
 

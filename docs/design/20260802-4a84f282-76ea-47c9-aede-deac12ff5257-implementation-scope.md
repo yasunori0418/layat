@@ -1,13 +1,13 @@
 ---
 id: "DSG-4a84f282-76ea-47c9-aede-deac12ff5257"
 type: design
-name: "実装スコープを standalone CLI + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする"
+name: "実装スコープを CLI 単体 + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする"
 satisfies:
   - "REQ-14f0aec9-abae-4621-82f3-40536a1ad904"
   - "TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2"
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
 ---
-# DSG-4a84f282-76ea-47c9-aede-deac12ff5257: 実装スコープを standalone CLI + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする
+# DSG-4a84f282-76ea-47c9-aede-deac12ff5257: 実装スコープを CLI 単体 + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする
 
 ## 設計
 

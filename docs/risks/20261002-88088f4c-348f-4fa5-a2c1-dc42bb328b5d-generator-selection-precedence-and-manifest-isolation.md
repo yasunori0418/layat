@@ -1,7 +1,7 @@
 ---
 id: "RISK-88088f4c-348f-4fa5-a2c1-dc42bb328b5d"
 type: risk
-name: "生成器の選択で優先順位を取り違える、または --manifest 経路が環境変数・設定ファイルに汚染される"
+name: "生成器の選択で優先順位を取り違える、または --manifest の使い方が環境変数・設定ファイルに汚染される"
 likelihood: medium
 impact: high
 level: high
@@ -9,7 +9,7 @@ threatens:
   - "REQ-badc7e10-0ba4-40d4-b334-6e40193119db"
   - "REQ-dec58330-6dad-47f7-8f56-2402764a89c7"
 ---
-# RISK-88088f4c-348f-4fa5-a2c1-dc42bb328b5d: 生成器の選択で優先順位を取り違える、または --manifest 経路が環境変数・設定ファイルに汚染される
+# RISK-88088f4c-348f-4fa5-a2c1-dc42bb328b5d: 生成器の選択で優先順位を取り違える、または --manifest の使い方が環境変数・設定ファイルに汚染される
 
 ## リスク
 
