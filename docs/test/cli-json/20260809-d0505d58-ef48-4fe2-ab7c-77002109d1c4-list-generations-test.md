@@ -21,10 +21,10 @@ covers:
   item を作らず空配列のままであること
 - **`info` の境界** — 列挙に到達せず失敗した実行では `info` がキーごと不在であること、
   0 件で列挙した実行では空配列がキーごと残ること
-- **モードゲート** — `rollback` / `list-generations <name>` が project / fixed の config を
+- **モードの条件** — `rollback` / `list-generations <name>` が project / fixed の config を
   「home / system mode only」の文言で拒否すること、system の config では一覧が出て
-  `info.mode` が `system` になること、system の rollback がゲートを越えて engine の root 権限
-  検査（`fs.ErrPermission`）で止まること、単発の一覧も `LAYAT_SYSTEM_PROFILE_BASE` の基底を
+  `info.mode` が `system` になること、system の rollback がモードの条件を通り、engine の root 権限の
+  確認（`fs.ErrPermission`）で止まること、単発の一覧も `LAYAT_SYSTEM_PROFILE_BASE` の基底を
   読むこと
 - **`--all` の 2 基底走査** — user 基底の後に system 基底を走査し、subject 名が常に
   `<mode>:<name>` で `info.mode` と一致すること（同名 config が両基底にあっても適合を保つ）、

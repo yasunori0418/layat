@@ -12,7 +12,7 @@ mitigates:
 nix 生成器は PATH の先頭に置いた nix のスタブで駆動し、CLI の提示は `generator.Error` を
 直接与えて確かめる。実 nix での到達は e2e で確かめる。
 
-- **素通し** — eval / build の両経路で、nix の stderr が成功時も失敗時も生成器の writer へ
+- **素通し** — eval と build のどちらの処理でも、nix の stderr が成功時も失敗時も生成器の writer へ
   届く。writer へは行単位で渡り、行の途中で切れた書き込みが来ても行が揃うまで渡さない
 - **分類と案内** — experimental-features 未有効の 3 つの文言が `PrerequisiteMissing` になり、
   `Guidance` に nix.conf と `NIX_CONFIG` の両手段が入る。eval での属性の不在は `NotFound` で、単発は

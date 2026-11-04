@@ -14,7 +14,7 @@ mitigates:
   発見・nix の eval / build を一切行わない
 - **名前による選択** — prebuilt 生成器の集合は config 名ごとに root（Targets は entries から
   導出）を返し、Roots / Build / DryBuild は名前で link-farm を選ぶ。集合に無い名前は NotFound
-- **前段衝突検査** — 2 つの link-farm が同じ root の同じ正規化後 target を持つとき、配置前に
+- **前段の衝突の確認** — 2 つの link-farm が同じ root の同じ正規化後 target を持つとき、配置前に
   止まり、メッセージに target と両 config 名が載る
 - **形の不正** — `--all` なしの複数指定・`--all` なしの `<name>=` 形・`--all` と `<link-farm>` 形・
   空の `<name>`・`--all` での同じ `<name>` の重複・`-f` / `--generator` との併用は、nix を

@@ -12,7 +12,7 @@ mitigates:
 `apply --all` の stage 1（先行並列 build）が、並列度を `--jobs` で抑えたまま、失敗を
 取りこぼさずに stage 2 の集約へ渡すことを確かめる。
 
-- **並列度の上限** — 同時に走る build が min(`--jobs`, config 数) に達し、それを超えない
+- **並列度の上限** — 同時に実行される build が min(`--jobs`, config 数) に達し、それを超えない
 - **失敗の集約** — stage 1 で失敗した config は stage 2 に渡らず、自身の subject に error で
   載り、failures に数えられ、stderr に報告される。成功 config の結果はそのまま残る。
   `--dryrun` でも同じ
