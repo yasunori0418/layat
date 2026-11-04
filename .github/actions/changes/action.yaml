@@ -22,6 +22,7 @@ runs:
             - 'go.sum'
             - 'flake.lock'
             - 'dev/flake.lock'
+            - 'VERSION'
             - '.github/workflows/**'
             - '.github/actions/**'
 

@@ -42,8 +42,12 @@ fixture flake は `layat` を `path:<repo>` input で参照し、`nixpkgs` / `ho
 | `13-status` | status。home mode と project mode の config を 1 つずつ apply し、`layat status` が `home:<name>` と `project:<name>@<root>` を見出し行と entry 行で出すこと、`[name]` で片方に絞れること・一致 0 件が stdout 空と stderr 1 行で exit 0 になること、`--json` の `info`（mode・root・entries の target）を検証。隔離した system の記録基底に置いた記録が user 基底の後に `system:<name>` で出ることも見る |
 | `14-flake-parts` | flake-parts + `lib.mkApplyCommand`。`flakeModules.default` を import した fixture に projectRoot と homeRoot の config を 1 つずつ持たせ、devShell の shellHook に `mkApplyCommand { …; manifests = config.layat; root = "project"; }` へ `--no-wait` を足した文字列を埋める。git repo のサブディレクトリで `nix develop -c true` を実行すると、project 側が git toplevel 配下に配置され、home 側は CLI の `--project-root` で外れて隔離した `$HOME` に何も出ないことを検証 |
 
-## 将来拡張
+## NixOS VM テスト（別系統）
 
-- **NixOS VM テスト（`runNixOSTest`）は将来拡張に回す**（→ `docs/design.md`・ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0）。
-  NixOS / nix-darwin モジュール経路の実 activate は VM / sandbox を要し、本ハーネス（非 NixOS の
-  ubuntu-latest 単一ジョブ）のスコープ外。モジュール経路を本実装する段で別途追加する。
+NixOS モジュールで使うときの実 activate は、本ハーネスではなく flake check `checks.nixos-vm`
+（`tests/modules/nixos-vm.nix`・`runNixOSTest`）で検証する（→ DSG-901351ea-f01b-4bb0-a470-b890d92c980b・ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0）。
+実 activate には NixOS 自体が要り、非 NixOS の ubuntu-latest 単一ジョブで回す本ハーネスとは前提が違うため、
+別系統の check に置いている。x86_64-linux でだけ VM を起動し、他の system では空の派生に差し替える。
+
+nix-darwin モジュールは VM で回せないため、実 activate のテストを持たない。`checks.darwin-module` は
+`postActivation.text` などの評価結果を確かめる check で、activate は実行しない。
