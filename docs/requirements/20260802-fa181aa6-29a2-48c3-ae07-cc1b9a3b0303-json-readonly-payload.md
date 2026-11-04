@@ -87,7 +87,7 @@ specification_ja: |
   `modify` に合体）。dryrun は re-link を実行しないため re-link 直前の on-disk dest を
   観測せず、記録どおりの dest への予定 re-link も `modify` として残さなければならない。
   `--recopy` の上書きは dryrun の plan に現れてはならない（planner は place-once 分類のみで
-  recopy は engine の materialize 側経路のため）。apply の dryrun に現れる change は全て
+  recopy は engine の materialize 側の処理のため）。apply の dryrun に現れる change は全て
   `reversible: true` としなければならない。
   空親ディレクトリ剪定と `--backup` の rename 退避は entry 識別を持たず item /
   change を生んではならない。`generation` は観測記録とし、切替が起きないため

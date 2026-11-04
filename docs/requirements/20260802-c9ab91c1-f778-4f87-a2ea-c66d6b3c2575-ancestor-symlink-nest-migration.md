@@ -1,7 +1,7 @@
 ---
 id: "REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575"
 type: requirement
-name: "祖先 symlink は自己記録で古くなったものだけを配置前除去し、それ以外はエラーで停止する"
+name: "祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する"
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -20,7 +20,7 @@ specification: |
   pollute the store or create dangling links.
 specification_ja: |
   symlink の配置に先立ち、engine は target の各祖先 component を `lstat` で walk し、
-  祖先の symlink を非対称に扱わなければならない。自己記録で古くなった祖先（当該 entry 自身の
+  祖先の symlink を非対称に扱わなければならない。自己記録の古くなった祖先（当該 entry 自身の
   前世代 manifest が記録し、on-disk が記録 dest と一致し、次世代には無い）は配置前に除去
   （PreRemove）して配下の子を新規配置し、ネストへ移行させなければならない。この除去は
   意図された移行であり warning にしてはならず、配置レポートの通常の出力規律に従わせなければ
@@ -28,7 +28,7 @@ specification_ja: |
   が残る自己矛盾はエラーで停止しなければならない（配下にネストすると store 汚染 / dangling
   を招くため）。
 ---
-# REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575: 祖先 symlink は自己記録で古くなったものだけを配置前除去し、それ以外はエラーで停止する
+# REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575: 祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する
 
 ## 仕様
 
