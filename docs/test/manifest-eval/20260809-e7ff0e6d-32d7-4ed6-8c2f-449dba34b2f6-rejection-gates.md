@@ -10,14 +10,14 @@ mitigates:
 ## テスト条件
 
 「この入力は評価が失敗する」を、エラー種別と拒否されたフィールドの名指しで直接アサートする。
-正常系のアサートでは、ゲートが外れたことを検出できないため。判定ロジックそのものを private
+正常系のアサートでは、拒否条件が外れたことを検出できないため。判定ロジックそのものを private
 helper 越しに単体で見るのは TC-311ca3b2-d6d1-4712-9e2a-9027941d3527 の担当で、検証境界が異なる。
 
-主たる経路は `normalizeManifest`（evalModules）だが、型の共有を確かめる 1 件だけは
+主たる処理は `normalizeManifest`（evalModules）だが、型の共有を確かめる 1 件だけは
 `entriesType` を直接 `evalModules` して見る（`normalizeManifest` を通さない）。同じ型定義が
-モジュール経路でも strict であることは、公開経路のアサートからは導けないため。
+モジュールという使い方でも strict であることは、公開された処理のアサートからは導けないため。
 
-**ゲートごとの拒否**:
+**条件ごとの拒否**:
 
 - `method = "copy"` と out-of-store marker の組み合わせ（意図の矛盾）
 - 絶対パスの target / `..` で root の外へ出る target / `..` で src の外へ出る subpath

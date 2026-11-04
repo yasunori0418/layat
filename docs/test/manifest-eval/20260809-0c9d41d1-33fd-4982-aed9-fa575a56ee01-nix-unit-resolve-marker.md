@@ -19,7 +19,7 @@ covers:
 
 src 解決については、`srcKind` 単体・`src` 単体・entry 全体の shape という 3 段のアサートを
 store / out-of-store / root 相対それぞれに重ねて置く。どの段で落ちたかで、種別判定・文字列化・余分な
-キーの混入のどれが壊れたかを切り分けられるようにするため。
+キーの混入のどれが破損したかを見分けられるようにするため。
 
 - **store src**: `srcKind = "store"`、`src` が store パスへ文字列化、entry 全体が
   5 フィールドに exact 一致

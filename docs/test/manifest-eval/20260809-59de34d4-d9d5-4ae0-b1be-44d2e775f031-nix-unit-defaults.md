@@ -18,7 +18,7 @@ covers:
 
 - **既定適用**: `src` だけを宣言した entry が `subpath = "."` / `target = 属性キー` /
   `method = "symlink"` を得ること（出力 entry 全体の exact 一致で見る）
-- **明示上書き**: `target` / `subpath` / `method` を明示した entry で、既定ではなく宣言値が
+- **明示上書き**: `target` / `subpath` / `method` を明示した entry で、既定値ではなく宣言値が
   文書へ載ること
 - **決定的な配列化**: 属性キー `b` / `a` / `c` を与えたとき、出力 entries の `target` 列が
   `[a b c]` の辞書順になること

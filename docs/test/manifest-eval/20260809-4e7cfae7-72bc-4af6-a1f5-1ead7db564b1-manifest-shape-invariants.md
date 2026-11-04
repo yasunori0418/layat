@@ -18,7 +18,7 @@ mitigates:
 - store-backed な entry が `srcKind` / `src` / `subpath` / `target` / `method` の 5 フィールド
   ちょうどであること（exact 一致で余分なキーの混入を落とす）
 - out-of-store marker を与えた entry が `srcKind = "outOfStore"` と marker の絶対パスへ
-  変換され、判別タグ `_layatMarker` が文書に漏れないこと。こちらも exact 一致で見るので、
+  変換され、判別タグ `_layatMarker` が文書に残らないこと。こちらも exact 一致で見るので、
   余分なキーの混入は store-backed 側と同じく検出される
 - `identity` の有無でトップレベルの形が変わること。与えなければ `identity` キー自体を持たず、
   与えればその値を持ち、空文字は評価で止まる
