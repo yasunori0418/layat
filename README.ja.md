@@ -28,12 +28,12 @@ layat は **フェッチ**(`src` は store パス)と **配置**(固定の実行
 [layat CLI]  packages.layat — PATH 上に乗る一次 UX
   · entrypoint を発見する(flake.nix / shell.nix / default.nix)
   · 生成器(既定 `nix`)を通じて named manifest を取得する
-  · エンジンを駆動して配置・stale link 除去・profile 切替を行う
+  · エンジンを駆動して配置・古くなった配置の除去・profile 切替を行う
    ↓ manifest.json
 [engine]    Go ライブラリ(stdlib-only)
   · manifest.json を入力に取り、外部コマンドは `git`(toplevel)のみを叩く
   · 世代のコミット・切替は世代バックエンド(既定 nixprofile。内部で nix-env を実行)を通す
-  · place / replace / remove のネイティブなファイルシステム操作 ＋ 保守的な stale 除去
+  · place / replace / remove のネイティブなファイルシステム操作 ＋ 古くなった配置の保守的な除去
 ```
 
 - **engine** が配置と古くなった配置の除去を所有する。`manifest.json`——安定した Nix↔Go の契約——を読み、ネイティブなファイルシステム操作を実行する。
@@ -458,7 +458,7 @@ layat init <template>           # `nix flake init -t github:yasunori0418/layat#<
 ```text
 -f, --file <path>   # entrypoint を明示指定(自動発見を上書き)
 --root <path>       # 任意モードで解決済み root を上書き
---no-wait           # ロック競合時に待たずスキップ(shellHook 用。明示 apply は既定でブロック)
+--no-wait           # ロック競合時に待たずスキップ(shellHook 用。明示 apply は指定が無いときはブロック)
 -v, --verbose       # 配置レポートを出力(サマリ＋target ごとの行)。既定は成功時サイレント
 --version           # 埋め込みバージョンを表示して終了(cobra 既定書式 `layat version X.Y.Z`。-v は --verbose 割当済みのため短縮形なし)
 --debug             # 内部 nix コマンドを stderr に出す(トラブルシュート用)
@@ -497,7 +497,7 @@ generator = "nix"
 |---|---|
 | `0` | 成功 / no-op / `--no-wait` の try-lock スキップ |
 | `1` | 一般エラー(eval エラー、エンジン実行時エラー、`apply --all` の部分失敗) |
-| `2` | `apply --dryrun` が conflict を検出(CI の事前ゲートに使える) |
+| `2` | `apply --dryrun` が conflict を検出(CI の事前の確認に使える) |
 
 ### 挙動メモ
 
@@ -570,7 +570,7 @@ target を `home.file` から layat へ移す手順:
 | ツール | 役割 | アプローチ | layat との違い |
 |---|---|---|---|
 | npins / niv | ソースのバージョン固定 | — | ファイルを配置しない(直交——layat と組み合わせる) |
-| home-manager `home.file` | ファイル配置 ＋ 世代 | module(生成 / 宣言) | HM 必須。環境まるごとモデル。file モジュールを standalone に切り出せない |
+| home-manager `home.file` | ファイル配置 ＋ 世代 | module(生成 / 宣言) | HM 必須。環境まるごとモデル。file モジュールを単体に切り出せない |
 | `mkOutOfStoreSymlink`(HM) | out-of-store symlink | module 内のヘルパー | HM 専用。layat は同等物を依存なしの明示関数として提供 |
 | nixpkgs `linkFarm` / `symlinkJoin` | store 内 symlink ツリー | 純粋関数 | 出力は store *内* に留まり、任意の out-of-store パスへは置かない(layat は内部で使う) |
 | `nix profile` | 世代管理 | — | 配置先が `~/.nix-profile` に固定。任意パス配置なし(layat はこれに乗る) |
@@ -585,7 +585,7 @@ target を `home.file` から layat へ移す手順:
 
 | 領域 | ステータス |
 |---|---|
-| Standalone CLI(`apply` / `reset` / `rollback` / `list-generations` / `gitignore` / `status` / `init`) | 実装済み(コア) |
+| CLI 単体(`apply` / `reset` / `rollback` / `list-generations` / `gitignore` / `prune` / `status` / `init`) | 実装済み(コア) |
 | project mode(`projectRoot`) | 実装済み(コア) |
 | home mode(`homeRoot`) | 実装済み |
 | home-manager モジュール | 実装済み——`layat.configs.<name>` ごとに 1 profile |

@@ -259,7 +259,7 @@ symlink は配置前除去 → 配置 → 古くなった配置の除去の順�
 
 ## root の解決
 
-root は評価時にパスへ展開せず、マーカーが運ぶ kind をエンジンが実行時に解決する
+root は評価時にパスへ展開せず、マーカーが運ぶ root の種別をエンジンが実行時に解決する
 （→ ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed）。
 
 - [REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b](requirements/20260802-8d965ca2-f8fd-44a4-87f3-94e850e9f85b-home-mode-root-resolution.md) — home mode の root は層ごとに定まった供給元から解決する

@@ -13,7 +13,7 @@ satisfies:
 
 | 対象 | スコープ |
 |---|---|
-| standalone CLI（起動形態。配置モードは root マーカーが決める）| 実装する |
+| CLI 単体（起動形態。配置モードは root マーカーが決める）| 実装する |
 | project mode（devShell / `projectRoot`）| 実装する（コア）|
 | home-manager モジュール | 実装する |
 | NixOS / nix-darwin モジュール | 実装する（system mode の配線・→ DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda）|

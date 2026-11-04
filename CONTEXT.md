@@ -36,6 +36,9 @@ _Avoid_: 「engine が `nix-env` を叩く」と説明すること、バック�
 layat CLI が読む nix の config ファイル。`flake.nix` / `shell.nix` / `default.nix` のいずれか。**`layat.<name>`** に named manifest（`mkManifest` の結果）を公開する。config は依然 Nix で書き `nix build` で評価される（→ ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1）。
 _Avoid_: 「layat が CWD から config 内容そのものを発見する」と説明すること（発見するのは entrypoint *ファイル*。config は Nix 評価で確定する）
 
+**starter**:
+`layat init` が CWD へ展開する 2 つのテンプレート（`templates/standalone` / `templates/project`）。展開してすぐ使える最小の雛形で、利用者が不要な部分を削って自分の config に育てる。layat は設定を生成せず、展開は nix の `templates` の仕組みが行う（→ ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d, ADR-7b9ecd2c-6b77-43c4-8fb4-3ad034e618e1）。
+
 **module (モジュール / 配線)**:
 CLI 単体・home-manager・NixOS / nix-darwin・devShell `shellHook` といった統合層。エンジンを起動する**配線**に徹し、自身では配置しない。`home.file` / `systemd.tmpfiles` へは翻訳しない（→ ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7, ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799）。**kick 方法は 2 クラス**（→ ADR-24488788-a5e6-47a5-9074-97192880642a）: **entrypoint 駆動**（CLI 単体 / devShell は `layat.<name>` を公開し `layat apply <name>` で build→配置）と、**ビルド済み manifest**（home-manager・NixOS / nix-darwin はモジュール評価時に `mkManifest` でビルドした link-farm を `layat apply --all --manifest <name>=<link-farm> … --jobs <n>` の 1 回の起動で配置）。配置〜世代コミットは両クラスで同じエンジンの処理。HM モジュールは **`layat.configs.<name>`** が正規の形で、config ごとに独立した link-farm と profile `<name>` を持つ（CLI 単体と同じく役割を分けられる）。configs 間の target 衝突は module eval ではなく activation の `apply --all` 前段検出で止める。`layat.entries` は `configs.default.entries` への deprecated な rename 糖衣。`layat.recopy` / `layat.jobs` / `layat.backup` は全 config に一律に掛かる共通オプションで、activation の `--recopy` / `--jobs` / `--backup` へ配線する（→ ADR-01abcd5a-464f-4c44-8afd-30950631487c, ADR-3447db4a-cdec-4573-bbad-05bbffc34a65, ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3, ADR-f58e9981-bacc-4937-98b8-bddce0a057db, ADR-1338a293-3f69-48f5-9164-efb4ec6994d6, ADR-7b9e4a7b-56d3-4356-9f67-bedbde8f0a52）。
 _Avoid_: 「モジュールがファイルを配置する」「モジュールがネイティブ機構へ変換する」
@@ -122,7 +125,7 @@ _Avoid_: 境界を跨ぐたびに context を積み増すこと、sentinel を w
 - **「統一」は「廃止」ではない**。store link 統一は out-of-store を消すことではなく、デフォルトから降格して明示関数に隔離すること。
 - **project mode の配置物は untracked が前提**。**ephemeral placement** を「コミットする vendoring」と取り違えない。`.gitignore` への列挙は専用コマンドの stdout 出力から得る（activation は `.gitignore` に触れない）。
 - **`src` と `subpath` は別概念**。`src` = どの物（store パス / リポジトリ）、`subpath` = その中のどのパス。名前が似ているが直交する。旧名 `source`（= 現 `subpath`）は使わない（→ ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab）。
-- **「standalone」は配置モードではなく起動形態**。standalone（= CLI を直接実行する起動形態）と配置モード（home / project / system）は直交する。standalone から project mode も home mode も使える。「standalone = home mode」と短絡しない（配置モードは `root` マーカーが決める）。
+- **「`standalone`」には 2 つの意味がある**。1 つ目は CLI 単体（= CLI を直接実行する起動形態）で、配置モード（home / project / system）とは直交する。CLI 単体から project mode も home mode も使える。「`standalone = home mode`」と短絡しない（配置モードは `root` マーカーが決める）。2 つ目は home-manager の `standalone` configuration（HM を NixOS モジュール無しで使う構成）で、`tests/e2e/scenarios/05-hm` と TP-0734996e-aea9-4229-8075-89a64bdf9f79 がこの意味で使う。日本語の散文では前者を「CLI 単体」と書き、後者はコード表記の `standalone` のまま書く。テンプレート名の `templates/standalone` と `layat init standalone` は前者の意味の識別子で、これもコード表記のまま書く。
 - **project mode の `layat` は devShell 同梱が canonical**。`templates/project` の devShell `packages` に pin 版 `layat` を入れ、CLI と `layat.lib`（manifest `schemaVersion`）を同一 flake 入力で一致させる。グローバル install は CLI 単体（home mode）の利便（→ ADR-88231ffc-4836-4252-be34-894944fd28c3）。
 - **entry の配置種別フィールドは `method`**（旧名 `mode`）。unix file mode との誤読を避ける改名（→ ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a）。
 

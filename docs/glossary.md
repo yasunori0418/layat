@@ -38,6 +38,9 @@ What the **engine** leaves recording, listing, and switching generations to. Its
 The Nix config file the layat CLI reads: one of `flake.nix`, `shell.nix`, or `default.nix`. It exposes a named manifest under `layat.<name>`. The config is still written in Nix and evaluated by `nix build`.
 - **Avoid**: saying "layat discovers the config contents from the CWD" — it discovers the entrypoint *file*; the config is fixed by Nix evaluation.
 
+### starter
+The two templates that `layat init` expands into the CWD: `templates/standalone` and `templates/project`. Each is a minimal scaffold that works right after expansion; the user trims what they do not need and grows it into their own config. layat itself generates no config; the nix `templates` mechanism does the expansion (→ [ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d](adr/20261101-d15a216f-b5d6-4df9-9825-b23a341bec1d-templates-and-init-fixed-ref.md), [ADR-7b9ecd2c-6b77-43c4-8fb4-3ad034e618e1](adr/20261103-7b9ecd2c-6b77-43c4-8fb4-3ad034e618e1-templates-minimal-example-with-comments.md)).
+
 ### module
 An integration layer such as standalone, home-manager, the NixOS / nix-darwin modules, or a devShell `shellHook`. It is purely the wiring that kicks the engine; it never places files itself and never translates to `home.file` or `systemd.tmpfiles`.
 - **Avoid**: "the module places files", "the module translates to native mechanisms".
@@ -124,4 +127,4 @@ The entry field that selects the placement kind (renamed from the old `mode`). R
 - **"symlink" alone is ambiguous.** Always disambiguate to either **store link** or **out-of-store symlink**. The default store link is itself realized as a symlink, so the bare word does not identify the kind.
 - **"unification" is not "removal".** Store-link unification does not delete out-of-store; it demotes it from the default and isolates it behind an explicit function.
 - **`src` and `subpath` are distinct.** `src` = which thing (store path / repository); `subpath` = which path inside it. Similar names, orthogonal concepts. Do not use the old name `source` (= today's `subpath`).
-- **"standalone" is a launch form, not a placement mode.** Standalone (invoking the CLI directly) is orthogonal to placement mode (home / project / system); the mode is decided by the `root` marker.
+- **"standalone" has two meanings.** First, the CLI on its own (invoking the CLI directly): a launch form, not a placement mode. It is orthogonal to placement mode (home / project / system); the mode is decided by the `root` marker. Second, home-manager's standalone configuration (using HM without the NixOS module), the sense used by `tests/e2e/scenarios/05-hm` and TP-0734996e-aea9-4229-8075-89a64bdf9f79. Japanese prose writes the first as 「CLI 単体」 and keeps the second as the code spelling `standalone`. The template name `templates/standalone` and the command `layat init standalone` are identifiers for the first meaning and also stay in code spelling.
