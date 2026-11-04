@@ -12,9 +12,9 @@ specification: |
   A contributor SHALL be able to run the same check the verification runs, and obtain the
   same verdict from it, without reproducing the pipeline that invokes it.
 specification_ja: |
-  コード整形と静的解析は、マージ前の自動検証が実行するチェックに含まれなければならない
+  コード整形と静的解析は、マージ前の自動検証が実行する確認に含まれなければならない
   （どちらも、貢献者がローカルでの実行を覚えていることに依存しないようにするため）。貢献者は、
-  その検証が実行するのと同じチェックを、それを起動するパイプラインを再現することなく実行し、
+  その検証が実行するのと同じ確認を、それを起動するパイプラインを再現することなく実行し、
   同じ判定を得られなければならない。
 ---
 # QA-a92341b9-c873-406e-8b70-a64f56d8a7d6: コード整形と静的解析を自動検証に載せ、同じ判定を手元でも得られるようにする

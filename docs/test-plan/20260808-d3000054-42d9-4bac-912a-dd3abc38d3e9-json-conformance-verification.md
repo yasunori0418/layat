@@ -24,20 +24,20 @@ specification: |
   by matching the document as text, so that they do not break on formatting or on fields
   they do not concern.
 specification_ja: |
-  Go テストは、emit した文書を outturn `conformance.NewDefaultChecker()`（embed 正本
+  Go テストは、emit した文書を outturn `conformance.NewDefaultChecker()`（embed した正とする
   schema〔format assertion 込み〕+ schema 外 lint MUST）で全形状について検証しなければ
   ならない（成功 / subject あり・なし / 前段エラー / 主体エラー / conflict / `--all` の
   複数 subject〔部分失敗・0 件・dryrun conflict〕）。E2E は dev flake の outturn input が
-  提供する `outturn-validate` CLI（`-schema` 省略 = embed 正本）でシナリオの実出力を検証し、
-  item id は同 input の `id-vectors.json` testdata と突き合わせなければならない。適合検証
+  提供する `outturn-validate` CLI（`-schema` 省略 = embed した正とする schema）でシナリオの実出力を検証し、
+  item id は同 input の `id-vectors.json` testdata と比べなければならない。適合検証
   だけを E2E の `--json` 検証としてはならない。schema はエンベロープの形は縛るがその内容が
   何を述べているかは縛らないため、E2E は加えて、payload の意味をそれを生んだ実行に照らして
   構造的にアサートしなければならない。すなわち、文書に伴う終了コードが期待どおりであること、
   計画された change がその実行の含意する kind と可逆性を持つこと、item のインベントリと
   status が一致すること、失敗した item がその原因に対応するエラーコードを持つこと、そして
-  世代番号が profile の有無に応じて存在または省略されること。これらのアサートは文書をテキスト
-  照合するのではなく抽出したフィールドに対して行わなければならない（書式や当該アサートの
-  関知しないフィールドで壊れないようにするため）。
+  世代番号が profile の有無に応じて存在または省略されること。これらのアサートは文書をテキストで
+  比較するのではなく抽出したフィールドに対して行わなければならない（書式や当該アサートの
+  関知しないフィールドで失敗しないようにするため）。
 ---
 # TP-d3000054-42d9-4bac-912a-dd3abc38d3e9: エンベロープの outturn 適合を Go テストと E2E の両方で検証する
 
