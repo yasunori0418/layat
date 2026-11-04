@@ -32,7 +32,7 @@ symlink にすると、`foo` は実ディレクトリとして残っているの
 
 ## 決定
 
-symlink の entry の target が実ディレクトリのとき、配下の全 leaf が「自分が記録して古くなった
+symlink の entry の target が実ディレクトリのとき、配下の全 leaf が「自己記録の古くなった
 symlink」か「空のディレクトリ」なら、ディレクトリごと配置前に除去して symlink を置く。それ
 以外の leaf が 1 つでもあれば、ディレクトリ全体を conflict にし、部分的には除去しない。空の
 ディレクトリは由来を問わない。copy の entry には適用しない。
