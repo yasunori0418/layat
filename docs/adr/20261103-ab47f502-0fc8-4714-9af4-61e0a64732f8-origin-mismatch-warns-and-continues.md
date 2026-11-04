@@ -30,7 +30,7 @@ references:
 
 ## 決定
 
-apply（`--dryrun` と generation skip の処理を含む）は、
+apply（`--dryrun` と世代スキップの処理を含む）は、
 記録の出所と今回の出所が両方あって食い違えば、警告を出して続行する。後勝ちは変えない。
 
 食い違いは、両方に `identity` があれば `identity` だけで比べ、どちらかに無ければ generator と

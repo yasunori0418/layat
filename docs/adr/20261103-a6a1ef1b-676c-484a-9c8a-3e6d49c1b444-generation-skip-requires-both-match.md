@@ -33,7 +33,7 @@ references:
 
 ## 決定
 
-generation skip は、新しい link-farm が profile の current 世代に一致し、記録があればその
+世代スキップは、新しい link-farm が profile の current 世代に一致し、記録があればその
 `linkFarm` にも一致するときだけ行う。profile が無ければ、記録だけがあっても skip しない。
 
 ## 根拠

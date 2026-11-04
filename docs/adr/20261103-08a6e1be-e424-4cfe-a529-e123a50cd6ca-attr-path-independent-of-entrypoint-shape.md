@@ -1,7 +1,7 @@
 ---
 id: "ADR-08a6e1be-e424-4cfe-a529-e123a50cd6ca"
 type: adr
-name: "CLI が叩く attr path を legacy entrypoint の書き方で分岐させない"
+name: "CLI が評価する attr path を legacy entrypoint の書き方で分岐させない"
 status: 採用
 issues:
   - "#112"
@@ -19,7 +19,7 @@ references:
   - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
 ---
-# ADR-08a6e1be-e424-4cfe-a529-e123a50cd6ca: CLI が叩く attr path を legacy entrypoint の書き方で分岐させない
+# ADR-08a6e1be-e424-4cfe-a529-e123a50cd6ca: CLI が評価する attr path を legacy entrypoint の書き方で分岐させない
 
 - ステータス: 採用
 - 日付: 2026-11-03

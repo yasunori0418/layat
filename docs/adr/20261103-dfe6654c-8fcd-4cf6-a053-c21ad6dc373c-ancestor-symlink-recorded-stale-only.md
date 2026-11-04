@@ -1,7 +1,7 @@
 ---
 id: "ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c"
 type: adr
-name: "祖先 symlink は自分が記録して古くなったものだけを移行する"
+name: "祖先 symlink は自己記録の古くなったものだけを移行する"
 status: 採用
 issues:
   - "#170"
@@ -29,7 +29,7 @@ references:
   - "ADR-40dd7945-5792-4b80-bdfa-43f95f482554"
   - "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
 ---
-# ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c: 祖先 symlink は自分が記録して古くなったものだけを移行する
+# ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c: 祖先 symlink は自己記録の古くなったものだけを移行する
 
 - ステータス: 採用
 - 日付: 2026-11-03

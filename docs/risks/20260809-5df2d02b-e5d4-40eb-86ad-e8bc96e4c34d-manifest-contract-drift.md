@@ -1,7 +1,7 @@
 ---
 id: "RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d"
 type: risk
-name: "manifest.json の形が engine の読む契約から静かにずれる"
+name: "manifest.json の形が engine の読む契約から気付かれずにずれる"
 likelihood: medium
 impact: medium
 level: medium
@@ -17,7 +17,7 @@ threatens:
   - "REQ-eb363122-385a-499c-a074-c95efb949d07"
   - "REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d"
 ---
-# RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d: manifest.json の形が engine の読む契約から静かにずれる
+# RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d: manifest.json の形が engine の読む契約から気付かれずにずれる
 
 ## リスク
 

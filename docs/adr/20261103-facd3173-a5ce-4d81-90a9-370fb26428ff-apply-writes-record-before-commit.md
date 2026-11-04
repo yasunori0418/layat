@@ -30,7 +30,7 @@ apply は FS を変えてから世代を commit する。この順序のどこ�
 ## 決定
 
 apply は、全ての FS 操作が成功した直後、世代の commit より前に、記録を一時ファイルと rename で
-atomic に書く。書けなければ apply を失敗とし、undo journal で FS を巻き戻す。generation skip
+atomic に書く。書けなければ apply を失敗とし、undo journal で FS を巻き戻す。世代スキップ
 の処理でも同じ時機に記録を更新し、書けなかったときの扱いも同じにする。
 
 ## 根拠
@@ -38,7 +38,7 @@ atomic に書く。書けなければ apply を失敗とし、undo journal で F
 記録は FS の事実である。FS が変わった時点で書き、commit の成否とは切り離す。commit
 が失敗しても記録は FS と一致しているので、次の apply は記録を比較の基準にして収束できる。
 
-書けなかったときに FS を戻せば、記録と FS がずれた状態を残さない。generation skip の処理も drift
+書けなかったときに FS を戻せば、記録と FS がずれた状態を残さない。世代スキップの処理も drift
 修復で FS を変える。だから同じ規則に揃える。
 
 ## 棄却した代替案
