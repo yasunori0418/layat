@@ -39,5 +39,5 @@ copy の src は nix store の read-only なツリーであり、そのまま複
 
 ## 張り先の判断
 
-3 本とも requirement へ張る。mode の扱い・symlink 非 deref・out-of-store の live 性は
+3 本とも `requirement` へ張る。mode の扱い・symlink 非 deref・out-of-store の live 性は
 いずれも配置物としてユーザーが直接観測する性質であり、コピー実装を差し替えても懸念は残る。

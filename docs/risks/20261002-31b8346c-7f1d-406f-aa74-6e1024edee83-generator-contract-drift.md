@@ -16,18 +16,18 @@ threatens:
 CLI は manifest を生成器の契約（Discover / Roots / AllRoots / Build / DryBuild）越しに得る
 （→ REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729）。実装は nix・prebuilt（`--manifest`）・テスト
 ダブルの 3 つで、CLI はどれが渡されても同じ手順で engine へ注入する。実装の 1 つが契約から
-ずれると、その実装を通る経路だけが壊れる。
+ずれると、その実装を通る処理だけが正しく動かなくなる。
 
 ずれ方は 2 方向ある。
 
 - **操作の意味** — prebuilt の Build / DryBuild が与えられた link-farm 以外を返す、Roots が
-  manifest.json の root を取り違える、テストダブルが呼び出しを記録し損ねる。`--manifest` 経路
+  manifest.json の root を取り違える、テストダブルが呼び出しを記録し損ねる。`--manifest` の使い方
   （モジュール activation）だけが別の link-farm を適用し、あるいは cmd 層のテストが実際とは
   違う呼び出し列を緑にする
 - **失敗の構造** — `generator.Error` が原因の error を保持し損ねる、Stage を取り違える
   （→ REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd）。`--json` の分類は Stage と原因の chain で
   決まるため、entrypoint の不在や `-f` のパスの不在が `E_LAYAT_BUILD` に化け、あるいは逆に
-  評価・build の失敗が `E_LAYAT_FAILED` へ落ちる
+  評価・build の失敗が `E_LAYAT_FAILED` に分類される
 
 ## 影響
 
