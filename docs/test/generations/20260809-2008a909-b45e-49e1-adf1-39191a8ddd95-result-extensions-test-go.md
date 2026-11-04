@@ -23,7 +23,7 @@ profile リンク）を symlink だけで作るため、世代番号を読み戻
 
 - **世代観測の分解能** — `observeGeneration` を直接駆動し、profile リンク不在 → nil、
   `profile-3-link` → 3、store パス（世代リンクでない dest）→ nil、`profile-x-link`
-  （壊れた番号）→ nil の 4 分岐
+  （数値として読めない番号）→ nil の 4 分岐
 - **インベントリと世代観測** — `Entries` が全 entry を持つ。初回 apply（nil → 1）・
   2 回目（1 → 2）・`--dryrun`（before == after でポインタ不動）
 - **観測不能時の nil** — profile リンクが世代リンクを経ず link-farm を直接指すとき、
@@ -40,4 +40,4 @@ profile リンク）を symlink だけで作るため、世代番号を読み戻
 - **conflict / 部分失敗の部分結果** — apply の conflict、reset の部分失敗、rollback の
   conflict のいずれも部分の結果を返す。`Apply` は張替えた dest と除去 entry も記録する
 - **構造化 warning** — planner の entry warning が kind + target の構造で結果に
-  載り、`Warnf` のテキスト出力は従来どおり流れる。`ResetResult` でも同じ形で露出する
+  載り、`Warnf` のテキスト出力は従来どおり出る。`ResetResult` でも同じ形で現れる

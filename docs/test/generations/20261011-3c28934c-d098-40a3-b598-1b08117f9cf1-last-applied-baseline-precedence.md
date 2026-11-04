@@ -9,7 +9,7 @@ mitigates:
 
 ## テスト条件
 
-stale 除去・ドリフト修復・reset・rollback が使う baseline（この root に layat が最後に
+古くなった配置の除去・ドリフト修復・reset・rollback が使う baseline（この root に layat が最後に
 置いたもの）について、読みの優先順位と、各操作が記録を書き換える時機と内容を検証する。
 
 **読み**
@@ -18,8 +18,8 @@ stale 除去・ドリフト修復・reset・rollback が使う baseline（この
   食い違えば記録を採り、warning を 1 行出す
 - 記録が無ければ profile の current を baseline にする
 - 両方無ければ baseline は空で、「last-applied 記録なし」の warning を 1 行出す
-- 壊れた JSON・必須フィールドの欠落や型違い・未知のフィールド・`recordVersion` が 1 でも 2 でもない記録は
-  「記録なし」に倒さず error にする
+- 破損した JSON・必須フィールドの欠落や型違い・未知のフィールド・`recordVersion` が 1 でも 2 でもない記録は
+  「記録なし」として扱わず error にする
 
 **書き**
 
@@ -28,8 +28,8 @@ stale 除去・ドリフト修復・reset・rollback が使う baseline（この
   undo journal が配置を巻き戻す
 - 記録ファイルは全ユーザーが読める mode 0644 で書く
 - generation skip は新 link-farm が profile の current に一致し、記録があればその `linkFarm` にも
-  一致するときだけ行い、その経路でも記録を更新する。profile が無いときや両者が食い違う間は、
-  記録を baseline に通常経路を通る
+  一致するときだけ行い、その処理でも記録を更新する。profile が無いときや両者が食い違う間は、
+  記録を baseline にして通常の処理を通る
 - rollback は FS の収束後・profile ポインタ移動の前に N-1 の manifest と link-farm で書き直す
 - reset は撤去対象のうち target が無くなった entry だけを除いて書き直し（foreign として
   残した entry・途中失敗で未到達の entry・`linkFarm` は保持）、全撤去なら記録を削除する
