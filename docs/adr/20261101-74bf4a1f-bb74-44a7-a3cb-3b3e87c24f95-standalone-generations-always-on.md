@@ -1,13 +1,13 @@
 ---
 id: "ADR-74bf4a1f-bb74-44a7-a3cb-3b3e87c24f95"
 type: adr
-name: "standalone では世代を常時有効にする"
+name: "CLI 単体では世代を常時有効にする"
 status: 採用
 origin: "ADR-0002 §決定（standalone は世代を常時 ON）を書き直した"
 justifies:
   - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
 ---
-# ADR-74bf4a1f-bb74-44a7-a3cb-3b3e87c24f95: standalone では世代を常時有効にする
+# ADR-74bf4a1f-bb74-44a7-a3cb-3b3e87c24f95: CLI 単体では世代を常時有効にする
 
 - ステータス: 採用
 - 日付: 2026-11-01
