@@ -125,7 +125,7 @@ _Avoid_: 境界を跨ぐたびに context を積み増すこと、sentinel を w
 - **「統一」は「廃止」ではない**。store link 統一は out-of-store を消すことではなく、デフォルトから降格して明示関数に隔離すること。
 - **project mode の配置物は untracked が前提**。**ephemeral placement** を「コミットする vendoring」と取り違えない。`.gitignore` への列挙は専用コマンドの stdout 出力から得る（activation は `.gitignore` に触れない）。
 - **`src` と `subpath` は別概念**。`src` = どの物（store パス / リポジトリ）、`subpath` = その中のどのパス。名前が似ているが直交する。旧名 `source`（= 現 `subpath`）は使わない（→ ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab）。
-- **「`standalone`」には 2 つの意味がある**。1 つ目は CLI 単体（= CLI を直接実行する起動形態）で、配置モード（home / project / system）とは直交する。CLI 単体から project mode も home mode も使える。「`standalone = home mode`」と短絡しない（配置モードは `root` マーカーが決める）。2 つ目は home-manager の `standalone` configuration（HM を NixOS モジュール無しで使う構成）で、`tests/e2e/scenarios/05-hm` と TP-0734996e-aea9-4229-8075-89a64bdf9f79 がこの意味で使う。日本語の散文では前者を「CLI 単体」と書き、後者はコード表記の `standalone` のまま書く。
+- **「`standalone`」には 2 つの意味がある**。1 つ目は CLI 単体（= CLI を直接実行する起動形態）で、配置モード（home / project / system）とは直交する。CLI 単体から project mode も home mode も使える。「`standalone = home mode`」と短絡しない（配置モードは `root` マーカーが決める）。2 つ目は home-manager の `standalone` configuration（HM を NixOS モジュール無しで使う構成）で、`tests/e2e/scenarios/05-hm` と TP-0734996e-aea9-4229-8075-89a64bdf9f79 がこの意味で使う。日本語の散文では前者を「CLI 単体」と書き、後者はコード表記の `standalone` のまま書く。テンプレート名の `templates/standalone` と `layat init standalone` は前者の意味の識別子で、これもコード表記のまま書く。
 - **project mode の `layat` は devShell 同梱が canonical**。`templates/project` の devShell `packages` に pin 版 `layat` を入れ、CLI と `layat.lib`（manifest `schemaVersion`）を同一 flake 入力で一致させる。グローバル install は CLI 単体（home mode）の利便（→ ADR-88231ffc-4836-4252-be34-894944fd28c3）。
 - **entry の配置種別フィールドは `method`**（旧名 `mode`）。unix file mode との誤読を避ける改名（→ ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a）。
 
