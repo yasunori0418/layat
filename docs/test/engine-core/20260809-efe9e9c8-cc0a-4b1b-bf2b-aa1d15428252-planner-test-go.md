@@ -28,7 +28,7 @@ table-driven テスト。実 FS へ触らずに分類の全パターンを列挙
   conflict、自己記録の古くなった祖先の移行（複数子での祖先の重複排除を含む）
 - **古くなった配置の除去の分類**: 記録どおりを指す symlink の除去、空 manifest による全クリア（無警告）、
   記録先と食い違う symlink の保持 + 警告、symlink でなくなった target の保持 + 警告、
-  既に消えた target の no-op、copy entry の orphan 警告（除去しない）
+  既に消えた target の no-op、copy entry の孤児の警告（除去しない）
 - **copy の分類**: target 不在での place-once コピー、記録済み target の no-op（place-once）、
   foreign 実ファイルの skip + 警告、構造不一致（src dir × target file / src file × target dir）
   両方向の conflict、記録済みディレクトリの no-op
