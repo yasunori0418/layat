@@ -53,7 +53,7 @@ specification_ja: |
   ならない。profileDir を共有する他の場合と同じく後勝ちとしなければならない。記録に origin
   が無いときは比べてはならず、警告してはならない。
   reset と rollback が記録を書き直すときは記録済みの origin を引き継がなければならない。
-  記録済みの origin が無ければ（記録が無く profile から baseline を取った場合を含む）、
+  記録済みの origin が無ければ（記録が無く profile から比較の基準（rollback では基準世代）を取った場合を含む）、
   `origin` を省いて `recordVersion` 2 で書かなければならない。
 ---
 # REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282: apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する
@@ -74,7 +74,7 @@ specification_ja: |
   `subjectResult.warnings` に `W_LAYAT_ORIGIN_MISMATCH`（`detail = {recorded, current}`）を出して
   続行する。止めず、後勝ちのまま。記録に origin が無ければ比べない。
 - **書き直しでの引き継ぎ**: reset / rollback は記録済みの origin を引き継ぐ。無ければ
-  （記録が無く profile から比較の基準を取った場合を含む）`origin` を省いて版 2 で書く。
+  （記録が無く profile から比較の基準（rollback では基準世代）を取った場合を含む）`origin` を省いて版 2 で書く。
 - **採らないもの**: `status` への origin の露出と、食い違いで止めるモード。
 
 想定する食い違いは、home-manager モジュール（`apply --all --manifest`・prebuilt 生成器）と
