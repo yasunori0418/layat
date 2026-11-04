@@ -7,7 +7,7 @@
 
 layat は、**フェッチ済みの Nix store パスの内容を `root` 相対の target へ配置する** Nix ライブラリ・モジュール群(symlink もしくは copy)。設定の生成は **行わない**。`root` は `projectRoot` / `homeRoot` / `systemRoot` マーカーで**明示的に**選ぶ(**暗黙のデフォルトは持たない**)。
 
-> **ステータス: MVP / 実装フェーズ。** 実装済みの範囲は standalone CLI ＋ **project mode** をコアとし、**home mode** と **system mode**、home-manager / NixOS / nix-darwin モジュールもサポート。全体のマトリクスは [MVP ステータス](#mvp-ステータス) を参照。API は今後も変わりうる。
+> **ステータス: MVP / 実装フェーズ。** 実装済みの範囲は CLI 単体 ＋ **project mode** をコアとし、**home mode** と **system mode**、home-manager / NixOS / nix-darwin モジュールもサポート。全体のマトリクスは [MVP ステータス](#mvp-ステータス) を参照。API は今後も変わりうる。
 
 ---
 
@@ -18,7 +18,7 @@ layat は **フェッチ**(`src` は store パス)と **配置**(固定の実行
 - **設定生成をしない。** リポジトリにすでにある内容を配置する。
 - **独立した単位。** 各 config(`layat.<name>`)はそれ自体が独立した Nix profile。ある更新が別へ波及しない。
 - **home-manager 非依存。** `lib/` は nixpkgs のみに依存する。module 統合はエンジンを *起動するだけ*。
-- **readlink パターンマッチではなく自己記録の manifest。** stale 除去は前世代の manifest を使う。詳細は [`docs/concept.md`](docs/concept.md#home-manager-homefile-との配置意味論の差) を参照。
+- **readlink パターンマッチではなく自己記録の manifest。** 古くなった配置の除去には前世代の manifest を使う。詳細は [`docs/concept.md`](docs/concept.md#home-manager-homefile-との配置意味論の差) を参照。
 
 ---
 
@@ -36,7 +36,7 @@ layat は **フェッチ**(`src` は store パス)と **配置**(固定の実行
   · place / replace / remove のネイティブなファイルシステム操作 ＋ 保守的な stale 除去
 ```
 
-- **engine** が配置と stale 除去を所有する。`manifest.json`——安定した Nix↔Go の契約——を読み、ネイティブなファイルシステム操作を実行する。
+- **engine** が配置と古くなった配置の除去を所有する。`manifest.json`——安定した Nix↔Go の契約——を読み、ネイティブなファイルシステム操作を実行する。
 - `lib.mkManifest` は link-farm derivation(`manifest.json` ＋ symlink farm)を生成する **純粋関数**。副作用を持たない。
 - **entrypoint** は CLI が読む Nix ファイル(`flake.nix` / `shell.nix` / `default.nix`)で、`layat.<name>` に named manifest を公開する。
 - **生成器**は CLI が manifest を得る相手。既定は `nix`(「[生成器の選択](#生成器の選択)」を参照)。`apply --manifest` はビルド済み link-farm をそのまま使う *prebuilt* 生成器を通る。
@@ -45,14 +45,14 @@ layat は **フェッチ**(`src` は store パス)と **配置**(固定の実行
 
 ## 要件
 
-- **Nix**。環境で experimental features を有効化していること：`experimental-features = nix-command`(flake entrypoint には `flakes` も)。layat は `--extra-experimental-features` を黙って注入 **しない**。機能が無効なら、前提条件と有効化方法を明示するメッセージを出して停止する。
+- **Nix**。環境で experimental features を有効化していること：`experimental-features = nix-command`(flake entrypoint には `flakes` も)。layat は `--extra-experimental-features` を利用者に知らせずに注入 **しない**。機能が無効なら、前提条件と有効化方法を明示するメッセージを出して停止する。
 - **git** が `PATH` 上にあること(project mode でプロジェクトルートを解決するために使う)。
 
 ---
 
 ## インストール
 
-### Standalone(home mode)
+### CLI 単体(home mode)
 
 CLI をグローバルにインストールし、`layat` を `PATH` に乗せる。
 
@@ -143,10 +143,10 @@ layat gitignore skills >> .gitignore
 ```
 
 - ここでは世代は内部機構であり、`rollback` / `list-generations` は project mode では **公開されない**(ephemeral な配置に rollback は無意味)。
-- devShell では **named apply**(`layat apply skills`)か `layat apply --all --project-root` を使う。裸の `--all` は home-mode config も `$HOME` へ配置してしまうため、混在 entrypoint では footgun。
+- devShell では **named apply**(`layat apply skills`)か `layat apply --all --project-root` を使う。裸の `--all` は home-mode config も `$HOME` へ配置してしまうため、混在 entrypoint では危険。
   `mkApplyCommand` の `root = "all"` も同じ。
 
-### Home mode(standalone、役割を別 profile に分ける)
+### Home mode(CLI 単体、役割を別 profile に分ける)
 
 **home mode** では root は `$HOME`(`homeRoot` で選ぶ)。各 config はそれ自体が独立した profile で、apply ごとにコミットされ、ユーザー公開の `rollback` を持つ。
 
@@ -193,7 +193,7 @@ nvim = layat.lib.mkManifest {
 };
 ```
 
-`mkManifest` は任意の `identity`(config を識別する空でない自由文字列)も受け取る。同じ config を home-manager モジュールからも適用するなら、ここと `layat.configs.<name>.identity` に同じ `identity` を与える。home-manager と standalone から交互に apply しても、出所の食い違いの警告は出ない。
+`mkManifest` は任意の `identity`(config を識別する空でない自由文字列)も受け取る。同じ config を home-manager モジュールからも適用するなら、ここと `layat.configs.<name>.identity` に同じ `identity` を与える。home-manager と CLI 単体から交互に apply しても、出所の食い違いの警告は出ない。
 
 #### `PATH` に載せるパッケージ環境
 
@@ -217,7 +217,7 @@ nixpkgs の多くのパッケージは man を別 output に分けており、�
 
 ### home-manager モジュール
 
-モジュールは `root = homeRoot` に固定される(`root` を再指定しない)。`layat.configs.<name>` ごとに link-farm と profile `<name>` が別々に作られるので、standalone の `layat.<name>` と同じく役割を分けられる。`home.activation` は `layat apply --all --manifest <name>=<link-farm> … --jobs <n>` の 1 回の起動でエンジンを駆動し、`home.file` へは委譲しない。2 つの config が同じ target を持つと、何も配置せずに activation が止まる。layat は自前の profile を **内部機構** として保持するが、ユーザー公開の rollback はホスト側に一本化される(`home-manager --rollback`)。
+モジュールは `root = homeRoot` に固定される(`root` を再指定しない)。`layat.configs.<name>` ごとに link-farm と profile `<name>` が別々に作られるので、CLI 単体の `layat.<name>` と同じく役割を分けられる。`home.activation` は `layat apply --all --manifest <name>=<link-farm> … --jobs <n>` の 1 回の起動でエンジンを駆動し、`home.file` へは委譲しない。2 つの config が同じ target を持つと、何も配置せずに activation が止まる。layat は自前の profile を **内部機構** として保持するが、ユーザー公開の rollback はホスト側に一本化される(`home-manager --rollback`)。
 
 ```nix
 imports = [ inputs.layat.homeManagerModules.default ];
@@ -241,7 +241,7 @@ layat = {
 config ごとのオプション:
 
 - `layat.configs.<name>.subdir`(nullable な文字列、既定 `null`)——その config の全 target を `$HOME/<subdir>/` 配下に置く。root は home に pin されたまま。絶対パス・`..` による脱出・`""` は eval エラーになる。
-- `layat.configs.<name>.identity`(nullable な文字列、既定 `null`)——`mkManifest` の `identity` へそのまま渡る。同じ `identity` を持つ manifest は、home-manager と standalone を跨いで apply しても出所の食い違いを警告しない。`""` は eval エラーになる。
+- `layat.configs.<name>.identity`(nullable な文字列、既定 `null`)——`mkManifest` の `identity` へそのまま渡る。同じ `identity` を持つ manifest は、home-manager と CLI 単体を跨いで apply しても出所の食い違いを警告しない。`""` は eval エラーになる。
 
 ```nix
 layat.configs.nvim = {
@@ -260,9 +260,9 @@ layat.configs.nvim = {
 
 ### System mode
 
-`systemRoot` の config は `/` に配置する。この config への `apply` / `reset` / `rollback` は root が必要(`sudo layat apply <name>`)で、`--dryrun` と `list-generations` は不要。profile は `/nix/var/nix/profiles/layat/` 下に、last-applied 記録は `/var/lib/layat/` 下に置かれる。構成が変わらないまま再 apply しても(NixOS の activation は boot のたびに走る)新しい世代は積まず、ずれた配置だけを直す。`list-generations --all` は home の profile を一覧したあと、system の profile を一覧する(見出しは `# <name> (system)`。`--json` では subject 名が `home:<name>` / `system:<name>` になる)。
+`systemRoot` の config は `/` に配置する。この config への `apply` / `reset` / `rollback` は root が必要(`sudo layat apply <name>`)で、`--dryrun` と `list-generations` は不要。profile は `/nix/var/nix/profiles/layat/` 下に、last-applied 記録は `/var/lib/layat/` 下に置かれる。構成が変わらないまま再 apply しても(NixOS の activation は boot のたびに実行される)新しい世代は積まず、ずれた配置だけを直す。`list-generations --all` は home の profile を一覧したあと、system の profile を一覧する(見出しは `# <name> (system)`。`--json` では subject 名が `home:<name>` / `system:<name>` になる)。
 
-1 つの entrypoint に system と home / project の config が混在するときは、実行を分ける。`sudo layat apply --all --system-root` のあと、自分のユーザーで `layat apply --all --home-root`(または `--project-root`)を実行する。home / project の config を root で適用すると、配置物は root 所有になり、世代は root の state に記録される。そのため root が絞り込みなしで実行した `apply --all` の選択にそれらが含まれると、warning が出る。同じ config(fixed も含む)を root と自分のユーザーの両方で適用しないこと。profile と記録が 2 ユーザーの state に分かれ、baseline が食い違う。
+1 つの entrypoint に system と home / project の config が混在するときは、実行を分ける。`sudo layat apply --all --system-root` のあと、自分のユーザーで `layat apply --all --home-root`(または `--project-root`)を実行する。home / project の config を root で適用すると、配置物は root 所有になり、世代は root の state に記録される。そのため root が絞り込みなしで実行した `apply --all` の選択にそれらが含まれると、warning が出る。同じ config(fixed も含む)を root と自分のユーザーの両方で適用しないこと。profile と記録が 2 ユーザーの state に分かれ、基準世代が食い違う。
 
 `LAYAT_SYSTEM_PROFILE_BASE` / `LAYAT_SYSTEM_STATE_DIR` は、テストや隔離したハーネスのために system の profile 基底と記録の基底を別の場所に差し替える。サポート対象の設定ではない。
 
@@ -285,8 +285,8 @@ layat = {
 };
 ```
 
-- **NixOS** では `system.activationScripts.layat` から、`etc` と `users` の後に起動する。activation は boot のたびにも走るが、構成が変わらなければ layat の世代は増えない。`nixos-rebuild dry-activate` では `--dryrun` 付きで起動するので、何も配置しない。
-- **nix-darwin** では `system.activationScripts.postActivation` へ起動を追記する(利用者が書いた `postActivation` も残る)。nix-darwin は boot 時にこれを走らせないため、ずれた配置は次の `darwin-rebuild switch` で直る。`--dryrun` の経路は無い。macOS ではエンジンが記録用に `/var/lib/layat` を作る。
+- **NixOS** では `system.activationScripts.layat` から、`etc` と `users` の後に起動する。activation は boot のたびにも実行されるが、構成が変わらなければ layat の世代は増えない。`nixos-rebuild dry-activate` では `--dryrun` 付きで起動するので、何も配置しない。
+- **nix-darwin** では `system.activationScripts.postActivation` へ起動を追記する(利用者が書いた `postActivation` も残る)。nix-darwin は boot 時にこれを実行しないため、ずれた配置は次の `darwin-rebuild switch` で直る。`--dryrun` で起動する場面は無い。macOS ではエンジンが記録用に `/var/lib/layat` を作る。
 - layat は自前の profile を **内部機構** として保持するが、ユーザー公開の rollback はホスト側に一本化される(`nixos-rebuild --rollback` / `darwin-rebuild --rollback`)。ホストの activation が古い link-farm を適用し直す。
 
 ### 既存の flake に layat を追加する
@@ -380,7 +380,7 @@ subpath = "themes/dark.json";   # 単一ファイル
 
 ### `target` — デフォルト = 属性キー
 
-配置先。**`root` からの相対パス**。属性キーが既定の `target` であり、entry の identity(stale 除去の diff キーであり、一意性のキー)でもある。キーを論理ラベルにして `target` を明示上書きすることもできる(`home.file` と同様)。
+配置先。**`root` からの相対パス**。属性キーが既定の `target` であり、entry の identity(古くなった配置を除去するときの diff キーであり、一意性のキー)でもある。キーを論理ラベルにして `target` を明示上書きすることもできる(`home.file` と同様)。
 
 ### `method` — デフォルト `"symlink"`
 
@@ -489,7 +489,7 @@ generator = "nix"
 
 ### 出力と終了コード
 
-- **既定では成功時サイレント。** 配置レポート、try-lock のスキップ通知、`apply --all` のサマリには `-v` が要る。`--debug` は内部 nix コマンドを表示する。`--quiet` は無い。
+- **指定が無いときは成功時サイレント。** 配置レポート、try-lock のスキップ通知、`apply --all` のサマリには `-v` が要る。`--debug` は内部 nix コマンドを表示する。`--quiet` は無い。
 - **`--json`** はコマンド完了時に [outturn](https://github.com/yasunori0418/outturn) 準拠の JSON エンベロープ(1 文書)を stdout へ書く機械可読の第 2 契約。`-v`(stderr・人間向け)とは直交(全サブコマンドがペイロードを載せ、`--all` は config ごとに `SubjectResult` を列挙する)。
 - **ストリーム規律**：stdout は機械可読出力(`gitignore` 一覧、`apply --dryrun` 計画)専用で、既定 verbosity でも出力される。よって `layat gitignore <name> >> .gitignore` や `layat apply <name> --dryrun | ...` は安全にパイプできる。**警告とエラーは常に stderr へ出力され、サイレンスされない。**
 
@@ -501,8 +501,8 @@ generator = "nix"
 
 ### 挙動メモ
 
-- **冪等。** 「配置したと記録し、かつ記録どおりを指している」stale link だけを除去する。外部 symlink は警告付きで置き換えられ、target にある実ファイル / ディレクトリはエラー。
-- **世代** は既定の nixprofile バックエンドが layat 自前の Nix profile に乗せ、`nix-env` / `nix-collect-garbage` で操作する。project mode は link-farm が不変なら新世代をコミットしないが、drift は修復する。layat が最後に配置したものは last-applied 記録(`<state>/layat/<name>/last-applied.json`。`--root` なしの home mode の場合。それ以外は `<state>/layat/<roothash>/<name>/` 下)にも残り、stale 除去は profile より先にこれを読む。
+- **冪等。** 「配置したと記録し、かつ記録どおりを指している」古くなった link だけを除去する。外部 symlink は警告付きで置き換えられ、target にある実ファイル / ディレクトリはエラー。
+- **世代** は既定の nixprofile バックエンドが layat 自前の Nix profile に乗せ、`nix-env` / `nix-collect-garbage` で操作する。project mode は link-farm が不変なら新世代をコミットしないが、drift は修復する。layat が最後に配置したものは last-applied 記録(`<state>/layat/<name>/last-applied.json`。`--root` なしの home mode の場合。それ以外は `<state>/layat/<roothash>/<name>/` 下)にも残り、古くなった配置の除去では profile より先にこれを読む。
 - **`apply --all`** は各 config を自分の profile 上で atomic に適用し、失敗しても続行し、いずれかが失敗すれば非ゼロで終了する。全体としては **atomic ではない**。
 - **`reset`** は layat 管理 symlink と copy target を削除する(copy を消す唯一の手段)。name と確認または `-y` が必須で、profile / 世代には触れない。ただし profile が無く last-applied 記録だけがあるときは、lock を取るために profileDir(roothash 系列は backref `.root` も)を作る。
 
@@ -607,11 +607,11 @@ target を `home.file` から layat へ移す手順:
 ## ドキュメント
 
 `docs/` は **README → 概要文書 → item の 3 層構造**。規範的な内容は item(1 ファイル 1 主張の
-Markdown + YAML frontmatter)が持ち、概要文書は通読の入口として全体像と item への索引を担う。
+Markdown + YAML frontmatter)が持ち、概要文書は通読の起点として全体像と item への索引を担う。
 
-- `docs/concept.md` — コンセプト(solution / use_case item と ADR への索引)、設計の哲学、north-star、既存ツールとの比較
-- `docs/design.md` — 設計(design item への索引)
-- `docs/spec.md` — 仕様(requirement item への索引)
+- `docs/concept.md` — コンセプト(`solution` / `use_case` item と ADR への索引)、設計の哲学、north-star、既存ツールとの比較
+- `docs/design.md` — 設計(`design` item への索引)
+- `docs/spec.md` — 仕様(`requirement` item への索引)
 - `docs/glossary.md` — 正準な英語用語(日本語対訳は `docs/glossary.ja.md`)
 
 | ディレクトリ | 型 | prefix |
