@@ -262,7 +262,7 @@ layat.configs.nvim = {
 
 `systemRoot` の config は `/` に配置する。この config への `apply` / `reset` / `rollback` は root が必要(`sudo layat apply <name>`)で、`--dryrun` と `list-generations` は不要。profile は `/nix/var/nix/profiles/layat/` 下に、last-applied 記録は `/var/lib/layat/` 下に置かれる。構成が変わらないまま再 apply しても(NixOS の activation は boot のたびに実行される)新しい世代は積まず、ずれた配置だけを直す。`list-generations --all` は home の profile を一覧したあと、system の profile を一覧する(見出しは `# <name> (system)`。`--json` では subject 名が `home:<name>` / `system:<name>` になる)。
 
-1 つの entrypoint に system と home / project の config が混在するときは、実行を分ける。`sudo layat apply --all --system-root` のあと、自分のユーザーで `layat apply --all --home-root`(または `--project-root`)を実行する。home / project の config を root で適用すると、配置物は root 所有になり、世代は root の state に記録される。そのため root が絞り込みなしで実行した `apply --all` の選択にそれらが含まれると、warning が出る。同じ config(fixed も含む)を root と自分のユーザーの両方で適用しないこと。profile と記録が 2 ユーザーの state に分かれ、基準世代が食い違う。
+1 つの entrypoint に system と home / project の config が混在するときは、実行を分ける。`sudo layat apply --all --system-root` のあと、自分のユーザーで `layat apply --all --home-root`(または `--project-root`)を実行する。home / project の config を root で適用すると、配置物は root 所有になり、世代は root の state に記録される。そのため root が絞り込みなしで実行した `apply --all` の選択にそれらが含まれると、warning が出る。同じ config(fixed も含む)を root と自分のユーザーの両方で適用しないこと。profile と記録が 2 ユーザーの state に分かれ、baseline が食い違う。
 
 `LAYAT_SYSTEM_PROFILE_BASE` / `LAYAT_SYSTEM_STATE_DIR` は、テストや隔離したハーネスのために system の profile 基底と記録の基底を別の場所に差し替える。サポート対象の設定ではない。
 
@@ -489,7 +489,7 @@ generator = "nix"
 
 ### 出力と終了コード
 
-- **指定が無いときは成功時サイレント。** 配置レポート、try-lock のスキップ通知、`apply --all` のサマリには `-v` が要る。`--debug` は内部 nix コマンドを表示する。`--quiet` は無い。
+- **フラグを指定しないときは成功時サイレント。** 配置レポート、try-lock のスキップ通知、`apply --all` のサマリには `-v` が要る。`--debug` は内部 nix コマンドを表示する。`--quiet` は無い。
 - **`--json`** はコマンド完了時に [outturn](https://github.com/yasunori0418/outturn) 準拠の JSON エンベロープ(1 文書)を stdout へ書く機械可読の第 2 契約。`-v`(stderr・人間向け)とは直交(全サブコマンドがペイロードを載せ、`--all` は config ごとに `SubjectResult` を列挙する)。
 - **ストリーム規律**：stdout は機械可読出力(`gitignore` 一覧、`apply --dryrun` 計画)専用で、既定 verbosity でも出力される。よって `layat gitignore <name> >> .gitignore` や `layat apply <name> --dryrun | ...` は安全にパイプできる。**警告とエラーは常に stderr へ出力され、サイレンスされない。**
 
