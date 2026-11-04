@@ -14,7 +14,7 @@ specification: |
   `nix-env` inside its own package.
 specification_ja: |
   engine が外部コマンドとして叩いてよいのは `git`（toplevel の取得）のみでなければならない。
-  place / replace / remove と保守的な古くなった配置の除去はネイティブ FS 操作で行わなければならない。
+  place / replace / remove と古くなった配置の保守的な除去はネイティブ FS 操作で行わなければならない。
   世代操作（コミット・一覧・切替）は世代バックエンドの契約
   （REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）越しに行わなければならず、engine が外部コマンド
   として呼び出してはならない。既定バックエンド nixprofile は自パッケージの内側で `nix-env` を
@@ -26,7 +26,7 @@ specification_ja: |
 
 engine は `manifest.json` を入力に取り、外部コマンドは `git`（toplevel の取得）だけを叩く。
 
-配置そのもの（place / replace / remove）と保守的な古くなった配置の除去は **ネイティブ FS 操作**で
+配置そのもの（place / replace / remove）と古くなった配置の保守的な除去は **ネイティブ FS 操作**で
 行う。世代操作（コミット・一覧・切替）は世代バックエンドの契約越しで、engine は世代を誰が
 管理するかに関知しない。既定バックエンド nixprofile が `nix-env` を自パッケージの内側で
 実行する（REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）。

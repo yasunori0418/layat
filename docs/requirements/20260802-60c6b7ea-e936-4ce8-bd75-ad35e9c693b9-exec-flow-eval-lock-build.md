@@ -144,7 +144,7 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 >
 > - profileDir のレイアウト（`<roothash>/<name>` 等）→ REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3、世代スキップ /
 >   ドリフト修復の詳細 → REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0
-> - 配置前除去（PreRemove）→ REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575 / REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26 / REQ-2b48620a-abaa-43df-a106-954bbba3de56、保守的な古くなった配置の
+> - 配置前除去（PreRemove）→ REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575 / REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26 / REQ-2b48620a-abaa-43df-a106-954bbba3de56、古くなった配置の保守的な
 >   除去 → REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2、undo ジャーナル → REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940
 > - `--backup` の退避段（PreRemove の後・配置の前）→ REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 /
 >   REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b。同段はフラグ有効時のみ実行されるため、**本 item は e の段数に含めない**
