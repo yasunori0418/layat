@@ -15,7 +15,7 @@ specification: |
 specification_ja: |
   `apply --recopy` が既存の copy target を上書きするとき、削除ではなく同一親ディレクトリ内の
   一時名への rename 退避で行い、そのうえで `<src>/<subpath>` を再コピーしなければならない。
-  rename はメタデータ操作のみであり、ENOSPC 下でも退避物が壊れないためである。target が不在の
+  rename はメタデータ操作のみであり、ENOSPC 下でも退避物が破損しないためである。target が不在の
   ときは通常の place-once コピーを行わなければならない。同一 apply run 内で後続の段が失敗した
   場合は退避物から元の内容を復元しなければならず、run が最終的に成功した場合は退避物を削除
   しなければならない。
