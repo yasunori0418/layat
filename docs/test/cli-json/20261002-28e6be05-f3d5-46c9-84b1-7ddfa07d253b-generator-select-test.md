@@ -1,13 +1,13 @@
 ---
 id: "CASE-28e6be05-f3d5-46c9-84b1-7ddfa07d253b"
 type: test_case
-name: "generator_select_test.go — 選択の優先順位・strict な設定ファイル・--manifest 経路の環境非依存"
+name: "generator_select_test.go — 選択の優先順位・strict な設定ファイル・--manifest の処理の環境非依存"
 target: "cmd/layat/generator_select_test.go"
 covers:
   - "TC-8377d290-1f47-48f3-844c-bd51f257e25e"
   - "TC-e54fe715-7b49-431c-a611-25e196b1d0a0"
 ---
-# CASE-28e6be05-f3d5-46c9-84b1-7ddfa07d253b: generator_select_test.go — 選択の優先順位・strict な設定ファイル・--manifest 経路の環境非依存
+# CASE-28e6be05-f3d5-46c9-84b1-7ddfa07d253b: generator_select_test.go — 選択の優先順位・strict な設定ファイル・--manifest の処理の環境非依存
 
 ## 対象
 

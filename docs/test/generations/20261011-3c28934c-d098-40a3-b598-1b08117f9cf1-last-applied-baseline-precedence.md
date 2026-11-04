@@ -1,11 +1,11 @@
 ---
 id: "TC-3c28934c-d098-40a3-b598-1b08117f9cf1"
 type: test_condition
-name: "baseline を last-applied 記録 → profile → 空の順で読み、各操作が記録を FS の事実どおりに保つ"
+name: "比較の基準を last-applied 記録 → profile → 空の順で読み、各操作が記録を FS の事実どおりに保つ"
 mitigates:
   - "RISK-ac5cd9b4-58f9-43d8-9fae-66f7b5940beb"
 ---
-# TC-3c28934c-d098-40a3-b598-1b08117f9cf1: baseline を last-applied 記録 → profile → 空の順で読み、各操作が記録を FS の事実どおりに保つ
+# TC-3c28934c-d098-40a3-b598-1b08117f9cf1: 比較の基準を last-applied 記録 → profile → 空の順で読み、各操作が記録を FS の事実どおりに保つ
 
 ## テスト条件
 

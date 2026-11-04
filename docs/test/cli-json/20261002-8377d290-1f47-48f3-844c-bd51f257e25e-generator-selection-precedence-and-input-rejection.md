@@ -1,11 +1,11 @@
 ---
 id: "TC-8377d290-1f47-48f3-844c-bd51f257e25e"
 type: test_condition
-name: "生成器の選択が優先順位どおりに解決し、入力不正を E_INPUT で拒否し、--manifest 経路では環境を読まない"
+name: "生成器の選択が優先順位どおりに解決し、入力不正を E_INPUT で拒否し、--manifest の処理では環境を読まない"
 mitigates:
   - "RISK-88088f4c-348f-4fa5-a2c1-dc42bb328b5d"
 ---
-# TC-8377d290-1f47-48f3-844c-bd51f257e25e: 生成器の選択が優先順位どおりに解決し、入力不正を E_INPUT で拒否し、--manifest 経路では環境を読まない
+# TC-8377d290-1f47-48f3-844c-bd51f257e25e: 生成器の選択が優先順位どおりに解決し、入力不正を E_INPUT で拒否し、--manifest の処理では環境を読まない
 
 ## 条件
 
