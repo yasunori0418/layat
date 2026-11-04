@@ -13,7 +13,7 @@ NixOS / nix-darwin のモジュールを host の構成として評価し、生�
 対してアサートする。実際に activate はしない。ここで確かめる性質は評価時に決まるが、
 activate 後にしか観測できないため、評価だけで先に捕まえる。
 
-- **hook の置き場所** — NixOS では `etc` と `users` の後に走る独自の activation script として、
+- **hook の置き場所** — NixOS では `etc` と `users` の後に実行される独自の activation script として、
   nix-darwin では利用者の追記と共存する `postActivation` への追記として起動が入ること
 - **起動の形** — 名前つき config ごとのビルド済み配置物を名前の辞書順に並べ、engine を
   `apply --all` の 1 回の起動で渡すこと。並列度・退避・再コピーのオプションが

@@ -13,14 +13,14 @@ root 相対 src の解決が配置 root と `target` の位置だけで決まる
 
 - **相対形で張られる** — 配置後の readlink が `target` の親から `<src>/<subpath>` への相対
   文字列に一致し（subpath があってもなくても）、リンク越しに内容へ到達できること
-- **基準点が root である** — preflight が `<root>/<src>/<subpath>` の実在で判定し、不在なら
+- **基準点が root である** — 配置前の確認が `<root>/<src>/<subpath>` の実在で判定し、不在なら
   dangling を作らずに停止すること。cwd を root 以外に置いても結果が変わらないこと
 - **上書き後の root が基準点になる** — `--root` で root を上書きしたとき、実在判定と配置が
   上書き後の root に対して行われ、元の root には何も置かれないこと
 - **移動に耐える** — リポジトリのディレクトリごと移動した後も readlink が変わらず、内容へ
   到達できること
-- **前世代との照合** — 同じ設定の再 apply が warning 無しで readlink を変えないこと、entry を
-  足した再 apply で既存の root 相対リンクが不変であること、entry を外した apply で stale
-  除去されること
+- **前世代との比較** — 同じ設定の再 apply が warning 無しで readlink を変えないこと、entry を
+  足した再 apply で既存の root 相対リンクが不変であること、entry を外した apply で古くなった
+  配置として除去されること
 - **重なりの拒否** — `<src>/<subpath>` と `target` が一致するか一方が他方の祖先である entry が
   評価時に拒否されること
