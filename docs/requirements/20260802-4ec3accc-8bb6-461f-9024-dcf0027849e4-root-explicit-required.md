@@ -38,4 +38,4 @@ specification_ja: |
 `docs/spec.md`「lib API」→「`lib.mkManifest`」→「`root` の値」および
 「`lib.projectRoot` / `lib.homeRoot` / `lib.systemRoot`」。「root の解決」節の導入文
 （root を `mkManifest` の `root` 引数で明示必須に選ぶ）も同じ規範を述べており、独立 item を
-立てず本 item に畳んだ。
+立てず本 item に含めた。

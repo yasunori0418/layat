@@ -41,21 +41,21 @@ specification: |
   of content hashes SHALL be performed.
 specification_ja: |
   project mode では profile を解決済み root でキーしなければならない。同一 entrypoint を複数箇所へ
-  クローンしても profile が衝突せず、stale 除去が互いのクローンの配置を破壊しないようにするため
+  クローンしても profile が衝突せず、古くなった配置の除去が互いのクローンの配置を破壊しないようにするため
   である（home mode（1 ユーザー 1 つ）では起きない問題）。`<roothash>` は解決後の絶対 root パスの
   sha256 を短縮した hex（固定長・FS 安全）でなければならない。project mode では世代をユーザーに
-  公開してはならない。profile は stale 除去と世代スキップ判定の内部機構に留めなければならず、
+  公開してはならない。profile は古くなった配置の除去と世代スキップ判定の内部機構に留めなければならず、
   `rollback` / `list-generations` を出してはならない（配置物が ephemeral で rollback の意味が薄く、
   devShell キック時は戻し先 host 世代も無いため）。新 link farm derivation が profile の
   current 世代に一致し、last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）が
   あればその `linkFarm` にも一致するなら新世代を積んではならない。profile が無ければ skip
-  してはならず、profile と記録が食い違う間は通常の apply 経路を走らせなければならない。skip は必須であり、devShell / direnv 運用では `shellHook` がシェル
+  してはならず、profile と記録が食い違う間は通常の apply の処理を走らせなければならない。skip は必須であり、devShell / direnv 運用では `shellHook` がシェル
   再入のたびに走るため、毎回新世代を積むと世代が無限増殖するからである。system mode でも同じ
   世代スキップとドリフト修復を行わなければならない。NixOS の activation は boot のたびにも走り、
   毎回新世代を積むと boot ごとに世代が増えるからである。home mode は従来通り「適用のたびに
-  新世代」のままでなければならず、世代スキップは project / system mode 限定としなければならない。ただし世代スキップ時も完全 no-op にせず、FS 検査だけは軽量に行わなければならない。
-  各 entry の target を baseline（last-applied 記録があれば記録、無ければ profile の current
-  世代）に照らして `lstat` で検査しなければならず、記録通りでない（foreign tool に
+  新世代」のままでなければならず、世代スキップは project / system mode 限定としなければならない。ただし世代スキップ時も完全 no-op にせず、FS の確認だけは軽量に行わなければならない。
+  各 entry の target を比較の基準（last-applied 記録があれば記録、無ければ profile の current
+  世代）に照らして `lstat` で確認しなければならず、記録通りでない（foreign tool に
   書き換えられた・消えた）entry があればその entry だけ再張りしなければならない
   （foreign symlink なら warning）。「derivation 同一 ⇒ FS 同一」は foreign 書き換えで崩れるため、
   新世代を積まずに FS だけ収束させなければならない。lstat 比較は安価で `shellHook` の高頻度実行に
@@ -95,18 +95,18 @@ specification_ja: |
 > - flock のキーが解決後 profileDir であること → REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3 / REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461
 > - `<state>` の定義 → REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3
 > - cross-config で同一 target を狙ったときの振動がユーザー責任であること → REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693
-> - ドリフト修復経路でも `--backup` の退避段が効くこと → REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98
+> - ドリフト修復の処理でも `--backup` の退避段が適用されること → REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98
 > - `rollback` / `list-generations` が home / system mode 限定であること（CLI 側の規範）→ REQ-05abce3e-9797-432b-b93f-37c55d09afde
 > - foreign symlink の warning そのもの → REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557、place-once そのもの → REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9
 >
 > **2026-10-11 追記（ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444）**: 上の写しの「新 link farm derivation が前世代と同一なら」は、新 link-farm が
 > profile の current 世代に一致し、last-applied 記録があればその `linkFarm` にも一致するなら、と読み替える
-> （profile が無ければ skip しない）。profile と記録が食い違う間は通常経路で記録を baseline に stale 除去とコミットを行う。
-> lstat 検査の「記録通り」も記録を優先した baseline に照らす。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
+> （profile が無ければ skip しない）。profile と記録が食い違う間は通常の処理で記録を比較の基準に古くなった配置の除去とコミットを行う。
+> lstat での確認の「記録通り」も記録を優先した比較の基準に照らす。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 >
 > **2026-10-24 追記**: 上の写しの「世代スキップは project mode 限定」は「project / system mode 限定」と読み替える。
 > system mode も同じ条件で世代を積まずドリフト修復だけ行い、home / fixed mode は従来どおり適用のたびに新世代を積む。
-> NixOS の activation は boot のたびにも走るため、system mode で毎回世代を積むと boot ごとに世代が増える。
+> NixOS の activation は boot のたびにも実行されるため、system mode で毎回世代を積むと boot ごとに世代が増える。
 
 ## 出典
 
@@ -116,4 +116,4 @@ specification_ja: |
 ADR-4dca6ef4-2791-48d5-aa82-7037630968a6「ephemeral 配置は git に干渉しない」と ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d「project mode では同じ link farm なら世代を積まず drift だけを直す」。
 profile を解決済み root でキーすることと `<roothash>` の定義は ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988、`<state>` の確定は
 ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203、copy のドリフト修復の限定は ADR-5265f879-e623-44f9-9c58-8c14598e8b10 が定めている。世代スキップの判定元を profile と
-last-applied 記録の両方一致にし、baseline を記録優先にしたのは ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444・ADR-a91585ad-971a-4558-9f25-b7fcd6e57671。
+last-applied 記録の両方一致にし、比較の基準を記録優先にしたのは ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444・ADR-a91585ad-971a-4558-9f25-b7fcd6e57671。

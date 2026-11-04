@@ -21,7 +21,7 @@ specification_ja: |
 
 > **上は原文の写しで、規範は frontmatter が正**。原文はこれに続けて「ただし store 内への
 > 絶対 symlink を複製すると store 依存（read-only / GC 後 dangling）が残る点に注意」と
-> 注記するが、これは規範ではなく利用上の帰結の注意喚起なので規範文には含めない。
+> 注記するが、これは規範ではなく利用した結果起きることへの注意なので規範文には含めない。
 
 この複製規則は通常の place-once コピーと `apply --recopy` の再コピーの双方に適用される。
 place-once そのものは REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9、recopy そのものは REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065 / REQ-b4e4b65d-6e35-40c3-a00e-20c14043df6f の担当。

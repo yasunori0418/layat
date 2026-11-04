@@ -1,7 +1,7 @@
 ---
 id: "REQ-5c6b07da-3d06-414d-8770-4f438234b322"
 type: requirement
-name: "target 衝突の検出経路を同一 manifest 内と cross-config で分ける"
+name: "target 衝突の検出処理を同一 manifest 内と cross-config で分ける"
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 specification: |
@@ -22,13 +22,13 @@ specification_ja: |
   （engine 実行時ではない）。単一の起動に載らない cross-config（別
   entrypoint・別マシン・別ツールに跨る場合）の同一 target 衝突は配置前に検出できず、engine
   実行時の後勝ち +
-  foreign symlink warning として扱わなければならない。両者は別経路として保たなければ
+  foreign symlink warning として扱わなければならない。両者は別の処理として保たなければ
   ならない。単一の起動に載る複数 config
   （activation の `apply --all` に載る 1 つのモジュール config の `layat.configs` など）に
   ついては配置前の検出が可能であり、本 item はそれを妨げない。その場合の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の担当で、本 item では
   規定しない。
 ---
-# REQ-5c6b07da-3d06-414d-8770-4f438234b322: target 衝突の検出経路を同一 manifest 内と cross-config で分ける
+# REQ-5c6b07da-3d06-414d-8770-4f438234b322: target 衝突の検出処理を同一 manifest 内と cross-config で分ける
 
 ## 仕様
 
@@ -50,7 +50,7 @@ cross-config（別 profile・別 manifest）の同一 target 衝突は eval で�
 > 持つ**。`docs/spec.md` の追従は本 item の担当範囲外。
 >
 > **2026-10-15 追記（ADR-1338a293-3f69-48f5-9164-efb4ec6994d6）**: 上の「eval 時 assertion で停止」は、activation の `apply --all`
-> 前段検査で停止する形へ改められた。本 item が妨げないとする対象も「単一の eval」から「単一の
+> 前段の確認で停止する形へ改められた。本 item が妨げないとする対象も「単一の eval」から「単一の
 > 起動」へ読み替える（規範は frontmatter）。
 
 ## 出典

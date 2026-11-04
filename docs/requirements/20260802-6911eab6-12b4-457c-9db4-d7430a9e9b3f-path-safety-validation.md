@@ -1,7 +1,7 @@
 ---
 id: "REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f"
 type: requirement
-name: "target / subpath のパス安全性を評価時に検査する"
+name: "target / subpath のパス安全性を評価時に確認する"
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -12,17 +12,17 @@ specification: |
   static absolute / `..` decision for `target` SHALL be possible at evaluation time,
   independently of the concrete value of root (which is resolved at runtime).
 specification_ja: |
-  `normalizeManifest` は `target` / `subpath` のパス安全性を検査しなければならない。
+  `normalizeManifest` は `target` / `subpath` のパス安全性を確認しなければならない。
   絶対パス（`/` 始まり）はエラーとしなければならず、`filepath.Clean` 相当で正規化した
   うえで `..` によって root / src の外へ出るものを拒否しなければならない。`target` の
   静的な絶対 / `..` 判定は root の
   実体値（実行時解決）に依らず eval 時に可能でなければならない。
 ---
-# REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f: target / subpath のパス安全性を評価時に検査する
+# REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f: target / subpath のパス安全性を評価時に確認する
 
 ## 仕様
 
-`normalizeManifest` は**パス安全性検査**を行う。
+`normalizeManifest` は**パス安全性の確認**を行う。
 
 - `target` / `subpath` が絶対パス（`/` 始まり）ならエラー。
 - `filepath.Clean` 相当で正規化し、`..` で root / src の外へ出るものを拒否する。

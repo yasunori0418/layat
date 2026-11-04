@@ -30,7 +30,7 @@ specification_ja: |
 
 - **`manifest.json`**: `schemaVersion` 付き・エンジンの入力契約。各 entry の解決済み
   配置元（store パス / out-of-store 絶対パス）・`subpath`・`target`・`method`・root の
-  kind（project / home / system / 固定パス）と、与えられた `identity` を記録する（全フィールドは
+  種別（project / home / system / 固定パス）と、与えられた `identity` を記録する（全フィールドは
   `docs/spec.md`「manifest.json スキーマ（v1）」）。
 - **配置元への明示 symlink farm**: GC アンカー。profile が生きている限り配置元の
   store path が GC されない。

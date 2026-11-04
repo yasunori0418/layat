@@ -1,7 +1,7 @@
 ---
 id: "REQ-16faf428-77f3-492f-b858-222c5274cbf7"
 type: requirement
-name: "意図が矛盾する組み合わせをクロスフィールドチェックで評価時に拒否する"
+name: "意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する"
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -14,24 +14,24 @@ specification: |
   intents contradict each other and SHALL fail early at evaluation time rather than being
   silently downgraded.
 specification_ja: |
-  `normalizeManifest` は単一フィールドの型検査では表現できない組み合わせを
+  `normalizeManifest` は単一フィールドの型の確認では表現できない組み合わせを
   `lib.throwIf` で拒否しなければならない。対象は `method = "copy"` かつ out-of-store
   marker の組み合わせである。out-of-store は「ライブ symlink」、copy は「place-once
   スナップショット」で意図が矛盾するため、暗黙降格ではなく評価時に早期エラーとしなければ
   ならない。
 ---
-# REQ-16faf428-77f3-492f-b858-222c5274cbf7: 意図が矛盾する組み合わせをクロスフィールドチェックで評価時に拒否する
+# REQ-16faf428-77f3-492f-b858-222c5274cbf7: 意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する
 
 ## 仕様
 
-`normalizeManifest` はクロスフィールドの `lib.throwIf` チェックを持つ。
+`normalizeManifest` は `lib.throwIf` によるクロスフィールドの確認を持つ。
 
 - `method = "copy"` かつ out-of-store marker の組み合わせを拒否する。
 
 規範は frontmatter が正。`root = systemRoot`（system mode）は `rootKind = "system"` として
-評価を通り、このチェックの対象ではない（→ ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c）。
+評価を通り、この確認の対象ではない（→ ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c）。
 
-単一フィールドの optionType では表現できない条件のため、型検査とは別に `throwIf` で
+単一フィールドの optionType では表現できない条件のため、型の確認とは別に `throwIf` で
 評価時に停止させる。out-of-store は「ライブ symlink」、copy は「place-once
 スナップショット」で意図が矛盾するので、暗黙に降格させず早期エラーにする（→ ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967）。
 

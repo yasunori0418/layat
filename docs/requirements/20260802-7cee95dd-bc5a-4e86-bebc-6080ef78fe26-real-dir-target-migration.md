@@ -19,7 +19,7 @@ specification: |
   NOT remove it partially.
 specification_ja: |
   target 自身が実 dir のとき、engine は配下（任意深さ）の全 leaf を判定しなければならない。
-  全 leaf が「recorded かつ stale な symlink（当該 entry 自身の前世代が記録・on-disk 一致・
+  全 leaf が「recorded かつ古くなった symlink（当該 entry 自身の前世代が記録・on-disk 一致・
   次世代に無い）」または「空の sub dir（由来を問わない）」であるときに限り、target 全体を
   配置前に除去（PreRemove: leaf は unlink・dir は子から親へ rmdir）してから symlink を新規
   配置しなければならない。この除去は意図された移行であり warning にしてはならず、配置レポート

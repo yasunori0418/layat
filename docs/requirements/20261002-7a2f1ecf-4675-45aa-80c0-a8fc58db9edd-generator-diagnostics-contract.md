@@ -31,7 +31,7 @@ specification: |
   part of a failed internal command in Message is not covered by this rule.
 specification_ja: |
   manifest 生成器は診断を CLI から渡された `io.Writer` へ書かなければならず、stdout へ
-  書いてはならない。成功時も eval・build の両経路の診断を捨てずにその writer へ素通し
+  書いてはならない。成功時も eval・build の両方の処理の診断を捨てずにその writer へ素通し
   しなければならず、成功時沈黙の規律をその抑制の根拠にしてはならない。失敗は
   Generator・Stage（`discover` / `roots` / `build`。DryBuild の失敗は `build`）・
   Kind（`PrerequisiteMissing` / `NotFound` / `Failed`）・Message・Guidance・キャプチャした

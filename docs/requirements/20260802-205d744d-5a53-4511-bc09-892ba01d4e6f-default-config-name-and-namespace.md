@@ -14,7 +14,7 @@ specification_ja: |
   config 名 `default` は flake の `default` 慣例に倣う特別な名前とし、`layat apply`
   （name 省略）が解決先に使うものでなければならない。named manifest は `packages` では
   なく専用の `layat` 名前空間に置き、manifest が通常パッケージとして `nix flake show` /
-  `nix build` に混ざらないようにしなければならない。
+  `nix build` に含まれないようにしなければならない。
 ---
 # REQ-205d744d-5a53-4511-bc09-892ba01d4e6f: config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない
 
@@ -22,7 +22,7 @@ specification_ja: |
 
 `<name>` = `default` は flake の `default` 慣例に倣う特別な名前で、`layat apply`
 （name 省略）が解決先に使う。専用 `layat` 名前空間を使い `packages` を汚さない
-（manifest が通常パッケージとして `nix flake show` / `nix build` に混ざらない）。
+（manifest が通常パッケージとして `nix flake show` / `nix build` に含まれない）。
 
 name 省略時に `default` が未定義ならエラーになることは `layat apply` の config 選択の
 規範であり、REQ-c2d44626-d8f4-446a-a80a-319a500129b4 の担当。

@@ -1,7 +1,7 @@
 ---
 id: "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
 type: requirement
-name: "stale 除去は前世代の記録通りを指す symlink のみに限り、copy は消さず orphan を警告する"
+name: "古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する"
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -20,17 +20,17 @@ specification: |
   under those invariants, whereas a copy SHALL NOT be removed, being data owned by the
   user, and its being orphaned SHALL be notified by a warning.
 specification_ja: |
-  削除は保守的に行わなければならない。baseline のマニフェストは、last-applied 記録があれば
+  削除は保守的に行わなければならない。比較の基準のマニフェストは、last-applied 記録があれば
   記録、無ければ profile の current 世代のマニフェストとしなければならない
-  （REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）。baseline のマニフェストが「layat が配置した」と記録し、かつ
-  現状もその記録通りの先（baseline が記録する store パス / 記録された out-of-store パス）を指す symlink
+  （REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）。比較の基準のマニフェストが「layat が配置した」と記録し、かつ
+  現状もその記録通りの先（比較の基準が記録する store パス / 記録された out-of-store パス）を指す symlink
   のみを削除しなければならない。通常ファイルや layat 非管理の link には触れてはならない。
   記録と実体が不一致なら削除してはならず、警告しなければならない。初回（last-applied 記録も
-  世代も無く baseline が空）では何も消してはならない。entry が消えたとき、symlink（store / out-of-store）は上記の不変条件を
+  世代も無く比較の基準が空）では何も消してはならない。entry が消えたとき、symlink（store / out-of-store）は上記の不変条件を
   満たすもののみ除去しなければならず、copy は除去してはならない（ユーザー所有データの
-  ため）。ただし copy が orphan になったことは警告で通知しなければならない。
+  ため）。ただし copy が孤児になったことは警告で通知しなければならない。
 ---
-# REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2: stale 除去は前世代の記録通りを指す symlink のみに限り、copy は消さず orphan を警告する
+# REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2: 古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する
 
 ## 仕様
 
@@ -42,20 +42,20 @@ specification_ja: |
 | 配置種別 | entry が消えたとき |
 |---|---|
 | symlink（store / out-of-store）| **除去する**（ただし上記の保守的不変条件を満たすもののみ）|
-| copy | **除去しない**（ユーザー所有データ）。ただし orphan を警告で通知する |
+| copy | **除去しない**（ユーザー所有データ）。ただし孤児を警告で通知する |
 
 > **上は原文の写しで、規範は frontmatter が正**。除去後の空親ディレクトリ剪定は
 > REQ-8409db86-a1ba-4053-86dc-588985cc1ca7、除去に途中失敗したときの巻き戻しは REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の担当。この保守的不変条件は
 > `reset` の symlink 除去にも適用されるが（REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6）、copy を明示的に消す唯一の手段が
 > `reset` であることも同 item の担当。
 >
-> **2026-10-11 追記（ADR-a91585ad-971a-4558-9f25-b7fcd6e57671）**: 上の写しの「前世代マニフェスト」は baseline と読み替える。baseline は
+> **2026-10-11 追記（ADR-a91585ad-971a-4558-9f25-b7fcd6e57671）**: 上の写しの「前世代マニフェスト」は比較の基準と読み替える。比較の基準は
 > last-applied 記録があれば記録の manifest、無ければ profile の current 世代の manifest で、「初回／記録なし」は
-> どちらも無く baseline が空のときを指す。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
+> どちらも無く比較の基準が空のときを指す。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
 
 ## 出典
 
 `docs/spec.md`「世代管理仕様」→「stale 除去の対象と安全不変条件」節の導入文と表。
 
-決定の実体は ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c「stale 除去は記録どおりの symlink だけに限る」。baseline を
+決定の実体は ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c「古くなった配置の除去は記録どおりの symlink だけに限る」。比較の基準を
 last-applied 記録から優先して読むのは ADR-a91585ad-971a-4558-9f25-b7fcd6e57671「古くなった配置の除去は、比較の基準を記録から優先して読む」。

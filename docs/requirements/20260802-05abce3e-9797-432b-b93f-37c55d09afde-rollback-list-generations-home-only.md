@@ -45,7 +45,7 @@ system 基底が無ければ空として扱い、読めなければ warning を�
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `rollback` / `list-generations` の
 箇条書き、および「モジュール別動作仕様」→「standalone（CLI）」節の第 2 文（home mode で
 nix profile による世代管理を行い `rollback` / `list-generations` を提供する）。後者は
-独立 item を立てず本 item に畳んだ。
+独立 item を立てず本 item に含めた。
 
 決定の実体は ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75「module と project では世代操作を公開しない」と、
 `list-generations --all` を追加した ADR-cfd13fb6-d11e-4f3b-b0c6-40ee21b6b212。home / system への公開は ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75。

@@ -29,7 +29,7 @@ specification_ja: |
 `check` で判別する。
 
 `_layatMarker` は Nix 評価内で完結させ `manifest.json` には漏らさない。Go 契約は
-`srcKind` / `rootKind` の clean enum。
+判別タグを含まない `srcKind` / `rootKind` の enum。
 
 ## 出典
 
