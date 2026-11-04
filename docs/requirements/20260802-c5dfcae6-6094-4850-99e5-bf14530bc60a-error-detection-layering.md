@@ -58,7 +58,7 @@ attrset のため Nix のキー重複不可で担保され、**重複 `name` と
 `docs/spec.md`「エラー仕様」節の導入文と、同節の表のうち評価時エラー行・engine 実行時
 エラー行の別。
 
-決定の実体は ADR-2e454c1f-6cad-41d8-8311-2c8e5b8efdf6「mkManifest の入力を evalModules で検査する」（設定の
+決定の実体は ADR-2e454c1f-6cad-41d8-8311-2c8e5b8efdf6「mkManifest の入力を evalModules で確認する」（設定の
 誤りを `mkManifest` の評価時に閉じる）と、native に担保される性質へ確認を置かない根拠と
 なる ADR-c494e86e-ceb9-4380-b983-4e09553b01d6「entries を target をキーにした attrset にする」。
 
