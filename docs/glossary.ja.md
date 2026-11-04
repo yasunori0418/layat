@@ -38,6 +38,9 @@ layat のコア。`root` 相対の `target` に Nix store のパスを配置す�
 layat CLI が読む Nix の config ファイル。`flake.nix` / `shell.nix` / `default.nix` のいずれか。`layat.<name>` に named manifest を公開する。config は依然として Nix で書かれ、`nix build` で評価される。
 - **Avoid**: 「layat が CWD から config の内容を発見する」と説明すること——発見するのは entrypoint *ファイル* であり、config は Nix 評価で確定する。
 
+### starter
+`layat init` が CWD へ展開する 2 つのテンプレート（`templates/standalone` と `templates/project`）。展開してすぐ使える最小の雛形で、利用者は不要な部分を削って自分の config に育てる。layat 自身は設定を生成せず、展開は nix の `templates` の仕組みが行う（→ [ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d](adr/20261101-d15a216f-b5d6-4df9-9825-b23a341bec1d-templates-and-init-fixed-ref.md), [ADR-7b9ecd2c-6b77-43c4-8fb4-3ad034e618e1](adr/20261103-7b9ecd2c-6b77-43c4-8fb4-3ad034e618e1-templates-minimal-example-with-comments.md)）。
+
 ### module
 CLI 単体・home-manager・NixOS / nix-darwin モジュール・devShell の `shellHook` といった統合層。エンジンを起動する配線（wiring）に徹し、自身ではファイルを配置せず、`home.file` や `systemd.tmpfiles` へ翻訳することもない。
 - **Avoid**: 「the module places files（モジュールがファイルを配置する）」「the module translates to native mechanisms（モジュールがネイティブ機構へ翻訳する）」。
@@ -124,4 +127,4 @@ rollback の単位。既定の **generation backend** である nixprofile が l
 - **「symlink」単独では曖昧**。必ず **store link** か **out-of-store symlink** のどちらかに寄せる。デフォルトの store link 自体も symlink として実現されるため、裸の語では種別を識別できない。
 - **「unification（統一）」は「removal（廃止）」ではない**。store link の統一は out-of-store を削除しない。デフォルトから降格し、明示的な関数の裏に隔離するだけ。
 - **`src` と `subpath` は別概念**。`src` = どの物（store パス / リポジトリ）、`subpath` = その中のどのパス。名前は似ているが直交する概念。旧名 `source`（= 現在の `subpath`）は使わない。
-- **「standalone」は配置モードではなく起動形態**。standalone（CLI を直接叩くこと）は配置モード（home / project / system）と直交する。モードは `root` マーカーが決める。
+- **「`standalone`」には 2 つの意味がある**。1 つ目は CLI 単体（CLI を直接実行する起動形態）で、配置モードではない。配置モード（home / project / system）とは直交し、モードは `root` マーカーが決める。2 つ目は home-manager の `standalone` configuration（HM を NixOS モジュール無しで使う構成）で、`tests/e2e/scenarios/05-hm` と TP-0734996e-aea9-4229-8075-89a64bdf9f79 がこの意味で使う。日本語の散文では前者を「CLI 単体」と書き、後者はコード表記の `standalone` のまま書く。
