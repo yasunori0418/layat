@@ -38,7 +38,7 @@ copy は世代管理の対象外であり、ロールバックされない。ent
   撤去には専用の手段が要る。その手段（`reset`）は copy を消す唯一の明示手段だが、reset 自体は
   copy 専用ではなく symlink を含む配置物を home / project の両モードで撤去する
   （→ UC-f2436d68-91ff-4c48-b1df-47acefe4f464 / UC-19a90989-0ae3-438f-8a75-4e1e2637f81c）
-- layat が置いていない実ファイルが target に在るとき、黙って skip せず可視化されること
+- layat が置いていない実ファイルが target に在るとき、利用者に知らせずに skip せず、可視化されること
 - src ツリー内の symlink が deref されず構造が保たれること
 
 ## 出典

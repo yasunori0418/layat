@@ -60,10 +60,10 @@ npins update 等）後に再適用すると新しい内容へ切り替わる。
 のスキル / zsh・bash プラグイン）と「想定ユースケース」の home mode 節。
 
 あわせて「設計の哲学」の「home-manager に依存しない」節も本 item が引き受ける。同節が述べる
-「HM 不在の環境でも同じ設定定義で動く」ことを体現するのは統合ではなく standalone の使われ方で、
+「HM 不在の環境でも同じ設定定義で動く」ことを体現するのは統合ではなく CLI 単体の使われ方で、
 本 item と UC-19a90989-0ae3-438f-8a75-4e1e2637f81c がそれにあたる。本 item では「config を Nix で書き `layat` CLI が
 entrypoint を発見して評価・適用すること」が同節に対応する要求になる。
 
-Issue #211 の素材リストはこの 3 例を別々に挙げるが、3 例とも紐づく requirement 群が重なる
+Issue #211 の素材リストはこの 3 例を別々に挙げるが、3 例とも紐づく `requirement` 群が重なる
 ため 1 件の use_case に統合した（2026-08-02 確定）。分けても derives_from が同一の
-requirement 集合を三重に指すだけで traceability の解像度が上がらないため。
+`requirement` 集合を三重に指すだけで traceability の解像度が上がらないため。

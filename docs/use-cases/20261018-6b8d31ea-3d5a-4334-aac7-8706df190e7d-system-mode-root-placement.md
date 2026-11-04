@@ -11,7 +11,7 @@ refines:
 
 管理者は、外部リポジトリの中身を `/etc` などシステム全体の場所へ配置したい。config の
 `root` に `layat.lib.systemRoot` を書き、root 権限で `apply` する。NixOS / nix-darwin の
-モジュールを使わない standalone の環境でも、home mode と同じ CLI で配置と世代管理ができる。
+モジュールを使わず CLI 単体で使う環境でも、home mode と同じ CLI で配置と世代管理ができる。
 
 ```bash
 layat apply <name>             # root 権限で / 配下へ配置し、新しい世代を積む
@@ -32,7 +32,7 @@ layat apply <name> --dryrun    # 非 root でも計画を確認できる
 
 - `systemRoot` の config の root が実行時に `/` へ解決され、`--root` で上書きできること
 - profile と last-applied 記録が、実行ユーザーの state ではなくシステムの基底に置かれること
-- 変更系の操作（`apply` / `reset` / `rollback`）が root 権限を前段で検査し、非 root では FS に
+- 変更系の操作（`apply` / `reset` / `rollback`）が root 権限を前段で確認し、非 root では FS に
   触れずに止まること
 - 計画確認（`apply --dryrun` / `reset --dryrun`）と世代閲覧（`list-generations`）は非 root でも
   できること

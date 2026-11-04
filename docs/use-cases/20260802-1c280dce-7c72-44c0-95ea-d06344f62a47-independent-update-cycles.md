@@ -21,7 +21,7 @@ layat apply claude-skills
 ```
 
 `src` を更新（flake input の更新 / npins update 等）した後、対象 config だけを再適用する
-ことで、他のツールへの影響を完全に排除できる。vim プラグインの更新が zsh の設定を壊す
+ことで、他のツールへの影響を完全に排除できる。vim プラグインの更新が zsh の設定を破損させる
 「共倒れ」が構造的に起こらない。
 
 逆に、複数 config をまとめて適用したい場面もある。`layat apply --all` は全 config を順に

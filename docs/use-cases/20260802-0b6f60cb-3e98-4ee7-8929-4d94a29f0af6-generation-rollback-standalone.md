@@ -9,7 +9,7 @@ refines:
 
 ## 使われ方
 
-`src` を更新して適用したところ、新しいバージョンのプラグインが壊れていた・意図しない内容が
+`src` を更新して適用したところ、新しいバージョンのプラグインに不具合があった・意図しない内容が
 配置された、といった場面で、ユーザーは前の世代へ戻して復旧する。
 
 ```bash
@@ -42,11 +42,11 @@ layat list-generations <name> # 世代一覧
 > REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe（method と世代管理の対応）/ REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9（copy が
 > 世代外であること）/ REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa（out-of-store の版管理範囲）にある。
 
-この使われ方は standalone（home mode）が対象。project mode は配置物が ephemeral なため
+この使われ方は CLI 単体（home mode）が対象。project mode は配置物が ephemeral なため
 rollback を公開せず、モジュール経由のときはユーザー向け rollback を host に一本化する
 （→ UC-19a90989-0ae3-438f-8a75-4e1e2637f81c / UC-d39c1994-f9a5-4860-80ba-f6e584adaf14）。
 
-なお、下に挙げる要求のうち stale 除去は本 use_case に固有のものではなく、全モードの apply が
+なお、下に挙げる要求のうち古くなった配置の除去は本 use_case に固有のものではなく、全モードの apply が
 持つ冪等性の不変条件である。この使われ方に固有なのは「戻した世代の記録が除去の基準になる」
 点に留まる。
 
