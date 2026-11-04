@@ -600,7 +600,7 @@ target を `home.file` から layat へ移す手順:
 **既知の制限 / 正直な注意点**
 
 - boot / init / filesystem / partition 層は layat のドメインではない。
-- クローンを削除すると `<state>/nix/profiles/layat/` 下に orphan な profile ディレクトリが残る(store は `nix-collect-garbage` で解放されるが、profile ディレクトリは残る)。MVP に `prune` コマンドは無い——手で消す。
+- クローンを削除すると `<state>/nix/profiles/layat/` 下に orphan な profile ディレクトリが残る(store は `nix-collect-garbage` で解放されるが、profile ディレクトリは残る)。`layat prune` は、記録された root が無くなった系列を消す。root のパスを一覧し、消す前に確認を取る。
 
 ---
 
