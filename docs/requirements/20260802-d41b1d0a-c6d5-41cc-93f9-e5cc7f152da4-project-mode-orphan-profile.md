@@ -27,7 +27,7 @@ specification_ja: |
 
 ## 仕様
 
-**orphan profile**: クローンを削除すると profile が `<state>/nix/profiles/layat/` 下に孤児として
+**孤児 profile**: クローンを削除すると profile が `<state>/nix/profiles/layat/` 下に孤児として
 残る。store は `nix-collect-garbage` で解放されるが profile ディレクトリは残る。`layat prune` か
 手動で削除されるまでは放置許容とし、公開ドキュメントに注記する。どの root 由来の孤児かは
 `<roothash>` 階層の backref ファイル（`.root`）で逆引きできる。**cleanup は `layat prune` が担う**
