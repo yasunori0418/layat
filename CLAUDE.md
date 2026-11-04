@@ -36,7 +36,7 @@ item を新設し、概要文書にはリンクを 1 行足すに留める。
 
 型・関係・フィールドの定義は `docs/model.yaml` が持つ。親を持たない根は **solution と
 ADR の 2 型（adr / sara_adr）のみ**で、他の型は upstream relation を 1 本以上張る
-（張り忘れは `sara check` の orphan warning で出る）。
+（張り忘れは `sara check` の接続漏れの warning で出る）。
 検出した欠陥（defect）は型として持たず、GitHub Issues（`bug` label）で管理する
 （→ SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed。運用規約は `docs/agents/issue-tracker.md` の「Defect issues」節）。
 
@@ -123,7 +123,7 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
 ```bash
 sara check                                 # グラフ全体の検証（broken reference / duplicate ID / cycles）
 sara query <フル ID> -u                    # 上流を辿る（requirement → use_case → solution）
-sara query <フル ID> -d                    # 下流を辿る（requirement → design。risk 以降は未着手）
+sara query <フル ID> -d                    # 下流を辿る（requirement → design / risk → test_condition → test_case）
 sara report coverage                       # カバー率
 sara report matrix                         # トレーサビリティマトリクス
 ```
