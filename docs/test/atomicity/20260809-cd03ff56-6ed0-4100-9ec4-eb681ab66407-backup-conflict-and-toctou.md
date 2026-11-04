@@ -9,16 +9,16 @@ mitigates:
 
 ## テスト条件
 
-`--backup` が退避先 `<target>.<suffix>` を潰さないことを、plan 時点と execute 時点の
+`--backup` が退避先 `<target>.<suffix>` を上書きしないことを、plan 時点と execute 時点の
 両方で検証する。
 
 **plan 時点で既存** — 前回の退避の残りなど、退避先が既に存在する状態で `--backup` を
-付けた apply は conflict で停止する。黙って上書きしない（→ REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b）。
+付けた apply は conflict で停止する。利用者に知らせずに上書きしない（→ REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b）。
 
 **plan と execute の間に出現（TOCTOU）** — plan 計算時には退避先が存在せず、`backup()`
 が実行される時点までに他プロセスがそこを作った場合、rename 直前の再検証がその並行生成物を
-検出して停止する。plan 時の判定を信じて rename すれば、並行して作られた実データを黙って
-潰す（→ ADR-37191429-2099-4217-a552-47b16a7e504c）。
+検出して停止する。plan 時の判定を信じて rename すれば、並行して作られた実データを利用者に知らせずに
+上書きする（→ ADR-37191429-2099-4217-a552-47b16a7e504c）。
 
 この条件は full `Apply` では窓を作れないため、`BackupAction` を組み立てて `applier.backup`
 を直接駆動し、plan 済みの状態から execute までの間に退避先を作る、という形で検証する。

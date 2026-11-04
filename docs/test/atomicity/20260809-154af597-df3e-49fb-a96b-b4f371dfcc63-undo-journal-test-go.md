@@ -28,7 +28,7 @@ ENOTDIR で落ち、「バッチ途中の失敗」にならない）。root で�
   いない。blocker ディレクトリ自体は無傷で、世代も commit されない
 - 同一バッチで先に行われた張替え（PlaceReplace）が pre-apply の dest へ復元される
 - 先に materialize 済みの copy が、後続段の removeStale 失敗で除去される
-  （materializeCopies は place の後・removeStale の前に走る）
+  （materializeCopies は place の後・removeStale の前に実行される）
 - PreRemove の実 dir target migration（unlink + rmdir）と、それによって可能になった
   dir symlink の配置が、後続の無関係な配置失敗でまとめて巻き戻る。実ディレクトリと
   配下の leaf symlink が元どおりになり、half-migrated で残らない
@@ -40,7 +40,7 @@ ENOTDIR で落ち、「バッチ途中の失敗」にならない）。root で�
 - commit 失敗では配置が巻き戻らず、そのまま残る（冪等な再実行が収束する → ADR-74423bb8-1453-4689-a25e-30bf46536afc、
   ADR-3aebefee-405d-4342-b754-eef8eac29b1b）
 - commit 失敗後は `--recopy` の退避ファイルも残る（discardJournal は commit 成功後に
-  しか走らず、unwind も起きない）
+  しか実行されず、unwind も起きない）
 
 **journal の記録順序**（TC-83fe0d4a-9730-431a-b7f9-b731060b9484）
 

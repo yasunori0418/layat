@@ -35,18 +35,18 @@ covers:
 
 **段の位置と巻き添え警告**（TC-ed4992c0-8513-4383-be0a-e45acbbc229f）
 
-- 世代スキップ（drift 修復）経路でも Backup 段が発火し、shell 再入間に現れた foreign な
+- 世代スキップ（drift 修復）の処理でも Backup 段が発火し、shell 再入間に現れた foreign な
   通常ファイルを退避して配置し直す（PreRemove と違い「derivation 不変なら発火しない」
   不変条件を持たない → REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98）
 - `--dryrun --backup` が塞いでいる target を conflict ではなく退避予定として報告し、
   FS には一切触れない
-- 実 dir target を丸ごと退避したとき、前世代が自分の stale symlink として記録している
+- 実 dir target を丸ごと退避したとき、前世代が自分の古くなった symlink として記録している
   兄弟 leaf が removeStale から drift 警告されない（親ごと 1 回の rename で去ったのは
   想定内 → planner.markDirEntriesPreRemoved の回帰テスト）
 
 **退避先の保護**（TC-cd03ff56-6ed0-4100-9ec4-eb681ab66407）
 
-- plan 時点で `<target>.<suffix>` が既存なら conflict で停止し、黙って上書きしない
+- plan 時点で `<target>.<suffix>` が既存なら conflict で停止し、利用者に知らせずに上書きしない
 - plan 時に不在だった退避先が execute 時点で存在する（TOCTOU 窓）ケースを
   `applier.backup` の直接駆動で作り、rename 直前の再検証が並行生成物を検出して
   loud に中断する（→ ADR-37191429-2099-4217-a552-47b16a7e504c）

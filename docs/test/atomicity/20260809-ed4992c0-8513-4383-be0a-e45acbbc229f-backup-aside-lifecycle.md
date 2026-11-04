@@ -13,11 +13,11 @@ mitigates:
 契約どおりに振る舞うことを検証する。
 
 **発動と非発動** — 配置を塞ぐ記録外の通常ファイルは `<target>.layat-backup` へ退避されて
-配置が進み、退避した target が `Result.BackedUp` に載る。`--backup` 無しの既定では同じ
+配置が進み、退避した target が `Result.BackedUp` に載る。`--backup` を指定しないときは同じ
 配置が conflict で停止する（opt-in であることの裏取り）。`--backup=<suffix>` で退避先の
 suffix が変わる。
 
-**段の位置** — 世代スキップ（drift 修復）経路でも Backup 段は到達し、通常 apply と同じく
+**段の位置** — 世代スキップ（drift 修復）の処理でも Backup 段は到達し、通常 apply と同じく
 退避 + 配置を行う。PreRemove と違い「derivation 不変なら発火しない」という不変条件を
 持たないため（記録外実体は manifest の変化と無関係に現れる → REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98）。
 
@@ -30,7 +30,7 @@ discardJournal の掃除対象ではない。ユーザーのバックアップ�
 内容へ復元され、退避先パスは消える。
 
 **巻き添えの誤警告が出ないこと** — 実 dir target の migration が foreign leaf 混在で
-失敗し `--backup` がディレクトリごと退避したとき、前世代が自分の stale symlink として
+失敗し `--backup` がディレクトリごと退避したとき、前世代が自分の古くなった symlink として
 記録している兄弟 leaf は removeStale から「planning 後に drift した」と報告されない
 （親ごと 1 回の rename で去ったのは想定内の挙動であって drift ではない）。
 
