@@ -21,7 +21,7 @@ nil であり、0 や現在値で埋めない。
 
 **世代観測の分解能** — 観測の下地である「profile symlink の指す先から世代番号を読む」
 層そのものも直接駆動して検証する。profile リンク不在 → nil、`profile-3-link` → 3、
-store パスなど世代リンクでない dest → nil、`profile-x-link` のような壊れた番号 → nil。
+store パスなど世代リンクでない dest → nil、`profile-x-link` のような数値として読めない番号 → nil。
 TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7 が扱う、profileDir の世代リンクを番号順に列挙して current を判定する
 走査とは別層（こちらは profile リンクの指す先の symlink 名のパース）である。
 
@@ -40,7 +40,7 @@ TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7 が扱う、profileDir の世代リン�
 
 **構造化 warning** — planner の entry warning が kind + target の構造で結果に
 載り、テキストの stderr 出力とは別に消費できる。`ResetResult` では同じ warning が、
-preview 向けの `KeptForeign` と構造化 `Warnings` の両面で露出する。
+preview 向けの `KeptForeign` と構造化 `Warnings` の両方に現れる。
 
 ## 対応する CASE
 

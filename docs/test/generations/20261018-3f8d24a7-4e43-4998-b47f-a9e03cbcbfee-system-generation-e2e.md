@@ -12,7 +12,7 @@ mitigates:
 ## テスト条件
 
 Go テストが double へ差し替えている層（euid・`nix build` / `nix-env --set`・世代一覧）を
-実物に戻し、system mode の世代機構と権限ゲートが一気通貫で動くことを検証する。root は
+実物に戻し、system mode の世代機構と権限の条件が一気通貫で動くことを検証する。root は
 user namespace で取り、system の profile 基底と記録基底は隔離先へ向ける。
 
 - **配置と世代コミット** — root の apply が `--root` の配下へ配置し、profile 基底の
@@ -22,8 +22,8 @@ user namespace で取り、system の profile 基底と記録基底は隔離先�
   配置へ戻し、`reset --yes` が配置を撤去する
 - **列挙** — `list-generations <name>` が世代を `info.mode == "system"` で返し、
   `--all` は `<roothash>` 系列を列挙に含めない
-- **権限ゲート** — 非 root の `apply` / `rollback` / `reset --yes` が exit 1 で止まり、
-  当該 subject の `errors[]` が `E_PERMISSION` を運び、配置先と profile を変えない。
+- **権限の条件** — 非 root の `apply` / `rollback` / `reset --yes` が exit 1 で止まり、
+  当該 subject の `errors[]` が `E_PERMISSION` を含み、配置先と profile を変えない。
   読み取り系の `apply --dryrun` と `list-generations` は非 root でも通る
 
 ## 対応する CASE

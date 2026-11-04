@@ -43,7 +43,7 @@ stderr は `captureOutErr` で取る。
   全体（`home:docs` など）との一致にもならない
 - 系列全体で 1 件として返る系列の error subject は `[name]` を指定しても残る。一致する config が
   無くてもこの subject が出て、一致 0 件の通知は出ず、exit 1 になる
-- 別の `<name>` の error subject は絞り込みで落ち、残った subject が全て読めれば exit 0
+- 別の `<name>` の error subject は絞り込みで除外され、残った subject が全て読めれば exit 0
 
 **一致 0 件**
 

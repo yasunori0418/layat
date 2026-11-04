@@ -30,7 +30,7 @@ CASE-79561175-24f5-40a5-a031-509d7f90614b の e2e が担う）。
   で stage 2 が呼ばれないこと
 - **dryrun の組合せ** — stage 1 build 失敗・read-only apply 失敗・conflict・成功の 15 通りで、
   終了コードが error(1) > conflict(2) > 0 の優先度に従うこと（conflict が error を隠さない）
-- **エンベロープの層** — 各組合せのエンベロープが適合検査を通り、`results[]` が辞書順、
+- **エンベロープの層** — 各組合せのエンベロープが適合の確認を通り、`results[]` が辞書順、
   集約 status は失敗があるときだけ error、トップレベル `errors[]` は無いこと。build 失敗・
   subject 起因の失敗は subject の `errors[]` に `E_LAYAT_FAILED` が 1 件、item 起因の失敗は
   `errors[]` 無しで failed item（`E_LAYAT_FAILED`）、conflict は failed item
