@@ -9,7 +9,7 @@ mitigates:
 
 `mkOutOfStoreSymlink` で作った marker が、コピーではなく marker の絶対パスを指す symlink
 として配置されることを検証する。配置後に src 側のファイルを書き換えたとき、target 越しに
-その変更がそのまま見えることまでを条件とする（コピーとして落ちていれば見えない）。
+その変更がそのまま見えることまでを条件とする（コピーとして配置されていれば見えない）。
 
 nix store を介さず live なディレクトリを指すことが目的であるため、実 nix を通した e2e で
-検証する。engine 単体での out-of-store の分類・stale 除去は `engine-core` 対象の担当。
+検証する。engine 単体での out-of-store の分類・古くなった配置の除去は `engine-core` 対象の担当。

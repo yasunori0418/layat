@@ -1,11 +1,11 @@
 ---
 id: "TC-be3d3dc9-1ead-4e2e-8eea-46e1c8884562"
 type: test_condition
-name: "system mode の root 解決・基底切替・euid ゲートが仕様どおりであること"
+name: "system mode の root 解決・基底切替・euid の条件が仕様どおりであること"
 mitigates:
   - "RISK-1a8f91c8-dfaa-4598-805a-a3b71cb967f0"
 ---
-# TC-be3d3dc9-1ead-4e2e-8eea-46e1c8884562: system mode の root 解決・基底切替・euid ゲート
+# TC-be3d3dc9-1ead-4e2e-8eea-46e1c8884562: system mode の root 解決・基底切替・euid の条件
 
 `rootKind=system` が root `/` に解決され、`--root` 上書きが優先されることを検証する。
 
@@ -22,5 +22,5 @@ euid 0 を注入し `--root` を tmp に向けた system apply が、system 基�
 有無の全組み合わせを、リテラルのパスで固定する。基底の切替が他のモードへ波及しないことは
 この表が担う。
 
-`list-generations` が検査を受けないことは CLI の担当で、条件の射程から外れる。
+`list-generations` が確認を受けないことは CLI の担当で、条件の射程から外れる。
 root = `/` を実際に使う配置は単体テストでは扱わない。

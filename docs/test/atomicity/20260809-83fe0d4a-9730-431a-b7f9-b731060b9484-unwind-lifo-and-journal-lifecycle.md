@@ -13,7 +13,7 @@ mitigates:
 個々の逆操作の正しさ（TC-9504e908-a4bc-4d2d-80d3-af07264284f8）ではなく、journal 全体を扱う層の振る舞いを検証する。
 
 **LIFO 順序** — 複数エントリを積んだ journal は last-in-first-out で巻き戻される。順序が
-効くのは前方操作に依存関係があるときで、代表形は PreRemove の「子 symlink を unlink →
+結果を左右するのは前方操作に依存関係があるときで、代表形は PreRemove の「子 symlink を unlink →
 空になった親を rmdir」という bottom-up のバッチ。この LIFO は親の mkdir を先に、子の
 再作成を後にする top-down の undo になり、これ以外の順序では子を作る先が存在しない。
 `preRemove` を直接駆動して、journal がこの順序で記録されること自体も条件に含む。
@@ -23,7 +23,7 @@ mitigates:
 ときは元のエラーだけを報告し、「N 件」の行を出さない。
 
 **成功時の journal 破棄** — commit 成功後の discardJournal が `--recopy` の rename 退避
-ファイルを掃除する。undo は起きなかったのだから、新しい copy がそのまま生きる。
+ファイルを掃除する。undo は起きなかったのだから、新しい copy がそのまま残る。
 `--backup` の退避を掃除しない側は TC-ed4992c0-8513-4383-be0a-e45acbbc229f が担当する。
 
 ## 対応する CASE

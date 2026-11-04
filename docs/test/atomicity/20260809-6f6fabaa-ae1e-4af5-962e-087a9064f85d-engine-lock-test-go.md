@@ -21,7 +21,7 @@ covers:
 ## 検証内容
 
 - **NoWait の try-lock** — `profileDir` の flock を別 fd から保持した状態で `NoWait` の
-  `Apply` を走らせると `ErrSkipped` でスキップし、何も配置しない。判定は `==` ではなく
+  `Apply` を実行すると `ErrSkipped` でスキップし、何も配置しない。判定は `==` ではなく
   `errors.Is`（将来の文脈ラップ #90 に耐える形）
 - **`ErrSkipped` の透過性** — `fmt.Errorf("%w")` の単段・多段ラップ越しでも `errors.Is`
   で到達する。無関係なエラーのラップは `ErrSkipped` に化けない

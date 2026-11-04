@@ -23,7 +23,7 @@ helper `escapesBase` / `pathChecks.isUnsafe` を直接叩く）
 - ちょうど 0 まで戻る `a/b/../..` → 脱出しない（境界の内側）
 - 1 つ外側の `a/b/../../..` → 脱出（境界の外側）
 - 途中で `..` に当たるが深さが残る `a/../b` → 脱出しない
-- 途中で負に踏み込む `a/../../b` → 後続が安全でも脱出確定
+- 途中で負になる `a/../../b` → 後続が安全でも脱出確定
 
 `isUnsafe` については、脱出しない相対パスが安全、絶対パス（`/etc/x`）が `escapesBase` とは
 独立に拒否、脱出する相対パス（`../../etc`）が `escapesBase` 経由で拒否されることを見る。
@@ -31,4 +31,4 @@ helper `escapesBase` / `pathChecks.isUnsafe` を直接叩く）
 ## 出典
 
 `tests/nix-unit/escapes-base.nix` の現行実装からの逆算（→ Issue #273「L1〜L4」節）。
-パス安全性検査の設計判断は ADR-00cc3497-654f-420a-928f-99f201e7efb0 が持つ。
+パス安全性の確認の設計判断は ADR-00cc3497-654f-420a-928f-99f201e7efb0 が持つ。

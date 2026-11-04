@@ -21,8 +21,8 @@ covers:
   （profile ディレクトリの不在は、mkdir も flock も行われていないことの代理指標になる）
 - **conflict の検出**: 通常ファイルが占有する target で conflict が plan に載り、FS が
   変更されないままであること
-- **祖先移行の判断**: 自己記録 stale 祖先の移行を、実際に除去せず plan 上で判断すること
+- **祖先移行の判断**: 自己記録の古くなった祖先の移行を、実際に除去せず plan 上で判断すること
 - **実ディレクトリ移行の判断**: 実 dir が占有する target の移行判断を、除去なしで行うこと
 
-dryrun と本番 apply が同数の conflict を報告することの照合は `engine_test.go` にあり、
+dryrun と本番 apply が同数の conflict を報告することの比較は `engine_test.go` にあり、
 CASE-31fdb776-9650-4ff9-97f6-45d56b2e7177 が扱う。
