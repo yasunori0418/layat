@@ -9,7 +9,7 @@ mitigates:
 
 ## 条件
 
-emit した文書を outturn の適合チェッカ（embed した、正とする schema と schema 外の lint）へ通し、
+emit した文書を outturn の適合チェッカ（正とする定義として embed した schema と、schema 外の lint）へ通し、
 出現しうる全形状で適合することを確かめる。形状とは、subject の有無、成功と失敗、主体確立前の
 失敗と主体起因の失敗、conflict、および `--all` の subject 0 件 / 1 件 / 複数件である。
 
