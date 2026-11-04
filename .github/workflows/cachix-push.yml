@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-    # layat バイナリの内容を決める入力（nix 定義 + Go ソース）の変更時のみ投入する。
+    # layat バイナリの内容を決める入力（nix 定義 + Go ソース + VERSION）の変更時のみ投入する。
     paths:
       - "**.nix"
       - "**.go"
@@ -12,6 +12,7 @@ on:
       - "go.sum"
       - "flake.lock"
       - "dev/flake.lock"
+      - "VERSION"
   workflow_dispatch:
 
 jobs:
