@@ -1,7 +1,7 @@
 ---
 id: "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
 type: requirement
-name: "stale 除去は前世代の記録通りを指す symlink のみに限り、copy は消さず orphan を警告する"
+name: "古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず orphan を警告する"
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -20,17 +20,17 @@ specification: |
   under those invariants, whereas a copy SHALL NOT be removed, being data owned by the
   user, and its being orphaned SHALL be notified by a warning.
 specification_ja: |
-  削除は保守的に行わなければならない。baseline のマニフェストは、last-applied 記録があれば
+  削除は保守的に行わなければならない。比較の基準のマニフェストは、last-applied 記録があれば
   記録、無ければ profile の current 世代のマニフェストとしなければならない
-  （REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）。baseline のマニフェストが「layat が配置した」と記録し、かつ
-  現状もその記録通りの先（baseline が記録する store パス / 記録された out-of-store パス）を指す symlink
+  （REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）。比較の基準のマニフェストが「layat が配置した」と記録し、かつ
+  現状もその記録通りの先（比較の基準が記録する store パス / 記録された out-of-store パス）を指す symlink
   のみを削除しなければならない。通常ファイルや layat 非管理の link には触れてはならない。
   記録と実体が不一致なら削除してはならず、警告しなければならない。初回（last-applied 記録も
-  世代も無く baseline が空）では何も消してはならない。entry が消えたとき、symlink（store / out-of-store）は上記の不変条件を
+  世代も無く比較の基準が空）では何も消してはならない。entry が消えたとき、symlink（store / out-of-store）は上記の不変条件を
   満たすもののみ除去しなければならず、copy は除去してはならない（ユーザー所有データの
   ため）。ただし copy が orphan になったことは警告で通知しなければならない。
 ---
-# REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2: stale 除去は前世代の記録通りを指す symlink のみに限り、copy は消さず orphan を警告する
+# REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2: 古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず orphan を警告する
 
 ## 仕様
 

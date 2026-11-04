@@ -38,7 +38,7 @@ specification_ja: |
   ディレクトリのいずれでも処理は同じでなければならない。別 config（別 profile）が同一
   target を狙うことは起きない前提として扱わなければならず、後勝ちを許容しつつ foreign
   symlink の上書きは warning で可視化しなければならない。例外として、同一 entrypoint の
-  `apply --all` で選択された config 間の衝突は REQ-38506419-c23d-4fce-b167-30715ce6a69d の前段検査で build 前に
+  `apply --all` で選択された config 間の衝突は REQ-38506419-c23d-4fce-b167-30715ce6a69d の前段の確認で build 前に
   止まらなければならない。
 ---
 # REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557: symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする

@@ -1,7 +1,7 @@
 ---
 id: "REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44"
 type: requirement
-name: "単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段検査で停止する"
+name: "単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する"
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 specification: |
@@ -23,7 +23,7 @@ specification: |
 specification_ja: |
   単一の home-manager config 内の `configs.<A>` と `configs.<B>` が正規化後 target
   （属性キー既定値・明示 `target` 上書きを解決した後の文字列）を重複させた場合、activation が
-  起動する `apply --all` の前段検査（REQ-38506419-c23d-4fce-b167-30715ce6a69d）で、どの
+  起動する `apply --all` の前段の確認（REQ-38506419-c23d-4fce-b167-30715ce6a69d）で、どの
   config の build・配置にも入る前に停止させなければならない。activation は非ゼロで終わり
   switch が止まる。モジュール eval はこの衝突を検出してはならない。1 つのモジュール config の
   全 config が単一の `apply --all` 起動に載るため検出が可能である。これは単一の起動に載らない
@@ -34,7 +34,7 @@ specification_ja: |
   検出しなければ、activation のたびに A と B が同じ target を交互に奪い合う
   フリップフロップが恒常化する。役割分離の導入自体が衝突の温床になるためである。
 ---
-# REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44: 単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段検査で停止する
+# REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44: 単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する
 
 ## 仕様
 

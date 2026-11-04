@@ -37,24 +37,24 @@ specification: |
   already succeeded by that point, and that the Backup stage SHALL always be empty for
   `rollback`, which has no flag equivalent to `--backup`.
 specification_ja: |
-  apply / rollback が各段（配置前除去・退避・配置（symlink / copy）・copy 反映・stale 除去）の
+  apply / rollback が各段（配置前除去・退避・配置（symlink / copy）・copy 反映・古くなった配置の除去）の
   いずれかで途中失敗したとき、その run が行った FS 変更を全て巻き戻して pre-apply 状態へ復元
   しなければならない（「失敗した apply は FS に痕跡を残さない」）。これは常時有効であり、
   フラグで制御してはならない。そのため engine は FS 書き込みごとにインメモリの undo ジャーナルへ
   逆操作を 1 件記録しなければならない。新規配置 symlink / copy は削除、張替えは unlink 前に捕捉
-  した旧リンク先での symlink 再作成、stale 除去したリンクと PreRemove の unlink は baseline の
+  した旧リンク先での symlink 再作成、古くなった配置として除去したリンクと PreRemove の unlink は比較の基準の
   manifest（last-applied 記録があれば記録、無ければ profile の current 世代。
   REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）の記録 dest での symlink 再作成、PreRemove の rmdir は空 dir の再作成、`--recopy` / `--backup`
   の rename 退避は退避物の rename back としなければならない。エラーが発生したら、それまでに
   記録したジャーナルを
-  逆順（LIFO）で巻き戻してからエラーを返さなければならない。apply（世代スキップ経路を含む）
+  逆順（LIFO）で巻き戻してからエラーを返さなければならない。apply（世代スキップの処理を含む）
   と rollback で last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）を書けなければ、
   run を失敗させ、同じ機構でジャーナルを巻き戻さなければならない。世代バックエンドの契約
   （REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）越しの世代コミットが成功した後はジャーナルを
   破棄しなければならない（コミット自体の失敗は冪等再実行で収束するため巻き戻し対象外）。`--recopy` の退避物は成功時に削除しなければならず、`--backup` の退避物は成功時も
   残置しなければならない。クラッシュ（SIGKILL・電源断）は対象外としなければならない
   （ジャーナルはプロセスメモリ上にのみ存在し永続 WAL を持たないため）。この場合は
-  「世代未コミット + 冪等再実行で収束」が保証を担う。世代スキップ経路の drift 修復も同じ機構で
+  「世代未コミット + 冪等再実行で収束」が保証を担う。世代スキップの処理の drift 修復も同じ機構で
   巻き戻さなければならず、`rollback` も apply と同じ機構を使わなければならない。ただし profile
   ポインタの移動はこの時点で全 FS 変更が成功済みのため巻き戻し対象外とし、`rollback` には
   `--backup` 相当のフラグが無いため Backup 段は常に空でなければならない。

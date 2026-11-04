@@ -24,17 +24,17 @@ specification: |
 specification_ja: |
   `apply --all` は build の前に、root フィルタ（`--project-root` / `--home-root` /
   `--system-root`）適用後に選択された config 群について、一括 eval で得た `targets` を用いて
-  正規化後 target が複数の config に現れないかを検査しなければならない。`--manifest
+  正規化後 target が複数の config に現れないかを確認しなければならない。`--manifest
   <name>=<link-farm>` で渡された prebuilt 集合では `targets` を各 link-farm の `manifest.json` の
-  entries から導出し、home-manager の activation が渡す集合を含め同じ検査をしなければならない。
-  検査は選択された
+  entries から導出し、home-manager の activation が渡す集合を含め同じ確認をしなければならない。
+  確認は選択された
   config をバケットに分けて行わなければならない: project / home / system は rootKind ごとに
   1 つ、fixed は root 文字列値ごとに 1 つ、`--root` 指定時は全体で 1 つ。同一バケット内の
   2 つの config が正規化後 target を共有するとき、`apply --all` は衝突 target と両 config 名を
   含むエラーで停止し、exit 1 としなければならず、いずれの config の build にも配置にも
-  入ってはならない。`--dryrun` も同様に停止しなければならない。選択外の config を検査しては
-  ならない。名指しの `apply <name>` はこの検査を行ってはならず、そのための eval を足しては
-  ならない。この検査で見えない衝突（別 entrypoint・別ツール・fixed root が偶然 project root と
+  入ってはならない。`--dryrun` も同様に停止しなければならない。選択外の config を確認しては
+  ならない。名指しの `apply <name>` はこの確認を行ってはならず、そのための eval を足しては
+  ならない。この確認で見えない衝突（別 entrypoint・別ツール・fixed root が偶然 project root と
   一致する場合）は、従来どおり実行時の後勝ち + foreign symlink warning で扱わなければならない。
 ---
 # REQ-38506419-c23d-4fce-b167-30715ce6a69d: apply --all は build 前に選択 config 間の target 衝突を検出して停止する

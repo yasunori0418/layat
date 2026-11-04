@@ -41,21 +41,21 @@ specification: |
   of content hashes SHALL be performed.
 specification_ja: |
   project mode では profile を解決済み root でキーしなければならない。同一 entrypoint を複数箇所へ
-  クローンしても profile が衝突せず、stale 除去が互いのクローンの配置を破壊しないようにするため
+  クローンしても profile が衝突せず、古くなった配置の除去が互いのクローンの配置を破壊しないようにするため
   である（home mode（1 ユーザー 1 つ）では起きない問題）。`<roothash>` は解決後の絶対 root パスの
   sha256 を短縮した hex（固定長・FS 安全）でなければならない。project mode では世代をユーザーに
-  公開してはならない。profile は stale 除去と世代スキップ判定の内部機構に留めなければならず、
+  公開してはならない。profile は古くなった配置の除去と世代スキップ判定の内部機構に留めなければならず、
   `rollback` / `list-generations` を出してはならない（配置物が ephemeral で rollback の意味が薄く、
   devShell キック時は戻し先 host 世代も無いため）。新 link farm derivation が profile の
   current 世代に一致し、last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）が
   あればその `linkFarm` にも一致するなら新世代を積んではならない。profile が無ければ skip
-  してはならず、profile と記録が食い違う間は通常の apply 経路を走らせなければならない。skip は必須であり、devShell / direnv 運用では `shellHook` がシェル
+  してはならず、profile と記録が食い違う間は通常の apply の処理を走らせなければならない。skip は必須であり、devShell / direnv 運用では `shellHook` がシェル
   再入のたびに走るため、毎回新世代を積むと世代が無限増殖するからである。system mode でも同じ
   世代スキップとドリフト修復を行わなければならない。NixOS の activation は boot のたびにも走り、
   毎回新世代を積むと boot ごとに世代が増えるからである。home mode は従来通り「適用のたびに
-  新世代」のままでなければならず、世代スキップは project / system mode 限定としなければならない。ただし世代スキップ時も完全 no-op にせず、FS 検査だけは軽量に行わなければならない。
-  各 entry の target を baseline（last-applied 記録があれば記録、無ければ profile の current
-  世代）に照らして `lstat` で検査しなければならず、記録通りでない（foreign tool に
+  新世代」のままでなければならず、世代スキップは project / system mode 限定としなければならない。ただし世代スキップ時も完全 no-op にせず、FS の確認だけは軽量に行わなければならない。
+  各 entry の target を比較の基準（last-applied 記録があれば記録、無ければ profile の current
+  世代）に照らして `lstat` で確認しなければならず、記録通りでない（foreign tool に
   書き換えられた・消えた）entry があればその entry だけ再張りしなければならない
   （foreign symlink なら warning）。「derivation 同一 ⇒ FS 同一」は foreign 書き換えで崩れるため、
   新世代を積まずに FS だけ収束させなければならない。lstat 比較は安価で `shellHook` の高頻度実行に

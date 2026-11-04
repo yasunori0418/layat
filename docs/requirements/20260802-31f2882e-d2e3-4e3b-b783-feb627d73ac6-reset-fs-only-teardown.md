@@ -27,7 +27,7 @@ specification: |
   the next apply SHALL place it again. It SHALL be usable in both home and project mode.
 specification_ja: |
   `layat reset <name> [target...]` は配置物を無い状態へ戻す teardown でなければならない。
-  target 省略で全 entry、指定でその entry のみを対象としなければならない。symlink は stale
+  target 省略で全 entry、指定でその entry のみを対象としなければならない。symlink は古くなった配置の
   除去と同じ保守的不変条件（layat 管理・記録通りのみ・foreign は warning で残す）で除去し
   （対象の entry と manifest が記録する配置先は、last-applied 記録があれば記録から、無ければ profile の current
   世代から取る。REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）、

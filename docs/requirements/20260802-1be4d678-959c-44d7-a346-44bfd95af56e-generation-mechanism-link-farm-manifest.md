@@ -1,7 +1,7 @@
 ---
 id: "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
 type: requirement
-name: "世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から stale を除去する"
+name: "世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する"
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -35,20 +35,20 @@ specification_ja: |
   規定し、ここでは繰り返さない）。store 外に持つ可変 JSON は last-applied 記録
   （REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）だけでなければならず、`manifest.json` は
   不変でなければならない。
-  engine は実行時に、解決後 `profileDir` 単位の flock を取得し、baseline の manifest
+  engine は実行時に、解決後 `profileDir` 単位の flock を取得し、比較の基準の manifest
   （last-applied 記録があれば記録、無ければ前世代の store マニフェスト）と
   新世代を diff して消えた entry を判定し、symlink / out-of-store symlink / place-once copy を
-  配置し（新規・張替を先に、stale 除去を最後に）、全て成功してから世代バックエンドの契約越しに
+  配置し（新規・張替を先に、古くなった配置の除去を最後に）、全て成功してから世代バックエンドの契約越しに
   link-farm を新世代としてコミットしなければならない（既定の nixprofile は
   `nix-env --profile <profileDir>/profile --set <link-farm-drv>` で layat の nix profile を
   更新する）。このコミットが全モード共通のコミット点であり、途中失敗はそこへ到達せず前世代を
-  保つ。記録が無いとき、前世代は standalone / module を問わず全モード共通で layat 自身の
+  保つ。記録が無いとき、前世代は CLI 単体 / module を問わず全モード共通で layat 自身の
   profile の前世代から読み、ホストの `oldGenPath` に依存してはならない。layat は全モードで自前
-  profile を持たなければならず、standalone ではユーザー向け rollback に使い、module
-  （HM / NixOS / darwin）では前世代マニフェストと stale 追跡のための内部機構に留めなければ
+  profile を持たなければならず、CLI 単体ではユーザー向け rollback に使い、module
+  （HM / NixOS / darwin）では前世代マニフェストと古くなった配置の追跡のための内部機構に留めなければ
   ならない。1 profile は 1 config に対応しなければならず、config 単位で atomic とする。
 ---
-# REQ-1be4d678-959c-44d7-a346-44bfd95af56e: 世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から stale を除去する
+# REQ-1be4d678-959c-44d7-a346-44bfd95af56e: 世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する
 
 ## 仕様
 

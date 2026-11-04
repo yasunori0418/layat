@@ -1,7 +1,7 @@
 ---
 id: "REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4"
 type: requirement
-name: "system mode は root を / に解決し、変更系操作の前に euid 0 を検査し、profile と last-applied 記録を system 基底に置く"
+name: "system mode は root を / に解決し、変更系操作の前に euid 0 を確認し、profile と last-applied 記録を system 基底に置く"
 specification: |
   When the root kind is `system`, the engine SHALL resolve the placement root to `/`, a
   `--root` override taking precedence as in every other mode. The profileDir of a
@@ -26,15 +26,15 @@ specification_ja: |
   last-applied 記録は `/var/lib/layat/<鍵>/last-applied.json` に置かなければならず、`<鍵>` は
   その profileDir と同じ鍵でなければならない。system mode の config に対する変更系操作
   （`apply` / `reset` / `rollback`）は、ディレクトリの作成・flock の取得・その他 FS への接触
-  より前に実効ユーザー ID が 0 であることを検査しなければならず、0 でなければ権限不足を wrap し
+  より前に実効ユーザー ID が 0 であることを確認しなければならず、0 でなければ権限不足を wrap し
   root 権限での再実行を案内するエラーで停止しなければならない。`apply --dryrun` /
-  `reset --dryrun` / `list-generations` / `status` はこの検査をしてはならない。home / project / fixed の
+  `reset --dryrun` / `list-generations` / `status` はこの確認をしてはならない。home / project / fixed の
   config の profileDir と記録の置き場は変えてはならない。
 derives_from:
   - "UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d"
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
 ---
-# REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4: system mode は root を / に解決し、変更系操作の前に euid 0 を検査し、profile と last-applied 記録を system 基底に置く
+# REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4: system mode は root を / に解決し、変更系操作の前に euid 0 を確認し、profile と last-applied 記録を system 基底に置く
 
 ## 仕様
 

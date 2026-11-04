@@ -19,7 +19,7 @@ specification: |
   specification and is not restated here.
 specification_ja: |
   `layat` CLI（`packages.layat`）は PATH に常駐する一次 UX でなければならない。導入形は
-  2 つを支援しなければならない。standalone（home mode）ではグローバルに導入し（例:
+  2 つを支援しなければならない。CLI 単体（home mode）ではグローバルに導入し（例:
   `nix profile install github:yasunori0418/layat`）、グローバル CLI とユーザー flake が
   pin する `layat.lib` は別入力になるため `schemaVersion` が skew し得る。よって CLI と
   flake pin の `layat` を同一 input から揃えることを推奨すべきであり、この形では
