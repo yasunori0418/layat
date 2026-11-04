@@ -1,7 +1,7 @@
 ---
 id: "ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3"
 type: adr
-name: "root の必須性を別の検査を書かずに標準のエラーで担保する"
+name: "root の必須性を別の確認を書かずに標準のエラーで担保する"
 status: 採用
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §3（クロスエントリ制約と必須性）の root 必須の項を書き直した"
 justifies:
@@ -21,7 +21,7 @@ references:
   - "ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d"
   - "ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3"
 ---
-# ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3: root の必須性を別の検査を書かずに標準のエラーで担保する
+# ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3: root の必須性を別の確認を書かずに標準のエラーで担保する
 
 - ステータス: 採用
 - 日付: 2026-11-01

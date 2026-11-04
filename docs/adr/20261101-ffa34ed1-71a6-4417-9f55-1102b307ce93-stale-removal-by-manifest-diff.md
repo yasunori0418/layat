@@ -1,14 +1,14 @@
 ---
 id: "ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93"
 type: adr
-name: "stale 除去は manifest の差分で行う"
+name: "古くなった配置の除去は manifest の差分で行う"
 status: 採用
 origin: "ADR-0002 §決定（stale 除去は世代由来の store マニフェストを diff して行う）を書き直した"
 justifies:
   - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
   - "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
 ---
-# ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93: stale 除去は manifest の差分で行う
+# ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93: 古くなった配置の除去は manifest の差分で行う
 
 - ステータス: 採用
 - 日付: 2026-11-01

@@ -1,13 +1,13 @@
 ---
 id: "ADR-f66cddc5-6b4f-40e4-a85a-ce1a85cd9a0c"
 type: adr
-name: "モジュール経路の二重検査を許容する"
+name: "モジュールの使い方での二重の確認を許容する"
 status: 採用
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §3（クロスエントリ制約と必須性）の二重検査の項を書き直した"
 justifies:
   - "REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34"
 ---
-# ADR-f66cddc5-6b4f-40e4-a85a-ce1a85cd9a0c: モジュール経路の二重検査を許容する
+# ADR-f66cddc5-6b4f-40e4-a85a-ce1a85cd9a0c: モジュールの使い方での二重の確認を許容する
 
 - ステータス: 採用
 - 日付: 2026-11-01

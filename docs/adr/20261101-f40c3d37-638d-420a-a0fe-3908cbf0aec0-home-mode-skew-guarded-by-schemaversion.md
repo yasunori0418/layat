@@ -1,7 +1,7 @@
 ---
 id: "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
 type: adr
-name: "home mode の CLI と lib の版ずれを manifest の検査に任せて許容する"
+name: "home mode の CLI と lib の版ずれを manifest の確認に任せて許容する"
 status: 採用
 origin: "実装前のレビュー第 2 巡で詰めた残りの細目。ADR-0016 §4 を書き直した"
 justifies:
@@ -21,7 +21,7 @@ references:
   - "ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3"
   - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
 ---
-# ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0: home mode の CLI と lib の版ずれを manifest の検査に任せて許容する
+# ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0: home mode の CLI と lib の版ずれを manifest の確認に任せて許容する
 
 - ステータス: 採用
 - 日付: 2026-11-01
