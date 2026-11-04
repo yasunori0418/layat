@@ -13,7 +13,7 @@ level: high
 ## リスク
 
 layat は profile ディレクトリ自体ではなく任意 root へ配置するため、profile ポインタを
-戻しただけでは FS は何も変わらない。`rollback` は「現世代 N の manifest を比較の基準、
+戻しただけでは FS は何も変わらない。`rollback` は「現世代 N の manifest を基準世代、
 戻る世代 N-1 を target」として planner を回し、apply と同順（配置前除去 → 配置 / 張替え →
 copy 反映 → 古くなった配置の除去）で FS を収束させてから、最後にポインタを移す
 （→ REQ-0e341430-17f0-498b-9439-65491652163a）。
