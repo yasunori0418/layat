@@ -243,7 +243,7 @@ symlink は配置前除去 → 配置 → 古くなった配置の除去の順�
 
 - [REQ-1be4d678-959c-44d7-a346-44bfd95af56e](requirements/20260802-1be4d678-959c-44d7-a346-44bfd95af56e-generation-mechanism-link-farm-manifest.md) — 世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する
 - [REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3](requirements/20260802-2aa3abbc-90b2-486e-92de-d785554bdeb3-profile-on-disk-layout.md) — profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる
-- [REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2](requirements/20260802-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2-stale-removal-invariants.md) — 古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず orphan を警告する
+- [REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2](requirements/20260802-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2-stale-removal-invariants.md) — 古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する
 - [REQ-8409db86-a1ba-4053-86dc-588985cc1ca7](requirements/20260802-8409db86-a1ba-4053-86dc-588985cc1ca7-empty-parent-dir-pruning.md) — target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する
 - [REQ-706de717-4e47-471a-a1c0-448635be159c](requirements/20260802-706de717-4e47-471a-a1c0-448635be159c-generation-gc.md) — 世代操作は世代バックエンドの契約越しに行い、GC root の間引きと store 解放は nix コマンドへ分けて委譲する
 - [REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b](requirements/20261011-833205ca-adfc-4c86-bf66-ae4d8fe4885b-generation-backend-contract.md) — engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う
