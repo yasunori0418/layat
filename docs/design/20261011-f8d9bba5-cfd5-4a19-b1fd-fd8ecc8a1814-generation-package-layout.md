@@ -39,8 +39,9 @@ type Backend interface {
   立ち、逆向きの依存を持たない。`nix-env` の呼び出しと基底
   `<state>/nix/profiles/layat` と `/nix/var/nix/profiles/layat` は `nixprofile` の外へ出ない。
 - **世代一覧は親パッケージの走査を共用する**。`ListLinks` は `profile-<N>-link` を読み取り専用で
-  走査し、Fake と `nixprofile` の List がどちらもこれを返す。`nix-env` は列挙でも profileDir に
-  lock を取るため、List には使わない。
+  走査し、Fake と `nixprofile` の List がどちらもこれを返す。日時は `2006-01-02 15:04:05`
+  （`DateLayout`）の書式で返す。`nix-env` は列挙でも profileDir に lock を取るため、List には
+  使わない。
 - **Fake は親パッケージの非 `_test` ファイルに置く**。`cmd/layat` のテストからも import する
   ため。Fake は FS ベースで `profile-<N>-link` と `profile` リンクを実際に張り、engine の
   レイアウト読みがそのまま動く。

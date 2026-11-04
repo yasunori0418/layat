@@ -19,7 +19,15 @@ specification: |
   nixprofile, which implements Commit and Switch with `nix-env --profile <profileLink>`
   (`--set`, `--switch-generation`), implements List by scanning the generation links in
   profileDir read-only without invoking `nix-env`, and owns the two bases (`<state>/nix/profiles/layat` and
-  `/nix/var/nix/profiles/layat`). The layout inside profileDir (`profile`,
+  `/nix/var/nix/profiles/layat`). List SHALL return the generations in ascending order of
+  generation number. The date of a generation SHALL be the mtime that lstat reports for the
+  generation link itself, not for its target. When profileDir does not exist, List SHALL
+  return zero generations and SHALL NOT fail; when profileDir cannot be read for any other
+  reason, List SHALL fail with an error. A sibling whose name is not of the form
+  `<profile>-<N>-link` SHALL NOT be counted as a generation. The current generation SHALL be
+  the one the `profile` link points to; when the destination of the `profile` link is not a
+  generation name, List SHALL match by resolved path instead and SHALL mark as current the
+  newest of the generations that resolve to the same path as the profile. The layout inside profileDir (`profile`,
   `profile-<N>-link`, `.pending`) SHALL be a fixed part of the contract: the engine MAY
   keep reading it directly, and the removal of `.pending` after a successful commit SHALL
   remain a plain filesystem operation of the engine. While nixprofile is the only backend,
@@ -37,6 +45,13 @@ specification_ja: |
   バックエンドは nixprofile でなければならず、Commit と Switch を `nix-env --profile
   <profileLink>`（`--set` / `--switch-generation`）で実装し、List は `nix-env` を呼び出さず
   profileDir の世代リンクを読み取り専用で走査して実装し、2 つの基底（`<state>/nix/profiles/layat` と `/nix/var/nix/profiles/layat`）を所有する。
+  List は世代を世代番号の昇順で返さなければならない。世代の日時は、リンク先ではなく世代
+  リンク自身を lstat した mtime でなければならない。profileDir が無いときは 0 件を返し、
+  error にしてはならない。不在以外の理由で profileDir を読めないときは error で失敗しなければ
+  ならない。`<profile>-<N>-link` の形でない兄弟を世代に数えてはならない。current は
+  `profile` リンクが指す世代でなければならない。`profile` リンクの指す先が世代名でないときは、
+  実体のパスの一致で探し、profile と同じ実体を指す世代のうち最も新しいものを current に
+  しなければならない。
   profileDir 内部のレイアウト（`profile` / `profile-<N>-link` / `.pending`）は契約の固定部分
   でなければならず、engine はこれを直接読んでもよく、コミット成功後の `.pending` の除去は
   engine の素の FS 操作のままでなければならない。nixprofile が唯一のバックエンドである間、
@@ -49,7 +64,7 @@ specification_ja: |
 | 操作 | 入力 | 出力・事後条件 |
 |---|---|---|
 | Commit | profile リンク + link-farm のパス | link-farm を新世代としてコミットする（nixprofile: `nix-env --profile <profileLink> --set <linkFarm>`） |
-| List | profile リンク | 世代の一覧（番号・日付・current）を返す（nixprofile: profileDir の `profile-<N>-link` を読み取り専用で走査する） |
+| List | profile リンク | 世代の一覧（番号・日付・current）を世代番号の昇順で返す。日付は世代リンク自身の lstat の mtime。profileDir が無ければ 0 件（error にしない）、不在以外で読めなければ error。`<profile>-<N>-link` の形でない兄弟は数えない。current は `profile` リンクが指す世代で、指す先が世代名でなければ実体のパスが一致する最も新しい世代（nixprofile: profileDir の `profile-<N>-link` を読み取り専用で走査する） |
 | Switch | profile リンク + 世代番号 | その世代へ profile ポインタを移す（nixprofile: `--switch-generation N`） |
 | UserBase | state ディレクトリ | ユーザー profile の基底（nixprofile: `<state>/nix/profiles/layat`） |
 | SystemBase | なし | system profile の基底（nixprofile: `/nix/var/nix/profiles/layat`） |
