@@ -50,13 +50,13 @@ target を passthru で取れば、rootKind と同じく build せずに安い e
 返り値が増えるだけで、eval の回数は増えない。
 
 engine は 1 つの manifest しか見ないことで層を分けている。config 間の衝突を engine で扱うには、
-複数の manifest を engine に渡すよう界面を変えなければならない。
+複数の manifest を engine に渡すようインターフェイスを変えなければならない。
 
 ## 棄却した代替案
 
 ### engine で検出する
 
-1 回の起動で 1 つの manifest だけを扱うという層の分け方が崩れ、複数の manifest を渡す界面の変更が要る。
+1 回の起動で 1 つの manifest だけを扱うという層の分け方が崩れ、複数の manifest を渡すインターフェイスの変更が要る。
 
 ### 一括 eval の `--apply` 式の中で throw する
 

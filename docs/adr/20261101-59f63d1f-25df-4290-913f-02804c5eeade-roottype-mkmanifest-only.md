@@ -29,9 +29,9 @@ entry の型は `lib/types.nix` に置き、`mkManifest` とモジュールの�
 
 ## 決定
 
-`root` の型は `mkManifest` の検査だけに持たせ、モジュールとは共有しない。
+`root` の型は `mkManifest` の確認だけに持たせ、モジュールとは共有しない。
 
-`mkManifest` の検査と型の共有範囲の規範は REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34 に置く。
+`mkManifest` の確認と型の共有範囲の規範は REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34 に置く。
 
 ## 根拠
 

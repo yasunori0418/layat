@@ -16,7 +16,7 @@ justifies:
 
 ## 背景
 
-lib の型検査は、`src` / `root` に渡された値が marker か derivation かを、marker に持たせた判別タグ
+lib の型の確認は、`src` / `root` に渡された値が marker か derivation かを、marker に持たせた判別タグ
 `_layatMarker` で見分ける。一方 engine が読む `manifest.json` にも、配置元の種別と root の種別を
 記録する必要がある。判別タグをそのまま契約に載せるかどうかを決める必要があった。
 

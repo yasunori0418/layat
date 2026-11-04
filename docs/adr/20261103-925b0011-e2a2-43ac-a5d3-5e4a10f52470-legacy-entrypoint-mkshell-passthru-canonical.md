@@ -29,7 +29,7 @@ references:
 CLI は flake.nix に加えて shell.nix / default.nix も entrypoint として読む。legacy entrypoint の書き方は
 トップレベルの attrset `{ layat.<name> = mkManifest { ... }; }` とだけ想定されていた。project mode では、
 同じ shell.nix を devShell と layat の entrypoint に兼ねるのが典型である。トップレベルの attrset を
-返すと、その shell.nix は `nix-shell` で入室できない。
+返すと、その shell.nix は `nix-shell` でシェルに入れない。
 
 ## 決定
 
@@ -41,7 +41,7 @@ legacy entrypoint の書き方と CLI が読む attr path は REQ-c890ce4a-6528-
 ## 根拠
 
 `passthru` は derivation に情報を足すだけで、derivation の型や振る舞いを変えない。`nix-shell` は
-返り値が derivation であれば入室でき、`passthru` は無視する。project の devShell と layat の
+返り値が derivation であればシェルに入れ、`passthru` は無視する。project の devShell と layat の
 entrypoint を同じファイルに置ける。
 
 トップレベルの attrset 形は、`mkShell` を使わず devShell も兼ねない最小の構成ではこちらのほうが
@@ -51,7 +51,7 @@ entrypoint を同じファイルに置ける。
 
 ### トップレベルの attrset 形を正準にする
 
-`mkShell` を返さない前提になり、project の devShell を兼ねる主要な使い方で `nix-shell` から入室できなくなる。
+`mkShell` を返さない前提になり、project の devShell を兼ねる主要な使い方で `nix-shell` からシェルに入れなくなる。
 
 ### トップレベルの attrset 形を廃止する
 

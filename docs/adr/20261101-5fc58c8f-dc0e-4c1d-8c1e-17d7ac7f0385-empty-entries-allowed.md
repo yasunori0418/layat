@@ -40,7 +40,7 @@ references:
 
 ## 背景
 
-`entries = {}` の config を apply すると、前の世代が置いた symlink が全て stale として除去され、
+`entries = {}` の config を apply すると、前の世代が置いた symlink が全て古くなったものとして除去され、
 その config の配置が全て消える。これを正当な操作として扱うか、誤りとして止めるかを決める必要が
 あった。
 
@@ -53,7 +53,7 @@ references:
 
 ## 根拠
 
-stale の除去は保守的で、layat が置いた symlink だけを消し、実ファイルには触れない（ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c）。
+古くなった配置の除去は保守的で、layat が置いた symlink だけを消し、実ファイルには触れない（ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c）。
 全て撤去しても利用者のデータは失われないので、空を特別に扱う理由が無い。
 
 entry を 1 つ以上必須にすると、config の配置を消すという正当な手段が無くなる。

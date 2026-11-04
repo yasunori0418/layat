@@ -45,4 +45,4 @@ outturn §4 が「`reversible:false` を警告として扱うべき」と定め�
 
 ### 不可逆な変更に `W_IRREVERSIBLE` を付ける
 
-`change.reversible` との二重符号化になる。outturn#1 で棄却した。
+`change.reversible` と同じ情報を二重に表すことになる。outturn#1 で棄却した。

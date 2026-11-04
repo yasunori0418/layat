@@ -29,7 +29,7 @@ CLI を PATH に置くと、今度は CLI の版と、利用者の flake が pin
 
 `layat` CLI（`packages.layat`）を PATH に常駐する一次 UX にする。project mode の正規の導入方法は、
 `templates/project` の devShell に flake.lock で pin した `layat` を同梱することとする。グローバルな
-導入（`nix profile install`）は standalone の利便として残す。
+導入（`nix profile install`）は CLI 単体で使うときの利便として残す。
 
 導入形態ごとの規範は REQ-14f0aec9-abae-4621-82f3-40536a1ad904 に置く。
 
@@ -39,7 +39,7 @@ PATH 上の CLI があれば、利用者は `layat apply <name>` で任意の co
 起動手段を持たなくてよい。
 
 devShell に同梱すれば、CLI と `layat.lib` が同じ flake 入力から来るので `schemaVersion` が必ず一致する。
-flake.lock による再現性が CLI まで届き、project-first の方針とも合う。standalone では PATH 常駐の
+flake.lock による再現性が CLI まで届き、project-first の方針とも合う。CLI 単体で使うときは PATH 常駐の
 利便を優先し、同梱を強制しない。
 
 ## 棄却した代替案
@@ -47,7 +47,7 @@ flake.lock による再現性が CLI まで届き、project-first の方針と�
 ### config ごとのラッパーを主な起動手段にする
 
 `nix run .#<config>` で起動するラッパーを主な起動手段にする案。ラッパーを作らないと engine を起動できず、
-flake 以外の entrypoint や standalone での使い勝手の要求を満たせない。
+flake 以外の entrypoint や CLI 単体での使い勝手の要求を満たせない。
 
 ### project mode でもグローバルな導入を前提にする
 
