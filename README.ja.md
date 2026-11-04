@@ -33,7 +33,7 @@ layat は **フェッチ**(`src` は store パス)と **配置**(固定の実行
 [engine]    Go ライブラリ(stdlib-only)
   · manifest.json を入力に取り、外部コマンドは `git`(toplevel)のみを叩く
   · 世代のコミット・切替は世代バックエンド(既定 nixprofile。内部で nix-env を実行)を通す
-  · place / replace / remove のネイティブなファイルシステム操作 ＋ 保守的な古くなった配置の除去
+  · place / replace / remove のネイティブなファイルシステム操作 ＋ 古くなった配置の保守的な除去
 ```
 
 - **engine** が配置と古くなった配置の除去を所有する。`manifest.json`——安定した Nix↔Go の契約——を読み、ネイティブなファイルシステム操作を実行する。
