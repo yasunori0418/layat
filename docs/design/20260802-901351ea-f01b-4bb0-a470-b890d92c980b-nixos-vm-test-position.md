@@ -14,7 +14,7 @@ flake check `checks.nixos-vm` で検証する**。`tests/e2e/` の bash ハー�
 （DSG-2947b4a5-ba5c-4218-8478-624cba156116）のスコープ外に置く。
 
 **E2E ハーネスへ入れずに別系統とする**理由は、要求する実行環境が違うため。
-TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2 が「NixOS / nix-darwin モジュール経路の実 activate は E2E ハーネスの
+TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2 が「NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの
 対象外」と定めているのは、E2E が非 NixOS（ubuntu ランナー）で「nix さえあれば動く」を
 検証する趣旨で組まれているのに対し、NixOS モジュールの activate には NixOS 自体が
 要るからである。同じハーネスへ押し込むと、前提の異なるシナリオが 1 つの実行系に含まれる。

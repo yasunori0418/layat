@@ -22,7 +22,7 @@ satisfies:
 
 - **nix-unit が担うのは「点」の検証**。REQ-b232ec98-af3b-41f3-a050-29d417322002 の `normalizeManifest`（確認・
   デフォルト適用・marker 変換）と REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34 の「`mkManifest` 自身が evalModules で
-  入力を検査する単一ゲート」は、正常系より拒否されるべき入力がきちんとエラーになるかが
+  入力を確認する単一の箇所になる」は、正常系より拒否されるべき入力がきちんとエラーになるかが
   肝になる。評価テストなら「この入力は eval が失敗する」を直接書ける
 - **namaka が担うのは「面」の検証**。REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281 が定める返り値（`manifest.json` +
   symlink farm を含む store オブジェクト）は、フィールドを 1 つ書き換えただけでも
