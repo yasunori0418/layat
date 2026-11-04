@@ -140,7 +140,7 @@ specification_ja: |
 
 - **`apply --dryrun`**: apply と **dryRun パリティ**。実装も同一の変換（変更系の payload
   builder）を通すため、スキーマの一致は構造的に保証され、値（観測結果）だけが異なる。
-  `items` = 新 manifest の全 entry + stale 除去計画に載った旧 entry（フルインベントリ・
+  `items` = 新 manifest の全 entry + 古くなった配置の除去計画に載った旧 entry（フルインベントリ・
   item 形は変更系と同一〔`info={target, method, subpath}`〕）。dryrun は何も実行しないため
   skipped 区分は現れない。conflict の entry は `item.status:"failed"` +
   `error.code:"E_LAYAT_COLLISION"`（message は planner の理由）で、**JSON 出力と exit 2 は
@@ -151,7 +151,7 @@ specification_ja: |
   on-disk dest（noop 判定の材料）を観測せず、記録どおりの dest への予定 re-link も
   `modify` として残る（テキスト plan の replace 行と同写像・実 apply の noop 抑止とは
   意図的な非対称）。`--recopy` の上書きは dryrun の plan に現れない（planner は place-once
-  分類のみで recopy は engine の materialize 側経路）。reversible は変更系と同じ規則
+  分類のみで recopy は engine の materialize 側の処理）。reversible は変更系と同じ規則
   （apply の dryrun に現れる change は全て `true`）。空親ディレクトリ剪定（rmdir）と `--backup` の
   rename 退避は entry 識別を持たず item / change を生まない。`generation` = 観測記録
   （切替が起きないため **before = after**・profile 未作成の初回 plan では **before / after を
@@ -194,4 +194,4 @@ specification_ja: |
 
 決定の実体は ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc（読み取り系の info インベントリ・`init` の top-level info）、
 status の info の形を定めた ADR-11918a81-f98d-466d-8310-d990c59f59e1 と、
-`--recopy` が planner の分類ではなく engine の materialize 経路であることを定めた ADR-fb01d942-2875-4dcb-a7df-879e18f63883。
+`--recopy` が planner の分類ではなく engine の materialize の処理であることを定めた ADR-fb01d942-2875-4dcb-a7df-879e18f63883。

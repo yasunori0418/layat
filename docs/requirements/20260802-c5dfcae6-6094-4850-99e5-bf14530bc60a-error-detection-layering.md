@@ -48,7 +48,7 @@ attrset のため Nix のキー重複不可で担保され、**重複 `name` と
 > - copy + out-of-store marker の矛盾拒否 → REQ-16faf428-77f3-492f-b858-222c5274cbf7
 > - 識別子 = 属性キーと一意性の native 担保 → REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7
 > - 同一 manifest 内の正規化後 target 重複 → REQ-5c6b07da-3d06-414d-8770-4f438234b322
-> - `mkManifest` が入力検査の単一ゲートであること → REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34
+> - `mkManifest` が入力の確認を担う単一の条件であること → REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34
 >
 > `root = systemRoot`（system mode）は `rootKind = "system"` として評価を通り、評価時エラーには
 > ならない（→ ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c）。
@@ -59,7 +59,7 @@ attrset のため Nix のキー重複不可で担保され、**重複 `name` と
 エラー行の別。
 
 決定の実体は ADR-2e454c1f-6cad-41d8-8311-2c8e5b8efdf6「mkManifest の入力を evalModules で検査する」（設定の
-誤りを `mkManifest` の評価時に閉じる）と、native に担保される性質へ検査を置かない根拠と
+誤りを `mkManifest` の評価時に閉じる）と、native に担保される性質へ確認を置かない根拠と
 なる ADR-c494e86e-ceb9-4380-b983-4e09553b01d6「entries を target をキーにした attrset にする」。
 
 実体依存の判定を engine 実行時へ回すことは、ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967「copy と out-of-store の併用を eval 時に拒否する」などの個別の決定に現れる層の分かれ方を、節の導入文が

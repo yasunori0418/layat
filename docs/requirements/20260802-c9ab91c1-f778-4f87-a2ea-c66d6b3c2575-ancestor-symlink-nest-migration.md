@@ -45,7 +45,7 @@ target の各祖先 component を lstat で walk。symlink の祖先があれば
 >
 > - 既定 silent と `-v` による可視化の出力規律そのもの（→ ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5・ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）→ REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 /
 >   REQ-0a123b89-0399-4f76-b988-56a5f7e0becf。本 item は「この除去を warning にせず配置レポート側で扱う」ことだけを
->   規範とし、そのレポートを既定で出すか `-v` で出すかは委譲する
+>   規範とし、そのレポートを指定が無いときに出すか `-v` のときに出すかは委譲する
 > - `--backup` 有効時にこのエラー停止がどう変わるか → 祖先 symlink conflict は
 >   `--backup` の対象外（REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b・構造問題であり退避では解消しないため）
 

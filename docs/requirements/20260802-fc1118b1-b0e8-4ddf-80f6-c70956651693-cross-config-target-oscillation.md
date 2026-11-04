@@ -63,11 +63,11 @@ specification_ja: |
 > `docs/spec.md` の追従は本 item の担当範囲外。
 >
 > **2026-10-15 追記（ADR-1338a293-3f69-48f5-9164-efb4ec6994d6）**: 上の「eval 時 assertion で停止」は、activation の `apply --all`
-> 前段検査で停止する形へ改められた（規範は frontmatter・REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44）。
+> 前段の確認で停止する形へ改められた（規範は frontmatter・REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44）。
 
 ## 出典
 
-`docs/spec.md`「世代管理仕様」→「project mode の世代」節の、世代スキップ時 FS 検査に付随する
+`docs/spec.md`「世代管理仕様」→「project mode の世代」節の、世代スキップ時の FS の確認に付随する
 入れ子箇条書き 2 項。
 
 決定の実体は ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4「配置の振動はユーザー責任とし、文書で注意するに留める」（cross-config 同一 target をユーザー責任と

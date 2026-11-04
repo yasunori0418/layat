@@ -25,17 +25,17 @@ specification_ja: |
 
 ## 仕様
 
-`mkManifest` は内部で `lib.evalModules` を回して `entries` / `root` を検査・正規化する。
+`mkManifest` は内部で `lib.evalModules` を回して `entries` / `root` を確認・正規化する。
 
-- 型をオプションに書くだけだと検査が効くのはモジュール経路（`layat.entries`）のみだが、
-  コアである CLI / entrypoint 経路（`mkManifest` 直呼び）でも検査を効かせるため
+- 型をオプションに書くだけだと確認が働くのはモジュールの使い方（`layat.entries`）のみだが、
+  コアである CLI / entrypoint の使い方（`mkManifest` 直呼び）でも確認を働かせるため
   `mkManifest` 自身が `evalModules` を回す。
 - `lib.types` / `mkOption` / `evalModules` は `nixpkgs.lib` のコアなので「lib は
   nixpkgs.lib のみ依存」を満たす。
 - entry の型定義（`lib/types.nix` の submodule）は `modules/common.nix` の
-  `attrsOf (submodule …)` と共有する。モジュール経路では host の `evalModules`
-  （`attrsOf`）と `mkManifest` の `evalModules` で二重に検査されるが、純粋・冪等で
-  害はなく、`mkManifest` を「entries が必ず通る単一の検査ゲート」に保つ。
+  `attrsOf (submodule …)` と共有する。モジュールの使い方では host の `evalModules`
+  （`attrsOf`）と `mkManifest` の `evalModules` で二重に確認されるが、純粋・冪等で
+  害はなく、`mkManifest` を「entries が必ず通る単一の確認の条件」に保つ。
 
 ## 出典
 

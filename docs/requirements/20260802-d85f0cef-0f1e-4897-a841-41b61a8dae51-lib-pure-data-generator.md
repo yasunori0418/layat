@@ -25,7 +25,7 @@ specification_ja: |
 
 - 依存は nixpkgs.lib に限る。`lib.types` / `mkOption` / `evalModules` は nixpkgs.lib の
   コアなのでこの制約を満たす。
-- 実際の配置（place / replace / remove・profile swap・stale 除去）は engine の責務で、
+- 実際の配置（place / replace / remove・profile swap・古くなった配置の除去）は engine の責務で、
   lib は一切行わない。
 - 統合層（home-manager モジュール等）へ依存しないため、lib 単体を任意の Nix 環境から
   取り込める。

@@ -87,9 +87,9 @@ target を除去した後、その親ディレクトリチェーンを root 方�
 > 写しの「出力規律」の項が言う**既定 silent と `-v` の規律そのもの**（→ ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5・ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）は
 > REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 / REQ-0a123b89-0399-4f76-b988-56a5f7e0becf の担当で、本 item の規範ではない。本 item が規範とするのは
 > 「剪定を warning にせず配置レポートの `pruned <path>` 行として出す」ことだけで、その
-> レポートを既定で出すか `-v` で出すかは委譲する。配置レポートの基本行種別
+> レポートを指定が無いときに出すか `-v` のときに出すかは委譲する。配置レポートの基本行種別
 > （`placed` / `replaced` / `removed` / `skipped`）とストリーム規律も REQ-fea038de-55eb-45ac-87fc-ec3a7287592a の担当で、
-> 本 item はそこへ剪定固有の `pruned` 行を足す。stale 除去の不変条件は REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2、
+> 本 item はそこへ剪定固有の `pruned` 行を足す。古くなった配置の除去の不変条件は REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2、
 > `reset` の除去は REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6 の担当。
 
 ## 出典

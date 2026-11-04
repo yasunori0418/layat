@@ -47,8 +47,8 @@ specification_ja: |
   `layat apply --all --manifest <name>=<link-farm> … --jobs <n>`。`<name>=<link-farm>` は
   config ごとに 1 つ、`<name>` の辞書順に並べる
 - `--jobs` は `layat.jobs` の値を、0 でも常に明示で付ける
-- 各 config は独立した profile で、profileDir 単位の flock・baseline との diff・保守的
-  stale 除去・世代コミットは config ごとに独立して走る
+- 各 config は独立した profile で、profileDir 単位の flock・比較の基準との diff・古くなった
+  配置の保守的な除去・世代コミットは config ごとに独立して実行される
 - 部分失敗の続行・集約・非ゼロ終了は `apply --all` に任せ、activation はシェルでループも
   集約もしない。非ゼロ終了は `run` がそのまま返して switch を止める
 - 報告は辞書順、配置の並列度は `--jobs` に従う
@@ -65,7 +65,7 @@ specification_ja: |
 > REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d。configs 間の target 衝突の停止は
 > REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44。
 >
-> **本文箇条書き第 3 項に対応する規範文を持たない理由**: profile ごとに独立して走る処理の
+> **本文箇条書き第 3 項に対応する規範文を持たない理由**: profile ごとに独立して実行される処理の
 > 列挙は、`apply --all` が config ごとに engine を駆動することと、profileDir 単位の flock を
 > 定める REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461・profileDir のキーを定める
 > REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81・世代機構を定める

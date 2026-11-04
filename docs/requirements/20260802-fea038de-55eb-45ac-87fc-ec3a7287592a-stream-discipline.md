@@ -32,7 +32,7 @@ warning・shellHook の skip 通知はすべて stderr**。これにより
 パイプできる。
 
 **沈黙化の対象は stderr の配置レポートのみ**で、**stdout 専有の機械可読出力
-（`apply --dryrun` の plan・`gitignore` の列挙）は既定でも `-v` 下でも常に出す**。
+（`apply --dryrun` の plan・`gitignore` の列挙）は指定が無いときも `-v` のときも常に出す**。
 stdout 専有原則を貫き、`layat apply <name> --dryrun | ...` や
 `layat gitignore <name> >> .gitignore` のパイプを壊さない。
 

@@ -81,7 +81,7 @@ specification_ja: |
 > - 世代が layat 自前 profile に乗ること → REQ-1be4d678-959c-44d7-a346-44bfd95af56e。profile 名の次元 → REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a、
 >   profileDir のキー → REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81。rollback を host へ一本化すること → REQ-844ee375-919f-4341-81e1-a5f89fd32840
 > - `manifest.json` が唯一の安定契約で `schemaVersion` が 1 に固定であること →
->   REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b / REQ-250d936c-1df0-491d-a7af-708f38b61f33。本 item はそれを前提に「module 経路では skew が構造的に
+>   REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b / REQ-250d936c-1df0-491d-a7af-708f38b61f33。本 item はそれを前提に「module の使い方では skew が構造的に
 >   起きない」ことだけを規定する
 >
 > 原文が世代の箇条書きに併記する「MVP は固定名 `default` の単一 profile

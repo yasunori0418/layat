@@ -56,7 +56,7 @@ specification_ja: |
 
 - 入出力はパスと整数だけ。Go コールバックを契約に含めないのは、同じ境界をそのまま
   プロセス境界（将来の世代管理 CLI）へ載せられる形に保つため。
-- profileDir を解決する全入口（apply / rollback / reset / prune / profile 解決）が
+- profileDir を解決する全起点（apply / rollback / reset / prune / profile 解決）が
   バックエンドを要求し、nil は error。`nix-env` への暗黙のフォールバックは持たない。
 - 基底の置き場所は世代バックエンドの責務で、layat の設定インターフェイスでは上書きできない。
   `UserBase` / `SystemBase` がその第一歩で、世代管理が layat から出たときは基底の所有ごと出る。

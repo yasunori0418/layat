@@ -37,13 +37,13 @@ specification_ja: |
 
 - **`normalizeManifest { lib, root, entries } -> attrset`**: 純データ関数。
   nix-unit / namaka の単体対象。
-  - `evalModules` 検査
+  - `evalModules` による確認
   - デフォルト適用: `subpath` → `"."` / `method` → `"symlink"` / `target` → 属性キー
   - 内部 marker タグ（`_layatMarker`）→ clean enum（`srcKind` / `rootKind`）変換
 - **`mkManifest = args: derivation`**: `normalizeManifest` の出力を `manifest.json` に
   書き symlink farm を組む。
 
-クロスフィールドチェック・パス安全性検査・target 衝突検出も `normalizeManifest` が
+クロスフィールドの確認・パス安全性の確認・target 衝突検出も `normalizeManifest` が
 担う（別 item）。
 
 ## 出典
