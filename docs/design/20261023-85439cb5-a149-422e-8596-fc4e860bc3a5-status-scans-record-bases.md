@@ -19,8 +19,8 @@ cmd/layat/         ← [name] の絞り込み、subject 名の組み立て、テ
 ```
 
 **`internal/engine`** が走査と読み取りを持つ。記録を読む `readRecord` は engine の非公開関数で、
-apply が baseline を読むときと同じ厳格な検査（壊れた JSON・フィールドの欠落や型違い・未知の
-フィールド・`recordVersion` が 1 でも 2 でもない記録を error にする）を持つ。status 用に検査を緩めた読み取りを
+apply が比較の基準を読むときと同じ厳格な確認（破損した JSON・フィールドの欠落や型違い・未知の
+フィールド・`recordVersion` が 1 でも 2 でもない記録を error にする）を持つ。status 用に確認を緩めた読み取りを
 別に作らず、engine の中で同じ関数を呼ぶ。
 
 **`internal/paths`** には関数を足さない。`<roothash>` 系列の列挙は prune が使う
@@ -102,7 +102,7 @@ apply が記録を書くときと同じ値で、CLI は `LAYAT_SYSTEM_STATE_DIR`
 - **`BackrefErr`**: root が決まらないので Root は空のまま、記録を持つ `<name>` ごとに `Err` を
   立てて返す。RootHash は通常どおり入れる。記録を持つ `<name>` が 1 つも見つからない系列は、
   `NamesErr` と同じく Name と Root が空の 1 件として返す。検索権限の無い `<name>` 直キーの
-  ディレクトリも `.root` の lstat が失敗してここに来るので、落とすと記録が黙って消える
+  ディレクトリも `.root` の lstat が失敗してここに来るので、落とすと、利用者に知らせずに記録が消える
 - **`NamesErr`**: `<name>` が分からないので、系列全体を Name と Root が空の 1 件として返す。
   RootHash と `Err` を入れる。`BackrefErr` と同時に立ったときもこの 1 件にまとめる
 

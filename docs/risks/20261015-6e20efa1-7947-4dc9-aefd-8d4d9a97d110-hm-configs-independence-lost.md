@@ -16,14 +16,14 @@ level: medium
 
 home-manager モジュールは `layat.configs.<name>` ごとに独立した配置物と profile を持ち、
 activation は全 config を 1 回の `apply --all` で engine へ渡す。この独立性が崩れると、
-standalone 経路と同じ役割分離が HM 経路では成り立たなくなる。
+CLI 単体の使い方と同じ役割分離が HM の使い方では成り立たなくなる。
 
 崩れ方は次の形をとる。
 
 - **配置物の混線** — ある config の entry が別の config の配置物へ入り込む、または config の
-  一部が起動の引数から漏れる
+  一部が起動の引数に含まれない
 - **profile の共有** — 複数の config が同じ profile と世代を使い、一方の apply が他方の
-  entry を stale とみなして撤去する
+  entry を古くなった配置とみなして撤去する
 - **衝突の見逃し** — 2 つの config が同じ target を持っても前段で止まらず、後勝ちの置換で
   apply のたびに配置が入れ替わる
 - **失敗の巻き込み** — 1 つの config の配置失敗で他の config まで配置されない、または
@@ -34,7 +34,7 @@ standalone 経路と同じ役割分離が HM 経路では成り立たなくな�
 
 ## 影響
 
-崩れても失われるのは layat が管理する symlink の配置と世代で、copy target は stale 除去の
+崩れても失われるのは layat が管理する symlink の配置と世代で、copy target は古くなった配置の除去の
 対象外のため消えない。配線を直して再 activation すれば各 config の配置と世代は戻るので、
 impact は medium とする。いずれの崩れ方も activation 自体は成功しうるため、利用者が気づき
 にくい点は沈黙性として残る。

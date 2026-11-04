@@ -15,7 +15,7 @@ threatens:
 ## リスク
 
 配置（engine 呼び出し）を config 単位の worker pool で並列にすると、辞書順の逐次ループでは
-構造的に起きなかった壊れ方が集約側に生じる。
+構造的に起きなかった失敗が集約側に生じる。
 
 - **集約順の非決定化** — config ごとの出力（`-v` レポート・`--dryrun` の計画・`apply <name>
   failed` / `skipped apply <name>` の行）を worker から直接書くと、完了順に並んで実行ごとに
@@ -33,7 +33,7 @@ threatens:
 
 impact は high とする。集約の取りこぼしは CI で `apply --all` を回す利用者に、配置されて
 いない config を成功と報告する沈黙した誤りになる。順序の非決定は `--json` の差分比較や
-ログ突合を壊す。
+ログの比較を成り立たなくする。
 
 likelihood を medium とするのは、subject の事前登録・index 付き結果スライス・完了後の
 flush という対策が集約関数の中に閉じている一方、集約関数を書き換える変更（後続の検証

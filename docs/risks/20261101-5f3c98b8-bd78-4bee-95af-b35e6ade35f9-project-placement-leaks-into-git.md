@@ -1,7 +1,7 @@
 ---
 id: "RISK-5f3c98b8-bd78-4bee-95af-b35e6ade35f9"
 type: risk
-name: "project mode の配置物が ephemeral に保たれず、git の追跡対象へ漏れる"
+name: "project mode の配置物が ephemeral に保たれず、git の追跡対象に入る"
 likelihood: medium
 impact: medium
 level: medium
@@ -11,7 +11,7 @@ threatens:
   - "REQ-1f128917-4424-4e37-8a88-e0bb23a09da7"
   - "REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9"
 ---
-# RISK-5f3c98b8-bd78-4bee-95af-b35e6ade35f9: project mode の配置物が ephemeral に保たれず、git の追跡対象へ漏れる
+# RISK-5f3c98b8-bd78-4bee-95af-b35e6ade35f9: project mode の配置物が ephemeral に保たれず、git の追跡対象に入る
 
 ## リスク
 
@@ -19,7 +19,7 @@ project mode の配置物は commit の対象外で、activation は `.gitignore
 干渉しない（→ REQ-e79178f5-5865-4444-a05d-3ab06f33cd6d）。利用者は `layat gitignore` の出力を
 `.gitignore` へ取り込んで配置物を追跡から外す。これが崩れる形は次のとおり。
 
-- **列挙の漏れ** — `gitignore` が `method` で target を選り分け、copy target を出さない
+- **列挙の取りこぼし** — `gitignore` が `method` で target を選り分け、copy target を出さない
   （→ REQ-60787ed2-4176-4bdd-800f-1600c0315551）。copy の配置物は通常ファイルなので、
   `git add -A` でそのまま commit に入る
 - **全件出力の重複と並び順** — 行指向の `gitignore --all` が config ごとの出力を並べたままにするか、
@@ -33,7 +33,7 @@ project mode の配置物は commit の対象外で、activation は `.gitignore
 
 ## 影響
 
-impact を medium とするのは、漏れた配置物や書き換わった `.gitignore` が git の操作で元へ戻せる
+impact を medium とするのは、追跡対象に入った配置物や書き換わった `.gitignore` が git の操作で元へ戻せる
 ため。commit に入った配置物は `git rm --cached` で外せ、`.gitignore` の行は消せば済む。
 push 済みの履歴に配置物が残る場合も、配置物は src から再生成できる内容で、利用者の実データは
 失われない。likelihood を medium とするのは、列挙の対象を method や rootKind で絞る変更が
@@ -44,8 +44,8 @@ likelihood medium × impact medium から level は medium。
 
 4 つの崩れ方ごとの緩和と残余は次のとおり。
 
-- **列挙の漏れ** — copy target を列挙に含むことを確かめる検証条件は無く、残余として残る
-- **全件出力の重複と並び順** — TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12 が対象選択の経路（名前の省略・単一・全件）の
+- **列挙の取りこぼし** — copy target を列挙に含むことを確かめる検証条件は無く、残余として残る
+- **全件出力の重複と並び順** — TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12 が対象選択の使い方（名前の省略・単一・全件）の
   区別を確かめ、全件指定が対象の config をすべて選ぶことだけを緩和する。行指向の `--all` の
   並び替えと重複除去は e2e 01-project と `cmd/layat/gitignore_test.go` が確かめているが、それを
   条件に持つ TC が無いので残余として残る

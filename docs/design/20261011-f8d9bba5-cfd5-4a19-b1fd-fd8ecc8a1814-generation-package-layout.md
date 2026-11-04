@@ -45,7 +45,7 @@ type Backend interface {
   ため。Fake は FS ベースで `profile-<N>-link` と `profile` リンクを実際に張り、engine の
   レイアウト読みがそのまま動く。
 - **engine は差し替え点の 3 関数型を `Backend` 1 フィールドに置き換える**。profileDir を解決する
-  全入口が `Backend` を要求し、nil は error。Prune も `Backend` から user / system の両基底を
+  全ての起点が `Backend` を要求し、nil は error。Prune も `Backend` から user / system の両基底を
   導く（`SystemDir` は全コマンド共通の環境変数 `LAYAT_SYSTEM_PROFILE_BASE` 由来の上書きだけに
   使う）。`paths.Base` と engine 側の `Generation` 型は無くなり、`paths.Resolve` は基底を受け取る。
 - **cmd 層は `newGenerationBackend()` の注入点だけを持つ**。選択機構は無く、常に

@@ -1,40 +1,40 @@
 ---
 id: "DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3"
 type: design
-name: "engine は nix を使わない tmpdir 統合テストで検証し、stale 除去の安全不変条件を table-driven に重点配分する"
+name: "engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する"
 satisfies:
   - "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
   - "REQ-b74a118a-1272-44eb-944c-7725163211c6"
   - "REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940"
   - "REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9"
 ---
-# DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3: engine は nix を使わない tmpdir 統合テストで検証し、stale 除去の安全不変条件を table-driven に重点配分する
+# DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3: engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する
 
 ## 設計
 
-engine（`internal/`）は **Go ユニットテスト + tmpdir 統合テスト**で検証する。
-統合テストは実 FS を使うが、**source は偽物・nix は使わない**。
+engine（`internal/`）は Go ユニットテスト + tmpdir 統合テストで検証する。
+統合テストは実 FS を使うが、source は偽物・nix は使わない。
 
-重点は **保守的 stale 除去の安全不変条件（誤削除防止）を table-driven で網羅する**ことに置く。
+重点は **古くなった配置を保守的に除去するときの安全不変条件（誤削除防止）を table-driven で網羅する**ことに置く。
 
 この形を選ぶ理由。
 
 - **実 FS を使うが nix を使わない**という中間の位置取りが、engine の責務範囲と
   一致する。REQ-b74a118a-1272-44eb-944c-7725163211c6 の通り engine は stdlib-only で、その仕事は
-  `manifest.json` を入力に FS を操作することに尽きる。nix を実際に走らせなくても
-  engine の全経路を踏める（実 nix の一気通貫は DSG-2947b4a5-ba5c-4218-8478-624cba156116 の E2E が担う）。
-  **FS をモックしないのは FS の意味論を実行する層**（`internal/engine/` の symlink 生成・
-  unlink・rename・copy）**に限った方針**で、symlink・パーミッション・親ディレクトリと
-  いった検証対象がモックでは再現しきれないため。**分類判定に閉じる層**
-  （`internal/planner/`）**はこの対象外**で、fake FS を差し込んだ table-driven で覆う。
+  `manifest.json` を入力に FS を操作することに尽きる。nix を実際に動かさなくても
+  engine の全処理を実行できる（実 nix の一気通貫は DSG-2947b4a5-ba5c-4218-8478-624cba156116 の E2E が担う）。
+  FS をモックしないのは FS の意味論を実行する層（`internal/engine/` の symlink 生成・
+  unlink・rename・copy）に限った方針で、symlink・パーミッション・親ディレクトリと
+  いった検証対象がモックでは再現しきれないため。分類判定に閉じる層
+  （`internal/planner/`）はこの対象外で、fake FS を差し込んだ table-driven で覆う。
   planner が判定するのは「前世代の記録 × 現状の実体」の分類であって FS の意味論
   そのものではないため、プローブ（Lstat / Readlink / ReadDir）を差し替えても
   検証対象は失われない（→ DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68 の層分割・TP-e7c25263-6d2d-4a37-8275-26906889d912 が定める「FS に触れずに
   判断する層」のユニットレベル被覆）
-- **stale 除去に重点を置く**のは、そこが**壊れたときの被害が非対称**だからである。
+- **古くなった配置の除去に重点を置く**のは、そこに不具合が出たときの被害が非対称だからである。
   REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2 が定める不変条件（前世代の記録通りを指す symlink のみ消し、通常ファイル・
-  非管理 link には触れず、copy target は消さない）が破れると**ユーザーの実ファイルが
-  消える**。配置側の失敗は「置かれない」で済むが、除去側の失敗は復旧できない
+  非管理 link には触れず、copy target は消さない）が破れるとユーザーの実ファイルが
+  消える。配置側の失敗は「置かれない」で済むが、除去側の失敗は復旧できない
 - **table-driven にする**のは、この不変条件が「前世代の記録 × 現状の実体」の
   組み合わせに対する判定表そのものだからである。記録あり/なし、実体が
   symlink/通常ファイル/ディレクトリ/不在、リンク先が記録通り/別物 — といった

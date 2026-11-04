@@ -25,21 +25,21 @@ system 基底では lock ファイルを作れず、非 root の status が失�
 走査対象になり、status を実行しただけで prune の候補が増える。非 root で system 基底に書こうとすれば権限エラーで止まる。
 
 **記録の書き換え** — 記録を書き直すと `appliedAt` が status の実行時刻になり、manifest や
-`linkFarm` を取り違えれば、次の apply の stale 除去が誤った baseline から始まる。
+`linkFarm` を取り違えれば、次の apply の古くなった配置の除去が誤った比較の基準から始まる。
 
-この脅威は status をどう設計しても残る要求側の脅威なので、design ではなく requirement に張る
+この脅威は status をどう設計しても残る要求側の脅威なので、`design` ではなく `requirement` に張る
 （→ `docs/agents/sara-graph.md`）。
 
 ## 実現性
 
-**likelihood: medium** — 変更頻度の側では、status は新規のコードで、記録を読む既存の経路
+**likelihood: medium** — 変更頻度の側では、status は新規のコードで、記録を読む既存の処理
 （`loadBaseline` など）は profileDir の解決やディレクトリの作成と隣り合っている。読み取りに
-必要な部分だけを取り出すつもりで、作成まで含む関数を呼んでしまう誤りは入りやすい。検証
-ゲートの側では、実行の前後で基底配下が変わらないことは tmpdir で機械的に確かめられる。
+必要な部分だけを取り出すつもりで、作成まで含む関数を呼んでしまう誤りは入りやすい。検証の
+条件の側では、実行の前後で基底配下が変わらないことは tmpdir で機械的に確かめられる。
 両軸を合わせて medium。
 
-**impact: medium** — 最も重い方向は記録の書き換えで、次の apply の stale 除去を誤った baseline
-から始めさせる。stale 除去は layat が置いた symlink だけを消す保守的な不変条件
+**impact: medium** — 最も重い方向は記録の書き換えで、次の apply の古くなった配置の除去を誤った比較の基準
+から始めさせる。古くなった配置の除去は layat が置いた symlink だけを消す保守的な不変条件
 （→ RISK-e3d42a21-1f43-4ac6-835e-a5caf8d86363）に守られており、利用者の実データには届かない。
 誤った配置は、正しい記録を書き直す再 apply で収束する。lock の取得とディレクトリの生成も、
 後から消せば元に戻る。

@@ -1,13 +1,13 @@
 ---
 id: "DSG-4a84f282-76ea-47c9-aede-deac12ff5257"
 type: design
-name: "実装スコープを standalone CLI + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする"
+name: "実装スコープを CLI 単体 + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする"
 satisfies:
   - "REQ-14f0aec9-abae-4621-82f3-40536a1ad904"
   - "TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2"
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
 ---
-# DSG-4a84f282-76ea-47c9-aede-deac12ff5257: 実装スコープを standalone CLI + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする
+# DSG-4a84f282-76ea-47c9-aede-deac12ff5257: 実装スコープを CLI 単体 + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする
 
 ## 設計
 
@@ -21,12 +21,12 @@ satisfies:
 
 REQ-14f0aec9-abae-4621-82f3-40536a1ad904 が layat CLI を一次 UX に据え、project mode を devShell 同梱で canonical と
 する以上、**最初に完成させるべきは CLI と project mode**になる。home mode（`homeRoot`）を
-同時に含めるのは、そこが rollback・世代管理という layat 固有機構を通る唯一の経路であり、
+同時に含めるのは、そこが rollback・世代管理という layat 固有機構を通る唯一の使い方であり、
 ここを外すと世代機構が実装されないまま残るため。
 
 system mode（`systemRoot`）は、root マーカーの union に最初から含めてあり（root マーカーの型は
-requirement 側の担当）、engine の root 解決・profile 基底・記録基底に分岐を足して実装している。
-変更系操作（`apply` / `reset` / `rollback`）は engine が root 権限を検査する。
+`requirement` 側の担当）、engine の root 解決・profile 基底・記録基底に分岐を足して実装している。
+変更系操作（`apply` / `reset` / `rollback`）は engine が root 権限を確認する。
 
 NixOS / nix-darwin モジュールは、REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 の通り配線に過ぎない。home-manager モジュールで
 確立した engine kick の形（DSG-98d7fa5d-c590-441a-b682-0ab7afa14233 のビルド済み manifest クラス）をそのまま使い、
@@ -34,7 +34,7 @@ root を `systemRoot` に pin する（DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda�
 再 activation で世代が増えないよう世代スキップを system mode へ広げたことだけである（ADR-5265f879-e623-44f9-9c58-8c14598e8b10）。
 実 activate を `tests/e2e/` のハーネスで検証しないことは TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2 が定めている。
 
-**モジュール対応の位置づけ**も同じ線引きから来る。モジュール層は他のモジュールシステムの
+**モジュール対応の位置づけ**も同じスコープの決め方から来る。モジュール層は他のモジュールシステムの
 switch と一括で動いてほしいユースケースを拾うために存在するのであって、各モジュールの
 内部事情を layat の設計へ持ち込まない。持ち込むと REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 の「ネイティブ機構へ
 翻訳しない」が層ごとに崩れる。
@@ -44,7 +44,7 @@ switch と一括で動いてほしいユースケースを拾うために存在�
 分割時点の原文（縮退前）の `docs/design.md`「プロジェクト構成」末尾の実装スコープ段落と、
 「モジュール統合設計」→「各統合層の動作」末尾のモジュール対応の位置づけ。
 
-なお同原文の「使用パターン」→「パターン 2」は standalone CLI を
+なお同原文の「使用パターン」→「パターン 2」は CLI 単体を
 「standalone CLI（home mode）」と呼んでいたが、本 item はこれを採らない。`CONTEXT.md` が
 曖昧さとして名指しで戒める項に「standalone は配置モードではなく起動形態であり、
 standalone = home mode と短絡しない（配置モードは `root` マーカーが決める）」が

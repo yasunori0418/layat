@@ -1,7 +1,7 @@
 ---
 id: "RISK-e8449214-7794-4d0d-b584-a3a152e2c1f9"
 type: risk
-name: "配置分類を誤り、ユーザーの実体を黙って壊す"
+name: "配置分類を誤り、利用者の実体を本人に知らせずに破損させる"
 threatens:
   - "REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557"
   - "REQ-053cfed2-265a-4997-a27b-97b0bed10d8a"
@@ -11,7 +11,7 @@ likelihood: medium
 impact: high
 level: high
 ---
-# RISK-e8449214-7794-4d0d-b584-a3a152e2c1f9: 配置分類を誤り、ユーザーの実体を黙って壊す
+# RISK-e8449214-7794-4d0d-b584-a3a152e2c1f9: 配置分類を誤り、利用者の実体を本人に知らせずに破損させる
 
 engine は target の現況を「不在 / 自プロファイルが前世代で記録した symlink / 記録に無い
 foreign symlink / 通常ファイル・実ディレクトリ」に分類し、それぞれ新規配置・無警告の張替え・
@@ -29,23 +29,23 @@ conflict 検出時に「最初の 1 件で止めて残りを報告しない」�
 - 自己記録の symlink を foreign と誤判定し、正常な再 apply で毎回警告を出す
 - foreign symlink を自己記録と誤判定し、他ツールの配置物を無警告で置き換える
 - conflict が複数あるとき 1 件しか報告せず、対処ガイダンスも欠く
-- out-of-store のリンク先が不在のまま配置し、dangling symlink を残す（また、検査自体が
+- out-of-store のリンク先が不在のまま配置し、dangling symlink を残す（また、確認自体が
   失敗しただけの状況をリンク先不在と誤って報告する）
-- 配置元の実在を判定できる層で検査せず、store path の `src` の不在が評価を通るか、out-of-store
+- 配置元の実在を判定できる層で確認せず、store path の `src` の不在が評価を通るか、out-of-store
   のリンク先や `src` 内の `subpath` の不在が engine を止めない（→ REQ-9dc7dac7-4e9e-494a-a17b-73853c119653）
 
 ## 評価
 
 - likelihood: medium — 分類は TC-9df804ce-35ee-44a7-87b1-17935d53fab2 / TC-405606f0-3ac8-4cc2-998e-d4759a62a171 / TC-8435052a-5dcc-49e2-ac26-82f645cb6890 / TC-4da40ee8-877e-405b-98ca-6bf5de926ba4 の
-  4 本が対象・停止・検査・報告の各面を覆っており密度は高い。ただし分類そのものが engine の
+  4 本が対象・停止・確認・報告の各面を覆っており密度は高い。ただし分類そのものが engine の
   中心にあり、配置の形（method・祖先 symlink・out-of-store）を足すたびに枝が増える
 - impact: high — 通常ファイルを symlink で上書きする方向の誤りは、ユーザーのファイルを消す。
   失われるのは layat の記録に無い実体なので再 apply でも `reset` でも戻らない。foreign を
-  自己記録と誤判定する方向も他ツールの配置物を置き換える形で同じ帰結になる。どちらも警告なく
+  自己記録と誤判定する方向も他ツールの配置物を置き換える形で同じ結果になる。どちらも警告なく
   起きるため、上書きされたこと自体に気づく契機も無い
 
 ## 張り先の判断
 
-4 本とも requirement へ張る。いずれも「target を上書きしない」「foreign は警告して後勝ち」
+4 本とも `requirement` へ張る。いずれも「target を上書きしない」「foreign は警告して後勝ち」
 「conflict は全件列挙する」「配置元の不在で停止する」というプロダクトの観測可能な振る舞い
 そのものへの懸念であり、配置アルゴリズムを別設計へ差し替えても懸念は残る（→ `docs/agents/sara-graph.md`）。
