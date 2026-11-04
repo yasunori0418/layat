@@ -33,7 +33,7 @@ satisfies:
 いずれも実際のビルドを伴わない評価だけで完結するのが選択理由でもある。
 REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4 が `mkManifest` を純粋関数と定めている以上、検証も評価層で閉じるのが自然で、
 FS も nix daemon も要らない。テスト対象の private helper へは、TP-403c55c7-d996-4951-8e6b-c3a7dddd387c が
-テスト用の差し替え点として公開する `lib.__internal` から到達する。
+テスト用に公開する `lib.__internal` から到達する。
 
 engine 側の検証手段は DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3、実際の使い方の一気通貫は DSG-2947b4a5-ba5c-4218-8478-624cba156116 が担う。
 

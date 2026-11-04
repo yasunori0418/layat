@@ -29,7 +29,7 @@ level: high
 同じ世代系列を共有する（silent orphan）。project mode で同一 entrypoint を複数箇所へ
 クローンした場合も同様に衝突する。**分離すべきでないものが割れる** — 同じ root を指す
 はずの呼び出しが毎回違う `<roothash>` を得ると（hash が決定的でない・長さが揺れる）、
-apply のたびに新しい世代系列が生まれ、前世代が永久に見つからず 古くなった配置の除去が機能しなくなる。
+apply のたびに新しい世代系列が生まれ、前世代が永久に見つからず古くなった配置の除去が機能しなくなる。
 
 レイアウト側では、profile リンク・`profile-N-link` 世代・`.pending` out-link を同一
 ディレクトリの兄弟として並べる規約（→ REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3）が崩れると、read-only な store パスを

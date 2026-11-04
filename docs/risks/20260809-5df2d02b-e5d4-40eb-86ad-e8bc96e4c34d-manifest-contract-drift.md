@@ -68,7 +68,7 @@ REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb は project root の否定側を TC-4e7
 `rootType` は marker でない文字列をすべて受理し（`lib.isString` のみ）、`normalizeManifest` は
 それを確認せずに `rootKind = "fixed"` へ倒すため、相対パス文字列も fixed として通る。
 TC-f9e927d0-8e10-4b8e-9870-5b5486949af6 は常に絶対パスを渡すので、この不足は評価テストでも補えない。拒否する規範が
-REQ 側に無い（REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb / REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 は「絶対パス」と述べるが 拒否の条件を要求していない）
+REQ 側に無い（REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb / REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 は「絶対パス」と述べるが拒否の条件を要求していない）
 ので、仕様の未決事項として残余に置く。
 
 第二に、`homeRoot` を HM 統合の配線として確かめる側は評価層の担当外で、`checks.hm-module`

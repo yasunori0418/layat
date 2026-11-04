@@ -30,8 +30,8 @@ lib/
 - **`default.nix` を公開 API のまとめに限る**ことで、REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d（`mkManifest` の引数は
   必須の pkgs / entries / root と任意の identity）・REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281（返り値）・REQ-eb363122-385a-499c-a074-c95efb949d07
   （`mkOutOfStoreSymlink`）・REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66（root マーカー 3 種）が定める API 面が 1 ファイルを
-  読めば分かる。`__internal` はここから露出するが安定 API ではなく、TP-403c55c7-d996-4951-8e6b-c3a7dddd387c が定める
-  テスト用の差し替え点に限る
+  読めば分かる。`__internal` はここから露出するが安定 API ではなく、TP-403c55c7-d996-4951-8e6b-c3a7dddd387c が定める、
+  テストから内部へ到達するための公開点に限る
 - **`types.nix` を独立させる**のは、entries の型定義を `lib` と `modules/` の双方が
   共有するため。共有できる形にしておかないと、モジュール側が型を再定義して二重管理になる
   （`modules/common.nix` からの共有は DSG-aeb5e219-4784-4950-845c-35f9bab9179c）
