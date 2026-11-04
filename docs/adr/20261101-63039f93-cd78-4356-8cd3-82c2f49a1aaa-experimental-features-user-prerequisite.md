@@ -17,7 +17,7 @@ justifies:
 
 既定の manifest 生成器である nix 生成器は、内部で `nix eval` / `nix build`（新 CLI）を使う。これらは
 `experimental-features = nix-command`（flake の entrypoint ではさらに `flakes`）が無効だと動かず、
-有効化されていない環境では分かりにくい nix のエラーで落ちる。
+有効化されていない環境では分かりにくい nix のエラーで失敗する。
 
 ## 決定
 

@@ -18,7 +18,7 @@ references:
 
 ## 背景
 
-project template の devShell は、direnv から読み込むと入室の手間が省ける。direnv を使うための
+project template の devShell は、direnv から読み込むとシェルに入る手間が省ける。direnv を使うための
 `.envrc` を template に入れるかどうかは決まっていなかった。
 
 ## 決定

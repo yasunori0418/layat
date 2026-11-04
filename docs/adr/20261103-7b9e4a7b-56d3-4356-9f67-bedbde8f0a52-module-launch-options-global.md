@@ -39,7 +39,7 @@ CLI の側に config ごとの修飾を足す必要がある。その要求は�
 
 ### `configs.<name>.recopy` などで config ごとに切り替える
 
-CLI に config ごとの修飾を足す拡張が要る。要求が無いまま界面を広げることになる。
+CLI に config ごとの修飾を足す拡張が要る。要求が無いままインターフェイスを広げることになる。
 
 ### config ごとの修飾のために activation を config ごとの起動に戻す
 

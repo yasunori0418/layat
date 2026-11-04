@@ -17,13 +17,13 @@ justifies:
 
 ## 背景
 
-`mkManifest` は入力を検査・正規化し、その結果から `manifest.json` と symlink farm を含む
-derivation を組む。検査と正規化の結果を Nix の評価テストで確かめたいが、derivation どうしを
+`mkManifest` は入力を確認・正規化し、その結果から `manifest.json` と symlink farm を含む
+derivation を組む。確認と正規化の結果を Nix の評価テストで確かめたいが、derivation どうしを
 比べて不変条件を確かめるのは難しい。
 
 ## 決定
 
-入力の検査・既定値の適用・marker から clean enum への変換を、純粋なデータ関数
+入力の確認・既定値の適用・marker から clean enum への変換を、純粋なデータ関数
 `normalizeManifest` に切り出す。`mkManifest` は `normalizeManifest` の出力から derivation を
 組むだけにする。
 
@@ -32,7 +32,7 @@ TP-36e90d5d-4524-4294-bc72-ee263bb02782 に置く。
 
 ## 根拠
 
-検査と正規化の結果が素の attrset になるので、nix-unit と namaka でそのまま確かめられる。
+確認と正規化の結果が素の attrset になるので、nix-unit と namaka でそのまま確かめられる。
 エラーの系統も、型とメッセージを指定して回帰テストにできる。lib をテストできる純粋なデータ生成器に
 保つという方針を、関数の形で直接担保する。
 
@@ -40,4 +40,4 @@ TP-36e90d5d-4524-4294-bc72-ee263bb02782 に置く。
 
 ### `mkManifest` を分けずに derivation だけを返す
 
-検査と正規化のロジックが derivation の中に閉じ、nix-unit で不変条件を確かめにくい。
+確認と正規化のロジックが derivation の中に閉じ、nix-unit で不変条件を確かめにくい。
