@@ -13,7 +13,7 @@ covers:
 `internal/engine/copytree_test.go`
 
 コピーのプリミティブ（`copyTree` / `copyFile` / `copySymlink`）を実 tmpdir に対して直接
-呼び、結果のツリーを lstat / readlink で確認する。engine の配置経路を通さないため、
+呼び、結果のツリーを lstat / readlink で確認する。engine の配置処理を通さないため、
 コピー自体の忠実性だけを切り出して見る。
 
 ## 主な検証内容
