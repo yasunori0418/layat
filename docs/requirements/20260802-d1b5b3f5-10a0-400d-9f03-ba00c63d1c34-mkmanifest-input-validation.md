@@ -35,7 +35,7 @@ specification_ja: |
 - entry の型定義（`lib/types.nix` の submodule）は `modules/common.nix` の
   `attrsOf (submodule …)` と共有する。モジュールの使い方では host の `evalModules`
   （`attrsOf`）と `mkManifest` の `evalModules` で二重に確認されるが、純粋・冪等で
-  害はなく、`mkManifest` を「entries が必ず通る単一の確認の条件」に保つ。
+  害はなく、`mkManifest` を「entries が必ず通る単一の確認箇所」に保つ。
 
 ## 出典
 

@@ -48,7 +48,7 @@ attrset のため Nix のキー重複不可で担保され、**重複 `name` と
 > - copy + out-of-store marker の矛盾拒否 → REQ-16faf428-77f3-492f-b858-222c5274cbf7
 > - 識別子 = 属性キーと一意性の native 担保 → REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7
 > - 同一 manifest 内の正規化後 target 重複 → REQ-5c6b07da-3d06-414d-8770-4f438234b322
-> - `mkManifest` が入力の確認を担う単一の条件であること → REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34
+> - `mkManifest` が入力を確認する単一の箇所であること → REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34
 >
 > `root = systemRoot`（system mode）は `rootKind = "system"` として評価を通り、評価時エラーには
 > ならない（→ ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c）。

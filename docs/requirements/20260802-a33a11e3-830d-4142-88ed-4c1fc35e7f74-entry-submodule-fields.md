@@ -49,7 +49,7 @@ entry :: {
 
 各フィールドは `lib/types.nix` の entry submodule（`lib.types`）として定義され、
 `mkManifest` の `evalModules` が確認・デフォルト適用する。この確認主体の規範は
-REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34（`mkManifest` が単一の確認の条件）と REQ-b232ec98-af3b-41f3-a050-29d417322002（`normalizeManifest` が
+REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34（`mkManifest` が入力を確認する単一の箇所）と REQ-b232ec98-af3b-41f3-a050-29d417322002（`normalizeManifest` が
 確認・デフォルト適用を担う）が持つ。
 
 各フィールドの値域・意味も個別 item が持つ（`src` は REQ-99ca5381-6c53-426c-b145-7b4297c53868、`subpath` は
