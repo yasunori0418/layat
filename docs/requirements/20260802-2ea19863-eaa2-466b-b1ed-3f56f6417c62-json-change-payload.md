@@ -77,19 +77,19 @@ specification_ja: |
   同一の engine 結果から DTO 経由で生成しなければならず、二重集計してはならない。
 
   `items` はフルインベントリでなければならない。`apply` / `rollback` は新（rollback は
-  戻り先）manifest の全 entry + stale 除去計画に載った旧 entry、`reset` は選択済み
+  戻り先）manifest の全 entry + 古くなった配置の除去計画に載った旧 entry、`reset` は選択済み
   teardown entry（`[target...]` 絞り込み後）。各 item は `kind="entry"`・`label` = target・
   `info={target, method, subpath}`（`subpath` 空は省略。ビルド毎に変わる src は item info に
   置かない）を持たなければならない。変更の無い entry も `success` としなければならず、
   method 変更で新旧両方に現れる target は新 entry が item を代表しなければならない。
 
   `changes` は実差分のみとし no-op を含めてはならない。place / copy 新規 → `add`、
-  replace / recopy → `modify`、stale 除去 / reset の除去 → `remove`。`kind` は意図した
+  replace / recopy → `modify`、古くなった配置の除去 / reset の除去 → `remove`。`kind` は意図した
   遷移ではなく実際に生じた遷移を反映しなければならない。同一 target の unlink + 再配置は
   1 つの `modify` に合体させなければならない。記録どおりの dest への機械的 re-link
   （old == new）は状態遷移が無いため change にしてはならない。
   `change.info = {old, new}` は symlink 先 / copy src を運ばなければならず、replace の
-  `old` は re-link 直前の実 on-disk dest、stale 除去の `old` は記録 dest とする。
+  `old` は re-link 直前の実 on-disk dest、古くなった配置の除去の `old` は記録 dest とする。
   recopy の `old` と copy 削除の info は省略しなければならない。`reversible` は symlink の
   add / modify / remove と copy 新規を `true`、recopy 上書きと reset の copy 削除を
   `false` としなければならない。

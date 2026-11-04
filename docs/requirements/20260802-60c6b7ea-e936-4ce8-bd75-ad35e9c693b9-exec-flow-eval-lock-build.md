@@ -71,14 +71,14 @@ specification_ja: |
   (b) ロック内で `nix build` を `--out-link <profileDir>/.pending` 付きで実行し、
   `os.Readlink` で link-farm store path を得る。out-link が indirect gcroot を張り、
   配置〜世代コミットの GC 窓を塞ぐ。build がロック内なので out-link 競合は構造的に起きない。
-  (c) baseline の manifest を読む（last-applied 記録があれば記録、無ければ profileDir の
+  (c) 比較の基準の manifest を読む（last-applied 記録があれば記録、無ければ profileDir の
   current 世代の `manifest.json`。REQ-9d622539-a1e5-4719-af51-e0cd85b66f35。どちらも無ければ初回 = 削除対象ゼロ）。
   (d) project mode かつ REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 が定める世代スキップの条件を満たすなら
   新世代は積まない。ただし各 target を
-  lstat 検査し、ドリフトした entry だけ再張りする（完全 no-op にしない）。その後 last-applied
+  lstat で確認し、ドリフトした entry だけ再張りする（完全 no-op にしない）。その後 last-applied
   記録を書き、書けなければ undo ジャーナルで巻き戻す。(e)
-  `manifest.json` を新旧 diff し、配置を塞ぐ自己記録 stale（祖先 symlink・実 dir target・
-  method 変更）を配置前除去し、新規 / 張替を配置し、copy 反映を行い、保守的 stale 除去
+  `manifest.json` を新旧 diff し、配置を塞ぐ自己記録の古くなった配置（祖先 symlink・実 dir target・
+  method 変更）を配置前除去し、新規 / 張替を配置し、copy 反映を行い、古くなった配置の保守的な除去
   （ネイティブ FS）を行う。この 4 段のいずれかが途中失敗すると、この run が行った FS 変更を
   全てインメモリ undo ジャーナルで巻き戻し pre-apply 状態へ戻す。4 段が成功したら last-applied
   記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）を書き、書けなければ同じ undo ジャーナルで
