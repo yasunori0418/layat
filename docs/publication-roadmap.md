@@ -46,7 +46,7 @@
 | e2e ハーネス（`tests/e2e/run.sh` 01-06、実 nix build/eval/`nix-env --set`） | 6/6 PASS |
 | spec ↔ 実装 乖離（2026-06-22 検証時点） | 0 件 |
 
-**結論: MVP（standalone CLI + project mode + home mode）は完成している。** system mode と NixOS / nix-darwin module は MVP の範囲外だったが、その後実装した（`systemRoot` で `/` 配下へ root 権限で配置し、module は activation から同じ engine を起動する）。
+**結論: MVP（CLI 単体 + project mode + home mode）は完成している。** system mode と NixOS / nix-darwin module は MVP の範囲外だったが、その後実装した（`systemRoot` で `/` 配下へ root 権限で配置し、module は activation から同じ engine を起動する）。
 
 > 「spec ↔ 実装 乖離 0 件」は上記検証日時点の結果。公開後の epic #107（ドキュメント横断分析）で spec ↔ 実装の乖離が再検出されており、現在の乖離状況は #107 配下（#111 等）および tracking #91 を参照する。
 
@@ -80,7 +80,7 @@ cmd/layat が低いのは nix eval/build + cobra が一体で単体テストし�
 ### ① listFilesInSrc 除去（公開 API 変更）— ✅ 完了
 - `lib/list-files.nix` 削除 / `lib/default.nix` の export 削除
 - `tests/nix-unit.nix` の関連テスト（5 件）削除
-- docs 整理（日本語維持）: spec.md（§132 / §478 応用節 / エラー仕様表）・design.md・CONTEXT.md（subpath 項）・templates コメント・`dev/layat.nix` の stale コメント → 「動的 entry 生成は既 realise store パス / flake input を `builtins.readDir`」idiom 注記へ置換
+- docs 整理（日本語維持）: spec.md（§132 / §478 応用節 / エラー仕様表）・design.md・CONTEXT.md（subpath 項）・templates コメント・`dev/layat.nix` の古くなったコメント → 「動的 entry 生成は既 realise store パス / flake input を `builtins.readDir`」idiom 注記へ置換
 - コミット: `refactor(lib)!: drop listFilesInSrc, demote to readDir idiom`
 
 ### ② UNIX 出力再設計（CLI 挙動変更）— ✅ 完了
@@ -123,15 +123,15 @@ cmd/layat が低いのは nix eval/build + cobra が一体で単体テストし�
 - ~~論点: テストのため内部を露出するか、公開面経由で振る舞いテストするか（公開後に決定）~~ → #58 で `lib.__internal` 経由の露出方針に確定し、sub-issue #71〜#75 で実装完了（親 #58 クローズ済み）。詳細は tracking #91 を参照
 
 ### C. Go テスト充実 — ✅ 完了（#59）
-- 最大効果: cmd/layat の orchestration ロジック（flag 検証 / `--all` 集約 / exit code 判定）を nix 呼び出しから分離し、nix インジェクション seam を拡張して単体テスト可能にする（engine は既に `Commit` / `Git` / `Build` を注入できる設計）→ #81 として着手（後に engine リファクタ安定後着手が前提のため #60 配下へ移設・完了）
-- 些末な穴: internal/paths の `StateDir()` / `GenerationLink()`（0%・数行で追加可能）→ #76 で対応
-- エラー経路の穴: engine の out-of-store Lstat 非 ENOENT / copy mkdir・chmod 失敗 / resolveRoot の project・fixed 分岐 / cleanupPending 再 flock 失敗 → #77〜#80 で対応
+- 最大効果: cmd/layat の orchestration ロジック（flag 検証 / `--all` 集約 / exit code 判定）を nix 呼び出しから分離し、nix を注入できる差し替え点を拡張して単体テスト可能にする（engine は既に `Commit` / `Git` / `Build` を注入できる設計）→ #81 として着手（後に engine リファクタ安定後着手が前提のため #60 配下へ移設・完了）
+- 些末な不足: internal/paths の `StateDir()` / `GenerationLink()`（0%・数行で追加可能）→ #76 で対応
+- エラー処理の不足: engine の out-of-store Lstat 非 ENOENT / copy mkdir・chmod 失敗 / resolveRoot の project・fixed 分岐 / cleanupPending 再 flock 失敗 → #77〜#80 で対応
 - ~~CI / devShell へのカバレッジ計測組み込み（現状なし）~~ → #82 で導入済み
 
 sub-issue #76〜#82（+ 安全網テスト #97/#98）は全マージ済み・親 #59 クローズ済み。詳細は tracking #91 を参照。
 
 ### D. Go パフォーマンス向上 / リファクタリング（backlog）— issue 化・完了済み（#60）
-すべて stdlib-only 制約に整合。→ この backlog は #60（sub-issue #83〜#90 + #81）として issue 化され、着手前のコード照合で perf 系タスク（#83/#86/#87/#89）は実体消滅（wontfix / 実装済み / 対象不在）と判明し、残る 5 件（#81/#84/#85/#88/#90）を軽量再スコープした上で全完了・親 #60 クローズ済み。再計画の経緯と各タスクの最終スコープは tracking #91 を参照。
+すべて stdlib-only 制約に整合。→ この backlog は #60（sub-issue #83〜#90 + #81）として issue 化され、着手前にコードと比べた結果、perf 系タスク（#83/#86/#87/#89）は実体消滅（wontfix / 実装済み / 対象不在）と判明し、残る 5 件（#81/#84/#85/#88/#90）を軽量再スコープした上で全完了・親 #60 クローズ済み。再計画の経緯と各タスクの最終スコープは tracking #91 を参照。
 
 **高優先（当初計画・#60 で再スコープ済み）:**
 - `reverifyStale` の plan 時 Lstat 結果キャッシュ化（重複 I/O 削減）→ #83 は wontfix（ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c の TOCTOU 再検証と正面衝突・重複 I/O なしと判明）

@@ -1,11 +1,11 @@
 # layat 仕様書
 
-layat が「何を満たすべきか」の全体像と、個別仕様（requirement item）・品質方針
-（quality item）・テスト計画（test_plan item）への索引。
+layat が「何を満たすべきか」の全体像と、個別仕様（`requirement` item）・品質方針
+（`quality` item）・テスト計画（`test_plan` item）への索引。
 
 規範的な仕様は **すべて `docs/requirements/` の item が持ち**、開発プロセスと規約に関する
 方針は `docs/quality/` の item が、何をどこまでテストするかは `docs/test-plan/` の item が
-持つ。本文書は通読の入口として全体像だけを述べ、詳細は item へのリンクで示す
+持つ。本文書は通読の起点として全体像だけを述べ、詳細は item へのリンクで示す
 （README → 本文書 → item の 3 層構造）。
 
 > **この文書の書き方（規約）**
@@ -14,7 +14,7 @@ layat が「何を満たすべきか」の全体像と、個別仕様（requirem
 >   ブロックはこの制限に含めない
 > - **詳細は必ず item へリンクし、本文に書き下さない**。仕様の断片をここへ写すと item と
 >   二重管理になり、改訂時に片方だけ古くなる
-> - requirement / quality / test_plan item を足したら本文書のリンク集にも足す。逆に本文書へ
+> - `requirement` / `quality` / `test_plan` item を足したら本文書のリンク集にも足す。逆に本文書へ
 >   仕様を書き足さない
 > - item を横断して検索・追跡するには `sara query`（→ `docs/agents/domain.md`）を使う
 >
@@ -39,7 +39,7 @@ layat が「何を満たすべきか」の全体像と、個別仕様（requirem
 layat は **CLI とエンジンの 2 層**で構成する（→ ADR-2119433e-de69-4447-85a5-575d58246007, ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3）。CLI は manifest 生成器
 （→ ADR-87a2cf34-9592-4c81-8980-246bca579ca0、既定 `nix`）を通じて entrypoint を発見し、生成器の Build をエンジンへ渡す。エンジンは
 ロック内で Build を呼び、生成器が build した link-farm のパス（既定の nixprofile では store path）を
-受け取る。エンジンは配置内容（entry）を `manifest.json` から読み、ネイティブ FS 操作で配置と stale 除去を行う。
+受け取る。エンジンは配置内容（entry）を `manifest.json` から読み、ネイティブ FS 操作で配置と古くなった配置の除去を行う。
 世代のコミットと切替は世代バックエンド（→ ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8、既定 nixprofile）に任せる。
 配置内容をエンジンへ渡すのは `manifest.json` だけ。
 
@@ -52,8 +52,8 @@ layat は **CLI とエンジンの 2 層**で構成する（→ ADR-2119433e-de6
 ## lib API
 
 `lib`（`mkManifest` / `mkApplyCommand` / マーカー群）は nixpkgs.lib のみに依存する純データ生成器で、配置ロジックは
-持たない（→ ADR-521765d7-7e31-42f4-b548-979185a7586a）。入力検査は `mkManifest` 自身が `evalModules` + `normalizeManifest` で
-行う単一ゲートに集約する。
+持たない（→ ADR-521765d7-7e31-42f4-b548-979185a7586a）。入力の確認は `mkManifest` 自身が `evalModules` + `normalizeManifest` で
+行い、1 か所に集約する。
 
 - [REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51](requirements/20260802-d85f0cef-0f1e-4897-a841-41b61a8dae51-lib-pure-data-generator.md) — lib は nixpkgs.lib のみに依存する純データ生成器である
 
@@ -78,13 +78,13 @@ layat は **CLI とエンジンの 2 層**で構成する（→ ADR-2119433e-de6
 
 - [REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f](requirements/20261025-6c51facc-fa7a-4b5e-939b-44e7578d7a4f-lib-apply-command.md) — lib.mkApplyCommand は事前展開した apply --all --manifest のコマンド行を返す
 
-### 入力検査（`evalModules` + `normalizeManifest`）
+### 入力の確認（`evalModules` + `normalizeManifest`）
 
-- [REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34](requirements/20260802-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34-mkmanifest-input-validation.md) — mkManifest 自身が evalModules で入力を検査する単一ゲートになる
-- [REQ-b232ec98-af3b-41f3-a050-29d417322002](requirements/20260802-b232ec98-af3b-41f3-a050-29d417322002-normalize-manifest-defaults.md) — normalizeManifest が検査・デフォルト適用・marker 変換を行い mkManifest が derivation を組む
-- [REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f](requirements/20260802-6911eab6-12b4-457c-9db4-d7430a9e9b3f-path-safety-validation.md) — target / subpath のパス安全性を評価時に検査する
-- [REQ-5c6b07da-3d06-414d-8770-4f438234b322](requirements/20260802-5c6b07da-3d06-414d-8770-4f438234b322-target-collision-eval-detection.md) — target 衝突の検出経路を同一 manifest 内と cross-config で分ける
-- [REQ-16faf428-77f3-492f-b858-222c5274cbf7](requirements/20260802-16faf428-77f3-492f-b858-222c5274cbf7-normalize-manifest-cross-field-checks.md) — 意図が矛盾する組み合わせをクロスフィールドチェックで評価時に拒否する
+- [REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34](requirements/20260802-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34-mkmanifest-input-validation.md) — mkManifest 自身が evalModules で入力を確認し、確認を 1 か所に集約する
+- [REQ-b232ec98-af3b-41f3-a050-29d417322002](requirements/20260802-b232ec98-af3b-41f3-a050-29d417322002-normalize-manifest-defaults.md) — normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む
+- [REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f](requirements/20260802-6911eab6-12b4-457c-9db4-d7430a9e9b3f-path-safety-validation.md) — target / subpath のパス安全性を評価時に確認する
+- [REQ-5c6b07da-3d06-414d-8770-4f438234b322](requirements/20260802-5c6b07da-3d06-414d-8770-4f438234b322-target-collision-eval-detection.md) — target 衝突の検出処理を同一 manifest 内と cross-config で分ける
+- [REQ-16faf428-77f3-492f-b858-222c5274cbf7](requirements/20260802-16faf428-77f3-492f-b858-222c5274cbf7-normalize-manifest-cross-field-checks.md) — 意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する
 - [REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7](requirements/20260802-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7-marker-tag-discrimination.md) — marker は判別タグで識別し manifest.json には漏らさない
 
 ---
@@ -105,7 +105,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [REQ-1cc080f6-ae91-4c1f-973e-b7054cfc0198](requirements/20260802-1cc080f6-ae91-4c1f-973e-b7054cfc0198-entrypoint-discovery-order.md) — entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする
 - [REQ-496b1a07-5b74-416b-9e5f-3952b4c03737](requirements/20260802-496b1a07-5b74-416b-9e5f-3952b4c03737-named-manifest-addressing.md) — entrypoint は layat.\<name\> に named manifest を公開し CLI は形ごとの attr path で build する
 - [REQ-205d744d-5a53-4511-bc09-892ba01d4e6f](requirements/20260802-205d744d-5a53-4511-bc09-892ba01d4e6f-default-config-name-and-namespace.md) — config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない
-- [REQ-c50df875-2cb0-4e72-8a21-858359a11cae](requirements/20260802-c50df875-2cb0-4e72-8a21-858359a11cae-flake-parts-module-path.md) — flake-parts 経路は直書きと同一の derivation を生み CLI のアドレッシングを変えない
+- [REQ-c50df875-2cb0-4e72-8a21-858359a11cae](requirements/20260802-c50df875-2cb0-4e72-8a21-858359a11cae-flake-parts-module-path.md) — flake-parts の使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない
 - [REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da](requirements/20260802-c890ce4a-6528-4ab3-ac86-23d7aebff7da-legacy-entrypoint-passthru-canonical.md) — legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない
 - [REQ-da253cab-34d4-4d6e-96f0-de99e012b376](requirements/20260802-da253cab-34d4-4d6e-96f0-de99e012b376-legacy-src-not-auto-stored.md) — legacy entrypoint では相対 path の src が自動で store 化されない
 
@@ -206,7 +206,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 
 ## 配置動作仕様
 
-symlink は配置前除去 → 配置 → stale 除去の順で進み、途中失敗はインメモリ undo ジャーナルで
+symlink は配置前除去 → 配置 → 古くなった配置の除去の順で進み、途中失敗はインメモリ undo ジャーナルで
 巻き戻す（→ ADR-56325270-20bb-4959-8498-e3223c35e24b, ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b）。copy は place-once でユーザー管理に委ねる。
 
 ### symlink モード
@@ -214,10 +214,10 @@ symlink は配置前除去 → 配置 → stale 除去の順で進み、途中�
 - [REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557](requirements/20260802-622787dc-4512-4ce9-9c7d-7b32bbb70557-symlink-placement-procedure.md) — symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする
 - [REQ-61856da1-8883-401e-ad57-9f326b96d400](requirements/20260802-61856da1-8883-401e-ad57-9f326b96d400-symlink-replace-unlink-symlink.md) — 既存 symlink の張替えは unlink + symlink の 2 操作で行い冪等な再実行で収束させる
 - [REQ-053cfed2-265a-4997-a27b-97b0bed10d8a](requirements/20260802-053cfed2-265a-4997-a27b-97b0bed10d8a-conflict-on-real-file-or-dir.md) — target に通常ファイル・ディレクトリが在れば上書きせずエラーで停止する
-- [REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575](requirements/20260802-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575-ancestor-symlink-nest-migration.md) — 祖先 symlink は自己記録 stale のみ配置前除去し、それ以外はエラーで停止する
+- [REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575](requirements/20260802-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575-ancestor-symlink-nest-migration.md) — 祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する
 - [REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26](requirements/20260802-7cee95dd-bc5a-4e86-bebc-6080ef78fe26-real-dir-target-migration.md) — 実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する
 - [REQ-2b48620a-abaa-43df-a106-954bbba3de56](requirements/20260802-2b48620a-abaa-43df-a106-954bbba3de56-method-change-symlink-to-copy-migration.md) — method 変更は symlink→copy のみ配置前除去で移行し、copy→symlink は移行しない
-- [REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98](requirements/20260802-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98-backup-stage-position.md) — backup 退避は配置前除去の後・配置の前に置き、drift 修復経路でも同じく実施する
+- [REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98](requirements/20260802-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98-backup-stage-position.md) — backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する
 
 ### 途中失敗時の巻き戻し
 
@@ -239,15 +239,15 @@ symlink は配置前除去 → 配置 → stale 除去の順で進み、途中�
 ## 世代管理仕様
 
 世代は link farm derivation を layat 自前の profile へコミットして積む（→ ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30, ADR-419914ba-9896-4dd1-853b-fb514fcb9f38）。
-stale 除去は前世代 manifest の記録通りを指す symlink だけに限る保守的な操作。
+古くなった配置の除去は前世代 manifest の記録通りを指す symlink だけに限る保守的な操作。
 
-- [REQ-1be4d678-959c-44d7-a346-44bfd95af56e](requirements/20260802-1be4d678-959c-44d7-a346-44bfd95af56e-generation-mechanism-link-farm-manifest.md) — 世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から stale を除去する
+- [REQ-1be4d678-959c-44d7-a346-44bfd95af56e](requirements/20260802-1be4d678-959c-44d7-a346-44bfd95af56e-generation-mechanism-link-farm-manifest.md) — 世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する
 - [REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3](requirements/20260802-2aa3abbc-90b2-486e-92de-d785554bdeb3-profile-on-disk-layout.md) — profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる
-- [REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2](requirements/20260802-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2-stale-removal-invariants.md) — stale 除去は前世代の記録通りを指す symlink のみに限り、copy は消さず orphan を警告する
+- [REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2](requirements/20260802-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2-stale-removal-invariants.md) — 古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず orphan を警告する
 - [REQ-8409db86-a1ba-4053-86dc-588985cc1ca7](requirements/20260802-8409db86-a1ba-4053-86dc-588985cc1ca7-empty-parent-dir-pruning.md) — target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する
 - [REQ-706de717-4e47-471a-a1c0-448635be159c](requirements/20260802-706de717-4e47-471a-a1c0-448635be159c-generation-gc.md) — 世代操作は世代バックエンドの契約越しに行い、GC root の間引きと store 解放は nix コマンドへ分けて委譲する
 - [REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b](requirements/20261011-833205ca-adfc-4c86-bf66-ae4d8fe4885b-generation-backend-contract.md) — engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う
-- [REQ-9d622539-a1e5-4719-af51-e0cd85b66f35](requirements/20261011-9d622539-a1e5-4719-af51-e0cd85b66f35-last-applied-record.md) — apply は最後に配置した manifest を last-applied 記録に書き、stale 除去の baseline は記録を優先して読む
+- [REQ-9d622539-a1e5-4719-af51-e0cd85b66f35](requirements/20261011-9d622539-a1e5-4719-af51-e0cd85b66f35-last-applied-record.md) — apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去で比べる基準は記録を優先して読む
 - [REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282](requirements/20261031-ee5085a5-077b-4f5a-aa6a-841bc5515282-apply-origin-mismatch-warning.md) — apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する
 - [REQ-0e341430-17f0-498b-9439-65491652163a](requirements/20260802-0e341430-17f0-498b-9439-65491652163a-rollback-refit-then-pointer.md) — rollback は FS を先に収束させてから profile ポインタを最後に移す
 - [REQ-844ee375-919f-4341-81e1-a5f89fd32840](requirements/20260802-844ee375-919f-4341-81e1-a5f89fd32840-module-mode-profile-internal.md) — module 時は rollback を host へ一本化し、layat profile は前進のみで追従する
@@ -266,7 +266,7 @@ root は評価時にパスへ展開せず、マーカーが運ぶ kind をエン
 - [REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e](requirements/20260802-9cb26ffd-071e-4c68-a6fc-faac6373b75e-project-mode-root-resolution.md) — project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない
 - [REQ-e79178f5-5865-4444-a05d-3ab06f33cd6d](requirements/20260802-e79178f5-5865-4444-a05d-3ab06f33cd6d-project-mode-ephemeral.md) — project mode の配置物は ephemeral とし、activation は git 状態に干渉しない
 - [REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81](requirements/20260802-d5a2e289-40bc-45a9-9d44-21b8dc561b81-profiledir-keying.md) — profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする
-- [REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4](requirements/20261018-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4-system-mode-root-gate-and-record-base.md) — system mode は root を / に解決し、変更系操作の前に euid 0 を検査し、profile と last-applied 記録を system 基底に置く
+- [REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4](requirements/20261018-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4-system-mode-root-gate-and-record-base.md) — system mode は root を / に解決し、変更系操作の前に euid 0 を確認し、profile と last-applied 記録を system 基底に置く
 - [REQ-81249072-56b8-42f5-807b-ea623c1efe99](requirements/20260802-81249072-56b8-42f5-807b-ea623c1efe99-out-of-store-eval-time-path.md) — out-of-store の src は評価時の絶対パスか配置 root 相対のどちらかで、root 相対は target と同じ root に対して実行時に解決する
 
 ---
@@ -284,7 +284,7 @@ root は評価時にパスへ展開せず、マーカーが運ぶ kind をエン
 - [REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9](requirements/20260802-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9-modules-are-engine-wiring.md) — 全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない
 - [REQ-8085f194-c903-4ecb-abd8-c719fe7b3292](requirements/20260802-8085f194-c903-4ecb-abd8-c719fe7b3292-hm-activation-contract.md) — home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める
 - [REQ-c847d1af-a437-46bb-bd64-42083810d034](requirements/20260803-c847d1af-a437-46bb-bd64-42083810d034-hm-activation-per-config-kick.md) — HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う
-- [REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44](requirements/20260803-5923ac79-4a2d-43cd-b56c-2f1000c01b44-hm-configs-target-collision-assertion.md) — 単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段検査で停止する
+- [REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44](requirements/20260803-5923ac79-4a2d-43cd-b56c-2f1000c01b44-hm-configs-target-collision-assertion.md) — 単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する
 - [REQ-a220bb28-89de-42b0-a854-e7468755ecb1](requirements/20261024-a220bb28-89de-42b0-a854-e7468755ecb1-system-module-activation-contract.md) — NixOS / nix-darwin モジュールは activation から全 config のビルド済み link-farm を systemRoot で 1 回の起動に渡す
 - [REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9](requirements/20260802-a0bdf6db-6c0c-476c-916a-61ee4e4510d9-devshell-wiring.md) — devShell は shellHook から engine を起動する配線で、シェル入室のたびに project mode で配置する
 
@@ -297,7 +297,7 @@ root は評価時にパスへ展開せず、マーカーが運ぶ kind をエン
 
 - [REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a](requirements/20260802-c5dfcae6-6094-4850-99e5-bf14530bc60a-error-detection-layering.md) — 設定の誤りは評価時に、実体の不整合は engine 実行時に検出する層分けを守る
 - [REQ-774cef80-2872-4ea1-937b-a0fbabc305a9](requirements/20260802-774cef80-2872-4ea1-937b-a0fbabc305a9-cli-stop-conditions.md) — 要求された操作が成立しないときは CLI がエラーで停止し、暗黙のフォールバックを採らない
-- [REQ-9dc7dac7-4e9e-494a-a17b-73853c119653](requirements/20260802-9dc7dac7-4e9e-494a-a17b-73853c119653-src-subpath-existence-checks.md) — 配置元の実在は判定できる層で検査し、いずれの層でも停止する
+- [REQ-9dc7dac7-4e9e-494a-a17b-73853c119653](requirements/20260802-9dc7dac7-4e9e-494a-a17b-73853c119653-src-subpath-existence-checks.md) — 配置元の実在は判定できる層で確認し、いずれの層でも停止する
 - [REQ-6506bc82-d1e1-4dbf-8c57-d5d1babf218a](requirements/20260802-6506bc82-d1e1-4dbf-8c57-d5d1babf218a-project-mode-root-resolution-failure.md) — project mode で git から root を解決できないときは engine 実行時に停止する
 - [REQ-fc64de4c-c82b-419c-8706-07d8d97daa37](requirements/20260802-fc64de4c-c82b-419c-8706-07d8d97daa37-empty-entries-full-clear.md) — 空の entries は正当な全クリアとして扱い、エラーにも警告にもしない
 - [REQ-95e97d01-5c34-44b3-bc85-9ca53472bc3d](requirements/20260802-95e97d01-5c34-44b3-bc85-9ca53472bc3d-conflict-full-report.md) — conflict で停止するときは全件を対処ガイダンス付きで列挙してから 1 本の集約エラーを返す
@@ -314,9 +314,9 @@ root は評価時にパスへ展開せず、マーカーが運ぶ kind をエン
 
 ## 品質
 
-quality は開発プロセス・規約・ガバナンスに関する方針を持つ。requirement とは別系統で、
-use_case を経由せず solution 直下に接続する。方針を実現する仕組みは `docs/infrastructure/` の
-item が持ち、`satisfies` で quality へ接続する。
+`quality` は開発プロセス・規約・ガバナンスに関する方針を持つ。`requirement` とは別系統で、
+`use_case` を経由せず `solution` 直下に接続する。方針を実現する仕組みは `docs/infrastructure/` の
+item が持ち、`satisfies` で `quality` へ接続する。
 
 - [QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e](quality/20260809-030f926b-5ae7-4543-b8cb-e66aae5e2b5e-adr-decisions-recorded-and-connected.md) — 設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる
 - [QA-0949183b-7ef0-4cae-b88f-3ad361576b63](quality/20260808-0949183b-7ef0-4cae-b88f-3ad361576b63-release-driven-by-source-of-truth.md) — リリースはバージョンの一次情報の変更で駆動し、手作業の工程を挟まない
@@ -327,9 +327,9 @@ item が持ち、`satisfies` で quality へ接続する。
 - [QA-67715bb3-1162-4ccf-8441-2f44257a57da](quality/20260809-67715bb3-1162-4ccf-8441-2f44257a57da-normative-items-placement-and-authoring.md) — 規範は 1 ファイル 1 item のグラフが持ち、概要文書は索引に縮退させる
 - [QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c](quality/20260808-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c-document-graph-mechanically-verified.md) — ドキュメントグラフのトレーサビリティは機械的に検証する
 - [QA-87b7776a-9ece-42ac-9a56-78daacb42217](quality/20260809-87b7776a-9ece-42ac-9a56-78daacb42217-defects-in-tracker-graph-holds-norms.md) — 欠陥はトラッカーが持ちドキュメントグラフは規範のみを持つ。起票は分類語彙を経由する
-- [QA-8c6767e4-dddb-48fb-b010-d363a936e746](quality/20260809-8c6767e4-dddb-48fb-b010-d363a936e746-measurement-reports-without-gating.md) — 傾向の計測は報告に留め、マージのゲートにしない
+- [QA-8c6767e4-dddb-48fb-b010-d363a936e746](quality/20260809-8c6767e4-dddb-48fb-b010-d363a936e746-measurement-reports-without-gating.md) — 傾向の計測は報告に留め、マージの条件にしない
 - [QA-9b5ccfce-25c2-4a90-977f-711ca489e9f4](quality/20260809-9b5ccfce-25c2-4a90-977f-711ca489e9f4-dod-single-machine-parsable-document.md) — 完成の定義は単一の機械パース可能な文書で持ち、項目数を上限で縛る
-- [QA-a5f7f088-a459-4bb2-9674-82b1a4a52053](quality/20260808-a5f7f088-a459-4bb2-9674-82b1a4a52053-cross-platform-verification-before-merge.md) — マージ前の自動検証を必須にし、プラットフォーム差が効く層は全プラットフォームで通す
+- [QA-a5f7f088-a459-4bb2-9674-82b1a4a52053](quality/20260808-a5f7f088-a459-4bb2-9674-82b1a4a52053-cross-platform-verification-before-merge.md) — マージ前の自動検証を必須にし、プラットフォーム差が影響する層は全プラットフォームで通す
 - [QA-a92341b9-c873-406e-8b70-a64f56d8a7d6](quality/20260809-a92341b9-c873-406e-8b70-a64f56d8a7d6-formatting-and-static-analysis-automated.md) — コード整形と静的解析を自動検証に載せ、同じ判定を手元でも得られるようにする
 - [QA-d028e302-8262-428c-9030-98d46b4b0cd3](quality/20260809-d028e302-8262-428c-9030-98d46b4b0cd3-automation-supply-chain-safety.md) — 自動化が取り込む実行物は不変な識別子で固定し、権限は最小に絞り、不正入力では成果物を作る前に失敗する
 
@@ -337,13 +337,13 @@ item が持ち、`satisfies` で quality へ接続する。
 
 ## テスト計画
 
-test_plan は requirement とは別系統で、use_case を経由せず solution 直下に接続する。
+`test_plan` は `requirement` とは別系統で、`use_case` を経由せず `solution` 直下に接続する。
 
 - [TP-0734996e-aea9-4229-8075-89a64bdf9f79](test-plan/20260809-0734996e-aea9-4229-8075-89a64bdf9f79-hm-module-eval-assert.md) — home-manager モジュールの配線は build sandbox 内の評価アサートで検証する
 - [TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9](test-plan/20260808-229b69c0-cf5e-4fb6-a353-27e5064d93e9-e2e-harness-scope.md) — 非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する
 - [TP-36e90d5d-4524-4294-bc72-ee263bb02782](test-plan/20260809-36e90d5d-4524-4294-bc72-ee263bb02782-nix-unit-namaka-split.md) — 評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る
 - [TP-403c55c7-d996-4951-8e6b-c3a7dddd387c](test-plan/20260808-403c55c7-d996-4951-8e6b-c3a7dddd387c-lib-internal-test-seam.md) — lib.\_\_internal は private helper のテスト seam として公開する
-- [TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2](test-plan/20260808-b7f1dc79-0222-4b6e-9e91-0545046e34f2-nixos-vm-test-future.md) — NixOS / nix-darwin モジュール経路の実 activate は E2E ハーネスの対象外とする
+- [TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2](test-plan/20260808-b7f1dc79-0222-4b6e-9e91-0545046e34f2-nixos-vm-test-future.md) — NixOS / nix-darwin モジュールを使う場面の実 activate は E2E ハーネスの対象外とする
 - [TP-d3000054-42d9-4bac-912a-dd3abc38d3e9](test-plan/20260808-d3000054-42d9-4bac-912a-dd3abc38d3e9-json-conformance-verification.md) — エンベロープの outturn 適合を Go テストと E2E の両方で検証する
 - [TP-d3d06fe4-6940-4df8-b111-bb4096d5444f](test-plan/20260809-d3d06fe4-6940-4df8-b111-bb4096d5444f-eval-test-double.md) — 評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える
 - [TP-deb05610-44bc-4962-8939-952392e5fbd0](test-plan/20260809-deb05610-44bc-4962-8939-952392e5fbd0-fault-injection-atomicity.md) — 原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する
@@ -361,8 +361,8 @@ test_plan は requirement とは別系統で、use_case を経由せず solution
 ## 関連文書
 
 - `README.md` / `README.ja.md` — 3 層構造の最上段（導入と使い方）
-- `docs/concept.md` — コンセプト（solution / use_case への索引）
-- `docs/design.md` — 設計（design item への索引）
+- `docs/concept.md` — コンセプト（`solution` / `use_case` への索引）
+- `docs/design.md` — 設計（`design` item への索引）
 - `docs/infrastructure/` — 品質方針を実現する技術基盤（CI / リリース / 配信）
-- `docs/adr/` — 意思決定の記録。requirement / design / quality / test_plan などを `justifies` で裏づける
+- `docs/adr/` — 意思決定の記録。`requirement` / `design` / `quality` / `test_plan` などを `justifies` で裏づける
 - `docs/model.yaml` — sara の型定義（item の型・関係・ID 形式）

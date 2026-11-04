@@ -70,7 +70,7 @@ type になる。使えるプレースホルダは `{prefix}` / `{id}` / `{seq[:
 ### `test_case` の `target`
 
 正準表記は次の 2 規則だけで、`dev/tests/test-doc-map.sh` が
-CASE とテスト資産の 1:1 を照合する。本文の `## 対象` 節は人向けの補足で、照合しない。
+CASE とテスト資産を比べて 1:1 かを確かめる。本文の `## 対象` 節は人向けの補足で、比較の対象にしない。
 
 - ファイルが実在するもの: リポジトリ相対パス（例: `internal/engine/engine_test.go`・
   `tests/nix-unit/structure.nix`・`tests/e2e/scenarios/03-stale.sh`・
