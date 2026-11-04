@@ -1,7 +1,7 @@
 ---
 id: "RISK-31b8346c-7f1d-406f-aa74-6e1024edee83"
 type: risk
-name: "生成器の実装が契約からずれ、使い方ごとに manifest の取得や失敗の分類が食い違う"
+name: "生成器の実装が契約からずれ、実装ごとに manifest の取得や失敗の分類が食い違う"
 likelihood: medium
 impact: medium
 level: medium
@@ -9,7 +9,7 @@ threatens:
   - "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"
   - "REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd"
 ---
-# RISK-31b8346c-7f1d-406f-aa74-6e1024edee83: 生成器の実装が契約からずれ、使い方ごとに manifest の取得や失敗の分類が食い違う
+# RISK-31b8346c-7f1d-406f-aa74-6e1024edee83: 生成器の実装が契約からずれ、実装ごとに manifest の取得や失敗の分類が食い違う
 
 ## リスク
 
