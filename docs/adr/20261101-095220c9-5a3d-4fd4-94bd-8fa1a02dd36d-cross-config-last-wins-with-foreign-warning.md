@@ -20,13 +20,13 @@ justifies:
 
 ## 背景
 
-別の config（別の profile）や別のツールが同じ target を狙うことがある。engine が知っているのは
+別の config（別の profile）や別のツールが同じ target に配置することがある。engine が知っているのは
 自分の前世代 manifest だけで、他の profile がその target を所有しているかは分からない。警告なしに
 上書きすると、ユーザーは配置が奪われたことに気付けない。
 
 ## 決定
 
-別 config が同じ target を狙うのは起きない前提とし、実行時は後勝ちにする。engine は、自分の前世代
+別 config が同じ target に配置することは起きない前提とし、実行時は後勝ちにする。engine は、自分の前世代
 manifest に記録の無い symlink（foreign）を置き換えるときに warning を出し、停止はしない。
 
 target の状態ごとの扱い（不在・自分の記録した symlink・foreign symlink・実ファイルや実ディレクトリ）は

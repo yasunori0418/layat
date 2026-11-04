@@ -55,5 +55,5 @@ REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b に置く。
 
 ### `systemRoot` を API に載せない
 
-marker を project と home の 2 つに絞れる。`/` は固定の絶対パスとして書けるが、root 権限の検査や
+marker を project と home の 2 つに絞れる。`/` は固定の絶対パスとして書けるが、root 権限の確認や
 system 用の profile の置き場所といった system mode の扱いを、marker で選べなくなる。

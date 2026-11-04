@@ -21,7 +21,7 @@ justifies:
 nix 2.27 / 2.34 で実際に動かした結果と、nix のソース（`src/nix/flake.cc` の `CmdFlakeCheck`）から、
 次のことを確かめた。
 
-- 終了コードは 0 で、CI は落ちない
+- 終了コードは 0 で、CI は失敗しない
 - `layat` 直下の値は評価されるが、未知の output の配下までは再帰して調べない。配下の derivation は build も
   eval もされない
 - flake-parts を経由しても警告は消えない。消す仕組みである flake-schemas（nix PR #8892）は未マージで、
@@ -37,7 +37,7 @@ docs に明記する。`layat` の成果物の主な検証は `nix build .#layat
 
 ## 根拠
 
-警告は CI を壊さず、配下の derivation を誤って build することもない。`layat` 直下の評価が成功するかは
+警告は CI を失敗させず、配下の derivation を誤って build することもない。`layat` 直下の評価が成功するかは
 むしろ確かめられる。警告を消す手段はいずれも、upstream の安定版では使えないか、特定の
 ディストリビューションへの依存を招くので、許容するのがいちばん安い。flake-schemas が upstream にマージされたら、
 `schemas.layat` を提供して警告を消す余地は残る。
@@ -48,6 +48,6 @@ docs に明記する。`layat` の成果物の主な検証は `nix build .#layat
 
 nix PR #8892 は未マージで、Determinate Nix でしか使えない。upstream の nix の利用者を切り捨てる。
 
-### 別の output 構造へ逃げる
+### 別の output 構造に移す
 
 `lib` 以外の名前では警告は消えず、`packages` を流用すると manifest を誤って build する危険がある。

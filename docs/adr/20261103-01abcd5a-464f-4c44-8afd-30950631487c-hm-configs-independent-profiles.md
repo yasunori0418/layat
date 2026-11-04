@@ -34,8 +34,8 @@ REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a に置く。
 
 ## 根拠
 
-- `<name>` は CLI 単体で使う `layat.<name>` と同じ「config 名」の次元で、home mode の profile dir の鍵に
-  そのまま乗る。profile dir のレイアウトは変わらない
+- `<name>` は CLI 単体で使う `layat.<name>` と同じ「config 名」の次元で、home mode の profile dir の鍵として
+  そのまま使われる。profile dir のレイアウトは変わらない
 - 世代の単位を profile に保つ。合成すると 1 つの世代に複数の役割が含まれ、片方だけを戻せなくなる
 - 名前を `configs` にするのは、spec の用語（config = named manifest）と揃えるためである
 

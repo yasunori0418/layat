@@ -37,7 +37,7 @@ dryrun でも conflict のままにする（ADR-37191429-2099-4217-a552-47b16a7e
 ## 根拠
 
 dryrun は、同じ引数で apply したときの plan を先に見せるためのものである。`--backup` 付きの
-apply は退避して先へ進むので、dryrun が conflict と答えると予告と実際の結果が食い違う。
+apply は退避して先へ進むので、dryrun が conflict を示すと予告と実際の結果が食い違う。
 
 退避先が既にある箇所は、実際の apply でも止まる。plan の計算で判定できるので、dryrun でも
 同じく conflict として示す。

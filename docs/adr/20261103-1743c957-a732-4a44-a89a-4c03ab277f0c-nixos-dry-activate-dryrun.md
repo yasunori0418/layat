@@ -43,7 +43,7 @@ NixOS モジュールは、`NIXOS_ACTION` が `dry-activate` のときだけ eng
 `dry-activate` は FS を変えないことを前提にした操作なので、layat もその前提に合わせる。`--dryrun` を
 付ければ、layat の配置の予定も他の activation の予定と一緒に示せる。
 
-`dry-activate` 以外を通常の起動に倒すのは、boot のときの起動で配置のずれを直す機会を残すためである。
+`dry-activate` 以外で通常どおり起動するのは、boot のときの起動で配置のずれを直す機会を残すためである。
 
 `NIXOS_ACTION` は NixOS の activation が設定する変数で、nix-darwin の activation では設定されない。
 nix-darwin に同じ分岐を持たせても使われない。

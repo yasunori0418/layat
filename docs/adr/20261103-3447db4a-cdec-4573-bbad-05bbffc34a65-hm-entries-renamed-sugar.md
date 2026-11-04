@@ -31,7 +31,7 @@ REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 に置く。
 ## 根拠
 
 リポジトリは公開済みで、利用者がいないとは言い切れない。profile を 1 つしか使わない利用者には
-`layat.entries` が今も最短の書き方である。`mkRenamedOptionModule` の 1 行で既存の設定を壊さずに済み、
+`layat.entries` が今も最短の書き方である。`mkRenamedOptionModule` の 1 行で既存の設定を変えずに使い続けられ、
 home-manager 標準の rename 警告がそのまま deprecated の告知になる。新しい利用者はこの警告で
 `configs` へ誘導される。
 
@@ -39,7 +39,7 @@ home-manager 標準の rename 警告がそのまま deprecated の告知にな�
 
 ### `layat.entries` を廃止して `configs.<name>` に一本化する
 
-公開済みの API を壊す。糖衣 1 行で避けられるコストに見合わない。
+公開済みの API の互換を失う。糖衣 1 行で避けられるコストに見合わない。
 
 ### 警告を出さずに両方を正式な書き方として並べる
 

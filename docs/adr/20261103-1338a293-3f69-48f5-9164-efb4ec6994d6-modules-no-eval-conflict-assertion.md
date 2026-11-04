@@ -25,7 +25,7 @@ references:
 
 ## 背景
 
-1 つの構成の中で、複数の config が正規化後に同じ target を狙うことがある。放っておくと、activation の
+1 つの構成の中で、複数の config が正規化後に同じ target に配置することがある。放っておくと、activation の
 たびに config 同士が同じ target を奪い合う。全 config が 1 回のモジュール評価に載るので、nix の
 `assertions` で評価時に止めることもできる。
 
