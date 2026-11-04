@@ -123,7 +123,7 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
 ```bash
 sara check                                 # グラフ全体の検証（broken reference / duplicate ID / cycles）
 sara query <フル ID> -u                    # 上流を辿る（requirement → use_case → solution）
-sara query <フル ID> -d                    # 下流を辿る（requirement → design。risk 以降は未着手）
+sara query <フル ID> -d                    # 下流を辿る（requirement → design / risk → test_condition → test_case）
 sara report coverage                       # カバー率
 sara report matrix                         # トレーサビリティマトリクス
 ```
