@@ -31,15 +31,15 @@ don't skim it as an index.
 | `docs/quality/` | quality | `QA` | Norms binding the development process (normative, RFC2119) |
 | `docs/test-plan/` | test_plan | `TP` | Scope, levels and approach of testing (normative, RFC2119) |
 | `docs/infrastructure/` | infrastructure | `INF` | The machinery upholding a quality — CI, release, docs site, merge gate |
-| `docs/risks/` | risk | `RISK` | What threatens a requirement or a design — **not started** |
-| `docs/test/<subject>/` | test_condition | `TC` | What a risk needs covered — **not started** |
-| `docs/test/<subject>/` | test_case | `CASE` | A concrete case under a condition — **not started** |
+| `docs/risks/` | risk | `RISK` | What threatens a requirement or a design |
+| `docs/test/<subject>/` | test_condition | `TC` | What a risk needs covered |
+| `docs/test/<subject>/` | test_case | `CASE` | A concrete case under a condition |
 | `docs/adr/` | adr | `ADR` | Decisions, linked by `justifies` |
 | `docs/sara-adr/` | sara_adr | `SDR` | Decisions on the sara quality-management machinery |
 
-The three types marked **not started** are defined in `docs/model.yaml` but have neither items nor
-directories yet; they get created when the test process is taken up, at which point the granularity
-of `<subject>` (per feature or per requirement) is decided.
+The risk, test_condition and test_case items live under `docs/risks/` and `docs/test/<subject>/`.
+`<subject>` is one of eight feature-level categories, whose list and order are defined by
+`dev/tests/test-categories.tsv` (details in `CLAUDE.md`, "テスト系 item の粒度").
 
 The Holds column above describes each type as the graph currently stands, not the full set of
 parents `docs/model.yaml` permits: `infrastructure` may hang off a `design` as well as a
@@ -64,7 +64,7 @@ Full conventions — ID format, placement rules, which type owns what — are in
 sara query <full-id> -u      # upstream: requirement -> use_case -> solution,
                              #           quality / test_plan -> solution
 sara query <full-id> -d      # downstream: requirement / test_plan -> design, quality -> infrastructure
-                             #             (risk and below not started yet)
+                             #             requirement -> risk -> test_condition -> test_case
 sara check                   # validate the whole graph (broken refs / duplicate IDs / cycles)
 sara report coverage         # coverage
 sara report matrix           # traceability matrix
@@ -99,8 +99,8 @@ This repo (single-context, with the item graph under `docs/`):
     ├── requirements/  design/         ← REQ / DSG
     ├── quality/  test-plan/           ← QA / TP
     ├── infrastructure/                ← INF
-    ├── risks/                         ← RISK (not started; no directory yet)
-    ├── test/<subject>/                ← TC / CASE / D (not started; no directory yet)
+    ├── risks/                         ← RISK
+    ├── test/<subject>/                ← TC / CASE (one directory per feature subject)
     ├── adr/                           ← ADR
     └── sara-adr/                      ← SDR
 ```
@@ -146,4 +146,4 @@ If your output contradicts an existing ADR, surface it explicitly rather than si
 > _Contradicts ADR-<uuid> (event-sourced orders) — but worth reopening because…_
 
 The same applies to a `requirement` item: its `specification` is normative, so contradicting it is a
-spec change, not an implementation detail. Say which item you're contradicting by its short ID.
+spec change, not an implementation detail. Say which item you're contradicting by its full ID.
