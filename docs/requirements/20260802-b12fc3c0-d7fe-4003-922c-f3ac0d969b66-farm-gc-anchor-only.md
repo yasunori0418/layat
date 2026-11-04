@@ -25,7 +25,7 @@ specification_ja: |
   （`srcKind = "outOfStore"`）は store 外を指すためアンカーを持ってはならない。
   `method = "copy"` の entry は store 由来であってもアンカーを持ってはならない。copy は
   place-once でマテリアライズ後は store から独立するため store src を掴む必要がなく、
-  `nix-collect-garbage` で解放されてよいためである。ただし copy entry も 孤児の警告と、
+  `nix-collect-garbage` で解放されてよいためである。ただし copy entry も孤児の警告と、
   古くなった配置の判定のため `manifest.json` には記録しなければならない。
 ---
 # REQ-b12fc3c0-d7fe-4003-922c-f3ac0d969b66: symlink farm は GC アンカー専用でアンカーは store-backed な symlink entry に限る
