@@ -45,7 +45,7 @@ specification_ja: |
   型違い・未知のフィールドは同じく error としなければならない。それ以外の `generator`・`entrypoint`・`identity` の
   値は読んだまま受け付け、比較に使わなければならない。版 1 の記録は origin 無しとして
   読まなければならない。
-  apply（`--dryrun` と generation skip 経路を含む）は、配置の前に記録の origin と今回の
+  apply（`--dryrun` と generation skip の処理を含む）は、配置の前に記録の origin と今回の
   origin を比べなければならない。両方あるとき、両方が `identity` を持てば `identity` だけで、
   そうでなければ `generator` と `entrypoint` で比べなければならない。食い違えば、stderr へ
   warning を 1 行出し、`subjectResult.warnings` に subject 警告 `W_LAYAT_ORIGIN_MISMATCH` を
@@ -53,7 +53,7 @@ specification_ja: |
   ならない。profileDir を共有する他の場合と同じく後勝ちとしなければならない。記録に origin
   が無いときは比べてはならず、警告してはならない。
   reset と rollback が記録を書き直すときは記録済みの origin を引き継がなければならない。
-  記録済みの origin が無ければ（記録が無く profile から baseline を取った場合を含む）、
+  記録済みの origin が無ければ（記録が無く profile から比較の基準（rollback では基準世代）を取った場合を含む）、
   `origin` を省いて `recordVersion` 2 で書かなければならない。
 ---
 # REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282: apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する
@@ -68,18 +68,18 @@ specification_ja: |
   読む。それ以外の版と未知のフィールドは従来どおり error。`origin` がオブジェクトでも `null`
   でもなければ error（`null` は origin 無し）。`origin` の中の `generator` の
   欠落・各フィールドの型違い・未知のフィールドも error。それ以外の値は読んだまま比較に使う。
-- **食い違いの警告**: apply（`--dryrun` と generation skip 経路を含む）は配置の前に記録の
+- **食い違いの警告**: apply（`--dryrun` と generation skip の処理を含む）は配置の前に記録の
   origin と今回の origin を比べる。両方に `identity` があれば `identity` だけで、どちらかに無ければ
   `generator` / `entrypoint` で比べる。両方あって食い違えば stderr に 1 行、`--json` では
   `subjectResult.warnings` に `W_LAYAT_ORIGIN_MISMATCH`（`detail = {recorded, current}`）を出して
   続行する。止めず、後勝ちのまま。記録に origin が無ければ比べない。
 - **書き直しでの引き継ぎ**: reset / rollback は記録済みの origin を引き継ぐ。無ければ
-  （記録が無く profile から baseline を取った場合を含む）`origin` を省いて版 2 で書く。
+  （記録が無く profile から比較の基準（rollback では基準世代）を取った場合を含む）`origin` を省いて版 2 で書く。
 - **採らないもの**: `status` への origin の露出と、食い違いで止めるモード。
 
 想定する食い違いは、home-manager モジュール（`apply --all --manifest`・prebuilt 生成器）と
-standalone の CLI（entrypoint 経由・nix 生成器）が同じ config 名を使い、profileDir と
-last-applied 記録を共有する場合。互いの entry を stale として除去し合うこと自体は止めず、
+CLI 単体（entrypoint 経由・nix 生成器）が同じ config 名を使い、profileDir と
+last-applied 記録を共有する場合。互いの entry を古くなった配置として除去し合うこと自体は止めず、
 それが起きていることを warning で知らせる。
 
 記録の置き場・残りの内容・書き込みの規則は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35、

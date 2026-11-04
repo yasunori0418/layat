@@ -42,13 +42,13 @@ specification_ja: |
 フィルタ・opt-in）。素の `--all` は全 config を適用する。
 
 home mode と project mode の config が混在する entrypoint で devShell の `shellHook` から
-`--all` を打つと home mode config も `$HOME` に配置される footgun があるため、devShell は
+`--all` を打つと home mode config も `$HOME` に配置されてしまう危険があるため、devShell は
 **`layat apply --all --project-root`**（または名指し `layat apply <name>`）を使う。
 フィルタは `--all` 修飾で、名指し apply では `<name>` が 1 config を pin するため無意味。
 
 root（実効 uid 0）で素の `--all` を打つと、home mode config は root の `$HOME` に root 所有で
 置かれ、project mode config も repo 内に root 所有の symlink ができ、どちらも root の state に
-世代が作られる。一般ユーザーの後続 apply とは baseline が食い違うため、選択対象に home / project
+世代が作られる。一般ユーザーの後続 apply とは比較の基準が食い違うため、選択対象に home / project
 config が含まれるときは stderr に warning を 1 行出す（error にはしない。root 自身の dotfiles を
 home mode で置く用途は正当）。fixed mode と system mode の config は warning の対象外で、
 フィルタ付き・非 root のときも出さない。layat は `SUDO_USER` を見ない。

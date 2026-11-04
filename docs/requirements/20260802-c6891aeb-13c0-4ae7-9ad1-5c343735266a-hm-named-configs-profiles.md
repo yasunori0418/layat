@@ -20,7 +20,7 @@ specification: |
   module; neither is restated here.
 specification_ja: |
   home-manager モジュールの利用者も、役割分離された複数の独立 profile（それぞれが自分の
-  世代を持つ）を取れなければならず、役割分離を standalone CLI 経路に限ってはならない。
+  世代を持つ）を取れなければならず、役割分離を CLI 単体での使い方に限ってはならない。
   `layat.configs` の `<name>` 1 つが 1 manifest = 1 profile に対応しなければならない。
   「1 config = 1 profile = 1 manifest」の atomic 性は保たなければならず、複数 config を
   合成するヘルパを提供してはならない。`<name>` 次元の導入は非破壊でなければならず、`default`
@@ -35,10 +35,10 @@ specification_ja: |
 
 ## 仕様
 
-- `layat.configs` の属性キー `<name>` が profile 名で、standalone の entrypoint `layat.<name>` と
+- `layat.configs` の属性キー `<name>` が profile 名で、CLI 単体の entrypoint `layat.<name>` と
   同じ次元。`<name>` ごとに独立した link-farm を生成し、1 config = 1 profile = 1 manifest の
   atomic 性を保つ（合成ヘルパは提供しない）
-- HM モジュール経由でも**役割分離ができる**。役割ごとに分けたいユーザーが standalone CLI 経路へ
+- HM モジュール経由でも**役割分離ができる**。役割ごとに分けたいユーザーが CLI 単体での使い方へ
   回る必要は無い
 - `<name>` 次元の導入は**非破壊**。`default` という名の config は従来と同じ profile へ解決され
   続け、`default` 以外の `<name>` が増えるだけで profile dir のレイアウト変更は無い
@@ -57,15 +57,15 @@ specification_ja: |
 > **原文の残る規範の所在**: `layat.configs` / `layat.entries` のオプション定義そのものは
 > REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10（ADR-01abcd5a-464f-4c44-8afd-30950631487c が定義先を `modules/common.nix` としているため全モジュール共通の
 > 集合に属する）、profile dir レイアウトの物理形は REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3、home mode が `<name>` 直キーで
-> あることは REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81、standalone が `layat.<name>` で複数 profile を持てることは
-> REQ-496b1a07-5b74-416b-9e5f-3952b4c03737、1 起動あたりの activation 契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、module 経路で rollback を host へ
+> あることは REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81、CLI 単体が `layat.<name>` で複数 profile を持てることは
+> REQ-496b1a07-5b74-416b-9e5f-3952b4c03737、1 起動あたりの activation 契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、module の使い方で rollback を host へ
 > 一本化することは REQ-844ee375-919f-4341-81e1-a5f89fd32840 の担当。
 >
 > **configs を導入した旧決定の activation と衝突検出の項を本 item に含めない理由**: その旧決定は activation が `configs` を
 > 走査して profile ごとに engine を kick すること（辞書順・1 profile の失敗で後続を止めず
 > 最後に集約）、単一 HM config 内の `configs` 間の正規化後 target 衝突を eval 時
 > assertion で停止することも決めている（ADR-f58e9981-bacc-4937-98b8-bddce0a057db が前者を `apply --all` 1 回起動へ、ADR-1338a293-3f69-48f5-9164-efb4ec6994d6 が後者を
-> activation の `apply --all` 前段検査へ改めた）が、いずれも `docs/spec.md` に対応記述が無い
+> activation の `apply --all` 前段の確認へ改めた）が、いずれも `docs/spec.md` に対応記述が無い
 > （原文が旧決定に未追従のため）。本 item は原文 blockquote の担当範囲＝profile 粒度に
 > 留め、**前者の規範は REQ-c847d1af-a437-46bb-bd64-42083810d034、後者の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 が持つ**。なお後者の前段
 > 検出は、別 entrypoint・別 manifest の cross-config を「eval では検出不可・実行時の

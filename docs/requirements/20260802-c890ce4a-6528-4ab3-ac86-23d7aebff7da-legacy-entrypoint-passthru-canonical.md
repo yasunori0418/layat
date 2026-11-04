@@ -23,7 +23,7 @@ specification_ja: |
   `passthru.layat.<name>` に named manifest を載せなければならない（`project` template の
   devShell 同梱と両立する）。`passthru` はホスト derivation の attrset にマージされるため、
   CLI が叩く attr path（`layat.<name>`）はトップレベル attrset 形と同一でなければならず、
-  CLI は実装分岐を持ってはならない。素の `nix-shell`（`-A` 不要）はどちらの形でも壊れては
+  CLI は実装分岐を持ってはならない。素の `nix-shell`（`-A` 不要）はどちらの形でも使えなくなっては
   ならない。複数 manifest の一括処理は既存の `apply --all` の一括 eval でそのまま充足させ
   なければならず、`mkShell` の `inputsFrom` で manifest を合成するヘルパは持ってはならない
   （1 profile = 1 config の atomic 性と衝突するため）。

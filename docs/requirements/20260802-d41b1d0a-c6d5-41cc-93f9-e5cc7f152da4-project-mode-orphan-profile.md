@@ -20,14 +20,14 @@ specification_ja: |
   公開ドキュメントに注記しなければならない。どの root 由来の孤児かは `<roothash>` 階層の
   backref ファイル `.root` で逆引きできなければならない。`layat prune` はこの backref で
   孤児系列を逆引きし、root がもはや実在しない系列を削除しなければならない。どの系列を
-  対象とするか、および削除を守るゲートは、それぞれを担当する 2 件の要求が定めるとおりで
+  対象とするか、および削除を守る条件は、それぞれを担当する 2 件の要求が定めるとおりで
   なければならない。
 ---
 # REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4: 孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する
 
 ## 仕様
 
-**orphan profile**: クローンを削除すると profile が `<state>/nix/profiles/layat/` 下に孤児として
+**孤児 profile**: クローンを削除すると profile が `<state>/nix/profiles/layat/` 下に孤児として
 残る。store は `nix-collect-garbage` で解放されるが profile ディレクトリは残る。`layat prune` か
 手動で削除されるまでは放置許容とし、公開ドキュメントに注記する。どの root 由来の孤児かは
 `<roothash>` 階層の backref ファイル（`.root`）で逆引きできる。**cleanup は `layat prune` が担う**
@@ -37,7 +37,7 @@ specification_ja: |
 > `.pending` が config あたり最大 1 であることは REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3、store 解放に
 > `nix-collect-garbage` を使うことは REQ-706de717-4e47-471a-a1c0-448635be159c、profile を解決済み root でキーすること
 > （孤児が生じる前提）は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 の担当。`layat prune` の対象判定は
-> REQ-c44433a1-7ee7-459a-9aae-7cc42166876f、削除を守るゲート（dryrun・確認・try-lock・`--json`）は
+> REQ-c44433a1-7ee7-459a-9aae-7cc42166876f、削除を守る条件（dryrun・確認・try-lock・`--json`）は
 > REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed が持つ。
 
 ## 出典

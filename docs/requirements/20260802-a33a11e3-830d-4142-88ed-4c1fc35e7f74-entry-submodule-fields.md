@@ -19,7 +19,7 @@ specification_ja: |
   （`string`・省略可）・`method`（`"symlink" | "copy"`・省略可）の 4 つでなければ
   ならない。`target` は `mkManifest` で明示選択した `root` からの相対パスでなければ
   ならない。
-  各省略可フィールドの具体的なデフォルト値と、それを検査・適用する主体は
+  各省略可フィールドの具体的なデフォルト値と、それを確認・適用する主体は
   REQ-b232ec98-af3b-41f3-a050-29d417322002 / REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 / REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34 が規定しており、本 item では重ねて
   規定しない。
 ---
@@ -48,9 +48,9 @@ entry :: {
 同型）。
 
 各フィールドは `lib/types.nix` の entry submodule（`lib.types`）として定義され、
-`mkManifest` の `evalModules` が検査・デフォルト適用する。この検査主体の規範は
-REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34（`mkManifest` が単一の検査ゲート）と REQ-b232ec98-af3b-41f3-a050-29d417322002（`normalizeManifest` が
-検査・デフォルト適用を担う）が持つ。
+`mkManifest` の `evalModules` が確認・デフォルト適用する。この確認主体の規範は
+REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34（`mkManifest` が入力を確認する単一の箇所）と REQ-b232ec98-af3b-41f3-a050-29d417322002（`normalizeManifest` が
+確認・デフォルト適用を担う）が持つ。
 
 各フィールドの値域・意味も個別 item が持つ（`src` は REQ-99ca5381-6c53-426c-b145-7b4297c53868、`subpath` は
 REQ-27b75fe6-6c36-44a8-8cd3-5cc98043022a、`target` の識別子性とデフォルトは REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7、`method` の動作は

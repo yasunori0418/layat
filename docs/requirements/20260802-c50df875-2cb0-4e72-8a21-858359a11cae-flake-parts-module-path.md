@@ -1,7 +1,7 @@
 ---
 id: "REQ-c50df875-2cb0-4e72-8a21-858359a11cae"
 type: requirement
-name: "flake-parts 経路は直書きと同一の derivation を生み CLI のアドレッシングを変えない"
+name: "flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない"
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
 specification: |
@@ -18,14 +18,14 @@ specification_ja: |
   flake-parts を使う repo は `imports = [ inputs.layat.flakeModules.default ]` の上で
   `perSystem.layat.<name> = mkManifest { inherit pkgs; ... }` を宣言しなければならない。
   flake-parts はこれを `flake.layat.<system>.<name>` へ transpose し、直書きと同一の
-  derivation を生まなければならない（CLI のアドレッシングは不変）。この経路では `pkgs`
+  derivation を生まなければならない（CLI のアドレッシングは不変）。この使い方では `pkgs`
   は perSystem 由来でなければならず `packages.layat` と一貫しなければならない（二重解決
   なし）。flake-parts 利用者にはこの形が canonical でなければならず、直書きは plain flake と
   `shell.nix` / `default.nix` の canonical でなければならない。`mkManifest` は両形で唯一の
   公開 API であり続けなければならず、flakeModule の option は `mkManifest` の derivation を
   格納するだけでなければならない。
 ---
-# REQ-c50df875-2cb0-4e72-8a21-858359a11cae: flake-parts 経路は直書きと同一の derivation を生み CLI のアドレッシングを変えない
+# REQ-c50df875-2cb0-4e72-8a21-858359a11cae: flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない
 
 ## 仕様
 

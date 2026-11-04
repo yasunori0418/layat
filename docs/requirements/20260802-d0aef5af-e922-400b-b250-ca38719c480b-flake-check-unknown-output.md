@@ -20,7 +20,7 @@ specification_ja: |
   consumer 側の `outputs.layat.<system>.<name>`（`packages` 汚染を避ける専用 namespace）は
   `nix flake check` で `warning: unknown flake output 'layat'` を出すが exit 0 になる。
   これは想定内・無害として許容しなければならず、CI を壊してはならない。`flake check` は
-  `layat` 直下 attrset の eval 健全性は検査するが、配下の `.<system>.<name>` derivation は
+  `layat` 直下 attrset の eval 健全性は確認するが、配下の `.<system>.<name>` derivation は
   build も eval もしてはならない（誤 build しない）。flake-parts module で `flake.layat.<system>` へ
   transpose しても警告は消えない（nix 本体が known-output を hardcode するため）。
   output 名を変えても消えない。`layat` 成果物の主検証は
@@ -33,7 +33,7 @@ specification_ja: |
 **`nix flake check` と `layat` カスタム output**: consumer の
 `outputs.layat.<system>.<name>`（`packages` 汚染回避の専用 namespace）は `nix flake check` で
 **`warning: unknown flake output 'layat'` を出すが exit 0**（CI を壊さない・想定内・無害）。
-`flake check` は `layat` 直下 attrset の eval 健全性は検査するが、**配下の
+`flake check` は `layat` 直下 attrset の eval 健全性は確認するが、**配下の
 `.<system>.<name>` derivation は build も eval もしない**（誤 build しない）。
 **flake-parts module で `flake.layat.<system>` へ transpose しても警告は消えない**
 （nix 本体が known-output を hardcode するため）。output 名を変えても消えない

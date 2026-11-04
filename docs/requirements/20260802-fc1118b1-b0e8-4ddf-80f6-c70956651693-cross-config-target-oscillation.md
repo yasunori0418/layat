@@ -30,7 +30,7 @@ specification_ja: |
   複数 config（activation の `apply --all` に載る 1 つのモジュール config の `layat.configs` など）
   については配置前の検出が可能であり、本 item はそれを妨げない。その場合の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の担当で、本 item
   では規定しない。例外として、同一 entrypoint の `apply --all` で選択された config 間の衝突は
-  REQ-38506419-c23d-4fce-b167-30715ce6a69d の前段検査で build 前に止まらなければならない。振動中の foreign warning は
+  REQ-38506419-c23d-4fce-b167-30715ce6a69d の前段の確認で build 前に止まらなければならない。振動中の foreign warning は
   `shellHook` の高頻度実行で出続けるが、これは設定ミスのシグナルとして正しいものと
   みなさなければならない。この warning は成功時沈黙の対象外でなければならず、`-v` の有無に
   関わらず常時出さなければならない。MVP では抑制 / 集約機構を持ってはならず、
@@ -63,11 +63,11 @@ specification_ja: |
 > `docs/spec.md` の追従は本 item の担当範囲外。
 >
 > **2026-10-15 追記（ADR-1338a293-3f69-48f5-9164-efb4ec6994d6）**: 上の「eval 時 assertion で停止」は、activation の `apply --all`
-> 前段検査で停止する形へ改められた（規範は frontmatter・REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44）。
+> 前段の確認で停止する形へ改められた（規範は frontmatter・REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44）。
 
 ## 出典
 
-`docs/spec.md`「世代管理仕様」→「project mode の世代」節の、世代スキップ時 FS 検査に付随する
+`docs/spec.md`「世代管理仕様」→「project mode の世代」節の、世代スキップ時の FS の確認に付随する
 入れ子箇条書き 2 項。
 
 決定の実体は ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4「配置の振動はユーザー責任とし、文書で注意するに留める」（cross-config 同一 target をユーザー責任と

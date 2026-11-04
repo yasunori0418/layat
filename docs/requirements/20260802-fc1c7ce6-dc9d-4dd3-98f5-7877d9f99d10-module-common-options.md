@@ -61,7 +61,7 @@ layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-5af37
 > **上は原文の写しで、規範は frontmatter が正**。`entries` の属性キーが target であることと
 > entry submodule のフィールド定義は REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 / REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74、`root` が
 > `mkManifest` / CLI 層で明示必須であることは REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4、`--backup` の退避契約そのものは
-> REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b の担当。`layat.backup` が manifest ではなく engine 起動の配線に効くことは
+> REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b の担当。`layat.backup` が manifest ではなく engine 起動の配線に働くことは
 > REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3、`layat.recopy` の配線は REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c の担当。`layat.jobs` を activation の `--jobs` へ渡すことは
 > REQ-c847d1af-a437-46bb-bd64-42083810d034 の担当。
 >
@@ -88,7 +88,7 @@ layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-5af37
 >
 > **`layat.configs` のデフォルトを `{}` とする根拠**: 旧決定（現在は ADR-01abcd5a-464f-4c44-8afd-30950631487c）は型
 > （`attrsOf (submodule { entries = entriesType; })`）のみを定めデフォルトに触れていなかったが、
-> `attrsOf` の既定が空 attrset であることは Nix module system の帰結であり、原文の表が他 3
+> `attrsOf` の既定が空 attrset であることは Nix module system の仕組みから従うことであり、原文の表が他 3
 > オプションのデフォルトを明示しているのに `configs` だけ欠けると非対称になるため規範に含めた。
 > 原文が `layat.entries` のデフォルトとする `{}` は、糖衣を通じて `configs.default.entries` の
 > デフォルトへ落ちる。

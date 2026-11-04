@@ -1,7 +1,7 @@
 ---
 id: "REQ-9dc7dac7-4e9e-494a-a17b-73853c119653"
 type: requirement
-name: "配置元の実在は判定できる層で検査し、いずれの層でも停止する"
+name: "配置元の実在は判定できる層で確認し、いずれの層でも停止する"
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -15,14 +15,14 @@ specification: |
   these cases, so that a missing source is not passed over silently or turned into a
   dangling symlink.
 specification_ja: |
-  配置元の実在は、それを判定できる層で検査し、いずれの層でも実行を停止させなければ
+  配置元の実在は、それを判定できる層で確認し、いずれの層でも実行を停止させなければ
   ならない。store パス（path / set）として与えた `src` が存在しない場合は Nix 評価時の
   エラーとしなければならない。out-of-store marker として与えた `src` のローカルパスが存在
   しない場合と、`subpath` が `src` 内に存在しない場合は、実体を見るまで判定できないため
   engine 実行時のエラーとして停止しなければならない。いずれの場合も停止を動作としなければ
-  ならず、配置元の不在を黙って見過ごしたり dangling symlink に変えたりしてはならない。
+  ならず、配置元の不在を利用者に知らせずに見過ごしたり dangling symlink に変えたりしてはならない。
 ---
-# REQ-9dc7dac7-4e9e-494a-a17b-73853c119653: 配置元の実在は判定できる層で検査し、いずれの層でも停止する
+# REQ-9dc7dac7-4e9e-494a-a17b-73853c119653: 配置元の実在は判定できる層で確認し、いずれの層でも停止する
 
 ## 仕様
 
@@ -43,5 +43,5 @@ specification_ja: |
 
 この 3 行に対応する決定を持つ ADR は無く、`docs/spec.md` が一次記述にあたる（原文の表でも
 この 3 行は `→ ADR-00xx` の参照注記を持たない。同様に注記を持たない行は他にもある）。
-よって本 item に `justifies` は張られないが、これは張り漏れではない。層が分かれること自体の
+よって本 item に `justifies` は張られないが、これは張り忘れではない。層が分かれること自体の
 一般則は REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a の担当。

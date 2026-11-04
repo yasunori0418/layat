@@ -1,7 +1,7 @@
 ---
 id: "REQ-b232ec98-af3b-41f3-a050-29d417322002"
 type: requirement
-name: "normalizeManifest が検査・デフォルト適用・marker 変換を行い mkManifest が derivation を組む"
+name: "normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む"
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -17,8 +17,8 @@ specification: |
   unparameterized: each function SHALL require `lib` (`normalizeManifest`) or `pkgs`
   (`mkManifest`) as an explicit argument at call time.
 specification_ja: |
-  入力検査の実装は 2 段に分かれなければならない。`normalizeManifest { lib, root, entries }
-  -> attrset` は `evalModules` 検査・デフォルト適用（`subpath` → `"."` / `method` →
+  入力の確認の実装は 2 段に分かれなければならない。`normalizeManifest { lib, root, entries }
+  -> attrset` は `evalModules` による確認・デフォルト適用（`subpath` → `"."` / `method` →
   `"symlink"` / `target` → 属性キー）・内部 marker タグ（`_layatMarker`）から clean enum
   （`srcKind` / `rootKind`）への変換を行う純データ関数とし、Nix 評価テスト
   （nix-unit / namaka）の単体対象としなければならない。`mkManifest = args:
@@ -27,7 +27,7 @@ specification_ja: |
   `lib`（`normalizeManifest`）または `pkgs`（`mkManifest`）を明示引数として要求しなければ
   ならない。
 ---
-# REQ-b232ec98-af3b-41f3-a050-29d417322002: normalizeManifest が検査・デフォルト適用・marker 変換を行い mkManifest が derivation を組む
+# REQ-b232ec98-af3b-41f3-a050-29d417322002: normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む
 
 ## 仕様
 
@@ -37,13 +37,13 @@ specification_ja: |
 
 - **`normalizeManifest { lib, root, entries } -> attrset`**: 純データ関数。
   nix-unit / namaka の単体対象。
-  - `evalModules` 検査
+  - `evalModules` による確認
   - デフォルト適用: `subpath` → `"."` / `method` → `"symlink"` / `target` → 属性キー
   - 内部 marker タグ（`_layatMarker`）→ clean enum（`srcKind` / `rootKind`）変換
 - **`mkManifest = args: derivation`**: `normalizeManifest` の出力を `manifest.json` に
   書き symlink farm を組む。
 
-クロスフィールドチェック・パス安全性検査・target 衝突検出も `normalizeManifest` が
+クロスフィールドの確認・パス安全性の確認・target 衝突検出も `normalizeManifest` が
 担う（別 item）。
 
 ## 出典

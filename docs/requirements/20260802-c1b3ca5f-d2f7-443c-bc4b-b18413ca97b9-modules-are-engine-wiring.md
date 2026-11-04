@@ -19,12 +19,12 @@ specification: |
   `system.activationScripts.postActivation`; the hook the home-manager module uses is
   stated by REQ-8085f194-c903-4ecb-abd8-c719fe7b3292.
 specification_ja: |
-  基本的な利用は project mode（プロジェクト内配置）と standalone CLI を中心に考えなければ
+  基本的な利用は project mode（プロジェクト内配置）と CLI 単体を中心に考えなければ
   ならず、モジュール対応は、他のモジュールシステムの switch と一括で動いてほしいユースケースを
   拾うためだけに存在する。全モジュール（home-manager / NixOS / nix-darwin）と devShell は
   一律、layat エンジンをキックするだけの配線でなければならず、各層は root と activation
   タイミングだけを供給する。`systemd.tmpfiles` / `home.file` などプラットフォームの
-  ネイティブ機構へ翻訳してはならない。配置・stale 除去は全層で同一の engine + store
+  ネイティブ機構へ翻訳してはならない。配置・古くなった配置の除去は全層で同一の engine + store
   マニフェストが行わなければならず、振る舞いが層ごとに二重化しないようにする。OS の機構は
   layat の関心外でなければならない。NixOS モジュールは `system.activationScripts.layat` から、
   nix-darwin モジュールは `system.activationScripts.postActivation` への追記から engine を
@@ -50,10 +50,10 @@ engine + store マニフェスト。
 > **上は原文の写しを ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c に合わせて改めたもので、規範は frontmatter が正**。各層が供給する
 > root の具体は REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b（HM の `$HOME`）と REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10（NixOS / nix-darwin の `systemRoot`）、HM の
 > activation フックと起動契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、NixOS / nix-darwin の起動契約は REQ-a220bb28-89de-42b0-a854-e7468755ecb1、devShell の起動タイミングは REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9、
-> module 経路の rollback を host 世代へ一本化することは REQ-844ee375-919f-4341-81e1-a5f89fd32840、engine 自身が
+> module の使い方での rollback を host 世代へ一本化することは REQ-844ee375-919f-4341-81e1-a5f89fd32840、engine 自身が
 > ネイティブ FS 操作で配置することは REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564 の担当。
 >
-> CLI が PATH 常駐の一次 UX であることと、その導入形（standalone のグローバル導入・
+> CLI が PATH 常駐の一次 UX であることと、その導入形（CLI 単体のグローバル導入・
 > project mode の devShell 同梱）は REQ-14f0aec9-abae-4621-82f3-40536a1ad904 の担当。本 item はモジュール対応の側から見た
 > 位置づけ（一括 switch 用途を拾うためだけに存在する配線であること）を規定する。
 
