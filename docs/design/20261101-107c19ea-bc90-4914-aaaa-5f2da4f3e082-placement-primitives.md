@@ -35,7 +35,7 @@ item では必ず 2 つを書き分ける。既定は store link で、out-of-st
 |---|---|---|---|
 | store link | リンク先の store パスごと世代が版管理する。rollback で戻り先世代の store パスを指し直す。entry が消えたら除去する | 記録どおりを指すものだけを除去する | 列挙する |
 | out-of-store symlink | 世代が版管理するのは「どのパスを指すか」だけで、指す先の内容は版管理しない。entry が消えたら除去する | 記録どおりを指すものだけを除去する | 列挙する |
-| copy | 世代管理の対象外。apply も rollback も target が不在のときだけ place-once で置く。entry が消えても消さず、orphan を警告する | 削除する（copy を消す唯一の明示手段）| 列挙する |
+| copy | 世代管理の対象外。apply も rollback も target が不在のときだけ place-once で置く。entry が消えても消さず、孤児を警告する | 削除する（copy を消す唯一の明示手段）| 列挙する |
 
 - **世代** — store link は内容が不変の store パスを指すので、マッピングを戻せば内容も戻る。
   out-of-store symlink は指す先がライブなので、戻るのはマッピングだけ

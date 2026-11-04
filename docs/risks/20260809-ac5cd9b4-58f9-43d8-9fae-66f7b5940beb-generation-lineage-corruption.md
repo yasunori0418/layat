@@ -26,7 +26,7 @@ level: high
 
 キーイング側の破れ方は 2 方向ある。**分離すべきものが同じ系列に含まれる** — fixed root や `--root`
 上書きが `<roothash>` でキーされず `<name>` 直キーになると、別 root の同名 config が
-同じ世代系列を共有する（silent orphan）。project mode で同一 entrypoint を複数箇所へ
+同じ世代系列を共有する（気付かれない孤児）。project mode で同一 entrypoint を複数箇所へ
 クローンした場合も同様に衝突する。**分離すべきでないものが割れる** — 同じ root を指す
 はずの呼び出しが毎回違う `<roothash>` を得ると（hash が決定的でない・長さが揺れる）、
 apply のたびに新しい世代系列が生まれ、前世代が永久に見つからず古くなった配置の除去が機能しなくなる。
