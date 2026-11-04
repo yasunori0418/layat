@@ -22,7 +22,7 @@ specification_ja: |
   しなければならない。`shell.nix` は素の `mkShell` derivation を返し、
   `passthru.layat.<name>` に named manifest を載せなければならない（`project` template の
   devShell 同梱と両立する）。`passthru` はホスト derivation の attrset にマージされるため、
-  CLI が叩く attr path（`layat.<name>`）はトップレベル attrset 形と同一でなければならず、
+  CLI が評価する attr path（`layat.<name>`）はトップレベル attrset 形と同一でなければならず、
   CLI は実装分岐を持ってはならない。素の `nix-shell`（`-A` 不要）はどちらの形でも使えなくなっては
   ならない。複数 manifest の一括処理は既存の `apply --all` の一括 eval でそのまま充足させ
   なければならず、`mkShell` の `inputsFrom` で manifest を合成するヘルパは持ってはならない
@@ -35,7 +35,7 @@ specification_ja: |
 `shell.nix` / `default.nix` は **nixpkgs `mkShell` と共存できる passthru 形**を canonical と
 する。`shell.nix` は素の `mkShell` derivation を返し、`passthru.layat.<name>` に named
 manifest を載せる（`project` template の devShell 同梱と両立する）。`passthru` はホスト
-derivation の attrset にマージされるため、**CLI が叩く attr path（`layat.<name>`）は
+derivation の attrset にマージされるため、**CLI が評価する attr path（`layat.<name>`）は
 トップレベル attrset 形と同一**で実装分岐を持たない。素の `nix-shell`（`-A` 不要）は
 どちらの形でも壊れない。
 
