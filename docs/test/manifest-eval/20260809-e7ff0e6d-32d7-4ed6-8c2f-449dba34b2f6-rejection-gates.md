@@ -5,7 +5,7 @@ name: "拒否すべき入力が評価時に throw することをアサートす
 mitigates:
   - "RISK-09df40d3-2752-433e-9ab0-2816fbd14969"
 ---
-# TC-e7ff0e6d-32d7-4ed6-8c2f-449dba34b2f6: 拒否ゲートが評価時に throw することをアサートする
+# TC-e7ff0e6d-32d7-4ed6-8c2f-449dba34b2f6: 拒否すべき入力が評価時に throw することをアサートする
 
 ## テスト条件
 
