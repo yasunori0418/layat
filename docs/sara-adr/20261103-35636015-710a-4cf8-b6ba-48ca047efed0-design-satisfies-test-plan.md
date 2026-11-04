@@ -25,7 +25,7 @@ references:
 
 design の `satisfies` は `requirement` だけを対象にしていた。テスト計画にあたる `requirement` を test_plan へ
 移す（SDR-34916a83-0cff-4524-a8ff-5a3195af52c3）と、それらを `satisfies` で指していた design item の辺は
-張り先を失う。中には `satisfies` がその 1 本だけの design item もあり、移した途端に design 側が orphan になる。
+張り先を失う。中には `satisfies` がその 1 本だけの design item もあり、移した途端に design 側が接続漏れになる。
 
 ## 決定
 
@@ -38,9 +38,9 @@ design の親に test_plan を加え、`satisfies` の対象を `requirement` �
 
 ## 棄却した代替案
 
-### design 側の orphan を許容する
+### design 側の接続漏れを許容する
 
-張り忘れではない orphan が残り、warning が張り忘れの信号としてはたらかなくなる。
+張り忘れではない接続漏れが残り、warning が張り忘れの信号としてはたらかなくなる。
 
 ### design から test_plan への専用 relation を新設する
 

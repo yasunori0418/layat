@@ -58,7 +58,7 @@ ADR も同じ形式で採番する（`ADR-<フル UUIDv4>`・`SDR-<フル UUIDv4
 
 ## 検証の強度
 
-**`strict_mode = true` の非必須の確認**。確認自体は strict で、orphan を含む全 warning が
+**`strict_mode = true` の非必須の確認**。確認自体は strict で、接続漏れを含む全 warning が
 error となり `sara check` は exit 1 を返す（epic #203 の移行完了・warning 0 到達を受けて有効化
 → SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626）。合格条件は「warning 0 件」に一本化されている。
 

@@ -26,7 +26,7 @@ references:
 
 infrastructure は root の型として定義されていた。satisfy できる相手が design しか無く、CI やトレーサビリティ
 検証のような開発の基盤は design の木に属さないため、root にせざるを得なかった。その結果、
-`docs/infrastructure/` の item は全件が構造上 orphan だった。
+`docs/infrastructure/` の item は全件が構造上の接続漏れだった。
 
 また、infrastructure には品質系の文書（DoD・トレーサビリティ検証）と基盤系の文書（CI/CD・配信）が同居
 していた。
@@ -52,5 +52,5 @@ quality と design のどちらかを経由して solution の木へ届くので
 
 ### infrastructure を root のまま残す
 
-`docs/infrastructure/` の item が構造上 orphan であり続ける。warning に常在の項目が 1 件でもあると、
+`docs/infrastructure/` の item が構造上の接続漏れであり続ける。warning に常在の項目が 1 件でもあると、
 本物の張り忘れが埋もれる。

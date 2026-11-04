@@ -23,17 +23,17 @@ references:
 
 ## 背景
 
-`sara check` は orphan を warning に留める設定で導入された。移行の途中では、まだ親を持たない item が
-正常に存在し、orphan を error にすると移行そのものが止まるためである。
+`sara check` は接続漏れを warning に留める設定で導入された。移行の途中では、まだ親を持たない item が
+正常に存在し、接続漏れを error にすると移行そのものが止まるためである。
 
-移行が終わり、`sara check` は warning 0 件で通るようになった。「張り忘れ = orphan warning」は全型で
+移行が終わり、`sara check` は warning 0 件で通るようになった。「張り忘れ = 接続漏れの warning」は全型で
 成り立つ（SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb）が、それを担保する仕組みは無く、張り忘れの item を
 足しても警告だけで通っていた。
 
 ## 決定
 
-`sara.toml` の `strict_mode` を `true` にする。orphan を含む全 warning が error になり、`sara check` は
-張り忘れで exit 1 を返す。型を限った別の確認（ADR の orphan だけを見る CI の grep など）や、frontmatter を
+`sara.toml` の `strict_mode` を `true` にする。接続漏れを含む全 warning が error になり、`sara check` は
+張り忘れで exit 1 を返す。型を限った別の確認（ADR の接続漏れだけを見る CI の grep など）や、frontmatter を
 単体で検証するテストは設けない。
 
 ## 根拠
@@ -42,7 +42,7 @@ references:
 残っていた時期には、これが strict 化を退ける理由だった。warning 0 件が成り立った今は、一括で全部落とす
 挙動がそのまま望む挙動になる。既存の状態を壊さずに、以後の張り忘れだけを機械的に落とせる。
 
-strict にすれば orphan は型を問わず error になる。型を限った確認はその部分集合を二重に確認するだけになる。
+strict にすれば接続漏れは型を問わず error になる。型を限った確認はその部分集合を二重に確認するだけになる。
 
 ## 棄却した代替案
 
@@ -50,6 +50,6 @@ strict にすれば orphan は型を問わず error になる。型を限った�
 
 張り忘れの item が警告だけで通り、不変条件が宣言のうえでしか成り立たない。
 
-### ADR の orphan だけを CI の grep で落とす
+### ADR の接続漏れだけを CI の grep で落とす
 
 strict の確認に含まれ、冗長になる。

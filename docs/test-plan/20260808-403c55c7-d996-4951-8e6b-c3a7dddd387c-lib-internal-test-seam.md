@@ -44,7 +44,7 @@ issues:
 > **本 item は `requirement` から `test_plan` へ移設した**（→ Issue #239。旧 ID は
 > `REQ-901993e9-771c-480a-ba0d-ca4be042e206`）。`lib.__internal` を公開する唯一の動機は評価テストから内部関数を呼び出せる
 > ようにすること、すなわちテスト対象へのアクセス手段の確保であり、ユーザーの使われ方
-> （use_case）から導かれるプロダクトの振る舞いではないため、use_case を親に持てず orphan に
+> （use_case）から導かれるプロダクトの振る舞いではないため、use_case を親に持てず接続漏れに
 > なっていた（当時の判断は Issue #211）。`lib.__internal` を「利用者への API 契約の宣言」と
 > 読んで `requirement` に残す立場もあり得たが、specification が SHALL NOT で安定性・後方互換の
 > 保証除外を宣言している以上、契約として規定しているものは実質何も無く、テスト容易性の確保が
