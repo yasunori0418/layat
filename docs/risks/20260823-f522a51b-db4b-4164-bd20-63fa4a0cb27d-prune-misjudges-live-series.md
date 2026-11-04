@@ -48,7 +48,7 @@ system 基底 `/nix/var/nix/profiles/layat/` → ADR-7a3dc78d-8946-46ae-94ec-b75
 
 **likelihood: high** — 変更頻度の側では、判定が依存する profile レイアウト（`<roothash>` 階層・
 backref `.root` の位置・走査基底）が繰り返し動いてきた領域で
-（現在の決定は → ADR-419914ba-9896-4dd1-853b-fb514fcb9f38 / ADR-b4be88b8-1c19-426d-885d-f5d80b95252f /
+（現在の決定は → ADR-419914ba-9896-4dd1-853b-fb514fcb9f38 / ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e /
 ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203）、
 `layat status`（→ #198）が同じ列挙に相乗りする予定もあるため、この先も触られる。検証の条件の
 側では、判定ロジックが新規で既存の配置系の条件（planner の分類・古くなった配置の除去の保守的不変条件
