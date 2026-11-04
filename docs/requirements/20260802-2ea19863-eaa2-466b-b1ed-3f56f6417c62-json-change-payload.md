@@ -168,12 +168,12 @@ specification_ja: |
   **`reset` は generation スロット自体を出さない**（前世代 manifest を読んで FS を
   除去するだけの FS-only teardown で、profile / 世代は untouched・遷移が存在しない）。
 - **warnings**: planner の構造化 warning を W_LAYAT_* に写像し、対象 target がインベントリ内
-  なら該当 `item.warnings`、外（entry が config を離れた copy orphan 等）なら
+  なら該当 `item.warnings`、外（entry が config を離れた copy の孤児等）なら
   `subjectResult.warnings` へ。コード: `W_LAYAT_FOREIGN_SYMLINK`（foreign symlink 上書き）/
   `W_LAYAT_COPY_FOREIGN`（place-once の copy skip）/ `W_LAYAT_STALE_MISMATCH`（記録不一致で
   残した stale symlink）/ `W_LAYAT_STALE_NON_SYMLINK`（symlink でないため残した stale
   target）（後 2 者 = 保守的不変条件による keep・reset の kept-foreign も同じ。当該 item は
-  success のまま = 方針による不作為）/ `W_LAYAT_COPY_ORPHAN`（copy orphan・subject 級）/
+  success のまま = 方針による不作為）/ `W_LAYAT_COPY_ORPHAN`（copy の孤児・subject 級）/
   `W_LAYAT_UNWOUND`（上記・subject 級）。`detail = {target}`。加えて
   `W_LAYAT_ORIGIN_MISMATCH`（last-applied 記録と今回の出所の食い違い・subject 級。
   `detail = {recorded, current}`。各 origin は `identity` も持つ。規則は REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282）。stderr の人間向けテキストは

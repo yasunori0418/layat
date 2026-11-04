@@ -1,7 +1,7 @@
 ---
 id: "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
 type: requirement
-name: "古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず orphan を警告する"
+name: "古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する"
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -28,9 +28,9 @@ specification_ja: |
   記録と実体が不一致なら削除してはならず、警告しなければならない。初回（last-applied 記録も
   世代も無く比較の基準が空）では何も消してはならない。entry が消えたとき、symlink（store / out-of-store）は上記の不変条件を
   満たすもののみ除去しなければならず、copy は除去してはならない（ユーザー所有データの
-  ため）。ただし copy が orphan になったことは警告で通知しなければならない。
+  ため）。ただし copy が孤児になったことは警告で通知しなければならない。
 ---
-# REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2: 古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず orphan を警告する
+# REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2: 古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する
 
 ## 仕様
 
@@ -42,7 +42,7 @@ specification_ja: |
 | 配置種別 | entry が消えたとき |
 |---|---|
 | symlink（store / out-of-store）| **除去する**（ただし上記の保守的不変条件を満たすもののみ）|
-| copy | **除去しない**（ユーザー所有データ）。ただし orphan を警告で通知する |
+| copy | **除去しない**（ユーザー所有データ）。ただし孤児を警告で通知する |
 
 > **上は原文の写しで、規範は frontmatter が正**。除去後の空親ディレクトリ剪定は
 > REQ-8409db86-a1ba-4053-86dc-588985cc1ca7、除去に途中失敗したときの巻き戻しは REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の担当。この保守的不変条件は
