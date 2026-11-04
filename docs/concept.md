@@ -44,7 +44,7 @@ opt-in する例外として位置づける（→ ADR-560852e1-3d07-46b9-ae1a-d1
 - [UC-f2436d68-91ff-4c48-b1df-47acefe4f464](use-cases/20260802-f2436d68-91ff-4c48-b1df-47acefe4f464-home-mode-pinned-repo-placement.md) — home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する
 - [UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d](use-cases/20261018-6b8d31ea-3d5a-4334-aac7-8706df190e7d-system-mode-root-placement.md) — system mode で `/` 配下へ配置し、root 権限で世代とともに管理する
 - [UC-1c280dce-7c72-44c0-95ea-d06344f62a47](use-cases/20260802-1c280dce-7c72-44c0-95ea-d06344f62a47-independent-update-cycles.md) — 役割ごとに config を分けて更新を独立させ、1 つの更新を他の役割へ波及させない
-- [UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6](use-cases/20260802-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6-generation-rollback-standalone.md) — 配置に失敗・後悔したとき standalone で前の世代へロールバックして元の状態へ戻す
+- [UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6](use-cases/20260802-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6-generation-rollback-standalone.md) — 配置に失敗・後悔したとき CLI 単体で前の世代へロールバックして元の状態へ戻す
 - [UC-403fbe32-b146-401b-8b53-fe67c1e169c5](use-cases/20260802-403fbe32-b146-401b-8b53-fe67c1e169c5-copy-place-once-user-managed.md) — リポジトリの内容を copy で初回だけ配置し、その後はユーザーが手で編集して育てる
 - [UC-01b896b4-04b9-40d0-bf9e-966eaf64c3d4](use-cases/20260802-01b896b4-04b9-40d0-bf9e-966eaf64c3d4-out-of-store-live-editing.md) — 開発中の手元 dotfiles を out-of-store symlink で参照し、編集と同時に反映しながら育てる
 - [UC-d39c1994-f9a5-4860-80ba-f6e584adaf14](use-cases/20260802-d39c1994-f9a5-4860-80ba-f6e584adaf14-module-integration.md) — 既に home-manager / NixOS / nix-darwin を使っている環境へ layat をモジュールとして組み込む
