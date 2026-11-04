@@ -5,6 +5,7 @@ name: "apply_all_manifest_project_test.go — project と home の link-farm を
 target: "cmd/layat/apply_all_manifest_project_test.go"
 covers:
   - "TC-4d477235-5917-469b-926b-119266048643"
+  - "TC-b4a365cd-0b1c-40ff-92c6-91f6cffe8e98"
 ---
 # CASE-c4ffa8b1-4058-4cba-b911-520ee970b2ae: apply_all_manifest_project_test.go
 
@@ -20,6 +21,8 @@ covers:
 
 - **フィルタなし** — project 側が git toplevel 配下に、home 側が隔離した `$HOME` 配下に置かれる
 - **`--project-root` / `--home-root`** — 各 root の config だけが置かれる
+- **`--system-root` で該当なし** — どの config も置かれず終了コードは 0。指定が無いときは stderr が
+  空で、`-v` のときだけ `layat: apply --all: no matching configs` の 1 行が出る
 - **配置先** — project 側はサブディレクトリ（cwd）にも `$HOME` にも置かれない
 - **nix 非依存** — どの実行も nix を呼ばない
 

@@ -32,28 +32,34 @@ func writeRootKindLinkFarm(t *testing.T, rootKind string, entries ...manifest.En
 }
 
 // TestRunApplyAllManifestProjectAndHome drives the real engine from inside a git repository: with
-// no filter both configs are placed (project under the git toplevel, home under $HOME), and each
-// root filter places only its own config. No run calls nix.
+// no filter both configs are placed (project under the git toplevel, home under $HOME), each root
+// filter places only its own config, and a filter matching nothing notices it on stderr only with -v.
+// No run calls nix.
 func TestRunApplyAllManifestProjectAndHome(t *testing.T) {
 	if _, err := exec.LookPath("git"); err != nil {
 		t.Skip("git not available")
 	}
 	cases := []struct {
-		name               string
-		projectRoot        bool
-		homeRoot           bool
-		wantProj, wantHome bool
+		name                              string
+		projectRoot, homeRoot, systemRoot bool
+		verbose                           bool
+		wantProj, wantHome                bool
+		checkStderr                       bool
+		wantStderr                        string
 	}{
-		{"no filter", false, false, true, true},
-		{"--project-root", true, false, true, false},
-		{"--home-root", false, true, false, true},
+		{"no filter", false, false, false, false, true, true, false, ""},
+		{"--project-root", true, false, false, false, true, false, false, ""},
+		{"--home-root", false, true, false, false, false, true, false, ""},
+		{"--system-root with no match", false, false, true, false, false, false, true, ""},
+		{"--system-root with no match -v", false, false, true, true, false, false, true,
+			"layat: apply --all: no matching configs\n"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			withFlakeEntrypoint(t)
 			installFakeBackend(t, "")
-			origProject := flagProjectRoot
-			t.Cleanup(func() { flagProjectRoot = origProject })
+			origProject, origSystem, origVerbose := flagProjectRoot, flagSystemRoot, flagVerbose
+			t.Cleanup(func() { flagProjectRoot, flagSystemRoot, flagVerbose = origProject, origSystem, origVerbose })
 			repo, err := filepath.EvalSymlinks(t.TempDir())
 			if err != nil {
 				t.Fatal(err)
@@ -69,14 +75,20 @@ func TestRunApplyAllManifestProjectAndHome(t *testing.T) {
 			t.Chdir(sub)
 			home := os.Getenv("HOME")
 			flagFile, flagDryrun = "", false
-			flagProjectRoot, flagHomeRoot = tc.projectRoot, tc.homeRoot
+			flagProjectRoot, flagHomeRoot, flagSystemRoot = tc.projectRoot, tc.homeRoot, tc.systemRoot
+			flagVerbose = tc.verbose
 			withManifestFlags(t, true,
 				"proj="+writeRootKindLinkFarm(t, manifest.RootKindProject, symlinkEntries(t, "from-proj")...),
 				"home="+writeRootKindLinkFarm(t, manifest.RootKindHome, symlinkEntries(t, "from-home")...))
 			log := stubNixForApply(t, `{}`)
 			run, _ := newApplyTestRun()
-			if err := runApplyAll(run); err != nil {
-				t.Fatalf("runApplyAll: %v", err)
+			var runErr error
+			stderr := captureStderr(t, func() { runErr = runApplyAll(run) })
+			if runErr != nil {
+				t.Fatalf("runApplyAll: %v", runErr)
+			}
+			if tc.checkStderr && stderr != tc.wantStderr {
+				t.Errorf("stderr = %q, want %q", stderr, tc.wantStderr)
 			}
 			for _, c := range []struct {
 				path string
