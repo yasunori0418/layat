@@ -156,23 +156,24 @@
                 exit 2
               fi
 
-              # 宣言辺から張り先（to）の集合を作り、各段の未カバーを逆引きする 1 パス。
-              # source.file_path は repositories.paths（./docs）相対なので docs/ を前置する。
+              # 宣言辺（relations.<型> の ID 配列）から張り先の集合を作り、各段の未カバーを
+              # 逆引きする 1 パス。relations を持たない item もあるので欠落は空配列に倒す。
+              # file はリポジトリルート相対で ./ が前置されるので剥がす。
               gaps=$(printf '%s' "$graph" | jq '
-                def targets(t): [.items[].relationships[]? | select(.relationship_type == t) | .to] | unique;
-                def row: {ref: (.id | split("-") | .[0] + "-" + .[1][0:8]), name, file: ("docs/" + .source.file_path)};
+                def targets(t): [.items[] | (.relations[t]? // [])[]] | unique;
+                def row: {ref: (.id | split("-") | .[0] + "-" + .[1][0:8]), name, file: (.file | ltrimstr("./"))};
                 targets("threatens") as $threatened
                 | targets("mitigates") as $mitigated
                 | targets("covers") as $covered
                 | {
                     unthreatened: ([.items[]
-                      | select(.item_type == "requirement" or .item_type == "design")
+                      | select(.type == "requirement" or .type == "design")
                       | select(.id as $i | ($threatened | index($i)) | not) | row] | sort_by(.ref)),
                     unmitigated: ([.items[]
-                      | select(.item_type == "risk")
+                      | select(.type == "risk")
                       | select(.id as $i | ($mitigated | index($i)) | not) | row] | sort_by(.ref)),
                     uncovered: ([.items[]
-                      | select(.item_type == "test_condition")
+                      | select(.type == "test_condition")
                       | select(.id as $i | ($covered | index($i)) | not) | row] | sort_by(.ref))
                   }')
 
