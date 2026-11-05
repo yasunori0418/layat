@@ -40,8 +40,8 @@ sara check --format json   # items 配列（宣言辺つき）を機械可読で
 - item を書き込んだら必ず回す。green（exit 0）が完了条件。
 - strict 有効（`sara.toml` の `strict_mode = true`）なら orphan を含む全 warning が
   error になる。orphan は「upstream relation の張り忘れ」を意味することが多い。
-- `--format json` の `items[].relationships[]` は**宣言辺（primary relation）のみ**で
-  逆辺を持たない。逆引き（「この REQ を threatens している risk は?」）が要るときは
+- `--format json` の `items[].relations`（relation 名 → 張り先 ID の配列）は**宣言辺
+  （primary relation）のみ**で逆辺を持たない。逆引き（「この REQ を threatens している risk は?」）が要るときは
   `sara query -d` か `sara-gap` を使う。
 
 ## query — グラフを辿る
