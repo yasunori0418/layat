@@ -15,7 +15,7 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137, `docs/spec.md`, `CONTEXT.md`
+- 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137, `docs/spec.md`, UBQ-e6466d28-6ab6-43be-a370-cca82eb1cfdb
 - 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。ADR-0040 §1a を書き直した
 
 ## 背景

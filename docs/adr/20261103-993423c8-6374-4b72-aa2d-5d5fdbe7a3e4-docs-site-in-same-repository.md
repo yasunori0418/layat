@@ -26,7 +26,7 @@ nixdoc と gomarkdoc で抽出したリファレンスと手書きのガイド�
 
 ドキュメントサイトは Astro（Starlight）のプロジェクトとして、本リポジトリの `site/` に置く。
 載せるのは利用者向けの usage ガイドと API リファレンス（英日）で、設計根拠のドキュメント（ADR・
-`CONTEXT.md`・`docs/spec.md`・`docs/design.md`）はリポジトリ内に留めてサイトには載せない。
+`docs/ubiquitous-language/`・`docs/spec.md`・`docs/design.md`）はリポジトリ内に留めてサイトには載せない。
 
 構成の細目は INF-0865477b-21b2-4feb-9c06-1a882a4e595a に置く。
 
