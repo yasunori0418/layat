@@ -2,7 +2,7 @@
 id: "SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb"
 type: sara_adr
 name: "root は solution と ADR 系の型だけにする"
-status: 採用
+status: 廃止
 issues:
   - "#583"
   - "#237"
@@ -17,7 +17,11 @@ references:
 ---
 # SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb: root は solution と ADR 系の型だけにする
 
-- ステータス: 採用
+> **廃止（2026-11-07）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 全体 → SDR-d3f88093-dc98-4703-af45-df5b27527ffa
+
+- ステータス: 廃止
 - 日付: 2026-11-03
 - 関連: SDR-c15921a9-7aea-407c-a34b-7465783b1af1, SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #237, #203, `docs/model.yaml`
 - 起点: epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §1b を書き直した
