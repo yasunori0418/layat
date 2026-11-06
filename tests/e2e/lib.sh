@@ -172,14 +172,19 @@ layat() {
 }
 
 # euid 0 で実行するランナーを解決する。user namespace（unshare -Ur）を優先し、使えなければ
-# sudo -n（環境変数と PATH を引き継ぐ）。どちらも使えなければ失敗する（skip しない）。
+# sudo -n。どちらも使えなければ失敗する（skip しない）。
 # E2E_ROOT_MODE は userns（root の成果物が実 uid の所有）か real（実 root の所有）。
 e2e_root_init() {
 	if unshare -Ur true 2>/dev/null; then
 		_E2E_ROOT_RUNNER=(unshare -Ur)
 		E2E_ROOT_MODE=userns
 	elif sudo -n true 2>/dev/null; then
-		_E2E_ROOT_RUNNER=(sudo -n --preserve-env -- env "PATH=$PATH")
+		# 隔離した環境は sudo の環境引き継ぎに頼らず env の引数で root 側へ渡す
+		# （sudo のポリシーが --preserve-env を無視しても隔離先が保たれる）。
+		_E2E_ROOT_RUNNER=(sudo -n -- env
+			"PATH=$PATH" "HOME=$HOME" "XDG_STATE_HOME=$XDG_STATE_HOME" "XDG_CONFIG_HOME=$XDG_CONFIG_HOME"
+			"LAYAT_SYSTEM_PROFILE_BASE=$LAYAT_SYSTEM_PROFILE_BASE" "LAYAT_SYSTEM_STATE_DIR=$LAYAT_SYSTEM_STATE_DIR"
+			"NIX_CONFIG=$NIX_CONFIG")
 		E2E_ROOT_MODE=real
 		# root 所有のファイルが残るため、後始末も root で行う。
 		# shellcheck disable=SC2064
