@@ -263,6 +263,35 @@
                 touch "$out"
               '';
 
+          # 用語索引 ⇔ 用語 item の 1:1 の契約テスト（dev/tests/glossary-index.sh）。CI はこの派生ではなく devShells.sara で走らせる。
+          # ルート flake の store path を書き込み可能な場所へ複製し、dev/ は dev flake 側から重ねて走らせる。
+          checks.glossary-index =
+            pkgs.runCommandLocal "glossary-index"
+              {
+                nativeBuildInputs = [
+                  inputs'.nur.packages.sara
+                  pkgs.jq
+                  pkgs.git
+                  pkgs.coreutils
+                  pkgs.gnused
+                  pkgs.gnugrep
+                  pkgs.gawk
+                ];
+              }
+              ''
+                cp -r ${inputs.root} repo
+                chmod -R u+w repo
+                rm -rf repo/dev/scripts repo/dev/tests
+                mkdir -p repo/dev
+                cp -r ${./scripts} repo/dev/scripts
+                cp -r ${./tests} repo/dev/tests
+                chmod -R u+w repo/dev
+                cd repo
+                # テスト側の走査基点はカレントへフォールバックする（git 管理外のため）。
+                bash dev/tests/glossary-index.sh
+                touch "$out"
+              '';
+
           # risk の level 導出マトリクス整合の契約テスト（dev/tests/risk-matrix.sh）。CI はこの派生ではなく devShells.sara で走らせる。
           checks.risk-matrix =
             pkgs.runCommandLocal "risk-matrix"
