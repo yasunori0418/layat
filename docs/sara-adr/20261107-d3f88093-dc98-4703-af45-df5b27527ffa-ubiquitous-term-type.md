@@ -60,7 +60,7 @@ model.yaml の雛形を他のリポジトリへ切り出すとき（#500）に�
 「`parent_types` が空で upstream relation を持たない型」を根と判定するので、strict モードでも
 orphan の error にならない。
 
-根を 3 つの型に限るのは、親が無いことにどれも理由があるためである。solution はグラフの根、ADR 系は
+根を solution・ADR 系の 2 型・ubiquitous_term に限るのは、親が無いことにどれも理由があるためである。solution はグラフの根、ADR 系は
 規範の外にある決定の記録で `justifies` で規範へつながる。ubiquitous_term は上で述べたとおり、どの
 item にも依存させない。それ以外の型に親が無いのは、受け皿の型が欠けているか張り忘れなので、strict
 モードの orphan として見えるほうがよい。
