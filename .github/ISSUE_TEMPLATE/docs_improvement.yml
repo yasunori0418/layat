@@ -28,6 +28,6 @@ body:
     id: suggestion
     attributes:
       label: 改善案
-      description: どう直すべきか。用語の揺れなら docs/glossary.md の索引から docs/ubiquitous-language/ の用語 item を引き、正名と突き合わせて。
+      description: どう直すべきか。用語の揺れなら docs/glossary.md の索引から docs/ubiquitous-language/ の用語 item を引き、正名と照らし合わせて。
     validations:
       required: false
