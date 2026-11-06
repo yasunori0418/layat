@@ -26,10 +26,10 @@ supersedes:
 手作業で、語の数も定義の中身もすでに食い違っている。用語を 2 語足すだけで 5 ファイルを
 直す必要があった（#644）。
 
-親を持たない型（根）は solution と ADR 系の 2 型だけに限ってきた。根の item は構造上いつも orphan の
+親を持たない型（根）は solution と ADR 系の 2 型だけに限ってきた。根の item は構造上いつも接続漏れの
 warning になり、根の型が増えるほど本物の張り忘れが埋もれるという前提による。sara 0.12.0 では
 この前提が成り立たない。`parent_types` が空で upstream relation を持たない型は根と判定され、その
-item は orphan にならない。
+item は接続漏れにならない。
 
 ## 決定
 
@@ -58,12 +58,12 @@ item は orphan にならない。
 relation を持たせないのは、この型を特定のプロジェクトの item に依存させないためである。
 model.yaml の雛形を他のリポジトリへ切り出すとき（#500）にも、そのまま持ち出せる。sara は
 「`parent_types` が空で upstream relation を持たない型」を根と判定するので、strict モードでも
-orphan の error にならない。
+接続漏れの error にならない。
 
 根を solution・ADR 系の 2 型・ubiquitous_term に限るのは、親が無いことにどれも理由があるためである。solution はグラフの根、ADR 系は
 規範の外にある決定の記録で `justifies` で規範へつながる。ubiquitous_term は上で述べたとおり、どの
 item にも依存させない。それ以外の型に親が無いのは、受け皿の型が欠けているか張り忘れなので、strict
-モードの orphan として見えるほうがよい。
+モードの接続漏れとして見えるほうがよい。
 
 索引を残すのは、`docs/spec.md` と同じく、語の全体を通して読む場所が要るためである。
 索引は定義を持たないので、item と内容が食い違うことはない。
