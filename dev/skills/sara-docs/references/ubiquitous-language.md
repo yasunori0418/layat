@@ -8,7 +8,7 @@
 1. `docs/glossary.md` を開き、主題の節から語を探す。各行は
    `- [UBQ-<フル UUIDv4>](ubiquitous-language/<ファイル名>) — <英語の正名>（<日本語の正名>）` の形になっている
 2. リンク先の item を読む。正名は frontmatter、定義と避ける表現は本文にある
-3. 索引で見つからないときは、綴りの揺れを疑って item 全体を検索する
+3. 索引で見つからないときは、綴りが揺れている可能性があるので item 全体を検索する
 
 ```bash
 rg -l -i '<探す語>' docs/ubiquitous-language/

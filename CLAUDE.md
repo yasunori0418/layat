@@ -37,7 +37,7 @@ item を新設し、概要文書にはリンクを 1 行足すに留める。
 
 型・関係・フィールドの定義は `docs/model.yaml` が持つ。親を持たない根は **solution と
 ADR の 2 型（adr / sara_adr）と ubiquitous_term のみ**で、他の型は upstream relation を 1 本以上張る
-（ubiquitous_term は relation を 1 本も持たない。張り忘れは `sara check` の接続漏れの warning で出る）。
+（ubiquitous_term は relation を 1 本も持たない。張り忘れは `sara check` の orphan として出る）。
 検出した欠陥（defect）は型として持たず、GitHub Issues（`bug` label）で管理する
 （→ SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed。運用規約は `docs/agents/issue-tracker.md` の「Defect issues」節）。
 
@@ -175,8 +175,8 @@ Issue は GitHub Issues で管理し、`gh` コマンドで操作する。epic�
 
 ### Triage labels
 
-トリアージのラベルは needs-triage / needs-info / ready-for-agent / ready-for-human / wontfix の 5 つ。
-意味と、構造ラベル（tracking / epic / task）は `docs/agents/triage-labels.md`。
+トリアージのラベルは `needs-triage` / `needs-info` / `ready-for-agent` / `ready-for-human` / `wontfix` の 5 つ。
+意味と、構造ラベル（`tracking` / `epic` / `task`）は `docs/agents/triage-labels.md`。
 
 ### Ubiquitous language
 
