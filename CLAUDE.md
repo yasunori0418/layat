@@ -33,10 +33,11 @@ item を新設し、概要文書にはリンクを 1 行足すに留める。
 | `docs/test/<対象>/` | test_case | `CASE` | test_condition |
 | `docs/adr/` | adr | `ADR` | なし（分離型）|
 | `docs/sara-adr/` | sara_adr | `SDR` | なし（分離型）|
+| `docs/ubiquitous-language/` | ubiquitous_term | `UBQ` | なし（relation を持たない根）|
 
 型・関係・フィールドの定義は `docs/model.yaml` が持つ。親を持たない根は **solution と
-ADR の 2 型（adr / sara_adr）のみ**で、他の型は upstream relation を 1 本以上張る
-（張り忘れは `sara check` の接続漏れの warning で出る）。
+ADR の 2 型（adr / sara_adr）と ubiquitous_term のみ**で、他の型は upstream relation を 1 本以上張る
+（ubiquitous_term は relation を 1 本も持たない。張り忘れは `sara check` の接続漏れの warning で出る）。
 検出した欠陥（defect）は型として持たず、GitHub Issues（`bug` label）で管理する
 （→ SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed。運用規約は `docs/agents/issue-tracker.md` の「Defect issues」節）。
 
@@ -169,15 +170,19 @@ nix develop ./dev -c dev/scripts/test-doc-matrix.sh out.md  # 対応表の生成
 
 ### Issue tracker
 
-Issues live in GitHub Issues (`gh` CLI). See `docs/agents/issue-tracker.md`.
+Issue は GitHub Issues で管理し、`gh` コマンドで操作する。epic・sub-issue・defect の運用は
+`docs/agents/issue-tracker.md`。
 
 ### Triage labels
 
-Default canonical labels (needs-triage / needs-info / ready-for-agent / ready-for-human / wontfix). See `docs/agents/triage-labels.md`.
+トリアージのラベルは needs-triage / needs-info / ready-for-agent / ready-for-human / wontfix の 5 つ。
+意味と、構造ラベル（tracking / epic / task）は `docs/agents/triage-labels.md`。
 
-### Domain docs
+### Ubiquitous language
 
-Single-context — one `CONTEXT.md` + `docs/adr/` at repo root. See `docs/agents/domain.md`.
+用語は `docs/glossary.md` の索引から `docs/ubiquitous-language/` の item を辿る。執筆では item の
+`avoid` にある綴りを使わず、必要な語の item が無ければ起こす。手順は dev/skills/sara-docs の
+`references/ubiquitous-language.md`。
 
 ### Sara document graph
 

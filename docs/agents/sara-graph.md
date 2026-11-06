@@ -24,6 +24,7 @@ flowchart BT
     RISK[risk]
     TC[test_condition]
     CASE[test_case]
+    UBQ[ubiquitous_term]
 
     UC -->|refines| SOL
     REQ -->|derives_from| UC
@@ -44,8 +45,8 @@ flowchart BT
     ADR -.->|justifies| TP
 ```
 
-Solid arrows point from an item to its parent side; the only roots are `solution` and
-the two ADR types. Dotted arrows are `justifies`, which ties the otherwise-independent ADR roots into
+Solid arrows point from an item to its parent side; the only roots are `solution`,
+the two ADR types and `ubiquitous_term`, which has no relation at all and stands alone. Dotted arrows are `justifies`, which ties the otherwise-independent ADR roots into
 the tree (one edge minimum per ADR — an ADR without one is an orphan warning). Two
 families of relations are deliberately absent from the figure: the peer `depends_on`
 (`requirement`, `design`, `quality`, `test_plan` and `infrastructure` may each depend on
