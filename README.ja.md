@@ -612,7 +612,7 @@ Markdown + YAML frontmatter)が持ち、概要文書は通読の起点として�
 - `docs/concept.md` — コンセプト(`solution` / `use_case` item と ADR への索引)、設計の哲学、north-star、既存ツールとの比較
 - `docs/design.md` — 設計(`design` item への索引)
 - `docs/spec.md` — 仕様(`requirement` item への索引)
-- `docs/glossary.md` — 正準な英語用語(日本語対訳は `docs/glossary.ja.md`)
+- `docs/glossary.md` — ユビキタス言語の索引(用語 item は `docs/ubiquitous-language/`)
 
 | ディレクトリ | 型 | prefix |
 |---|---|---|
@@ -629,4 +629,4 @@ item はグラフを成す(型と関係の定義は `docs/model.yaml`)。辿る�
 nix develop ./dev --command sara check    # グラフ全体の検証
 ```
 
-グラフの検索(フル ID を取る `sara query`)は `docs/agents/domain.md` を参照。
+グラフの検索(フル ID を取る `sara query`)は `CLAUDE.md` の「item を辿る（`sara query`）」節を参照。

@@ -16,7 +16,7 @@ layat が「何を満たすべきか」の全体像と、個別仕様（`require
 >   二重管理になり、改訂時に片方だけ古くなる
 > - `requirement` / `quality` / `test_plan` item を足したら本文書のリンク集にも足す。逆に本文書へ
 >   仕様を書き足さない
-> - item を横断して検索・追跡するには `sara query`（→ `docs/agents/domain.md`）を使う
+> - item を横断して検索・追跡するには `sara query`（→ `CLAUDE.md` の「item を辿る（`sara query`）」節）を使う
 >
 > **item の `## 出典` は概要文書の現行章立てを指さない。** 出典が記録するのは分割時点
 > （epic #203）の原文の記述箇所であり、節見出しに限らず表の行・blockquote・箇条書きの項も

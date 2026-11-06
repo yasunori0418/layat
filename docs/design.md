@@ -18,7 +18,7 @@
 > - `design` / `infrastructure` item を足したら本文書のリンク集にも足す。逆に本文書へ設計を
 >   書き足さない
 > - 「何を満たすべきか」は `requirement` の領分で本文書は扱わない（→ `docs/spec.md`）
-> - item を横断して検索・追跡するには `sara query`（→ `docs/agents/domain.md`）を使う
+> - item を横断して検索・追跡するには `sara query`（→ `CLAUDE.md` の「item を辿る（`sara query`）」節）を使う
 > - item の `## 出典` は本文書の現行章立てを指さない。原文の読み方を含め `docs/spec.md` の
 >   同項が正（同項は 3 文書共通の手順として書いてある）
 
