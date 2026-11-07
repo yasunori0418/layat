@@ -109,6 +109,7 @@ layat 自身の flake outputs は packages / templates / 各モジュール / fl
 - [DSG-096dc893-21f4-45e3-9347-986e9275b4d1](design/20260823-096dc893-21f4-45e3-9347-986e9275b4d1-prune-orphan-series.md) — prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする
 - [DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296](design/20261012-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296-root-relative-linkdest.md) — rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは配置前の確認だけにする
 - [DSG-85439cb5-a149-422e-8596-fc4e860bc3a5](design/20261023-85439cb5-a149-422e-8596-fc4e860bc3a5-status-scans-record-bases.md) — status を engine の記録基底走査と CLI の絞り込み・出力に分ける
+- [DSG-9f5f949f-8b0e-4679-8f70-e0901a3d63b8](design/20261107-9f5f949f-8b0e-4679-8f70-e0901a3d63b8-engine-error-wrap-once-at-origin.md) — engine のエラーは発生源で 1 回だけ op と対象パスを付けて wrap し、伝搬では素通しする
 
 `lib` の API・`entries` スキーマ・`manifest.json` の内容・CLI の実行モデルは仕様（`requirement`）の
 領分（→ `docs/spec.md`「lib API」「entries スキーマ仕様」「manifest.json スキーマ」「CLI 仕様」）。
