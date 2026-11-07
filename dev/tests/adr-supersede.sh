@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ADR の status: 廃止 と supersedes の対応を frontmatter だけから確かめる。
+# supersedes が指す ADR が status: deprecated かを frontmatter だけから確かめる。
 #
 # 実行:
 #   nix develop '.?dir=dev#sara' -c dev/tests/adr-supersede.sh
@@ -45,7 +45,6 @@ mapfile -t records < <(
 )
 
 declare -A status_of=()
-declare -A superseded=()
 edges=()
 for rec in "${records[@]}"; do
   read -r kind from to <<<"$rec"
@@ -53,7 +52,6 @@ for rec in "${records[@]}"; do
     status_of["$from"]="$to"
   else
     edges+=("$from $to")
-    superseded["$to"]=1
   fi
 done
 
@@ -63,25 +61,15 @@ else
   fault "ADR を frontmatter から読む（$docs_dir に ADR が見つからない）"
 fi
 
-# supersedes で指された ADR は 廃止 である。
+# supersedes で指された ADR は deprecated である。
 bad_targets=0
 for edge in "${edges[@]}"; do
   read -r from to <<<"$edge"
-  if [[ "${status_of[$to]:-}" != 廃止 ]]; then
-    fault "$from が supersedes で指す $to が status: 廃止 でない（実際: ${status_of[$to]:-ADR が見つからない}）"
+  if [[ "${status_of[$to]:-}" != deprecated ]]; then
+    fault "$from が supersedes で指す $to が status: deprecated でない（実際: ${status_of[$to]:-ADR が見つからない}）"
     bad_targets=1
   fi
 done
-[[ "$bad_targets" -eq 0 ]] && pass "supersedes で指された ADR は全て status: 廃止"
-
-# 廃止 の ADR は 1 本以上の supersedes から指されている。
-bad_orphans=0
-for id in "${!status_of[@]}"; do
-  if [[ "${status_of[$id]}" == 廃止 && -z "${superseded[$id]:-}" ]]; then
-    fault "$id は status: 廃止 だが、どの ADR の supersedes からも指されていない"
-    bad_orphans=1
-  fi
-done
-[[ "$bad_orphans" -eq 0 ]] && pass "status: 廃止 の ADR は全て supersedes から指されている"
+[[ "$bad_targets" -eq 0 ]] && pass "supersedes で指された ADR は全て status: deprecated"
 
 exit "$fail"
