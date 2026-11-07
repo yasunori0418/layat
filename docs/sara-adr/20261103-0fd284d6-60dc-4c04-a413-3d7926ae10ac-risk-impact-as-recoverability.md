@@ -2,11 +2,17 @@
 id: "SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac"
 type: sara_adr
 name: "risk の impact を検出後の回復可能性で採点する"
-status: 採用
-issues:
-  - "#583"
-  - "#303"
-  - "#292"
+status: stable
+sources:
+  - id: "issue-583"
+    resource: "https://github.com/yasunori0418/layat/issues/583"
+    title: "#583"
+  - id: "issue-303"
+    resource: "https://github.com/yasunori0418/layat/issues/303"
+    title: "#303"
+  - id: "issue-292"
+    resource: "https://github.com/yasunori0418/layat/issues/292"
+    title: "#292"
 origin: "Issue #303 の着手前 grilling（2026-08-12）で確定。ADR-0052 §1a を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
@@ -16,7 +22,7 @@ generated:
 ---
 # SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac: risk の impact を検出後の回復可能性で採点する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: GitHub Issue #583, #303, #292, `docs/agents/sara-graph.md`
 - 起点: Issue #303 の着手前 grilling（2026-08-12）で確定。ADR-0052 §1a を書き直した

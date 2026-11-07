@@ -2,9 +2,11 @@
 id: "ADR-bc334f0c-ac3b-44cf-8d0d-31034ef420ac"
 type: adr
 name: "mkApplyCommand は実行時フラグを引数に取らない"
-status: 採用
-issues:
-  - "#530"
+status: stable
+sources:
+  - id: "issue-530"
+    resource: "https://github.com/yasunori0418/layat/issues/530"
+    title: "#530"
 origin: "Issue #530 の grilling（2026-10-25）。ADR-0068 §4 を書き直した"
 justifies:
   - "REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f"
@@ -16,7 +18,7 @@ generated:
 ---
 # ADR-bc334f0c-ac3b-44cf-8d0d-31034ef420ac: mkApplyCommand は実行時フラグを引数に取らない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-db293e0c-4789-45b7-93a9-adedc021344f, GitHub Issue #530
 - 起点: Issue #530 の grilling（2026-10-25）。ADR-0068 §4 を書き直した

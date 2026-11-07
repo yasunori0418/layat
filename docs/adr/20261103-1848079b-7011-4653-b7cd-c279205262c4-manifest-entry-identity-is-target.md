@@ -2,7 +2,7 @@
 id: "ADR-1848079b-7011-4653-b7cd-c279205262c4"
 type: adr
 name: "manifest.json の entry は target を識別子にして name を持たない"
-status: 採用
+status: stable
 origin: "ADR-0014 §3b を書き直した"
 justifies:
   - "REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336"
@@ -16,7 +16,7 @@ generated:
 ---
 # ADR-1848079b-7011-4653-b7cd-c279205262c4: manifest.json の entry は target を識別子にして name を持たない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-c494e86e-ceb9-4380-b983-4e09553b01d6, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0, `docs/spec.md`
 - 起点: ADR-0014 §3b を書き直した

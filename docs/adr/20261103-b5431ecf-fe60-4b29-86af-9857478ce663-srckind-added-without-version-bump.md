@@ -2,9 +2,11 @@
 id: "ADR-b5431ecf-fe60-4b29-86af-9857478ce663"
 type: adr
 name: "srcKind の列挙値は schemaVersion を上げずに足す"
-status: 採用
-issues:
-  - "#362"
+status: stable
+sources:
+  - id: "issue-362"
+    resource: "https://github.com/yasunori0418/layat/issues/362"
+    title: "#362"
 origin: "Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §5a と §5b を書き直した"
 justifies:
   - "REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336"
@@ -22,7 +24,7 @@ generated:
 ---
 # ADR-b5431ecf-fe60-4b29-86af-9857478ce663: srcKind の列挙値は schemaVersion を上げずに足す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-88231ffc-4836-4252-be34-894944fd28c3, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, ADR-6d2327f7-f513-42c3-89f8-808467db1914, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, `docs/spec.md`
 - 起点: Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §5a と §5b を書き直した

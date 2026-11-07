@@ -2,7 +2,7 @@
 id: "ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203"
 type: adr
 name: "profile の基底ディレクトリをモードで切り替える"
-status: 採用
+status: stable
 origin: "実装前の残セマンティクス確定の第 4 巡（2026-06-14）と次期マイルストーン計画の grilling（2026-07-04）。ADR-0022 §3a と ADR-0036 §3a を書き直した"
 justifies:
   - "REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3"
@@ -34,7 +34,7 @@ generated:
 ---
 # ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203: profile の基底ディレクトリをモードで切り替える
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-41d506b4-2c5c-4a17-9954-b0de37e97de5, ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9, ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8, ADR-1cbacca1-1930-46ca-bf82-30310f82216e, ADR-4c8d459a-c371-4f0d-b009-16e2ca096e49, ADR-eb1aa25f-a0ca-4efe-bcd9-4cbe11368764, ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd, ADR-8b8c9109-a479-4571-8b10-5a6079127441, ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7, ADR-efa7685c-6fa4-45df-b7a3-8f3f58e4118c, ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883, ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818, ADR-419914ba-9896-4dd1-853b-fb514fcb9f38, ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75, ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-45380022-d959-4b22-aa05-5993ac1f3c87, ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988
 - 起点: 実装前の残セマンティクス確定の第 4 巡（2026-06-14）と次期マイルストーン計画の grilling（2026-07-04）。ADR-0022 §3a と ADR-0036 §3a を書き直した

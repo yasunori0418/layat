@@ -2,9 +2,11 @@
 id: "ADR-2aaf72ab-1dfc-4cde-852d-4b1f9916780b"
 type: adr
 name: "モジュールの activation は lock を待ち、失敗したら switch を止める"
-status: 採用
-issues:
-  - "#585"
+status: stable
+sources:
+  - id: "issue-585"
+    resource: "https://github.com/yasunori0418/layat/issues/585"
+    title: "#585"
 origin: "ADR-0026 §3b を書き直した"
 justifies:
   - "REQ-8085f194-c903-4ecb-abd8-c719fe7b3292"
@@ -14,7 +16,7 @@ generated:
 ---
 # ADR-2aaf72ab-1dfc-4cde-852d-4b1f9916780b: モジュールの activation は lock を待ち、失敗したら switch を止める
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: GitHub Issue #585, `docs/spec.md`
 - 起点: ADR-0026 §3b を書き直した

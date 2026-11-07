@@ -2,9 +2,11 @@
 id: "ADR-aec6bd1d-f776-4d7c-9337-1ed78fee6180"
 type: adr
 name: "CLI の依存に go-toml/v2 を許可する"
-status: 採用
-issues:
-  - "#395"
+status: stable
+sources:
+  - id: "issue-395"
+    resource: "https://github.com/yasunori0418/layat/issues/395"
+    title: "#395"
 origin: "Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §4 の依存の許可を書き直した"
 justifies:
   - "REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0"
@@ -17,7 +19,7 @@ generated:
 ---
 # ADR-aec6bd1d-f776-4d7c-9337-1ed78fee6180: CLI の依存に go-toml/v2 を許可する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-e88f074e-95f4-4e04-97fc-eae2d0c695a3, ADR-ef9e4099-0cf4-409a-9e73-518866aea676, GitHub Issue #395
 - 起点: Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §4 の依存の許可を書き直した

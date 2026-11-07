@@ -2,7 +2,7 @@
 id: "ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a"
 type: adr
 name: "entry の配置種別のフィールドを method と名付ける"
-status: 採用
+status: stable
 origin: "実装前の最終レビューで詰めた残りの細目。ADR-0015 §6 を書き直した"
 justifies:
   - "REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51"
@@ -12,7 +12,7 @@ generated:
 ---
 # ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a: entry の配置種別のフィールドを method と名付ける
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: `docs/spec.md`, UBQ-bc180161-69ea-4ec6-bae5-9c0e5853a112
 - 起点: 実装前の最終レビューで詰めた残りの細目。ADR-0015 §6 を書き直した

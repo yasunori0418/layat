@@ -2,9 +2,11 @@
 id: "SDR-3ff9f355-a667-476e-b10d-087248cdbfcf"
 type: sara_adr
 name: "ADR の失効は supersedes と 廃止 で表す"
-status: 採用
-issues:
-  - "#499"
+status: stable
+sources:
+  - id: "issue-499"
+    resource: "https://github.com/yasunori0418/layat/issues/499"
+    title: "#499"
 origin: "Issue #499 の grilling（2026-11-01）で確定。ADR-0048 §2・§3 を書き直した"
 justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
@@ -16,7 +18,7 @@ generated:
 ---
 # SDR-3ff9f355-a667-476e-b10d-087248cdbfcf: ADR の失効は supersedes と 廃止 で表す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd, GitHub Issue #499, `docs/agents/adr-rules.md`, `docs/adr/README.md`
 - 起点: Issue #499 の grilling（2026-11-01）で確定。ADR-0048 §2・§3 を書き直した

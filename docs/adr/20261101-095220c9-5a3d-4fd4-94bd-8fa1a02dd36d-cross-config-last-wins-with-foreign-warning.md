@@ -2,9 +2,11 @@
 id: "ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d"
 type: adr
 name: "cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する"
-status: 採用
-issues:
-  - "#550"
+status: stable
+sources:
+  - id: "issue-550"
+    resource: "https://github.com/yasunori0418/layat/issues/550"
+    title: "#550"
 origin: "ドキュメント計画段階の最終レビュー（2026-06-14）で確定。ADR-0015 §2 を書き直した"
 justifies:
   - "REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557"
@@ -16,7 +18,7 @@ generated:
 ---
 # ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d: cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: GitHub Issue #550
 - 起点: ドキュメント計画段階の最終レビュー（2026-06-14）で確定。ADR-0015 §2 を書き直した

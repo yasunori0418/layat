@@ -2,7 +2,7 @@
 id: "ADR-419914ba-9896-4dd1-853b-fb514fcb9f38"
 type: adr
 name: "profile は専用ディレクトリレイアウトに置く"
-status: 採用
+status: stable
 origin: "実装前の残セマンティクス確定の第 7 巡（2026-06-14）。ADR-0025 §4 を書き直した"
 justifies:
   - "REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3"
@@ -16,7 +16,7 @@ generated:
 ---
 # ADR-419914ba-9896-4dd1-853b-fb514fcb9f38: profile は専用ディレクトリレイアウトに置く
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75
 - 起点: 実装前の残セマンティクス確定の第 7 巡（2026-06-14）。ADR-0025 §4 を書き直した

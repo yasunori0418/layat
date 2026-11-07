@@ -2,7 +2,7 @@
 id: "ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d"
 type: adr
 name: "project mode では同じ link farm なら世代を積まず drift だけを直す"
-status: 採用
+status: stable
 origin: "ADR-0005 の決定「世代スキップ短絡を project mode の必須要件にする」と ADR-0017 §3 を書き直した"
 justifies:
   - "REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0"
@@ -12,7 +12,7 @@ generated:
 ---
 # ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d: project mode では同じ link farm なら世代を積まず drift だけを直す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: `docs/spec.md`
 - 起点: ADR-0005 の決定「世代スキップ短絡を project mode の必須要件にする」と ADR-0017 §3 を書き直した

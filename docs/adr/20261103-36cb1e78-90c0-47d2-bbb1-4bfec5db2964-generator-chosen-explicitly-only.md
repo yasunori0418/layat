@@ -2,9 +2,11 @@
 id: "ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964"
 type: adr
 name: "生成器は明示の指定だけで選ぶ"
-status: 採用
-issues:
-  - "#395"
+status: stable
+sources:
+  - id: "issue-395"
+    resource: "https://github.com/yasunori0418/layat/issues/395"
+    title: "#395"
 origin: "Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §1 を書き直した"
 justifies:
   - "REQ-badc7e10-0ba4-40d4-b334-6e40193119db"
@@ -17,7 +19,7 @@ generated:
 ---
 # ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964: 生成器は明示の指定だけで選ぶ
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-87a2cf34-9592-4c81-8980-246bca579ca0, ADR-ef9e4099-0cf4-409a-9e73-518866aea676, GitHub Issue #395
 - 起点: Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §1 を書き直した

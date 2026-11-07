@@ -2,9 +2,11 @@
 id: "ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98"
 type: adr
 name: "configs.<name>.subdir で config ごとに target の基点を寄せる"
-status: 採用
-issues:
-  - "#585"
+status: stable
+sources:
+  - id: "issue-585"
+    resource: "https://github.com/yasunori0418/layat/issues/585"
+    title: "#585"
 origin: "ADR-0064 §1・§2 を書き直した"
 justifies:
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
@@ -15,7 +17,7 @@ generated:
 ---
 # ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98: configs.<name>.subdir で config ごとに target の基点を寄せる
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: GitHub Issue #585, `docs/spec.md`
 - 起点: ADR-0064 §1・§2 を書き直した

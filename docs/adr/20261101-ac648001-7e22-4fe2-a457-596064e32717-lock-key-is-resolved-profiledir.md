@@ -2,7 +2,7 @@
 id: "ADR-ac648001-7e22-4fe2-a457-596064e32717"
 type: adr
 name: "ロックのキーを解決後の profileDir にする"
-status: 採用
+status: stable
 origin: "engine の実行時セマンティクスの確定（2026-06-13）。ADR-0013 §2 を書き直した"
 justifies:
   - "REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-ac648001-7e22-4fe2-a457-596064e32717: ロックのキーを解決後の profileDir にする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 起点: engine の実行時セマンティクスの確定（2026-06-13）。ADR-0013 §2 を書き直した
 

@@ -2,9 +2,11 @@
 id: "ADR-7f4fd2f6-672d-4d8c-a881-31024ad1d7c3"
 type: adr
 name: "config 間の target 衝突は CLI が判定し engine に持ち込まない"
-status: 採用
-issues:
-  - "#584"
+status: stable
+sources:
+  - id: "issue-584"
+    resource: "https://github.com/yasunori0418/layat/issues/584"
+    title: "#584"
 origin: "ADR-0038 §2a（データ算出は nix・検出判定は Go CLI・engine は不変）を書き直した"
 justifies:
   - "REQ-535b811d-dfc5-4eac-92db-737e70eb5415"
@@ -20,7 +22,7 @@ generated:
 ---
 # ADR-7f4fd2f6-672d-4d8c-a881-31024ad1d7c3: config 間の target 衝突は CLI が判定し engine に持ち込まない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-75df92ae-0694-452b-8fb4-350994e31b25, ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d, ADR-af37a636-a798-4c03-8fa4-e73ed6375a92, ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4
 - 起点: ADR-0038 §2a（データ算出は nix・検出判定は Go CLI・engine は不変）を書き直した

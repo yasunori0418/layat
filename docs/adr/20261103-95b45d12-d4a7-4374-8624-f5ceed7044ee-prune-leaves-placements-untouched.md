@@ -2,9 +2,11 @@
 id: "ADR-95b45d12-d4a7-4374-8624-f5ceed7044ee"
 type: adr
 name: "prune は配置物に触れない"
-status: 採用
-issues:
-  - "#580"
+status: stable
+sources:
+  - id: "issue-580"
+    resource: "https://github.com/yasunori0418/layat/issues/580"
+    title: "#580"
 origin: "次期マイルストーン計画の grilling（2026-07-04）。公開後の実運用で孤児系列が溜まり始めたことを消費側の要求と判断した。ADR-0034 §1c を書き直した"
 justifies:
   - "REQ-c44433a1-7ee7-459a-9aae-7cc42166876f"
@@ -16,7 +18,7 @@ generated:
 ---
 # ADR-95b45d12-d4a7-4374-8624-f5ceed7044ee: prune は配置物に触れない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988, GitHub Issue #580
 - 起点: 次期マイルストーン計画の grilling（2026-07-04）。公開後の実運用で孤児系列が溜まり始めたことを消費側の要求と判断した。ADR-0034 §1c を書き直した

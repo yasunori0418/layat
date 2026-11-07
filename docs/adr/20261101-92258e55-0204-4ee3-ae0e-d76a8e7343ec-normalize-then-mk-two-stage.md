@@ -2,7 +2,7 @@
 id: "ADR-92258e55-0204-4ee3-ae0e-d76a8e7343ec"
 type: adr
 name: "入力の確認を normalizeManifest に切り出す"
-status: 採用
+status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §4（2 段分割）を書き直した"
 justifies:
   - "REQ-b232ec98-af3b-41f3-a050-29d417322002"
@@ -13,7 +13,7 @@ generated:
 ---
 # ADR-92258e55-0204-4ee3-ae0e-d76a8e7343ec: 入力の確認を normalizeManifest に切り出す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: `docs/spec.md`
 - 起点: manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §4（2 段分割）を書き直した

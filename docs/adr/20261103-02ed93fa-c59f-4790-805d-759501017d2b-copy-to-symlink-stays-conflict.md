@@ -2,10 +2,14 @@
 id: "ADR-02ed93fa-c59f-4790-805d-759501017d2b"
 type: adr
 name: "method の copy から symlink への変更は移行しない"
-status: 採用
-issues:
-  - "#175"
-  - "#172"
+status: stable
+sources:
+  - id: "issue-175"
+    resource: "https://github.com/yasunori0418/layat/issues/175"
+    title: "#175"
+  - id: "issue-172"
+    resource: "https://github.com/yasunori0418/layat/issues/172"
+    title: "#172"
 origin: "epic #172 の grilling セッション（2026-07-12）で確定。ADR-0047 §2 の copy から symlink への変更を書き直した"
 justifies:
   - "REQ-2b48620a-abaa-43df-a106-954bbba3de56"
@@ -19,7 +23,7 @@ generated:
 ---
 # ADR-02ed93fa-c59f-4790-805d-759501017d2b: method の copy から symlink への変更は移行しない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-c4ad9987-850e-4834-bbea-d8de3b073548, ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f, ADR-fc28d09c-9d52-4539-8838-e9ae5a414594, GitHub Issue #175, #172
 - 起点: epic #172 の grilling セッション（2026-07-12）で確定。ADR-0047 §2 の copy から symlink への変更を書き直した

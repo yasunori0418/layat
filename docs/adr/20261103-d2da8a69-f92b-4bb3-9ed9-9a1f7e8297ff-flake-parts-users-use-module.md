@@ -2,9 +2,11 @@
 id: "ADR-d2da8a69-f92b-4bb3-9ed9-9a1f7e8297ff"
 type: adr
 name: "flake-parts の利用者には module 経由を正準にする"
-status: 採用
-issues:
-  - "#26"
+status: stable
+sources:
+  - id: "issue-26"
+    resource: "https://github.com/yasunori0418/layat/issues/26"
+    title: "#26"
 origin: "Issue #26。ADR-0029 §6a と ADR-0029 §6b を書き直した"
 justifies:
   - "REQ-c50df875-2cb0-4e72-8a21-858359a11cae"
@@ -16,7 +18,7 @@ generated:
 ---
 # ADR-d2da8a69-f92b-4bb3-9ed9-9a1f7e8297ff: flake-parts の利用者には module 経由を正準にする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-e6820da0-fce3-4aef-8b79-d53abbca6051, GitHub Issue #26
 - 起点: Issue #26。ADR-0029 §6a と ADR-0029 §6b を書き直した

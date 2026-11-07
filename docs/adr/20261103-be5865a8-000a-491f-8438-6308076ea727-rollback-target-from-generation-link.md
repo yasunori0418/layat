@@ -2,10 +2,14 @@
 id: "ADR-be5865a8-000a-491f-8438-6308076ea727"
 type: adr
 name: "rollback の戻り先は世代リンクから読む"
-status: 採用
-issues:
-  - "#580"
-  - "#406"
+status: stable
+sources:
+  - id: "issue-580"
+    resource: "https://github.com/yasunori0418/layat/issues/580"
+    title: "#580"
+  - id: "issue-406"
+    resource: "https://github.com/yasunori0418/layat/issues/406"
+    title: "#406"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §3c を書き直した"
 justifies:
   - "REQ-0e341430-17f0-498b-9439-65491652163a"
@@ -21,7 +25,7 @@ generated:
 ---
 # ADR-be5865a8-000a-491f-8438-6308076ea727: rollback の戻り先は世代リンクから読む
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-d97154cd-a2e5-4853-a682-800ff9435c89, ADR-a91585ad-971a-4558-9f25-b7fcd6e57671, ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93, GitHub Issue #580, #406
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §3c を書き直した

@@ -2,7 +2,7 @@
 id: "ADR-2e454c1f-6cad-41d8-8311-2c8e5b8efdf6"
 type: adr
 name: "mkManifest の入力を evalModules で確認する"
-status: 採用
+status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §1（検査機構）を書き直した"
 justifies:
   - "REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34"
@@ -13,7 +13,7 @@ generated:
 ---
 # ADR-2e454c1f-6cad-41d8-8311-2c8e5b8efdf6: mkManifest の入力を evalModules で確認する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: `docs/spec.md`
 - 起点: manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §1（検査機構）を書き直した

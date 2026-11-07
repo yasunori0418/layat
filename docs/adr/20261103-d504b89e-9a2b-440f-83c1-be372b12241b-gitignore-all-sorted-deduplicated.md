@@ -2,7 +2,7 @@
 id: "ADR-d504b89e-9a2b-440f-83c1-be372b12241b"
 type: adr
 name: "gitignore --all は project mode の全 config の target を重複なく整列して出す"
-status: 採用
+status: stable
 origin: "ADR-0018 §4a を書き直した"
 justifies:
   - "REQ-1f128917-4424-4e37-8a88-e0bb23a09da7"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-d504b89e-9a2b-440f-83c1-be372b12241b: gitignore --all は project mode の全 config の target を重複なく整列して出す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-baf6346d-783b-4607-ab1c-c2c93c09e064
 - 起点: ADR-0018 §4a を書き直した

@@ -2,9 +2,11 @@
 id: "ADR-cd139de9-06a4-49a2-8bea-4801c8acc518"
 type: adr
 name: "nix 固有の失敗判定と案内文を nix 生成器の中に閉じる"
-status: 採用
-issues:
-  - "#396"
+status: stable
+sources:
+  - id: "issue-396"
+    resource: "https://github.com/yasunori0418/layat/issues/396"
+    title: "#396"
 origin: "Issue #396（評価器の診断の扱い）の結論。ADR-0055 §6 の nix 固有の判定の置き場所を書き直した"
 justifies:
   - "REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6"
@@ -25,7 +27,7 @@ generated:
 ---
 # ADR-cd139de9-06a4-49a2-8bea-4801c8acc518: nix 固有の失敗判定と案内文を nix 生成器の中に閉じる
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-63039f93-cd78-4356-8cd3-82c2f49a1aaa, ADR-964e99a8-4aaa-46f6-b4ee-26270fc04649, ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9, ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1, ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246, ADR-6b7becf0-f029-41e3-895e-b672dce94d3d, ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, GitHub Issue #396
 - 起点: Issue #396（評価器の診断の扱い）の結論。ADR-0055 §6 の nix 固有の判定の置き場所を書き直した

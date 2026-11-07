@@ -2,10 +2,14 @@
 id: "ADR-14cf38ad-23d3-4d25-b14e-3e5da5ac7826"
 type: adr
 name: "manifest に identity を足しても schemaVersion を据え置く"
-status: 採用
-issues:
-  - "#580"
-  - "#498"
+status: stable
+sources:
+  - id: "issue-580"
+    resource: "https://github.com/yasunori0418/layat/issues/580"
+    title: "#580"
+  - id: "issue-498"
+    resource: "https://github.com/yasunori0418/layat/issues/498"
+    title: "#498"
 origin: "Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §5b を書き直した"
 justifies:
   - "REQ-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f"
@@ -20,7 +24,7 @@ generated:
 ---
 # ADR-14cf38ad-23d3-4d25-b14e-3e5da5ac7826: manifest に identity を足しても schemaVersion を据え置く
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-0db061d1-fa30-436d-91d7-c0cec8804c52, ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e, GitHub Issue #580, #498
 - 起点: Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §5b を書き直した

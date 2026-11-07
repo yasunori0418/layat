@@ -2,7 +2,7 @@
 id: "ADR-d9cad6f6-d694-4c1d-afee-b57b129955dc"
 type: adr
 name: "marker を判別タグで derivation と見分ける"
-status: 採用
+status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の marker の項を書き直した"
 justifies:
   - "REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7"
@@ -12,7 +12,7 @@ generated:
 ---
 # ADR-d9cad6f6-d694-4c1d-afee-b57b129955dc: marker を判別タグで derivation と見分ける
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: `docs/spec.md`
 - 起点: manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の marker の項を書き直した

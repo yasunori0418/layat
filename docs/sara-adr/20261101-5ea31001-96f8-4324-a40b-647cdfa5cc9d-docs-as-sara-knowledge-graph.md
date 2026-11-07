@@ -2,11 +2,17 @@
 id: "SDR-5ea31001-96f8-4324-a40b-647cdfa5cc9d"
 type: sara_adr
 name: "ドキュメントは sara のナレッジグラフとして item に分割する"
-status: 採用
-issues:
-  - "#203"
-  - "#206"
-  - "#207"
+status: stable
+sources:
+  - id: "issue-203"
+    resource: "https://github.com/yasunori0418/layat/issues/203"
+    title: "#203"
+  - id: "issue-206"
+    resource: "https://github.com/yasunori0418/layat/issues/206"
+    title: "#206"
+  - id: "issue-207"
+    resource: "https://github.com/yasunori0418/layat/issues/207"
+    title: "#207"
 origin: "epic #203 の grilling セッション（2026-07-31・2026-08-01）で確定。ADR-0048 §1 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
@@ -16,7 +22,7 @@ generated:
 ---
 # SDR-5ea31001-96f8-4324-a40b-647cdfa5cc9d: ドキュメントは sara のナレッジグラフとして item に分割する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: GitHub Issue #203, #206, #207
 - 起点: epic #203 の grilling セッション（2026-07-31・2026-08-01）で確定。ADR-0048 §1 を書き直した

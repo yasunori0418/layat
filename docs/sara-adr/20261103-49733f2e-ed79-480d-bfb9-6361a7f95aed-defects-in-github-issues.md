@@ -2,12 +2,20 @@
 id: "SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed"
 type: sara_adr
 name: "欠陥はグラフに置かず GitHub Issues で管理する"
-status: 採用
-issues:
-  - "#583"
-  - "#268"
-  - "#203"
-  - "#267"
+status: stable
+sources:
+  - id: "issue-583"
+    resource: "https://github.com/yasunori0418/layat/issues/583"
+    title: "#583"
+  - id: "issue-268"
+    resource: "https://github.com/yasunori0418/layat/issues/268"
+    title: "#268"
+  - id: "issue-203"
+    resource: "https://github.com/yasunori0418/layat/issues/203"
+    title: "#203"
+  - id: "issue-267"
+    resource: "https://github.com/yasunori0418/layat/issues/267"
+    title: "#267"
 origin: "Issue #268（epic #203 残ブロッカー）の判断（2026-08-09）で確定。ADR-0051 §1・§2 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
@@ -21,7 +29,7 @@ generated:
 ---
 # SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed: 欠陥はグラフに置かず GitHub Issues で管理する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb, SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #268, #203, #267, `docs/model.yaml`, `docs/agents/issue-tracker.md`
 - 起点: Issue #268（epic #203 残ブロッカー）の判断（2026-08-09）で確定。ADR-0051 §1・§2 を書き直した

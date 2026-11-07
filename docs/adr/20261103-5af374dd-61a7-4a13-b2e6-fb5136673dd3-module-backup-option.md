@@ -2,10 +2,14 @@
 id: "ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3"
 type: adr
 name: "モジュールに layat.backup を起動配線のオプションとして持つ"
-status: 採用
-issues:
-  - "#169"
-  - "#172"
+status: stable
+sources:
+  - id: "issue-169"
+    resource: "https://github.com/yasunori0418/layat/issues/169"
+    title: "#169"
+  - id: "issue-172"
+    resource: "https://github.com/yasunori0418/layat/issues/172"
+    title: "#172"
 origin: "旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §8 を書き直した"
 justifies:
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
@@ -26,7 +30,7 @@ generated:
 ---
 # ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3: モジュールに layat.backup を起動配線のオプションとして持つ
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-24488788-a5e6-47a5-9074-97192880642a, ADR-f58e9981-bacc-4937-98b8-bddce0a057db, ADR-2aaf72ab-1dfc-4cde-852d-4b1f9916780b, ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5, ADR-01abcd5a-464f-4c44-8afd-30950631487c, ADR-9506276e-2108-4962-9f90-efe82fec7f66, ADR-e8bb6153-2528-419e-8be0-c862a3eb4e05, ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98, ADR-33d8c466-6b38-46b6-8696-ad7521c72786, GitHub Issue #169, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §8 を書き直した

@@ -2,11 +2,17 @@
 id: "SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb"
 type: sara_adr
 name: "root は solution と ADR 系の型だけにする"
-status: 廃止
-issues:
-  - "#583"
-  - "#237"
-  - "#203"
+status: deprecated
+sources:
+  - id: "issue-583"
+    resource: "https://github.com/yasunori0418/layat/issues/583"
+    title: "#583"
+  - id: "issue-237"
+    resource: "https://github.com/yasunori0418/layat/issues/237"
+    title: "#237"
+  - id: "issue-203"
+    resource: "https://github.com/yasunori0418/layat/issues/203"
+    title: "#203"
 origin: "epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §1b を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
@@ -24,7 +30,7 @@ generated:
 >
 > - 全体 → SDR-d3f88093-dc98-4703-af45-df5b27527ffa
 
-- ステータス: 廃止
+- ステータス: deprecated
 - 日付: 2026-11-03
 - 関連: SDR-c15921a9-7aea-407c-a34b-7465783b1af1, SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #237, #203, `docs/model.yaml`
 - 起点: epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §1b を書き直した

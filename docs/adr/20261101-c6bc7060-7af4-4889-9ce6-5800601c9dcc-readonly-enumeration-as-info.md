@@ -2,10 +2,14 @@
 id: "ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc"
 type: adr
 name: "読み取り専用の列挙は info で返す"
-status: 採用
-issues:
-  - "#552"
-  - "yasunori0418/outturn#1"
+status: stable
+sources:
+  - id: "issue-552"
+    resource: "https://github.com/yasunori0418/layat/issues/552"
+    title: "#552"
+  - id: "issue-outturn-1"
+    resource: "https://github.com/yasunori0418/outturn/issues/1"
+    title: "yasunori0418/outturn#1"
 origin: "layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §5 を書き直した"
 justifies:
   - "REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303"
@@ -20,7 +24,7 @@ generated:
 ---
 # ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc: 読み取り専用の列挙は info で返す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, ADR-feb60906-1517-46b8-8fa5-e007df4d3e11, ADR-9e328362-2e90-441a-8eca-40081ce71b1b, ADR-5d28818e-f7e1-45e8-a7fd-bbb6157b8586, GitHub Issue #552, yasunori0418/outturn#1
 - 起点: layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §5 を書き直した

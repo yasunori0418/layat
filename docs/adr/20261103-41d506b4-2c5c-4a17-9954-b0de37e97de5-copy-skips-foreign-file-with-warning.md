@@ -2,9 +2,11 @@
 id: "ADR-41d506b4-2c5c-4a17-9954-b0de37e97de5"
 type: adr
 name: "copy は foreign の実ファイルを上書きせず warning を出して見送る"
-status: 採用
-issues:
-  - "#584"
+status: stable
+sources:
+  - id: "issue-584"
+    resource: "https://github.com/yasunori0418/layat/issues/584"
+    title: "#584"
 origin: "ADR-0022 §4（copy が foreign 実ファイルに当たったら warning を出して skip する）を書き直した"
 justifies:
   - "REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7"
@@ -18,7 +20,7 @@ generated:
 ---
 # ADR-41d506b4-2c5c-4a17-9954-b0de37e97de5: copy は foreign の実ファイルを上書きせず warning を出して見送る
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-c4ad9987-850e-4834-bbea-d8de3b073548, ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d, ADR-45380022-d959-4b22-aa05-5993ac1f3c87
 - 起点: ADR-0022 §4（copy が foreign 実ファイルに当たったら warning を出して skip する）を書き直した

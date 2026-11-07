@@ -2,9 +2,11 @@
 id: "ADR-f82e33bd-0534-4266-89bf-f1d9a2dbe258"
 type: adr
 name: "ドキュメントサイトを GitHub Actions から Cloudflare Pages へ配備する"
-status: 採用
-issues:
-  - "#57"
+status: stable
+sources:
+  - id: "issue-57"
+    resource: "https://github.com/yasunori0418/layat/issues/57"
+    title: "#57"
 origin: "Issue #57 のサイト設計。ADR-0037 §2 を書き直した"
 justifies:
   - "INF-0865477b-21b2-4feb-9c06-1a882a4e595a"
@@ -17,7 +19,7 @@ generated:
 ---
 # ADR-f82e33bd-0534-4266-89bf-f1d9a2dbe258: ドキュメントサイトを GitHub Actions から Cloudflare Pages へ配備する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4, ADR-da7b74a6-bab4-43ea-8f1c-cf843b8b58cc, GitHub Issue #57
 - 起点: Issue #57 のサイト設計。ADR-0037 §2 を書き直した
