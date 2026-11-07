@@ -76,7 +76,7 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
 
 **逆算階層の粒度**（既存のテスト実装から item を起こすときの単位）:
 
-- **CASE** = テストファイル / e2e シナリオ / flake check 単位。frontmatter の `target`
+- **CASE** = テストファイル / e2e シナリオ / flake check 単位。frontmatter の `resource`
   （必須・単一値）に対象を正準表記で書き、本文の `## 対象` 節に人間向けの補足を書く。
   主な検証内容（テスト関数のテーマ列挙）も本文へ。テスト関数単位には割らない。
   CASE ⟷ テスト資産の 1:1 は `dev/tests/test-doc-map.sh` が強制する
