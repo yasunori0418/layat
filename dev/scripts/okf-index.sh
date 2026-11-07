@@ -73,6 +73,7 @@ jq -r '.items[]
 
 # 本文の段落: <リポジトリ相対パス>\t<H1 の次に来る最初の段落>
 # 段落は見出し・箇条書き・表・引用・HTML・コードフェンスの中身・字下げ行を除いた最初の散文の塊。
+# 行は、改行の両側が ASCII のときだけ空白でつなぎ、日本語の文字が接するときは空白なしでつなぐ。
 cut -f7 "$work/items.tsv" | xargs -r awk '
   function flush() { if (!done && para != "") { print file "\t" para; done = 1 } }
   FNR == 1 { flush(); file = FILENAME; fm = 0; h1 = 0; fence = 0; para = ""; done = 0 }
@@ -89,7 +90,9 @@ cut -f7 "$work/items.tsv" | xargs -r awk '
     line = $0
     sub(/^[[:space:]]+/, "", line)
     sub(/[[:space:]]+$/, "", line)
-    para = (para == "") ? line : para " " line
+    if (para == "") para = line
+    else if (para ~ /[ -~]$/ && line ~ /^[ -~]/) para = para " " line
+    else para = para line
   }
   END { flush() }
 ' > "$work/paras.tsv"

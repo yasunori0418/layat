@@ -85,8 +85,9 @@ status: deprecated
 echo 段落ではない
 ```
 
-最初の段落の
-1 行目と 2 行目。
+最初の段落は
+日本語の行と `code`
+and English words.
 
 次の段落は使わない。
 EOF
@@ -118,7 +119,8 @@ status: stable
 ---
 # UBQ-44444444-4444-4444-8444-444444444444: term
 
-用語の定義。
+The term
+definition.
 EOF
 
 if ! (cd "$fixture" && bash "$generator") > "$work/gen.out" 2>&1; then
@@ -142,12 +144,12 @@ expect_line() {
 
 expect_line "description フィールドを使い、ADR の status を添える" docs/adr/index.md \
   '* [フィールドを持つ決定](./20260102-11111111-1111-4111-8111-111111111111-with-field.md) - フィールドの要約 (stable)'
-expect_line "description が無ければ H1 の次の最初の段落を、改行を空白にして使う" docs/adr/index.md \
-  '* [results\[\] を返す](./20260101-22222222-2222-4222-8222-222222222222-from-paragraph.md) - 最初の段落の 1 行目と 2 行目。 (deprecated)'
+expect_line "description が無ければ H1 の次の最初の段落を使い、日本語の行は空白なしでつなぐ" docs/adr/index.md \
+  '* [results\[\] を返す](./20260101-22222222-2222-4222-8222-222222222222-from-paragraph.md) - 最初の段落は日本語の行と `code` and English words. (deprecated)'
 expect_line "description も段落も無ければ ' - ' ごと省き、SDR の status を添える" docs/sara-adr/index.md \
   '* [説明の無い決定](./20260101-33333333-3333-4333-8333-333333333333-no-description.md) (stable)'
-expect_line "ADR 以外の item には status の添え字を付けない" docs/ubiquitous-language/index.md \
-  '* [term](./20260101-44444444-4444-4444-8444-444444444444-term.md) - 用語の定義。'
+expect_line "ADR 以外の item には status の添え字を付けず、英数字の行は空白でつなぐ" docs/ubiquitous-language/index.md \
+  '* [term](./20260101-44444444-4444-4444-8444-444444444444-term.md) - The term definition.'
 
 # --- (3) 並びはファイル名順 ----------------------------------------------------
 
