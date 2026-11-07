@@ -3,10 +3,16 @@ id: "SDR-1a02013e-c57b-4079-9c72-8e9fe99e499a"
 type: sara_adr
 name: "複数の失敗方向を持つ risk は最も重い方向で採点する"
 status: stable
-issues:
-  - "#583"
-  - "#303"
-  - "#292"
+sources:
+  - id: "issue-583"
+    resource: "https://github.com/yasunori0418/layat/issues/583"
+    title: "#583"
+  - id: "issue-303"
+    resource: "https://github.com/yasunori0418/layat/issues/303"
+    title: "#303"
+  - id: "issue-292"
+    resource: "https://github.com/yasunori0418/layat/issues/292"
+    title: "#292"
 origin: "Issue #303 の着手前 grilling（2026-08-12）で確定。ADR-0052 §1b を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"

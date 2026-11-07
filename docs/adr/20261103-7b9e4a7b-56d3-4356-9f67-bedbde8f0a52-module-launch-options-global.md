@@ -3,8 +3,10 @@ id: "ADR-7b9e4a7b-56d3-4356-9f67-bedbde8f0a52"
 type: adr
 name: "モジュールの起動修飾オプションを config ごとに持たない"
 status: stable
-issues:
-  - "#585"
+sources:
+  - id: "issue-585"
+    resource: "https://github.com/yasunori0418/layat/issues/585"
+    title: "#585"
 origin: "ADR-0061 §3 を書き直した"
 justifies:
   - "REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c"

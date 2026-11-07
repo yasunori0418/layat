@@ -3,9 +3,13 @@ id: "ADR-acc31876-df36-485e-b356-92ae60e26db7"
 type: adr
 name: "reset は非対話の実行で --yes を必須にする"
 status: stable
-issues:
-  - "#550"
-  - "yasunori0418/outturn#1"
+sources:
+  - id: "issue-550"
+    resource: "https://github.com/yasunori0418/layat/issues/550"
+    title: "#550"
+  - id: "issue-outturn-1"
+    resource: "https://github.com/yasunori0418/outturn/issues/1"
+    title: "yasunori0418/outturn#1"
 origin: "実装前残セマンティクス確定の第7巡（2026-06-14）で確定。ADR-0025 §5 と ADR-0043 §8 の reset --json を書き直した"
 justifies:
   - "REQ-31dae599-f3a3-4bbe-b367-c955535265da"

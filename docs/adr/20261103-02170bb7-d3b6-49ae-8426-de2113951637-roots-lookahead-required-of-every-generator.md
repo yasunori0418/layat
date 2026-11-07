@@ -3,8 +3,10 @@ id: "ADR-02170bb7-d3b6-49ae-8426-de2113951637"
 type: adr
 name: "Roots の先読みを全ての生成器の前提条件にする"
 status: stable
-issues:
-  - "#395"
+sources:
+  - id: "issue-395"
+    resource: "https://github.com/yasunori0418/layat/issues/395"
+    title: "#395"
 origin: "Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0055 §3 を書き直した"
 justifies:
   - "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"

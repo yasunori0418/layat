@@ -3,8 +3,10 @@ id: "ADR-b157254e-e942-42bf-ae40-60a3a41a4452"
 type: adr
 name: "flake-parts module の option に mkManifest の結果を入れる"
 status: stable
-issues:
-  - "#26"
+sources:
+  - id: "issue-26"
+    resource: "https://github.com/yasunori0418/layat/issues/26"
+    title: "#26"
 origin: "Issue #26。ADR-0029 §2 と ADR-0029 §3 を書き直した"
 justifies:
   - "REQ-c50df875-2cb0-4e72-8a21-858359a11cae"

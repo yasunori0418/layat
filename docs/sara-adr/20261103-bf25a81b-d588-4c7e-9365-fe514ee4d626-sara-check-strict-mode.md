@@ -3,10 +3,16 @@ id: "SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626"
 type: sara_adr
 name: "sara check を strict モードで回す"
 status: stable
-issues:
-  - "#583"
-  - "#255"
-  - "#203"
+sources:
+  - id: "issue-583"
+    resource: "https://github.com/yasunori0418/layat/issues/583"
+    title: "#583"
+  - id: "issue-255"
+    resource: "https://github.com/yasunori0418/layat/issues/255"
+    title: "#255"
+  - id: "issue-203"
+    resource: "https://github.com/yasunori0418/layat/issues/203"
+    title: "#203"
 origin: "epic #203 の移行完了（Batch 2・2026-08-08）を受けた残論点判断（Issue #255）で確定。ADR-0050 §1・§3 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"

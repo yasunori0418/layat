@@ -3,9 +3,13 @@ id: "ADR-1743c957-a732-4a44-a89a-4c03ab277f0c"
 type: adr
 name: "NixOS の dry-activate では --dryrun を付けて起動する"
 status: stable
-issues:
-  - "#519"
-  - "#493"
+sources:
+  - id: "issue-519"
+    resource: "https://github.com/yasunori0418/layat/issues/519"
+    title: "#519"
+  - id: "issue-493"
+    resource: "https://github.com/yasunori0418/layat/issues/493"
+    title: "#493"
 origin: "Issue #493（epic: NixOS / nix-darwin モジュールの実装）の grilling（2026-10-24）。ADR-0066 §4a を書き直した"
 justifies:
   - "REQ-a220bb28-89de-42b0-a854-e7468755ecb1"

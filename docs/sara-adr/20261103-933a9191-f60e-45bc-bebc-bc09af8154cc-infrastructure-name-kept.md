@@ -3,10 +3,16 @@ id: "SDR-933a9191-f60e-45bc-bebc-bc09af8154cc"
 type: sara_adr
 name: "infrastructure 型を改名しない"
 status: stable
-issues:
-  - "#583"
-  - "#237"
-  - "#203"
+sources:
+  - id: "issue-583"
+    resource: "https://github.com/yasunori0418/layat/issues/583"
+    title: "#583"
+  - id: "issue-237"
+    resource: "https://github.com/yasunori0418/layat/issues/237"
+    title: "#237"
+  - id: "issue-203"
+    resource: "https://github.com/yasunori0418/layat/issues/203"
+    title: "#203"
 origin: "epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §3b を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"

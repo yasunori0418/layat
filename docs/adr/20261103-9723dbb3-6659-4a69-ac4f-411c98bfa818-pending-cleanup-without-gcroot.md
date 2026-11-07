@@ -3,8 +3,10 @@ id: "ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818"
 type: adr
 name: ".pending の後片付けを gcroot を知らない engine の FS 操作として行う"
 status: stable
-issues:
-  - "#406"
+sources:
+  - id: "issue-406"
+    resource: "https://github.com/yasunori0418/layat/issues/406"
+    title: "#406"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §7 を書き直した"
 justifies:
   - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"

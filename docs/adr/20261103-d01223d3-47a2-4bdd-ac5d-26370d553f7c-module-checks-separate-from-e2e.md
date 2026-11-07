@@ -3,9 +3,13 @@ id: "ADR-d01223d3-47a2-4bdd-ac5d-26370d553f7c"
 type: adr
 name: "モジュールの検証を flake check と VM テストに置く"
 status: stable
-issues:
-  - "#519"
-  - "#493"
+sources:
+  - id: "issue-519"
+    resource: "https://github.com/yasunori0418/layat/issues/519"
+    title: "#519"
+  - id: "issue-493"
+    resource: "https://github.com/yasunori0418/layat/issues/493"
+    title: "#493"
 origin: "Issue #493（epic: NixOS / nix-darwin モジュールの実装）の grilling（2026-10-24）。ADR-0066 §5b を書き直した"
 justifies:
   - "DSG-901351ea-f01b-4bb0-a470-b890d92c980b"

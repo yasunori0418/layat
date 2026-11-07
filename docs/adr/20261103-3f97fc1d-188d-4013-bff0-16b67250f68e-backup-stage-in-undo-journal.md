@@ -3,9 +3,13 @@ id: "ADR-3f97fc1d-188d-4013-bff0-16b67250f68e"
 type: adr
 name: "退避を配置前除去の後の段として undo ジャーナルに載せる"
 status: stable
-issues:
-  - "#169"
-  - "#172"
+sources:
+  - id: "issue-169"
+    resource: "https://github.com/yasunori0418/layat/issues/169"
+    title: "#169"
+  - id: "issue-172"
+    resource: "https://github.com/yasunori0418/layat/issues/172"
+    title: "#172"
 origin: "旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §4（undo ジャーナルへの統合）を書き直した"
 justifies:
   - "REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98"

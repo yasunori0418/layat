@@ -3,8 +3,10 @@ id: "ADR-8b7cd75f-5521-4805-b7bc-105b5c56ee38"
 type: adr
 name: "移行する祖先の配下の entry は lstat を経ず不在として配置する"
 status: stable
-issues:
-  - "#170"
+sources:
+  - id: "issue-170"
+    resource: "https://github.com/yasunori0418/layat/issues/170"
+    title: "#170"
 origin: "dotfiles 側での実遭遇（#170）と、次期マイルストーンの grilling セッション（2026-07-11）で設計確定。ADR-0046 §2 を書き直した"
 justifies:
   - "REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575"

@@ -3,8 +3,10 @@ id: "ADR-e6820da0-fce3-4aef-8b79-d53abbca6051"
 type: adr
 name: "layat output の flake-parts module を flakeModules.default で公開する"
 status: stable
-issues:
-  - "#26"
+sources:
+  - id: "issue-26"
+    resource: "https://github.com/yasunori0418/layat/issues/26"
+    title: "#26"
 origin: "Issue #26。ADR-0029 §1 と ADR-0029 §4 を書き直した"
 justifies:
   - "DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58"

@@ -3,8 +3,10 @@ id: "ADR-e7a57f51-41da-460c-8f51-c84e94643f3d"
 type: adr
 name: "apply --all の配置を config 単位で並列に行う"
 status: stable
-issues:
-  - "#584"
+sources:
+  - id: "issue-584"
+    resource: "https://github.com/yasunori0418/layat/issues/584"
+    title: "#584"
 origin: "ADR-0039 §2a（配置段階も config 単位の goroutine で並列化する）と §3b（単一 config 内の entry 単位は並列化しない）を書き直した"
 justifies:
   - "REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af"

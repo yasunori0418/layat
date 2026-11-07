@@ -3,8 +3,10 @@ id: "SDR-fa7eff8e-788f-48e7-951d-4cfbf95d5a1f"
 type: sara_adr
 name: "adr の status_note を持たない"
 status: stable
-issues:
-  - "#499"
+sources:
+  - id: "issue-499"
+    resource: "https://github.com/yasunori0418/layat/issues/499"
+    title: "#499"
 origin: "Issue #499 の grilling（2026-11-01）で確定。ADR-0048 §2 を書き直した"
 justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"

@@ -3,9 +3,13 @@ id: "ADR-4dba7720-c179-4835-8644-d90b8022e474"
 type: adr
 name: "配置前除去は空の祖先ディレクトリを剪定しない"
 status: stable
-issues:
-  - "#175"
-  - "#172"
+sources:
+  - id: "issue-175"
+    resource: "https://github.com/yasunori0418/layat/issues/175"
+    title: "#175"
+  - id: "issue-172"
+    resource: "https://github.com/yasunori0418/layat/issues/172"
+    title: "#172"
 origin: "epic #172 の grilling セッション（2026-07-12）で確定。ADR-0047 §5 を書き直した"
 justifies:
   - "REQ-8409db86-a1ba-4053-86dc-588985cc1ca7"

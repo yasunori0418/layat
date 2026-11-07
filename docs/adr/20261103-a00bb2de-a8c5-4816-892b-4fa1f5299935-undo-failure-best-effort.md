@@ -3,9 +3,13 @@ id: "ADR-a00bb2de-a8c5-4816-892b-4fa1f5299935"
 type: adr
 name: "巻き戻しの失敗は best-effort で続行する"
 status: stable
-issues:
-  - "#168"
-  - "#172"
+sources:
+  - id: "issue-168"
+    resource: "https://github.com/yasunori0418/layat/issues/168"
+    title: "#168"
+  - id: "issue-172"
+    resource: "https://github.com/yasunori0418/layat/issues/172"
+    title: "#172"
 origin: "旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0044 §3 を書き直した"
 justifies:
   - "REQ-9fca28c9-d3b1-4ad7-8f24-13b2ec7aeab2"

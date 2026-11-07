@@ -3,8 +3,10 @@ id: "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"
 type: adr
 name: "apply --all の集約は config 名の辞書順に並べる"
 status: stable
-issues:
-  - "#550"
+sources:
+  - id: "issue-550"
+    resource: "https://github.com/yasunori0418/layat/issues/550"
+    title: "#550"
 origin: "ドキュメント計画段階のレビュー（2026-06-13）で確定。ADR-0013 §3 と ADR-0016 §2 を書き直した"
 justifies:
   - "REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af"

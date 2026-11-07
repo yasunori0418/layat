@@ -3,8 +3,10 @@ id: "ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d"
 type: adr
 name: "templates と layat init は固定 ref で導入する"
 status: stable
-issues:
-  - "#3"
+sources:
+  - id: "issue-3"
+    resource: "https://github.com/yasunori0418/layat/issues/3"
+    title: "#3"
 origin: "Issue #3（CLI 化）と、/grill-me による実装前の横断検査（実装前残セマンティクスの第 7 巡）。ADR-0006「layat の露出と環境セットアップ」節・ADR-0007 §6・ADR-0025 §3 を書き直した"
 justifies:
   - "REQ-6be1cbf1-6c6e-498b-8acb-7f4b80037169"

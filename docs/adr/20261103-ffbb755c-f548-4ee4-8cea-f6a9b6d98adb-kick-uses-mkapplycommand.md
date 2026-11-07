@@ -3,8 +3,10 @@ id: "ADR-ffbb755c-f548-4ee4-8cea-f6a9b6d98adb"
 type: adr
 name: "モジュールの kick も mkApplyCommand で組む"
 status: stable
-issues:
-  - "#530"
+sources:
+  - id: "issue-530"
+    resource: "https://github.com/yasunori0418/layat/issues/530"
+    title: "#530"
 origin: "Issue #530 の grilling（2026-10-25）。ADR-0068 §5a を書き直した"
 justifies:
   - "DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5"

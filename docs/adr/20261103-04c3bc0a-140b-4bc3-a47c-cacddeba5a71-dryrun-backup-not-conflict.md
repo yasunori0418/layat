@@ -3,9 +3,13 @@ id: "ADR-04c3bc0a-140b-4bc3-a47c-cacddeba5a71"
 type: adr
 name: "--dryrun --backup は退避で解ける箇所を conflict にしない"
 status: stable
-issues:
-  - "#169"
-  - "#172"
+sources:
+  - id: "issue-169"
+    resource: "https://github.com/yasunori0418/layat/issues/169"
+    title: "#169"
+  - id: "issue-172"
+    resource: "https://github.com/yasunori0418/layat/issues/172"
+    title: "#172"
 origin: "旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §6（出力規律）の dryrun の扱いを書き直した"
 justifies:
   - "REQ-02a33511-0941-4813-b289-a05eb8e9aa57"

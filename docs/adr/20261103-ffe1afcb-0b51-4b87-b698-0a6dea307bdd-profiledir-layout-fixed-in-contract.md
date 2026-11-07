@@ -3,8 +3,10 @@ id: "ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd"
 type: adr
 name: "profileDir の内部レイアウトを世代バックエンド契約の固定部分にする"
 status: stable
-issues:
-  - "#406"
+sources:
+  - id: "issue-406"
+    resource: "https://github.com/yasunori0418/layat/issues/406"
+    title: "#406"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §3a を書き直した"
 justifies:
   - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"

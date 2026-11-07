@@ -3,8 +3,10 @@ id: "ADR-fdb8003f-db36-424b-8484-6f2fd57a3027"
 type: adr
 name: "engine は JSON とエラーを標準ライブラリで扱う"
 status: stable
-issues:
-  - "#552"
+sources:
+  - id: "issue-552"
+    resource: "https://github.com/yasunori0418/layat/issues/552"
+    title: "#552"
 origin: "engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §7 の JSON とエラー処理を書き直した"
 justifies:
   - "REQ-b74a118a-1272-44eb-944c-7725163211c6"

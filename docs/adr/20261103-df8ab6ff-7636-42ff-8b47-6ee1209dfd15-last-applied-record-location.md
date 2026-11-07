@@ -3,9 +3,13 @@ id: "ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15"
 type: adr
 name: "last-applied 記録を profileDir と同じ鍵で state 基底に置く"
 status: stable
-issues:
-  - "#580"
-  - "#406"
+sources:
+  - id: "issue-580"
+    resource: "https://github.com/yasunori0418/layat/issues/580"
+    title: "#580"
+  - id: "issue-406"
+    resource: "https://github.com/yasunori0418/layat/issues/406"
+    title: "#406"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §1 を書き直した"
 justifies:
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"

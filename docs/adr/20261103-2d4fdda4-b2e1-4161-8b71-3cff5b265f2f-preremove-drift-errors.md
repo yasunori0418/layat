@@ -3,10 +3,16 @@ id: "ADR-2d4fdda4-b2e1-4161-8b71-3cff5b265f2f"
 type: adr
 name: "配置前除去は drift を見つけたら error で止める"
 status: stable
-issues:
-  - "#170"
-  - "#175"
-  - "#172"
+sources:
+  - id: "issue-170"
+    resource: "https://github.com/yasunori0418/layat/issues/170"
+    title: "#170"
+  - id: "issue-175"
+    resource: "https://github.com/yasunori0418/layat/issues/175"
+    title: "#175"
+  - id: "issue-172"
+    resource: "https://github.com/yasunori0418/layat/issues/172"
+    title: "#172"
 origin: "grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0046 §3（配置前除去の drift の扱い）と ADR-0047 §3 を書き直した"
 justifies:
   - "REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26"

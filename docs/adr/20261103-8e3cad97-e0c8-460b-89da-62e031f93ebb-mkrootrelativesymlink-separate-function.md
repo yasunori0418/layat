@@ -3,8 +3,10 @@ id: "ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb"
 type: adr
 name: "root 相対マーカーを別関数 mkRootRelativeSymlink で作る"
 status: stable
-issues:
-  - "#362"
+sources:
+  - id: "issue-362"
+    resource: "https://github.com/yasunori0418/layat/issues/362"
+    title: "#362"
 origin: "Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §4 を書き直した"
 justifies:
   - "REQ-a77181dd-a59c-40bb-855e-3430ad970eb6"

@@ -3,8 +3,10 @@ id: "ADR-efa7685c-6fa4-45df-b7a3-8f3f58e4118c"
 type: adr
 name: "Build の事後条件を世代バックエンドがコミットできる link-farm のパスに置く"
 status: stable
-issues:
-  - "#406"
+sources:
+  - id: "issue-406"
+    resource: "https://github.com/yasunori0418/layat/issues/406"
+    title: "#406"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §5・ADR-0055 §4 を書き直した"
 justifies:
   - "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"

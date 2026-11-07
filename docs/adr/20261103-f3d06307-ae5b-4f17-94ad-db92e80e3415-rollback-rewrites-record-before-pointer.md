@@ -3,9 +3,13 @@ id: "ADR-f3d06307-ae5b-4f17-94ad-db92e80e3415"
 type: adr
 name: "rollback はポインタ移動の前に戻り先の manifest で記録を書き直す"
 status: stable
-issues:
-  - "#580"
-  - "#406"
+sources:
+  - id: "issue-580"
+    resource: "https://github.com/yasunori0418/layat/issues/580"
+    title: "#580"
+  - id: "issue-406"
+    resource: "https://github.com/yasunori0418/layat/issues/406"
+    title: "#406"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §4b を書き直した"
 justifies:
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"

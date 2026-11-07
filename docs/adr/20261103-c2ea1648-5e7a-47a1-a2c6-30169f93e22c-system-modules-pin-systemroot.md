@@ -3,9 +3,13 @@ id: "ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c"
 type: adr
 name: "NixOS / nix-darwin モジュールは root を systemRoot に固定する"
 status: stable
-issues:
-  - "#519"
-  - "#493"
+sources:
+  - id: "issue-519"
+    resource: "https://github.com/yasunori0418/layat/issues/519"
+    title: "#519"
+  - id: "issue-493"
+    resource: "https://github.com/yasunori0418/layat/issues/493"
+    title: "#493"
 origin: "Issue #493（epic: NixOS / nix-darwin モジュールの実装）の grilling（2026-10-24）。ADR-0066 §1 を書き直した"
 justifies:
   - "REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b"

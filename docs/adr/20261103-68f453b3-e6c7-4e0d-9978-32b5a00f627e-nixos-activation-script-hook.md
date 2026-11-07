@@ -3,9 +3,13 @@ id: "ADR-68f453b3-e6c7-4e0d-9978-32b5a00f627e"
 type: adr
 name: "NixOS モジュールは system.activationScripts.layat から起動する"
 status: stable
-issues:
-  - "#519"
-  - "#493"
+sources:
+  - id: "issue-519"
+    resource: "https://github.com/yasunori0418/layat/issues/519"
+    title: "#519"
+  - id: "issue-493"
+    resource: "https://github.com/yasunori0418/layat/issues/493"
+    title: "#493"
 origin: "Issue #493（epic: NixOS / nix-darwin モジュールの実装）の grilling（2026-10-24）。ADR-0066 §2a を書き直した"
 justifies:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"

@@ -3,8 +3,10 @@ id: "ADR-b08479ba-0eae-4668-a4a2-910cd40bd316"
 type: adr
 name: "apply の修飾フラグを --all と合成できるようにする"
 status: stable
-issues:
-  - "#584"
+sources:
+  - id: "issue-584"
+    resource: "https://github.com/yasunori0418/layat/issues/584"
+    title: "#584"
 origin: "ADR-0021 §3b（apply --all --recopy を合成できるようにする）を書き直した"
 justifies:
   - "REQ-687e225f-5046-46db-88fb-f9e527a1e97a"

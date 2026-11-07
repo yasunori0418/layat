@@ -3,9 +3,13 @@ id: "ADR-ef5eac75-c65f-45b3-a8b4-748e0e767989"
 type: adr
 name: "flake-parts module は transposition だけを行う"
 status: stable
-issues:
-  - "#26"
-  - "#530"
+sources:
+  - id: "issue-26"
+    resource: "https://github.com/yasunori0418/layat/issues/26"
+    title: "#26"
+  - id: "issue-530"
+    resource: "https://github.com/yasunori0418/layat/issues/530"
+    title: "#530"
 origin: "Issue #26 と Issue #530 の grilling（2026-10-25）。ADR-0029 §5 と ADR-0068 §5b を書き直した"
 justifies:
   - "REQ-c50df875-2cb0-4e72-8a21-858359a11cae"

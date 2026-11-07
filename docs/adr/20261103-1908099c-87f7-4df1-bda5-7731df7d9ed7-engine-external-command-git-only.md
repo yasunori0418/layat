@@ -3,8 +3,10 @@ id: "ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7"
 type: adr
 name: "engine が直接叩く外部コマンドを git に限る"
 status: stable
-issues:
-  - "#406"
+sources:
+  - id: "issue-406"
+    resource: "https://github.com/yasunori0418/layat/issues/406"
+    title: "#406"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §4 を書き直した"
 justifies:
   - "REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564"

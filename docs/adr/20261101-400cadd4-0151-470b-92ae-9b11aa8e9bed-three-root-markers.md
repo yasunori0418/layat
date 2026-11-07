@@ -3,8 +3,10 @@ id: "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
 type: adr
 name: "root は 3 つの marker で表す"
 status: stable
-issues:
-  - "#2"
+sources:
+  - id: "issue-2"
+    resource: "https://github.com/yasunori0418/layat/issues/2"
+    title: "#2"
 origin: "Issue #2（root デフォルト）。ADR-0007 §2 の 3 マーカーと ADR-0013 §5 を書き直した"
 justifies:
   - "REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66"

@@ -3,8 +3,10 @@ id: "ADR-494b6477-9d5b-4e29-879d-f7d16be5d466"
 type: adr
 name: "生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する"
 status: stable
-issues:
-  - "#395"
+sources:
+  - id: "issue-395"
+    resource: "https://github.com/yasunori0418/layat/issues/395"
+    title: "#395"
 origin: "Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0055 §7 を書き直した"
 justifies:
   - "REQ-9341fa5d-836e-4023-af53-cc7d273438d1"

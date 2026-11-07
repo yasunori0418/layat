@@ -3,9 +3,13 @@ id: "ADR-02ed93fa-c59f-4790-805d-759501017d2b"
 type: adr
 name: "method の copy から symlink への変更は移行しない"
 status: stable
-issues:
-  - "#175"
-  - "#172"
+sources:
+  - id: "issue-175"
+    resource: "https://github.com/yasunori0418/layat/issues/175"
+    title: "#175"
+  - id: "issue-172"
+    resource: "https://github.com/yasunori0418/layat/issues/172"
+    title: "#172"
 origin: "epic #172 の grilling セッション（2026-07-12）で確定。ADR-0047 §2 の copy から symlink への変更を書き直した"
 justifies:
   - "REQ-2b48620a-abaa-43df-a106-954bbba3de56"

@@ -3,8 +3,10 @@ id: "ADR-2be5080a-1cba-4fea-bed8-66e0d0d7b8d0"
 type: adr
 name: "Go toolchain は nixpkgs の go に pin する"
 status: stable
-issues:
-  - "#552"
+sources:
+  - id: "issue-552"
+    resource: "https://github.com/yasunori0418/layat/issues/552"
+    title: "#552"
 origin: "engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §8 を書き直した"
 justifies:
   - "REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0"

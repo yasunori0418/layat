@@ -3,8 +3,10 @@ id: "ADR-5d85f49f-c136-425f-bea4-ad8ab8dd8632"
 type: adr
 name: "root 相対 entry で engine が root を使うのは配置前の実在確認だけにする"
 status: stable
-issues:
-  - "#362"
+sources:
+  - id: "issue-362"
+    resource: "https://github.com/yasunori0418/layat/issues/362"
+    title: "#362"
 origin: "Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §7 を書き直した"
 justifies:
   - "DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296"

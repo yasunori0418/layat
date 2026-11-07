@@ -3,9 +3,13 @@ id: "ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444"
 type: adr
 name: "世代スキップには profile に加え記録の一致も要する"
 status: stable
-issues:
-  - "#580"
-  - "#406"
+sources:
+  - id: "issue-580"
+    resource: "https://github.com/yasunori0418/layat/issues/580"
+    title: "#580"
+  - id: "issue-406"
+    resource: "https://github.com/yasunori0418/layat/issues/406"
+    title: "#406"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §3b を書き直した"
 justifies:
   - "REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0"

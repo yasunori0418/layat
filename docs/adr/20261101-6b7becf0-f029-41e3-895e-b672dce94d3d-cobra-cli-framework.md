@@ -3,8 +3,10 @@ id: "ADR-6b7becf0-f029-41e3-895e-b672dce94d3d"
 type: adr
 name: "CLI は cobra で組む"
 status: stable
-issues:
-  - "#552"
+sources:
+  - id: "issue-552"
+    resource: "https://github.com/yasunori0418/layat/issues/552"
+    title: "#552"
 origin: "engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §2 を書き直した"
 justifies:
   - "REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0"

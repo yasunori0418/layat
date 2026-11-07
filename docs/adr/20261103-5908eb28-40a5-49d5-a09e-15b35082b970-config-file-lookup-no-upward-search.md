@@ -3,8 +3,10 @@ id: "ADR-5908eb28-40a5-49d5-a09e-15b35082b970"
 type: adr
 name: "設定ファイルは -f のディレクトリか cwd だけで探す"
 status: stable
-issues:
-  - "#395"
+sources:
+  - id: "issue-395"
+    resource: "https://github.com/yasunori0418/layat/issues/395"
+    title: "#395"
 origin: "Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §3 を書き直した"
 justifies:
   - "REQ-badc7e10-0ba4-40d4-b334-6e40193119db"

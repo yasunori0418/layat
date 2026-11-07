@@ -3,8 +3,10 @@ id: "ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7"
 type: adr
 name: "root 相対マーカーのリンクを target 起点の相対パスで張る"
 status: stable
-issues:
-  - "#362"
+sources:
+  - id: "issue-362"
+    resource: "https://github.com/yasunori0418/layat/issues/362"
+    title: "#362"
 origin: "Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §1 と §3 を書き直した"
 justifies:
   - "REQ-a77181dd-a59c-40bb-855e-3430ad970eb6"

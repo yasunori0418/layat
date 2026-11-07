@@ -4,8 +4,10 @@ type: sara_adr
 name: "item に生成者・確認の記録・期限を持たせる"
 description: "生成者と時刻の generated を必須にし、確認の記録 verified と期限 stale_after を任意で持たせ、入れ子キーの形を契約テストで確かめる"
 status: stable
-issues:
-  - "#662"
+sources:
+  - id: "issue-662"
+    resource: "https://github.com/yasunori0418/layat/issues/662"
+    title: "#662"
 origin: "epic #662 の grilling（2026-11-07）で確定"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"

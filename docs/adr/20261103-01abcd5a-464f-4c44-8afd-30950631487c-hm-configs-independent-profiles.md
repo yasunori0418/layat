@@ -3,8 +3,10 @@ id: "ADR-01abcd5a-464f-4c44-8afd-30950631487c"
 type: adr
 name: "HM モジュールは layat.configs.<name> ごとに独立した profile を持つ"
 status: stable
-issues:
-  - "#585"
+sources:
+  - id: "issue-585"
+    resource: "https://github.com/yasunori0418/layat/issues/585"
+    title: "#585"
 origin: "ADR-0035 §1 を書き直した"
 justifies:
   - "REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a"

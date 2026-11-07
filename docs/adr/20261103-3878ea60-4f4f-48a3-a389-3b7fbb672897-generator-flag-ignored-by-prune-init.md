@@ -3,8 +3,10 @@ id: "ADR-3878ea60-4f4f-48a3-a389-3b7fbb672897"
 type: adr
 name: "--generator を prune と init では無視する"
 status: stable
-issues:
-  - "#395"
+sources:
+  - id: "issue-395"
+    resource: "https://github.com/yasunori0418/layat/issues/395"
+    title: "#395"
 origin: "Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §6 を書き直した"
 justifies:
   - "REQ-badc7e10-0ba4-40d4-b334-6e40193119db"

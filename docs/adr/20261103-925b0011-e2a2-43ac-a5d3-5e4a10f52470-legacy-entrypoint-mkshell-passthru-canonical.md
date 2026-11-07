@@ -3,9 +3,13 @@ id: "ADR-925b0011-e2a2-43ac-a5d3-5e4a10f52470"
 type: adr
 name: "legacy entrypoint は mkShell の passthru 形を正準にする"
 status: stable
-issues:
-  - "#112"
-  - "#107"
+sources:
+  - id: "issue-112"
+    resource: "https://github.com/yasunori0418/layat/issues/112"
+    title: "#112"
+  - id: "issue-107"
+    resource: "https://github.com/yasunori0418/layat/issues/107"
+    title: "#107"
 origin: "ADR-0032 §1 を書き直した"
 justifies:
   - "REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da"

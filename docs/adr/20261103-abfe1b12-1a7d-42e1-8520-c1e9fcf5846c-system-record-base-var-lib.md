@@ -3,8 +3,10 @@ id: "ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c"
 type: adr
 name: "system mode の last-applied 記録を /var/lib/layat に置く"
 status: stable
-issues:
-  - "#140"
+sources:
+  - id: "issue-140"
+    resource: "https://github.com/yasunori0418/layat/issues/140"
+    title: "#140"
 origin: "Issue #140（epic #129: system mode の実装）の計画（2026-10-18）。ADR-0062 §1・ADR-0066 の既知の注意点（macOS の記録基底）を書き直した"
 justifies:
   - "REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4"

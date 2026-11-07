@@ -3,8 +3,10 @@ id: "SDR-536848bb-8901-4e73-8c66-861de3f91bcd"
 type: sara_adr
 name: "概要文書は item へのリンク集に縮退させる"
 status: stable
-issues:
-  - "#203"
+sources:
+  - id: "issue-203"
+    resource: "https://github.com/yasunori0418/layat/issues/203"
+    title: "#203"
 origin: "epic #203 の grilling セッション（2026-07-31・2026-08-01）で確定。ADR-0048 §1 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"

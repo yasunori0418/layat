@@ -3,8 +3,10 @@ id: "ADR-b4be88b8-1c19-426d-885d-f5d80b95252f"
 type: adr
 name: "prune は root が実在しない roothash 系列だけを削除する"
 status: stable
-issues:
-  - "#580"
+sources:
+  - id: "issue-580"
+    resource: "https://github.com/yasunori0418/layat/issues/580"
+    title: "#580"
 origin: "次期マイルストーン計画の grilling（2026-07-04）。公開後の実運用で孤児系列が溜まり始めたことを消費側の要求と判断した。ADR-0034 §1a を書き直した"
 justifies:
   - "REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4"

@@ -3,9 +3,13 @@ id: "ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8"
 type: adr
 name: "出所の食い違いは警告して apply を続ける"
 status: stable
-issues:
-  - "#580"
-  - "#498"
+sources:
+  - id: "issue-580"
+    resource: "https://github.com/yasunori0418/layat/issues/580"
+    title: "#580"
+  - id: "issue-498"
+    resource: "https://github.com/yasunori0418/layat/issues/498"
+    title: "#498"
 origin: "Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §3 と §6 を書き直した"
 justifies:
   - "REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282"

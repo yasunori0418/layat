@@ -3,8 +3,10 @@ id: "ADR-6687c0dc-957d-4913-99c6-168b0fe552ad"
 type: adr
 name: "生成器の診断を成功時も stderr へ素通しする"
 status: stable
-issues:
-  - "#396"
+sources:
+  - id: "issue-396"
+    resource: "https://github.com/yasunori0418/layat/issues/396"
+    title: "#396"
 origin: "Issue #396（評価器の診断の扱い）の結論。ADR-0055 §6 の診断の出力先を書き直した"
 justifies:
   - "REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd"

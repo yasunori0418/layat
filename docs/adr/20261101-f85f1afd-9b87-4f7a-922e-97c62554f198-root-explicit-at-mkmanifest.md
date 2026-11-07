@@ -3,8 +3,10 @@ id: "ADR-f85f1afd-9b87-4f7a-922e-97c62554f198"
 type: adr
 name: "root の明示を mkManifest 層で必須にする"
 status: stable
-issues:
-  - "#2"
+sources:
+  - id: "issue-2"
+    resource: "https://github.com/yasunori0418/layat/issues/2"
+    title: "#2"
 origin: "Issue #2（root デフォルト）。ADR-0007 §2 の root の明示必須とモジュールによる pin を書き直した"
 justifies:
   - "REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4"

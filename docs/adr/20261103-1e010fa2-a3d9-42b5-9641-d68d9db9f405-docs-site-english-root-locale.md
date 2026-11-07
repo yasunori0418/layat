@@ -3,8 +3,10 @@ id: "ADR-1e010fa2-a3d9-42b5-9641-d68d9db9f405"
 type: adr
 name: "ドキュメントサイトは英語をルートのロケールにする"
 status: stable
-issues:
-  - "#57"
+sources:
+  - id: "issue-57"
+    resource: "https://github.com/yasunori0418/layat/issues/57"
+    title: "#57"
 origin: "Issue #57 のサイト設計。ADR-0037 §4 を書き直した"
 justifies:
   - "INF-0865477b-21b2-4feb-9c06-1a882a4e595a"

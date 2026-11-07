@@ -3,8 +3,10 @@ id: "ADR-87a2cf34-9592-4c81-8980-246bca579ca0"
 type: adr
 name: "manifest の取得をプロセス内の Go インターフェイスの生成器越しにする"
 status: stable
-issues:
-  - "#395"
+sources:
+  - id: "issue-395"
+    resource: "https://github.com/yasunori0418/layat/issues/395"
+    title: "#395"
 origin: "Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0055 §1 を書き直した"
 justifies:
   - "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"

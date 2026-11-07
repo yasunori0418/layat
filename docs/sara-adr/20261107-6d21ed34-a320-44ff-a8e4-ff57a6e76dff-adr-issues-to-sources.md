@@ -4,8 +4,10 @@ type: sara_adr
 name: "ADR の issues を sources に移す"
 description: "ADR の外部参照の Issue を OKF の sources リストへ移し、origin は拡張キーとして残す"
 status: stable
-issues:
-  - "#662"
+sources:
+  - id: "issue-662"
+    resource: "https://github.com/yasunori0418/layat/issues/662"
+    title: "#662"
 origin: "epic #662 の grilling（2026-11-07）で確定"
 justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"

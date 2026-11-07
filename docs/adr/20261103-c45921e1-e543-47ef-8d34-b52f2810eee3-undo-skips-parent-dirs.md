@@ -3,9 +3,13 @@ id: "ADR-c45921e1-e543-47ef-8d34-b52f2810eee3"
 type: adr
 name: "配置の前に作った中間ディレクトリを undo の対象にしない"
 status: stable
-issues:
-  - "#168"
-  - "#172"
+sources:
+  - id: "issue-168"
+    resource: "https://github.com/yasunori0418/layat/issues/168"
+    title: "#168"
+  - id: "issue-172"
+    resource: "https://github.com/yasunori0418/layat/issues/172"
+    title: "#172"
 origin: "旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0044 §1（インメモリ undo ジャーナル）の中間ディレクトリの扱いを書き直した"
 justifies:
   - "REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940"

@@ -3,9 +3,13 @@ id: "ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883"
 type: adr
 name: "state の基底を設定で上書きさせない"
 status: stable
-issues:
-  - "#406"
-  - "#140"
+sources:
+  - id: "issue-406"
+    resource: "https://github.com/yasunori0418/layat/issues/406"
+    title: "#406"
+  - id: "issue-140"
+    resource: "https://github.com/yasunori0418/layat/issues/140"
+    title: "#140"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）と Issue #140（epic #129: system mode の実装）の計画（2026-10-18）。ADR-0057 §6b・ADR-0062 §2 を書き直した"
 justifies:
   - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"

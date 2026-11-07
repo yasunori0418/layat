@@ -3,9 +3,13 @@ id: "ADR-c2131901-290d-4311-8f84-64edb33e8897"
 type: adr
 name: "status は config 名の完全一致で絞り込む"
 status: stable
-issues:
-  - "#580"
-  - "#198"
+sources:
+  - id: "issue-580"
+    resource: "https://github.com/yasunori0418/layat/issues/580"
+    title: "#580"
+  - id: "issue-198"
+    resource: "https://github.com/yasunori0418/layat/issues/198"
+    title: "#198"
 origin: "Issue #198（`layat status [name]`）の実装前に、2026-07-19 の grilling 以後の実装の変化を差分 grilling で反映した（2026-10-23）。ADR-0065 §2 を書き直した"
 justifies:
   - "REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173"

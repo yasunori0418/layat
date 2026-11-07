@@ -4,8 +4,10 @@ type: sara_adr
 name: "OKF v0.2 と互換の frontmatter キーを item に足す"
 description: "OKF v0.2 と互換の frontmatter キーを sara の item に足す方針と、バンドル単位の適合を追わない範囲を決める"
 status: stable
-issues:
-  - "#662"
+sources:
+  - id: "issue-662"
+    resource: "https://github.com/yasunori0418/layat/issues/662"
+    title: "#662"
 origin: "epic #662 の grilling（2026-11-07）で確定"
 justifies:
   - "QA-67715bb3-1162-4ccf-8441-2f44257a57da"

@@ -3,8 +3,10 @@ id: "ADR-c4a3d9be-19ea-461d-ab0f-2037adc494e1"
 type: adr
 name: "入力の不正を E_INPUT に分類する"
 status: stable
-issues:
-  - "#395"
+sources:
+  - id: "issue-395"
+    resource: "https://github.com/yasunori0418/layat/issues/395"
+    title: "#395"
 origin: "Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §5 を書き直した"
 justifies:
   - "REQ-9341fa5d-836e-4023-af53-cc7d273438d1"

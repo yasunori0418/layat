@@ -3,8 +3,10 @@ id: "ADR-56ac6298-db67-4f63-8b60-f14af3b9570a"
 type: adr
 name: "reset は config の名指しを必須にする"
 status: stable
-issues:
-  - "#584"
+sources:
+  - id: "issue-584"
+    resource: "https://github.com/yasunori0418/layat/issues/584"
+    title: "#584"
 origin: "ADR-0021 §1（reset は名指し必須で --all に対応しない）を書き直した"
 justifies:
   - "REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4"

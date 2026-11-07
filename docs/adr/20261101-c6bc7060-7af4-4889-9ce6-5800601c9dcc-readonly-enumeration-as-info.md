@@ -3,9 +3,13 @@ id: "ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc"
 type: adr
 name: "読み取り専用の列挙は info で返す"
 status: stable
-issues:
-  - "#552"
-  - "yasunori0418/outturn#1"
+sources:
+  - id: "issue-552"
+    resource: "https://github.com/yasunori0418/layat/issues/552"
+    title: "#552"
+  - id: "issue-outturn-1"
+    resource: "https://github.com/yasunori0418/outturn/issues/1"
+    title: "yasunori0418/outturn#1"
 origin: "layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §5 を書き直した"
 justifies:
   - "REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303"

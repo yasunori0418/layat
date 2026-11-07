@@ -3,8 +3,10 @@ id: "ADR-ca24e802-cc57-40c5-ad03-a1c5f0b6e498"
 type: adr
 name: "mkApplyCommand の root を既定値のない必須の enum にする"
 status: stable
-issues:
-  - "#530"
+sources:
+  - id: "issue-530"
+    resource: "https://github.com/yasunori0418/layat/issues/530"
+    title: "#530"
 origin: "Issue #530 の grilling（2026-10-25）。ADR-0068 §2 を書き直した"
 justifies:
   - "REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f"

@@ -3,8 +3,10 @@ id: "ADR-1cbacca1-1930-46ca-bf82-30310f82216e"
 type: adr
 name: "世代の一覧を nix-env を経由せず世代リンクの走査で得る"
 status: stable
-issues:
-  - "#129"
+sources:
+  - id: "issue-129"
+    resource: "https://github.com/yasunori0418/layat/issues/129"
+    title: "#129"
 origin: "system mode の e2e で、root 所有の profileDir を非 root が `list-generations` すると nix-env の lock 取得で失敗することが分かった（2026-10-18）。ADR-0063 §1・§2 を書き直した"
 justifies:
   - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"

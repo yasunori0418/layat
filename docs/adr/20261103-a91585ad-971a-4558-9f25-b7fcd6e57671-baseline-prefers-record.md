@@ -3,9 +3,13 @@ id: "ADR-a91585ad-971a-4558-9f25-b7fcd6e57671"
 type: adr
 name: "古くなった配置の除去は、比較の基準を記録から優先して読む"
 status: stable
-issues:
-  - "#580"
-  - "#406"
+sources:
+  - id: "issue-580"
+    resource: "https://github.com/yasunori0418/layat/issues/580"
+    title: "#580"
+  - id: "issue-406"
+    resource: "https://github.com/yasunori0418/layat/issues/406"
+    title: "#406"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §3a を書き直した"
 justifies:
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"

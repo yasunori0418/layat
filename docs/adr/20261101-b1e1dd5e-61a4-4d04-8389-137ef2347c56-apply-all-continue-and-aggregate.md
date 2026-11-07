@@ -3,8 +3,10 @@ id: "ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56"
 type: adr
 name: "apply --all は失敗しても残りを続け、最後に集約して非 0 で終える"
 status: stable
-issues:
-  - "#550"
+sources:
+  - id: "issue-550"
+    resource: "https://github.com/yasunori0418/layat/issues/550"
+    title: "#550"
 origin: "ドキュメント計画段階のレビュー（2026-06-13）で確定。ADR-0013 §3 を書き直した"
 justifies:
   - "REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af"

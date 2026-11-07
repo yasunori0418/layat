@@ -3,8 +3,10 @@ id: "ADR-964e99a8-4aaa-46f6-b4ee-26270fc04649"
 type: adr
 name: "生成器の失敗は構造化した値で CLI へ返す"
 status: stable
-issues:
-  - "#396"
+sources:
+  - id: "issue-396"
+    resource: "https://github.com/yasunori0418/layat/issues/396"
+    title: "#396"
 origin: "Issue #396（評価器の診断の扱い）の結論。ADR-0055 §6 の失敗の返し方と表示の主体を書き直した"
 justifies:
   - "REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd"

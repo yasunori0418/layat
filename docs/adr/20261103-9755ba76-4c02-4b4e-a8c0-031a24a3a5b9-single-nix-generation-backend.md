@@ -3,8 +3,10 @@ id: "ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9"
 type: adr
 name: "世代バックエンドを nix 実装 1 つに留める"
 status: stable
-issues:
-  - "#406"
+sources:
+  - id: "issue-406"
+    resource: "https://github.com/yasunori0418/layat/issues/406"
+    title: "#406"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §1・§6a を書き直した"
 justifies:
   - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"

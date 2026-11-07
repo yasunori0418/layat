@@ -3,9 +3,13 @@ id: "SDR-f5443db0-6407-41c0-9ab5-55f22dc4de5e"
 type: sara_adr
 name: "sara-id を廃止し sara init を包む起票ラッパーを使う"
 status: stable
-issues:
-  - "#366"
-  - "#364"
+sources:
+  - id: "issue-366"
+    resource: "https://github.com/yasunori0418/layat/issues/366"
+    title: "#366"
+  - id: "issue-364"
+    resource: "https://github.com/yasunori0418/layat/issues/364"
+    title: "#364"
 origin: "epic #364 の着手前 grilling（2026-08-17）で確定。ADR-0053 §3 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"

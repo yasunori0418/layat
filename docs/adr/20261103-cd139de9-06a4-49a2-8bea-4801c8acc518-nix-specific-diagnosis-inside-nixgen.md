@@ -3,8 +3,10 @@ id: "ADR-cd139de9-06a4-49a2-8bea-4801c8acc518"
 type: adr
 name: "nix 固有の失敗判定と案内文を nix 生成器の中に閉じる"
 status: stable
-issues:
-  - "#396"
+sources:
+  - id: "issue-396"
+    resource: "https://github.com/yasunori0418/layat/issues/396"
+    title: "#396"
 origin: "Issue #396（評価器の診断の扱い）の結論。ADR-0055 §6 の nix 固有の判定の置き場所を書き直した"
 justifies:
   - "REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6"

@@ -3,8 +3,10 @@ id: "ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429"
 type: adr
 name: "apply --all に root モードのフィルタを持たせる"
 status: stable
-issues:
-  - "#550"
+sources:
+  - id: "issue-550"
+    resource: "https://github.com/yasunori0418/layat/issues/550"
+    title: "#550"
 origin: "実装前レビュー第 3 巡（2026-06-14）で確定。ADR-0017 §1 を書き直した"
 justifies:
   - "REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b"

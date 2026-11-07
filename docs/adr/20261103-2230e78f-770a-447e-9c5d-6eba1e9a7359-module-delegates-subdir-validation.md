@@ -3,8 +3,10 @@ id: "ADR-2230e78f-770a-447e-9c5d-6eba1e9a7359"
 type: adr
 name: "モジュールは subdir の確認を lib に委ねる"
 status: stable
-issues:
-  - "#585"
+sources:
+  - id: "issue-585"
+    resource: "https://github.com/yasunori0418/layat/issues/585"
+    title: "#585"
 origin: "ADR-0064 §3 を書き直した"
 justifies:
   - "REQ-068f2fb3-5459-4325-9359-c931b5049e0d"

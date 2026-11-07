@@ -3,8 +3,10 @@ id: "ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1"
 type: adr
 name: "終了コードは 0 / 1 / 2 の 3 値にする"
 status: stable
-issues:
-  - "#550"
+sources:
+  - id: "issue-550"
+    resource: "https://github.com/yasunori0418/layat/issues/550"
+    title: "#550"
 origin: "実装前残セマンティクス確定の第5巡（2026-06-14）で確定。ADR-0023 §2 と ADR-0006「dry-run」節を書き直した"
 justifies:
   - "REQ-2c5a10d8-112b-4f96-947a-aba7164779c4"

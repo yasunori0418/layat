@@ -3,8 +3,10 @@ id: "ADR-f58e9981-bacc-4937-98b8-bddce0a057db"
 type: adr
 name: "モジュールの activation は apply --all --manifest を 1 回だけ起動する"
 status: stable
-issues:
-  - "#585"
+sources:
+  - id: "issue-585"
+    resource: "https://github.com/yasunori0418/layat/issues/585"
+    title: "#585"
 origin: "ADR-0060 §1 と ADR-0066 §3a を書き直した"
 justifies:
   - "REQ-c847d1af-a437-46bb-bd64-42083810d034"

@@ -3,8 +3,10 @@ id: "ADR-fb01d942-2875-4dcb-a7df-879e18f63883"
 type: adr
 name: "apply --recopy で全 copy target を src から無条件に上書きする"
 status: stable
-issues:
-  - "#584"
+sources:
+  - id: "issue-584"
+    resource: "https://github.com/yasunori0418/layat/issues/584"
+    title: "#584"
 origin: "ADR-0020 §1（apply --recopy で copy target を上書き再コピーする）を書き直した"
 justifies:
   - "REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065"

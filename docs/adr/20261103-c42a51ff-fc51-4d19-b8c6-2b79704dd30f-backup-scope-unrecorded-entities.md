@@ -3,9 +3,13 @@ id: "ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f"
 type: adr
 name: "--backup は配置を塞ぐ記録外の実体だけを退避する"
 status: stable
-issues:
-  - "#169"
-  - "#172"
+sources:
+  - id: "issue-169"
+    resource: "https://github.com/yasunori0418/layat/issues/169"
+    title: "#169"
+  - id: "issue-172"
+    resource: "https://github.com/yasunori0418/layat/issues/172"
+    title: "#172"
 origin: "旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §2 を書き直した"
 justifies:
   - "REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b"

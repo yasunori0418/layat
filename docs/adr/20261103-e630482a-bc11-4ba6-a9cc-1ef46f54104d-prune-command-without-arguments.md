@@ -3,8 +3,10 @@ id: "ADR-e630482a-bc11-4ba6-a9cc-1ef46f54104d"
 type: adr
 name: "prune は引数を取らない"
 status: stable
-issues:
-  - "#580"
+sources:
+  - id: "issue-580"
+    resource: "https://github.com/yasunori0418/layat/issues/580"
+    title: "#580"
 origin: "次期マイルストーン計画の grilling（2026-07-04）。公開後の実運用で孤児系列が溜まり始めたことを消費側の要求と判断した。ADR-0034 §3 を書き直した"
 justifies:
   - "REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4"

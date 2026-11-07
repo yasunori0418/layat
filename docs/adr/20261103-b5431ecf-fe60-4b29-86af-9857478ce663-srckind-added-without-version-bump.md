@@ -3,8 +3,10 @@ id: "ADR-b5431ecf-fe60-4b29-86af-9857478ce663"
 type: adr
 name: "srcKind の列挙値は schemaVersion を上げずに足す"
 status: stable
-issues:
-  - "#362"
+sources:
+  - id: "issue-362"
+    resource: "https://github.com/yasunori0418/layat/issues/362"
+    title: "#362"
 origin: "Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §5a と §5b を書き直した"
 justifies:
   - "REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336"

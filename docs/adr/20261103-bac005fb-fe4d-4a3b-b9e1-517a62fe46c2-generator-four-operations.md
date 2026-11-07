@@ -3,8 +3,10 @@ id: "ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2"
 type: adr
 name: "生成器の契約を Discover / Roots / Build / DryBuild の 4 操作にする"
 status: stable
-issues:
-  - "#395"
+sources:
+  - id: "issue-395"
+    resource: "https://github.com/yasunori0418/layat/issues/395"
+    title: "#395"
 origin: "Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0055 §2 と ADR-0032 §6、ADR-0007 §3 の発見順を書き直した"
 justifies:
   - "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"

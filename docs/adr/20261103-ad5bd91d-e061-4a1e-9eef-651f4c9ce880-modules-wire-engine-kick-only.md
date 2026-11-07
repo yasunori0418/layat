@@ -3,8 +3,10 @@ id: "ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880"
 type: adr
 name: "モジュールは root と起動の時機だけを供給して engine を起動する"
 status: stable
-issues:
-  - "#585"
+sources:
+  - id: "issue-585"
+    resource: "https://github.com/yasunori0418/layat/issues/585"
+    title: "#585"
 origin: "ADR-0003 §b を書き直した"
 justifies:
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"

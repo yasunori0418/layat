@@ -3,8 +3,10 @@ id: "ADR-9acd3e01-58f1-48ca-b84f-f33a5bc1aaa5"
 type: adr
 name: "生成器の選択値を nix だけにする"
 status: stable
-issues:
-  - "#395"
+sources:
+  - id: "issue-395"
+    resource: "https://github.com/yasunori0418/layat/issues/395"
+    title: "#395"
 origin: "Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §2 を書き直した"
 justifies:
   - "REQ-badc7e10-0ba4-40d4-b334-6e40193119db"

@@ -3,9 +3,13 @@ id: "ADR-db293e0c-4789-45b7-93a9-adedc021344f"
 type: adr
 name: "lib.mkApplyCommand で事前展開した apply コマンドを組む"
 status: stable
-issues:
-  - "#530"
-  - "#493"
+sources:
+  - id: "issue-530"
+    resource: "https://github.com/yasunori0418/layat/issues/530"
+    title: "#530"
+  - id: "issue-493"
+    resource: "https://github.com/yasunori0418/layat/issues/493"
+    title: "#493"
 origin: "Issue #530 の grilling（2026-10-25）。ADR-0068 §1 を書き直した"
 justifies:
   - "REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f"

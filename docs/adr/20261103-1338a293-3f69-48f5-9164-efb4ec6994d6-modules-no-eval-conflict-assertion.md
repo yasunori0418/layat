@@ -3,8 +3,10 @@ id: "ADR-1338a293-3f69-48f5-9164-efb4ec6994d6"
 type: adr
 name: "モジュールは configs 間の target 衝突を評価時に確認しない"
 status: stable
-issues:
-  - "#585"
+sources:
+  - id: "issue-585"
+    resource: "https://github.com/yasunori0418/layat/issues/585"
+    title: "#585"
 origin: "ADR-0060 §3 と ADR-0066 §3c を書き直した"
 justifies:
   - "REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44"

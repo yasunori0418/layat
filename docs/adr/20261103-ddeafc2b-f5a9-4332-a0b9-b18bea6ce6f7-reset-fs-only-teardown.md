@@ -3,8 +3,10 @@ id: "ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7"
 type: adr
 name: "reset で profile を触らずに配置物を撤去する"
 status: stable
-issues:
-  - "#584"
+sources:
+  - id: "issue-584"
+    resource: "https://github.com/yasunori0418/layat/issues/584"
+    title: "#584"
 origin: "ADR-0020 §2（layat reset で配置物を無い状態へ戻す）を書き直した"
 justifies:
   - "REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6"

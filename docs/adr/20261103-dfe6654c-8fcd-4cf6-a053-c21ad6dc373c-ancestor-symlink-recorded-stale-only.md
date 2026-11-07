@@ -3,8 +3,10 @@ id: "ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c"
 type: adr
 name: "祖先 symlink は自己記録の古くなったものだけを移行する"
 status: stable
-issues:
-  - "#170"
+sources:
+  - id: "issue-170"
+    resource: "https://github.com/yasunori0418/layat/issues/170"
+    title: "#170"
 origin: "dotfiles 側での実遭遇（#170）と、次期マイルストーンの grilling セッション（2026-07-11）で設計確定。ADR-0046 §1 を書き直した"
 justifies:
   - "REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575"

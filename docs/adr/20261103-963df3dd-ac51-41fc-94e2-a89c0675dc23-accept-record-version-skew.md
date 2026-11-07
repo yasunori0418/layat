@@ -3,9 +3,13 @@ id: "ADR-963df3dd-ac51-41fc-94e2-a89c0675dc23"
 type: adr
 name: "版 1 しか読めない engine との非互換を受け入れる"
 status: stable
-issues:
-  - "#580"
-  - "#498"
+sources:
+  - id: "issue-580"
+    resource: "https://github.com/yasunori0418/layat/issues/580"
+    title: "#580"
+  - id: "issue-498"
+    resource: "https://github.com/yasunori0418/layat/issues/498"
+    title: "#498"
 origin: "Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §5a を書き直した"
 justifies:
   - "REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282"

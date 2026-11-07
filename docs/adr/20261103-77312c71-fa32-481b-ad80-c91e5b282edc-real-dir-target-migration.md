@@ -3,9 +3,13 @@ id: "ADR-77312c71-fa32-481b-ad80-c91e5b282edc"
 type: adr
 name: "実ディレクトリの target は全 leaf を除去できるときだけ移行する"
 status: stable
-issues:
-  - "#175"
-  - "#172"
+sources:
+  - id: "issue-175"
+    resource: "https://github.com/yasunori0418/layat/issues/175"
+    title: "#175"
+  - id: "issue-172"
+    resource: "https://github.com/yasunori0418/layat/issues/172"
+    title: "#172"
 origin: "epic #172 の grilling セッション（2026-07-12）で確定。ADR-0047 §1 を書き直した"
 justifies:
   - "REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26"

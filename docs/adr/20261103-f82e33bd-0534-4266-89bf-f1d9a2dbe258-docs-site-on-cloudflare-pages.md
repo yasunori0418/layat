@@ -3,8 +3,10 @@ id: "ADR-f82e33bd-0534-4266-89bf-f1d9a2dbe258"
 type: adr
 name: "ドキュメントサイトを GitHub Actions から Cloudflare Pages へ配備する"
 status: stable
-issues:
-  - "#57"
+sources:
+  - id: "issue-57"
+    resource: "https://github.com/yasunori0418/layat/issues/57"
+    title: "#57"
 origin: "Issue #57 のサイト設計。ADR-0037 §2 を書き直した"
 justifies:
   - "INF-0865477b-21b2-4feb-9c06-1a882a4e595a"

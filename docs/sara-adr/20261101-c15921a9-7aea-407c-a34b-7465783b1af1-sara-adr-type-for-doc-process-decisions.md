@@ -3,9 +3,13 @@ id: "SDR-c15921a9-7aea-407c-a34b-7465783b1af1"
 type: sara_adr
 name: "sara 品質管理機構の決定は sara_adr 型に分ける"
 status: stable
-issues:
-  - "#499"
-  - "#500"
+sources:
+  - id: "issue-499"
+    resource: "https://github.com/yasunori0418/layat/issues/499"
+    title: "#499"
+  - id: "issue-500"
+    resource: "https://github.com/yasunori0418/layat/issues/500"
+    title: "#500"
 origin: "Issue #499 の grilling（2026-11-01）で確定"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"

@@ -3,8 +3,10 @@ id: "ADR-a86a8492-57fb-49d0-ba77-200f6dc49c3a"
 type: adr
 name: "reset --dryrun は副作用なしで撤去対象を示す"
 status: stable
-issues:
-  - "#584"
+sources:
+  - id: "issue-584"
+    resource: "https://github.com/yasunori0418/layat/issues/584"
+    title: "#584"
 origin: "ADR-0021 §2（reset の --dryrun を副作用なしのプレビューにする）を書き直した"
 justifies:
   - "REQ-6a950d6d-c191-4235-a1b4-73ffc7c2bb38"

@@ -3,8 +3,10 @@ id: "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
 type: adr
 name: "配置の振動はユーザー責任とし、文書で注意するに留める"
 status: stable
-issues:
-  - "#550"
+sources:
+  - id: "issue-550"
+    resource: "https://github.com/yasunori0418/layat/issues/550"
+    title: "#550"
 origin: "実装前残セマンティクス確定の第5巡（2026-06-14）で確定。ADR-0023 §5（5b）と ADR-0024 §10 を書き直した"
 justifies:
   - "REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693"

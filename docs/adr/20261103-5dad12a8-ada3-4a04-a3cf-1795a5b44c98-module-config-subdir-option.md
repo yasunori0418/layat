@@ -3,8 +3,10 @@ id: "ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98"
 type: adr
 name: "configs.<name>.subdir で config ごとに target の基点を寄せる"
 status: stable
-issues:
-  - "#585"
+sources:
+  - id: "issue-585"
+    resource: "https://github.com/yasunori0418/layat/issues/585"
+    title: "#585"
 origin: "ADR-0064 §1・§2 を書き直した"
 justifies:
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"

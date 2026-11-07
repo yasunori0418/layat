@@ -3,9 +3,13 @@ id: "ADR-08a6e1be-e424-4cfe-a529-e123a50cd6ca"
 type: adr
 name: "CLI が評価する attr path を legacy entrypoint の書き方で分岐させない"
 status: stable
-issues:
-  - "#112"
-  - "#107"
+sources:
+  - id: "issue-112"
+    resource: "https://github.com/yasunori0418/layat/issues/112"
+    title: "#112"
+  - id: "issue-107"
+    resource: "https://github.com/yasunori0418/layat/issues/107"
+    title: "#107"
 origin: "ADR-0032 §2 を書き直した"
 justifies:
   - "REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da"

@@ -3,8 +3,10 @@ id: "ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3"
 type: adr
 name: "engine は cmd/ と internal/ に置きライブラリ化しない"
 status: stable
-issues:
-  - "#3"
+sources:
+  - id: "issue-3"
+    resource: "https://github.com/yasunori0418/layat/issues/3"
+    title: "#3"
 origin: "Issue #3（CLI 化）と、engine / CLI の技術スタックの確定。ADR-0006「ソース配置」節・ADR-0007 §7・ADR-0011 §3 を書き直した"
 justifies:
   - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"

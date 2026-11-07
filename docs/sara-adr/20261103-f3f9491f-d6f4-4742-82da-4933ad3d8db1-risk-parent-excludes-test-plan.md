@@ -3,10 +3,16 @@ id: "SDR-f3f9491f-d6f4-4742-82da-4933ad3d8db1"
 type: sara_adr
 name: "risk の親に test_plan を含めない"
 status: stable
-issues:
-  - "#583"
-  - "#237"
-  - "#203"
+sources:
+  - id: "issue-583"
+    resource: "https://github.com/yasunori0418/layat/issues/583"
+    title: "#583"
+  - id: "issue-237"
+    resource: "https://github.com/yasunori0418/layat/issues/237"
+    title: "#237"
+  - id: "issue-203"
+    resource: "https://github.com/yasunori0418/layat/issues/203"
+    title: "#203"
 origin: "epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §2b を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"

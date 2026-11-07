@@ -3,9 +3,13 @@ id: "ADR-5265f879-e623-44f9-9c58-8c14598e8b10"
 type: adr
 name: "世代スキップを project mode と system mode で行う"
 status: stable
-issues:
-  - "#519"
-  - "#493"
+sources:
+  - id: "issue-519"
+    resource: "https://github.com/yasunori0418/layat/issues/519"
+    title: "#519"
+  - id: "issue-493"
+    resource: "https://github.com/yasunori0418/layat/issues/493"
+    title: "#493"
 origin: "Issue #493（epic: NixOS / nix-darwin モジュールの実装）の grilling（2026-10-24）と実装前の残セマンティクス確定の第 4 巡（2026-06-14）。ADR-0067 §1 と ADR-0022 §2 を書き直した"
 justifies:
   - "REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0"

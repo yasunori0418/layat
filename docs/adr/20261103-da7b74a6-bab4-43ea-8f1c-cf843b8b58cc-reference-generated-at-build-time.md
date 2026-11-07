@@ -3,8 +3,10 @@ id: "ADR-da7b74a6-bab4-43ea-8f1c-cf843b8b58cc"
 type: adr
 name: "リファレンスをビルド時に生成する"
 status: stable
-issues:
-  - "#57"
+sources:
+  - id: "issue-57"
+    resource: "https://github.com/yasunori0418/layat/issues/57"
+    title: "#57"
 origin: "Issue #57 のサイト設計。ADR-0037 §3 を書き直した"
 justifies:
   - "INF-0865477b-21b2-4feb-9c06-1a882a4e595a"

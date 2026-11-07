@@ -3,8 +3,10 @@ id: "ADR-5be36ff2-ed08-4e8e-8476-62ff2b08a9dd"
 type: adr
 name: "内部コマンドの開示を CLI と生成器で分担する"
 status: stable
-issues:
-  - "#395"
+sources:
+  - id: "issue-395"
+    resource: "https://github.com/yasunori0418/layat/issues/395"
+    title: "#395"
 origin: "Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0055 §8 を書き直した"
 justifies:
   - "REQ-4ffda99a-7062-4c00-915f-70b525cb215b"

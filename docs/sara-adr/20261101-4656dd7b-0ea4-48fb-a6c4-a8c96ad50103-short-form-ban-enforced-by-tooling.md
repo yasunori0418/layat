@@ -3,9 +3,13 @@ id: "SDR-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103"
 type: sara_adr
 name: "省略形の禁止は起票の機械化と全面移行で担保する"
 status: stable
-issues:
-  - "#366"
-  - "#364"
+sources:
+  - id: "issue-366"
+    resource: "https://github.com/yasunori0418/layat/issues/366"
+    title: "#366"
+  - id: "issue-364"
+    resource: "https://github.com/yasunori0418/layat/issues/364"
+    title: "#364"
 origin: "epic #364 の着手前 grilling（2026-08-17）で確定。ADR-0053 §2 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"

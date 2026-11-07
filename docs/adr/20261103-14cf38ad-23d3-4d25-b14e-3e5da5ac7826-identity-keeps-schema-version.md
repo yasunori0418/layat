@@ -3,9 +3,13 @@ id: "ADR-14cf38ad-23d3-4d25-b14e-3e5da5ac7826"
 type: adr
 name: "manifest に identity を足しても schemaVersion を据え置く"
 status: stable
-issues:
-  - "#580"
-  - "#498"
+sources:
+  - id: "issue-580"
+    resource: "https://github.com/yasunori0418/layat/issues/580"
+    title: "#580"
+  - id: "issue-498"
+    resource: "https://github.com/yasunori0418/layat/issues/498"
+    title: "#498"
 origin: "Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §5b を書き直した"
 justifies:
   - "REQ-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f"

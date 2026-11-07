@@ -3,11 +3,19 @@ id: "SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed"
 type: sara_adr
 name: "欠陥はグラフに置かず GitHub Issues で管理する"
 status: stable
-issues:
-  - "#583"
-  - "#268"
-  - "#203"
-  - "#267"
+sources:
+  - id: "issue-583"
+    resource: "https://github.com/yasunori0418/layat/issues/583"
+    title: "#583"
+  - id: "issue-268"
+    resource: "https://github.com/yasunori0418/layat/issues/268"
+    title: "#268"
+  - id: "issue-203"
+    resource: "https://github.com/yasunori0418/layat/issues/203"
+    title: "#203"
+  - id: "issue-267"
+    resource: "https://github.com/yasunori0418/layat/issues/267"
+    title: "#267"
 origin: "Issue #268（epic #203 残ブロッカー）の判断（2026-08-09）で確定。ADR-0051 §1・§2 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"

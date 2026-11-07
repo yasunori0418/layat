@@ -3,8 +3,10 @@ id: "ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e"
 type: adr
 name: "同一 profileDir への同時実行は後勝ちにする"
 status: stable
-issues:
-  - "#550"
+sources:
+  - id: "issue-550"
+    resource: "https://github.com/yasunori0418/layat/issues/550"
+    title: "#550"
 origin: "ドキュメント計画段階のレビュー（2026-06-13）で確定。ADR-0013 §2 を書き直した"
 justifies:
   - "REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9"

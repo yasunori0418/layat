@@ -3,8 +3,10 @@ id: "ADR-e88f074e-95f4-4e04-97fc-eae2d0c695a3"
 type: adr
 name: "設定ファイルを strict な TOML で書く"
 status: stable
-issues:
-  - "#395"
+sources:
+  - id: "issue-395"
+    resource: "https://github.com/yasunori0418/layat/issues/395"
+    title: "#395"
 origin: "Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §4 の形式を書き直した"
 justifies:
   - "REQ-badc7e10-0ba4-40d4-b334-6e40193119db"

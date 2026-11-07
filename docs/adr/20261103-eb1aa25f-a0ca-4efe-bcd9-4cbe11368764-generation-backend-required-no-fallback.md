@@ -3,8 +3,10 @@ id: "ADR-eb1aa25f-a0ca-4efe-bcd9-4cbe11368764"
 type: adr
 name: "世代バックエンドの注入を必須にし nix-env への暗黙のフォールバックを持たない"
 status: stable
-issues:
-  - "#406"
+sources:
+  - id: "issue-406"
+    resource: "https://github.com/yasunori0418/layat/issues/406"
+    title: "#406"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §2d を書き直した"
 justifies:
   - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"

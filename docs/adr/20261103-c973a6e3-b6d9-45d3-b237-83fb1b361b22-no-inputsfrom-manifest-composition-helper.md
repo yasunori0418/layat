@@ -3,9 +3,13 @@ id: "ADR-c973a6e3-b6d9-45d3-b237-83fb1b361b22"
 type: adr
 name: "複数の manifest を inputsFrom で合成するヘルパを持たない"
 status: stable
-issues:
-  - "#112"
-  - "#107"
+sources:
+  - id: "issue-112"
+    resource: "https://github.com/yasunori0418/layat/issues/112"
+    title: "#112"
+  - id: "issue-107"
+    resource: "https://github.com/yasunori0418/layat/issues/107"
+    title: "#107"
 origin: "ADR-0032 §3b を書き直した"
 justifies:
   - "REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da"

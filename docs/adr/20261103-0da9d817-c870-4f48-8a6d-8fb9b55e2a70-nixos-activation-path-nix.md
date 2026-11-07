@@ -3,9 +3,13 @@ id: "ADR-0da9d817-c870-4f48-8a6d-8fb9b55e2a70"
 type: adr
 name: "NixOS の activation の PATH に nix を前置する"
 status: stable
-issues:
-  - "#519"
-  - "#493"
+sources:
+  - id: "issue-519"
+    resource: "https://github.com/yasunori0418/layat/issues/519"
+    title: "#519"
+  - id: "issue-493"
+    resource: "https://github.com/yasunori0418/layat/issues/493"
+    title: "#493"
 origin: "Issue #493（epic: NixOS / nix-darwin モジュールの実装）の grilling（2026-10-24）。ADR-0066 §4b を書き直した"
 justifies:
   - "REQ-a220bb28-89de-42b0-a854-e7468755ecb1"
