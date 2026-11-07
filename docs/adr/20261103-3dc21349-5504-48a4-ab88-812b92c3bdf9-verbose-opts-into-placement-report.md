@@ -11,6 +11,9 @@ references:
   - "ADR-9e328362-2e90-441a-8eca-40081ce71b1b"
   - "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
   - "ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9: -v で配置レポートを opt-in で出す
 

@@ -11,6 +11,9 @@ justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
 references:
   - "SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:32+09:00"
 ---
 # SDR-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103: 省略形の禁止は起票の機械化と全面移行で担保する
 

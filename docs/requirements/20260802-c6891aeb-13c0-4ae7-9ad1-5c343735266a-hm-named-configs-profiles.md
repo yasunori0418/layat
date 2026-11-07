@@ -2,6 +2,7 @@
 id: "REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a"
 type: requirement
 name: "HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる"
+status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
@@ -30,6 +31,9 @@ specification_ja: |
   （canonical な形が `layat.configs.<name>.entries` であり、素の `layat.entries` が
   `configs.default.entries` への deprecated 糖衣であること）は全モジュール共通であり
   REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 の担当で、いずれも本 item では規定しない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a: HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる
 

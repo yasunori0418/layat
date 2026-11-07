@@ -2,6 +2,7 @@
 id: "REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b"
 type: requirement
 name: "--all は root モードフィルタで対象 config を絞れる"
+status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
   - "UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d"
@@ -32,6 +33,9 @@ specification_ja: |
   warning を 1 行出すべきである。warning は該当 config を root モード付きで挙げ、
   `--system-root` と `--home-root` / `--project-root` で実行を分けるよう案内する。warning は
   exit code と `--json` のエンベロープを変えてはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b: --all は root モードフィルタで対象 config を絞れる
 

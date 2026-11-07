@@ -6,6 +6,9 @@ status: 採用
 origin: "ADR-0017 §4 を書き直した"
 justifies:
   - "REQ-61856da1-8883-401e-ad57-9f326b96d400"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T23:17:11+09:00"
 ---
 # ADR-3aebefee-405d-4342-b754-eef8eac29b1b: symlink を unlink と symlink の 2 操作で張り替える
 

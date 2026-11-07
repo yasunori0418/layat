@@ -6,6 +6,9 @@ status: 採用
 origin: "実装前の最終レビューで詰めた残りの細目。ADR-0015 §6 を書き直した"
 justifies:
   - "REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T02:02:56+09:00"
 ---
 # ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a: entry の配置種別のフィールドを method と名付ける
 

@@ -2,8 +2,12 @@
 id: "TC-4f315cfc-446c-4c3f-8dc9-c36b10073e9d"
 type: test_condition
 name: "コピー中の syscall 失敗が伝播し、失敗した entry が結果へ記録されないこと"
+status: stable
 mitigates:
   - "RISK-bc7526c2-2a2d-427f-9490-92d7d262fce3"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:25:13+09:00"
 ---
 # TC-4f315cfc-446c-4c3f-8dc9-c36b10073e9d: コピー失敗の伝播
 

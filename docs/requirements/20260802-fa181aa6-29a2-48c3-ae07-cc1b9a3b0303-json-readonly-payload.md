@@ -2,6 +2,7 @@
 id: "REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303"
 type: requirement
 name: "読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -133,6 +134,9 @@ specification_ja: |
   読み取り系（list-generations / status / gitignore / init）の `dryRun` は常に `false` としなければ
   ならない。`dryRun` は `--dryrun` フラグの反映に限定し、副作用の無さを `dryRun` で表現
   してはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303: 読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す
 

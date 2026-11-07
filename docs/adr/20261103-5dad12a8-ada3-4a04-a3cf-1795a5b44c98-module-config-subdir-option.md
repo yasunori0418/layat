@@ -9,6 +9,9 @@ origin: "ADR-0064 §1・§2 を書き直した"
 justifies:
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
   - "REQ-068f2fb3-5459-4325-9359-c931b5049e0d"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:34:10+09:00"
 ---
 # ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98: configs.<name>.subdir で config ごとに target の基点を寄せる
 

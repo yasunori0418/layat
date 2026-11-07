@@ -8,6 +8,9 @@ justifies:
   - "REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9"
   - "REQ-9c111c32-8f6c-4eda-859c-dae02c0624fc"
   - "REQ-7a71a049-5876-4cfc-a65e-44e9a0349856"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9: eval を先に行い、flock を取ってから build する
 

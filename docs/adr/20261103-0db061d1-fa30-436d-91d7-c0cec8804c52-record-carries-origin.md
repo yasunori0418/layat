@@ -11,6 +11,9 @@ justifies:
   - "REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282"
 references:
   - "ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-0db061d1-fa30-436d-91d7-c0cec8804c52: last-applied 記録に出所を持たせる
 

@@ -2,9 +2,13 @@
 id: "TC-de6514e2-9105-45a6-a5b9-d474911a401b"
 type: test_condition
 name: "manifest 文書全体をスナップショットに固定し、どの不変条件も名指ししない変更を差分として出す"
+status: stable
 mitigates:
   - "RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d"
   - "RISK-3de9753f-3fd3-4364-b1ab-64c68c15ec77"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:49+09:00"
 ---
 # TC-de6514e2-9105-45a6-a5b9-d474911a401b: 文書全体をスナップショットに固定する
 

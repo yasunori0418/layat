@@ -8,6 +8,9 @@ issues:
 origin: "実装前残セマンティクス確定の第6巡（2026-06-14）で確定。ADR-0024 §7 を書き直した"
 justifies:
   - "REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T23:01:19+09:00"
 ---
 # ADR-3c3aa4a5-083a-43c1-a99f-92b9e97a68b9: apply --all --dryrun の終了コードは error を conflict より優先する
 

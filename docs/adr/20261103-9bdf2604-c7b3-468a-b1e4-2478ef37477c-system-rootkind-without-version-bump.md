@@ -16,6 +16,9 @@ references:
   - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
   - "ADR-419914ba-9896-4dd1-853b-fb514fcb9f38"
   - "ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c: rootKind に system を足しても schemaVersion を上げない
 

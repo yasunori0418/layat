@@ -11,6 +11,9 @@ justifies:
   - "DSG-85439cb5-a149-422e-8596-fc4e860bc3a5"
 references:
   - "ADR-8e253f2e-c255-482a-a0f8-0837e122e80f"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:33:20+09:00"
 ---
 # ADR-ad1dd4ef-0b71-42cf-bc30-03eb11e5485c: status は記録の確認を apply より緩めない
 

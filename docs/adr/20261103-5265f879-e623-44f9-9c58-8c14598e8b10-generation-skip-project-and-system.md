@@ -37,6 +37,9 @@ references:
   - "ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c"
   - "ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d"
   - "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-5265f879-e623-44f9-9c58-8c14598e8b10: 世代スキップを project mode と system mode で行う
 

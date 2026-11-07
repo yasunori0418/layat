@@ -2,6 +2,7 @@
 id: "REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4"
 type: requirement
 name: "system mode は root を / に解決し、変更系操作の前に euid 0 を確認し、profile と last-applied 記録を system 基底に置く"
+status: stable
 specification: |
   When the root kind is `system`, the engine SHALL resolve the placement root to `/`, a
   `--root` override taking precedence as in every other mode. The profileDir of a
@@ -33,6 +34,9 @@ specification_ja: |
 derives_from:
   - "UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d"
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:54:59+09:00"
 ---
 # REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4: system mode は root を / に解決し、変更系操作の前に euid 0 を確認し、profile と last-applied 記録を system 基底に置く
 

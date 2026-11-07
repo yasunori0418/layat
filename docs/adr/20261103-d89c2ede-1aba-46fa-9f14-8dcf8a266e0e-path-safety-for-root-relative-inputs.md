@@ -15,6 +15,9 @@ references:
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
   - "ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137"
   - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-d89c2ede-1aba-46fa-9f14-8dcf8a266e0e: root 相対で指定するパスすべてにパス安全性の確認を課す
 

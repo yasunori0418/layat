@@ -9,6 +9,9 @@ justifies:
   - "REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9"
 references:
   - "ADR-4dca6ef4-2791-48d5-aa82-7037630968a6"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T23:17:11+09:00"
 ---
 # ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe: 配置 target を gitignore コマンドで stdout へ列挙する
 

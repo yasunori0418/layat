@@ -2,6 +2,7 @@
 id: "REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32"
 type: requirement
 name: "apply --all --dryrun の終了コードは error を conflict より優先する"
+status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 specification: |
@@ -16,6 +17,9 @@ specification_ja: |
   単純な最大値（2 > 1 で conflict 優先）を採ってはならない。より深刻な eval / engine
   エラーを CI で隠すため。非 dryrun の `--all` は conflict 概念が無く 0 / 1 のみでなければ
   ならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32: apply --all --dryrun の終了コードは error を conflict より優先する
 

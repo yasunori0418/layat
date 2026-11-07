@@ -12,6 +12,9 @@ justifies:
 references:
   - "ADR-56325270-20bb-4959-8498-e3223c35e24b"
   - "ADR-74423bb8-1453-4689-a25e-30bf46536afc"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-a00bb2de-a8c5-4816-892b-4fa1f5299935: 巻き戻しの失敗は best-effort で続行する
 

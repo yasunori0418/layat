@@ -6,6 +6,9 @@ status: 採用
 origin: "垂直トレーサー弾の着手前の横断検査（実装前残セマンティクスの第 6 巡）。ADR-0024 §6 を書き直した"
 justifies:
   - "REQ-6be1cbf1-6c6e-498b-8acb-7f4b80037169"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T23:00:59+09:00"
 ---
 # ADR-9fde06e2-fe42-4274-8af3-da2298cdaeae: 既存 flake への組込手順を docs に置く
 

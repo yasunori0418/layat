@@ -13,6 +13,9 @@ references:
   - "ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131"
   - "ADR-59f63d1f-25df-4290-913f-02804c5eeade"
   - "ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-70debe94-c7ce-492b-b938-4c62f7a781e7: out-of-store のリンクは lib の関数が包むだけにして engine が張る
 

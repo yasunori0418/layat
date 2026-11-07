@@ -2,6 +2,7 @@
 id: "RISK-d734e24e-9af9-49f1-a22d-ade92f6554eb"
 type: risk
 name: "home-manager モジュールが engine をキックする配線から外れ native 機構へ翻訳される"
+status: stable
 threatens:
   - "REQ-8085f194-c903-4ecb-abd8-c719fe7b3292"
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
@@ -14,6 +15,9 @@ threatens:
 likelihood: medium
 impact: high
 level: high
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-d734e24e-9af9-49f1-a22d-ade92f6554eb: home-manager モジュールが engine をキックする配線から外れ native 機構へ翻訳される
 

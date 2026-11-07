@@ -33,6 +33,9 @@ references:
   - "ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93"
   - "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
   - "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:00:56+09:00"
 ---
 # ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56: apply --all は失敗しても残りを続け、最後に集約して非 0 で終える
 

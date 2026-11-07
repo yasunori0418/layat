@@ -2,6 +2,7 @@
 id: "QA-5ecd74ba-889a-4e06-b32b-e67f10a45051"
 type: quality
 name: "公開ドキュメントは英語を canonical とし、日本語版を対で保守する"
+status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 specification: |
@@ -15,6 +16,9 @@ specification_ja: |
   ならず、日本語版が対で保守されなければならない。対の側が追いついていない箇所では、
   読者は欠落したページではなく canonical な文へ導かれなければならない。貢献者に向けた
   設計記録は本規範の対象外であり、日本語だけで書いてもよい。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T02:02:33+09:00"
 ---
 # QA-5ecd74ba-889a-4e06-b32b-e67f10a45051: 公開ドキュメントは英語を canonical とし、日本語版を対で保守する
 

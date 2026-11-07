@@ -2,9 +2,13 @@
 id: "CASE-3a1f403d-3c7b-4221-a32a-2ddc272a58a3"
 type: test_case
 name: "nix-unit: farm-entries.nix — アンカー対象の抽出と anchorLines の組み立て"
+status: stable
 target: "tests/nix-unit/farm-entries.nix"
 covers:
   - "TC-1d69350e-db3c-4d74-a24e-7a3fabb31b0a"
+generated:
+  by: "claude-code/claude-fable-5-1"
+  at: "2026-10-12T21:37:16+09:00"
 ---
 # CASE-3a1f403d-3c7b-4221-a32a-2ddc272a58a3: nix-unit farm-entries.nix
 

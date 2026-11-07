@@ -2,9 +2,13 @@
 id: "TC-5a72b00e-2c03-4703-acdc-33cffb6fa994"
 type: test_condition
 name: "activation が評価時点で engine 起動へ配線され root と entry とオプションを届ける"
+status: stable
 mitigates:
   - "RISK-d734e24e-9af9-49f1-a22d-ade92f6554eb"
   - "RISK-7808768d-bd87-429a-af42-52e8559d940c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-10-22T01:02:01+09:00"
 ---
 # TC-5a72b00e-2c03-4703-acdc-33cffb6fa994: activation が評価時点で engine 起動へ配線され root と entry とオプションを届ける
 

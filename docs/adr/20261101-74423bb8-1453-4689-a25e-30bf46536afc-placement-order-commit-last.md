@@ -7,6 +7,9 @@ origin: "ADR-0006 §決定（部分失敗 = コミット最後）を書き直し
 justifies:
   - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
   - "REQ-61856da1-8883-401e-ad57-9f326b96d400"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:30+09:00"
 ---
 # ADR-74423bb8-1453-4689-a25e-30bf46536afc: 新規配置と張替えを先に、世代のコミットを最後に行う
 

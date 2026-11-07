@@ -2,8 +2,12 @@
 id: "TC-a5eb7de3-a1a7-41ae-8fb9-c2aa374ac894"
 type: test_condition
 name: "dryrun が副作用を持たず、本番 apply と同数の conflict を報告すること"
+status: stable
 mitigates:
   - "RISK-33e30498-6fa1-450b-a251-5624cbe837b9"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:25:54+09:00"
 ---
 # TC-a5eb7de3-a1a7-41ae-8fb9-c2aa374ac894: dryrun の無副作用と本番との conflict 件数の一致
 

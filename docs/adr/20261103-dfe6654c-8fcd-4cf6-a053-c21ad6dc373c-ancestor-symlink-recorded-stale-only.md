@@ -28,6 +28,9 @@ references:
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
   - "ADR-40dd7945-5792-4b80-bdfa-43f95f482554"
   - "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:29:04+09:00"
 ---
 # ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c: 祖先 symlink は自己記録の古くなったものだけを移行する
 

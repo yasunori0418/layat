@@ -12,6 +12,9 @@ justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
 references:
   - "SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:00:43+09:00"
 ---
 # SDR-1a02013e-c57b-4079-9c72-8e9fe99e499a: 複数の失敗方向を持つ risk は最も重い方向で採点する
 

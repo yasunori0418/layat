@@ -2,6 +2,7 @@
 id: "REQ-b232ec98-af3b-41f3-a050-29d417322002"
 type: requirement
 name: "normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -26,6 +27,9 @@ specification_ja: |
   組まなければならない。lib 層は unparameterized でなければならず、各関数が呼び出し時に
   `lib`（`normalizeManifest`）または `pkgs`（`mkManifest`）を明示引数として要求しなければ
   ならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:54:35+09:00"
 ---
 # REQ-b232ec98-af3b-41f3-a050-29d417322002: normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む
 

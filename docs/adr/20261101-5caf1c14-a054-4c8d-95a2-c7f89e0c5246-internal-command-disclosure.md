@@ -8,6 +8,9 @@ issues:
 origin: "Issue #3（CLI 化）。ADR-0007 §3 を書き直した"
 justifies:
   - "REQ-4ffda99a-7062-4c00-915f-70b525cb215b"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:00:56+09:00"
 ---
 # ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246: 内部コマンドの開示で透明性を保つ
 

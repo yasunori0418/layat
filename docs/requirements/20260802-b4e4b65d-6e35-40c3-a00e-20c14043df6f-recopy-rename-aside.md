@@ -2,6 +2,7 @@
 id: "REQ-b4e4b65d-6e35-40c3-a00e-20c14043df6f"
 type: requirement
 name: "recopy の上書きは削除ではなく同一親内への rename 退避で行う"
+status: stable
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
 specification: |
@@ -19,6 +20,9 @@ specification_ja: |
   ときは通常の place-once コピーを行わなければならない。同一 apply run 内で後続の段が失敗した
   場合は退避物から元の内容を復元しなければならず、run が最終的に成功した場合は退避物を削除
   しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-b4e4b65d-6e35-40c3-a00e-20c14043df6f: recopy の上書きは削除ではなく同一親内への rename 退避で行う
 

@@ -2,6 +2,7 @@
 id: "REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b"
 type: requirement
 name: "manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -14,6 +15,9 @@ specification_ja: |
   `lib.mkManifest` が生成し engine が読む `manifest.json` は、Nix 層と engine の間の
   唯一の安定契約でなければならない。`schemaVersion` は v1 では `1` に固定し、engine は
   自身の対応版より新しい `schemaVersion` を拒否しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
 ---
 # REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b: manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する
 

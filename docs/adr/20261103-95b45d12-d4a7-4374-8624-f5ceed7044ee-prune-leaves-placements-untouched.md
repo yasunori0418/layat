@@ -10,6 +10,9 @@ justifies:
   - "REQ-c44433a1-7ee7-459a-9aae-7cc42166876f"
 references:
   - "ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-95b45d12-d4a7-4374-8624-f5ceed7044ee: prune は配置物に触れない
 

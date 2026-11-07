@@ -14,6 +14,9 @@ references:
   - "ADR-feb60906-1517-46b8-8fa5-e007df4d3e11"
   - "ADR-9e328362-2e90-441a-8eca-40081ce71b1b"
   - "ADR-5d28818e-f7e1-45e8-a7fd-bbb6157b8586"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:00:56+09:00"
 ---
 # ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc: 読み取り専用の列挙は info で返す
 

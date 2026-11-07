@@ -10,6 +10,9 @@ justifies:
   - "INF-0865477b-21b2-4feb-9c06-1a882a4e595a"
 references:
   - "ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T02:02:56+09:00"
 ---
 # ADR-1e010fa2-a3d9-42b5-9641-d68d9db9f405: ドキュメントサイトは英語をルートのロケールにする
 

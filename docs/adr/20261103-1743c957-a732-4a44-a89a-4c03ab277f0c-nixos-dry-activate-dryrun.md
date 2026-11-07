@@ -16,6 +16,9 @@ references:
   - "ADR-0da9d817-c870-4f48-8a6d-8fb9b55e2a70"
   - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
   - "ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-1743c957-a732-4a44-a89a-4c03ab277f0c: NixOS の dry-activate では --dryrun を付けて起動する
 

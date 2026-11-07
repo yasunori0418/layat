@@ -9,6 +9,9 @@ justifies:
 references:
   - "ADR-c4ad9987-850e-4834-bbea-d8de3b073548"
   - "ADR-4dca6ef4-2791-48d5-aa82-7037630968a6"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T23:17:11+09:00"
 ---
 # ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c: project mode では copy と out-of-store も ephemeral として扱う
 

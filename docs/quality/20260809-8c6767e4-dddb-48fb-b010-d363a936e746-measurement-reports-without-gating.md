@@ -2,6 +2,7 @@
 id: "QA-8c6767e4-dddb-48fb-b010-d363a936e746"
 type: quality
 name: "傾向の計測は報告に留め、マージの条件にしない"
+status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 depends_on:
@@ -24,6 +25,9 @@ specification_ja: |
   通ることを必須とされるかは、ここではなく、検証を必須条件とする規範によって定められなければ
   ならない。検出は機械的でなければならず、計測が何を要求しているかの判断は人が負わなければ
   ならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:38+09:00"
 ---
 # QA-8c6767e4-dddb-48fb-b010-d363a936e746: 傾向の計測は報告に留め、マージの条件にしない
 

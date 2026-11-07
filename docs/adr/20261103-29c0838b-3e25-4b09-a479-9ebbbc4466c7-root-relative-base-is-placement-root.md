@@ -15,6 +15,9 @@ references:
   - "ADR-6d2327f7-f513-42c3-89f8-808467db1914"
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
   - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-29c0838b-3e25-4b09-a479-9ebbbc4466c7: root 相対マーカーの基準点を manifest の配置 root にする
 

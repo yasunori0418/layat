@@ -13,6 +13,9 @@ justifies:
 references:
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
   - "ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:35:05+09:00"
 ---
 # ADR-77312c71-fa32-481b-ad80-c91e5b282edc: 実ディレクトリの target は全 leaf を除去できるときだけ移行する
 

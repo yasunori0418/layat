@@ -2,6 +2,7 @@
 id: "REQ-a480c183-40ce-4201-93b5-65a7a59c1b9e"
 type: requirement
 name: "gitignore は配置 target を stdout へ列挙するだけでファイルを書き込まない"
+status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
@@ -19,6 +20,9 @@ specification_ja: |
   1 行 1 件でなければならない。project mode の root = git toplevel = `.gitignore` の
   置き場所なので先頭 `/` が正しくアンカーし、別階層の同名パスを誤って無視してはならない。
   ディレクトリ / ファイルとも末尾 `/` を付けてはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-a480c183-40ce-4201-93b5-65a7a59c1b9e: gitignore は配置 target を stdout へ列挙するだけでファイルを書き込まない
 

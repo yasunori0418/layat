@@ -13,6 +13,9 @@ references:
   - "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
   - "ADR-acc31876-df36-485e-b356-92ae60e26db7"
   - "ADR-a51897c5-f709-4b7a-8db2-61e6ebb0040c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7: reset で profile を触らずに配置物を撤去する
 

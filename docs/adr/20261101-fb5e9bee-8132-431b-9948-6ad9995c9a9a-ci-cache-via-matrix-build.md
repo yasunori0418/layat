@@ -7,6 +7,9 @@ origin: "参照: https://github.com/yasunori0418/cryoflow の CI 構成（同一
 justifies:
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
   - "INF-af33c5a1-f846-4f09-8e43-c6ea042d6e06"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:00:56+09:00"
 ---
 # ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a: キャッシュは 3 system の matrix ビルドで投入する
 

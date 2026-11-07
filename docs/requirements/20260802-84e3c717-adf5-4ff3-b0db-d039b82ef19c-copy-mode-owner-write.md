@@ -2,6 +2,7 @@
 id: "REQ-84e3c717-adf5-4ff3-b0db-d039b82ef19c"
 type: requirement
 name: "copy は元の mode を保存しつつ owner-write を付与する"
+status: stable
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
 specification: |
@@ -16,6 +17,9 @@ specification_ja: |
   `0555` → `0755`）。store パスは read-only のためそのまま保存すると編集できないが、copy は
   「store から切り離してユーザーが所有・編集する」用途である。したがって perm の相対構造
   （実行ビット・group / other）は保ちつつ、所有者が編集できる状態にしなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-84e3c717-adf5-4ff3-b0db-d039b82ef19c: copy は元の mode を保存しつつ owner-write を付与する
 

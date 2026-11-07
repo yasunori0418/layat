@@ -10,6 +10,9 @@ justifies:
 references:
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
   - "ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T02:02:56+09:00"
 ---
 # ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509: root マーカーに subdir の適用形を持たせる
 

@@ -10,6 +10,9 @@ justifies:
 references:
   - "ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a"
   - "ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:30+09:00"
 ---
 # ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c: store link を既定にし、out-of-store は明示関数でのみ選ばせる
 

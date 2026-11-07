@@ -2,9 +2,13 @@
 id: "CASE-ead15d61-8ca7-41fb-9121-a5d247ef727a"
 type: test_case
 name: "nix-unit: anchor-name.nix — GC アンカー名の形式と決定性"
+status: stable
 target: "tests/nix-unit/anchor-name.nix"
 covers:
   - "TC-a6a14739-89e5-4eba-acee-3ed5be5a0b7e"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:49+09:00"
 ---
 # CASE-ead15d61-8ca7-41fb-9121-a5d247ef727a: nix-unit anchor-name.nix
 

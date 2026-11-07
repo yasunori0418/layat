@@ -2,6 +2,7 @@
 id: "REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74"
 type: requirement
 name: "entry submodule のフィールドは src / subpath / target / method の 4 つとする"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -22,6 +23,9 @@ specification_ja: |
   各省略可フィールドの具体的なデフォルト値と、それを確認・適用する主体は
   REQ-b232ec98-af3b-41f3-a050-29d417322002 / REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 / REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34 が規定しており、本 item では重ねて
   規定しない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:56+09:00"
 ---
 # REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74: entry submodule のフィールドは src / subpath / target / method の 4 つとする
 

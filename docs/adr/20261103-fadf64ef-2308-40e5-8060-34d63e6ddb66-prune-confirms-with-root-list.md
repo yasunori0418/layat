@@ -11,6 +11,9 @@ justifies:
 references:
   - "ADR-acc31876-df36-485e-b356-92ae60e26db7"
   - "ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66: prune は削除前に root パスの一覧を示して確認を取る
 

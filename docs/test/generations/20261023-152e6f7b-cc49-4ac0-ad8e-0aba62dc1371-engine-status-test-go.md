@@ -2,9 +2,13 @@
 id: "CASE-152e6f7b-cc49-4ac0-ad8e-0aba62dc1371"
 type: test_case
 name: "status_test.go — 記録基底の列挙順・基底の扱い・読めない系列・読み取り専用"
+status: stable
 target: "internal/engine/status_test.go"
 covers:
   - "TC-076bd7b4-6427-4a35-9bab-86daaaada504"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:49+09:00"
 ---
 # CASE-152e6f7b-cc49-4ac0-ad8e-0aba62dc1371: status_test.go — 記録基底の列挙順・基底の扱い・読めない系列・読み取り専用
 

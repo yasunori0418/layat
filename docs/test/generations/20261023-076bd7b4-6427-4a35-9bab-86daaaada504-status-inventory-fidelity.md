@@ -2,9 +2,13 @@
 id: "TC-076bd7b4-6427-4a35-9bab-86daaaada504"
 type: test_condition
 name: "status が記録基底の全系列を漏れなく列挙し、記録の内容をそのまま反映し、状態を変えない"
+status: stable
 mitigates:
   - "RISK-e92487a5-fff9-40db-844d-6590f1f36dec"
   - "RISK-f87d4909-6dea-4ead-8e72-994c498a14df"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:49+09:00"
 ---
 # TC-076bd7b4-6427-4a35-9bab-86daaaada504: status が記録基底の全系列を漏れなく列挙し、記録の内容をそのまま反映し、状態を変えない
 

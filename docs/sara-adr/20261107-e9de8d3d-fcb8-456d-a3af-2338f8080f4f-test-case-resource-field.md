@@ -9,6 +9,9 @@ issues:
 origin: "epic #662 の grilling（2026-11-07）で確定"
 justifies:
   - "QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T23:10:46+09:00"
 ---
 # SDR-e9de8d3d-fcb8-456d-a3af-2338f8080f4f: test_case の target を resource に改名する
 

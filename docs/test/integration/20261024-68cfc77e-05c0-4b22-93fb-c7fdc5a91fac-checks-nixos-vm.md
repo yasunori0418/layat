@@ -2,9 +2,13 @@
 id: "CASE-68cfc77e-05c0-4b22-93fb-c7fdc5a91fac"
 type: test_case
 name: "checks.nixos-vm — NixOS モジュールの実 activate を VM で検証する flake check"
+status: stable
 target: "checks.nixos-vm"
 covers:
   - "TC-1b492e41-ee81-4945-a42b-0669dd574809"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-10-24T09:52:17+09:00"
 ---
 # CASE-68cfc77e-05c0-4b22-93fb-c7fdc5a91fac: checks.nixos-vm — NixOS モジュールの実 activate を VM で検証する flake check
 

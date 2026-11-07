@@ -12,6 +12,9 @@ justifies:
 references:
   - "ADR-56325270-20bb-4959-8498-e3223c35e24b"
   - "ADR-74423bb8-1453-4689-a25e-30bf46536afc"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-c45921e1-e543-47ef-8d34-b52f2810eee3: 配置の前に作った中間ディレクトリを undo の対象にしない
 

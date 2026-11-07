@@ -13,6 +13,9 @@ references:
   - "ADR-acc31876-df36-485e-b356-92ae60e26db7"
   - "ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1"
   - "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-a86a8492-57fb-49d0-ba77-200f6dc49c3a: reset --dryrun は副作用なしで撤去対象を示す
 

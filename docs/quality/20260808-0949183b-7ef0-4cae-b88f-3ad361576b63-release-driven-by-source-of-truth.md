@@ -2,6 +2,7 @@
 id: "QA-0949183b-7ef0-4cae-b88f-3ad361576b63"
 type: quality
 name: "リリースはバージョンの一次情報の変更で駆動し、手作業の工程を挟まない"
+status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 depends_on:
@@ -18,6 +19,9 @@ specification_ja: |
   リリースはその一次情報の変更が main へ到達することで駆動されなければならず、タグ・
   リリースノート・GitHub Release はそこから自動的に生成されなければならない。手動での
   タグ打ちや手書きの CHANGELOG をリリースの処理に含めてはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:03+09:00"
 ---
 # QA-0949183b-7ef0-4cae-b88f-3ad361576b63: リリースはバージョンの一次情報の変更で駆動し、手作業の工程を挟まない
 

@@ -2,6 +2,7 @@
 id: "REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62"
 type: requirement
 name: "変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -125,6 +126,9 @@ specification_ja: |
 
   `reset` の changes は実際に除去したもののみでなければならない。`--backup` の退避と
   空親ディレクトリ剪定は entry の状態遷移ではないため changes / items に載せてはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:43:21+09:00"
 ---
 # REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62: 変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く
 

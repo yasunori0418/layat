@@ -9,6 +9,9 @@ justifies:
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
 references:
   - "ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-cb010758-7887-470a-ba61-19b2e99f0053: 変更検出で nix を回さない PR の必須の確認を skip で通す
 

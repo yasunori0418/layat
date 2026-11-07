@@ -17,6 +17,9 @@ references:
   - "ADR-4dca6ef4-2791-48d5-aa82-7037630968a6"
   - "ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe"
   - "ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:00:56+09:00"
 ---
 # ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e: 同一 profileDir への同時実行は後勝ちにする
 

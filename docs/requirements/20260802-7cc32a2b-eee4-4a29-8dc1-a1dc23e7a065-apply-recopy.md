@@ -2,6 +2,7 @@
 id: "REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065"
 type: requirement
 name: "apply --recopy は config 内の全 copy target を src から無条件に上書き再コピーする"
+status: stable
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
 specification: |
@@ -21,6 +22,9 @@ specification_ja: |
   レポート表示しなければならず、フラグ自体が opt-in なので確認を出してはならない。したがって
   ローカルの copy 編集は破棄され src の内容に戻る（upstream 追従の意図）。symlink 部の世代
   コミット挙動は不変でなければならず、copy は世代を増やしてはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065: apply --recopy は config 内の全 copy target を src から無条件に上書き再コピーする
 

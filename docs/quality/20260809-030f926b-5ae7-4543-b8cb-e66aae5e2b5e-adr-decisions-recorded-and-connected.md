@@ -2,6 +2,7 @@
 id: "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
 type: quality
 name: "設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる"
+status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 depends_on:
@@ -25,6 +26,9 @@ specification_ja: |
   同じ変更の中で item を起こさなければならない（空の接続が埋め忘れとして読み取れる状態を
   保つため）。廃止にする ADR の全決定に後継が揃っているかは機械的に検証されないため、レビューで
   守られなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:03+09:00"
 ---
 # QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e: 設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる
 

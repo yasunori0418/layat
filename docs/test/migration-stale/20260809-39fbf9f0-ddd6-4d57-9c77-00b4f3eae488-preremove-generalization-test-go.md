@@ -2,12 +2,16 @@
 id: "CASE-39fbf9f0-ddd6-4d57-9c77-00b4f3eae488"
 type: test_case
 name: "internal/engine/preremove_generalization_test.go — レイアウト移行と method 変更"
+status: stable
 target: "internal/engine/preremove_generalization_test.go"
 covers:
   - "TC-b9d4ffaf-ac91-4bf1-9f27-5ea3964466ad"
   - "TC-76597b11-8199-4682-8f53-008e5208bd9c"
   - "TC-8a1f4b19-0ece-4057-a8bf-f9717855cade"
   - "TC-810d661d-6d3d-4199-828f-e44adcebad5a"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:20+09:00"
 ---
 # CASE-39fbf9f0-ddd6-4d57-9c77-00b4f3eae488: preremove_generalization_test.go
 

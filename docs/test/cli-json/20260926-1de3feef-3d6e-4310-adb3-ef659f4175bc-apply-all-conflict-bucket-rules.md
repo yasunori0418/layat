@@ -2,8 +2,12 @@
 id: "TC-1de3feef-3d6e-4310-adb3-ef659f4175bc"
 type: test_condition
 name: "前段の衝突の確認がバケット規則と選択集合に従って衝突を判定する"
+status: stable
 mitigates:
   - "RISK-8241dd1d-f856-4ed5-b572-05b88232a199"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:14+09:00"
 ---
 # TC-1de3feef-3d6e-4310-adb3-ef659f4175bc: 前段の衝突の確認がバケット規則と選択集合に従って衝突を判定する
 

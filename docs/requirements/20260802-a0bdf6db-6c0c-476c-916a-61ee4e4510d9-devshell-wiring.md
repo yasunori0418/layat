@@ -2,6 +2,7 @@
 id: "REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9"
 type: requirement
 name: "devShell は shellHook から engine を起動する配線で、シェル入室のたびに project mode で配置する"
+status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
@@ -23,6 +24,9 @@ specification_ja: |
   しなければならない。配置ロジックを持たず root と
   activation タイミングだけを供給することは REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9、`projectRoot` を pin することは
   REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 の担当で、いずれも本 item では規定しない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9: devShell は shellHook から engine を起動する配線で、シェル入室のたびに project mode で配置する
 

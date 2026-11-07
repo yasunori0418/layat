@@ -10,6 +10,9 @@ references:
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
   - "ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988"
   - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-419914ba-9896-4dd1-853b-fb514fcb9f38: profile は専用ディレクトリレイアウトに置く
 

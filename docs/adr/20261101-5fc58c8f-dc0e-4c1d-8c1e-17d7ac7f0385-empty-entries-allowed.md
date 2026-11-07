@@ -30,6 +30,9 @@ references:
   - "ADR-6d2327f7-f513-42c3-89f8-808467db1914"
   - "ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93"
   - "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:30+09:00"
 ---
 # ADR-5fc58c8f-dc0e-4c1d-8c1e-17d7ac7f0385: 空の entries を正当な全クリアとして許可する
 

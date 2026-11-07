@@ -2,12 +2,16 @@
 id: "RISK-8241dd1d-f856-4ed5-b572-05b88232a199"
 type: risk
 name: "前段の衝突の確認でバケット判定を誤り衝突をすり抜けさせるか誤って停止させる"
+status: stable
 threatens:
   - "REQ-38506419-c23d-4fce-b167-30715ce6a69d"
   - "REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693"
 likelihood: medium
 impact: medium
 level: medium
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:31+09:00"
 ---
 # RISK-8241dd1d-f856-4ed5-b572-05b88232a199: 前段の衝突の確認でバケット判定を誤り衝突をすり抜けさせるか誤って停止させる
 

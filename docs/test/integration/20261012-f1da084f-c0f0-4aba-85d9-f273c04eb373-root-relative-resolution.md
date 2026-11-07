@@ -2,8 +2,12 @@
 id: "TC-f1da084f-c0f0-4aba-85d9-f273c04eb373"
 type: test_condition
 name: "root 相対 symlink が配置 root に対して相対形で張られ、worktree 移動後も有効で、前世代との比較が崩れない"
+status: stable
 mitigates:
   - "RISK-238bc9da-353b-4699-94f2-ea871e305f45"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:44+09:00"
 ---
 # TC-f1da084f-c0f0-4aba-85d9-f273c04eb373: root 相対 symlink が配置 root に対して相対形で張られ、worktree 移動後も有効で、前世代との比較が崩れない
 

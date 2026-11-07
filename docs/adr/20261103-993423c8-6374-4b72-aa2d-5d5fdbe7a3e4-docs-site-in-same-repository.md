@@ -8,6 +8,9 @@ issues:
 origin: "Issue #57 のサイト設計。ADR-0037 §1 を書き直した"
 justifies:
   - "INF-0865477b-21b2-4feb-9c06-1a882a4e595a"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T02:02:56+09:00"
 ---
 # ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4: ドキュメントサイトのソースを同じリポジトリの site/ に置く
 

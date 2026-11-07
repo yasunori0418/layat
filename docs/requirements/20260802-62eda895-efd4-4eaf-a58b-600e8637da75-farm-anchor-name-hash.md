@@ -2,6 +2,7 @@
 id: "REQ-62eda895-efd4-4eaf-a58b-600e8637da75"
 type: requirement
 name: "symlink farm の GC アンカー名は target のハッシュとする"
+status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
 specification: |
@@ -18,6 +19,9 @@ specification_ja: |
   ならない。別 target が同名に潰れ `linkFarm` のキー一意制約に反するためである。farm は
   GC アンカー専用でアンカー名が可読である必要はなく、engine が配置に使う値は
   `manifest.json` の解決済み `src` 文字列である。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-08-18T22:23:49+09:00"
 ---
 # REQ-62eda895-efd4-4eaf-a58b-600e8637da75: symlink farm の GC アンカー名は target のハッシュとする
 

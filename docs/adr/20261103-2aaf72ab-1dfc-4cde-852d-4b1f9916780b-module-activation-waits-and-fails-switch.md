@@ -8,6 +8,9 @@ issues:
 origin: "ADR-0026 §3b を書き直した"
 justifies:
   - "REQ-8085f194-c903-4ecb-abd8-c719fe7b3292"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T15:56:40+09:00"
 ---
 # ADR-2aaf72ab-1dfc-4cde-852d-4b1f9916780b: モジュールの activation は lock を待ち、失敗したら switch を止める
 

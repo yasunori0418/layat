@@ -2,6 +2,7 @@
 id: "REQ-2bd0d35f-dc29-4771-9cfe-6998247afa0f"
 type: requirement
 name: "modules/common.nix は nixpkgs.lib のみに依存する"
+status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
 specification: |
@@ -22,6 +23,9 @@ specification_ja: |
   規定しない。統合層ごとのファイル（`modules/home-manager.nix` 等）が何に依存してよいかは
   本 item の射程外であり、ここでは規定しない。それらが engine を起動する配線であることは
   REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 の担当である。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-2bd0d35f-dc29-4771-9cfe-6998247afa0f: modules/common.nix は nixpkgs.lib のみに依存する
 

@@ -6,6 +6,9 @@ status: 採用
 origin: "ADR-0019 §1 を書き直した"
 justifies:
   - "REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-00cc3497-654f-420a-928f-99f201e7efb0: 絶対パスと .. エスケープは eval 時に拒否する
 

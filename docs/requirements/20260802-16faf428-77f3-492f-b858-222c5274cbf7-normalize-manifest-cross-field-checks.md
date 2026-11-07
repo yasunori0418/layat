@@ -2,6 +2,7 @@
 id: "REQ-16faf428-77f3-492f-b858-222c5274cbf7"
 type: requirement
 name: "意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -19,6 +20,9 @@ specification_ja: |
   marker の組み合わせである。out-of-store は「ライブ symlink」、copy は「place-once
   スナップショット」で意図が矛盾するため、暗黙降格ではなく評価時に早期エラーとしなければ
   ならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:54:20+09:00"
 ---
 # REQ-16faf428-77f3-492f-b858-222c5274cbf7: 意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する
 

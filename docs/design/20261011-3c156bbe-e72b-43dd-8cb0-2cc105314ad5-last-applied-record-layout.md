@@ -2,9 +2,13 @@
 id: "DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5"
 type: design
 name: "last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む"
+status: stable
 satisfies:
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
   - "REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:31+09:00"
 ---
 # DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5: last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む
 

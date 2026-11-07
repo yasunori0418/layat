@@ -2,6 +2,7 @@
 id: "REQ-840b3641-6e76-46da-82e9-680cabd65abe"
 type: requirement
 name: "失敗時に残る pending gcroot は config あたり最大 1 個に有界とし回収処理を持たない"
+status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
 specification: |
@@ -17,6 +18,9 @@ specification_ja: |
   （`.pending`）で上書きするため config あたり最大 1 個に有界でなければならず、回収処理を
   持ってはならない。これは許容しなければならない。commit 成功後は engine が `.pending` を
   素の FS 操作で除去しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-840b3641-6e76-46da-82e9-680cabd65abe: 失敗時に残る pending gcroot は config あたり最大 1 個に有界とし回収処理を持たない
 

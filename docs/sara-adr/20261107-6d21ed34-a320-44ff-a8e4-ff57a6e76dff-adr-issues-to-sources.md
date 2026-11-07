@@ -9,6 +9,9 @@ issues:
 origin: "epic #662 の grilling（2026-11-07）で確定"
 justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T22:51:53+09:00"
 ---
 # SDR-6d21ed34-a320-44ff-a8e4-ff57a6e76dff: ADR の issues を sources に移す
 

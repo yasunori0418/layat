@@ -2,6 +2,7 @@
 id: "RISK-bd1e4ada-4a0d-4672-96cf-028f488c0540"
 type: risk
 name: "失敗の帰属層と終了コードがずれ部分失敗の成否判定を誤らせる"
+status: stable
 threatens:
   - "REQ-9341fa5d-836e-4023-af53-cc7d273438d1"
   - "REQ-2c5a10d8-112b-4f96-947a-aba7164779c4"
@@ -10,6 +11,9 @@ threatens:
 likelihood: medium
 impact: medium
 level: medium
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-bd1e4ada-4a0d-4672-96cf-028f488c0540: 失敗の帰属層と終了コードがずれ部分失敗の成否判定を誤らせる
 

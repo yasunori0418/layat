@@ -2,6 +2,7 @@
 id: "REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693"
 type: requirement
 name: "同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める"
+status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 specification: |
@@ -35,6 +36,9 @@ specification_ja: |
   みなさなければならない。この warning は成功時沈黙の対象外でなければならず、`-v` の有無に
   関わらず常時出さなければならない。MVP では抑制 / 集約機構を持ってはならず、
   config の同一 target 重複を解消して直す。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693: 同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める
 

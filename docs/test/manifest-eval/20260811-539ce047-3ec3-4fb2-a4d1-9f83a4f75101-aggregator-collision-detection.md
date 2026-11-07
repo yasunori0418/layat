@@ -2,8 +2,12 @@
 id: "TC-539ce047-3ec3-4fb2-a4d1-9f83a4f75101"
 type: test_condition
 name: "アグリゲータの名前衝突の確認が衝突を落とし、衝突元を全件示す"
+status: stable
 mitigates:
   - "RISK-3de9753f-3fd3-4364-b1ab-64c68c15ec77"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:44+09:00"
 ---
 # TC-539ce047-3ec3-4fb2-a4d1-9f83a4f75101: アグリゲータの名前衝突の確認が衝突を落とし衝突元を全件示す
 

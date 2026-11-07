@@ -6,6 +6,9 @@ status: 採用
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の marker の項を書き直した"
 justifies:
   - "REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-d9cad6f6-d694-4c1d-afee-b57b129955dc: marker を判別タグで derivation と見分ける
 

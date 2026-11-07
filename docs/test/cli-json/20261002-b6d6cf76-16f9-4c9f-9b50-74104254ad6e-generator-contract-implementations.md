@@ -2,8 +2,12 @@
 id: "TC-b6d6cf76-16f9-4c9f-9b50-74104254ad6e"
 type: test_condition
 name: "生成器の各実装が実 nix 無しで同じ契約（操作・失敗の構造）を満たす"
+status: stable
 mitigates:
   - "RISK-31b8346c-7f1d-406f-aa74-6e1024edee83"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-10-02T12:16:38+09:00"
 ---
 # TC-b6d6cf76-16f9-4c9f-9b50-74104254ad6e: 生成器の各実装が実 nix 無しで同じ契約（操作・失敗の構造）を満たす
 

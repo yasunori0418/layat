@@ -7,6 +7,9 @@ origin: "manifest の型検査を NixOS モジュールシステムで行える�
 justifies:
   - "REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34"
   - "REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:30:39+09:00"
 ---
 # ADR-2e454c1f-6cad-41d8-8311-2c8e5b8efdf6: mkManifest の入力を evalModules で確認する
 

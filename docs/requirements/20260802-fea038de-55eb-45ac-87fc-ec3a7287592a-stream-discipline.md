@@ -2,6 +2,7 @@
 id: "REQ-fea038de-55eb-45ac-87fc-ec3a7287592a"
 type: requirement
 name: "stdout は機械可読出力を専有しレポートと warning は stderr へ出す"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -20,6 +21,9 @@ specification_ja: |
   `layat apply <name> --dryrun | ...` が安全にパイプできるようにする。成功時の沈黙化の
   対象は stderr の配置レポートのみとし、stdout 専有の機械可読出力は指定が無いときも `-v` のときも
   常に出さなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-fea038de-55eb-45ac-87fc-ec3a7287592a: stdout は機械可読出力を専有しレポートと warning は stderr へ出す
 

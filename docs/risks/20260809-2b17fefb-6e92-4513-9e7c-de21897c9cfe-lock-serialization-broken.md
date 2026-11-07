@@ -2,6 +2,7 @@
 id: "RISK-2b17fefb-6e92-4513-9e7c-de21897c9cfe"
 type: risk
 name: "flock による直列化が破れ、同一 config への同時実行が互いの配置を壊す"
+status: stable
 threatens:
   - "REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461"
   - "REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9"
@@ -9,6 +10,9 @@ threatens:
 likelihood: medium
 impact: high
 level: high
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-2b17fefb-6e92-4513-9e7c-de21897c9cfe: flock による直列化が破れ、同一 config への同時実行が互いの配置を壊す
 

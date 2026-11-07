@@ -2,6 +2,7 @@
 id: "QA-58522afb-31d5-4a1f-a7df-0858efa9e44b"
 type: quality
 name: "最新 main のビルド成果物を再ビルドなしに消費できる状態を保つ"
+status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 specification: |
@@ -16,6 +17,9 @@ specification_ja: |
   ソースからビルドせずに取得できるようにするため）。投入は成果物の内容を決める変更に
   よって駆動されなければならず、リリースタグに紐づけてはならない（キャッシュがリリースの
   頻度ではなく main に追従するようにするため）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:03+09:00"
 ---
 # QA-58522afb-31d5-4a1f-a7df-0858efa9e44b: 最新 main のビルド成果物を再ビルドなしに消費できる状態を保つ
 

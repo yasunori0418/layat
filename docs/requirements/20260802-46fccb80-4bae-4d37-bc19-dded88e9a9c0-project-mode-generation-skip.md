@@ -2,6 +2,7 @@
 id: "REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0"
 type: requirement
 name: "project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う"
+status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
@@ -63,6 +64,9 @@ specification_ja: |
   target が不在のときだけ place-once で再マテリアライズしなければならず、存在するが内容が異なる
   （ユーザー編集）場合は触ってはならない（home mode の place-once と振る舞いを一致させる）。
   src 追従は `apply --recopy` 限定としなければならず、内容ハッシュ比較はしてはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:54:59+09:00"
 ---
 # REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0: project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う
 

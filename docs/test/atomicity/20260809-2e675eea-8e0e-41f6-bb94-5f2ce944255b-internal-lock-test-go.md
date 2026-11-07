@@ -2,9 +2,13 @@
 id: "CASE-2e675eea-8e0e-41f6-bb94-5f2ce944255b"
 type: test_case
 name: "internal/lock/lock_test.go — flock ラッパーの try / blocking / 再取得"
+status: stable
 target: "internal/lock/lock_test.go"
 covers:
   - "TC-5454b99c-f274-438a-9ba9-5be09aa71c98"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-08-18T22:23:49+09:00"
 ---
 # CASE-2e675eea-8e0e-41f6-bb94-5f2ce944255b: internal/lock/lock_test.go — flock ラッパーの try / blocking / 再取得
 

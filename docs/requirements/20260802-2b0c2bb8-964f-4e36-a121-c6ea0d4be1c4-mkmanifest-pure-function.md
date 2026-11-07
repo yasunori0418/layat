@@ -2,6 +2,7 @@
 id: "REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4"
 type: requirement
 name: "mkManifest は配置データを生成する純粋関数である"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -21,6 +22,9 @@ specification_ja: |
   （nix-unit / namaka）の単体対象と
   しなければならない。返り値 derivation が何を含むかは REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281 が規定しており、
   本 item では重ねて規定しない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-10-31T22:07:39+09:00"
 ---
 # REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4: mkManifest は配置データを生成する純粋関数である
 

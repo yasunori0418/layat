@@ -14,6 +14,9 @@ references:
   - "ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d"
   - "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"
   - "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:30+09:00"
 ---
 # ADR-7f4fd2f6-672d-4d8c-a881-31024ad1d7c3: config 間の target 衝突は CLI が判定し engine に持ち込まない
 

@@ -2,6 +2,7 @@
 id: "REQ-c50df875-2cb0-4e72-8a21-858359a11cae"
 type: requirement
 name: "flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない"
+status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
 specification: |
@@ -24,6 +25,9 @@ specification_ja: |
   `shell.nix` / `default.nix` の canonical でなければならない。`mkManifest` は両形で唯一の
   公開 API であり続けなければならず、flakeModule の option は `mkManifest` の derivation を
   格納するだけでなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:54:35+09:00"
 ---
 # REQ-c50df875-2cb0-4e72-8a21-858359a11cae: flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない
 

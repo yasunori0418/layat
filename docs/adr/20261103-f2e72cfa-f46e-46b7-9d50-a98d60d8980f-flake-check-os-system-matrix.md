@@ -6,6 +6,9 @@ status: 採用
 origin: "参照: PR #40、https://github.com/yasunori0418/cryoflow の CI 構成。ADR-0027 §1 を書き直した"
 justifies:
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:26:22+09:00"
 ---
 # ADR-f2e72cfa-f46e-46b7-9d50-a98d60d8980f: flake check を 3 環境の os×system matrix で回す
 

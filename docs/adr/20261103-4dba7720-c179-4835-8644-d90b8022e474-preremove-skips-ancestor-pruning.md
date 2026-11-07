@@ -11,6 +11,9 @@ justifies:
   - "REQ-8409db86-a1ba-4053-86dc-588985cc1ca7"
 references:
   - "ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:28:05+09:00"
 ---
 # ADR-4dba7720-c179-4835-8644-d90b8022e474: 配置前除去は空の祖先ディレクトリを剪定しない
 

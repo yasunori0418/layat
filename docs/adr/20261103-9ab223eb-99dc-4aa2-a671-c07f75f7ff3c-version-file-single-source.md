@@ -8,6 +8,9 @@ justifies:
   - "INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43"
   - "REQ-9ed6b500-a11f-414e-a763-adb47c89f7d4"
   - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:00:19+09:00"
 ---
 # ADR-9ab223eb-99dc-4aa2-a671-c07f75f7ff3c: VERSION ファイルをバージョンの一次情報にする
 

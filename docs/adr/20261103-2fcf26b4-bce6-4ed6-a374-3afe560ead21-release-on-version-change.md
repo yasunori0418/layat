@@ -9,6 +9,9 @@ justifies:
 references:
   - "ADR-9ab223eb-99dc-4aa2-a671-c07f75f7ff3c"
   - "ADR-0dd4036d-594b-4f36-a509-e5498b231cf7"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:26:22+09:00"
 ---
 # ADR-2fcf26b4-bce6-4ed6-a374-3afe560ead21: VERSION の変更をきっかけに release を自動で作る
 

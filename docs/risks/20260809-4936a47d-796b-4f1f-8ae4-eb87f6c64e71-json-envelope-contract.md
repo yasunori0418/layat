@@ -2,6 +2,7 @@
 id: "RISK-4936a47d-796b-4f1f-8ae4-eb87f6c64e71"
 type: risk
 name: "--json のエンベロープが outturn 規約から外れ機械可読出力の消費側が処理に失敗する"
+status: stable
 threatens:
   - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
   - "REQ-5c2e64c3-09a7-4ae8-b60c-4f1ccabce4fd"
@@ -11,6 +12,9 @@ threatens:
 likelihood: low
 impact: medium
 level: low
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:31+09:00"
 ---
 # RISK-4936a47d-796b-4f1f-8ae4-eb87f6c64e71: --json のエンベロープが outturn 規約から外れ機械可読出力の消費側が処理に失敗する
 
