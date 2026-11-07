@@ -15,6 +15,9 @@ references:
   - "ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d"
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
   - "ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:29:04+09:00"
 ---
 # ADR-f3d06307-ae5b-4f17-94ad-db92e80e3415: rollback はポインタ移動の前に戻り先の manifest で記録を書き直す
 

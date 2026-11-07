@@ -2,6 +2,7 @@
 id: "QA-67715bb3-1162-4ccf-8441-2f44257a57da"
 type: quality
 name: "規範は 1 ファイル 1 item のグラフが持ち、概要文書は索引に縮退させる"
+status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 specification: |
@@ -21,6 +22,9 @@ specification_ja: |
   ならない（並列レーンで採番が衝突しないようにするため）。specification を持つ型の item は、
   その規範を英語で述べなければならず、対応する日本語の規範文を併記しなければならない。
   いずれの欄も他方の訳注として扱ってはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:03+09:00"
 ---
 # QA-67715bb3-1162-4ccf-8441-2f44257a57da: 規範は 1 ファイル 1 item のグラフが持ち、概要文書は索引に縮退させる
 

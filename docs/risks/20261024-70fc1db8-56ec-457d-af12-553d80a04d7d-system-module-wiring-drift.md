@@ -2,6 +2,7 @@
 id: "RISK-70fc1db8-56ec-457d-af12-553d80a04d7d"
 type: risk
 name: "NixOS / nix-darwin モジュールが system mode の engine 起動の配線から外れる"
+status: stable
 likelihood: medium
 impact: high
 level: high
@@ -9,6 +10,9 @@ threatens:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
   - "REQ-a220bb28-89de-42b0-a854-e7468755ecb1"
   - "REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-70fc1db8-56ec-457d-af12-553d80a04d7d: NixOS / nix-darwin モジュールが system mode の engine 起動の配線から外れる
 

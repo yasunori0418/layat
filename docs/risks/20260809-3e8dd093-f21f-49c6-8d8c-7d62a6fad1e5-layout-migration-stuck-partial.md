@@ -2,6 +2,7 @@
 id: "RISK-3e8dd093-f21f-49c6-8d8c-7d62a6fad1e5"
 type: risk
 name: "レイアウト移行が部分適用で止まり、再実行しても収束しない"
+status: stable
 threatens:
   - "REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575"
   - "REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26"
@@ -9,6 +10,9 @@ threatens:
 likelihood: medium
 impact: high
 level: high
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-3e8dd093-f21f-49c6-8d8c-7d62a6fad1e5: レイアウト移行が部分適用で止まり、再実行しても収束しない
 

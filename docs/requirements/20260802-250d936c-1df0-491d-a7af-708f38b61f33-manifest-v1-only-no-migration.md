@@ -2,6 +2,7 @@
 id: "REQ-250d936c-1df0-491d-a7af-708f38b61f33"
 type: requirement
 name: "MVP は manifest v1 のみを発行・受理しマイグレーション機構を持たない"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -19,6 +20,9 @@ specification_ja: |
   古くなった配置の除去 / rollback のために古い版の manifest を読めること。アップグレード直後の
   古くなった配置の除去は前世代 manifest を読む）は、最初のリリース後にフィールド追加で v2 が
   必要になった時点で改めて検討しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
 ---
 # REQ-250d936c-1df0-491d-a7af-708f38b61f33: MVP は manifest v1 のみを発行・受理しマイグレーション機構を持たない
 

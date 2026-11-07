@@ -2,6 +2,7 @@
 id: "REQ-9c111c32-8f6c-4eda-859c-dae02c0624fc"
 type: requirement
 name: "非 build コマンドも eval 先行を共通前段に持つ"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -20,6 +21,9 @@ specification_ja: |
   ため profileDir 確定（= rootKind 先取り eval → root 解決）が前提になる。したがって
   `--root` を付けた世代を操作するには同じ `--root` を要求しなければならない（profileDir の
   キーの引き方は apply と同一）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-9c111c32-8f6c-4eda-859c-dae02c0624fc: 非 build コマンドも eval 先行を共通前段に持つ
 

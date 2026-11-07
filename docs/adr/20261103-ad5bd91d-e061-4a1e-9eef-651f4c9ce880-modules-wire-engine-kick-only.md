@@ -15,6 +15,9 @@ references:
   - "ADR-2119433e-de69-4447-85a5-575d58246007"
   - "ADR-59f63d1f-25df-4290-913f-02804c5eeade"
   - "ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880: モジュールは root と起動の時機だけを供給して engine を起動する
 

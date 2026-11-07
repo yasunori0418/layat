@@ -2,6 +2,7 @@
 id: "REQ-6a950d6d-c191-4235-a1b4-73ffc7c2bb38"
 type: requirement
 name: "reset --dryrun は副作用ゼロで削除対象を表示して終了する"
+status: stable
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
@@ -15,6 +16,9 @@ specification_ja: |
   `layat reset <name> --dryrun` は副作用ゼロで削除対象（symlink / copy target）を表示して
   終了しなければならない（FS 削除・confirm・flock のいずれも行わない・`apply --dryrun` と
   対称）。終了コードは削除対象の有無に依らず 0 でなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-6a950d6d-c191-4235-a1b4-73ffc7c2bb38: reset --dryrun は副作用ゼロで削除対象を表示して終了する
 

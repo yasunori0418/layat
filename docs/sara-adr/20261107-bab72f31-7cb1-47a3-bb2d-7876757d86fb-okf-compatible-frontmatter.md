@@ -10,6 +10,9 @@ origin: "epic #662 の grilling（2026-11-07）で確定"
 justifies:
   - "QA-67715bb3-1162-4ccf-8441-2f44257a57da"
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T23:10:46+09:00"
 ---
 # SDR-bab72f31-7cb1-47a3-bb2d-7876757d86fb: OKF v0.2 と互換の frontmatter キーを item に足す
 

@@ -2,9 +2,13 @@
 id: "DSG-f286746c-56ca-4f0c-bb95-7c74d0cea7c0"
 type: design
 name: "hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす"
+status: stable
 satisfies:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
   - "REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # DSG-f286746c-56ca-4f0c-bb95-7c74d0cea7c0: hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす
 

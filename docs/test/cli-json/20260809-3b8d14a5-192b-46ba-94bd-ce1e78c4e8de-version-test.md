@@ -2,10 +2,14 @@
 id: "CASE-3b8d14a5-192b-46ba-94bd-ce1e78c4e8de"
 type: test_case
 name: "version_test.go — バージョンの供給元一致・--version の出力書式"
+status: stable
 target: "cmd/layat/version_test.go"
 covers:
   - "TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12"
   - "TC-b4a365cd-0b1c-40ff-92c6-91f6cffe8e98"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:34+09:00"
 ---
 # CASE-3b8d14a5-192b-46ba-94bd-ce1e78c4e8de: version_test.go — バージョンの供給元一致・--version の出力書式
 

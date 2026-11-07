@@ -2,8 +2,12 @@
 id: "TC-8a1f4b19-0ece-4057-a8bf-f9717855cade"
 type: test_condition
 name: "plan から unlink までの drift が除去直前に再検証され、処理ごとに正しく分岐すること"
+status: stable
 mitigates:
   - "RISK-e3d42a21-1f43-4ac6-835e-a5caf8d86363"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:20+09:00"
 ---
 # TC-8a1f4b19-0ece-4057-a8bf-f9717855cade: 除去直前の drift 再検証
 

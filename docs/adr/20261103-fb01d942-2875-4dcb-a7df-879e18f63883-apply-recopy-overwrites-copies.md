@@ -14,6 +14,9 @@ references:
   - "ADR-c4ad9987-850e-4834-bbea-d8de3b073548"
   - "ADR-a51897c5-f709-4b7a-8db2-61e6ebb0040c"
   - "ADR-acc31876-df36-485e-b356-92ae60e26db7"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-fb01d942-2875-4dcb-a7df-879e18f63883: apply --recopy で全 copy target を src から無条件に上書きする
 

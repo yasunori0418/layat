@@ -2,11 +2,15 @@
 id: "CASE-4a8860b1-5a88-4225-9702-f946be9c984e"
 type: test_case
 name: "apply_all_failure_matrix_test.go — build 失敗 × 配置失敗 × 成功 × skip（× conflict）の部分失敗マトリクス"
+status: stable
 target: "cmd/layat/apply_all_failure_matrix_test.go"
 covers:
   - "TC-e42a5438-039b-41b3-9a39-0e8dc1f25cb3"
   - "TC-9ccb2ffe-7bf6-41ea-a9ce-df06cdda0509"
   - "TC-ddee6cc4-bc10-4107-bc7e-288a5fb62f1f"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:34+09:00"
 ---
 # CASE-4a8860b1-5a88-4225-9702-f946be9c984e: apply_all_failure_matrix_test.go — build 失敗 × 配置失敗 × 成功 × skip（× conflict）の部分失敗マトリクス
 

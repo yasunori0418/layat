@@ -7,6 +7,9 @@ origin: "ADR-0002 §決定（stale 除去は世代由来の store マニフェ�
 justifies:
   - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
   - "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:30:50+09:00"
 ---
 # ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93: 古くなった配置の除去は manifest の差分で行う
 

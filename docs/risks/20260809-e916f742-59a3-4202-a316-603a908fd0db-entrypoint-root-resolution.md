@@ -2,6 +2,7 @@
 id: "RISK-e916f742-59a3-4202-a316-603a908fd0db"
 type: risk
 name: "entrypoint の形ごとに root 解決と配置の意味論が食い違う"
+status: stable
 threatens:
   - "REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e"
   - "REQ-6506bc82-d1e1-4dbf-8c57-d5d1babf218a"
@@ -12,6 +13,9 @@ threatens:
 likelihood: medium
 impact: high
 level: high
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-e916f742-59a3-4202-a316-603a908fd0db: entrypoint の形ごとに root 解決と配置の意味論が食い違う
 

@@ -2,8 +2,12 @@
 id: "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
 type: use_case
 name: "配置に失敗・後悔したとき CLI 単体で前の世代へロールバックして元の状態へ戻す"
+status: stable
 refines:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:38+09:00"
 ---
 # UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6: 配置に失敗・後悔したとき CLI 単体で前の世代へロールバックして元の状態へ戻す
 

@@ -2,6 +2,7 @@
 id: "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
 type: requirement
 name: "layat は CLI とエンジンの 2 層で構成する"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -24,6 +25,9 @@ specification_ja: |
   2 層の境界は `manifest.json` だけとし、engine が Nix の評価結果へ直接依存しないように
   しなければならない。どのファイルを entrypoint として発見するかは CLI 仕様の担当、
   engine がどう配置を行うかは REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564 の担当で、いずれも本 item では規定しない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645: layat は CLI とエンジンの 2 層で構成する
 

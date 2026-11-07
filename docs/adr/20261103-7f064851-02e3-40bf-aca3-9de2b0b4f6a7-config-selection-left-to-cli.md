@@ -11,6 +11,9 @@ justifies:
 references:
   - "ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429"
   - "ADR-db293e0c-4789-45b7-93a9-adedc021344f"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T15:54:50+09:00"
 ---
 # ADR-7f064851-02e3-40bf-aca3-9de2b0b4f6a7: config の選別を CLI だけに任せる
 

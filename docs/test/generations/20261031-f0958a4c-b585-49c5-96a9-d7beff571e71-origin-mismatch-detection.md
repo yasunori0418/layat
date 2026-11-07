@@ -2,8 +2,12 @@
 id: "TC-f0958a4c-b585-49c5-96a9-d7beff571e71"
 type: test_condition
 name: "記録は版 2 で出所を持ち、読みは版 1 と 2 を受け付け、出所の食い違いを警告し、書き直しは出所を引き継ぐ"
+status: stable
 mitigates:
   - "RISK-94be367e-9e2b-43ed-a351-6f16d41113b8"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:33+09:00"
 ---
 # TC-f0958a4c-b585-49c5-96a9-d7beff571e71: 記録は版 2 で出所を持ち、読みは版 1 と 2 を受け付け、出所の食い違いを警告し、書き直しは出所を引き継ぐ
 

@@ -2,6 +2,7 @@
 id: "REQ-9fca28c9-d3b1-4ad7-8f24-13b2ec7aeab2"
 type: requirement
 name: "巻き戻し自体の失敗は best-effort で続行し、全件を stderr へ報告して停止する"
+status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
@@ -20,6 +21,9 @@ specification_ja: |
   なかった項目の一覧を stderr へ全報告して停止しなければならない（conflict 報告と同じ
   「全件列挙してから 1 本の集約エラー」の形）。この報告は失敗時の処理のため常時 stderr とし、
   成功時沈黙の対象にしてはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-9fca28c9-d3b1-4ad7-8f24-13b2ec7aeab2: 巻き戻し自体の失敗は best-effort で続行し、全件を stderr へ報告して停止する
 

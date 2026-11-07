@@ -2,6 +2,7 @@
 id: "REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557"
 type: requirement
 name: "symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -40,6 +41,9 @@ specification_ja: |
   symlink の上書きは warning で可視化しなければならない。例外として、同一 entrypoint の
   `apply --all` で選択された config 間の衝突は REQ-38506419-c23d-4fce-b167-30715ce6a69d の前段の確認で build 前に
   止まらなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557: symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする
 

@@ -20,6 +20,9 @@ references:
   - "ADR-65b3439a-b90a-4056-b55a-522399bc71e6"
   - "ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d"
   - "ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:30:50+09:00"
 ---
 # ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3: root の必須性を別の確認を書かずに標準のエラーで担保する
 

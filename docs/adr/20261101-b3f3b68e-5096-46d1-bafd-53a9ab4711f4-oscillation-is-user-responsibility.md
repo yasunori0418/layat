@@ -14,6 +14,9 @@ references:
   - "ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d"
   - "ADR-3aebefee-405d-4342-b754-eef8eac29b1b"
   - "ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4: 配置の振動はユーザー責任とし、文書で注意するに留める
 

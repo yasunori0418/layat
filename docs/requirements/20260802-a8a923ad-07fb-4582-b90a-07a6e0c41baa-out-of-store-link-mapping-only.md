@@ -2,6 +2,7 @@
 id: "REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa"
 type: requirement
 name: "out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする"
+status: stable
 derives_from:
   - "UC-01b896b4-04b9-40d0-bf9e-966eaf64c3d4"
 specification: |
@@ -19,6 +20,9 @@ specification_ja: |
   この entry について、世代が版管理するのは「どのパスを指すか」というリンク先
   マッピングのみとし、指す先の内容は版管理してはならない（設計上ライブであり、永遠に
   スナップショットしない）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa: out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする
 

@@ -2,6 +2,7 @@
 id: "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
 type: requirement
 name: "世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する"
+status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -47,6 +48,9 @@ specification_ja: |
   profile を持たなければならず、CLI 単体ではユーザー向け rollback に使い、module
   （HM / NixOS / darwin）では前世代マニフェストと古くなった配置の追跡のための内部機構に留めなければ
   ならない。1 profile は 1 config に対応しなければならず、config 単位で atomic とする。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:54:59+09:00"
 ---
 # REQ-1be4d678-959c-44d7-a346-44bfd95af56e: 世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する
 

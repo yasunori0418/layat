@@ -6,6 +6,9 @@ status: 採用
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §3（クロスエントリ制約と必須性）の二重検査の項を書き直した"
 justifies:
   - "REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:30:50+09:00"
 ---
 # ADR-f66cddc5-6b4f-40e4-a85a-ce1a85cd9a0c: モジュールの使い方での二重の確認を許容する
 

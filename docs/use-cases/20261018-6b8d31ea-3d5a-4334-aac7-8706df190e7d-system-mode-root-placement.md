@@ -2,8 +2,12 @@
 id: "UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d"
 type: use_case
 name: "system mode で `/` 配下へ配置し、root 権限で世代とともに管理する"
+status: stable
 refines:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:30:05+09:00"
 ---
 # UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d: system mode で `/` 配下へ配置し、root 権限で世代とともに管理する
 

@@ -2,6 +2,7 @@
 id: "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"
 type: requirement
 name: "CLI は manifest 生成器の契約（Discover / Roots / Build / DryBuild）越しに manifest を得る"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -45,6 +46,9 @@ specification_ja: |
   Roots は name ごとの `manifest.Root` を、target 一覧をその link-farm の `manifest.json` の
   entries から導出して返さなければならず、Build と DryBuild は name で link-farm を選ばなければ
   ならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
 ---
 # REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729: CLI は manifest 生成器の契約（Discover / Roots / Build / DryBuild）越しに manifest を得る
 

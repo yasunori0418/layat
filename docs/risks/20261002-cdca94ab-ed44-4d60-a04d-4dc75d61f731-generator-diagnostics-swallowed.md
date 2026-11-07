@@ -2,12 +2,16 @@
 id: "RISK-cdca94ab-ed44-4d60-a04d-4dc75d61f731"
 type: risk
 name: "生成器の診断が握り潰され、前提条件の案内も出ない"
+status: stable
 likelihood: medium
 impact: medium
 level: medium
 threatens:
   - "REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd"
   - "REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-cdca94ab-ed44-4d60-a04d-4dc75d61f731: 生成器の診断が握り潰され、前提条件の案内も出ない
 

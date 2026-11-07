@@ -12,6 +12,9 @@ justifies:
 references:
   - "ADR-8e253f2e-c255-482a-a0f8-0837e122e80f"
   - "ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-963df3dd-ac51-41fc-94e2-a89c0675dc23: 版 1 しか読めない engine との非互換を受け入れる
 

@@ -13,6 +13,9 @@ justifies:
 references:
   - "SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb"
   - "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:44:41+09:00"
 ---
 # SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626: sara check を strict モードで回す
 

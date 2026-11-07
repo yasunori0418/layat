@@ -2,6 +2,7 @@
 id: "QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c"
 type: quality
 name: "ドキュメントグラフのトレーサビリティは機械的に検証する"
+status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 specification: |
@@ -15,6 +16,9 @@ specification_ja: |
   あること・グラフが非循環であること）は、人手の点検ではなく機械的に検証されなければならず、
   その検証は要求されたときではなく CI で実行されなければならない。参照先を解決しない確認を
   もってこれを満たしたとみなしてはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:03+09:00"
 ---
 # QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c: ドキュメントグラフのトレーサビリティは機械的に検証する
 

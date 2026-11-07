@@ -2,8 +2,12 @@
 id: "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
 type: use_case
 name: "リポジトリの内容を copy で初回だけ配置し、その後はユーザーが手で編集して育てる"
+status: stable
 refines:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:44:41+09:00"
 ---
 # UC-403fbe32-b146-401b-8b53-fe67c1e169c5: リポジトリの内容を copy で初回だけ配置し、その後はユーザーが手で編集して育てる
 

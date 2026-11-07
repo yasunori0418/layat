@@ -2,6 +2,7 @@
 id: "RISK-5f3c98b8-bd78-4bee-95af-b35e6ade35f9"
 type: risk
 name: "project mode の配置物が ephemeral に保たれず、git の追跡対象に入る"
+status: stable
 likelihood: medium
 impact: medium
 level: medium
@@ -10,6 +11,9 @@ threatens:
   - "REQ-60787ed2-4176-4bdd-800f-1600c0315551"
   - "REQ-1f128917-4424-4e37-8a88-e0bb23a09da7"
   - "REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:31+09:00"
 ---
 # RISK-5f3c98b8-bd78-4bee-95af-b35e6ade35f9: project mode の配置物が ephemeral に保たれず、git の追跡対象に入る
 

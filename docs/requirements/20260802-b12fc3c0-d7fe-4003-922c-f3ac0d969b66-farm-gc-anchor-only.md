@@ -2,6 +2,7 @@
 id: "REQ-b12fc3c0-d7fe-4003-922c-f3ac0d969b66"
 type: requirement
 name: "symlink farm は GC アンカー専用でアンカーは store-backed な symlink entry に限る"
+status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
 specification: |
@@ -27,6 +28,9 @@ specification_ja: |
   place-once でマテリアライズ後は store から独立するため store src を掴む必要がなく、
   `nix-collect-garbage` で解放されてよいためである。ただし copy entry も孤児の警告と、
   古くなった配置の判定のため `manifest.json` には記録しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:43:18+09:00"
 ---
 # REQ-b12fc3c0-d7fe-4003-922c-f3ac0d969b66: symlink farm は GC アンカー専用でアンカーは store-backed な symlink entry に限る
 

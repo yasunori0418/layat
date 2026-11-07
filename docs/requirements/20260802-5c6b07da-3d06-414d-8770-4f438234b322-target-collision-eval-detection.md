@@ -2,6 +2,7 @@
 id: "REQ-5c6b07da-3d06-414d-8770-4f438234b322"
 type: requirement
 name: "target 衝突の検出処理を同一 manifest 内と cross-config で分ける"
+status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 specification: |
@@ -27,6 +28,9 @@ specification_ja: |
   （activation の `apply --all` に載る 1 つのモジュール config の `layat.configs` など）に
   ついては配置前の検出が可能であり、本 item はそれを妨げない。その場合の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の担当で、本 item では
   規定しない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:54:20+09:00"
 ---
 # REQ-5c6b07da-3d06-414d-8770-4f438234b322: target 衝突の検出処理を同一 manifest 内と cross-config で分ける
 

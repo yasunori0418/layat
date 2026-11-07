@@ -17,6 +17,9 @@ references:
   - "ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1"
   - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-c5ebc6d9-d218-45f7-bce1-4dd481766843: legacy entrypoint の eval と build は新 CLI の -f 形で行う
 

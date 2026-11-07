@@ -10,6 +10,9 @@ justifies:
   - "DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5"
 references:
   - "ADR-db293e0c-4789-45b7-93a9-adedc021344f"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T15:55:37+09:00"
 ---
 # ADR-ffbb755c-f548-4ee4-8cea-f6a9b6d98adb: モジュールの kick も mkApplyCommand で組む
 

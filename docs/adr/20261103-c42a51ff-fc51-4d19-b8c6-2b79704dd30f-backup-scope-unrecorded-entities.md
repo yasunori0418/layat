@@ -12,6 +12,9 @@ justifies:
   - "REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98"
 references:
   - "ADR-33d8c466-6b38-46b6-8696-ad7521c72786"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f: --backup は配置を塞ぐ記録外の実体だけを退避する
 

@@ -20,6 +20,9 @@ references:
   - "ADR-bd8a4c8a-5e7e-485a-bccf-20dab63125f2"
   - "ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9"
   - "ADR-acc31876-df36-485e-b356-92ae60e26db7"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1: 終了コードは 0 / 1 / 2 の 3 値にする
 

@@ -10,6 +10,9 @@ references:
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
   - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
   - "ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:38:08+09:00"
 ---
 # ADR-10dcf5a9-f298-4123-9a50-24f43e25d30c: コアを store パスを root 相対の target へ置くプリミティブにする
 

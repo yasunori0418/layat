@@ -13,6 +13,9 @@ justifies:
 references:
   - "SDR-34916a83-0cff-4524-a8ff-5a3195af52c3"
   - "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:44:41+09:00"
 ---
 # SDR-35636015-710a-4cf8-b6ba-48ca047efed0: design の satisfies 対象に test_plan を含める
 

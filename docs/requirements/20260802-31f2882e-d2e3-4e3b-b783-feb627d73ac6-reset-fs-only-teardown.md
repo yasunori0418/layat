@@ -2,6 +2,7 @@
 id: "REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6"
 type: requirement
 name: "reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す"
+status: stable
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
@@ -39,6 +40,9 @@ specification_ja: |
   あるときの flock の鍵である profileDir（roothash 系列は backref `.root` も）の作成は行う）、
   config が entry を残す限り次の apply がこれを再配置しなければならない。home / project の
   両モードで使用できなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
 ---
 # REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6: reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す
 

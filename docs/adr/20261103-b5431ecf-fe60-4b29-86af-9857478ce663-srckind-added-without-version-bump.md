@@ -16,6 +16,9 @@ references:
   - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
   - "ADR-6d2327f7-f513-42c3-89f8-808467db1914"
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-b5431ecf-fe60-4b29-86af-9857478ce663: srcKind の列挙値は schemaVersion を上げずに足す
 

@@ -2,12 +2,16 @@
 id: "DSG-fb49e36c-eb20-4efa-8cac-88ef0873db8e"
 type: design
 name: "lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する"
+status: stable
 satisfies:
   - "REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4"
   - "REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281"
   - "REQ-b232ec98-af3b-41f3-a050-29d417322002"
   - "REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34"
   - "TP-403c55c7-d996-4951-8e6b-c3a7dddd387c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T13:53:52+09:00"
 ---
 # DSG-fb49e36c-eb20-4efa-8cac-88ef0873db8e: lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する
 

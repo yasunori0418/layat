@@ -2,6 +2,7 @@
 id: "RISK-bb54245e-b284-4b4d-9896-8fec2b4e521c"
 type: risk
 name: "reset の teardown が管理外の実体まで消し、preview と同意の条件も機能しない"
+status: stable
 threatens:
   - "REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6"
   - "REQ-6a950d6d-c191-4235-a1b4-73ffc7c2bb38"
@@ -9,6 +10,9 @@ threatens:
 likelihood: medium
 impact: high
 level: high
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:31+09:00"
 ---
 # RISK-bb54245e-b284-4b4d-9896-8fec2b4e521c: reset の teardown が管理外の実体まで消し、preview と同意の条件も機能しない
 

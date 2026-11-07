@@ -2,6 +2,7 @@
 id: "REQ-4ffda99a-7062-4c00-915f-70b525cb215b"
 type: requirement
 name: "内部実行する nix コマンドを開示し世代の切替と GC は標準の nix コマンドへ委譲する"
+status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
@@ -21,6 +22,9 @@ specification_ja: |
   `--debug` のときは、生成器自身が実行する内部コマンドを生成器名付きで書かなければならない。任意世代への切替・世代の GC は layat 専用の
   サブコマンドではなく、世代バックエンドの標準コマンド（既定の nixprofile では `nix-env` /
   `nix-collect-garbage`）を profile パスに対して使って行わなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:04:55+09:00"
 ---
 # REQ-4ffda99a-7062-4c00-915f-70b525cb215b: 内部実行する nix コマンドを開示し世代の切替と GC は標準の nix コマンドへ委譲する
 

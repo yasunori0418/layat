@@ -2,8 +2,12 @@
 id: "TC-733ac4ed-dac3-4bb8-9bfd-fd1cbdc300c9"
 type: test_condition
 name: "失敗が item と subject とトップレベルの正しい層に 1 度だけ載り原因で分類される"
+status: stable
 mitigates:
   - "RISK-bd1e4ada-4a0d-4672-96cf-028f488c0540"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:34+09:00"
 ---
 # TC-733ac4ed-dac3-4bb8-9bfd-fd1cbdc300c9: 失敗が item と subject とトップレベルの正しい層に 1 度だけ載り原因で分類される
 

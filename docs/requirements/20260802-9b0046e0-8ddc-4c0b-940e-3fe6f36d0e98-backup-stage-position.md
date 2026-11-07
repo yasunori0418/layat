@@ -2,6 +2,7 @@
 id: "REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98"
 type: requirement
 name: "backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -24,6 +25,9 @@ specification_ja: |
   では、PreRemove はその不変条件により到達しないが、Backup 段は対象であり続け、通常 apply と
   同じく退避 + 配置を行わなければならない（target への記録外実体の出現は manifest /
   derivation の変化を伴わず、shell 再入間でも起こり得るため）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:54:35+09:00"
 ---
 # REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98: backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する
 

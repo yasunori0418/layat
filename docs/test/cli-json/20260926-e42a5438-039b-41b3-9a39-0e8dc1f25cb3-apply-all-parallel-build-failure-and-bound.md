@@ -2,8 +2,12 @@
 id: "TC-e42a5438-039b-41b3-9a39-0e8dc1f25cb3"
 type: test_condition
 name: "並列 build の失敗が config ごとに集約され並列度が --jobs を超えない"
+status: stable
 mitigates:
   - "RISK-87484de7-e767-493c-a3a4-c699591832c9"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:34+09:00"
 ---
 # TC-e42a5438-039b-41b3-9a39-0e8dc1f25cb3: 並列 build の失敗が config ごとに集約され並列度が --jobs を超えない
 

@@ -2,9 +2,13 @@
 id: "CASE-474dc938-dec8-4aae-9d91-607cfcd6dec0"
 type: test_case
 name: "e2e 06-init-templates — テンプレを展開して展開物の評価が通ることを確かめる"
+status: stable
 target: "tests/e2e/scenarios/06-init-templates.sh"
 covers:
   - "TC-7e1e6a63-80d5-452c-bc49-81854ffac5a4"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-08-18T22:23:49+09:00"
 ---
 # CASE-474dc938-dec8-4aae-9d91-607cfcd6dec0: e2e 06-init-templates — テンプレを展開して展開物の評価が通ることを確かめる
 

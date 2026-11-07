@@ -13,6 +13,9 @@ justifies:
   - "REQ-2353259f-5878-452a-8e11-3445de69abc2"
 references:
   - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T23:00:36+09:00"
 ---
 # ADR-feb60906-1517-46b8-8fa5-e007df4d3e11: --json は常に results[] エンベロープを出す
 

@@ -18,6 +18,9 @@ references:
   - "ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1"
   - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:29:04+09:00"
 ---
 # ADR-08a6e1be-e424-4cfe-a529-e123a50cd6ca: CLI が評価する attr path を legacy entrypoint の書き方で分岐させない
 

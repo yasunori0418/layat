@@ -13,6 +13,9 @@ justifies:
   - "REQ-0a123b89-0399-4f76-b988-56a5f7e0becf"
 references:
   - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:00:56+09:00"
 ---
 # ADR-9e328362-2e90-441a-8eca-40081ce71b1b: エラーはエンベロープに構造化し stderr のテキストと併存させる
 

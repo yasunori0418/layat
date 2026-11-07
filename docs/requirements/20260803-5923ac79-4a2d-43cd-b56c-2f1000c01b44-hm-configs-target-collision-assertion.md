@@ -2,6 +2,7 @@
 id: "REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44"
 type: requirement
 name: "単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する"
+status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 specification: |
@@ -33,6 +34,9 @@ specification_ja: |
   どう扱うかは同 2 item の担当であり、本 item では再掲も変更もしない。
   検出しなければ、activation のたびに A と B が同じ target を交互に奪い合う
   フリップフロップが恒常化する。役割分離の導入自体が衝突の温床になるためである。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:54:20+09:00"
 ---
 # REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44: 単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する
 

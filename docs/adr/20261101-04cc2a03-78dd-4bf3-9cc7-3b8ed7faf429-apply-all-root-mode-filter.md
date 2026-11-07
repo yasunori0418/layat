@@ -11,6 +11,9 @@ justifies:
 references:
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
   - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429: apply --all に root モードのフィルタを持たせる
 

@@ -28,6 +28,9 @@ references:
   - "ADR-0da9d817-c870-4f48-8a6d-8fb9b55e2a70"
   - "ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c"
   - "ADR-f85f1afd-9b87-4f7a-922e-97c62554f198"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c: NixOS / nix-darwin モジュールは root を systemRoot に固定する
 

@@ -12,6 +12,9 @@ justifies:
 references:
   - "ADR-e6820da0-fce3-4aef-8b79-d53abbca6051"
   - "ADR-db293e0c-4789-45b7-93a9-adedc021344f"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T16:58:03+09:00"
 ---
 # ADR-ef5eac75-c65f-45b3-a8b4-748e0e767989: flake-parts module は transposition だけを行う
 

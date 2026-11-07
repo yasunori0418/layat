@@ -13,6 +13,9 @@ justifies:
 references:
   - "ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0"
   - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd: manifest.json を schemaVersion 1 の唯一の契約として固定する
 

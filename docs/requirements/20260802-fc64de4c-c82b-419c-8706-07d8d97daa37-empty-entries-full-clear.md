@@ -2,6 +2,7 @@
 id: "REQ-fc64de4c-c82b-419c-8706-07d8d97daa37"
 type: requirement
 name: "空の entries は正当な全クリアとして扱い、エラーにも警告にもしない"
+status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 specification: |
@@ -14,6 +15,9 @@ specification_ja: |
   はならない。前世代の全 layat symlink を古くなった配置の保守的な除去で除去しなければならず、
   新世代は空でなければならない。
   古くなった配置の保守的な除去が何を除去するかは REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2 の規範であり、ここでは再掲しない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:44:47+09:00"
 ---
 # REQ-fc64de4c-c82b-419c-8706-07d8d97daa37: 空の entries は正当な全クリアとして扱い、エラーにも警告にもしない
 

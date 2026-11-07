@@ -2,6 +2,7 @@
 id: "REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4"
 type: requirement
 name: "reset は名指し必須で profileDir 単位の blocking flock を取る"
+status: stable
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
@@ -20,6 +21,9 @@ specification_ja: |
   行わなければならない。`reset` は解決後 `profileDir` 単位の blocking flock を取得して、
   並行する apply / reset と直列化しなければならない。非 build コマンド共通の eval 先行
   前段に加えて、`reset` は entries 読みのため entrypoint eval も行わなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4: reset は名指し必須で profileDir 単位の blocking flock を取る
 

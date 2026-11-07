@@ -13,6 +13,9 @@ references:
   - "ADR-c4ad9987-850e-4834-bbea-d8de3b073548"
   - "ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f"
   - "ADR-fc28d09c-9d52-4539-8838-e9ae5a414594"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:28:05+09:00"
 ---
 # ADR-02ed93fa-c59f-4790-805d-759501017d2b: method の copy から symlink への変更は移行しない
 

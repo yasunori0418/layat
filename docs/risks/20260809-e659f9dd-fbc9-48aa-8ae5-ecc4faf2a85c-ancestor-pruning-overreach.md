@@ -2,11 +2,15 @@
 id: "RISK-e659f9dd-fbc9-48aa-8ae5-ecc4faf2a85c"
 type: risk
 name: "空親ディレクトリの剪定が行き過ぎ、または残骸を残す"
+status: stable
 threatens:
   - "REQ-8409db86-a1ba-4053-86dc-588985cc1ca7"
 likelihood: low
 impact: medium
 level: low
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-e659f9dd-fbc9-48aa-8ae5-ecc4faf2a85c: 空親ディレクトリの剪定が行き過ぎ、または残骸を残す
 

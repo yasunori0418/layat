@@ -6,6 +6,9 @@ status: 採用
 origin: "ドキュメント計画段階の最終レビュー（grill）。ADR-0015 §8 を書き直した"
 justifies:
   - "REQ-d0aef5af-e922-400b-b250-ca38719c480b"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-40dd7945-5792-4b80-bdfa-43f95f482554: flake check の警告は無害として許容する
 

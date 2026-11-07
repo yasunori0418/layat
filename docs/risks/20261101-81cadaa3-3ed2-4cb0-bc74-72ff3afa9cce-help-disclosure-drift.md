@@ -2,11 +2,15 @@
 id: "RISK-81cadaa3-3ed2-4cb0-bc74-72ff3afa9cce"
 type: risk
 name: "--help の nix コマンド開示が実際に実行する nix 呼び出しからずれる"
+status: stable
 likelihood: medium
 impact: low
 level: low
 threatens:
   - "REQ-4ffda99a-7062-4c00-915f-70b525cb215b"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-81cadaa3-3ed2-4cb0-bc74-72ff3afa9cce: --help の nix コマンド開示が実際に実行する nix 呼び出しからずれる
 

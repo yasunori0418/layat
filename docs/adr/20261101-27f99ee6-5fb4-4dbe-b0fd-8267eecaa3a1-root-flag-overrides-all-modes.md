@@ -8,6 +8,9 @@ justifies:
   - "REQ-61c05e09-0bde-4f74-9a96-03185f9df606"
 references:
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-27f99ee6-5fb4-4dbe-b0fd-8267eecaa3a1: --root は全モードで root を上書きする
 

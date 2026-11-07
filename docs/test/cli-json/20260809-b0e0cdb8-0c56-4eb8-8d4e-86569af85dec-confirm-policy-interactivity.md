@@ -2,8 +2,12 @@
 id: "TC-b0e0cdb8-0c56-4eb8-8d4e-86569af85dec"
 type: test_condition
 name: "破壊的操作の確認が対話性と同意フラグの組み合わせで決まり非対話で止まらない"
+status: stable
 mitigates:
   - "RISK-687993a2-4863-483c-a957-8a5d6faa4b82"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:34+09:00"
 ---
 # TC-b0e0cdb8-0c56-4eb8-8d4e-86569af85dec: 破壊的操作の確認が対話性と同意フラグの組み合わせで決まり非対話で止まらない
 

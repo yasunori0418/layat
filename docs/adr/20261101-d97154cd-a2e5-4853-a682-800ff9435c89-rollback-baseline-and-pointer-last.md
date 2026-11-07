@@ -6,6 +6,9 @@ status: 採用
 origin: "ドキュメント計画段階の最終レビュー（grill）で surfaced した「実装前に決めておくべき」残細目の束。ADR-0015 §5 を書き直した"
 justifies:
   - "REQ-0e341430-17f0-498b-9439-65491652163a"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-d97154cd-a2e5-4853-a682-800ff9435c89: rollback は FS を収束させてからポインタを動かす
 

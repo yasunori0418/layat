@@ -2,8 +2,12 @@
 id: "TC-d9175bb5-d7ec-41e0-8bee-71de928a71fb"
 type: test_condition
 name: "省略時の既定適用・明示上書き・target 辞書順での決定的配列化をアサートする"
+status: stable
 mitigates:
   - "RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:49+09:00"
 ---
 # TC-d9175bb5-d7ec-41e0-8bee-71de928a71fb: 既定適用と決定的な配列化をアサートする
 

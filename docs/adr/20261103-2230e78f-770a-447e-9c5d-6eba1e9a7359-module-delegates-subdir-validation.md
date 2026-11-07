@@ -8,6 +8,9 @@ issues:
 origin: "ADR-0064 §3 を書き直した"
 justifies:
   - "REQ-068f2fb3-5459-4325-9359-c931b5049e0d"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:34:10+09:00"
 ---
 # ADR-2230e78f-770a-447e-9c5d-6eba1e9a7359: モジュールは subdir の確認を lib に委ねる
 

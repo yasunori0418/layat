@@ -2,6 +2,7 @@
 id: "REQ-2b48620a-abaa-43df-a106-954bbba3de56"
 type: requirement
 name: "method 変更は symlink→copy のみ配置前除去で移行し、copy→symlink は移行しない"
+status: stable
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
 specification: |
@@ -22,6 +23,9 @@ specification_ja: |
   ならず、通常の foreign 判定へフォールバックしなければならない。method 変更 copy→symlink は
   自動移行してはならず、conflict のままとしなければならない（ユーザーが編集し得る copy
   データの保護を優先するため）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-2b48620a-abaa-43df-a106-954bbba3de56: method 変更は symlink→copy のみ配置前除去で移行し、copy→symlink は移行しない
 

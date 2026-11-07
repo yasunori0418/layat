@@ -2,10 +2,14 @@
 id: "DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda"
 type: design
 name: "NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする"
+status: stable
 satisfies:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
   - "REQ-a220bb28-89de-42b0-a854-e7468755ecb1"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:01:21+09:00"
 ---
 # DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda: NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする
 

@@ -2,6 +2,7 @@
 id: "REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9"
 type: requirement
 name: "実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -92,6 +93,9 @@ specification_ja: |
   2b を skip しなければならない。build しないため pending out-link はそこで張ってはならない。
   skip した段の代わりに何を行うかは `apply --manifest` の仕様の担当で、本 item では
   規定しない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T13:39:28+09:00"
 ---
 # REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9: 実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる
 

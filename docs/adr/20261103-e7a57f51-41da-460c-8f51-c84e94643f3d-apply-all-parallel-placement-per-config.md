@@ -14,6 +14,9 @@ references:
   - "ADR-ac648001-7e22-4fe2-a457-596064e32717"
   - "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"
   - "ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-e7a57f51-41da-460c-8f51-c84e94643f3d: apply --all の配置を config 単位で並列に行う
 

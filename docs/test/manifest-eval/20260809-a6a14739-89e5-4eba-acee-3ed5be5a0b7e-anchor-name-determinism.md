@@ -2,8 +2,12 @@
 id: "TC-a6a14739-89e5-4eba-acee-3ed5be5a0b7e"
 type: test_condition
 name: "GC アンカー名の形式・決定性・特殊文字耐性をアサートする"
+status: stable
 mitigates:
   - "RISK-f67a0883-950a-4458-8b6d-1f95cb039cb1"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:49+09:00"
 ---
 # TC-a6a14739-89e5-4eba-acee-3ed5be5a0b7e: アンカー名の形式と決定性をアサートする
 

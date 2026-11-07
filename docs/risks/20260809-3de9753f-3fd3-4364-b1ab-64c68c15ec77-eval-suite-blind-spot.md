@@ -2,11 +2,15 @@
 id: "RISK-3de9753f-3fd3-4364-b1ab-64c68c15ec77"
 type: risk
 name: "評価スイート自身の盲点でアサートが空虚に緑になる"
+status: stable
 likelihood: low
 impact: high
 level: medium
 threatens:
   - "DSG-fb49e36c-eb20-4efa-8cac-88ef0873db8e"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:35:05+09:00"
 ---
 # RISK-3de9753f-3fd3-4364-b1ab-64c68c15ec77: 評価スイート自身の盲点でアサートが空虚に緑になる
 

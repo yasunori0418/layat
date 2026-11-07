@@ -2,6 +2,7 @@
 id: "REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796"
 type: requirement
 name: "rollback は名指し必須で --all に対応しない"
+status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
 specification: |
@@ -11,6 +12,9 @@ specification: |
 specification_ja: |
   `layat rollback` は名指し必須とし、`--all` に対応してはならない。全 config を一斉に
   戻すのは破壊的で footgun であり、途中失敗で状態が不揃いになり得るため。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796: rollback は名指し必須で --all に対応しない
 

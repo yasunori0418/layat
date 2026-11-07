@@ -19,6 +19,9 @@ references:
   - "ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3"
   - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-1ddf424a-db2c-4bcb-8823-bf7e4326b980: --manifest を prebuilt 生成器に写す
 

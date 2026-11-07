@@ -12,6 +12,9 @@ references:
   - "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
   - "ADR-2119433e-de69-4447-85a5-575d58246007"
   - "ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:30+09:00"
 ---
 # ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799: devShell の shellHook で配線する
 

@@ -11,6 +11,9 @@ justifies:
   - "REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b"
 references:
   - "ADR-33d8c466-6b38-46b6-8696-ad7521c72786"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T15:57:37+09:00"
 ---
 # ADR-65e41903-5eee-4a00-a154-be8c830cdca9: 退避先を target に suffix を付けた名前に固定する
 

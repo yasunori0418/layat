@@ -2,6 +2,7 @@
 id: "REQ-c44433a1-7ee7-459a-9aae-7cc42166876f"
 type: requirement
 name: "prune は backref の root が実在しない roothash 系列だけを系列ごと削除する"
+status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
@@ -42,6 +43,9 @@ specification_ja: |
   するのに列挙できないときは、その基底を名指しした warning として報告しなければならない
   （見に行けなかった実行と、見た結果何も無かった実行を区別できるようにするため）。
   `layat prune` は配置物に一切触れてはならず、残す系列の世代を間引いてもならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-c44433a1-7ee7-459a-9aae-7cc42166876f: prune は backref の root が実在しない roothash 系列だけを系列ごと削除する
 

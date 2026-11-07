@@ -16,6 +16,9 @@ references:
   - "ADR-3aebefee-405d-4342-b754-eef8eac29b1b"
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
   - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988: profile は解決済み root の roothash でキーする
 

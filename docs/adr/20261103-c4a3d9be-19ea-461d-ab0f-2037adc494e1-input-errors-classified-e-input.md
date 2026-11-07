@@ -17,6 +17,9 @@ references:
   - "ADR-24488788-a5e6-47a5-9074-97192880642a"
   - "ADR-1338a293-3f69-48f5-9164-efb4ec6994d6"
   - "ADR-ef9e4099-0cf4-409a-9e73-518866aea676"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:00:56+09:00"
 ---
 # ADR-c4a3d9be-19ea-461d-ab0f-2037adc494e1: 入力の不正を E_INPUT に分類する
 

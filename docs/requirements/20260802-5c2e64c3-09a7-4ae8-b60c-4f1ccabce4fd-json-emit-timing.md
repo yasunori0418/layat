@@ -2,6 +2,7 @@
 id: "REQ-5c2e64c3-09a7-4ae8-b60c-4f1ccabce4fd"
 type: requirement
 name: "エンベロープはコマンド完了時に 1 回だけ出し成立条件を満たさない実行では出さない"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -26,6 +27,9 @@ specification_ja: |
   stderr をシグナルとしなければならない。エンベロープ書き込み自体の失敗（EPIPE 等）は
   コマンド成功時でも
   非ゼロ終了にしなければならない（欠損文書を成功と読ませないため）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-5c2e64c3-09a7-4ae8-b60c-4f1ccabce4fd: エンベロープはコマンド完了時に 1 回だけ出し成立条件を満たさない実行では出さない
 

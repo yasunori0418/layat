@@ -16,6 +16,9 @@ references:
   - "ADR-d97154cd-a2e5-4853-a682-800ff9435c89"
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
   - "ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:40:25+09:00"
 ---
 # ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444: 世代スキップには profile に加え記録の一致も要する
 

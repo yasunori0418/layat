@@ -2,8 +2,12 @@
 id: "TC-cf8189c4-d680-4d7e-bcd3-810543762c50"
 type: test_condition
 name: "engine 結果から item と change への写像がインベントリ全数と実差分に一致する"
+status: stable
 mitigates:
   - "RISK-06d7375e-fecd-4a0a-9ceb-1f9e207c3308"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:34+09:00"
 ---
 # TC-cf8189c4-d680-4d7e-bcd3-810543762c50: engine 結果から item と change への写像がインベントリ全数と実差分に一致する
 

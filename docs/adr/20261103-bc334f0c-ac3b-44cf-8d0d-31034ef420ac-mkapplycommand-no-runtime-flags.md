@@ -10,6 +10,9 @@ justifies:
   - "REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f"
 references:
   - "ADR-db293e0c-4789-45b7-93a9-adedc021344f"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T15:54:50+09:00"
 ---
 # ADR-bc334f0c-ac3b-44cf-8d0d-31034ef420ac: mkApplyCommand は実行時フラグを引数に取らない
 

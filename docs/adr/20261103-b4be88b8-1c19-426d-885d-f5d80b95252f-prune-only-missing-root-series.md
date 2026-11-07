@@ -12,6 +12,9 @@ justifies:
 references:
   - "ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988"
   - "ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-b4be88b8-1c19-426d-885d-f5d80b95252f: prune は root が実在しない roothash 系列だけを削除する
 

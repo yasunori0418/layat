@@ -2,6 +2,7 @@
 id: "RISK-ffb5100d-c553-4dd8-937a-1263ad84a8c7"
 type: risk
 name: "コピー結果が src と構造・属性で食い違い、配置物が使えなくなる"
+status: stable
 threatens:
   - "REQ-84e3c717-adf5-4ff3-b0db-d039b82ef19c"
   - "REQ-0bd55dfc-b28c-4ad2-ad50-bb1f76b2246c"
@@ -9,6 +10,9 @@ threatens:
 likelihood: low
 impact: medium
 level: low
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-ffb5100d-c553-4dd8-937a-1263ad84a8c7: コピー結果が src と構造・属性で食い違い、配置物が使えなくなる
 

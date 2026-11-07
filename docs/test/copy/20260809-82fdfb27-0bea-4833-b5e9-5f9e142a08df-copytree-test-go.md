@@ -2,9 +2,13 @@
 id: "CASE-82fdfb27-0bea-4833-b5e9-5f9e142a08df"
 type: test_case
 name: "internal/engine/copytree_test.go — 再帰コピーの構造・mode・symlink 再現"
+status: stable
 target: "internal/engine/copytree_test.go"
 covers:
   - "TC-b1b8c163-9d37-47ee-9838-7168569df03a"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:25:13+09:00"
 ---
 # CASE-82fdfb27-0bea-4833-b5e9-5f9e142a08df: copytree_test.go
 

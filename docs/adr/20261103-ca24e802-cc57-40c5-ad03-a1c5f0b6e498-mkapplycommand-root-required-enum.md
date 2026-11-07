@@ -11,6 +11,9 @@ justifies:
 references:
   - "ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429"
   - "ADR-db293e0c-4789-45b7-93a9-adedc021344f"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:34:07+09:00"
 ---
 # ADR-ca24e802-cc57-40c5-ad03-a1c5f0b6e498: mkApplyCommand の root を既定値のない必須の enum にする
 

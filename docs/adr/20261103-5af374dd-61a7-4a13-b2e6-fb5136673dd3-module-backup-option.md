@@ -20,6 +20,9 @@ references:
   - "ADR-e8bb6153-2528-419e-8be0-c862a3eb4e05"
   - "ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98"
   - "ADR-33d8c466-6b38-46b6-8696-ad7521c72786"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:00:56+09:00"
 ---
 # ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3: モジュールに layat.backup を起動配線のオプションとして持つ
 

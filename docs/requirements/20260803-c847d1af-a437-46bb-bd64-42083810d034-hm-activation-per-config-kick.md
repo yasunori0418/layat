@@ -2,6 +2,7 @@
 id: "REQ-c847d1af-a437-46bb-bd64-42083810d034"
 type: requirement
 name: "HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う"
+status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
@@ -38,6 +39,9 @@ specification_ja: |
   ならない（`--manifest` の無い `apply --all` は entrypoint を通る処理になるため）。起動の契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、1 config が
   1 manifest = 1 profile に対応することは REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a の担当で、
   いずれも本 item では規定しない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-c847d1af-a437-46bb-bd64-42083810d034: HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う
 
