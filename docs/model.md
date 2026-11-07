@@ -148,7 +148,7 @@ layat の値は URI ではない。根もリポジトリ根で、index.md のバ
 平たいキー（`status` / `stale_after` / `resource`）は `docs/model.yaml` のフィールドとして sara が
 確かめる。入れ子のキー（`generated` / `verified` / `sources`）は sara が型を持たないので、
 `dev/tests/okf-frontmatter.sh` が形を確かめる。本文の変更と `generated` の更新が揃っているかは
-検査せず、規約で守る。
+確かめず、規約で守る。
 
 ## 関係
 

@@ -1,7 +1,7 @@
 ---
 id: "SDR-9a646576-31bd-4cea-996d-54993ff2b8fa"
 type: sara_adr
-name: "item の来歴と鮮度を generated・verified・stale_after で持つ"
+name: "item に生成者・確認の記録・期限を持たせる"
 description: "生成者と時刻の generated を必須にし、確認の記録 verified と期限 stale_after を任意で持たせ、入れ子キーの形を契約テストで確かめる"
 status: 採用
 issues:
@@ -10,7 +10,7 @@ origin: "epic #662 の grilling（2026-11-07）で確定"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
 ---
-# SDR-9a646576-31bd-4cea-996d-54993ff2b8fa: item の来歴と鮮度を generated・verified・stale_after で持つ
+# SDR-9a646576-31bd-4cea-996d-54993ff2b8fa: item に生成者・確認の記録・期限を持たせる
 
 - ステータス: 採用
 - 日付: 2026-11-07
@@ -20,7 +20,7 @@ justifies:
 ## 背景
 
 item を誰がいつ書いたか、人が内容を確かめたか、いつまで有効な事実かは、frontmatter から読めない。
-git の履歴には書いた時刻が残るが、frontmatter だけを直したコミットや改名のコミットと混ざり、
+git の履歴には書いた時刻が残るが、frontmatter だけを直したコミットや改名のコミットも同じ履歴に並ぶので、
 本文を最後に変えた時刻を取り出すには手間がかかる。
 
 OKF には、生成者と時刻の `generated`、確認の記録の `verified`、期限の `stale_after` がある。
@@ -32,7 +32,7 @@ SDR-bab72f31-7cb1-47a3-bb2d-7876757d86fb で OKF と互換のキーを足すと�
 
 - `generated` は `by`（actor）と `at`（時刻）の組にする。actor は人なら `human:<GitHub ID>`、
   エージェントなら `claude-code/<モデル ID>` の形で書く。`at` は UTC オフセット付きの ISO 8601 で書く
-- `generated.at` は、本文を最後に意味のある形で変えた時刻にする。git の履歴と突き合わせられる値に
+- `generated.at` は、本文を最後に意味のある形で変えた時刻にする。git の履歴と比べられる値に
   するため、frontmatter だけの変更や改名では動かさない。本文を変えたら `generated` を更新する
 - 起票では `sara-new` が `generated` を付ける。actor は環境変数 `SARA_NEW_GENERATED_BY` から取る
 - `verified` は `generated` と同じ形の要素のリストにする。自動では付けず、人が内容を確かめたときに
@@ -41,7 +41,7 @@ SDR-bab72f31-7cb1-47a3-bb2d-7876757d86fb で OKF と互換のキーを足すと�
   公開状況など）を含む item にだけ、書き手が付ける
 - 入れ子のキー（`generated` / `verified` / `sources`）の形は `dev/tests/okf-frontmatter.sh` が
   確かめる。平たいキーは `docs/model.yaml` のフィールドにして sara に確かめさせる
-- `generated.at` と git の履歴の突き合わせは、この決定では検査しない
+- `generated.at` と git の履歴が合っているかは、この決定では確かめない
 
 ## 根拠
 
@@ -53,15 +53,15 @@ SDR-bab72f31-7cb1-47a3-bb2d-7876757d86fb で OKF と互換のキーを足すと�
 `verified` を自動で付けると、確かめていない item にも確認の記録が付き、記録の意味が無くなる。
 `stale_after` を全ての item に求めると、期限の無い規範に架空の期限を書くことになる。
 
-sara は入れ子のキーに型を持たないので、形の検査は契約テストに置くしかない。本文の変更と
+sara は入れ子のキーに型を持たないので、形を確かめる処理は契約テストに置くしかない。本文の変更と
 `generated` の更新が揃っているかは、規約で守る。
 
 ## 棄却した代替案
 
 ### `generated` を git の履歴から毎回導く
 
-frontmatter だけを読む OKF の読み手には届かない。履歴から導く処理は、埋め戻しと後続の突き合わせの
-検査に使う。
+frontmatter だけを読む OKF の読み手には届かない。履歴から導く処理は、埋め戻しと、後続の epic で履歴と比べる
+仕組みに使う。
 
 ### `verified` をレビューの承認から自動で付ける
 

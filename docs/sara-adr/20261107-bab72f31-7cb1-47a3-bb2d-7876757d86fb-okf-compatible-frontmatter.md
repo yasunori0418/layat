@@ -35,7 +35,7 @@ OKF v0.2 と互換の frontmatter キーを、sara の item に足す。対応�
 
 - OKF の `title` には sara の組み込みの `name` を当てる。`title` は足さない
 - OKF の必須キー `type` は sara の組み込みフィールドで満たす。欠落は `sara check` が拒否するので、
-  新たな検査は足さない
+  確かめる仕組みを新たに足さない
 - `description` は新しく起こす item で必須にする。既存の item には手で埋め戻さない
 - `tags` は使わない
 - バンドルの宣言（`okf_version`）・`log.md`・frontmatter の無い文書への frontmatter 追加は行わない

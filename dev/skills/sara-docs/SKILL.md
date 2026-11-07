@@ -51,9 +51,9 @@ relation・型別フィールドはオプションで渡す。手順は
 
 ### OKF 互換のキー（`description` と `generated`）
 
-- `sara-new` は `--` 以降に **`--description`（item の 1 文の要約）が無いと起票を拒否する**（exit 2）
+- `sara-new` は `--` 以降に `--description`（item の 1 文の要約）が無いと起票を拒否する（exit 2）
 - `sara-new` は frontmatter に `generated`（`by` と `at`）を付ける。`by` は環境変数
-  **`SARA_NEW_GENERATED_BY`** から取り、未設定なら起票を拒否する（exit 2）。人なら
+  `SARA_NEW_GENERATED_BY` から取り、未設定なら起票を拒否する（exit 2）。人なら
   `human:<GitHub ID>`、エージェントなら `claude-code/<モデル ID>` を設定してから呼ぶ
 - **本文を変えたら `generated` の `by` と `at` を更新する**（`at` は UTC オフセット付きの
   ISO 8601。`date --iso-8601=seconds` の値）。frontmatter だけの変更や改名では更新しない
