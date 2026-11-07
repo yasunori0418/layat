@@ -9,7 +9,7 @@
 #   --full:   <資産識別子>\t<種別>\t<テスト名>
 #             テスト名を持たない種別（e2e / namaka / flake-check）は 3 列目が空。
 #
-# 資産識別子は CASE frontmatter の target と同じ表記:
+# 資産識別子は CASE frontmatter の resource と同じ表記:
 #   - 実在するファイル → リポジトリ相対パス（namaka だけは末尾スラッシュのディレクトリ）
 #   - flake check      → checks.<name> 形式（dev flake は dev:checks.<name>）
 
