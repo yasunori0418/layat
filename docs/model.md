@@ -116,7 +116,8 @@ verified:
 - actor（`by`）は、人なら `human:<GitHub ID>`、エージェントなら `claude-code/<モデル ID>` の形で書く
 - 時刻（`at`）は UTC オフセット付きの ISO 8601 で書く。`Z` も UTC オフセットとして扱う
 - `generated.at` は本文を最後に意味のある形で変えた時刻にする。**本文を変えたら `generated` の
-  `by` と `at` を更新する**。frontmatter だけの変更や改名では更新しない
+  `by` と `at` を更新する**。frontmatter だけの変更や改名では更新しない。frontmatter の値を本文へ
+  写しただけの変更（ステータス行の書き換えなど）でも更新しない
 - 起票では `sara-new` が `generated` を付ける（`by` は環境変数 `SARA_NEW_GENERATED_BY` から取る）
 - `verified` は自動では付けない。人が内容を確かめたときにだけ、手で要素を足す
 
