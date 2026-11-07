@@ -3,7 +3,7 @@
 #
 #   nix develop ./dev -c dev/scripts/test-doc-matrix.sh [出力パス]
 #
-# 入力は test-inventory.sh --full・sara report matrix・CASE の target・区分表と除外リストの TSV。
+# 入力は test-inventory.sh --full・sara report matrix・CASE の resource・区分表と除外リストの TSV。
 # 区分（docs/test/<区分>/）ごとに、行 = テスト資産、列 = CASE / TC / 上流 RISK の表を出す。
 
 set -uo pipefail
@@ -42,13 +42,13 @@ sara report matrix --format json > "$work/matrix.json" 2>/dev/null || {
   exit 1
 }
 
-# CASE: <target>\t<CASE フル ID>\t<name>\t<区分>\t<ファイルパス>
+# CASE: <resource>\t<CASE フル ID>\t<name>\t<区分>\t<ファイルパス>
 # frontmatter の 3 列を yq で採り、区分とファイルパスは置き場所から付ける。
 : > "$work/cases"
 while IFS= read -r file; do
   category=$(printf '%s\n' "$file" | cut -d/ -f3)
   if ! row=$(yq --front-matter=extract -r \
-    '[(.target // ""), (.id // ""), (.name // "")] | @tsv' "$file" 2>/dev/null); then
+    '[(.resource // ""), (.id // ""), (.name // "")] | @tsv' "$file" 2>/dev/null); then
     echo "test-doc-matrix.sh: 警告: $file の frontmatter を読めなかった（対応表から落ちる）" >&2
     continue
   fi
@@ -135,17 +135,17 @@ names_block() {
 # $work/assets:     資産の一意リスト（inventory 由来）
 cut -f1 "$work/inventory" | LC_ALL=C sort -u > "$work/assets"
 
-# cases（<target>\t<id>\t<name>\t<区分>\t<ファイル>）を資産側から引ける形へ並べ替える。
+# cases（<resource>\t<id>\t<name>\t<区分>\t<ファイル>）を資産側から引ける形へ並べ替える。
 awk -F'\t' -v OFS='\t' '
   NR == FNR { asset[$1] = 1; next }
   $1 in asset { print $4, $1, $2, $3 }
 ' "$work/assets" "$work/cases" | LC_ALL=C sort > "$work/asset-rows"
 
-# inventory に無い target を指す CASE は上の join で落ちるため、stderr へ警告し末尾の節にも載せる。
-# 診断はファイルパスで出し、target が空の CASE は別表記にする。
+# inventory に無い resource を指す CASE は上の join で落ちるため、stderr へ警告し末尾の節にも載せる。
+# 診断はファイルパスで出し、resource が空の CASE は別表記にする。
 awk -F'\t' -v OFS='\t' '
   NR == FNR { asset[$1] = 1; next }
-  !($1 in asset) { print $5, ($1 == "" ? "(target 空)" : $1) }
+  !($1 in asset) { print $5, ($1 == "" ? "(resource 空)" : $1) }
 ' "$work/assets" "$work/cases" > "$work/dangling-cases"
 
 if [ -s "$work/dangling-cases" ]; then
@@ -261,16 +261,16 @@ emit_dangling() {
   fi
 
   printf '## 実在しない資産を指す CASE\n\n'
-  printf 'target が inventory に無い CASE。リネーム / 削除の追従漏れで、対応表の本体からは\n'
+  printf 'resource が inventory に無い CASE。リネーム / 削除の追従漏れで、対応表の本体からは\n'
   printf '落ちている。dev/tests/test-doc-map.sh §1 が落とすべき状態。\n\n'
-  printf '| CASE | target |\n'
+  printf '| CASE | resource |\n'
   printf '| --- | --- |\n'
-  while IFS=$'\t' read -r file target; do
-    # 「(target 空)」は注記なのでバッククォートで囲まない。
-    if [ "$target" = "(target 空)" ]; then
-      printf '| `%s` | %s |\n' "$file" "$target"
+  while IFS=$'\t' read -r file resource; do
+    # 「(resource 空)」は注記なのでバッククォートで囲まない。
+    if [ "$resource" = "(resource 空)" ]; then
+      printf '| `%s` | %s |\n' "$file" "$resource"
     else
-      printf '| `%s` | `%s` |\n' "$file" "$target"
+      printf '| `%s` | `%s` |\n' "$file" "$resource"
     fi
   done < "$work/dangling-cases"
   printf '\n'
