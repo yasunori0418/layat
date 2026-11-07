@@ -80,7 +80,8 @@ pass "risk-matrix.tsv から ${#LEVEL_MATRIX[@]} セルのマトリクスを読�
 # --- 全 risk item の level が導出と一致する -----------------------------------
 
 # ファイル一覧は改行区切りで受ける（ファイル名は空白・改行を含まない）。
-mapfile -t risk_files < <(find "$risks_dir" -maxdepth 1 -type f -name '*.md' | LC_ALL=C sort)
+# frontmatter に type: risk を持つファイルだけを読み、index.md などの item でない文書を除く。
+mapfile -t risk_files < <(find "$risks_dir" -maxdepth 1 -type f -name '*.md' -exec grep -lx 'type: risk' {} + | LC_ALL=C sort)
 
 # 対象 0 件を緑にしない。
 if [[ "${#risk_files[@]}" -eq 0 ]]; then
