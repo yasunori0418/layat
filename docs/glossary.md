@@ -9,7 +9,7 @@ layat のユビキタス言語の索引。用語の正名・避ける綴り・�
 >   正名は `name_ja` に置く。英語のまま使う語は `name_ja` を持たない
 > - 執筆では item の `avoid` にある綴りを使わない
 > - `avoid` の綴りは契約テスト `dev/tests/term-avoid.sh`（textlint + prh）が検出する。対象は docs・README・CLAUDE.md で、ADR・SDR・用語 item は除く
-> - 使いたい語の item が無ければ `sara-new ubiquitous_term <slug> docs/ubiquitous-language` で
+> - 使いたい語の item が無ければ `sara-new ubiquitous_term <slug> docs/ubiquitous-language -- --description '<1 文の要約>'` で
 >   起こし、本文書の該当する節に 1 行足す
 > - 本文書には定義を書かない。1 語 1 行で `` - [<ID>](<item>) — `<英語の正名>`（<日本語の正名>） `` の形に揃える
 
