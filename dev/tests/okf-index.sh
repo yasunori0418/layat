@@ -217,28 +217,33 @@ fi
 
 # --- (5) --check は食い違うパスを出して exit 1 を返し、index.md を書き換えない --
 
+# --check を走らせ、exit 1 で出力が期待するパスだけであることを確かめる。
+expect_stale() {
+  local label=$1 want=$2 rc
+  (cd "$fixture" && bash "$generator" --check) > "$work/stale.out" 2> "$work/stale.err"
+  rc=$?
+  if [ "$rc" -eq 1 ] && [ "$(cat "$work/stale.out")" = "$want" ]; then
+    pass "$label"
+  else
+    fault "$label（exit $rc・出力: $(tr '\n' ' ' < "$work/stale.out")）"
+    sed 's/^/    /' "$work/stale.err"
+  fi
+}
+
 printf '手で書き換えた\n' >> "$fixture/docs/adr/index.md"
 cp "$fixture/docs/adr/index.md" "$work/edited.md"
-mkdir -p "$fixture/docs/test/removed"
-printf '# removed\n' > "$fixture/docs/test/removed/index.md"
-(cd "$fixture" && bash "$generator" --check) > "$work/stale.out" 2>&1
-rc=$?
-if [ "$rc" -ne 1 ]; then
-  fault "(5) 食い違う index.md があるとき --check が exit 1 を返さない（実際: $rc）"
-  sed 's/^/    /' "$work/stale.out"
-elif ! grep -qxF 'docs/adr/index.md' "$work/stale.out"; then
-  fault "(5) --check の出力に内容の食い違うパスが無い"
-  sed 's/^/    /' "$work/stale.out"
-elif ! grep -qxF 'docs/test/removed/index.md' "$work/stale.out"; then
-  fault "(5) --check の出力に生成対象から外れたパスが無い"
-  sed 's/^/    /' "$work/stale.out"
-else
-  pass "--check は食い違うパスと生成対象から外れたパスを出して exit 1 を返す"
-fi
+expect_stale "--check は内容の食い違う index.md のパスを出して exit 1 を返す" docs/adr/index.md
 if cmp -s "$fixture/docs/adr/index.md" "$work/edited.md"; then
   pass "--check は既存の index.md を書き換えない"
 else
   fault "(5) --check が既存の index.md を書き換えた"
 fi
+
+# 書き出しで内容の食い違いを解消してから、生成対象に無い index.md だけを残す。
+(cd "$fixture" && bash "$generator") > /dev/null 2>&1
+mkdir -p "$fixture/docs/test/removed" "$fixture/docs/agents"
+printf '# removed\n' > "$fixture/docs/test/removed/index.md"
+printf '# agents\n' > "$fixture/docs/agents/index.md"
+expect_stale "--check は生成対象に無い index.md のパスを出して exit 1 を返し、docs/agents/ は見ない" docs/test/removed/index.md
 
 exit "$fail"

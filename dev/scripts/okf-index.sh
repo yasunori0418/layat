@@ -164,16 +164,22 @@ if [ "$mode" = write ]; then
 fi
 
 stale=0
-report() {
-  [ "$stale" -eq 0 ] && echo "okf-index.sh: 生成結果と食い違う index.md がある（okf-index.sh で再生成する）:" >&2
-  printf '%s\n' "$1"
-  stale=1
-}
 while IFS= read -r path; do
-  cmp -s "$gen/$path" "$path" || report "$path"
+  if ! cmp -s "$gen/$path" "$path"; then
+    [ "$stale" -eq 0 ] && echo "okf-index.sh: 生成結果と食い違う index.md がある（okf-index.sh で再生成する）:" >&2
+    printf '%s\n' "$path"
+    stale=1
+  fi
 done < "$work/targets"
-# 生成対象から外れたのに残っている index.md も食い違いとして出す。
+
+# 生成対象から外れたのに残っている index.md も食い違いとして出す。再生成では消えないので削除を促す。
+extra=0
 while IFS= read -r path; do
-  grep -qxF "$path" "$work/targets" || report "$path"
+  if ! grep -qxF "$path" "$work/targets"; then
+    [ "$extra" -eq 0 ] && echo "okf-index.sh: 生成対象に無い index.md が残っている（削除する）:" >&2
+    printf '%s\n' "$path"
+    extra=1
+  fi
 done < <(find docs -name index.md -not -path 'docs/agents/*' -not -path 'docs/dev/*' | LC_ALL=C sort)
-exit "$stale"
+
+[ "$stale" -eq 0 ] && [ "$extra" -eq 0 ]
