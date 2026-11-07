@@ -329,6 +329,12 @@ case "${SARA_NEW_FAKE_MODE:-}" in
     printf '  ID:   %s\n' "$SARA_NEW_FAKE_ID"
     exit 0
     ;;
+  unclosed-id)
+    # frontmatter を開いて閉じない仮ファイルを作り、ID だけは正しく返す。
+    printf -- '---\nid: "%s"\n' "$SARA_NEW_FAKE_ID" >"$tmp_path"
+    printf '  ID:   %s\n' "$SARA_NEW_FAKE_ID"
+    exit 0
+    ;;
   *)
     # モード指定漏れを成功扱いにしない。
     echo "fake sara: 未知のモード: ${SARA_NEW_FAKE_MODE:-（未設定）}" >&2
@@ -407,28 +413,31 @@ else
   fault "UUID 部の検査で落ちたときにファイル・一時ディレクトリを残さない（md $badprefix_files 件 / tmp $badprefix_tmp 件）"
 fi
 
-# --- 8c. frontmatter の閉じが無ければ失敗する ---------------------------------
+# --- 8c. frontmatter が無い・閉じていなければ失敗する -------------------------
 #
-# 偽 sara の id モードは空の仮ファイルを作るので、generated を足す先が無く exit 1 で落ちる。
+# generated を足す先（閉じの `---`）が無ければ exit 1 で落ちる。id モードは空の仮ファイル、
+# unclosed-id モードは開きの `---` だけを持つ仮ファイルを作る。
 
-repo8c="$work/nofm"
-make_repo "$repo8c"
-run_sara_new "$repo8c" env SARA_NEW_SARA="$fake_sara" SARA_NEW_FAKE_MODE=id \
-  SARA_NEW_FAKE_ID='REQ-11111111-2222-4333-8444-555555555555' \
-  SARA_NEW_FAKE_WANT_TYPE=requirement SARA_NEW_FAKE_WANT_STEM=nofm \
-  sara-new requirement nofm docs/requirements -- "${desc[@]}"
-nofm_files="$(find "$repo8c/docs" -name '*.md' -type f | wc -l)"
-nofm_tmp="$(find "$repo8c/docs" -name '.sara-new-*' | wc -l)"
-if [[ "$status_capture" -eq 1 && "$stderr_capture" == *"frontmatter の閉じ"* ]]; then
-  pass "frontmatter の閉じが無ければ exit 1 で落ち、理由を出す"
-else
-  fault "frontmatter の閉じが無ければ exit 1 で落ち、理由を出す（実際: exit=$status_capture stderr: $stderr_capture）"
-fi
-if [[ "$nofm_files" -eq 0 && "$nofm_tmp" -eq 0 ]]; then
-  pass "frontmatter の閉じが無いときにファイル・一時ディレクトリを残さない"
-else
-  fault "frontmatter の閉じが無いときにファイル・一時ディレクトリを残さない（md $nofm_files 件 / tmp $nofm_tmp 件）"
-fi
+for nofm_mode in id unclosed-id; do
+  repo8c="$work/nofm-$nofm_mode"
+  make_repo "$repo8c"
+  run_sara_new "$repo8c" env SARA_NEW_SARA="$fake_sara" SARA_NEW_FAKE_MODE="$nofm_mode" \
+    SARA_NEW_FAKE_ID='REQ-11111111-2222-4333-8444-555555555555' \
+    SARA_NEW_FAKE_WANT_TYPE=requirement SARA_NEW_FAKE_WANT_STEM=nofm \
+    sara-new requirement nofm docs/requirements -- "${desc[@]}"
+  nofm_files="$(find "$repo8c/docs" -name '*.md' -type f | wc -l)"
+  nofm_tmp="$(find "$repo8c/docs" -name '.sara-new-*' | wc -l)"
+  if [[ "$status_capture" -eq 1 && "$stderr_capture" == *"frontmatter の閉じ"* ]]; then
+    pass "frontmatter の閉じが無ければ exit 1 で落ち、理由を出す（$nofm_mode）"
+  else
+    fault "frontmatter の閉じが無ければ exit 1 で落ち、理由を出す（$nofm_mode。実際: exit=$status_capture stderr: $stderr_capture）"
+  fi
+  if [[ "$nofm_files" -eq 0 && "$nofm_tmp" -eq 0 ]]; then
+    pass "frontmatter の閉じが無いときにファイル・一時ディレクトリを残さない（$nofm_mode）"
+  else
+    fault "frontmatter の閉じが無いときにファイル・一時ディレクトリを残さない（$nofm_mode。md $nofm_files 件 / tmp $nofm_tmp 件）"
+  fi
+done
 
 # --- 9. 既存ファイルを上書きしない --------------------------------------------
 #
