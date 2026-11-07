@@ -45,7 +45,7 @@ switch と一括で動いてほしいユースケースを拾うために存在�
 「モジュール統合設計」→「各統合層の動作」末尾のモジュール対応の位置づけ。
 
 なお同原文の「使用パターン」→「パターン 2」は CLI 単体を
-「standalone CLI（home mode）」と呼んでいたが、本 item はこれを採らない。`CONTEXT.md` が
-曖昧さとして名指しで戒める項に「standalone は配置モードではなく起動形態であり、
-standalone = home mode と短絡しない（配置モードは `root` マーカーが決める）」が
-あるため。
+「`standalone CLI`（home mode）」と呼んでいたが、本 item はこれを採らない。用語 item
+UBQ-f7799808-267e-40c4-aaa7-d85e568f11c4（`standalone`）が、CLI 単体は配置モードではなく
+起動形態であり、「`standalone = home mode`」と短絡しない（配置モードは `root` マーカーが決める）と
+定めているため。

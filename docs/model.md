@@ -10,7 +10,7 @@
 
 ## 型構成
 
-型は 13 個。各型が書くものは次のとおり。
+型の一覧は `docs/model.yaml` を一次の参照先とする。各型が書くものは次のとおり。
 
 | 型 | 書くもの |
 |---|---|
@@ -26,6 +26,7 @@
 | `risk` | 満たされない懸念。`requirement` か `design` を脅かす |
 | `test_condition` | リスクを潰すためのテスト条件 |
 | `test_case` | 具体的なテストケース（テスト資産 1 つに 1 件）|
+| `ubiquitous_term` | ユビキタス言語の 1 語。relation を持たない根で、どの item ともつながない。索引は `docs/glossary.md` |
 
 `risk` の親に `test_plan` は無い。テスト計画がどのリスクを扱うかは
 `test_condition` の `mitigates` を辿って追跡する。
@@ -56,6 +57,8 @@ type になる。使えるプレースホルダは `{prefix}` / `{id}` / `{seq[:
 | `adr` / `sara_adr` | `issues` / `origin` | item にできない外部参照（GitHub Issue 番号・起点となったセッション等）|
 | `risk` | `likelihood` / `impact` / `level` | `high` / `medium` / `low`。採点規約と `level` の導出は [sara-graph.md](agents/sara-graph.md) |
 | `test_case` | `target` | 対応するテスト資産の正準表記（単一値）|
+| `ubiquitous_term` | `name_ja` | 日本語の正名。英語のまま使う語では省く。英語の正名は組み込みの `name` に置く |
+| `ubiquitous_term` | `avoid` | 執筆で使わない綴りのリスト。任意。綴りだけを書き、説明は本文に置く |
 
 `specification` / `specification_ja` の様式（SHALL 系に揃える・強度の写像）は
 [sara-graph.md](agents/sara-graph.md) が持つ。

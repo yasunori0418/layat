@@ -15,7 +15,7 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab, ADR-12ad7852-e689-44d7-b9fe-0667effb3d13, ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a, `docs/spec.md`, `CONTEXT.md`
+- 関連: ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab, ADR-12ad7852-e689-44d7-b9fe-0667effb3d13, ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a, `docs/spec.md`, UBQ-12218337-953b-40c8-b9ec-6d8ee8ec0d4e
 - 起点: 「リポジトリ全体を示す文字列として `"."` 以外の表現は無いか」という問いの設計検討。ADR-0008 §3 と §4 を書き直した
 
 ## 背景

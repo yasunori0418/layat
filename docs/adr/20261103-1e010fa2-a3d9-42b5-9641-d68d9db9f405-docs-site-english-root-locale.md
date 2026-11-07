@@ -15,7 +15,7 @@ references:
 
 - ステータス: 採用
 - 日付: 2026-11-03
-- 関連: ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4, GitHub Issue #57, `docs/glossary.md`, `docs/glossary.ja.md`
+- 関連: ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4, GitHub Issue #57, `docs/glossary.md`
 - 起点: Issue #57 のサイト設計。ADR-0037 §4 を書き直した
 
 ## 背景

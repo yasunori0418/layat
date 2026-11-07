@@ -16,7 +16,7 @@ layat が「何を満たすべきか」の全体像と、個別仕様（`require
 >   二重管理になり、改訂時に片方だけ古くなる
 > - `requirement` / `quality` / `test_plan` item を足したら本文書のリンク集にも足す。逆に本文書へ
 >   仕様を書き足さない
-> - item を横断して検索・追跡するには `sara query`（→ `docs/agents/domain.md`）を使う
+> - item を横断して検索・追跡するには `sara query`（→ `CLAUDE.md` の「item を辿る（`sara query`）」節）を使う
 >
 > **item の `## 出典` は概要文書の現行章立てを指さない。** 出典が記録するのは分割時点
 > （epic #203）の原文の記述箇所であり、節見出しに限らず表の行・blockquote・箇条書きの項も
@@ -321,7 +321,7 @@ item が持ち、`satisfies` で `quality` へ接続する。
 - [QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e](quality/20260809-030f926b-5ae7-4543-b8cb-e66aae5e2b5e-adr-decisions-recorded-and-connected.md) — 設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる
 - [QA-0949183b-7ef0-4cae-b88f-3ad361576b63](quality/20260808-0949183b-7ef0-4cae-b88f-3ad361576b63-release-driven-by-source-of-truth.md) — リリースはバージョンの一次情報の変更で駆動し、手作業の工程を挟まない
 - [QA-0d42104c-a3c2-4bd1-9cad-a42d9e5a56a1](quality/20260808-0d42104c-a3c2-4bd1-9cad-a42d9e5a56a1-reference-docs-generated-from-source.md) — リファレンスドキュメントは記述対象のソースから生成し、生成物を持たない
-- [QA-4a623664-650d-4a08-800f-691f4ea6ff91](quality/20260809-4a623664-650d-4a08-800f-691f4ea6ff91-glossary-fixes-canonical-terms.md) — 用語の正名は glossary が固定し、執筆はそれに従う
+- [QA-4a623664-650d-4a08-800f-691f4ea6ff91](quality/20260809-4a623664-650d-4a08-800f-691f4ea6ff91-glossary-fixes-canonical-terms.md) — 用語の正名は用語 item が固定し、執筆はそれに従う
 - [QA-58522afb-31d5-4a1f-a7df-0858efa9e44b](quality/20260808-58522afb-31d5-4a1f-a7df-0858efa9e44b-prebuilt-artifact-availability.md) — 最新 main のビルド成果物を再ビルドなしに消費できる状態を保つ
 - [QA-5ecd74ba-889a-4e06-b32b-e67f10a45051](quality/20260809-5ecd74ba-889a-4e06-b32b-e67f10a45051-public-docs-english-canonical.md) — 公開ドキュメントは英語を canonical とし、日本語版を対で保守する
 - [QA-67715bb3-1162-4ccf-8441-2f44257a57da](quality/20260809-67715bb3-1162-4ccf-8441-2f44257a57da-normative-items-placement-and-authoring.md) — 規範は 1 ファイル 1 item のグラフが持ち、概要文書は索引に縮退させる

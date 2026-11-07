@@ -11,7 +11,7 @@ justifies:
 
 - ステータス: 採用
 - 日付: 2026-11-01
-- 関連: `docs/spec.md`, `CONTEXT.md`
+- 関連: `docs/spec.md`, UBQ-bc180161-69ea-4ec6-bae5-9c0e5853a112
 - 起点: 実装前の最終レビューで詰めた残りの細目。ADR-0015 §6 を書き直した
 
 ## 背景

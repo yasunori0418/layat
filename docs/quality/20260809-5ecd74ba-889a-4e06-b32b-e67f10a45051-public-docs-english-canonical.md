@@ -44,5 +44,5 @@ canonical 性と対の保守だけを定める（分界の宣言であり、依�
 
 `docs/publication-roadmap.md` §1（英語化する面と日本語のまま維持する面の境界）が置いた方針と、
 INF-0865477b-21b2-4feb-9c06-1a882a4e595a の i18n 節（root ロケール = 英語・日本語は別ロケール・未翻訳ページは英語へ
-フォールバック）、README / README.ja・glossary / glossary.ja の対が実運用してきた規範を、
+フォールバック）、README / README.ja の対と用語 item の英日の正名（索引は `docs/glossary.md`）が実運用してきた規範を、
 Issue #272 で quality item として立てたもの。

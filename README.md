@@ -766,7 +766,7 @@ normative content (one claim per Markdown file, with YAML frontmatter); the over
 - `docs/concept.md` — concept (index into solution / use_case items and ADRs), philosophy, north-star, comparison
 - `docs/design.md` — design (index into design items)
 - `docs/spec.md` — specification (index into requirement items)
-- `docs/glossary.md` — canonical English terminology
+- `docs/glossary.md` — index of the ubiquitous language (the term items live in `docs/ubiquitous-language/`)
 
 | Directory | Type | Prefix |
 |---|---|---|
@@ -784,4 +784,4 @@ from the devShell:
 nix develop ./dev --command sara check    # validate the whole graph
 ```
 
-For querying the graph (`sara query`, which takes a full ID) see `docs/agents/domain.md`.
+For querying the graph (`sara query`, which takes a full ID) see the "item を辿る（`sara query`）" section of `CLAUDE.md`.

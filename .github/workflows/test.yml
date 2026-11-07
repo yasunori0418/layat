@@ -80,7 +80,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
   sara:
-    # Knowledge-graph validation of docs/ plus the test-doc-map / risk-matrix /
+    # Knowledge-graph validation of docs/ plus the test-doc-map / glossary-index / risk-matrix /
     # sara-gap / sara-new / adr-supersede contract tests. Not a required status check. Uses a
     # job-local path filter instead of the `changes` job.
     if: github.event_name != 'push'
@@ -129,6 +129,12 @@ jobs:
       - name: Run test-doc-map contract test
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/test-doc-map.sh
+
+      # The glossary index ⇔ ubiquitous_term item 1:1 contract: every term item
+      # is listed exactly once in docs/glossary.md and every link resolves.
+      - name: Run glossary-index contract test
+        if: steps.filter.outputs.relevant != 'false'
+        run: nix develop '.?dir=dev#sara' -c dev/tests/glossary-index.sh
 
       # The level derivation contract for risk items: `level` must equal the
       # matrix cell of `likelihood` × `impact`.

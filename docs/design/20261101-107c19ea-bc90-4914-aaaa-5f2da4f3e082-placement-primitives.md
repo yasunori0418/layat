@@ -25,7 +25,7 @@ entry が置く物の種別（配置プリミティブ）は 3 つに限る。�
 | copy | `copy` | store パス | store パスの内容を複製した実ファイル・実ディレクトリ |
 
 store link と out-of-store symlink はどちらも symlink として実現されるため、「symlink」とだけ
-書くと種別を特定できない（→ `docs/glossary.md`「Flagged ambiguities」）。この item と下流の
+書くと種別を特定できない（→ UBQ-d0332595-e976-4942-b218-728e428ecc26・UBQ-2340b0fd-6444-4946-94a6-43f874e37615）。この item と下流の
 item では必ず 2 つを書き分ける。既定は store link で、out-of-store symlink は明示 marker で
 選ぶ退避路に留める（→ SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e）。
 
@@ -57,5 +57,5 @@ item では必ず 2 つを書き分ける。既定は store link で、out-of-st
 
 ## 出典
 
-`docs/glossary.md`「Placement kinds」と SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e が述べる
+UBQ-d0332595-e976-4942-b218-728e428ecc26・UBQ-2340b0fd-6444-4946-94a6-43f874e37615 と SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e が述べる
 種別の定義を、上掲の REQ が個別に定める世代・reset・gitignore の振る舞いと 1 枚の表に束ねた。

@@ -1,5 +1,5 @@
 name: ドキュメント改善
-description: concept / design / spec / ADR / CONTEXT.md の誤り・不整合・分かりにくさ
+description: concept / design / spec / ADR / 用語（glossary.md・ubiquitous-language/）の誤り・不整合・分かりにくさ
 labels: ["documentation", "needs-triage"]
 body:
   - type: dropdown
@@ -12,7 +12,8 @@ body:
         - docs/design.md
         - docs/spec.md
         - docs/adr/
-        - CONTEXT.md
+        - docs/glossary.md
+        - docs/ubiquitous-language/
         - その他
     validations:
       required: true
@@ -27,6 +28,6 @@ body:
     id: suggestion
     attributes:
       label: 改善案
-      description: どう直すべきか。用語の揺れなら CONTEXT.md の正名と突き合わせて。
+      description: どう直すべきか。用語の揺れなら docs/glossary.md の索引から docs/ubiquitous-language/ の用語 item を引き、正名と照らし合わせて。
     validations:
       required: false

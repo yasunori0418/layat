@@ -68,6 +68,7 @@ FLAKE_CHECKS=(
   checks.nixos-vm
   checks.layat
   checks.treefmt
+  dev:checks.glossary-index
   dev:checks.risk-matrix
   dev:checks.sara-gap
   dev:checks.sara-new
