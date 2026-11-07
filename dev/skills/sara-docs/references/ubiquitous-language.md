@@ -48,6 +48,7 @@ sara check --format json | jq -r '
 ## 執筆での使い方
 
 - 語は item の正名で書く。`avoid` にある綴りは使わない
+- `avoid` の綴りは契約テスト `dev/tests/term-avoid.sh`（textlint + prh）が検出する。対象は docs・README・CLAUDE.md で、ADR・SDR・用語 item は除く
 - 必要な語の item が無ければ、その場で綴りを決めずに item を起こすか、既存の語を選ぶ
 
 ## 語が無いときに item を起こす
