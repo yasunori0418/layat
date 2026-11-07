@@ -2,6 +2,7 @@
 id: "RISK-22220002-0000-4000-8000-000000000007"
 type: risk
 name: "TC が無いリスク"
+status: stable
 threatens:
   - "REQ-aaaa0001-0000-4000-8000-000000000003"
 likelihood: medium

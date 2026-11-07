@@ -2,6 +2,7 @@
 id: "DSG-dd000001-0000-4000-8000-000000000005"
 type: design
 name: "risk が無い設計"
+status: stable
 satisfies:
   - "REQ-aaaa0001-0000-4000-8000-000000000003"
 ---
