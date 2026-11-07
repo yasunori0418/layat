@@ -24,11 +24,11 @@ specification_ja: |
   deprecated にしなければならない。すべての ADR は、自身が裏づける item へ
   1 本以上接続しなければならず、接続先の item がまだ無い場合は、接続を空のまま残すのではなく
   同じ変更の中で item を起こさなければならない（空の接続が埋め忘れとして読み取れる状態を
-  保つため）。deprecated にする ADR の全決定に後継が揃っているかは機械的に検証されないため、レビューで
+  保つため）。置き換えで deprecated にする ADR の全決定に後継が揃っているかは機械的に検証されないため、レビューで
   守られなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-08T00:27:01+09:00"
+  at: "2026-11-08T00:53:48+09:00"
 ---
 # QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e: 設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる
 
@@ -44,7 +44,7 @@ generated:
 
 接続を空のまま残さない規範は、**空を埋め忘れとして機械判定できる状態**を保つためにある。
 接続の非空性は QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c の機械検証が見つけ、`deprecated` と `supersedes` の対応は
-`dev/tests/adr-supersede.sh` が見つける。どちらも frontmatter しか見ないので、deprecated にする ADR の全決定に
+`dev/tests/adr-supersede.sh` が見つける。どちらも frontmatter しか見ないので、置き換えで deprecated にする ADR の全決定に
 後継が揃っているかは視野の外にあり、そこは人手のレビューで守る（判定の条件は
 `docs/agents/adr-rules.md` の「deprecated にできる条件」節が持つ）。
 
