@@ -68,6 +68,8 @@
               pkgs.coreutils
               # ID 行の抽出に使う。
               pkgs.gnused
+              # frontmatter の閉じの直前へ generated を足すのに使う。
+              pkgs.gawk
               # 下の text が exec するインタプリタ自身。
               pkgs.bash
             ];
