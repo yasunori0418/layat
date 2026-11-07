@@ -3,7 +3,7 @@ id: "CASE-ed4b32fd-4f2e-497c-baa4-cc91f8a34e4a"
 type: test_case
 name: "backup_test.go — --backup の退避ライフサイクルと退避先の保護"
 status: stable
-target: "internal/engine/backup_test.go"
+resource: "internal/engine/backup_test.go"
 covers:
   - "TC-ed4992c0-8513-4383-be0a-e45acbbc229f"
   - "TC-cd03ff56-6ed0-4100-9ec4-eb681ab66407"

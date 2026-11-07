@@ -3,7 +3,7 @@ id: "CASE-4a8860b1-5a88-4225-9702-f946be9c984e"
 type: test_case
 name: "apply_all_failure_matrix_test.go — build 失敗 × 配置失敗 × 成功 × skip（× conflict）の部分失敗マトリクス"
 status: stable
-target: "cmd/layat/apply_all_failure_matrix_test.go"
+resource: "cmd/layat/apply_all_failure_matrix_test.go"
 covers:
   - "TC-e42a5438-039b-41b3-9a39-0e8dc1f25cb3"
   - "TC-9ccb2ffe-7bf6-41ea-a9ce-df06cdda0509"

@@ -38,7 +38,7 @@ sara（Requirements Knowledge Graph CLI）で管理する `docs/` の読み書�
 | ubiquitous_term | `UBQ` | `docs/ubiquitous-language/` | なし（relation を持たない根）|
 
 テスト系 item（TC / CASE）を `docs/test/` 配下でどう区分けするか（サブディレクトリの
-切り方）と、CASE の `target`（テスト資産の正準表記）の規則はプロジェクト規約
+切り方）と、CASE の `resource`（テスト資産の正準表記）の規則はプロジェクト規約
 （CLAUDE.md 等）に委ねる。
 
 親を持たない根は solution と ADR の 2 型（adr / sara_adr）と ubiquitous_term のみ。ubiquitous_term を除く
