@@ -138,6 +138,8 @@ sources:
   `https://github.com/yasunori0418/layat/issues/N`、他のリポジトリの `owner/repo#N` は
   `https://github.com/owner/repo/issues/N` にする
 - `id` は `issue-N`（他のリポジトリなら `issue-<repo>-N`）の形にし、1 つの item の中で一意にする
+- `title` には Issue のタイトルを書く。`issues` から移したエントリだけは、元の文字列（`#N` /
+  `owner/repo#N`）を `title` にする
 - `origin` は散文のまま layat の拡張キーとして残し、`sources` には入れない
 
 ### `resource`
