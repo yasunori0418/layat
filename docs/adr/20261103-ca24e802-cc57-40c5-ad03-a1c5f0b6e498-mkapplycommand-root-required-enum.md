@@ -2,7 +2,7 @@
 id: "ADR-ca24e802-cc57-40c5-ad03-a1c5f0b6e498"
 type: adr
 name: "mkApplyCommand の root を既定値のない必須の enum にする"
-status: 採用
+status: stable
 issues:
   - "#530"
 origin: "Issue #530 の grilling（2026-10-25）。ADR-0068 §2 を書き直した"
@@ -17,7 +17,7 @@ generated:
 ---
 # ADR-ca24e802-cc57-40c5-ad03-a1c5f0b6e498: mkApplyCommand の root を既定値のない必須の enum にする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429, ADR-db293e0c-4789-45b7-93a9-adedc021344f, GitHub Issue #530
 - 起点: Issue #530 の grilling（2026-10-25）。ADR-0068 §2 を書き直した

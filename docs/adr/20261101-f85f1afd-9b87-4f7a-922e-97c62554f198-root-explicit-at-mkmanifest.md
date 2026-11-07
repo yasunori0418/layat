@@ -2,7 +2,7 @@
 id: "ADR-f85f1afd-9b87-4f7a-922e-97c62554f198"
 type: adr
 name: "root の明示を mkManifest 層で必須にする"
-status: 採用
+status: stable
 issues:
   - "#2"
 origin: "Issue #2（root デフォルト）。ADR-0007 §2 の root の明示必須とモジュールによる pin を書き直した"
@@ -15,7 +15,7 @@ generated:
 ---
 # ADR-f85f1afd-9b87-4f7a-922e-97c62554f198: root の明示を mkManifest 層で必須にする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: GitHub Issue #2, `docs/concept.md`, `docs/spec.md`
 - 起点: Issue #2（root デフォルト）。ADR-0007 §2 の root の明示必須とモジュールによる pin を書き直した

@@ -2,7 +2,7 @@
 id: "ADR-70debe94-c7ce-492b-b938-4c62f7a781e7"
 type: adr
 name: "out-of-store のリンクは lib の関数が包むだけにして engine が張る"
-status: 採用
+status: stable
 origin: "ADR-0001 §d と ADR-0003 §d を書き直した"
 justifies:
   - "REQ-eb363122-385a-499c-a074-c95efb949d07"
@@ -19,7 +19,7 @@ generated:
 ---
 # ADR-70debe94-c7ce-492b-b938-4c62f7a781e7: out-of-store のリンクは lib の関数が包むだけにして engine が張る
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c, ADR-2119433e-de69-4447-85a5-575d58246007, ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131, ADR-59f63d1f-25df-4290-913f-02804c5eeade, ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799, `docs/design.md`
 - 起点: ADR-0001 §d と ADR-0003 §d を書き直した

@@ -2,7 +2,7 @@
 id: "ADR-facd3173-a5ce-4d81-90a9-370fb26428ff"
 type: adr
 name: "apply は世代の commit の前に記録を書く"
-status: 採用
+status: stable
 issues:
   - "#580"
   - "#406"
@@ -20,7 +20,7 @@ generated:
 ---
 # ADR-facd3173-a5ce-4d81-90a9-370fb26428ff: apply は世代の commit の前に記録を書く
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-d97154cd-a2e5-4853-a682-800ff9435c89, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93, GitHub Issue #580, #406
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §4a を書き直した

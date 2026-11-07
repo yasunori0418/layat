@@ -2,7 +2,7 @@
 id: "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
 type: adr
 name: "配置の振動はユーザー責任とし、文書で注意するに留める"
-status: 採用
+status: stable
 issues:
   - "#550"
 origin: "実装前残セマンティクス確定の第5巡（2026-06-14）で確定。ADR-0023 §5（5b）と ADR-0024 §10 を書き直した"
@@ -20,7 +20,7 @@ generated:
 ---
 # ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4: 配置の振動はユーザー責任とし、文書で注意するに留める
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429, ADR-27f99ee6-5fb4-4dbe-b0fd-8267eecaa3a1, ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-3aebefee-405d-4342-b754-eef8eac29b1b, ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d, GitHub Issue #550
 - 起点: 実装前残セマンティクス確定の第5巡（2026-06-14）で確定。ADR-0023 §5（5b）と ADR-0024 §10 を書き直した

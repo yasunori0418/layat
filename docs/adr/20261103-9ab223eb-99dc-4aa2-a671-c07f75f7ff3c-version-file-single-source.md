@@ -2,7 +2,7 @@
 id: "ADR-9ab223eb-99dc-4aa2-a671-c07f75f7ff3c"
 type: adr
 name: "VERSION ファイルをバージョンの一次情報にする"
-status: 採用
+status: stable
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。参照実装: https://github.com/yasunori0418/cryoflow のリリース自動化（bump workflow と release workflow）。ADR-0042 §1 を書き直した"
 justifies:
   - "INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-9ab223eb-99dc-4aa2-a671-c07f75f7ff3c: VERSION ファイルをバージョンの一次情報にする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。参照実装: https://github.com/yasunori0418/cryoflow のリリース自動化（bump workflow と release workflow）。ADR-0042 §1 を書き直した
 

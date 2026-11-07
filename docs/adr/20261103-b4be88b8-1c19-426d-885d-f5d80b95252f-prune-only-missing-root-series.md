@@ -2,7 +2,7 @@
 id: "ADR-b4be88b8-1c19-426d-885d-f5d80b95252f"
 type: adr
 name: "prune は root が実在しない roothash 系列だけを削除する"
-status: 採用
+status: stable
 issues:
   - "#580"
 origin: "次期マイルストーン計画の grilling（2026-07-04）。公開後の実運用で孤児系列が溜まり始めたことを消費側の要求と判断した。ADR-0034 §1a を書き直した"
@@ -18,7 +18,7 @@ generated:
 ---
 # ADR-b4be88b8-1c19-426d-885d-f5d80b95252f: prune は root が実在しない roothash 系列だけを削除する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988, ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66, GitHub Issue #580
 - 起点: 次期マイルストーン計画の grilling（2026-07-04）。公開後の実運用で孤児系列が溜まり始めたことを消費側の要求と判断した。ADR-0034 §1a を書き直した

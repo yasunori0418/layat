@@ -2,7 +2,7 @@
 id: "ADR-97edd9af-befb-4a9f-a8ef-de038c76336a"
 type: adr
 name: "layat は buildGoModule と vendorHash でビルドする"
-status: 採用
+status: stable
 issues:
   - "#552"
 origin: "engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §5 を書き直した"
@@ -15,7 +15,7 @@ generated:
 ---
 # ADR-97edd9af-befb-4a9f-a8ef-de038c76336a: layat は buildGoModule と vendorHash でビルドする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: GitHub Issue #552
 - 起点: engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §5 を書き直した

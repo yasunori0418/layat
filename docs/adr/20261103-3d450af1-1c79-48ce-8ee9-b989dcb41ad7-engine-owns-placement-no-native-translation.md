@@ -2,7 +2,7 @@
 id: "ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7"
 type: adr
 name: "配置は全層で engine が行い、ネイティブ機構へ翻訳しない"
-status: 採用
+status: stable
 origin: "ADR-0003 §a（決定節の第 1 項）と「layat は OS のファイル管理機構とは別の機構である」節を書き直した"
 justifies:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
@@ -18,7 +18,7 @@ generated:
 ---
 # ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7: 配置は全層で engine が行い、ネイティブ機構へ翻訳しない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-2119433e-de69-4447-85a5-575d58246007, ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c, ADR-59f63d1f-25df-4290-913f-02804c5eeade, ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799, `docs/design.md`, `docs/spec.md`
 - 起点: ADR-0003 §a（決定節の第 1 項）と「layat は OS のファイル管理機構とは別の機構である」節を書き直した

@@ -2,7 +2,7 @@
 id: "ADR-0346fdd2-bd05-4793-bcd0-9c3ce64c8657"
 type: adr
 name: "--json を全サブコマンド共通の persistent フラグにする"
-status: 採用
+status: stable
 origin: "ADR-0033 §1a を書き直した"
 justifies:
   - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-0346fdd2-bd05-4793-bcd0-9c3ce64c8657: --json を全サブコマンド共通の persistent フラグにする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc
 - 起点: ADR-0033 §1a を書き直した

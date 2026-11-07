@@ -2,7 +2,7 @@
 id: "SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd"
 type: sara_adr
 name: "ADR は単独で覆せる 1 つの決定だけを書く"
-status: 採用
+status: stable
 issues:
   - "#499"
 origin: "Issue #499 の grilling（2026-11-01）で確定"
@@ -14,7 +14,7 @@ generated:
 ---
 # SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd: ADR は単独で覆せる 1 つの決定だけを書く
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: GitHub Issue #499, `docs/agents/adr-rules.md`
 - 起点: Issue #499 の grilling（2026-11-01）で確定

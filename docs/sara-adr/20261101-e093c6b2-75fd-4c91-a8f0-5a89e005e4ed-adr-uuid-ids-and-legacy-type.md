@@ -2,7 +2,7 @@
 id: "SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed"
 type: sara_adr
 name: "ADR も UUID で採番し、連番の旧 ADR は legacy_adr 型に凍結する"
-status: 廃止
+status: deprecated
 issues:
   - "#499"
 origin: "Issue #499 の grilling（2026-11-01）で確定。ADR-0048 §4・ADR-0053 §4 を書き直した"
@@ -20,7 +20,7 @@ generated:
 >
 > - 全体 → SDR-3e5b9994-a905-44d8-8256-2bd65b12b87e
 
-- ステータス: 廃止
+- ステータス: deprecated
 - 日付: 2026-11-01
 - 関連: SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd, GitHub Issue #499, `docs/adr/README.md`
 - 起点: Issue #499 の grilling（2026-11-01）で確定。ADR-0048 §4・ADR-0053 §4 を書き直した

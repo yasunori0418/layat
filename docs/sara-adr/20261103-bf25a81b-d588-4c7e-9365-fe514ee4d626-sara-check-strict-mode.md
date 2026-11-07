@@ -2,7 +2,7 @@
 id: "SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626"
 type: sara_adr
 name: "sara check を strict モードで回す"
-status: 採用
+status: stable
 issues:
   - "#583"
   - "#255"
@@ -19,7 +19,7 @@ generated:
 ---
 # SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626: sara check を strict モードで回す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #255, #203, `sara.toml`
 - 起点: epic #203 の移行完了（Batch 2・2026-08-08）を受けた残論点判断（Issue #255）で確定。ADR-0050 §1・§3 を書き直した

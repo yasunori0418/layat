@@ -2,7 +2,7 @@
 id: "ADR-65e41903-5eee-4a00-a154-be8c830cdca9"
 type: adr
 name: "退避先を target に suffix を付けた名前に固定する"
-status: 採用
+status: stable
 issues:
   - "#169"
   - "#172"
@@ -17,7 +17,7 @@ generated:
 ---
 # ADR-65e41903-5eee-4a00-a154-be8c830cdca9: 退避先を target に suffix を付けた名前に固定する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-33d8c466-6b38-46b6-8696-ad7521c72786, GitHub Issue #169, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §1（CLI）の退避先の決め方を書き直した

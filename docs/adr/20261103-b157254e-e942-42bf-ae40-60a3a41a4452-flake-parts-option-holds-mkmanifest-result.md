@@ -2,7 +2,7 @@
 id: "ADR-b157254e-e942-42bf-ae40-60a3a41a4452"
 type: adr
 name: "flake-parts module の option に mkManifest の結果を入れる"
-status: 採用
+status: stable
 issues:
   - "#26"
 origin: "Issue #26。ADR-0029 §2 と ADR-0029 §3 を書き直した"
@@ -16,7 +16,7 @@ generated:
 ---
 # ADR-b157254e-e942-42bf-ae40-60a3a41a4452: flake-parts module の option に mkManifest の結果を入れる
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-e6820da0-fce3-4aef-8b79-d53abbca6051, GitHub Issue #26
 - 起点: Issue #26。ADR-0029 §2 と ADR-0029 §3 を書き直した

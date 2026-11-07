@@ -2,7 +2,7 @@
 id: "ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988"
 type: adr
 name: "profile は解決済み root の roothash でキーする"
-status: 採用
+status: stable
 origin: "実装前の残セマンティクス確定（2026-06-11〜06-14）。ADR-0005 §「profile は解決済み root でキーする」・ADR-0013 §7・ADR-0023 §3・ADR-0024 §1 を書き直した"
 justifies:
   - "REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81"
@@ -22,7 +22,7 @@ generated:
 ---
 # ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988: profile は解決済み root の roothash でキーする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429, ADR-27f99ee6-5fb4-4dbe-b0fd-8267eecaa3a1, ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-3aebefee-405d-4342-b754-eef8eac29b1b, ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75
 - 起点: 実装前の残セマンティクス確定（2026-06-11〜06-14）。ADR-0005 §「profile は解決済み root でキーする」・ADR-0013 §7・ADR-0023 §3・ADR-0024 §1 を書き直した

@@ -2,7 +2,7 @@
 id: "ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4"
 type: adr
 name: "ドキュメントサイトのソースを同じリポジトリの site/ に置く"
-status: 採用
+status: stable
 issues:
   - "#57"
 origin: "Issue #57 のサイト設計。ADR-0037 §1 を書き直した"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4: ドキュメントサイトのソースを同じリポジトリの site/ に置く
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: GitHub Issue #57, `docs/publication-roadmap.md`
 - 起点: Issue #57 のサイト設計。ADR-0037 §1 を書き直した

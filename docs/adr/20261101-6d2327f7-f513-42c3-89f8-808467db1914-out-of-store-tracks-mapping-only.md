@@ -2,7 +2,7 @@
 id: "ADR-6d2327f7-f513-42c3-89f8-808467db1914"
 type: adr
 name: "out-of-store はマッピングだけを追跡する"
-status: 採用
+status: stable
 origin: "ADR-0002 の決定「out-of-store は世代追跡する」を書き直した"
 justifies:
   - "REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-6d2327f7-f513-42c3-89f8-808467db1914: out-of-store はマッピングだけを追跡する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, `docs/spec.md`
 - 起点: ADR-0002 の決定「out-of-store は世代追跡する」を書き直した

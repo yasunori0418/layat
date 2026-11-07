@@ -2,7 +2,7 @@
 id: "ADR-a00bb2de-a8c5-4816-892b-4fa1f5299935"
 type: adr
 name: "巻き戻しの失敗は best-effort で続行する"
-status: 採用
+status: stable
 issues:
   - "#168"
   - "#172"
@@ -18,7 +18,7 @@ generated:
 ---
 # ADR-a00bb2de-a8c5-4816-892b-4fa1f5299935: 巻き戻しの失敗は best-effort で続行する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-56325270-20bb-4959-8498-e3223c35e24b, ADR-74423bb8-1453-4689-a25e-30bf46536afc, GitHub Issue #168, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0044 §3 を書き直した

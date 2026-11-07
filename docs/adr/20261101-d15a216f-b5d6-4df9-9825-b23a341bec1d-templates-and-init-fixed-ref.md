@@ -2,7 +2,7 @@
 id: "ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d"
 type: adr
 name: "templates と layat init は固定 ref で導入する"
-status: 採用
+status: stable
 issues:
   - "#3"
 origin: "Issue #3（CLI 化）と、/grill-me による実装前の横断検査（実装前残セマンティクスの第 7 巡）。ADR-0006「layat の露出と環境セットアップ」節・ADR-0007 §6・ADR-0025 §3 を書き直した"
@@ -16,7 +16,7 @@ generated:
 ---
 # ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d: templates と layat init は固定 ref で導入する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: GitHub Issue #3
 - 起点: Issue #3（CLI 化）と、/grill-me による実装前の横断検査（実装前残セマンティクスの第 7 巡）。ADR-0006「layat の露出と環境セットアップ」節・ADR-0007 §6・ADR-0025 §3 を書き直した

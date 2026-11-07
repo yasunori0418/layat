@@ -2,7 +2,7 @@
 id: "ADR-00cc3497-654f-420a-928f-99f201e7efb0"
 type: adr
 name: "絶対パスと .. エスケープは eval 時に拒否する"
-status: 採用
+status: stable
 origin: "ADR-0019 §1 を書き直した"
 justifies:
   - "REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f"
@@ -12,7 +12,7 @@ generated:
 ---
 # ADR-00cc3497-654f-420a-928f-99f201e7efb0: 絶対パスと .. エスケープは eval 時に拒否する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: `docs/spec.md`
 - 起点: ADR-0019 §1 を書き直した

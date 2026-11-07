@@ -2,7 +2,7 @@
 id: "ADR-40dd7945-5792-4b80-bdfa-43f95f482554"
 type: adr
 name: "flake check の警告は無害として許容する"
-status: 採用
+status: stable
 origin: "ドキュメント計画段階の最終レビュー（grill）。ADR-0015 §8 を書き直した"
 justifies:
   - "REQ-d0aef5af-e922-400b-b250-ca38719c480b"
@@ -12,7 +12,7 @@ generated:
 ---
 # ADR-40dd7945-5792-4b80-bdfa-43f95f482554: flake check の警告は無害として許容する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 起点: ドキュメント計画段階の最終レビュー（grill）。ADR-0015 §8 を書き直した
 

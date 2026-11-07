@@ -2,7 +2,7 @@
 id: "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
 type: adr
 name: "古くなった配置の除去は記録どおりの symlink だけに限る"
-status: 採用
+status: stable
 origin: "ADR-0002 §決定（削除の安全不変条件）を書き直した"
 justifies:
   - "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
@@ -12,7 +12,7 @@ generated:
 ---
 # ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c: 古くなった配置の除去は記録どおりの symlink だけに限る
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 起点: ADR-0002 §決定（削除の安全不変条件）を書き直した
 

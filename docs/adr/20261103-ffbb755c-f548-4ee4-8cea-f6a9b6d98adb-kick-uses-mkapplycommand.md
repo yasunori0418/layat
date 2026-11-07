@@ -2,7 +2,7 @@
 id: "ADR-ffbb755c-f548-4ee4-8cea-f6a9b6d98adb"
 type: adr
 name: "モジュールの kick も mkApplyCommand で組む"
-status: 採用
+status: stable
 issues:
   - "#530"
 origin: "Issue #530 の grilling（2026-10-25）。ADR-0068 §5a を書き直した"
@@ -16,7 +16,7 @@ generated:
 ---
 # ADR-ffbb755c-f548-4ee4-8cea-f6a9b6d98adb: モジュールの kick も mkApplyCommand で組む
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-db293e0c-4789-45b7-93a9-adedc021344f, GitHub Issue #530
 - 起点: Issue #530 の grilling（2026-10-25）。ADR-0068 §5a を書き直した

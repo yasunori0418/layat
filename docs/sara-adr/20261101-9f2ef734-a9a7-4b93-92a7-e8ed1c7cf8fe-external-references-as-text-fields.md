@@ -2,7 +2,7 @@
 id: "SDR-9f2ef734-a9a7-4b93-92a7-e8ed1c7cf8fe"
 type: sara_adr
 name: "item にできない外部参照は text フィールドへ逃がす"
-status: 採用
+status: stable
 issues:
   - "#203"
 origin: "epic #203 の grilling セッション（2026-07-31・2026-08-01）で確定。ADR-0048 §2 を書き直した"
@@ -14,7 +14,7 @@ generated:
 ---
 # SDR-9f2ef734-a9a7-4b93-92a7-e8ed1c7cf8fe: item にできない外部参照は text フィールドへ逃がす
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: GitHub Issue #203, `docs/adr/README.md`
 - 起点: epic #203 の grilling セッション（2026-07-31・2026-08-01）で確定。ADR-0048 §2 を書き直した

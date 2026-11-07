@@ -2,7 +2,7 @@
 id: "ADR-653e6a28-76dd-44b3-99e2-3be189a3c1c4"
 type: adr
 name: "template に .envrc を同梱しない"
-status: 採用
+status: stable
 origin: "ADR-0018 §3c を書き直した"
 justifies:
   - "REQ-196ddabf-6569-4303-942e-050872972501"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-653e6a28-76dd-44b3-99e2-3be189a3c1c4: template に .envrc を同梱しない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-baf6346d-783b-4607-ab1c-c2c93c09e064
 - 起点: ADR-0018 §3c を書き直した

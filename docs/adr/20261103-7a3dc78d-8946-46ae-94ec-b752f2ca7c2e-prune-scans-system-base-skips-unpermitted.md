@@ -2,7 +2,7 @@
 id: "ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e"
 type: adr
 name: "prune は system 基底も走査し、権限の無い系列を見送る"
-status: 採用
+status: stable
 origin: "次期マイルストーン計画の grilling（2026-07-04）。ADR-0034 §1b と ADR-0036 §3c を書き直した"
 justifies:
   - "REQ-c44433a1-7ee7-459a-9aae-7cc42166876f"
@@ -27,7 +27,7 @@ generated:
 ---
 # ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e: prune は system 基底も走査し、権限の無い系列を見送る
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-b4be88b8-1c19-426d-885d-f5d80b95252f, ADR-95b45d12-d4a7-4374-8624-f5ceed7044ee, ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66, ADR-8517e311-c461-41aa-80ac-48760a7762b2, ADR-63ec1446-d328-42d2-b8d2-e8a11d752ed7, ADR-e630482a-bc11-4ba6-a9cc-1ef46f54104d, ADR-25d54346-f13a-4c12-9895-ab93dc6c183b, ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203, ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75, ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-419914ba-9896-4dd1-853b-fb514fcb9f38, ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988
 - 起点: 次期マイルストーン計画の grilling（2026-07-04）。ADR-0034 §1b と ADR-0036 §3c を書き直した

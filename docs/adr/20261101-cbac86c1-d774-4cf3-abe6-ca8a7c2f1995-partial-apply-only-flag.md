@@ -2,7 +2,7 @@
 id: "ADR-cbac86c1-d774-4cf3-abe6-ca8a7c2f1995"
 type: adr
 name: "一部の entry だけを適用する --only を提供する"
-status: 不採用
+status: deprecated
 origin: "ADR-0002 §決定で棄却された提案（実装前の spec にあった --only）を書き直した"
 justifies:
   - "REQ-4fc98fa6-fd5f-4f25-8b10-60755bf49bd2"
@@ -12,7 +12,7 @@ generated:
 ---
 # ADR-cbac86c1-d774-4cf3-abe6-ca8a7c2f1995: 一部の entry だけを適用する --only を提供する
 
-- ステータス: 不採用
+- ステータス: deprecated
 - 日付: 2026-11-01
 - 起点: ADR-0002 §決定で棄却された提案（実装前の spec にあった --only）を書き直した
 

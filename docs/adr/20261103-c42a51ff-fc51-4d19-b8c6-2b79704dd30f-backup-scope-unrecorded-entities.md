@@ -2,7 +2,7 @@
 id: "ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f"
 type: adr
 name: "--backup は配置を塞ぐ記録外の実体だけを退避する"
-status: 採用
+status: stable
 issues:
   - "#169"
   - "#172"
@@ -18,7 +18,7 @@ generated:
 ---
 # ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f: --backup は配置を塞ぐ記録外の実体だけを退避する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-33d8c466-6b38-46b6-8696-ad7521c72786, GitHub Issue #169, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §2 を書き直した

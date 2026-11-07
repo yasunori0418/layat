@@ -2,7 +2,7 @@
 id: "ADR-feb60906-1517-46b8-8fa5-e007df4d3e11"
 type: adr
 name: "--json は常に results[] エンベロープを出す"
-status: 採用
+status: stable
 issues:
   - "#552"
   - "yasunori0418/outturn#1"
@@ -19,7 +19,7 @@ generated:
 ---
 # ADR-feb60906-1517-46b8-8fa5-e007df4d3e11: --json は常に results[] エンベロープを出す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, GitHub Issue #552, yasunori0418/outturn#1, outturn ADR-0013
 - 起点: layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §2 を書き直した

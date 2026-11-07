@@ -2,7 +2,7 @@
 id: "ADR-a86a8492-57fb-49d0-ba77-200f6dc49c3a"
 type: adr
 name: "reset --dryrun は副作用なしで撤去対象を示す"
-status: 採用
+status: stable
 issues:
   - "#584"
 origin: "ADR-0021 §2（reset の --dryrun を副作用なしのプレビューにする）を書き直した"
@@ -19,7 +19,7 @@ generated:
 ---
 # ADR-a86a8492-57fb-49d0-ba77-200f6dc49c3a: reset --dryrun は副作用なしで撤去対象を示す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7, ADR-acc31876-df36-485e-b356-92ae60e26db7, ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1, ADR-45380022-d959-4b22-aa05-5993ac1f3c87
 - 起点: ADR-0021 §2（reset の --dryrun を副作用なしのプレビューにする）を書き直した

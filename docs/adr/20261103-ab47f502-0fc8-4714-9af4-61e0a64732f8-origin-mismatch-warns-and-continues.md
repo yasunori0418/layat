@@ -2,7 +2,7 @@
 id: "ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8"
 type: adr
 name: "出所の食い違いは警告して apply を続ける"
-status: 採用
+status: stable
 issues:
   - "#580"
   - "#498"
@@ -18,7 +18,7 @@ generated:
 ---
 # ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8: 出所の食い違いは警告して apply を続ける
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e, ADR-0db061d1-fa30-436d-91d7-c0cec8804c52, GitHub Issue #580, #498
 - 起点: Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §3 と §6 を書き直した

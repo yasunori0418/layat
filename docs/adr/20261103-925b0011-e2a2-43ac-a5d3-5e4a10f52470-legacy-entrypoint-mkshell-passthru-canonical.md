@@ -2,7 +2,7 @@
 id: "ADR-925b0011-e2a2-43ac-a5d3-5e4a10f52470"
 type: adr
 name: "legacy entrypoint は mkShell の passthru 形を正準にする"
-status: 採用
+status: stable
 issues:
   - "#112"
   - "#107"
@@ -22,7 +22,7 @@ generated:
 ---
 # ADR-925b0011-e2a2-43ac-a5d3-5e4a10f52470: legacy entrypoint は mkShell の passthru 形を正準にする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-6b7becf0-f029-41e3-895e-b672dce94d3d, ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3, ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, GitHub Issue #112, #107
 - 起点: ADR-0032 §1 を書き直した

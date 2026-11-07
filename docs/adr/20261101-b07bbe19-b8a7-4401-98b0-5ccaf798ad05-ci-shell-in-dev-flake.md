@@ -2,7 +2,7 @@
 id: "ADR-b07bbe19-b8a7-4401-98b0-5ccaf798ad05"
 type: adr
 name: "CI シェルは dev/flake.nix に公開する"
-status: 採用
+status: stable
 origin: "参照: https://github.com/yasunori0418/cryoflow の CI 構成（同一メンテナの実績構成）。ADR-0012 §2 を書き直した"
 justifies:
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
@@ -12,7 +12,7 @@ generated:
 ---
 # ADR-b07bbe19-b8a7-4401-98b0-5ccaf798ad05: CI シェルは dev/flake.nix に公開する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 起点: 参照: https://github.com/yasunori0418/cryoflow の CI 構成（同一メンテナの実績構成）。ADR-0012 §2 を書き直した
 

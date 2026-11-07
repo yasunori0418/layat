@@ -2,7 +2,7 @@
 id: "ADR-3447db4a-cdec-4573-bbad-05bbffc34a65"
 type: adr
 name: "layat.entries を configs.default.entries への rename 糖衣として残す"
-status: 採用
+status: stable
 issues:
   - "#585"
 origin: "ADR-0035 §2 を書き直した"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-3447db4a-cdec-4573-bbad-05bbffc34a65: layat.entries を configs.default.entries への rename 糖衣として残す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: GitHub Issue #585, `docs/spec.md`
 - 起点: ADR-0035 §2 を書き直した

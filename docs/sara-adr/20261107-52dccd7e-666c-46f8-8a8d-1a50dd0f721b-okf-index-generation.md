@@ -3,7 +3,7 @@ id: "SDR-52dccd7e-666c-46f8-8a8d-1a50dd0f721b"
 type: sara_adr
 name: "OKF の index.md を sara check の出力から生成してコミットする"
 description: "OKF の index.md を sara check --format json から生成し、コミットして契約テストで差分ゼロを守る"
-status: 採用
+status: stable
 issues:
   - "#662"
 origin: "epic #662 の grilling（2026-11-07）で確定"
@@ -15,7 +15,7 @@ generated:
 ---
 # SDR-52dccd7e-666c-46f8-8a8d-1a50dd0f721b: OKF の index.md を sara check の出力から生成してコミットする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-07
 - 関連: GitHub Issue #662, `docs/model.md`
 - 起点: epic #662 の grilling（2026-11-07）で確定

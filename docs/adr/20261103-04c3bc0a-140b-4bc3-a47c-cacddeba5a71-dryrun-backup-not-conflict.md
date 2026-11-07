@@ -2,7 +2,7 @@
 id: "ADR-04c3bc0a-140b-4bc3-a47c-cacddeba5a71"
 type: adr
 name: "--dryrun --backup は退避で解ける箇所を conflict にしない"
-status: 採用
+status: stable
 issues:
   - "#169"
   - "#172"
@@ -18,7 +18,7 @@ generated:
 ---
 # ADR-04c3bc0a-140b-4bc3-a47c-cacddeba5a71: --dryrun --backup は退避で解ける箇所を conflict にしない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1, ADR-37191429-2099-4217-a552-47b16a7e504c, GitHub Issue #169, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §6（出力規律）の dryrun の扱いを書き直した

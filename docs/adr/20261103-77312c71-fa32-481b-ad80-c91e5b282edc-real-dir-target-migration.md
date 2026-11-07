@@ -2,7 +2,7 @@
 id: "ADR-77312c71-fa32-481b-ad80-c91e5b282edc"
 type: adr
 name: "実ディレクトリの target は全 leaf を除去できるときだけ移行する"
-status: 採用
+status: stable
 issues:
   - "#175"
   - "#172"
@@ -19,7 +19,7 @@ generated:
 ---
 # ADR-77312c71-fa32-481b-ad80-c91e5b282edc: 実ディレクトリの target は全 leaf を除去できるときだけ移行する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b, GitHub Issue #175, #172
 - 起点: epic #172 の grilling セッション（2026-07-12）で確定。ADR-0047 §1 を書き直した

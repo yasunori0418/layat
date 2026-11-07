@@ -2,7 +2,7 @@
 id: "ADR-c2131901-290d-4311-8f84-64edb33e8897"
 type: adr
 name: "status は config 名の完全一致で絞り込む"
-status: 採用
+status: stable
 issues:
   - "#580"
   - "#198"
@@ -15,7 +15,7 @@ generated:
 ---
 # ADR-c2131901-290d-4311-8f84-64edb33e8897: status は config 名の完全一致で絞り込む
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: GitHub Issue #580, #198
 - 起点: Issue #198（`layat status [name]`）の実装前に、2026-07-19 の grilling 以後の実装の変化を差分 grilling で反映した（2026-10-23）。ADR-0065 §2 を書き直した

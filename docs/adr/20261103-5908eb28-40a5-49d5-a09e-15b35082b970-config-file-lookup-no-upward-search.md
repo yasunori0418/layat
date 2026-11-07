@@ -2,7 +2,7 @@
 id: "ADR-5908eb28-40a5-49d5-a09e-15b35082b970"
 type: adr
 name: "設定ファイルは -f のディレクトリか cwd だけで探す"
-status: 採用
+status: stable
 issues:
   - "#395"
 origin: "Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §3 を書き直した"
@@ -17,7 +17,7 @@ generated:
 ---
 # ADR-5908eb28-40a5-49d5-a09e-15b35082b970: 設定ファイルは -f のディレクトリか cwd だけで探す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964, ADR-ef9e4099-0cf4-409a-9e73-518866aea676, GitHub Issue #395
 - 起点: Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §3 を書き直した

@@ -2,7 +2,7 @@
 id: "ADR-2230e78f-770a-447e-9c5d-6eba1e9a7359"
 type: adr
 name: "モジュールは subdir の確認を lib に委ねる"
-status: 採用
+status: stable
 issues:
   - "#585"
 origin: "ADR-0064 §3 を書き直した"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-2230e78f-770a-447e-9c5d-6eba1e9a7359: モジュールは subdir の確認を lib に委ねる
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: GitHub Issue #585, `docs/spec.md`
 - 起点: ADR-0064 §3 を書き直した

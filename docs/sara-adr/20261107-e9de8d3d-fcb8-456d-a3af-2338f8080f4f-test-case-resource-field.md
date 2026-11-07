@@ -3,7 +3,7 @@ id: "SDR-e9de8d3d-fcb8-456d-a3af-2338f8080f4f"
 type: sara_adr
 name: "test_case の target を resource に改名する"
 description: "test_case のテスト資産の正準表記を OKF の resource キーで持ち、値はリポジトリ根からのパスのままにする"
-status: 採用
+status: stable
 issues:
   - "#662"
 origin: "epic #662 の grilling（2026-11-07）で確定"
@@ -15,7 +15,7 @@ generated:
 ---
 # SDR-e9de8d3d-fcb8-456d-a3af-2338f8080f4f: test_case の target を resource に改名する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-07
 - 関連: GitHub Issue #662, `docs/model.md`, `dev/tests/test-doc-map.sh`
 - 起点: epic #662 の grilling（2026-11-07）で確定

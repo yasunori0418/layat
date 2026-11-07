@@ -2,7 +2,7 @@
 id: "ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246"
 type: adr
 name: "内部コマンドの開示で透明性を保つ"
-status: 採用
+status: stable
 issues:
   - "#3"
 origin: "Issue #3（CLI 化）。ADR-0007 §3 を書き直した"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246: 内部コマンドの開示で透明性を保つ
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: GitHub Issue #3
 - 起点: Issue #3（CLI 化）。ADR-0007 §3 を書き直した

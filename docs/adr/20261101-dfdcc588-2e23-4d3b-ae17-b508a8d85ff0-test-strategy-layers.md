@@ -2,7 +2,7 @@
 id: "ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0"
 type: adr
 name: "テストを sandbox 可否で flake check と E2E に分ける"
-status: 採用
+status: stable
 origin: "ADR-0006 §テスト戦略・ADR-0012 §3 を書き直した"
 justifies:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
@@ -20,7 +20,7 @@ generated:
 ---
 # ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0: テストを sandbox 可否で flake check と E2E に分ける
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 起点: ADR-0006 §テスト戦略・ADR-0012 §3 を書き直した
 

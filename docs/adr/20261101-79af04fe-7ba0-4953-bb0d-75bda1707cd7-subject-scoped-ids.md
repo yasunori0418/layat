@@ -2,7 +2,7 @@
 id: "ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7"
 type: adr
 name: "--json の item id は subject スコープで導く"
-status: 採用
+status: stable
 issues:
   - "#552"
   - "yasunori0418/outturn#1"
@@ -17,7 +17,7 @@ generated:
 ---
 # ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7: --json の item id は subject スコープで導く
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, GitHub Issue #552, yasunori0418/outturn#1, outturn ADR-0013
 - 起点: layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §3 を書き直した

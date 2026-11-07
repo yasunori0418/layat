@@ -2,7 +2,7 @@
 id: "ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b"
 type: adr
 name: "配置前除去を planner が計算するデータとして表す"
-status: 採用
+status: stable
 issues:
   - "#170"
   - "#175"
@@ -20,7 +20,7 @@ generated:
 ---
 # ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b: 配置前除去を planner が計算するデータとして表す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-74423bb8-1453-4689-a25e-30bf46536afc, ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c, GitHub Issue #170, #175, #172
 - 起点: dotfiles 側での実遭遇（#170）と grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0046 §3（配置前除去のデータ化と実行順）と ADR-0047 §4 を書き直した

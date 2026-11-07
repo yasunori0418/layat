@@ -2,7 +2,7 @@
 id: "SDR-fa7eff8e-788f-48e7-951d-4cfbf95d5a1f"
 type: sara_adr
 name: "adr の status_note を持たない"
-status: 採用
+status: stable
 issues:
   - "#499"
 origin: "Issue #499 の grilling（2026-11-01）で確定。ADR-0048 §2 を書き直した"
@@ -16,7 +16,7 @@ generated:
 ---
 # SDR-fa7eff8e-788f-48e7-951d-4cfbf95d5a1f: adr の status_note を持たない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: SDR-3ff9f355-a667-476e-b10d-087248cdbfcf, GitHub Issue #499
 - 起点: Issue #499 の grilling（2026-11-01）で確定。ADR-0048 §2 を書き直した

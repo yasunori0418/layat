@@ -2,7 +2,7 @@
 id: "ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131"
 type: adr
 name: "src の型で素の文字列を拒否する"
-status: 採用
+status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の srcType の項を書き直した"
 justifies:
   - "REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74"
@@ -13,7 +13,7 @@ generated:
 ---
 # ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131: src の型で素の文字列を拒否する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: `docs/spec.md`
 - 起点: manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の srcType の項を書き直した

@@ -2,7 +2,7 @@
 id: "ADR-e6820da0-fce3-4aef-8b79-d53abbca6051"
 type: adr
 name: "layat output の flake-parts module を flakeModules.default で公開する"
-status: 採用
+status: stable
 issues:
   - "#26"
 origin: "Issue #26。ADR-0029 §1 と ADR-0029 §4 を書き直した"
@@ -17,7 +17,7 @@ generated:
 ---
 # ADR-e6820da0-fce3-4aef-8b79-d53abbca6051: layat output の flake-parts module を flakeModules.default で公開する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1, GitHub Issue #26
 - 起点: Issue #26。ADR-0029 §1 と ADR-0029 §4 を書き直した

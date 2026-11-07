@@ -2,7 +2,7 @@
 id: "ADR-59f63d1f-25df-4290-913f-02804c5eeade"
 type: adr
 name: "root の型を mkManifest だけに持たせる"
-status: 採用
+status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の rootType の項を書き直した"
 justifies:
   - "REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34"
@@ -17,7 +17,7 @@ generated:
 ---
 # ADR-59f63d1f-25df-4290-913f-02804c5eeade: root の型を mkManifest だけに持たせる
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75, ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c, ADR-2119433e-de69-4447-85a5-575d58246007, `docs/spec.md`
 - 起点: manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の rootType の項を書き直した

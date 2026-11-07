@@ -2,7 +2,7 @@
 id: "SDR-d3f88093-dc98-4703-af45-df5b27527ffa"
 type: sara_adr
 name: "用語を ubiquitous_term の item で管理する"
-status: 採用
+status: stable
 issues:
   - "#647"
 origin: "epic #647 の grilling（2026-11-06〜07）で確定。SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb を書き直した"
@@ -17,7 +17,7 @@ generated:
 ---
 # SDR-d3f88093-dc98-4703-af45-df5b27527ffa: 用語を ubiquitous_term の item で管理する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-07
 - 関連: GitHub Issue #647, `docs/glossary.md`, `docs/glossary.ja.md`, `CONTEXT.md`
 - 起点: epic #647 の grilling（2026-11-06〜07）で確定。SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb を書き直した

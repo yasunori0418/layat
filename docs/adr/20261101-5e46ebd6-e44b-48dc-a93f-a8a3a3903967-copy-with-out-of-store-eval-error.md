@@ -2,7 +2,7 @@
 id: "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
 type: adr
 name: "copy と out-of-store の併用を eval 時に拒否する"
-status: 採用
+status: stable
 origin: "ADR-0013 §4 を書き直した"
 justifies:
   - "REQ-16faf428-77f3-492f-b858-222c5274cbf7"
@@ -12,7 +12,7 @@ generated:
 ---
 # ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967: copy と out-of-store の併用を eval 時に拒否する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: `docs/spec.md`
 - 起点: ADR-0013 §4 を書き直した

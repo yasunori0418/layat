@@ -2,7 +2,7 @@
 id: "ADR-27f99ee6-5fb4-4dbe-b0fd-8267eecaa3a1"
 type: adr
 name: "--root は全モードで root を上書きする"
-status: 採用
+status: stable
 origin: "ADR-0017 §2 を書き直した"
 justifies:
   - "REQ-61c05e09-0bde-4f74-9a96-03185f9df606"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-27f99ee6-5fb4-4dbe-b0fd-8267eecaa3a1: --root は全モードで root を上書きする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, `docs/spec.md`
 - 起点: ADR-0017 §2 を書き直した

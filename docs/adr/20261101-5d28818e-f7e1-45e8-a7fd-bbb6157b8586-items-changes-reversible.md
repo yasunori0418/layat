@@ -2,7 +2,7 @@
 id: "ADR-5d28818e-f7e1-45e8-a7fd-bbb6157b8586"
 type: adr
 name: "--json は items を全件、changes を差分で持ち可逆性を reversible で表す"
-status: 採用
+status: stable
 issues:
   - "#552"
   - "yasunori0418/outturn#1"
@@ -18,7 +18,7 @@ generated:
 ---
 # ADR-5d28818e-f7e1-45e8-a7fd-bbb6157b8586: --json は items を全件、changes を差分で持ち可逆性を reversible で表す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, GitHub Issue #552, yasunori0418/outturn#1
 - 起点: layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §4 を書き直した

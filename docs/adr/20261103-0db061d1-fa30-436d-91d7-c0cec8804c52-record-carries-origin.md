@@ -2,7 +2,7 @@
 id: "ADR-0db061d1-fa30-436d-91d7-c0cec8804c52"
 type: adr
 name: "last-applied 記録に出所を持たせる"
-status: 採用
+status: stable
 issues:
   - "#580"
   - "#498"
@@ -17,7 +17,7 @@ generated:
 ---
 # ADR-0db061d1-fa30-436d-91d7-c0cec8804c52: last-applied 記録に出所を持たせる
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e, GitHub Issue #580, #498
 - 起点: Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §1 を書き直した

@@ -2,7 +2,7 @@
 id: "ADR-2be5080a-1cba-4fea-bed8-66e0d0d7b8d0"
 type: adr
 name: "Go toolchain は nixpkgs の go に pin する"
-status: 採用
+status: stable
 issues:
   - "#552"
 origin: "engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §8 を書き直した"
@@ -16,7 +16,7 @@ generated:
 ---
 # ADR-2be5080a-1cba-4fea-bed8-66e0d0d7b8d0: Go toolchain は nixpkgs の go に pin する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: ADR-97edd9af-befb-4a9f-a8ef-de038c76336a, GitHub Issue #552
 - 起点: engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §8 を書き直した

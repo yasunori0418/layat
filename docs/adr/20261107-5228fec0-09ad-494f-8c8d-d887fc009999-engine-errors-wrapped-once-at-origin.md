@@ -2,7 +2,7 @@
 id: "ADR-5228fec0-09ad-494f-8c8d-d887fc009999"
 type: adr
 name: "engine のエラーは発生源で 1 回だけ wrap し、伝搬では再 wrap しない"
-status: 採用
+status: stable
 issues:
   - "#90"
 origin: "Issue #90 の再計画（2026-07-03）"
@@ -16,7 +16,7 @@ generated:
 ---
 # ADR-5228fec0-09ad-494f-8c8d-d887fc009999: engine のエラーは発生源で 1 回だけ wrap し、伝搬では再 wrap しない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-07
 - 関連: GitHub Issue #90, ADR-fdb8003f-db36-424b-8484-6f2fd57a3027, UBQ-f5a31977-edde-4c0f-881f-28f709b0ef0b
 - 起点: Issue #90 の再計画（2026-07-03）

@@ -2,7 +2,7 @@
 id: "ADR-3c3aa4a5-083a-43c1-a99f-92b9e97a68b9"
 type: adr
 name: "apply --all --dryrun の終了コードは error を conflict より優先する"
-status: 採用
+status: stable
 issues:
   - "#550"
 origin: "実装前残セマンティクス確定の第6巡（2026-06-14）で確定。ADR-0024 §7 を書き直した"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-3c3aa4a5-083a-43c1-a99f-92b9e97a68b9: apply --all --dryrun の終了コードは error を conflict より優先する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: GitHub Issue #550
 - 起点: 実装前残セマンティクス確定の第6巡（2026-06-14）で確定。ADR-0024 §7 を書き直した

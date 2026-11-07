@@ -2,7 +2,7 @@
 id: "SDR-933a9191-f60e-45bc-bebc-bc09af8154cc"
 type: sara_adr
 name: "infrastructure 型を改名しない"
-status: 採用
+status: stable
 issues:
   - "#583"
   - "#237"
@@ -19,7 +19,7 @@ generated:
 ---
 # SDR-933a9191-f60e-45bc-bebc-bc09af8154cc: infrastructure 型を改名しない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: SDR-29ef8bb4-9349-47db-9e79-926bc71bbdd0, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #237, #203
 - 起点: epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §3b を書き直した

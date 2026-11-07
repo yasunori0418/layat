@@ -2,7 +2,7 @@
 id: "ADR-56ac6298-db67-4f63-8b60-f14af3b9570a"
 type: adr
 name: "reset は config の名指しを必須にする"
-status: 採用
+status: stable
 issues:
   - "#584"
 origin: "ADR-0021 §1（reset は名指し必須で --all に対応しない）を書き直した"
@@ -17,7 +17,7 @@ generated:
 ---
 # ADR-56ac6298-db67-4f63-8b60-f14af3b9570a: reset は config の名指しを必須にする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7, ADR-45380022-d959-4b22-aa05-5993ac1f3c87
 - 起点: ADR-0021 §1（reset は名指し必須で --all に対応しない）を書き直した

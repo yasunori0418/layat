@@ -2,7 +2,7 @@
 id: "SDR-f5443db0-6407-41c0-9ab5-55f22dc4de5e"
 type: sara_adr
 name: "sara-id を廃止し sara init を包む起票ラッパーを使う"
-status: 採用
+status: stable
 issues:
   - "#366"
   - "#364"
@@ -17,7 +17,7 @@ generated:
 ---
 # SDR-f5443db0-6407-41c0-9ab5-55f22dc4de5e: sara-id を廃止し sara init を包む起票ラッパーを使う
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb, GitHub Issue #366, #364
 - 起点: epic #364 の着手前 grilling（2026-08-17）で確定。ADR-0053 §3 を書き直した

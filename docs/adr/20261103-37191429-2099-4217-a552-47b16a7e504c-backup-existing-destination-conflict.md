@@ -2,7 +2,7 @@
 id: "ADR-37191429-2099-4217-a552-47b16a7e504c"
 type: adr
 name: "退避先が既にあれば conflict で止める"
-status: 採用
+status: stable
 issues:
   - "#169"
   - "#172"
@@ -18,7 +18,7 @@ generated:
 ---
 # ADR-37191429-2099-4217-a552-47b16a7e504c: 退避先が既にあれば conflict で止める
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-65e41903-5eee-4a00-a154-be8c830cdca9, GitHub Issue #169, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §3 を書き直した

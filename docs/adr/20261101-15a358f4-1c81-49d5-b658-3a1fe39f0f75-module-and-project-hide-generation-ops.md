@@ -2,7 +2,7 @@
 id: "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
 type: adr
 name: "module と project では世代操作を公開しない"
-status: 採用
+status: stable
 origin: "ADR-0002 §決定（module の profile は内部機構）・ADR-0005 §決定（project mode の世代はユーザー露出しない）を書き直した"
 justifies:
   - "REQ-844ee375-919f-4341-81e1-a5f89fd32840"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75: module と project では世代操作を公開しない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 起点: ADR-0002 §決定（module の profile は内部機構）・ADR-0005 §決定（project mode の世代はユーザー露出しない）を書き直した
 

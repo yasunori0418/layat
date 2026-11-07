@@ -2,7 +2,7 @@
 id: "ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c"
 type: adr
 name: "rootKind に system を足しても schemaVersion を上げない"
-status: 採用
+status: stable
 origin: "次期マイルストーン計画の grilling（2026-07-04）。ADR-0036 §1a を書き直した"
 justifies:
   - "REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb"
@@ -22,7 +22,7 @@ generated:
 ---
 # ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c: rootKind に system を足しても schemaVersion を上げない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-25d54346-f13a-4c12-9895-ab93dc6c183b, ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203, ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e, ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75, ADR-419914ba-9896-4dd1-853b-fb514fcb9f38, ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988
 - 起点: 次期マイルストーン計画の grilling（2026-07-04）。ADR-0036 §1a を書き直した

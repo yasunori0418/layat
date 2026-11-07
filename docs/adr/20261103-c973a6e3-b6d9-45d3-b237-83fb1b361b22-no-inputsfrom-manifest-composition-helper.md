@@ -2,7 +2,7 @@
 id: "ADR-c973a6e3-b6d9-45d3-b237-83fb1b361b22"
 type: adr
 name: "複数の manifest を inputsFrom で合成するヘルパを持たない"
-status: 採用
+status: stable
 issues:
   - "#112"
   - "#107"
@@ -22,7 +22,7 @@ generated:
 ---
 # ADR-c973a6e3-b6d9-45d3-b237-83fb1b361b22: 複数の manifest を inputsFrom で合成するヘルパを持たない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-6b7becf0-f029-41e3-895e-b672dce94d3d, ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3, ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, GitHub Issue #112, #107
 - 起点: ADR-0032 §3b を書き直した

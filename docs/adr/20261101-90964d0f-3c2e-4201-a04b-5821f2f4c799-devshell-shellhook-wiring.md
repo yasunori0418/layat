@@ -2,7 +2,7 @@
 id: "ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799"
 type: adr
 name: "devShell の shellHook で配線する"
-status: 採用
+status: stable
 origin: "ADR-0005 の決定「devShell shellHook を正式な配線レイヤーに加える」を書き直した"
 justifies:
   - "REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9"
@@ -18,7 +18,7 @@ generated:
 ---
 # ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799: devShell の shellHook で配線する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75, ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c, ADR-2119433e-de69-4447-85a5-575d58246007, ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, `docs/concept.md`, `docs/spec.md`
 - 起点: ADR-0005 の決定「devShell shellHook を正式な配線レイヤーに加える」を書き直した

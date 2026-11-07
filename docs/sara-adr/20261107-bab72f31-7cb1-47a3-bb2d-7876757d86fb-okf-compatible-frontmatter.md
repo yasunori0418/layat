@@ -3,7 +3,7 @@ id: "SDR-bab72f31-7cb1-47a3-bb2d-7876757d86fb"
 type: sara_adr
 name: "OKF v0.2 と互換の frontmatter キーを item に足す"
 description: "OKF v0.2 と互換の frontmatter キーを sara の item に足す方針と、バンドル単位の適合を追わない範囲を決める"
-status: 採用
+status: stable
 issues:
   - "#662"
 origin: "epic #662 の grilling（2026-11-07）で確定"
@@ -16,7 +16,7 @@ generated:
 ---
 # SDR-bab72f31-7cb1-47a3-bb2d-7876757d86fb: OKF v0.2 と互換の frontmatter キーを item に足す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-07
 - 関連: GitHub Issue #662, `docs/model.md`
 - 起点: epic #662 の grilling（2026-11-07）で確定

@@ -2,7 +2,7 @@
 id: "ADR-acc31876-df36-485e-b356-92ae60e26db7"
 type: adr
 name: "reset は非対話の実行で --yes を必須にする"
-status: 採用
+status: stable
 issues:
   - "#550"
   - "yasunori0418/outturn#1"
@@ -16,7 +16,7 @@ generated:
 ---
 # ADR-acc31876-df36-485e-b356-92ae60e26db7: reset は非対話の実行で --yes を必須にする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: GitHub Issue #550, yasunori0418/outturn#1
 - 起点: 実装前残セマンティクス確定の第7巡（2026-06-14）で確定。ADR-0025 §5 と ADR-0043 §8 の reset --json を書き直した
