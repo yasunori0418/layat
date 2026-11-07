@@ -308,6 +308,7 @@
                   pkgs.git
                   pkgs.coreutils
                   pkgs.findutils
+                  pkgs.gnugrep
                 ];
               }
               ''

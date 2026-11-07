@@ -13,7 +13,7 @@ fault() { printf 'FAIL - %s\n' "$1"; }
 # shellcheck source=dev/scripts/lib-testdoc.sh
 . "$(dirname "$0")/../scripts/lib-testdoc.sh"
 
-require_commands "term-avoid.sh（nix develop '.?dir=dev#sara' から実行する）" sara jq git textlint find || exit 1
+require_commands "term-avoid.sh（nix develop '.?dir=dev#sara' から実行する）" sara jq git textlint find grep || exit 1
 
 cd "$(testdoc_repo_root)" || exit 1
 
@@ -42,7 +42,10 @@ jq '[.items[]
         pattern: (if test("^[A-Za-z0-9 -]+$")
           then "/\\b" + (gsub("(?<c>[.*+?^${}()|\\[\\]\\\\/])"; "\\\(.c)") | gsub(" +"; "\\s+")) + "\\b/"
           else . end)
-      }]' "$work/graph.json" > "$work/rules.json"
+      }]' "$work/graph.json" > "$work/rules.json" || {
+  echo "term-avoid.sh: avoid の綴りから辞書を作れなかった" >&2
+  exit 1
+}
 
 spellings=$(jq length "$work/rules.json")
 if [ "$spellings" -eq 0 ]; then
@@ -51,8 +54,11 @@ if [ "$spellings" -eq 0 ]; then
 fi
 
 # YAML は JSON の上位集合なので、prh.yml は JSON で書く。
-jq '{version: 1, rules: .}' "$work/rules.json" > "$work/prh.yml"
-jq -n --arg prh "$work/prh.yml" '{rules: {prh: {rulePaths: [$prh]}}}' > "$work/.textlintrc.json"
+if ! jq '{version: 1, rules: .}' "$work/rules.json" > "$work/prh.yml" ||
+  ! jq -n --arg prh "$work/prh.yml" '{rules: {prh: {rulePaths: [$prh]}}}' > "$work/.textlintrc.json"; then
+  echo "term-avoid.sh: prh.yml / .textlintrc.json を生成できなかった" >&2
+  exit 1
+fi
 
 # --- 対象ファイル -------------------------------------------------------------
 
@@ -74,23 +80,20 @@ done
 
 textlint --config "$work/.textlintrc.json" -f unix "${targets[@]}" > "$work/lint.out" 2> "$work/lint.err"
 rc=$?
-case "$rc" in
-  0)
-    pass "avoid の綴りが対象の散文に無い"
-    echo
-    printf 'term-avoid: 全アサーション通過（対象ファイル %d 件 / 綴り %d 件）\n' "${#targets[@]}" "$spellings"
-    exit 0
-    ;;
-  1)
-    fault "avoid の綴りが対象の散文にある"
-    cat "$work/lint.out"
-    echo
-    printf 'term-avoid: 失敗あり\n' >&2
-    exit 1
-    ;;
-  *)
-    echo "term-avoid.sh: textlint が異常終了した（exit $rc）" >&2
-    cat "$work/lint.out" "$work/lint.err" >&2
-    exit 1
-    ;;
-esac
+# textlint は rule の読み込み失敗でも exit 1 を返すので、prh の検出行があるときだけ検出として扱う。
+if [ "$rc" -eq 0 ]; then
+  pass "avoid の綴りが対象の散文に無い"
+  echo
+  printf 'term-avoid: 全アサーション通過（対象ファイル %d 件 / 綴り %d 件）\n' "${#targets[@]}" "$spellings"
+  exit 0
+fi
+if [ "$rc" -eq 1 ] && grep -q '\[Error/prh\]$' "$work/lint.out"; then
+  fault "avoid の綴りが対象の散文にある"
+  cat "$work/lint.out"
+  echo
+  printf 'term-avoid: 失敗あり\n' >&2
+  exit 1
+fi
+echo "term-avoid.sh: textlint が異常終了した（exit $rc）" >&2
+cat "$work/lint.out" "$work/lint.err" >&2
+exit 1
