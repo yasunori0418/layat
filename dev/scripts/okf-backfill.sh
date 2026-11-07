@@ -73,7 +73,7 @@ actor_of() {
 }
 
 # 本文を最後に変えたコミットから generated の by と at を求め、`<by>\t<at>` を出す。
-# 改名を跨いで辿るため、各コミットの旧版は 1 つ古いログ項目のパスで引く。
+# 改名を跨いで辿るため、各コミットの旧版は 1 つ古いログ項目のパスで読む。
 generated_of() {
   local file=$1 log hashes=() paths=() i h trailer
   log=$(git log --follow -M --format='%x01%H' --name-only -- "$file")

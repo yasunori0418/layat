@@ -23,7 +23,7 @@ item_types:
             - deprecated
         required: true
         placeholder: stable
-      # OKF の stale_after。sara は値を検査せず、形は dev/tests/okf-frontmatter.sh が確かめる。
+      # OKF の `stale_after`。値の形は sara でなく dev/tests/okf-frontmatter.sh が確かめる。
       - &stale_after_field
         name: stale_after
         display_name: Stale After
