@@ -3,7 +3,7 @@ id: "CASE-83bd9936-cfb5-4e1d-a9a7-b85f049991b8"
 type: test_case
 name: "generator_error_test.go — 生成器の失敗の人間向け / --json / --debug の 3 形"
 status: stable
-target: "cmd/layat/generator_error_test.go"
+resource: "cmd/layat/generator_error_test.go"
 covers:
   - "TC-4a39ca86-e866-41ec-93d2-663f8e6c1ce0"
 generated:

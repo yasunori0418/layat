@@ -3,7 +3,7 @@ id: "CASE-f6c9eb4d-d2ed-4992-b57b-a0fbbc9963b6"
 type: test_case
 name: "checks.nixos-module — NixOS の activation の配線を評価アサートで検証する flake check"
 status: stable
-target: "checks.nixos-module"
+resource: "checks.nixos-module"
 covers:
   - "TC-bd436b15-d2c3-4847-9797-582e37ef2367"
 generated:

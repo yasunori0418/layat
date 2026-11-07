@@ -3,7 +3,7 @@ id: "CASE-9e8e3151-2c56-4c53-89ec-3e9fc5f1e06f"
 type: test_case
 name: "nix-unit: root-subdir.nix — root マーカーの subdir 適用形"
 status: stable
-target: "tests/nix-unit/root-subdir.nix"
+resource: "tests/nix-unit/root-subdir.nix"
 covers:
   - "TC-7d713505-5673-4e15-99bf-e98965e18892"
 generated:
