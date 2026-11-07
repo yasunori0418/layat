@@ -81,8 +81,8 @@ jobs:
 
   sara:
     # Knowledge-graph validation of docs/ plus the test-doc-map / glossary-index / risk-matrix /
-    # sara-gap / sara-new / adr-supersede contract tests. Not a required status check. Uses a
-    # job-local path filter instead of the `changes` job.
+    # sara-gap / sara-new / adr-supersede / term-avoid contract tests. Not a required status
+    # check. Uses a job-local path filter instead of the `changes` job.
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:
@@ -111,6 +111,10 @@ jobs:
               # Defines the flake checks the contract test matches against its
               # static list (`checks.hm-module` and friends).
               - 'flake.nix'
+              # Prose the term-avoid contract test scans besides docs/.
+              - 'README.md'
+              - 'README.ja.md'
+              - 'CLAUDE.md'
 
       - name: Setup Nix
         if: steps.filter.outputs.relevant != 'false'
@@ -159,6 +163,12 @@ jobs:
       - name: Run adr-supersede contract test
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/adr-supersede.sh
+
+      # Spellings listed under `avoid` in ubiquitous_term items must not appear in
+      # the prose of docs/, README.md, README.ja.md or CLAUDE.md (textlint + prh).
+      - name: Run term-avoid contract test
+        if: steps.filter.outputs.relevant != 'false'
+        run: nix develop '.?dir=dev#sara' -c dev/tests/term-avoid.sh
 
   e2e:
     needs: changes
