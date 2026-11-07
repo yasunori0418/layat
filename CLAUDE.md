@@ -105,7 +105,7 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
   振らない（並列レーンでの採番衝突を構造的に避けるため）
 
   ```bash
-  sara-new <型> <slug> <配置ディレクトリ> [-- <sara init のオプション>...]
+  sara-new <型> <slug> <配置ディレクトリ> -- --description <要約> [<sara init のオプション>...]
   sara-new requirement lock-ordering docs/requirements -- --description '<1 文の要約>'
   ```
 

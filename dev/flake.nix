@@ -57,7 +57,7 @@
 
           # sara init を包む item 起票ラッパー。
           #
-          #   sara-new <型> <slug> <配置ディレクトリ> [-- <sara init のオプション>...]
+          #   sara-new <型> <slug> <配置ディレクトリ> -- --description <要約> [<sara init のオプション>...]
           #
           # 実体の dev/scripts/sara-new.sh を PATH に載せる薄い wrapper。
           sara-new = pkgs.writeShellApplication {

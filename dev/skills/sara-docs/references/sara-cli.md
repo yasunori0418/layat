@@ -11,7 +11,7 @@ frontmatter は手書き・テンプレ写経をせず `sara-new` で起票す�
 適用・`sara init` の呼び出しを一手で済ませる:
 
 ```bash
-sara-new <型> <slug> <配置ディレクトリ> [-- <sara init のオプション>...]
+sara-new <型> <slug> <配置ディレクトリ> -- --description <要約> [<sara init のオプション>...]
 
 export SARA_NEW_GENERATED_BY="claude-code/<モデル ID>"   # 人なら human:<GitHub ID>
 sara-new risk lock-ordering docs/risks -- \
