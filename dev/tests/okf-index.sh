@@ -66,7 +66,7 @@ status: stable
 本文の段落は使わない。
 EOF
 
-# description が無く、本文の箇条書き・見出し・コードフェンスの後に段落がある ADR。
+# description が無く、本文の箇条書き・見出し・コードフェンスの後に段落がある ADR。段落は箇条書きの行で終わる。
 cat > "$fixture/docs/adr/20260101-22222222-2222-4222-8222-222222222222-from-paragraph.md" <<'EOF'
 ---
 id: "ADR-22222222-2222-4222-8222-222222222222"
@@ -86,8 +86,11 @@ echo 段落ではない
 ```
 
 最初の段落は
-日本語の行と `code`
-and English words.
+`results[]`
+の後に English
+words を
+挟む。
+- 箇条書きの行は段落に含めない
 
 次の段落は使わない。
 EOF
@@ -107,6 +110,18 @@ status: stable
 ## 背景
 
 - 箇条書きだけ
+
+| 表 | 段落ではない |
+
+> 引用は段落ではない
+
+<details>HTML は段落ではない</details>
+
+    字下げ行は段落ではない
+
+~~~
+フェンスの中は段落ではない
+~~~
 EOF
 
 # ADR 以外の item。H1 の直後に段落があり、status を持っても添え字は付かない。
@@ -144,9 +159,9 @@ expect_line() {
 
 expect_line "description フィールドを使い、ADR の status を添える" docs/adr/index.md \
   '* [フィールドを持つ決定](./20260102-11111111-1111-4111-8111-111111111111-with-field.md) - フィールドの要約 (stable)'
-expect_line "description が無ければ H1 の次の最初の段落を使い、日本語の行は空白なしでつなぐ" docs/adr/index.md \
-  '* [results\[\] を返す](./20260101-22222222-2222-4222-8222-222222222222-from-paragraph.md) - 最初の段落は日本語の行と `code` and English words. (deprecated)'
-expect_line "description も段落も無ければ ' - ' ごと省き、SDR の status を添える" docs/sara-adr/index.md \
+expect_line "description が無ければ H1 の次の最初の段落を使い、日本語が接する改行は空白なしでつなぐ" docs/adr/index.md \
+  '* [results\[\] を返す](./20260101-22222222-2222-4222-8222-222222222222-from-paragraph.md) - 最初の段落は`results[]`の後に English words を挟む。 (deprecated)'
+expect_line "表・引用・HTML・字下げ行・~~~ のフェンスは段落に数えず、段落が無ければ ' - ' ごと省く" docs/sara-adr/index.md \
   '* [説明の無い決定](./20260101-33333333-3333-4333-8333-333333333333-no-description.md) (stable)'
 expect_line "ADR 以外の item には status の添え字を付けず、英数字の行は空白でつなぐ" docs/ubiquitous-language/index.md \
   '* [term](./20260101-44444444-4444-4444-8444-444444444444-term.md) - The term definition.'

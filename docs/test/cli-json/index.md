@@ -19,7 +19,7 @@
 * [生成器の選択が優先順位どおりに解決し、入力不正を E_INPUT で拒否し、--manifest の処理では環境を読まない](./20261002-8377d290-1f47-48f3-844c-bd51f257e25e-generator-selection-precedence-and-input-rejection.md)
 * [生成器の各実装が実 nix 無しで同じ契約（操作・失敗の構造）を満たす](./20261002-b6d6cf76-16f9-4c9f-9b50-74104254ad6e-generator-contract-implementations.md) - 実 nix を起動せず、契約の実装（prebuilt・テストダブル・nix 生成器）と失敗型を確かめる。nix生成器は PATH の先頭に置いた nix のスタブで駆動する。
 * [apply --all が --manifest <name>=<link-farm> の集合に乗り、集合の形の不正を E_INPUT で拒否する](./20261015-e54fe715-7b49-431c-a611-25e196b1d0a0-prebuilt-set-rides-apply-all.md)
-* [status の CLI がフィルタ・ストリームの排他・--json の形・error 時の続行の契約を守る](./20261023-1bc3e39a-116a-4f26-96b4-1d15e6f837bd-status-cli-contracts.md) - `layat status \[name\]` の CLI 層が、engine の結果を契約どおりに絞り込み、名付け、出力することを検証する。
+* [status の CLI がフィルタ・ストリームの排他・--json の形・error 時の続行の契約を守る](./20261023-1bc3e39a-116a-4f26-96b4-1d15e6f837bd-status-cli-contracts.md) - `layat status [name]` の CLI 層が、engine の結果を契約どおりに絞り込み、名付け、出力することを検証する。
 * [--help の開示ブロックがサブコマンドごとに実際の nix 呼び出しと一致する](./20261101-b4262641-776c-427d-8331-1a94b29fa568-help-disclosure-matches-nixgen.md) - `layat --help` の開示ブロックが、各サブコマンドを実際に実行したときの nix 呼び出しと一致することを検証する。
 
 ## テストケース（`test_case`）

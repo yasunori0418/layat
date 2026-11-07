@@ -98,13 +98,14 @@ cut -f7 "$work/items.tsv" | xargs -r awk '
 ' > "$work/paras.tsv"
 
 # エントリ: <型>\t<docs/ からのディレクトリ>\t<ファイル名>\t<index.md の 1 行>
+# リンク文字列に化けないよう name の角括弧だけをエスケープし、説明はそのまま載せる。
 awk -F '\t' '
   function esc(s) { gsub(/\[/, "\\[", s); gsub(/\]/, "\\]", s); return s }
   NR == FNR { para[$1] = $2; next }
   {
     desc = ($5 != "") ? $5 : para[$7]
     line = "* [" esc($4) "](./" $3 ")"
-    if (desc != "") line = line " - " esc(desc)
+    if (desc != "") line = line " - " desc
     if (($1 == "adr" || $1 == "sara_adr") && $6 != "") line = line " (" $6 ")"
     print $1 "\t" $2 "\t" $3 "\t" line
   }
