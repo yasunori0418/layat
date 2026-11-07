@@ -11,6 +11,9 @@ justifies:
 references:
   - "ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4"
   - "ADR-da7b74a6-bab4-43ea-8f1c-cf843b8b58cc"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:00:12+09:00"
 ---
 # ADR-f82e33bd-0534-4266-89bf-f1d9a2dbe258: ドキュメントサイトを GitHub Actions から Cloudflare Pages へ配備する
 

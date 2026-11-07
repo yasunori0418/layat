@@ -2,6 +2,7 @@
 id: "REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281"
 type: requirement
 name: "mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -21,6 +22,9 @@ specification_ja: |
   解決済み配置元（store パス / out-of-store 絶対パス）・`subpath`・`target`・`method`・
   root の kind（project / home / system / 固定パス）を記録し、`mkManifest` に与えた
   `identity` が null でなければトップレベルに記録しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
 ---
 # REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281: mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す
 

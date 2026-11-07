@@ -11,6 +11,9 @@ justifies:
   - "DSG-aeb5e219-4784-4950-845c-35f9bab9179c"
 references:
   - "ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T15:55:37+09:00"
 ---
 # ADR-e6820da0-fce3-4aef-8b79-d53abbca6051: layat output の flake-parts module を flakeModules.default で公開する
 

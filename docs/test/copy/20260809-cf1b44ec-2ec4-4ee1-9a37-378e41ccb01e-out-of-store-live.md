@@ -2,8 +2,12 @@
 id: "TC-cf1b44ec-2ec4-4ee1-9a37-378e41ccb01e"
 type: test_condition
 name: "out-of-store marker が live symlink として配置され、src 側の変更が透過すること"
+status: stable
 mitigates:
   - "RISK-ffb5100d-c553-4dd8-937a-1263ad84a8c7"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:25:13+09:00"
 ---
 # TC-cf1b44ec-2ec4-4ee1-9a37-378e41ccb01e: out-of-store の live 性
 

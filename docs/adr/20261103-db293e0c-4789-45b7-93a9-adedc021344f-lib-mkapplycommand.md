@@ -13,6 +13,9 @@ justifies:
 references:
   - "ADR-521765d7-7e31-42f4-b548-979185a7586a"
   - "ADR-88231ffc-4836-4252-be34-894944fd28c3"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:26:08+09:00"
 ---
 # ADR-db293e0c-4789-45b7-93a9-adedc021344f: lib.mkApplyCommand で事前展開した apply コマンドを組む
 

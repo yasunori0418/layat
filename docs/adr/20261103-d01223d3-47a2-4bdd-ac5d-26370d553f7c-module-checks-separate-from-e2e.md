@@ -20,6 +20,9 @@ references:
   - "ADR-0da9d817-c870-4f48-8a6d-8fb9b55e2a70"
   - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
   - "ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-d01223d3-47a2-4bdd-ac5d-26370d553f7c: モジュールの検証を flake check と VM テストに置く
 

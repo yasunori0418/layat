@@ -2,6 +2,7 @@
 id: "REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3"
 type: requirement
 name: "profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる"
+status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -40,6 +41,9 @@ specification_ja: |
   ならず、複数の `<name>` で共有しなければならない。`profileDir` は flock キーでもあり、
   同一 config の apply / reset / rollback を直列化しつつ、同 roothash でも別 `<name>` dir とは
   独立させなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3: profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる
 

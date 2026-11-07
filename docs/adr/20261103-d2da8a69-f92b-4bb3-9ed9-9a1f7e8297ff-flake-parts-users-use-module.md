@@ -10,6 +10,9 @@ justifies:
   - "REQ-c50df875-2cb0-4e72-8a21-858359a11cae"
 references:
   - "ADR-e6820da0-fce3-4aef-8b79-d53abbca6051"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T15:55:37+09:00"
 ---
 # ADR-d2da8a69-f92b-4bb3-9ed9-9a1f7e8297ff: flake-parts の利用者には module 経由を正準にする
 

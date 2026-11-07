@@ -2,6 +2,7 @@
 id: "RISK-94be367e-9e2b-43ed-a351-6f16d41113b8"
 type: risk
 name: "出所の異なる apply が同名 config の記録を共有し、互いの entry を利用者に知らせずに古くなった配置として除去し合う"
+status: stable
 likelihood: medium
 impact: medium
 level: medium
@@ -9,6 +10,9 @@ threatens:
   - "REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282"
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
   - "DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:31+09:00"
 ---
 # RISK-94be367e-9e2b-43ed-a351-6f16d41113b8: 出所の異なる apply が同名 config の記録を共有し、互いの entry を利用者に知らせずに古くなった配置として除去し合う
 

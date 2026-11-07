@@ -2,9 +2,13 @@
 id: "TC-83fe0d4a-9730-431a-b7f9-b731060b9484"
 type: test_condition
 name: "unwind が LIFO で巻き戻し、1 件の失敗でも継続して全件報告し、成功時は journal を破棄する"
+status: stable
 mitigates:
   - "RISK-68e810c5-4e68-4b25-9bc0-6b2613022b49"
   - "RISK-a1622cdd-c7e2-4178-a50d-85bc2a35b29f"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:31+09:00"
 ---
 # TC-83fe0d4a-9730-431a-b7f9-b731060b9484: unwind が LIFO で巻き戻し、1 件の失敗でも継続して全件報告し、成功時は journal を破棄する
 

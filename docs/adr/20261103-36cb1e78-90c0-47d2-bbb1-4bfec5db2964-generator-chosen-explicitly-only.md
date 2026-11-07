@@ -11,6 +11,9 @@ justifies:
 references:
   - "ADR-87a2cf34-9592-4c81-8980-246bca579ca0"
   - "ADR-ef9e4099-0cf4-409a-9e73-518866aea676"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964: 生成器は明示の指定だけで選ぶ
 

@@ -8,6 +8,9 @@ justifies:
   - "REQ-5c6b07da-3d06-414d-8770-4f438234b322"
 references:
   - "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0: manifest 内の target の衝突を評価時に検出する
 

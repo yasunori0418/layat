@@ -2,8 +2,12 @@
 id: "TC-4e7cfae7-72bc-4af6-a1f5-1ead7db564b1"
 type: test_condition
 name: "manifest 文書の形（schemaVersion / root / entry 5 フィールド）を不変条件としてアサートする"
+status: stable
 mitigates:
   - "RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:49+09:00"
 ---
 # TC-4e7cfae7-72bc-4af6-a1f5-1ead7db564b1: manifest 文書の形を不変条件としてアサートする
 

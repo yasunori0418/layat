@@ -2,6 +2,7 @@
 id: "REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575"
 type: requirement
 name: "祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -27,6 +28,9 @@ specification_ja: |
   ならない。foreign な祖先（記録なし / 記録 dest と不一致 / 前世代なし）と、次世代にも祖先
   が残る自己矛盾はエラーで停止しなければならない（配下にネストすると store 汚染 / dangling
   を招くため）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T13:39:07+09:00"
 ---
 # REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575: 祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する
 

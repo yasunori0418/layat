@@ -2,12 +2,16 @@
 id: "RISK-e65844ea-a7b7-4bad-b15b-f60130b7e8fa"
 type: risk
 name: "subdir 適用形の前置が一部の target で抜ける、root 側へ混入する、または単体 marker の形が変わる"
+status: stable
 likelihood: low
 impact: medium
 level: low
 threatens:
   - "REQ-08c8f639-790c-4970-a954-c9567538cf9b"
   - "REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:31+09:00"
 ---
 # RISK-e65844ea-a7b7-4bad-b15b-f60130b7e8fa: subdir 適用形の前置が一部の target で抜ける、root 側へ混入する、または単体 marker の形が変わる
 

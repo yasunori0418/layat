@@ -8,6 +8,9 @@ justifies:
   - "REQ-196ddabf-6569-4303-942e-050872972501"
 references:
   - "ADR-baf6346d-783b-4607-ab1c-c2c93c09e064"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:30+09:00"
 ---
 # ADR-653e6a28-76dd-44b3-99e2-3be189a3c1c4: template に .envrc を同梱しない
 

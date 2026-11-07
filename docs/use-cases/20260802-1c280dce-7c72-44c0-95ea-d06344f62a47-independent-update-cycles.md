@@ -2,8 +2,12 @@
 id: "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 type: use_case
 name: "役割ごとに config を分けて更新を独立させ、1 つの更新を他の役割へ波及させない"
+status: stable
 refines:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:30:05+09:00"
 ---
 # UC-1c280dce-7c72-44c0-95ea-d06344f62a47: 役割ごとに config を分けて更新を独立させ、1 つの更新を他の役割へ波及させない
 

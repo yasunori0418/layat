@@ -2,8 +2,12 @@
 id: "TC-4a39ca86-e866-41ec-93d2-663f8e6c1ce0"
 type: test_condition
 name: "生成器の診断が成功・失敗とも writer へ届き、失敗は分類と案内付きで出力面ごとに提示される"
+status: stable
 mitigates:
   - "RISK-cdca94ab-ed44-4d60-a04d-4dc75d61f731"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:34+09:00"
 ---
 # TC-4a39ca86-e866-41ec-93d2-663f8e6c1ce0: 生成器の診断が成功・失敗とも writer へ届き、失敗は分類と案内付きで出力面ごとに提示される
 

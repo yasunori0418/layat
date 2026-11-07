@@ -13,6 +13,9 @@ references:
   - "ADR-8e253f2e-c255-482a-a0f8-0837e122e80f"
   - "ADR-0db061d1-fa30-436d-91d7-c0cec8804c52"
   - "ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-17f29974-4fdb-4596-8afa-368a8f3971eb: 記録を書き直す操作は記録済みの出所を引き継ぐ
 

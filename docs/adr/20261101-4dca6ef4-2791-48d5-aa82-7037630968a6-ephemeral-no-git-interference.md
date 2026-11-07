@@ -6,6 +6,9 @@ status: 採用
 origin: "ADR-0005 の決定「ephemeral 配置原則 — 配置物はコミット対象外」を書き直した"
 justifies:
   - "REQ-e79178f5-5865-4444-a05d-3ab06f33cd6d"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-4dca6ef4-2791-48d5-aa82-7037630968a6: ephemeral 配置は git に干渉しない
 

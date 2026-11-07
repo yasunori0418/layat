@@ -2,11 +2,15 @@
 id: "DSG-98d7fa5d-c590-441a-b682-0ab7afa14233"
 type: design
 name: "engine の起動を entrypoint 駆動とビルド済み manifest の 2 クラスに束ね、統合層の差を link-farm の取得方法だけに閉じる"
+status: stable
 satisfies:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
   - "REQ-dec58330-6dad-47f7-8f56-2402764a89c7"
   - "REQ-8085f194-c903-4ecb-abd8-c719fe7b3292"
   - "REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # DSG-98d7fa5d-c590-441a-b682-0ab7afa14233: engine の起動を entrypoint 駆動とビルド済み manifest の 2 クラスに束ね、統合層の差を link-farm の取得方法だけに閉じる
 

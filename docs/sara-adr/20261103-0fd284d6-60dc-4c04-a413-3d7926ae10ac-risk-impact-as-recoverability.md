@@ -10,6 +10,9 @@ issues:
 origin: "Issue #303 の着手前 grilling（2026-08-12）で確定。ADR-0052 §1a を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:25:57+09:00"
 ---
 # SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac: risk の impact を検出後の回復可能性で採点する
 

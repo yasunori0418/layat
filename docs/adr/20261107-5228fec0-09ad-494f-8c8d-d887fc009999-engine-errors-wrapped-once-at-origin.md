@@ -10,6 +10,9 @@ justifies:
   - "DSG-9f5f949f-8b0e-4679-8f70-e0901a3d63b8"
 references:
   - "ADR-fdb8003f-db36-424b-8484-6f2fd57a3027"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T22:24:21+09:00"
 ---
 # ADR-5228fec0-09ad-494f-8c8d-d887fc009999: engine のエラーは発生源で 1 回だけ wrap し、伝搬では再 wrap しない
 

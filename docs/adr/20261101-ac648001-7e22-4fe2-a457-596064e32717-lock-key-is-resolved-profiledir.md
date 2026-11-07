@@ -8,6 +8,9 @@ justifies:
   - "REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3"
   - "REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4"
   - "REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T23:16:14+09:00"
 ---
 # ADR-ac648001-7e22-4fe2-a457-596064e32717: ロックのキーを解決後の profileDir にする
 

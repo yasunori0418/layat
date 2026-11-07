@@ -2,6 +2,7 @@
 id: "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
 type: requirement
 name: "全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない"
+status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
 specification: |
@@ -30,6 +31,9 @@ specification_ja: |
   nix-darwin モジュールは `system.activationScripts.postActivation` への追記から engine を
   起動しなければならない（home-manager モジュールが使うフックは
   REQ-8085f194-c903-4ecb-abd8-c719fe7b3292 の担当）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9: 全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない
 

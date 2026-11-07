@@ -31,6 +31,9 @@ references:
   - "ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56"
   - "ADR-d97154cd-a2e5-4853-a682-800ff9435c89"
   - "ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:00:56+09:00"
 ---
 # ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8: 世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う
 

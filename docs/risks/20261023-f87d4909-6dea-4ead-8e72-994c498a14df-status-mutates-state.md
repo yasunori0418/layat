@@ -2,11 +2,15 @@
 id: "RISK-f87d4909-6dea-4ead-8e72-994c498a14df"
 type: risk
 name: "status が flock を取り、ディレクトリを作り、記録を書き換えて読み取り専用でなくなる"
+status: stable
 threatens:
   - "REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173"
 likelihood: medium
 impact: medium
 level: medium
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-f87d4909-6dea-4ead-8e72-994c498a14df: status が flock を取り、ディレクトリを作り、記録を書き換えて読み取り専用でなくなる
 

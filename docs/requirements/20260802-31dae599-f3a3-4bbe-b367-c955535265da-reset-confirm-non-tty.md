@@ -2,6 +2,7 @@
 id: "REQ-31dae599-f3a3-4bbe-b367-c955535265da"
 type: requirement
 name: "reset の確認プロンプトは stdin が TTY のときだけ出し、非 TTY で同意が無ければ即エラー停止する"
+status: stable
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
@@ -16,6 +17,9 @@ specification_ja: |
   `layat reset` の確認プロンプトは stdin が TTY のときのみ出さなければならない。非 TTY
   （CI / direnv / パイプ）かつ `-y` / `--yes` が未指定なら、プロンプトを出さず即エラー停止
   （exit 1）しなければならない（ハングと空入力による誤削除を防ぐため）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-31dae599-f3a3-4bbe-b367-c955535265da: reset の確認プロンプトは stdin が TTY のときだけ出し、非 TTY で同意が無ければ即エラー停止する
 

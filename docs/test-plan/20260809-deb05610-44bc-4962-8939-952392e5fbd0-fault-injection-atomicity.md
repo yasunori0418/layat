@@ -2,6 +2,7 @@
 id: "TP-deb05610-44bc-4962-8939-952392e5fbd0"
 type: test_plan
 name: "原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する"
+status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 depends_on:
@@ -43,6 +44,9 @@ specification_ja: |
   包まれたあとも互いに取り違えられないことを覆わなければならない。競合は、保持状態を模擬
   するのではなく実際にロックを保持して作らなければならない（テスト対象の機構を、本番で
   動くものと同じに保つため）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:26:39+09:00"
 ---
 # TP-deb05610-44bc-4962-8939-952392e5fbd0: 原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する
 

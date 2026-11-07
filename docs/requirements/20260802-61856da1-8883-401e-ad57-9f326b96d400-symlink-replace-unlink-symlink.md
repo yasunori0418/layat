@@ -2,6 +2,7 @@
 id: "REQ-61856da1-8883-401e-ad57-9f326b96d400"
 type: requirement
 name: "既存 symlink の張替えは unlink + symlink の 2 操作で行い冪等な再実行で収束させる"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -22,6 +23,9 @@ specification_ja: |
   クラッシュ（SIGKILL・電源断）以外で、この run 自身が後続の段でエラーを検知した場合は、
   unlink 前に捕捉した張替え先を undo ジャーナルへ記録し、symlink の再作成で復元しなければ
   ならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-61856da1-8883-401e-ad57-9f326b96d400: 既存 symlink の張替えは unlink + symlink の 2 操作で行い冪等な再実行で収束させる
 

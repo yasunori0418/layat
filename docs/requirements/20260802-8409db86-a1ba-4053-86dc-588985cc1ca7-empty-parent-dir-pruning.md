@@ -2,6 +2,7 @@
 id: "REQ-8409db86-a1ba-4053-86dc-588985cc1ca7"
 type: requirement
 name: "target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -52,6 +53,9 @@ specification_ja: |
   ならない。剪定自体の失敗（上記 ENOTEMPTY を除く異常系）は呼び出し元の既存ポリシーに
   従わなければならず、古くなった配置の除去と `reset` では warning を出してディレクトリを残置しなければ
   ならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-8409db86-a1ba-4053-86dc-588985cc1ca7: target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する
 

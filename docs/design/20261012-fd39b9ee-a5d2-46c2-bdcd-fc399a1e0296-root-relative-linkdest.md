@@ -2,8 +2,12 @@
 id: "DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296"
 type: design
 name: "rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは配置前の確認だけにする"
+status: stable
 satisfies:
   - "REQ-a77181dd-a59c-40bb-855e-3430ad970eb6"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:31+09:00"
 ---
 # DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296: rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは配置前の確認だけにする
 

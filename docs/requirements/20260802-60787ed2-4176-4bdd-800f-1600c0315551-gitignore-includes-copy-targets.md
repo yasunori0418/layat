@@ -2,6 +2,7 @@
 id: "REQ-60787ed2-4176-4bdd-800f-1600c0315551"
 type: requirement
 name: "gitignore は method を区別せず copy target も含めて全 target を列挙する"
+status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
@@ -17,6 +18,9 @@ specification_ja: |
   place-once で再マテリアライズされ、その編集は clone local / 使い捨てである。copy を committed
   （vendoring）にするのは layat の責務外であり、project mode の ephemeral 原則を
   崩してはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-60787ed2-4176-4bdd-800f-1600c0315551: gitignore は method を区別せず copy target も含めて全 target を列挙する
 

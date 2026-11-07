@@ -13,6 +13,9 @@ justifies:
 references:
   - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
   - "ADR-9e328362-2e90-441a-8eca-40081ce71b1b"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T23:18:29+09:00"
 ---
 # ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9: エラーコードは共通コードを再利用し固有の意味だけを E_LAYAT_* にする
 

@@ -2,8 +2,12 @@
 id: "TC-7e1e6a63-80d5-452c-bc49-81854ffac5a4"
 type: test_condition
 name: "展開したテンプレが局所参照へ差し替えた上でそのまま評価を通る"
+status: stable
 mitigates:
   - "RISK-c3e92bb8-5806-48b0-8910-ee4fe236a325"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:22+09:00"
 ---
 # TC-7e1e6a63-80d5-452c-bc49-81854ffac5a4: 展開したテンプレが局所参照へ差し替えた上でそのまま評価を通る
 

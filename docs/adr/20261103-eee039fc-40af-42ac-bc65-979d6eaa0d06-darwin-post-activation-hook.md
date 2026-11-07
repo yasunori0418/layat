@@ -20,6 +20,9 @@ references:
   - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
   - "ADR-d01223d3-47a2-4bdd-ac5d-26370d553f7c"
   - "ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-eee039fc-40af-42ac-bc65-979d6eaa0d06: nix-darwin モジュールは postActivation に起動を追記する
 

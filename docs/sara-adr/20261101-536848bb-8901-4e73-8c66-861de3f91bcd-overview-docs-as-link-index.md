@@ -10,6 +10,9 @@ justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
 references:
   - "SDR-5ea31001-96f8-4324-a40b-647cdfa5cc9d"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:32+09:00"
 ---
 # SDR-536848bb-8901-4e73-8c66-861de3f91bcd: 概要文書は item へのリンク集に縮退させる
 

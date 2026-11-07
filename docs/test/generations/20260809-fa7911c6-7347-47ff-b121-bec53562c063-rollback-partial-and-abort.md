@@ -2,8 +2,12 @@
 id: "TC-fa7911c6-7347-47ff-b121-bec53562c063"
 type: test_condition
 name: "rollback は途中失敗を巻き戻し、ポインタ移動の失敗は巻き戻さず、前提不成立では停止する"
+status: stable
 mitigates:
   - "RISK-fbf029f6-866c-4a08-a4eb-f09e3c7e907e"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:49+09:00"
 ---
 # TC-fa7911c6-7347-47ff-b121-bec53562c063: rollback は途中失敗を巻き戻し、ポインタ移動の失敗は巻き戻さず、前提不成立では停止する
 

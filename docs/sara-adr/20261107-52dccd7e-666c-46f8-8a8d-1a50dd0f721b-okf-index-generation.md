@@ -9,6 +9,9 @@ issues:
 origin: "epic #662 の grilling（2026-11-07）で確定"
 justifies:
   - "QA-67715bb3-1162-4ccf-8441-2f44257a57da"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T23:10:46+09:00"
 ---
 # SDR-52dccd7e-666c-46f8-8a8d-1a50dd0f721b: OKF の index.md を sara check の出力から生成してコミットする
 

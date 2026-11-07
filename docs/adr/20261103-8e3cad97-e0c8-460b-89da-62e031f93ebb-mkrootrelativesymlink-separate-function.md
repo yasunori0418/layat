@@ -17,6 +17,9 @@ references:
   - "ADR-6d2327f7-f513-42c3-89f8-808467db1914"
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
   - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb: root 相対マーカーを別関数 mkRootRelativeSymlink で作る
 

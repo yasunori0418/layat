@@ -11,6 +11,9 @@ references:
   - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
   - "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
   - "ADR-2119433e-de69-4447-85a5-575d58246007"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:30+09:00"
 ---
 # ADR-59f63d1f-25df-4290-913f-02804c5eeade: root の型を mkManifest だけに持たせる
 

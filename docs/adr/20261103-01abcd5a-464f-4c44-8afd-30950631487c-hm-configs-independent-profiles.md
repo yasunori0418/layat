@@ -9,6 +9,9 @@ origin: "ADR-0035 §1 を書き直した"
 justifies:
   - "REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a"
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:35:23+09:00"
 ---
 # ADR-01abcd5a-464f-4c44-8afd-30950631487c: HM モジュールは layat.configs.<name> ごとに独立した profile を持つ
 

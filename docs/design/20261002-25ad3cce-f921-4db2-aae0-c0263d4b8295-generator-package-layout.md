@@ -2,9 +2,13 @@
 id: "DSG-25ad3cce-f921-4db2-aae0-c0263d4b8295"
 type: design
 name: "internal/generator は契約・prebuilt・Fake を親パッケージに、nix 実装を nixgen サブパッケージに置き、cmd 層は注入点だけを持つ"
+status: stable
 satisfies:
   - "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"
   - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:01:21+09:00"
 ---
 # DSG-25ad3cce-f921-4db2-aae0-c0263d4b8295: internal/generator は契約・prebuilt・Fake を親パッケージに、nix 実装を nixgen サブパッケージに置き、cmd 層は注入点だけを持つ
 

@@ -15,6 +15,9 @@ references:
   - "ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d"
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
   - "ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-be5865a8-000a-491f-8438-6308076ea727: rollback の戻り先は世代リンクから読む
 

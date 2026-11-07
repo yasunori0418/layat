@@ -2,10 +2,14 @@
 id: "DSG-17db0831-d7da-446d-ba3e-404df64c582d"
 type: design
 name: "層を CLI / engine / lib / common.nix / 統合層の 5 段に積み、依存を呼ぶ側から呼ばれる側への一方向に限る"
+status: stable
 satisfies:
   - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
   - "REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51"
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # DSG-17db0831-d7da-446d-ba3e-404df64c582d: 層を CLI / engine / lib / common.nix / 統合層の 5 段に積み、依存を呼ぶ側から呼ばれる側への一方向に限る
 

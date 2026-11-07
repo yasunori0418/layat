@@ -12,6 +12,9 @@ justifies:
 references:
   - "ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1"
   - "ADR-37191429-2099-4217-a552-47b16a7e504c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-04c3bc0a-140b-4bc3-a47c-cacddeba5a71: --dryrun --backup は退避で解ける箇所を conflict にしない
 

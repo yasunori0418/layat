@@ -11,6 +11,9 @@ justifies:
 references:
   - "ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d"
   - "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:00:56+09:00"
 ---
 # ADR-af37a636-a798-4c03-8fa4-e73ed6375a92: apply --all の集約は config 名の辞書順に並べる
 

@@ -6,6 +6,9 @@ status: 採用
 origin: "実装前レビューの第 2 巡（2026-06-14）。ADR-0016 §6 を書き直した"
 justifies:
   - "REQ-840b3641-6e76-46da-82e9-680cabd65abe"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-58fdbad9-5ed7-469d-b6b2-6462b2173888: .pending の残留を許容する
 

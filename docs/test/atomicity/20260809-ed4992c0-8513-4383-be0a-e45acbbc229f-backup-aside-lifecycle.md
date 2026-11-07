@@ -2,8 +2,12 @@
 id: "TC-ed4992c0-8513-4383-be0a-e45acbbc229f"
 type: test_condition
 name: "--backup の退避が opt-in で発動し、commit 後は残り、途中失敗では戻る"
+status: stable
 mitigates:
   - "RISK-3719d298-8175-4501-95d5-75f3a29568fe"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:31+09:00"
 ---
 # TC-ed4992c0-8513-4383-be0a-e45acbbc229f: --backup の退避が opt-in で発動し、commit 後は残り、途中失敗では戻る
 

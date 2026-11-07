@@ -2,6 +2,7 @@
 id: "REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3"
 type: requirement
 name: "layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -21,6 +22,9 @@ specification_ja: |
   なければならず、そのデフォルトは REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 が定める。`layat.backup` は `entries`
   （manifest v1 契約）とは独立な起動配線レイヤーのオプションであり、manifest 自体に影響して
   はならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3: layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない
 

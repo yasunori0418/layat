@@ -11,6 +11,9 @@ justifies:
 references:
   - "ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7"
   - "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-56ac6298-db67-4f63-8b60-f14af3b9570a: reset は config の名指しを必須にする
 

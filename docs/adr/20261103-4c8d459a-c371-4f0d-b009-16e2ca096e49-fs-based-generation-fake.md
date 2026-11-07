@@ -18,6 +18,9 @@ references:
   - "ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56"
   - "ADR-d97154cd-a2e5-4853-a682-800ff9435c89"
   - "ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-4c8d459a-c371-4f0d-b009-16e2ca096e49: 世代バックエンドのテストダブルを FS ベースの Fake に統一する
 

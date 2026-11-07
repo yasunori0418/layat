@@ -2,6 +2,7 @@
 id: "REQ-cbd61281-64b0-4487-a4b7-ce76e70dc4f9"
 type: requirement
 name: "init のテンプレート参照はバイナリにハードコードした固定 flake ref とする"
+status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
@@ -15,6 +16,9 @@ specification_ja: |
   `github:yasunori0418/layat` でなければならない（registry 登録に依存せず動くように）。
   `init` は新規 bootstrap 用途であるため、CLI 版と template 版のズレ（常に latest main
   参照）は許容しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-cbd61281-64b0-4487-a4b7-ce76e70dc4f9: init のテンプレート参照はバイナリにハードコードした固定 flake ref とする
 

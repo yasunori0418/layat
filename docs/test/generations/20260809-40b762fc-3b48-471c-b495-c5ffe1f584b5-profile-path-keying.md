@@ -2,8 +2,12 @@
 id: "TC-40b762fc-3b48-471c-b495-c5ffe1f584b5"
 type: test_condition
 name: "state 基底・profileDir のキーイング・世代リンク名が root と mode ごとに正しく決まる"
+status: stable
 mitigates:
   - "RISK-ac5cd9b4-58f9-43d8-9fae-66f7b5940beb"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:49+09:00"
 ---
 # TC-40b762fc-3b48-471c-b495-c5ffe1f584b5: state 基底・profileDir のキーイング・世代リンク名が root と mode ごとに正しく決まる
 

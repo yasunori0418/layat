@@ -11,6 +11,9 @@ justifies:
 references:
   - "SDR-c15921a9-7aea-407c-a34b-7465783b1af1"
   - "SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:32+09:00"
 ---
 # SDR-2457aa00-fab7-4c99-af53-2e6643c21c79: model.yaml で組み込みモデルを全面置換し、汎用の型名を使う
 

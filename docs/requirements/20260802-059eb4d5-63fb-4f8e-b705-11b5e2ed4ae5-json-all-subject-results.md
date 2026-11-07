@@ -2,6 +2,7 @@
 id: "REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5"
 type: requirement
 name: "--all は config ごとの SubjectResult を単一実行と同一形状で積む"
+status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
@@ -122,6 +123,9 @@ specification_ja: |
   続行するので、選択された全 config が必ず `results[]` に載る。したがって消費側は
   `results[]` の subject 集合が対象 config 集合と一致することを前提にしてはならない
   （成功時は一致する）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:32:25+09:00"
 ---
 # REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5: --all は config ごとの SubjectResult を単一実行と同一形状で積む
 

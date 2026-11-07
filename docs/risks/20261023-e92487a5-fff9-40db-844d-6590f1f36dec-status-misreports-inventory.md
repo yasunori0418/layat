@@ -2,11 +2,15 @@
 id: "RISK-e92487a5-fff9-40db-844d-6590f1f36dec"
 type: risk
 name: "status が系列を取りこぼし、mode / root を取り違え、不正な記録を記録なしと読む"
+status: stable
 threatens:
   - "REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173"
 likelihood: medium
 impact: medium
 level: medium
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:25:57+09:00"
 ---
 # RISK-e92487a5-fff9-40db-844d-6590f1f36dec: status が系列を取りこぼし、mode / root を取り違え、不正な記録を記録なしと読む
 

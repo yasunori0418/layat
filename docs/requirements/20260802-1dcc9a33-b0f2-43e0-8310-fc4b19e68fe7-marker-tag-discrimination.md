@@ -2,6 +2,7 @@
 id: "REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7"
 type: requirement
 name: "marker は判別タグで識別し manifest.json には漏らさない"
+status: stable
 derives_from:
   - "UC-01b896b4-04b9-40d0-bf9e-966eaf64c3d4"
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
@@ -19,6 +20,9 @@ specification_ja: |
   custom optionType の `check` で derivation と判別できなければならない。`_layatMarker` は
   Nix 評価内で完結させ、`manifest.json` へ漏らしてはならない。Go 契約へ渡すのは
   `srcKind` / `rootKind` の clean enum でなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
 ---
 # REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7: marker は判別タグで識別し manifest.json には漏らさない
 

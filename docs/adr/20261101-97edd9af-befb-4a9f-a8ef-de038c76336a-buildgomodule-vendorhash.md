@@ -9,6 +9,9 @@ origin: "engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 
 justifies:
   - "REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0"
   - "DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T23:01:38+09:00"
 ---
 # ADR-97edd9af-befb-4a9f-a8ef-de038c76336a: layat は buildGoModule と vendorHash でビルドする
 

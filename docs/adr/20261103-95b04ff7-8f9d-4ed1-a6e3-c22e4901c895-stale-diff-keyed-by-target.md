@@ -11,6 +11,9 @@ references:
   - "ADR-c494e86e-ceb9-4380-b983-4e09553b01d6"
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
   - "ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-95b04ff7-8f9d-4ed1-a6e3-c22e4901c895: 古くなった配置の除去で使う比較のキーを解決後の target にする
 

@@ -2,10 +2,14 @@
 id: "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
 type: infrastructure
 name: "トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）"
+status: stable
 depends_on:
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
 satisfies:
   - "QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:44:41+09:00"
 ---
 # INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71: トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）
 

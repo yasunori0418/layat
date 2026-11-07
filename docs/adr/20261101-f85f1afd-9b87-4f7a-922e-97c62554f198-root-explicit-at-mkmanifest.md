@@ -9,6 +9,9 @@ origin: "Issue #2（root デフォルト）。ADR-0007 §2 の root の明示必
 justifies:
   - "REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4"
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-f85f1afd-9b87-4f7a-922e-97c62554f198: root の明示を mkManifest 層で必須にする
 

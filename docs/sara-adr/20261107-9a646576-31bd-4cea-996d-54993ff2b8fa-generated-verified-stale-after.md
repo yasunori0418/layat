@@ -9,6 +9,9 @@ issues:
 origin: "epic #662 の grilling（2026-11-07）で確定"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T23:10:46+09:00"
 ---
 # SDR-9a646576-31bd-4cea-996d-54993ff2b8fa: item に生成者・確認の記録・期限を持たせる
 

@@ -2,10 +2,14 @@
 id: "TC-3f8d24a7-4e43-4998-b47f-a9e03cbcbfee"
 type: test_condition
 name: "実 nix を通した system mode で世代がコミット・往復し、非 root の変更系は FS に触れずに止まる"
+status: stable
 mitigates:
   - "RISK-1a8f91c8-dfaa-4598-805a-a3b71cb967f0"
   - "RISK-fbf029f6-866c-4a08-a4eb-f09e3c7e907e"
   - "RISK-cdcc6faf-9164-409b-b584-2921fa036d10"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:49+09:00"
 ---
 # TC-3f8d24a7-4e43-4998-b47f-a9e03cbcbfee: 実 nix を通した system mode で世代がコミット・往復し、非 root の変更系は FS に触れずに止まる
 

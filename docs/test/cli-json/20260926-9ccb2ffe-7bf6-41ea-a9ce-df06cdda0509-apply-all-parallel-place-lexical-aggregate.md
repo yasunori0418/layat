@@ -2,8 +2,12 @@
 id: "TC-9ccb2ffe-7bf6-41ea-a9ce-df06cdda0509"
 type: test_condition
 name: "配置並列の集約が完了順に依らず辞書順で、カウントが並行安全である"
+status: stable
 mitigates:
   - "RISK-b7159827-3d29-405f-87ef-cdce7bb9a72f"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-09-26T02:11:41+09:00"
 ---
 # TC-9ccb2ffe-7bf6-41ea-a9ce-df06cdda0509: 配置並列の集約が完了順に依らず辞書順で、カウントが並行安全である
 

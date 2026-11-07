@@ -14,6 +14,9 @@ references:
   - "ADR-28605860-770e-41df-95dd-7dc05b20497a"
   - "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"
   - "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:30+09:00"
 ---
 # ADR-75df92ae-0694-452b-8fb4-350994e31b25: apply --all は選択した config 間の target 重複を build 前に止める
 

@@ -2,6 +2,7 @@
 id: "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
 type: requirement
 name: "全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する"
+status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
 specification: |
@@ -41,6 +42,9 @@ specification_ja: |
   オプションを公開してはならない。モジュール利用者が root を再指定しないようにするため
   である。これは `root` を明示必須とする `mkManifest` / CLI entrypoint の層
   （REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4）との差分である。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10: 全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する
 

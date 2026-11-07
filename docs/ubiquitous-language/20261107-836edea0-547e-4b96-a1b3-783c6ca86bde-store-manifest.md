@@ -2,7 +2,11 @@
 id: "UBQ-836edea0-547e-4b96-a1b3-783c6ca86bde"
 type: ubiquitous_term
 name: "store manifest"
+status: stable
 name_ja: "store マニフェスト"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T01:41:26+09:00"
 ---
 
 # UBQ-836edea0-547e-4b96-a1b3-783c6ca86bde: store manifest

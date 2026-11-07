@@ -2,9 +2,13 @@
 id: "CASE-dc611f8f-4ee4-44cb-8b34-01d68da1b918"
 type: test_case
 name: "status_test.go — status の subject 名・フィルタ・一致 0 件・ストリームの排他・--json の形・error 時の続行"
+status: stable
 target: "cmd/layat/status_test.go"
 covers:
   - "TC-1bc3e39a-116a-4f26-96b4-1d15e6f837bd"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:34+09:00"
 ---
 # CASE-dc611f8f-4ee4-44cb-8b34-01d68da1b918: status_test.go — status の subject 名・フィルタ・一致 0 件・ストリームの排他・--json の形・error 時の続行
 

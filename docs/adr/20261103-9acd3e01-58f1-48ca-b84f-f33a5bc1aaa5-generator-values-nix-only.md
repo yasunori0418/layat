@@ -12,6 +12,9 @@ references:
   - "ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964"
   - "ADR-1ddf424a-db2c-4bcb-8823-bf7e4326b980"
   - "ADR-ef9e4099-0cf4-409a-9e73-518866aea676"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-9acd3e01-58f1-48ca-b84f-f33a5bc1aaa5: 生成器の選択値を nix だけにする
 

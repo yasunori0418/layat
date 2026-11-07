@@ -2,11 +2,15 @@
 id: "DSG-bb6e03fd-e1c4-47c4-bfa0-a73e9457b184"
 type: design
 name: "E2E に legacy entrypoint シナリオを置き、NIX_PATH を flake.lock の nixpkgs に pin して検証する"
+status: stable
 satisfies:
   - "REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da"
   - "REQ-da253cab-34d4-4d6e-96f0-de99e012b376"
   - "REQ-67095391-eab2-45d2-b75b-b428d481bcc2"
   - "TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # DSG-bb6e03fd-e1c4-47c4-bfa0-a73e9457b184: E2E に legacy entrypoint シナリオを置き、NIX_PATH を flake.lock の nixpkgs に pin して検証する
 

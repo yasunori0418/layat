@@ -2,8 +2,12 @@
 id: "TC-4b4709c9-1b7a-42f0-8430-62a26ead4eff"
 type: test_condition
 name: "engine 公開 API から見たロックの取得モードと保持区間が仕様どおりである"
+status: stable
 mitigates:
   - "RISK-2b17fefb-6e92-4513-9e7c-de21897c9cfe"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:31+09:00"
 ---
 # TC-4b4709c9-1b7a-42f0-8430-62a26ead4eff: engine 公開 API から見たロックの取得モードと保持区間が仕様どおりである
 

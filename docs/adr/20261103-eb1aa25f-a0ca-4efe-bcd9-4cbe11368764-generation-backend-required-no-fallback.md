@@ -19,6 +19,9 @@ references:
   - "ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56"
   - "ADR-d97154cd-a2e5-4853-a682-800ff9435c89"
   - "ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-eb1aa25f-a0ca-4efe-bcd9-4cbe11368764: 世代バックエンドの注入を必須にし nix-env への暗黙のフォールバックを持たない
 

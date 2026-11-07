@@ -2,6 +2,7 @@
 id: "QA-4a623664-650d-4a08-800f-691f4ea6ff91"
 type: quality
 name: "用語の正名は用語 item が固定し、執筆はそれに従う"
+status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 specification: |
@@ -19,6 +20,9 @@ specification_ja: |
   item が避けるものとして挙げる綴りを避けなければならない。執筆中に必要になった用語に item が
   無い場合、その欠落は、その場で綴りを作り出すのではなく、item を追加するか既存の用語を
   選ぶことで解消されなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T01:11:46+09:00"
 ---
 # QA-4a623664-650d-4a08-800f-691f4ea6ff91: 用語の正名は用語 item が固定し、執筆はそれに従う
 

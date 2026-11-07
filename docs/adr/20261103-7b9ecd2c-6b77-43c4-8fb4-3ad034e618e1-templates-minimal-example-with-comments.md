@@ -8,6 +8,9 @@ justifies:
   - "REQ-196ddabf-6569-4303-942e-050872972501"
 references:
   - "ADR-baf6346d-783b-4607-ab1c-c2c93c09e064"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-7b9ecd2c-6b77-43c4-8fb4-3ad034e618e1: template に置く動く example を 1 config に絞る
 

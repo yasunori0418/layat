@@ -2,6 +2,7 @@
 id: "REQ-2a613337-7646-4ced-8807-e43bca18acf3"
 type: requirement
 name: "reset --json は --yes を必須とし無ければ fail fast する"
+status: stable
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
@@ -14,6 +15,9 @@ specification_ja: |
   破壊的操作の確認プロンプトは機械消費で扱えないため、`reset --json` は TTY でも
   プロンプトを出してはならず、`--yes` が無ければ即 `status:"error"` + 非ゼロで
   fail fast しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:04:55+09:00"
 ---
 # REQ-2a613337-7646-4ced-8807-e43bca18acf3: reset --json は --yes を必須とし無ければ fail fast する
 

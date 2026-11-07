@@ -2,6 +2,7 @@
 id: "REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da"
 type: requirement
 name: "legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -27,6 +28,9 @@ specification_ja: |
   ならない。複数 manifest の一括処理は既存の `apply --all` の一括 eval でそのまま充足させ
   なければならず、`mkShell` の `inputsFrom` で manifest を合成するヘルパは持ってはならない
   （1 profile = 1 config の atomic 性と衝突するため）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:29:04+09:00"
 ---
 # REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da: legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない
 

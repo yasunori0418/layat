@@ -2,10 +2,14 @@
 id: "CASE-c4ffa8b1-4058-4cba-b911-520ee970b2ae"
 type: test_case
 name: "apply_all_manifest_project_test.go — project と home の link-farm を apply --all --manifest で配置し root フィルタで選別する"
+status: stable
 target: "cmd/layat/apply_all_manifest_project_test.go"
 covers:
   - "TC-4d477235-5917-469b-926b-119266048643"
   - "TC-b4a365cd-0b1c-40ff-92c6-91f6cffe8e98"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:26:57+09:00"
 ---
 # CASE-c4ffa8b1-4058-4cba-b911-520ee970b2ae: apply_all_manifest_project_test.go
 

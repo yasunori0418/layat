@@ -16,6 +16,9 @@ references:
   - "ADR-d97154cd-a2e5-4853-a682-800ff9435c89"
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
   - "ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15: last-applied 記録を profileDir と同じ鍵で state 基底に置く
 

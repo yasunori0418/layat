@@ -2,12 +2,16 @@
 id: "DSG-107c19ea-bc90-4914-aaaa-5f2da4f3e082"
 type: design
 name: "配置プリミティブを store link・copy・out-of-store symlink の 3 種に定め、世代・reset・gitignore での扱いを種別ごとに固定する"
+status: stable
 satisfies:
   - "REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557"
   - "REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9"
   - "REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa"
   - "REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6"
   - "REQ-60787ed2-4176-4bdd-800f-1600c0315551"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T02:02:33+09:00"
 ---
 # DSG-107c19ea-bc90-4914-aaaa-5f2da4f3e082: 配置プリミティブを store link・copy・out-of-store symlink の 3 種に定め、世代・reset・gitignore での扱いを種別ごとに固定する
 

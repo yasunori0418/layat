@@ -27,6 +27,9 @@ references:
   - "ADR-f3d06307-ae5b-4f17-94ad-db92e80e3415"
   - "ADR-fd3353cf-00af-4343-bd3f-3369c21d7194"
   - "ADR-8e253f2e-c255-482a-a0f8-0837e122e80f"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c: system mode の last-applied 記録を /var/lib/layat に置く
 

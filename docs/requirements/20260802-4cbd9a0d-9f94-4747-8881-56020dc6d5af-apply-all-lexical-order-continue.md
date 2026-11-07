@@ -2,6 +2,7 @@
 id: "REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af"
 type: requirement
 name: "apply --all は選択された config を並列に適用し、集約表示と results[] を辞書順にし、部分失敗でも続行して最後に集約する"
+status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 specification: |
@@ -20,6 +21,9 @@ specification_ja: |
   で atomic なため）。最後に成功 / 失敗を集約表示し、1 つでも失敗なら非ゼロ終了しなければ
   ならない。`--all` 自体は全体 atomic にしてはならない（project mode は rollback 非公開で
   意味論が崩れるため）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
 ---
 # REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af: apply --all は選択された config を並列に適用し、集約表示と results[] を辞書順にし、部分失敗でも続行して最後に集約する
 

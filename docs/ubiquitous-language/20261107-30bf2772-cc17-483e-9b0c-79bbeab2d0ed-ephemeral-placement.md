@@ -2,6 +2,10 @@
 id: "UBQ-30bf2772-cc17-483e-9b0c-79bbeab2d0ed"
 type: ubiquitous_term
 name: "ephemeral placement"
+status: stable
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T01:45:24+09:00"
 ---
 
 # UBQ-30bf2772-cc17-483e-9b0c-79bbeab2d0ed: ephemeral placement

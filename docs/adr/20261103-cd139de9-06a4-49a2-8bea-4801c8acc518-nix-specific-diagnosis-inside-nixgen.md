@@ -19,6 +19,9 @@ references:
   - "ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3"
   - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-cd139de9-06a4-49a2-8bea-4801c8acc518: nix 固有の失敗判定と案内文を nix 生成器の中に閉じる
 

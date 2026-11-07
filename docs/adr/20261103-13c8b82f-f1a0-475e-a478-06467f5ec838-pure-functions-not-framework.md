@@ -10,6 +10,9 @@ justifies:
 references:
   - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
   - "ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-13c8b82f-f1a0-475e-a478-06467f5ec838: layat をフレームワークではなく純粋関数群として提供する
 

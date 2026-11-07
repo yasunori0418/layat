@@ -2,6 +2,7 @@
 id: "REQ-badc7e10-0ba4-40d4-b334-6e40193119db"
 type: requirement
 name: "生成器は明示指定のみで選び、フラグ・環境変数・設定ファイル・既定の順に解決する"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -51,6 +52,9 @@ specification_ja: |
   `-f` + `--manifest`、`--all` + `<link-farm>` 形の `--manifest`）は `--json` で `E_INPUT` として報告しなければ
   ならない。`prune`・`init`・`status` は `--generator` の値を検証せずに無視し、環境変数・設定
   ファイルを読んではならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:04:55+09:00"
 ---
 # REQ-badc7e10-0ba4-40d4-b334-6e40193119db: 生成器は明示指定のみで選び、フラグ・環境変数・設定ファイル・既定の順に解決する
 

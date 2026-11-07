@@ -2,12 +2,16 @@
 id: "RISK-bc7526c2-2a2d-427f-9490-92d7d262fce3"
 type: risk
 name: "コピー中の syscall 失敗が握り潰され、中途半端な配置物と誤った成功報告が残る"
+status: stable
 threatens:
   - "REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7"
   - "REQ-95e97d01-5c34-44b3-bc85-9ca53472bc3d"
 likelihood: medium
 impact: medium
 level: medium
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-bc7526c2-2a2d-427f-9490-92d7d262fce3: コピー中の syscall 失敗が握り潰され、中途半端な配置物と誤った成功報告が残る
 

@@ -2,6 +2,7 @@
 id: "REQ-535b811d-dfc5-4eac-92db-737e70eb5415"
 type: requirement
 name: "apply --all は rootKind を 1 回の一括 eval で取る"
+status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 specification: |
@@ -22,6 +23,9 @@ specification_ja: |
   `--project-root` 等のフィルタもこの結果で振り分けなければならない。build だけは
   atomic 性のため config ごと N 回行わなければならない。eval プロセス起動コストを
   N→1 に固定しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
 ---
 # REQ-535b811d-dfc5-4eac-92db-737e70eb5415: apply --all は rootKind を 1 回の一括 eval で取る
 

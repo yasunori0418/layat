@@ -2,6 +2,7 @@
 id: "REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4"
 type: requirement
 name: "孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する"
+status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
@@ -22,6 +23,9 @@ specification_ja: |
   孤児系列を逆引きし、root がもはや実在しない系列を削除しなければならない。どの系列を
   対象とするか、および削除を守る条件は、それぞれを担当する 2 件の要求が定めるとおりで
   なければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:43:18+09:00"
 ---
 # REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4: 孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する
 

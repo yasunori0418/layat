@@ -10,6 +10,9 @@ justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
 references:
   - "SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T21:41:20+09:00"
 ---
 # SDR-3ff9f355-a667-476e-b10d-087248cdbfcf: ADR の失効は supersedes と 廃止 で表す
 

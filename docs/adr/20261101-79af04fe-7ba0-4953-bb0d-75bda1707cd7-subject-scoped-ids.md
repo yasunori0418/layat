@@ -11,6 +11,9 @@ justifies:
   - "REQ-57137302-de29-4f71-a565-034cd5de080b"
 references:
   - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T23:01:38+09:00"
 ---
 # ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7: --json の item id は subject スコープで導く
 

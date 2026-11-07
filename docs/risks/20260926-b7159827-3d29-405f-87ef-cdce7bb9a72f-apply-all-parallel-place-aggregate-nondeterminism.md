@@ -2,6 +2,7 @@
 id: "RISK-b7159827-3d29-405f-87ef-cdce7bb9a72f"
 type: risk
 name: "配置並列で集約順・カウント・エンベロープが完了順に依存して非決定化するかレースする"
+status: stable
 likelihood: medium
 impact: high
 level: high
@@ -9,6 +10,9 @@ threatens:
   - "REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af"
   - "REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5"
   - "REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-b7159827-3d29-405f-87ef-cdce7bb9a72f: 配置並列で集約順・カウント・エンベロープが完了順に依存して非決定化するかレースする
 

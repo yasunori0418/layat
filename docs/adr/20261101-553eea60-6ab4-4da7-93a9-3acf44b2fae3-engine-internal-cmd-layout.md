@@ -12,6 +12,9 @@ justifies:
   - "REQ-b74a118a-1272-44eb-944c-7725163211c6"
   - "DSG-1361df1a-31c4-46ed-a6ce-92938f94ac02"
   - "DSG-7d354fe0-a333-495b-9f4b-14bba316dc47"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:30+09:00"
 ---
 # ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3: engine は cmd/ と internal/ に置きライブラリ化しない
 

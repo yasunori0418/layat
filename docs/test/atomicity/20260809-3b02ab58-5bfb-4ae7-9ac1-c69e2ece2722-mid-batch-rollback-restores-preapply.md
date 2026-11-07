@@ -2,8 +2,12 @@
 id: "TC-3b02ab58-5bfb-4ae7-9ac1-c69e2ece2722"
 type: test_condition
 name: "実 FS の故障注入で FS 変更段の途中を失敗させ、apply 前の状態が完全に復元される"
+status: stable
 mitigates:
   - "RISK-68e810c5-4e68-4b25-9bc0-6b2613022b49"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:31+09:00"
 ---
 # TC-3b02ab58-5bfb-4ae7-9ac1-c69e2ece2722: 実 FS の故障注入で FS 変更段の途中を失敗させ、apply 前の状態が完全に復元される
 

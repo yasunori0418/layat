@@ -2,10 +2,14 @@
 id: "CASE-f3a5fee2-1981-42c3-ba5b-81b75fd7a3ad"
 type: test_case
 name: "internal/engine/preflight_test.go — out-of-store の配置前の確認での非 ENOENT エラー"
+status: stable
 target: "internal/engine/preflight_test.go"
 covers:
   - "TC-8435052a-5dcc-49e2-ac26-82f645cb6890"
   - "TC-f1da084f-c0f0-4aba-85d9-f273c04eb373"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:25:54+09:00"
 ---
 # CASE-f3a5fee2-1981-42c3-ba5b-81b75fd7a3ad: preflight_test.go
 

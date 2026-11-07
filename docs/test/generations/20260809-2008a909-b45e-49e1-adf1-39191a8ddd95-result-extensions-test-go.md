@@ -2,9 +2,13 @@
 id: "CASE-2008a909-b45e-49e1-adf1-39191a8ddd95"
 type: test_case
 name: "result_extensions_test.go — 実行結果のインベントリ・世代観測・到達状態・構造化 warning"
+status: stable
 target: "internal/engine/result_extensions_test.go"
 covers:
   - "TC-1d19aebc-e1e6-4d6f-9440-3efbd69b18a8"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:49+09:00"
 ---
 # CASE-2008a909-b45e-49e1-adf1-39191a8ddd95: result_extensions_test.go — 実行結果のインベントリ・世代観測・到達状態・構造化 warning
 

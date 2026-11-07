@@ -21,6 +21,9 @@ references:
   - "ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3"
   - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:00:56+09:00"
 ---
 # ADR-6687c0dc-957d-4913-99c6-168b0fe552ad: 生成器の診断を成功時も stderr へ素通しする
 

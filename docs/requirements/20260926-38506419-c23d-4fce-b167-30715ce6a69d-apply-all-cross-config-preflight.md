@@ -2,6 +2,7 @@
 id: "REQ-38506419-c23d-4fce-b167-30715ce6a69d"
 type: requirement
 name: "apply --all は build 前に選択 config 間の target 衝突を検出して停止する"
+status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 specification: |
@@ -36,6 +37,9 @@ specification_ja: |
   ならない。名指しの `apply <name>` はこの確認を行ってはならず、そのための eval を足しては
   ならない。この確認で見えない衝突（別 entrypoint・別ツール・fixed root が偶然 project root と
   一致する場合）は、従来どおり実行時の後勝ち + foreign symlink warning で扱わなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
 ---
 # REQ-38506419-c23d-4fce-b167-30715ce6a69d: apply --all は build 前に選択 config 間の target 衝突を検出して停止する
 

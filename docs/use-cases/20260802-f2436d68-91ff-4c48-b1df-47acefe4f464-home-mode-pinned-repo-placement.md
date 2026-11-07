@@ -2,8 +2,12 @@
 id: "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
 type: use_case
 name: "home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する"
+status: stable
 refines:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:30:05+09:00"
 ---
 # UC-f2436d68-91ff-4c48-b1df-47acefe4f464: home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する
 
