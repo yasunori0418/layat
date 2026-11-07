@@ -31,6 +31,9 @@ trap 'rm -rf "$work"' EXIT
 
 now=$(date +%s)
 
+# レコードの列の区切り（US）。空の列を詰めないよう、IFS 空白でない文字を使う。
+sep=$'\x1f'
+
 # --- 入力の収集 --------------------------------------------------------------
 
 # 先頭行が `---` で、frontmatter に `type:` を持つ .md を item として列挙する。
@@ -42,8 +45,8 @@ list_items() {
   ' {} + | LC_ALL=C sort
 }
 
-# item の frontmatter を、判定関数が読むレコードへ直す。1 行 1 要素で、列は US（\x1f）区切りの
-# <ファイル> <キー> <添字> <形> <値 1> <値 2>。空の列を詰めないよう、IFS 空白でない区切りを使う。読めない item は stderr へ名前を出し、1 を返す。
+# item の frontmatter を、判定関数が読むレコードへ直す。1 行 1 要素で、列は $sep 区切りの
+# <ファイル> <キー> <添字> <形> <値 1> <値 2>。読めない item は stderr へ名前を出し、1 を返す。
 collect_records() {
   local list=$1 out=$2 file json unreadable=0
   : >"$out"
@@ -53,7 +56,7 @@ collect_records() {
       unreadable=1
       continue
     fi
-    jq -r --arg file "$file" '
+    jq -r --arg file "$file" --arg sep "$sep" '
       def kind: if type == "object" then "object" elif type == "array" then "array" else "scalar" end;
       def str: if type == "string" then . elif . == null then "" else tostring end;
       def actor($key; $i): [$file, $key, $i, kind,
@@ -71,7 +74,7 @@ collect_records() {
               (if type == "object" then (.resource | str) else "" end)])
           else [$file, "sources", "-", kind, "", ""] end)
        else empty end)
-      | map(gsub("[\n\u001f]"; " ")) | join("\u001f")
+      | map(gsub("\n|" + $sep; " ")) | join($sep)
     ' <<<"$json" >>"$out"
   done <"$list"
   return "$unreadable"
@@ -92,7 +95,7 @@ is_iso_with_offset() {
 judge_actor_time() {
   local records=$1
   local violated=0 file key i shape by at epoch
-  while IFS=$'\x1f' read -r file key i shape by at; do
+  while IFS=$sep read -r file key i shape by at; do
     [[ "$key" == generated || "$key" == verified ]] || continue
     [[ "$shape" == missing ]] && continue
     local where="$file の $key"
@@ -130,7 +133,7 @@ judge_generated_required() {
   local records=$1 required=$2
   local violated=0 file key i shape rest
   [[ "$required" -eq 1 ]] || return 0
-  while IFS=$'\x1f' read -r file key i shape rest; do
+  while IFS=$sep read -r file key i shape rest; do
     if [[ "$key" == generated && "$shape" == missing ]]; then
       echo "$file に generated が無い"
       violated=1
@@ -143,7 +146,7 @@ judge_generated_required() {
 judge_stale_after() {
   local records=$1
   local violated=0 file key i shape value rest
-  while IFS=$'\x1f' read -r file key i shape value rest; do
+  while IFS=$sep read -r file key i shape value rest; do
     [[ "$key" == stale_after ]] || continue
     if [[ "$shape" != scalar ]] || ! is_iso_with_offset "$value"; then
       echo "$file の stale_after が UTC オフセット付きの ISO 8601 でない（実際: ${value:-$shape}）"
@@ -157,7 +160,7 @@ judge_stale_after() {
 judge_sources() {
   local records=$1
   local violated=0 file key i shape id resource dups
-  while IFS=$'\x1f' read -r file key i shape id resource; do
+  while IFS=$sep read -r file key i shape id resource; do
     [[ "$key" == sources ]] || continue
     if [[ "$i" == - ]]; then
       echo "$file の sources がリストでない（実際: $shape）"
@@ -170,10 +173,10 @@ judge_sources() {
       violated=1
     fi
   done <"$records"
-  dups=$(awk -F'\037' '$2 == "sources" && $3 != "-" && $5 != "" { print $1 "\037" $5 }' "$records" |
+  dups=$(awk -F"$sep" -v sep="$sep" '$2 == "sources" && $3 != "-" && $5 != "" { print $1 sep $5 }' "$records" |
     LC_ALL=C sort | uniq -d)
   if [[ -n "$dups" ]]; then
-    while IFS=$'\x1f' read -r file id; do
+    while IFS=$sep read -r file id; do
       echo "$file の sources に id '$id' が重複している"
     done <<<"$dups"
     violated=1
@@ -343,12 +346,13 @@ if broken_out=$(collect_records "$self/broken.list" "$self/broken.tsv") || [[ "$
   self_fail=1
 fi
 
-# run_judges の配線: 判定ごとに、その判定だけが落ちる records で偽を返す（fault・pass は捨てる）。
+# run_judges の配線: 判定ごとに、その判定だけが落ちる records で偽を返し、fault を呼ぶ。
 # 必須判定は no-generated のときだけ有効にし、他の判定の違反と混ぜない。
-for case in gen-scalar:0 no-generated:1 stale-no-offset:0 src-dup-id:0; do
-  name=${case%:*}
-  if (fault() { :; } && pass() { :; } && run_judges "$self/$name.tsv" "${case#*:}"); then
-    fault "自己検証: run_judges（$name）— 違反のある records で真を返した（判定が配線されていない）"
+for wiring in gen-scalar:0 no-generated:1 stale-no-offset:0 src-dup-id:0; do
+  wiring_item=${wiring%:*}
+  if wiring_out=$(fault() { echo fault-called; } && pass() { :; } &&
+    run_judges "$self/$wiring_item.tsv" "${wiring#*:}") || [[ "$wiring_out" != *fault-called* ]]; then
+    fault "自己検証: run_judges（$wiring_item）— 違反のある records で偽を返さないか、fault を呼ばない（判定が配線されていない）"
     self_fail=1
   fi
 done
