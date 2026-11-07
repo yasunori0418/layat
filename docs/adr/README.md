@@ -48,7 +48,7 @@ status: stable          # draft / stable / deprecated
 sources:                # 「関連:」「起点 Issue:」「起点:」の GitHub Issue
   - id: "issue-123"
     resource: "https://github.com/yasunori0418/layat/issues/123"
-    title: "#123"
+    title: "<Issue のタイトル>"
 origin: "…"             # 「起点:」の内容（無ければ「起点 Issue:」「参照:」）
 justifies:              # この ADR が決めた item（必須・1 本以上）
   - "REQ-<フル UUIDv4>"
