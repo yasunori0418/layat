@@ -13,8 +13,10 @@ frontmatter は手書き・テンプレ写経をせず `sara-new` で起票す�
 ```bash
 sara-new <型> <slug> <配置ディレクトリ> [-- <sara init のオプション>...]
 
+export SARA_NEW_GENERATED_BY="claude-code/<モデル ID>"   # 人なら human:<GitHub ID>
 sara-new risk lock-ordering docs/risks -- \
   --name "<日本語の 1 行要約>" \
+  --description "<item の 1 文の要約>" \
   --threatens "<REQ / DSG のフル ID>" \
   --likelihood medium --impact high --level high
 ```
@@ -24,6 +26,11 @@ sara-new risk lock-ordering docs/risks -- \
   `sara init <型> --help` で確認する。requirement / quality / test_plan の
   `--specification` / `--specification-ja`、test_case の `--target` など、モデルの必須
   フィールドはここで渡す。
+- `--` 以降に `--description`（`-d` / `--description=…` でもよい）が無ければ、起票せず exit 2 で
+  落ちる。環境変数 `SARA_NEW_GENERATED_BY` が空か未設定のときも exit 2 で落ちる。どちらも
+  ファイルを作らない。
+- 起票した item の frontmatter の末尾（閉じの `---` の直前）に `generated` を付ける。`by` は
+  `SARA_NEW_GENERATED_BY` の値、`at` は起票時の `date --iso-8601=seconds` の値（UTC オフセット付き）。
 - ADR は `adr` / `sara_adr` で起票する（`--status` を渡す）。
 - 生成後に本文（`# <フル ID>: <name>` の見出し + 散文）を書き足し、`sara check` で green
   を確認する。

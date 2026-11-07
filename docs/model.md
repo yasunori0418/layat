@@ -80,6 +80,76 @@ CASE とテスト資産を比べて 1:1 かを確かめる。本文の `## 対�
   `tests/namaka/manifest-project/`〔ディレクトリは末尾スラッシュ〕）
 - flake check: `checks.hm-module` の形（`checks.` 接頭辞）
 
+## OKF 互換の frontmatter
+
+item は Open Knowledge Format（OKF）v0.2 と互換のキーを持つ。対応はキー単位で取り、バンドル単位の
+適合（`okf_version` の宣言・`log.md`・frontmatter の無い文書への frontmatter 追加）は追わない。
+決定の理由は SDR-bab72f31-7cb1-47a3-bb2d-7876757d86fb とその後続の SDR が持つ。
+
+| キー | 対象の型 | 書き方 |
+|---|---|---|
+| `type` | 全て | sara の組み込みフィールドをそのまま OKF の `type` とみなす |
+| `name` | 全て | OKF の `title` とみなす。`title` は書かない |
+| `description` | 全て | item の 1 文の要約。新しく起こす item では必須。既存の item は index.md の生成器が本文の最初の段落で代用する |
+| `status` | 全て | `draft`（検討中でまだ有効でない）/ `stable`（有効）/ `deprecated`（もう有効でない）の 3 値 |
+| `generated` | 全て | `by`（actor）と `at`（時刻）の組 |
+| `verified` | 全て | `generated` と同じ形の要素のリスト。任意 |
+| `stale_after` | 全て | 期限の時刻。任意 |
+| `sources` | `adr` / `sara_adr` | `id` / `resource` / `title` の組のリスト |
+| `resource` | `test_case` | 対応するテスト資産の正準表記 |
+
+`tags` は使わない。
+
+### `generated` と `verified`
+
+```yaml
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T21:04:05+09:00"
+verified:
+  - by: "human:yasunori0418"
+    at: "2026-11-08T10:00:00+09:00"
+```
+
+- actor（`by`）は、人なら `human:<GitHub ID>`、エージェントなら `claude-code/<モデル ID>` の形で書く
+- 時刻（`at`）は UTC オフセット付きの ISO 8601 で書く。`Z` も UTC オフセットとして扱う
+- `generated.at` は本文を最後に意味のある形で変えた時刻にする。**本文を変えたら `generated` の
+  `by` と `at` を更新する**。frontmatter だけの変更や改名では更新しない
+- 起票では `sara-new` が `generated` を付ける（`by` は環境変数 `SARA_NEW_GENERATED_BY` から取る）
+- `verified` は自動では付けない。人が内容を確かめたときにだけ、手で要素を足す
+
+### `stale_after`
+
+UTC オフセット付きの ISO 8601 の時刻を書く。外部ツールの版や公開状況など、期限のある事実を含む
+item にだけ書き手が付ける。
+
+### `sources`
+
+```yaml
+sources:
+  - id: "issue-662"
+    resource: "https://github.com/yasunori0418/layat/issues/662"
+    title: "<Issue のタイトル>"
+```
+
+- `resource` には Issue の URL を書く。このリポジトリの `#N` は
+  `https://github.com/yasunori0418/layat/issues/N`、他のリポジトリの `owner/repo#N` は
+  `https://github.com/owner/repo/issues/N` にする
+- `id` は `issue-N`（他のリポジトリなら `issue-<repo>-N`）の形にし、1 つの item の中で一意にする
+- `origin` は散文のまま layat の拡張キーとして残し、`sources` には入れない
+
+### `resource`
+
+値の規則は「`test_case` の `target`」の 2 規則と同じ。OKF の `resource` は URI を想定するが、
+layat の値は URI ではない。根もリポジトリ根で、index.md のバンドル根（`docs/`）とは異なる。
+
+### 検証の分担
+
+平たいキー（`status` / `stale_after` / `resource`）は `docs/model.yaml` のフィールドとして sara が
+確かめる。入れ子のキー（`generated` / `verified` / `sources`）は sara が型を持たないので、
+`dev/tests/okf-frontmatter.sh` が形を確かめる。本文の変更と `generated` の更新が揃っているかは
+検査せず、規約で守る。
+
 ## 関係
 
 上流向き（upstream）の関係は子から親へ張り、逆向き（downstream）は sara が対で持つ。

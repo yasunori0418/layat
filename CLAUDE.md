@@ -106,7 +106,7 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
 
   ```bash
   sara-new <型> <slug> <配置ディレクトリ> [-- <sara init のオプション>...]
-  sara-new requirement lock-ordering docs/requirements
+  sara-new requirement lock-ordering docs/requirements -- --description '<1 文の要約>'
   ```
 
 - ADR も UUID で採番する（`ADR-<フル UUIDv4>`、sara 品質管理機構の決定は `SDR-<フル UUIDv4>`）。
@@ -116,6 +116,13 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
   sara が RFC2119 キーワード（MUST / SHALL / SHOULD …）の存在をハードコードで検証するため。
   対になる日本語の規範文は `specification_ja` に併記する。ただし検証が効くのは requirement
   だけ（型名がハードコードされている）で、quality / test_plan の様式はレビューで守る
+
+### OKF 互換の frontmatter
+
+item は OKF v0.2 と互換のキー（`description` / `status` / `generated` / `verified` / `stale_after` /
+`sources` / `resource`）を持つ。キーの意味と書き方は `docs/model.md` の「OKF 互換の frontmatter」節。
+起票では `sara-new` が `--description` を求め、`generated` を環境変数 `SARA_NEW_GENERATED_BY` の
+actor で埋める。本文を変えたら `generated` の `by` / `at` を更新する。
 
 ### item を辿る（`sara query`）
 
