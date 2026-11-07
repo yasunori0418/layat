@@ -31,6 +31,7 @@ esac
 
 require_commands okf-index.sh sara jq awk cmp || exit 2
 
+categories_tsv="$(cd "$(dirname "$0")" && pwd)/../tests/test-categories.tsv"
 cd "$(testdoc_repo_root)"
 
 work=$(mktemp -d)
@@ -138,8 +139,8 @@ for row in "${TYPE_DIRS[@]}"; do
 done
 top+="* [$TEST_TITLE](./test/index.md) - $TEST_DESC"
 
-# docs/test/ の区分は item の置き場所から導く。
-categories=$(cut -f2 "$work/entries.tsv" | awk -F / '$1 == "test" && NF == 2 { print $2 }' | LC_ALL=C sort -u)
+# docs/test/ の区分と並び順は dev/tests/test-categories.tsv に従う。
+categories=$(read_tsv "$categories_tsv" | cut -f1)
 test_list=""
 for cat in $categories; do
   tc=$(entries_of "test/$cat" test_condition)

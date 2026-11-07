@@ -38,9 +38,9 @@ fi
 
 # --- 小さな入力の組み立て ------------------------------------------------------
 
-# 実物の docs/model.yaml を重ね、ADR と用語の item だけで閉じたグラフを作る。
+# 実物の docs/model.yaml を重ね、上流を持たない item とテスト条件 1 本だけのグラフを作る。
 fixture="$work/fixture"
-mkdir -p "$fixture/docs/adr" "$fixture/docs/sara-adr" "$fixture/docs/ubiquitous-language"
+mkdir -p "$fixture/docs/adr" "$fixture/docs/sara-adr" "$fixture/docs/ubiquitous-language" "$fixture/docs/test/copy"
 cp "$repo_root/docs/model.yaml" "$fixture/docs/model.yaml"
 cat > "$fixture/sara.toml" <<'EOF'
 model_schema = "docs/model.yaml"
@@ -138,6 +138,19 @@ The term
 definition.
 EOF
 
+# docs/test/ の区分に置くテスト条件。
+cat > "$fixture/docs/test/copy/20260101-55555555-5555-4555-8555-555555555555-condition.md" <<'EOF'
+---
+id: "TC-55555555-5555-4555-8555-555555555555"
+type: test_condition
+name: "条件"
+status: stable
+---
+# TC-55555555-5555-4555-8555-555555555555: 条件
+
+条件の説明。
+EOF
+
 if ! (cd "$fixture" && bash "$generator") > "$work/gen.out" 2>&1; then
   fault "入力: 小さな入力から index.md を生成できなかった"
   sed 's/^/    /' "$work/gen.out"
@@ -166,7 +179,34 @@ expect_line "表・引用・HTML・字下げ行・~~~ のフェンスは段落�
 expect_line "ADR 以外の item には status の添え字を付けず、英数字の行は空白でつなぐ" docs/ubiquitous-language/index.md \
   '* [term](./20260101-44444444-4444-4444-8444-444444444444-term.md) - The term definition.'
 
-# --- (3) 並びはファイル名順 ----------------------------------------------------
+# --- (3) docs/test/ の区分 ------------------------------------------------------
+
+want_copy=$(cat <<'EOF'
+# copy
+
+## テスト条件（`test_condition`）
+
+* [条件](./20260101-55555555-5555-4555-8555-555555555555-condition.md) - 条件の説明。
+
+## テストケース（`test_case`）
+EOF
+)
+if [ "$(cat "$fixture/docs/test/copy/index.md")" = "$want_copy" ]; then
+  pass "区分の index.md は型ごとの見出しの下にエントリを並べる"
+else
+  fault "(3) docs/test/copy/index.md の形が食い違う"
+  sed 's/^/    /' "$fixture/docs/test/copy/index.md"
+fi
+
+want_cats=$(read_tsv "$script_dir/test-categories.tsv" | cut -f1 | tr '\n' ' ')
+got_cats=$(grep -oE '^\* \[[^]]*\]' "$fixture/docs/test/index.md" | sed -E 's/^\* \[(.*)\]$/\1/' | tr '\n' ' ')
+if [ "$got_cats" = "$want_cats" ]; then
+  pass "docs/test/index.md は区分を test-categories.tsv の順に並べる"
+else
+  fault "(3) docs/test/index.md の区分の並びが test-categories.tsv と食い違う（実際: $got_cats）"
+fi
+
+# --- (4) 並びはファイル名順 ----------------------------------------------------
 
 order=$(grep -oE '\(\./[^)]*\)' "$fixture/docs/adr/index.md" | tr -d '()' | tr '\n' ' ')
 if [ "$order" = "./20260101-22222222-2222-4222-8222-222222222222-from-paragraph.md ./20260102-11111111-1111-4111-8111-111111111111-with-field.md " ]; then
