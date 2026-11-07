@@ -2,7 +2,6 @@
 id: "UBQ-f5a31977-edde-4c0f-881f-28f709b0ef0b"
 type: ubiquitous_term
 name: "error-wrap convention"
-name_ja: "エラー wrap 規約"
 ---
 
 # UBQ-f5a31977-edde-4c0f-881f-28f709b0ef0b: error-wrap convention

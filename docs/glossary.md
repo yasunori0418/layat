@@ -58,4 +58,4 @@ layat のユビキタス言語の索引。用語の正名・避ける綴り・�
 
 ## Error handling
 
-- [UBQ-f5a31977-edde-4c0f-881f-28f709b0ef0b](ubiquitous-language/20261107-f5a31977-edde-4c0f-881f-28f709b0ef0b-error-wrap-convention.md) — `error-wrap convention`（エラー wrap 規約）
+- [UBQ-f5a31977-edde-4c0f-881f-28f709b0ef0b](ubiquitous-language/20261107-f5a31977-edde-4c0f-881f-28f709b0ef0b-error-wrap-convention.md) — `error-wrap convention`
