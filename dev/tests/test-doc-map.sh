@@ -53,17 +53,17 @@ if [ ! -s "$work/assets" ]; then
   exit 1
 fi
 
-# CASE の <ファイルパス>\t<target> 表。frontmatter の target を yq で読む。
-# yq の失敗（frontmatter の破損）と target が空は区別して報告する。
+# CASE の <ファイルパス>\t<resource> 表。frontmatter の resource を yq で読む。
+# yq の失敗（frontmatter の破損）と resource が空は区別して報告する。
 : > "$work/case-targets"
 unreadable=0
 while IFS= read -r file; do
-  if ! target=$(yq --front-matter=extract '.target // ""' "$file" 2>/dev/null); then
+  if ! resource=$(yq --front-matter=extract '.resource // ""' "$file" 2>/dev/null); then
     fault "入力: $file の frontmatter を yq で読めなかった（YAML の構文を確認する）"
     unreadable=1
     continue
   fi
-  printf '%s\t%s\n' "$file" "$target" >> "$work/case-targets"
+  printf '%s\t%s\n' "$file" "$resource" >> "$work/case-targets"
 done < <(grep -rl '^type: test_case' docs/test/ | LC_ALL=C sort)
 
 if [ ! -s "$work/case-targets" ]; then
@@ -81,18 +81,18 @@ read_tsv "$exclusions_tsv" | cut -f1 | LC_ALL=C sort > "$work/exclusions"
 #
 # 各関数は診断行を stdout へ出し、違反があれば 1 を返す。呼び出し側が pass / fault へ振り分ける。
 
-# 順方向: case_targets（<ファイル>\t<target>）の target が assets に在るか。
+# 順方向: case_targets（<ファイル>\t<resource>）の resource が assets に在るか。
 judge_forward() {
   local case_targets=$1 assets=$2
-  local violated=0 file target
-  while IFS=$'\t' read -r file target; do
-    if [ -z "$target" ]; then
-      echo "順方向: $file に target が無い（docs/model.yaml で required なので sara check も落ちる）"
+  local violated=0 file resource
+  while IFS=$'\t' read -r file resource; do
+    if [ -z "$resource" ]; then
+      echo "順方向: $file に resource が無い（docs/model.yaml で required なので sara check も落ちる）"
       violated=1
       continue
     fi
-    if ! grep -qxF "$target" "$assets"; then
-      echo "順方向: $file の target '$target' に対応するテスト資産が無い（リネーム / 削除の追従漏れ）"
+    if ! grep -qxF "$resource" "$assets"; then
+      echo "順方向: $file の resource '$resource' に対応するテスト資産が無い（リネーム / 削除の追従漏れ）"
       violated=1
     fi
   done < "$case_targets"
@@ -129,17 +129,17 @@ judge_reverse() {
   return "$violated"
 }
 
-# 1:1: case_targets の target に重複が無いか。
+# 1:1: case_targets の resource に重複が無いか。
 judge_unique() {
   local case_targets=$1
-  local dups target owners
+  local dups resource owners
   dups=$(cut -f2 "$case_targets" | grep -v '^$' | LC_ALL=C sort | uniq -d)
   if [ -z "$dups" ]; then
     return 0
   fi
-  while IFS= read -r target; do
-    owners=$(awk -F'\t' -v t="$target" '$2 == t { printf "%s ", $1 }' "$case_targets")
-    echo "1:1 違反: '$target' に複数の CASE が張られている（$owners）"
+  while IFS= read -r resource; do
+    owners=$(awk -F'\t' -v t="$resource" '$2 == t { printf "%s ", $1 }' "$case_targets")
+    echo "1:1 違反: '$resource' に複数の CASE が張られている（$owners）"
   done <<< "$dups"
   return 1
 }
@@ -166,9 +166,9 @@ run_judge() {
   return 1
 }
 
-# --- 1. 順方向（CASE の target が実在する） ----------------------------------
+# --- 1. 順方向（CASE の resource が実在する） --------------------------------
 
-run_judge "全 CASE の target が実在するテスト資産を指す" \
+run_judge "全 CASE の resource が実在するテスト資産を指す" \
   judge_forward "$work/case-targets" "$work/assets"
 
 # --- 2. 逆方向（全テスト資産に CASE がある） ---------------------------------
@@ -180,7 +180,7 @@ run_judge "全テスト資産に CASE がある（除外リストを除く）" \
 
 # --- 3. 1:1 一意性 -----------------------------------------------------------
 
-# 順方向の 1:1 は target が単一 text であることで型が担保する。ここは逆方向の重複だけを見る。
+# 順方向の 1:1 は resource が単一 text であることで型が担保する。ここは逆方向の重複だけを見る。
 run_judge "1 テスト資産に張られた CASE は高々 1 件（1:1）" \
   judge_unique "$work/case-targets"
 
@@ -232,7 +232,7 @@ fi
 # CASE と除外リストが重複していないこと。
 both=$(LC_ALL=C comm -12 "$work/covered" "$work/exclusions" | tr '\n' ' ')
 if [ -z "$both" ]; then
-  pass "除外リストと CASE の target が排他である"
+  pass "除外リストと CASE の resource が排他である"
 else
   fault "除外されているのに CASE がある（$both）"
 fi
@@ -317,9 +317,9 @@ printf 'a_test.go\nb_test.go\n' > "$self/covered-ok"
 : > "$self/exclusions-empty"
 
 # 違反のあるフィクスチャ。判定内の分岐ごとに 1 つずつ用意する。
-# 順方向 (a): 実在しない target を指す。
+# 順方向 (a): 実在しない resource を指す。
 printf 'CASE-a.md\tgone_test.go\n' > "$self/case-targets-dangling"
-# 順方向 (b): target が空。空 target 分岐だけを踏ませるため、assets 側に空行を含める。
+# 順方向 (b): resource が空。空 resource 分岐だけを踏ませるため、assets 側に空行を含める。
 printf 'CASE-b.md\t\n' > "$self/case-targets-empty"
 printf '\na_test.go\n' > "$self/assets-with-empty"
 # 逆方向: covered にも exclusions にも無い資産（c_test.go）。免除集合は走査対象の部分集合に保つ。
@@ -327,7 +327,7 @@ printf 'a_test.go\nc_test.go\n' > "$self/assets-uncovered"
 printf 'a_test.go\n' > "$self/covered-subset"
 # 逆方向: 除外リストだけで消える資産（除外経路の単独検証用）。
 printf 'c_test.go\n' > "$self/assets-c-only"
-# 1:1: 同じ target を 2 CASE が張る。
+# 1:1: 同じ resource を 2 CASE が張る。
 printf 'CASE-a.md\ta_test.go\nCASE-b.md\ta_test.go\n' > "$self/case-targets-dup"
 
 self_fail=0
@@ -358,10 +358,10 @@ expect_judge_fail() {
 
 expect_judge_pass "judge_forward" \
   judge_forward "$self/case-targets-ok" "$self/assets-ok"
-expect_judge_fail "judge_forward（実在しない target）" \
+expect_judge_fail "judge_forward（実在しない resource）" \
   judge_forward "$self/case-targets-dangling" "$self/assets-ok"
-# 空 target 分岐は assets-with-empty（空行を含む）と組ませて単独に踏ませる。
-expect_judge_fail "judge_forward（target が空）" \
+# 空 resource 分岐は assets-with-empty（空行を含む）と組ませて単独に踏ませる。
+expect_judge_fail "judge_forward（resource が空）" \
   judge_forward "$self/case-targets-empty" "$self/assets-with-empty"
 
 # 逆方向で違反を消す 2 経路（covered / exclusions）をそれぞれ単独で確かめる。
