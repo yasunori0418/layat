@@ -9,7 +9,7 @@
 set -uo pipefail
 
 # 1 にすると generated を持たない item を違反にする。
-GENERATED_REQUIRED=0
+GENERATED_REQUIRED=1
 
 fail=0
 pass() { printf 'ok   - %s\n' "$1"; }
