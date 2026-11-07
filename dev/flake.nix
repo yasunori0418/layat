@@ -46,6 +46,9 @@
       perSystem =
         { inputs', pkgs, ... }:
         let
+          # dev/tests/term-avoid.sh が avoid の綴りの検出に使う。
+          textlint = pkgs.textlint.withPackages [ pkgs.textlint-rule-prh ];
+
           # outturn の Go 参照実装は subPackages 由来の bin/validate を生むため、
           # 規格上の CLI 名 outturn-validate で PATH に載せる薄い wrapper を挟む。
           outturn-validate = pkgs.writeShellScriptBin "outturn-validate" ''
@@ -216,6 +219,7 @@
               yq-go
               # test-doc-matrix.sh が sara report matrix --format json を整形するのに使う。
               jq
+              textlint
               go
               gopls
               # ローカルのカバレッジ計測。func サマリを出し、HTML 表示のコマンドを案内する。
@@ -289,6 +293,34 @@
                 cd repo
                 # テスト側の走査基点はカレントへフォールバックする（git 管理外のため）。
                 bash dev/tests/glossary-index.sh
+                touch "$out"
+              '';
+
+          # avoid の綴りの検出の契約テスト（dev/tests/term-avoid.sh）。CI はこの派生ではなく devShells.sara で走らせる。
+          # ルート flake の store path を書き込み可能な場所へ複製し、dev/ は dev flake 側から重ねて走らせる。
+          checks.term-avoid =
+            pkgs.runCommandLocal "term-avoid"
+              {
+                nativeBuildInputs = [
+                  inputs'.nur.packages.sara
+                  textlint
+                  pkgs.jq
+                  pkgs.git
+                  pkgs.coreutils
+                  pkgs.findutils
+                ];
+              }
+              ''
+                cp -r ${inputs.root} repo
+                chmod -R u+w repo
+                rm -rf repo/dev/scripts repo/dev/tests
+                mkdir -p repo/dev
+                cp -r ${./scripts} repo/dev/scripts
+                cp -r ${./tests} repo/dev/tests
+                chmod -R u+w repo/dev
+                cd repo
+                # テスト側の走査基点はカレントへフォールバックする（git 管理外のため）。
+                bash dev/tests/term-avoid.sh
                 touch "$out"
               '';
 
@@ -387,6 +419,8 @@
               pkgs.yq-go
               # dev/tests/sara-gap.sh が --json 出力のアサーションに使う。
               pkgs.jq
+              # dev/tests/term-avoid.sh が avoid の綴りを検出する。
+              textlint
             ];
             env.TERM = "dumb";
           };
