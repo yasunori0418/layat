@@ -38,20 +38,20 @@ trap 'rm -rf "$work"' EXIT
 
 # 型ごとのディレクトリ: <docs/ からのディレクトリ>|<型>|<見出し>|<docs/index.md に載せる説明>
 TYPE_DIRS=(
-  "solution|solution|解決策（solution）|layat が解く課題と、その解き方の全体像"
-  "use-cases|use_case|ユースケース（use_case）|利用者が layat をどう使うかの場面"
-  "requirements|requirement|要求（requirement）|layat が満たす振る舞いの規範"
-  "design|design|設計（design）|要求をどう実現するかの設計判断"
-  "quality|quality|品質（quality）|開発とリリースの品質を保つ規範"
-  "test-plan|test_plan|テスト計画（test_plan）|何をどの層のテストで確かめるかの方針"
-  "infrastructure|infrastructure|基盤（infrastructure）|CI・配布・ドキュメントサイトなどの基盤の構成"
-  "risks|risk|リスク（risk）|要求や設計が崩れたときに起きる脅威"
-  "adr|adr|ADR（adr）|layat の設計判断の記録"
-  "sara-adr|sara_adr|SDR（sara_adr）|ドキュメントグラフの運用についての判断の記録"
-  "ubiquitous-language|ubiquitous_term|用語（ubiquitous_term）|layat の用語の定義と避ける綴り"
+  "solution|solution|解決策（\`solution\`）|layat が解く課題と、その解き方の全体像"
+  "use-cases|use_case|ユースケース（\`use_case\`）|利用者が layat をどう使うかの場面"
+  "requirements|requirement|要求（\`requirement\`）|layat が満たす振る舞いの規範"
+  "design|design|設計（\`design\`）|要求をどう実現するかの設計判断"
+  "quality|quality|品質（\`quality\`）|開発とリリースの品質を保つ規範"
+  "test-plan|test_plan|テスト計画（\`test_plan\`）|何をどの層のテストで確かめるかの方針"
+  "infrastructure|infrastructure|基盤（\`infrastructure\`）|CI・配布・ドキュメントサイトなどの基盤の構成"
+  "risks|risk|リスク（\`risk\`）|要求や設計が崩れたときに起きる脅威"
+  "adr|adr|ADR（\`adr\`）|layat の設計判断の記録"
+  "sara-adr|sara_adr|SDR（\`sara_adr\`）|ドキュメントグラフの運用についての判断の記録"
+  "ubiquitous-language|ubiquitous_term|用語（\`ubiquitous_term\`）|layat の用語の定義と避ける綴り"
 )
 TEST_TITLE="テスト条件とテストケース"
-TEST_DESC="機能の区分ごとのテスト条件（test_condition）とテストケース（test_case）"
+TEST_DESC="機能の区分ごとのテスト条件（\`test_condition\`）とテストケース（\`test_case\`）"
 
 if ! sara check --format json > "$work/graph.json" 2> "$work/graph.err"; then
   echo "okf-index.sh: sara check が失敗した" >&2
@@ -140,9 +140,9 @@ test_list=""
 for cat in $categories; do
   tc=$(entries_of "test/$cat" test_condition)
   cs=$(entries_of "test/$cat" test_case)
-  body="## テスト条件（test_condition）"
+  body="## テスト条件（\`test_condition\`）"
   [ -n "$tc" ] && body+=$'\n\n'"$tc"
-  body+=$'\n\n'"## テストケース（test_case）"
+  body+=$'\n\n'"## テストケース（\`test_case\`）"
   [ -n "$cs" ] && body+=$'\n\n'"$cs"
   write_index "docs/test/$cat/index.md" "$cat" "$body"
   test_list+="* [$cat](./$cat/index.md)"$'\n'
