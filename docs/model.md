@@ -50,13 +50,13 @@ type になる。使えるプレースホルダは `{prefix}` / `{id}` / `{seq[:
 
 | 型 | フィールド | 読み方 |
 |---|---|---|
-| `adr` / `sara_adr` 以外の全て | `status` | `draft` / `stable` / `deprecated` の 3 値。必須 |
+| 全て | `status` | `draft` / `stable` / `deprecated` の 3 値。必須 |
 | 全て | `stale_after` | 期限の時刻。任意。値の形は sara でなく `dev/tests/okf-frontmatter.sh` が確かめる |
 | `requirement` / `quality` / `test_plan` | `specification` | 英語の規範文。RFC2119 キーワードを含める |
 | `requirement` / `quality` / `test_plan` | `specification_ja` | `specification` と対になる日本語の規範文。sara はこのフィールドを検査しない |
 | `infrastructure` | `dod` | `docs/dev/definition-of-done.md` の項目 ID（`DOD-01` …）のリスト。任意 |
-| `adr` / `sara_adr` | `status` | `提案` / `採用` / `不採用` / `廃止` の 4 値 |
-| `adr` / `sara_adr` | `issues` / `origin` | item にできない外部参照（GitHub Issue 番号・起点となったセッション等）|
+| `adr` / `sara_adr` | `origin` | 起点となったセッション等の散文。任意 |
+| `adr` / `sara_adr` | `sources` | 起点となった GitHub Issue 等の出典。書き方は「OKF 互換の frontmatter」節 |
 | `risk` | `likelihood` / `impact` / `level` | `high` / `medium` / `low`。採点規約と `level` の導出は [sara-graph.md](agents/sara-graph.md) |
 | `test_case` | `target` | 対応するテスト資産の正準表記（単一値）|
 | `ubiquitous_term` | `name_ja` | 日本語の正名。英語のまま使う語では省く。英語の正名は組み込みの `name` に置く |
@@ -68,9 +68,9 @@ type になる。使えるプレースホルダは `{prefix}` / `{id}` / `{seq[:
 `dod` の値が実在する DoD 項目かは検証されない。sara は text フィールドの中身を見ないので、
 存在しない項目 ID を書いても `sara check` は通る。
 
-`status` の `廃止` と関係の `supersedes` は対で扱う。`supersedes` で指された ADR は `廃止` で、
-`廃止` の ADR は 1 本以上の `supersedes` から指される。sara はこの対応を検証しないので、
-`dev/tests/adr-supersede.sh` が frontmatter から確かめる。
+`supersedes` で指された ADR は `status` が `deprecated` になる。sara はこの対応を検証しないので、
+`dev/tests/adr-supersede.sh` が frontmatter から確かめる。`deprecated` は提案を棄却した ADR にも
+付くため、逆向き（`deprecated` の ADR が `supersedes` で指されるか）は確かめない。
 
 ### `test_case` の `target`
 

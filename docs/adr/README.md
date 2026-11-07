@@ -1,6 +1,6 @@
 # layat の ADR
 
-ADR の粒度・ステータス・`supersedes` と `廃止`・`justifies` の選定基準といった汎用の規則は
+ADR の粒度・ステータス・`supersedes` と `deprecated`・`justifies` の選定基準といった汎用の規則は
 [adr-rules.md](../agents/adr-rules.md) が持つ。この文書はそれを layat へ当てはめた部分
 （型とディレクトリ・起票の手順・frontmatter の対応表・検算用の実データ）だけを持つ。
 
@@ -23,16 +23,16 @@ ADR の粒度・ステータス・`supersedes` と `廃止`・`justifies` の選
 
 ```bash
 nix develop '.?dir=dev#sara' -c sara-new adr <slug> docs/adr -- \
-  --name '<タイトル>' --description '<1 文の要約>' --status 採用 \
-  --issues '#<sub-issue>' --origin '…' \
+  --name '<タイトル>' --description '<1 文の要約>' --status stable \
+  --origin '…' \
   --justifies '<ID>' [--supersedes '<ADR>'] [--references '<ADR>']
 ```
 
 `sara_adr` は型を `sara_adr`、配置ディレクトリを `docs/sara-adr` にする。本文のタイトル行は
 `# ADR-<フル UUIDv4>: <タイトル>`（`sara_adr` は `# SDR-…`）とし、採番結果の ID で書く。
 
-`--name` は必須フィールドなので省略しない。`--issues` は `!list text` なので、複数の issue を
-持つときはフラグを繰り返す。
+`--name` は必須フィールドなので省略しない。`sources` は `sara-new` のフラグで渡せないので、
+起票後に frontmatter へ手で書く。
 
 ## frontmatter
 
@@ -44,20 +44,22 @@ nix develop '.?dir=dev#sara' -c sara-new adr <slug> docs/adr -- \
 id: "ADR-<フル UUIDv4>"
 type: adr
 name: "<タイトル行から `# ADR-…: ` を除いた部分>"
-status: 採用            # 提案 / 採用 / 不採用 / 廃止
-issues:                 # 「関連:」「起点 Issue:」「起点:」の GitHub Issue 番号
-  - "#123"
+status: stable          # draft / stable / deprecated
+sources:                # 「関連:」「起点 Issue:」「起点:」の GitHub Issue
+  - id: "issue-123"
+    resource: "https://github.com/yasunori0418/layat/issues/123"
+    title: "#123"
 origin: "…"             # 「起点:」の内容（無ければ「起点 Issue:」「参照:」）
 justifies:              # この ADR が決めた item（必須・1 本以上）
   - "REQ-<フル UUIDv4>"
-supersedes:             # 置き換えた ADR（置き換えた側を 廃止 にする変更の中でだけ張る）
+supersedes:             # 置き換えた ADR（置き換えた側を deprecated にする変更の中でだけ張る）
   - "ADR-<フル UUIDv4>"
 references:             # 「関連:」の ADR
   - "ADR-<フル UUIDv4>"
 ---
 ```
 
-フィールドの順序は上記のとおり（`id` / `type` / `name` / `status` / `issues` / `origin` /
+フィールドの順序は上記のとおり（`id` / `type` / `name` / `status` / `sources` / `origin` /
 `justifies` / `supersedes` / `references`）。
 
 `supersedes` だけは本文のメタデータ行を持たず、frontmatter にだけ書く。読者への誘導は、置き換えられた
@@ -67,12 +69,12 @@ references:             # 「関連:」の ADR
 
 | 本文 | frontmatter |
 |---|---|
-| `- ステータス:` | `status`（カッコ書きは付けない）|
+| `- ステータス:` | `status`。本文にも frontmatter と同じ英語の値を書き、カッコ書きは付けない |
 | `- 日付:` | 持たない（機械検証に使わないため本文のみ）|
 | `- 関連:` の ADR 参照 | `references` |
-| `- 関連:` の GitHub Issue 参照 | `issues` |
+| `- 関連:` の GitHub Issue 参照 | `sources` |
 | `- 関連:` の `docs/*.md` 参照 | 持たない（本文に残す）|
-| `- 起点:` | `origin`。行が `Issue #N` で始まるときは `issues` にも入れる |
+| `- 起点:` | `origin`。行が `Issue #N` で始まるときは `sources` にも入れる |
 | `- 起点 Issue:` / `- 参照:` | `起点:` 行が無いときだけ `origin` へ入れる |
 
 分類の細則:
@@ -80,10 +82,11 @@ references:             # 「関連:」の ADR
 - **他リポジトリの ADR は `references` に入れない**。`関連:` にリポジトリ名を前置した ADR 参照
   （例: ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7 の `関連:` にある outturn の ADR）は ID 空間が別なので、`references` に入れると自リポジトリの
   同番号 ADR への誤った辺になる（`sara check` は実在する ID なので通してしまう）。本文に残す
-- **他リポジトリの Issue は `issues` へ入れる**（`関連:` / `起点:` / `起点 Issue:` のどの行にあっても）。
-  `owner/repo#N` 形式にすれば ID 空間が衝突しない（例: ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7 の `yasunori0418/outturn#1`）
+- **他リポジトリの Issue も `sources` へ入れる**（`関連:` / `起点:` / `起点 Issue:` のどの行にあっても）。
+  `resource` を `https://github.com/owner/repo/issues/N`、`id` を `issue-<repo>-N` にすれば ID 空間が衝突しない
+  （例: ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7 の `yasunori0418/outturn#1`）
 - `起点:` 行の Issue は原則 `origin` のテキストに残す。行が `Issue #N` で始まる（その ADR の直接の
-  起点である）ときだけ `issues` にも入れる（例: ADR-955c2601-88fb-4be8-85de-ec7d0a8c727d の `- 起点: Issue #4（…）`）。経緯として
+  起点である）ときだけ `sources` にも入れる（例: ADR-955c2601-88fb-4be8-85de-ec7d0a8c727d の `- 起点: Issue #4（…）`）。経緯として
   言及されるだけの Issue は入れない（例: ADR-56325270-20bb-4959-8498-e3223c35e24b の「旧 epic #167 から統合された」の `#167`）
 - `origin` のフォールバックは `起点:` → `起点 Issue:` → `参照:` の順。フォールバック時は `"起点 Issue: #26"`
   `"参照: PR #40, …"` のようにラベルを残す
@@ -127,7 +130,7 @@ rg -n 'justifies' docs/requirements/ docs/design/ docs/infrastructure/ docs/test
 
 ## セルフチェック
 
-ADR を書き終えたら、グラフ全体の検証と、`廃止` と `supersedes` の対応の検証を実行する。
+ADR を書き終えたら、グラフ全体の検証と、`supersedes` と `deprecated` の対応の検証を実行する。
 
 ```bash
 nix develop '.?dir=dev#sara' -c sara check
@@ -140,6 +143,5 @@ nix develop '.?dir=dev#sara' -c dev/tests/adr-supersede.sh
 `justifies` の埋め忘れなので、張ってから完了とする。`justifies` に書いた ID のタイポは接続漏れでは
 なく `Broken reference` として落ちる。
 
-`adr-supersede.sh` は、`supersedes` で指された ADR が `廃止` であることと、`廃止` の ADR が 1 本以上の
-`supersedes` から指されていることを確かめる。どちらも CI の `sara` job が実行するが、required status
+`adr-supersede.sh` は、`supersedes` で指された ADR が `deprecated` であることを確かめる。どちらも CI の `sara` job が実行するが、required status
 check ではないため、赤くなってもマージはブロックしない（→ SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef）。
