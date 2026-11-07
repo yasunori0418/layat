@@ -42,8 +42,8 @@ list_items() {
   ' {} + | LC_ALL=C sort
 }
 
-# item の frontmatter を、判定関数が読む TSV のレコードへ直す。1 行 1 要素で、列は
-# <ファイル> <キー> <添字> <形> <値 1> <値 2>。読めない item は stderr へ名前を出し、1 を返す。
+# item の frontmatter を、判定関数が読むレコードへ直す。1 行 1 要素で、列は US（\x1f）区切りの
+# <ファイル> <キー> <添字> <形> <値 1> <値 2>。空の列を詰めないよう、IFS 空白でない区切りを使う。読めない item は stderr へ名前を出し、1 を返す。
 collect_records() {
   local list=$1 out=$2 file json unreadable=0
   : >"$out"
@@ -71,7 +71,7 @@ collect_records() {
               (if type == "object" then (.resource | str) else "" end)])
           else [$file, "sources", "-", kind, "", ""] end)
        else empty end)
-      | @tsv
+      | map(gsub("[\n\u001f]"; " ")) | join("\u001f")
     ' <<<"$json" >>"$out"
   done <"$list"
   return "$unreadable"
@@ -92,7 +92,7 @@ is_iso_with_offset() {
 judge_actor_time() {
   local records=$1
   local violated=0 file key i shape by at epoch
-  while IFS=$'\t' read -r file key i shape by at; do
+  while IFS=$'\x1f' read -r file key i shape by at; do
     [[ "$key" == generated || "$key" == verified ]] || continue
     [[ "$shape" == missing ]] && continue
     local where="$file の $key"
@@ -130,7 +130,7 @@ judge_generated_required() {
   local records=$1 required=$2
   local violated=0 file key i shape rest
   [[ "$required" -eq 1 ]] || return 0
-  while IFS=$'\t' read -r file key i shape rest; do
+  while IFS=$'\x1f' read -r file key i shape rest; do
     if [[ "$key" == generated && "$shape" == missing ]]; then
       echo "$file に generated が無い"
       violated=1
@@ -143,7 +143,7 @@ judge_generated_required() {
 judge_stale_after() {
   local records=$1
   local violated=0 file key i shape value rest
-  while IFS=$'\t' read -r file key i shape value rest; do
+  while IFS=$'\x1f' read -r file key i shape value rest; do
     [[ "$key" == stale_after ]] || continue
     if [[ "$shape" != scalar ]] || ! is_iso_with_offset "$value"; then
       echo "$file の stale_after が UTC オフセット付きの ISO 8601 でない（実際: ${value:-$shape}）"
@@ -157,7 +157,7 @@ judge_stale_after() {
 judge_sources() {
   local records=$1
   local violated=0 file key i shape id resource dups
-  while IFS=$'\t' read -r file key i shape id resource; do
+  while IFS=$'\x1f' read -r file key i shape id resource; do
     [[ "$key" == sources ]] || continue
     if [[ "$i" == - ]]; then
       echo "$file の sources がリストでない（実際: $shape）"
@@ -170,10 +170,10 @@ judge_sources() {
       violated=1
     fi
   done <"$records"
-  dups=$(awk -F'\t' '$2 == "sources" && $3 != "-" && $5 != "" { print $1 "\t" $5 }' "$records" |
+  dups=$(awk -F'\037' '$2 == "sources" && $3 != "-" && $5 != "" { print $1 "\037" $5 }' "$records" |
     LC_ALL=C sort | uniq -d)
   if [[ -n "$dups" ]]; then
-    while IFS=$'\t' read -r file id; do
+    while IFS=$'\x1f' read -r file id; do
       echo "$file の sources に id '$id' が重複している"
     done <<<"$dups"
     violated=1
@@ -257,7 +257,8 @@ write_item ok \
   'verified:' '  - by: "human:someone"' '    at: 2026-01-02T00:00:00Z' \
   'stale_after: "2099-01-01T00:00:00+00:00"' \
   'sources:' '  - id: "issue-1"' '    resource: "https://example.com/1"' '    title: "a"' \
-  '  - id: "issue-2"' '    resource: "https://example.com/2"'
+  '  - id: "issue-2"' '    resource: "https://example.com/2"' \
+  '  - resource: "https://example.com/3"'
 # generated を持たない item（必須判定の対象）。
 write_item no-generated 'name: "x"'
 # frontmatter の無い文書と、本文にだけ type: を持つ文書は item として数えない。
@@ -342,12 +343,15 @@ if broken_out=$(collect_records "$self/broken.list" "$self/broken.tsv") || [[ "$
   self_fail=1
 fi
 
-# run_judges の配線: 違反のある records で偽を返す（fault は本体の判定と混ざらないよう捨てる）。
-cat "$self"/*.tsv >"$self/all.tsv"
-if (fault() { :; } && pass() { :; } && run_judges "$self/all.tsv" 1); then
-  fault "自己検証: run_judges — 違反のある records で真を返した（判定が配線されていない）"
-  self_fail=1
-fi
+# run_judges の配線: 判定ごとに、その判定だけが落ちる records で偽を返す（fault・pass は捨てる）。
+# 必須判定は no-generated のときだけ有効にし、他の判定の違反と混ぜない。
+for case in gen-scalar:0 no-generated:1 stale-no-offset:0 src-dup-id:0; do
+  name=${case%:*}
+  if (fault() { :; } && pass() { :; } && run_judges "$self/$name.tsv" "${case#*:}"); then
+    fault "自己検証: run_judges（$name）— 違反のある records で真を返した（判定が配線されていない）"
+    self_fail=1
+  fi
+done
 
 [[ "$self_fail" -eq 0 ]] && pass "自己検証: 判定関数は違反なしで真・違反ありで偽を返す"
 
