@@ -145,13 +145,13 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 
 ### 名前の由来
 
-旧名 **nput** の「n」は **nix** を指していたが、engine の契約は `manifest.json` 1 本で生成者を
+旧名 `nput` の「n」は **nix** を指していたが、engine の契約は `manifest.json` 1 本で生成者を
 問わない。nix に依存するのは既定の生成器（nix）と世代バックエンド（nixprofile）で、engine ではない
 ため、「n」が指すものは曖昧だった。現名 **layat** は
 "**lay** \<src\> **at** \<target\>" の圧縮造語で、manifest の通りに src を target へ置く動作を
 一語で表す（`chroot`・`getopt` と同じ動詞句の圧縮）。
 
-- [ADR-6cd587e8-7aa2-4624-be78-7f6501bf0d6f](adr/20261103-6cd587e8-7aa2-4624-be78-7f6501bf0d6f-tool-named-layat.md) — nput を layat へ改名し、2 週間の改名予告期間を挟む（命名条件・棄却した候補・移行方針）
+- [ADR-6cd587e8-7aa2-4624-be78-7f6501bf0d6f](adr/20261103-6cd587e8-7aa2-4624-be78-7f6501bf0d6f-tool-named-layat.md) — `nput` を layat へ改名し、2 週間の改名予告期間を挟む（命名条件・棄却した候補・移行方針）
 
 ---
 
