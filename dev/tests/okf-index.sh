@@ -212,19 +212,33 @@ order=$(grep -oE '\(\./[^)]*\)' "$fixture/docs/adr/index.md" | tr -d '()' | tr '
 if [ "$order" = "./20260101-22222222-2222-4222-8222-222222222222-from-paragraph.md ./20260102-11111111-1111-4111-8111-111111111111-with-field.md " ]; then
   pass "エントリはファイル名順に並ぶ"
 else
-  fault "(3) エントリがファイル名順に並ばない（実際: $order）"
+  fault "(4) エントリがファイル名順に並ばない（実際: $order）"
 fi
 
-# --- (4) --check は差分のあるパスを出して exit 1 ------------------------------
+# --- (5) --check は食い違うパスを出して exit 1 を返し、index.md を書き換えない --
 
 printf '手で書き換えた\n' >> "$fixture/docs/adr/index.md"
-if (cd "$fixture" && bash "$generator" --check) > "$work/stale.out" 2>&1; then
-  fault "(4) 食い違う index.md があっても --check が exit 0 を返した"
-elif grep -qF 'docs/adr/index.md' "$work/stale.out"; then
-  pass "--check は食い違う index.md のパスを出して exit 1 を返す"
-else
-  fault "(4) --check の出力に食い違うパスが無い"
+cp "$fixture/docs/adr/index.md" "$work/edited.md"
+mkdir -p "$fixture/docs/test/removed"
+printf '# removed\n' > "$fixture/docs/test/removed/index.md"
+(cd "$fixture" && bash "$generator" --check) > "$work/stale.out" 2>&1
+rc=$?
+if [ "$rc" -ne 1 ]; then
+  fault "(5) 食い違う index.md があるとき --check が exit 1 を返さない（実際: $rc）"
   sed 's/^/    /' "$work/stale.out"
+elif ! grep -qxF 'docs/adr/index.md' "$work/stale.out"; then
+  fault "(5) --check の出力に内容の食い違うパスが無い"
+  sed 's/^/    /' "$work/stale.out"
+elif ! grep -qxF 'docs/test/removed/index.md' "$work/stale.out"; then
+  fault "(5) --check の出力に生成対象から外れたパスが無い"
+  sed 's/^/    /' "$work/stale.out"
+else
+  pass "--check は食い違うパスと生成対象から外れたパスを出して exit 1 を返す"
+fi
+if cmp -s "$fixture/docs/adr/index.md" "$work/edited.md"; then
+  pass "--check は既存の index.md を書き換えない"
+else
+  fault "(5) --check が既存の index.md を書き換えた"
 fi
 
 exit "$fail"
