@@ -3,7 +3,7 @@ id: "CASE-9e44bd6d-f6b4-4d12-990e-349a4b5c0dda"
 type: test_case
 name: "namaka: manifest-subdir — subdir 適用形で生成した manifest 文書のスナップショット回帰"
 status: stable
-target: "tests/namaka/manifest-subdir/"
+resource: "tests/namaka/manifest-subdir/"
 covers:
   - "TC-7d713505-5673-4e15-99bf-e98965e18892"
   - "TC-de6514e2-9105-45a6-a5b9-d474911a401b"

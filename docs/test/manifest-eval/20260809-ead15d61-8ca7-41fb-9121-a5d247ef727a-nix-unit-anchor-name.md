@@ -3,7 +3,7 @@ id: "CASE-ead15d61-8ca7-41fb-9121-a5d247ef727a"
 type: test_case
 name: "nix-unit: anchor-name.nix — GC アンカー名の形式と決定性"
 status: stable
-target: "tests/nix-unit/anchor-name.nix"
+resource: "tests/nix-unit/anchor-name.nix"
 covers:
   - "TC-a6a14739-89e5-4eba-acee-3ed5be5a0b7e"
 generated:
