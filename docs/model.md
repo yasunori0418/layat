@@ -50,6 +50,8 @@ type になる。使えるプレースホルダは `{prefix}` / `{id}` / `{seq[:
 
 | 型 | フィールド | 読み方 |
 |---|---|---|
+| `adr` / `sara_adr` 以外の全て | `status` | `draft` / `stable` / `deprecated` の 3 値。必須 |
+| 全て | `stale_after` | 期限の時刻。任意。sara は値を検査せず、形は `dev/tests/okf-frontmatter.sh` が確かめる |
 | `requirement` / `quality` / `test_plan` | `specification` | 英語の規範文。RFC2119 キーワードを含める |
 | `requirement` / `quality` / `test_plan` | `specification_ja` | `specification` と対になる日本語の規範文。sara はこのフィールドを検査しない |
 | `infrastructure` | `dod` | `docs/dev/definition-of-done.md` の項目 ID（`DOD-01` …）のリスト。任意 |

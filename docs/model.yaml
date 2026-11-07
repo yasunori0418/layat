@@ -11,7 +11,24 @@ item_types:
     prefix: SOL
     id_format: '{prefix}-{uuid4}'
     parent_types: []
-    fields: []
+    fields:
+      # OKF の status。ADR / SDR 以外の全ての型が持つ。
+      - &status_field
+        name: status
+        display_name: Status
+        field_type: !enum
+          values:
+            - draft
+            - stable
+            - deprecated
+        required: true
+        placeholder: stable
+      # OKF の stale_after。sara は値を検査せず、形は dev/tests/okf-frontmatter.sh が確かめる。
+      - &stale_after_field
+        name: stale_after
+        display_name: Stale After
+        field_type: date
+        required: false
     allowed_targets: []
 
   # ユーザーがどう使うか。docs/use-cases/。
@@ -21,7 +38,9 @@ item_types:
     id_format: '{prefix}-{uuid4}'
     parent_types:
       - solution
-    fields: []
+    fields:
+      - *status_field
+      - *stale_after_field
     allowed_targets:
       - relation: refines
         targets:
@@ -49,6 +68,8 @@ item_types:
         field_type: text
         required: true
         placeholder: layat は <要求> を満たさなければならない。
+      - *status_field
+      - *stale_after_field
     allowed_targets:
       - relation: derives_from
         targets:
@@ -65,7 +86,9 @@ item_types:
     parent_types:
       - requirement
       - test_plan
-    fields: []
+    fields:
+      - *status_field
+      - *stale_after_field
     allowed_targets:
       # テストハーネスの実装形を表す design は test_plan を満たす。
       - relation: satisfies
@@ -98,6 +121,8 @@ item_types:
         field_type: text
         required: true
         placeholder: layat は <品質方針> を満たさなければならない。
+      - *status_field
+      - *stale_after_field
     allowed_targets:
       - relation: derives_from
         targets:
@@ -126,6 +151,8 @@ item_types:
         field_type: text
         required: true
         placeholder: テストプロセスは <テスト計画上の決定> を満たさなければならない。
+      - *status_field
+      - *stale_after_field
     allowed_targets:
       - relation: derives_from
         targets:
@@ -152,6 +179,8 @@ item_types:
         display_name: Definition of Done
         field_type: !list text
         required: false
+      - *status_field
+      - *stale_after_field
     allowed_targets:
       - relation: satisfies
         targets:
@@ -192,6 +221,7 @@ item_types:
         display_name: Origin
         field_type: text
         required: false
+      - *stale_after_field
     allowed_targets: &adr_targets
       - relation: justifies
         targets:
@@ -238,6 +268,8 @@ item_types:
         display_name: Avoid
         field_type: !list text
         required: false
+      - *status_field
+      - *stale_after_field
     allowed_targets: []
 
   # ---- リスクとテストの系統（risk → test_condition → test_case）----
@@ -279,6 +311,8 @@ item_types:
             - low
         required: true
         placeholder: medium
+      - *status_field
+      - *stale_after_field
     allowed_targets:
       - relation: threatens
         targets:
@@ -292,7 +326,9 @@ item_types:
     id_format: '{prefix}-{uuid4}'
     parent_types:
       - risk
-    fields: []
+    fields:
+      - *status_field
+      - *stale_after_field
     allowed_targets:
       - relation: mitigates
         targets:
@@ -313,6 +349,8 @@ item_types:
         field_type: text
         required: true
         placeholder: internal/engine/engine_test.go
+      - *status_field
+      - *stale_after_field
     allowed_targets:
       - relation: covers
         targets:
