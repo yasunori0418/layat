@@ -269,6 +269,35 @@
                 touch "$out"
               '';
 
+          # OKF 互換の入れ子キーの形の契約テスト（dev/tests/okf-frontmatter.sh）。CI はこの派生ではなく devShells.sara で走らせる。
+          # ルート flake の store path を書き込み可能な場所へ複製し、dev/ は dev flake 側から重ねて走らせる。
+          checks.okf-frontmatter =
+            pkgs.runCommandLocal "okf-frontmatter"
+              {
+                nativeBuildInputs = [
+                  pkgs.yq-go
+                  pkgs.jq
+                  pkgs.git
+                  pkgs.coreutils
+                  pkgs.gawk
+                  pkgs.gnugrep
+                  pkgs.findutils
+                ];
+              }
+              ''
+                cp -r ${inputs.root} repo
+                chmod -R u+w repo
+                rm -rf repo/dev/scripts repo/dev/tests
+                mkdir -p repo/dev
+                cp -r ${./scripts} repo/dev/scripts
+                cp -r ${./tests} repo/dev/tests
+                chmod -R u+w repo/dev
+                cd repo
+                # テスト側の走査基点はカレントへフォールバックする（git 管理外のため）。
+                bash dev/tests/okf-frontmatter.sh
+                touch "$out"
+              '';
+
           # 用語索引 ⇔ 用語 item の 1:1 の契約テスト（dev/tests/glossary-index.sh）。CI はこの派生ではなく devShells.sara で走らせる。
           # ルート flake の store path を書き込み可能な場所へ複製し、dev/ は dev flake 側から重ねて走らせる。
           checks.glossary-index =

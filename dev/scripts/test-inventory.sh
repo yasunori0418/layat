@@ -69,6 +69,7 @@ FLAKE_CHECKS=(
   checks.layat
   checks.treefmt
   dev:checks.glossary-index
+  dev:checks.okf-frontmatter
   dev:checks.risk-matrix
   dev:checks.sara-gap
   dev:checks.sara-new

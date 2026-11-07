@@ -81,8 +81,8 @@ jobs:
 
   sara:
     # Knowledge-graph validation of docs/ plus the test-doc-map / glossary-index / risk-matrix /
-    # sara-gap / sara-new / adr-supersede / term-avoid contract tests. Not a required status
-    # check. Uses a job-local path filter instead of the `changes` job.
+    # sara-gap / sara-new / adr-supersede / okf-frontmatter / term-avoid contract tests. Not a
+    # required status check. Uses a job-local path filter instead of the `changes` job.
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:
@@ -163,6 +163,12 @@ jobs:
       - name: Run adr-supersede contract test
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/adr-supersede.sh
+
+      # Shape of the OKF-compatible nested keys (generated / verified / sources)
+      # and stale_after in item frontmatter. Reads frontmatter only.
+      - name: Run okf-frontmatter contract test
+        if: steps.filter.outputs.relevant != 'false'
+        run: nix develop '.?dir=dev#sara' -c dev/tests/okf-frontmatter.sh
 
       # Spellings listed under `avoid` in ubiquitous_term items must not appear in
       # the prose of docs/, README.md, README.ja.md or CLAUDE.md (textlint + prh).
