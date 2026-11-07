@@ -217,12 +217,13 @@ fi
 
 # --- (5) --check は食い違うパスを出して exit 1 を返し、index.md を書き換えない --
 
-# --check を走らせ、exit 1 で出力が期待するパスだけであることを確かめる。
+# --check を走らせ、exit 1 で出力が期待するパスだけであり、案内が期待する方だけであることを確かめる。
 expect_stale() {
-  local label=$1 want=$2 rc
+  local label=$1 want=$2 hint=$3 other=$4 rc
   (cd "$fixture" && bash "$generator" --check) > "$work/stale.out" 2> "$work/stale.err"
   rc=$?
-  if [ "$rc" -eq 1 ] && [ "$(cat "$work/stale.out")" = "$want" ]; then
+  if [ "$rc" -eq 1 ] && [ "$(cat "$work/stale.out")" = "$want" ] &&
+    grep -qF "$hint" "$work/stale.err" && ! grep -qF "$other" "$work/stale.err"; then
     pass "$label"
   else
     fault "$label（exit $rc・出力: $(tr '\n' ' ' < "$work/stale.out")）"
@@ -232,7 +233,8 @@ expect_stale() {
 
 printf '手で書き換えた\n' >> "$fixture/docs/adr/index.md"
 cp "$fixture/docs/adr/index.md" "$work/edited.md"
-expect_stale "--check は内容の食い違う index.md のパスを出して exit 1 を返す" docs/adr/index.md
+expect_stale "--check は内容の食い違う index.md のパスを出し、再生成を促して exit 1 を返す" \
+  docs/adr/index.md '再生成する' '削除する'
 if cmp -s "$fixture/docs/adr/index.md" "$work/edited.md"; then
   pass "--check は既存の index.md を書き換えない"
 else
@@ -244,6 +246,7 @@ fi
 mkdir -p "$fixture/docs/test/removed" "$fixture/docs/agents"
 printf '# removed\n' > "$fixture/docs/test/removed/index.md"
 printf '# agents\n' > "$fixture/docs/agents/index.md"
-expect_stale "--check は生成対象に無い index.md のパスを出して exit 1 を返し、docs/agents/ は見ない" docs/test/removed/index.md
+expect_stale "--check は生成対象に無い index.md のパスを出し、削除を促して exit 1 を返す（docs/agents/ は見ない）" \
+  docs/test/removed/index.md '削除する' '再生成する'
 
 exit "$fail"
