@@ -106,13 +106,18 @@ run_sara_new() {
 
 field() { printf '%s\n' "$stdout_capture" | sed -n "s/^$1:[[:space:]]*//p"; }
 
+# 起票の必須入力（--description と generated の actor）。§11 だけが外して異常系を確かめる。
+desc=(--description "起票テスト")
+generated_by="claude-code/sara-new-test"
+export SARA_NEW_GENERATED_BY="$generated_by"
+
 # --- 1. 起票と rename ---------------------------------------------------------
 
 repo="$work/basic"
 make_repo "$repo"
 # 日付は SUT 実行の前後で採る（日付の跨ぎに備える）。
 date_before="$(date +%Y%m%d)"
-run_sara_new "$repo" sara-new requirement lock-ordering docs/requirements
+run_sara_new "$repo" sara-new requirement lock-ordering docs/requirements -- "${desc[@]}"
 date_after="$(date +%Y%m%d)"
 
 created="$(field file)"
@@ -195,7 +200,7 @@ fi
 
 repo3="$work/passthru"
 make_repo "$repo3"
-run_sara_new "$repo3" sara-new requirement passthru docs/requirements -- --name "透過テスト"
+run_sara_new "$repo3" sara-new requirement passthru docs/requirements -- --name "透過テスト" "${desc[@]}"
 passthru_file="$(field file)"
 if [[ "$status_capture" -eq 0 ]] && grep -q 'name: "透過テスト"' "$repo3/$passthru_file" 2>/dev/null; then
   pass "-- 以降のオプションを sara init へ透過する"
@@ -209,7 +214,7 @@ fi
 
 repo4="$work/mkdir"
 make_repo "$repo4"
-run_sara_new "$repo4" sara-new test_case first-case docs/test/new-area
+run_sara_new "$repo4" sara-new test_case first-case docs/test/new-area -- "${desc[@]}"
 mkdir_file="$(field file)"
 if [[ "$status_capture" -eq 0 && -f "$repo4/$mkdir_file" && "$mkdir_file" == docs/test/new-area/* ]]; then
   pass "存在しない配置ディレクトリを作って起票する（型名はアンダースコア表記）"
@@ -218,7 +223,7 @@ else
 fi
 
 # ハイフン表記（sara init のサブコマンド名そのもの）も同じ型として通る。
-run_sara_new "$repo4" sara-new test-case second-case docs/test/new-area
+run_sara_new "$repo4" sara-new test-case second-case docs/test/new-area -- "${desc[@]}"
 hyphen_file="$(field file)"
 hyphen_id="$(field id)"
 if [[ "$status_capture" -eq 0 && "$hyphen_id" == CASE-* ]]; then
@@ -235,7 +240,7 @@ fi
 repo5="$work/slug"
 make_repo "$repo5"
 for bad in "" "has space" "../escape" "a/b" "UPPER" "under_score" "dot.ted"; do
-  run_sara_new "$repo5" sara-new requirement "$bad" docs/requirements
+  run_sara_new "$repo5" sara-new requirement "$bad" docs/requirements -- "${desc[@]}"
   bad_status="$status_capture"
   bad_files="$(find "$repo5/docs" -name '*.md' -type f | wc -l)"
   if [[ "$bad_status" -eq 2 && "$bad_files" -eq 0 ]]; then
@@ -246,7 +251,7 @@ for bad in "" "has space" "../escape" "a/b" "UPPER" "under_score" "dot.ted"; do
 done
 
 # 有効側（英小数字とハイフン）は通し、その slug がファイル名へ入ることまで見る。
-run_sara_new "$repo5" sara-new requirement a1-b2 docs/requirements
+run_sara_new "$repo5" sara-new requirement a1-b2 docs/requirements -- "${desc[@]}"
 valid_slug_file="$(field file)"
 if [[ "$status_capture" -eq 0 && "$valid_slug_file" == *-a1-b2.md ]]; then
   pass "英小文字・数字・ハイフンの slug を受理し、ファイル名へ入れる（境界の有効側）"
@@ -262,7 +267,7 @@ repo6="$work/adr"
 make_repo "$repo6"
 for spec in "adr ADR docs/adr" "sara_adr SDR docs/sara-adr" "sara-adr SDR docs/sara-adr"; do
   read -r adr_type adr_prefix adr_dir <<<"$spec"
-  run_sara_new "$repo6" sara-new "$adr_type" some-decision "$adr_dir" -- --status 採用
+  run_sara_new "$repo6" sara-new "$adr_type" some-decision "$adr_dir" -- --status 採用 "${desc[@]}"
   adr_id="$(field id)"
   adr_file="$(field file)"
   if [[ "$status_capture" -eq 0 && "$adr_id" =~ ^${adr_prefix}-${uuid_re}$ \
@@ -338,7 +343,7 @@ repo7="$work/initfail"
 make_repo "$repo7"
 run_sara_new "$repo7" env SARA_NEW_SARA="$fake_sara" SARA_NEW_FAKE_MODE=fail \
   SARA_NEW_FAKE_WANT_TYPE=requirement SARA_NEW_FAKE_WANT_STEM=boom \
-  sara-new requirement boom docs/requirements
+  sara-new requirement boom docs/requirements -- "${desc[@]}"
 initfail_status="$status_capture"
 initfail_files="$(find "$repo7/docs" -name '*.md' -type f | wc -l)"
 initfail_tmp="$(find "$repo7/docs" -name '.sara-new-*' | wc -l)"
@@ -362,7 +367,7 @@ repo8="$work/noid"
 make_repo "$repo8"
 run_sara_new "$repo8" env SARA_NEW_SARA="$fake_sara" SARA_NEW_FAKE_MODE=no-id \
   SARA_NEW_FAKE_WANT_TYPE=requirement SARA_NEW_FAKE_WANT_STEM=noid \
-  sara-new requirement noid docs/requirements
+  sara-new requirement noid docs/requirements -- "${desc[@]}"
 noid_status="$status_capture"
 noid_files="$(find "$repo8/docs" -name '*.md' -type f | wc -l)"
 noid_tmp="$(find "$repo8/docs" -name '.sara-new-*' | wc -l)"
@@ -387,7 +392,7 @@ make_repo "$repo8b"
 run_sara_new "$repo8b" env SARA_NEW_SARA="$fake_sara" SARA_NEW_FAKE_MODE=id \
   SARA_NEW_FAKE_ID='TEST-CASE-11111111-2222-4333-8444-555555555555' \
   SARA_NEW_FAKE_WANT_TYPE=requirement SARA_NEW_FAKE_WANT_STEM=badprefix \
-  sara-new requirement badprefix docs/requirements
+  sara-new requirement badprefix docs/requirements -- "${desc[@]}"
 badprefix_status="$status_capture"
 badprefix_files="$(find "$repo8b/docs" -name '*.md' -type f | wc -l)"
 badprefix_tmp="$(find "$repo8b/docs" -name '.sara-new-*' | wc -l)"
@@ -408,7 +413,7 @@ fi
 
 repo9="$work/clobber"
 make_repo "$repo9"
-run_sara_new "$repo9" sara-new requirement dup docs/requirements
+run_sara_new "$repo9" sara-new requirement dup docs/requirements -- "${desc[@]}"
 first_file="$(field file)"
 if [[ -z "$first_file" ]]; then
   fault "§9 の前提（1 件目の起票）が失敗した（$stdout_capture）"
@@ -418,7 +423,7 @@ else
   run_sara_new "$repo9" env SARA_NEW_SARA="$fake_sara" SARA_NEW_FAKE_MODE=id \
     SARA_NEW_FAKE_ID="$first_id" SARA_NEW_FAKE_WANT_TYPE=requirement \
     SARA_NEW_FAKE_WANT_STEM=dup \
-    sara-new requirement dup docs/requirements
+    sara-new requirement dup docs/requirements -- "${desc[@]}"
   clobber_status="$status_capture"
   clobber_files="$(find "$repo9/docs/requirements" -name '*.md' -type f | wc -l)"
   clobber_tmp="$(find "$repo9/docs" -name '.sara-new-*' | wc -l)"
@@ -470,11 +475,86 @@ else
   fault "-- 区切り無しの余分な引数は exit 2 で拒否し、ファイルを残さない（exit=$stray_status 残 $stray_files 件）"
 fi
 
-run_sara_new "$repo10" sara-new --help
+run_sara_new "$repo10" env -u SARA_NEW_GENERATED_BY sara-new --help
 if [[ "$status_capture" -eq 0 ]]; then
-  pass "--help は exit 0"
+  pass "--help は exit 0（SARA_NEW_GENERATED_BY が無くても）"
 else
   fault "--help は exit 0（実際: exit=$status_capture）"
+fi
+
+# --- 11. --description と generated ------------------------------------------
+#
+# 必須入力が欠けたら起票の前に exit 2 で拒否し、配置ディレクトリも作らない。
+
+repo11="$work/okf"
+make_repo "$repo11"
+
+# 拒否の判定。exit 2・ファイルも配置ディレクトリも残さない・stderr が理由を名指しする。
+expect_rejected() {
+  local label=$1 dir=$2 reason=$3
+  local made_dir=0
+  [[ -e "$repo11/$dir" ]] && made_dir=1
+  if [[ "$status_capture" -eq 2 && "$made_dir" -eq 0 && "$stderr_capture" == *"$reason"* ]]; then
+    pass "$label"
+  else
+    fault "$label（exit=$status_capture 配置ディレクトリ作成=$made_dir stderr: $stderr_capture）"
+  fi
+}
+
+run_sara_new "$repo11" sara-new requirement no-desc docs/no-desc
+expect_rejected "-- が無く --description も無ければ exit 2 で拒否する" docs/no-desc description
+
+run_sara_new "$repo11" sara-new requirement no-desc docs/no-desc-2 -- --name "要約なし"
+expect_rejected "-- 以降に --description が無ければ exit 2 で拒否する" docs/no-desc-2 description
+
+run_sara_new "$repo11" env -u SARA_NEW_GENERATED_BY \
+  sara-new requirement no-actor docs/no-actor -- "${desc[@]}"
+expect_rejected "SARA_NEW_GENERATED_BY が無ければ exit 2 で拒否する" docs/no-actor SARA_NEW_GENERATED_BY
+
+run_sara_new "$repo11" env SARA_NEW_GENERATED_BY= \
+  sara-new requirement empty-actor docs/empty-actor -- "${desc[@]}"
+expect_rejected "SARA_NEW_GENERATED_BY が空なら exit 2 で拒否する" docs/empty-actor SARA_NEW_GENERATED_BY
+
+run_sara_new "$repo11" env 'SARA_NEW_GENERATED_BY=claude-code/"quoted"' \
+  sara-new requirement quoted-actor docs/quoted-actor -- "${desc[@]}"
+expect_rejected "SARA_NEW_GENERATED_BY が二重引用符を含めば exit 2 で拒否する" docs/quoted-actor SARA_NEW_GENERATED_BY
+
+# --description の別表記（sara init が受ける -d / --description=…）も指定として通る。
+for spelling in "-d|起票テスト" "--description=起票テスト"; do
+  if [[ "$spelling" == *"|"* ]]; then
+    spelled=("${spelling%%|*}" "${spelling#*|}")
+  else
+    spelled=("$spelling")
+  fi
+  run_sara_new "$repo11" sara-new requirement spelled docs/requirements -- "${spelled[@]}"
+  spelled_file="$(field file)"
+  if [[ "$status_capture" -eq 0 ]] && grep -q '^description: "起票テスト"$' "$repo11/$spelled_file" 2>/dev/null; then
+    pass "--description の別表記 ${spelled[0]} を受け、description が入る"
+  else
+    fault "--description の別表記 ${spelled[0]} を受け、description が入る（exit=$status_capture file=$spelled_file stderr: $stderr_capture）"
+  fi
+done
+
+# §1 で起票した item の frontmatter の末尾 3 行が generated ブロックになっている。
+mapfile -t fm_tail < <(awk 'NR == 1 { next } /^---$/ { exit } { print }' "$repo/$created" 2>/dev/null | tail -n 3)
+iso_re='^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[+-][0-9]{2}:[0-9]{2}$'
+gen_at="$(printf '%s' "${fm_tail[2]:-}" | sed -n 's/^  at: "\(.*\)"$/\1/p')"
+if [[ "${fm_tail[0]:-}" == "generated:" && "${fm_tail[1]:-}" == "  by: \"$generated_by\"" && -n "$gen_at" ]]; then
+  pass "frontmatter の末尾に generated.by（SARA_NEW_GENERATED_BY の値）と generated.at を付ける"
+else
+  fault "frontmatter の末尾に generated.by と generated.at を付ける（実際: ${fm_tail[*]:-なし}）"
+fi
+if [[ "$gen_at" =~ $iso_re ]]; then
+  pass "generated.at が UTC オフセット付きの ISO 8601（秒まで）"
+else
+  fault "generated.at が UTC オフセット付きの ISO 8601（秒まで）（実際: ${gen_at:-空}）"
+fi
+
+# generated を足した frontmatter を sara がそのまま読める。
+if (cd "$repo" && sara --no-color --no-emoji check >/dev/null 2>&1); then
+  pass "generated を付けた item を sara check が受け付ける"
+else
+  fault "generated を付けた item を sara check が受け付ける（$(cd "$repo" && sara --no-color --no-emoji check 2>&1 | tail -n 5)）"
 fi
 
 exit "$fail"
