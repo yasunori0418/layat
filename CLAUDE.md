@@ -143,6 +143,7 @@ nix flake check          # 評価エラー・型チェック
 nix build .#<package>    # パッケージビルド
 nix run .#<script>       # activation スクリプト実行
 nix develop ./dev --command sara check   # ドキュメントグラフの検証
+nix develop '.?dir=dev#sara' -c dev/tests/term-avoid.sh   # avoid の綴りの検出（textlint + prh）
 
 # テストコード ⇔ CASE 対応（→ Issue #304）
 nix develop '.?dir=dev#sara' -c dev/tests/test-doc-map.sh   # 契約テスト（純静的・毎 PR で回る）
@@ -183,6 +184,7 @@ Issue は GitHub Issues で管理し、`gh` コマンドで操作する。epic�
 用語は `docs/glossary.md` の索引から `docs/ubiquitous-language/` の item を辿る。執筆では item の
 `avoid` にある綴りを使わず、必要な語の item が無ければ起こす。手順は dev/skills/sara-docs の
 `references/ubiquitous-language.md`。
+`avoid` の綴りは契約テスト `dev/tests/term-avoid.sh`（textlint + prh）が検出する。対象は docs・README・CLAUDE.md で、ADR・SDR・用語 item は除く。
 
 ### Sara document graph
 

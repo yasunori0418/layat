@@ -72,6 +72,7 @@ FLAKE_CHECKS=(
   dev:checks.risk-matrix
   dev:checks.sara-gap
   dev:checks.sara-new
+  dev:checks.term-avoid
   dev:checks.test-doc-map
 )
 

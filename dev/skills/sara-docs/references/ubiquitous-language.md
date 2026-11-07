@@ -31,7 +31,8 @@ sara check --format json | jq -r '
 
 - `name`: 英語の正名。英語の正名が一次になる
 - `name_ja`: 日本語の正名。英語のまま使う語では省く
-- `avoid`: 執筆で使わない綴りのリスト。綴りだけを書き、「〜と説明すること」のような説明は本文に書く
+- `avoid`: 執筆で使わない綴りのリスト。綴りだけを書き、「〜と説明すること」のような説明は本文に書く。
+  他の語の正名として正しく使う綴り（`copy` / `mode` など）は入れない。入れると検出が偽陽性になる
 - relation は持たない。ADR や QA、REQ / DSG へ辺を張らない
 
 本文は `# UBQ-<フル UUIDv4>: <name>` の見出しの下に、次の 4 節をこの順で置く。`sara init` が
@@ -47,6 +48,7 @@ sara check --format json | jq -r '
 ## 執筆での使い方
 
 - 語は item の正名で書く。`avoid` にある綴りは使わない
+- `avoid` の綴りは契約テスト `dev/tests/term-avoid.sh`（textlint + prh）が検出する。対象は docs・README・CLAUDE.md で、ADR・SDR・用語 item は除く
 - 必要な語の item が無ければ、その場で綴りを決めずに item を起こすか、既存の語を選ぶ
 
 ## 語が無いときに item を起こす
