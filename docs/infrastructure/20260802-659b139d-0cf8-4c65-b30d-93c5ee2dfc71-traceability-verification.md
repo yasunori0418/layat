@@ -9,7 +9,7 @@ satisfies:
   - "QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-08T19:10:06+09:00"
+  at: "2026-11-08T19:20:21+09:00"
 ---
 # INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71: トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）
 
@@ -52,9 +52,9 @@ CI 用の devShell も sara 専用のものへ分ける。
 
 ## ID 規約
 
-正式 ID は `<PREFIX>-<フル UUIDv4>`。relation リスト・散文中の参照を含め**どの面でもフル ID を
+正式 ID は `<PREFIX>-<フル UUIDv4>`。relation リスト・散文中の参照を含め**ID を書くときはフル ID を
 そのまま書く**（→ SDR-6c6c0681-4d5e-429e-8ee9-acf8dd94ad54）。乱数 ID により並列レーンでの採番衝突を構造的に回避する。
-表記が全面で一致するので、目に付いた ID をそのまま grep すれば frontmatter の `id:` と参照元に当たり、
+relation リストと散文の表記が一致するので、目に付いた ID をそのまま grep すれば frontmatter の `id:` と参照元に当たり、
 `sara query` へ渡しても同じものに当たる。
 
 ADR も同じ形式で採番する（`ADR-<フル UUIDv4>`・`SDR-<フル UUIDv4>`）。連番の `ADR-NNNN` は
