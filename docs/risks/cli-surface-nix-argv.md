@@ -48,7 +48,7 @@ CLI の表層は「どの対象に」「どの修飾で」作用するかを決�
 attr path の解決も同じ層にある。名前を省いたときに `default` 以外へ解決する、manifest を
 `layat` 名前空間ではなく `packages` に探す（→ [config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない](../requirements/default-config-name-and-namespace.md)）、flake の
 `layat.<system>.<name>` と legacy の `-f` の使い方で attr path を取り違える
-（→ [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md)）、`apply --all` の rootKind を一括 eval で取らずフィルタの
+（→ [entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md)）、`apply --all` の rootKind を一括 eval で取らずフィルタの
 振り分けを誤る（→ [apply --all は rootKind を 1 回の一括 eval で取る](../requirements/apply-all-batched-eval.md)）と、意図しない config を build する。
 entrypoint や `layat.<name>` が見つからないときに別の config を推測するか空の manifest で続ける
 （→ [要求された操作が成立しないときは CLI がエラーで停止し、暗黙のフォールバックを採らない](../requirements/cli-stop-conditions.md)）、`rollback` が `--all` を受け付ける

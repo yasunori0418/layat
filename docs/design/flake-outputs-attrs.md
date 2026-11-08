@@ -60,7 +60,7 @@ outputs = { ... }: {
   そのまま公開し、公開 API 面は [lib は公開 API・型定義・manifest 生成・マーカー構築子・apply コマンド組み立ての 5 ファイルへ分割する](lib-module-split.md) の `lib/default.nix` が決める
 
 **ユーザー側の entrypoint が公開する `layat.<system>.<name>` は、この 5 系統とは別**で、
-layat 自身の outputs ではなく consumer 側の output である（規範は [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md)）。
+layat 自身の outputs ではなく consumer 側の output である（規範は [entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md)）。
 
 ## 出典
 

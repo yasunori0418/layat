@@ -103,7 +103,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 ### entrypoint の発見・アドレッシング
 
 - [entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする](requirements/entrypoint-discovery-order.md) — entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする
-- [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](requirements/named-manifest-addressing.md) — entrypoint は layat.\<name\> に named manifest を公開し CLI は形ごとの attr path で build する
+- [entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する](requirements/named-manifest-addressing.md) — entrypoint は layat.\<name\> に named manifest を公開し CLI は形ごとの attr path で build する
 - [config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない](requirements/default-config-name-and-namespace.md) — config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない
 - [flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない](requirements/flake-parts-module-path.md) — flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない
 - [legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない](requirements/legacy-entrypoint-passthru-canonical.md) — legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない
@@ -280,7 +280,7 @@ root は評価時にパスへ展開せず、マーカーが運ぶ root の種別
 - [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](requirements/hm-named-configs-profiles.md) — HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる
 - [layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない](requirements/backup-wiring-layer.md) — layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない
 - [layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける](requirements/recopy-wiring-layer.md) — layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける
-- [HM モジュールは configs.<name>.subdir が非 null の config を homeRoot の subdir 適用形で組み、全 target を $HOME/<subdir>/ 配下に置く](requirements/hm-config-subdir-wiring.md) — HM モジュールは configs.<name>.subdir が非 null の config を homeRoot の subdir 適用形で組み、全 target を $HOME/<subdir>/ 配下に置く
+- [HM モジュールは `configs.<name>.subdir` が非 null の config を homeRoot の subdir 適用形で組み、全 target を `$HOME/<subdir>/` 配下に置く](requirements/hm-config-subdir-wiring.md) — HM モジュールは configs.<name>.subdir が非 null の config を homeRoot の subdir 適用形で組み、全 target を $HOME/<subdir>/ 配下に置く
 - [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](requirements/modules-are-engine-wiring.md) — 全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない
 - [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](requirements/hm-activation-contract.md) — home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める
 - [HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う](requirements/hm-activation-per-config-kick.md) — HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う

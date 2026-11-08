@@ -39,7 +39,7 @@ generated:
 | entrypoint が発見できない（CWD に flake.nix/shell.nix/default.nix なし・`-f` 未指定）| CLI がエラーで停止 |
 
 > **上は原文の写しで、規範は frontmatter が正**。entrypoint の探索順と `-f` による上書きは
-> [entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする](entrypoint-discovery-order.md)、`layat.<name>` のアドレッシングは [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](named-manifest-addressing.md)、`apply` で name を省略した
+> [entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする](entrypoint-discovery-order.md)、`layat.<name>` のアドレッシングは [entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する](named-manifest-addressing.md)、`apply` で name を省略した
 > ときに `default` へ解決すること（および `layat.default` 未定義でのエラー停止）は
 > [apply の config 選択は name 省略で default・明示で単一・--all で全件](apply-config-selection.md) / [config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない](default-config-name-and-namespace.md)、`rollback` が名指し必須で home / system mode 限定であることは
 > [rollback は名指し必須で --all に対応しない](rollback-named-only.md) / [rollback と list-generations は home / system mode 限定にする](rollback-list-generations-home-only.md)、`gitignore` を非 project config へ与えたときのエラー停止は
@@ -58,4 +58,4 @@ generated:
 あたる。よって本 item に `justifies` は張られないが、これは張り忘れではない。前提となる
 「CLI が entrypoint と named manifest を解決する」ことは旧決定が定めていた（現在は [生成器の契約を Discover / Roots / Build / DryBuild の 4 操作にする](../adr/generator-four-operations.md) の生成器が担う）が、旧決定は解決できなかった
 ときの扱いを決めていないため、側面の根拠として `justifies` は張らない（前提そのものの帰属は
-[entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする](entrypoint-discovery-order.md) / [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](named-manifest-addressing.md) が担当する）。
+[entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする](entrypoint-discovery-order.md) / [entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する](named-manifest-addressing.md) が担当する）。

@@ -129,7 +129,7 @@ generated:
   rollback の target（N-1）は世代リンクから読む。
 
 変えないもの: `--json` の契約（出所の食い違い警告を除く）・flock の鍵（profileDir）・prune の対象。記録のレイアウトは
-[last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](../design/last-applied-record-layout.md)、古くなった配置の除去の保守的不変条件は
+[last-applied 記録は `<state>/layat/<鍵>/last-applied.json` に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](../design/last-applied-record-layout.md)、古くなった配置の除去の保守的不変条件は
 [古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](stale-removal-invariants.md)、rollback の手順は
 [rollback は FS を先に収束させてから profile ポインタを最後に移す](rollback-refit-then-pointer.md)、system mode の記録基底は
 [system mode は root を / に解決し、変更系操作の前に euid 0 を確認し、profile と last-applied 記録を system 基底に置く](system-mode-root-gate-and-record-base.md) の担当。

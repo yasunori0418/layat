@@ -76,7 +76,7 @@ generated:
 > - manifest を供給するオプションの定義（canonical は `layat.configs.<name>.entries`・
 >   `layat.entries` はその糖衣）→ [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)、1 config が 1 manifest = 1 profile に対応する
 >   ことと profile 粒度 → [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md)。本 item の写しにある `layat.entries` は原文逐語であり、
->   規範文では供給元を「config の entries」と述べて [HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) と衝突しない形にしている。
+>   規範文では供給元を「config の entries」と述べて [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) と衝突しない形にしている。
 >   activation が全 config を 1 回の `apply --all` 起動へ渡す規律（[モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)・`<name>` の
 >   辞書順・`--jobs`・部分失敗の集約）は原文に対応記述が無いため本 item の写しには現れないが、
 >   規範は [HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う](hm-activation-per-config-kick.md) が持つ
@@ -89,7 +89,7 @@ generated:
 >   起きない」ことだけを規定する
 >
 > 原文が世代の箇条書きに併記する「MVP は固定名 `default` の単一 profile
-> （`<state>/nix/profiles/layat/default`）」は、**[HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が `layat.configs.<name>` の実装を
+> （`<state>/nix/profiles/layat/default`）」は、**[HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が `layat.configs.<name>` の実装を
 > 決定済み**で反転しているため写しから落とした（[HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md) / [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md) と同じ扱い）。
 > `docs/spec.md` の追従は本 item の担当範囲外。
 >

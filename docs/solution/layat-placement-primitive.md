@@ -68,7 +68,7 @@ layat モデル:
 > **上の 2 つの図は分割時点の `docs/concept.md`（原文）からの写し**。solution は解決策の
 > 位置づけを述べる層で規範を持たないため、独立更新の粒度が config 単位
 > （1 profile = 1 config）であることの規範は
-> [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](../requirements/generation-mechanism-link-farm-manifest.md) にあり、その config をどう選ぶかは [apply の config 選択は name 省略で default・明示で単一・--all で全件](../requirements/apply-config-selection.md) / [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md) が担う。
+> [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](../requirements/generation-mechanism-link-farm-manifest.md) にあり、その config をどう選ぶかは [apply の config 選択は name 省略で default・明示で単一・--all で全件](../requirements/apply-config-selection.md) / [entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md) が担う。
 > 使われ方としての整理は [役割ごとに config を分けて更新を独立させ、1 つの更新を他の役割へ波及させない](../use-cases/independent-update-cycles.md) が担う。
 
 `home.file` 相当（root = `$HOME`）はこのプリミティブの一適用に過ぎず、root は

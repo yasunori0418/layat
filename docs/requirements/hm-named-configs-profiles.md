@@ -52,17 +52,17 @@ generated:
 > 単一 manifest = 1 profile（固定名 `default`）で `<name>` 次元を持たず、**HM モジュール経由では
 > 役割分離はできない**。役割ごとに分けたいユーザーは standalone CLI 経路を使う。HM の複数
 > profile 化（`layat.configs.<name>.entries` 等）は将来拡張の seam として残す」と述べるが、
-> この MVP 限定は **[HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md)・[layat.entries を configs.default.entries への rename 糖衣として残す](../adr/hm-entries-renamed-sugar.md) が実装決定済み**（seam を実装へ進め、`layat.entries` を
+> この MVP 限定は **[HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md)・[layat.entries を configs.default.entries への rename 糖衣として残す](../adr/hm-entries-renamed-sugar.md) が実装決定済み**（seam を実装へ進め、`layat.entries` を
 > `configs.default.entries` への糖衣にする）で反転している。`docs/spec.md` 側がこの改訂に
 > 追従できていないため、分割にあたって原文の MVP 限定を規範へ持ち込まない判断をした
 > （[root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md) / [意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](normalize-manifest-cross-field-checks.md) で [rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)・[root は 3 つの marker で表す](../adr/three-root-markers.md) 由来の未追従を扱ったのと同じ扱い）。
 > `docs/spec.md` の追従は本 item の担当範囲外。
 >
 > **原文の残る規範の所在**: `layat.configs` / `layat.entries` のオプション定義そのものは
-> [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)（[HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が定義先を `modules/common.nix` としているため全モジュール共通の
+> [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)（[HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が定義先を `modules/common.nix` としているため全モジュール共通の
 > 集合に属する）、profile dir レイアウトの物理形は [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](profile-on-disk-layout.md)、home mode が `<name>` 直キーで
 > あることは [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md)、CLI 単体が `layat.<name>` で複数 profile を持てることは
-> [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](named-manifest-addressing.md)、1 起動あたりの activation 契約は [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](hm-activation-contract.md)、module の使い方で rollback を host へ
+> [entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する](named-manifest-addressing.md)、1 起動あたりの activation 契約は [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](hm-activation-contract.md)、module の使い方で rollback を host へ
 > 一本化することは [module 時は rollback を host へ一本化し、layat profile は前進のみで追従する](module-mode-profile-internal.md) の担当。
 >
 > **configs を導入した旧決定の activation と衝突検出の項を本 item に含めない理由**: その旧決定は activation が `configs` を
@@ -82,8 +82,8 @@ generated:
 `docs/spec.md`「モジュールオプション仕様」→「共通オプション（全モジュール）」節の
 blockquote「HM モジュールの profile 粒度（MVP）」。
 
-決定の実体は [HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md)「HM モジュールは layat.configs.<name> ごとに独立した profile を持つ」と
+決定の実体は [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md)「HM モジュールは layat.configs.<name> ごとに独立した profile を持つ」と
 [layat.entries を configs.default.entries への rename 糖衣として残す](../adr/hm-entries-renamed-sugar.md)「layat.entries を configs.default.entries への rename 糖衣として残す」（MVP 限定の旧決定を改訂）。`<name>` 次元と
-atomic 性・合成ヘルパ不提供は [HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md)、`default` が従来と同じ profile に解決され続ける非破壊性は
-[HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md)（profile dir が `<name>` 直キーに乗ること）と [layat.entries を configs.default.entries への rename 糖衣として残す](../adr/hm-entries-renamed-sugar.md)（`layat.entries` を `configs.default.entries`
+atomic 性・合成ヘルパ不提供は [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md)、`default` が従来と同じ profile に解決され続ける非破壊性は
+[HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md)（profile dir が `<name>` 直キーに乗ること）と [layat.entries を configs.default.entries への rename 糖衣として残す](../adr/hm-entries-renamed-sugar.md)（`layat.entries` を `configs.default.entries`
 への糖衣とすること）の双方に依る。

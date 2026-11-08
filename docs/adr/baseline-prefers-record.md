@@ -47,7 +47,7 @@ warning を 1 行出す。どちらも無い初回は、「last-applied 記録�
 
 この順序を使う処理（apply の古くなった配置の除去と drift 修復・reset の撤去対象・rollback
 の比較の基準）と warning の細目は [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](../requirements/last-applied-record.md) と
-[last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](../design/last-applied-record-layout.md) に、世代機構の側の読み方は
+[last-applied 記録は `<state>/layat/<鍵>/last-applied.json` に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](../design/last-applied-record-layout.md) に、世代機構の側の読み方は
 [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](../requirements/generation-mechanism-link-farm-manifest.md) に置く。
 
 ## 根拠

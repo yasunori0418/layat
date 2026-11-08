@@ -1,7 +1,7 @@
 ---
 id: "REQ-068f2fb3-5459-4325-9359-c931b5049e0d"
 type: requirement
-name: "HM モジュールは configs.<name>.subdir が非 null の config を homeRoot の subdir 適用形で組み、全 target を $HOME/<subdir>/ 配下に置く"
+name: "HM モジュールは `configs.<name>.subdir` が非 null の config を homeRoot の subdir 適用形で組み、全 target を `$HOME/<subdir>/` 配下に置く"
 status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
@@ -26,7 +26,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-068f2fb3-5459-4325-9359-c931b5049e0d: HM モジュールは configs.<name>.subdir が非 null の config を homeRoot の subdir 適用形で組み、全 target を $HOME/<subdir>/ 配下に置く
+# REQ-068f2fb3-5459-4325-9359-c931b5049e0d: HM モジュールは `configs.<name>.subdir` が非 null の config を homeRoot の subdir 適用形で組み、全 target を `$HOME/<subdir>/` 配下に置く
 
 ## 仕様
 
@@ -44,4 +44,4 @@ generated:
 
 ## 出典
 
-[configs.<name>.subdir で config ごとに target の基点を寄せる](../adr/module-config-subdir-option.md)・[モジュールは subdir の確認を lib に委ねる](../adr/module-delegates-subdir-validation.md)。subdir 適用形そのものは [root マーカーに subdir の適用形を持たせる](../adr/root-marker-subdir-applied-form.md) が定めている。
+[`configs.<name>.subdir` で config ごとに target の基点を寄せる](../adr/module-config-subdir-option.md)・[モジュールは subdir の確認を lib に委ねる](../adr/module-delegates-subdir-validation.md)。subdir 適用形そのものは [root マーカーに subdir の適用形を持たせる](../adr/root-marker-subdir-applied-form.md) が定めている。

@@ -88,7 +88,7 @@ last-applied 記録を共有する場合。互いの entry を古くなった配
 
 記録の置き場・残りの内容・書き込みの規則は [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)、
 警告コードの一覧と payload 上の置き場は [変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く](json-change-payload.md)、
-レイアウトは [last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](../design/last-applied-record-layout.md) の担当。
+レイアウトは [last-applied 記録は `<state>/layat/<鍵>/last-applied.json` に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](../design/last-applied-record-layout.md) の担当。
 
 ## 出典
 

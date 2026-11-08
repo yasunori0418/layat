@@ -77,7 +77,7 @@ generated:
 > （解決済み root でキーすること）とその理由・`<roothash>`（解決後の絶対 root パスの sha256
 > 短縮 hex）の定義が [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md)、孤児 profile の扱いが [孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する](project-mode-orphan-profile.md) の担当。
 > HM モジュール経由も home mode の `<name>` 直キーに乗る（原文が挙げる「固定名 `default`」の
-> MVP 限定は [HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が反転済み・[HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md)）。本 item は「キーで指す先が
+> MVP 限定は [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が反転済み・[HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md)）。本 item は「キーで指す先が
 > ディレクトリであり、その中に何をどう並べるか」という物理形を規定する。flock を blocking で
 > 取るか try-lock で取るかは [flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする](flock-acquisition-mode.md)、pending out-link が gcroot を持ち config あたり
 > 最大 1 に抑えられることは [失敗時に残る pending gcroot は config あたり最大 1 個に有界とし回収処理を持たない](pending-gcroot-bounded.md) の担当。

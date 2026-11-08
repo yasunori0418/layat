@@ -35,5 +35,5 @@ name 省略時に `default` が未定義ならエラーになることは `layat
 
 `docs/spec.md`「CLI 仕様」→「アドレッシング」節の末尾段落。
 
-決定の実体は [named manifest を専用の layat.<name> 名前空間に公開する](../adr/layat-name-namespace.md)・[apply の config は名前省略で default を選び、--all で全件を選ぶ](../adr/config-selection-default-and-all.md)（専用 `layat` 名前空間・`default` 慣例）と、棄却した代替案
+決定の実体は [named manifest を専用の `layat.<name>` 名前空間に公開する](../adr/layat-name-namespace.md)・[apply の config は名前省略で default を選び、--all で全件を選ぶ](../adr/config-selection-default-and-all.md)（専用 `layat` 名前空間・`default` 慣例）と、棄却した代替案
 「アドレッシングで `packages.<system>.<name>` を流用」の項。

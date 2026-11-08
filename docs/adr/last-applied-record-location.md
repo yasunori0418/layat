@@ -46,7 +46,7 @@ generated:
 
 apply は、最後に配置した manifest を layat 自前の last-applied 記録に書く。記録は state
 基底の下に置き、鍵は profileDir と同じ規則で決める（[profile は解決済み root の roothash でキーする](profile-keyed-by-roothash-of-resolved-root.md)）。
-パスとレイアウトの細目は [last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](../design/last-applied-record-layout.md) に置く。
+パスとレイアウトの細目は [last-applied 記録は `<state>/layat/<鍵>/last-applied.json` に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](../design/last-applied-record-layout.md) に置く。
 
 ## 根拠
 

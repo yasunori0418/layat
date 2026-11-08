@@ -1,7 +1,7 @@
 ---
 id: "ADR-01abcd5a-464f-4c44-8afd-30950631487c"
 type: adr
-name: "HM モジュールは layat.configs.<name> ごとに独立した profile を持つ"
+name: "HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ"
 status: stable
 sources:
   - id: "issue-585"
@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:35:23+09:00"
 ---
-# ADR-01abcd5a-464f-4c44-8afd-30950631487c: HM モジュールは layat.configs.<name> ごとに独立した profile を持つ
+# ADR-01abcd5a-464f-4c44-8afd-30950631487c: HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -65,7 +65,7 @@ generated:
 - `<roothash>` 算出・backref（`.root`）は project mode と同一機構
 
 > **上は原文の写しに system の行と散文を足したもので、規範は frontmatter が正**。原文の表が持つ「HM モジュール経由（MVP）は
-> `<state>/nix/profiles/layat/default`（固定名 1 profile）」の行は、**[HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が HM の
+> `<state>/nix/profiles/layat/default`（固定名 1 profile）」の行は、**[HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が HM の
 > `layat.configs.<name>` 実装を決定済み**で反転している（HM も `<name>` 次元を持ち、home mode の
 > `<name>` 直キーにそのまま乗る。`default` は糖衣が指す config 名に過ぎない）。`docs/spec.md`
 > 側がこの改訂に追従できていないため、分割にあたって MVP 限定の行を規範へ持ち込まない判断を

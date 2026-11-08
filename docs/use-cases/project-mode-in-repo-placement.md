@@ -46,7 +46,7 @@ devShells.${system}.default = pkgs.mkShell {
 > **上は分割時点の `docs/concept.md`（原文）からの写し**（コメントの出典注記は省いた）。
 > use_case は使われ方を述べる層で規範を持たないため、この例が示す各要素の規範は
 > `requirement` 側にある
-> （devShell 同梱 → [layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする](../requirements/cli-primary-ux-installation.md)、`layat.<name>` のアドレッシング → [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md)、
+> （devShell 同梱 → [layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする](../requirements/cli-primary-ux-installation.md)、`layat.<name>` のアドレッシング → [entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md)、
 > devShell からの engine 起動 → [devShell は shellHook から engine を起動する配線で、シェル入室のたびに project mode で配置する](../requirements/devshell-wiring.md)）。
 
 配置物は per-clone で再生成される前提の **ephemeral** であり、プロジェクトにはコミットされ
