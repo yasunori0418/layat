@@ -1,0 +1,48 @@
+---
+id: "ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246"
+type: adr
+name: "内部コマンドの開示で透明性を保つ"
+status: stable
+sources:
+  - id: "issue-3"
+    resource: "https://github.com/yasunori0418/layat/issues/3"
+    title: "#3"
+origin: "Issue #3（CLI 化）。ADR-0007 §3 を書き直した"
+justifies:
+  - "REQ-4ffda99a-7062-4c00-915f-70b525cb215b"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:00:56+09:00"
+---
+# ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246: 内部コマンドの開示で透明性を保つ
+
+- ステータス: stable
+- 日付: 2026-11-01
+- 関連: GitHub Issue #3
+- 起点: Issue #3（CLI 化）。ADR-0007 §3 を書き直した
+
+## 背景
+
+CLI は entrypoint を見つけ、manifest 生成器（既定は nix）に内部でコマンドを実行させて manifest の
+store path を得る。利用者からはこの内部の呼び出しが見えず、失敗したときの切り分けや、CLI を経ずに
+同じ操作を手で行う手段が分かりにくくなる。
+
+## 決定
+
+CLI は、manifest 生成器が内部で実行するコマンドを利用者に開示し、利用者が選んで手で実行できるように
+する。開示を `--help` の文面と `--debug` での逐次の表示にどう分担するかは [内部コマンドの開示を CLI と生成器で分担する](internal-command-disclosure-split.md) が決める。
+
+開示の範囲は [内部実行する nix コマンドを開示し世代の切替と GC は標準の nix コマンドへ委譲する](../requirements/nix-command-transparency-and-delegation.md) に置く。
+
+## 根拠
+
+layat は、利用者が配置を明示的に握り、モジュールの抽象で隠さないことを重んじる。内部コマンドを
+開示すれば、CLI は nix の操作を束ねる便宜にとどまり、利用者は CLI を経ずに同じ結果へたどり着ける。
+nix のエラーを利用者が自分で再現して調べる手がかりにもなる。
+
+## 棄却した代替案
+
+### 内部コマンドを開示しない
+
+CLI の操作だけを見せる案。表面は簡潔になるが、CLI がブラックボックスになり、配置を利用者が握るという
+方針に反する。

@@ -1,0 +1,83 @@
+---
+id: "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"
+type: requirement
+name: "CLI は manifest 生成器の契約（Discover / Roots / Build / DryBuild）越しに manifest を得る"
+status: stable
+derives_from:
+  - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
+  - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
+specification: |
+  The CLI SHALL obtain manifests only through a manifest generator contract, and the CLI
+  layer SHALL keep no more than the selection of a generator and its injection into the
+  engine. The contract SHALL take a config `name` as its only config argument, without a
+  system, and SHALL provide four operations: Discover, which finds the entrypoint; Roots,
+  which returns `manifest.Root` (rootKind and the fixed root when fixed) for one config or
+  for all configs without building anything; Build, which
+  takes a name and a pending path; and DryBuild, which returns the store path of the
+  link-farm without laying down a gcroot. The all-configs Roots and the prebuilt generator's
+  Roots SHALL also return the normalized target list, while a single-config Roots MAY omit
+  it. Every generator SHALL answer Roots before any
+  build, because the apply flow resolves profileDir and takes the lock before it builds.
+  Build SHALL lay down at the pending path, and return, the path of a link-farm that the
+  selected generation backend can commit (the default nixprofile backend requires a store
+  path). `--manifest` SHALL be served by a prebuilt
+  generator whose Discover is the given path, whose Roots reads that link-farm's
+  `manifest.json`, and whose Build returns that path. Where `--all` is combined with
+  `--manifest <name>=<link-farm>` pairs, the prebuilt generator SHALL hold the named set:
+  its all-configs Roots SHALL return each name's `manifest.Root` with the targets derived
+  from the entries of that link-farm's `manifest.json`, and Build and DryBuild SHALL select
+  the link-farm by name.
+specification_ja: |
+  CLI は manifest を manifest 生成器の契約越しにのみ得なければならず、CLI 層に残すのは
+  生成器の選択と engine への注入だけにしなければならない。契約が取る config の引数は
+  `name` のみとし（system は取らない）、次の 4 操作を持たなければならない: entrypoint を
+  発見する Discover、build せずに 1 config 分または全 config 分の `manifest.Root`
+  （rootKind・fixed のときの root）を返す Roots、name と pending の
+  パスを取る Build、gcroot を張らずに link-farm の store path を返す DryBuild。
+  全 config 分の Roots と prebuilt 生成器の Roots は正規化後の target 一覧も返さなければ
+  ならず、1 config 分の Roots はそれを省いてもよい。
+  apply の実行フローは build の前に profileDir を確定してロックを取るため、全ての生成器は
+  build の前に Roots に答えなければならない。Build は選択中の世代バックエンドがコミット可能な
+  link-farm のパス（既定の nixprofile は store path を要求する）を pending のパスに張って返さ
+  なければならない。`--manifest` は prebuilt
+  生成器が担わなければならない（Discover = 与えられたパス、Roots = その link-farm の
+  `manifest.json` から読む、Build = そのパスを返す）。`--all` と `--manifest <name>=<link-farm>`
+  の組を合成するときは、prebuilt 生成器は名前付きの集合を持たなければならない: 全 config 分の
+  Roots は name ごとの `manifest.Root` を、target 一覧をその link-farm の `manifest.json` の
+  entries から導出して返さなければならず、Build と DryBuild は name で link-farm を選ばなければ
+  ならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
+---
+# REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729: CLI は manifest 生成器の契約（Discover / Roots / Build / DryBuild）越しに manifest を得る
+
+## 仕様
+
+| 操作 | 入力 | 出力・事後条件 |
+|---|---|---|
+| Discover | `-f` の値（無ければ cwd） | entrypoint を発見する |
+| Roots | `name`（`--all` 用の一括取得は全件） | build せずに `manifest.Root`（`RootKind` / `Root`）を返す。`--all` 用の一括取得と prebuilt は `Targets` も返す（単一 config では任意） |
+| Build | `name` + pending のパス | 選択中の世代バックエンドがコミット可能な link-farm のパス（既定の nixprofile は store path）を pending に張って返す |
+| DryBuild | `name` | link-farm の store path を gcroot を張らずに返す |
+
+- Roots の先読みは能力宣言ではなく契約の前提条件。apply の「eval 先行 → flock → build」
+  （[実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](exec-flow-eval-lock-build.md)）を全ての生成器で成り立たせるため。
+- Build の事後条件は選択中の世代バックエンドに依存する。既定の nixprofile は `nix-env --set` が
+  store 外のパスを拒否するため store path を要求し、非 store パスを受け入れる世代バックエンドは
+  無い。世代バックエンドの契約は [engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md) の担当。
+- `--manifest` は prebuilt 生成器で、`--all` と合成するときは名前付き link-farm の集合を持つ。
+  その外面（フラグ・`-f` との排他・`<name>=<link-farm>` の繰り返し）は
+  [apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](apply-manifest-direct.md) の担当。
+- `Targets` は Go 構造体 `manifest.Root` 側のフィールドで、manifest.json スキーマ v1 は変えない。
+  消費者は `apply --all` の cross-config の target 衝突の確認だけなので、課すのは一括取得と prebuilt に
+  限る（単一 config の Roots で返すと nix 実装の eval が 1 本増える）。
+
+生成器の選び方は [生成器は明示指定のみで選び、フラグ・環境変数・設定ファイル・既定の順に解決する](generator-selection-precedence.md)、診断の扱いは
+[生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める](generator-diagnostics-contract.md) の担当。
+
+## 出典
+
+[manifest の取得をプロセス内の Go インターフェイスの生成器越しにする](../adr/manifest-generator-in-process-interface.md)・[生成器の契約を Discover / Roots / Build / DryBuild の 4 操作にする](../adr/generator-four-operations.md)・[Roots の先読みを全ての生成器の前提条件にする](../adr/roots-lookahead-required-of-every-generator.md)・[Build の事後条件を世代バックエンドがコミットできる link-farm のパスに置く](../adr/build-postcondition-committable-link-farm.md)・[--manifest を prebuilt 生成器に写す](../adr/manifest-flag-as-prebuilt-generator.md)。Build 事後条件の文言は
+[Build の事後条件を世代バックエンドがコミットできる link-farm のパスに置く](../adr/build-postcondition-committable-link-farm.md) が「選択中の世代バックエンドがコミット可能な link-farm のパス」へ緩和した。prebuilt
+生成器が名前付き集合を持つのは [apply --manifest でビルド済み link-farm を engine へ直接渡す](../adr/apply-manifest-prebuilt-link-farm.md)。

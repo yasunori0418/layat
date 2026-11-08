@@ -1,0 +1,65 @@
+---
+id: "SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb"
+type: sara_adr
+name: "ID はフル UUID に統一し 8 文字省略形を使わない"
+status: deprecated
+sources:
+  - id: "issue-366"
+    resource: "https://github.com/yasunori0418/layat/issues/366"
+    title: "#366"
+  - id: "issue-364"
+    resource: "https://github.com/yasunori0418/layat/issues/364"
+    title: "#364"
+origin: "epic #364 の着手前 grilling（2026-08-17）で確定。ADR-0053 §1 を書き直した"
+justifies:
+  - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:32+09:00"
+---
+# SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb: ID はフル UUID に統一し 8 文字省略形を使わない
+
+- ステータス: deprecated
+- 日付: 2026-11-01
+- 関連: [省略形の禁止は起票の機械化と全面移行で担保する](short-form-ban-enforced-by-tooling.md), GitHub Issue #366, #364
+- 起点: epic #364 の着手前 grilling（2026-08-17）で確定。ADR-0053 §1 を書き直した
+
+## 背景
+
+item の正式 ID はフル UUIDv4 だが、ファイル名と散文中の参照には前方 8 文字の省略形を使っていた。
+フル UUID は人が読めないという前提への対処だった。
+
+sara が見るのは正式 ID の一意性だけで、8 文字の一意性は見ない。省略形を保つには、自前の採番
+コマンドと、その契約テストと、モデル定義との対応の確認が要った。散文中の省略形からフル ID を探す
+手順も、エージェント向けの文書に書かなければならないほどの摩擦になっていた。
+
+## 決定
+
+ファイル名・散文中の参照・relation のどの面でも、フル ID（`<PREFIX>-<フル UUIDv4>`）をそのまま書く。
+8 文字の省略形は使わない。ファイル名が長くなることは受け入れ、ディレクトリ分割での短縮はしない。
+この禁止をどう担保するかは [省略形の禁止は起票の機械化と全面移行で担保する](short-form-ban-enforced-by-tooling.md) が決める。
+
+ID の規約は [トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）](../infrastructure/traceability-verification.md) の「ID 規約」節に、ファイル名の形式は CLAUDE.md の
+「ID 規約」表に置く。
+
+## 根拠
+
+item を辿るのは `sara query` で、人が ID を読む場面は想定より少なかった。省略形の読みやすさは、
+sara の外にある層を自前で保守するコストに見合わない。
+
+全面でフル ID を使えば、目に付いた ID をそのまま grep しても `sara query` へ渡しても同じものに当たる。
+
+## 棄却した代替案
+
+### 省略形を残し、8 文字の重複の確認だけを別に持つ
+
+自前の実装は減るが、sara の外の層を保守し続ける構造は変わらない。
+
+### UUID の先頭でディレクトリを分けてファイル名を短くする
+
+型ごとのディレクトリを `ls` すれば全件が見える、という一覧性を失う。
+
+### ULID / UUIDv7 を使う
+
+先頭が時刻になるので、フル形でも先頭が似通い、diff を目で見比べても違いが分かりにくい。時系列の並びは
+ファイル名の日付が担う。

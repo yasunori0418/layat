@@ -1,0 +1,52 @@
+---
+id: "ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c"
+type: adr
+name: "rootKind に system を足しても schemaVersion を上げない"
+status: stable
+origin: "次期マイルストーン計画の grilling（2026-07-04）。ADR-0036 §1a を書き直した"
+justifies:
+  - "REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb"
+references:
+  - "ADR-25d54346-f13a-4c12-9895-ab93dc6c183b"
+  - "ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203"
+  - "ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e"
+  - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
+  - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
+  - "ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429"
+  - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
+  - "ADR-419914ba-9896-4dd1-853b-fb514fcb9f38"
+  - "ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
+---
+# ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c: rootKind に system を足しても schemaVersion を上げない
+
+- ステータス: stable
+- 日付: 2026-11-03
+- 関連: [system mode の変更系操作の前に engine が euid 0 を確認する](system-mode-euid-gate.md), [profile の基底ディレクトリをモードで切り替える](profile-base-directory-per-mode.md), [prune は system 基底も走査し、権限の無い系列を見送る](prune-scans-system-base-skips-unpermitted.md), [root は 3 つの marker で表す](three-root-markers.md), [manifest.json を schemaVersion 1 の唯一の契約として固定する](manifest-json-contract-schemaversion-v1.md), [apply --all に root モードのフィルタを持たせる](apply-all-root-mode-filter.md), [module と project では世代操作を公開しない](module-and-project-hide-generation-ops.md), [profile は専用ディレクトリレイアウトに置く](profile-directory-layout.md), [profile は解決済み root の roothash でキーする](profile-keyed-by-roothash-of-resolved-root.md)
+- 起点: 次期マイルストーン計画の grilling（2026-07-04）。ADR-0036 §1a を書き直した
+
+## 背景
+
+`systemRoot` は root の marker として公開していたが、system mode を実装するまでは `normalizeManifest` が
+評価時に拒否していた。system mode を実装すると、`manifest.json` の `root.rootKind` に新しい値 `"system"` が
+現れる。`manifest.json` のスキーマは `schemaVersion = 1` で、版を上げるかどうかを決める必要があった。
+
+## 決定
+
+`rootKind` の値に `"system"` を足し、`schemaVersion` は 1 のまま据え置く。`rootKind` の値の一覧は
+[manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する](../requirements/manifest-root-object.md) に置く。
+
+## 根拠
+
+変更は列挙値を 1 つ足すだけで、既存のフィールドの意味も形も変わらない。古い CLI は知らない `rootKind` を
+拒否するので、古い CLI に新しい manifest を渡しても、既存の確認で安全に止まる。版を上げなくても、
+誤った配置は起きない。
+
+## 棄却した代替案
+
+### `schemaVersion` を 2 に上げる
+
+古い CLI は新しい manifest を版の違いで拒否できるが、`rootKind` の確認で既に拒否できている。版を上げると
+古い版を読む互換の扱いまで決める必要が生じ、列挙値 1 つの追加に見合わない。

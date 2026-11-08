@@ -115,10 +115,7 @@ export SARA_NEW_GENERATED_BY="$generated_by"
 
 repo="$work/basic"
 make_repo "$repo"
-# 日付は SUT 実行の前後で採る（日付の跨ぎに備える）。
-date_before="$(date +%Y%m%d)"
 run_sara_new "$repo" sara-new requirement lock-ordering docs/requirements -- "${desc[@]}"
-date_after="$(date +%Y%m%d)"
 
 created="$(field file)"
 created_id="$(field id)"
@@ -135,14 +132,12 @@ else
   fault "採番 ID が <PREFIX>-<フル UUIDv4> 形式（実際: $created_id）"
 fi
 
-uuid="${created_id#REQ-}"
-want_before="docs/requirements/$date_before-$uuid-lock-ordering.md"
-want_after="docs/requirements/$date_after-$uuid-lock-ordering.md"
+want_file="docs/requirements/lock-ordering.md"
 
-if [[ "$created" == "$want_before" || "$created" == "$want_after" ]]; then
-  pass "ファイル名が <YYYYMMDD>-<フル UUID>-<slug>.md で、出力の file: と一致する"
+if [[ "$created" == "$want_file" ]]; then
+  pass "ファイル名が <slug>.md で、出力の file: と一致する"
 else
-  fault "ファイル名が <YYYYMMDD>-<フル UUID>-<slug>.md（期待: $want_before 実際: $created）"
+  fault "ファイル名が <slug>.md（期待: $want_file 実際: $created）"
 fi
 
 if [[ -n "$created" && -f "$repo/$created" ]]; then
@@ -151,11 +146,11 @@ else
   fault "その名前のファイルが実在する（$repo/$created が無い）"
 fi
 
-# frontmatter の id と、ファイル名に埋めた UUID が一致する。
+# frontmatter の id が、出力の id: と一致する。
 if grep -q "id: \"$created_id\"" "$repo/$created" 2>/dev/null; then
-  pass "frontmatter の id とファイル名の UUID が同じ item を指す"
+  pass "frontmatter の id が出力の id: と一致する"
 else
-  fault "frontmatter の id とファイル名の UUID が同じ item を指す（id=$created_id）"
+  fault "frontmatter の id が出力の id: と一致する（id=$created_id）"
 fi
 
 # --name を渡さない既定経路で、item の name が仮ファイル名ではなく slug 由来になる。
@@ -236,10 +231,10 @@ fi
 #
 # 検査は起票の前に行い、失敗時にファイルを残さない。
 
-# 無効側の同値クラスは不正文字ごとに分ける。
+# 無効側の同値クラスは不正文字ごとに分ける。index は生成物の index.md と同じ名前になるので拒否する。
 repo5="$work/slug"
 make_repo "$repo5"
-for bad in "" "has space" "../escape" "a/b" "UPPER" "under_score" "dot.ted"; do
+for bad in "" "has space" "../escape" "a/b" "UPPER" "under_score" "dot.ted" "index"; do
   run_sara_new "$repo5" sara-new requirement "$bad" docs/requirements -- "${desc[@]}"
   bad_status="$status_capture"
   bad_files="$(find "$repo5/docs" -name '*.md' -type f | wc -l)"
@@ -253,10 +248,19 @@ done
 # 有効側（英小数字とハイフン）は通し、その slug がファイル名へ入ることまで見る。
 run_sara_new "$repo5" sara-new requirement a1-b2 docs/requirements -- "${desc[@]}"
 valid_slug_file="$(field file)"
-if [[ "$status_capture" -eq 0 && "$valid_slug_file" == *-a1-b2.md ]]; then
+if [[ "$status_capture" -eq 0 && "$valid_slug_file" == docs/requirements/a1-b2.md ]]; then
   pass "英小文字・数字・ハイフンの slug を受理し、ファイル名へ入れる（境界の有効側）"
 else
   fault "英小文字・数字・ハイフンの slug を受理し、ファイル名へ入れる（exit=$status_capture file=$valid_slug_file）"
+fi
+
+# 予約は index の完全一致だけで、index で始まる slug は通す。
+run_sara_new "$repo5" sara-new requirement index-1 docs/requirements -- "${desc[@]}"
+index_prefix_file="$(field file)"
+if [[ "$status_capture" -eq 0 && "$index_prefix_file" == docs/requirements/index-1.md ]]; then
+  pass "index で始まる slug は受理する（予約の境界の有効側）"
+else
+  fault "index で始まる slug は受理する（exit=$status_capture file=$index_prefix_file）"
 fi
 
 # --- 6. ADR の型 ---------------------------------------------------------------
@@ -265,13 +269,13 @@ fi
 
 repo6="$work/adr"
 make_repo "$repo6"
-for spec in "adr ADR docs/adr" "sara_adr SDR docs/sara-adr" "sara-adr SDR docs/sara-adr"; do
-  read -r adr_type adr_prefix adr_dir <<<"$spec"
-  run_sara_new "$repo6" sara-new "$adr_type" some-decision "$adr_dir" -- --status 採用 "${desc[@]}"
+for spec in "adr ADR docs/adr adr-decision" "sara_adr SDR docs/sara-adr underscore-decision" "sara-adr SDR docs/sara-adr hyphen-decision"; do
+  read -r adr_type adr_prefix adr_dir adr_slug <<<"$spec"
+  run_sara_new "$repo6" sara-new "$adr_type" "$adr_slug" "$adr_dir" -- --status 採用 "${desc[@]}"
   adr_id="$(field id)"
   adr_file="$(field file)"
   if [[ "$status_capture" -eq 0 && "$adr_id" =~ ^${adr_prefix}-${uuid_re}$ \
-    && "$adr_file" == "$adr_dir/"*"-${adr_id#"$adr_prefix"-}-some-decision.md" && -f "$repo6/$adr_file" ]]; then
+    && "$adr_file" == "$adr_dir/$adr_slug.md" && -f "$repo6/$adr_file" ]]; then
     pass "$adr_type を ${adr_prefix}-<フル UUIDv4> で起票する"
   else
     fault "$adr_type を ${adr_prefix}-<フル UUIDv4> で起票する（exit=$status_capture id=$adr_id file=$adr_file stderr: $stderr_capture）"
@@ -335,6 +339,13 @@ case "${SARA_NEW_FAKE_MODE:-}" in
     printf '  ID:   %s\n' "$SARA_NEW_FAKE_ID"
     exit 0
     ;;
+  race)
+    # 正しい仮ファイルを作り、その間に別の起票が同じ出力先を置いた状況を作る。
+    printf -- '---\nid: "%s"\n---\n' "$SARA_NEW_FAKE_ID" >"$tmp_path"
+    printf '先着\n' >"$SARA_NEW_FAKE_RACE_TARGET"
+    printf '  ID:   %s\n' "$SARA_NEW_FAKE_ID"
+    exit 0
+    ;;
   *)
     # モード指定漏れを成功扱いにしない。
     echo "fake sara: 未知のモード: ${SARA_NEW_FAKE_MODE:-（未設定）}" >&2
@@ -389,30 +400,6 @@ else
   fault "ID 読み取り失敗時に一時ファイル・一時ディレクトリを残さない（md $noid_files 件 / tmp $noid_tmp 件）"
 fi
 
-# --- 8b. UUID 部を取り出せなければ失敗する ------------------------------------
-#
-# prefix がハイフンを含む型（TEST-CASE 等）では UUID 部が `CASE-<uuid>` になり、形の検査で落ちる。
-
-repo8b="$work/badprefix"
-make_repo "$repo8b"
-run_sara_new "$repo8b" env SARA_NEW_SARA="$fake_sara" SARA_NEW_FAKE_MODE=id \
-  SARA_NEW_FAKE_ID='TEST-CASE-11111111-2222-4333-8444-555555555555' \
-  SARA_NEW_FAKE_WANT_TYPE=requirement SARA_NEW_FAKE_WANT_STEM=badprefix \
-  sara-new requirement badprefix docs/requirements -- "${desc[@]}"
-badprefix_status="$status_capture"
-badprefix_files="$(find "$repo8b/docs" -name '*.md' -type f | wc -l)"
-badprefix_tmp="$(find "$repo8b/docs" -name '.sara-new-*' | wc -l)"
-if [[ "$badprefix_status" -eq 1 ]]; then
-  pass "UUID 部を取り出せない ID なら exit 1 で落ちる"
-else
-  fault "UUID 部を取り出せない ID なら exit 1 で落ちる（実際: exit=$badprefix_status stderr: $stderr_capture）"
-fi
-if [[ "$badprefix_files" -eq 0 && "$badprefix_tmp" -eq 0 ]]; then
-  pass "UUID 部の検査で落ちたときにファイル・一時ディレクトリを残さない"
-else
-  fault "UUID 部の検査で落ちたときにファイル・一時ディレクトリを残さない（md $badprefix_files 件 / tmp $badprefix_tmp 件）"
-fi
-
 # --- 8c. frontmatter が無い・閉じていなければ失敗する -------------------------
 #
 # generated を足す先（閉じの `---`）が無ければ exit 1 で落ちる。id モードは空の仮ファイル、
@@ -439,9 +426,9 @@ for nofm_mode in id unclosed-id; do
   fi
 done
 
-# --- 9. 既存ファイルを上書きしない --------------------------------------------
+# --- 9. 同じ slug の再起票を拒否する -------------------------------------------
 #
-# rename 先が既存なら上書きせず落ちる。
+# 同じディレクトリに同じ slug で 2 回起票すると、2 回目は既存ファイルを上書きせず落ちる。
 
 repo9="$work/clobber"
 make_repo "$repo9"
@@ -450,31 +437,39 @@ first_file="$(field file)"
 if [[ -z "$first_file" ]]; then
   fault "§9 の前提（1 件目の起票）が失敗した（$stdout_capture）"
 else
-  # 1 件目と同じ ID を返す偽 sara（id モード）で rename 先を衝突させる。
-  first_id="$(sed -n 's/^id: "\(.*\)"$/\1/p' "$repo9/$first_file")"
-  run_sara_new "$repo9" env SARA_NEW_SARA="$fake_sara" SARA_NEW_FAKE_MODE=id \
-    SARA_NEW_FAKE_ID="$first_id" SARA_NEW_FAKE_WANT_TYPE=requirement \
-    SARA_NEW_FAKE_WANT_STEM=dup \
-    sara-new requirement dup docs/requirements -- "${desc[@]}"
+  first_content="$(cat "$repo9/$first_file")"
+  run_sara_new "$repo9" sara-new requirement dup docs/requirements -- "${desc[@]}"
   clobber_status="$status_capture"
   clobber_files="$(find "$repo9/docs/requirements" -name '*.md' -type f | wc -l)"
   clobber_tmp="$(find "$repo9/docs" -name '.sara-new-*' | wc -l)"
 
-  # 1 件目と 2 件目の間で日付が変わると衝突が成立しないため、判定を見送る。
-  first_date="${first_file##*/}"
-  first_date="${first_date%%-*}"
-  if [[ "$first_date" != "$(date +%Y%m%d)" ]]; then
-    pass "§9 は日付が跨いだため判定を見送る（衝突の前提が崩れる）"
-  elif [[ "$clobber_status" -eq 1 ]]; then
-    pass "rename 先が既存なら exit 1 で拒否する"
-    if [[ "$clobber_files" -eq 1 && "$clobber_tmp" -eq 0 ]]; then
-      pass "既存ファイルを上書きせず、一時ファイル・一時ディレクトリも残さない"
-    else
-      fault "既存ファイルを上書きせず、一時ファイル・一時ディレクトリも残さない（md $clobber_files 件 / tmp $clobber_tmp 件）"
-    fi
+  if [[ "$clobber_status" -eq 1 ]]; then
+    pass "同じ slug の 2 回目の起票は exit 1 で拒否する"
   else
-    fault "rename 先が既存なら exit 1 で拒否する（実際: exit=$clobber_status stderr: $stderr_capture）"
+    fault "同じ slug の 2 回目の起票は exit 1 で拒否する（実際: exit=$clobber_status stderr: $stderr_capture）"
   fi
+  if [[ "$clobber_files" -eq 1 && "$clobber_tmp" -eq 0 && "$(cat "$repo9/$first_file")" == "$first_content" ]]; then
+    pass "既存ファイルを上書きせず、一時ファイル・一時ディレクトリも残さない"
+  else
+    fault "既存ファイルを上書きせず、一時ファイル・一時ディレクトリも残さない（md $clobber_files 件 / tmp $clobber_tmp 件）"
+  fi
+fi
+
+# 起票の最中に同じ出力先が現れても、先に置かれたファイルを上書きせず落ちる。
+repo9b="$work/race"
+make_repo "$repo9b"
+run_sara_new "$repo9b" env SARA_NEW_SARA="$fake_sara" SARA_NEW_FAKE_MODE=race \
+  SARA_NEW_FAKE_ID='REQ-11111111-2222-4333-8444-555555555555' \
+  SARA_NEW_FAKE_RACE_TARGET=docs/requirements/race.md \
+  SARA_NEW_FAKE_WANT_TYPE=requirement SARA_NEW_FAKE_WANT_STEM=race \
+  sara-new requirement race docs/requirements -- "${desc[@]}"
+race_status="$status_capture"
+race_content="$(cat "$repo9b/docs/requirements/race.md" 2>/dev/null)"
+race_tmp="$(find "$repo9b/docs" -name '.sara-new-*' | wc -l)"
+if [[ "$race_status" -eq 1 && "$race_content" == "先着" && "$race_tmp" -eq 0 ]]; then
+  pass "起票の最中に現れた出力先を上書きせず exit 1 で落ち、一時ディレクトリも残さない"
+else
+  fault "起票の最中に現れた出力先を上書きせず exit 1 で落ちる（exit=$race_status 内容: $race_content tmp $race_tmp 件）"
 fi
 
 # --- 10. 引数の異常系 ---------------------------------------------------------
@@ -552,13 +547,15 @@ run_sara_new "$repo11" env 'SARA_NEW_GENERATED_BY=claude-code/"quoted"' \
 expect_rejected "SARA_NEW_GENERATED_BY が二重引用符を含めば exit 2 で拒否する" docs/quoted-actor SARA_NEW_GENERATED_BY
 
 # --description の別表記（sara init が受ける -d / --description=…）も指定として通る。
+spelled_n=0
 for spelling in "-d|起票テスト" "--description=起票テスト"; do
   if [[ "$spelling" == *"|"* ]]; then
     spelled=("${spelling%%|*}" "${spelling#*|}")
   else
     spelled=("$spelling")
   fi
-  run_sara_new "$repo11" sara-new requirement spelled docs/requirements -- "${spelled[@]}"
+  spelled_n=$((spelled_n + 1))
+  run_sara_new "$repo11" sara-new requirement "spelled-$spelled_n" docs/requirements -- "${spelled[@]}"
   spelled_file="$(field file)"
   if [[ "$status_capture" -eq 0 ]] && grep -q '^description: "起票テスト"$' "$repo11/$spelled_file" 2>/dev/null; then
     pass "--description の別表記 ${spelled[0]} を受け、description が入る"

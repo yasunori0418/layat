@@ -1,0 +1,85 @@
+---
+id: "ADR-24488788-a5e6-47a5-9074-97192880642a"
+type: adr
+name: "apply --manifest でビルド済み link-farm を engine へ直接渡す"
+status: stable
+sources:
+  - id: "issue-585"
+    resource: "https://github.com/yasunori0418/layat/issues/585"
+    title: "#585"
+origin: "ADR-0026 §1・§2a・§2c・§4 と ADR-0060 §2 を書き直した"
+justifies:
+  - "REQ-dec58330-6dad-47f7-8f56-2402764a89c7"
+  - "REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9"
+  - "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"
+references:
+  - "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"
+  - "ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:38:08+09:00"
+---
+# ADR-24488788-a5e6-47a5-9074-97192880642a: apply --manifest でビルド済み link-farm を engine へ直接渡す
+
+- ステータス: stable
+- 日付: 2026-11-03
+- 関連: [apply --all の集約は config 名の辞書順に並べる](apply-all-lexicographic-order.md), [apply --all は失敗しても残りを続け、最後に集約して非 0 で終える](apply-all-continue-and-aggregate.md), GitHub Issue #585, `docs/spec.md`
+- 起点: ADR-0026 §1・§2a・§2c・§4 と ADR-0060 §2 を書き直した
+
+## 背景
+
+`layat apply` は entrypoint 駆動で、entrypoint を発見し、`nix eval` と `nix build` で link-farm を
+得てから engine を動かす。モジュールから使う場合、manifest はモジュールの評価時に `mkManifest` から
+link-farm としてビルド済みで、activation script から store パスで参照できる。
+
+ここで entrypoint 駆動の `apply` を使うには entrypoint flake が要る。ところがモジュールの entries は
+利用者の flake の outputs に現れない。仮に用意できても、ビルド済みの link-farm を switch のたびに
+eval と build でもう一度作り直すことになる。
+
+## 決定
+
+`layat apply --manifest <link-farm>` でビルド済みの link-farm を受け取り、entrypoint の発見・eval・
+build を行わずに engine へ渡す。取得した後の挙動は通常の `apply` と同じにする。`-f` とは併用させず、
+位置引数 `name` は profile の選択として `--manifest` と両立させる。`--all` と合成するときは
+`--manifest <name>=<link-farm>` を config ごとに繰り返す。`--manifest` は `--help` に載せる公開の
+CLI 契約として安定させる。
+
+フラグの組み合わせと入力エラーは [apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](../requirements/apply-manifest-direct.md)、実行フローの順序は
+[実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](../requirements/exec-flow-eval-lock-build.md)、生成器の契約越しの取得は
+[CLI は manifest 生成器の契約（Discover / Roots / Build / DryBuild）越しに manifest を得る](../requirements/manifest-generator-contract.md) に置く。
+
+## 根拠
+
+- engine はもともとビルド済みの link-farm から配置する処理を持っており、CLI からその処理を呼べるようにするだけで済む。
+  配置のロジックは二重にならない
+- 引数を `manifest.json` 単体ではなく link-farm にするのは、世代としてコミットする対象が GC アンカーを
+  含む link-farm 全体だからである
+- 取得元を二重に指定する `-f` との併用は、片方を暗黙に選ばずに入力エラーで止める。`name` を profile の選択として
+  残すので、config が複数になってもそのまま広がる
+- `--all` と合成するときに `name` を起動側から与えるのは、`name` が profile の選択であって manifest の
+  内容ではないからである。`manifest.json` のスキーマを変えずに済み、集合は `--all` が担うという区分も保てる
+- activation script には `--manifest` がそのまま現れ、利用者の目に触れる。NixOS / nix-darwin も同じフラグを
+  使うので、隠さずに契約として公開する。モジュールから使う場合は CLI と `mkManifest` が同じ flake input から
+  来るため、schemaVersion のずれは構造的に起きない
+
+## 棄却した代替案
+
+### 専用のサブコマンド `layat activate` を設ける
+
+`apply` の全フラグと報告を重複して実装することになる。home-manager の activation という語とも紛れる。
+
+### entrypoint flake を生成して既存の `apply` を使う
+
+評価済みの entries を flake の source へ直列化する必要があり脆い。switch のたびに eval と build も実行される。
+
+### `--manifest` を隠しフラグにする
+
+activation script で利用者の目に触れるのに説明が無い。NixOS / nix-darwin も使う契約とも食い違う。
+
+### `--manifest <link-farm>` を繰り返し、name を `manifest.json` に持たせる
+
+`manifest.json` のスキーマを拡張することになる。name は manifest の内容ではない。
+
+### `--all` を付けずに `--manifest` の複数指定だけで集合とみなす
+
+単一の config と集合の区別がフラグから読めなくなる。

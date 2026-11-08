@@ -1,0 +1,53 @@
+---
+id: "RISK-67e96e59-005f-439d-a230-834b0228801c"
+type: risk
+name: "世代スキップと lstat ドリフト修復が誤発火し、世代が無限に増えるかユーザーの編集を失わせる"
+status: stable
+threatens:
+  - "REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0"
+likelihood: high
+impact: high
+level: high
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:26:05+09:00"
+---
+# RISK-67e96e59-005f-439d-a230-834b0228801c: 世代スキップと lstat ドリフト修復が誤発火し、世代が無限に増えるかユーザーの編集を失わせる
+
+## リスク
+
+project mode では、新しい link farm derivation が前世代と同一なら新世代を積まず、
+代わりに各 entry の target を `lstat` で確認して記録どおりでないものだけ再張りする
+（→ [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](../requirements/project-mode-generation-skip.md)）。この判定が誤ると、方向によって別々の被害が出る。
+
+**スキップすべき場面で積む** — devShell / direnv 運用では `shellHook` がシェル再入の
+たびに実行される。derivation 同一でも毎回新世代を積めば、世代がシェルを開くたびに増え続け、
+`nix-env` の世代一覧も store の gcroot も無限に膨らむ。判定が home mode まで及んで
+「適用のたびに新世代」を壊すのも逆向きの誤りで、home mode の rollback 先が失われる。
+
+**修復すべき場面で修復しない** — 「derivation 同一 ⇒ FS 同一」は foreign tool の書き換えで
+崩れる。消された symlink・別物に張り替えられた symlink を放置すれば、config が有効な
+はずの環境で設定が反映されない状態が利用者に知らされないまま続く。foreign な実体を再張りしたときに warning を
+出さないのも、ユーザーが他ツールとの競合に気付けなくなる形で同じ欠陥に属する。
+
+**修復すべきでないものを修復する** — copy entry のドリフト修復は place-once の意味論を
+守る必要がある。target が不在のときだけ再マテリアライズし、存在するが内容が異なる
+（＝ユーザーが編集した）場合は触ってはならない。ここを取り違えると、ユーザーがローカルで
+編集した設定ファイルがシェル再入のたびに利用者に知らせずに上書きされる。`--recopy` を明示したときは
+逆に上書きするのが正しい。
+
+## 実現性
+
+**likelihood: high** — 発火頻度が極めて高い場面（シェル再入のたび）で、判定の入力が
+derivation の同一性と FS を実際に調べた結果という 2 系統に分かれている。
+
+**impact: high** — copy entry のドリフト修復を取り違える方向では、ユーザーがローカルで編集した
+内容そのものが上書きされる。copy は世代管理の対象外なのでロールバックでも戻せず、再実行が回復
+させる余地は無い。他の方向（修復し損ねた symlink・世代の無限増殖）は再 apply や世代の間引きで
+回復するが、規約の最重方向則に従い最も重い方向で採る。どの方向の誤りもユーザーの日常操作の
+中で表に出ないまま進行し、気づく契機が無い。
+
+## 緩和
+
+[lstat ドリフト修復が破損した entry だけを直し、ユーザーの編集には触れない](../test/generations/drift-repair-scope.md)（ドリフト修復の対象範囲）と [世代スキップは project / system mode で derivation 同一のときだけ発火し、それ以外は新世代を積む](../test/generations/generation-skip-commit-policy.md)（世代スキップの発火条件と
+コミット方針）が緩和する。

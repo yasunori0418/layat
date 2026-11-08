@@ -53,7 +53,7 @@ strict_mode = false
 EOF
 
 # description フィールドを持つ ADR。本文の段落より description を優先する。
-cat > "$fixture/docs/adr/20260102-11111111-1111-4111-8111-111111111111-with-field.md" <<'EOF'
+cat > "$fixture/docs/adr/with-field.md" <<'EOF'
 ---
 id: "ADR-11111111-1111-4111-8111-111111111111"
 type: adr
@@ -67,7 +67,7 @@ status: stable
 EOF
 
 # description が無く、本文の箇条書き・見出し・コードフェンスの後に段落がある ADR。段落は箇条書きの行で終わる。
-cat > "$fixture/docs/adr/20260101-22222222-2222-4222-8222-222222222222-from-paragraph.md" <<'EOF'
+cat > "$fixture/docs/adr/from-paragraph.md" <<'EOF'
 ---
 id: "ADR-22222222-2222-4222-8222-222222222222"
 type: adr
@@ -96,7 +96,7 @@ words を
 EOF
 
 # description も段落も無い SDR。
-cat > "$fixture/docs/sara-adr/20260101-33333333-3333-4333-8333-333333333333-no-description.md" <<'EOF'
+cat > "$fixture/docs/sara-adr/no-description.md" <<'EOF'
 ---
 id: "SDR-33333333-3333-4333-8333-333333333333"
 type: sara_adr
@@ -125,7 +125,7 @@ status: stable
 EOF
 
 # ADR 以外の item。H1 の直後に段落があり、status を持っても添え字は付かない。
-cat > "$fixture/docs/ubiquitous-language/20260101-44444444-4444-4444-8444-444444444444-term.md" <<'EOF'
+cat > "$fixture/docs/ubiquitous-language/term.md" <<'EOF'
 ---
 id: "UBQ-44444444-4444-4444-8444-444444444444"
 type: ubiquitous_term
@@ -139,7 +139,7 @@ definition.
 EOF
 
 # docs/test/ の区分に置くテスト条件。
-cat > "$fixture/docs/test/copy/20260101-55555555-5555-4555-8555-555555555555-condition.md" <<'EOF'
+cat > "$fixture/docs/test/copy/condition.md" <<'EOF'
 ---
 id: "TC-55555555-5555-4555-8555-555555555555"
 type: test_condition
@@ -171,13 +171,13 @@ expect_line() {
 # --- (2) description の 3 通りの代用と status の添え字 -------------------------
 
 expect_line "description フィールドを使い、ADR の status を添える" docs/adr/index.md \
-  '* [フィールドを持つ決定](./20260102-11111111-1111-4111-8111-111111111111-with-field.md) - フィールドの要約 (stable)'
+  '* [フィールドを持つ決定](./with-field.md) - フィールドの要約 (stable)'
 expect_line "description が無ければ H1 の次の最初の段落を使い、日本語が接する改行は空白なしでつなぐ" docs/adr/index.md \
-  '* [results\[\] を返す](./20260101-22222222-2222-4222-8222-222222222222-from-paragraph.md) - 最初の段落は`results[]`の後に English words を挟む。 (deprecated)'
+  '* [results\[\] を返す](./from-paragraph.md) - 最初の段落は`results[]`の後に English words を挟む。 (deprecated)'
 expect_line "表・引用・HTML・字下げ行・~~~ のフェンスは段落に数えず、段落が無ければ ' - ' ごと省く" docs/sara-adr/index.md \
-  '* [説明の無い決定](./20260101-33333333-3333-4333-8333-333333333333-no-description.md) (stable)'
+  '* [説明の無い決定](./no-description.md) (stable)'
 expect_line "ADR 以外の item には status の添え字を付けず、英数字の行は空白でつなぐ" docs/ubiquitous-language/index.md \
-  '* [term](./20260101-44444444-4444-4444-8444-444444444444-term.md) - The term definition.'
+  '* [term](./term.md) - The term definition.'
 
 # --- (3) docs/test/ の区分 ------------------------------------------------------
 
@@ -186,7 +186,7 @@ want_copy=$(cat <<'EOF'
 
 ## テスト条件（`test_condition`）
 
-* [条件](./20260101-55555555-5555-4555-8555-555555555555-condition.md) - 条件の説明。
+* [条件](./condition.md) - 条件の説明。
 
 ## テストケース（`test_case`）
 EOF
@@ -209,7 +209,7 @@ fi
 # --- (4) 並びはファイル名順 ----------------------------------------------------
 
 order=$(grep -oE '\(\./[^)]*\)' "$fixture/docs/adr/index.md" | tr -d '()' | tr '\n' ' ')
-if [ "$order" = "./20260101-22222222-2222-4222-8222-222222222222-from-paragraph.md ./20260102-11111111-1111-4111-8111-111111111111-with-field.md " ]; then
+if [ "$order" = "./from-paragraph.md ./with-field.md " ]; then
   pass "エントリはファイル名順に並ぶ"
 else
   fault "(4) エントリがファイル名順に並ばない（実際: $order）"

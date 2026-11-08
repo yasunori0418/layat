@@ -1,0 +1,36 @@
+---
+id: "CASE-80a327c3-5fdd-48d4-9446-4b3e0e262105"
+type: test_case
+name: "nixprofile_test.go — 世代リンクの走査と 2 基底"
+status: stable
+resource: "internal/generation/nixprofile/nixprofile_test.go"
+covers:
+  - "TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-10-18T23:49:36+09:00"
+---
+# CASE-80a327c3-5fdd-48d4-9446-4b3e0e262105: nixprofile_test.go — 世代リンクの走査と 2 基底
+
+## 対象
+
+`internal/generation/nixprofile/nixprofile_test.go`
+
+世代バックエンドの nix 実装（`internal/generation/nixprofile`）のユニットテスト。nix-env は
+起動せず、tmpdir に張った世代リンクに対する `List`（Fake と共用する走査）と、バックエンドが
+所有する 2 つの基底（user / system）の値を検証する。
+
+## 検証内容
+
+**世代リンクの走査**（[profileDir の世代リンクを番号順に列挙して current を判定し、読めない profileDir は黙認しない](generation-listing-parse.md)）
+
+- `profile-<N>-link` を番号の昇順に返し、`profile` の指す世代だけを current にする
+- 世代でない兄弟名（`profile.lock` 等）を無視する
+- 日時はリンク自身の mtime（リンク先の mtime ではない）
+- profileDir が無ければ 0 件でエラーにしない
+- profileDir を読めなければ（ディレクトリでない等）エラーにする
+
+**基底**
+
+- `UserBase(<state>)` が `<state>/nix/profiles/layat`、`SystemBase()` が
+  `/nix/var/nix/profiles/layat` を返す（engine と CLI はこの値を直接持たない）

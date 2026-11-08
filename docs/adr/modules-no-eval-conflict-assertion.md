@@ -1,0 +1,69 @@
+---
+id: "ADR-1338a293-3f69-48f5-9164-efb4ec6994d6"
+type: adr
+name: "モジュールは configs 間の target 衝突を評価時に確認しない"
+status: stable
+sources:
+  - id: "issue-585"
+    resource: "https://github.com/yasunori0418/layat/issues/585"
+    title: "#585"
+origin: "ADR-0060 §3 と ADR-0066 §3c を書き直した"
+justifies:
+  - "REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44"
+  - "REQ-5c6b07da-3d06-414d-8770-4f438234b322"
+  - "REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693"
+references:
+  - "ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d"
+  - "ADR-28605860-770e-41df-95dd-7dc05b20497a"
+  - "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"
+  - "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
+---
+# ADR-1338a293-3f69-48f5-9164-efb4ec6994d6: モジュールは configs 間の target 衝突を評価時に確認しない
+
+- ステータス: stable
+- 日付: 2026-11-03
+- 関連: [cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](cross-config-last-wins-with-foreign-warning.md), [apply --all は config ごとの情報を 1 回の eval でまとめて取る](apply-all-single-eval.md), [apply --all の集約は config 名の辞書順に並べる](apply-all-lexicographic-order.md), [配置の振動はユーザー責任とし、文書で注意するに留める](oscillation-is-user-responsibility.md), GitHub Issue #585, `docs/spec.md`
+- 起点: ADR-0060 §3 と ADR-0066 §3c を書き直した
+
+## 背景
+
+1 つの構成の中で、複数の config が正規化後に同じ target に配置することがある。放っておくと、activation の
+たびに config 同士が同じ target を奪い合う。全 config が 1 回のモジュール評価に載るので、nix の
+`assertions` で評価時に止めることもできる。
+
+一方で activation は全 config を 1 回の `apply --all` に渡し、`apply --all` は build と配置の前に、
+選択した集合の target の重複を確認する。
+
+## 決定
+
+モジュールは configs 間の target 衝突を、評価時の `assertions` で確認しない。検出は activation の
+`apply --all` の前段の確認に委ね、衝突があれば build と配置の前に止めて switch を失敗させる。
+
+衝突をどこで検出するかの分け方は [target 衝突の検出処理を同一 manifest 内と cross-config で分ける](../requirements/target-collision-eval-detection.md)、HM の configs 間衝突での停止は
+[単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する](../requirements/hm-configs-target-collision-assertion.md)、前段の確認に掛からない config 間の衝突の扱いは
+[同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める](../requirements/cross-config-target-oscillation.md) に置く。
+
+## 根拠
+
+- 同じ規則の検出器を 2 つ持つと、正規化の規則（属性キーの既定値・`target` の上書き・`subdir` の前置）を
+  2 か所で揃え続けることになり、片方だけの変更が見逃しや誤検出を生む
+- CLI 単体の `apply --all` とモジュールの activation が同じ確認を受ける
+- 代償は、止まる時機が評価時から activation に移ることだけである。どの config も配置されずに
+  switch が失敗するので、誤った設定を通さない点は評価時に止めるのと変わらない
+
+## 棄却した代替案
+
+### モジュールの評価時に `assertions` で止める
+
+`apply --all` の前段の確認と同じ規則を nix で二重に持つことになる。
+
+### 評価時の `assertions` と前段の確認を両方持つ
+
+検出器が 2 つになり、正規化の規則のずれが見逃しや誤検出を生む。
+
+### 実行時の後勝ちのまま放置する
+
+activation のたびに config 同士が target を奪い合い、上書きと警告が恒常化する。

@@ -1,0 +1,70 @@
+---
+id: "REQ-08c8f639-790c-4970-a954-c9567538cf9b"
+type: requirement
+name: "root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない"
+status: stable
+specification: |
+  Each root marker (`layat.lib.projectRoot` / `homeRoot` / `systemRoot`) SHALL remain
+  usable as a marker on its own, and SHALL also accept the function application
+  `<marker> { subdir = "<relative path>"; }`, which returns a marker carrying `subdir`.
+  In the applied form `subdir` SHALL be required, unknown argument keys SHALL be rejected,
+  and the applied marker SHALL NOT be applicable again. `normalizeManifest` SHALL normalize
+  `subdir` into path components (dropping empty and `.` components and folding `..` into
+  its parent) and SHALL prepend `<subdir>/` to the target of every entry. The path-safety
+  check on `target` SHALL apply to the target as written, before the prefix. The sugar
+  SHALL NOT change the root resolution, `rootKind`, or the `manifest.json` schema, and the
+  `root` object SHALL NOT carry `subdir`. A `subdir` that is an absolute path, escapes root
+  via `..`, or normalizes to empty SHALL be rejected at evaluation time with an error that
+  mentions `root subdir`. A fixed root (absolute path string) SHALL NOT accept `subdir`.
+specification_ja: |
+  各 root マーカー（`layat.lib.projectRoot` / `homeRoot` / `systemRoot`）は、単体で従来
+  どおりマーカーとして使えなければならず、関数適用 `<marker> { subdir = "<相対パス>"; }`
+  を受け付けて `subdir` を持つマーカーを返さなければならない。適用形では `subdir` を必須と
+  しなければならず、未知の引数キーを拒否しなければならず、適用後のマーカーを再適用できては
+  ならない。`normalizeManifest` は `subdir` をパス成分へ正規化（空成分と `.` を除き、`..` を
+  親へ畳む）し、全 entry の target に `<subdir>/` を前置しなければならない。`target` の
+  パス安全性の確認は、前置する前の記述どおりの target に掛けなければならない。この糖衣は
+  root の解決・`rootKind`・`manifest.json` のスキーマを変えてはならず、`root` オブジェクトに
+  `subdir` を持たせてはならない。絶対パス・`..` で root の外へ出る値・正規化で空になる値の
+  `subdir` は、`root subdir` を含むエラーで評価時に拒否しなければならない。固定 root
+  （絶対パス文字列）は `subdir` を受け付けてはならない。
+derives_from:
+  - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
+  - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
+---
+# REQ-08c8f639-790c-4970-a954-c9567538cf9b: root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない
+
+## 仕様
+
+```nix
+root = layat.lib.homeRoot;                         # 単体形（従来どおり）
+root = layat.lib.homeRoot { subdir = ".config"; }; # 適用形
+```
+
+適用形は、全 entry の target に `<subdir>/` を書いた manifest と同じものを生成する。
+root は動かず、`rootKind` も単体形と同じ値になる。`manifest.json` に新しいフィールドは
+現れない。
+
+| `subdir` の値 | 結果 |
+|---|---|
+| `".config"` / `".config/"` / `"./.config"` | target が `.config/<target>` になる |
+| `"/abs"`（絶対パス）| `root subdir` を含むエラー |
+| `"../x"`（root の外へ出る）| 同上 |
+| `""` / `"."` / `"a/.."`（正規化で空）| 同上 |
+
+適用形は `subdir` だけを受け付ける。`homeRoot { }` と未知キー付きの引数は評価エラーになり、
+適用後のマーカーは関数ではないため再適用もできない。`target` の安全性の確認
+（[target / subpath のパス安全性を評価時に確認する](path-safety-validation.md)）は前置前の値に掛かるので、`subdir` を付けても
+`..` 始まりの target は従来どおり拒否される。
+
+規範は frontmatter が正。
+
+## 出典
+
+[root マーカーに subdir の適用形を持たせる](../adr/root-marker-subdir-applied-form.md)・[fixed root には subdir を提供しない](../adr/no-subdir-for-fixed-root.md)（marker の関数適用形）と [subdir は全 target へ前置する評価時の糖衣にし、root を動かさない](../adr/subdir-as-target-prefix-sugar.md)・[root 相対で指定するパスすべてにパス安全性の確認を課す](../adr/path-safety-for-root-relative-inputs.md)（`normalizeManifest` での target 前置糖衣）。
+root の値と対応するモードは [root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md)、マーカーが `kind` を運ぶ
+入れ物であることは [root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) が持ち、本 item はその上に乗る
+適用形だけを規定する。

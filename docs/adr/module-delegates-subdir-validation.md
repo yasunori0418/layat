@@ -1,0 +1,49 @@
+---
+id: "ADR-2230e78f-770a-447e-9c5d-6eba1e9a7359"
+type: adr
+name: "モジュールは subdir の確認を lib に委ねる"
+status: stable
+sources:
+  - id: "issue-585"
+    resource: "https://github.com/yasunori0418/layat/issues/585"
+    title: "#585"
+origin: "ADR-0064 §3 を書き直した"
+justifies:
+  - "REQ-068f2fb3-5459-4325-9359-c931b5049e0d"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:34:10+09:00"
+---
+# ADR-2230e78f-770a-447e-9c5d-6eba1e9a7359: モジュールは subdir の確認を lib に委ねる
+
+- ステータス: stable
+- 日付: 2026-11-03
+- 関連: GitHub Issue #585, `docs/spec.md`
+- 起点: ADR-0064 §3 を書き直した
+
+## 背景
+
+`configs.<name>.subdir` には、絶対パス・`..` による root の外への脱出・空文字といった不正な値が
+入りうる。lib の root marker の subdir 適用形は、これらをすでに評価時に確認している。
+
+## 決定
+
+モジュールは subdir の確認・正規化・空文字の読み替えを持たず、値をそのまま lib へ渡す。`""` を
+null と同一視しない。不正な値は lib の評価エラーで止まる。規範は
+[HM モジュールは configs.<name>.subdir が非 null の config を homeRoot の subdir 適用形で組み、全 target を $HOME/<subdir>/ 配下に置く](../requirements/hm-config-subdir-wiring.md) に置く。
+
+## 根拠
+
+同じ規則を 2 か所で持つと、片方だけが変わって挙動が分岐する。lib の確認は CLI 単体で使うときも同じく評価時に
+行われるので、モジュールで重ねて確認しても得るものが無い。`""` を null と読み替えると、lib が拒否する
+値をモジュールだけが受け入れることになる。
+
+## 棄却した代替案
+
+### モジュールの側で subdir を確認し直す
+
+lib と同じ規則を二重に持つことになり、片方だけが変わると挙動が分岐する。
+
+### 空文字を null とみなす
+
+CLI 単体では拒否される値がモジュールでは通り、使い方によって挙動が変わる。

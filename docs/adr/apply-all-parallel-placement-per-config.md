@@ -1,0 +1,70 @@
+---
+id: "ADR-e7a57f51-41da-460c-8f51-c84e94643f3d"
+type: adr
+name: "apply --all の配置を config 単位で並列に行う"
+status: stable
+sources:
+  - id: "issue-584"
+    resource: "https://github.com/yasunori0418/layat/issues/584"
+    title: "#584"
+origin: "ADR-0039 §2a（配置段階も config 単位の goroutine で並列化する）と §3b（単一 config 内の entry 単位は並列化しない）を書き直した"
+justifies:
+  - "REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af"
+references:
+  - "ADR-75df92ae-0694-452b-8fb4-350994e31b25"
+  - "ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e"
+  - "ADR-ac648001-7e22-4fe2-a457-596064e32717"
+  - "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"
+  - "ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
+---
+# ADR-e7a57f51-41da-460c-8f51-c84e94643f3d: apply --all の配置を config 単位で並列に行う
+
+- ステータス: stable
+- 日付: 2026-11-03
+- 関連: [apply --all は選択した config 間の target 重複を build 前に止める](apply-all-preflight-target-conflict.md), [apply --all の build を worker pool で並列に実行する](apply-all-parallel-build-worker-pool.md), [ロックのキーを解決後の profileDir にする](lock-key-is-resolved-profiledir.md), [apply --all の集約は config 名の辞書順に並べる](apply-all-lexicographic-order.md), [apply --all は失敗しても残りを続け、最後に集約して非 0 で終える](apply-all-continue-and-aggregate.md)
+- 起点: ADR-0039 §2a（配置段階も config 単位の goroutine で並列化する）と §3b（単一 config 内の entry 単位は並列化しない）を書き直した
+
+## 背景
+
+`apply --all` の build は worker pool で並列に実行する（[apply --all の build を worker pool で並列に実行する](apply-all-parallel-build-worker-pool.md)）。
+配置は config ごとに順に処理していたが、`method = "copy"` の大きなツリーでは配置の時間も無視できない。
+
+ロックのキーは解決後の profileDir で（[ロックのキーを解決後の profileDir にする](lock-key-is-resolved-profiledir.md)）、`--all` が扱う
+config は名前が一意なので profileDir も一意になる。同じプロセスの中で同じロックを取り合うことは
+起きない。
+
+配置を並列にしたときに変わりうるのは、config 間で同じ target を取り合ったときの後勝ちの順序だけ
+である。前段の確認で見える衝突は build の前に取り除かれ、見えない衝突はこれまでどおり後勝ちで扱う
+（[apply --all は選択した config 間の target 重複を build 前に止める](apply-all-preflight-target-conflict.md)）。
+
+## 決定
+
+`apply --all` は配置も config 単位で並列に行う。1 つの config の中の配置は engine が順に行い、
+並列にしない。
+
+並列に適用したときの集約と部分失敗の扱いは [apply --all は選択された config を並列に適用し、集約表示と results\[\] を辞書順にし、部分失敗でも続行して最後に集約する](../requirements/apply-all-lexical-order-continue.md) に置く。
+集約の並び順は [apply --all の集約は config 名の辞書順に並べる](apply-all-lexicographic-order.md) が定める。
+
+## 根拠
+
+ロックも古くなった配置の除去の保守的な条件も config ごとに完全に独立している。前段の確認で後勝ちの順序の
+問題も消えたので、copy の大きなツリーでの実益を捨てる理由が無い。残る非決定は別の entrypoint
+などとの衝突で、これはもともと競合だった領域である。
+
+engine の保守的な条件は、祖先の確認・配置・古くなった配置の除去を 1 つの manifest の中で順に行うことを
+前提にしている。並列にする粒度をロックの境界である config に揃えれば、この前提を変えずに済む。
+
+## 棄却した代替案
+
+### build だけを並列にし、配置は順に処理する
+
+安全側の折衷だが、配置を並列にしたときの後勝ちの順序の問題は、前段の確認で消えている。copy の
+大きなツリーで得られる短縮を捨てることになる。
+
+### 1 つの config の中の entry 単位まで配置を並列にする
+
+古くなった配置の除去や祖先の symlink の確認の順序を変えることになり、保守的な条件が保たれることを示すのが
+難しくなる。symlink が主体の配置では得るものも無い。

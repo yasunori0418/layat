@@ -39,7 +39,7 @@ item を新設し、概要文書にはリンクを 1 行足すに留める。
 ADR の 2 型（adr / sara_adr）と ubiquitous_term のみ**で、他の型は upstream relation を 1 本以上張る
 （ubiquitous_term は relation を 1 本も持たない。張り忘れは `sara check` の接続漏れの warning で出る）。
 検出した欠陥（defect）は型として持たず、GitHub Issues（`bug` label）で管理する
-（→ SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed。運用規約は `docs/agents/issue-tracker.md` の「Defect issues」節）。
+（→ [欠陥はグラフに置かず GitHub Issues で管理する](docs/sara-adr/defects-in-github-issues.md)。運用規約は `docs/agents/issue-tracker.md` の「Defect issues」節）。
 
 risk を `requirement` と `design` のどちらに張るかの使い分けは `docs/agents/sara-graph.md`。
 
@@ -61,14 +61,14 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
 
 | `<対象>` | 含むテスト資産 | 上位の test_plan |
 |---|---|---|
-| `manifest-eval` | `tests/nix-unit/` と `tests/namaka/` 配下の全テスト | TP-36e90d5d-4524-4294-bc72-ee263bb02782 / TP-d3d06fe4-6940-4df8-b111-bb4096d5444f / TP-403c55c7-d996-4951-8e6b-c3a7dddd387c |
-| `engine-core` | `internal/engine/` の engine / dryrun / preflight、`internal/planner/` | TP-e7c25263-6d2d-4a37-8275-26906889d912 |
-| `copy` | copytree / copy、e2e `04-copy` | TP-e7c25263-6d2d-4a37-8275-26906889d912 / TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9 |
-| `migration-stale` | preremove_generalization / staleremove、e2e `03-stale` | TP-e7c25263-6d2d-4a37-8275-26906889d912 / TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9 |
-| `atomicity` | undo / undo_journal / backup、engine の lock + `internal/lock/` | TP-deb05610-44bc-4962-8939-952392e5fbd0 / TP-e7c25263-6d2d-4a37-8275-26906889d912（backup の退避ポリシー）|
-| `generations` | generations / reset（engine）/ result_extensions / drift / prune、`internal/paths/`、`internal/generation/`、e2e `02-home` / `08-prune` | TP-e7c25263-6d2d-4a37-8275-26906889d912（`internal/paths/` の純ロジックを含む）/ TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9 |
-| `cli-json` | `cmd/layat/` の全テストファイル、`internal/generator/` | TP-e7c25263-6d2d-4a37-8275-26906889d912（CLI 層の判断）/ TP-d3000054-42d9-4bac-912a-dd3abc38d3e9（エンベロープ適合と payload 意味論）|
-| `integration` | `checks.hm-module` / `checks.nixos-module` / `checks.darwin-module` / `checks.nixos-vm`、e2e `01-project` / `05-hm` / `06-init-templates` / `07-legacy` / `14-flake-parts`、`internal/gitutil/`、`internal/manifest/` | TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9 / TP-0734996e-aea9-4229-8075-89a64bdf9f79 / TP-e7c25263-6d2d-4a37-8275-26906889d912（`internal/` の Go テスト）|
+| `manifest-eval` | `tests/nix-unit/` と `tests/namaka/` 配下の全テスト | [評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](docs/test-plan/nix-unit-namaka-split.md) / [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](docs/test-plan/eval-test-double.md) / [lib.__internal は private helper のテスト seam として公開する](docs/test-plan/lib-internal-test-seam.md) |
+| `engine-core` | `internal/engine/` の engine / dryrun / preflight、`internal/planner/` | [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](docs/test-plan/go-test-layering.md) |
+| `copy` | copytree / copy、e2e `04-copy` | [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](docs/test-plan/go-test-layering.md) / [非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](docs/test-plan/e2e-harness-scope.md) |
+| `migration-stale` | preremove_generalization / staleremove、e2e `03-stale` | [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](docs/test-plan/go-test-layering.md) / [非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](docs/test-plan/e2e-harness-scope.md) |
+| `atomicity` | undo / undo_journal / backup、engine の lock + `internal/lock/` | [原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](docs/test-plan/fault-injection-atomicity.md) / [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](docs/test-plan/go-test-layering.md)（backup の退避ポリシー）|
+| `generations` | generations / reset（engine）/ result_extensions / drift / prune、`internal/paths/`、`internal/generation/`、e2e `02-home` / `08-prune` | [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](docs/test-plan/go-test-layering.md)（`internal/paths/` の純ロジックを含む）/ [非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](docs/test-plan/e2e-harness-scope.md) |
+| `cli-json` | `cmd/layat/` の全テストファイル、`internal/generator/` | [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](docs/test-plan/go-test-layering.md)（CLI 層の判断）/ [エンベロープの outturn 適合を Go テストと E2E の両方で検証する](docs/test-plan/json-conformance-verification.md)（エンベロープ適合と payload 意味論）|
+| `integration` | `checks.hm-module` / `checks.nixos-module` / `checks.darwin-module` / `checks.nixos-vm`、e2e `01-project` / `05-hm` / `06-init-templates` / `07-legacy` / `14-flake-parts`、`internal/gitutil/`、`internal/manifest/` | [非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](docs/test-plan/e2e-harness-scope.md) / [home-manager モジュールの配線は build sandbox 内の評価アサートで検証する](docs/test-plan/hm-module-eval-assert.md) / [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](docs/test-plan/go-test-layering.md)（`internal/` の Go テスト）|
 
 区分外: `go-vet` / `golangci-lint` / カバレッジ計測は quality の担当。**CASE を
 持たないテスト資産の規範は `dev/tests/test-doc-exclusions.tsv`**（除外理由付き。ここに無い
@@ -93,12 +93,13 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
 | 用途 | 形式 | 例 |
 |---|---|---|
 | 正式 ID（frontmatter `id:`・relation リスト）| `<PREFIX>-<フル UUIDv4>` | `REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4` |
-| ファイル名 | `<YYYYMMDD>-<フル UUIDv4>-<slug>.md` | `20260802-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4-mkmanifest-pure-function.md` |
-| 散文中の参照 | `<PREFIX>-<フル UUIDv4>` | `REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4` |
+| ファイル名 | `<slug>.md` | `mkmanifest-pure-function.md` |
+| 散文中の参照 | `[item の name](相対パス)` | `[mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md)` |
 
-**どの面でもフル ID をそのまま書く**（→ SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb）。8 文字省略形は使わない。ファイル名・
-散文・relation リストの表記が一致するので、ID をそのまま grep しても `sara query` へ渡しても
-同じものに当たる（省略形と正式 ID を突き合わせる手順が要らない）。
+**フル ID を書くのは frontmatter の `id:`・relation リストと、item 本文の H1 見出し `# <ID>: <name>` だけにする**
+（→ [ID の書き方の決定](docs/sara-adr/slug-only-filenames.md)）。8 文字省略形は使わない。
+散文で item に触れるときは Markdown リンクにし、リンク文字列にも ID を書かない。ID をそのまま grep すれば
+frontmatter の `id:` と relation に当たり、`sara query` へ渡しても同じものに当たる（省略形から正式 ID を探す手順が要らない）。
 
 - 起票は ADR を含め devShell 同梱の `sara-new` コマンドで行う。採番（`sara init` が引く
   UUIDv4）とファイル名規約の適用を一手で済ませ、`id:` と `file:` の 2 行を返す。連番を手で
@@ -140,11 +141,11 @@ sara report coverage                       # カバー率
 sara report matrix                         # トレーサビリティマトリクス
 ```
 
-**`sara query` はフル ID しか受け付けない**が、散文もファイル名もフル ID で書くので、
-目に付いた ID をそのままコピーして渡せる（変換は要らない）。同じ文字列で参照元も辿れる。
+**`sara query` はフル ID しか受け付けない**が、frontmatter の `id:` と relation リストはフル ID で書くので、
+そこからそのままコピーして渡せる（変換は要らない）。同じ文字列で grep すると、宣言と relation の参照元が分かる。
 
 ```bash
-rg -l REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4 docs/   # 宣言している item ファイルと参照元を列挙
+rg -l REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4 docs/   # `id:` で宣言している item と relation の参照元を列挙
 ```
 
 ## 開発コマンド

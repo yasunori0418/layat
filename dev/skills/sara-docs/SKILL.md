@@ -82,12 +82,13 @@ relation は**起こした側（下流）の frontmatter に宣言する**（`sa
 | 用途 | 形式 | 例 |
 |---|---|---|
 | 正式 ID（frontmatter `id:`・relation リスト）| `<PREFIX>-<フル UUIDv4>` | `REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4` |
-| ファイル名 | `<YYYYMMDD>-<フル UUIDv4>-<slug>.md` | `20260802-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4-mkmanifest-pure-function.md` |
-| 散文中の参照 | `<PREFIX>-<フル UUIDv4>` | `REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4` |
+| ファイル名 | `<slug>.md` | `mkmanifest-pure-function.md` |
+| 散文中の参照 | `[item の name](相対パス)` | `[mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md)` |
 
-- **どの面でもフル ID をそのまま書く**（→ SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb）。8 文字省略形は使わない。relation
-  リスト・ファイル名・散文の表記が一致するので、ID をそのまま grep しても `sara query` へ
-  渡しても同じものに当たる。
+- **フル ID を書くのは frontmatter の `id:`・relation リストと、item 本文の H1 見出し `# <ID>: <name>` だけにする**
+  （→ [ID の書き方の決定](../../../docs/sara-adr/slug-only-filenames.md)）。8 文字省略形は使わない。
+- 散文で item に触れるときは Markdown リンクにし、リンク文字列にも ID を書かない。
+- ID をそのまま grep すれば frontmatter の `id:` と relation に当たり、`sara query` へ渡しても同じものに当たる。
 - 起票は ADR を含め **`sara-new` コマンド**。採番とファイル名規約の適用、`sara init` の
   呼び出しまでを一手で済ませ、`id:` / `file:` の 2 行を返す。連番を手で振らない
   （並列レーンでの採番衝突を構造的に避けるため）。手順は

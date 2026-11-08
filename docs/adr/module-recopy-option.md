@@ -1,0 +1,54 @@
+---
+id: "ADR-9506276e-2108-4962-9f90-efe82fec7f66"
+type: adr
+name: "layat.recopy で activation の起動に --recopy を付ける"
+status: stable
+sources:
+  - id: "issue-585"
+    resource: "https://github.com/yasunori0418/layat/issues/585"
+    title: "#585"
+origin: "ADR-0061 §1 を書き直した"
+justifies:
+  - "REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c"
+  - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:34:10+09:00"
+---
+# ADR-9506276e-2108-4962-9f90-efe82fec7f66: layat.recopy で activation の起動に --recopy を付ける
+
+- ステータス: stable
+- 日付: 2026-11-03
+- 関連: GitHub Issue #585, `docs/spec.md`
+- 起点: ADR-0061 §1 を書き直した
+
+## 背景
+
+copy entry を src の更新に追従させるには、`apply` に `--recopy` を付けて起動する必要がある。
+activation の起動文字列はモジュールが組み立てるので、利用者がこのフラグを付ける手段が無ければ、
+activation の外で `layat apply --manifest … --recopy` を手で起動するしかない。
+
+## 決定
+
+共通オプション `layat.recopy :: bool`（既定 false）を設け、true のときだけ activation の起動に
+`--recopy` を付ける。manifest には影響しない、起動の配線のオプションとする。オプションの説明文には、
+有効にすると activation のたびに copy target を src で上書きし、ローカルの編集を捨てることを明記する。
+
+規範は [layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける](../requirements/recopy-wiring-layer.md)、共通オプションの集合は
+[全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md) に置く。
+
+## 根拠
+
+- `--recopy` は値を取らないフラグなので、bool で足りる。`layat.backup` のように submodule にする中身が無い
+- 既定を false にするのは、recopy がローカルの編集を捨てる破壊的な修飾だからである。CLI でも明示の
+  opt-in で、利用者が意図しないまま activation のたびに上書きされる既定は採れない
+
+## 棄却した代替案
+
+### `layat.extraFlags :: listOf str` で任意のフラグを渡す
+
+型の確認も説明文も持てない。`--manifest` や `--all` のように配線の側が持つフラグとの衝突も防げない。
+
+### 既定を true にする
+
+利用者が気付かないまま、activation のたびにローカルの編集が捨てられる。

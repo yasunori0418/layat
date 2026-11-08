@@ -1,0 +1,72 @@
+---
+id: "ADR-a0d0cf15-8234-42be-b83e-9b8271850475"
+type: adr
+name: "activation の起動文字列を modules/kick.nix で組み立てる"
+status: stable
+sources:
+  - id: "issue-519"
+    resource: "https://github.com/yasunori0418/layat/issues/519"
+    title: "#519"
+  - id: "issue-493"
+    resource: "https://github.com/yasunori0418/layat/issues/493"
+    title: "#493"
+origin: "Issue #493（epic: NixOS / nix-darwin モジュールの実装）の grilling（2026-10-24）。ADR-0066 §3b を書き直した"
+justifies:
+  - "DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda"
+  - "DSG-aeb5e219-4784-4950-845c-35f9bab9179c"
+references:
+  - "ADR-f58e9981-bacc-4937-98b8-bddce0a057db"
+  - "ADR-24488788-a5e6-47a5-9074-97192880642a"
+  - "ADR-1338a293-3f69-48f5-9164-efb4ec6994d6"
+  - "ADR-68f453b3-e6c7-4e0d-9978-32b5a00f627e"
+  - "ADR-1743c957-a732-4a44-a89a-4c03ab277f0c"
+  - "ADR-0da9d817-c870-4f48-8a6d-8fb9b55e2a70"
+  - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
+  - "ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
+---
+# ADR-a0d0cf15-8234-42be-b83e-9b8271850475: activation の起動文字列を modules/kick.nix で組み立てる
+
+- ステータス: stable
+- 日付: 2026-11-03
+- 関連: [モジュールの activation は apply --all --manifest を 1 回だけ起動する](module-activation-single-apply-all.md), [apply --manifest でビルド済み link-farm を engine へ直接渡す](apply-manifest-prebuilt-link-farm.md), [モジュールは configs 間の target 衝突を評価時に確認しない](modules-no-eval-conflict-assertion.md), [NixOS モジュールは system.activationScripts.layat から起動する](nixos-activation-script-hook.md), [NixOS の dry-activate では --dryrun を付けて起動する](nixos-dry-activate-dryrun.md), [NixOS の activation の PATH に nix を前置する](nixos-activation-path-nix.md), [module と project では世代操作を公開しない](module-and-project-hide-generation-ops.md), [system mode の last-applied 記録を /var/lib/layat に置く](system-record-base-var-lib.md), GitHub Issue #519, #493
+- 起点: Issue #493（epic: NixOS / nix-darwin モジュールの実装）の grilling（2026-10-24）。ADR-0066 §3b を書き直した
+
+## 背景
+
+home-manager・NixOS・nix-darwin の 3 つのモジュールは、どれも activation から
+`layat apply --all --manifest <name>=<link-farm> …` を 1 回起動する。config ごとの link-farm のビルドと、
+`--jobs` / `--recopy` / `--backup` を付ける規則は 3 つで同じである。モジュールごとに違うのは、root の
+marker と、起動文字列を差し込むフックと、NixOS の起動環境である。
+
+## 決定
+
+config から link-farm への対応と起動文字列の組み立ては、純粋関数 `modules/kick.nix` に置く。
+3 つのモジュールはどれもこれを使い、root の marker とフックを自分で与える。NixOS の起動環境は、
+NixOS モジュールが起動文字列の外側で整える。`modules/common.nix` は
+共通オプションの定義だけを持つ。
+
+ファイルの分け方とモジュールの構成は [modules は common.nix に共通オプションを集約し、統合層ごとに 1 ファイルへ分ける](../design/modules-file-split.md) と
+[NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする](../design/module-stubs.md) に置く。
+
+## 根拠
+
+フラグの規則を 3 つのモジュールが別々に組むと、1 つだけが変わって振る舞いが分かれる。組み立てを
+1 か所に集めれば、home-manager モジュールとの同一性をテストで守り続ける必要が無くなる。
+
+`kick.nix` を module ではなく純粋関数にするのは、呼び出す側が root の marker を引数で渡せるように
+するためである。オプションの定義と組み立てを分けておけば、`common.nix` を import するだけのモジュールが
+起動の規則に依存しない。
+
+## 棄却した代替案
+
+### 起動文字列をモジュールごとに組む
+
+規則が 3 か所に分かれ、home-manager モジュールとの同一性をテストで守り続けることになる。
+
+### 組み立てを `modules/common.nix` に置く
+
+`common.nix` はオプションを定義する module なので、root の marker を引数として受け取れない。
+オプションの定義と起動の規則も 1 つのファイルに同居する。

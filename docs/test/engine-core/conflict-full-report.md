@@ -1,0 +1,20 @@
+---
+id: "TC-4da40ee8-877e-405b-98ca-6bf5de926ba4"
+type: test_condition
+name: "conflict が全件・種類に応じたガイダンス付きで列挙され、集約エラー 1 本で返ること"
+status: stable
+mitigates:
+  - "RISK-e8449214-7794-4d0d-b584-a3a152e2c1f9"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-08-18T22:23:49+09:00"
+---
+# TC-4da40ee8-877e-405b-98ca-6bf5de926ba4: conflict の全件列挙とガイダンス
+
+conflict が複数あるとき、最初の 1 件で打ち切らず全件を列挙し、件数を含む集約エラー 1 本を
+返すことを検証する。ユーザーが 1 回の apply で対処すべき全てを把握できることがこの条件の
+狙いであり、「列挙されること」と「種類ごとに適切な対処ガイダンスが付くこと」の両方を含む。
+
+種類の異なる conflict が混在するとき、各 conflict に対応するガイダンスが正しく組み合わされる
+（他種のガイダンスが付かない）ことも条件に含む。dryrun と本番 apply で同数の conflict が
+報告されることは [dryrun が副作用を持たず、本番 apply と同数の conflict を報告すること](dryrun-readonly-parity.md) の担当。

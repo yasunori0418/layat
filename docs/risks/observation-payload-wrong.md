@@ -1,0 +1,70 @@
+---
+id: "RISK-cdcc6faf-9164-409b-b584-2921fa036d10"
+type: risk
+name: "run が返す世代観測と到達状態が実態とずれ、機械可読出力の消費側を誤らせる"
+status: stable
+threatens:
+  - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
+  - "REQ-05abce3e-9797-432b-b93f-37c55d09afde"
+likelihood: medium
+impact: medium
+level: medium
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
+---
+# RISK-cdcc6faf-9164-409b-b584-2921fa036d10: run が返す世代観測と到達状態が実態とずれ、機械可読出力の消費側を誤らせる
+
+## リスク
+
+`Apply` / `Rollback` / `Reset` は、実行結果として全 entry のインベントリ・世代観測
+（before / after）・失敗時の到達状態（どの target で落ちたか・どこへ到達しなかったか・
+巻き戻したか）・構造化された planner warning を返す。これが `--json` の envelope として
+そのまま外へ出るため、値のずれは「FS の実態と機械可読出力の乖離」になる。
+
+食い違い方は失敗する場面に集中する。成功時は FS も出力も期待どおりで、失敗時にだけ
+「配置したことになっている target が実は配置されていない」「巻き戻したのに `Unwound` が
+false」「到達しなかった entry が一覧から消える」といった形で崩れる。CI が exit code だけ
+でなく JSON を読んで判断する運用では、この乖離が誤った成功判定へ直結する。
+
+世代観測の nil 表現も同じ系統にある。世代を観測できない状況（profile リンクが世代リンク
+でない・そもそも世代を進めない run）で、観測できなかったことを nil で表さずに 0 や現在値を
+返せば、消費側は「世代 0 へ戻った」「世代が進んだ」と読む。project mode が世代をユーザーへ
+公開しない（`rollback` / `list-generations` を出さない → [rollback と list-generations は home / system mode 限定にする](../requirements/rollback-list-generations-home-only.md)）という区別も、
+観測値が漏れ出せば崩れる。ただしその公開／非公開の強制は CLI 側にあり（名指しの実行は
+`rootKind` を見て拒否する分岐が、全 config を対象とする列挙は entrypoint を評価せず
+profile の配置構造だけで落とす別機構が担う）、engine 層の観測値が nil を正しく運ぶ
+ところまでが [実行結果のインベントリ・世代観測・到達状態・構造化 warning が実態を表す](../test/generations/result-observation-fields.md) / [実 nix を通した home mode で世代がコミットされ、rollback が前世代の配置へ戻る](../test/generations/home-generation-e2e.md) の守備範囲になる。非公開の強制そのものは
+[project mode の世代は公開されず、拒否のときは理由が利用者へ届く](../test/integration/project-mode-generation-nondisclosure.md) が持ち、名指しの拒否と全件列挙からの除外の両方の処理を覆う。前者は entrypoint の評価で
+root の種別を解決した後にしか機能しないため、実際に評価を通す e2e でしか見られない。
+覆えない範囲（fixed root での拒否の検証・名指しの拒否が engine へ到達しないこと）は
+同 TC が残件として挙げている。
+
+`list-generations --all` は観測しか行わない処理として約束されており（読み取り専用 →
+[rollback と list-generations は home / system mode 限定にする](../requirements/rollback-list-generations-home-only.md)）、列挙が profile リンクや世代の本数・配置を動かせばその約束が崩れる。
+これを本 risk が抱えるのは、観測が実態を写し取るという前提そのものが破れる点で
+観測値のずれと同根だからで、値を読む側から見れば「読んだ結果と実態が違う」も
+「読んだこと自体が実態を変えた」も区別できない。どちらも失敗として現れない。
+ただしこれを確かめる範囲は home 側の profile / 世代 / 配置に限る（→ [実 nix を通した home mode で世代がコミットされ、rollback が前世代の配置へ戻る](../test/generations/home-generation-e2e.md)）。
+
+## 実現性
+
+**likelihood: medium** — 値の組み立ては失敗する場面ごとに分岐しており、段を増やすたびに
+どの段までを「到達済み」と数えるかの判断が要る。
+
+**impact: medium** — FS を直接壊しはせず、観測値の組み立てを直したうえでの再実行が実態どおりの
+文書を返す。読み取り専用の破れが profile や世代を動かした場合も、動くのは layat 自身が管理する
+世代であり再 apply で収束する。誤りが検出されないまま渡ることは脅威の性質として重いが、気づいた
+後の回復可能性は下げない。「配置したことになっている target が実は配置されていない」
+「巻き戻したのに `Unwound` が false」はどちらも失敗として現れず、CI が
+JSON を読んで判断する運用では誤った成功判定に直結する。
+
+## 緩和
+
+[実行結果のインベントリ・世代観測・到達状態・構造化 warning が実態を表す](../test/generations/result-observation-fields.md)（実行結果の観測フィールドと到達状態の分割）と [実 nix を通した home mode で世代がコミットされ、rollback が前世代の配置へ戻る](../test/generations/home-generation-e2e.md)（e2e での
+`--json` 観測と `--all` の読み取り専用）が緩和する。世代の公開／非公開の強制は
+[project mode の世代は公開されず、拒否のときは理由が利用者へ届く](../test/integration/project-mode-generation-nondisclosure.md)（project mode の世代は公開されず、拒否のときは理由が利用者へ届く）が
+緩和し、名指しした project mode の config に対する拒否（拒否の成立・理由の伝達・
+一覧の非漏出）を [e2e 01-project — project mode の配置と --all の部分失敗を実 nix で通す](../test/integration/e2e-01-project.md) が、全 config を対象とする列挙からの除外を
+[e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復](../test/generations/e2e-02-home.md) が覆う。読み取り専用の被覆は列挙に現れる home 側に限り、除外された
+project mode の profile が動かないことは未被覆（→ [実 nix を通した home mode で世代がコミットされ、rollback が前世代の配置へ戻る](../test/generations/home-generation-e2e.md)）。

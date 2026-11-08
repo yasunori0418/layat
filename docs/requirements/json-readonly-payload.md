@@ -1,0 +1,201 @@
+---
+id: "REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303"
+type: requirement
+name: "読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す"
+status: stable
+derives_from:
+  - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
+  - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
+  - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
+  - "UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d"
+specification: |
+  `apply --dryrun` SHALL have dryRun parity with apply: it SHALL go through the same
+  conversion as apply, so that the schemas agree structurally and only the observed values
+  differ. Its `items` SHALL be the full inventory of every entry of the new manifest plus
+  the old entries in the stale removal plan, in the same item shape as apply. Because a
+  dryrun executes nothing, the skipped state SHALL NOT appear. A conflicting entry SHALL
+  be `item.status:"failed"` with `error.code:"E_LAYAT_COLLISION"`; the JSON output and exit
+  2 SHALL coexist, and the item-caused error SHALL NOT be duplicated into
+  `results[i].errors[]`.
+
+  The changes of `apply --dryrun` SHALL be only the planned differences (a new place /
+  copy maps to `add`, a replace to `modify`, a removal to `remove`, and an unlink plus
+  re-placement of the same target merges into one `modify`). Because a dryrun does not
+  perform the re-link, it does not observe the on-disk destination just before it, so a
+  planned re-link to the recorded destination SHALL remain a `modify`. The overwrite of
+  `--recopy` SHALL NOT appear in the dryrun plan, the planner classifying only place-once
+  while recopy is on the materialize path of the engine. Every change appearing in an
+  apply dryrun SHALL be `reversible: true`. Empty-parent-directory pruning
+  and the rename aside of `--backup` have no entry identity and SHALL produce neither an
+  item nor a change. `generation` SHALL be an observation record with before == after,
+  since no switch occurs; when the profile has not been created yet, both `before` and
+  `after` SHALL be omitted and only `profile` emitted. The mapping and routing of warnings
+  SHALL be shared with apply.
+
+  `reset --dryrun` SHALL have dryRun parity with reset: its `items` SHALL be every selected
+  entry, in the same item shape as reset, and its `changes` SHALL be the planned removals
+  (a symlink removal maps to a reversible `remove`, a copy deletion to an irreversible
+  `remove`). It SHALL NOT emit the `SubjectResult.generation` slot. The mapping and routing
+  of warnings SHALL be shared with reset.
+
+  `list-generations <name>` SHALL emit
+  `results[i].result.info.generations = [{number, date, current}]` (`date` being the raw
+  string displayed by nix-env) with `items: []`, and SHALL NOT emit the
+  `SubjectResult.generation` slot, so as not to encode the generation numbers twice. Even
+  for an empty profile it SHALL state `"generations": []` explicitly. Beside it,
+  `results[i].result.info.mode` SHALL state the profile's mode, `"home"` or `"system"`.
+  Under `list-generations --all` every `results[i].subject.name` SHALL be
+  `<mode>:<name>`, the mode being `home` for the user base and `system` for the system base.
+
+  `status [name]` SHALL emit one subject per listed config, with
+  `results[i].result.info = {mode, root, appliedAt, linkFarm, entries}`, each element of
+  `entries` being `{target, method, srcKind, src, subpath}` taken from the recorded
+  manifest, and `items: []`; it SHALL NOT emit the `SubjectResult.generation` slot. Even
+  for a manifest without entries it SHALL state `"entries": []` explicitly. Every
+  `results[i].subject.name` SHALL be `<mode>:<name>` for a `<name>`-keyed record and
+  `<mode>:<name>@<root>` for a record of a `<roothash>` series; for a series whose backref
+  cannot be read it SHALL be `<mode>:<name>@<roothash>`, and a series reported as a whole
+  (its `<name>` entries cannot be listed, or its backref cannot be read and no `<name>`
+  with a record is found) SHALL be one subject named `<mode>:@<roothash>`, the mode of
+  these being `home` for the user base and `system` for the system base. A config whose record or
+  backref cannot be read or is invalid SHALL carry the error in its own
+  `results[i].errors[]`, the other subjects SHALL be emitted as usual, and the top-level
+  `status` SHALL be `error`.
+
+  `gitignore <name>` SHALL emit `results[i].result.info.paths` as anchored targets (with a
+  leading `/`) and `items: []`. Even with zero entries it SHALL state `"paths": []`
+  explicitly.
+
+  `init <template>` has no subject and SHALL keep `results: []`, carrying `{template, ref}`
+  in the top-level `info`. Because the info is fixed before the expansion is executed, it
+  SHALL remain alongside the top-level `errors[]` on failure as well.
+
+  The `dryRun` of the read-only commands (list-generations / status / gitignore / init) SHALL
+  always be `false`: `dryRun` SHALL be limited to reflecting the `--dryrun` flag and SHALL
+  NOT be used to express the absence of side effects.
+specification_ja: |
+  `apply --dryrun` は apply と dryRun パリティを持たなければならない。apply と同一の変換を
+  通すことでスキーマの一致を構造的に保証し、値（観測結果）だけが異なるようにしなければ
+  ならない。`items` は新 manifest の全 entry + 古くなった配置の除去計画に載った旧 entry のフルイン
+  ベントリとし、item 形は apply と同一としなければならない。dryrun は何も実行しないため
+  skipped 区分は現れてはならない。
+  conflict の entry は `item.status:"failed"` + `error.code:"E_LAYAT_COLLISION"` とし、
+  JSON 出力と exit 2 は両立させ、item 起因エラーを `results[i].errors[]` へ二重化しては
+  ならない。
+
+  `apply --dryrun` の changes は予定差分のみとしなければならない（place / copy 新規 →
+  `add`・replace → `modify`・除去 → `remove`。同一 target の unlink + 再配置は 1 つの
+  `modify` に合体）。dryrun は re-link を実行しないため re-link 直前の on-disk dest を
+  観測せず、記録どおりの dest への予定 re-link も `modify` として残さなければならない。
+  `--recopy` の上書きは dryrun の plan に現れてはならない（planner は place-once 分類のみで
+  recopy は engine の materialize 側の処理のため）。apply の dryrun に現れる change は全て
+  `reversible: true` としなければならない。
+  空親ディレクトリ剪定と `--backup` の rename 退避は entry 識別を持たず item /
+  change を生んではならない。`generation` は観測記録とし、切替が起きないため
+  before = after、profile 未作成の初回 plan では `before` / `after` を両省略し `profile`
+  のみとしなければならない。warnings の写像・振り分けは apply と共通としなければならない。
+
+  `reset --dryrun` は reset と dryRun パリティを持たなければならない。`items` は選択済みの
+  全 entry とし、item 形は reset と同一としなければならない。`changes` は撤去予定とし
+  なければならない（symlink の撤去は可逆な `remove`、copy の削除は不可逆な `remove`）。
+  `SubjectResult.generation` スロットは出してはならない。warnings の写像・振り分けは reset と
+  共通としなければならない。
+
+  `list-generations <name>` は `results[i].result.info.generations = [{number, date,
+  current}]`（`date` は nix-env 表示の生文字列）と `items: []` を出さなければならず、
+  `SubjectResult.generation` スロットは出してはならない（世代番号の二重符号化回避）。
+  空 profile でも `"generations": []` を明示しなければならない。
+  あわせて `results[i].result.info.mode` に profile のモード（`"home"` か `"system"`）を
+  出さなければならない。`list-generations --all` では全ての `results[i].subject.name` を
+  `<mode>:<name>`（user 基底は `home`、system 基底は `system`）としなければならない。
+
+  `status [name]` は列挙する config ごとに 1 つの subject を出し、
+  `results[i].result.info = {mode, root, appliedAt, linkFarm, entries}`（`entries` の各要素は
+  記録の manifest から取った `{target, method, srcKind, src, subpath}`）と `items: []` を
+  出さなければならず、`SubjectResult.generation` スロットは出してはならない。entry を持たない
+  manifest でも `"entries": []` を明示しなければならない。`results[i].subject.name` は
+  `<name>` 直キーの記録なら `<mode>:<name>`、`<roothash>` 系列の記録なら
+  `<mode>:<name>@<root>` としなければならない。backref が読めない系列では
+  `<mode>:<name>@<roothash>` とし、系列全体で 1 件として返す系列（`<name>` を列挙できない
+  系列と、backref が読めず記録を持つ `<name>` も見つからない系列）は `<mode>:@<roothash>` という
+  1 つの subject としなければならず、これらの mode は user 基底なら `home`、system 基底なら
+  `system` としなければならない。記録や backref が読めない・不正な config は、
+  その error を自分の `results[i].errors[]` に持たなければならず、他の subject は通常どおり
+  出さなければならず、トップレベルの `status` は `error` としなければならない。
+
+  `gitignore <name>` は `results[i].result.info.paths` に anchor 形 target（先頭 `/`）と
+  `items: []` を出さなければならない。entry 0 件でも `"paths": []` を明示しなければ
+  ならない。
+
+  `init <template>` は主体を持たないため `results: []` のままとし、トップレベル `info` に
+  `{template, ref}` を載せなければならない。info は展開実行前に確定するため、失敗時も
+  トップ `errors[]` と並んで残さなければならない。
+
+  読み取り系（list-generations / status / gitignore / init）の `dryRun` は常に `false` としなければ
+  ならない。`dryRun` は `--dryrun` フラグの反映に限定し、副作用の無さを `dryRun` で表現
+  してはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
+---
+# REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303: 読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す
+
+## 仕様
+
+- **`apply --dryrun`**: apply と **dryRun パリティ**。実装も同一の変換（変更系の payload
+  builder）を通すため、スキーマの一致は構造的に保証され、値（観測結果）だけが異なる。
+  `items` = 新 manifest の全 entry + 古くなった配置の除去計画に載った旧 entry（フルインベントリ・
+  item 形は変更系と同一〔`info={target, method, subpath}`〕）。dryrun は何も実行しないため
+  skipped 区分は現れない。conflict の entry は `item.status:"failed"` +
+  `error.code:"E_LAYAT_COLLISION"`（message は planner の理由）で、**JSON 出力と exit 2 は
+  両立**し、item 起因エラーは `results[i].errors[]` へ二重化しない。
+- **`apply --dryrun` の changes**: 予定差分のみ（place / copy 新規 → `add`・
+  replace → `modify`・除去 → `remove`。同一 target の unlink + 再配置〔method 変更〕は
+  変更系と同じく 1 つの `modify` に合体）。dryrun は re-link を実行しないため re-link 直前の
+  on-disk dest（noop 判定の材料）を観測せず、記録どおりの dest への予定 re-link も
+  `modify` として残る（テキスト plan の replace 行と同写像・実 apply の noop 抑止とは
+  意図的な非対称）。`--recopy` の上書きは dryrun の plan に現れない（planner は place-once
+  分類のみで recopy は engine の materialize 側の処理）。reversible は変更系と同じ規則
+  （apply の dryrun に現れる change は全て `true`）。空親ディレクトリ剪定（rmdir）と `--backup` の
+  rename 退避は entry 識別を持たず item / change を生まない。`generation` = 観測記録
+  （切替が起きないため **before = after**・profile 未作成の初回 plan では **before / after を
+  両省略**し `profile` のみ）。warnings の写像・振り分けは変更系と共通。
+- **`reset --dryrun`**: reset と **dryRun パリティ**。`items` = 選択済みの全 entry（item 形は
+  reset と同一）、`changes` = 撤去予定（symlink は可逆な `remove`・copy は不可逆な `remove`）。
+  `SubjectResult.generation` スロットは出さない。warnings の写像・振り分けは reset と共通。
+- **`list-generations <name>`**: `results[i].result.info.generations = [{number, date,
+  current}]`（`date` は nix-env 表示の生文字列）・`items: []`。`SubjectResult.generation`
+  スロットは出さない（世代番号の二重符号化回避）。空 profile でも `"generations": []` を
+  明示する。`info.mode` に profile のモード（`"home"` / `"system"`）を添える。
+  `list-generations --all` は user 基底と system 基底を走査し、同名 config が両方にあっても
+  subject 名が 1 エンベロープ内で重複しないよう、全 subject を `home:<name>` /
+  `system:<name>` と名付ける（単発の `list-generations <name>` は素の `<name>`）。
+- **`status [name]`**: 列挙する config ごとに 1 subject。`results[i].result.info =
+  {mode, root, appliedAt, linkFarm, entries}`・`items: []`。`entries[]` は記録の manifest の
+  `{target, method, srcKind, src, subpath}` で、0 件でも `"entries": []` を明示する。
+  `SubjectResult.generation` スロットは出さない（status は profile を読まず世代番号を持たない）。
+  subject 名は `<name>` 直キーが `<mode>:<name>`（mode は user 基底 `home` / system 基底
+  `system`）、`<roothash>` 系列が `<mode>:<name>@<root>`（mode は記録の `rootKind`、root は
+  backref `.root`）。backref が読めない系列は `<mode>:<name>@<roothash>`、`<name>` を列挙
+  できない系列と、backref が読めず記録を持つ `<name>` も見つからない系列は系列全体で 1 件の
+  `<mode>:@<roothash>`（どれも mode は基底に応じた `home` / `system`）。記録・backref が読めない・不正な config は、その subject の `errors[]` に
+  error を置き、他の subject は通常どおり出す（トップの `status` は `error`、exit 1）。
+- **`gitignore <name>`**: `results[i].result.info.paths` = anchor 形 target（先頭 `/`）・
+  `items: []`。デフォルトの行指向 stdout は不変（`--json` は opt-in の第 2 契約）。
+  entry 0 件でも `"paths": []` を明示する。
+- **`init <template>`**: 主体（config）を持たないため `results: []` のまま、トップレベル
+  `info` に `{template, ref}`（展開テンプレート名と flake ref）を載せる。info は展開実行前に
+  確定するため、失敗時もトップ `errors[]` と並んで「何を展開しようとしたか」が残る。
+- **読み取り系の `dryRun` は常に `false`**（list-generations / status / gitignore / init）。
+  `dryRun` は `--dryrun` フラグの反映に限定し、副作用の無さを `dryRun` で表現しない。
+
+変更系ペイロード（item 形・warnings 一覧・部分失敗の写像）は [変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く](json-change-payload.md) の担当。
+
+## 出典
+
+`docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
+出力」のサブ項目「読み取り系ペイロード（#132）」とその配下の全項目。
+
+決定の実体は [読み取り専用の列挙は info で返す](../adr/readonly-enumeration-as-info.md)（読み取り系の info インベントリ・`init` の top-level info）、
+status の info の形を定めた [status は entry ごとに配置先を出力する](../adr/status-output-format.md) と、
+`--recopy` が planner の分類ではなく engine の materialize の処理であることを定めた [apply --recopy で全 copy target を src から無条件に上書きする](../adr/apply-recopy-overwrites-copies.md)。

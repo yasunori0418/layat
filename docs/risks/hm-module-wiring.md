@@ -1,0 +1,72 @@
+---
+id: "RISK-d734e24e-9af9-49f1-a22d-ade92f6554eb"
+type: risk
+name: "home-manager モジュールが engine をキックする配線から外れ native 機構へ翻訳される"
+status: stable
+threatens:
+  - "REQ-8085f194-c903-4ecb-abd8-c719fe7b3292"
+  - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
+  - "REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3"
+  - "REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a"
+  - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
+  - "REQ-068f2fb3-5459-4325-9359-c931b5049e0d"
+  - "REQ-844ee375-919f-4341-81e1-a5f89fd32840"
+  - "REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c"
+likelihood: medium
+impact: high
+level: high
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
+---
+# RISK-d734e24e-9af9-49f1-a22d-ade92f6554eb: home-manager モジュールが engine をキックする配線から外れ native 機構へ翻訳される
+
+## リスク
+
+統合層のモジュールは engine を起動するだけの配線であり、entry を統合先の native な配置機構へ
+翻訳しない、というのが設計全体の前提である。この前提が崩れると、配置の意味論が統合層ごとに
+分岐し、engine が一手に引き受けているはずの不変条件（保守的な古くなった配置の除去・原子性）が使い方に
+よって成り立たなくなる。
+
+崩れ方は次の形をとる。
+
+- **翻訳への退化** — activation が engine を呼ばず、統合先のファイル配置機構へ entry を
+  流し込む。単体では動いてしまうため、engine 側の保証を失ったことに気づきにくい
+- **root の取り違え** — モジュール経由の配置先が home root に固定されず、利用者側の指定で
+  上書きされる
+- **entry の欠落** — モジュール上で宣言した entry が manifest へ届かない
+- **オプションの配線し忘れ** — モジュールのオプション（退避の有効化とそのサフィックス）が、
+  engine の起動時のフラグとして届かない。既定値を省略したときに既定が入らない、という形でも
+  起きる
+- **subdir の配線し忘れ** — config に指定した subdir がその config の target に前置されない、
+  または別の config の target へ漏れる
+- **config ごとの独立性の喪失** — 名前つきの config ごとに独立した profile を取れず、役割
+  分離が崩れる。hm の使い方の検証は評価アサート（`checks.hm-module`）・実 activate（e2e
+  `05-hm`）とも複数 config を通しており、この崩れ方は [home-manager モジュールで名前つき config ごとの独立性が失われる](hm-configs-independence-lost.md)
+  と [HM の複数 config が独立した配置物と profile を持ち、衝突と部分失敗が config 単位で扱われる](../test/integration/hm-multi-config-activation.md) が受ける
+- **rollback の二重化** — モジュール下で `layat rollback` が露出する、あるいは host の rollback 後の
+  再 kick で layat の profile が前進せず前世代へ戻り、host と layat の世代が食い違う
+  （→ [module 時は rollback を host へ一本化し、layat profile は前進のみで追従する](../requirements/module-mode-profile-internal.md)）
+- **recopy の配線の取り違え** — `layat.recopy` が false でも activation の起動に `--recopy` が付くか、
+  true でも付かない（→ [layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける](../requirements/recopy-wiring-layer.md)）
+
+これらは評価の時点で決まるが、実際に activate するまで観測できない性質を持つ。activate を
+伴わない検証層が無ければ、統合先の実環境でしか崩れが露見しない。
+
+## 影響
+
+宣言的に管理しているつもりの配置が engine の保証を外れる。崩れ方のうち軽い側——root が
+固定されない・entry やオプションが届かない——は配線を直したうえでの再 activation が engine
+経由の配置へ戻すので medium に留まるが、最も重い「翻訳への退化」はそうではない。engine を
+呼ばず統合先の native な配置機構へ entry を流し込むと、配置も撤去も engine の外で行われ、
+home-manager の readlink パターンによる cleanup が記録外の実体を消す場面が生じる（この取り違えを
+避けるために layat が manifest 記録による分類を採っていることは [古くなった配置を保守的に除去するときの不変条件が破れ、layat が作っていない実体を消す](stale-removal-invariant-broken.md) が述べる。ただし
+同 item の射程は engine 自身の除去実装で、engine を経由しない配置は射程外なので、この場面の
+impact は本 item が持つ）。消えるのは layat の記録に無い実体なので再 activation では戻らない。
+規約の最重方向則に従い impact を high とする。home-manager の使い方が主要な利用導線でありながら
+崩れても単体では動いてしまい、保証を失ったことに利用者が気づく手段が乏しい点は沈黙性として
+残る。
+
+likelihood を medium とするのは、モジュールが配線するオプションが増えるたびに engine の
+起動フラグへの受け渡し忘れが入りうる一方、これらは評価の時点で決まるため、評価アサートを
+持つ検証層が退行の多くを捕まえるため。

@@ -1,0 +1,64 @@
+---
+id: "ADR-2119433e-de69-4447-85a5-575d58246007"
+type: adr
+name: "engine を単一の固定 Go バイナリにする"
+status: stable
+origin: "初期設計の生成 bash を実装前に正す見直し。ADR-0006「決定」節の第 1 項を書き直した"
+justifies:
+  - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
+  - "DSG-0b94308c-6b15-46d1-854c-5945ae587b0d"
+references:
+  - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
+  - "ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75"
+  - "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
+---
+# ADR-2119433e-de69-4447-85a5-575d58246007: engine を単一の固定 Go バイナリにする
+
+- ステータス: stable
+- 日付: 2026-11-01
+- 関連: [1 config = 1 profile を全モードで自前に持つ](one-config-one-profile-all-modes.md), [module と project では世代操作を公開しない](module-and-project-hide-generation-ops.md), [古くなった配置の除去は記録どおりの symlink だけに限る](conservative-removal-invariant.md), `docs/concept.md`
+- 起点: 初期設計の生成 bash を実装前に正す見直し。ADR-0006「決定」節の第 1 項を書き直した
+
+## 背景
+
+初期の設計では、config ごとに entries を埋め込んだ bash スクリプトを生成し、配置のロジック（`ln`・
+`rsync`・古くなった配置の除去・profile の切替）をその中に持たせていた。
+
+これは concept の 2 つの主張と矛盾していた。配置のロジックが最もテストしにくい生成物の中にあり、
+「テスト可能な純粋関数群」にならない。配置を一手に所有する単一のコア機構（[配置は全層で engine が行い、ネイティブ機構へ翻訳しない](engine-owns-placement-no-native-translation.md)）と言いながら、
+実体は config の数だけ再生成される bash だった。
+
+## 決定
+
+engine は単一の固定 Go バイナリ（`packages.layat`、`buildGoModule` でビルド）にし、配置のロジックは
+この 1 箇所だけに置く。
+
+CLI と engine の 2 層構成は [layat は CLI とエンジンの 2 層で構成する](../requirements/two-layer-architecture.md) に、配置と cleanup のアルゴリズムを
+Go で再実装することは [配置と cleanup のアルゴリズムは home-manager の linkGeneration / cleanup を範として Go で再実装する](../design/cleanup-from-home-manager.md) に置く。
+
+## 根拠
+
+配置のロジックが固定のバイナリ 1 つに閉じるので、「単一の engine」を文字どおり満たし、ユニットテストの
+対象にできる。
+
+Go を選んだのは、安全に関わる保守的な古くなった配置の除去をユニットテストしやすいからである。単一の静的
+バイナリで `buildGoModule` により nixpkgs でビルドしやすく、サブプロセスと FS の操作も素直に書ける。
+engine は外部コマンドと FS を扱うオーケストレータなので、Go が実務に合う。
+
+## 棄却した代替案
+
+### config ごとに bash を生成する
+
+初期の設計そのもの。単一の engine にならず、配置のロジックをテストできない。
+
+### 固定の bash スクリプト 1 本にする
+
+コンパイルが要らず純 Nix で済むが、保守的な古くなった配置の除去を bash で正しく書き、テストするのが難しい。
+
+### Rust で書く
+
+同じく堅牢で妥当だが、反復のコストが重い。CLI とサブプロセスを扱う素直さと nixpkgs でのビルドの
+しやすさで Go を選んだ。

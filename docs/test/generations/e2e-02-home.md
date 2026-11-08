@@ -1,0 +1,79 @@
+---
+id: "CASE-2e7b9ea2-4e4d-48ca-9e1e-0bfbb6223ff2"
+type: test_case
+name: "e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復"
+status: stable
+resource: "tests/e2e/scenarios/02-home.sh"
+covers:
+  - "TC-527b5034-715a-4df1-871a-072dc9062704"
+  - "TC-b4a365cd-0b1c-40ff-92c6-91f6cffe8e98"
+  - "TC-cf8189c4-d680-4d7e-bcd3-810543762c50"
+  - "TC-f304d682-bc5e-4369-a427-f766fdfdd961"
+  - "TC-f0958a4c-b585-49c5-96a9-d7beff571e71"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:49+09:00"
+---
+# CASE-2e7b9ea2-4e4d-48ca-9e1e-0bfbb6223ff2: e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復
+
+## 対象
+
+`tests/e2e/scenarios/02-home.sh`
+
+`e2e_isolate` で仮 `$HOME` と `$XDG_STATE_HOME` を切り、fixture flake（`homeRoot` を
+使う `mkManifest`）を書いて実 nix 経由で apply する E2E シナリオ。世代ごとに entry の
+target / subpath を入れ替えて flake を書き直し、git commit してから apply する。
+
+fixture flake は `projectRoot` の第 2 config `proj` も宣言する。`list-generations --all` の
+除外は、除外対象が disk 上に実在する配置でしか「元から空」と区別できないため
+（→ [project mode の世代は公開されず、拒否のときは理由が利用者へ届く](../integration/project-mode-generation-nondisclosure.md) の条件「全件列挙が含めない」・issue #312）、`--all` の検証に入る直前で
+`proj` を apply して roothash 階層の profile を作る。
+
+## 検証内容
+
+- **世代 1** — apply が `$HOME/.cfg/a` へ symlink を張り、内容が src と一致する
+- **成功時沈黙** — 再 apply（no-op）で指定が無いときは配置レポートを出さず、`-v` で出す
+  （layat 自身の完了マーカーの有無で判定 → [指定が無いときは成功時に何も出力しない](../../adr/silent-on-success.md) / [-v で配置レポートを opt-in で出す](../../adr/verbose-opts-into-placement-report.md)）
+- **profile 世代のコミット** — `<state>/nix/profiles/layat/home/profile` が symlink として
+  存在し、`list-generations` が 1 件以上を返す
+- **last-applied 記録（apply 後）** — `$XDG_STATE_HOME/layat/home/last-applied.json` が存在し、
+  `linkFarm` が profile の指す link-farm と一致する
+- **`apply --dryrun --json`** — 既存 profile では `generation.before` が非 null かつ
+  `before == after`（→ issue #132）
+- **世代 2** — entry を b へ入れ替えて apply すると `.cfg/b` が配置され、`.cfg/a` が
+  古くなった配置として除去され、世代が 2 つ以上になる
+- **`rollback --json`** — 前世代へ戻ると `.cfg/a` が復活し `.cfg/b` が消える。エンベロープは
+  generation が 2 → 1 の遷移を含み、`items` は復帰先と撤去元の両方（全在庫）を全て success で
+  持ち、`changes` は復帰先の add と撤去元の remove（どちらも symlink なので可逆）の 2 件だけ。
+  status は success、`dryRun` は false、command は `rollback`（→ issue #285）
+- **last-applied 記録（rollback 後）** — 記録の `linkFarm` が世代 1（N-1）の link-farm に変わる
+- **`list-generations --json`** — `info.generations` が `{number, date, current}` を持つ
+  2 世代を含み、current は rollback 先の世代 1 だけ。`items` は空、generation スロットは
+  持たず、`dryRun` は false
+- **`list-generations --all --json`** — `results` の subject 名が `["home:home"]` と等しい
+  （`--all` の subject 名は `<mode>:<name>`。home が現れる陽性対照と `proj` が現れない除外を
+  1 つの等式で固定する）。`home` の
+  `info.generations` は名指し列挙と同じ 2 世代で current は世代 1、`items` は空、
+  generation スロットは持たず subject の status は success。集約 status は success で
+  `dryRun` は false（→ issue #312）
+- **`--all` のテキスト出力** — exit 0 で終わり、per-config ヘッダ行の集合が `# home` だけと
+  等しく、世代本体が世代 1（current）と世代 2 のリテラルと一致する。ヘッダの印字は `--json`
+  の処理が通らない別分岐なので、JSON の処理だけではこの分岐の退行に気付けない
+- **`--all` の読み取り専用** — `--json` の処理とテキストの処理の両方をまたいで、profile の
+  リンク先・世代の本数・`$HOME` 配下の配置がいずれも変わらない
+- **`reset --dryrun --json`** — 実際の reset の直前に通す。exit 0 で、エンベロープは status が
+  success、`dryRun` が true、command が `reset`。`items` は選択済みの entry（`kind: "entry"`）を
+  success で全件、`changes` は撤去予定の可逆な remove だけを含み、generation スロットは持たない。
+  dryrun の後も配置・profile のリンク先・last-applied 記録が変わらない
+- **`reset --json --yes`** — 配置が撤去され、エンベロープは `items` に撤去対象の entry を
+  success で、`changes` に可逆な remove を 1 件だけ含む。generation スロットは持たず（FS のみの撤去）、
+  profile リンクと世代の本数は動かない。status は success、`dryRun` は false、command は
+  `reset`（→ issue #285）
+- **last-applied 記録の出所** — reset 後に nix 生成器で apply し直すと、記録は `recordVersion` 2 で
+  `origin.generator` が `nix`、`origin.entrypoint` が絶対パスになる。続けて記録の `linkFarm` を
+  `apply --manifest --json` で再適用すると exit 0 で subject 警告 `W_LAYAT_ORIGIN_MISMATCH` を出し、
+  配置は変わらず、記録の `origin.generator` は後勝ちで `prebuilt` になる
+  （→ [記録は版 2 で出所を持ち、読みは版 1 と 2 を受け付け、出所の食い違いを警告し、書き直しは出所を引き継ぐ](origin-mismatch-detection.md)）
+- **出所の同一性 `identity`** — `home` に `identity` を与えて apply すると記録の `origin.identity` がその値になり、
+  その `linkFarm` を `--manifest` で再適用しても `W_LAYAT_ORIGIN_MISMATCH` を出さない。同じ entries で `identity` だけ違う
+  `alt` を `--manifest` で当てると警告し、`detail.recorded.identity` と `detail.current.identity` が異なる

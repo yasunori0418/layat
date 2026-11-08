@@ -1,0 +1,33 @@
+---
+id: "TC-2f51dc14-f938-439d-b0c8-1d535914b2d3"
+type: test_condition
+name: "非 NixOS で HM configuration を実際に activate すると engine が配置する"
+status: stable
+mitigates:
+  - "RISK-d734e24e-9af9-49f1-a22d-ade92f6554eb"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:22+09:00"
+---
+# TC-2f51dc14-f938-439d-b0c8-1d535914b2d3: 非 NixOS で HM configuration を実際に activate すると engine が配置する
+
+## 条件
+
+評価アサートの層（[activation が評価時点で engine 起動へ配線され root と entry とオプションを届ける](activation-engine-kick-wiring.md)）で確かめられない部分、すなわち activate を実際に実行した
+ときに engine が起動して配置が行われることを確かめる。隔離した一時 HOME の下で、
+activation package を実際にビルドして実行する。
+
+- **実 activate の成立** — activation が engine を起動し、宣言した配置先に配置物が現れ、
+  内容が配置元と一致すること
+- **subdir 付き config の配置** — subdir を与えた config の配置先が `$HOME/<subdir>/` 配下に
+  なること。不正な subdir の configuration は build が失敗し、診断に `root subdir` が載ること
+- **公開 API の健全性** — 外部の flake から公開されたモジュールを import して利用でき、
+  必要な CLI の注入が利用者側の記述なしに済むこと
+- **主体起因の失敗の層** — 主体が確立した後に評価が失敗した場合、失敗が subject 側へ構造化
+  され、item は空のまま文書は適合を保つこと
+
+CLI と文書の生成側が同一の入力に由来し契約の版がずれないことは、モジュールという使い方の構成上
+そうなる性質であり、この条件では検証しない（現状の実装にアサートが無い）。
+
+NixOS / nix-darwin のモジュールという使い方での実 activate はこの条件の外に置く（仮想マシンを要する
+ため、テスト計画上スコープ外と宣言されている）。

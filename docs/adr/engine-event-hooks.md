@@ -1,0 +1,74 @@
+---
+id: "ADR-5ee0230d-765f-450a-b9f7-929c13d6b694"
+type: adr
+name: "engine の実行イベントにユーザー定義スクリプトの hook を掛ける"
+status: deprecated
+sources:
+  - id: "issue-584"
+    resource: "https://github.com/yasunori0418/layat/issues/584"
+    title: "#584"
+origin: "ADR-0041 §a（engine に hook 機構を持たない）を書き直した"
+justifies:
+  - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
+  - "REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564"
+  - "DSG-f286746c-56ca-4f0c-bb95-7c74d0cea7c0"
+references:
+  - "ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T02:02:56+09:00"
+---
+# ADR-5ee0230d-765f-450a-b9f7-929c13d6b694: engine の実行イベントにユーザー定義スクリプトの hook を掛ける
+
+- ステータス: deprecated
+- 日付: 2026-11-03
+- 関連: [layat.lib.mkEnv で buildEnv 合成環境を提供する](mkenv-buildenv.md), [placement primitive](../ubiquitous-language/placement-primitive.md)
+- 起点: ADR-0041 §a（engine に hook 機構を持たない）を書き直した
+
+## 背景
+
+engine の実行イベント（配置の前後・古くなった配置の除去・世代のコミットなど）に、利用者が定義したスクリプトを
+掛ける hook 機構が提案された。home-manager の activation hook や git hooks と同じ型の、よくある発想
+である。提案には「layat のコンセプトから外れるなら取りやめる」という条件が付いていたので、
+コンセプトに合うかを正面から評価した。
+
+layat の各層には、すでに hook を差し込める場所がある。devShell には `shellHook`、home-manager には
+activation の DAG がある。CLI 単体で使うときは shell で `layat apply` の前後にコマンドを並べ、終了コードで
+分岐できる。機械可読な結果が要るなら `--json` を読めばよい。
+
+## 決定
+
+engine に hook 機構を設けない。hook が欲しくなる場面は、配線層ごとの合成で満たす。将来ふたたび
+提案するときは、どの配線層の合成でも満たせない場面を具体的に示すことを前提にする。
+
+モジュールと devShell を engine を呼ぶだけの配線に留めることは
+[全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md) に、engine が実行する外部コマンドを git に限ることは
+[engine が叩く外部コマンドは git のみに限る](../requirements/engine-external-command-constraint.md) に、配線層ごとの合成のしかたは
+[hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす](../design/hook-composition-idioms.md) に置く。
+
+## 根拠
+
+[placement primitive](../ubiquitous-language/placement-primitive.md)（placement primitive）は「配置フレームワーク」を避ける語としている。engine に任意のスクリプトを実行する
+イベント機構を足すと、配置という 1 つの仕事をする engine が、ライフサイクルを持つフレームワークへ
+変わっていく。提案に付いていた取りやめの条件に当たる。
+
+hook の置き場所は配線層にすでにある。engine に hook を持てば、それらと重複するうえ、層を飛び越えて
+配線の責務を engine に持ち込むことになる。
+
+engine は git 以外の外部コマンドを実行せず、成功時は何も出力しない。任意のスクリプトを実行すると、
+サブプロセスの失敗・出力・タイムアウトという新しい失敗の種類を engine の意味に持ち込むことになる。
+
+## 棄却した代替案
+
+### 提案どおり engine に pre / post の hook を実装する
+
+上の根拠のとおり、コンセプトから外れる。
+
+### engine には触れず、CLI に hook を置く
+
+層は変わっても、layat が任意のスクリプトの実行に責任を持つ点は同じである。shell で合成する場合と
+比べた利点は、設定ファイルに書けることくらいしかない。合成は shell に任せればよい。
+
+### 判断を保留して検討を続ける
+
+外れる根拠が [placement primitive](../ubiquitous-language/placement-primitive.md) に明文で存在する。保留しても判断を先送りするだけである。

@@ -30,7 +30,7 @@ nix store のパス（リポジトリ全体・サブディレクトリ・単一�
 symlink または copy で配置する Nix ライブラリ・モジュール群。配置ロジックはテスト可能な純粋関数 +
 単一の配置エンジンとして実装し、ユーザーが配置を明示的に握る。home-manager に依存せず単体で
 動作しつつ、HM / NixOS / nix-darwin のモジュールとも統合できる。ただし統合層は配置ロジックを
-持たず、エンジンを起動する薄い配線に徹する（→ ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880）。
+持たず、エンジンを起動する薄い配線に徹する（→ [モジュールは root と起動の時機だけを供給して engine を起動する](adr/modules-wire-engine-kick-only.md)）。
 
 layat が何であるか・何のために作るかは `solution` / `use_case` の領分。→ `docs/concept.md`。
 
@@ -60,13 +60,13 @@ layat が何であるか・何のために作るかは `solution` / `use_case` �
 
 リポジトリはトップレベル 5 ディレクトリ（`lib/` / `cmd/` / `internal/` / `templates/` /
 `modules/`）に分ける。配置ロジックは Go エンジンが単一の源として所有し、`lib/` はデータ生成に
-徹する（→ ADR-521765d7-7e31-42f4-b548-979185a7586a, ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3）。
+徹する（→ [lib は純データ生成に徹する](adr/lib-produces-data-only.md), [engine は cmd/ と internal/ に置きライブラリ化しない](adr/engine-internal-cmd-layout.md)）。
 
-- [DSG-1361df1a-31c4-46ed-a6ce-92938f94ac02](design/20260802-1361df1a-31c4-46ed-a6ce-92938f94ac02-repo-layout.md) — リポジトリを lib / cmd / internal / templates / modules のトップレベル 5 ディレクトリへ分ける
-- [DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5](design/20260802-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5-lib-module-split.md) — lib は公開 API・型定義・manifest 生成・マーカー構築子・apply コマンド組み立ての 5 ファイルへ分割する
-- [DSG-7d354fe0-a333-495b-9f4b-14bba316dc47](design/20260802-7d354fe0-a333-495b-9f4b-14bba316dc47-go-package-split.md) — Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする
-- [DSG-aeb5e219-4784-4950-845c-35f9bab9179c](design/20260802-aeb5e219-4784-4950-845c-35f9bab9179c-modules-file-split.md) — modules は common.nix に共通オプションを集約し、統合層ごとに 1 ファイルへ分ける
-- [DSG-4a84f282-76ea-47c9-aede-deac12ff5257](design/20260802-4a84f282-76ea-47c9-aede-deac12ff5257-implementation-scope.md) — 実装スコープを CLI 単体 + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする
+- [リポジトリを lib / cmd / internal / templates / modules のトップレベル 5 ディレクトリへ分ける](design/repo-layout.md) — リポジトリを lib / cmd / internal / templates / modules のトップレベル 5 ディレクトリへ分ける
+- [lib は公開 API・型定義・manifest 生成・マーカー構築子・apply コマンド組み立ての 5 ファイルへ分割する](design/lib-module-split.md) — lib は公開 API・型定義・manifest 生成・マーカー構築子・apply コマンド組み立ての 5 ファイルへ分割する
+- [Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする](design/go-package-split.md) — Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする
+- [modules は common.nix に共通オプションを集約し、統合層ごとに 1 ファイルへ分ける](design/modules-file-split.md) — modules は common.nix に共通オプションを集約し、統合層ごとに 1 ファイルへ分ける
+- [実装スコープを CLI 単体 + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする](design/implementation-scope.md) — 実装スコープを CLI 単体 + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする
 
 ---
 
@@ -74,12 +74,12 @@ layat が何であるか・何のために作るかは `solution` / `use_case` �
 
 CLI / engine / lib / `common.nix` / 統合層の 5 段に積み、依存は呼ぶ側から呼ばれる側への一方向に
 限る。配置の振る舞いは全層でエンジンが単一の源であり、各層はネイティブ機構へ翻訳しない
-（→ ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7, ADR-2119433e-de69-4447-85a5-575d58246007）。
+（→ [配置は全層で engine が行い、ネイティブ機構へ翻訳しない](adr/engine-owns-placement-no-native-translation.md), [engine を単一の固定 Go バイナリにする](adr/engine-fixed-go-binary.md)）。
 
-- [DSG-17db0831-d7da-446d-ba3e-404df64c582d](design/20260802-17db0831-d7da-446d-ba3e-404df64c582d-layer-stack-dependency.md) — 層を CLI / engine / lib / common.nix / 統合層の 5 段に積み、依存を呼ぶ側から呼ばれる側への一方向に限る
-- [DSG-25ad3cce-f921-4db2-aae0-c0263d4b8295](design/20261002-25ad3cce-f921-4db2-aae0-c0263d4b8295-generator-package-layout.md) — internal/generator は契約・prebuilt・Fake を親パッケージに、nix 実装を nixgen サブパッケージに置き、cmd 層は注入点だけを持つ
-- [DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814](design/20261011-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814-generation-package-layout.md) — internal/generation は契約・Generation 型・FS ベースの Fake を親パッケージに、nix-env 実装を nixprofile サブパッケージに置き、engine は Backend 1 フィールドで受ける
-- [DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5](design/20261011-3c156bbe-e72b-43dd-8cb0-2cc105314ad5-last-applied-record-layout.md) — last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む
+- [層を CLI / engine / lib / common.nix / 統合層の 5 段に積み、依存を呼ぶ側から呼ばれる側への一方向に限る](design/layer-stack-dependency.md) — 層を CLI / engine / lib / common.nix / 統合層の 5 段に積み、依存を呼ぶ側から呼ばれる側への一方向に限る
+- [internal/generator は契約・prebuilt・Fake を親パッケージに、nix 実装を nixgen サブパッケージに置き、cmd 層は注入点だけを持つ](design/generator-package-layout.md) — internal/generator は契約・prebuilt・Fake を親パッケージに、nix 実装を nixgen サブパッケージに置き、cmd 層は注入点だけを持つ
+- [internal/generation は契約・Generation 型・FS ベースの Fake を親パッケージに、nix-env 実装を nixprofile サブパッケージに置き、engine は Backend 1 フィールドで受ける](design/generation-package-layout.md) — internal/generation は契約・Generation 型・FS ベースの Fake を親パッケージに、nix-env 実装を nixprofile サブパッケージに置き、engine は Backend 1 フィールドで受ける
+- [last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](design/last-applied-record-layout.md) — last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む
 
 ---
 
@@ -87,29 +87,29 @@ CLI / engine / lib / `common.nix` / 統合層の 5 段に積み、依存は呼�
 
 layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統。
 ユーザーの entrypoint 側は `layat.<name>` に named manifest を公開し、直書きと flake-parts の
-2 つの使い方が同一の derivation を生む（→ ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1, ADR-b157254e-e942-42bf-ae40-60a3a41a4452, ADR-08a6e1be-e424-4cfe-a529-e123a50cd6ca）。
+2 つの使い方が同一の derivation を生む（→ [named manifest を専用の layat.<name> 名前空間に公開する](adr/layat-name-namespace.md), [flake-parts module の option に mkManifest の結果を入れる](adr/flake-parts-option-holds-mkmanifest-result.md), [CLI が評価する attr path を legacy entrypoint の書き方で分岐させない](adr/attr-path-independent-of-entrypoint-shape.md)）。
 
-- [DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58](design/20260802-16373ec2-3496-4b12-b3b1-ef74e0435b58-flake-outputs-attrs.md) — layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する
-- [DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda](design/20260802-0e186e89-c8c6-4bca-9daa-03855e8d5cda-module-stubs.md) — NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする
-- [DSG-d2e17f4f-0d32-45c1-8125-17e589664c85](design/20260802-d2e17f4f-0d32-45c1-8125-17e589664c85-lib-no-dynamic-entries.md) — 動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す
-- [DSG-92f54490-872a-42ac-bbd7-d06e9ee381c6](design/20260802-92f54490-872a-42ac-bbd7-d06e9ee381c6-legacy-nix-invocation-reuse.md) — legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する
-- [DSG-f286746c-56ca-4f0c-bb95-7c74d0cea7c0](design/20260906-f286746c-56ca-4f0c-bb95-7c74d0cea7c0-hook-composition-idioms.md) — hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす
-- [DSG-f1d4c295-54ae-4def-951c-901b42dea008](design/20261030-f1d4c295-54ae-4def-951c-901b42dea008-buildenv-placement-env-wiring-idioms.md) — buildEnv の合成環境は entry の src に置く配置 idiom で扱い、環境変数の配線は利用者側の idiom で行う
+- [layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する](design/flake-outputs-attrs.md) — layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する
+- [NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする](design/module-stubs.md) — NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする
+- [動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す](design/lib-no-dynamic-entries.md) — 動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す
+- [legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する](design/legacy-nix-invocation-reuse.md) — legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する
+- [hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす](design/hook-composition-idioms.md) — hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす
+- [buildEnv の合成環境は entry の src に置く配置 idiom で扱い、環境変数の配線は利用者側の idiom で行う](design/buildenv-placement-env-wiring-idioms.md) — buildEnv の合成環境は entry の src に置く配置 idiom で扱い、環境変数の配線は利用者側の idiom で行う
 
 ---
 
 ## コアロジック設計（lib データ生成 + Go エンジン）
 
 `lib.mkManifest` が link farm derivation（`manifest.json` + symlink ツリー）を生成し、エンジンが
-実行時に前世代 manifest と diff して配置・古くなった配置の除去・profile swap を行う（→ ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd）。
+実行時に前世代 manifest と diff して配置・古くなった配置の除去・profile swap を行う（→ [古くなった配置の除去は manifest の差分で行う](adr/stale-removal-by-manifest-diff.md), [manifest.json を schemaVersion 1 の唯一の契約として固定する](adr/manifest-json-contract-schemaversion-v1.md)）。
 
-- [DSG-107c19ea-bc90-4914-aaaa-5f2da4f3e082](design/20261101-107c19ea-bc90-4914-aaaa-5f2da4f3e082-placement-primitives.md) — 配置プリミティブを store link・copy・out-of-store symlink の 3 種に定め、世代・reset・gitignore での扱いを種別ごとに固定する
-- [DSG-0b94308c-6b15-46d1-854c-5945ae587b0d](design/20260802-0b94308c-6b15-46d1-854c-5945ae587b0d-cleanup-from-home-manager.md) — 配置と cleanup のアルゴリズムは home-manager の linkGeneration / cleanup を範として Go で再実装する
-- [DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68](design/20260810-8b96869c-842e-4f78-8ff7-df1f1d6c1a68-planner-engine-split.md) — 配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する
-- [DSG-096dc893-21f4-45e3-9347-986e9275b4d1](design/20260823-096dc893-21f4-45e3-9347-986e9275b4d1-prune-orphan-series.md) — prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする
-- [DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296](design/20261012-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296-root-relative-linkdest.md) — rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは配置前の確認だけにする
-- [DSG-85439cb5-a149-422e-8596-fc4e860bc3a5](design/20261023-85439cb5-a149-422e-8596-fc4e860bc3a5-status-scans-record-bases.md) — status を engine の記録基底走査と CLI の絞り込み・出力に分ける
-- [DSG-9f5f949f-8b0e-4679-8f70-e0901a3d63b8](design/20261107-9f5f949f-8b0e-4679-8f70-e0901a3d63b8-engine-error-wrap-once-at-origin.md) — engine のエラーは発生源で 1 回だけ op と対象パスを付けて wrap し、伝搬では素通しする
+- [配置プリミティブを store link・copy・out-of-store symlink の 3 種に定め、世代・reset・gitignore での扱いを種別ごとに固定する](design/placement-primitives.md) — 配置プリミティブを store link・copy・out-of-store symlink の 3 種に定め、世代・reset・gitignore での扱いを種別ごとに固定する
+- [配置と cleanup のアルゴリズムは home-manager の linkGeneration / cleanup を範として Go で再実装する](design/cleanup-from-home-manager.md) — 配置と cleanup のアルゴリズムは home-manager の linkGeneration / cleanup を範として Go で再実装する
+- [配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する](design/planner-engine-split.md) — 配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する
+- [prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする](design/prune-orphan-series.md) — prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする
+- [rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは配置前の確認だけにする](design/root-relative-linkdest.md) — rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは配置前の確認だけにする
+- [status を engine の記録基底走査と CLI の絞り込み・出力に分ける](design/status-scans-record-bases.md) — status を engine の記録基底走査と CLI の絞り込み・出力に分ける
+- [engine のエラーは発生源で 1 回だけ op と対象パスを付けて wrap し、伝搬では素通しする](design/engine-error-wrap-once-at-origin.md) — engine のエラーは発生源で 1 回だけ op と対象パスを付けて wrap し、伝搬では素通しする
 
 `lib` の API・`entries` スキーマ・`manifest.json` の内容・CLI の実行モデルは仕様（`requirement`）の
 領分（→ `docs/spec.md`「lib API」「entries スキーマ仕様」「manifest.json スキーマ」「CLI 仕様」）。
@@ -119,9 +119,9 @@ layat 自身の flake outputs は packages / templates / 各モジュール / fl
 ## モジュール統合設計
 
 全モジュールと devShell は root と activation タイミングを供給してエンジンを起動する薄い配線。
-起動の差は link-farm の取得方法だけに閉じる（→ ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880, ADR-24488788-a5e6-47a5-9074-97192880642a）。
+起動の差は link-farm の取得方法だけに閉じる（→ [モジュールは root と起動の時機だけを供給して engine を起動する](adr/modules-wire-engine-kick-only.md), [apply --manifest でビルド済み link-farm を engine へ直接渡す](adr/apply-manifest-prebuilt-link-farm.md)）。
 
-- [DSG-98d7fa5d-c590-441a-b682-0ab7afa14233](design/20260802-98d7fa5d-c590-441a-b682-0ab7afa14233-integration-layer-kick-classes.md) — engine の起動を entrypoint 駆動とビルド済み manifest の 2 クラスに束ね、統合層の差を link-farm の取得方法だけに閉じる
+- [engine の起動を entrypoint 駆動とビルド済み manifest の 2 クラスに束ね、統合層の差を link-farm の取得方法だけに閉じる](design/integration-layer-kick-classes.md) — engine の起動を entrypoint 駆動とビルド済み manifest の 2 クラスに束ね、統合層の差を link-farm の取得方法だけに閉じる
 
 各モジュールが公開するオプションと動作は仕様の領分
 （→ `docs/spec.md`「モジュールオプション仕様・モジュール別動作仕様」）。
@@ -138,22 +138,22 @@ layat 自身の flake outputs は packages / templates / 各モジュール / fl
 ## テスト戦略
 
 lib は Nix 評価テスト、エンジンは実 FS の tmpdir 統合テスト、非 NixOS で動く主張は実 nix の
-E2E で検証する（→ ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0）。
+E2E で検証する（→ [テストを sandbox 可否で flake check と E2E に分ける](adr/test-strategy-layers.md)）。
 
-- [DSG-fb49e36c-eb20-4efa-8cac-88ef0873db8e](design/20260802-fb49e36c-eb20-4efa-8cac-88ef0873db8e-lib-test-nix-unit-namaka.md) — lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する
-- [DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3](design/20260802-836aa5cb-0389-4adb-990b-144fe5aeffe3-engine-test-go-unit-tmpdir.md) — engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する
-- [DSG-2947b4a5-ba5c-4218-8478-624cba156116](design/20260802-2947b4a5-ba5c-4218-8478-624cba156116-e2e-harness-shape.md) — E2E は tests/e2e の bash ハーネスに置き、シナリオの詳細は同ディレクトリの README へ委譲する
-- [DSG-bb6e03fd-e1c4-47c4-bfa0-a73e9457b184](design/20260802-bb6e03fd-e1c4-47c4-bfa0-a73e9457b184-e2e-legacy-entrypoint.md) — E2E に legacy entrypoint シナリオを置き、NIX_PATH を flake.lock の nixpkgs に pin して検証する
-- [DSG-901351ea-f01b-4bb0-a470-b890d92c980b](design/20260802-901351ea-f01b-4bb0-a470-b890d92c980b-nixos-vm-test-position.md) — NixOS モジュールの実 activate は runNixOSTest の checks.nixos-vm で検証し、E2E ハーネスとは別系統に置く
+- [lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する](design/lib-test-nix-unit-namaka.md) — lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する
+- [engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する](design/engine-test-go-unit-tmpdir.md) — engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する
+- [E2E は tests/e2e の bash ハーネスに置き、シナリオの詳細は同ディレクトリの README へ委譲する](design/e2e-harness-shape.md) — E2E は tests/e2e の bash ハーネスに置き、シナリオの詳細は同ディレクトリの README へ委譲する
+- [E2E に legacy entrypoint シナリオを置き、NIX_PATH を flake.lock の nixpkgs に pin して検証する](design/e2e-legacy-entrypoint.md) — E2E に legacy entrypoint シナリオを置き、NIX_PATH を flake.lock の nixpkgs に pin して検証する
+- [NixOS モジュールの実 activate は runNixOSTest の checks.nixos-vm で検証し、E2E ハーネスとは別系統に置く](design/nixos-vm-test-position.md) — NixOS モジュールの実 activate は runNixOSTest の checks.nixos-vm で検証し、E2E ハーネスとは別系統に置く
 
 CI での実行基盤・キャッシュ・リリースは `infrastructure` item の領分。
 
-- [INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27](infrastructure/20260802-d1230e1f-8ba8-49d8-8386-409bfbb7dd27-ci-pipeline.md) — CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）
-- [INF-af33c5a1-f846-4f09-8e43-c6ea042d6e06](infrastructure/20260802-af33c5a1-f846-4f09-8e43-c6ea042d6e06-binary-cache.md) — バイナリキャッシュ（main push 時の cachix 投入）
-- [INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43](infrastructure/20260802-9878e9f5-1ec0-4ef2-879b-859ea538cc43-release-automation.md) — リリース自動化（VERSION ファイル起点の bump PR・自動タグ・自動リリースノート）
-- [INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6](infrastructure/20260802-8b97573f-d4d6-4abf-85e2-d859afbd96c6-merge-gate.md) — マージの条件（main の ruleset と required status checks）
-- [INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71](infrastructure/20260802-659b139d-0cf8-4c65-b30d-93c5ee2dfc71-traceability-verification.md) — トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）
-- [INF-0865477b-21b2-4feb-9c06-1a882a4e595a](infrastructure/20260802-0865477b-21b2-4feb-9c06-1a882a4e595a-docs-site.md) — ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）
+- [CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](infrastructure/ci-pipeline.md) — CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）
+- [バイナリキャッシュ（main push 時の cachix 投入）](infrastructure/binary-cache.md) — バイナリキャッシュ（main push 時の cachix 投入）
+- [リリース自動化（VERSION ファイル起点の bump PR・自動タグ・自動リリースノート）](infrastructure/release-automation.md) — リリース自動化（VERSION ファイル起点の bump PR・自動タグ・自動リリースノート）
+- [マージの条件（main の ruleset と required status checks）](infrastructure/merge-gate.md) — マージの条件（main の ruleset と required status checks）
+- [トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）](infrastructure/traceability-verification.md) — トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）
+- [ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）](infrastructure/docs-site.md) — ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）
 
 ---
 

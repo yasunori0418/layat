@@ -1,0 +1,50 @@
+---
+id: "ADR-0346fdd2-bd05-4793-bcd0-9c3ce64c8657"
+type: adr
+name: "--json を全サブコマンド共通の persistent フラグにする"
+status: stable
+origin: "ADR-0033 §1a を書き直した"
+justifies:
+  - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
+references:
+  - "ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
+---
+# ADR-0346fdd2-bd05-4793-bcd0-9c3ce64c8657: --json を全サブコマンド共通の persistent フラグにする
+
+- ステータス: stable
+- 日付: 2026-11-03
+- 関連: [読み取り専用の列挙は info で返す](readonly-enumeration-as-info.md)
+- 起点: ADR-0033 §1a を書き直した
+
+## 背景
+
+CLI の機械可読な stdout は、`gitignore` の行と `apply --dryrun` のプランだけだった。`list-generations`
+の一覧や `apply` / `reset` / `rollback` の結果を機械で読む手段は無かった。`prune` の新設で削除する
+系列の一覧という構造化されたデータが増え、スクリプト・エディタ統合・CI など外部のツールが読むための出力も
+求められて、`--json` を足すことになった。どのサブコマンドで `--json` を受けるかを決める必要があった。
+
+## 決定
+
+`--json` はルートの persistent フラグにし、全サブコマンドで受理する。コマンドごとの対応可否の表や
+「このコマンドでは使えない」というエラーの分岐を持たず、出すデータの少ないコマンドも最小の結果を
+返す。
+
+`--json` が出すエンベロープの形は [--json は outturn 規約準拠のエンベロープを出す第 2 契約とする](../requirements/json-outturn-envelope.md) に置く。
+
+## 根拠
+
+どのコマンドが `--json` を持つかの表は、利用者には覚える負担に、docs には維持の手間になる。
+persistent フラグとして 1 か所で受ければ、各コマンドは自分の結果を JSON で表す責務だけを負う。
+仕様も実装も単純になる。
+
+全コマンドで受けるなら、新しいサブコマンドを足したときも対応の有無を決め直さずに済む。
+
+## 棄却した代替案
+
+### 対象のコマンドを絞る
+
+dryrun・`list-generations`・結果のレポートに限れば作る量は減る。しかし対応表を保守し続けることに
+なり、一部のコマンドだけ使えないことに利用者が驚く。

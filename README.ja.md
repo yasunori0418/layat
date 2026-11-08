@@ -213,7 +213,7 @@ dev-tools = layat.lib.mkManifest {
 };
 ```
 
-nixpkgs の多くのパッケージは man を別 output に分けており、素の `buildEnv` では `share/man` が空になる。man が要るなら `extraOutputsToInstall = [ "man" ]` を指定する。環境変数の配線(`env.sh`・`environment.d`・`.envrc` など)は利用者が自分で書く。layat は生成しない。書き方は[配線の idiom](docs/design/20261030-f1d4c295-54ae-4def-951c-901b42dea008-buildenv-placement-env-wiring-idioms.md) を参照。
+nixpkgs の多くのパッケージは man を別 output に分けており、素の `buildEnv` では `share/man` が空になる。man が要るなら `extraOutputsToInstall = [ "man" ]` を指定する。環境変数の配線(`env.sh`・`environment.d`・`.envrc` など)は利用者が自分で書く。layat は生成しない。書き方は[配線の idiom](docs/design/buildenv-placement-env-wiring-idioms.md) を参照。
 
 ### home-manager モジュール
 

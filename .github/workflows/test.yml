@@ -153,7 +153,7 @@ jobs:
         run: nix develop '.?dir=dev#sara' -c dev/tests/sara-gap.sh
 
       # The item-creation contract for sara-new, the wrapper around `sara init`
-      # that enforces the <YYYYMMDD>-<full UUID>-<slug>.md filename convention.
+      # that enforces the <slug>.md filename convention.
       - name: Run sara-new contract test
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/sara-new.sh

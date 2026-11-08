@@ -1,0 +1,61 @@
+---
+id: "ADR-b157254e-e942-42bf-ae40-60a3a41a4452"
+type: adr
+name: "flake-parts module の option に mkManifest の結果を入れる"
+status: stable
+sources:
+  - id: "issue-26"
+    resource: "https://github.com/yasunori0418/layat/issues/26"
+    title: "#26"
+origin: "Issue #26。ADR-0029 §2 と ADR-0029 §3 を書き直した"
+justifies:
+  - "REQ-c50df875-2cb0-4e72-8a21-858359a11cae"
+references:
+  - "ADR-e6820da0-fce3-4aef-8b79-d53abbca6051"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
+---
+# ADR-b157254e-e942-42bf-ae40-60a3a41a4452: flake-parts module の option に mkManifest の結果を入れる
+
+- ステータス: stable
+- 日付: 2026-11-03
+- 関連: [layat output の flake-parts module を flakeModules.default で公開する](flake-parts-module-published.md), GitHub Issue #26
+- 起点: Issue #26。ADR-0029 §2 と ADR-0029 §3 を書き直した
+
+## 背景
+
+flake-parts module は `perSystem.layat` を `flake.layat.<system>` へ転置する
+（[layat output の flake-parts module を flakeModules.default で公開する](flake-parts-module-published.md)）。転置先の `flake.layat.<system>.<name>` は、CLI が
+`nix build .#layat.<system>.<name>` でビルドする対象なので、ビルドできる derivation でなければ
+ならない。`mkTransposedPerSystemModule` は option の値を加工せずに転置する。
+
+## 決定
+
+option の型は package の lazy な attrset にし、利用者が perSystem の `pkgs` で `mkManifest` を
+呼んだ結果（derivation）をそのまま入れる。module は `mkManifest` を内部で呼ばず、`mkManifest` の
+シグネチャも flake-parts のために変えない。
+
+flake-parts module を使う書き方の規範は [flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない](../requirements/flake-parts-module-path.md) に置く。
+
+## 根拠
+
+転置先が derivation でなければならないという制約から、option に derivation を入れる形が導かれる。
+この形なら公式のヘルパーがそのまま使え、module に変換の処理が要らない。
+
+`mkManifest` が直書きでも flake-parts module 経由でも共通の唯一の公開 API になり、利用者が覚える
+API が 1 つで済む。`pkgs` は perSystem から来るので、`packages.layat` と同じ `pkgs`（将来の
+overlay や config を含む）を使い、二重に解決しない。
+
+## 棄却した代替案
+
+### option に `{ root, entries }` を入れ、module が `mkManifest` を呼ぶ
+
+利用者は `pkgs` を書かずに済み、HM モジュールの `layat.configs` に近い書き味になる。しかし転置先を
+derivation にするために、公式ヘルパーを使わず自前の転置と submodule から derivation への変換が
+要る。`mkManifest` の直呼びと並んで公開 API が 2 つになる。
+
+### flake-parts module のために `mkManifest` のシグネチャを変える
+
+`pkgs` を module から渡す形にすれば利用者の記述は減るが、直書きのときと引数が食い違い、
+`mkManifest` が書き方ごとに別の API になる。

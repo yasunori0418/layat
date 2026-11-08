@@ -1,0 +1,95 @@
+---
+id: "REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81"
+type: requirement
+name: "profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする"
+status: stable
+derives_from:
+  - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
+  - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
+  - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
+  - "UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d"
+specification: |
+  The key of `profileDir` SHALL be determined by the root. Keying directly on `<name>`
+  SHALL be confined to home mode and system mode without `--root`: in home mode "one
+  profile per user" holds, and in system mode the root is fixed at `/`. Where `--root` is
+  given, `profileDir` SHALL be keyed on the `<roothash>` of the overriding root in every
+  mode alike, home, system and fixed included. Fixed root mode — an
+  absolute path string as `root`, without `--root` — SHALL likewise always be keyed on
+  `<roothash>`, a fixed root being an arbitrary absolute path settled at evaluation time
+  and therefore separated into an independent series per root, as project mode and a
+  `--root` override are, which structurally prevents the silent orphan of a config of the
+  same name under a different root sharing a series of generations. The keying SHALL be
+  consistent across `apply` / `reset` / `rollback` / `list-generations`, so that operating
+  on a generation made with `--root` requires the same `--root` again. The computation of
+  `<roothash>` and the backref `.root` SHALL be the same mechanism as project mode.
+specification_ja: |
+  `profileDir` のキーは root によって定めなければならない。`<name>` 直キーは、「1 ユーザー
+  1 profile」が成立する home と、root が `/` に固定される system（いずれも `--root` なし）に
+  限らなければならない。`--root` 明示時は home / system / fixed を含む全モードで、上書き後
+  root の `<roothash>` でキーしなければならない。
+  fixed root mode（`root` に絶対パス文字列・`--root` なし）も常に `<roothash>` でキーしな
+  ければならない。fixed root は評価時確定の任意絶対パスであり、project / `--root` 上書きと
+  同じく root ごとに独立系列へ
+  分離することで、別 root の同名 config が世代系列を共有する気付かれない孤児を構造的に
+  防ぐためである。このキーイングは `apply` / `reset` / `rollback` / `list-generations` で
+  一貫させなければならず、`--root` を付けた世代を操作するには再び同じ `--root` を要する。
+  `<roothash>` の算出と backref（`.root`）は project mode と同一機構でなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:44:47+09:00"
+---
+# REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81: profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする
+
+## 仕様
+
+| 状況 | profileDir |
+|---|---|
+| home（`--root` なし）| `<state>/nix/profiles/layat/<name>` |
+| home / fixed（`--root /p`）| `<state>/nix/profiles/layat/<roothash(/p)>/<name>` |
+| system（`--root` なし）| `/nix/var/nix/profiles/layat/<name>` |
+| system（`--root /p`）| `/nix/var/nix/profiles/layat/<roothash(/p)>/<name>` |
+| fixed（`--root` なし・`root = "/abs"`）| `<state>/nix/profiles/layat/<roothash(/abs)>/<name>` |
+| project（`--root` 有無）| `<state>/nix/profiles/layat/<roothash>/<name>` |
+
+- **`--root` 明示時は全モードで profileDir を上書き後 root の `<roothash>` でキーする**。
+  home / fixed mode は `<state>/nix/profiles/layat/<roothash>/<name>`、system mode は
+  `/nix/var/nix/profiles/layat/<roothash>/<name>` になり、異なる
+  オーバーライド root が独立した世代系列に分離されて気付かれない孤児を防ぐ。`apply` /
+  `reset` / `rollback` / `list-generations` で一貫し、`--root` を付けた世代を操作するには
+  再び同じ `--root` が要る。`--root` なしの home は `<name>` キー（1 ユーザー 1 profile）、
+  `--root` なしの system も root が `/` に固定されるので `<name>` キー
+- **fixed root mode（`root` に絶対パス文字列・`--root` なし）も常に `<roothash>/<name>` で
+  キーする**。fixed root は評価時確定の任意絶対パスなので project / `--root` 上書きと同じく
+  root ごとに独立系列へ分離し、別 root の同名 config が世代系列を共有する気付かれない孤児を
+  構造的に防ぐ。`<name>` 直キーは home と system（いずれも `--root` なし）に限る
+- `<roothash>` 算出・backref（`.root`）は project mode と同一機構
+
+> **上は原文の写しに system の行と散文を足したもので、規範は frontmatter が正**。原文の表が持つ「HM モジュール経由（MVP）は
+> `<state>/nix/profiles/layat/default`（固定名 1 profile）」の行は、**[HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が HM の
+> `layat.configs.<name>` 実装を決定済み**で反転している（HM も `<name>` 次元を持ち、home mode の
+> `<name>` 直キーにそのまま乗る。`default` は糖衣が指す config 名に過ぎない）。`docs/spec.md`
+> 側がこの改訂に追従できていないため、分割にあたって MVP 限定の行を規範へ持ち込まない判断を
+> した（[HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md) と同じ扱い）。`docs/spec.md` の追従は本 item の担当範囲外。
+>
+> 原文が参照する次の規範は本 item の担当ではない。
+>
+> - profileDir の中に何をどう並べるか（profile リンク・世代・`.pending`・backref `.root` の
+>   置き場所）と `<state>` の定義 → [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](profile-on-disk-layout.md)
+> - `<roothash>`（解決後の絶対 root パスの sha256 短縮 hex）の定義と、project mode で
+>   解決済み root をキーにする理由 → [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md)
+> - `--root` が全モードの解決 root を一律上書きすること自体 → [--root は全モード共通で解決 root を明示上書きする](root-override-flag.md)。ただし
+>   **`--root` 明示時のキーイングは本 item の担当**で、[--root は全モード共通で解決 root を明示上書きする](root-override-flag.md) の規範からは落として
+>   ある（profileDir のキーは root の種別ごとに定まる一つの体系であり、`--root` の行だけを
+>   切り出すと [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md) の改訂時に片方だけが直って食い違いが生じるため一本化した）
+> - 孤児 profile の放置許容と backref による逆引き → [孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する](project-mode-orphan-profile.md)
+
+## 出典
+
+`docs/spec.md`「root の解決」→「project mode（`root = projectRoot`）」節の箇条書き
+第 4〜5 項（`--root` 明示時のキーイング・fixed root mode のキーイング）と、
+第 5 項に付随する profileDir 表。
+
+決定の実体は [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)「profile は解決済み root の roothash でキーする」（`--root` 明示時の profileDir
+キーイングを home / fixed へ拡張し、
+fixed root mode も常に `<roothash>` でキーする）。system の行と散文は原文に無く、決定の実体は
+[profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)「profile の基底ディレクトリをモードで切り替える」・[profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)（system mode の profile 基底と `<name>` 直キー）。
