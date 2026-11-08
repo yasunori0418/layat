@@ -79,7 +79,7 @@ warning を出して skip する。lock が取れない = その系列で engine
 
 ## 出典
 
-決定の実体は [prune は削除前に root パスの一覧を示して確認を取る](../adr/prune-confirms-with-root-list.md)「prune は削除前に root パスの一覧を示して確認を取る」・[prune はロックを取れない系列を待たずに飛ばす](../adr/prune-skips-locked-series.md)「prune はロックを取れない系列を待たずに飛ばす」。
+決定の実体は [prune は削除前に root パスの一覧を示して確認を取る](../adr/prune-confirms-with-root-list.md)・[prune はロックを取れない系列を待たずに飛ばす](../adr/prune-skips-locked-series.md)。
 `--json` の `--yes` 必須は [prune は新設時から --json に対応する](../adr/prune-json-output.md) と [reset は非対話の実行で --yes を必須にする](../adr/reset-confirmation-and-yes.md) から導かれる。削除に着手して完了
 しなかった系列の扱いは、[prune は削除前に root パスの一覧を示して確認を取る](../adr/prune-confirms-with-root-list.md)・[prune はロックを取れない系列を待たずに飛ばす](../adr/prune-skips-locked-series.md) が挙げる安全機構に明示が無い部分を、削除が系列単位の複数実体に
 及ぶという [profile は専用ディレクトリレイアウトに置く](../adr/profile-directory-layout.md) のレイアウトから導いたもの。

@@ -38,4 +38,4 @@ generated:
 
 `docs/spec.md`「配置動作仕様」→「recopy・reset」節の reset 箇条書き第 1 項。
 
-決定の実体は [reset は非対話の実行で --yes を必須にする](../adr/reset-confirmation-and-yes.md)「reset は非対話の実行で --yes を必須にする」。
+決定の実体は [reset は非対話の実行で --yes を必須にする](../adr/reset-confirmation-and-yes.md)。

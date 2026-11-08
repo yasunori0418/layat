@@ -43,5 +43,5 @@ layat apply <name>              # layat.<name> をビルドし新世代を作っ
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」のコードブロックと、直後の箇条書き
 第 1 項。
 
-決定の実体は [apply の config は名前省略で default を選び、--all で全件を選ぶ](../adr/config-selection-default-and-all.md)「apply の config は名前省略で default を選び、--all で全件を選ぶ」（name 省略時は `layat.default`・未定義ならエラー・
+決定の実体は [apply の config は名前省略で default を選び、--all で全件を選ぶ](../adr/config-selection-default-and-all.md)（name 省略時は `layat.default`・未定義ならエラー・
 一括適用は `--all`）。

@@ -45,10 +45,10 @@ LinkDest(e) = filepath.Rel(filepath.Dir(e.Target), filepath.Join(e.Src, e.Subpat
 
 ## 出典
 
-[root 相対マーカーのリンクを target 起点の相対パスで張る](../adr/root-relative-link-as-relative-path.md)「root 相対マーカーのリンクを target 起点の相対パスで張る」、
-[root 相対マーカーの基準点を manifest の配置 root にする](../adr/root-relative-base-is-placement-root.md)「root 相対マーカーの基準点を manifest の配置 root にする」、
-[srcKind の列挙値は schemaVersion を上げずに足す](../adr/srckind-added-without-version-bump.md)「srcKind の列挙値は schemaVersion を上げずに足す」、
-[root 相対で指定するパスすべてにパス安全性の確認を課す](../adr/path-safety-for-root-relative-inputs.md)「root 相対で指定するパスすべてにパス安全性の確認を課す」、
-[copy と out-of-store の併用を eval 時に拒否する](../adr/copy-with-out-of-store-eval-error.md)「copy と out-of-store の併用を eval 時に拒否する」、
-[src が target に重なる root 相対 entry を評価時に拒否する](../adr/reject-overlapping-src-and-target.md)「src が target に重なる root 相対 entry を評価時に拒否する」、
-[root 相対 entry で engine が root を使うのは配置前の実在確認だけにする](../adr/root-only-in-preflight.md)「root 相対 entry で engine が root を使うのは配置前の実在確認だけにする」。
+[root 相対マーカーのリンクを target 起点の相対パスで張る](../adr/root-relative-link-as-relative-path.md)、
+[root 相対マーカーの基準点を manifest の配置 root にする](../adr/root-relative-base-is-placement-root.md)、
+[srcKind の列挙値は schemaVersion を上げずに足す](../adr/srckind-added-without-version-bump.md)、
+[root 相対で指定するパスすべてにパス安全性の確認を課す](../adr/path-safety-for-root-relative-inputs.md)、
+[copy と out-of-store の併用を eval 時に拒否する](../adr/copy-with-out-of-store-eval-error.md)、
+[src が target に重なる root 相対 entry を評価時に拒否する](../adr/reject-overlapping-src-and-target.md)、
+[root 相対 entry で engine が root を使うのは配置前の実在確認だけにする](../adr/root-only-in-preflight.md)。

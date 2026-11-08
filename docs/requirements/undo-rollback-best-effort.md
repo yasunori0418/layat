@@ -44,5 +44,5 @@ generated:
 
 `docs/spec.md`「配置動作仕様」→「途中失敗時の巻き戻し」節の箇条書き第 1・2 項。
 
-決定の実体は [巻き戻しの失敗は best-effort で続行する](../adr/undo-failure-best-effort.md)「巻き戻しの失敗は best-effort で続行する」で、
+決定の実体は [巻き戻しの失敗は best-effort で続行する](../adr/undo-failure-best-effort.md)で、
 失敗時の処理を沈黙の対象にしない出力規律は [指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md) が定めている。

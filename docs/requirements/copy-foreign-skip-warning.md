@@ -44,5 +44,5 @@ symlink の foreign 警告と対称化し、「layat が中身を置いた」と
 
 `docs/spec.md`「配置動作仕様」→「copy モード（place-once・ユーザー管理）」節の箇条書き第 1 項。
 
-決定の実体は [copy は foreign の実ファイルを上書きせず warning を出して見送る](../adr/copy-skips-foreign-file-with-warning.md)「copy は foreign の実ファイルを上書きせず warning を出して見送る」で、対称化の元に
+決定の実体は [copy は foreign の実ファイルを上書きせず warning を出して見送る](../adr/copy-skips-foreign-file-with-warning.md)で、対称化の元に
 なる symlink の foreign 警告は [cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](../adr/cross-config-last-wins-with-foreign-warning.md) が定めている。

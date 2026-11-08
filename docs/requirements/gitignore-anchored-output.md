@@ -45,5 +45,5 @@ project mode 限定であることは [gitignore は project mode 限定で非 p
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `gitignore <name>` の箇条書き。
 
-決定の実体は [配置 target を gitignore コマンドで stdout へ列挙する](../adr/gitignore-command.md)「配置 target を gitignore コマンドで stdout へ列挙する」（更新責務はプロジェクト管理者・アンカー形式・
+決定の実体は [配置 target を gitignore コマンドで stdout へ列挙する](../adr/gitignore-command.md)（更新責務はプロジェクト管理者・アンカー形式・
 末尾 `/` を付けない）。

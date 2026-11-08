@@ -38,4 +38,4 @@ generated:
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `gitignore` project mode 限定の
 箇条書き。
 
-決定の実体は [配置 target を gitignore コマンドで stdout へ列挙する](../adr/gitignore-command.md)「配置 target を gitignore コマンドで stdout へ列挙する」。
+決定の実体は [配置 target を gitignore コマンドで stdout へ列挙する](../adr/gitignore-command.md)。

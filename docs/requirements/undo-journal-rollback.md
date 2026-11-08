@@ -108,6 +108,6 @@ undo ジャーナルへ逆操作を 1 件記録する:
 `docs/spec.md`「配置動作仕様」→「途中失敗時の巻き戻し（インメモリ undo ジャーナル）」節の
 導入文・コードブロックと、箇条書き第 3・4・5 項。
 
-決定の実体は [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](../adr/in-memory-undo-journal.md)「途中失敗した apply をインメモリ undo ジャーナルで巻き戻す」。
-コミットとポインタ移動を世代バックエンドの契約越しにしたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」、
-last-applied 記録を書けないときに undo ジャーナルで巻き戻すのは [apply は世代の commit の前に記録を書く](../adr/apply-writes-record-before-commit.md)「apply は世代の commit の前に記録を書く」。
+決定の実体は [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](../adr/in-memory-undo-journal.md)。
+コミットとポインタ移動を世代バックエンドの契約越しにしたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)、
+last-applied 記録を書けないときに undo ジャーナルで巻き戻すのは [apply は世代の commit の前に記録を書く](../adr/apply-writes-record-before-commit.md)。

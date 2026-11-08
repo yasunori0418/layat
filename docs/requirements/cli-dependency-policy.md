@@ -54,12 +54,12 @@ generated:
 
 `docs/spec.md`「依存関係」節の表の `cmd/layat` 行。
 
-決定の実体は [CLI は cobra で組む](../adr/cobra-cli-framework.md)「CLI は cobra で組む」・[layat は buildGoModule と vendorHash でビルドする](../adr/buildgomodule-vendorhash.md)「layat は buildGoModule と vendorHash でビルドする」・[Go toolchain は nixpkgs の go に pin する](../adr/go-toolchain-pinned.md)「Go toolchain は nixpkgs の go に pin する」で、CLI に cobra を許可し
+決定の実体は [CLI は cobra で組む](../adr/cobra-cli-framework.md)・[layat は buildGoModule と vendorHash でビルドする](../adr/buildgomodule-vendorhash.md)・[Go toolchain は nixpkgs の go に pin する](../adr/go-toolchain-pinned.md)で、CLI に cobra を許可し
 `buildGoModule` + vendorHash・Go の pin でビルドを固定することを定めている。CLI を一次 UX と
-する位置づけは [CLI が一次 UX で devShell に pin 版を同梱する](../adr/cli-primary-ux-devshell-pinned.md)「CLI が一次 UX で devShell に pin 版を同梱する」が定めるが、同 ADR は cobra / vendorHash / Go の pin のいずれにも触れておらず、
+する位置づけは [CLI が一次 UX で devShell に pin 版を同梱する](../adr/cli-primary-ux-devshell-pinned.md)が定めるが、同 ADR は cobra / vendorHash / Go の pin のいずれにも触れておらず、
 この item の規範を決めていないため、側面の根拠として `justifies` は張らない（位置づけそのものの
 帰属は [layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする](cli-primary-ux-installation.md) / [layat は CLI とエンジンの 2 層で構成する](two-layer-architecture.md) が担当する）。
 
-go-toml/v2 の許可は [CLI の依存に go-toml/v2 を許可する](../adr/cli-depends-on-go-toml.md)「CLI の依存に go-toml/v2 を許可する」が定めている。
+go-toml/v2 の許可は [CLI の依存に go-toml/v2 を許可する](../adr/cli-depends-on-go-toml.md)が定めている。
 
-outturn/go の許可は [CLI は outturn/go に依存する](../adr/outturn-go-dependency.md)「CLI は outturn/go に依存する」が定めている。
+outturn/go の許可は [CLI は outturn/go に依存する](../adr/outturn-go-dependency.md)が定めている。

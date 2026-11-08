@@ -48,4 +48,4 @@ oldGenPath 配管は不要。
 持ち、ユーザー向け rollback は host 世代へ一本化する）も本 item の担当で、独立 item を立てず
 本 item に畳んだ。
 
-決定の実体は [module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)「module と project では世代操作を公開しない」・[1 config = 1 profile を全モードで自前に持つ](../adr/one-config-one-profile-all-modes.md)。
+決定の実体は [module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)・[1 config = 1 profile を全モードで自前に持つ](../adr/one-config-one-profile-all-modes.md)。

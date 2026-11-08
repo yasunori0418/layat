@@ -46,4 +46,4 @@ layat apply <name> --recopy     # 通常 apply に加え config 内の全 copy t
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply <name> --recopy` の箇条書き。
 
-決定の実体は [apply --recopy で全 copy target を src から無条件に上書きする](../adr/apply-recopy-overwrites-copies.md)「apply --recopy で全 copy target を src から無条件に上書きする」。
+決定の実体は [apply --recopy で全 copy target を src から無条件に上書きする](../adr/apply-recopy-overwrites-copies.md)。

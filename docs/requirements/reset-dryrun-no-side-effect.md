@@ -39,4 +39,4 @@ exit する（FS 削除・confirm・flock いずれも行わない・`apply --dr
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `reset <name> --dryrun` の箇条書き。
 
-決定の実体は [reset --dryrun は副作用なしで撤去対象を示す](../adr/reset-dryrun-side-effect-free.md)「reset --dryrun は副作用なしで撤去対象を示す」。
+決定の実体は [reset --dryrun は副作用なしで撤去対象を示す](../adr/reset-dryrun-side-effect-free.md)。

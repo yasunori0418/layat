@@ -102,6 +102,6 @@ layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-5af37
 `docs/spec.md`「モジュールオプション仕様」→「共通オプション（全モジュール）」節の
 オプション表と、その直後の root pin の段落。
 
-決定の実体は root 明示必須とモジュール側 pin を定めた [root の明示を mkManifest 層で必須にする](../adr/root-explicit-at-mkmanifest.md)「root の明示を mkManifest 層で必須にする」と、配置ロジックを engine が所有し
+決定の実体は root 明示必須とモジュール側 pin を定めた [root の明示を mkManifest 層で必須にする](../adr/root-explicit-at-mkmanifest.md)と、配置ロジックを engine が所有し
 モジュールは配線に徹すると定めた [モジュールは root と起動の時機だけを供給して engine を起動する](../adr/modules-wire-engine-kick-only.md)。`layat.backup` の追加は [モジュールに layat.backup を起動配線のオプションとして持つ](../adr/module-backup-option.md)、`layat.configs`
 の新設と `layat.entries` の糖衣化は [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md)・[layat.entries を configs.default.entries への rename 糖衣として残す](../adr/hm-entries-renamed-sugar.md)、`layat.recopy` / `layat.jobs` の追加は [layat.recopy で activation の起動に --recopy を付ける](../adr/module-recopy-option.md)・[layat.jobs で activation の並列度を指定する](../adr/module-jobs-option.md)、NixOS / nix-darwin の `systemRoot` pin は [NixOS / nix-darwin モジュールは root を systemRoot に固定する](../adr/system-modules-pin-systemroot.md)。

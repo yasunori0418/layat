@@ -84,5 +84,5 @@ layat apply --manifest <link-farm>  # ビルド済み link-farm を直接適用�
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply --manifest` の箇条書き。
 
-決定の実体は [apply --manifest でビルド済み link-farm を engine へ直接渡す](../adr/apply-manifest-prebuilt-link-farm.md)「apply --manifest でビルド済み link-farm を engine へ直接渡す」。`--all` との合成は [apply --manifest でビルド済み link-farm を engine へ直接渡す](../adr/apply-manifest-prebuilt-link-farm.md)。世代のコミットを世代バックエンドの契約越しにしたのは
+決定の実体は [apply --manifest でビルド済み link-farm を engine へ直接渡す](../adr/apply-manifest-prebuilt-link-farm.md)。`--all` との合成は [apply --manifest でビルド済み link-farm を engine へ直接渡す](../adr/apply-manifest-prebuilt-link-farm.md)。世代のコミットを世代バックエンドの契約越しにしたのは
 [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)、比較の基準を last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)。

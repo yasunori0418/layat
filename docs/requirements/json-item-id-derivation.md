@@ -35,4 +35,4 @@ generated:
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「item id 導出 seam」。
 
-決定の実体は [--json の item id は subject スコープで導く](../adr/subject-scoped-ids.md)「--json の item id は subject スコープで導く」。
+決定の実体は [--json の item id は subject スコープで導く](../adr/subject-scoped-ids.md)。

@@ -48,7 +48,7 @@ engine に hook 機構を設けない。hook が欲しくなる場面は、配�
 
 ## 根拠
 
-[placement primitive](../ubiquitous-language/placement-primitive.md)（placement primitive）は「配置フレームワーク」を避ける語としている。engine に任意のスクリプトを実行する
+[placement primitive](../ubiquitous-language/placement-primitive.md)は「配置フレームワーク」を避ける語としている。engine に任意のスクリプトを実行する
 イベント機構を足すと、配置という 1 つの仕事をする engine が、ライフサイクルを持つフレームワークへ
 変わっていく。提案に付いていた取りやめの条件に当たる。
 

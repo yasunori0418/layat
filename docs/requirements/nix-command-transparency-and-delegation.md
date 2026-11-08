@@ -44,7 +44,7 @@ generated:
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の透明性・任意世代切替の箇条書き 2 項。
 
-決定の実体は [内部コマンドの開示で透明性を保つ](../adr/internal-command-disclosure.md)「内部コマンドの開示で透明性を保つ」（`layat --help` 等で内部実行する nix コマンドを開示し、
+決定の実体は [内部コマンドの開示で透明性を保つ](../adr/internal-command-disclosure.md)（`layat --help` 等で内部実行する nix コマンドを開示し、
 ユーザーが選択的に手で実行できるようにする）。`--help` の文面を CLI、`--debug` の
-逐次開示を生成器に分けたのは [内部コマンドの開示を CLI と生成器で分担する](../adr/internal-command-disclosure-split.md)「内部コマンドの開示を CLI と生成器で分担する」。世代の切替・GC の委譲先を
-世代バックエンドの標準コマンドとしたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」。
+逐次開示を生成器に分けたのは [内部コマンドの開示を CLI と生成器で分担する](../adr/internal-command-disclosure-split.md)。世代の切替・GC の委譲先を
+世代バックエンドの標準コマンドとしたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)。

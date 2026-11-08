@@ -48,5 +48,5 @@ stdout 専有原則を貫き、`layat apply <name> --dryrun | ...` や
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」の「ストリーム規律」箇条書きと、
 同節末尾の「沈黙化の対象は stderr の配置レポートのみ」箇条書き。
 
-決定の実体は [エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)「エラーはエンベロープに構造化し stderr のテキストと併存させる」（ストリーム規律）と [指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)「指定が無いときは成功時に何も出力しない」
+決定の実体は [エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)（ストリーム規律）と [指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)
 （沈黙化の対象を stderr のレポートに限り stdout 専有出力は常に出す）。

@@ -70,7 +70,7 @@ generated:
 
 ## 出典
 
-[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)「モジュールは configs 間の target 衝突を評価時に確認しない」。旧版（module eval の assertion で停止する形）は
+[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)。旧版（module eval の assertion で停止する形）は
 同じ ADR で改められた。
 
 `docs/spec.md` には対応記述が無いため、原文の写しは持たない（規範は frontmatter が正で、

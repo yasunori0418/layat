@@ -94,6 +94,6 @@ home / project 両モード可。
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `reset <name> [target...]` の箇条書きと、
 同節グローバルフラグ表の `-y, --yes`。
 
-決定の実体は [reset で profile を触らずに配置物を撤去する](../adr/reset-fs-only-teardown.md)「reset で profile を触らずに配置物を撤去する」で、`-y` / `--yes` に
+決定の実体は [reset で profile を触らずに配置物を撤去する](../adr/reset-fs-only-teardown.md)で、`-y` / `--yes` に
 よる同意は [reset は非対話の実行で --yes を必須にする](../adr/reset-confirmation-and-yes.md) が決めている。撤去対象を last-applied 記録から優先して取り、記録を書き直すのは
 [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)・[reset は撤去できなかった entry を残して記録を書き直す](../adr/reset-rewrites-record-with-survivors.md)。

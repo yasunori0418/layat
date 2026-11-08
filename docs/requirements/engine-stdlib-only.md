@@ -41,7 +41,7 @@ generated:
 
 `docs/spec.md`「依存関係」節の表の `internal/` 行。
 
-決定の実体は [engine は JSON とエラーを標準ライブラリで扱う](../adr/json-and-errors-via-stdlib.md)「engine は JSON とエラーを標準ライブラリで扱う」・[engine は cmd/ と internal/ に置きライブラリ化しない](../adr/engine-internal-cmd-layout.md)・[flock は syscall.Flock で実装する](../adr/flock-via-syscall-flock.md) で、engine を stdlib-only の
+決定の実体は [engine は JSON とエラーを標準ライブラリで扱う](../adr/json-and-errors-via-stdlib.md)・[engine は cmd/ と internal/ に置きライブラリ化しない](../adr/engine-internal-cmd-layout.md)・[flock は syscall.Flock で実装する](../adr/flock-via-syscall-flock.md) で、engine を stdlib-only の
 内部層とすることを定めている。runtime に `nix` / `git` をサブプロセスで要求する形は
 旧決定が定めていた（現在は [engine が直接叩く外部コマンドを git に限る](../adr/engine-external-command-git-only.md) が `git` だけに限る）が、旧決定は
 stdlib-only 自体を決めていないため、側面の根拠として `justifies` は張らない（外部コマンドの

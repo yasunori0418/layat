@@ -51,5 +51,5 @@ system 基底が無ければ空として扱い、読めなければ warning を�
 nix profile による世代管理を行い `rollback` / `list-generations` を提供する）。後者は
 独立 item を立てず本 item に含めた。
 
-決定の実体は [module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)「module と project では世代操作を公開しない」と、
+決定の実体は [module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)と、
 `list-generations --all` を追加した [list-generations --all は home mode と system mode の全 config を対象にする](../adr/list-generations-all-home-and-system.md)。home / system への公開は [module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)。

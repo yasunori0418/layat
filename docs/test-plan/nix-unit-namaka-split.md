@@ -70,7 +70,7 @@ generated:
 
 ## 出典
 
-[テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)「テストを sandbox 可否で flake check と E2E に分ける」が
+[テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)が
 「lib（純データ）: nix-unit で `mkManifest` の不変条件、namaka で `manifest.json` 全体の
 スナップショット回帰」と定めている。アグリゲータ規約は [mkManifest の入力を evalModules で確認する](../adr/mkmanifest-evalmodules.md) の実装（`tests/nix-unit.nix`）が
 根拠で、同ファイルのヘッダコメントが列挙方式と名前一意の要請を述べている。同コメントは

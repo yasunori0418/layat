@@ -93,6 +93,6 @@ generated:
 `docs/spec.md`「世代管理仕様」→「機構」→「profile のオンディスクレイアウト」節と、
 同「機構」節の機構表直後の blockquote（`<state>` の定義）。
 
-決定の実体は [profile は専用ディレクトリレイアウトに置く](../adr/profile-directory-layout.md)「profile は専用ディレクトリレイアウトに置く」。`<state>` の定義は [profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)、backref
+決定の実体は [profile は専用ディレクトリレイアウトに置く](../adr/profile-directory-layout.md)。`<state>` の定義は [profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)、backref
 `.root` による孤児逆引きは [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md) が定めている。基底の所有を世代バックエンドへ移し、レイアウトを
 契約の固定部分としたのは [profileDir の内部レイアウトを世代バックエンド契約の固定部分にする](../adr/profiledir-layout-fixed-in-contract.md)・[state の基底を設定で上書きさせない](../adr/state-bases-not-configurable.md)。

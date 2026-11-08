@@ -64,5 +64,5 @@ generated:
 
 `docs/spec.md`「CLI 仕様（一次 UX）」の導入 2 項目。
 
-決定の実体は [CLI が一次 UX で devShell に pin 版を同梱する](../adr/cli-primary-ux-devshell-pinned.md)「CLI が一次 UX で devShell に pin 版を同梱する」（PATH 常駐・
+決定の実体は [CLI が一次 UX で devShell に pin 版を同梱する](../adr/cli-primary-ux-devshell-pinned.md)（PATH 常駐・
 `packages.layat`・project mode では devShell 同梱が canonical）。

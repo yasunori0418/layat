@@ -69,6 +69,6 @@ rollback の一本化は [module 時は rollback を host へ一本化し、laya
 配線に徹する」を本 item に畳んだ。NixOS / nix-darwin の root は、その後 [NixOS / nix-darwin モジュールは root を systemRoot に固定する](../adr/system-modules-pin-systemroot.md) で
 [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md) の `systemRoot` pin へ移った。
 
-決定の実体は [モジュールは root と起動の時機だけを供給して engine を起動する](../adr/modules-wire-engine-kick-only.md)「モジュールは root と起動の時機だけを供給して engine を起動する」・[配置は全層で engine が行い、ネイティブ機構へ翻訳しない](../adr/engine-owns-placement-no-native-translation.md) で、
-モジュール対応を一括 switch 用途に限る positioning は [project mode を第一の使い方とする](../adr/project-first.md)「project mode を第一の使い方とする」が定めている。NixOS / nix-darwin の hook を
+決定の実体は [モジュールは root と起動の時機だけを供給して engine を起動する](../adr/modules-wire-engine-kick-only.md)・[配置は全層で engine が行い、ネイティブ機構へ翻訳しない](../adr/engine-owns-placement-no-native-translation.md) で、
+モジュール対応を一括 switch 用途に限る positioning は [project mode を第一の使い方とする](../adr/project-first.md)が定めている。NixOS / nix-darwin の hook を
 具体化したのは [NixOS モジュールは system.activationScripts.layat から起動する](../adr/nixos-activation-script-hook.md)・[nix-darwin モジュールは postActivation に起動を追記する](../adr/darwin-post-activation-hook.md)。

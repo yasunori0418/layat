@@ -46,5 +46,5 @@ re-symlink で復元する。
 
 `docs/spec.md`「配置動作仕様」→「symlink モード」の箇条書き第 1 項。
 
-決定の実体は [symlink を unlink と symlink の 2 操作で張り替える](../adr/relink-unlink-then-symlink.md)「symlink を unlink と symlink の 2 操作で張り替える」で、冪等再実行による収束の前提は [新規配置と張替えを先に、世代のコミットを最後に行う](../adr/placement-order-commit-last.md) が、undo ジャーナルによる
+決定の実体は [symlink を unlink と symlink の 2 操作で張り替える](../adr/relink-unlink-then-symlink.md)で、冪等再実行による収束の前提は [新規配置と張替えを先に、世代のコミットを最後に行う](../adr/placement-order-commit-last.md) が、undo ジャーナルによる
 復元は [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](../adr/in-memory-undo-journal.md) が定めている。

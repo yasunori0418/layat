@@ -89,7 +89,7 @@ generated:
 第 4〜5 項（`--root` 明示時のキーイング・fixed root mode のキーイング）と、
 第 5 項に付随する profileDir 表。
 
-決定の実体は [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)「profile は解決済み root の roothash でキーする」（`--root` 明示時の profileDir
+決定の実体は [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)（`--root` 明示時の profileDir
 キーイングを home / fixed へ拡張し、
 fixed root mode も常に `<roothash>` でキーする）。system の行と散文は原文に無く、決定の実体は
-[profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)「profile の基底ディレクトリをモードで切り替える」・[profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)（system mode の profile 基底と `<name>` 直キー）。
+[profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)・[profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)（system mode の profile 基底と `<name>` 直キー）。

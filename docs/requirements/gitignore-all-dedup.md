@@ -35,4 +35,4 @@ layat gitignore --all           # projectRoot の全 config の target をソー
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `list-generations --all` /
 `gitignore --all` の箇条書き（後段）。
 
-決定の実体は [gitignore --all は project mode の全 config の target を重複なく整列して出す](../adr/gitignore-all-sorted-deduplicated.md)「gitignore --all は project mode の全 config の target を重複なく整列して出す」。
+決定の実体は [gitignore --all は project mode の全 config の target を重複なく整列して出す](../adr/gitignore-all-sorted-deduplicated.md)。

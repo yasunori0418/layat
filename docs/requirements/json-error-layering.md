@@ -75,5 +75,5 @@ generated:
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「エラーの層と stderr 併存」「エラーコード」。
 
-決定の実体は [エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)「エラーはエンベロープに構造化し stderr のテキストと併存させる」。`E_LAYAT_BUILD` の読み替えは [生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する](../adr/generator-failure-single-build-code.md)「生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する」、
-`E_INPUT` の初実装は [入力の不正を E_INPUT に分類する](../adr/input-errors-classified-e-input.md)「入力の不正を E_INPUT に分類する」。
+決定の実体は [エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)。`E_LAYAT_BUILD` の読み替えは [生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する](../adr/generator-failure-single-build-code.md)、
+`E_INPUT` の初実装は [入力の不正を E_INPUT に分類する](../adr/input-errors-classified-e-input.md)。

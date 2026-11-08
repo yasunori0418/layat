@@ -101,6 +101,6 @@ generated:
 
 `docs/spec.md`「モジュール別動作仕様」→「home-manager モジュール」節の表と箇条書き。
 
-決定の実体は [モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)「モジュールの activation は apply --all --manifest を 1 回だけ起動する」と
-[モジュールの activation は lock を待ち、失敗したら switch を止める](../adr/module-activation-waits-and-fails-switch.md)「モジュールの activation は lock を待ち、失敗したら switch を止める」。モジュールを配線に徹させることは [モジュールは root と起動の時機だけを供給して engine を起動する](../adr/modules-wire-engine-kick-only.md) が
+決定の実体は [モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)と
+[モジュールの activation は lock を待ち、失敗したら switch を止める](../adr/module-activation-waits-and-fails-switch.md)。モジュールを配線に徹させることは [モジュールは root と起動の時機だけを供給して engine を起動する](../adr/modules-wire-engine-kick-only.md) が
 定めている。全 config を `apply --all` の 1 回の起動で渡す形は [モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)。

@@ -109,7 +109,7 @@ generated:
 
 ## 出典
 
-[テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)「テストを sandbox 可否で flake check と E2E に分ける」。
+[テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)。
 同 ADR が「エンジン（Go）: ユニットテスト（特に**保守的 stale 除去の安全不変条件**を
 table-driven）+ tmpdir 統合テスト（実 FS・偽 source・nix 不使用）」と定めている。
 

@@ -43,4 +43,4 @@ generated:
 「root の解決」→「project mode（`root = projectRoot`）」節の箇条書き第 3 項（`--root` は
 project mode に限らず全モードの解決 root を一律上書きする）。
 
-決定の実体は [--root は全モードで root を上書きする](../adr/root-flag-overrides-all-modes.md)「--root は全モードで root を上書きする」。
+決定の実体は [--root は全モードで root を上書きする](../adr/root-flag-overrides-all-modes.md)。

@@ -41,5 +41,5 @@ generated:
 
 `docs/spec.md`「配置動作仕様」→「out-of-store symlink」節。
 
-決定の実体は [out-of-store はマッピングだけを追跡する](../adr/out-of-store-tracks-mapping-only.md)「out-of-store はマッピングだけを追跡する」で確定した、out-of-store のリンク先
+決定の実体は [out-of-store はマッピングだけを追跡する](../adr/out-of-store-tracks-mapping-only.md)で確定した、out-of-store のリンク先
 マッピングのみを版管理する方針。

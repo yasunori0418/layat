@@ -77,4 +77,4 @@ generated:
 `docs/spec.md`「配置動作仕様」→「symlink モード」の手順 1〜3 と、同節の箇条書き
 第 3・4 項。
 
-決定の実体は [cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](../adr/cross-config-last-wins-with-foreign-warning.md)「cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する」。root 相対の配置元は [root 相対マーカーのリンクを target 起点の相対パスで張る](../adr/root-relative-link-as-relative-path.md)「root 相対マーカーのリンクを target 起点の相対パスで張る」が加えた。
+決定の実体は [cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](../adr/cross-config-last-wins-with-foreign-warning.md)。root 相対の配置元は [root 相対マーカーのリンクを target 起点の相対パスで張る](../adr/root-relative-link-as-relative-path.md)が加えた。

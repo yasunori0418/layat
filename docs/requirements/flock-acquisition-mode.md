@@ -46,5 +46,5 @@ shellHook の場面（`--no-wait`）では、try-lock（`LOCK_NB`）で保持中
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」のグローバルフラグ表 `--no-wait` と、
 「実行フロー」2a の flock 取得（blocking / try-lock の別・待機表示・skip 通知）。
 
-決定の実体は [flock は明示実行で待ち、hook 実行でスキップする](../adr/flock-mode-explicit-wait-hook-skip.md)「flock は明示実行で待ち、hook 実行でスキップする」（flock の待ち方と `--no-wait` の位置づけ）。shellHook の
+決定の実体は [flock は明示実行で待ち、hook 実行でスキップする](../adr/flock-mode-explicit-wait-hook-skip.md)（flock の待ち方と `--no-wait` の位置づけ）。shellHook の
 try-lock skip を無言にせず通知するとしていた旧決定は、同じ ADR で改められた。

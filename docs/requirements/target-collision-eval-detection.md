@@ -62,6 +62,6 @@ cross-config（別 profile・別 manifest）の同一 target 衝突は eval で�
 `docs/spec.md`「lib API」→「入力検査（`evalModules` + `normalizeManifest`）」。
 
 決定の実体は同一 manifest 内の target 衝突を eval 時に検出すると定めた
-[manifest 内の target の衝突を評価時に検出する](../adr/manifest-target-conflict-eval-error.md)「manifest 内の target の衝突を評価時に検出する」で、cross-config を「単一の eval に載らない場合」へ限定した
+[manifest 内の target の衝突を評価時に検出する](../adr/manifest-target-conflict-eval-error.md)で、cross-config を「単一の eval に載らない場合」へ限定した
 のは旧決定（単一のモジュール eval に載る config 間は静的検出が可能）。例外の条件を「単一の起動」へ改めたのは
-[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)「モジュールは configs 間の target 衝突を評価時に確認しない」。
+[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)。

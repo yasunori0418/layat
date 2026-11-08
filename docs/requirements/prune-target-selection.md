@@ -107,11 +107,11 @@ store の回収は `nix-collect-garbage` に委ねる。
 
 ## 出典
 
-決定の実体は [prune は root が実在しない roothash 系列だけを削除する](../adr/prune-only-missing-root-series.md)「prune は root が実在しない roothash 系列だけを削除する」。
+決定の実体は [prune は root が実在しない roothash 系列だけを削除する](../adr/prune-only-missing-root-series.md)。
 out-of-store な root がアンマウント中に「一時的に実在しない」と誤判定されうる caveat は
 [prune は削除前に root パスの一覧を示して確認を取る](../adr/prune-confirms-with-root-list.md) にあり、機械側で区別せず確認プロンプトの root パス一覧で防ぐ（→ [prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](prune-safety-gates.md)）。
 
 走査対象に system 基底 `/nix/var/nix/profiles/layat/` を加えることと、非 root 実行で削除権限が
 無い系列を warning 付きで skip することは [prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md) が定めている（prune の旧決定は system mode の
 実装決定より前の 2026-07-04 で、当時は root = `/` が常に実在することだけを理由に対象外として
-いた）。基底の所有を世代バックエンドへ移したのは [state の基底を設定で上書きさせない](../adr/state-bases-not-configurable.md)「state の基底を設定で上書きさせない」。
+いた）。基底の所有を世代バックエンドへ移したのは [state の基底を設定で上書きさせない](../adr/state-bases-not-configurable.md)。

@@ -72,7 +72,7 @@ generated:
 決定の実体は grilling 2026-07-12 D6 で、conflict を全件列挙する方針を定めている。この決定を
 表明した ADR は無い（ADR 化されていない）。`--backup` を脱出ハッチとするガイダンスと、退避先が既存の
 ときを conflict 種別に加えることは [--backup は配置を塞ぐ記録外の実体だけを退避する](../adr/backup-scope-unrecorded-entities.md)・[退避先が既にあれば conflict で止める](../adr/backup-existing-destination-conflict.md) による。報告を stderr に置き失敗時の処理を沈黙の対象にしない出力規律は
-[指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)「指定が無いときは成功時に何も出力しない」が定めるが、同 ADR は conflict に一切言及せず全件列挙を
+[指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)が定めるが、同 ADR は conflict に一切言及せず全件列挙を
 決めていないため、側面の根拠として `justifies` は張らない（出力規律そのものの帰属は
 [stdout は機械可読出力を専有しレポートと warning は stderr へ出す](stream-discipline.md) / [成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](silent-on-success.md) が担当する）。成功時沈黙を定めていた旧決定は [巻き戻し自体の失敗は best-effort で続行し、全件を stderr へ報告して停止する](undo-rollback-best-effort.md) へは `justifies` を
 張っていたが、あちらは「この報告を成功時沈黙の対象にしてはならない」を自身の規範に含めて

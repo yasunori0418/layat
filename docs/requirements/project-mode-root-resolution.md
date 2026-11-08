@@ -50,5 +50,5 @@ generated:
 `docs/spec.md`「root の解決」→「project mode（`root = projectRoot`）」節の表と、
 同節の箇条書き第 1〜2 項。
 
-決定の実体は [root は 3 つの marker で表す](../adr/three-root-markers.md)「root は 3 つの marker で表す」
+決定の実体は [root は 3 つの marker で表す](../adr/three-root-markers.md)
 （git toplevel 解決。config 相対と CWD 相対を棄却したのは旧決定）。

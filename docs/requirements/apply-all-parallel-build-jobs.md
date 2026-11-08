@@ -64,4 +64,4 @@ generated:
 
 ## 出典
 
-[apply --all の build を worker pool で並列に実行する](../adr/apply-all-parallel-build-worker-pool.md)「apply --all の build を worker pool で並列に実行する」（Issue #153 で起票）。
+[apply --all の build を worker pool で並列に実行する](../adr/apply-all-parallel-build-worker-pool.md)（Issue #153 で起票）。

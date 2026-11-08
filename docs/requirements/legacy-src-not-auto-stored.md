@@ -42,4 +42,4 @@ legacy（`-f` eval）にはこの事前コピーが無く、相対 path はフ�
 `docs/spec.md`「CLI 仕様」→「アドレッシング」の blockquote 末尾「`src` の store 化は
 自動ではない」。
 
-決定の実体は [shell.nix / default.nix の再現性は利用者の責任にする](../adr/shell-default-nix-best-effort.md)「shell.nix / default.nix の再現性は利用者の責任にする」。
+決定の実体は [shell.nix / default.nix の再現性は利用者の責任にする](../adr/shell-default-nix-best-effort.md)。

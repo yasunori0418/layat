@@ -35,4 +35,4 @@ generated:
 
 `docs/spec.md`「エラー仕様」節の表の `entries = {}` 行。
 
-決定の実体は [空の entries を正当な全クリアとして許可する](../adr/empty-entries-allowed.md)「空の entries を正当な全クリアとして許可する」で、空 entries をエラーにせず全クリアとして受理することを定めている。
+決定の実体は [空の entries を正当な全クリアとして許可する](../adr/empty-entries-allowed.md)で、空 entries をエラーにせず全クリアとして受理することを定めている。

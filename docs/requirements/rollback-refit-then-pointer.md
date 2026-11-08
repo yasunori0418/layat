@@ -106,7 +106,7 @@ stale 除去の diff は次の基準・順序で行う:
 
 `docs/spec.md`「世代管理仕様」→「ロールバック」節の standalone（home mode）の箇条書き。
 
-決定の実体は [rollback は FS を収束させてからポインタを動かす](../adr/rollback-baseline-and-pointer-last.md)「rollback は FS を収束させてからポインタを動かす」（rollback diff 基準）で、
+決定の実体は [rollback は FS を収束させてからポインタを動かす](../adr/rollback-baseline-and-pointer-last.md)（rollback diff 基準）で、
 戻り先の祖先 symlink を配置前除去する処理は [祖先 symlink は自己記録の古くなったものだけを移行する](../adr/ancestor-symlink-recorded-stale-only.md) が定めている。ポインタ移動を世代
-バックエンドの契約越しにしたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」、比較の基準を
+バックエンドの契約越しにしたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)、比較の基準を
 last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)・[rollback はポインタ移動の前に戻り先の manifest で記録を書き直す](../adr/rollback-rewrites-record-before-pointer.md)。

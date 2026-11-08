@@ -53,6 +53,6 @@ generated:
 `docs/spec.md`「モジュールオプション仕様」→「共通オプション（全モジュール）」節の
 `layat.backup` の段落。
 
-決定の実体は [モジュールに layat.backup を起動配線のオプションとして持つ](../adr/module-backup-option.md)「モジュールに layat.backup を起動配線のオプションとして持つ」で、
+決定の実体は [モジュールに layat.backup を起動配線のオプションとして持つ](../adr/module-backup-option.md)で、
 module の使い方への配線は同 ADR が Issue #169 とともに定めている。配線先を全 config の
 `apply --all --manifest <name>=<link-farm> …` 起動にしたのは [モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)。

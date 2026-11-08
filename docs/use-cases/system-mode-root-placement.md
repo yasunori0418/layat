@@ -44,12 +44,12 @@ layat apply <name> --dryrun    # 非 root でも計画を確認できる
 
 ## 出典
 
-[rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)「rootKind に system を足しても schemaVersion を上げない」、
-[root は 3 つの marker で表す](../adr/three-root-markers.md)「root は 3 つの marker で表す」、
-[system mode の変更系操作の前に engine が euid 0 を確認する](../adr/system-mode-euid-gate.md)「system mode の変更系操作の前に engine が euid 0 を確認する」、
-[profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)「profile の基底ディレクトリをモードで切り替える」、
-[profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)「profile は解決済み root の roothash でキーする」、
-[prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md)「prune は system 基底も走査し、権限の無い系列を見送る」、
-[module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)「module と project では世代操作を公開しない」、
-[system mode の last-applied 記録を /var/lib/layat に置く](../adr/system-record-base-var-lib.md)「system mode の last-applied 記録を /var/lib/layat に置く」、
-[state の基底を設定で上書きさせない](../adr/state-bases-not-configurable.md)「state の基底を設定で上書きさせない」。
+[rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)、
+[root は 3 つの marker で表す](../adr/three-root-markers.md)、
+[system mode の変更系操作の前に engine が euid 0 を確認する](../adr/system-mode-euid-gate.md)、
+[profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)、
+[profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)、
+[prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md)、
+[module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)、
+[system mode の last-applied 記録を /var/lib/layat に置く](../adr/system-record-base-var-lib.md)、
+[state の基底を設定で上書きさせない](../adr/state-bases-not-configurable.md)。

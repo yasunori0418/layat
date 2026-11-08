@@ -76,5 +76,5 @@ manifest / derivation の変化を伴わず、shell 再入間でも起こり得�
 `docs/spec.md`「配置動作仕様」→「symlink モード」の手順 0.7 と、「途中失敗時の巻き戻し」節の
 箇条書き第 4 項（世代スキップの処理での drift 修復と Backup）。
 
-決定の実体は [退避を配置前除去の後の段として undo ジャーナルに載せる](../adr/backup-stage-in-undo-journal.md)「退避を配置前除去の後の段として undo ジャーナルに載せる」・[--backup は配置を塞ぐ記録外の実体だけを退避する](../adr/backup-scope-unrecorded-entities.md) で、
+決定の実体は [退避を配置前除去の後の段として undo ジャーナルに載せる](../adr/backup-stage-in-undo-journal.md)・[--backup は配置を塞ぐ記録外の実体だけを退避する](../adr/backup-scope-unrecorded-entities.md) で、
 PreRemove がドリフト修復の処理に到達しない不変条件は [世代スキップのときも退避を行う](../adr/backup-on-generation-skip.md) が前提にしている。

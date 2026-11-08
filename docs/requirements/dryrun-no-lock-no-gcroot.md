@@ -32,4 +32,4 @@ out-link で gcroot を張ることは [実行フローの順序は eval 先行 
 
 `docs/spec.md`「CLI 仕様」→「実行フロー」の `--dryrun` の箇条書き。
 
-決定の実体は [store path は out-link で受け取る](../adr/store-path-via-out-link.md)「store path は out-link で受け取る」と [eval を先に行い、flock を取ってから build する](../adr/eval-first-then-flock-then-build.md)「eval を先に行い、flock を取ってから build する」。
+決定の実体は [store path は out-link で受け取る](../adr/store-path-via-out-link.md)と [eval を先に行い、flock を取ってから build する](../adr/eval-first-then-flock-then-build.md)。

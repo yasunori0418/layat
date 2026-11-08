@@ -77,7 +77,7 @@ generated:
 
 ## 出典
 
-[モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)「モジュールの activation は apply --all --manifest を 1 回だけ起動する」。`layat.jobs` の定義は [layat.jobs で activation の並列度を指定する](../adr/module-jobs-option.md)。
+[モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)。`layat.jobs` の定義は [layat.jobs で activation の並列度を指定する](../adr/module-jobs-option.md)。
 
 `docs/spec.md` には対応記述が無いため、原文の写しは持たない（規範は frontmatter が正で、
 上の箇条書きは ADR 本文の要約）。旧版（config ごとに起動し bash で集約する形）は

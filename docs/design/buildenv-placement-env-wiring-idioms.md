@@ -108,6 +108,6 @@ fi
 
 ## 出典
 
-[layat.lib.mkEnv で buildEnv 合成環境を提供する](../adr/mkenv-buildenv.md)「layat.lib.mkEnv で buildEnv 合成環境を提供する」。
+[layat.lib.mkEnv で buildEnv 合成環境を提供する](../adr/mkenv-buildenv.md)。
 同 ADR は配置と環境変数配線の書き方を idiom として docs に置くと決めており、
 本 item がその実体。

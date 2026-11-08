@@ -74,8 +74,8 @@ generated:
 `docs/spec.md`「世代管理仕様」→「project mode の世代」節の、世代スキップ時の FS の確認に付随する
 入れ子箇条書き 2 項。
 
-決定の実体は [配置の振動はユーザー責任とし、文書で注意するに留める](../adr/oscillation-is-user-responsibility.md)「配置の振動はユーザー責任とし、文書で注意するに留める」（cross-config 同一 target をユーザー責任と
+決定の実体は [配置の振動はユーザー責任とし、文書で注意するに留める](../adr/oscillation-is-user-responsibility.md)（cross-config 同一 target をユーザー責任と
 すること・振動 warning を抑制しないこと）。
 「検知して止める機構を持たない」を engine 実行時へ限定したのは旧決定（単一のモジュール eval に
 載る config 間は静的検出が可能）。例外の条件を「単一の起動」へ改めたのは
-[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)「モジュールは configs 間の target 衝突を評価時に確認しない」。
+[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)。

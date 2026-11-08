@@ -60,6 +60,6 @@ devShells.default = pkgs.mkShell {
 
 `docs/spec.md`「モジュール別動作仕様」→「devShell（配線）」節。
 
-決定の実体は [devShell の shellHook で配線する](../adr/devshell-shellhook-wiring.md)「devShell の shellHook で配線する」
+決定の実体は [devShell の shellHook で配線する](../adr/devshell-shellhook-wiring.md)
 （devShell からの project mode キックと世代スキップ）と、devShell を配線層として位置づける
 [root の明示を mkManifest 層で必須にする](../adr/root-explicit-at-mkmanifest.md)。

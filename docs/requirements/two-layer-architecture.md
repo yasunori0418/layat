@@ -74,5 +74,5 @@ engine は Nix の評価結果へ直接依存しない。
 （`manifest.json` を「engine が読む唯一の安定契約」と明示するのは同「manifest.json
 スキーマ（v1）」節で、当該節は後続 PR の担当）。
 
-manifest の取得を生成器経由にしたのは [manifest の取得をプロセス内の Go インターフェイスの生成器越しにする](../adr/manifest-generator-in-process-interface.md)「manifest の取得をプロセス内の Go インターフェイスの生成器越しにする」、世代のコミットを
-世代バックエンドの契約越しにしたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」。
+manifest の取得を生成器経由にしたのは [manifest の取得をプロセス内の Go インターフェイスの生成器越しにする](../adr/manifest-generator-in-process-interface.md)、世代のコミットを
+世代バックエンドの契約越しにしたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)。

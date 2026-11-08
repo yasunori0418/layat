@@ -38,5 +38,5 @@ pending out-link を張る段そのものは [実行フローの順序は eval �
 
 `docs/spec.md`「CLI 仕様」→「実行フロー」の `.pending` gcroot 残存の箇条書き。
 
-決定の実体は [.pending の残留を許容する](../adr/pending-leftover-tolerated.md)「.pending の残留を許容する」。commit 後の片付けを engine の FS 操作として
-位置づけたのは [.pending の後片付けを gcroot を知らない engine の FS 操作として行う](../adr/pending-cleanup-without-gcroot.md)「.pending の後片付けを gcroot を知らない engine の FS 操作として行う」。
+決定の実体は [.pending の残留を許容する](../adr/pending-leftover-tolerated.md)。commit 後の片付けを engine の FS 操作として
+位置づけたのは [.pending の後片付けを gcroot を知らない engine の FS 操作として行う](../adr/pending-cleanup-without-gcroot.md)。

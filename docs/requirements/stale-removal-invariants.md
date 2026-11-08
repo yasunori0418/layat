@@ -61,5 +61,5 @@ generated:
 
 `docs/spec.md`「世代管理仕様」→「stale 除去の対象と安全不変条件」節の導入文と表。
 
-決定の実体は [古くなった配置の除去は記録どおりの symlink だけに限る](../adr/conservative-removal-invariant.md)「古くなった配置の除去は記録どおりの symlink だけに限る」。比較の基準を
-last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)「古くなった配置の除去は、比較の基準を記録から優先して読む」。
+決定の実体は [古くなった配置の除去は記録どおりの symlink だけに限る](../adr/conservative-removal-invariant.md)。比較の基準を
+last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)。

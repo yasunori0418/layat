@@ -41,6 +41,6 @@ generated:
 この 2 行が挙げる解決失敗時の停止そのものに対応する決定を持つ ADR は無く、
 `docs/spec.md` が一次記述にあたる。よって本 item に `justifies` は張られないが、これは
 張り忘れではない。前提となる「project root を git toplevel に置く」ことは
-[root は 3 つの marker で表す](../adr/three-root-markers.md)「root は 3 つの marker で表す」が定めるが、同 ADR は
+[root は 3 つの marker で表す](../adr/three-root-markers.md)が定めるが、同 ADR は
 解決に失敗したときの扱いを決めていないため、側面の根拠として `justifies` は張らない
 （前提そのものの帰属は [project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない](project-mode-root-resolution.md) が担当する）。

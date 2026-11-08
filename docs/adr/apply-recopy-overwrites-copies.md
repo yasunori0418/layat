@@ -29,7 +29,7 @@ generated:
 
 ## 背景
 
-copy は世代の外に place-once で置く（[copy は世代の外に place-once で置く](copy-outside-generations-place-once.md)）。一度置いた
+[copy は世代の外に place-once で置く](copy-outside-generations-place-once.md)。一度置いた
 target には以後触れないので、`src` を更新しても copy した側には反映されない。反映するには、
 target を手で消してから apply をやり直すしかなかった。
 

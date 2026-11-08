@@ -48,6 +48,6 @@ generated:
 
 `docs/spec.md`「世代管理仕様」→「project mode の世代」節の箇条書き最終項。
 
-決定の実体は [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)「profile は解決済み root の roothash でキーする」（孤児 profile の
+決定の実体は [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)（孤児 profile の
 放置許容）で、backref による逆引きも同じ ADR が定めている。cleanup を持たず seam に留めていた判断は、
-[prune は root が実在しない roothash 系列だけを削除する](../adr/prune-only-missing-root-series.md)「prune は root が実在しない roothash 系列だけを削除する」で `layat prune` の実装に進めた。
+[prune は root が実在しない roothash 系列だけを削除する](../adr/prune-only-missing-root-series.md)で `layat prune` の実装に進めた。

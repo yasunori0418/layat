@@ -82,8 +82,8 @@ generated:
 `docs/spec.md`「モジュールオプション仕様」→「共通オプション（全モジュール）」節の
 blockquote「HM モジュールの profile 粒度（MVP）」。
 
-決定の実体は [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md)「HM モジュールは layat.configs.<name> ごとに独立した profile を持つ」と
-[layat.entries を configs.default.entries への rename 糖衣として残す](../adr/hm-entries-renamed-sugar.md)「layat.entries を configs.default.entries への rename 糖衣として残す」（MVP 限定の旧決定を改訂）。`<name>` 次元と
+決定の実体は [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md)と
+[layat.entries を configs.default.entries への rename 糖衣として残す](../adr/hm-entries-renamed-sugar.md)（MVP 限定の旧決定を改訂）。`<name>` 次元と
 atomic 性・合成ヘルパ不提供は [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md)、`default` が従来と同じ profile に解決され続ける非破壊性は
 [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md)（profile dir が `<name>` 直キーに乗ること）と [layat.entries を configs.default.entries への rename 糖衣として残す](../adr/hm-entries-renamed-sugar.md)（`layat.entries` を `configs.default.entries`
 への糖衣とすること）の双方に依る。

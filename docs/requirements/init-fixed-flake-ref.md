@@ -33,4 +33,4 @@ CLI 版と template 版のズレ（常に latest main 参照）は許容する�
 
 `docs/spec.md`「CLI 仕様」→「`layat init`（テンプレート展開）」の箇条書き第 3 項。
 
-決定の実体は [templates と layat init は固定 ref で導入する](../adr/templates-and-init-fixed-ref.md)「templates と layat init は固定 ref で導入する」。
+決定の実体は [templates と layat init は固定 ref で導入する](../adr/templates-and-init-fixed-ref.md)。

@@ -57,6 +57,6 @@ legacy entrypoint には flake の `<system>` に相当する次元が無く、a
 
 `docs/spec.md`「CLI 仕様」→「アドレッシング（`layat.<name>`）」の本文と表。
 
-決定の実体は [named manifest を専用の `layat.<name>` 名前空間に公開する](../adr/layat-name-namespace.md)「named manifest を専用の layat.<name> 名前空間に公開する」で、
+決定の実体は [named manifest を専用の `layat.<name>` 名前空間に公開する](../adr/layat-name-namespace.md)で、
 legacy entrypoint の addressing を `nix build -f <ep> layat.<name>` に統一したのは
-[legacy entrypoint の eval と build は新 CLI の -f 形で行う](../adr/legacy-eval-via-nix-file-flag.md)「legacy entrypoint の eval と build は新 CLI の -f 形で行う」（旧決定の `nix-build -A` 記述を改訂）。
+[legacy entrypoint の eval と build は新 CLI の -f 形で行う](../adr/legacy-eval-via-nix-file-flag.md)（旧決定の `nix-build -A` 記述を改訂）。

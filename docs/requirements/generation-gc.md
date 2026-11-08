@@ -66,4 +66,4 @@ profile の各世代は GC root。`nix-env --profile <profileDir>/profile --dele
 
 決定の実体は、世代操作を `nix-env --profile` 系で統一していた旧決定と、
 `<profileDir>` レイアウトを確定した [profile は専用ディレクトリレイアウトに置く](../adr/profile-directory-layout.md)。世代操作を契約越しにしたのは
-[世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」。
+[世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)。

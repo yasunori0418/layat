@@ -32,5 +32,5 @@ generated:
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」のグローバルフラグ表 `--version`。
 
-決定の実体は [VERSION ファイルをバージョンの一次情報にする](../adr/version-file-single-source.md)「VERSION ファイルをバージョンの一次情報にする」で、埋め込みバージョンの
+決定の実体は [VERSION ファイルをバージョンの一次情報にする](../adr/version-file-single-source.md)で、埋め込みバージョンの
 供給元（VERSION ファイル由来の ldflags 埋め込み `main.version`）を定めている。

@@ -62,6 +62,6 @@ macOS / Linux でホームの慣例が異なるため、絶対パスのローカ
 `docs/spec.md`「root の解決」→「ローカルパス（out-of-store）の扱い」節（本文・時点対比の
 コードブロック・OS 判別の推奨）。同節の `nix` 使用例は要求ではないため規範に採らない。
 
-決定の実体は root を marker 化して実行時解決へ寄せた [root は 3 つの marker で表す](../adr/three-root-markers.md)「root は 3 つの marker で表す」と、out-of-store symlink をネイティブ
-機構へ委譲せず engine が扱うと定めた [out-of-store のリンクは lib の関数が包むだけにして engine が張る](../adr/out-of-store-linked-by-engine.md)。root 相対の形は [root 相対マーカーの基準点を manifest の配置 root にする](../adr/root-relative-base-is-placement-root.md)「root 相対マーカーの基準点を manifest の配置 root にする」が加えた。ただし OS 判別によるローカルパス解決の推奨（`SHOULD`）は原文由来で、
+決定の実体は root を marker 化して実行時解決へ寄せた [root は 3 つの marker で表す](../adr/three-root-markers.md)と、out-of-store symlink をネイティブ
+機構へ委譲せず engine が扱うと定めた [out-of-store のリンクは lib の関数が包むだけにして engine が張る](../adr/out-of-store-linked-by-engine.md)。root 相対の形は [root 相対マーカーの基準点を manifest の配置 root にする](../adr/root-relative-base-is-placement-root.md)が加えた。ただし OS 判別によるローカルパス解決の推奨（`SHOULD`）は原文由来で、
 対応する ADR を持たない（macOS / Linux のホーム慣例差を扱った ADR は無い）。

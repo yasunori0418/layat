@@ -82,4 +82,4 @@ subpath がファイルの場合:
 `docs/spec.md`「配置動作仕様」→「copy モード（place-once・ユーザー管理）」節のコードブロックと、
 箇条書き第 2・3・6 項。
 
-決定の実体は [apply --recopy で全 copy target を src から無条件に上書きする](../adr/apply-recopy-overwrites-copies.md)「apply --recopy で全 copy target を src から無条件に上書きする」で、place-once そのものは [copy は世代の外に place-once で置く](../adr/copy-outside-generations-place-once.md) が定めている。
+決定の実体は [apply --recopy で全 copy target を src から無条件に上書きする](../adr/apply-recopy-overwrites-copies.md)で、place-once そのものは [copy は世代の外に place-once で置く](../adr/copy-outside-generations-place-once.md) が定めている。

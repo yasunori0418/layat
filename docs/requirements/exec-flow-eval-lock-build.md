@@ -174,10 +174,10 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 `docs/spec.md`「CLI 仕様」→「実行フロー」の本文・コードブロックと、
 `apply --manifest` の skip を述べる最終箇条書き。
 
-決定の実体は [eval を先に行い、flock を取ってから build する](../adr/eval-first-then-flock-then-build.md)「eval を先に行い、flock を取ってから build する」で、out-link に
+決定の実体は [eval を先に行い、flock を取ってから build する](../adr/eval-first-then-flock-then-build.md)で、out-link に
 よる indirect gcroot は [store path は out-link で受け取る](../adr/store-path-via-out-link.md)、同一 profileDir 同時実行の後勝ちは [同一 profileDir への同時実行は後勝ちにする](../adr/same-profiledir-target-last-wins.md)、
 `apply --manifest` の skip は [apply --manifest でビルド済み link-farm を engine へ直接渡す](../adr/apply-manifest-prebuilt-link-farm.md)。2a の flock を blocking で取るか try-lock で取るか
 （shellHook の skip 通知を含む）は [flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする](flock-acquisition-mode.md) の担当で、その決定元となる ADR は
 本 item の出典には含めない。世代のコミットを世代バックエンドの契約越しにし、`.pending` の
 削除を engine の FS 操作として位置づけたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)・[.pending の後片付けを gcroot を知らない engine の FS 操作として行う](../adr/pending-cleanup-without-gcroot.md)、比較の基準を
-last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)「古くなった配置の除去は、比較の基準を記録から優先して読む」。
+last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)。

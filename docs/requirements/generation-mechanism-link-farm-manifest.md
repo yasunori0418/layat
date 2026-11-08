@@ -114,9 +114,9 @@ generated:
 「layat は全モードで自前 profile を持つ」段落。atomic 性のみ同「CLI 仕様」→
 「サブコマンド体系」の `apply` の箇条書き（上の注記を参照）。
 
-決定の実体は [世代は link farm と nix profile に乗せる](../adr/generations-on-link-farm-and-nix-profile.md)「世代は link farm と nix profile に乗せる」と
-[symlink farm を GC アンカー専用にする](../adr/farm-as-gc-anchor-only.md)「symlink farm を GC アンカー専用にする」（link farm derivation への manifest 埋め込み）・
-[新規配置と張替えを先に、世代のコミットを最後に行う](../adr/placement-order-commit-last.md)「新規配置と張替えを先に、世代のコミットを最後に行う」（コミット最後）。全モードのコミットを
+決定の実体は [世代は link farm と nix profile に乗せる](../adr/generations-on-link-farm-and-nix-profile.md)と
+[symlink farm を GC アンカー専用にする](../adr/farm-as-gc-anchor-only.md)（link farm derivation への manifest 埋め込み）・
+[新規配置と張替えを先に、世代のコミットを最後に行う](../adr/placement-order-commit-last.md)（コミット最後）。全モードのコミットを
 `nix-env --profile <profileDir>/profile --set` に統一することは旧決定が定めていた。
-コミットを世代バックエンドの契約越しにしたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」、
-last-applied 記録を store 外の唯一の可変 JSON として認めたのは [last-applied 記録を profileDir と同じ鍵で state 基底に置く](../adr/last-applied-record-location.md)「last-applied 記録を profileDir と同じ鍵で state 基底に置く」。
+コミットを世代バックエンドの契約越しにしたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)、
+last-applied 記録を store 外の唯一の可変 JSON として認めたのは [last-applied 記録を profileDir と同じ鍵で state 基底に置く](../adr/last-applied-record-location.md)。
