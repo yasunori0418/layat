@@ -2,7 +2,7 @@
 id: "SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb"
 type: sara_adr
 name: "ID はフル UUID に統一し 8 文字省略形を使わない"
-status: stable
+status: deprecated
 sources:
   - id: "issue-366"
     resource: "https://github.com/yasunori0418/layat/issues/366"
@@ -19,7 +19,7 @@ generated:
 ---
 # SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb: ID はフル UUID に統一し 8 文字省略形を使わない
 
-- ステータス: stable
+- ステータス: deprecated
 - 日付: 2026-11-01
 - 関連: SDR-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103, GitHub Issue #366, #364
 - 起点: epic #364 の着手前 grilling（2026-08-17）で確定。ADR-0053 §1 を書き直した
