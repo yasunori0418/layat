@@ -18,8 +18,7 @@ import (
 // exists is kept; one whose verdict cannot be reached is kept with a warning.
 
 // PruneSkipReason is why a series was left alone. Only failures appear here; a
-// series kept because its root exists is not a failure and is not reported
-// (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1).
+// series kept because its root exists is not a failure and is not reported.
 type PruneSkipReason string
 
 const (
@@ -42,8 +41,7 @@ const (
 )
 
 // PruneOptions is the input to Prune. Prune names no config: it neither
-// evaluates nor builds, and its only inputs are the two bases to scan
-// (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1).
+// evaluates nor builds, and its only inputs are the two bases to scan.
 type PruneOptions struct {
 	// Backend owns both bases: the user base is derived from StateDir through
 	// Backend.UserBase and the system base is Backend.SystemBase. Required: nil is an error.
@@ -53,7 +51,7 @@ type PruneOptions struct {
 	// SystemDir overrides the finished system base itself (empty = Backend.SystemBase).
 	SystemDir string
 	// DryRun is a side-effect-free preview: it enumerates and judges, takes no
-	// lock, and changes nothing (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
+	// lock, and changes nothing.
 	DryRun bool
 	// Confirm is the confirmation callback before deletion (nil = --yes path).
 	// It is handed a preview separate from the returned result; Aborted is set
@@ -65,8 +63,7 @@ type PruneOptions struct {
 }
 
 // PruneSeries is one <roothash> series. RootHash / Root / Names are the fields
-// --dryrun prints and the confirmation prompt lists
-// (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
+// --dryrun prints and the confirmation prompt lists.
 type PruneSeries struct {
 	// RootHash is the series directory name.
 	RootHash string
@@ -90,7 +87,7 @@ type PruneSkipped struct {
 type PruneResult struct {
 	// Removed holds the series deleted — in dryrun, the ones that would be.
 	// When the deletion stage fails it holds the series completed before that
-	// failure (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
+	// failure.
 	Removed []PruneSeries
 	// Skipped holds the series left alone, with the reason.
 	Skipped []PruneSkipped
@@ -129,7 +126,7 @@ func Prune(opts PruneOptions) (*PruneResult, error) {
 
 	// 1. judge both bases. A base that does not exist holds no series and is
 	// not reported; a base that exists but cannot be listed is reported by
-	// name, and the other base is still processed (→ RISK-f522a51b-db4b-4164-bd20-63fa4a0cb27d).
+	// name, and the other base is still processed.
 	var candidates []PruneSeries
 	for _, base := range []string{opts.Backend.UserBase(stateDir), systemDir} {
 		found, err := pruneJudgeBase(base, res, warnf)
@@ -183,7 +180,7 @@ func Prune(opts PruneOptions) (*PruneResult, error) {
 			}
 			// Something was already removed, or the reason gives no guidance:
 			// the series is neither gone nor untouched, so the run stops with
-			// an error (→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed).
+			// an error.
 			return res, err
 		}
 		res.Removed = append(res.Removed, s)
@@ -193,7 +190,7 @@ func Prune(opts PruneOptions) (*PruneResult, error) {
 
 // pruneJudgeBase enumerates one base and returns the series to delete, adding
 // the ones kept for a failed verdict to res.Skipped. A base that does not exist
-// yields no series and no error (→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f).
+// yields no series and no error.
 func pruneJudgeBase(base string, res *PruneResult, warnf func(string, ...any)) ([]PruneSeries, error) {
 	listed, err := paths.ListRootHashSeries(base)
 	if err != nil {
@@ -251,9 +248,8 @@ func pruneJudgeBase(base string, res *PruneResult, warnf func(string, ...any)) (
 	return candidates, nil
 }
 
-// pruneSkip records a skipped series and warns for every reason
-// (→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f). The series is named by its
-// directory, since the same <roothash> can stand under both bases.
+// pruneSkip records a skipped series and warns for every reason. The series is
+// named by its directory, since the same <roothash> can stand under both bases.
 func pruneSkip(res *PruneResult, warnf func(string, ...any), s PruneSeries, reason PruneSkipReason, cause error) {
 	res.Skipped = append(res.Skipped, PruneSkipped{Series: s, Reason: reason, Detail: cause.Error()})
 	warnf("layat: prune: skipped series %s (%s): %v", s.Dir, reason, cause)

@@ -22,7 +22,7 @@ import (
 
 // pruneBases returns a state dir (whose user base is created) and a system
 // base (created as-is), both under tmpdirs. The system base is a tmpdir so no
-// test ever reaches the real /nix/var/nix/profiles (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1).
+// test ever reaches the real /nix/var/nix/profiles.
 func pruneBases(t *testing.T) (stateDir, systemDir string) {
 	t.Helper()
 	stateDir = realTempDir(t)
@@ -191,7 +191,7 @@ func mustExist(t *testing.T, path, what string) {
 	}
 }
 
-// --- target accuracy (→ TC-bc653f83-70ce-4920-b7cd-9b70a4cd2cae) -----------
+// --- target accuracy -------------------------------------------------------
 
 func TestPruneRemovesOrphanSeriesWhole(t *testing.T) {
 	state, system := pruneBases(t)
@@ -578,7 +578,7 @@ func TestPruneKeepsSeriesWhoseNamesCannotBeListed(t *testing.T) {
 	}
 }
 
-// --- safety gates (→ TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9) --------------
+// --- safety gates ----------------------------------------------------------
 
 func TestPruneDryRunChangesNothing(t *testing.T) {
 	state, system := pruneBases(t)
