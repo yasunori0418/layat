@@ -10,7 +10,7 @@ satisfies:
   - "REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:22:37+09:00"
+  at: "2026-11-09T08:32:50+09:00"
 ---
 # DSG-98d7fa5d-c590-441a-b682-0ab7afa14233: engine の起動を entrypoint 駆動とビルド済み manifest の 2 クラスに束ね、統合層の差を link-farm の取得方法だけに閉じる
 
@@ -60,4 +60,4 @@ rollback を公開する層は [rollback と list-generations は home / system 
 
 なお同原文の統合層テーブルは home-manager 行に「MVP は profile `<name>` =
 `default` 固定の 1 profile・役割分離は不可」と書いているが、本 item はこれを採らない。
-現行の規範は [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) と [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](../requirements/hm-named-configs-profiles.md) であるため。
+現行の規範は [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](../requirements/hm-named-configs-profiles.md) で、`layat.configs.<name>` の導入は [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) の決定であるため。
