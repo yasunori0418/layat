@@ -90,6 +90,7 @@ scan() {
       if (length(t) >= fence_len) { c = t; gsub(fence_char, "", c); if (c == "") fence_char = "" }
       next
     }
+    # 情報文字列にバッククォートを含む行はフェンスではなくコードスパンとして扱う。
     match($0, /^[ \t]*(```+|~~~+)/) {
       t = substr($0, RSTART, RLENGTH); sub(/^[ \t]+/, "", t)
       if (!(substr(t, 1, 1) == "`" && index(substr($0, RLENGTH + 1), "`"))) {
@@ -122,6 +123,22 @@ name: "タグ <state> 入りの name"
 [角括弧 \[x\] の繰り返し](e.md)「角括弧 [x] の繰り返し」
 [`code` の繰り返し](f.md)（`code` の繰り返し）
 1 行に [一つ目の <a>](g.md) と [二つ目の <b>](h.md) がある
+[`code` と裸の <c> の混在](i.md)
+閉じない ` がある行の [タグ <d> 入り](j.md)
+``` `span` の行の [タグ <e> 入り](k.md)
+[前の行でフェンスに入らない <f>](l.md)
+EOF
+
+# 閉じないフェンスで終わるファイルの次のファイルも走査できることを確かめる。
+cat > "$fixture/detect-unclosed.md" <<'EOF'
+本文
+```
+EOF
+
+cat > "$fixture/detect-nofm.md" <<'EOF'
+# frontmatter の無いファイルの <title>
+
+[タグ <name> 入りのリンク](a.md)
 EOF
 
 cat > "$work/detect.expected" <<'EOF'
@@ -130,8 +147,14 @@ dup	detect.md:11
 dup	detect.md:7
 dup	detect.md:8
 dup	detect.md:9
+tag	detect-nofm.md:1
+tag	detect-nofm.md:3
 tag	detect.md:12
 tag	detect.md:12
+tag	detect.md:13
+tag	detect.md:14
+tag	detect.md:15
+tag	detect.md:16
 tag	detect.md:2
 tag	detect.md:4
 tag	detect.md:6
@@ -155,6 +178,11 @@ description: "<frontmatter> の name 以外のキーは見ない"
 リンクの外の <name> は見ない
 `[タグ <name> 入り](e.md)「タグ <name> 入り」` はコードスパンの中
 `` [二重の <name> のスパン](e.md) `` もコードスパンの中
+`` ` [内側の <name>](e.md) `` は長さの同じ閉じまでコードスパン
+[リンク](d.md) 「リンク」は直後でない
+[リンク](d.md)「リンクの別名」は完全一致でない
+[リンク](d.md)（リンクの別名）は完全一致でない
+リンク（[リンク](d.md)、補足）は直後が閉じ括弧でない
 
 ```bash
 [コードブロックの <name>](e.md)（コードブロックの <name>）
@@ -177,14 +205,14 @@ description: "<frontmatter> の name 以外のキーは見ない"
   ```
 EOF
 
-(cd "$fixture" && scan detect.md clean.md) > "$work/self.out"
+(cd "$fixture" && scan detect-unclosed.md detect-nofm.md detect.md clean.md) > "$work/self.out"
 self_rc=$?
 if [ "$self_rc" -ne 0 ]; then
   fault "自己テスト: 走査が異常終了した（exit $self_rc）"
 fi
 
 cut -d: -f1,2 "$work/self.out" | LC_ALL=C sort > "$work/self.detected"
-if diff <(grep $'\tdetect\.md:' "$work/self.detected") "$work/detect.expected" > "$work/self.diff"; then
+if diff <(grep -v $'\tclean\.md:' "$work/self.detected") "$work/detect.expected" > "$work/self.diff"; then
   pass "自己テスト: 検出すべき例を全件検出する"
 else
   fault "自己テスト: 検出すべき例の結果が期待と食い違う"
@@ -256,6 +284,11 @@ report_kind() {
 
 report_kind tag "リンク文字列・name・H1 の裸のタグ"
 report_kind dup "リンク前後の name の繰り返し"
+
+if [ -s "$work/scan.out" ] && [ "$fail" -eq 0 ]; then
+  fault "走査の検出が tag / dup のどちらにも分類されない"
+  cat "$work/scan.out"
+fi
 
 # --- 結果 -------------------------------------------------------------------
 
