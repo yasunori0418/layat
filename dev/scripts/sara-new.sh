@@ -148,7 +148,10 @@ fi
 mv "$tmp_file.generated" "$tmp_file"
 
 # 同時起票が先に同じ slug を置いていても上書きしない（ln は既存の出力先で失敗する）。
-ln "$tmp_file" "$target"
+if ! ln "$tmp_file" "$target"; then
+  echo "sara-new: 出力先へ配置できなかった: $target" >&2
+  exit 1
+fi
 
 printf 'id: %s\n' "$id"
 printf 'file: %s\n' "$target"
