@@ -18,7 +18,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab, ADR-12ad7852-e689-44d7-b9fe-0667effb3d13, ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a, `docs/spec.md`, UBQ-12218337-953b-40c8-b9ec-6d8ee8ec0d4e
+- 関連: [配置元の中のパスを全層で subpath と呼ぶ](subpath-naming-across-layers.md), [entry の未知のキーを評価時に拒否する](strict-unknown-keys-rejected.md), [entry の配置種別のフィールドを method と名付ける](mode-renamed-to-method.md), `docs/spec.md`, [subpath](../ubiquitous-language/subpath.md)
 - 起点: 「リポジトリ全体を示す文字列として `"."` 以外の表現は無いか」という問いの設計検討。ADR-0008 §3 と §4 を書き直した
 
 ## 背景
@@ -32,7 +32,7 @@ toplevel）の種別を運び、実行時に解決させるための入れ物で
 
 リポジトリ全体は `subpath` を省略して表す。`subpath = "."` も全体を明示する形として合法に残し、
 専用のトークンや全体を表すマーカーは設けない。型と既定値は
-REQ-27b75fe6-6c36-44a8-8cd3-5cc98043022a に置く。
+[subpath は src 内の相対パスとし、リポジトリ全体は省略で表して専用トークンを設けない](../requirements/subpath-omission-whole-repo.md) に置く。
 
 ## 根拠
 

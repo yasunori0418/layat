@@ -16,7 +16,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-baf6346d-783b-4607-ab1c-c2c93c09e064
+- 関連: [--all は config ごとの SubjectResult を積む](all-as-multiple-subject-results.md)
 - 起点: ADR-0018 §4c を書き直した
 
 ## 背景
@@ -28,7 +28,7 @@ generated:
 
 `rollback` は `--all` を受けない。戻す config の名指しを必須にする。
 
-引数の形は REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796 に置く。
+引数の形は [rollback は名指し必須で --all に対応しない](../requirements/rollback-named-only.md) に置く。
 
 ## 根拠
 

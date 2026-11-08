@@ -30,9 +30,9 @@ lib の生成物に入るため、lib は実質的に shell script の生成ツ�
 lib は配置データの生成だけを行う純粋関数にとどめ、配置のロジックを持たない。`lib.mkManifest` は
 `manifest.json` と symlink farm を含む derivation を返し、配置はそれを入力に取る engine が行う。
 
-lib の依存の制約は REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51 に、`mkManifest` が純粋関数であることは
-REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4 に、返す store オブジェクトの中身は
-REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281 に置く。
+lib の依存の制約は [lib は nixpkgs.lib のみに依存する純データ生成器である](../requirements/lib-pure-data-generator.md) に、`mkManifest` が純粋関数であることは
+[mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md) に、返す store オブジェクトの中身は
+[mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](../requirements/mkmanifest-return-value.md) に置く。
 
 ## 根拠
 

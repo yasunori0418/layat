@@ -37,8 +37,8 @@ layat は manifest 記録による分類でそれを避けている。分類が�
 
 ## 評価
 
-- likelihood: medium — TC-d160e18b-4c0c-4531-a506-e7d00d88788a が除去対象の限定を、TC-8a1f4b19-0ece-4057-a8bf-f9717855cade が除去直前の再検証を
-  覆っている。ただし同じ保守的不変条件を reset の teardown（RISK-bb54245e-b284-4b4d-9896-8fec2b4e521c）と共有しており、
+- likelihood: medium — [古くなった配置の除去の対象が前世代に記録され記録先を指す symlink に限られること](../test/migration-stale/stale-removal-targets.md) が除去対象の限定を、[plan から unlink までの drift が除去直前に再検証され、処理ごとに正しく分岐すること](../test/migration-stale/drift-reverification.md) が除去直前の再検証を
+  覆っている。ただし同じ保守的不変条件を reset の teardown（[reset の teardown が管理外の実体まで消し、preview と同意の条件も機能しない](reset-teardown-overreach.md)）と共有しており、
   どちらかの処理への変更がもう一方へ波及しうる
 - impact: high — 除去はユーザーや他ツールが置いた実体に届き、unlink は不可逆。home-manager
   の readlink パターンがまさにこの取り違えを起こす方式で、記録ベースの分類から外れることが

@@ -44,8 +44,8 @@ generated:
 終了する。副作用ゼロが preview である担保で、lock も取らない。
 
 **確認** — 実削除の前に削除対象の **root パス一覧を必ず表示**し、`reset` と同型の確認を出す
-（→ ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66）。`--yes` でスキップできる。非 TTY では確認が取れないため、`--yes` が無ければ
-中止する（`reset` の非 TTY 規律 → REQ-31dae599-f3a3-4bbe-b367-c955535265da と同型）。
+（→ [prune は削除前に root パスの一覧を示して確認を取る](../adr/prune-confirms-with-root-list.md)）。`--yes` でスキップできる。非 TTY では確認が取れないため、`--yes` が無ければ
+中止する（`reset` の非 TTY 規律 → [reset の確認プロンプトは stdin が TTY のときだけ出し、非 TTY で同意が無ければ即エラー停止する](reset-confirm-non-tty.md) と同型）。
 
 root パス一覧を必ず見せるのは、out-of-store な root（リムーバブルディスク・ネットワーク
 マウント上のプロジェクト）がアンマウント中に「一時的に実在しない」と誤判定されうるため。
@@ -57,14 +57,14 @@ warning を出して skip する。lock が取れない = その系列で engine
 ために待つ」倒錯した挙動になるので持たない。
 
 **`--json`** — 確認プロンプトは機械消費で扱えないため、`--json` は `--yes` を必須とし、無ければ
-即 `status:"error"` + 非ゼロで fail fast する（`reset --json` の REQ-2a613337-7646-4ced-8807-e43bca18acf3 と同型）。
+即 `status:"error"` + 非ゼロで fail fast する（`reset --json` の [reset --json は --yes を必須とし無ければ fail fast する](json-reset-requires-yes.md) と同型）。
 
 必須になるのは**削除を行う実行だけ**で、`--dryrun --json` は対象外。`--yes` を要求する理由は
 「削除の同意を機械消費の場面で取れない」ことにあり、副作用ゼロの preview には取るべき同意が無い
 （`reset` も dryrun の処理が確認ポリシーの手前で返るのと同じ構造）。ここを限定しないと、削除しない
 実行にまで同意フラグを要求する読み方ができてしまう。
 
-`--json` 出力が stdout を専有することは REQ-2353259f-5878-452a-8e11-3445de69abc2 の担当。
+`--json` 出力が stdout を専有することは [--json 指定時は行指向 stdout を出さずエンベロープが stdout を専有する](json-stdout-exclusive.md) の担当。
 
 **削除に着手して完了しなかった系列** — エラーとして報告し、削除済みとしても skip としても
 扱わない。系列の削除は複数の実体を順に消す作業なので、途中で失敗した系列は「消えた」でも
@@ -72,14 +72,14 @@ warning を出して skip する。lock が取れない = その系列で engine
 ものが無傷だと読める報告になる。その失敗より前に削除し終えた系列は削除済みとして報告する
 （結果ごと破棄すると、既に消えた系列が結果に現れず、何が消えて何が残ったか分からないまま
 部分削除された FS を渡すことになる）。権限が無くて着手すらできなかった系列は「残した」側で、
-REQ-c44433a1-7ee7-459a-9aae-7cc42166876f の担当。
+[prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](prune-target-selection.md) の担当。
 
-> 何を削除対象とみなすかは REQ-c44433a1-7ee7-459a-9aae-7cc42166876f が持つ。本 item は
+> 何を削除対象とみなすかは [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](prune-target-selection.md) が持つ。本 item は
 > 「対象と判定したものを実際に消してよいか」と「消し切れなかったことがどう届くか」を述べる。
 
 ## 出典
 
-決定の実体は ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66「prune は削除前に root パスの一覧を示して確認を取る」・ADR-8517e311-c461-41aa-80ac-48760a7762b2「prune はロックを取れない系列を待たずに飛ばす」。
-`--json` の `--yes` 必須は ADR-63ec1446-d328-42d2-b8d2-e8a11d752ed7 と ADR-acc31876-df36-485e-b356-92ae60e26db7 から導かれる。削除に着手して完了
-しなかった系列の扱いは、ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66・ADR-8517e311-c461-41aa-80ac-48760a7762b2 が挙げる安全機構に明示が無い部分を、削除が系列単位の複数実体に
-及ぶという ADR-419914ba-9896-4dd1-853b-fb514fcb9f38 のレイアウトから導いたもの。
+決定の実体は [prune は削除前に root パスの一覧を示して確認を取る](../adr/prune-confirms-with-root-list.md)「prune は削除前に root パスの一覧を示して確認を取る」・[prune はロックを取れない系列を待たずに飛ばす](../adr/prune-skips-locked-series.md)「prune はロックを取れない系列を待たずに飛ばす」。
+`--json` の `--yes` 必須は [prune は新設時から --json に対応する](../adr/prune-json-output.md) と [reset は非対話の実行で --yes を必須にする](../adr/reset-confirmation-and-yes.md) から導かれる。削除に着手して完了
+しなかった系列の扱いは、[prune は削除前に root パスの一覧を示して確認を取る](../adr/prune-confirms-with-root-list.md)・[prune はロックを取れない系列を待たずに飛ばす](../adr/prune-skips-locked-series.md) が挙げる安全機構に明示が無い部分を、削除が系列単位の複数実体に
+及ぶという [profile は専用ディレクトリレイアウトに置く](../adr/profile-directory-layout.md) のレイアウトから導いたもの。

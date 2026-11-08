@@ -20,11 +20,11 @@ generated:
 
 > **廃止（2026-11-04）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
 >
-> - 全体 → SDR-3e5b9994-a905-44d8-8256-2bd65b12b87e
+> - 全体 → [ADR は UUID だけで採番する](adr-uuid-only-numbering.md)
 
 - ステータス: deprecated
 - 日付: 2026-11-01
-- 関連: SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd, GitHub Issue #499, `docs/adr/README.md`
+- 関連: [ADR は単独で覆せる 1 つの決定だけを書く](adr-one-decision-granularity.md), GitHub Issue #499, `docs/adr/README.md`
 - 起点: Issue #499 の grilling（2026-11-01）で確定。ADR-0048 §4・ADR-0053 §4 を書き直した
 
 ## 背景
@@ -33,7 +33,7 @@ ADR だけは連番（`ADR-NNNN`）で採番してきた。既存 ADR の相互�
 無効にしないためである。一方、並列レーンで ADR を起こすと、複数のレーンが同じ「次の番号」を取る構造が
 残っていた。
 
-1 決定 1 ADR の粒度（SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd）で旧 ADR を書き直すと、新しい ADR は
+1 決定 1 ADR の粒度（[ADR は単独で覆せる 1 つの決定だけを書く](adr-one-decision-granularity.md)）で旧 ADR を書き直すと、新しい ADR は
 100 本を超え、多くのレーンが並行して起票する。sara は型ごとに 1 つの `id_format` しか持てず、連番の
 ID は UUID 形式の検証を通らない。
 

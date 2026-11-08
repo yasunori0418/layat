@@ -29,7 +29,7 @@ lib の型の確認は、`src` / `root` に渡された値が marker か derivat
 `rootKind` の clean enum として写す。写す変換は lib の正規化（`normalizeManifest`）が受け持ち、
 store 由来の `src` も Nix 側で store パスの文字列に解決してから書く。
 
-marker と enum の対応は REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7 に置く。
+marker と enum の対応は [marker は判別タグで識別し manifest.json には漏らさない](../requirements/marker-tag-discrimination.md) に置く。
 
 ## 根拠
 

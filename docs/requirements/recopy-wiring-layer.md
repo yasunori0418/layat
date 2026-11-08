@@ -39,11 +39,11 @@ generated:
   捨てる」ことを明記する
 
 > **他 item との担当分界**: オプションの型とデフォルト値（`bool`・false）は
-> REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、`--recopy` が何を上書きしどう報告するかは
-> REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065、activation の起動形は REQ-c847d1af-a437-46bb-bd64-42083810d034 /
-> REQ-8085f194-c903-4ecb-abd8-c719fe7b3292 の担当。`layat.backup` の配線を定める
-> REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3 と対になる。
+> [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)、`--recopy` が何を上書きしどう報告するかは
+> [apply --recopy は config 内の全 copy target を src から無条件に上書き再コピーする](apply-recopy.md)、activation の起動形は [HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う](hm-activation-per-config-kick.md) /
+> [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](hm-activation-contract.md) の担当。`layat.backup` の配線を定める
+> [layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない](backup-wiring-layer.md) と対になる。
 
 ## 出典
 
-ADR-9506276e-2108-4962-9f90-efe82fec7f66・ADR-7b9e4a7b-56d3-4356-9f67-bedbde8f0a52。`--recopy` そのものは ADR-fb01d942-2875-4dcb-a7df-879e18f63883 が定めている。
+[layat.recopy で activation の起動に --recopy を付ける](../adr/module-recopy-option.md)・[モジュールの起動修飾オプションを config ごとに持たない](../adr/module-launch-options-global.md)。`--recopy` そのものは [apply --recopy で全 copy target を src から無条件に上書きする](../adr/apply-recopy-overwrites-copies.md) が定めている。

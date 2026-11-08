@@ -28,7 +28,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988, ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-d97154cd-a2e5-4853-a682-800ff9435c89, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93, GitHub Issue #580, #406
+- 関連: [profile は解決済み root の roothash でキーする](profile-keyed-by-roothash-of-resolved-root.md), [project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md), [rollback は FS を収束させてからポインタを動かす](rollback-baseline-and-pointer-last.md), [1 config = 1 profile を全モードで自前に持つ](one-config-one-profile-all-modes.md), [古くなった配置の除去は manifest の差分で行う](stale-removal-by-manifest-diff.md), GitHub Issue #580, #406
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §1 を書き直した
 
 ## 背景
@@ -45,8 +45,8 @@ generated:
 ## 決定
 
 apply は、最後に配置した manifest を layat 自前の last-applied 記録に書く。記録は state
-基底の下に置き、鍵は profileDir と同じ規則で決める（ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988）。
-パスとレイアウトの細目は DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5 に置く。
+基底の下に置き、鍵は profileDir と同じ規則で決める（[profile は解決済み root の roothash でキーする](profile-keyed-by-roothash-of-resolved-root.md)）。
+パスとレイアウトの細目は [last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](../design/last-applied-record-layout.md) に置く。
 
 ## 根拠
 

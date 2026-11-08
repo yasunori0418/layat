@@ -31,7 +31,7 @@ layat は flake input として消費されるツールであり、消費側の 
 
 投入の契機を**リリースタグではなく main の変更**に置く点が要点になる。タグに紐づけると
 リリース間の main 変更がキャッシュされず、「flake input として最新 main を追う」という
-消費のされ方と噛み合わない。リリース（QA-0949183b-7ef0-4cae-b88f-3ad361576b63）とキャッシュは互いに独立に駆動する。
+消費のされ方と噛み合わない。リリース（[リリースはバージョンの一次情報の変更で駆動し、手作業の工程を挟まない](release-driven-by-source-of-truth.md)）とキャッシュは互いに独立に駆動する。
 
 > **受益者は消費側だが、型は quality に置いた。** この norm を落として困るのはビルド時間を
 > 払う消費側であり、`docs/agents/sara-graph.md` の quality の signature test（落ちて気づくのは
@@ -41,8 +41,8 @@ layat は flake input として消費されるツールであり、消費側の 
 
 ## 出典
 
-ADR-6c477b0f-cd25-417d-91a0-172dd0ed084f、ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a、
-ADR-21570c09-066c-471b-b605-3364265c8736 が置いた方針を、
+[キャッシュへの投入を main への push で起動する](../adr/cachix-push-on-main.md)、[キャッシュは 3 system の matrix ビルドで投入する](../adr/ci-cache-via-matrix-build.md)、
+[キャッシュへの投入を cachix-action の自動 push に任せる](../adr/cachix-push-via-cachix-action.md) が置いた方針を、
 基盤（INF）から
 分離して quality item として立てたもの。投入先のキャッシュ名・マトリクス構成・トリガの
-`paths` は INF-af33c5a1-f846-4f09-8e43-c6ea042d6e06 が持つ。
+`paths` は [バイナリキャッシュ（main push 時の cachix 投入）](../infrastructure/binary-cache.md) が持つ。

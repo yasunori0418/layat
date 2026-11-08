@@ -20,7 +20,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, `docs/spec.md`, `docs/design.md`, UBQ-5caf1573-b91f-40dd-a414-58b5f49bf0d9, UBQ-575f2527-64a9-4f8b-ae68-1131b053cf66
+- 関連: [manifest 内の target の衝突を評価時に検出する](manifest-target-conflict-eval-error.md), [manifest.json を schemaVersion 1 の唯一の契約として固定する](manifest-json-contract-schemaversion-v1.md), `docs/spec.md`, `docs/design.md`, [entry / entries](../ubiquitous-language/entry.md), [target](../ubiquitous-language/target.md)
 - 起点: 参照: home-manager `modules/lib/file-type.nix`（`home.file` の識別子モデル）。ADR-0014 §1・§2a・§5 を書き直した
 
 ## 背景
@@ -38,8 +38,8 @@ home-manager の `home.file` は `attrsOf (submodule …)` で、属性キーが
 entries を `attrsOf (submodule …)` にし、属性キーを root 相対の target とする。`target` は省略
 すれば属性キーになり、明示して上書きもできる。`name` フィールドは持たず、キーの一意性は Nix の
 attrset に任せる。動的な生成は `listToAttrs` などで attrset を組む。フィールドの集合と既定値は
-REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74、識別子と一意性は
-REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 に置く。
+[entry submodule のフィールドは src / subpath / target / method の 4 つとする](../requirements/entry-submodule-fields.md)、識別子と一意性は
+[entry の識別子は属性キー = target とし一意性は Nix が担保する](../requirements/entry-identity-by-target-key.md) に置く。
 
 ## 根拠
 
@@ -48,7 +48,7 @@ REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 に置く。
 過不足が無い。並べ替えで名前が変わる心配も、順序に依らない target をキーにすれば起きない。
 実証済みの `home.file` と同じ形なので、利用者のすでに知っている使い方と同じになる。別のキーから `target` を
 上書きして同じ target を指す衝突だけは attrset で防げず、
-ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0 が評価時に検出する。
+[manifest 内の target の衝突を評価時に検出する](manifest-target-conflict-eval-error.md) が評価時に検出する。
 
 ## 棄却した代替案
 

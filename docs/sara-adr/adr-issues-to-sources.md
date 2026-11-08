@@ -29,7 +29,7 @@ ADR / SDR は、item にできない外部参照を `issues`（`#N` の文字列
 指す先が変わる。
 
 OKF には、item の出典を `id` / `resource` / `title` の組のリストで持つ `sources` キーがある。
-SDR-bab72f31-7cb1-47a3-bb2d-7876757d86fb で OKF と互換のキーを足すと決めた。
+[OKF v0.2 と互換の frontmatter キーを item に足す](okf-compatible-frontmatter.md) で OKF と互換のキーを足すと決めた。
 
 ## 決定
 

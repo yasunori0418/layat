@@ -27,13 +27,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-d97154cd-a2e5-4853-a682-800ff9435c89, ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93, GitHub Issue #580, #406
+- 関連: [rollback は FS を収束させてからポインタを動かす](rollback-baseline-and-pointer-last.md), [project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md), [1 config = 1 profile を全モードで自前に持つ](one-config-one-profile-all-modes.md), [古くなった配置の除去は manifest の差分で行う](stale-removal-by-manifest-diff.md), GitHub Issue #580, #406
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §4b を書き直した
 
 ## 背景
 
 rollback は FS を N-1 に収束させてから、最後に profile
-のポインタを動かす（ADR-d97154cd-a2e5-4853-a682-800ff9435c89）。記録は世代ではなく、
+のポインタを動かす（[rollback は FS を収束させてからポインタを動かす](rollback-baseline-and-pointer-last.md)）。記録は世代ではなく、
 「最後に置いたもの」である。世代のポインタを戻しても、記録は巻き戻らない。rollback で FS が N-1
 になったら、記録も N-1 の内容にする必要がある。
 

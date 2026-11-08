@@ -25,14 +25,14 @@ generated:
 
 ## 検証内容
 
-**発火条件**（TC-1ee7a729-5629-4c92-b02a-4f6e11c0b57d）
+**発火条件**（[世代スキップは project / system mode で derivation 同一のときだけ発火し、それ以外は新世代を積む](generation-skip-commit-policy.md)）
 
 - project mode で同一 link farm を 2 回 apply → 世代を積まない
 - link farm が変われば新世代を積む
 - system mode（root）で同一 link farm を再 apply → 世代を積まず、消された symlink だけを再張りする
 - home mode では同一 link farm でも新世代を積む（世代スキップは project / system 限定）
 
-**修復の対象範囲**（TC-765858b6-d596-4428-b4da-5d432944a714）
+**修復の対象範囲**（[lstat ドリフト修復が破損した entry だけを直し、ユーザーの編集には触れない](drift-repair-scope.md)）
 
 - ドリフト無し（記録どおり）→ 何もせず warning も出さない
 - 消された symlink → 再張りする

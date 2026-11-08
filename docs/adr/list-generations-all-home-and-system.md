@@ -16,7 +16,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-baf6346d-783b-4607-ab1c-c2c93c09e064
+- 関連: [--all は config ごとの SubjectResult を積む](all-as-multiple-subject-results.md)
 - 起点: ADR-0018 §4b を書き直した
 
 ## 背景
@@ -30,7 +30,7 @@ generated:
 `list-generations` は `--all` を受け、home mode の全 config、続けて system mode の全 config の
 世代を一覧する。
 
-基底が無いときと読めないときの扱いは REQ-05abce3e-9797-432b-b93f-37c55d09afde に置く。
+基底が無いときと読めないときの扱いは [rollback と list-generations は home / system mode 限定にする](../requirements/rollback-list-generations-home-only.md) に置く。
 
 ## 根拠
 

@@ -38,10 +38,10 @@ generated:
 - `root` オプションは公開しない
 
 > **他 item との担当分界**: オプションの型とデフォルト値（`nullOr str`・null）は
-> REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、subdir 適用形が target へどう前置され、どの値を
-> 拒否するかは REQ-08c8f639-790c-4970-a954-c9567538cf9b、config ごとの
-> profile の独立は REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a の担当。
+> [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)、subdir 適用形が target へどう前置され、どの値を
+> 拒否するかは [root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](root-marker-subdir-sugar.md)、config ごとの
+> profile の独立は [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md) の担当。
 
 ## 出典
 
-ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98・ADR-2230e78f-770a-447e-9c5d-6eba1e9a7359。subdir 適用形そのものは ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509 が定めている。
+[configs.<name>.subdir で config ごとに target の基点を寄せる](../adr/module-config-subdir-option.md)・[モジュールは subdir の確認を lib に委ねる](../adr/module-delegates-subdir-validation.md)。subdir 適用形そのものは [root マーカーに subdir の適用形を持たせる](../adr/root-marker-subdir-applied-form.md) が定めている。

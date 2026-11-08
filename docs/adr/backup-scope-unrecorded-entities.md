@@ -24,14 +24,14 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-33d8c466-6b38-46b6-8696-ad7521c72786, GitHub Issue #169, #172
+- 関連: [--backup を = 区切りで suffix を取る省略可能な値のフラグにする](backup-optional-value-flag.md), GitHub Issue #169, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §2 を書き直した
 
 ## 背景
 
 layat は、自分が前世代に置いて古くなったものなら配置前に除去して自動で移行する。一方、記録外の実体
 （他人のデータ）は判定なしに動かすと危険なので、自動移行の対象から外して conflict で止めて
-いる。`--backup`（ADR-33d8c466-6b38-46b6-8696-ad7521c72786）はこの隙間を埋める手段で、
+いる。`--backup`（[--backup を = 区切りで suffix を取る省略可能な値のフラグにする](backup-optional-value-flag.md)）はこの隙間を埋める手段で、
 何を退避の対象にするかを決める必要があった。
 
 ## 決定
@@ -42,8 +42,8 @@ skip される記録外の実体に限る。実ディレクトリの target の�
 しない。
 
 対象の外延（symlink モードの foreign な実体、copy の構造不一致、copy の foreign な実ファイル、
-method の copy から symlink への変更など）は REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 と
-REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b に置く。
+method の copy から symlink への変更など）は [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](../requirements/backup-stage-position.md) と
+[apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](../requirements/apply-backup-rename-aside.md) に置く。
 
 ## 根拠
 

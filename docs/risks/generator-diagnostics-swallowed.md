@@ -18,8 +18,8 @@ generated:
 ## リスク
 
 生成器は診断を CLI が渡す writer へ素通しし、失敗を `generator.Error` で構造化して返す
-（→ REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd）。nix 生成器は experimental-features が未有効の
-とき、自動付与せず有効化の手段を案内して止まる（→ REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6）。
+（→ [生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める](../requirements/generator-diagnostics-contract.md)）。nix 生成器は experimental-features が未有効の
+とき、自動付与せず有効化の手段を案内して止まる（→ [nix experimental-features は nix 生成器の前提条件とし、自動付与せず案内エラーで停止する](../requirements/nix-experimental-features-prerequisite.md)）。
 これが崩れる形は 3 つある。
 
 - **成功時の握り潰し** — eval の処理が nix の stderr をキャプチャしたまま捨て、成功時の警告

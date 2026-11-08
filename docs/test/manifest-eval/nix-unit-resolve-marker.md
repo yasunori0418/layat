@@ -14,7 +14,7 @@ generated:
 
 ## 対象
 
-`tests/nix-unit/resolve-marker.nix`（TP-403c55c7-d996-4951-8e6b-c3a7dddd387c のテスト seam `layat.__internal.resolveEntry`
+`tests/nix-unit/resolve-marker.nix`（[lib.__internal は private helper のテスト seam として公開する](../../test-plan/lib-internal-test-seam.md) のテスト seam `layat.__internal.resolveEntry`
 と `lib/types.nix` の `isRootMarker` / `isOutOfStoreMarker` / `isRootRelativeMarker` を直接叩く。manifest 全体を介さず
 単一 entry の src 種別判定・文字列化だけを見る最小の境界。root 相対 marker だけは、
 `normalizeManifest` を通した entries の形も 1 件確かめる）
@@ -40,10 +40,10 @@ store / out-of-store / root 相対それぞれに重ねて置く。どの段で�
 - **`isRootMarker`**: projectRoot / homeRoot / systemRoot には true、out-of-store marker と
   絶対パス文字列には false
 
-配置元は TP-d3d06fe4-6940-4df8-b111-bb4096d5444f の fake flake-input double イディオムに従う。
+配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) の fake flake-input double イディオムに従う。
 
 ## 出典
 
 `tests/nix-unit/resolve-marker.nix` の現行実装からの逆算（→ Issue #273「L1〜L4」節）。
-marker の設計判断は ADR-70debe94-c7ce-492b-b938-4c62f7a781e7 / ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb /
-ADR-d9cad6f6-d694-4c1d-afee-b57b129955dc / ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed が持つ。
+marker の設計判断は [out-of-store のリンクは lib の関数が包むだけにして engine が張る](../../adr/out-of-store-linked-by-engine.md) / [root 相対マーカーを別関数 mkRootRelativeSymlink で作る](../../adr/mkrootrelativesymlink-separate-function.md) /
+[marker を判別タグで derivation と見分ける](../../adr/marker-tag-typing.md) / [root は 3 つの marker で表す](../../adr/three-root-markers.md) が持つ。

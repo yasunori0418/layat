@@ -146,38 +146,38 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 > **上のフロー図は原文の写しで、規範は frontmatter が正**。図が触れる次の規範は本 item の
 > 担当ではなく、本 item はそれらがフロー上のどの段に位置するかだけを規定する。
 >
-> - profileDir のレイアウト（`<roothash>/<name>` 等）→ REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3、世代スキップ /
->   ドリフト修復の詳細 → REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0
-> - 配置前除去（PreRemove）→ REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575 / REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26 / REQ-2b48620a-abaa-43df-a106-954bbba3de56、古くなった配置の保守的な
->   除去 → REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2、undo ジャーナル → REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940
-> - `--backup` の退避段（PreRemove の後・配置の前）→ REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 /
->   REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b。同段はフラグ有効時のみ実行されるため、**本 item は e の段数に含めない**
->   （undo ジャーナルの対象段としては REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 が退避を含む 5 段で数える）
+> - profileDir のレイアウト（`<roothash>/<name>` 等）→ [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](profile-on-disk-layout.md)、世代スキップ /
+>   ドリフト修復の詳細 → [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md)
+> - 配置前除去（PreRemove）→ [祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する](ancestor-symlink-nest-migration.md) / [実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する](real-dir-target-migration.md) / [method 変更は symlink→copy のみ配置前除去で移行し、copy→symlink は移行しない](method-change-symlink-to-copy-migration.md)、古くなった配置の保守的な
+>   除去 → [古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](stale-removal-invariants.md)、undo ジャーナル → [途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](undo-journal-rollback.md)
+> - `--backup` の退避段（PreRemove の後・配置の前）→ [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](backup-stage-position.md) /
+>   [apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md)。同段はフラグ有効時のみ実行されるため、**本 item は e の段数に含めない**
+>   （undo ジャーナルの対象段としては [途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](undo-journal-rollback.md) が退避を含む 5 段で数える）
 > - root 解決の各モードの規範 → 「root の解決」節の担当（#209-PR5）
 > - `apply --manifest` の契約（引数・併用エラー・entrypoint 発見と eval / build を
->   行わないこと・rootKind を link-farm 内 `manifest.json` から読むこと）→ REQ-dec58330-6dad-47f7-8f56-2402764a89c7。
+>   行わないこと・rootKind を link-farm 内 `manifest.json` から読むこと）→ [apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](apply-manifest-direct.md)。
 >   本 item はそれがフロー上のどの段に入り・どの段を skip するかだけを規定する
 > - 2a の flock を blocking で取るか try-lock で取るか（`LOCK_EX` / `LOCK_NB`・
->   skip 時の stderr 通知）→ REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461。本 item はフロー上の位置（2a）だけを規定する
+>   skip 時の stderr 通知）→ [flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする](flock-acquisition-mode.md)。本 item はフロー上の位置（2a）だけを規定する
 >
-> **2026-10-11 追記（ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8 / ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818）**: 上の図の f「`nix-env --profile <profileDir>/profile --set`」は、
+> **2026-10-11 追記（[世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md) / [.pending の後片付けを gcroot を知らない engine の FS 操作として行う](../adr/pending-cleanup-without-gcroot.md)）**: 上の図の f「`nix-env --profile <profileDir>/profile --set`」は、
 > 世代バックエンドの契約の Commit と読み替える（`nix-env` は既定実装 nixprofile の内側に閉じる。
-> REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）。g の `.pending` 削除は build 出力の一時リンクの片付けで、
+> [engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)）。g の `.pending` 削除は build 出力の一時リンクの片付けで、
 > engine の素の FS 操作。gcroot の引き継ぎは nixprofile の世代リンクの性質で、engine は gcroot を扱わない。
 >
-> **2026-10-11 追記（ADR-a91585ad-971a-4558-9f25-b7fcd6e57671）**: 上の図の c「profileDir の前世代 manifest.json を読む」は、last-applied 記録が
+> **2026-10-11 追記（[古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)）**: 上の図の c「profileDir の前世代 manifest.json を読む」は、last-applied 記録が
 > あれば記録の manifest を比較の基準に採り、無ければ profileDir の current 世代から読む、と読み替える。記録は
-> e の後・f の前に書き、世代スキップの処理では d のドリフト修復の後に書く。d の世代スキップの判定元は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
+> e の後・f の前に書き、世代スキップの処理では d のドリフト修復の後に書く。d の世代スキップの判定元は [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md)、記録の規範は [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「実行フロー」の本文・コードブロックと、
 `apply --manifest` の skip を述べる最終箇条書き。
 
-決定の実体は ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9「eval を先に行い、flock を取ってから build する」で、out-link に
-よる indirect gcroot は ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1、同一 profileDir 同時実行の後勝ちは ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e、
-`apply --manifest` の skip は ADR-24488788-a5e6-47a5-9074-97192880642a。2a の flock を blocking で取るか try-lock で取るか
-（shellHook の skip 通知を含む）は REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461 の担当で、その決定元となる ADR は
+決定の実体は [eval を先に行い、flock を取ってから build する](../adr/eval-first-then-flock-then-build.md)「eval を先に行い、flock を取ってから build する」で、out-link に
+よる indirect gcroot は [store path は out-link で受け取る](../adr/store-path-via-out-link.md)、同一 profileDir 同時実行の後勝ちは [同一 profileDir への同時実行は後勝ちにする](../adr/same-profiledir-target-last-wins.md)、
+`apply --manifest` の skip は [apply --manifest でビルド済み link-farm を engine へ直接渡す](../adr/apply-manifest-prebuilt-link-farm.md)。2a の flock を blocking で取るか try-lock で取るか
+（shellHook の skip 通知を含む）は [flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする](flock-acquisition-mode.md) の担当で、その決定元となる ADR は
 本 item の出典には含めない。世代のコミットを世代バックエンドの契約越しにし、`.pending` の
-削除を engine の FS 操作として位置づけたのは ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8・ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818、比較の基準を
-last-applied 記録から優先して読むのは ADR-a91585ad-971a-4558-9f25-b7fcd6e57671「古くなった配置の除去は、比較の基準を記録から優先して読む」。
+削除を engine の FS 操作として位置づけたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)・[.pending の後片付けを gcroot を知らない engine の FS 操作として行う](../adr/pending-cleanup-without-gcroot.md)、比較の基準を
+last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)「古くなった配置の除去は、比較の基準を記録から優先して読む」。

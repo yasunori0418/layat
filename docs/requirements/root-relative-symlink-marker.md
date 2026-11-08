@@ -56,13 +56,13 @@ generated:
 | root 種別 | 全種別で使える |
 | 評価時の拒否 | 絶対パス・`..` による root 外への脱出・`method = "copy"` との併用・`<src>/<subpath>` と `target` の一致または祖先関係 |
 | 実行時の停止 | `<root>/<src>/<subpath>` が不在なら配置前に停止（dangling を作らない）|
-| 版管理 | 相対のリンク先文字列のみ。指す先の内容はライブ（REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa の担当）|
+| 版管理 | 相対のリンク先文字列のみ。指す先の内容はライブ（[out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする](out-of-store-link-mapping-only.md) の担当）|
 
-`mkOutOfStoreSymlink`（REQ-eb363122-385a-499c-a074-c95efb949d07）は絶対パス専用のまま据え置き、
+`mkOutOfStoreSymlink`（[mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](mkoutofstoresymlink-marker.md)）は絶対パス専用のまま据え置き、
 相対文字列を受理させない。manifest での表現（`srcKind: "rootRelative"`）は
-REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336、マーカーの判別は REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7、
-src と target root の時点の関係は REQ-81249072-56b8-42f5-807b-ea623c1efe99 の担当。
+[manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する](manifest-entries-array.md)、マーカーの判別は [marker は判別タグで識別し manifest.json には漏らさない](marker-tag-discrimination.md)、
+src と target root の時点の関係は [out-of-store の src は評価時の絶対パスか配置 root 相対のどちらかで、root 相対は target と同じ root に対して実行時に解決する](out-of-store-eval-time-path.md) の担当。
 
 ## 出典
 
-ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb・ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7・ADR-29c0838b-3e25-4b09-a479-9ebbbc4466c7・ADR-d89c2ede-1aba-46fa-9f14-8dcf8a266e0e・ADR-796508e6-2845-467d-83f8-386930a48bfb。
+[root 相対マーカーを別関数 mkRootRelativeSymlink で作る](../adr/mkrootrelativesymlink-separate-function.md)・[root 相対マーカーのリンクを target 起点の相対パスで張る](../adr/root-relative-link-as-relative-path.md)・[root 相対マーカーの基準点を manifest の配置 root にする](../adr/root-relative-base-is-placement-root.md)・[root 相対で指定するパスすべてにパス安全性の確認を課す](../adr/path-safety-for-root-relative-inputs.md)・[src が target に重なる root 相対 entry を評価時に拒否する](../adr/reject-overlapping-src-and-target.md)。

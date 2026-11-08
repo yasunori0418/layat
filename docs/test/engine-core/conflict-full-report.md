@@ -17,4 +17,4 @@ conflict が複数あるとき、最初の 1 件で打ち切らず全件を列�
 
 種類の異なる conflict が混在するとき、各 conflict に対応するガイダンスが正しく組み合わされる
 （他種のガイダンスが付かない）ことも条件に含む。dryrun と本番 apply で同数の conflict が
-報告されることは TC-a5eb7de3-a1a7-41ae-8fb9-c2aa374ac894 の担当。
+報告されることは [dryrun が副作用を持たず、本番 apply と同数の conflict を報告すること](dryrun-readonly-parity.md) の担当。

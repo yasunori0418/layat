@@ -17,7 +17,7 @@ generated:
 
 ## Definition
 
-The name of the tool itself. A compressed coinage of "**lay** \<src\> **at** \<target\>": it places src at target, as the manifest says. It follows the traditional UNIX way of compressing a verb phrase into a command name, as `chroot` (change root) and `getopt` (get options) do. The tool was formerly named nput, whose "n" stood for *nix*; that prefix stopped describing the tool once the engine's only contract became `manifest.json`, regardless of who generates it (→ [ADR-6cd587e8-7aa2-4624-be78-7f6501bf0d6f](../adr/tool-named-layat.md)). Spell it lowercase, including at the start of a sentence.
+The name of the tool itself. A compressed coinage of "**lay** \<src\> **at** \<target\>": it places src at target, as the manifest says. It follows the traditional UNIX way of compressing a verb phrase into a command name, as `chroot` (change root) and `getopt` (get options) do. The tool was formerly named nput, whose "n" stood for *nix*; that prefix stopped describing the tool once the engine's only contract became `manifest.json`, regardless of who generates it (→ [ツール名を layat にする](../adr/tool-named-layat.md)). Spell it lowercase, including at the start of a sentence.
 
 ## Avoid
 
@@ -25,7 +25,7 @@ The name of the tool itself. A compressed coinage of "**lay** \<src\> **at** \<t
 
 ## 定義
 
-ツールそのものの名前。"**lay** \<src\> **at** \<target\>"（manifest の言うとおりに src を target へ置く）の圧縮造語。`chroot`（change root）・`getopt`（get options）と同じ、動詞句をコマンド名へ圧縮する UNIX の伝統的な造語法に従う。旧名は nput で、その「n」は *nix* を指していたが、engine の契約が生成者を問わない `manifest.json` 1 本へ収束した時点でツールを記述しなくなった（→ [ADR-6cd587e8-7aa2-4624-be78-7f6501bf0d6f](../adr/tool-named-layat.md)）。文頭でも小文字で表記する。
+ツールそのものの名前。"**lay** \<src\> **at** \<target\>"（manifest の言うとおりに src を target へ置く）の圧縮造語。`chroot`（change root）・`getopt`（get options）と同じ、動詞句をコマンド名へ圧縮する UNIX の伝統的な造語法に従う。旧名は nput で、その「n」は *nix* を指していたが、engine の契約が生成者を問わない `manifest.json` 1 本へ収束した時点でツールを記述しなくなった（→ [ツール名を layat にする](../adr/tool-named-layat.md)）。文頭でも小文字で表記する。
 
 ## 避ける表現
 

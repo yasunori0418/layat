@@ -27,12 +27,12 @@ target に通常ファイルまたはディレクトリが存在する場合は�
 ただし実 dir は条件を満たせば例外的に PreRemove で除去して配置する。
 
 > **上は原文の写しで、規範は frontmatter が正**。実 dir が例外になる条件そのもの
-> （全 leaf 判定と部分除去の禁止）は REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26 の担当。`--backup` 有効時にこの
-> エラー停止が退避 + 配置へ変わることは REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b / REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 の担当。
+> （全 leaf 判定と部分除去の禁止）は [実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する](real-dir-target-migration.md) の担当。`--backup` 有効時にこの
+> エラー停止が退避 + 配置へ変わることは [apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md) / [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](backup-stage-position.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「配置動作仕様」→「symlink モード」の箇条書き第 2 項。
 
-決定の実体は ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c「祖先 symlink は自己記録の古くなったものだけを移行する」（祖先 symlink /
-実体衝突の扱い）で、実 dir の例外化は ADR-77312c71-fa32-481b-ad80-c91e5b282edc が追加した。
+決定の実体は [祖先 symlink は自己記録の古くなったものだけを移行する](../adr/ancestor-symlink-recorded-stale-only.md)「祖先 symlink は自己記録の古くなったものだけを移行する」（祖先 symlink /
+実体衝突の扱い）で、実 dir の例外化は [実ディレクトリの target は全 leaf を除去できるときだけ移行する](../adr/real-dir-target-migration.md) が追加した。

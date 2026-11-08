@@ -27,15 +27,15 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9, ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964, ADR-f58e9981-bacc-4937-98b8-bddce0a057db, ADR-24488788-a5e6-47a5-9074-97192880642a, ADR-1338a293-3f69-48f5-9164-efb4ec6994d6, ADR-ef9e4099-0cf4-409a-9e73-518866aea676, GitHub Issue #395
+- 関連: [エラーコードは共通コードを再利用し固有の意味だけを E_LAYAT_* にする](error-code-scheme.md), [生成器は明示の指定だけで選ぶ](generator-chosen-explicitly-only.md), [モジュールの activation は apply --all --manifest を 1 回だけ起動する](module-activation-single-apply-all.md), [apply --manifest でビルド済み link-farm を engine へ直接渡す](apply-manifest-prebuilt-link-farm.md), [モジュールは configs 間の target 衝突を評価時に確認しない](modules-no-eval-conflict-assertion.md), [Go の整形は gofmt、静的解析は go vet と golangci-lint で行う](gofmt-vet-golangci.md), GitHub Issue #395
 - 起点: Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §5 を書き直した
 
 ## 背景
 
 エラーコードは複数のツールで共有する共通コードを再利用し、layat 固有の意味だけを `E_LAYAT_*` にする
-（→ ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9）。生成器の選択（→ ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964）で、
+（→ [エラーコードは共通コードを再利用し固有の意味だけを E_LAYAT_* にする](error-code-scheme.md)）。生成器の選択（→ [生成器は明示の指定だけで選ぶ](generator-chosen-explicitly-only.md)）で、
 未知の生成器名・不正な設定ファイル・矛盾するフラグという、利用者の入力の誤りが新たに生じる。
-`--manifest` は `--all` と合成できるようになり（→ ADR-24488788-a5e6-47a5-9074-97192880642a）、その形の誤りも入力の誤りに加わった。
+`--manifest` は `--all` と合成できるようになり（→ [apply --manifest でビルド済み link-farm を engine へ直接渡す](apply-manifest-prebuilt-link-farm.md)）、その形の誤りも入力の誤りに加わった。
 
 ## 決定
 
@@ -45,8 +45,8 @@ generated:
 `<name>=<link-farm>` を繰り返す形だけを正当とし、`-f` や `--generator` との併用、`--all` と
 `<link-farm>` の形の合成などは入力の不正にする。
 
-選択に関わる入力の不正は REQ-badc7e10-0ba4-40d4-b334-6e40193119db、`--manifest` の組み合わせの一覧は
-REQ-dec58330-6dad-47f7-8f56-2402764a89c7、エンベロープでの分類は REQ-9341fa5d-836e-4023-af53-cc7d273438d1 に置く。
+選択に関わる入力の不正は [生成器は明示指定のみで選び、フラグ・環境変数・設定ファイル・既定の順に解決する](../requirements/generator-selection-precedence.md)、`--manifest` の組み合わせの一覧は
+[apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](../requirements/apply-manifest-direct.md)、エンベロープでの分類は [エンベロープのエラーは主体の有無で層を分けコードを分類する](../requirements/json-error-layering.md) に置く。
 
 ## 根拠
 

@@ -13,7 +13,7 @@ generated:
 
 ## テスト条件
 
-`Reset`（profile を触らない FS-only teardown → REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6）を、一度 apply して世代を
+`Reset`（profile を触らない FS-only teardown → [reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す](../../requirements/reset-fs-only-teardown.md)）を、一度 apply して世代を
 コミットした状態から駆動して検証する。
 
 **除去の範囲** — layat が配置した symlink と copy target は除去する。古くなった配置の除去と同じ
@@ -33,9 +33,9 @@ preview であることの担保。
 
 **profile 不在** — 一度も apply していない状態での `reset` は no-op でエラーにしない。
 
-上位の規範は TP-e7c25263-6d2d-4a37-8275-26906889d912（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。
+上位の規範は [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../../test-plan/go-test-layering.md)（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。
 
 ## 対応する CASE
 
-CASE-503c9021-a43f-4c06-8ef6-8630a7d4aeac（`internal/engine/reset_test.go`）。`Reset` の返す `ResetResult` の構造は
-CASE-2008a909-b45e-49e1-adf1-39191a8ddd95 も隣接して検証する。
+[reset_test.go — FS-only teardown の除去範囲・フィルタ・dryrun・同意](reset-test-go.md)（`internal/engine/reset_test.go`）。`Reset` の返す `ResetResult` の構造は
+[result_extensions_test.go — 実行結果のインベントリ・世代観測・到達状態・構造化 warning](result-extensions-test-go.md) も隣接して検証する。

@@ -34,17 +34,17 @@ place-once の規約どおり skip した場合も、利用者に知らせずに
 ## 評価
 
 - likelihood: medium — 失敗しうる syscall が mkdir / open / read-write / readlink / lstat と
-  多岐にわたり、処理を足すたびにエラー処理の取りこぼしが入りうる。TC-4f315cfc-446c-4c3f-8dc9-c36b10073e9d が各段の
+  多岐にわたり、処理を足すたびにエラー処理の取りこぼしが入りうる。[コピー中の syscall 失敗が伝播し、失敗した entry が結果へ記録されないこと](../test/copy/copy-failure-propagation.md) が各段の
   伝播と結果レコードの汚染を覆っているが、同 TC はエラーメッセージによる段の特定を診断上の
   要となる 2 つの処理に限り、残る段は伝播そのものまでしか見ないと自ら断っている
 - impact: medium — 残るのは layat が書いた不完全なツリーで、エラー処理を直したうえでの
   `apply --recopy` か `reset` → 再 apply が正しい配置へ収束させる。上書きされるのは自分が
   書いたコピーであってユーザーの実データではない（記録外の実体を失わせる方向は
-  RISK-e8449214-7794-4d0d-b584-a3a152e2c1f9 / RISK-3719d298-8175-4501-95d5-75f3a29568fe の担当）。apply が成功として返るためユーザーが破損した配置物を
+  [配置分類を誤り、利用者の実体を本人に知らせずに破損させる](placement-classification-misjudged.md) / [--backup の rename 退避がユーザーの実データを上書き・喪失させる](backup-aside-data-loss.md) の担当）。apply が成功として返るためユーザーが破損した配置物を
   正常と誤認する沈黙性は残るが、気づいた後の回復可能性は下げない
 
 ## 張り先の判断
 
-REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7（skip の warning 可視化）と REQ-95e97d01-5c34-44b3-bc85-9ca53472bc3d（停止時に全件をガイダンス付きで報告）
+[copy が foreign 実ファイルを skip したときは warning で可視化する](../requirements/copy-foreign-skip-warning.md)（skip の warning 可視化）と [conflict で停止するときは全件を対処ガイダンス付きで列挙してから 1 本の集約エラーを返す](../requirements/conflict-full-report.md)（停止時に全件をガイダンス付きで報告）
 へ張る。どちらも「失敗・非適用がユーザーへ届く」というプロダクトの振る舞いへの懸念で、
 コピー実装の選択に依存しない。

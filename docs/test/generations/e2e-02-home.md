@@ -26,14 +26,14 @@ target / subpath を入れ替えて flake を書き直し、git commit してか
 
 fixture flake は `projectRoot` の第 2 config `proj` も宣言する。`list-generations --all` の
 除外は、除外対象が disk 上に実在する配置でしか「元から空」と区別できないため
-（→ TC-f304d682-bc5e-4369-a427-f766fdfdd961 の条件「全件列挙が含めない」・issue #312）、`--all` の検証に入る直前で
+（→ [project mode の世代は公開されず、拒否のときは理由が利用者へ届く](../integration/project-mode-generation-nondisclosure.md) の条件「全件列挙が含めない」・issue #312）、`--all` の検証に入る直前で
 `proj` を apply して roothash 階層の profile を作る。
 
 ## 検証内容
 
 - **世代 1** — apply が `$HOME/.cfg/a` へ symlink を張り、内容が src と一致する
 - **成功時沈黙** — 再 apply（no-op）で指定が無いときは配置レポートを出さず、`-v` で出す
-  （layat 自身の完了マーカーの有無で判定 → ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5 / ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）
+  （layat 自身の完了マーカーの有無で判定 → [指定が無いときは成功時に何も出力しない](../../adr/silent-on-success.md) / [-v で配置レポートを opt-in で出す](../../adr/verbose-opts-into-placement-report.md)）
 - **profile 世代のコミット** — `<state>/nix/profiles/layat/home/profile` が symlink として
   存在し、`list-generations` が 1 件以上を返す
 - **last-applied 記録（apply 後）** — `$XDG_STATE_HOME/layat/home/last-applied.json` が存在し、
@@ -73,7 +73,7 @@ fixture flake は `projectRoot` の第 2 config `proj` も宣言する。`list-g
   `origin.generator` が `nix`、`origin.entrypoint` が絶対パスになる。続けて記録の `linkFarm` を
   `apply --manifest --json` で再適用すると exit 0 で subject 警告 `W_LAYAT_ORIGIN_MISMATCH` を出し、
   配置は変わらず、記録の `origin.generator` は後勝ちで `prebuilt` になる
-  （→ TC-f0958a4c-b585-49c5-96a9-d7beff571e71）
+  （→ [記録は版 2 で出所を持ち、読みは版 1 と 2 を受け付け、出所の食い違いを警告し、書き直しは出所を引き継ぐ](origin-mismatch-detection.md)）
 - **出所の同一性 `identity`** — `home` に `identity` を与えて apply すると記録の `origin.identity` がその値になり、
   その `linkFarm` を `--manifest` で再適用しても `W_LAYAT_ORIGIN_MISMATCH` を出さない。同じ entries で `identity` だけ違う
   `alt` を `--manifest` で当てると警告し、`detail.recorded.identity` と `detail.current.identity` が異なる

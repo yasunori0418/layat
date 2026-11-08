@@ -30,7 +30,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9, ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1, ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246, ADR-63039f93-cd78-4356-8cd3-82c2f49a1aaa, ADR-6b7becf0-f029-41e3-895e-b672dce94d3d, ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, GitHub Issue #395
+- 関連: [apply --all は config ごとの情報を 1 回の eval でまとめて取る](apply-all-single-eval.md), [eval を先に行い、flock を取ってから build する](eval-first-then-flock-then-build.md), [store path は out-link で受け取る](store-path-via-out-link.md), [内部コマンドの開示で透明性を保つ](internal-command-disclosure.md), [nix の experimental-features は利用者が有効にしておく前提にする](experimental-features-user-prerequisite.md), [CLI は cobra で組む](cobra-cli-framework.md), [root の必須性を別の確認を書かずに標準のエラーで担保する](root-required.md), [home mode の CLI と lib の版ずれを manifest の確認に任せて許容する](home-mode-skew-guarded-by-schemaversion.md), [1 config = 1 profile を全モードで自前に持つ](one-config-one-profile-all-modes.md), GitHub Issue #395
 - 起点: Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0055 §1 を書き直した
 
 ## 背景
@@ -50,9 +50,9 @@ cmd 層に残すのは生成器の選択と engine への注入だけにする�
 list-generations・reset・rollback）とする。prune は nix を使わないので経由せず、`nix flake init` を
 呼ぶ init は生成器化の範囲外にする。
 
-生成器の契約の規範は REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729、
-パッケージ構成は DSG-25ad3cce-f921-4db2-aae0-c0263d4b8295、engine と CLI の 2 層構成は
-REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 に置く。
+生成器の契約の規範は [CLI は manifest 生成器の契約（Discover / Roots / Build / DryBuild）越しに manifest を得る](../requirements/manifest-generator-contract.md)、
+パッケージ構成は [internal/generator は契約・prebuilt・Fake を親パッケージに、nix 実装を nixgen サブパッケージに置き、cmd 層は注入点だけを持つ](../design/generator-package-layout.md)、engine と CLI の 2 層構成は
+[layat は CLI とエンジンの 2 層で構成する](../requirements/two-layer-architecture.md) に置く。
 
 ## 根拠
 

@@ -15,13 +15,13 @@ generated:
 ## 設計
 
 「パッケージ群を `PATH` に載せたい」需要に対し、layat は専用の関数（`mkEnv` 等）を持たない
-（→ ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137）。`pkgs.buildEnv` の結果を entry の `src` に置けば、既存の配置プリミティブで
+（→ [layat.lib.mkEnv で buildEnv 合成環境を提供する](../adr/mkenv-buildenv.md)）。`pkgs.buildEnv` の結果を entry の `src` に置けば、既存の配置プリミティブで
 そのまま満たせるため。
 
-- **REQ-99ca5381-6c53-426c-b145-7b4297c53868（`src` は path / set / marker の 3 種）**:
+- **[src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する](../requirements/src-kinds-store-default.md)（`src` は path / set / marker の 3 種）**:
   `pkgs.buildEnv { … }` は derivation（set）なので、現行スキーマの `src` にそのまま渡せる。
   engine・manifest schema・passthru は変わらない
-- **REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9（モジュールは engine をキックするだけの配線）**:
+- **[全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md)（モジュールは engine をキックするだけの配線）**:
   環境変数の設定はシェル・systemd・direnv の機構で、layat の関心外。layat は配線ファイル
   （env.sh / environment.d / `.envrc`）を生成せず、書き方を idiom として示すに留める
 
@@ -108,6 +108,6 @@ fi
 
 ## 出典
 
-ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137「layat.lib.mkEnv で buildEnv 合成環境を提供する」。
+[layat.lib.mkEnv で buildEnv 合成環境を提供する](../adr/mkenv-buildenv.md)「layat.lib.mkEnv で buildEnv 合成環境を提供する」。
 同 ADR は配置と環境変数配線の書き方を idiom として docs に置くと決めており、
 本 item がその実体。

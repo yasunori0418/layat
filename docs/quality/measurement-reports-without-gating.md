@@ -33,7 +33,7 @@ generated:
 
 ## 仕様
 
-QA-a5f7f088-a459-4bb2-9674-82b1a4a52053 が「マージ前の自動検証を必須にする」側を規範化するのに対し、本 item は
+[マージ前の自動検証を必須にし、プラットフォーム差が効く層は全プラットフォームで通す](cross-platform-verification-before-merge.md) が「マージ前の自動検証を必須にする」側を規範化するのに対し、本 item は
 **必須化しない側の境界**を定める。両方が無いと、必須化の規範が「検証と名の付くものは
 すべて塞ぐ」と読めてしまう。
 
@@ -46,16 +46,16 @@ QA-a5f7f088-a459-4bb2-9674-82b1a4a52053 が「マージ前の自動検証を必�
 結果を決める。塞ぐ代わりに読める場所へ出し、下がったことをどう扱うかは人が判断する。
 
 **「計測でない = 必須」ではない。** 本 item が定めるのは計測を必須条件にしないことだけで、
-何を必須にするかは QA-a5f7f088-a459-4bb2-9674-82b1a4a52053 の担当になる。実際、`sara check` は破損を検出する
-検証でありながら required status check にしない判断が別途置かれている（→ SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef）。本 item
+何を必須にするかは [マージ前の自動検証を必須にし、プラットフォーム差が効く層は全プラットフォームで通す](cross-platform-verification-before-merge.md) の担当になる。実際、`sara check` は破損を検出する
+検証でありながら required status check にしない判断が別途置かれている（→ [sara check を required status check にしない](../sara-adr/sara-check-not-required.md)）。本 item
 の規範をその判断の否定として読んではならない。
 
 どの指標を計測するか・報告先・計測の実装は本 item の規範に含めない。`.github/workflows/` と
-INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 が持つ。
+[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](../infrastructure/ci-pipeline.md) が持つ。
 
 ## 出典
 
-SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626、SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef が置いた方針と、
+[sara check を strict モードで回す](../sara-adr/sara-check-strict-mode.md)、[sara check を required status check にしない](../sara-adr/sara-check-not-required.md) が置いた方針と、
 `.github/workflows/test.yml` の go-coverage / sara ジョブ
 （閾値による条件を持たず Job Summary へ報告する）・`docs/dev/definition-of-done.md`（閾値による条件を
 持たない計測は完成の定義に入れない）・`sara.toml` が実運用してきた規範を、Issue #272 で

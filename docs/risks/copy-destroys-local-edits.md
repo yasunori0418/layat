@@ -34,13 +34,13 @@ copy は「target 不在のときにだけマテリアライズし、以後は�
 - 構造不一致（subpath がディレクトリ / target が通常ファイル、またはその逆）が停止せず、
   不整合なまま書き込む
 - モジュールの `layat.recopy` が false でも activation の起動に `--recopy` が付き、ローカル編集を
-  利用者の同意なく破棄する（→ REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c）
+  利用者の同意なく破棄する（→ [layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける](../requirements/recopy-wiring-layer.md)）
 
 ## 評価
 
-- likelihood: medium — place-once の判定は TC-596d697f-4ba6-4ec1-b71e-8b5375806c08 が、`--recopy` の無条件更新は
-  TC-d1eb1814-ac5e-4576-b092-7db4929fba43 が覆っているが、判定の入力が target の存在と記録の双方にまたがり、drift 修復の
-  処理（RISK-67e96e59-005f-439d-a230-834b0228801c）と条件を共有するため、そちら側の変更が波及しうる
+- likelihood: medium — place-once の判定は [copy が target 不在時のみマテリアライズし、既存 target を触らないこと](../test/copy/place-once-idempotence.md) が、`--recopy` の無条件更新は
+  [apply --recopy が全 copy target を無条件に src から更新すること](../test/copy/recopy-overwrite.md) が覆っているが、判定の入力が target の存在と記録の双方にまたがり、drift 修復の
+  処理（[世代スキップと lstat ドリフト修復が誤発火し、世代が無限に増えるかユーザーの編集を失わせる](drift-repair-misfires.md)）と条件を共有するため、そちら側の変更が波及しうる
 - impact: high — copy は世代管理の対象外でロールバックで戻せず、失われるのはユーザーが
   自分で編集した内容そのもの。上書きは警告なく起きるため気づく契機も無い
 

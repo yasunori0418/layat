@@ -16,13 +16,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511
+- 関連: [main へのマージにテストの成功を必須にする](tests-required-for-merge.md)
 - 起点: ADR-0030 §1b（pull_request ルールで main への直接 push を禁じる）を書き直した
 
 ## 背景
 
 layat は main へ直接コミットせず、ブランチを切って PR 経由でマージする運用を取っている。
-main へのマージにはテストの成功を必須にした（ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511）が、
+main へのマージにはテストの成功を必須にした（[main へのマージにテストの成功を必須にする](tests-required-for-merge.md)）が、
 PR を通らない直接の push には、この条件が掛からない。
 
 ## 決定
@@ -30,7 +30,7 @@ PR を通らない直接の push には、この条件が掛からない。
 main の ruleset に `pull_request` のルールを置き、main への直接の push を禁じる。bypass は
 許さない。
 
-ruleset の構成は INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6 に置く。
+ruleset の構成は [マージの条件（main の ruleset と required status checks）](../infrastructure/merge-gate.md) に置く。
 
 ## 根拠
 

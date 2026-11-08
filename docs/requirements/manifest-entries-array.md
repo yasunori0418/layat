@@ -42,10 +42,10 @@ attrset を**配列に正規化**して記録する（Go は配列を読む）�
 | `target` | string | root 相対の配置先。**entry の identity**（属性キー由来・stale 除去の diff キー）|
 | `method` | `"symlink"` \| `"copy"` | 配置種別（デフォルト適用後。旧名 `mode`）|
 
-上の表は原文の写しに `rootRelative`（→ ADR-b5431ecf-fe60-4b29-86af-9857478ce663）を加えたもので、規範は frontmatter が正。
+上の表は原文の写しに `rootRelative`（→ [srcKind の列挙値は schemaVersion を上げずに足す](../adr/srckind-added-without-version-bump.md)）を加えたもので、規範は frontmatter が正。
 
 entry の `name` フィールドは持たない（識別子が属性キー = target であることは
-REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7）。
+[entry の識別子は属性キー = target とし一意性は Nix が担保する](entry-identity-by-target-key.md)）。
 
 ## 出典
 

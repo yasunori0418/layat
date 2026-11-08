@@ -27,7 +27,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #255, #203, `sara.toml`
+- 関連: [root は solution と ADR 系の型だけにする](roots-solution-and-adr-types-only.md), [model.yaml で組み込みモデルを全面置換し、汎用の型名を使う](model-yaml-full-replacement.md), GitHub Issue #583, #255, #203, `sara.toml`
 - 起点: epic #203 の移行完了（Batch 2・2026-08-08）を受けた残論点判断（Issue #255）で確定。ADR-0050 §1・§3 を書き直した
 
 ## 背景
@@ -36,7 +36,7 @@ generated:
 正常に存在し、接続漏れを error にすると移行そのものが止まるためである。
 
 移行が終わり、`sara check` は warning 0 件で通るようになった。「張り忘れ = 接続漏れの warning」は全型で
-成り立つ（SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb）が、それを担保する仕組みは無く、張り忘れの item を
+成り立つ（[root は solution と ADR 系の型だけにする](roots-solution-and-adr-types-only.md)）が、それを担保する仕組みは無く、張り忘れの item を
 足しても警告だけで通っていた。
 
 ## 決定

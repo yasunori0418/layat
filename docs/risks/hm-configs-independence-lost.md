@@ -33,7 +33,7 @@ CLI 単体の使い方と同じ役割分離が HM の使い方では成り立た
 - **失敗の巻き込み** — 1 つの config の配置失敗で他の config まで配置されない、または
   失敗が activation の終了コードに現れない
 
-配線の退化（engine を呼ばず native 機構へ翻訳する等）は RISK-d734e24e-9af9-49f1-a22d-ade92f6554eb の
+配線の退化（engine を呼ばず native 機構へ翻訳する等）は [home-manager モジュールが engine をキックする配線から外れ native 機構へ翻訳される](hm-module-wiring.md) の
 射程で、本 item は config 間の独立性だけを持つ。
 
 ## 影響

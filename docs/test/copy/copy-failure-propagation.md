@@ -21,4 +21,4 @@ generated:
 ことは、recopy の処理で特に重要になる。
 
 foreign な実ファイルの skip が warning として可視化されることは、engine 側の配置処理で検証
-する（`engine-core` の CASE-31fdb776-9650-4ff9-97f6-45d56b2e7177 が扱う。検証の所在を示すだけで relation は張らない）。
+する（`engine-core` の [internal/engine/engine_test.go — 実 tmpdir に対する apply の統合テスト](../engine-core/engine-test-go.md) が扱う。検証の所在を示すだけで relation は張らない）。

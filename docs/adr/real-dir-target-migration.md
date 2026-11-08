@@ -25,7 +25,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b, GitHub Issue #175, #172
+- 関連: [manifest.json を schemaVersion 1 の唯一の契約として固定する](manifest-json-contract-schemaversion-v1.md), [配置前除去を planner が計算するデータとして表す](preremove-as-planner-data.md), GitHub Issue #175, #172
 - 起点: epic #172 の grilling セッション（2026-07-12）で確定。ADR-0047 §1 を書き直した
 
 ## 背景
@@ -34,7 +34,7 @@ generated:
 symlink にすると、`foo` は実ディレクトリとして残っているので conflict になる。2026-07-12 の
 実障害（`.claude/hooks/<name>/main.sh` を `.claude/hooks/<name>` のディレクトリ symlink に
 まとめた変更）がこの形だった。祖先の symlink の移行だけでは、target そのものが実ディレクトリの
-場合を救えない。配置前除去（ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b）の対象を広げるかを
+場合を救えない。配置前除去（[配置前除去を planner が計算するデータとして表す](preremove-as-planner-data.md)）の対象を広げるかを
 決める必要があった。
 
 ## 決定
@@ -44,8 +44,8 @@ symlink」か「空のディレクトリ」なら、ディレクトリごと配�
 以外の leaf が 1 つでもあれば、ディレクトリ全体を conflict にし、部分的には除去しない。空の
 ディレクトリは由来を問わない。copy の entry には適用しない。
 
-leaf の判定と除去の順は REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26 に、実ディレクトリ以外の
-実体で止まる規範は REQ-053cfed2-265a-4997-a27b-97b0bed10d8a に置く。
+leaf の判定と除去の順は [実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する](../requirements/real-dir-target-migration.md) に、実ディレクトリ以外の
+実体で止まる規範は [target に通常ファイル・ディレクトリが在れば上書きせずエラーで停止する](../requirements/conflict-on-real-file-or-dir.md) に置く。
 
 ## 根拠
 
@@ -62,7 +62,7 @@ leaf の判定と除去の順は REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26 に、
 ### 自動で作った親ディレクトリを manifest に記録する
 
 layat が作ったディレクトリを追えれば判定は楽になるが、manifest の schemaVersion 1 の契約
-（ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd）を破る。空のディレクトリは由来を問わず除去できる
+（[manifest.json を schemaVersion 1 の唯一の契約として固定する](manifest-json-contract-schemaversion-v1.md)）を破る。空のディレクトリは由来を問わず除去できる
 ので、記録しなくても解ける。
 
 ### foreign な symlink が含まれていても除去する

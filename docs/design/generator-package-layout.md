@@ -31,7 +31,7 @@ cmd/layat                       ← 生成器の選択と注入だけ（newGener
 - **prebuilt と Fake は親パッケージに置く**。どちらも nix を呼ばず契約だけで書けるため、
   親パッケージに置いても nix 依存は入らない。`Fake` を非 `_test` ファイルに置くのは、
   `cmd/layat` のテストからも import して使うため（`_test.go` のシンボルは他パッケージから見えない）。
-- **cmd 層は `newGenerator()` の注入点だけを持つ**。選択の解決（REQ-badc7e10-0ba4-40d4-b334-6e40193119db）の結果で
+- **cmd 層は `newGenerator()` の注入点だけを持つ**。選択の解決（[生成器は明示指定のみで選び、フラグ・環境変数・設定ファイル・既定の順に解決する](../requirements/generator-selection-precedence.md)）の結果で
   nixgen / prebuilt を組み立て、各サブコマンドへ渡す。サブコマンドは `Generator` インターフェイス
   だけに依存し、nix を直接呼ばない。
 - 2 層構成の境界（CLI と engine の間は `manifest.json`）は変えない。生成器は CLI 層の内側の
@@ -39,5 +39,5 @@ cmd/layat                       ← 生成器の選択と注入だけ（newGener
 
 ## 出典
 
-ADR-87a2cf34-9592-4c81-8980-246bca579ca0「manifest の取得をプロセス内の Go インターフェイスの生成器越しにする」と、Issue #395 の計画（2026-09-26）の裁定「テストダブル
+[manifest の取得をプロセス内の Go インターフェイスの生成器越しにする](../adr/manifest-generator-in-process-interface.md)「manifest の取得をプロセス内の Go インターフェイスの生成器越しにする」と、Issue #395 の計画（2026-09-26）の裁定「テストダブル
 `Fake` は `internal/generator/fake.go`（非 `_test` ファイル）に置く」。

@@ -28,7 +28,7 @@ engine は profileDir ごとにロックを取る。取得できるまで待つ�
 profileDir のロックは、Go 標準ライブラリの `syscall.Flock` による advisory lock で実装する。待つ取り方は
 排他ロック（`LOCK_EX`）、待たない取り方は排他ロックに非ブロックのフラグ（`LOCK_NB`）を加えて表す。
 
-engine が標準ライブラリだけに依存することは REQ-b74a118a-1272-44eb-944c-7725163211c6 に置く。
+engine が標準ライブラリだけに依存することは [engine は第三者依存ゼロの stdlib-only とし内部層に閉じる](../requirements/engine-stdlib-only.md) に置く。
 
 ## 根拠
 

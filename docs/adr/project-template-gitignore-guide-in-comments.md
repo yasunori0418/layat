@@ -16,7 +16,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-baf6346d-783b-4607-ab1c-c2c93c09e064
+- 関連: [--all は config ごとの SubjectResult を積む](all-as-multiple-subject-results.md)
 - 起点: ADR-0018 §2 を書き直した
 
 ## 背景
@@ -31,7 +31,7 @@ project template は、`flake.nix` の manifest 定義のそばに `layat gitign
 `.gitignore` へ足すよう促すコメントを置く。あわせて template に `.gitignore` を同梱し、その先頭に
 再生成の手順を書いたヘッダコメントを置く。
 
-project template のファイル構成は REQ-196ddabf-6569-4303-942e-050872972501 に置く。
+project template のファイル構成は [template は動く example を 1 config だけ置きバリエーションはコメントで示す](../requirements/init-template-contents.md) に置く。
 
 ## 根拠
 

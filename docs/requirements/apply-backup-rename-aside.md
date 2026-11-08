@@ -58,26 +58,26 @@ copy→symlink）を `<target>.<suffix>` へ rename 退避してから配置す�
 しない**（ユーザー所有物として残置。復元は手動 `mv`）。
 
 > **上は原文の写しで、規範は frontmatter が正**。undo ジャーナルそのものの規範
-> （→ ADR-56325270-20bb-4959-8498-e3223c35e24b）は REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の担当で、本 item は「退避もその対象である」ことだけを
+> （→ [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](../adr/in-memory-undo-journal.md)）は [途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](undo-journal-rollback.md) の担当で、本 item は「退避もその対象である」ことだけを
 > 規定する。退避が配置手順のどの段に入るか（PreRemove の後・配置の前）と、ドリフト修復
-> の処理でも実施されることは REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 の担当。
+> の処理でも実施されることは [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](backup-stage-position.md) の担当。
 >
-> **退避対象の外延は REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 の担当**。上の写しが挙げる 4 種は原文の「CLI 仕様」節の
+> **退避対象の外延は [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](backup-stage-position.md) の担当**。上の写しが挙げる 4 種は原文の「CLI 仕様」節の
 > 逐語で、原文は「配置動作仕様」§0.7 でこれに「実 dir migration 失敗」を加えた 5 種を挙げる。
-> REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 が種別の列挙ではなく判定各段の結論（「エラーで停止」または「copy foreign
+> [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](backup-stage-position.md) が種別の列挙ではなく判定各段の結論（「エラーで停止」または「copy foreign
 > スキップ」）で括ることで広い方を規範としているため、本 item の規範文では 4 種を `例:` と
 > 明示して外延を確定しない形にした（写しは原文どおりのまま）。
 >
 > 一方、**祖先 symlink conflict が対象外であることは本 item の規範**として持つ。退避しない
 > 対象の指定は退避契約の一部であり、その理由（構造問題であり退避では解消しない）と同じ
-> item に置くのが所在として自然なため。REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 の規範文はこの除外を本 item へ委譲する
+> item に置くのが所在として自然なため。[backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](backup-stage-position.md) の規範文はこの除外を本 item へ委譲する
 > 形で括りを述べている。
 
-`--dryrun` / `--all` との合成は REQ-02a33511-0941-4813-b289-a05eb8e9aa57 / REQ-687e225f-5046-46db-88fb-f9e527a1e97a の担当。
+`--dryrun` / `--all` との合成は [apply --dryrun は読み取り専用で conflict 検出時に非ゼロ終了する](apply-dryrun-readonly.md) / [apply 修飾フラグは --all と合成できる](apply-modifier-flag-composition.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply <name> --backup` の箇条書きと、
 グローバルフラグ表の `--backup[=<suffix>]`。
 
-決定の実体は ADR-33d8c466-6b38-46b6-8696-ad7521c72786・ADR-65e41903-5eee-4a00-a154-be8c830cdca9・ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f・ADR-37191429-2099-4217-a552-47b16a7e504c・ADR-18267548-27d0-430b-8149-b6124d02ce56・ADR-c0a91b81-f54f-4790-9295-f90656f53de8。
+決定の実体は [--backup を = 区切りで suffix を取る省略可能な値のフラグにする](../adr/backup-optional-value-flag.md)・[退避先を target に suffix を付けた名前に固定する](../adr/backup-destination-suffix.md)・[--backup は配置を塞ぐ記録外の実体だけを退避する](../adr/backup-scope-unrecorded-entities.md)・[退避先が既にあれば conflict で止める](../adr/backup-existing-destination-conflict.md)・[退避物を成功後も残して利用者の所有物にする](../adr/backup-aside-left-to-user.md)・[退避の発生は常に stderr へ出す](../adr/backup-always-reported.md)。

@@ -35,16 +35,16 @@ HM   NixOS  darwin  devShell  standalone(CLI)
 `manifest.json を渡して起動` / `起動配線` は起動の関係を指す。依存の向きは図から
 読み取るものではなく、下の 3 点が定める。
 
-REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 が規範化しているのは CLI と engine の 2 層境界（`manifest.json`）までで、
+[layat は CLI とエンジンの 2 層で構成する](../requirements/two-layer-architecture.md) が規範化しているのは CLI と engine の 2 層境界（`manifest.json`）までで、
 lib・`common.nix`・統合層を含めた積み方と依存の向きは設計側の判断になる。この積み方が
 実現手段になるのは次の点。
 
 - **lib から engine への依存を持たせない**ことで、
-  REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51 の「lib は配置ロジックを持たず nixpkgs.lib のみに依存する」が
+  [lib は nixpkgs.lib のみに依存する純データ生成器である](../requirements/lib-pure-data-generator.md) の「lib は配置ロジックを持たず nixpkgs.lib のみに依存する」が
   依存の向きとして表現される。lib が engine を呼べると、配置ロジックを
   lib 側から呼ぶ処理が書けてしまう
 - **統合層が lib・engine を呼ぶ側に立ち、逆に engine から統合層を参照しない**ことで、
-  REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 の「モジュールは engine をキックするだけの配線」が守られる。
+  [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md) の「モジュールは engine をキックするだけの配線」が守られる。
   engine が統合層を参照すると、engine が層ごとの事情を知ることになり、
   配置の振る舞いが層ごとに分岐しうる
 - **配置の振る舞いは全層で engine が単一の源**であり、各層はネイティブ機構へ翻訳しない。

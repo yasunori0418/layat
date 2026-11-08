@@ -36,7 +36,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-41d506b4-2c5c-4a17-9954-b0de37e97de5, ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9, ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8, ADR-1cbacca1-1930-46ca-bf82-30310f82216e, ADR-4c8d459a-c371-4f0d-b009-16e2ca096e49, ADR-eb1aa25f-a0ca-4efe-bcd9-4cbe11368764, ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd, ADR-8b8c9109-a479-4571-8b10-5a6079127441, ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7, ADR-efa7685c-6fa4-45df-b7a3-8f3f58e4118c, ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883, ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818, ADR-419914ba-9896-4dd1-853b-fb514fcb9f38, ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75, ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-45380022-d959-4b22-aa05-5993ac1f3c87, ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988
+- 関連: [manifest.json を schemaVersion 1 の唯一の契約として固定する](manifest-json-contract-schemaversion-v1.md), [copy は foreign の実ファイルを上書きせず warning を出して見送る](copy-skips-foreign-file-with-warning.md), [世代バックエンドを nix 実装 1 つに留める](single-nix-generation-backend.md), [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](generation-backend-contract-paths-and-ints.md), [世代の一覧を nix-env を経由せず世代リンクの走査で得る](generation-list-scans-links.md), [世代バックエンドのテストダブルを FS ベースの Fake に統一する](fs-based-generation-fake.md), [世代バックエンドの注入を必須にし nix-env への暗黙のフォールバックを持たない](generation-backend-required-no-fallback.md), [profileDir の内部レイアウトを世代バックエンド契約の固定部分にする](profiledir-layout-fixed-in-contract.md), [前世代の読み取りは契約に載せず engine が直接読む](generation-reads-outside-contract.md), [engine が直接叩く外部コマンドを git に限る](engine-external-command-git-only.md), [Build の事後条件を世代バックエンドがコミットできる link-farm のパスに置く](build-postcondition-committable-link-farm.md), [state の基底を設定で上書きさせない](state-bases-not-configurable.md), [.pending の後片付けを gcroot を知らない engine の FS 操作として行う](pending-cleanup-without-gcroot.md), [profile は専用ディレクトリレイアウトに置く](profile-directory-layout.md), [apply --all に root モードのフィルタを持たせる](apply-all-root-mode-filter.md), [module と project では世代操作を公開しない](module-and-project-hide-generation-ops.md), [root は 3 つの marker で表す](three-root-markers.md), [flock は明示実行で待ち、hook 実行でスキップする](flock-mode-explicit-wait-hook-skip.md), [profile は解決済み root の roothash でキーする](profile-keyed-by-roothash-of-resolved-root.md)
 - 起点: 実装前の残セマンティクス確定の第 4 巡（2026-06-14）と次期マイルストーン計画の grilling（2026-07-04）。ADR-0022 §3a と ADR-0036 §3a を書き直した
 
 ## 背景
@@ -52,8 +52,8 @@ profile の基底は、system mode の config では `/nix/var/nix/profiles/laya
 ユーザー state 基底 `<state>/nix/profiles/layat` とする。`<state>` は `$XDG_STATE_HOME` があればそれ、
 無ければ `~/.local/state` とする。基底は世代バックエンドの契約が与える。
 
-基底の値とその下の並びは REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3 と
-REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4、基底を返す契約の操作は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b に置く。
+基底の値とその下の並びは [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](../requirements/profile-on-disk-layout.md) と
+[system mode は root を / に解決し、変更系操作の前に euid 0 を確認し、profile と last-applied 記録を system 基底に置く](../requirements/system-mode-root-gate-and-record-base.md)、基底を返す契約の操作は [engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](../requirements/generation-backend-contract.md) に置く。
 
 ## 根拠
 

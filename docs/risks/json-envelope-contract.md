@@ -44,4 +44,4 @@ generated:
 まま不正な文書を渡し、とくに item id の導出則のずれはパースエラーにすらならず値だけが他実装と
 食い違う。この沈黙性は本 risk の中心だが、気づいた後の回復可能性は下げない。likelihood を
 low に留めるのは、outturn の適合チェッカを Go テスト・E2E の双方に置いており、逸脱の大半が
-機械的に捕まる構造になっているため（→ TP-d3000054-42d9-4bac-912a-dd3abc38d3e9）。
+機械的に捕まる構造になっているため（→ [エンベロープの outturn 適合を Go テストと E2E の両方で検証する](../test-plan/json-conformance-verification.md)）。

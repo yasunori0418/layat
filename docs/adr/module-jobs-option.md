@@ -33,8 +33,8 @@ activation は `apply --all` を 1 回起動し、build と配置を `--jobs` �
 共通オプション `layat.jobs :: ints.unsigned`（既定 0）を設け、activation の起動へ `--jobs <n>` として
 渡す。0 は論理 CPU 数を表し、`--jobs` の解決規則に従う。
 
-共通オプションの集合は REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、activation での `--jobs` の
-渡し方は REQ-c847d1af-a437-46bb-bd64-42083810d034 に置く。
+共通オプションの集合は [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md)、activation での `--jobs` の
+渡し方は [HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う](../requirements/hm-activation-per-config-kick.md) に置く。
 
 ## 根拠
 

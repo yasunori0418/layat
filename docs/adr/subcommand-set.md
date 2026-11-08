@@ -20,7 +20,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-acc31876-df36-485e-b356-92ae60e26db7, GitHub Issue #550
+- 関連: [reset は非対話の実行で --yes を必須にする](reset-confirmation-and-yes.md), GitHub Issue #550
 - 起点: Go エンジン化の設計（2026-06-11）で確定。ADR-0006「CLI 構造（サブコマンド体系）」節を書き直した
 
 ## 背景
@@ -35,7 +35,7 @@ generated:
 ある操作の挙動を変えるだけのもの（`--dryrun` など）は、サブコマンドにせずその操作のフラグにする。
 操作を追加するときもこの区別に従う。
 
-dry-run を apply のフラグとして持つ規範は REQ-02a33511-0941-4813-b289-a05eb8e9aa57 に置く。
+dry-run を apply のフラグとして持つ規範は [apply --dryrun は読み取り専用で conflict 検出時に非ゼロ終了する](../requirements/apply-dryrun-readonly.md) に置く。
 
 ## 根拠
 

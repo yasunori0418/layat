@@ -26,11 +26,11 @@ generated:
                     # -v は --verbose に割当済みのため短縮形なし）
 ```
 
-`--version` がエンベロープを出さないこと（`--json` との関係）は REQ-5c2e64c3-09a7-4ae8-b60c-4f1ccabce4fd の担当。
+`--version` がエンベロープを出さないこと（`--json` との関係）は [エンベロープはコマンド完了時に 1 回だけ出し成立条件を満たさない実行では出さない](json-emit-timing.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」のグローバルフラグ表 `--version`。
 
-決定の実体は ADR-9ab223eb-99dc-4aa2-a671-c07f75f7ff3c「VERSION ファイルをバージョンの一次情報にする」で、埋め込みバージョンの
+決定の実体は [VERSION ファイルをバージョンの一次情報にする](../adr/version-file-single-source.md)「VERSION ファイルをバージョンの一次情報にする」で、埋め込みバージョンの
 供給元（VERSION ファイル由来の ldflags 埋め込み `main.version`）を定めている。

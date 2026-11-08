@@ -23,7 +23,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, ADR-6d2327f7-f513-42c3-89f8-808467db1914, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, `docs/spec.md`
+- 関連: [copy と out-of-store の併用を eval 時に拒否する](copy-with-out-of-store-eval-error.md), [out-of-store はマッピングだけを追跡する](out-of-store-tracks-mapping-only.md), [manifest.json を schemaVersion 1 の唯一の契約として固定する](manifest-json-contract-schemaversion-v1.md), [home mode の CLI と lib の版ずれを manifest の確認に任せて許容する](home-mode-skew-guarded-by-schemaversion.md), `docs/spec.md`
 - 起点: Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §6c を書き直した
 
 ## 背景
@@ -36,7 +36,7 @@ root 相対マーカーでは、`src/subpath` と target が同じ root の中�
 
 root 相対マーカーの entry で、`src/subpath` と target が一致する場合と、一方が他方の祖先である
 場合を、`normalizeManifest` が評価時に拒否する。拒否の規則は
-REQ-a77181dd-a59c-40bb-855e-3430ad970eb6 に置く。
+[mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](../requirements/root-relative-symlink-marker.md) に置く。
 
 ## 根拠
 

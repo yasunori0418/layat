@@ -79,17 +79,17 @@ generated:
 
 | 境界 | 上流 / 下流の担当 |
 |---|---|
-| `manifest.json` | 上流（`mkManifest` の評価）は nix-unit / namaka（→ TP-36e90d5d-4524-4294-bc72-ee263bb02782）|
-| flake entrypoint | 下流（`nix build` / `nix eval` / `nix-env --set` を含む実経路）は E2E（→ TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9）|
+| `manifest.json` | 上流（`mkManifest` の評価）は nix-unit / namaka（→ [評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](nix-unit-namaka-split.md)）|
+| flake entrypoint | 下流（`nix build` / `nix eval` / `nix-env --set` を含む実経路）は E2E（→ [非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](e2e-harness-scope.md)）|
 
 この 2 点はエンジン（`internal/`）に対する境界で、コマンド層には適用しない。CLI とエンジンは
-別レイヤー（→ REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645）で、コマンド層の判断（entrypoint の探索など）は manifest より
+別レイヤー（→ [layat は CLI とエンジンの 2 層で構成する](../requirements/two-layer-architecture.md)）で、コマンド層の判断（entrypoint の探索など）は manifest より
 上流に位置するため。コマンド層の扱いは下の「コマンド層」の段が定める。
 
 ファイルシステムをインターフェースで抽象化しないのは、テスト対象そのものが FS の意味論
 （symlink / rename / unlink / 権限失敗）だから。抽象化すると double の挙動を検証すること
 になり、実 FS でしか出ない失敗（EACCES / ENOTDIR / EISDIR / EINVAL）が観測できない。故障を
-実 FS の条件で誘発する具体的な手法は TP-deb05610-44bc-4962-8939-952392e5fbd0 が定める。
+実 FS の条件で誘発する具体的な手法は [原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](fault-injection-atomicity.md) が定める。
 
 保守的な古くなった配置の除去は、統合テストの被覆とは別にユニットレベルで table-driven に覆う。誤除去は
 ユーザーのファイルを消す不可逆な失敗であり、正常系の統合テストでは網羅できない入力空間を
@@ -105,11 +105,11 @@ generated:
 ポリシーと非対話フォールバック、複数 subject の集約終了コード——は、コマンドを一気通貫で
 駆動せずに到達する。テストはビルドしたバイナリを起動せず、判断を下す関数そのものを動かす
 （ケースを、失敗を出力から推測するほかないプロセスではなく引数を伴う関数呼び出しにするため）。
-このうちエンベロープの適合と payload の意味論だけは TP-d3000054-42d9-4bac-912a-dd3abc38d3e9 の担当。
+このうちエンベロープの適合と payload の意味論だけは [エンベロープの outturn 適合を Go テストと E2E の両方で検証する](json-conformance-verification.md) の担当。
 
 ## 出典
 
-ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0「テストを sandbox 可否で flake check と E2E に分ける」。
+[テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)「テストを sandbox 可否で flake check と E2E に分ける」。
 同 ADR が「エンジン（Go）: ユニットテスト（特に**保守的 stale 除去の安全不変条件**を
 table-driven）+ tmpdir 統合テスト（実 FS・偽 source・nix 不使用）」と定めている。
 

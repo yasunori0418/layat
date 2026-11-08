@@ -36,13 +36,13 @@ generated:
 - **報告は常時 stderr**（失敗経路のため沈黙対象外・既定 silent の対象にしない）
 
 > **上は原文の写しで、規範は frontmatter が正**。undo ジャーナルそのものの規範は
-> REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940、成功時沈黙の出力規律そのものは REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 の担当。conflict の全件報告
-> （`reportConflicts`）は REQ-95e97d01-5c34-44b3-bc85-9ca53472bc3d の担当で、本 item はその形を巻き戻し失敗の報告にも
+> [途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](undo-journal-rollback.md)、成功時沈黙の出力規律そのものは [成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](silent-on-success.md) の担当。conflict の全件報告
+> （`reportConflicts`）は [conflict で停止するときは全件を対処ガイダンス付きで列挙してから 1 本の集約エラーを返す](conflict-full-report.md) の担当で、本 item はその形を巻き戻し失敗の報告にも
 > 用いることだけを規定する。
 
 ## 出典
 
 `docs/spec.md`「配置動作仕様」→「途中失敗時の巻き戻し」節の箇条書き第 1・2 項。
 
-決定の実体は ADR-a00bb2de-a8c5-4816-892b-4fa1f5299935「巻き戻しの失敗は best-effort で続行する」で、
-失敗時の処理を沈黙の対象にしない出力規律は ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5 が定めている。
+決定の実体は [巻き戻しの失敗は best-effort で続行する](../adr/undo-failure-best-effort.md)「巻き戻しの失敗は best-effort で続行する」で、
+失敗時の処理を沈黙の対象にしない出力規律は [指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md) が定めている。

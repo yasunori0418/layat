@@ -46,7 +46,7 @@ generated:
 ## 仕様
 
 - **検出対象**: `apply --all` で選択された config 集合内の、正規化後 target の重複。
-  `targets` は一括 eval（REQ-535b811d-dfc5-4eac-92db-737e70eb5415）が rootKind と同時に取る。
+  `targets` は一括 eval（[apply --all は rootKind を 1 回の一括 eval で取る](apply-all-batched-eval.md)）が rootKind と同時に取る。
   `--manifest <name>=<link-farm>` の prebuilt 集合（HM activation が渡すものを含む）では
   各 link-farm の `manifest.json` の entries から導出する
 - **バケット規則**: project / home / system は rootKind ごと、fixed は root 文字列値ごと、
@@ -55,13 +55,13 @@ generated:
   subject 登録前の失敗としてトップレベル `errors[]` に載る
 - **確認しないもの**: 名指しの `apply <name>`・選択外の config
 - **検出不能な衝突**: 別 entrypoint・別ツール・fixed root と project root の偶然の一致は
-  従来どおり実行時の後勝ち + foreign symlink warning（REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 / REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557）
+  従来どおり実行時の後勝ち + foreign symlink warning（[同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める](cross-config-target-oscillation.md) / [symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする](symlink-placement-procedure.md)）
 
 > **上は要約で、規範は frontmatter が正**。同一 config 内の target 重複は
-> REQ-5c6b07da-3d06-414d-8770-4f438234b322、HM モジュールの `layat.configs` 間の衝突は
-> REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の担当。
+> [target 衝突の検出処理を同一 manifest 内と cross-config で分ける](target-collision-eval-detection.md)、HM モジュールの `layat.configs` 間の衝突は
+> [単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する](hm-configs-target-collision-assertion.md) の担当。
 
 ## 出典
 
-ADR-75df92ae-0694-452b-8fb4-350994e31b25・ADR-7f4fd2f6-672d-4d8c-a881-31024ad1d7c3・ADR-1338a293-3f69-48f5-9164-efb4ec6994d6
-（Issue #152 で起票）。prebuilt 集合を確認の対象に含めるのは ADR-24488788-a5e6-47a5-9074-97192880642a・ADR-1338a293-3f69-48f5-9164-efb4ec6994d6。
+[apply --all は選択した config 間の target 重複を build 前に止める](../adr/apply-all-preflight-target-conflict.md)・[config 間の target 衝突は CLI が判定し engine に持ち込まない](../adr/cross-config-conflict-judged-by-cli.md)・[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)
+（Issue #152 で起票）。prebuilt 集合を確認の対象に含めるのは [apply --manifest でビルド済み link-farm を engine へ直接渡す](../adr/apply-manifest-prebuilt-link-farm.md)・[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)。

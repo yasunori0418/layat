@@ -30,8 +30,8 @@ derivation を組む。確認と正規化の結果を Nix の評価テストで�
 `normalizeManifest` に切り出す。`mkManifest` は `normalizeManifest` の出力から derivation を
 組むだけにする。
 
-2 つの関数の役割分担は REQ-b232ec98-af3b-41f3-a050-29d417322002 に、評価テストの方針は
-TP-36e90d5d-4524-4294-bc72-ee263bb02782 に置く。
+2 つの関数の役割分担は [normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む](../requirements/normalize-manifest-defaults.md) に、評価テストの方針は
+[評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](../test-plan/nix-unit-namaka-split.md) に置く。
 
 ## 根拠
 

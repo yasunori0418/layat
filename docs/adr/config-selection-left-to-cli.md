@@ -21,22 +21,22 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429, ADR-db293e0c-4789-45b7-93a9-adedc021344f, GitHub Issue #530
+- 関連: [apply --all に root モードのフィルタを持たせる](apply-all-root-mode-filter.md), [lib.mkApplyCommand で事前展開した apply コマンドを組む](lib-mkapplycommand.md), GitHub Issue #530
 - 起点: Issue #530 の grilling（2026-10-25）。ADR-0068 §3 を書き直した
 
 ## 背景
 
-`mkApplyCommand`（ADR-db293e0c-4789-45b7-93a9-adedc021344f）は root を指定して呼ばれる。指定した
+`mkApplyCommand`（[lib.mkApplyCommand で事前展開した apply コマンドを組む](lib-mkapplycommand.md)）は root を指定して呼ばれる。指定した
 root の config だけを適用する方法は 2 つある。Nix 側で各 farm の `passthru.rootKind` を見て
 `--manifest` に渡す config を絞る方法と、全 config を渡して CLI の root フィルタ
-（ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429）に絞らせる方法である。
+（[apply --all に root モードのフィルタを持たせる](apply-all-root-mode-filter.md)）に絞らせる方法である。
 
 ## 決定
 
 `mkApplyCommand` は Nix 側で config を選別せず、`manifests` の全 config を `--manifest` に並べる。
 選別は CLI の root フィルタだけが行う。選ばれない root の farm もビルド依存に入ることは許容する。
 
-並べ方の規範は REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f に置く。
+並べ方の規範は [lib.mkApplyCommand は事前展開した apply --all --manifest のコマンド行を返す](../requirements/lib-apply-command.md) に置く。
 
 ## 根拠
 

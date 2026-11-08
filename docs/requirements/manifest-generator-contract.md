@@ -62,22 +62,22 @@ generated:
 | DryBuild | `name` | link-farm の store path を gcroot を張らずに返す |
 
 - Roots の先読みは能力宣言ではなく契約の前提条件。apply の「eval 先行 → flock → build」
-  （REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9）を全ての生成器で成り立たせるため。
+  （[実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](exec-flow-eval-lock-build.md)）を全ての生成器で成り立たせるため。
 - Build の事後条件は選択中の世代バックエンドに依存する。既定の nixprofile は `nix-env --set` が
   store 外のパスを拒否するため store path を要求し、非 store パスを受け入れる世代バックエンドは
-  無い。世代バックエンドの契約は REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b の担当。
+  無い。世代バックエンドの契約は [engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md) の担当。
 - `--manifest` は prebuilt 生成器で、`--all` と合成するときは名前付き link-farm の集合を持つ。
   その外面（フラグ・`-f` との排他・`<name>=<link-farm>` の繰り返し）は
-  REQ-dec58330-6dad-47f7-8f56-2402764a89c7 の担当。
+  [apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](apply-manifest-direct.md) の担当。
 - `Targets` は Go 構造体 `manifest.Root` 側のフィールドで、manifest.json スキーマ v1 は変えない。
   消費者は `apply --all` の cross-config の target 衝突の確認だけなので、課すのは一括取得と prebuilt に
   限る（単一 config の Roots で返すと nix 実装の eval が 1 本増える）。
 
-生成器の選び方は REQ-badc7e10-0ba4-40d4-b334-6e40193119db、診断の扱いは
-REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd の担当。
+生成器の選び方は [生成器は明示指定のみで選び、フラグ・環境変数・設定ファイル・既定の順に解決する](generator-selection-precedence.md)、診断の扱いは
+[生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める](generator-diagnostics-contract.md) の担当。
 
 ## 出典
 
-ADR-87a2cf34-9592-4c81-8980-246bca579ca0・ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2・ADR-02170bb7-d3b6-49ae-8426-de2113951637・ADR-efa7685c-6fa4-45df-b7a3-8f3f58e4118c・ADR-1ddf424a-db2c-4bcb-8823-bf7e4326b980。Build 事後条件の文言は
-ADR-efa7685c-6fa4-45df-b7a3-8f3f58e4118c が「選択中の世代バックエンドがコミット可能な link-farm のパス」へ緩和した。prebuilt
-生成器が名前付き集合を持つのは ADR-24488788-a5e6-47a5-9074-97192880642a。
+[manifest の取得をプロセス内の Go インターフェイスの生成器越しにする](../adr/manifest-generator-in-process-interface.md)・[生成器の契約を Discover / Roots / Build / DryBuild の 4 操作にする](../adr/generator-four-operations.md)・[Roots の先読みを全ての生成器の前提条件にする](../adr/roots-lookahead-required-of-every-generator.md)・[Build の事後条件を世代バックエンドがコミットできる link-farm のパスに置く](../adr/build-postcondition-committable-link-farm.md)・[--manifest を prebuilt 生成器に写す](../adr/manifest-flag-as-prebuilt-generator.md)。Build 事後条件の文言は
+[Build の事後条件を世代バックエンドがコミットできる link-farm のパスに置く](../adr/build-postcondition-committable-link-farm.md) が「選択中の世代バックエンドがコミット可能な link-farm のパス」へ緩和した。prebuilt
+生成器が名前付き集合を持つのは [apply --manifest でビルド済み link-farm を engine へ直接渡す](../adr/apply-manifest-prebuilt-link-farm.md)。

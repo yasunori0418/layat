@@ -29,7 +29,7 @@ LinkDest(e) = filepath.Rel(filepath.Dir(e.Target), filepath.Join(e.Src, e.Subpat
 - **相対リンクが正しく解決される条件は「配置時点で `target` の祖先が実ディレクトリ」**。祖先が
   symlink なら相対リンクは symlink の先を起点に解決され、別の場所を指す。layat は foreign な
   祖先 symlink を conflict として止め、自己記録の古くなった祖先 symlink は配置前に除去する
-  （REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575）ので、配置の時点でこの条件は常に成り立つ。
+  （[祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する](../requirements/ancestor-symlink-nest-migration.md)）ので、配置の時点でこの条件は常に成り立つ。
 - **planner・古くなった配置の除去・drift 修復・`--json` の `old` / `new` は手を入れない**。いずれも
   ディスク上の readlink 結果と `LinkDest` の文字列完全一致で判定するので、相対の文字列が
   そのまま比較の両辺に乗る。last-applied 記録は manifest をそのまま保持するので、前世代の
@@ -45,10 +45,10 @@ LinkDest(e) = filepath.Rel(filepath.Dir(e.Target), filepath.Join(e.Src, e.Subpat
 
 ## 出典
 
-ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7「root 相対マーカーのリンクを target 起点の相対パスで張る」、
-ADR-29c0838b-3e25-4b09-a479-9ebbbc4466c7「root 相対マーカーの基準点を manifest の配置 root にする」、
-ADR-b5431ecf-fe60-4b29-86af-9857478ce663「srcKind の列挙値は schemaVersion を上げずに足す」、
-ADR-d89c2ede-1aba-46fa-9f14-8dcf8a266e0e「root 相対で指定するパスすべてにパス安全性の確認を課す」、
-ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967「copy と out-of-store の併用を eval 時に拒否する」、
-ADR-796508e6-2845-467d-83f8-386930a48bfb「src が target に重なる root 相対 entry を評価時に拒否する」、
-ADR-5d85f49f-c136-425f-bea4-ad8ab8dd8632「root 相対 entry で engine が root を使うのは配置前の実在確認だけにする」。
+[root 相対マーカーのリンクを target 起点の相対パスで張る](../adr/root-relative-link-as-relative-path.md)「root 相対マーカーのリンクを target 起点の相対パスで張る」、
+[root 相対マーカーの基準点を manifest の配置 root にする](../adr/root-relative-base-is-placement-root.md)「root 相対マーカーの基準点を manifest の配置 root にする」、
+[srcKind の列挙値は schemaVersion を上げずに足す](../adr/srckind-added-without-version-bump.md)「srcKind の列挙値は schemaVersion を上げずに足す」、
+[root 相対で指定するパスすべてにパス安全性の確認を課す](../adr/path-safety-for-root-relative-inputs.md)「root 相対で指定するパスすべてにパス安全性の確認を課す」、
+[copy と out-of-store の併用を eval 時に拒否する](../adr/copy-with-out-of-store-eval-error.md)「copy と out-of-store の併用を eval 時に拒否する」、
+[src が target に重なる root 相対 entry を評価時に拒否する](../adr/reject-overlapping-src-and-target.md)「src が target に重なる root 相対 entry を評価時に拒否する」、
+[root 相対 entry で engine が root を使うのは配置前の実在確認だけにする](../adr/root-only-in-preflight.md)「root 相対 entry で engine が root を使うのは配置前の実在確認だけにする」。

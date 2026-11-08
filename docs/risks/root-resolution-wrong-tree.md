@@ -36,11 +36,11 @@ git から root を解決できないときに engine 実行時ではなく評�
 - home mode の root 供給元が層ごとに揃わず、HM 経由と CLI 経由で配置先が分岐する
 - profile ディレクトリの作成・backref 書き込みの失敗が握り潰され、逆引き不能な状態で配置が進む
 - `--root` を渡しても、project mode が git toplevel、home mode が `$HOME` を採り続け、明示した
-  root が使われない（→ REQ-61c05e09-0bde-4f74-9a96-03185f9df606）
+  root が使われない（→ [--root は全モード共通で解決 root を明示上書きする](../requirements/root-override-flag.md)）
 
 ## 評価
 
-- likelihood: low — 解決規則はモードごとに 1 箇所へ集約されており、TC-b254a5a8-7fbf-4f31-8486-3e373d66bfa7 が成功する場面と
+- likelihood: low — 解決規則はモードごとに 1 箇所へ集約されており、[root 解決と profile ディレクトリ準備の成功時・失敗時の処理が仕様どおりであること](../test/engine-core/root-resolution.md) が成功する場面と
   失敗する場面（git repo 外での停止・`fixed` でのパス無しの拒否・profile 準備の失敗）の双方を
   機械的に覆っている。ただし同 TC は「想定する失敗」4 点目に現れる root 供給元の層分けそのものを
   `integration` 区分へ明示的に委ねている（rootKind から絶対 root への解決分岐は home mode 側も

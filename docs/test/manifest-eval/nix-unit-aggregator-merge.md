@@ -15,7 +15,7 @@ generated:
 ## 対象
 
 `tests/nix-unit/aggregator-merge.nix`（`tests/nix-unit.nix` のディレクトリ列挙で自動搭載。
-TP-36e90d5d-4524-4294-bc72-ee263bb02782 が定めるとおりテスト名はファイル横断で一意でなければならず、本ファイルは
+[評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](../../test-plan/nix-unit-namaka-split.md) が定めるとおりテスト名はファイル横断で一意でなければならず、本ファイルは
 `testAggregatorMerge*` 接頭辞を使う）
 
 検証するのは同じスイートの組み立て器である `tests/nix-unit-lib.nix` の `mergeTests`。
@@ -67,4 +67,4 @@ throw してスイート全体が評価不能になるため、本 CASE の評�
 ## 出典
 
 Issue #308（#287 で入れた重複の確認に、検出器自身を検証するテストが無い。検出元は #287 の
-レビュー収束）。緩和する脅威は RISK-3de9753f-3fd3-4364-b1ab-64c68c15ec77、一意性の規約は TP-36e90d5d-4524-4294-bc72-ee263bb02782 が持つ。
+レビュー収束）。緩和する脅威は [評価スイート自身の盲点でアサートが空虚に緑になる](../../risks/eval-suite-blind-spot.md)、一意性の規約は [評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](../../test-plan/nix-unit-namaka-split.md) が持つ。

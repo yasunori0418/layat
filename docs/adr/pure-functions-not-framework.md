@@ -18,7 +18,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137, `docs/concept.md`
+- 関連: [--json は outturn 規約に常時準拠する](outturn-conformance-principle.md), [layat.lib.mkEnv で buildEnv 合成環境を提供する](mkenv-buildenv.md), `docs/concept.md`
 - 起点: ADR-0004 §d を書き直した
 
 ## 背景
@@ -36,8 +36,8 @@ layat はフレームワークではなく、テスト可能な純粋関数群�
 distro は利用者が layat の関数を合成して組むものとし、振る舞いをモジュールのオプションの奥に隠す
 抽象は意図して持たない。
 
-関数群の性質は REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4（`mkManifest` が純粋関数であること）と
-REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51（`lib` が nixpkgs.lib だけに依存する純データ生成器であること）に置く。
+関数群の性質は [mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md)（`mkManifest` が純粋関数であること）と
+[lib は nixpkgs.lib のみに依存する純データ生成器である](../requirements/lib-pure-data-generator.md)（`lib` が nixpkgs.lib だけに依存する純データ生成器であること）に置く。
 
 ## 根拠
 

@@ -23,7 +23,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-08
-- 関連: [省略形の禁止は起票の機械化と全面移行で担保する](20261101-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103-short-form-ban-enforced-by-tooling.md), GitHub Issue #674
+- 関連: [省略形の禁止は起票の機械化と全面移行で担保する](short-form-ban-enforced-by-tooling.md), GitHub Issue #674
 - 起点: issue #674 の grilling（2026-11-08）で確定
 
 ## 背景
@@ -50,9 +50,9 @@ slug は同じディレクトリの中で一意にする。`sara-new` は出力�
 並列のレーンが同じディレクトリに同じ slug を起こすと、起票では検出できない。この場合はマージの
 add/add 衝突で検出し、片方を改名する。ここは防がずに受け入れる。
 
-ID の規約は [トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）](../infrastructure/20260802-659b139d-0cf8-4c65-b30d-93c5ee2dfc71-traceability-verification.md) の「ID 規約」節に、
+ID の規約は [トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）](../infrastructure/traceability-verification.md) の「ID 規約」節に、
 ファイル名の形式は CLAUDE.md の「ID 規約」表に置く。省略形の禁止をどう担保するかは
-[省略形の禁止は起票の機械化と全面移行で担保する](20261101-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103-short-form-ban-enforced-by-tooling.md) が決める。
+[省略形の禁止は起票の機械化と全面移行で担保する](short-form-ban-enforced-by-tooling.md) が決める。
 
 ## 根拠
 

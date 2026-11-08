@@ -52,5 +52,5 @@ generated:
 - `--json` なしでは、不正な記録を持つ subject の error を stderr に出し、他の subject は
   通常どおり stdout に出して exit 1
 
-上位の規範は TP-d3000054-42d9-4bac-912a-dd3abc38d3e9（エンベロープ適合と payload 意味論）と
-TP-e7c25263-6d2d-4a37-8275-26906889d912（CLI 層の判断）。
+上位の規範は [エンベロープの outturn 適合を Go テストと E2E の両方で検証する](../../test-plan/json-conformance-verification.md)（エンベロープ適合と payload 意味論）と
+[エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../../test-plan/go-test-layering.md)（CLI 層の判断）。

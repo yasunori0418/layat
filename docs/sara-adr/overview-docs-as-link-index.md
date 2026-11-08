@@ -20,12 +20,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: SDR-5ea31001-96f8-4324-a40b-647cdfa5cc9d, GitHub Issue #203, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
+- 関連: [ドキュメントは sara のナレッジグラフとして item に分割する](docs-as-sara-knowledge-graph.md), GitHub Issue #203, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
 - 起点: epic #203 の grilling セッション（2026-07-31・2026-08-01）で確定。ADR-0048 §1 を書き直した
 
 ## 背景
 
-ドキュメントを item に分割する決定（SDR-5ea31001-96f8-4324-a40b-647cdfa5cc9d）で、`docs/spec.md`・
+ドキュメントを item に分割する決定（[ドキュメントは sara のナレッジグラフとして item に分割する](docs-as-sara-knowledge-graph.md)）で、`docs/spec.md`・
 `docs/design.md`・`docs/concept.md` の規範的な内容は item へ移る。元の 3 文書をどう扱うかを決める
 必要があった。
 

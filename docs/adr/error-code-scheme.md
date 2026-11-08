@@ -25,7 +25,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, ADR-9e328362-2e90-441a-8eca-40081ce71b1b, GitHub Issue #552, yasunori0418/outturn#1
+- 関連: [--json は outturn 規約に常時準拠する](outturn-conformance-principle.md), [エラーはエンベロープに構造化し stderr のテキストと併存させる](structured-errors-with-stderr.md), GitHub Issue #552, yasunori0418/outturn#1
 - 起点: layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §8 のエラーコードを書き直した
 
 ## 背景
@@ -40,8 +40,8 @@ outturn §6 はエラーコードを二層で命名する。複数のツール�
 ものを `W_LAYAT_*` とする。分類するのは sentinel や型で判定できる失敗に限り、それ以外はツールの総称
 コード `E_LAYAT_FAILED` にする。
 
-エラーコードの一覧と割り当ては REQ-9341fa5d-836e-4023-af53-cc7d273438d1 に、配置の衝突と警告のコードの
-割り当ては REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62 に置く。
+エラーコードの一覧と割り当ては [エンベロープのエラーは主体の有無で層を分けコードを分類する](../requirements/json-error-layering.md) に、配置の衝突と警告のコードの
+割り当ては [変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く](../requirements/json-change-payload.md) に置く。
 
 ## 根拠
 

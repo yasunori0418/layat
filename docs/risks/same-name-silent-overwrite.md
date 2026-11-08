@@ -29,7 +29,7 @@ nix 生成器）が同じ名前を使うと、片方の apply がもう片方の
 - **書き直しでの出所の喪失** — reset / rollback が `origin` を省くと、次の apply は出所を
   比べられず、食い違いを見逃す
 
-記録の鍵と `origin` の形は DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5 の記録レイアウトが決める。記録を
+記録の鍵と `origin` の形は [last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](../design/last-applied-record-layout.md) の記録レイアウトが決める。記録を
 profile と別の場所へ鍵で置き、比較の基準を記録 → profile → 空の順に読むという選択に固有の脅威でも
 あるので、この `design` にも張る。
 

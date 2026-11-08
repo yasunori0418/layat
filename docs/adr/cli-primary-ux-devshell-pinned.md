@@ -36,7 +36,7 @@ CLI を PATH に置くと、今度は CLI の版と、利用者の flake が pin
 `templates/project` の devShell に flake.lock で pin した `layat` を同梱することとする。グローバルな
 導入（`nix profile install`）は CLI 単体で使うときの利便として残す。
 
-導入形態ごとの規範は REQ-14f0aec9-abae-4621-82f3-40536a1ad904 に置く。
+導入形態ごとの規範は [layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする](../requirements/cli-primary-ux-installation.md) に置く。
 
 ## 根拠
 

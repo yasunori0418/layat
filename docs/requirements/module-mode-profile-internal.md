@@ -36,9 +36,9 @@ oldGenPath 配管は不要。
 
 > **上は原文の写しで、規範は frontmatter が正**。全モードで自前 profile を持つこと・module では
 > それを内部機構に留めること・前世代を layat 自身の profile から読みホストの oldGenPath に
-> 依存しないことは REQ-1be4d678-959c-44d7-a346-44bfd95af56e の担当で、本 item はユーザー向け rollback の一本化先と、
+> 依存しないことは [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](generation-mechanism-link-farm-manifest.md) の担当で、本 item はユーザー向け rollback の一本化先と、
 > それが成立する追従の仕組み（前進のみ）を規定する。home mode 側の rollback 手順は
-> REQ-0e341430-17f0-498b-9439-65491652163a、`rollback` が home / system mode 限定であることは REQ-05abce3e-9797-432b-b93f-37c55d09afde の担当。
+> [rollback は FS を先に収束させてから profile ポインタを最後に移す](rollback-refit-then-pointer.md)、`rollback` が home / system mode 限定であることは [rollback と list-generations は home / system mode 限定にする](rollback-list-generations-home-only.md) の担当。
 
 ## 出典
 
@@ -48,4 +48,4 @@ oldGenPath 配管は不要。
 持ち、ユーザー向け rollback は host 世代へ一本化する）も本 item の担当で、独立 item を立てず
 本 item に畳んだ。
 
-決定の実体は ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75「module と project では世代操作を公開しない」・ADR-fe035038-4415-4a1e-aa5c-509fdfce9955。
+決定の実体は [module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)「module と project では世代操作を公開しない」・[1 config = 1 profile を全モードで自前に持つ](../adr/one-config-one-profile-all-modes.md)。

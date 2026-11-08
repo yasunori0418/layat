@@ -24,22 +24,22 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-3f97fc1d-188d-4013-bff0-16b67250f68e, GitHub Issue #169, #172
+- 関連: [project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md), [退避を配置前除去の後の段として undo ジャーナルに載せる](backup-stage-in-undo-journal.md), GitHub Issue #169, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §4（世代スキップ時）を書き直した
 
 ## 背景
 
 project mode は、link farm が前と同じなら世代を積まず、drift だけを直す
-（ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d）。世代スキップでは配置前除去が構造的に空になる。
+（[project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md)）。世代スキップでは配置前除去が構造的に空になる。
 配置前除去の発生源は全て manifest の差分を伴い、link farm を変えるからである。退避の段
-（ADR-3f97fc1d-188d-4013-bff0-16b67250f68e）も世代スキップで空とみなしてよいかを決める必要が
+（[退避を配置前除去の後の段として undo ジャーナルに載せる](backup-stage-in-undo-journal.md)）も世代スキップで空とみなしてよいかを決める必要が
 あった。
 
 ## 決定
 
 世代スキップのときも `--backup` を有効にし、通常の apply と同じく退避してから配置する。
 
-世代スキップの有無ごとの段の規範は REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 に置く。
+世代スキップの有無ごとの段の規範は [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](../requirements/backup-stage-position.md) に置く。
 
 ## 根拠
 

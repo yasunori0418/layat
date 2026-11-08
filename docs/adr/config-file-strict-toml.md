@@ -21,12 +21,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964, ADR-ef9e4099-0cf4-409a-9e73-518866aea676, GitHub Issue #395
+- 関連: [生成器は明示の指定だけで選ぶ](generator-chosen-explicitly-only.md), [Go の整形は gofmt、静的解析は go vet と golangci-lint で行う](gofmt-vet-golangci.md), GitHub Issue #395
 - 起点: Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §4 の形式を書き直した
 
 ## 背景
 
-生成器の選択はプロジェクト設定とユーザー設定からも読む（→ ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964）。
+生成器の選択はプロジェクト設定とユーザー設定からも読む（→ [生成器は明示の指定だけで選ぶ](generator-chosen-explicitly-only.md)）。
 設定ファイルは利用者が手で書くもので、項目は当面 `generator` だけである。
 
 ## 決定
@@ -35,7 +35,7 @@ generated:
 存在するが読めない設定ファイル（権限が無い・ディレクトリである）は入力の不正にせず、読み込み失敗の
 分類を保つ。
 
-キーと失敗の分類の規範は REQ-badc7e10-0ba4-40d4-b334-6e40193119db に置く。
+キーと失敗の分類の規範は [生成器は明示指定のみで選び、フラグ・環境変数・設定ファイル・既定の順に解決する](../requirements/generator-selection-precedence.md) に置く。
 
 ## 根拠
 

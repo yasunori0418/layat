@@ -42,9 +42,9 @@ engine が配置中に出す warning（foreign symlink 等）と、ロック内 
 
 ## 改訂の経緯
 
-ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e・ADR-e7a57f51-41da-460c-8f51-c84e94643f3d（`apply --all` の build・配置の両段階の並列化）による改訂。旧規範は
+[apply --all の build を worker pool で並列に実行する](../adr/apply-all-parallel-build-worker-pool.md)・[apply --all の配置を config 単位で並列に行う](../adr/apply-all-parallel-placement-per-config.md)（`apply --all` の build・配置の両段階の並列化）による改訂。旧規範は
 「`layat.*` を辞書順（キーソート・決定的）に**逐次**適用する」（旧決定「`--all` 適用順」）
-で、適用順そのものを辞書順に固定していた。ADR-75df92ae-0694-452b-8fb4-350994e31b25 の前段での衝突の確認で同一 entrypoint 内の
+で、適用順そのものを辞書順に固定していた。[apply --all は選択した config 間の target 重複を build 前に止める](../adr/apply-all-preflight-target-conflict.md) の前段での衝突の確認で同一 entrypoint 内の
 config 間衝突が排除され、実行順が結果に影響しなくなったため、辞書順の保証を実行順から
 表示・集約の順へ移した。
 
@@ -52,5 +52,5 @@ config 間衝突が排除され、実行順が結果に影響しなくなった�
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply --all` の箇条書き。
 
-決定の実体は ADR-e7a57f51-41da-460c-8f51-c84e94643f3d・ADR-af37a636-a798-4c03-8fa4-e73ed6375a92（並列適用・完了後の辞書順集約）、旧決定「`--all` 適用順」
-（改訂前の辞書順・決定的）と ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56「apply --all は失敗しても残りを続け、最後に集約して非 0 で終える」。
+決定の実体は [apply --all の配置を config 単位で並列に行う](../adr/apply-all-parallel-placement-per-config.md)・[apply --all の集約は config 名の辞書順に並べる](../adr/apply-all-lexicographic-order.md)（並列適用・完了後の辞書順集約）、旧決定「`--all` 適用順」
+（改訂前の辞書順・決定的）と [apply --all は失敗しても残りを続け、最後に集約して非 0 で終える](../adr/apply-all-continue-and-aggregate.md)「apply --all は失敗しても残りを続け、最後に集約して非 0 で終える」。

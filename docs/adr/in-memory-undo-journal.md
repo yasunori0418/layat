@@ -25,13 +25,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-74423bb8-1453-4689-a25e-30bf46536afc, GitHub Issue #168, #172
+- 関連: [新規配置と張替えを先に、世代のコミットを最後に行う](placement-order-commit-last.md), GitHub Issue #168, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0044 §1（インメモリ undo ジャーナル）を書き直した
 
 ## 背景
 
 世代のコミットは FS への反映が全て成功した後の 1 点に置いている
-（ADR-74423bb8-1453-4689-a25e-30bf46536afc）。途中で失敗すれば世代は進まないが、FS には
+（[新規配置と張替えを先に、世代のコミットを最後に行う](placement-order-commit-last.md)）。途中で失敗すれば世代は進まないが、FS には
 部分的な配置が残る。この残骸は 2 つの点で困る。
 
 1. 失敗した run が新しく置いた symlink や copy は前世代の manifest に記録が無い。次の apply は
@@ -46,8 +46,8 @@ apply と rollback は、FS へ 1 回書き込むたびに、その逆操作を�
 から error を返す。この巻き戻しは常に有効で、フラグでは切り替えない。
 
 順操作と逆操作の対応、`--recopy` の上書きを rename 退避で行う手順は
-REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 と REQ-b4e4b65d-6e35-40c3-a00e-20c14043df6f に置く。
-故障を誘発して検証する方針は TP-deb05610-44bc-4962-8939-952392e5fbd0 に置く。
+[途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](../requirements/undo-journal-rollback.md) と [recopy の上書きは削除ではなく同一親内への rename 退避で行う](../requirements/recopy-rename-aside.md) に置く。
+故障を誘発して検証する方針は [原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](../test-plan/fault-injection-atomicity.md) に置く。
 
 ## 根拠
 

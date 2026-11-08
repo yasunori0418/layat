@@ -25,13 +25,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, ADR-feb60906-1517-46b8-8fa5-e007df4d3e11, ADR-88231ffc-4836-4252-be34-894944fd28c3, GitHub Issue #552, yasunori0418/outturn#1, outturn ADR-0013
+- 関連: [--json は outturn 規約に常時準拠する](outturn-conformance-principle.md), [--json は常に results\[\] エンベロープを出す](results-envelope-always.md), [CLI が一次 UX で devShell に pin 版を同梱する](cli-primary-ux-devshell-pinned.md), GitHub Issue #552, yasunori0418/outturn#1, outturn ADR-0013
 - 起点: layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §7 を書き直した
 
 ## 背景
 
 `apply --all` / `list-generations --all` / `gitignore --all` は、複数の config を 1 回の実行で扱う。
-トップレベルを常に `results[]` にする決定（ADR-feb60906-1517-46b8-8fa5-e007df4d3e11）の上で、複数の
+トップレベルを常に `results[]` にする決定（[--json は常に results\[\] エンベロープを出す](results-envelope-always.md)）の上で、複数の
 config の結果をどう並べるかを決める必要がある。
 
 ## 決定
@@ -40,7 +40,7 @@ config の結果をどう並べるかを決める必要がある。
 同じで、`--all` を区別するフィールドを持たない。トップの `status` は全 subject の集約とする。
 `gitignore --all --json` は config 間で重複を除かず、各 subject が自分の paths を持つ。
 
-細目は REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5 に置く。
+細目は [--all は config ごとの SubjectResult を単一実行と同一形状で積む](../requirements/json-all-subject-results.md) に置く。
 
 ## 根拠
 

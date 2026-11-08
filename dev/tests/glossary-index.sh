@@ -47,13 +47,35 @@ if [ ! -s "$work/items" ]; then
   exit 1
 fi
 
-# 索引側: <ID>\t<リポジトリルート相対のリンク先>（リンクは docs/ からの相対）
-grep -oE '\[UBQ-[0-9a-f-]+\]\([^)]*\)' "$index" |
-  sed -E 's/^\[(UBQ-[0-9a-f-]+)\]\(([^)]*)\)$/\1\tdocs\/\2/' |
-  LC_ALL=C sort > "$work/links"
+frontmatter_id() {
+  awk 'NR == 1 && $0 != "---" { exit }
+    NR > 1 && $0 == "---" { exit }
+    NR > 1 && /^id:/ { sub(/^id:[[:space:]]*/, ""); gsub(/"/, ""); print; exit }' "$1"
+}
+
+# 索引側: <ID>\t<リポジトリルート相対のリンク先>。索引の各行（`- [` で始まる行）のリンクは docs/ からの相対で、
+# ID はリンク先の frontmatter から読む。
+bad_link=0
+: > "$work/links-unsorted"
+while IFS= read -r target; do
+  path="docs/$target"
+  if [ ! -f "$path" ]; then
+    fault "(3) リンク先のファイルが無い: $path"
+    bad_link=1
+    continue
+  fi
+  id=$(frontmatter_id "$path")
+  if [ -z "$id" ]; then
+    fault "(3) リンク先の frontmatter に id が無い: $path"
+    bad_link=1
+    continue
+  fi
+  printf '%s\t%s\n' "$id" "$path" >> "$work/links-unsorted"
+done < <(sed -nE 's/^- \[(\\.|[^]\\])*\]\(([^)]*)\).*$/\2/p' "$index")
+LC_ALL=C sort "$work/links-unsorted" > "$work/links"
 
 if [ ! -s "$work/links" ]; then
-  fault "入力: $index に UBQ- のリンクが 1 件も無い"
+  fault "入力: $index に用語 item へのリンクが 1 件も無い"
 fi
 
 cut -f1 "$work/items" > "$work/item-ids"
@@ -87,13 +109,7 @@ fi
 
 # --- (3) リンク先のファイルが実在し、その ID の item である ------------------
 
-bad_link=0
 while IFS=$'\t' read -r id path; do
-  if [ ! -f "$path" ]; then
-    fault "(3) リンク先のファイルが無い: $id → $path"
-    bad_link=1
-    continue
-  fi
   expected=$(awk -F '\t' -v id="$id" '$1 == id { print $2 }' "$work/items")
   if [ -n "$expected" ] && [ "$expected" != "$path" ]; then
     fault "(3) リンク先が別の item のファイル: $id → $path（正: $expected）"

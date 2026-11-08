@@ -23,7 +23,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc, GitHub Issue #580, #198
+- 関連: [読み取り専用の列挙は info で返す](readonly-enumeration-as-info.md), GitHub Issue #580, #198
 - 起点: Issue #198（`layat status [name]`）の実装前に、2026-07-19 の grilling 以後の実装の変化を差分 grilling で反映した（2026-10-23）。ADR-0065 §3 を書き直した
 
 ## 背景
@@ -36,8 +36,8 @@ status の出力には、人が読むテキストとスクリプトが読む `--
 
 テキストは config ごとに apply した時刻を見出しに置き、entry ごとに target・method・配置先（symlink
 が指す先）を 1 行で出す。`--json` は `list-generations` と同じく読み取り系の列挙として、
-記録の内容を config ごとの info に載せる（ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc）。行の書式と
-info の形は REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303 に置く。
+記録の内容を config ごとの info に載せる（[読み取り専用の列挙は info で返す](readonly-enumeration-as-info.md)）。行の書式と
+info の形は [読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す](../requirements/json-readonly-payload.md) に置く。
 
 ## 根拠
 

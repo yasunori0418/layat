@@ -37,35 +37,35 @@ generated:
 
 > **上は原文の写しで、規範は frontmatter が正**。同ファイルが定義する共通オプション集合
 > （`enable` / `configs`（`entries` を含む）/ `backup.*` と `layat.entries` の糖衣）は
-> REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、entry submodule の型定義を `lib/types.nix` と共有することは REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34、
-> `lib` が nixpkgs.lib のみに依存する純データ生成器であることは REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51、engine が
-> stdlib-only であることは REQ-b74a118a-1272-44eb-944c-7725163211c6 の担当。統合層ごとのファイルが engine を起動する
-> 配線に徹することは REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 が定めるが、**それらが何に依存してよいかの規範は現状
+> [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)、entry submodule の型定義を `lib/types.nix` と共有することは [mkManifest 自身が evalModules で入力を確認する単一の箇所になる](mkmanifest-input-validation.md)、
+> `lib` が nixpkgs.lib のみに依存する純データ生成器であることは [lib は nixpkgs.lib のみに依存する純データ生成器である](lib-pure-data-generator.md)、engine が
+> stdlib-only であることは [engine は第三者依存ゼロの stdlib-only とし内部層に閉じる](engine-stdlib-only.md) の担当。統合層ごとのファイルが engine を起動する
+> 配線に徹することは [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](modules-are-engine-wiring.md) が定めるが、**それらが何に依存してよいかの規範は現状
 > どの item も持たない**（原文の `modules/home-manager.nix` 行以下も `modules/common.nix`
 > 行と同じく縮退で落ちたまま未回収）。層の積み方と依存の向きを一方向に限る設計は
-> DSG-17db0831-d7da-446d-ba3e-404df64c582d が持つ。
+> [層を CLI / engine / lib / common.nix / 統合層の 5 段に積み、依存を呼ぶ側から呼ばれる側への一方向に限る](../design/layer-stack-dependency.md) が持つ。
 >
-> **新規 item にした理由（REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51 との粒度合わせ）**: 依存制約は層ごとに 1 item
-> 立てるのが既存の粒度で、`lib` は REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51、engine は REQ-b74a118a-1272-44eb-944c-7725163211c6 が各層 1 item
-> として持つ。`modules/common.nix` は DSG-17db0831-d7da-446d-ba3e-404df64c582d の 5 段のうち `lib` とも統合層とも
+> **新規 item にした理由（[lib は nixpkgs.lib のみに依存する純データ生成器である](lib-pure-data-generator.md) との粒度合わせ）**: 依存制約は層ごとに 1 item
+> 立てるのが既存の粒度で、`lib` は [lib は nixpkgs.lib のみに依存する純データ生成器である](lib-pure-data-generator.md)、engine は [engine は第三者依存ゼロの stdlib-only とし内部層に閉じる](engine-stdlib-only.md) が各層 1 item
+> として持つ。`modules/common.nix` は [層を CLI / engine / lib / common.nix / 統合層の 5 段に積み、依存を呼ぶ側から呼ばれる側への一方向に限る](../design/layer-stack-dependency.md) の 5 段のうち `lib` とも統合層とも
 > 別の 1 段であり、同じ粒度に揃えるなら独立した item になる。既存 item への編入も
-> 検討したが、REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 は「共通オプションとして何を公開するか」の item で軸が別
-> （公開する集合 vs 依存の範囲）であり、REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51 へ相乗りさせると `lib` と
+> 検討したが、[全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md) は「共通オプションとして何を公開するか」の item で軸が別
+> （公開する集合 vs 依存の範囲）であり、[lib は nixpkgs.lib のみに依存する純データ生成器である](lib-pure-data-generator.md) へ相乗りさせると `lib` と
 > `common.nix` という別の層に対する 2 つの依存制約が 1 item に同居して 1 item 1 主張が
-> 崩れるため、いずれも採らなかった。DSG-17db0831-d7da-446d-ba3e-404df64c582d の層構成図は `common.nix` を「options 型定義
+> 崩れるため、いずれも採らなかった。[層を CLI / engine / lib / common.nix / 統合層の 5 段に積み、依存を呼ぶ側から呼ばれる側への一方向に限る](../design/layer-stack-dependency.md) の層構成図は `common.nix` を「options 型定義
 > （nixpkgs.lib のみ依存）」と記載するが、これは設計の図であって規範文（specification）
 > ではないため、本 item が規範を持つ。
 
 ## 出典
 
 `docs/spec.md`「依存関係」節の表の `modules/common.nix` 行「nixpkgs.lib のみ」。#209 の
-分割では同表の `internal/` 行が REQ-b74a118a-1272-44eb-944c-7725163211c6 へ入った一方、`modules/common.nix` 行は
+分割では同表の `internal/` 行が [engine は第三者依存ゼロの stdlib-only とし内部層に閉じる](engine-stdlib-only.md) へ入った一方、`modules/common.nix` 行は
 どの item の規範にも入らないまま縮退で落ちていた（epic #203 / issue #228 で回収）。
 `lib` に対する同種の依存制約は、同表の `lib/` 行ではなく別出典（「lib API」節）の
-REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51 が持つ。
+[lib は nixpkgs.lib のみに依存する純データ生成器である](lib-pure-data-generator.md) が持つ。
 
 同表の他行と異なり原文の当該行は ADR 参照を伴わず、`modules/common.nix` の依存制約
 そのものを決定した ADR も無いため、`justifies` は張らない（側面としては、lib を
-データ生成に徹させる ADR-521765d7-7e31-42f4-b548-979185a7586a、entry submodule の型定義を `lib/types.nix` と
-`modules/common.nix` で共有すると定めた ADR-0d8f691f-304a-4b36-8393-d6aeddc4b32a、モジュールを配線に徹させる ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880 が
+データ生成に徹させる [lib は純データ生成に徹する](../adr/lib-produces-data-only.md)、entry submodule の型定義を `lib/types.nix` と
+`modules/common.nix` で共有すると定めた [モジュールの entries に lib と同じ型を使う](../adr/module-entries-share-lib-type.md)、モジュールを配線に徹させる [モジュールは root と起動の時機だけを供給して engine を起動する](../adr/modules-wire-engine-kick-only.md) が
 この制約と整合する）。

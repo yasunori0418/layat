@@ -60,25 +60,25 @@ generated:
 
 > **他 item との担当分界**: 起動 1 回の activation 契約（`entryAfter ["writeBoundary"]`・
 > ビルド済み link-farm を渡すこと・activation が `nix eval` / `build` を行わないこと・engine
-> error が非 0 終了で switch を止めること）は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292。
+> error が非 0 終了で switch を止めること）は [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](hm-activation-contract.md)。
 > 1 config = 1 profile = 1 manifest の対応と `<name>` 次元そのものは
-> REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a。`layat.configs` / `layat.jobs` オプションの定義は
-> REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10。`--manifest <name>=<link-farm>` の繰り返しと
-> `--all` の合成は REQ-dec58330-6dad-47f7-8f56-2402764a89c7。並列適用と辞書順の集約・
-> 部分失敗の続行は REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af、`--jobs` の解決規則は
-> REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d。configs 間の target 衝突の停止は
-> REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44。
+> [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md)。`layat.configs` / `layat.jobs` オプションの定義は
+> [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)。`--manifest <name>=<link-farm>` の繰り返しと
+> `--all` の合成は [apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](apply-manifest-direct.md)。並列適用と辞書順の集約・
+> 部分失敗の続行は [apply --all は選択された config を並列に適用し、集約表示と results\[\] を辞書順にし、部分失敗でも続行して最後に集約する](apply-all-lexical-order-continue.md)、`--jobs` の解決規則は
+> [apply --all は build を --jobs の worker pool で先行並列実行し build 失敗 config を部分失敗として集約する](apply-all-parallel-build-jobs.md)。configs 間の target 衝突の停止は
+> [単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する](hm-configs-target-collision-assertion.md)。
 >
 > **本文箇条書き第 3 項に対応する規範文を持たない理由**: profile ごとに独立して実行される処理の
 > 列挙は、`apply --all` が config ごとに engine を駆動することと、profileDir 単位の flock を
-> 定める REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461・profileDir のキーを定める
-> REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81・世代機構を定める
-> REQ-1be4d678-959c-44d7-a346-44bfd95af56e の合成から従うため、規範として再掲しない。
+> 定める [flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする](flock-acquisition-mode.md)・profileDir のキーを定める
+> [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md)・世代機構を定める
+> [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](generation-mechanism-link-farm-manifest.md) の合成から従うため、規範として再掲しない。
 
 ## 出典
 
-ADR-f58e9981-bacc-4937-98b8-bddce0a057db「モジュールの activation は apply --all --manifest を 1 回だけ起動する」。`layat.jobs` の定義は ADR-e8bb6153-2528-419e-8be0-c862a3eb4e05。
+[モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)「モジュールの activation は apply --all --manifest を 1 回だけ起動する」。`layat.jobs` の定義は [layat.jobs で activation の並列度を指定する](../adr/module-jobs-option.md)。
 
 `docs/spec.md` には対応記述が無いため、原文の写しは持たない（規範は frontmatter が正で、
 上の箇条書きは ADR 本文の要約）。旧版（config ごとに起動し bash で集約する形）は
-ADR-f58e9981-bacc-4937-98b8-bddce0a057db で改められた。
+[モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md) で改められた。

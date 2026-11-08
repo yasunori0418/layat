@@ -14,7 +14,7 @@ generated:
 ## テスト条件
 
 `escapesBase` / `isUnsafe` をテスト seam 越しに直接叩き、深さ 0 の境界を内側と外側の対で
-アサートする。エラーの到達性は TC-e7ff0e6d-32d7-4ed6-8c2f-449dba34b2f6 の担当。
+アサートする。エラーの到達性は [拒否すべき入力が評価時に throw することをアサートする](rejection-gates.md) の担当。
 
 - `.` と空文字が深さを動かさないこと
 - 単体の `..`・先頭の `..` が深さ 0 で即脱出になること
@@ -32,7 +32,7 @@ generated:
 
 ## 覆う CASE
 
-- CASE-36b5b61a-f40e-4bd5-97d9-f2b0c9284a72（`tests/nix-unit/escapes-base.nix`）
+- [nix-unit: escapes-base.nix — `..` 深さ判定の境界網羅](nix-unit-escapes-base.md)（`tests/nix-unit/escapes-base.nix`）
 
 ## 出典
 

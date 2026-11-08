@@ -48,11 +48,11 @@ target 自身が実 dir のとき、配下（任意深さ）の全 leaf を判�
 > **上は原文の写しで、規範は frontmatter が正**。この migration が失敗して「エラーで停止」
 > と判定された実 dir も `--backup` の退避対象に入る。退避対象を判定各段の結論
 > （エラー停止 / copy foreign スキップ）で括る規範と、退避が配置手順のどの段に入るかは
-> REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 の担当（退避そのものの契約は REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b）。
+> [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](backup-stage-position.md) の担当（退避そのものの契約は [apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md)）。
 
-祖先 symlink の migration は REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575、method 変更 symlink→copy の migration は
-REQ-2b48620a-abaa-43df-a106-954bbba3de56 の担当。除去を既定 silent とし `-v` で可視化するという出力規律そのもの
-（→ ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5・ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）は REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 / REQ-0a123b89-0399-4f76-b988-56a5f7e0becf の担当で、本 item は「この除去を warning に
+祖先 symlink の migration は [祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する](ancestor-symlink-nest-migration.md)、method 変更 symlink→copy の migration は
+[method 変更は symlink→copy のみ配置前除去で移行し、copy→symlink は移行しない](method-change-symlink-to-copy-migration.md) の担当。除去を既定 silent とし `-v` で可視化するという出力規律そのもの
+（→ [指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)・[-v で配置レポートを opt-in で出す](../adr/verbose-opts-into-placement-report.md)）は [成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](silent-on-success.md) / [冗長度は -v、デバッグは --debug に分離し --json と直交させる](verbose-and-debug-separation.md) の担当で、本 item は「この除去を warning に
 せず配置レポート側で扱う」ことだけを規範とする。
 
 ## 出典
@@ -61,4 +61,4 @@ REQ-2b48620a-abaa-43df-a106-954bbba3de56 の担当。除去を既定 silent と�
 「target に通常ファイルまたはディレクトリが存在する場合はエラーで停止（上書きしない）。
 ただし実 dir は §0.5 の条件を満たせば例外的に PreRemove で除去して配置する」。
 
-決定の実体は ADR-77312c71-fa32-481b-ad80-c91e5b282edc「実ディレクトリの target は全 leaf を除去できるときだけ移行する」。
+決定の実体は [実ディレクトリの target は全 leaf を除去できるときだけ移行する](../adr/real-dir-target-migration.md)「実ディレクトリの target は全 leaf を除去できるときだけ移行する」。

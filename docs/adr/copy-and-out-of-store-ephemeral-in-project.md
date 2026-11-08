@@ -17,13 +17,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-c4ad9987-850e-4834-bbea-d8de3b073548, ADR-4dca6ef4-2791-48d5-aa82-7037630968a6, `docs/concept.md`, `docs/spec.md`
+- 関連: [copy は世代の外に place-once で置く](copy-outside-generations-place-once.md), [ephemeral 配置は git に干渉しない](ephemeral-no-git-interference.md), `docs/concept.md`, `docs/spec.md`
 - 起点: ADR-0005 の決定「copy / out-of-store も同原則を継承」と ADR-0019 §3 を書き直した
 
 ## 背景
 
-project mode の配置物は ephemeral で、リポジトリにコミットしない（ADR-4dca6ef4-2791-48d5-aa82-7037630968a6）。
-一方で copy は利用者が持ち主となって編集する実ファイルで（ADR-c4ad9987-850e-4834-bbea-d8de3b073548）、out-of-store は store の外を指す。
+project mode の配置物は ephemeral で、リポジトリにコミットしない（[ephemeral 配置は git に干渉しない](ephemeral-no-git-interference.md)）。
+一方で copy は利用者が持ち主となって編集する実ファイルで（[copy は世代の外に place-once で置く](copy-outside-generations-place-once.md)）、out-of-store は store の外を指す。
 この 2 つの method も ephemeral として扱うのか、コミットしてよいのかを決める必要があった。
 
 ## 決定
@@ -32,7 +32,7 @@ project mode では copy と out-of-store も ephemeral として扱い、新し
 copy target は clone ごとに place-once で置き直され、その編集は clone の中だけで使い捨てになる。
 `layat gitignore` は method を区別せず、copy target を含む全 target を列挙する。copy target を
 コミットして共有したい場合は layat の責務外とする。規範の細目は
-REQ-60787ed2-4176-4bdd-800f-1600c0315551 に置く。
+[gitignore は method を区別せず copy target も含めて全 target を列挙する](../requirements/gitignore-includes-copy-targets.md) に置く。
 
 ## 根拠
 

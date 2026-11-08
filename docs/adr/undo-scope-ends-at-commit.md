@@ -26,25 +26,25 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-74423bb8-1453-4689-a25e-30bf46536afc, ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-56325270-20bb-4959-8498-e3223c35e24b, GitHub Issue #168, #172
+- 関連: [新規配置と張替えを先に、世代のコミットを最後に行う](placement-order-commit-last.md), [project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md), [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md), GitHub Issue #168, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0044 §2 を書き直した
 
 ## 背景
 
-undo ジャーナル（ADR-56325270-20bb-4959-8498-e3223c35e24b）は、途中失敗した run の FS 変更を
+undo ジャーナル（[途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md)）は、途中失敗した run の FS 変更を
 巻き戻す。どこで起きた失敗を巻き戻しの対象にし、どの時点でジャーナルを捨てるかを決める
 必要があった。世代のコミットは FS への反映が全て成功した後の唯一のコミット点である
-（ADR-74423bb8-1453-4689-a25e-30bf46536afc）。
+（[新規配置と張替えを先に、世代のコミットを最後に行う](placement-order-commit-last.md)）。
 
 ## 決定
 
 巻き戻しを発火させるのは、FS に反映する段（配置前除去・退避・配置・copy の反映・古くなった配置の除去）、
-世代スキップ時の drift 修復（ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d）、last-applied 記録の
+世代スキップ時の drift 修復（[project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md)）、last-applied 記録の
 書き込みで起きた失敗に限る。世代のコミットが成功したらジャーナルを捨てる。コミット自体が
 失敗したときは巻き戻さない。
 
-発火の範囲とジャーナルを捨てる時点の細目は REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 に、
-コミットの失敗で配置を巻き戻さないことの検証は TP-deb05610-44bc-4962-8939-952392e5fbd0 に置く。
+発火の範囲とジャーナルを捨てる時点の細目は [途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](../requirements/undo-journal-rollback.md) に、
+コミットの失敗で配置を巻き戻さないことの検証は [原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](../test-plan/fault-injection-atomicity.md) に置く。
 
 ## 根拠
 

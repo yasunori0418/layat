@@ -19,7 +19,7 @@ generated:
 ## リスク
 
 `reset` は配置物を無い状態へ戻す FS-only teardown で、copy target を消す唯一の明示手段
-でもある（→ REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6）。削除だけを行うコマンドであるぶん、誤りの影響は片方向にしか出ない。
+でもある（→ [reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す](../requirements/reset-fs-only-teardown.md)）。削除だけを行うコマンドであるぶん、誤りの影響は片方向にしか出ない。
 消し過ぎは不可逆で、消し足りないぶんは次の apply が再配置するので実害が無い。
 
 **除去範囲の逸脱** — symlink の除去は古くなった配置の除去と同じ保守的不変条件（layat 管理・前世代の
@@ -34,7 +34,7 @@ generated:
 **同意の条件の破れ** — 確認プロンプトの中断（no を選ぶ・非 TTY で `-y` が無い）が機能せず
 処理が進めば、ユーザーの同意なくデータが消える。
 
-このリスクは rollback の誤収束（RISK-fbf029f6-866c-4a08-a4eb-f09e3c7e907e）とは脅威が別で、あちらは「意図した状態へ
+このリスクは rollback の誤収束（[rollback が FS を前世代へ収束させ損ね、世代表示と実配置が食い違う](rollback-misconverges-fs.md)）とは脅威が別で、あちらは「意図した状態へ
 持っていけない」、こちらは「消してはいけないものを消す」。
 
 ## 実現性
@@ -46,6 +46,6 @@ generated:
 
 ## 緩和
 
-TC-06052178-ed49-4800-beb2-1d7c5d696ea8（reset の teardown 安全性）が緩和する。ただし覆えるのは engine 層まで
+[reset が保守的不変条件の範囲だけを消し、dryrun は副作用ゼロ、非同意では中断する](../test/generations/reset-teardown-safety.md)（reset の teardown 安全性）が緩和する。ただし覆えるのは engine 層まで
 （`Confirm` コールバックが false を返したときの中断）で、TTY 判定と `-y` / `--yes` の
 解釈は CLI 側の責務のため、同意の条件の残り半分は cli-json 区分の TC が担う。

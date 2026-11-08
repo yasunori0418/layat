@@ -37,13 +37,13 @@ profileDir 確定（= rootKind 先取り eval → root 解決）が前提にな�
 
 **本 item が非 build コマンド一般の eval 先行を規定する**。個々のコマンドが加える固有の
 前段（`reset` が entries 読みのため entrypoint eval も行うこと）は各コマンドの item が
-規定し、本 item では扱わない（→ REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4）。
+規定し、本 item では扱わない（→ [reset は名指し必須で profileDir 単位の blocking flock を取る](reset-named-only-and-flock.md)）。
 
-apply を含む実行フロー全体の順序規範は REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9、`--root` が全モードの解決 root を
-上書きすることは REQ-61c05e09-0bde-4f74-9a96-03185f9df606、上書き後の profileDir のキーイングは REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81 の担当。
+apply を含む実行フロー全体の順序規範は [実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](exec-flow-eval-lock-build.md)、`--root` が全モードの解決 root を
+上書きすることは [--root は全モード共通で解決 root を明示上書きする](root-override-flag.md)、上書き後の profileDir のキーイングは [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「実行フロー」の非 build コマンドの箇条書き。
 
-決定の実体は ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9「eval を先に行い、flock を取ってから build する」。
+決定の実体は [eval を先に行い、flock を取ってから build する](../adr/eval-first-then-flock-then-build.md)「eval を先に行い、flock を取ってから build する」。

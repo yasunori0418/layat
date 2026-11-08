@@ -28,7 +28,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e, ADR-f85f1afd-9b87-4f7a-922e-97c62554f198, ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-88231ffc-4836-4252-be34-894944fd28c3, ADR-86a77232-dc99-4c04-bd6d-2127410e8828, ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246, ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1, ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-955c2601-88fb-4be8-85de-ec7d0a8c727d, ADR-65b3439a-b90a-4056-b55a-522399bc71e6, ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d, ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3, ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, `docs/spec.md`
+- 関連: [project mode を第一の使い方とする](project-first.md), [root の明示を mkManifest 層で必須にする](root-explicit-at-mkmanifest.md), [root は 3 つの marker で表す](three-root-markers.md), [CLI が一次 UX で devShell に pin 版を同梱する](cli-primary-ux-devshell-pinned.md), [mkActivationScript で config ごとのラッパー derivation を提供する](mkactivationscript-wrapper.md), [内部コマンドの開示で透明性を保つ](internal-command-disclosure.md), [named manifest を専用の layat.<name> 名前空間に公開する](layat-name-namespace.md), [apply --all は config ごとの情報を 1 回の eval でまとめて取る](apply-all-single-eval.md), [shell.nix / default.nix の再現性は利用者の責任にする](shell-default-nix-best-effort.md), [apply の config は名前省略で default を選び、--all で全件を選ぶ](config-selection-default-and-all.md), [templates と layat init は固定 ref で導入する](templates-and-init-fixed-ref.md), [engine は cmd/ と internal/ に置きライブラリ化しない](engine-internal-cmd-layout.md), [copy と out-of-store の併用を eval 時に拒否する](copy-with-out-of-store-eval-error.md), `docs/spec.md`
 - 起点: 実装前のレビュー第 2 巡で詰めた残りの細目。ADR-0016 §4 を書き直した
 
 ## 背景
@@ -41,9 +41,9 @@ project mode では、devShell に pin した `layat` を同梱するので、CL
 
 home mode の版ずれは強制的には防がない。CLI と flake が pin する `layat` を同じ入力から揃えることを
 推奨として文書に書くに留める。ずれたときは、engine が manifest を読むときの確認に任せる。engine は対応版より
-新しい `schemaVersion` を拒否し、同じ版の中で知らない列挙値も拒否する（ADR-b5431ecf-fe60-4b29-86af-9857478ce663）。
+新しい `schemaVersion` を拒否し、同じ版の中で知らない列挙値も拒否する（[srcKind の列挙値は schemaVersion を上げずに足す](srckind-added-without-version-bump.md)）。
 
-推奨の規範は REQ-14f0aec9-abae-4621-82f3-40536a1ad904 に置く。
+推奨の規範は [layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする](../requirements/cli-primary-ux-installation.md) に置く。
 
 ## 根拠
 

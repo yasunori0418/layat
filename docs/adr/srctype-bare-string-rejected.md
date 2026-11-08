@@ -20,7 +20,7 @@ generated:
 
 ## 背景
 
-out-of-store の配置は、明示の関数が返す marker を渡したときだけ選べる（ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c）。`src` に文字列を
+out-of-store の配置は、明示の関数が返す marker を渡したときだけ選べる（[store link を既定にし、out-of-store は明示関数でのみ選ばせる](store-link-default-out-of-store-opt-in.md)）。`src` に文字列を
 直接渡すと暗黙に out-of-store になる形は提供しない。この取り決めを、文書だけでなく型でも守らせるか
 を決める必要があった。
 
@@ -32,8 +32,8 @@ out-of-store の配置は、明示の関数が返す marker を渡したとき�
 `src` の型は store 由来の値（path・derivation・`outPath` を持つ attrset）と marker だけを受け付け、
 素の文字列は評価時のエラーにする。path と set は型の上で分けない。
 
-`src` のフィールドの型は REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74 に、`src` が取る値の種別は
-REQ-99ca5381-6c53-426c-b145-7b4297c53868 に置く。
+`src` のフィールドの型は [entry submodule のフィールドは src / subpath / target / method の 4 つとする](../requirements/entry-submodule-fields.md) に、`src` が取る値の種別は
+[src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する](../requirements/src-kinds-store-default.md) に置く。
 
 ## 根拠
 

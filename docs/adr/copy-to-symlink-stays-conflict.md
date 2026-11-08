@@ -25,26 +25,26 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-c4ad9987-850e-4834-bbea-d8de3b073548, ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f, ADR-fc28d09c-9d52-4539-8838-e9ae5a414594, GitHub Issue #175, #172
+- 関連: [copy は世代の外に place-once で置く](copy-outside-generations-place-once.md), [--backup は配置を塞ぐ記録外の実体だけを退避する](backup-scope-unrecorded-entities.md), [method の symlink から copy への変更を自動で移行する](symlink-to-copy-migration.md), GitHub Issue #175, #172
 - 起点: epic #172 の grilling セッション（2026-07-12）で確定。ADR-0047 §2 の copy から symlink への変更を書き直した
 
 ## 背景
 
 method の symlink から copy への変更は自動で移行する
-（ADR-fc28d09c-9d52-4539-8838-e9ae5a414594）。逆向きの copy から symlink への変更でも、前世代が
+（[method の symlink から copy への変更を自動で移行する](symlink-to-copy-migration.md)）。逆向きの copy から symlink への変更でも、前世代が
 置いた copy が target を占めている。こちらも自動で移行するかを決める必要があった。
 
 ## 決定
 
 copy から symlink への変更は自動で移行せず、target に既存の実体があるとして conflict のまま
 にする。利用者が `--backup` を明示したときだけ、copy を退避して symlink を置ける
-（ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f）。
+（[--backup は配置を塞ぐ記録外の実体だけを退避する](backup-scope-unrecorded-entities.md)）。
 
-判定の規範は REQ-2b48620a-abaa-43df-a106-954bbba3de56 に置く。
+判定の規範は [method 変更は symlink→copy のみ配置前除去で移行し、copy→symlink は移行しない](../requirements/method-change-symlink-to-copy-migration.md) に置く。
 
 ## 根拠
 
-copy は place-once で置いた後は利用者が管理するもので（ADR-c4ad9987-850e-4834-bbea-d8de3b073548）、
+copy は place-once で置いた後は利用者が管理するもので（[copy は世代の外に place-once で置く](copy-outside-generations-place-once.md)）、
 編集されている可能性がある。symlink にするために利用者に知らせず消せば、利用者の編集を失う。
 
 向きによって扱いが違うのは、データを失う危険の非対称を映したものである。symlink はデータを

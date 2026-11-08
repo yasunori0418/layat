@@ -31,7 +31,7 @@ generated:
 ## 仕様
 
 `lib.mkManifest` は配置データを生成する**純粋関数**。返り値 derivation が何を含むかは
-REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281 が正で、本 item では規定しない。
+[mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](mkmanifest-return-value.md) が正で、本 item では規定しない。
 
 ```
 mkManifest :: { pkgs, entries, root, identity ? null } -> derivation

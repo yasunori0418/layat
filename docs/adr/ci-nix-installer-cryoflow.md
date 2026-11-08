@@ -27,7 +27,7 @@ CI の nix は `cachix/install-nix-action` で入れる。インストールと 
 （キャッシュ `yasunori0418`）の設定を composite action `.github/actions/setup-nix` にまとめ、
 nix を使う全ての workflow から再利用する。外部 action はコミット SHA で固定する。
 
-CI のジョブ構成は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 に置く。
+CI のジョブ構成は [CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](../infrastructure/ci-pipeline.md) に置く。
 
 ## 根拠
 

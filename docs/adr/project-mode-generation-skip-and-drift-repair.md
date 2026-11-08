@@ -27,8 +27,8 @@ target を書き換えたり消したりしていることはある。
 
 project mode では、新しい link farm が前回適用したものと同一なら新しい世代を積まない。その場合も
 各 entry の target を `lstat` で確認し、記録どおりでない entry（書き換えられたもの・消えたもの）
-だけを置き直す。同一かどうかの判定元は ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444、system mode への適用は ADR-5265f879-e623-44f9-9c58-8c14598e8b10 が定める。
-規範の細目は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 に置く。
+だけを置き直す。同一かどうかの判定元は [世代スキップには profile に加え記録の一致も要する](generation-skip-requires-both-match.md)、system mode への適用は [世代スキップを project mode と system mode で行う](generation-skip-project-and-system.md) が定める。
+規範の細目は [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](../requirements/project-mode-generation-skip.md) に置く。
 
 ## 根拠
 

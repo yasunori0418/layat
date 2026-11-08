@@ -40,12 +40,12 @@ farm は devShell の依存として先にビルドされる。
 - `manifests` は config 名 → link-farm の attrset。flake-parts なら `config.layat`、素の flake
   なら `self.layat.${system}` を渡す
 - `layatPackage` は引数で受ける。`lib` は nixpkgs.lib だけに依存するので、pin 版 CLI を
-  自分では参照しない（REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51）
-- config の選別は CLI の root フィルタ（REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b）だけが行う。
+  自分では参照しない（[lib は nixpkgs.lib のみに依存する純データ生成器である](lib-pure-data-generator.md)）
+- config の選別は CLI の root フィルタ（[--all は root モードフィルタで対象 config を絞れる](apply-all-root-mode-filter.md)）だけが行う。
   選ばれない root の farm もビルド依存に入る
 - 実行時フラグは呼び出し側が文字列の後ろに足す。HM / NixOS / nix-darwin モジュールは
   `root = "all"` で呼び、`--jobs` / `--recopy` / `--backup` を足す
 
 ## 出典
 
-ADR-db293e0c-4789-45b7-93a9-adedc021344f・ADR-ca24e802-cc57-40c5-ad03-a1c5f0b6e498・ADR-7f064851-02e3-40bf-aca3-9de2b0b4f6a7・ADR-bc334f0c-ac3b-44cf-8d0d-31034ef420ac。
+[lib.mkApplyCommand で事前展開した apply コマンドを組む](../adr/lib-mkapplycommand.md)・[mkApplyCommand の root を既定値のない必須の enum にする](../adr/mkapplycommand-root-required-enum.md)・[config の選別を CLI だけに任せる](../adr/config-selection-left-to-cli.md)・[mkApplyCommand は実行時フラグを引数に取らない](../adr/mkapplycommand-no-runtime-flags.md)。

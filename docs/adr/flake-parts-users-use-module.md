@@ -20,12 +20,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-e6820da0-fce3-4aef-8b79-d53abbca6051, GitHub Issue #26
+- 関連: [layat output の flake-parts module を flakeModules.default で公開する](flake-parts-module-published.md), GitHub Issue #26
 - 起点: Issue #26。ADR-0029 §6a と ADR-0029 §6b を書き直した
 
 ## 背景
 
-flake-parts module（ADR-e6820da0-fce3-4aef-8b79-d53abbca6051）を公開すると、named manifest を
+flake-parts module（[layat output の flake-parts module を flakeModules.default で公開する](flake-parts-module-published.md)）を公開すると、named manifest を
 公開する書き方が 2 つになる。`perSystem.layat.<name>` に書く module 経由と、
 `outputs.layat.<system>.<name>` に `mkManifest` の結果を直書きする形である。どちらも CLI からは
 `nix build .#layat.<system>.<name>` で同じように見える。
@@ -36,7 +36,7 @@ flake-parts を使う repo では module 経由を正準にする。直書きは
 `shell.nix` / `default.nix` での正準として残す。`layat init` が展開するテンプレートは plain flake
 のまま変えず、module 経由は既に flake-parts を使っている repo 向けの導線にとどめる。
 
-両形の関係と CLI のアドレッシングの規範は REQ-c50df875-2cb0-4e72-8a21-858359a11cae に置く。
+両形の関係と CLI のアドレッシングの規範は [flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない](../requirements/flake-parts-module-path.md) に置く。
 
 ## 根拠
 

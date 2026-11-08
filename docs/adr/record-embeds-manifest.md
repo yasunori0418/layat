@@ -27,7 +27,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-d97154cd-a2e5-4853-a682-800ff9435c89, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93, GitHub Issue #580, #406
+- 関連: [project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md), [rollback は FS を収束させてからポインタを動かす](rollback-baseline-and-pointer-last.md), [1 config = 1 profile を全モードで自前に持つ](one-config-one-profile-all-modes.md), [古くなった配置の除去は manifest の差分で行う](stale-removal-by-manifest-diff.md), GitHub Issue #580, #406
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §2a を書き直した
 
 ## 背景
@@ -40,8 +40,8 @@ rollback ができなくなった。記録を持つなら、この問題を避�
 
 last-applied 記録は、配置した manifest を参照ではなく内容ごと埋め込む。あわせて、その manifest
 を組んだ link-farm の store パス（`linkFarm`）と、記録した時刻（`appliedAt`）を持つ。
-フィールドの一覧と版は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 と
-DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5 に置く。
+フィールドの一覧と版は [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](../requirements/last-applied-record.md) と
+[last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](../design/last-applied-record-layout.md) に置く。
 
 ## 根拠
 

@@ -15,7 +15,7 @@ generated:
 
 ## 設計
 
-`layat prune` を 3 層に分ける。既存コマンドと同じ層境界（→ DSG-7d354fe0-a333-495b-9f4b-14bba316dc47）に
+`layat prune` を 3 層に分ける。既存コマンドと同じ層境界（→ [Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする](go-package-split.md)）に
 乗せ、prune 専用の縦割りを作らない。
 
 ```
@@ -29,7 +29,7 @@ cmd/layat/          ← TTY 判定・--yes・--json の解釈と、確認プロ�
 （`ListRootHashSeries`）と backref 読み取り（`ReadBackref`）をここへ置くと、レイアウトの知識が
 1 箇所に留まる。この 2 関数は prune 専用ではなく、`layat status`（→ #198）が同じ列挙を使う。
 
-この配置は `internal/paths` の性格を変える。TP-e7c25263-6d2d-4a37-8275-26906889d912 は同
+この配置は `internal/paths` の性格を変える。[エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../test-plan/go-test-layering.md) は同
 パッケージを「FS に一切触れずに判断する層」（state ディレクトリ・世代パスの解決・root の
 ハッシュ化）として名指しし、入力が列挙可能だから table-driven のユニットで覆えと規範化して
 いるが、`ListRootHashSeries` はディレクトリを走査し `ReadBackref` はファイルを読む。**この
@@ -39,7 +39,7 @@ table で覆い、新設 2 関数は tmpdir を張った実 FS の統合レベ�
 定める主戦力と同じ層）。
 
 `internal/planner` は同じ問題を FS の注入（`FS` interface + fake）で解いており
-（→ DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68）、こちらはそれを採らない。planner が読むのは
+（→ [配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する](planner-engine-split.md)）、こちらはそれを採らない。planner が読むのは
 「この 1 パスが symlink か・リンク先が記録どおりか」という個別の問い合わせで fake に置き換えて
 も検証対象が残るのに対し、`ListRootHashSeries` が検証したいのは **`Base` 直下に実際に並んだ
 レイアウトそのもの**（`.root` を持つ dir と持たない dir が混在した木を正しく振り分けられるか）
@@ -47,7 +47,7 @@ table で覆い、新設 2 関数は tmpdir を張った実 FS の統合レベ�
 列挙は実 FS の tmpdir で覆う。
 
 **`internal/engine`** が root の実在判定・lock・削除を持つ。FS 意味論の実行は engine の担当で
-（→ DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68）、prune もその例外にしない。
+（→ [配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する](planner-engine-split.md)）、prune もその例外にしない。
 
 **`cmd/layat`** は TTY 判定と `--yes` / `--json` の解釈だけを持つ。engine が見るのは `Confirm`
 コールバックの戻り値までで、同意をどう取ったかは知らない（`reset` と同じ分担）。
@@ -77,8 +77,8 @@ preview** である点。`Reset` は `res` 自身をコールバックへ渡す�
 `Name` / `RootKind` / `WorkDir` / `Git` を持たず、入力が走査基底の 2 つだけになる。entrypoint
 発見も nix eval / build も行わない。
 
-**基底を 2 つ受けるのは REQ-c44433a1-7ee7-459a-9aae-7cc42166876f が走査対象に system 基底を
-含めるため**（→ ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e）。`SystemDir` を定数の直書きにせずフィールドで受けるのは、
+**基底を 2 つ受けるのは [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](../requirements/prune-target-selection.md) が走査対象に system 基底を
+含めるため**（→ [prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md)）。`SystemDir` を定数の直書きにせずフィールドで受けるのは、
 tmpdir に張った偽の system 基底を差し込めないとテストが実 `/nix/var/nix/profiles/` を触ることに
 なるため。**CLI は環境変数 `LAYAT_SYSTEM_PROFILE_BASE` があればその値を、無ければ既定値を渡す。**
 この環境変数は prune 専用ではなく、CLI が 1 か所で読み、system 基底を扱う全コマンド（apply /
@@ -97,7 +97,7 @@ env の口を持つのは Go のユニットだけでなく **E2E も隔離を�
 2 つのフィールドは**指す階層が違う**。`StateDir` は `<state>` で、engine が `paths.Base()` を
 通して基底 `<state>/nix/profiles/layat` を得る（既存コマンドが `paths.StateDir()` の結果を渡す
 のと同じ値）。`SystemDir` は `paths.Base()` を通さない完成した基底そのもので、system mode の
-profile 基底が `nix/profiles/layat` を挟まないレイアウトだから（→ ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203）。取り違えると
+profile 基底が `nix/profiles/layat` を挟まないレイアウトだから（→ [profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)）。取り違えると
 `/nix/var/nix/profiles/layat/nix/profiles/layat` を走査することになるので、フィールドのコメントで
 区別を明示する。
 
@@ -110,7 +110,7 @@ profile 基底が `nix/profiles/layat` を挟まないレイアウトだから�
 一方、**基底が存在するのに読めない**（権限等で `ReadDir` が失敗する）ときは、`Warnf` でその基底を
 名指しして報告し、もう一方の基底の処理は続ける。系列単位の `Skipped` には載せない（どの系列が
 あったのか分からないので載せようがない）。この区別が無いと、非 root 実行で system 基底が読めない
-状況が「孤児 0 件で正常終了」と見分けられなくなる（→ RISK-f522a51b-db4b-4164-bd20-63fa4a0cb27d）。
+状況が「孤児 0 件で正常終了」と見分けられなくなる（→ [prune が生存系列や判定不能な系列を孤児と読み、不可逆に削除する](../risks/prune-misjudges-live-series.md)）。
 
 `DryRun` は列挙と判定だけを行い、lock も取らず FS を変えない。`Confirm` は非 nil のときだけ
 呼ばれ、削除直前に**判定済みの preview**（前掲のとおり戻り値とは別値）を渡す。root パス一覧が
@@ -139,7 +139,7 @@ type PruneSkipped struct {
 }
 ```
 
-`PruneSeries` の `RootHash` / `Root` / `Names` は、REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed が
+`PruneSeries` の `RootHash` / `Root` / `Names` は、[prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](../requirements/prune-safety-gates.md) が
 `--dryrun` の出力項目として挙げる `<roothash>` / root パス / 配下 `<name>` 一覧と 1:1 で対応する。
 `Confirm` に渡す `PruneResult` にも同じものが入るので、CLI は削除前の root パス一覧をこの `Root`
 から組み立てる。
@@ -151,7 +151,7 @@ type PruneSkipped struct {
 
 `PruneSkipReason` は `"locked"` / `"backref-unreadable"` / `"series-unreadable"` /
 `"root-stat-failed"` / `"permission-denied"` の 5 値。判定材料が欠けた系列と、削除する権限が
-無い系列は、利用者に知らせずに落とすことはせず、理由付きで返す（→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f の
+無い系列は、利用者に知らせずに落とすことはせず、理由付きで返す（→ [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](../requirements/prune-target-selection.md) の
 「安全側へ倒す」）。root が実在していて対象外になった系列は失敗ではないので `Skipped` に
 入れない。
 
@@ -164,14 +164,14 @@ nil であることは「`<name>` を持たない系列」と見分けが付か�
 
 **`Skipped` に入る全ケースで `Warnf` を呼ぶ。** 5 値のいずれであっても、系列を残した理由は
 warning として出す。`Skipped` に構造化して返すのは CLI がまとめて扱うためで、`locked` だけ
-warning・判定不能系は黙殺、という不揃いは REQ-c44433a1-7ee7-459a-9aae-7cc42166876f の
+warning・判定不能系は黙殺、という不揃いは [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](../requirements/prune-target-selection.md) の
 「その理由を warning として報告しなければならない」に反する。
 
 **skip できるのは「何も消えていない × 権限」だけ。** 削除は `<name>` 単位のループなので、失敗は
 系列の途中でも起きる。**そこまでに何か消えたか**と**理由が権限か**の 2 軸で 4 通りあり、
 `Skipped` へ倒せるのはその 1 つだけ。上位の規範は 2 件に分かれていて、着手前の権限失敗を
-「残す」側に入れるのが REQ-c44433a1-7ee7-459a-9aae-7cc42166876f、着手後の失敗をエラーとして
-報告するのが REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed。本節はその境目を実装の分岐へ落とす。
+「残す」側に入れるのが [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](../requirements/prune-target-selection.md)、着手後の失敗をエラーとして
+報告するのが [prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](../requirements/prune-safety-gates.md)。本節はその境目を実装の分岐へ落とす。
 
 | | 権限（`fs.ErrPermission`）| 権限以外（EBUSY・read-only FS・I/O）|
 |---|---|---|
@@ -183,14 +183,14 @@ warning・判定不能系は黙殺、という不揃いは REQ-c44433a1-7ee7-459
 落とす手が無い（ENOTDIR / ENOTEMPTY はいずれも `.root` 削除後にしか現れず、`.root` を非空
 ディレクトリにする案は `ReadBackref` が先に失敗して `backref-unreadable` になる）。実装へフォールト
 注入の差し替え点を足す選択は採らないので、このセルは規範として残しつつ検証は
-TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9 が定める代替（非権限の失敗が `permission-denied` へ
+[prune の dryrun が副作用ゼロで、非同意は中断し、lock 中の系列は skip され、削除段の失敗は進捗と理由で振り分けられる](../test/generations/prune-safety-gates.md) が定める代替（非権限の失敗が `permission-denied` へ
 丸められないことと、権限側の 2 セルの対）で担保する。
 
 - **何も消えていない × 権限** — その系列はまだ手付かずで、かつ「消せない環境で実行された」だけ
   なので `Skipped` へ倒し、他の基底・他の系列の削除は続ける
-  （→ ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e「prune は system 基底も走査し、権限の無い系列を見送る」）。
+  （→ [prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md)「prune は system 基底も走査し、権限の無い系列を見送る」）。
   非 root で system 基底の孤児系列を消そうとすれば最初の `RemoveAll` が `fs.ErrPermission` で
-  落ちるので、ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e が想定する状況はここに当てはまる
+  落ちるので、[prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md) が想定する状況はここに当てはまる
 - **何も消えていない × 権限以外** — 手付かずではあるが、権限を上げれば消えるとは限らない
   （read-only FS はそもそも消せない）。`permission-denied` へ丸めると「権限を直せば消える」と
   読める誤った案内になるので、エラーで返す。`Skipped` に受け皿となる理由を足さないのは、
@@ -213,7 +213,7 @@ lock を取る理由（後述）と同じ考え方に立つ。実装が持つの
 拾える。
 
 **フィールド名に `Pruned` を使わない。** `Result.Pruned` が既に「除去後に rmdir した空祖先
-ディレクトリ」の意味で埋まっており（→ REQ-8409db86-a1ba-4053-86dc-588985cc1ca7）、prune の
+ディレクトリ」の意味で埋まっており（→ [target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する](../requirements/empty-parent-dir-pruning.md)）、prune の
 削除系列を同じ語で呼ぶと同じ構造体群の中で 2 つの意味が衝突する。削除した系列は `Removed`。
 
 ### root の判定条件は 1 つだけ
@@ -265,6 +265,6 @@ profileDir 単位 → `internal/lock`）。
 ### この設計が引き受ける代償
 
 判定ロジックが新規で、既存の配置系の条件（planner の分類・古くなった配置の除去の保守的不変条件）の
-どれにも乗らない（→ RISK-f522a51b-db4b-4164-bd20-63fa4a0cb27d）。安全機構の側は `reset` の
+どれにも乗らない（→ [prune が生存系列や判定不能な系列を孤児と読み、不可逆に削除する](../risks/prune-misjudges-live-series.md)）。安全機構の側は `reset` の
 確認・dryrun の処理と同型にすることで既存のテストと規律に乗せているが、乗り切らない分は
-残る（→ RISK-0909e121-8ec4-40c8-ab1c-562e61f31067）。
+残る（→ [prune の dryrun・確認・lock の安全機構が働かず、同意なく削除が実行される](../risks/prune-safety-gate-bypass.md)）。

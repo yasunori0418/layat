@@ -62,13 +62,13 @@ manifest を合成するヘルパは持たない（1 profile = 1 config の atom
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する次の点は本 item の
 > 規範ではない。
 >
-> - legacy entrypoint の addressing がフラットな `layat.<name>` になること → REQ-496b1a07-5b74-416b-9e5f-3952b4c03737
-> - `apply --all` の一括 eval そのもの → REQ-535b811d-dfc5-4eac-92db-737e70eb5415
-> - 1 profile = 1 config の atomic 性（→ ADR-fe035038-4415-4a1e-aa5c-509fdfce9955）→ REQ-1be4d678-959c-44d7-a346-44bfd95af56e
+> - legacy entrypoint の addressing がフラットな `layat.<name>` になること → [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](named-manifest-addressing.md)
+> - `apply --all` の一括 eval そのもの → [apply --all は rootKind を 1 回の一括 eval で取る](apply-all-batched-eval.md)
+> - 1 profile = 1 config の atomic 性（→ [1 config = 1 profile を全モードで自前に持つ](../adr/one-config-one-profile-all-modes.md)）→ [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](generation-mechanism-link-farm-manifest.md)
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「アドレッシング」の blockquote「legacy entrypoint の
 canonical 形」。
 
-決定の実体は ADR-925b0011-e2a2-43ac-a5d3-5e4a10f52470・ADR-08a6e1be-e424-4cfe-a529-e123a50cd6ca・ADR-c973a6e3-b6d9-45d3-b237-83fb1b361b22。
+決定の実体は [legacy entrypoint は mkShell の passthru 形を正準にする](../adr/legacy-entrypoint-mkshell-passthru-canonical.md)・[CLI が評価する attr path を legacy entrypoint の書き方で分岐させない](../adr/attr-path-independent-of-entrypoint-shape.md)・[複数の manifest を inputsFrom で合成するヘルパを持たない](../adr/no-inputsfrom-manifest-composition-helper.md)。

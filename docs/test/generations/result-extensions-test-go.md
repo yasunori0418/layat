@@ -21,7 +21,7 @@ issue #130 が outturn envelope（#131 / #132 が共有）のために足した 
 `Fake` は実バックエンドと同じ profileDir の構造（兄弟の `<profile>-<N>-link` と相対の
 profile リンク）を symlink だけで作るため、世代番号を読み戻せる。manifest は原則 `rootKind=fixed`（root を明示的に渡し git に依存
 しない）で、rollback 系のみ home mode + `--root` 上書き（rollback が home / system 限定であるため
-→ REQ-05abce3e-9797-432b-b93f-37c55d09afde）。
+→ [rollback と list-generations は home / system mode 限定にする](../../requirements/rollback-list-generations-home-only.md)）。
 
 ## 検証内容
 
@@ -39,7 +39,7 @@ profile リンク）を symlink だけで作るため、世代番号を読み戻
   entry も、`materializeCopies` 到達前に失敗した run では `Unreached` に載る
   （recopy の実行対象は plan ではなく manifest であるため）
 - **commit 失敗の形** — インベントリは埋まり、到達状態フィールドは空（entry スコープの
-  失敗ではない）、`Unwound` は false（→ ADR-f29d1256-5e14-4b83-ac77-4717b2210193）、世代は nil のまま。配置済み
+  失敗ではない）、`Unwound` は false（→ [undo の発火を FS 反映の段に限り、世代コミットの後は対象にしない](../../adr/undo-scope-ends-at-commit.md)）、世代は nil のまま。配置済み
   symlink は残る
 - **conflict / 部分失敗の部分結果** — apply の conflict、reset の部分失敗、rollback の
   conflict のいずれも部分の結果を返す。`Apply` は張替えた dest と除去 entry も記録する

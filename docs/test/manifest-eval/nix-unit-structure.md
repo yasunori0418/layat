@@ -14,7 +14,7 @@ generated:
 
 ## 対象
 
-`tests/nix-unit/structure.nix`（`tests/nix-unit.nix` のディレクトリ列挙で自動搭載。TP-36e90d5d-4524-4294-bc72-ee263bb02782
+`tests/nix-unit/structure.nix`（`tests/nix-unit.nix` のディレクトリ列挙で自動搭載。[評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](../../test-plan/nix-unit-namaka-split.md)
 が定めるとおり、テスト名はファイル横断で一意でなければならない）
 
 ## 検証内容
@@ -31,19 +31,19 @@ generated:
   変換され、`method` は既定の `"symlink"`
 - out-of-store entry に判別タグ `_layatMarker` が残っていないことを単独でも明示アサート
 - `mkManifest` の passthru `targets` が正規化後 target を属性キーの辞書順で返し、明示 `target`
-  上書きが値に反映されること（fake pkgs で passthru だけを純評価で取り出す。→ ADR-7f4fd2f6-672d-4d8c-a881-31024ad1d7c3）
+  上書きが値に反映されること（fake pkgs で passthru だけを純評価で取り出す。→ [config 間の target 衝突は CLI が判定し engine に持ち込まない](../../adr/cross-config-conflict-judged-by-cli.md)）
 - `identity` を与えなければトップレベルに `identity` キーが無く、与えればその値が載り、
   空文字では `builtins.tryEval` が失敗する
 
 本 CASE が検証する root 種別は project と system の `rootKind` で、文書の形の不変条件は project root で
-見る（→ TC-4e7cfae7-72bc-4af6-a1f5-1ead7db564b1）。system の `rootKind` 変換は TC-4e7cfae7-72bc-4af6-a1f5-1ead7db564b1 の適用範囲外で、
+見る（→ [manifest 文書の形（schemaVersion / root / entry 5 フィールド）を不変条件としてアサートする](manifest-shape-invariants.md)）。system の `rootKind` 変換は [manifest 文書の形（schemaVersion / root / entry 5 フィールド）を不変条件としてアサートする](manifest-shape-invariants.md) の適用範囲外で、
 これを受ける TC はまだ無い。fixed root の絶対パス併記と
-`homeRoot` marker の評価層での扱いは CASE-823a65c6-e9d2-404f-99ed-85d09376afea（→ TC-f9e927d0-8e10-4b8e-9870-5b5486949af6）、HM 統合での
+`homeRoot` marker の評価層での扱いは [nix-unit: fixed-root.nix — fixed root の絶対パス併記](nix-unit-fixed-root.md)（→ [fixed root で rootKind が fixed になり絶対パスを併記する（home marker が倒れないことを含む）](fixed-root-absolute-path.md)）、HM 統合での
 `homeRoot` は `checks.hm-module`（`integration` 区分）が担当する。
-配置元は TP-d3d06fe4-6940-4df8-b111-bb4096d5444f の fake flake-input double イディオムに従う。
+配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) の fake flake-input double イディオムに従う。
 
 ## 出典
 
 `tests/nix-unit/structure.nix` の現行実装からの逆算（→ Issue #273「L1〜L4」節）。manifest
-構造の設計判断は ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd / ADR-83a1275b-85bb-4918-8d21-8db9ab18a58c /
-ADR-1848079b-7011-4653-b7cd-c279205262c4 が持つ。
+構造の設計判断は [manifest.json を schemaVersion 1 の唯一の契約として固定する](../../adr/manifest-json-contract-schemaversion-v1.md) / [manifest.json へ marker を clean enum で写す](../../adr/wire-format-clean-enum.md) /
+[manifest.json の entry は target を識別子にして name を持たない](../../adr/manifest-entry-identity-is-target.md) が持つ。

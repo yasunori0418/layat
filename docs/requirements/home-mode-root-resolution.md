@@ -30,22 +30,22 @@ generated:
 | standalone | `$HOME`（実行時のシェル環境変数）| OS 問わず動作 |
 | home-manager | `$HOME`（HM が内部解決・モジュールが `homeRoot` を pin）| OS 問わず動作 |
 
-> **上は原文の写しを ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c に合わせて改めたもので、規範は frontmatter が正**。`homeRoot` が marker であり `kind` を運ぶこと
-> （実体パス解決は engine の実行時責務）は REQ-3f541d39-da41-4ef8-858b-707f54cf6a29 / REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66、`--root` による全モード
-> 共通の上書きは REQ-61c05e09-0bde-4f74-9a96-03185f9df606、
-> home mode の profileDir キーは REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81 の担当。**モジュールが `homeRoot` を pin する
-> こと自体は REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 の担当**で、本 item の規範に現れる「モジュールが `homeRoot` を
+> **上は原文の写しを [NixOS / nix-darwin モジュールは root を systemRoot に固定する](../adr/system-modules-pin-systemroot.md) に合わせて改めたもので、規範は frontmatter が正**。`homeRoot` が marker であり `kind` を運ぶこと
+> （実体パス解決は engine の実行時責務）は [root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) / [root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md)、`--root` による全モード
+> 共通の上書きは [--root は全モード共通で解決 root を明示上書きする](root-override-flag.md)、
+> home mode の profileDir キーは [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md) の担当。**モジュールが `homeRoot` を pin する
+> こと自体は [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md) の担当**で、本 item の規範に現れる「モジュールが `homeRoot` を
 > pin する」は、HM の `$HOME` が standalone の `$HOME` とは供給の処理が異なる（HM が内部
 > 解決する）ことを説明する従属節であり、pin そのものを規範化するものではない。
 >
 > 原文の表にあった NixOS / nix-darwin 行（`config.users.users.${cfg.user}.home`）は規範に採らない。
-> 両モジュールは home mode の root を供給せず `systemRoot` を pin する（→ ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c・
-> REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10）。
+> 両モジュールは home mode の root を供給せず `systemRoot` を pin する（→ [NixOS / nix-darwin モジュールは root を systemRoot に固定する](../adr/system-modules-pin-systemroot.md)・
+> [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)）。
 
 ## 出典
 
 `docs/spec.md`「root の解決」→「home mode（`root = homeRoot`）」節の表。
 
 決定の実体は root を 3 マーカーへ昇格し `$HOME` を `homeRoot` としたうえで各層が root を
-供給すると定めた ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed「root は 3 つの marker で表す」と、各層を配線に徹させ root と activation タイミングだけを供給させる
-ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880。
+供給すると定めた [root は 3 つの marker で表す](../adr/three-root-markers.md)「root は 3 つの marker で表す」と、各層を配線に徹させ root と activation タイミングだけを供給させる
+[モジュールは root と起動の時機だけを供給して engine を起動する](../adr/modules-wire-engine-kick-only.md)。

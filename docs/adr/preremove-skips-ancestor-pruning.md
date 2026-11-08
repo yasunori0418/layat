@@ -23,13 +23,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b, GitHub Issue #175, #172
+- 関連: [配置前除去を planner が計算するデータとして表す](preremove-as-planner-data.md), GitHub Issue #175, #172
 - 起点: epic #172 の grilling セッション（2026-07-12）で確定。ADR-0047 §5 を書き直した
 
 ## 背景
 
 layat は target を除去した後、空になった親ディレクトリを root の手前まで剪定する。配置前除去
-（ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b）も target を除去するので、この剪定を呼ぶかを
+（[配置前除去を planner が計算するデータとして表す](preremove-as-planner-data.md)）も target を除去するので、この剪定を呼ぶかを
 決める必要があった。
 
 ## 決定
@@ -37,7 +37,7 @@ layat は target を除去した後、空になった親ディレクトリを ro
 配置前除去は、unlink と rmdir のどちらが成功しても空の祖先ディレクトリの剪定を呼ばない。
 剪定は最終段の除去（古くなった配置の除去・`reset`）に限る。
 
-剪定の適用範囲は REQ-8409db86-a1ba-4053-86dc-588985cc1ca7 に置く。
+剪定の適用範囲は [target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する](../requirements/empty-parent-dir-pruning.md) に置く。
 
 ## 根拠
 

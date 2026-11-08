@@ -69,17 +69,17 @@ subpath がファイルの場合:
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する次の規範は本 item の
 > 担当ではない。
 >
-> - コピー時の mode 保存 + owner-write 付与 → REQ-84e3c717-adf5-4ff3-b0db-d039b82ef19c
-> - src ツリー内 symlink の複製 → REQ-0bd55dfc-b28c-4ad2-ad50-bb1f76b2246c
-> - foreign 実ファイルの skip を warning で可視化すること → REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7
-> - `--backup` 有効時に構造不一致が退避 + 配置へ変わること → REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b / REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98
-> - `apply --recopy` の契約 → REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065、`reset` の契約 → REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6
-> - method の値が copy であることの意味と世代管理の有無 → REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe
-> - `rollback` の段構成（copy 反映段を含む 4 段）そのもの → REQ-0e341430-17f0-498b-9439-65491652163a
+> - コピー時の mode 保存 + owner-write 付与 → [copy は元の mode を保存しつつ owner-write を付与する](copy-mode-owner-write.md)
+> - src ツリー内 symlink の複製 → [copy は src ツリー内の symlink を deref せず symlink のまま複製する](copy-preserves-inner-symlinks.md)
+> - foreign 実ファイルの skip を warning で可視化すること → [copy が foreign 実ファイルを skip したときは warning で可視化する](copy-foreign-skip-warning.md)
+> - `--backup` 有効時に構造不一致が退避 + 配置へ変わること → [apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md) / [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](backup-stage-position.md)
+> - `apply --recopy` の契約 → [apply --recopy は config 内の全 copy target を src から無条件に上書き再コピーする](apply-recopy.md)、`reset` の契約 → [reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す](reset-fs-only-teardown.md)
+> - method の値が copy であることの意味と世代管理の有無 → [method は配置方法を選び symlink は世代管理下・copy は世代管理外になる](method-src-matrix.md)
+> - `rollback` の段構成（copy 反映段を含む 4 段）そのもの → [rollback は FS を先に収束させてから profile ポインタを最後に移す](rollback-refit-then-pointer.md)
 
 ## 出典
 
 `docs/spec.md`「配置動作仕様」→「copy モード（place-once・ユーザー管理）」節のコードブロックと、
 箇条書き第 2・3・6 項。
 
-決定の実体は ADR-fb01d942-2875-4dcb-a7df-879e18f63883「apply --recopy で全 copy target を src から無条件に上書きする」で、place-once そのものは ADR-c4ad9987-850e-4834-bbea-d8de3b073548 が定めている。
+決定の実体は [apply --recopy で全 copy target を src から無条件に上書きする](../adr/apply-recopy-overwrites-copies.md)「apply --recopy で全 copy target を src から無条件に上書きする」で、place-once そのものは [copy は世代の外に place-once で置く](../adr/copy-outside-generations-place-once.md) が定めている。

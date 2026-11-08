@@ -28,11 +28,11 @@ generated:
 | `entries = {}`（空 manifest）| 正当な全クリア。前世代の全 layat symlink を保守的 stale 除去し新世代は空（警告なし）|
 
 > **上は原文の写しで、規範は frontmatter が正**。古くなった配置の保守的な除去の不変条件そのもの
-> （何を消し何を消さないか）は REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2、copy が古くなった配置の除去で消えず孤児の警告に
+> （何を消し何を消さないか）は [古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](stale-removal-invariants.md)、copy が古くなった配置の除去で消えず孤児の警告に
 > なることも同 item の担当。
 
 ## 出典
 
 `docs/spec.md`「エラー仕様」節の表の `entries = {}` 行。
 
-決定の実体は ADR-5fc58c8f-dc0e-4c1d-8c1e-17d7ac7f0385「空の entries を正当な全クリアとして許可する」で、空 entries をエラーにせず全クリアとして受理することを定めている。
+決定の実体は [空の entries を正当な全クリアとして許可する](../adr/empty-entries-allowed.md)「空の entries を正当な全クリアとして許可する」で、空 entries をエラーにせず全クリアとして受理することを定めている。

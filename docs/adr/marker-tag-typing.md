@@ -28,7 +28,7 @@ attrset なので、そのままでは型の確認で区別できない。
 marker に判別タグ `_layatMarker` を持たせ、独自の optionType の `check` でタグを見て marker と
 derivation を見分ける。
 
-規範は REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7 に置く。
+規範は [marker は判別タグで識別し manifest.json には漏らさない](../requirements/marker-tag-discrimination.md) に置く。
 
 ## 根拠
 

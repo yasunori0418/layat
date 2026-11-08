@@ -24,16 +24,16 @@ symlink だけを保守的に消すという**アルゴリズムの骨格**で�
 
 この選択が実現手段になっているのは次の点。
 
-- **REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 が全モジュールに「engine をキックするだけ」を課している**以上、
+- **[全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md) が全モジュールに「engine をキックするだけ」を課している**以上、
   home-manager の機構へ委譲する選択肢は最初から取れない。委譲すれば HM の使い方だけ
   振る舞いが HM 由来になり、CLI 単体 / devShell と二重化する。したがって
   自前実装が前提になり、残る判断は「アルゴリズムをゼロから設計するか、既に
   実運用で枯れた設計を範とするか」になる
-- **REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2 が要求する、古くなった配置を保守的に除去するときの不変条件**（前世代の記録通りを指す
+- **[古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](../requirements/stale-removal-invariants.md) が要求する、古くなった配置を保守的に除去するときの不変条件**（前世代の記録通りを指す
   symlink のみ消し、通常ファイル・非管理 link・copy target には触れない）は、
   まさに home-manager の cleanup が長年扱ってきた問題で、範とする価値がある部分に
   当たる
-- **REQ-1be4d678-959c-44d7-a346-44bfd95af56e が定める「前世代マニフェストとの diff → 配置 → コミット」という
+- **[世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](../requirements/generation-mechanism-link-farm-manifest.md) が定める「前世代マニフェストとの diff → 配置 → コミット」という
   順序**も同じ骨格に載る。layat 固有なのは、前世代の出所を layat 自身の profile に
   統一する点（ホストの `oldGenPath` に依存しない）
 

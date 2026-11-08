@@ -40,12 +40,12 @@ CI と自動化は、このリポジトリの変更なしに振る舞いが変�
 誤ったものを出すより失敗させる方が、事後の調査も回復も容易になる。
 
 **本 item が縛るのはこのリポジトリの CI 実行環境であり、layat が提供する CLI ではない。**
-製品側にも依存の固定（REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0）と不正入力での早期失敗（REQ-774cef80-2872-4ea1-937b-a0fbabc305a9）の規範があるが、
+製品側にも依存の固定（[CLI が持ち込む依存は許可した第三者ライブラリと pin した Go に限り、いずれも固定する](../requirements/cli-dependency-policy.md)）と不正入力での早期失敗（[要求された操作が成立しないときは CLI がエラーで停止し、暗黙のフォールバックを採らない](../requirements/cli-stop-conditions.md)）の規範があるが、
 それらは利用者が触れる振る舞いを縛るもので、系統が異なる。固定の方式・権限の具体値・検証の
 実装形は本 item の規範に含めない。規範は横断で立て、実現手段は workflow ごとの
 infrastructure item が分担する。CI パイプラインが参照する外部 action の固定は
-INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 が、リリース系 2 workflow（`bump-version.yml` / `release.yml`）の権限配分と
-入力検証は INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43 が持つ。
+[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](../infrastructure/ci-pipeline.md) が、リリース系 2 workflow（`bump-version.yml` / `release.yml`）の権限配分と
+入力検証は [リリース自動化（VERSION ファイル起点の bump PR・自動タグ・自動リリースノート）](../infrastructure/release-automation.md) が持つ。
 
 規範は全 workflow を縛るので、現状は次の 2 点が未充足として残る。いずれも
 `.github/workflows/` 側の変更を伴うため、item を張り替えるだけでは解消しない。
@@ -58,5 +58,5 @@ INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 が、リリース系 2 workflow（`bum
 
 `.github/workflows/` の各 workflow が実運用してきた規範（外部 action の SHA ピンと版名注記の
 併記・workflow ごとに絞った `permissions`・`bump-version.yml` と `release.yml` のバージョン
-入力検証）を、ADR-2fcf26b4-bce6-4ed6-a374-3afe560ead21 のリリース自動化の決定とあわせて、Issue #272 で quality item として
+入力検証）を、[VERSION の変更をきっかけに release を自動で作る](../adr/release-on-version-change.md) のリリース自動化の決定とあわせて、Issue #272 で quality item として
 立てたもの。

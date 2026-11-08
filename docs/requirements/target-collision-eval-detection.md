@@ -45,15 +45,15 @@ cross-config（別 profile・別 manifest）の同一 target 衝突は eval で�
 
 > **上は原文の写しで、規範は frontmatter が正**。原文が「cross-config」を無条件に「eval では
 > 検出不可」とするのに対し、規範文では**単一の eval に載らない場合**（別 entrypoint・別マシン・
-> 別ツール）へ限定した。**旧決定（ADR-1338a293-3f69-48f5-9164-efb4ec6994d6 で改訂）が、1 つのモジュール config 内の `layat.configs.<A>` と
+> 別ツール）へ限定した。**旧決定（[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md) で改訂）が、1 つのモジュール config 内の `layat.configs.<A>` と
 > `<B>` は全 config が同一のモジュール eval に載るため正規化後 target の衝突を静的に検出でき、
 > eval 時 assertion で停止すると決定済み**で、原文の無条件な言い切りはこれを否定してしまう
-> （原文が旧決定に未追従・REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 / REQ-16faf428-77f3-492f-b858-222c5274cbf7 で ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c・ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed 由来の未追従を扱ったのと
+> （原文が旧決定に未追従・[root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md) / [意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](normalize-manifest-cross-field-checks.md) で [rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)・[root は 3 つの marker で表す](../adr/three-root-markers.md) 由来の未追従を扱ったのと
 > 同じ扱い）。本 item は静的検出が可能な場合を妨げないことまでを規範とし、その場合に実際に
-> eval 停止する規範（旧決定）そのものは持たない。**その規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 が
+> eval 停止する規範（旧決定）そのものは持たない。**その規範は [単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する](hm-configs-target-collision-assertion.md) が
 > 持つ**。`docs/spec.md` の追従は本 item の担当範囲外。
 >
-> **2026-10-15 追記（ADR-1338a293-3f69-48f5-9164-efb4ec6994d6）**: 上の「eval 時 assertion で停止」は、activation の `apply --all`
+> **2026-10-15 追記（[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)）**: 上の「eval 時 assertion で停止」は、activation の `apply --all`
 > 前段の確認で停止する形へ改められた。本 item が妨げないとする対象も「単一の eval」から「単一の
 > 起動」へ読み替える（規範は frontmatter）。
 
@@ -62,6 +62,6 @@ cross-config（別 profile・別 manifest）の同一 target 衝突は eval で�
 `docs/spec.md`「lib API」→「入力検査（`evalModules` + `normalizeManifest`）」。
 
 決定の実体は同一 manifest 内の target 衝突を eval 時に検出すると定めた
-ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0「manifest 内の target の衝突を評価時に検出する」で、cross-config を「単一の eval に載らない場合」へ限定した
+[manifest 内の target の衝突を評価時に検出する](../adr/manifest-target-conflict-eval-error.md)「manifest 内の target の衝突を評価時に検出する」で、cross-config を「単一の eval に載らない場合」へ限定した
 のは旧決定（単一のモジュール eval に載る config 間は静的検出が可能）。例外の条件を「単一の起動」へ改めたのは
-ADR-1338a293-3f69-48f5-9164-efb4ec6994d6「モジュールは configs 間の target 衝突を評価時に確認しない」。
+[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)「モジュールは configs 間の target 衝突を評価時に確認しない」。

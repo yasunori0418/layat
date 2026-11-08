@@ -32,7 +32,7 @@ generated:
 時点で一部の config が既に置かれている。`--dryrun` の処理だけ確認を迂回する実装も同じ。
 
 別々の config が同じ target を狙うことによる振動は、engine の実行時には止めない
-（→ REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693）。1 回の `apply --all` に載る config どうしでは、この
+（→ [同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める](../requirements/cross-config-target-oscillation.md)）。1 回の `apply --all` に載る config どうしでは、この
 前段の確認が配置前に止める唯一の場所になる。確認が衝突を取りこぼすと、apply のたびに config どうしが
 target を取り合い、foreign 警告が出続ける。
 
@@ -44,5 +44,5 @@ foreign symlink warning になるだけで、config の重複を解消して再 
 不可逆に壊さない。すり抜けは warning 以外に何も知らせないため沈黙しやすい。
 
 likelihood を medium とするのは、判定は純粋関数に切り出されテストで覆われている一方、
-`runApplyAll` は後続の並列化（ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e / ADR-e7a57f51-41da-460c-8f51-c84e94643f3d）で build・配置の段が大きく組み替わり、確認の
+`runApplyAll` は後続の並列化（[apply --all の build を worker pool で並列に実行する](../adr/apply-all-parallel-build-worker-pool.md) / [apply --all の配置を config 単位で並列に行う](../adr/apply-all-parallel-placement-per-config.md)）で build・配置の段が大きく組み替わり、確認の
 呼び出し位置（root フィルタ適用後・`--dryrun` 分岐と build の前）がずれる余地があるため。

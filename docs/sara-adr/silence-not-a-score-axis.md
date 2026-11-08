@@ -26,12 +26,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac, GitHub Issue #583, #303, #292, `docs/agents/sara-graph.md`
+- 関連: [risk の impact を検出後の回復可能性で採点する](risk-impact-as-recoverability.md), GitHub Issue #583, #303, #292, `docs/agents/sara-graph.md`
 - 起点: Issue #303 の着手前 grilling（2026-08-12）で確定。ADR-0052 §1c と題名の決定を書き直した
 
 ## 背景
 
-risk の `impact` から沈黙の不整合を外し、回復可能性の一軸にした（SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac）。
+risk の `impact` から沈黙の不整合を外し、回復可能性の一軸にした（[risk の impact を検出後の回復可能性で採点する](risk-impact-as-recoverability.md)）。
 気づけるかどうかは脅威の性質として重要な情報で、捨てるには惜しい。これをどこに残すかを決める必要があった。
 
 ## 決定

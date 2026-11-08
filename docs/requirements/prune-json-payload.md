@@ -55,18 +55,18 @@ generated:
 ```
 
 - **トップレベルの `info`** — prune は主体（config）を持たないので、`init` と同じくインベントリを
-  エンベロープ全体の `info` に載せる（→ REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303）
+  エンベロープ全体の `info` に載せる（→ [読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す](json-readonly-payload.md)）
 - **`dir`** — 同じ `<roothash>` が state 基底と system 基底の両方に立ちうるので、由来を示せる
-  のは `dir` だけ（→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f）
-- **`reason` の語彙** — skip 理由の意味は REQ-c44433a1-7ee7-459a-9aae-7cc42166876f と
-  REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed が定める
+  のは `dir` だけ（→ [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](prune-target-selection.md)）
+- **`reason` の語彙** — skip 理由の意味は [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](prune-target-selection.md) と
+  [prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](prune-safety-gates.md) が定める
 - **`pruned` を使わない** — `pruned` は空祖先ディレクトリの剪定で既に使われている
-  （→ REQ-8409db86-a1ba-4053-86dc-588985cc1ca7）
+  （→ [target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する](empty-parent-dir-pruning.md)）
 - **`info` を出さない実行** — 走査前の失敗で空のインベントリを出すと「走査して 0 件だった」と
   読めてしまう。同意が得られなかった実行は何も削除していない
 
 削除途中の失敗で、失敗より前に削除し終えた系列を `removed` に残すことと、`--json` の
-`--yes` 必須は REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed の担当。
+`--yes` 必須は [prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](prune-safety-gates.md) の担当。
 
 ## 出典
 

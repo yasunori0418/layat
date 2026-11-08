@@ -18,7 +18,7 @@ generated:
 
 project mode では、新しい link farm derivation が前世代と同一なら新世代を積まず、
 代わりに各 entry の target を `lstat` で確認して記録どおりでないものだけ再張りする
-（→ REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0）。この判定が誤ると、方向によって別々の被害が出る。
+（→ [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](../requirements/project-mode-generation-skip.md)）。この判定が誤ると、方向によって別々の被害が出る。
 
 **スキップすべき場面で積む** — devShell / direnv 運用では `shellHook` がシェル再入の
 たびに実行される。derivation 同一でも毎回新世代を積めば、世代がシェルを開くたびに増え続け、
@@ -49,5 +49,5 @@ derivation の同一性と FS を実際に調べた結果という 2 系統に�
 
 ## 緩和
 
-TC-765858b6-d596-4428-b4da-5d432944a714（ドリフト修復の対象範囲）と TC-1ee7a729-5629-4c92-b02a-4f6e11c0b57d（世代スキップの発火条件と
+[lstat ドリフト修復が破損した entry だけを直し、ユーザーの編集には触れない](../test/generations/drift-repair-scope.md)（ドリフト修復の対象範囲）と [世代スキップは project / system mode で derivation 同一のときだけ発火し、それ以外は新世代を積む](../test/generations/generation-skip-commit-policy.md)（世代スキップの発火条件と
 コミット方針）が緩和する。

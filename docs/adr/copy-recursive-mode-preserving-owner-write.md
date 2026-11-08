@@ -27,7 +27,7 @@ copy は編集するために選ぶ method なので、mode の扱いを決め�
 
 copy は engine が自前の再帰コピー（`filepath.WalkDir` と `io.Copy` と `os.Chmod`）で行い、元の
 mode を保存したうえで owner の書き込みビットを付ける（例: 0444 → 0644、0555 → 0755）。実行ビットや
-group / other のビットはそのまま保つ。規範の細目は REQ-84e3c717-adf5-4ff3-b0db-d039b82ef19c に置く。
+group / other のビットはそのまま保つ。規範の細目は [copy は元の mode を保存しつつ owner-write を付与する](../requirements/copy-mode-owner-write.md) に置く。
 
 ## 根拠
 

@@ -29,11 +29,11 @@ generated:
 `reset --dryrun` のプラン・`list-generations` と `status` の一覧）は `--json` 指定時には**出さない**
 （エンベロープが stdout を専有する）。`--json` なしの既定契約は不変。
 
-`--json` なしのストリーム規律は REQ-fea038de-55eb-45ac-87fc-ec3a7287592a の担当。
+`--json` なしのストリーム規律は [stdout は機械可読出力を専有しレポートと warning は stderr へ出す](stream-discipline.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「`--json` 時の stdout 専有」。
 
-決定の実体は ADR-feb60906-1517-46b8-8fa5-e007df4d3e11「--json は常に results[] エンベロープを出す」。
+決定の実体は [--json は常に results\[\] エンベロープを出す](../adr/results-envelope-always.md)「--json は常に results[] エンベロープを出す」。

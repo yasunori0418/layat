@@ -34,9 +34,9 @@ generated:
 select で見るが、これは取りこぼしても偽陽性（block に気付かない）にしかならず、
 flaky な失敗にはならない。
 
-上位の規範は TP-deb05610-44bc-4962-8939-952392e5fbd0 の「並行実行に対する原子性」で、競合を保持状態の模擬ではなく
+上位の規範は [原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](../../test-plan/fault-injection-atomicity.md) の「並行実行に対する原子性」で、競合を保持状態の模擬ではなく
 実際にロックを保持して作ることもそこが定める。
 
 ## 対応する CASE
 
-CASE-6f6fabaa-ae1e-4af5-962e-087a9064f85d（`internal/engine/lock_test.go`）。
+[engine/lock_test.go — 公開 API 越しのロック取得モード・保持区間・sentinel 同一性](engine-lock-test-go.md)（`internal/engine/lock_test.go`）。

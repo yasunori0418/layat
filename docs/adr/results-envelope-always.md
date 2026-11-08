@@ -25,7 +25,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, GitHub Issue #552, yasunori0418/outturn#1, outturn ADR-0013
+- 関連: [--json は outturn 規約に常時準拠する](outturn-conformance-principle.md), GitHub Issue #552, yasunori0418/outturn#1, outturn ADR-0013
 - 起点: layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §2 を書き直した
 
 ## 背景
@@ -39,8 +39,8 @@ layat には、単一の config を扱うコマンドと、`--all` で複数の 
 配列）とし、単数の `result` をトップに置かない。実行形態を区別する判別子フィールドも持たない。
 `specVersion` / `tool` / `command` はトップに 1 度だけ置く。
 
-フィールドの一覧は REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead に、出す時機は
-REQ-5c2e64c3-09a7-4ae8-b60c-4f1ccabce4fd に、stdout の専有は REQ-2353259f-5878-452a-8e11-3445de69abc2 に置く。
+フィールドの一覧は [--json は outturn 規約準拠のエンベロープを出す第 2 契約とする](../requirements/json-outturn-envelope.md) に、出す時機は
+[エンベロープはコマンド完了時に 1 回だけ出し成立条件を満たさない実行では出さない](../requirements/json-emit-timing.md) に、stdout の専有は [--json 指定時は行指向 stdout を出さずエンベロープが stdout を専有する](../requirements/json-stdout-exclusive.md) に置く。
 
 ## 根拠
 

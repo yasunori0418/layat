@@ -36,15 +36,15 @@ generated:
 オプションで、manifest 自体には影響しない。
 
 > **上は原文の写しで、規範は frontmatter が正**。オプションの型とデフォルト値そのものは
-> REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、`--backup[=<suffix>]` が何を退避しどう振る舞うかは REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b、
-> module activation が `apply --all --manifest <name>=<link-farm> …` で engine を kick すること自体は REQ-dec58330-6dad-47f7-8f56-2402764a89c7 /
-> REQ-8085f194-c903-4ecb-abd8-c719fe7b3292 の担当。本 item は `layat.backup` が manifest ではなく起動側に働くという
+> [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)、`--backup[=<suffix>]` が何を退避しどう振る舞うかは [apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md)、
+> module activation が `apply --all --manifest <name>=<link-farm> …` で engine を kick すること自体は [apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](apply-manifest-direct.md) /
+> [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](hm-activation-contract.md) の担当。本 item は `layat.backup` が manifest ではなく起動側に働くという
 > レイヤーの所属と、その**配線の発動条件**（`enable` が true のときに限る）を規定する。
-> 発動条件は REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 が定めるオプションの型・デフォルト値とは別の規範で、退避が
-> ユーザーの明示 opt-in であるという ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3 の設計意図（既定 false・記録外実体を勝手に
+> 発動条件は [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md) が定めるオプションの型・デフォルト値とは別の規範で、退避が
+> ユーザーの明示 opt-in であるという [モジュールに layat.backup を起動配線のオプションとして持つ](../adr/module-backup-option.md) の設計意図（既定 false・記録外実体を勝手に
 > 動かさない）を担保する。
 >
-> **2026-10-15 追記（ADR-f58e9981-bacc-4937-98b8-bddce0a057db）**: 上の写しの `layat apply --manifest` 起動は、全 config を渡す
+> **2026-10-15 追記（[モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)）**: 上の写しの `layat apply --manifest` 起動は、全 config を渡す
 > `layat apply --all --manifest <name>=<link-farm> …` の 1 回起動と読み替える。`--backup` は
 > その起動に載る全 config へ一律に付く。
 
@@ -53,6 +53,6 @@ generated:
 `docs/spec.md`「モジュールオプション仕様」→「共通オプション（全モジュール）」節の
 `layat.backup` の段落。
 
-決定の実体は ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3「モジュールに layat.backup を起動配線のオプションとして持つ」で、
+決定の実体は [モジュールに layat.backup を起動配線のオプションとして持つ](../adr/module-backup-option.md)「モジュールに layat.backup を起動配線のオプションとして持つ」で、
 module の使い方への配線は同 ADR が Issue #169 とともに定めている。配線先を全 config の
-`apply --all --manifest <name>=<link-farm> …` 起動にしたのは ADR-f58e9981-bacc-4937-98b8-bddce0a057db。
+`apply --all --manifest <name>=<link-farm> …` 起動にしたのは [モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)。

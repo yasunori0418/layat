@@ -15,12 +15,12 @@ generated:
 ## 設計
 
 適用範囲は `internal/engine/` のエラーとする。エラーの組み立ては標準ライブラリの `fmt.Errorf` と
-`errors.Is` だけで行う（→ REQ-b74a118a-1272-44eb-944c-7725163211c6）。
+`errors.Is` だけで行う（→ [engine は第三者依存ゼロの stdlib-only とし内部層に閉じる](../requirements/engine-stdlib-only.md)）。
 
 - **発生源で 1 回だけ wrap する**: syscall・exec・parse に最も近い箇所で
   `fmt.Errorf("layat: cannot <op> (<target>): %w", ...)` の形にする。`<op>` は何をしようとしたか、
   `<target>` は対象パスを書く。stderr に出す人間向けテキストの op と対象パスは、ここで付いたものになる
-  （→ REQ-9341fa5d-836e-4023-af53-cc7d273438d1）
+  （→ [エンベロープのエラーは主体の有無で層を分けコードを分類する](../requirements/json-error-layering.md)）
 - **伝搬では素通しする**: 呼び出し元は `return err` でそのまま返し、途中で再 wrap しない
 - **sentinel は `%w` で透過させる**: `ErrSkipped`（= `lock.ErrLocked`）などの sentinel は常に `%w` で包み、
   呼び出し元が `errors.Is` で判定できる状態を保つ
@@ -29,4 +29,4 @@ generated:
 
 ## 出典
 
-ADR-5228fec0-09ad-494f-8c8d-d887fc009999 の決定（GitHub Issue #90 の再計画で定めた規約）を、engine の中での実現として書き下した。
+[engine のエラーは発生源で 1 回だけ wrap し、伝搬では再 wrap しない](../adr/engine-errors-wrapped-once-at-origin.md) の決定（GitHub Issue #90 の再計画で定めた規約）を、engine の中での実現として書き下した。

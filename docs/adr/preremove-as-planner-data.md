@@ -28,14 +28,14 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-74423bb8-1453-4689-a25e-30bf46536afc, ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c, GitHub Issue #170, #175, #172
+- 関連: [新規配置と張替えを先に、世代のコミットを最後に行う](placement-order-commit-last.md), [祖先 symlink は自己記録の古くなったものだけを移行する](ancestor-symlink-recorded-stale-only.md), GitHub Issue #170, #175, #172
 - 起点: dotfiles 側での実遭遇（#170）と grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0046 §3（配置前除去のデータ化と実行順）と ADR-0047 §4 を書き直した
 
 ## 背景
 
 apply の本流は、新しいものを先に置き、古いものを最後に消す
-（ADR-74423bb8-1453-4689-a25e-30bf46536afc）。自己記録の古くなったものが配置を塞ぐとき
-（ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c など）は、それを配置の前に消さなければ置けない。
+（[新規配置と張替えを先に、世代のコミットを最後に行う](placement-order-commit-last.md)）。自己記録の古くなったものが配置を塞ぐとき
+（[祖先 symlink は自己記録の古くなったものだけを移行する](ancestor-symlink-recorded-stale-only.md) など）は、それを配置の前に消さなければ置けない。
 この順序の例外をどこで決め、どう表すかを決める必要があった。除去には symlink の unlink の
 ほか、実ディレクトリの target を移行するときの空ディレクトリの rmdir もある。
 
@@ -46,8 +46,8 @@ apply の本流は、新しいものを先に置き、古いものを最後に�
 持ち、実行順は列の順で表す。planner は子を親より先に積み、同じ target は 1 件にまとめる。
 後段の古くなった配置の除去は、配置前除去に載った target を飛ばす。
 
-plan の構造と planner・engine の分担は DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68 に、段の並びは
-REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 に置く。
+plan の構造と planner・engine の分担は [配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する](../design/planner-engine-split.md) に、段の並びは
+[backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](../requirements/backup-stage-position.md) に置く。
 
 ## 根拠
 

@@ -32,5 +32,5 @@ user namespace で取り、system の profile 基底と記録基底は隔離先�
 
 ## 対応する CASE
 
-CASE-99803cb0-6fd0-4004-af78-83e301320ce0（`tests/e2e/scenarios/12-system.sh`）。E2E ハーネス全体のスコープは
-TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9 が定める。
+[e2e 12-system — user namespace の root で system mode の配置・世代・権限の条件を往復する](e2e-12-system.md)（`tests/e2e/scenarios/12-system.sh`）。E2E ハーネス全体のスコープは
+[非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](../../test-plan/e2e-harness-scope.md) が定める。

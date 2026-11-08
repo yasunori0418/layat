@@ -21,12 +21,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7, ADR-45380022-d959-4b22-aa05-5993ac1f3c87
+- 関連: [reset で profile を触らずに配置物を撤去する](reset-fs-only-teardown.md), [flock は明示実行で待ち、hook 実行でスキップする](flock-mode-explicit-wait-hook-skip.md)
 - 起点: ADR-0021 §1（reset は名指し必須で --all に対応しない）を書き直した
 
 ## 背景
 
-reset は symlink に加えて copy target も消す（ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7）。copy には
+reset は symlink に加えて copy target も消す（[reset で profile を触らずに配置物を撤去する](reset-fs-only-teardown.md)）。copy には
 利用者の編集が入っていることがあり、消すと戻せない。
 
 apply は `--all` で全 config をまとめて扱える。reset にも同じ一括指定を用意するかが決まっていなかった。
@@ -37,7 +37,7 @@ rollback は、全 config を一斉に巻き戻す `--all` を破壊的すぎる
 reset には `--all` も root モードのフィルタも設けず、config の名指しを必須にする。複数の config を
 撤去したいときは、名指しで複数回実行する。config 内の entry 単位の指定はこれまでどおり使える。
 
-規範は REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4 に置く。
+規範は [reset は名指し必須で profileDir 単位の blocking flock を取る](../requirements/reset-named-only-and-flock.md) に置く。
 
 ## 根拠
 

@@ -21,12 +21,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964, ADR-ef9e4099-0cf4-409a-9e73-518866aea676, GitHub Issue #395
+- 関連: [生成器は明示の指定だけで選ぶ](generator-chosen-explicitly-only.md), [Go の整形は gofmt、静的解析は go vet と golangci-lint で行う](gofmt-vet-golangci.md), GitHub Issue #395
 - 起点: Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0056 §3 を書き直した
 
 ## 背景
 
-生成器の選択にはプロジェクト設定 `layat.toml` の段がある（→ ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964）。
+生成器の選択にはプロジェクト設定 `layat.toml` の段がある（→ [生成器は明示の指定だけで選ぶ](generator-chosen-explicitly-only.md)）。
 layat はこれまで設定ファイルを読まず、config を設定ファイルから発見する機構も持たない。entrypoint の
 発見は生成器の Discover が行うので、設定ファイルを探すために entrypoint を使うと、生成器を決める前に
 生成器が要ることになる。
@@ -37,7 +37,7 @@ layat はこれまで設定ファイルを読まず、config を設定ファイ�
 `-f` が無ければ cwd だけで探し、親ディレクトリへは遡らない。設定ファイルは生成器の選択にだけ使い、
 config の発見には使わない。
 
-`-f` のパスを stat できないときの扱いを含む探索の規範は REQ-badc7e10-0ba4-40d4-b334-6e40193119db に置く。
+`-f` のパスを stat できないときの扱いを含む探索の規範は [生成器は明示指定のみで選び、フラグ・環境変数・設定ファイル・既定の順に解決する](../requirements/generator-selection-precedence.md) に置く。
 
 ## 根拠
 

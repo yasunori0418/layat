@@ -33,9 +33,9 @@ run が修復だけを行う状況を作る。
 修復対象は symlink と copy の両方であること（片方だけの修復に縮退していないこと）を
 条件に含む。
 
-上位の規範は TP-e7c25263-6d2d-4a37-8275-26906889d912（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。
+上位の規範は [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../../test-plan/go-test-layering.md)（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。
 
 ## 対応する CASE
 
-CASE-2de3a3d8-3b67-485a-8ddf-a97dd182af23（`internal/engine/drift_test.go`）。`--backup` が同じ修復の処理で発火する
-側は atomicity の TC-ed4992c0-8513-4383-be0a-e45acbbc229f が担当する。
+[drift_test.go — 世代スキップの発火条件と lstat ドリフト修復の対象範囲](drift-test-go.md)（`internal/engine/drift_test.go`）。`--backup` が同じ修復の処理で発火する
+側は atomicity の [--backup の退避が opt-in で発動し、commit 後は残り、途中失敗では戻る](../atomicity/backup-aside-lifecycle.md) が担当する。

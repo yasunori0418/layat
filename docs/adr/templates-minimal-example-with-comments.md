@@ -16,7 +16,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-baf6346d-783b-4607-ab1c-c2c93c09e064
+- 関連: [--all は config ごとの SubjectResult を積む](all-as-multiple-subject-results.md)
 - 起点: ADR-0018 §1 を書き直した
 
 ## 背景
@@ -30,7 +30,7 @@ generated:
 各 template は動く example を 1 config だけ置き、書き方のバリエーションはコメントで示す。
 `standalone` は homeRoot の例を 1 つ、`project` は projectRoot の例を 1 つと devShell を置く。
 
-各 template のファイル構成とコメントで示す範囲は REQ-196ddabf-6569-4303-942e-050872972501 に置く。
+各 template のファイル構成とコメントで示す範囲は [template は動く example を 1 config だけ置きバリエーションはコメントで示す](../requirements/init-template-contents.md) に置く。
 
 ## 根拠
 

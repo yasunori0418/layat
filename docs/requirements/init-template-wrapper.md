@@ -35,12 +35,12 @@ layat init project      # nix flake init -t github:yasunori0418/layat#project �
 作るのは nix の templates 機構であり layat 自身は generate しない（「設定を生成しない」
 thesis を維持）。`nix flake init` の「既存ファイルを上書きしない」保守性を継承する。
 
-固定 flake ref は REQ-cbd61281-64b0-4487-a4b7-ce76e70dc4f9、template の中身は REQ-196ddabf-6569-4303-942e-050872972501、`--json` 時の出力は
-REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303 の担当。
+固定 flake ref は [init のテンプレート参照はバイナリにハードコードした固定 flake ref とする](init-fixed-flake-ref.md)、template の中身は [template は動く example を 1 config だけ置きバリエーションはコメントで示す](init-template-contents.md)、`--json` 時の出力は
+[読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す](json-readonly-payload.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「`layat init`（テンプレート展開）」のコードブロックと
 箇条書き第 1・2 項。
 
-決定の実体は ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d「templates と layat init は固定 ref で導入する」。
+決定の実体は [templates と layat init は固定 ref で導入する](../adr/templates-and-init-fixed-ref.md)「templates と layat init は固定 ref で導入する」。

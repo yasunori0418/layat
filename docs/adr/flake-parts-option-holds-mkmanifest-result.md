@@ -20,13 +20,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-e6820da0-fce3-4aef-8b79-d53abbca6051, GitHub Issue #26
+- 関連: [layat output の flake-parts module を flakeModules.default で公開する](flake-parts-module-published.md), GitHub Issue #26
 - 起点: Issue #26。ADR-0029 §2 と ADR-0029 §3 を書き直した
 
 ## 背景
 
 flake-parts module は `perSystem.layat` を `flake.layat.<system>` へ転置する
-（ADR-e6820da0-fce3-4aef-8b79-d53abbca6051）。転置先の `flake.layat.<system>.<name>` は、CLI が
+（[layat output の flake-parts module を flakeModules.default で公開する](flake-parts-module-published.md)）。転置先の `flake.layat.<system>.<name>` は、CLI が
 `nix build .#layat.<system>.<name>` でビルドする対象なので、ビルドできる derivation でなければ
 ならない。`mkTransposedPerSystemModule` は option の値を加工せずに転置する。
 
@@ -36,7 +36,7 @@ option の型は package の lazy な attrset にし、利用者が perSystem �
 呼んだ結果（derivation）をそのまま入れる。module は `mkManifest` を内部で呼ばず、`mkManifest` の
 シグネチャも flake-parts のために変えない。
 
-flake-parts module を使う書き方の規範は REQ-c50df875-2cb0-4e72-8a21-858359a11cae に置く。
+flake-parts module を使う書き方の規範は [flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない](../requirements/flake-parts-module-path.md) に置く。
 
 ## 根拠
 

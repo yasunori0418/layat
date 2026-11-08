@@ -24,7 +24,7 @@ generated:
 - ステータス: stable
 - 日付: 2026-11-04
 - 関連: GitHub Issue #558, #492, `docs/adr/README.md`
-- 起点: Issue #558 の分解（job adr-finish・2026-11-03）で確定。SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed を書き直した
+- 起点: Issue #558 の分解（job adr-finish・2026-11-03）で確定。[ADR も UUID で採番し、連番の旧 ADR は legacy_adr 型に凍結する](adr-uuid-ids-and-legacy-type.md) を書き直した
 
 ## 背景
 

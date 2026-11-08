@@ -39,13 +39,13 @@ generated:
 | entrypoint が発見できない（CWD に flake.nix/shell.nix/default.nix なし・`-f` 未指定）| CLI がエラーで停止 |
 
 > **上は原文の写しで、規範は frontmatter が正**。entrypoint の探索順と `-f` による上書きは
-> REQ-1cc080f6-ae91-4c1f-973e-b7054cfc0198、`layat.<name>` のアドレッシングは REQ-496b1a07-5b74-416b-9e5f-3952b4c03737、`apply` で name を省略した
+> [entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする](entrypoint-discovery-order.md)、`layat.<name>` のアドレッシングは [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](named-manifest-addressing.md)、`apply` で name を省略した
 > ときに `default` へ解決すること（および `layat.default` 未定義でのエラー停止）は
-> REQ-c2d44626-d8f4-446a-a80a-319a500129b4 / REQ-205d744d-5a53-4511-bc09-892ba01d4e6f、`rollback` が名指し必須で home / system mode 限定であることは
-> REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796 / REQ-05abce3e-9797-432b-b93f-37c55d09afde、`gitignore` を非 project config へ与えたときのエラー停止は
-> REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9、`--manifest` と `-f` の併用エラー、および `--all` と合成するときの形の制約は REQ-dec58330-6dad-47f7-8f56-2402764a89c7、
-> experimental-features 未有効の案内エラーは REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6 の担当。停止時の終了コードは
-> REQ-2c5a10d8-112b-4f96-947a-aba7164779c4 の担当。
+> [apply の config 選択は name 省略で default・明示で単一・--all で全件](apply-config-selection.md) / [config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない](default-config-name-and-namespace.md)、`rollback` が名指し必須で home / system mode 限定であることは
+> [rollback は名指し必須で --all に対応しない](rollback-named-only.md) / [rollback と list-generations は home / system mode 限定にする](rollback-list-generations-home-only.md)、`gitignore` を非 project config へ与えたときのエラー停止は
+> [gitignore は project mode 限定で非 project config を指定したらエラーで停止する](gitignore-project-mode-only.md)、`--manifest` と `-f` の併用エラー、および `--all` と合成するときの形の制約は [apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](apply-manifest-direct.md)、
+> experimental-features 未有効の案内エラーは [nix experimental-features は nix 生成器の前提条件とし、自動付与せず案内エラーで停止する](nix-experimental-features-prerequisite.md) の担当。停止時の終了コードは
+> [終了コードは 0 = 成功 / 1 = 一般エラー / 2 = dryrun の conflict とする](exit-codes.md) の担当。
 
 ## 出典
 
@@ -56,6 +56,6 @@ generated:
 
 この 3 行が挙げる停止そのものに対応する決定を持つ ADR は無く、`docs/spec.md` が一次記述に
 あたる。よって本 item に `justifies` は張られないが、これは張り忘れではない。前提となる
-「CLI が entrypoint と named manifest を解決する」ことは旧決定が定めていた（現在は ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2 の生成器が担う）が、旧決定は解決できなかった
+「CLI が entrypoint と named manifest を解決する」ことは旧決定が定めていた（現在は [生成器の契約を Discover / Roots / Build / DryBuild の 4 操作にする](../adr/generator-four-operations.md) の生成器が担う）が、旧決定は解決できなかった
 ときの扱いを決めていないため、側面の根拠として `justifies` は張らない（前提そのものの帰属は
-REQ-1cc080f6-ae91-4c1f-973e-b7054cfc0198 / REQ-496b1a07-5b74-416b-9e5f-3952b4c03737 が担当する）。
+[entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする](entrypoint-discovery-order.md) / [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](named-manifest-addressing.md) が担当する）。

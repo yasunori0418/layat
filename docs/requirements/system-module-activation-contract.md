@@ -45,10 +45,10 @@ generated:
 | NixOS | `system.activationScripts.layat`（`deps = [ "etc" "users" ]`・`supportsDryActivation = true`）| `NIXOS_ACTION=dry-activate` のときだけ `--dryrun` | `config.nix.package` の `bin` を前置 |
 | nix-darwin | `system.activationScripts.postActivation.text` へ追記 | 分岐しない | そのまま |
 
-> 規範は frontmatter が正。HM 側の起動契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、ペアの並び・`--jobs`・config が無いときに
-> 起動しないことは REQ-c847d1af-a437-46bb-bd64-42083810d034、`--backup` / `--recopy` の配線は REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3 /
-> REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c、モジュールが root を pin することは REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、rollback を host へ
-> 一本化することは REQ-844ee375-919f-4341-81e1-a5f89fd32840 の担当。
+> 規範は frontmatter が正。HM 側の起動契約は [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](hm-activation-contract.md)、ペアの並び・`--jobs`・config が無いときに
+> 起動しないことは [HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う](hm-activation-per-config-kick.md)、`--backup` / `--recopy` の配線は [layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない](backup-wiring-layer.md) /
+> [layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける](recopy-wiring-layer.md)、モジュールが root を pin することは [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)、rollback を host へ
+> 一本化することは [module 時は rollback を host へ一本化し、layat profile は前進のみで追従する](module-mode-profile-internal.md) の担当。
 >
 > `supportsDryActivation = true` が無いと、スクリプトは dry-activate 用の activate に含まれず
 > `NIXOS_ACTION` の分岐が実行されない。`PATH` の前置は、engine が世代コミットで呼ぶ `nix-env` が
@@ -57,4 +57,4 @@ generated:
 
 ## 出典
 
-ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c・ADR-68f453b3-e6c7-4e0d-9978-32b5a00f627e・ADR-eee039fc-40af-42ac-bc65-979d6eaa0d06・ADR-f58e9981-bacc-4937-98b8-bddce0a057db・ADR-a0d0cf15-8234-42be-b83e-9b8271850475・ADR-1338a293-3f69-48f5-9164-efb4ec6994d6・ADR-1743c957-a732-4a44-a89a-4c03ab277f0c・ADR-0da9d817-c870-4f48-8a6d-8fb9b55e2a70。
+[NixOS / nix-darwin モジュールは root を systemRoot に固定する](../adr/system-modules-pin-systemroot.md)・[NixOS モジュールは system.activationScripts.layat から起動する](../adr/nixos-activation-script-hook.md)・[nix-darwin モジュールは postActivation に起動を追記する](../adr/darwin-post-activation-hook.md)・[モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)・[activation の起動文字列を modules/kick.nix で組み立てる](../adr/modules-kick-builder.md)・[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)・[NixOS の dry-activate では --dryrun を付けて起動する](../adr/nixos-dry-activate-dryrun.md)・[NixOS の activation の PATH に nix を前置する](../adr/nixos-activation-path-nix.md)。

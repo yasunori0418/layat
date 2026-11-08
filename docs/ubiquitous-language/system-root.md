@@ -12,7 +12,7 @@ generated:
 
 ## Definition
 
-The root marker selecting system mode (root = `/`). Promotes what was once called a "future absolute-path string seam" into a first-class marker (→ [ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed](../adr/three-root-markers.md)). Also accepts the applied form `systemRoot { subdir = "..."; }` (see root).
+The root marker selecting system mode (root = `/`). Promotes what was once called a "future absolute-path string seam" into a first-class marker (→ [root は 3 つの marker で表す](../adr/three-root-markers.md)). Also accepts the applied form `systemRoot { subdir = "..."; }` (see root).
 
 ## Avoid
 
@@ -20,7 +20,7 @@ The root marker selecting system mode (root = `/`). Promotes what was once calle
 
 ## 定義
 
-system mode（root = `/`）を選ぶ root マーカー。「将来、絶対パス文字列を受ける差し替え点」とされていたものを第一級のマーカーへ昇格したもの（→ [ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed](../adr/three-root-markers.md)）。適用形 `systemRoot { subdir = "..."; }` も受け付ける（意味は root の項）。
+system mode（root = `/`）を選ぶ root マーカー。「将来、絶対パス文字列を受ける差し替え点」とされていたものを第一級のマーカーへ昇格したもの（→ [root は 3 つの marker で表す](../adr/three-root-markers.md)）。適用形 `systemRoot { subdir = "..."; }` も受け付ける（意味は root の項）。
 
 ## 避ける表現
 

@@ -53,18 +53,18 @@ entry :: {
 
 各フィールドは `lib/types.nix` の entry submodule（`lib.types`）として定義され、
 `mkManifest` の `evalModules` が確認・デフォルト適用する。この確認主体の規範は
-REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34（`mkManifest` が入力を確認する単一の箇所）と REQ-b232ec98-af3b-41f3-a050-29d417322002（`normalizeManifest` が
+[mkManifest 自身が evalModules で入力を確認する単一の箇所になる](mkmanifest-input-validation.md)（`mkManifest` が入力を確認する単一の箇所）と [normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む](normalize-manifest-defaults.md)（`normalizeManifest` が
 確認・デフォルト適用を担う）が持つ。
 
-各フィールドの値域・意味も個別 item が持つ（`src` は REQ-99ca5381-6c53-426c-b145-7b4297c53868、`subpath` は
-REQ-27b75fe6-6c36-44a8-8cd3-5cc98043022a、`target` の識別子性とデフォルトは REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7、`method` の動作は
-REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe）。本 item はフィールドの構成そのもの（4 つで過不足なく、どれが必須で
+各フィールドの値域・意味も個別 item が持つ（`src` は [src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する](src-kinds-store-default.md)、`subpath` は
+[subpath は src 内の相対パスとし、リポジトリ全体は省略で表して専用トークンを設けない](subpath-omission-whole-repo.md)、`target` の識別子性とデフォルトは [entry の識別子は属性キー = target とし一意性は Nix が担保する](entry-identity-by-target-key.md)、`method` の動作は
+[method は配置方法を選び symlink は世代管理下・copy は世代管理外になる](method-src-matrix.md)）。本 item はフィールドの構成そのもの（4 つで過不足なく、どれが必須で
 どれが省略可か）を規定する。5 つ目のフィールドが評価時エラーになること（strict）は
-REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51 の規範。
+[entry submodule は strict とし未知キーと旧名を評価時エラーにする](entry-submodule-strict.md) の規範。
 
 > **デフォルト値を規範に含めない理由**: `subpath` → `"."` / `method` → `"symlink"` /
-> `target` → 属性キーの 3 つは、いずれも既存 item が規範として持つ（REQ-b232ec98-af3b-41f3-a050-29d417322002 が
-> `normalizeManifest` のデフォルト適用として 3 つとも、REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 が `target` の
+> `target` → 属性キーの 3 つは、いずれも既存 item が規範として持つ（[normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む](normalize-manifest-defaults.md) が
+> `normalizeManifest` のデフォルト適用として 3 つとも、[entry の識別子は属性キー = target とし一意性は Nix が担保する](entry-identity-by-target-key.md) が `target` の
 > 分を）。本 item で重ねて規定すると規範の所在が二箇所になるため、frontmatter からは
 > 落として委譲した。
 

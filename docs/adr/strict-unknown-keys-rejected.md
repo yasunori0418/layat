@@ -29,7 +29,7 @@ entry のフィールドは改名を重ねており、旧名（`source` や `dir
 entry は submodule の既定どおり strict にし、宣言していないキーを評価時のエラーにする。
 `freeformType` で緩めない。
 
-規範は REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51 に置く。
+規範は [entry submodule は strict とし未知キーと旧名を評価時エラーにする](../requirements/entry-submodule-strict.md) に置く。
 
 ## 根拠
 

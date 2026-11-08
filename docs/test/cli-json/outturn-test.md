@@ -34,9 +34,9 @@ generated:
 - **エラー分類** — prebuilt 以外の生成器の roots / build 段の失敗が `E_LAYAT_BUILD` になり、
   原因が not-found でもそれに優先すること・そのマーカーが再ラップされても残ること。
   discover 段と prebuilt の失敗は原因の error チェーンから従来の規則で分類すること（not-found
-  の原因は `E_NOTFOUND`、原因が無ければ汎用分類・→ ADR-494b6477-9d5b-4e29-879d-f7d16be5d466）。入力不正のマーカーが
+  の原因は `E_NOTFOUND`、原因が無ければ汎用分類・→ [生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する](../../adr/generator-failure-single-build-code.md)）。入力不正のマーカーが
   `E_INPUT` になり not-found の原因に優先すること（未知の `--generator` / `LAYAT_GENERATOR` の値、
-  `--manifest` と `-f` の併用、`--all` と `<link-farm>` 形の `--manifest` の併用・→ ADR-c4a3d9be-19ea-461d-ab0f-2037adc494e1）。ファイルシステム由来の sentinel が汎用の
+  `--manifest` と `-f` の併用、`--all` と `<link-farm>` 形の `--manifest` の併用・→ [入力の不正を E_INPUT に分類する](../../adr/input-errors-classified-e-input.md)）。ファイルシステム由来の sentinel が汎用の
   形状判定に優先すること、排他制御由来の分類、いずれにも当たらない失敗の汎用分類
 - **`--json` 下の stdout 所有権** — 行指向の出力（計画・世代一覧・パス列挙）が全て止まり、
   既定の契約では出ること。stderr の人間向け通知は両契約で維持されること

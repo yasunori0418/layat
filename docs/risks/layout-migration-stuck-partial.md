@@ -39,7 +39,7 @@ method 変更の非対称性（symlink → copy は自動移行し、copy → sy
 
 ## 評価
 
-- likelihood: medium — TC-b9d4ffaf-ac91-4bf1-9f27-5ea3964466ad が移行の可否判定を、TC-76597b11-8199-4682-8f53-008e5208bd9c が部分適用と再実行の
+- likelihood: medium — [配置前除去による移行の可否判定が、自己記録の古くなった配置と method 変更の規則どおりであること](../test/migration-stale/migration-eligibility.md) が移行の可否判定を、[移行が部分適用されず、中断後の再実行で収束すること](../test/migration-stale/migration-atomicity-convergence.md) が部分適用と再実行の
   収束を覆っている。ただし配置前除去は per-file / dir symlink / method 変更の組み合わせで
   枝が多く、形を 1 つ足すたびに判定の抜けが入りうる
 - impact: high — 判定を誤れば記録に無いユーザーの実体を移行の名目で消す。部分除去が残った

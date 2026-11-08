@@ -26,7 +26,7 @@ nil であり、0 や現在値で埋めない。
 **世代観測の分解能** — 観測の下地である「profile symlink の指す先から世代番号を読む」
 層そのものも直接駆動して検証する。profile リンク不在 → nil、`profile-3-link` → 3、
 store パスなど世代リンクでない dest → nil、`profile-x-link` のような数値として読めない番号 → nil。
-TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7 が扱う、profileDir の世代リンクを番号順に列挙して current を判定する
+[profileDir の世代リンクを番号順に列挙して current を判定し、読めない profileDir は黙認しない](generation-listing-parse.md) が扱う、profileDir の世代リンクを番号順に列挙して current を判定する
 走査とは別層（こちらは profile リンクの指す先の symlink 名のパース）である。
 
 **失敗時の到達状態の分割** — 配置の途中で失敗した run では、完了済みの操作リストは
@@ -37,7 +37,7 @@ TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7 が扱う、profileDir の世代リン�
 対象は plan ではなく manifest であるため）。
 
 **commit 失敗の形** — 全 FS 操作が成功しているため到達状態のフィールドは空
-（entry スコープの失敗ではない）、`Unwound` は false（→ ADR-f29d1256-5e14-4b83-ac77-4717b2210193）、世代は動かない。
+（entry スコープの失敗ではない）、`Unwound` は false（→ [undo の発火を FS 反映の段に限り、世代コミットの後は対象にしない](../../adr/undo-scope-ends-at-commit.md)）、世代は動かない。
 
 **conflict と部分失敗** — apply の conflict、reset の部分失敗、rollback の conflict の
 いずれでも部分の結果が返る。`Apply` は張替えた dest と除去 entry も記録する。
@@ -48,4 +48,4 @@ preview 向けの `KeptForeign` と構造化 `Warnings` の両方に現れる。
 
 ## 対応する CASE
 
-CASE-2008a909-b45e-49e1-adf1-39191a8ddd95（`internal/engine/result_extensions_test.go`）。
+[result_extensions_test.go — 実行結果のインベントリ・世代観測・到達状態・構造化 warning](result-extensions-test-go.md)（`internal/engine/result_extensions_test.go`）。

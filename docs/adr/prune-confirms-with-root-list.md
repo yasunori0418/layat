@@ -21,7 +21,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-acc31876-df36-485e-b356-92ae60e26db7, ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988, GitHub Issue #580
+- 関連: [reset は非対話の実行で --yes を必須にする](reset-confirmation-and-yes.md), [profile は解決済み root の roothash でキーする](profile-keyed-by-roothash-of-resolved-root.md), GitHub Issue #580
 - 起点: 次期マイルストーン計画の grilling（2026-07-04）。公開後の実運用で孤児系列が溜まり始めたことを消費側の要求と判断した。ADR-0034 §2a を書き直した
 
 ## 背景
@@ -34,13 +34,13 @@ root の実在で孤児を判定する方法には、誤判定する場合が 1 
 ## 決定
 
 prune は、実際に削除する前に削除対象の root パスの一覧を必ず示し、reset
-と同じ形の確認を取る（ADR-acc31876-df36-485e-b356-92ae60e26db7）。`--dryrun`
+と同じ形の確認を取る（[reset は非対話の実行で --yes を必須にする](reset-confirmation-and-yes.md)）。`--dryrun`
 は削除予定の系列を出力するだけで、何も削除しない。
 マウントポイントの判定のような機械的な区別は行わず、アンマウント中の誤判定がありうることは docs
 に注記する。
 
 確認の省略（`--yes`）、非 TTY での扱い、`--dryrun` の出力の規範は
-REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed に置く。
+[prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](../requirements/prune-safety-gates.md) に置く。
 
 ## 根拠
 

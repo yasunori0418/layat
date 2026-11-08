@@ -87,17 +87,17 @@ target を除去した後、その親ディレクトリチェーンを root 方�
 > **上は原文の写しで、規範は frontmatter が正**。原文が補足する「実 dir migration で除去する
 > dir チェーンは planner の `classifyDirMigration` が子から親まで明示的に列挙済みで、剪定ヘルパ
 > による探索的な追加除去を必要としない」は実装構造の説明で規範ではない（実 dir migration
-> そのものは REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26）。空 dir の残置が cosmetic な取りこぼしに過ぎないことも同様の注記。
-> 写しの「出力規律」の項が言う**既定 silent と `-v` の規律そのもの**（→ ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5・ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）は
-> REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 / REQ-0a123b89-0399-4f76-b988-56a5f7e0becf の担当で、本 item の規範ではない。本 item が規範とするのは
+> そのものは [実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する](real-dir-target-migration.md)）。空 dir の残置が cosmetic な取りこぼしに過ぎないことも同様の注記。
+> 写しの「出力規律」の項が言う**既定 silent と `-v` の規律そのもの**（→ [指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)・[-v で配置レポートを opt-in で出す](../adr/verbose-opts-into-placement-report.md)）は
+> [成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](silent-on-success.md) / [冗長度は -v、デバッグは --debug に分離し --json と直交させる](verbose-and-debug-separation.md) の担当で、本 item の規範ではない。本 item が規範とするのは
 > 「剪定を warning にせず配置レポートの `pruned <path>` 行として出す」ことだけで、その
 > レポートを指定が無いときに出すか `-v` のときに出すかは委譲する。配置レポートの基本行種別
-> （`placed` / `replaced` / `removed` / `skipped`）とストリーム規律も REQ-fea038de-55eb-45ac-87fc-ec3a7287592a の担当で、
-> 本 item はそこへ剪定固有の `pruned` 行を足す。古くなった配置の除去の不変条件は REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2、
-> `reset` の除去は REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6 の担当。
+> （`placed` / `replaced` / `removed` / `skipped`）とストリーム規律も [stdout は機械可読出力を専有しレポートと warning は stderr へ出す](stream-discipline.md) の担当で、
+> 本 item はそこへ剪定固有の `pruned` 行を足す。古くなった配置の除去の不変条件は [古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](stale-removal-invariants.md)、
+> `reset` の除去は [reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す](reset-fs-only-teardown.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「世代管理仕様」→「stale 除去の対象と安全不変条件」→「空親ディレクトリ剪定」節。
 
-決定の実体は ADR-4dba7720-c179-4835-8644-d90b8022e474「配置前除去は空の祖先ディレクトリを剪定しない」と、出力規律を定める ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5。剪定そのものは epic #172 D4（Issue #174）で確定した。
+決定の実体は [配置前除去は空の祖先ディレクトリを剪定しない](../adr/preremove-skips-ancestor-pruning.md)「配置前除去は空の祖先ディレクトリを剪定しない」と、出力規律を定める [指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)。剪定そのものは epic #172 D4（Issue #174）で確定した。

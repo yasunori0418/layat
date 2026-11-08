@@ -14,7 +14,7 @@ generated:
 
 ## テスト条件
 
-root マーカーの subdir 適用形（REQ-08c8f639-790c-4970-a954-c9567538cf9b）が、全 target への前置と
+root マーカーの subdir 適用形（[root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](../../requirements/root-marker-subdir-sugar.md)）が、全 target への前置と
 等価な糖衣として振る舞うことを確かめる。
 
 - **marker の形**: 単体の 3 マーカーは `__functor` を除くと `_layatMarker` / `kind` の
@@ -29,14 +29,14 @@ root マーカーの subdir 適用形（REQ-08c8f639-790c-4970-a954-c9567538cf9b
   `subdir` が `"root subdir"` を含む `ThrownError` になる。entries が空でも拒否される。target の
   `..` 脱出は前置した後も従来どおり拒否される
 
-前 4 項目は RISK-e65844ea-a7b7-4bad-b15b-f60130b7e8fa、拒否条件は RISK-09df40d3-2752-433e-9ab0-2816fbd14969 を
-緩和する。文書全体の形は TC-de6514e2-9105-45a6-a5b9-d474911a401b のスナップショットでも固定する。
+前 4 項目は [subdir 適用形の前置が一部の target で抜ける、root 側へ混入する、または単体 marker の形が変わる](../../risks/subdir-prefix-drift.md)、拒否条件は [評価時に止めるべき入力が止まらずに engine 実行時まで到達する](../../risks/eval-gate-bypass.md) を
+緩和する。文書全体の形は [manifest 文書全体をスナップショットに固定し、どの不変条件も名指ししない変更を差分として出す](manifest-document-regression.md) のスナップショットでも固定する。
 
 ## 覆う CASE
 
-- CASE-9e8e3151-2c56-4c53-89ec-3e9fc5f1e06f（`tests/nix-unit/root-subdir.nix`）
-- CASE-9e44bd6d-f6b4-4d12-990e-349a4b5c0dda（`tests/namaka/manifest-subdir/expr.nix`）
+- [nix-unit: root-subdir.nix — root マーカーの subdir 適用形](nix-unit-root-subdir.md)（`tests/nix-unit/root-subdir.nix`）
+- [namaka: manifest-subdir — subdir 適用形で生成した manifest 文書のスナップショット回帰](namaka-manifest-subdir.md)（`tests/namaka/manifest-subdir/expr.nix`）
 
 ## 出典
 
-REQ-08c8f639-790c-4970-a954-c9567538cf9b の規範と ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509 / ADR-433b9539-21d9-46c5-91a1-fc2b04d5eb47 / ADR-6669c002-1b90-47a2-8a84-a0f7bddfd965 / ADR-d89c2ede-1aba-46fa-9f14-8dcf8a266e0e。
+[root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](../../requirements/root-marker-subdir-sugar.md) の規範と [root マーカーに subdir の適用形を持たせる](../../adr/root-marker-subdir-applied-form.md) / [fixed root には subdir を提供しない](../../adr/no-subdir-for-fixed-root.md) / [subdir は全 target へ前置する評価時の糖衣にし、root を動かさない](../../adr/subdir-as-target-prefix-sugar.md) / [root 相対で指定するパスすべてにパス安全性の確認を課す](../../adr/path-safety-for-root-relative-inputs.md)。

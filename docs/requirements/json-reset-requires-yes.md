@@ -27,7 +27,7 @@ generated:
 TTY でもプロンプトを出さず、`--yes` が無ければ即 `status:"error"` + 非ゼロで fail fast
 する。
 
-`--json` なしの `reset` が確認プロンプトか `--yes` で同意を要求することは REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6 の
+`--json` なしの `reset` が確認プロンプトか `--yes` で同意を要求することは [reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す](reset-fs-only-teardown.md) の
 担当。
 
 ## 出典
@@ -35,4 +35,4 @@ TTY でもプロンプトを出さず、`--yes` が無ければ即 `status:"erro
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「`reset --json` は `--yes` 必須」。
 
-決定の実体は ADR-acc31876-df36-485e-b356-92ae60e26db7「reset は非対話の実行で --yes を必須にする」。
+決定の実体は [reset は非対話の実行で --yes を必須にする](../adr/reset-confirmation-and-yes.md)「reset は非対話の実行で --yes を必須にする」。

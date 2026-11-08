@@ -86,10 +86,10 @@ CLI 単体（entrypoint 経由・nix 生成器）が同じ config 名を使い�
 last-applied 記録を共有する場合。互いの entry を古くなった配置として除去し合うこと自体は止めず、
 それが起きていることを warning で知らせる。
 
-記録の置き場・残りの内容・書き込みの規則は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35、
-警告コードの一覧と payload 上の置き場は REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62、
-レイアウトは DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5 の担当。
+記録の置き場・残りの内容・書き込みの規則は [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)、
+警告コードの一覧と payload 上の置き場は [変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く](json-change-payload.md)、
+レイアウトは [last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](../design/last-applied-record-layout.md) の担当。
 
 ## 出典
 
-ADR-0db061d1-fa30-436d-91d7-c0cec8804c52・ADR-8e253f2e-c255-482a-a0f8-0837e122e80f・ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8・ADR-17f29974-4fdb-4596-8afa-368a8f3971eb。
+[last-applied 記録に出所を持たせる](../adr/record-carries-origin.md)・[記録の読みは不正な記録を error にする](../adr/record-read-strictly.md)・[出所の食い違いは警告して apply を続ける](../adr/origin-mismatch-warns-and-continues.md)・[記録を書き直す操作は記録済みの出所を引き継ぐ](../adr/reset-rollback-inherit-origin.md)。

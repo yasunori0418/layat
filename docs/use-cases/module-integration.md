@@ -17,12 +17,12 @@ generated:
 としてではなくモジュールとして組み込み、host の activation（`home-manager switch` /
 `nixos-rebuild switch` 等）に layat の配置を載せる。flake-parts を使っているプロジェクト向け
 には `perSystem.layat` を `flake.layat.<system>` へ transpose する flakeModule も提供する
-（→ ADR-e6820da0-fce3-4aef-8b79-d53abbca6051）。
+（→ [layat output の flake-parts module を flakeModules.default で公開する](../adr/flake-parts-module-published.md)）。
 
 統合はあくまで**オプション**である。コアロジックはモジュールシステムに依存しない純粋関数
 として実装され、統合層はコアの薄いラッパーに過ぎない。配置の実体は全層で layat 自身の固定
 Go エンジンが実行し、`home.file` / `systemd.tmpfiles` などプラットフォームのネイティブ機構
-へは委譲しない（→ ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7 / ADR-2119433e-de69-4447-85a5-575d58246007）。
+へは委譲しない（→ [配置は全層で engine が行い、ネイティブ機構へ翻訳しない](../adr/engine-owns-placement-no-native-translation.md) / [engine を単一の固定 Go バイナリにする](../adr/engine-fixed-go-binary.md)）。
 
 ```
 layat コア（配置エンジン）= 振る舞いの単一の源
@@ -54,7 +54,7 @@ profile は**内部機構**（古くなった配置の追跡）に留め、ユ�
 
 同じ「設計の哲学」の「home-manager に依存しない」節は本 item の出典ではない。同節が述べるのは
 HM 不在の環境でも同じ設定定義で動くことであり、それを体現するのは統合ではなく CLI 単体の
-使われ方（UC-f2436d68-91ff-4c48-b1df-47acefe4f464 / UC-19a90989-0ae3-438f-8a75-4e1e2637f81c）。本 item が引き受けるのは、そこから派生する
+使われ方（[home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する](home-mode-pinned-repo-placement.md) / [プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する](project-mode-in-repo-placement.md)）。本 item が引き受けるのは、そこから派生する
 「コアロジックはモジュールシステムに依存しない純粋関数で、統合層は薄いラッパーに過ぎない」
 という統合層側の含意に留まる。
 

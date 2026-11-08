@@ -40,7 +40,7 @@ out-of-store は明示マーカーで opt-in する。
 | `marker` | `layat.lib.mkOutOfStoreSymlink "/abs/path"` | ローカル FS（ライブ）| 開発中の手元 dotfiles |
 | `marker` | `layat.lib.mkRootRelativeSymlink "rel/path"` | 配置 root 内のローカル FS（ライブ・相対リンク）| リポジトリ内の実体を同じ root へ配置 |
 
-上の表は原文の写しに root 相対（→ ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb）を加えたもので、規範は frontmatter が正。
+上の表は原文の写しに root 相対（→ [root 相対マーカーを別関数 mkRootRelativeSymlink で作る](../adr/mkrootrelativesymlink-separate-function.md)）を加えたもので、規範は frontmatter が正。
 
 `src` に string を直接渡して暗黙に out-of-store へ分岐する形は提供しない。
 
@@ -49,9 +49,9 @@ out-of-store は明示マーカーで opt-in する。
 # src = "/path/to/dotfiles";   # NG
 ```
 
-marker が何を返すか（`mkOutOfStoreSymlink` / `mkRootRelativeSymlink` の責務）は REQ-eb363122-385a-499c-a074-c95efb949d07 /
-REQ-a77181dd-a59c-40bb-855e-3430ad970eb6、marker と
-derivation の判別方式は REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7 が持つ。本 item は `src` が取る値の種別と、
+marker が何を返すか（`mkOutOfStoreSymlink` / `mkRootRelativeSymlink` の責務）は [mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](mkoutofstoresymlink-marker.md) /
+[mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](root-relative-symlink-marker.md)、marker と
+derivation の判別方式は [marker は判別タグで識別し manifest.json には漏らさない](marker-tag-discrimination.md) が持つ。本 item は `src` が取る値の種別と、
 どれが store / out-of-store になるかを規定する。
 
 ## 出典

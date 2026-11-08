@@ -27,12 +27,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: SDR-29ef8bb4-9349-47db-9e79-926bc71bbdd0, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #237, #203
+- 関連: [infrastructure を技術基盤として再定義し root から外す](infrastructure-redefined-non-root.md), [model.yaml で組み込みモデルを全面置換し、汎用の型名を使う](model-yaml-full-replacement.md), GitHub Issue #583, #237, #203
 - 起点: epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §3b を書き直した
 
 ## 背景
 
-infrastructure を技術基盤として定義し直した（SDR-29ef8bb4-9349-47db-9e79-926bc71bbdd0）とき、型名が
+infrastructure を技術基盤として定義し直した（[infrastructure を技術基盤として再定義し root から外す](infrastructure-redefined-non-root.md)）とき、型名が
 内容に合っているかが問題になった。違和感の主な原因は、品質系の文書と基盤系の文書の同居だった。
 
 ## 決定

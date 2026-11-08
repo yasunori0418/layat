@@ -24,17 +24,17 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-75df92ae-0694-452b-8fb4-350994e31b25, ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d, ADR-af37a636-a798-4c03-8fa4-e73ed6375a92, ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4
+- 関連: [apply --all は選択した config 間の target 重複を build 前に止める](apply-all-preflight-target-conflict.md), [apply --all は config ごとの情報を 1 回の eval でまとめて取る](apply-all-single-eval.md), [cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](cross-config-last-wins-with-foreign-warning.md), [apply --all の集約は config 名の辞書順に並べる](apply-all-lexicographic-order.md), [配置の振動はユーザー責任とし、文書で注意するに留める](oscillation-is-user-responsibility.md)
 - 起点: ADR-0038 §2a（データ算出は nix・検出判定は Go CLI・engine は不変）を書き直した
 
 ## 背景
 
 `apply --all` は、選択した config 間の target 重複を build の前に止める
-（ADR-75df92ae-0694-452b-8fb4-350994e31b25）。この確認に要る正規化後の target をどこで算出し、
+（[apply --all は選択した config 間の target 重複を build 前に止める](apply-all-preflight-target-conflict.md)）。この確認に要る正規化後の target をどこで算出し、
 重複の判定をどの層に置くかを決める必要があった。
 
 `apply --all` は build の前に、config ごとの情報を 1 回の eval でまとめて取っている
-（ADR-28605860-770e-41df-95dd-7dc05b20497a）。どの config を対象にするかを決める root モードの
+（[apply --all は config ごとの情報を 1 回の eval でまとめて取る](apply-all-single-eval.md)）。どの config を対象にするかを決める root モードの
 フィルタは、CLI にしかない。engine は 1 回の起動で 1 つの manifest だけを扱う。
 
 ## 決定
@@ -44,7 +44,7 @@ rootKind と一緒に受け取る。`--manifest` で渡されたビルド済み�
 各 link-farm の `manifest.json` から target を読む。重複の判定は CLI が行う。engine には手を入れず、config 間の衝突を
 engine へ持ち込まない。
 
-一括 eval で取る値と式は REQ-535b811d-dfc5-4eac-92db-737e70eb5415 に置く。
+一括 eval で取る値と式は [apply --all は rootKind を 1 回の一括 eval で取る](../requirements/apply-all-batched-eval.md) に置く。
 
 ## 根拠
 

@@ -49,8 +49,8 @@ engine が配置に使う値は `manifest.json` の解決済み `src` 文字列�
   なく、`nix-collect-garbage` で解放されてよい。`manifest.json` には記録する
   （孤児の警告と、古くなった配置の判定のため）。
 
-アンカー名の決め方は REQ-62eda895-efd4-4eaf-a58b-600e8637da75 が持つ。derivation が manifest.json と farm を含む
-こと自体は REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281 が持つ。
+アンカー名の決め方は [symlink farm の GC アンカー名は target のハッシュとする](farm-anchor-name-hash.md) が持つ。derivation が manifest.json と farm を含む
+こと自体は [mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](mkmanifest-return-value.md) が持つ。
 
 ## 出典
 

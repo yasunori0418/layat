@@ -16,13 +16,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-2fcf26b4-bce6-4ed6-a374-3afe560ead21
+- 関連: [VERSION の変更をきっかけに release を自動で作る](release-on-version-change.md)
 - 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。参照実装: https://github.com/yasunori0418/cryoflow のリリース自動化（bump workflow と release workflow）。ADR-0042 §4 を書き直した
 
 ## 背景
 
 `VERSION` の変更をきっかけに、タグと GitHub Release を自動で作る
-（ADR-2fcf26b4-bce6-4ed6-a374-3afe560ead21）。Release にバイナリなどの成果物を添付するかを
+（[VERSION の変更をきっかけに release を自動で作る](release-on-version-change.md)）。Release にバイナリなどの成果物を添付するかを
 決める必要がある。
 
 ## 決定
@@ -30,7 +30,7 @@ generated:
 GitHub Release に成果物を添付しない。配布の正規の手段は、タグで pin できる flake ref とする。
 需要が出たら `release.yml` にステップを足せる余地は残し、添付を禁じはしない。
 
-成果物の扱いは INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43 に置く。
+成果物の扱いは [リリース自動化（VERSION ファイル起点の bump PR・自動タグ・自動リリースノート）](../infrastructure/release-automation.md) に置く。
 
 ## 根拠
 

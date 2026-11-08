@@ -22,7 +22,7 @@ generated:
 
 GitHub Actions 上の `test.yml` のうち、**flake check と E2E の系統**と、テストを実行しないが
 同じ workflow が抱える対応表生成（`test-doc-matrix`）。同居する `sara` ジョブだけは
-トレーサビリティ検証基盤（INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71）の担当で、本 item には入らない。
+トレーサビリティ検証基盤（[トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）](traceability-verification.md)）の担当で、本 item には入らない。
 
 ## 構成
 
@@ -40,7 +40,7 @@ GitHub Actions 上の `test.yml` のうち、**flake check と E2E の系統**�
 最後の `test-doc-matrix` だけはテストを実行するジョブではなく、テスト資産とテスト文書
 （→ Issue #304）の対応を読み物として出す生成ジョブ。生成物はリポジトリへコミットせず artifact
 に留める — 生成元と併走する生成物はずれるうえ、その diff を読んでも対応の崩れは別途契約テスト
-（`dev/tests/test-doc-map.sh`。担当は INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71）が機械で強制している以上のことは分からない。
+（`dev/tests/test-doc-map.sh`。担当は [トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）](traceability-verification.md)）が機械で強制している以上のことは分からない。
 Job Summary への出力はそのついでの表示手段で、サイズ上限に触れる場合は artifact への誘導へ
 退避する。
 
@@ -60,7 +60,7 @@ action だけで完結し、nix を入れない。
 固定し、可読性のための版名（`# v7.0.0` 等）をコメントで併記する**。版タグは同じ名前のまま
 中身を差し替えられるため、参照側を変えずに実行される内容が変わり得る。SHA なら更新は
 このリポジトリへの変更として PR に現れ、マージ前の検証を必ず通る。これが本パイプラインの
-引き受ける「不変な識別子での固定」の実体になる（→ QA-d028e302-8262-428c-9030-98d46b4b0cd3）。
+引き受ける「不変な識別子での固定」の実体になる（→ [自動化が取り込む実行物は不変な識別子で固定し、権限は最小に絞り、不正入力では成果物を作る前に失敗する](../quality/automation-supply-chain-safety.md)）。
 
 その先のコマンド実行は 2 通りに分かれる。`flake-check` と `go-coverage` は `nix flake check -L` /
 `nix build` をそのまま実行し、`e2e` と `test-doc-matrix` は devShell 経由でスクリプトを実行する。
@@ -94,7 +94,7 @@ PR 上でも実行される。
 話で、この push ガードとは別の判断になる。
 
 docs のみの変更で 3 環境マトリクスを回すのは無駄だが、**トリガ段の `paths` フィルタは使わない**。
-required status check（→ INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6）は生成されない check を `Expected` のままブロックするため、
+required status check（→ [マージの条件（main の ruleset と required status checks）](merge-gate.md)）は生成されない check を `Expected` のままブロックするため、
 `paths` で workflow ごと弾くと docs-only PR がマージ不能になる。代わりに専用の変更検出 composite
 action（`.github/actions/changes`）を `changes` ジョブが呼び、後続ジョブがその outputs を条件にする。
 「docs-only で nix を実走させない」意図は保ったまま、実現手段だけを移してある。
@@ -109,11 +109,11 @@ action（`.github/actions/changes`）を `changes` ジョブが呼び、後続�
 
 ## 依存関係
 
-- ここで出る check 名が INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6（マージの条件）の required status check の実体になる
-- INF-af33c5a1-f846-4f09-8e43-c6ea042d6e06（バイナリキャッシュ）はこのパイプラインと同じ 3 環境マトリクスと `setup-nix` を
+- ここで出る check 名が [マージの条件（main の ruleset と required status checks）](merge-gate.md)（マージの条件）の required status check の実体になる
+- [バイナリキャッシュ（main push 時の cachix 投入）](binary-cache.md)（バイナリキャッシュ）はこのパイプラインと同じ 3 環境マトリクスと `setup-nix` を
   使うが、投入自体は独立した workflow が main push で自らビルドして行う。本パイプラインの
   ビルド結果を受け渡す関係ではない
-- INF-0865477b-21b2-4feb-9c06-1a882a4e595a（docs サイト）のビルド検証は本パイプラインの check 群へ加わる
+- [ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）](docs-site.md)（docs サイト）のビルド検証は本パイプラインの check 群へ加わる
 
 `docs/dev/definition-of-done.md` の DOD-01（E2E 成功）/ DOD-02（flake check 成功）は、
 このパイプラインのジョブを直接指す。
@@ -125,7 +125,7 @@ E2E をコンテナで回す案（`pkgs.dockerTools` によるテストイメー
 
 ## 出典
 
-ADR-ab400e58-afbd-40a0-8eae-239d3cfda211、ADR-b07bbe19-b8a7-4401-98b0-5ccaf798ad05、
-ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0、ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a、
-ADR-f2e72cfa-f46e-46b7-9d50-a98d60d8980f、ADR-3eb35e63-5465-44cd-8299-c2ac3e6034de、
-ADR-cb010758-7887-470a-ba61-19b2e99f0053、ADR-6f0383d9-0176-47c4-a9da-1a41e1fd3747。
+[CI の nix インストーラは cryoflow 踏襲](../adr/ci-nix-installer-cryoflow.md)、[CI シェルは dev/flake.nix に公開する](../adr/ci-shell-in-dev-flake.md)、
+[テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)、[キャッシュは 3 system の matrix ビルドで投入する](../adr/ci-cache-via-matrix-build.md)、
+[flake check を 3 環境の os×system matrix で回す](../adr/flake-check-os-system-matrix.md)、[テスト系の CI を pull_request と workflow_dispatch で起動する](../adr/ci-triggers-pull-request-and-dispatch.md)、
+[変更検出で nix を回さない PR の必須の確認を skip で通す](../adr/change-detection-gates-ci-jobs.md)、[Go の静的解析を CGO_ENABLED=0 で行う](../adr/go-checks-without-cgo.md)。

@@ -24,7 +24,7 @@ generated:
 
 - ステータス: deprecated
 - 日付: 2026-11-01
-- 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-f85f1afd-9b87-4f7a-922e-97c62554f198, GitHub Issue #162, #537, `docs/concept.md`
+- 関連: [root は 3 つの marker で表す](three-root-markers.md), [root の明示を mkManifest 層で必須にする](root-explicit-at-mkmanifest.md), GitHub Issue #162, #537, `docs/concept.md`
 - 起点: Issue #162 の job-plan grilling（2026-10-30）。ADR-0069 の本題を書き直した
 
 ## 背景
@@ -41,7 +41,7 @@ Issue #162 は、`pkgs.buildEnv` で合成したパッケージ環境（bin / sh
 `pkgs.buildEnv { … }` を置く配置 idiom で満たす。env.sh や `.envrc` などの配線ファイルは layat が
 生成せず、利用者が書く。engine・manifest schema・passthru は変えない。
 
-配置と配線の書き方は DSG-f1d4c295-54ae-4def-951c-901b42dea008 に置く。
+配置と配線の書き方は [buildEnv の合成環境は entry の src に置く配置 idiom で扱い、環境変数の配線は利用者側の idiom で行う](../design/buildenv-placement-env-wiring-idioms.md) に置く。
 
 ## 根拠
 
@@ -50,7 +50,7 @@ buildEnv 呼び出しの短縮と、`binDir` などの派生パスだけであ�
 値から導けるので、新しい情報を持たない。公開する API が増える一方、素の buildEnv の式より表現力は
 狭まる（入れ子の buildEnv や `postBuild` など）。
 
-hook の需要を engine に持ち込まず配線層の idiom で満たした ADR-5ee0230d-765f-450a-b9f7-929c13d6b694 と同じ判断になる。`PATH` の管理は、
+hook の需要を engine に持ち込まず配線層の idiom で満たした [engine の実行イベントにユーザー定義スクリプトの hook を掛ける](engine-event-hooks.md) と同じ判断になる。`PATH` の管理は、
 配置を既存のプリミティブで行い、環境変数の設定をシェル・systemd・direnv の機構に任せれば足りる。
 
 再提案するときは、entry の配置 idiom で満たせない需要を具体的に示すことを前提条件にする。
@@ -59,7 +59,7 @@ hook の需要を engine に持ち込まず配線層の idiom で満たした AD
 
 ### 提案どおり `mkEnv` を提供する
 
-#162 が実装の対象にした案で、`mkEnv` を 1 entry の mkManifest へ脱糖する。ADR-6669c002-1b90-47a2-8a84-a0f7bddfd965 の root marker
+#162 が実装の対象にした案で、`mkEnv` を 1 entry の mkManifest へ脱糖する。[subdir は全 target へ前置する評価時の糖衣にし、root を動かさない](subdir-as-target-prefix-sugar.md) の root marker
 `subdir` と同じく lib 層の糖衣で、engine は変えない。role ごとに独立した profile は得られるが、
 それは専用の config に 1 entry を置けば今でも得られる。増える API に見合う価値が無い。
 

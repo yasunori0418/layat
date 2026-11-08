@@ -73,18 +73,18 @@ change が空、conflict なのに status=success 等）は検出されずに通
 これらは文書のテキストの比較ではなく抽出したフィールドに対して行う（書式や当該アサートの
 関知しないフィールドの変化で失敗しないようにするため）。
 
-item id の導出規則そのものは REQ-57137302-de29-4f71-a565-034cd5de080b の担当。
+item id の導出規則そのものは [item id は identity の JCS を SHA-256 した小文字 hex とする](../requirements/json-item-id-derivation.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「適合検証」。
 
-決定の実体は ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71、ADR-feb60906-1517-46b8-8fa5-e007df4d3e11、
-ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7、ADR-5d28818e-f7e1-45e8-a7fd-bbb6157b8586、
-ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc、ADR-9e328362-2e90-441a-8eca-40081ce71b1b、
-ADR-baf6346d-783b-4607-ab1c-c2c93c09e064、ADR-bd8a4c8a-5e7e-485a-bccf-20dab63125f2、
-ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9、ADR-acc31876-df36-485e-b356-92ae60e26db7。
+決定の実体は [--json は outturn 規約に常時準拠する](../adr/outturn-conformance-principle.md)、[--json は常に results\[\] エンベロープを出す](../adr/results-envelope-always.md)、
+[--json の item id は subject スコープで導く](../adr/subject-scoped-ids.md)、[--json は items を全件、changes を差分で持ち可逆性を reversible で表す](../adr/items-changes-reversible.md)、
+[読み取り専用の列挙は info で返す](../adr/readonly-enumeration-as-info.md)、[エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)、
+[--all は config ごとの SubjectResult を積む](../adr/all-as-multiple-subject-results.md)、[CLI は outturn/go に依存する](../adr/outturn-go-dependency.md)、
+[エラーコードは共通コードを再利用し固有の意味だけを E_LAYAT_* にする](../adr/error-code-scheme.md)、[reset は非対話の実行で --yes を必須にする](../adr/reset-confirmation-and-yes.md)。
 
 > **2026-08-09 追補（→ Issue #273）**: E2E の `--json` 検証範囲を追補した。原文が挙げるのは
 > `outturn-validate` による適合検証と id-vectors との比較だけだったが、実装（`tests/e2e/
@@ -93,10 +93,10 @@ ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9、ADR-acc31876-df36-485e-b356-92ae60e26
 > 検証だけを規範に置くと、この層が退行しても item に照らして検出できないため規範へ引き上げた。
 
 > **本 item は `requirement` から `test_plan` へ移設した**（→ Issue #238。旧 ID は
-> `REQ-2381d93a-732e-4437-910b-fac14d398aa0`）。エンベロープを outturn 規約準拠にすること自体は REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead が担い、
+> `REQ-2381d93a-732e-4437-910b-fac14d398aa0`）。エンベロープを outturn 規約準拠にすること自体は [--json は outturn 規約準拠のエンベロープを出す第 2 契約とする](../requirements/json-outturn-envelope.md) が担い、
 > そちらは use_case へ紐づく。本 item はその適合をどのテストレベルでどう検証するかを定める
 > テストアプローチの規定であり、ユーザーの使われ方からは導かれないため、use_case を親に
 > 持てず接続漏れになっていた（当時の判断は Issue #211）。テスト計画の型を新設して solution
-> 直下で受けることにしたため、`derives_from` は SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e を指す。TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9・
-> TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2 も同じ経緯で移設した。TP-403c55c7-d996-4951-8e6b-c3a7dddd387c は #238 では「テスト計画そのものではない」
+> 直下で受けることにしたため、`derives_from` は [layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る](../solution/layat-placement-primitive.md) を指す。[非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](e2e-harness-scope.md)・
+> [NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする](nixos-vm-test-future.md) も同じ経緯で移設した。[lib.__internal は private helper のテスト seam として公開する](lib-internal-test-seam.md) は #238 では「テスト計画そのものではない」
 > と判断して見送ったが、Issue #239 でその判断を改めて移設した（経緯は同 item の注記）。

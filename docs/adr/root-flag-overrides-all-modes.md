@@ -16,12 +16,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, `docs/spec.md`
+- 関連: [root は 3 つの marker で表す](three-root-markers.md), `docs/spec.md`
 - 起点: ADR-0017 §2 を書き直した
 
 ## 背景
 
-engine は marker が運ぶ種別から root を実行時に解決する（ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed）。
+engine は marker が運ぶ種別から root を実行時に解決する（[root は 3 つの marker で表す](three-root-markers.md)）。
 CLI の `--root <path>` は解決した root を上書きするフラグで、当初は project mode の root を
 差し替える用途だけを想定していた。home mode や fixed root の config に渡したときの扱いを
 決める必要があった。
@@ -29,7 +29,7 @@ CLI の `--root <path>` は解決した root を上書きするフラグで、�
 ## 決定
 
 `--root <path>` は、manifest の root の種別（project / home / system / fixed）に関わらず、engine が
-解決する root を一律に上書きする。規範の細目は REQ-61c05e09-0bde-4f74-9a96-03185f9df606 に置く。
+解決する root を一律に上書きする。規範の細目は [--root は全モード共通で解決 root を明示上書きする](../requirements/root-override-flag.md) に置く。
 
 ## 根拠
 

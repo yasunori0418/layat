@@ -41,7 +41,7 @@ entrypoint は `layat.<name>` に複数の config を公開できる。1 つの�
 `layat apply` は、名前を省略すると `layat.default` を、名前を指定するとその config を、`--all` を
 付けると `layat.*` の全 config を適用する。`default` が無いのに名前を省略したらエラーにする。
 
-選択の規範は REQ-c2d44626-d8f4-446a-a80a-319a500129b4 に置く。
+選択の規範は [apply の config 選択は name 省略で default・明示で単一・--all で全件](../requirements/apply-config-selection.md) に置く。
 
 ## 根拠
 

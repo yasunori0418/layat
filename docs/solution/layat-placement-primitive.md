@@ -68,19 +68,19 @@ layat モデル:
 > **上の 2 つの図は分割時点の `docs/concept.md`（原文）からの写し**。solution は解決策の
 > 位置づけを述べる層で規範を持たないため、独立更新の粒度が config 単位
 > （1 profile = 1 config）であることの規範は
-> REQ-1be4d678-959c-44d7-a346-44bfd95af56e にあり、その config をどう選ぶかは REQ-c2d44626-d8f4-446a-a80a-319a500129b4 / REQ-496b1a07-5b74-416b-9e5f-3952b4c03737 が担う。
-> 使われ方としての整理は UC-1c280dce-7c72-44c0-95ea-d06344f62a47 が担う。
+> [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](../requirements/generation-mechanism-link-farm-manifest.md) にあり、その config をどう選ぶかは [apply の config 選択は name 省略で default・明示で単一・--all で全件](../requirements/apply-config-selection.md) / [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md) が担う。
+> 使われ方としての整理は [役割ごとに config を分けて更新を独立させ、1 つの更新を他の役割へ波及させない](../use-cases/independent-update-cycles.md) が担う。
 
 `home.file` 相当（root = `$HOME`）はこのプリミティブの一適用に過ぎず、root は
 `projectRoot` / `homeRoot` / `systemRoot` で明示的に選ぶ（暗黙デフォルトは持たない・
-→ ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed / ADR-f85f1afd-9b87-4f7a-922e-97c62554f198）。
+→ [root は 3 つの marker で表す](../adr/three-root-markers.md) / [root の明示を mkManifest 層で必須にする](../adr/root-explicit-at-mkmanifest.md)）。
 
 positioning は **project-first**。中心的な使い方はプロジェクト内に組み込んで repo 内の
 任意パスへ配置する project mode であり、`$HOME` 配置・system 配置は明示マーカーで opt-in
-する例外として位置づける（→ ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e）。ユーザーは PATH 常駐の `layat` CLI を実行し、CLI が
+する例外として位置づける（→ [project mode を第一の使い方とする](../adr/project-first.md)）。ユーザーは PATH 常駐の `layat` CLI を実行し、CLI が
 entrypoint（`flake.nix` / `shell.nix` / `default.nix`）を発見して配置する。
 
-配置先のデフォルトは常に Nix ストアへの symlink であり、再現性を担保する（→ ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c）。
+配置先のデフォルトは常に Nix ストアへの symlink であり、再現性を担保する（→ [store link を既定にし、out-of-store は明示関数でのみ選ばせる](../adr/store-link-default-out-of-store-opt-in.md)）。
 手元の dotfiles を直接参照してライブ編集したい場合に限り、明示関数
 `layat.lib.mkOutOfStoreSymlink "/abs/path"` で Nix ストアを経由しない退避路を選べる。
 
@@ -91,10 +91,10 @@ entrypoint（`flake.nix` / `shell.nix` / `default.nix`）を発見して配置�
 「設計の哲学」「既存ツールとの比較」「設計の変遷（会話の流れ）」は独立した item を立てず
 `docs/concept.md` に残す（→ Issue #211）。ただし「設計の哲学」のうちモジュール統合の
 使われ方に転化する 2 項（「配置ロジックはコアが所有し、モジュールは配線に徹する」
-「統合は『オプション』」）は UC-d39c1994-f9a5-4860-80ba-f6e584adaf14 が引き受けており、節そのものは concept.md に残るが
+「統合は『オプション』」）は [既に home-manager / NixOS / nix-darwin を使っている環境へ layat をモジュールとして組み込む](../use-cases/module-integration.md) が引き受けており、節そのものは concept.md に残るが
 主張は use_case 側にも写っている。「home-manager に依存しない」節が述べるのは HM 不在の環境
 でも同じ設定定義で動くことであり、これは統合層ではなく CLI 単体の使われ方
-（UC-f2436d68-91ff-4c48-b1df-47acefe4f464 / UC-19a90989-0ae3-438f-8a75-4e1e2637f81c）が体現する。
+（[home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する](../use-cases/home-mode-pinned-repo-placement.md) / [プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する](../use-cases/project-mode-in-repo-placement.md)）が体現する。
 
 north-star（配置プリミティブから組むミニマル distro 構想）も展望として `docs/concept.md` に
 残し、`requirement` を持たない use_case にはしない（2026-08-01 確定）。

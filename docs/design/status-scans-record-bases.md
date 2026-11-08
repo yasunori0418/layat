@@ -13,7 +13,7 @@ generated:
 
 ## 設計
 
-`layat status` を 3 つに分担する。既存コマンドと同じ層境界（→ DSG-7d354fe0-a333-495b-9f4b-14bba316dc47）に
+`layat status` を 3 つに分担する。既存コマンドと同じ層境界（→ [Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする](go-package-split.md)）に
 乗せる。
 
 ```
@@ -30,7 +30,7 @@ apply が比較の基準を読むときと同じ厳格な確認（破損した J
 **`internal/paths`** には関数を足さない。`<roothash>` 系列の列挙は prune が使う
 `ListRootHashSeries` を記録基底に対して呼ぶ。この関数は「`.root` を持つディレクトリ」を系列と
 みなすだけで、基底が profile 基底か記録基底かを問わない。記録基底も `<roothash>` 階層に
-backref `.root` を置く同型のレイアウトなので（→ REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）、
+backref `.root` を置く同型のレイアウトなので（→ [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](../requirements/last-applied-record.md)）、
 そのまま使える。`<name>` 直キーの列挙は status だけが使うので、`internal/engine/status.go` の中に
 閉じる。
 
@@ -139,10 +139,10 @@ Root が空なので、Root で見分けると直キーと取り違える。
 - テキストは subject ごとに見出し行と、manifest の entry ごとに `<target>\t<method>\t<dest>`
   （dest は `planner.LinkDest`）を出す。`Err` を持つ subject は stderr に error を出す。
 - `--json` は `results[i].result.info` に `{mode, root, appliedAt, linkFarm, entries}` を載せ
-  （→ REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303）、`Err` は該当 subject の `errors[]` に置く。
+  （→ [読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す](../requirements/json-readonly-payload.md)）、`Err` は該当 subject の `errors[]` に置く。
 
 ### この設計が引き受ける代償
 
 `ListRootHashSeries` を profile 基底と記録基底の両方で共有するので、その列挙条件が変わると
-prune と status の両方の列挙結果が変わる。status 側の取りこぼしは RISK-e92487a5-fff9-40db-844d-6590f1f36dec が
+prune と status の両方の列挙結果が変わる。status 側の取りこぼしは [status が系列を取りこぼし、mode / root を取り違え、不正な記録を記録なしと読む](../risks/status-misreports-inventory.md) が
 扱う。

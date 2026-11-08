@@ -28,7 +28,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb, SDR-34916a83-0cff-4524-a8ff-5a3195af52c3, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #237, #203, `docs/model.yaml`
+- 関連: [root は solution と ADR 系の型だけにする](roots-solution-and-adr-types-only.md), [テスト計画の型を品質方針の型から分けて設ける](quality-and-test-plan-types.md), [model.yaml で組み込みモデルを全面置換し、汎用の型名を使う](model-yaml-full-replacement.md), GitHub Issue #583, #237, #203, `docs/model.yaml`
 - 起点: epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §3a を書き直した
 
 ## 背景
@@ -50,9 +50,9 @@ design を満たす。これで infrastructure は root から外れる。
 
 ## 根拠
 
-quality を設けた（SDR-34916a83-0cff-4524-a8ff-5a3195af52c3）ことで、開発の基盤にも接続先ができた。
+quality を設けた（[テスト計画の型を品質方針の型から分けて設ける](quality-and-test-plan-types.md)）ことで、開発の基盤にも接続先ができた。
 quality と design のどちらかを経由して solution の木へ届くので、root の型を solution と ADR 系に絞れる
-（SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb）。
+（[root は solution と ADR 系の型だけにする](roots-solution-and-adr-types-only.md)）。
 
 品質系の文書が quality へ移ったため、infrastructure は技術基盤だけを受ける型として定義し直せる。
 配信やクラウドまで含めるのは、web アプリケーションのような横展開でも同じ型で受けられるようにするため。

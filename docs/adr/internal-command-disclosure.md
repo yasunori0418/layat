@@ -30,9 +30,9 @@ store path を得る。利用者からはこの内部の呼び出しが見えず
 ## 決定
 
 CLI は、manifest 生成器が内部で実行するコマンドを利用者に開示し、利用者が選んで手で実行できるように
-する。開示を `--help` の文面と `--debug` での逐次の表示にどう分担するかは ADR-5be36ff2-ed08-4e8e-8476-62ff2b08a9dd が決める。
+する。開示を `--help` の文面と `--debug` での逐次の表示にどう分担するかは [内部コマンドの開示を CLI と生成器で分担する](internal-command-disclosure-split.md) が決める。
 
-開示の範囲は REQ-4ffda99a-7062-4c00-915f-70b525cb215b に置く。
+開示の範囲は [内部実行する nix コマンドを開示し世代の切替と GC は標準の nix コマンドへ委譲する](../requirements/nix-command-transparency-and-delegation.md) に置く。
 
 ## 根拠
 

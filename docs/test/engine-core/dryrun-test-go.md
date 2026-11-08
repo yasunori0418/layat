@@ -29,4 +29,4 @@ generated:
 - **実ディレクトリ移行の判断**: 実 dir が占有する target の移行判断を、除去なしで行うこと
 
 dryrun と本番 apply が同数の conflict を報告することの比較は `engine_test.go` にあり、
-CASE-31fdb776-9650-4ff9-97f6-45d56b2e7177 が扱う。
+[internal/engine/engine_test.go — 実 tmpdir に対する apply の統合テスト](engine-test-go.md) が扱う。

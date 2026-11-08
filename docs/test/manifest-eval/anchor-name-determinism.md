@@ -14,7 +14,7 @@ generated:
 ## テスト条件
 
 アンカー名（target の sha256 先頭 32 hex）そのものの性質を、farm の組み立てから切り離して
-アサートする。抽出条件と組み立て結果は TC-1d69350e-db3c-4d74-a24e-7a3fabb31b0a の担当。
+アサートする。抽出条件と組み立て結果は [GC アンカー対象の抽出条件と farm の組み立て結果をアサートする](farm-anchor-derivation.md) の担当。
 
 - 出力長が常に 32、構成が小文字 hex のみであること
 - 同一 target は同値（呼び出しをまたいで安定）であること
@@ -24,7 +24,7 @@ generated:
 
 ## 覆う CASE
 
-- CASE-ead15d61-8ca7-41fb-9121-a5d247ef727a（`tests/nix-unit/anchor-name.nix`）
+- [nix-unit: anchor-name.nix — GC アンカー名の形式と決定性](nix-unit-anchor-name.md)（`tests/nix-unit/anchor-name.nix`）
 
 ## 出典
 

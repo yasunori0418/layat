@@ -29,7 +29,7 @@ git の履歴には書いた時刻が残るが、frontmatter だけを直した�
 本文を最後に変えた時刻を取り出すには手間がかかる。
 
 OKF には、生成者と時刻の `generated`、確認の記録の `verified`、期限の `stale_after` がある。
-SDR-bab72f31-7cb1-47a3-bb2d-7876757d86fb で OKF と互換のキーを足すと決めた。
+[OKF v0.2 と互換の frontmatter キーを item に足す](okf-compatible-frontmatter.md) で OKF と互換のキーを足すと決めた。
 
 ## 決定
 

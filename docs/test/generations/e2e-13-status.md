@@ -21,8 +21,8 @@ generated:
 隔離し、homeRoot の `home` と projectRoot の `proj` を持つ fixture flake を実 nix 経由で apply する
 E2E シナリオ。
 
-走査と読み取りの分岐は CASE-152e6f7b-cc49-4ac0-ad8e-0aba62dc1371（tmpdir に組んだ記録）、
-出力契約は CASE-dc611f8f-4ee4-44cb-8b34-01d68da1b918（engine の差し替え）が覆う。**このシナリオの
+走査と読み取りの分岐は [status_test.go — 記録基底の列挙順・基底の扱い・読めない系列・読み取り専用](engine-status-test-go.md)（tmpdir に組んだ記録）、
+出力契約は [status_test.go — status の subject 名・フィルタ・一致 0 件・ストリームの排他・--json の形・error 時の続行](../cli-json/status-cli-test-go.md)（engine の差し替え）が覆う。**このシナリオの
 持ち分は「実 apply が書いた本物の記録を status が読み取り、CLI の実際の処理で出せるか」**である。
 記録の書式や置き場が apply と status の間でずれる退行は、手組みの記録だけでは気付けない。
 

@@ -22,7 +22,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-955c2601-88fb-4be8-85de-ec7d0a8c727d, GitHub Issue #4
+- 関連: [apply --all は config ごとの情報を 1 回の eval でまとめて取る](apply-all-single-eval.md), [shell.nix / default.nix の再現性は利用者の責任にする](shell-default-nix-best-effort.md), GitHub Issue #4
 - 起点: Issue #4（flake.nix 以外の entrypoint）。ADR-0007 §4 を書き直した
 
 ## 背景
@@ -36,11 +36,11 @@ flake の標準 output である `packages.<system>.<name>` に置けば、`nix 
 ## 決定
 
 entrypoint は named manifest を専用の `layat` 名前空間の `layat.<name>` に公開する。flake では
-`layat.<system>.<name>` とし、system は CLI が補う。shell.nix / default.nix での公開形は ADR-925b0011-e2a2-43ac-a5d3-5e4a10f52470 が
+`layat.<system>.<name>` とし、system は CLI が補う。shell.nix / default.nix での公開形は [legacy entrypoint は mkShell の passthru 形を正準にする](legacy-entrypoint-mkshell-passthru-canonical.md) が
 決める。
 
-entrypoint の形ごとの公開形と build の attr path は REQ-496b1a07-5b74-416b-9e5f-3952b4c03737 に、
-名前空間を分けて `packages` に manifest を含めないことは REQ-205d744d-5a53-4511-bc09-892ba01d4e6f に置く。
+entrypoint の形ごとの公開形と build の attr path は [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md) に、
+名前空間を分けて `packages` に manifest を含めないことは [config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない](../requirements/default-config-name-and-namespace.md) に置く。
 
 ## 根拠
 

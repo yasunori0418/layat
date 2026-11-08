@@ -27,7 +27,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, ADR-6d2327f7-f513-42c3-89f8-808467db1914, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, `docs/design.md`
+- 関連: [copy と out-of-store の併用を eval 時に拒否する](copy-with-out-of-store-eval-error.md), [out-of-store はマッピングだけを追跡する](out-of-store-tracks-mapping-only.md), [manifest.json を schemaVersion 1 の唯一の契約として固定する](manifest-json-contract-schemaversion-v1.md), [home mode の CLI と lib の版ずれを manifest の確認に任せて許容する](home-mode-skew-guarded-by-schemaversion.md), `docs/design.md`
 - 起点: Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §1 と §3 を書き直した
 
 ## 背景
@@ -44,8 +44,8 @@ readlink の結果と、Entry だけから計算するリンク先の文字列�
 engine は root 相対マーカーの entry を、target の親ディレクトリから `src/subpath` への相対パスを
 中身とする symlink として張る。この形は、配置の時点で target の祖先が実ディレクトリであるという
 不変条件に依存する。foreign な祖先 symlink は配置前に止め、自己記録の古くなった祖先 symlink は
-配置前に除く。リンク先の計算は DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296、祖先 symlink の扱いは
-REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575 に置く。
+配置前に除く。リンク先の計算は [rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは配置前の確認だけにする](../design/root-relative-linkdest.md)、祖先 symlink の扱いは
+[祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する](../requirements/ancestor-symlink-nest-migration.md) に置く。
 
 ## 根拠
 

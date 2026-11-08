@@ -30,12 +30,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #268, #203, #267, `docs/agents/issue-tracker.md`
+- 関連: [欠陥はグラフに置かず GitHub Issues で管理する](defects-in-github-issues.md), [model.yaml で組み込みモデルを全面置換し、汎用の型名を使う](model-yaml-full-replacement.md), GitHub Issue #583, #268, #203, #267, `docs/agents/issue-tracker.md`
 - 起点: Issue #268（epic #203 残ブロッカー）の判断（2026-08-09）で確定。ADR-0051 §3 を書き直した
 
 ## 背景
 
-欠陥はグラフに置かず GitHub Issues で管理する（SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed）。グラフの
+欠陥はグラフに置かず GitHub Issues で管理する（[欠陥はグラフに置かず GitHub Issues で管理する](defects-in-github-issues.md)）。グラフの
 risk / test_condition は予防の体系だが、起きた欠陥から学ばなければ、ある時点の分析を写したまま古びていく。
 
 ## 決定

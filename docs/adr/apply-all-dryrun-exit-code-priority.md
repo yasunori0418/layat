@@ -32,7 +32,7 @@ config ごとに結果が分かれるので、error の config と conflict の 
 `apply --all --dryrun` の終了コードは、error を conflict より優先して決める。error が 1 つでも
 あれば 1、error が無く conflict があれば 2、どちらも無ければ 0 にする。
 
-優先順の規範は REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32 に置く。
+優先順の規範は [apply --all --dryrun の終了コードは error を conflict より優先する](../requirements/apply-all-dryrun-exit-code-priority.md) に置く。
 
 ## 根拠
 

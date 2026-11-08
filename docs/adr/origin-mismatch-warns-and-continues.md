@@ -24,12 +24,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e, ADR-0db061d1-fa30-436d-91d7-c0cec8804c52, GitHub Issue #580, #498
+- 関連: [同一 profileDir への同時実行は後勝ちにする](same-profiledir-target-last-wins.md), [last-applied 記録に出所を持たせる](record-carries-origin.md), GitHub Issue #580, #498
 - 起点: Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §3 と §6 を書き直した
 
 ## 背景
 
-同じ profileDir への apply は後勝ちにしている（ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e）。
+同じ profileDir への apply は後勝ちにしている（[同一 profileDir への同時実行は後勝ちにする](same-profiledir-target-last-wins.md)）。
 欠けているのは、後勝ちが別の出所からの上書きとして起きていることを利用者が知る手段である。
 
 同じ設定を home-manager と CLI 単体の両方から使う場合、generator と entrypoint
@@ -42,7 +42,7 @@ apply（`--dryrun` と世代スキップの処理を含む）は、
 
 食い違いは、両方に `identity` があれば `identity` だけで比べ、どちらかに無ければ generator と
 entrypoint で比べる。版 1 の記録は出所を持たないので比べない。警告のコードと判定の細目は
-REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282 に置く。
+[apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する](../requirements/apply-origin-mismatch-warning.md) に置く。
 
 ## 根拠
 

@@ -36,7 +36,7 @@ generated:
 apply のたびに新しい世代系列が生まれ、前世代が永久に見つからず古くなった配置の除去が機能しなくなる。
 
 レイアウト側では、profile リンク・`profile-N-link` 世代・`.pending` out-link を同一
-ディレクトリの兄弟として並べる規約（→ REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3）が崩れると、read-only な store パスを
+ディレクトリの兄弟として並べる規約（→ [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](../requirements/profile-on-disk-layout.md)）が崩れると、read-only な store パスを
 貫通して書こうとし、書き込みに失敗する。`<state>` の解決（`$XDG_STATE_HOME` 優先・無ければ
 `~/.local/state`・`$HOME` も解決できなければエラー）が誤れば、profile 一式が想定外の
 場所に作られ、既存の世代が一切見えなくなる。
@@ -48,14 +48,14 @@ profileDir を読めない失敗を黙認して「世代 0 件」と見なすの
 危険な結論を沈黙で作る。
 
 キーイングの前提と世代を操作する処理も同じ系統にある。build 前に profileDir を決めるための
-`passthru.rootKind`（→ REQ-2f9205ee-cec5-4072-ac3e-890caae79904）が評価時に取れないか実際の root と
+`passthru.rootKind`（→ [mkManifest の返り値は passthru で root kind を露出する](../requirements/mkmanifest-passthru-rootkind.md)）が評価時に取れないか実際の root と
 食い違うと、flock と前世代の読み取りが別の profileDir に対して行われる。build しないコマンドが eval 先行を
 省くか、`--root` で作った世代を同じ `--root` 無しで操作できてしまうと、別の系列を読む
-（→ REQ-9c111c32-8f6c-4eda-859c-dae02c0624fc）。世代の commit・列挙・切替が世代バックエンドの契約
-（→ REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）を迂回するか、世代の間引きが契約と nix コマンドの
-外で行われると（→ REQ-706de717-4e47-471a-a1c0-448635be159c）、同じ系列を処理ごとに違う形で読み書き
+（→ [非 build コマンドも eval 先行を共通前段に持つ](../requirements/non-build-commands-eval-first.md)）。世代の commit・列挙・切替が世代バックエンドの契約
+（→ [engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](../requirements/generation-backend-contract.md)）を迂回するか、世代の間引きが契約と nix コマンドの
+外で行われると（→ [世代操作は世代バックエンドの契約越しに行い、GC root の間引きと store 解放は nix コマンドへ分けて委譲する](../requirements/generation-gc.md)）、同じ系列を処理ごとに違う形で読み書き
 する。失敗時に残る `.pending` が同名で上書きされず config あたり 1 個を超えて溜まるのも、
-同じディレクトリ規約の崩れである（→ REQ-840b3641-6e76-46da-82e9-680cabd65abe）。
+同じディレクトリ規約の崩れである（→ [失敗時に残る pending gcroot は config あたり最大 1 個に有界とし回収処理を持たない](../requirements/pending-gcroot-bounded.md)）。
 
 ## 実現性
 
@@ -71,10 +71,10 @@ profileDir を読めない失敗を黙認して「世代 0 件」と見なすの
 
 ## 緩和
 
-TC-40b762fc-3b48-471c-b495-c5ffe1f584b5（`<state>` 解決・profileDir キーイング・世代リンク命名）と
-TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7（世代リンクの走査）が緩和する。
+[state 基底・profileDir のキーイング・世代リンク名が root と mode ごとに正しく決まる](../test/generations/profile-path-keying.md)（`<state>` 解決・profileDir キーイング・世代リンク命名）と
+[profileDir の世代リンクを番号順に列挙して current を判定し、読めない profileDir は黙認しない](../test/generations/generation-listing-parse.md)（世代リンクの走査）が緩和する。
 
 キーイングの前提と世代を操作する処理の面のうち、`--root` 上書きのキーイングは
-TC-40b762fc-3b48-471c-b495-c5ffe1f584b5 が、世代の列挙は TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7 が覆う。
+[state 基底・profileDir のキーイング・世代リンク名が root と mode ごとに正しく決まる](../test/generations/profile-path-keying.md) が、世代の列挙は [profileDir の世代リンクを番号順に列挙して current を判定し、読めない profileDir は黙認しない](../test/generations/generation-listing-parse.md) が覆う。
 `passthru.rootKind` の値、build しないコマンドの eval 先行、commit・切替・間引きが契約を迂回しないこと、
 `.pending` が config あたり 1 個に収まることを確かめる検証条件はこの risk に無く、残余として残る。

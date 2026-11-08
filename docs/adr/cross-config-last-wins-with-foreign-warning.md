@@ -35,10 +35,10 @@ generated:
 manifest に記録の無い symlink（foreign）を置き換えるときに warning を出し、停止はしない。
 
 target の状態ごとの扱い（不在・自分の記録した symlink・foreign symlink・実ファイルや実ディレクトリ）は
-REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557 に置く。同一 manifest 内の衝突を eval で止めるか、
-この実行時の後勝ちで扱うかの分け方は REQ-5c6b07da-3d06-414d-8770-4f438234b322 に置く。copy が
+[symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする](../requirements/symlink-placement-procedure.md) に置く。同一 manifest 内の衝突を eval で止めるか、
+この実行時の後勝ちで扱うかの分け方は [target 衝突の検出処理を同一 manifest 内と cross-config で分ける](../requirements/target-collision-eval-detection.md) に置く。copy が
 foreign の実ファイルを見つけて配置を見送るときの、symlink 側と対になる warning は
-REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7 に置く。
+[copy が foreign 実ファイルを skip したときは warning で可視化する](../requirements/copy-foreign-skip-warning.md) に置く。
 
 ## 根拠
 
@@ -47,7 +47,7 @@ REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7 に置く。
 
 warning にとどめれば、意図しない上書きは見えるようになり、意図した乗り換え（別ツールから layat への
 移行など）は止まらない。1 回の `apply --all` に載る config どうしの衝突のうち、eval で検出できる
-ものは ADR-75df92ae-0694-452b-8fb4-350994e31b25 が前段で止める。この ADR の後勝ちが受け持つのは、それ以外の衝突である。
+ものは [apply --all は選択した config 間の target 重複を build 前に止める](apply-all-preflight-target-conflict.md) が前段で止める。この ADR の後勝ちが受け持つのは、それ以外の衝突である。
 
 ## 棄却した代替案
 

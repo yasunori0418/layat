@@ -23,7 +23,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb, GitHub Issue #366, #364
+- 関連: [ID はフル UUID に統一し 8 文字省略形を使わない](full-uuid-ids-no-short-form.md), GitHub Issue #366, #364
 - 起点: epic #364 の着手前 grilling（2026-08-17）で確定。ADR-0053 §3 を書き直した
 
 ## 背景
@@ -32,7 +32,7 @@ generated:
 prefix への写像・ファイル名素材の組み立てを担っていた。item ファイルの作成は `sara init` が担当した。
 
 sara 0.10.0 から、`sara init` が `id_format` に従って UUIDv4 を採番するようになった。ID をフル UUID に
-統一した（SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb）ことで、8 文字の重複の確認と省略形の出力も
+統一した（[ID はフル UUID に統一し 8 文字省略形を使わない](full-uuid-ids-no-short-form.md)）ことで、8 文字の重複の確認と省略形の出力も
 要らなくなった。
 
 ## 決定

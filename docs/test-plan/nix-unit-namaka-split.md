@@ -62,17 +62,17 @@ generated:
 
 **一意性はレビュー任せにしない**。アグリゲータはマージ前にファイル横断の重複名を確認し、
 衝突があれば衝突したテスト名と定義元ファイル名を示して評価を落とす（→ Issue #287）。この確認
-自身がダミー入力で検証されている（→ Issue #308、CASE-276945a3-59c2-493d-9971-c080a9a8c066）ため、確認が常に「衝突なし」を
+自身がダミー入力で検証されている（→ Issue #308、[nix-unit: aggregator-merge.nix — 衝突の確認をダミー入力で検証する](../test/manifest-eval/nix-unit-aggregator-merge.md)）ため、確認が常に「衝突なし」を
 返す退行も捕まる。ファイル固有の接頭辞を付ける慣行は、確認に頼る前の第一手として残る。
 
-評価テストが内部関数を呼び出すための seam は TP-403c55c7-d996-4951-8e6b-c3a7dddd387c、store hash の揺れを避ける test double
-のイディオムは TP-d3d06fe4-6940-4df8-b111-bb4096d5444f の担当。
+評価テストが内部関数を呼び出すための seam は [lib.__internal は private helper のテスト seam として公開する](lib-internal-test-seam.md)、store hash の揺れを避ける test double
+のイディオムは [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](eval-test-double.md) の担当。
 
 ## 出典
 
-ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0「テストを sandbox 可否で flake check と E2E に分ける」が
+[テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)「テストを sandbox 可否で flake check と E2E に分ける」が
 「lib（純データ）: nix-unit で `mkManifest` の不変条件、namaka で `manifest.json` 全体の
-スナップショット回帰」と定めている。アグリゲータ規約は ADR-2e454c1f-6cad-41d8-8311-2c8e5b8efdf6 の実装（`tests/nix-unit.nix`）が
+スナップショット回帰」と定めている。アグリゲータ規約は [mkManifest の入力を evalModules で確認する](../adr/mkmanifest-evalmodules.md) の実装（`tests/nix-unit.nix`）が
 根拠で、同ファイルのヘッダコメントが列挙方式と名前一意の要請を述べている。同コメントは
 Issue #287 以降「一意性は規約に留めず、マージ前の重複検査で機械的に強制する」も述べており、
 要請の記述に留まらず強制の宣言も持つ（確認の実体は `tests/nix-unit-lib.nix` の `mergeTests`。

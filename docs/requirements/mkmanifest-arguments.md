@@ -44,8 +44,8 @@ generated:
 `pkgs` を引数で受け取るのは lib 層が unparameterized（`lib` / `pkgs` を自身で保持しない）
 であるため。各関数が呼び出し時に必要なものを明示引数として要求する。
 
-`root` の必須性と型の内訳は REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4（明示必須・暗黙デフォルトなし）と
-REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66（`string | marker` の union と各マーカーの対応）が正とする。上の表は
+`root` の必須性と型の内訳は [root は明示必須で暗黙デフォルトを持たない](root-explicit-required.md)（明示必須・暗黙デフォルトなし）と
+[root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md)（`string | marker` の union と各マーカーの対応）が正とする。上の表は
 原文の引数表をそのまま写したもので、規範の重複を避けるため本 item の規範文では
 `root` 固有の規定を持たない。
 

@@ -33,11 +33,11 @@ generated:
 - `method = "copy"` かつ out-of-store marker の組み合わせを拒否する。
 
 規範は frontmatter が正。`root = systemRoot`（system mode）は `rootKind = "system"` として
-評価を通り、この確認の対象ではない（→ ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c）。
+評価を通り、この確認の対象ではない（→ [rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)）。
 
 単一フィールドの optionType では表現できない条件のため、型の確認とは別に `throwIf` で
 評価時に停止させる。out-of-store は「ライブ symlink」、copy は「place-once
-スナップショット」で意図が矛盾するので、暗黙に降格させず早期エラーにする（→ ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967）。
+スナップショット」で意図が矛盾するので、暗黙に降格させず早期エラーにする（→ [copy と out-of-store の併用を eval 時に拒否する](../adr/copy-with-out-of-store-eval-error.md)）。
 
 ## 出典
 

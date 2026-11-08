@@ -25,7 +25,7 @@ engine の Go の静的解析（go-vet と golangci-lint）は、flake check の
 
 go-vet と golangci-lint の check derivation は、`CGO_ENABLED=0` のピュア Go で実行する。
 
-check の構成は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 に置く。
+check の構成は [CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](../infrastructure/ci-pipeline.md) に置く。
 
 ## 根拠
 

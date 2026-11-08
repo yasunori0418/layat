@@ -84,9 +84,9 @@ generator = "nix"
   分類（`E_PERMISSION` / `E_IO`）を保つ。
 - 設定ファイルは生成器の選択にだけ使い、config の発見には使わない。
 
-`--manifest` の外面・`-f` との排他・`--all` との合成の形そのものは REQ-dec58330-6dad-47f7-8f56-2402764a89c7、TOML パーサの
-依存許可は REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0 の担当。
+`--manifest` の外面・`-f` との排他・`--all` との合成の形そのものは [apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](apply-manifest-direct.md)、TOML パーサの
+依存許可は [CLI が持ち込む依存は許可した第三者ライブラリと pin した Go に限り、いずれも固定する](cli-dependency-policy.md) の担当。
 
 ## 出典
 
-ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964・ADR-9acd3e01-58f1-48ca-b84f-f33a5bc1aaa5・ADR-5908eb28-40a5-49d5-a09e-15b35082b970・ADR-e88f074e-95f4-4e04-97fc-eae2d0c695a3・ADR-aec6bd1d-f776-4d7c-9337-1ed78fee6180・ADR-c4a3d9be-19ea-461d-ab0f-2037adc494e1・ADR-3878ea60-4f4f-48a3-a389-3b7fbb672897。
+[生成器は明示の指定だけで選ぶ](../adr/generator-chosen-explicitly-only.md)・[生成器の選択値を nix だけにする](../adr/generator-values-nix-only.md)・[設定ファイルは -f のディレクトリか cwd だけで探す](../adr/config-file-lookup-no-upward-search.md)・[設定ファイルを strict な TOML で書く](../adr/config-file-strict-toml.md)・[CLI の依存に go-toml/v2 を許可する](../adr/cli-depends-on-go-toml.md)・[入力の不正を E_INPUT に分類する](../adr/input-errors-classified-e-input.md)・[--generator を prune と init では無視する](../adr/generator-flag-ignored-by-prune-init.md)。

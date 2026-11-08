@@ -30,14 +30,14 @@ NixOS / nix-darwin のモジュールは、host の activation から system roo
   または別の config に前置される
 - **起動の形の分岐** — `--manifest` / `--jobs` / `--recopy` / `--backup` の規則が
   home-manager モジュールと食い違う。`layat.recopy` が false でも `--recopy` が付くか、
-  true でも付かない（→ REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c）。config が無いのに engine を起動する
+  true でも付かない（→ [layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける](../requirements/recopy-wiring-layer.md)）。config が無いのに engine を起動する
 - **dry-activate の取りこぼし** — NixOS の dry-activate 用スクリプトに起動が含まれない、
   または含まれても `--dryrun` が付かず、FS を変えない前提の操作で実配置が実行される
 - **起動環境の欠落** — activation の PATH に `nix` が無いまま起動し、世代コミットが失敗する。
   `etc` / `users` より前に実行される
 
 いずれも、activation から全 config の link-farm を 1 回の起動に渡す契約
-（→ REQ-a220bb28-89de-42b0-a854-e7468755ecb1）からの逸脱として現れる。
+（→ [NixOS / nix-darwin モジュールは activation から全 config のビルド済み link-farm を systemRoot で 1 回の起動に渡す](../requirements/system-module-activation-contract.md)）からの逸脱として現れる。
 
 ## 影響
 

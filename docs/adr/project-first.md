@@ -41,7 +41,7 @@ layat の中心となる使い方を、プロジェクトに組み込んで repo
 （project mode）に置く。`$HOME` への配置と `/` への配置は、root マーカーで明示して選ぶ使い方と
 位置付ける。モジュール（HM・NixOS・nix-darwin）への対応は、ほかのモジュールシステムの switch と
 一括で動かしたい用途を受け持つものにとどめる。規範の細目は
-REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 と DSG-4a84f282-76ea-47c9-aede-deac12ff5257 に置く。
+[全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md) と [実装スコープを CLI 単体 + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする](../design/implementation-scope.md) に置く。
 
 ## 根拠
 

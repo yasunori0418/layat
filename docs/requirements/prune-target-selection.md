@@ -53,9 +53,9 @@ generated:
 
 **走査対象** — 2 つの基底の直下で backref `.root` を持つディレクトリ、つまり project mode /
 fixed root / `--root` 上書きで生じた `<roothash>` 系列だけ。基底は世代バックエンドが与え
-（REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）、既定の nixprofile ではユーザー state 基底が
+（[engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)）、既定の nixprofile ではユーザー state 基底が
 `<state>/nix/profiles/layat/`、system 基底が `/nix/var/nix/profiles/layat/`。基底が 2 つあるのは、
-system mode の profile 状態がユーザー state 基底とは別の場所に住むため（→ ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203）。
+system mode の profile 状態がユーザー state 基底とは別の場所に住むため（→ [profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)）。
 
 `.root` を持たない `<name>` 直キーの系列（home mode の root = `$HOME`・system mode の
 root = `/`）は、判定すべき root パスが導けないため構造的に対象外になる。system mode でも
@@ -69,7 +69,7 @@ root = `/`）は、判定すべき root パスが導けないため構造的に�
 system 基底の位置は環境変数 `LAYAT_SYSTEM_PROFILE_BASE` で差し替えられる（prune 以外の
 system 基底を扱うコマンドも同じ値を使う）。state 基底は
 `XDG_STATE_HOME` を移せば動くのに対し system 基底は絶対パスで、口が無いと破壊的な prune を
-実機で駆動するテストがランナーの実共有状態を走査・削除しうるため（→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1）。
+実機で駆動するテストがランナーの実共有状態を走査・削除しうるため（→ [prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする](../design/prune-orphan-series.md)）。
 隔離・テスト用であって「別の基底を prune する」機能ではない（prune は基底を引数に取らない）。
 サポート対象の設定でもない。
 
@@ -83,35 +83,35 @@ system 基底を扱うコマンドも同じ値を使う）。state 基底は
 ときに削除へ倒す処理を持たない。
 
 **削除段で安全側へ倒す場合** — 削除すると決めた系列でも、権限が無くて**削除に着手すらできない**
-ときは残して warning を出す（→ ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e。system 基底の系列を非 root で実行したときに起きる）。
+ときは残して warning を出す（→ [prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md)。system 基底の系列を非 root で実行したときに起きる）。
 判定段の条件が「削除するか決められない」なのに対し、こちらは「削除すると決めたが 1 つも消せ
 なかった」で発生する段が違う。どちらも残す点は同じで、1 系列を残したことが他の系列の処理を
 止めることもない。
 
 着手した後で失敗した系列は「残した」に含めない。その系列は無傷ではなく半端に破損しているので、
 残した系列と同じ扱いにすると実態と食い違う報告になる。この場合の扱いは
-REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed が持つ。
+[prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](prune-safety-gates.md) が持つ。
 
 **削除の単位** — 対象になった系列は `<roothash>` ディレクトリごと消す。配下に世代が 1 つも無く
 `.pending` と `.root` だけが残っている系列も同じく対象になる。
 
 **触らないもの** — 配置物には一切触れない（root が消えている以上、配置先も消えている）。残す
 系列の世代間引きも行わない（既定の nixprofile では利用者が叩く `nix-env --profile <dir>
---delete-generations` の二重化になる。REQ-706de717-4e47-471a-a1c0-448635be159c）。
+--delete-generations` の二重化になる。[世代操作は世代バックエンドの契約越しに行い、GC root の間引きと store 解放は nix コマンドへ分けて委譲する](generation-gc.md)）。
 store の回収は `nix-collect-garbage` に委ねる。
 
-> 孤児 profile が backref で逆引き可能なまま残ること自体は REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4、
-> backref `.root` を roothash 階層へ置くことは REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3、
-> profile を解決済み root でキーすること（孤児が生じる前提）は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 の担当。
-> 削除を守る dryrun・確認・lock・`--json` の規律は REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed が持つ。
+> 孤児 profile が backref で逆引き可能なまま残ること自体は [孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する](project-mode-orphan-profile.md)、
+> backref `.root` を roothash 階層へ置くことは [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](profile-on-disk-layout.md)、
+> profile を解決済み root でキーすること（孤児が生じる前提）は [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md) の担当。
+> 削除を守る dryrun・確認・lock・`--json` の規律は [prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](prune-safety-gates.md) が持つ。
 
 ## 出典
 
-決定の実体は ADR-b4be88b8-1c19-426d-885d-f5d80b95252f「prune は root が実在しない roothash 系列だけを削除する」。
+決定の実体は [prune は root が実在しない roothash 系列だけを削除する](../adr/prune-only-missing-root-series.md)「prune は root が実在しない roothash 系列だけを削除する」。
 out-of-store な root がアンマウント中に「一時的に実在しない」と誤判定されうる caveat は
-ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66 にあり、機械側で区別せず確認プロンプトの root パス一覧で防ぐ（→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed）。
+[prune は削除前に root パスの一覧を示して確認を取る](../adr/prune-confirms-with-root-list.md) にあり、機械側で区別せず確認プロンプトの root パス一覧で防ぐ（→ [prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](prune-safety-gates.md)）。
 
 走査対象に system 基底 `/nix/var/nix/profiles/layat/` を加えることと、非 root 実行で削除権限が
-無い系列を warning 付きで skip することは ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e が定めている（prune の旧決定は system mode の
+無い系列を warning 付きで skip することは [prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md) が定めている（prune の旧決定は system mode の
 実装決定より前の 2026-07-04 で、当時は root = `/` が常に実在することだけを理由に対象外として
-いた）。基底の所有を世代バックエンドへ移したのは ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883「state の基底を設定で上書きさせない」。
+いた）。基底の所有を世代バックエンドへ移したのは [state の基底を設定で上書きさせない](../adr/state-bases-not-configurable.md)「state の基底を設定で上書きさせない」。

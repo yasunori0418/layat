@@ -24,7 +24,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-52423842-bacf-4773-bbca-bcb34ae71013, GitHub Issue #580, #198
+- 関連: [last-applied 記録は manifest を内容ごと持つ](record-embeds-manifest.md), GitHub Issue #580, #198
 - 起点: Issue #198（`layat status [name]`）の実装前に、2026-07-19 の grilling 以後の実装の変化を差分 grilling で反映した（2026-10-23）。ADR-0065 §1a を書き直した
 
 ## 背景
@@ -41,8 +41,8 @@ last-applied 記録は配置した manifest を埋め込み、`appliedAt` と `l
 `layat status [name]` は last-applied 記録をデータ源にし、user と system の 2
 つの記録基底をこの順に走査して、記録を持つ config を列挙する。profile 基底は読まず、世代番号は
 `list-generations` に任せる。並び順と、読めない基底の扱いは
-REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173 に、engine と CLI の分担は
-DSG-85439cb5-a149-422e-8596-fc4e860bc3a5 に置く。
+[status は記録基底を走査して last-applied 記録を読み取り専用で表示する](../requirements/status-command.md) に、engine と CLI の分担は
+[status を engine の記録基底走査と CLI の絞り込み・出力に分ける](../design/status-scans-record-bases.md) に置く。
 
 ## 根拠
 

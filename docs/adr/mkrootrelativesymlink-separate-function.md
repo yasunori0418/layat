@@ -27,22 +27,22 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c, ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131, ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, ADR-6d2327f7-f513-42c3-89f8-808467db1914, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, `docs/spec.md`
+- 関連: [store link を既定にし、out-of-store は明示関数でのみ選ばせる](store-link-default-out-of-store-opt-in.md), [src の型で素の文字列を拒否する](srctype-bare-string-rejected.md), [copy と out-of-store の併用を eval 時に拒否する](copy-with-out-of-store-eval-error.md), [out-of-store はマッピングだけを追跡する](out-of-store-tracks-mapping-only.md), [manifest.json を schemaVersion 1 の唯一の契約として固定する](manifest-json-contract-schemaversion-v1.md), [home mode の CLI と lib の版ずれを manifest の確認に任せて許容する](home-mode-skew-guarded-by-schemaversion.md), `docs/spec.md`
 - 起点: Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §4 を書き直した
 
 ## 背景
 
 out-of-store は明示関数が返すマーカーでだけ選ばせ、値の形による暗黙の分岐は持たない
-（ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c）。既存の `mkOutOfStoreSymlink` は絶対パスを取る。
+（[store link を既定にし、out-of-store は明示関数でのみ選ばせる](store-link-default-out-of-store-opt-in.md)）。既存の `mkOutOfStoreSymlink` は絶対パスを取る。
 root 相対の `src` を表す手段を、この関数の引数の形で足すか、別の関数で足すかを決める必要がある。
 
 ## 決定
 
 root 相対の `src` は、別の関数 `lib.mkRootRelativeSymlink` が返すマーカーで表す。この関数は
 root 相対の文字列を包んだマーカーを返す純粋関数で、`mkOutOfStoreSymlink` は絶対パス専用のまま
-据え置く。マーカーの形と判別は REQ-a77181dd-a59c-40bb-855e-3430ad970eb6 と
-REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7、`src` が取る種別は
-REQ-99ca5381-6c53-426c-b145-7b4297c53868 に置く。
+据え置く。マーカーの形と判別は [mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](../requirements/root-relative-symlink-marker.md) と
+[marker は判別タグで識別し manifest.json には漏らさない](../requirements/marker-tag-discrimination.md)、`src` が取る種別は
+[src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する](../requirements/src-kinds-store-default.md) に置く。
 
 ## 根拠
 

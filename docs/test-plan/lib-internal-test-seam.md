@@ -54,10 +54,10 @@ generated:
 > 保証除外を宣言している以上、契約として規定しているものは実質何も無く、テスト容易性の確保が
 > 支配的であると判断した。
 >
-> **#238 の判断を #239 で改めた**。TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9・TP-d3000054-42d9-4bac-912a-dd3abc38d3e9・TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2 を移設した
+> **#238 の判断を #239 で改めた**。[非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](e2e-harness-scope.md)・[エンベロープの outturn 適合を Go テストと E2E の両方で検証する](json-conformance-verification.md)・[NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする](nixos-vm-test-future.md) を移設した
 > Issue #238 の時点では、本 item は「テスト容易性のための実装上の seam であってテスト計画
 > そのものではない」と判断して見送り、接続先を別途決めることにしていた。しかし
 > `docs/model.yaml` の test_plan 型は収容範囲に**テスト容易性の要求**を明示して含んでおり、
 > 「テスト計画そのものではないから対象外」という当時の切り分けは型定義と食い違う。
-> Issue #239 でこの判断を改め、TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9・TP-d3000054-42d9-4bac-912a-dd3abc38d3e9・TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2 と同類として
-> test_plan へ移した。solution 直下で受けるため `derives_from` は SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e を指す。
+> Issue #239 でこの判断を改め、[非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](e2e-harness-scope.md)・[エンベロープの outturn 適合を Go テストと E2E の両方で検証する](json-conformance-verification.md)・[NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする](nixos-vm-test-future.md) と同類として
+> test_plan へ移した。solution 直下で受けるため `derives_from` は [layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る](../solution/layat-placement-primitive.md) を指す。

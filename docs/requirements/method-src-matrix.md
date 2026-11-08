@@ -40,18 +40,18 @@ generated:
 | `"copy"` | marker | **eval 時エラー**（意図矛盾・`lib.throwIf`）| — |
 
 上の表は原文の写しで、規範は frontmatter が正。最終行（`"copy"` + marker の eval 時
-エラー）は規範に含めない。この規範は REQ-16faf428-77f3-492f-b858-222c5274cbf7（クロスフィールドチェック）が持ち、
+エラー）は規範に含めない。この規範は [意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](normalize-manifest-cross-field-checks.md)（クロスフィールドチェック）が持ち、
 本 item で二重に定義しないため。
 
-旧名 `mode` からの改名理由（unix file mode との誤読回避・→ ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a）は原文の注記で、
-規範ではない。旧名が評価時エラーになることは REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51 が持つ。
+旧名 `mode` からの改名理由（unix file mode との誤読回避・→ [entry の配置種別のフィールドを method と名付ける](../adr/mode-renamed-to-method.md)）は原文の注記で、
+規範ではない。旧名が評価時エラーになることは [entry submodule は strict とし未知キーと旧名を評価時エラーにする](entry-submodule-strict.md) が持つ。
 
 out-of-store symlink が世代管理下に置かれるといっても、版管理されるのは「どのリンク先を
 指すか」のマッピングのみで、リンク先のファイル内容は対象外（原文の表の
-「あり（リンク先のみ）」）。この限定の規範は REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa の担当。
+「あり（リンク先のみ）」）。この限定の規範は [out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする](out-of-store-link-mapping-only.md) の担当。
 
 配置動作そのもの（symlink / copy の FS 操作・place-once の意味）と世代管理の機構は
-REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557 / REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9 / REQ-1be4d678-959c-44d7-a346-44bfd95af56e 等の担当。本 item は method の値と、それが選ぶ
+[symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする](symlink-placement-procedure.md) / [copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](copy-place-once.md) / [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](generation-mechanism-link-farm-manifest.md) 等の担当。本 item は method の値と、それが選ぶ
 配置方法・世代管理の有無までを規定する。
 
 ## 出典

@@ -28,11 +28,11 @@ generated:
 選んだ各 config に `--recopy` を適用する（`--recopy` は apply 修飾で `--all` と直交）。
 `--all --backup[=<suffix>]` も同様に合成可（`--backup` も apply 修飾）。
 
-各フラグ自体の規範は REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065（`--recopy`）・REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b（`--backup`）の担当で、
+各フラグ自体の規範は [apply --recopy は config 内の全 copy target を src から無条件に上書き再コピーする](apply-recopy.md)（`--recopy`）・[apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md)（`--backup`）の担当で、
 本 item は `--all` との直交性のみを規定する。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply --all --recopy` の箇条書き。
 
-決定の実体は ADR-b08479ba-0eae-4668-a4a2-910cd40bd316「apply の修飾フラグを --all と合成できるようにする」と、`--backup` について同じ直交性を定めた ADR-33d8c466-6b38-46b6-8696-ad7521c72786。
+決定の実体は [apply の修飾フラグを --all と合成できるようにする](../adr/apply-modifiers-compose-with-all.md)「apply の修飾フラグを --all と合成できるようにする」と、`--backup` について同じ直交性を定めた [--backup を = 区切りで suffix を取る省略可能な値のフラグにする](../adr/backup-optional-value-flag.md)。

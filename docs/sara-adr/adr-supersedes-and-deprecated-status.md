@@ -20,7 +20,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd, GitHub Issue #499, `docs/agents/adr-rules.md`, `docs/adr/README.md`
+- 関連: [ADR は単独で覆せる 1 つの決定だけを書く](adr-one-decision-granularity.md), GitHub Issue #499, `docs/agents/adr-rules.md`, `docs/adr/README.md`
 - 起点: Issue #499 の grilling（2026-11-01）で確定。ADR-0048 §2・§3 を書き直した
 
 ## 背景
@@ -29,7 +29,7 @@ generated:
 文書丸ごとの失効を表す `supersedes` と、ステータスの `廃止` は持たなかった。当時は丸ごと失効した
 ADR の実例が無く、実例の無い関係を先に置くと部分改訂に誤用されると考えたためである。
 
-1 本の ADR に 1 つの決定だけを書く規則（SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd）を採ると、
+1 本の ADR に 1 つの決定だけを書く規則（[ADR は単独で覆せる 1 つの決定だけを書く](adr-one-decision-granularity.md)）を採ると、
 決定の変更は ADR の丸ごとの置き換えになる。部分改訂という扱いは要らなくなる。
 
 ## 決定

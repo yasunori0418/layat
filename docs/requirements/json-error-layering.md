@@ -45,7 +45,7 @@ generated:
 **エラーの層と stderr 併存**: 単一 config コマンドは RunE 冒頭・name 引数の時点で subject が
 確定するため、その実行の失敗（entrypoint 発見・eval / build・lock・engine 実行時）は
 **全て `results[0].errors[]`** に載る。トップ `errors[]` に載るのは **subject を持たない
-実行の失敗のみ**（ADR-9e328362-2e90-441a-8eca-40081ce71b1b の「主体が決まる前の失敗」に相当）。どちらも stderr の
+実行の失敗のみ**（[エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md) の「主体が決まる前の失敗」に相当）。どちらも stderr の
 人間向けテキスト（op + 対象パスの wrap 規約）を常時併存させ、終了コード表 0 / 1 / 2 は
 不変。item 起因の失敗は `item.error` に埋め、包含する `SubjectResult` の `errors[]` へ
 重複させない（outturn §2）。
@@ -60,20 +60,20 @@ generated:
 > （どのコードが #131 で追加されたか、`--all` が #164 以降どうなるか）は要求ではなく
 > 履歴の注記。
 >
-> **2026-10-02 追記（ADR-494b6477-9d5b-4e29-879d-f7d16be5d466 / ADR-c4a3d9be-19ea-461d-ab0f-2037adc494e1）**: 上の写しの `E_LAYAT_BUILD`「内部 nix eval / build
+> **2026-10-02 追記（[生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する](../adr/generator-failure-single-build-code.md) / [入力の不正を E_INPUT に分類する](../adr/input-errors-classified-e-input.md)）**: 上の写しの `E_LAYAT_BUILD`「内部 nix eval / build
 > 呼び出しの失敗」は、prebuilt 以外の manifest 生成器の roots / build 段の失敗に読み替える
 > （entrypoint 発見段と prebuilt の失敗は原因から従来どおり分類する。規則と事象の対応は
-> REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd）。また入力不正を `E_INPUT` に分類する（対象は
-> REQ-badc7e10-0ba4-40d4-b334-6e40193119db）。
+> [生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める](generator-diagnostics-contract.md)）。また入力不正を `E_INPUT` に分類する（対象は
+> [生成器は明示指定のみで選び、フラグ・環境変数・設定ファイル・既定の順に解決する](generator-selection-precedence.md)）。
 
 **本 item がエラー層の振り分け規則を規定する**（単一 config / `--all` を問わない）。
-`--all` 固有の差分（集約エラーをトップへ重ねないこと）は REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5、変更系ペイロードで
-どの失敗が item 起因になるか（entry 失敗・conflict の写像）は REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62 の担当。
+`--all` 固有の差分（集約エラーをトップへ重ねないこと）は [--all は config ごとの SubjectResult を単一実行と同一形状で積む](json-all-subject-results.md)、変更系ペイロードで
+どの失敗が item 起因になるか（entry 失敗・conflict の写像）は [変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く](json-change-payload.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「エラーの層と stderr 併存」「エラーコード」。
 
-決定の実体は ADR-9e328362-2e90-441a-8eca-40081ce71b1b「エラーはエンベロープに構造化し stderr のテキストと併存させる」。`E_LAYAT_BUILD` の読み替えは ADR-494b6477-9d5b-4e29-879d-f7d16be5d466「生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する」、
-`E_INPUT` の初実装は ADR-c4a3d9be-19ea-461d-ab0f-2037adc494e1「入力の不正を E_INPUT に分類する」。
+決定の実体は [エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)「エラーはエンベロープに構造化し stderr のテキストと併存させる」。`E_LAYAT_BUILD` の読み替えは [生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する](../adr/generator-failure-single-build-code.md)「生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する」、
+`E_INPUT` の初実装は [入力の不正を E_INPUT に分類する](../adr/input-errors-classified-e-input.md)「入力の不正を E_INPUT に分類する」。

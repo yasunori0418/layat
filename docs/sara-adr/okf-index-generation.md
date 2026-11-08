@@ -27,7 +27,7 @@ generated:
 OKF の読み手は、ディレクトリごとの index.md から item を探す。sara の item には index.md が無く、
 一覧は `sara query` や `sara report` で取る。sara を持たない読み手は、これらを使えない。
 
-QA-0d42104c-a3c2-4bd1-9cad-a42d9e5a56a1 は、リファレンスドキュメントをソースから生成し、生成物を
+[リファレンスドキュメントは記述対象のソースから生成し、生成物を持たない](../quality/reference-docs-generated-from-source.md) は、リファレンスドキュメントをソースから生成し、生成物を
 リポジトリに持たないと定めている。
 
 ## 決定
@@ -38,12 +38,12 @@ QA-0d42104c-a3c2-4bd1-9cad-a42d9e5a56a1 は、リファレンスドキュメン�
 - index.md には item の `name`・`description`・`status` とファイルへのリンクを載せる
 - sara の relation は index.md に出さない。OKF の読み手には item の一覧だけを見せる
 - `description` を持たない item は、本文の最初の段落で代用する
-- index.md のコミットは QA-0d42104c-a3c2-4bd1-9cad-a42d9e5a56a1 の例外として扱う
+- index.md のコミットは [リファレンスドキュメントは記述対象のソースから生成し、生成物を持たない](../quality/reference-docs-generated-from-source.md) の例外として扱う
 
 ## 根拠
 
 OKF の読み手は、リポジトリをそのまま読む。ビルド時に生成する方式では、ビルドを実行しない読み手に
-index.md が届かない。そのため QA-0d42104c-a3c2-4bd1-9cad-a42d9e5a56a1 の例外とし、生成物を
+index.md が届かない。そのため [リファレンスドキュメントは記述対象のソースから生成し、生成物を持たない](../quality/reference-docs-generated-from-source.md) の例外とし、生成物を
 コミットする。生成物とソースの食い違いという、例外で生じる問題は、差分ゼロの契約テストで防ぐ。
 
 `sara check --format json` は item の一覧とフィールドを機械可読で返すので、frontmatter を

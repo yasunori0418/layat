@@ -26,12 +26,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5, ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9, ADR-a19bf484-368d-4d01-b539-52de32510fa5, GitHub Issue #169, #172
+- 関連: [指定が無いときは成功時に何も出力しない](silent-on-success.md), [-v で配置レポートを opt-in で出す](verbose-opts-into-placement-report.md), [内部コマンドの開示を --debug に分ける](debug-discloses-internal-commands.md), GitHub Issue #169, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §6（出力規律）の退避の報告を書き直した
 
 ## 背景
 
-layat は成功したときに何も出さず（ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5）、配置のレポートは `-v` を付けたときだけ出す（ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）。
+layat は成功したときに何も出さず（[指定が無いときは成功時に何も出力しない](silent-on-success.md)）、配置のレポートは `-v` を付けたときだけ出す（[-v で配置レポートを opt-in で出す](verbose-opts-into-placement-report.md)）。
 `--backup` による退避をこの沈黙の対象にするかを決める必要があった。
 
 ## 決定
@@ -40,8 +40,8 @@ layat は成功したときに何も出さず（ADR-36bfbfbd-f1dd-4581-a75a-943d
 copy の foreign な実ファイルを退避したときは、skip のときに出す warning の代わりにこの報告を
 出す。
 
-出力の規律は REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 と
-REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b に置く。
+出力の規律は [成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](../requirements/silent-on-success.md) と
+[apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](../requirements/apply-backup-rename-aside.md) に置く。
 
 ## 根拠
 

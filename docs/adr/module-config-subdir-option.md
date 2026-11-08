@@ -38,8 +38,8 @@ subdir が null なら素の root marker を、非 null なら subdir 適用形�
 `mkManifest` に root として渡す。root は pin したまま、target だけが `<subdir>/` の下に置かれる。
 全 config 共通の `layat.subdir` は設けない。
 
-共通オプションの型は REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、home-manager での配線は
-REQ-068f2fb3-5459-4325-9359-c931b5049e0d に置く。
+共通オプションの型は [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md)、home-manager での配線は
+[HM モジュールは configs.<name>.subdir が非 null の config を homeRoot の subdir 適用形で組み、全 target を $HOME/<subdir>/ 配下に置く](../requirements/hm-config-subdir-wiring.md) に置く。
 
 ## 根拠
 

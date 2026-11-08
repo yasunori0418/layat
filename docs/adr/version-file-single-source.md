@@ -31,9 +31,9 @@ pyproject.toml のようにバージョンを書く場所が言語の側に用�
 Go のバイナリへは nix build の `ldflags` で `main.version` に埋め込む。`layat --version` と
 `--json` の `tool.version` は、この埋め込んだ値を出す。
 
-`--version` の書式は REQ-9ed6b500-a11f-414e-a763-adb47c89f7d4、`tool.version` は
-REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead、ファイルと workflow の構成は
-INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43 に置く。
+`--version` の書式は [--version は埋め込みバージョンを cobra 既定書式で表示して終了し短縮形を持たない](../requirements/version-flag.md)、`tool.version` は
+[--json は outturn 規約準拠のエンベロープを出す第 2 契約とする](../requirements/json-outturn-envelope.md)、ファイルと workflow の構成は
+[リリース自動化（VERSION ファイル起点の bump PR・自動タグ・自動リリースノート）](../infrastructure/release-automation.md) に置く。
 
 ## 根拠
 

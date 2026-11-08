@@ -27,10 +27,10 @@ generated:
 **テンプレート参照はバイナリにハードコードした固定 flake ref
 `github:yasunori0418/layat`**。registry 登録に依存せず動く。`init` は新規 bootstrap 用途で、
 CLI 版と template 版のズレ（常に latest main 参照）は許容する。apply 時の
-`schemaVersion` 整合は project mode の devShell 同梱 pin が担う（REQ-14f0aec9-abae-4621-82f3-40536a1ad904）。
+`schemaVersion` 整合は project mode の devShell 同梱 pin が担う（[layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする](cli-primary-ux-installation.md)）。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「`layat init`（テンプレート展開）」の箇条書き第 3 項。
 
-決定の実体は ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d「templates と layat init は固定 ref で導入する」。
+決定の実体は [templates と layat init は固定 ref で導入する](../adr/templates-and-init-fixed-ref.md)「templates と layat init は固定 ref で導入する」。

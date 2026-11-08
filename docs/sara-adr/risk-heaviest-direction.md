@@ -26,12 +26,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac, GitHub Issue #583, #303, #292, `docs/agents/sara-graph.md`
+- 関連: [risk の impact を検出後の回復可能性で採点する](risk-impact-as-recoverability.md), GitHub Issue #583, #303, #292, `docs/agents/sara-graph.md`
 - 起点: Issue #303 の着手前 grilling（2026-08-12）で確定。ADR-0052 §1b を書き直した
 
 ## 背景
 
-risk の `impact` は検出後の回復可能性で採点する（SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac）。1 つの
+risk の `impact` は検出後の回復可能性で採点する（[risk の impact を検出後の回復可能性で採点する](risk-impact-as-recoverability.md)）。1 つの
 risk が複数の失敗の仕方を持ち、方向によって回復できる度合いが違うとき、どの方向で採点するかを決める
 必要があった。
 

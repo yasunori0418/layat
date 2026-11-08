@@ -17,10 +17,10 @@ generated:
 
 ## リスク
 
-root マーカーの subdir 適用形（REQ-08c8f639-790c-4970-a954-c9567538cf9b）は、全 entry の target に
+root マーカーの subdir 適用形（[root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](../requirements/root-marker-subdir-sugar.md)）は、全 entry の target に
 `<subdir>/` を前置する評価時の糖衣で、root も `rootKind` も動かさない。前提として、単体の
 マーカーは従来どおり `kind` を運ぶだけの入れ物で、root の値はマーカーと絶対パス文字列の union を
-取る（REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66）。この糖衣が崩れる形は 3 つある。
+取る（[root は 3 マーカーと絶対パス文字列の union を取る](../requirements/root-marker-kinds.md)）。この糖衣が崩れる形は 3 つある。
 
 - **前置の抜け・揺れ**: 明示 target や既定 target の一部にだけ前置が掛からない。または
   `"a/"` と `"./a"` のような表記揺れが正規化されず、`a//x` や `./a/x` のような target になる
@@ -30,7 +30,7 @@ root マーカーの subdir 適用形（REQ-08c8f639-790c-4970-a954-c9567538cf9b
   `systemRoot` が従来の `_layatMarker` / `kind` 以外のフィールドを持つ
 
 拒否の条件側の破れ（絶対パス・`..` 脱出・空の `subdir` が通る、前置で target の `..` 脱出が
-隠れる）は本 `risk` ではなく RISK-09df40d3-2752-433e-9ab0-2816fbd14969 が扱う。
+隠れる）は本 `risk` ではなく [評価時に止めるべき入力が止まらずに engine 実行時まで到達する](eval-gate-bypass.md) が扱う。
 
 **顕在化したときに起きること**: 前置が抜けた entry は `$HOME/.config/nvim` のつもりが
 `$HOME/nvim` に置かれ、宣言からは読み取れない場所へ配置される。root 側へ混入した場合は、
@@ -46,10 +46,10 @@ root マーカーの subdir 適用形（REQ-08c8f639-790c-4970-a954-c9567538cf9b
 
 ## 対処
 
-TC-7d713505-5673-4e15-99bf-e98965e18892（全 target への正規化済みの前置・root と単体 marker の不変・
+[subdir 適用形が全 target に正規化済みの前置を施し、root と単体 marker を変えず、不正な subdir を評価時に拒否する](../test/manifest-eval/root-subdir-sugar.md)（全 target への正規化済みの前置・root と単体 marker の不変・
 不正な `subdir` の評価時拒否）で緩和する。
 
 ## 出典
 
-ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509 / ADR-433b9539-21d9-46c5-91a1-fc2b04d5eb47 / ADR-6669c002-1b90-47a2-8a84-a0f7bddfd965 / ADR-d89c2ede-1aba-46fa-9f14-8dcf8a266e0e と、`tests/nix-unit/root-subdir.nix` /
+[root マーカーに subdir の適用形を持たせる](../adr/root-marker-subdir-applied-form.md) / [fixed root には subdir を提供しない](../adr/no-subdir-for-fixed-root.md) / [subdir は全 target へ前置する評価時の糖衣にし、root を動かさない](../adr/subdir-as-target-prefix-sugar.md) / [root 相対で指定するパスすべてにパス安全性の確認を課す](../adr/path-safety-for-root-relative-inputs.md) と、`tests/nix-unit/root-subdir.nix` /
 `tests/namaka/manifest-subdir/expr.nix` の実装。

@@ -61,10 +61,10 @@ bash・詳細は `tests/e2e/README.md`）が、flake entrypoint からの `nix b
 | `14-flake-parts` | flake-parts + `lib.mkApplyCommand`。devShell の shellHook に埋めた apply が `nix develop -c true` だけで project 側を git toplevel 配下に配置し、home 側は `$HOME` に何も出さないことを検証 |
 
 > **表の `01-project`〜`07-legacy` の行は原文の写しで、規範は frontmatter が正**。その 7 行の右列が指す仕様そのものは、それぞれ
-> REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e（project mode の root 解決）・REQ-1be4d678-959c-44d7-a346-44bfd95af56e / REQ-0e341430-17f0-498b-9439-65491652163a（世代とロール
-> バック）・REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2（stale 除去）・REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9 / REQ-84e3c717-adf5-4ff3-b0db-d039b82ef19c / REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa（copy と
-> out-of-store）・REQ-8085f194-c903-4ecb-abd8-c719fe7b3292（HM activation 契約）・REQ-196ddabf-6569-4303-942e-050872972501（init とテンプレ）・
-> REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da（legacy entrypoint）の担当。`tests/e2e/` というパスと bash という実装手段は
+> [project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない](../requirements/project-mode-root-resolution.md)（project mode の root 解決）・[世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](../requirements/generation-mechanism-link-farm-manifest.md) / [rollback は FS を先に収束させてから profile ポインタを最後に移す](../requirements/rollback-refit-then-pointer.md)（世代とロール
+> バック）・[古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](../requirements/stale-removal-invariants.md)（stale 除去）・[copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](../requirements/copy-place-once.md) / [copy は元の mode を保存しつつ owner-write を付与する](../requirements/copy-mode-owner-write.md) / [out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする](../requirements/out-of-store-link-mapping-only.md)（copy と
+> out-of-store）・[home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](../requirements/hm-activation-contract.md)（HM activation 契約）・[template は動く example を 1 config だけ置きバリエーションはコメントで示す](../requirements/init-template-contents.md)（init とテンプレ）・
+> [legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない](../requirements/legacy-entrypoint-passthru-canonical.md)（legacy entrypoint）の担当。`tests/e2e/` というパスと bash という実装手段は
 > 現況であり、規範文では実装手段を固定していない。
 
 > **2026-08-09 改訂（→ Issue #273）**: シナリオ表を実装の 7 本へ更新し、規範文の対象範囲へ
@@ -77,7 +77,7 @@ bash・詳細は `tests/e2e/README.md`）が、flake entrypoint からの `nix b
 
 `docs/spec.md`「E2E 検証範囲（非 NixOS）」節の導入文と表。
 
-決定の実体は ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0「テストを sandbox 可否で flake check と E2E に分ける」で、非 NixOS の
+決定の実体は [テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)「テストを sandbox 可否で flake check と E2E に分ける」で、非 NixOS の
 実 nix 上で E2E を回す検証範囲を定めている。
 
 > **本 item は `requirement` から `test_plan` へ移設した**（→ Issue #238。旧 ID は
@@ -85,6 +85,6 @@ bash・詳細は `tests/e2e/README.md`）が、flake entrypoint からの `nix b
 > スコープの規定であり、ユーザーの使われ方（use_case）から導かれるプロダクトの振る舞いでは
 > ないため、use_case を親に持てず接続漏れになっていた（当時の判断は Issue #211）。テスト計画
 > の型を新設して solution 直下で受けることにしたため、`derives_from` は
-> SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e を指す。TP-d3000054-42d9-4bac-912a-dd3abc38d3e9・TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2 も同じ経緯で移設した。TP-403c55c7-d996-4951-8e6b-c3a7dddd387c は
+> [layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る](../solution/layat-placement-primitive.md) を指す。[エンベロープの outturn 適合を Go テストと E2E の両方で検証する](json-conformance-verification.md)・[NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする](nixos-vm-test-future.md) も同じ経緯で移設した。[lib.__internal は private helper のテスト seam として公開する](lib-internal-test-seam.md) は
 > #238 では「テスト計画そのものではない」と判断して見送ったが、Issue #239 でその判断を
 > 改めて移設した（経緯は同 item の注記）。

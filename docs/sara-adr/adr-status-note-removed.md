@@ -20,7 +20,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: SDR-3ff9f355-a667-476e-b10d-087248cdbfcf, GitHub Issue #499
+- 関連: [ADR の失効は supersedes と 廃止 で表す](adr-supersedes-and-deprecated-status.md), GitHub Issue #499
 - 起点: Issue #499 の grilling（2026-11-01）で確定。ADR-0048 §2 を書き直した
 
 ## 背景
@@ -28,7 +28,7 @@ generated:
 ADR のステータス行には「採用（2026-06-14 改訂: … → ADR-0015）」のようなカッコ書きの改訂注記が
 付いていた。enum の値に収まらないので、frontmatter に `status_note` フィールドを設けて受け皿にしていた。
 
-失効を `supersedes` と `廃止` で表す決定（SDR-3ff9f355-a667-476e-b10d-087248cdbfcf）により、ADR は
+失効を `supersedes` と `廃止` で表す決定（[ADR の失効は supersedes と 廃止 で表す](adr-supersedes-and-deprecated-status.md)）により、ADR は
 部分改訂を受けなくなる。
 
 ## 決定

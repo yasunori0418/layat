@@ -31,7 +31,7 @@ JSON の扱いとエラー処理をどう実装するかを決める必要があ
 engine は、JSON を `encoding/json` で扱う。エラーは `fmt.Errorf` の `%w` でラップし、`errors.Is` / `errors.As` で
 判別する。どちらも標準ライブラリで完結させる。
 
-engine の依存の規範は REQ-b74a118a-1272-44eb-944c-7725163211c6 に置く。
+engine の依存の規範は [engine は第三者依存ゼロの stdlib-only とし内部層に閉じる](../requirements/engine-stdlib-only.md) に置く。
 
 ## 根拠
 

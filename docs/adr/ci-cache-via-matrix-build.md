@@ -25,11 +25,11 @@ layat を使う側（activation や CI）は layat のバイナリを必要と�
 ## 決定
 
 キャッシュへの投入は、x86_64-linux・aarch64-linux・aarch64-darwin の matrix で `nix build .#layat` を
-実行し、cachix のキャッシュ `yasunori0418` へ送って行う。投入の契機は ADR-6c477b0f-cd25-417d-91a0-172dd0ed084f、ジョブの組み方は ADR-21570c09-066c-471b-b605-3364265c8736 が
+実行し、cachix のキャッシュ `yasunori0418` へ送って行う。投入の契機は [キャッシュへの投入を main への push で起動する](cachix-push-on-main.md)、ジョブの組み方は [キャッシュへの投入を cachix-action の自動 push に任せる](cachix-push-via-cachix-action.md) が
 決めている。
 
-検証の matrix は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27、キャッシュ投入の構成は
-INF-af33c5a1-f846-4f09-8e43-c6ea042d6e06 に置く。
+検証の matrix は [CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](../infrastructure/ci-pipeline.md)、キャッシュ投入の構成は
+[バイナリキャッシュ（main push 時の cachix 投入）](../infrastructure/binary-cache.md) に置く。
 
 ## 根拠
 

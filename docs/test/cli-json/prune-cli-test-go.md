@@ -20,12 +20,12 @@ generated:
 
 `layat prune` の CLI 面（TTY 判定・`--yes` / `--json` の解釈・確認プロンプトの提示・
 `--dryrun` の出力・`--json` の payload）を検証する。engine を実 FS で駆動するのは
-CASE-49ac6d68-ed29-41aa-b939-dcfdc8711082 の担当で、こちらは engine の結果値を組み立てた
+[prune_test.go — 孤児系列の判定と系列ごとの削除・dryrun / 確認 / lock / 削除段の失敗](../generations/prune-test-go.md) の担当で、こちらは engine の結果値を組み立てた
 fixture を CLI の関数へ通す。engine 本体は呼ばず、CLI が持つ engine 呼び出しの seam を
 差し替えて駆動するので実 state dir に依存しない。対話性は実行系関数の引数で渡すので実 TTY にも
 依存しない（`go test` の標準入力は決して TTY にならず、検出に頼ると対話の処理へ到達できない）。
 
-TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9 が「CLI が root パス一覧を実際に表示するかは
+[prune の dryrun が副作用ゼロで、非同意は中断し、lock 中の系列は skip され、削除段の失敗は進捗と理由で振り分けられる](../generations/prune-safety-gates.md) が「CLI が root パス一覧を実際に表示するかは
 cli-json 区分の残余」として残した部分を、ここが引き取る。
 
 ## 検証内容
@@ -33,13 +33,13 @@ cli-json 区分の残余」として残した部分を、ここが引き取る�
 - **確認ポリシー** — プロンプトを出せるのは TTY のときだけで、`--json` は TTY でも常に
   禁じること。共有の確認ポリシーと合成すると、`--json` + 同意フラグ無しが
   プロンプトを出さずに即拒否になり、同意フラグを足せばプロンプト無しで進むこと
-  （→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed の `--json` fail fast）
+  （→ [prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](../../requirements/prune-safety-gates.md) の `--json` fail fast）
 - **拒否の名指し** — 確認ポリシーは reset と共有するが、拒否のメッセージが prune を名指し
   すること（共有した結果として別コマンドの名前が出ると、読者が直すべきフラグを取り違える）
 - **root パス一覧の提示** — 確認の直前に出す一覧に、削除対象の**全系列の root パス**が
   含まれること。アンマウント中の root を消えたものと取り違えないための唯一の手段なので、
   1 系列だけでは満たせない fixture（state 基底と system 基底の 2 系列）で見る
-  （→ ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66）。期待する root は fixture からループで取り出さずリテラルで書き、件数の
+  （→ [prune は削除前に root パスの一覧を示して確認を取る](../../adr/prune-confirms-with-root-list.md)）。期待する root は fixture からループで取り出さずリテラルで書き、件数の
   ヘッダと実際の行数の一致も見る（結果値を読み直して期待にすると、結果値と辻褄が合うだけの
   一覧でも通る）
 - **preview と戻り値の別** — 確認コールバックが表示するのは engine が渡した **preview**、
@@ -53,21 +53,21 @@ cli-json 区分の残余」として残した部分を、ここが引き取る�
   行わず、エンベロープにインベントリを載せないこと。engine が判定候補を結果に残したまま返しても
   「削除した」と読める文書にならないよう、候補を持った結果を返す stub で駆動する
 - **削除途中の失敗** — 同じ分岐のもう一方の側。エラーで返りつつ、失敗より前に削除し終えた系列は
-  インベントリに残ること（→ REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed）。捨ててしまうと、部分的に
+  インベントリに残ること（→ [prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](../../requirements/prune-safety-gates.md)）。捨ててしまうと、部分的に
   削除された状態を記録の無いままユーザーへ渡すことになる
 - **走査基底の受け渡し** — state 基底は engine へ委ね（CLI は名指ししない）、system 基底は
   全コマンド共通の環境変数 `LAYAT_SYSTEM_PROFILE_BASE` があればその値をそのまま渡すこと。空文字は上書きと
   みなさず既定値になること。`--dryrun` と破壊的実行の両方で見る。この環境変数が無いと、絶対パスの
   system 基底は `$HOME` の隔離では動かせず、E2E の破壊的実行がランナーの実共有状態を触る
-  （→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1・`tests/e2e/lib.sh` の `e2e_isolate`）
+  （→ [prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする](../../design/prune-orphan-series.md)・`tests/e2e/lib.sh` の `e2e_isolate`）
 - **ストリームの排他** — `--dryrun` の系列一覧は stdout をタブ区切りで専有し、確認の提示と
   事後の結果レポートは stderr へ出して stdout へは出さないこと。`--json` のときは行指向の
   stdout が止まること。削除対象 0 件のときは stdout が空のまま stderr の通知が両契約で残り、
   結果レポートは no-op を告げること
-  （→ REQ-fea038de-55eb-45ac-87fc-ec3a7287592a、REQ-2353259f-5878-452a-8e11-3445de69abc2）
-- **`--json` の形状** — payload の形は REQ-a47fbfb0-c808-42e9-b2ad-767c933494d6 が定める。削除（予定）系列が `removed`、判定か削除に至れず残した系列が `skipped` に載り、
+  （→ [stdout は機械可読出力を専有しレポートと warning は stderr へ出す](../../requirements/stream-discipline.md)、[--json 指定時は行指向 stdout を出さずエンベロープが stdout を専有する](../../requirements/json-stdout-exclusive.md)）
+- **`--json` の形状** — payload の形は [prune --json はトップレベル info の removed に削除系列を、skipped に判定か削除に至れず残した系列を載せる](../../requirements/prune-json-payload.md) が定める。削除（予定）系列が `removed`、判定か削除に至れず残した系列が `skipped` に載り、
   `pruned` というキーが現れないこと（`pruned` は空祖先ディレクトリの剪定で既に埋まっている
-  → REQ-8409db86-a1ba-4053-86dc-588985cc1ca7）。skip 理由は engine の語彙 5 値がそのまま
+  → [target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する](../../requirements/empty-parent-dir-pruning.md)）。skip 理由は engine の語彙 5 値がそのまま
   出て、CLI 側で綴り直されないこと。系列 0 件でも `removed` / `skipped` が配列で残ること。
   prune は config を名指ししないので `results` は空で、インベントリはエンベロープ全体の
   `info` に乗ること。文書は outturn の適合チェッカを通ること

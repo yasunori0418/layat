@@ -38,11 +38,11 @@ config 名 → `{ rootKind, targets }`（fixed root は `root` も）マップ�
 フィルタもこの結果で振り分ける。build だけは atomic 性のため config ごと N 回。
 eval プロセス起動コストを N→1 に固定する。
 
-フィルタそのものは REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b の担当。
+フィルタそのものは [--all は root モードフィルタで対象 config を絞れる](apply-all-root-mode-filter.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「実行フロー」の `apply --all` 一括 eval の箇条書き。
 
-決定の実体は ADR-28605860-770e-41df-95dd-7dc05b20497a「apply --all は config ごとの情報を 1 回の eval でまとめて取る」で、legacy entrypoint の eval 形は ADR-c5ebc6d9-d218-45f7-bce1-4dd481766843。
-`targets` を取得に加えたのは ADR-7f4fd2f6-672d-4d8c-a881-31024ad1d7c3（前段での衝突の確認 REQ-38506419-c23d-4fce-b167-30715ce6a69d が使う）。
+決定の実体は [apply --all は config ごとの情報を 1 回の eval でまとめて取る](../adr/apply-all-single-eval.md)「apply --all は config ごとの情報を 1 回の eval でまとめて取る」で、legacy entrypoint の eval 形は [legacy entrypoint の eval と build は新 CLI の -f 形で行う](../adr/legacy-eval-via-nix-file-flag.md)。
+`targets` を取得に加えたのは [config 間の target 衝突は CLI が判定し engine に持ち込まない](../adr/cross-config-conflict-judged-by-cli.md)（前段での衝突の確認 [apply --all は build 前に選択 config 間の target 衝突を検出して停止する](apply-all-cross-config-preflight.md) が使う）。

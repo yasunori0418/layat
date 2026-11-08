@@ -33,18 +33,18 @@ generated:
 - 透明性: `layat --help` 等で manifest 生成器が内部実行するコマンド（nix 生成器では nix
   コマンド）を開示し、ユーザーが選択的に手で実行できる。`--help` の文面は CLI が持ち、
   `--debug` の逐次開示は生成器が担う（実行する内部コマンドを生成器名付きで書く）。失敗時の要約の組み立ては
-  REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd の担当。
+  [生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める](generator-diagnostics-contract.md) の担当。
 - 任意世代への切替・世代の GC は世代バックエンドの標準コマンド（既定の nixprofile では
   `nix-env` / `nix-collect-garbage`）を profile パスに対して使う。engine 自身は `nix-env` を
-  叩かない（REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564）。
+  叩かない（[engine が叩く外部コマンドは git のみに限る](engine-external-command-constraint.md)）。
 
-`--debug` を冗長度（`-v`）と直交させる分離そのものは REQ-0a123b89-0399-4f76-b988-56a5f7e0becf の担当。
+`--debug` を冗長度（`-v`）と直交させる分離そのものは [冗長度は -v、デバッグは --debug に分離し --json と直交させる](verbose-and-debug-separation.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の透明性・任意世代切替の箇条書き 2 項。
 
-決定の実体は ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246「内部コマンドの開示で透明性を保つ」（`layat --help` 等で内部実行する nix コマンドを開示し、
+決定の実体は [内部コマンドの開示で透明性を保つ](../adr/internal-command-disclosure.md)「内部コマンドの開示で透明性を保つ」（`layat --help` 等で内部実行する nix コマンドを開示し、
 ユーザーが選択的に手で実行できるようにする）。`--help` の文面を CLI、`--debug` の
-逐次開示を生成器に分けたのは ADR-5be36ff2-ed08-4e8e-8476-62ff2b08a9dd「内部コマンドの開示を CLI と生成器で分担する」。世代の切替・GC の委譲先を
-世代バックエンドの標準コマンドとしたのは ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」。
+逐次開示を生成器に分けたのは [内部コマンドの開示を CLI と生成器で分担する](../adr/internal-command-disclosure-split.md)「内部コマンドの開示を CLI と生成器で分担する」。世代の切替・GC の委譲先を
+世代バックエンドの標準コマンドとしたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」。

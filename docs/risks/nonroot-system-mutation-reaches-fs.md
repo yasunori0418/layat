@@ -17,7 +17,7 @@ generated:
 ## リスク
 
 system mode の変更系操作は、euid 0 の確認を通ってから FS に触れる
-（→ REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4）。これが崩れる形は 3 つある。
+（→ [system mode は root を / に解決し、変更系操作の前に euid 0 を確認し、profile と last-applied 記録を system 基底に置く](../requirements/system-mode-root-gate-and-record-base.md)）。これが崩れる形は 3 つある。
 
 - **条件の抜け・順序の誤り** — `apply` / `reset` / `rollback` のどれかで確認が無いか、
   profileDir や backref の作成・flock の取得より後に置かれる。非 root の実行が途中まで進み、

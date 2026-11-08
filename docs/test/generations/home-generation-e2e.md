@@ -25,9 +25,9 @@ apply を重ねる。
   新 entry が配置され、世代が 2 つ以上になる
 - **rollback の往復** — `rollback` が前世代の配置状態（旧 entry あり・新 entry なし）へ
   戻す
-- **成功時沈黙** — 指定が無いときは配置レポートを出さず、`-v` で出す（→ ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5 / ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）
+- **成功時沈黙** — 指定が無いときは配置レポートを出さず、`-v` で出す（→ [指定が無いときは成功時に何も出力しない](../../adr/silent-on-success.md) / [-v で配置レポートを opt-in で出す](../../adr/verbose-opts-into-placement-report.md)）
 - **撤去の非遷移** — `reset` は配置を撤去するが profile リンクと世代の本数は動かさない
-  （FS のみの撤去 → REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6）
+  （FS のみの撤去 → [reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す](../../requirements/reset-fs-only-teardown.md)）
 - **`--json` の世代観測** — `apply --dryrun --json` の generation が before == after
   （非 null）を含み、`list-generations --json` が `{number, date, current}` の 2 世代を
   返し、current が rollback 先の 1 世代だけであること。`items` は空で generation スロットを
@@ -35,12 +35,12 @@ apply を重ねる。
   後退する向きの遷移を含み、`reset --json` は generation スロット自体を持たないこと
   （→ issue #285）
 - **`--all` の読み取り専用** — 全 config を対象とする列挙が観測に留まり、profile の
-  リンク先・世代の本数・`$HOME` 配下の配置のいずれも動かさないこと（→ REQ-05abce3e-9797-432b-b93f-37c55d09afde の
+  リンク先・世代の本数・`$HOME` 配下の配置のいずれも動かさないこと（→ [rollback と list-generations は home / system mode 限定にする](../../requirements/rollback-list-generations-home-only.md) の
   `SHALL be read-only`）。JSON の処理とテキストの処理は印字の分岐が別なので、両方の処理を
   またいだ前後比較で見る。観測するのは列挙に現れる home 側だけで、除外された
   project mode の profile が動かないことは本条件の範囲外（未被覆）
 
 ## 対応する CASE
 
-CASE-2e7b9ea2-4e4d-48ca-9e1e-0bfbb6223ff2（`tests/e2e/scenarios/02-home.sh`）。E2E ハーネス全体のスコープは
-TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9、`--json` の検証範囲は TP-d3000054-42d9-4bac-912a-dd3abc38d3e9 が定める。
+[e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復](e2e-02-home.md)（`tests/e2e/scenarios/02-home.sh`）。E2E ハーネス全体のスコープは
+[非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](../../test-plan/e2e-harness-scope.md)、`--json` の検証範囲は [エンベロープの outturn 適合を Go テストと E2E の両方で検証する](../../test-plan/json-conformance-verification.md) が定める。

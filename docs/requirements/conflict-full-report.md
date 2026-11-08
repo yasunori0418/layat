@@ -57,13 +57,13 @@ generated:
 `--dryrun` は `2`）。`--json` の `Conflicts` 配列も同じ全件集合と整合させる。
 
 > **上は原文の写しで、規範は frontmatter が正**。表が挙げる各 conflict 種別が「なぜ
-> conflict になるか」は、それぞれ REQ-053cfed2-265a-4997-a27b-97b0bed10d8a（foreign 実体。実 dir が例外にならない
-> 条件は REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26）・REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575（祖先 symlink と自己矛盾）・REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9（copy の
-> 構造不一致）・REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b（backup 退避先の既存）の担当。終了コードの値そのものは
-> REQ-2c5a10d8-112b-4f96-947a-aba7164779c4、`--dryrun` が読み取り専用で conflict を返すことは REQ-02a33511-0941-4813-b289-a05eb8e9aa57、
-> `--json` エンベロープ側の形は REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead / REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62、報告先が stderr である
-> ことの出力規律は REQ-fea038de-55eb-45ac-87fc-ec3a7287592a / REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 の担当。この「全件列挙してから 1 本の
-> 集約エラー」の形を巻き戻し失敗の報告にも用いることは REQ-9fca28c9-d3b1-4ad7-8f24-13b2ec7aeab2 の担当。
+> conflict になるか」は、それぞれ [target に通常ファイル・ディレクトリが在れば上書きせずエラーで停止する](conflict-on-real-file-or-dir.md)（foreign 実体。実 dir が例外にならない
+> 条件は [実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する](real-dir-target-migration.md)）・[祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する](ancestor-symlink-nest-migration.md)（祖先 symlink と自己矛盾）・[copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](copy-place-once.md)（copy の
+> 構造不一致）・[apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md)（backup 退避先の既存）の担当。終了コードの値そのものは
+> [終了コードは 0 = 成功 / 1 = 一般エラー / 2 = dryrun の conflict とする](exit-codes.md)、`--dryrun` が読み取り専用で conflict を返すことは [apply --dryrun は読み取り専用で conflict 検出時に非ゼロ終了する](apply-dryrun-readonly.md)、
+> `--json` エンベロープ側の形は [--json は outturn 規約準拠のエンベロープを出す第 2 契約とする](json-outturn-envelope.md) / [変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く](json-change-payload.md)、報告先が stderr である
+> ことの出力規律は [stdout は機械可読出力を専有しレポートと warning は stderr へ出す](stream-discipline.md) / [成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](silent-on-success.md) の担当。この「全件列挙してから 1 本の
+> 集約エラー」の形を巻き戻し失敗の報告にも用いることは [巻き戻し自体の失敗は best-effort で続行し、全件を stderr へ報告して停止する](undo-rollback-best-effort.md) の担当。
 
 ## 出典
 
@@ -71,10 +71,10 @@ generated:
 
 決定の実体は grilling 2026-07-12 D6 で、conflict を全件列挙する方針を定めている。この決定を
 表明した ADR は無い（ADR 化されていない）。`--backup` を脱出ハッチとするガイダンスと、退避先が既存の
-ときを conflict 種別に加えることは ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f・ADR-37191429-2099-4217-a552-47b16a7e504c による。報告を stderr に置き失敗時の処理を沈黙の対象にしない出力規律は
-ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5「指定が無いときは成功時に何も出力しない」が定めるが、同 ADR は conflict に一切言及せず全件列挙を
+ときを conflict 種別に加えることは [--backup は配置を塞ぐ記録外の実体だけを退避する](../adr/backup-scope-unrecorded-entities.md)・[退避先が既にあれば conflict で止める](../adr/backup-existing-destination-conflict.md) による。報告を stderr に置き失敗時の処理を沈黙の対象にしない出力規律は
+[指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)「指定が無いときは成功時に何も出力しない」が定めるが、同 ADR は conflict に一切言及せず全件列挙を
 決めていないため、側面の根拠として `justifies` は張らない（出力規律そのものの帰属は
-REQ-fea038de-55eb-45ac-87fc-ec3a7287592a / REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 が担当する）。成功時沈黙を定めていた旧決定は REQ-9fca28c9-d3b1-4ad7-8f24-13b2ec7aeab2 へは `justifies` を
+[stdout は機械可読出力を専有しレポートと warning は stderr へ出す](stream-discipline.md) / [成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](silent-on-success.md) が担当する）。成功時沈黙を定めていた旧決定は [巻き戻し自体の失敗は best-effort で続行し、全件を stderr へ報告して停止する](undo-rollback-best-effort.md) へは `justifies` を
 張っていたが、あちらは「この報告を成功時沈黙の対象にしてはならない」を自身の規範に含めて
 おり、本 item は出力規律を規範に持たず委譲している。この違いによる非対称であって、
 張り忘れではない。

@@ -36,7 +36,7 @@ generated:
 読めること」で、アップグレード直後の古くなった配置の除去が前世代 manifest を読むという事実が
 その必要性の根拠になる。
 
-engine が自身の対応版より新しい `schemaVersion` を拒否することは REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b が持つ。
+engine が自身の対応版より新しい `schemaVersion` を拒否することは [manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する](manifest-single-stable-contract.md) が持つ。
 本 item は「古い版を読む機構を作らない」側を規定する。
 
 ## 出典

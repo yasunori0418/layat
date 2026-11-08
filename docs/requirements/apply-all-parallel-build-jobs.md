@@ -47,21 +47,21 @@ generated:
 ## 仕様
 
 - **2 段構成**: stage 1 = 選択 config の build を `--no-link` で先行 realize（worker pool・
-  同時実行数 ≤ `--jobs`）、stage 2 = REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af に従う並列適用
+  同時実行数 ≤ `--jobs`）、stage 2 = [apply --all は選択された config を並列に適用し、集約表示と results\[\] を辞書順にし、部分失敗でも続行して最後に集約する](apply-all-lexical-order-continue.md) に従う並列適用
   （集約表示と `results[]` は辞書順）。engine の in-lock build は残り、
   stage 1 で store が温まっているのでキャッシュヒットになる
-  （build をロック内に閉じる REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9 は不変）
+  （build をロック内に閉じる [実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](exec-flow-eval-lock-build.md) は不変）
 - **`--jobs`**: `apply` ローカル（persistent ではない）・既定 0 = 論理 CPU 数・負値はエラー・
   `--all` 無しはエラー（明示の `--jobs 0` も含む）
 - **build 失敗**: その config は stage 2 をスキップし、自身の subject に error で載り、失敗に
-  数えられる。成功 config の subject は残る（REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5）
+  数えられる。成功 config の subject は残る（[--all は config ごとの SubjectResult を単一実行と同一形状で積む](json-all-subject-results.md)）
 - **決定性**: 集約結果は `--jobs` に依存しない。stage 1 で非決定なのは `--debug` 開示行の
   順序だけで、stage 1 の nix 自身の出力は捕捉されて失敗時の error に載る（stage 2 の
-  即時出力の順序は REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af）
+  即時出力の順序は [apply --all は選択された config を並列に適用し、集約表示と results\[\] を辞書順にし、部分失敗でも続行して最後に集約する](apply-all-lexical-order-continue.md)）
 
 > **上は要約で、規範は frontmatter が正**。配置段階の並列化（Issue #154）の規範は
-> REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af が持つ。
+> [apply --all は選択された config を並列に適用し、集約表示と results\[\] を辞書順にし、部分失敗でも続行して最後に集約する](apply-all-lexical-order-continue.md) が持つ。
 
 ## 出典
 
-ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e「apply --all の build を worker pool で並列に実行する」（Issue #153 で起票）。
+[apply --all の build を worker pool で並列に実行する](../adr/apply-all-parallel-build-worker-pool.md)「apply --all の build を worker pool で並列に実行する」（Issue #153 で起票）。

@@ -28,10 +28,10 @@ entry submodule は **strict**（未知キー拒否）。タイポや旧名は�
 
 | 旧名 | 現在のフィールド | 改名を決めた ADR |
 |---|---|---|
-| `name` | （廃止・識別子は属性キー）| ADR-c494e86e-ceb9-4380-b983-4e09553b01d6 |
-| `source` | `subpath` | ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab |
-| `dir` | `subpath` | ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab |
-| `mode` | `method` | ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a |
+| `name` | （廃止・識別子は属性キー）| [entries を target をキーにした attrset にする](../adr/entries-keyed-by-target.md) |
+| `source` | `subpath` | [配置元の中のパスを全層で subpath と呼ぶ](../adr/subpath-naming-across-layers.md) |
+| `dir` | `subpath` | [配置元の中のパスを全層で subpath と呼ぶ](../adr/subpath-naming-across-layers.md) |
+| `mode` | `method` | [entry の配置種別のフィールドを method と名付ける](../adr/mode-renamed-to-method.md) |
 
 上の表は原文（`docs/spec.md` の旧名列挙と各 ADR 参照）を対応づけて整理したもので、
 規範は frontmatter が正。

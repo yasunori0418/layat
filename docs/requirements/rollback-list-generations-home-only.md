@@ -38,11 +38,11 @@ layat list-generations --all    # home mode、続けて system mode の全 confi
 config、続けて system 基底（system mode）の全 config の世代を一覧する（読み取り専用）。
 system 基底が無ければ空として扱い、読めなければ warning を出してその基底を走査しない。
 
-`rollback` が名指し必須である点は REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796 の担当。
+`rollback` が名指し必須である点は [rollback は名指し必須で --all に対応しない](rollback-named-only.md) の担当。
 
 > **原文「standalone（CLI）」節の残る規範の所在**: 同節の第 1 文（`layat apply <name>` の
-> 明示実行と、CLI による entrypoint 発見・manifest ビルド・エンジン駆動）は REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 /
-> REQ-1cc080f6-ae91-4c1f-973e-b7054cfc0198、世代管理の機構そのものは REQ-1be4d678-959c-44d7-a346-44bfd95af56e の担当。
+> 明示実行と、CLI による entrypoint 発見・manifest ビルド・エンジン駆動）は [layat は CLI とエンジンの 2 層で構成する](two-layer-architecture.md) /
+> [entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする](entrypoint-discovery-order.md)、世代管理の機構そのものは [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](generation-mechanism-link-farm-manifest.md) の担当。
 
 ## 出典
 
@@ -51,5 +51,5 @@ system 基底が無ければ空として扱い、読めなければ warning を�
 nix profile による世代管理を行い `rollback` / `list-generations` を提供する）。後者は
 独立 item を立てず本 item に含めた。
 
-決定の実体は ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75「module と project では世代操作を公開しない」と、
-`list-generations --all` を追加した ADR-cfd13fb6-d11e-4f3b-b0c6-40ee21b6b212。home / system への公開は ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75。
+決定の実体は [module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)「module と project では世代操作を公開しない」と、
+`list-generations --all` を追加した [list-generations --all は home mode と system mode の全 config を対象にする](../adr/list-generations-all-home-and-system.md)。home / system への公開は [module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)。

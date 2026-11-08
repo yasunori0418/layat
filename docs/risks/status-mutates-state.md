@@ -16,7 +16,7 @@ generated:
 
 ## リスク
 
-`layat status` は読み取り専用でなければならない（→ REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173）。
+`layat status` は読み取り専用でなければならない（→ [status は記録基底を走査して last-applied 記録を読み取り専用で表示する](../requirements/status-command.md)）。
 engine には記録や profileDir を扱う関数が既にあり、その多くは apply・reset のために
 ディレクトリを作るか lock を取る。status がそれらを流用すると、読むだけのはずの操作が
 状態を変える。
@@ -44,12 +44,12 @@ system 基底では lock ファイルを作れず、非 root の status が失�
 
 **impact: medium** — 最も重い方向は記録の書き換えで、次の apply の古くなった配置の除去を誤った比較の基準
 から始めさせる。古くなった配置の除去は layat が置いた symlink だけを消す保守的な不変条件
-（→ RISK-e3d42a21-1f43-4ac6-835e-a5caf8d86363）に守られており、利用者の実データには届かない。
+（→ [古くなった配置を保守的に除去するときの不変条件が破れ、layat が作っていない実体を消す](stale-removal-invariant-broken.md)）に守られており、利用者の実データには届かない。
 誤った配置は、正しい記録を書き直す再 apply で収束する。lock の取得とディレクトリの生成も、
 後から消せば元に戻る。
 
 ## 緩和
 
-TC-076bd7b4-6427-4a35-9bab-86daaaada504 が緩和する。実行の前後で `StateDir` / `SystemStateDir`
+[status が記録基底の全系列を漏れなく列挙し、記録の内容をそのまま反映し、状態を変えない](../test/generations/status-inventory-fidelity.md) が緩和する。実行の前後で `StateDir` / `SystemStateDir`
 配下のエントリが増減しないこと、記録ファイルの内容が変わらないこと、profileDir の lock を
 保持した状態でも待たずに返ることを検証する。

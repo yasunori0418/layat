@@ -28,7 +28,7 @@ layat は、プロジェクトに組み込んで repo 内へ配置する使い�
 既に `flake.nix` がある repo へ layat を後から組み込む手順を、docs に通しで置く。CLI には既存の
 flake を自動でマージする機構（`init --merge` など）を持たせない。
 
-`layat init` がファイルを生成しないことは REQ-6be1cbf1-6c6e-498b-8acb-7f4b80037169 に置く。手順そのものは
+`layat init` がファイルを生成しないことは [layat init は nix flake init -t への透明なラッパーとしファイルを生成しない](../requirements/init-template-wrapper.md) に置く。手順そのものは
 README の「既存の flake に layat を追加する」節が持つ。
 
 ## 根拠

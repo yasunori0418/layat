@@ -47,18 +47,18 @@ target の各祖先 component を lstat で walk。symlink の祖先があれば
 > **上は原文の写しで、規範は frontmatter が正**。原文が参照する次の規範は本 item の
 > 担当ではない。
 >
-> - 既定 silent と `-v` による可視化の出力規律そのもの（→ ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5・ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）→ REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 /
->   REQ-0a123b89-0399-4f76-b988-56a5f7e0becf。本 item は「この除去を warning にせず配置レポート側で扱う」ことだけを
+> - 既定 silent と `-v` による可視化の出力規律そのもの（→ [指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)・[-v で配置レポートを opt-in で出す](../adr/verbose-opts-into-placement-report.md)）→ [成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](silent-on-success.md) /
+>   [冗長度は -v、デバッグは --debug に分離し --json と直交させる](verbose-and-debug-separation.md)。本 item は「この除去を warning にせず配置レポート側で扱う」ことだけを
 >   規範とし、そのレポートを指定が無いときに出すか `-v` のときに出すかは委譲する
 > - `--backup` 有効時にこのエラー停止がどう変わるか → 祖先 symlink conflict は
->   `--backup` の対象外（REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b・構造問題であり退避では解消しないため）
+>   `--backup` の対象外（[apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md)・構造問題であり退避では解消しないため）
 
-実 dir target の migration は REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26、method 変更 symlink→copy の migration は
-REQ-2b48620a-abaa-43df-a106-954bbba3de56 の担当。
+実 dir target の migration は [実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する](real-dir-target-migration.md)、method 変更 symlink→copy の migration は
+[method 変更は symlink→copy のみ配置前除去で移行し、copy→symlink は移行しない](method-change-symlink-to-copy-migration.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「配置動作仕様」→「symlink モード」の手順 0。
 
-決定の実体は ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c・ADR-8b7cd75f-5521-4805-b7bc-105b5c56ee38・ADR-8357b519-cb23-4984-ba56-254046779f47 で、foreign 祖先のエラー停止は ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c が
+決定の実体は [祖先 symlink は自己記録の古くなったものだけを移行する](../adr/ancestor-symlink-recorded-stale-only.md)・[移行する祖先の配下の entry は lstat を経ず不在として配置する](../adr/nested-children-placed-as-absent.md)・[配置前除去による移行を warning にせず -v のときだけ報告する](../adr/migration-reported-silently.md) で、foreign 祖先のエラー停止は [祖先 symlink は自己記録の古くなったものだけを移行する](../adr/ancestor-symlink-recorded-stale-only.md) が
 定めている。

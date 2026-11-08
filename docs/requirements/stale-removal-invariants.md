@@ -49,17 +49,17 @@ generated:
 | copy | **除去しない**（ユーザー所有データ）。ただし孤児を警告で通知する |
 
 > **上は原文の写しで、規範は frontmatter が正**。除去後の空親ディレクトリ剪定は
-> REQ-8409db86-a1ba-4053-86dc-588985cc1ca7、除去に途中失敗したときの巻き戻しは REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の担当。この保守的不変条件は
-> `reset` の symlink 除去にも適用されるが（REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6）、copy を明示的に消す唯一の手段が
+> [target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する](empty-parent-dir-pruning.md)、除去に途中失敗したときの巻き戻しは [途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](undo-journal-rollback.md) の担当。この保守的不変条件は
+> `reset` の symlink 除去にも適用されるが（[reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す](reset-fs-only-teardown.md)）、copy を明示的に消す唯一の手段が
 > `reset` であることも同 item の担当。
 >
-> **2026-10-11 追記（ADR-a91585ad-971a-4558-9f25-b7fcd6e57671）**: 上の写しの「前世代マニフェスト」は比較の基準と読み替える。比較の基準は
+> **2026-10-11 追記（[古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)）**: 上の写しの「前世代マニフェスト」は比較の基準と読み替える。比較の基準は
 > last-applied 記録があれば記録の manifest、無ければ profile の current 世代の manifest で、「初回／記録なし」は
-> どちらも無く比較の基準が空のときを指す。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
+> どちらも無く比較の基準が空のときを指す。記録の規範は [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「世代管理仕様」→「stale 除去の対象と安全不変条件」節の導入文と表。
 
-決定の実体は ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c「古くなった配置の除去は記録どおりの symlink だけに限る」。比較の基準を
-last-applied 記録から優先して読むのは ADR-a91585ad-971a-4558-9f25-b7fcd6e57671「古くなった配置の除去は、比較の基準を記録から優先して読む」。
+決定の実体は [古くなった配置の除去は記録どおりの symlink だけに限る](../adr/conservative-removal-invariant.md)「古くなった配置の除去は記録どおりの symlink だけに限る」。比較の基準を
+last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)「古くなった配置の除去は、比較の基準を記録から優先して読む」。

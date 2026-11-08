@@ -32,10 +32,10 @@ generated:
 | `flake.nix` | pure（root 解決はエンジン実行時なので eval は pure のまま）| flake.lock で固定 |
 | `shell.nix` / `default.nix` | impure（NIX_PATH / channels 依存）を許容 | **ユーザー責任**。layat lib を含め nixpkgs を npins / fetchTarball / flake-compat 等で固定することを推奨 |
 
-legacy entrypoint で `src` が自動で store 化されないことは REQ-da253cab-34d4-4d6e-96f0-de99e012b376 の担当。
+legacy entrypoint で `src` が自動で store 化されないことは [legacy entrypoint では相対 path の src が自動で store 化されない](legacy-src-not-auto-stored.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「再現性スタンス」の表。
 
-決定の実体は ADR-955c2601-88fb-4be8-85de-ec7d0a8c727d「shell.nix / default.nix の再現性は利用者の責任にする」。
+決定の実体は [shell.nix / default.nix の再現性は利用者の責任にする](../adr/shell-default-nix-best-effort.md)「shell.nix / default.nix の再現性は利用者の責任にする」。

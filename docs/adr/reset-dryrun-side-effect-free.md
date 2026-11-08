@@ -23,14 +23,14 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7, ADR-acc31876-df36-485e-b356-92ae60e26db7, ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1, ADR-45380022-d959-4b22-aa05-5993ac1f3c87
+- 関連: [reset で profile を触らずに配置物を撤去する](reset-fs-only-teardown.md), [reset は非対話の実行で --yes を必須にする](reset-confirmation-and-yes.md), [終了コードは 0 / 1 / 2 の 3 値にする](exit-code-scheme.md), [flock は明示実行で待ち、hook 実行でスキップする](flock-mode-explicit-wait-hook-skip.md)
 - 起点: ADR-0021 §2（reset の --dryrun を副作用なしのプレビューにする）を書き直した
 
 ## 背景
 
-reset は copy target を消すので、実行するとデータを失うことがある（ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7）。
+reset は copy target を消すので、実行するとデータを失うことがある（[reset で profile を触らずに配置物を撤去する](reset-fs-only-teardown.md)）。
 削除前の確認は撤去対象を示すが、対話が前提で、CI やスクリプトからは使えない
-（ADR-acc31876-df36-485e-b356-92ae60e26db7）。
+（[reset は非対話の実行で --yes を必須にする](reset-confirmation-and-yes.md)）。
 
 apply はすでに `--dryrun` を持っている。
 
@@ -39,8 +39,8 @@ apply はすでに `--dryrun` を持っている。
 reset に `--dryrun` を設ける。`--dryrun` は撤去する symlink と copy target を示して終わり、
 FS の削除・確認・flock のどれも行わない。撤去対象があってもなくても、正常に終える。
 
-規範は REQ-6a950d6d-c191-4235-a1b4-73ffc7c2bb38 に置く。終了コードの体系は
-ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1 に従う。
+規範は [reset --dryrun は副作用ゼロで削除対象を表示して終了する](../requirements/reset-dryrun-no-side-effect.md) に置く。終了コードの体系は
+[終了コードは 0 / 1 / 2 の 3 値にする](exit-code-scheme.md) に従う。
 
 ## 根拠
 

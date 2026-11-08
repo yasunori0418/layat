@@ -23,7 +23,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-af37a636-a798-4c03-8fa4-e73ed6375a92, ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56, GitHub Issue #585, `docs/spec.md`
+- 関連: [apply --all の集約は config 名の辞書順に並べる](apply-all-lexicographic-order.md), [apply --all は失敗しても残りを続け、最後に集約して非 0 で終える](apply-all-continue-and-aggregate.md), GitHub Issue #585, `docs/spec.md`
 - 起点: ADR-0026 §1・§2a・§2c・§4 と ADR-0060 §2 を書き直した
 
 ## 背景
@@ -44,9 +44,9 @@ build を行わずに engine へ渡す。取得した後の挙動は通常の `a
 `--manifest <name>=<link-farm>` を config ごとに繰り返す。`--manifest` は `--help` に載せる公開の
 CLI 契約として安定させる。
 
-フラグの組み合わせと入力エラーは REQ-dec58330-6dad-47f7-8f56-2402764a89c7、実行フローの順序は
-REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9、生成器の契約越しの取得は
-REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729 に置く。
+フラグの組み合わせと入力エラーは [apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](../requirements/apply-manifest-direct.md)、実行フローの順序は
+[実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](../requirements/exec-flow-eval-lock-build.md)、生成器の契約越しの取得は
+[CLI は manifest 生成器の契約（Discover / Roots / Build / DryBuild）越しに manifest を得る](../requirements/manifest-generator-contract.md) に置く。
 
 ## 根拠
 

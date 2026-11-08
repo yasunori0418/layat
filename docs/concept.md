@@ -31,23 +31,23 @@ layat はフレームワークではなく **配置プリミティブ**である
 任意パスへ symlink または copy で置く」という単一の責務を、テスト可能な純粋関数として提供し、
 設定は生成しない。
 
-- [SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e](solution/layat-placement-primitive.md) — layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る
+- [layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る](solution/layat-placement-primitive.md) — layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る
 
 ---
 
 ## 想定する使われ方
 
 中心は project mode（プロジェクト内配置）。`$HOME` 配置（home mode）・system 配置は明示マーカーで
-opt-in する例外として位置づける（→ ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e）。
+opt-in する例外として位置づける（→ [project mode を第一の使い方とする](adr/project-first.md)）。
 
-- [UC-19a90989-0ae3-438f-8a75-4e1e2637f81c](use-cases/project-mode-in-repo-placement.md) — プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する
-- [UC-f2436d68-91ff-4c48-b1df-47acefe4f464](use-cases/home-mode-pinned-repo-placement.md) — home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する
-- [UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d](use-cases/system-mode-root-placement.md) — system mode で `/` 配下へ配置し、root 権限で世代とともに管理する
-- [UC-1c280dce-7c72-44c0-95ea-d06344f62a47](use-cases/independent-update-cycles.md) — 役割ごとに config を分けて更新を独立させ、1 つの更新を他の役割へ波及させない
-- [UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6](use-cases/generation-rollback-standalone.md) — 配置に失敗・後悔したとき CLI 単体で前の世代へロールバックして元の状態へ戻す
-- [UC-403fbe32-b146-401b-8b53-fe67c1e169c5](use-cases/copy-place-once-user-managed.md) — リポジトリの内容を copy で初回だけ配置し、その後はユーザーが手で編集して育てる
-- [UC-01b896b4-04b9-40d0-bf9e-966eaf64c3d4](use-cases/out-of-store-live-editing.md) — 開発中の手元 dotfiles を out-of-store symlink で参照し、編集と同時に反映しながら育てる
-- [UC-d39c1994-f9a5-4860-80ba-f6e584adaf14](use-cases/module-integration.md) — 既に home-manager / NixOS / nix-darwin を使っている環境へ layat をモジュールとして組み込む
+- [プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する](use-cases/project-mode-in-repo-placement.md) — プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する
+- [home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する](use-cases/home-mode-pinned-repo-placement.md) — home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する
+- [system mode で `/` 配下へ配置し、root 権限で世代とともに管理する](use-cases/system-mode-root-placement.md) — system mode で `/` 配下へ配置し、root 権限で世代とともに管理する
+- [役割ごとに config を分けて更新を独立させ、1 つの更新を他の役割へ波及させない](use-cases/independent-update-cycles.md) — 役割ごとに config を分けて更新を独立させ、1 つの更新を他の役割へ波及させない
+- [配置に失敗・後悔したとき CLI 単体で前の世代へロールバックして元の状態へ戻す](use-cases/generation-rollback-standalone.md) — 配置に失敗・後悔したとき CLI 単体で前の世代へロールバックして元の状態へ戻す
+- [リポジトリの内容を copy で初回だけ配置し、その後はユーザーが手で編集して育てる](use-cases/copy-place-once-user-managed.md) — リポジトリの内容を copy で初回だけ配置し、その後はユーザーが手で編集して育てる
+- [開発中の手元 dotfiles を out-of-store symlink で参照し、編集と同時に反映しながら育てる](use-cases/out-of-store-live-editing.md) — 開発中の手元 dotfiles を out-of-store symlink で参照し、編集と同時に反映しながら育てる
+- [既に home-manager / NixOS / nix-darwin を使っている環境へ layat をモジュールとして組み込む](use-cases/module-integration.md) — 既に home-manager / NixOS / nix-darwin を使っている環境へ layat をモジュールとして組み込む
 
 ---
 
@@ -58,7 +58,7 @@ opt-in する例外として位置づける（→ ADR-560852e1-3d07-46b9-ae1a-d1
 ストアパスを受け取る」設計にすることで、取得方法の変化から独立する。
 
 **配置ロジックはコアが所有し、モジュールは配線に徹する**: 配置の実体は全層で layat 自身の
-固定 Go エンジンが実行し（→ ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7, ADR-2119433e-de69-4447-85a5-575d58246007）、`home.file` / `systemd.tmpfiles` などの
+固定 Go エンジンが実行し（→ [配置は全層で engine が行い、ネイティブ機構へ翻訳しない](adr/engine-owns-placement-no-native-translation.md), [engine を単一の固定 Go バイナリにする](adr/engine-fixed-go-binary.md)）、`home.file` / `systemd.tmpfiles` などの
 ネイティブ機構には委譲しない。振る舞いが単一コアに集約され、テストと一貫性を担保できる。
 
 **home-manager に依存しない**: どの環境でも同じ設定定義で動き、統合層はコアの薄いラッパー。
@@ -71,16 +71,16 @@ opt-in する例外として位置づける（→ ADR-560852e1-3d07-46b9-ae1a-d1
 ## north-star: 配置プリミティブから組むミニマル distro
 
 長期的な狙いは、nixpkgs のパッケージ群（＝ストアパス）を活かしつつ配置だけをユーザーに操作させ、
-Arch / Gentoo 的なミニマル Linux ディストリビューションの基盤を作ること（→ ADR-10dcf5a9-f298-4123-9a50-24f43e25d30c）。
+Arch / Gentoo 的なミニマル Linux ディストリビューションの基盤を作ること（→ [コアを store パスを root 相対の target へ置くプリミティブにする](adr/core-as-placement-primitive.md)）。
 このためコアの中心抽象は root を `$HOME` に固定せず一般化する。
 
 layat は他のツール群と stdout / stdin の JSON パイプで合成するエコシステムの一員でもある。
-機械可読出力（`--json`）は **すべての機能で** outturn specVersion 1 規約に準拠する（→ ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71）。
+機械可読出力（`--json`）は **すべての機能で** outturn specVersion 1 規約に準拠する（→ [--json は outturn 規約に常時準拠する](adr/outturn-conformance-principle.md)）。
 
 **スコープの線引き**: CLI 単体 + project mode をコアとし、home mode と system mode
 （`systemRoot` で `/` 配下へ root 権限で配置。CLI を root で実行するか、NixOS / nix-darwin module の
-activation から起動する。→ ADR-25d54346-f13a-4c12-9895-ab93dc6c183b, ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c）も実装済み。「関数ベースのパッケージ導入・PATH 追加」に
-専用機構は持たない。`pkgs.buildEnv` の合成環境を entry として配置し、環境変数の配線は利用者側で行う（→ ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137）。
+activation から起動する。→ [system mode の変更系操作の前に engine が euid 0 を確認する](adr/system-mode-euid-gate.md), [NixOS / nix-darwin モジュールは root を systemRoot に固定する](adr/system-modules-pin-systemroot.md)）も実装済み。「関数ベースのパッケージ導入・PATH 追加」に
+専用機構は持たない。`pkgs.buildEnv` の合成環境を entry として配置し、環境変数の配線は利用者側で行う（→ [layat.lib.mkEnv で buildEnv 合成環境を提供する](adr/mkenv-buildenv.md)）。
 ブート / init / FS / パーティションの層は本構想でも空白であり、layat が担う領域ではない。
 
 ---
@@ -111,7 +111,7 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 
 `home.file` と layat はどちらも前世代との diff で古くなった配置を除去するが、layat は前世代の
 **自己記録の manifest** を一次情報に持ち、HM は on-disk の readlink パターンマッチで判定する
-（HM 現行実装〔2026-07 時点〕との比較・→ ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c, ADR-2d4fdda4-b2e1-4161-8b71-3cff5b265f2f）。差は次の 5 点に表れる。
+（HM 現行実装〔2026-07 時点〕との比較・→ [祖先 symlink は自己記録の古くなったものだけを移行する](adr/ancestor-symlink-recorded-stale-only.md), [配置前除去は drift を見つけたら error で止める](adr/preremove-drift-errors.md)）。差は次の 5 点に表れる。
 
 1. **同名 leaf を含む per-file → dir symlink 遷移の自動移行** — HM は旧 leaf の残存を誤認して失敗しうるが、layat は manifest 記録との一致判定（recorded ∧ stale）で安全に移行する
 2. **所有判定の厳密さ** — HM は readlink の glob マッチ、layat は記録済みの配置先のうち readlink が記録 dest と完全一致するものだけを所有とみなす
@@ -127,21 +127,21 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 
 主要な設計判断の記録。全件は `docs/adr/` を参照。
 
-- [ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c](adr/store-link-default-out-of-store-opt-in.md) — store link をデフォルトに統一し、out-of-store は明示関数へ降格
-- [ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30](adr/generations-on-link-farm-and-nix-profile.md), [ADR-74bf4a1f-bb74-44a7-a3cb-3b3e87c24f95](adr/standalone-generations-always-on.md), [ADR-c4ad9987-850e-4834-bbea-d8de3b073548](adr/copy-outside-generations-place-once.md) — nix profile に乗せた CLI 単体の世代管理。copy は世代外
-- [ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7](adr/engine-owns-placement-no-native-translation.md), [ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880](adr/modules-wire-engine-kick-only.md) — 配置ロジックは全層でエンジンが所有し、モジュールは配線に徹する
-- [ADR-10dcf5a9-f298-4123-9a50-24f43e25d30c](adr/core-as-placement-primitive.md), [ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed](adr/three-root-markers.md), [ADR-f85f1afd-9b87-4f7a-922e-97c62554f198](adr/root-explicit-at-mkmanifest.md) — root を一般化し配置プリミティブにする
-- [ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed](adr/three-root-markers.md) — git toplevel 相対の project mode
-- [ADR-2119433e-de69-4447-85a5-575d58246007](adr/engine-fixed-go-binary.md), [ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd](adr/manifest-json-contract-schemaversion-v1.md) — 配置ロジックを固定 Go エンジンに集約し、契約は manifest.json
-- [ADR-88231ffc-4836-4252-be34-894944fd28c3](adr/cli-primary-ux-devshell-pinned.md), [ADR-f85f1afd-9b87-4f7a-922e-97c62554f198](adr/root-explicit-at-mkmanifest.md) — 汎用 `layat` CLI を一次 UX にし、root は明示必須
-- [ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab](adr/subpath-naming-across-layers.md), [ADR-2f5b8825-f13b-4f73-bdf1-fe14e0098d57](adr/whole-repo-by-omitting-subpath.md) — `subpath` で取り出し、全体選択は省略で表す
-- [ADR-c494e86e-ceb9-4380-b983-4e09553b01d6](adr/entries-keyed-by-target.md) — `entries` は target キーの attrset
-- [ADR-fb01d942-2875-4dcb-a7df-879e18f63883](adr/apply-recopy-overwrites-copies.md), [ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7](adr/reset-fs-only-teardown.md) — `method = "copy"`（世代外・place-once）・`--recopy`・`reset`（関連: ADR-00cc3497-654f-420a-928f-99f201e7efb0, ADR-30f105c7-85a8-4fab-9dea-3277d932b524, ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c, ADR-5fc58c8f-dc0e-4c1d-8c1e-17d7ac7f0385, ADR-56ac6298-db67-4f63-8b60-f14af3b9570a, ADR-a86a8492-57fb-49d0-ba77-200f6dc49c3a, ADR-45380022-d959-4b22-aa05-5993ac1f3c87, ADR-b08479ba-0eae-4668-a4a2-910cd40bd316）
-- [ADR-24488788-a5e6-47a5-9074-97192880642a](adr/apply-manifest-prebuilt-link-farm.md), [ADR-f58e9981-bacc-4937-98b8-bddce0a057db](adr/module-activation-single-apply-all.md) — モジュールはビルド済み link-farm を `apply --manifest` で直接適用する
-- [ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5](adr/silent-on-success.md), [ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9](adr/verbose-opts-into-placement-report.md) — 成功時はデフォルト沈黙。`-v` で opt-in 表示
-- [ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8](adr/generation-backend-contract-paths-and-ints.md), [ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7](adr/engine-external-command-git-only.md) — 世代操作を世代バックエンドの契約越しにし、engine から nix-env と profile 基底の固定を外す
-- [ADR-52423842-bacf-4773-bbca-bcb34ae71013](adr/record-embeds-manifest.md), [ADR-a91585ad-971a-4558-9f25-b7fcd6e57671](adr/baseline-prefers-record.md) — 最後に配置した manifest を last-applied 記録に持ち、古くなった配置の除去で使う比較の基準を世代の概念から FS の事実へ移す
-- [ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb](adr/mkrootrelativesymlink-separate-function.md), [ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7](adr/root-relative-link-as-relative-path.md) — 配置 root 相対の src を `mkRootRelativeSymlink` で宣言し、engine が target 起点の相対 symlink として張る
+- [store link を既定にし、out-of-store は明示関数でのみ選ばせる](adr/store-link-default-out-of-store-opt-in.md) — store link をデフォルトに統一し、out-of-store は明示関数へ降格
+- [世代は link farm と nix profile に乗せる](adr/generations-on-link-farm-and-nix-profile.md), [CLI 単体では世代を常時有効にする](adr/standalone-generations-always-on.md), [copy は世代の外に place-once で置く](adr/copy-outside-generations-place-once.md) — nix profile に乗せた CLI 単体の世代管理。copy は世代外
+- [配置は全層で engine が行い、ネイティブ機構へ翻訳しない](adr/engine-owns-placement-no-native-translation.md), [モジュールは root と起動の時機だけを供給して engine を起動する](adr/modules-wire-engine-kick-only.md) — 配置ロジックは全層でエンジンが所有し、モジュールは配線に徹する
+- [コアを store パスを root 相対の target へ置くプリミティブにする](adr/core-as-placement-primitive.md), [root は 3 つの marker で表す](adr/three-root-markers.md), [root の明示を mkManifest 層で必須にする](adr/root-explicit-at-mkmanifest.md) — root を一般化し配置プリミティブにする
+- [root は 3 つの marker で表す](adr/three-root-markers.md) — git toplevel 相対の project mode
+- [engine を単一の固定 Go バイナリにする](adr/engine-fixed-go-binary.md), [manifest.json を schemaVersion 1 の唯一の契約として固定する](adr/manifest-json-contract-schemaversion-v1.md) — 配置ロジックを固定 Go エンジンに集約し、契約は manifest.json
+- [CLI が一次 UX で devShell に pin 版を同梱する](adr/cli-primary-ux-devshell-pinned.md), [root の明示を mkManifest 層で必須にする](adr/root-explicit-at-mkmanifest.md) — 汎用 `layat` CLI を一次 UX にし、root は明示必須
+- [配置元の中のパスを全層で subpath と呼ぶ](adr/subpath-naming-across-layers.md), [リポジトリ全体は subpath の省略で表す](adr/whole-repo-by-omitting-subpath.md) — `subpath` で取り出し、全体選択は省略で表す
+- [entries を target をキーにした attrset にする](adr/entries-keyed-by-target.md) — `entries` は target キーの attrset
+- [apply --recopy で全 copy target を src から無条件に上書きする](adr/apply-recopy-overwrites-copies.md), [reset で profile を触らずに配置物を撤去する](adr/reset-fs-only-teardown.md) — `method = "copy"`（世代外・place-once）・`--recopy`・`reset`（関連: [絶対パスと .. エスケープは eval 時に拒否する](adr/path-safety-eval-rejection.md), [symlink farm を GC アンカー専用にする](adr/farm-as-gc-anchor-only.md), [project mode では copy と out-of-store も ephemeral として扱う](adr/copy-and-out-of-store-ephemeral-in-project.md), [空の entries を正当な全クリアとして許可する](adr/empty-entries-allowed.md), [reset は config の名指しを必須にする](adr/reset-requires-config-name.md), [reset --dryrun は副作用なしで撤去対象を示す](adr/reset-dryrun-side-effect-free.md), [flock は明示実行で待ち、hook 実行でスキップする](adr/flock-mode-explicit-wait-hook-skip.md), [apply の修飾フラグを --all と合成できるようにする](adr/apply-modifiers-compose-with-all.md)）
+- [apply --manifest でビルド済み link-farm を engine へ直接渡す](adr/apply-manifest-prebuilt-link-farm.md), [モジュールの activation は apply --all --manifest を 1 回だけ起動する](adr/module-activation-single-apply-all.md) — モジュールはビルド済み link-farm を `apply --manifest` で直接適用する
+- [指定が無いときは成功時に何も出力しない](adr/silent-on-success.md), [-v で配置レポートを opt-in で出す](adr/verbose-opts-into-placement-report.md) — 成功時はデフォルト沈黙。`-v` で opt-in 表示
+- [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](adr/generation-backend-contract-paths-and-ints.md), [engine が直接叩く外部コマンドを git に限る](adr/engine-external-command-git-only.md) — 世代操作を世代バックエンドの契約越しにし、engine から nix-env と profile 基底の固定を外す
+- [last-applied 記録は manifest を内容ごと持つ](adr/record-embeds-manifest.md), [古くなった配置の除去は、比較の基準を記録から優先して読む](adr/baseline-prefers-record.md) — 最後に配置した manifest を last-applied 記録に持ち、古くなった配置の除去で使う比較の基準を世代の概念から FS の事実へ移す
+- [root 相対マーカーを別関数 mkRootRelativeSymlink で作る](adr/mkrootrelativesymlink-separate-function.md), [root 相対マーカーのリンクを target 起点の相対パスで張る](adr/root-relative-link-as-relative-path.md) — 配置 root 相対の src を `mkRootRelativeSymlink` で宣言し、engine が target 起点の相対 symlink として張る
 
 ### 名前の由来
 
@@ -151,7 +151,7 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 "**lay** \<src\> **at** \<target\>" の圧縮造語で、manifest の通りに src を target へ置く動作を
 一語で表す（`chroot`・`getopt` と同じ動詞句の圧縮）。
 
-- [ADR-6cd587e8-7aa2-4624-be78-7f6501bf0d6f](adr/tool-named-layat.md) — `nput` を layat へ改名し、2 週間の改名予告期間を挟む（命名条件・棄却した候補・移行方針）
+- [ツール名を layat にする](adr/tool-named-layat.md) — `nput` を layat へ改名し、2 週間の改名予告期間を挟む（命名条件・棄却した候補・移行方針）
 
 ---
 

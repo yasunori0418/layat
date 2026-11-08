@@ -16,13 +16,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a
+- 関連: [キャッシュは 3 system の matrix ビルドで投入する](ci-cache-via-matrix-build.md)
 - 起点: 参照: https://github.com/yasunori0418/nur-packages の `.github/workflows/cachix-push.yml`。ADR-0028 §1 を書き直した
 
 ## 背景
 
 layat のバイナリは、3 system の matrix でビルドして cachix のキャッシュ `yasunori0418` へ投入する
-（ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a）。layat は flake input として消費される CLI で、
+（[キャッシュは 3 system の matrix ビルドで投入する](ci-cache-via-matrix-build.md)）。layat は flake input として消費される CLI で、
 利用者の CI や手元は main の最新を参照することが多い。投入をどのイベントで起動するかを決める
 必要がある。
 
@@ -31,7 +31,7 @@ layat のバイナリは、3 system の matrix でビルドして cachix のキ�
 キャッシュへの投入は、main への push のうち layat のバイナリの内容を決める入力が変わったときに
 起動する。docs だけの変更では起動しない。手動の投入は `workflow_dispatch` で行う。
 
-対象とする入力の一覧は INF-af33c5a1-f846-4f09-8e43-c6ea042d6e06 に置く。
+対象とする入力の一覧は [バイナリキャッシュ（main push 時の cachix 投入）](../infrastructure/binary-cache.md) に置く。
 
 ## 根拠
 

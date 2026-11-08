@@ -22,30 +22,30 @@ generated:
 統合テスト。世代バックエンドは `generation.Fake`（FS ベース。世代一覧は sibling の
 `profile-<N>-link` から読み、Switch は profile リンクを張り直す）を注入し、Switch の
 失敗は `OnSwitch` フックで起こす。nix-env の世代一覧パースは
-CASE-80a327c3-5fdd-48d4-9446-4b3e0e262105（nixprofile）が持つ。
+[nixprofile_test.go — 世代リンクの走査と 2 基底](nixprofile-test-go.md)（nixprofile）が持つ。
 
 `resolveRoot` を直接呼ぶテストは分岐網羅を 1 ファイルで追えるよう engine_test.go へ集約した
 （集約先の集合は多くが純引数だが、cwd を入力に取る処理も含む。
-→ CASE-31fdb776-9650-4ff9-97f6-45d56b2e7177 / TC-b254a5a8-7fbf-4f31-8486-3e373d66bfa7、issue #328）。
+→ [internal/engine/engine_test.go — 実 tmpdir に対する apply の統合テスト](../engine-core/engine-test-go.md) / [root 解決と profile ディレクトリ準備の成功時・失敗時の処理が仕様どおりであること](../engine-core/root-resolution.md)、issue #328）。
 
 ## 検証内容
 
-**rollback の再収束**（TC-36ea3609-d52e-42d4-975c-40fb89b23919）
+**rollback の再収束**（[rollback が FS を前世代へ再収束させてから最後にポインタを移す](rollback-reconvergence.md)）
 
 - gen1 = {a, b}・gen2（current）= {a, c} からの再収束。c の古くなった配置の除去・b の再配置・
   a の据え置き。`RollbackResult` の世代観測が From / To を映し、Entries が戻り先世代の全
   インベントリを持つ（→ issue #130）
 - 祖先 symlink 世代（N）から per-file 世代（N-1）への復帰。plan の PreRemove が祖先
-  symlink を除去してから子を実ディレクトリへ置き直す（→ ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b、issue #173）
+  symlink を除去してから子を実ディレクトリへ置き直す（→ [配置前除去を planner が計算するデータとして表す](../../adr/preremove-as-planner-data.md)、issue #173）
 - rollback は copy entries も実体化する。祖先 symlink 世代から戻るときの copy child と、
   gen N が symlink へ変えた target を N-1 の copy へ戻す method change の両方で、apply と同じ
   materializeCopies 段が place-once copy を配置する（→ issue #178）
 
-**rollback の失敗時の処理**（TC-fa7911c6-7347-47ff-b121-bec53562c063）
+**rollback の失敗時の処理**（[rollback は途中失敗を巻き戻し、ポインタ移動の失敗は巻き戻さず、前提不成立では停止する](rollback-partial-and-abort.md)）
 
 - `Switch` の失敗は unwind しない。部分の `RollbackResult` が From == To == 現世代を
-  表し、既に行われた配置・古くなった配置の除去はそのまま残る（→ ADR-f29d1256-5e14-4b83-ac77-4717b2210193）
-- 祖先 migration 成功後の無関係な配置失敗で、migration ごと巻き戻る（→ ADR-4f08aa18-6a38-49fd-a784-450677d80e1a、
+  表し、既に行われた配置・古くなった配置の除去はそのまま残る（→ [undo の発火を FS 反映の段に限り、世代コミットの後は対象にしない](../../adr/undo-scope-ends-at-commit.md)）
+- 祖先 migration 成功後の無関係な配置失敗で、migration ごと巻き戻る（→ [配置前除去の除去も undo の対象にする](../../adr/undo-covers-preremove.md)、
   issue #168）
 - copy 配置の失敗で、直前に置いた symlink ごと unwind してポインタ移動へ進まない
   （→ issue #178）
@@ -55,7 +55,7 @@ CASE-80a327c3-5fdd-48d4-9446-4b3e0e262105（nixprofile）が持つ。
 - 戻り先の target が複数 foreign 実体で塞がれているとき、全 conflict を stderr へ
   列挙してから件数付きの集約エラーを返す（→ issue #176）
 
-**system mode の euid の条件**（TC-be3d3dc9-1ead-4e2e-8eea-46e1c8884562）
+**system mode の euid の条件**（[system mode の root 解決・基底切替・euid の条件が仕様どおりであること](../engine-core/system-mode-root-gate.md)）
 
 - euid 0 以外を注入した system mode の rollback が `fs.ErrPermission` を wrap したエラーで止まり、
   root・profile 基底・記録基底に何も作らない

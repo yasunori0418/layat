@@ -27,13 +27,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: SDR-34916a83-0cff-4524-a8ff-5a3195af52c3, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #237, #203, `docs/model.yaml`
+- 関連: [テスト計画の型を品質方針の型から分けて設ける](quality-and-test-plan-types.md), [model.yaml で組み込みモデルを全面置換し、汎用の型名を使う](model-yaml-full-replacement.md), GitHub Issue #583, #237, #203, `docs/model.yaml`
 - 起点: epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §5 を書き直した
 
 ## 背景
 
 ADR 系の型の `justifies` は、`requirement` / `design` / `infrastructure` だけを対象にしていた。quality と
-test_plan を設けた（SDR-34916a83-0cff-4524-a8ff-5a3195af52c3）ことで、規範の文を持つ型が増えた。
+test_plan を設けた（[テスト計画の型を品質方針の型から分けて設ける](quality-and-test-plan-types.md)）ことで、規範の文を持つ型が増えた。
 
 ## 決定
 

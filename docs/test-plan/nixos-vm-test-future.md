@@ -29,24 +29,24 @@ NixOS / nix-darwin モジュールで使うときの実 activate は VM / sandbo
 単一ジョブ）のスコープ外。検証は flake check の別系統（評価アサートと NixOS VM テスト
 `runNixOSTest`）が担う。
 
-> **上は原文の写しを ADR-d01223d3-47a2-4bdd-ac5d-26370d553f7c に合わせて改めたもので、規範は frontmatter が正**。E2E ハーネス本体の検証範囲は
-> TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9、NixOS / nix-darwin モジュールが engine キックの配線であることは
-> REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9、別系統の check の分担は DSG-901351ea-f01b-4bb0-a470-b890d92c980b の担当。`runNixOSTest` という手段は
+> **上は原文の写しを [モジュールの検証を flake check と VM テストに置く](../adr/module-checks-separate-from-e2e.md) に合わせて改めたもので、規範は frontmatter が正**。E2E ハーネス本体の検証範囲は
+> [非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](e2e-harness-scope.md)、NixOS / nix-darwin モジュールが engine キックの配線であることは
+> [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md)、別系統の check の分担は [NixOS モジュールの実 activate は runNixOSTest の checks.nixos-vm で検証し、E2E ハーネスとは別系統に置く](../design/nixos-vm-test-position.md) の担当。`runNixOSTest` という手段は
 > 規範に採らない。
 
 ## 出典
 
 `docs/spec.md`「E2E 検証範囲（非 NixOS）」節の末尾の注記。
 
-決定の実体は ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0「テストを sandbox 可否で flake check と E2E に分ける」と
-ADR-d01223d3-47a2-4bdd-ac5d-26370d553f7c「モジュールの検証を flake check と VM テストに置く」で、
+決定の実体は [テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)「テストを sandbox 可否で flake check と E2E に分ける」と
+[モジュールの検証を flake check と VM テストに置く](../adr/module-checks-separate-from-e2e.md)「モジュールの検証を flake check と VM テストに置く」で、
 NixOS VM テストを E2E のハーネスとは別系統の check で検証すると定めている。
 
 > **本 item は `requirement` から `test_plan` へ移設した**（→ Issue #238。旧 ID は
 > `REQ-690f2730-2628-420d-8e72-ed1ce747ac1e`）。E2E ハーネスの検証範囲からの除外を宣言するスコープ外規定であり、
 > ユーザーの使われ方（use_case）から導かれるものではないため、use_case を親に持てず接続漏れに
-> なっていた（当時の判断は Issue #211）。モジュールでの使い方そのものは UC-d39c1994-f9a5-4860-80ba-f6e584adaf14 が担い、
-> REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 等がそちらへ紐づく。テスト計画の型を新設して solution 直下で受けることに
-> したため、`derives_from` は SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e を指す。TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9・TP-d3000054-42d9-4bac-912a-dd3abc38d3e9 も同じ経緯で
-> 移設した。TP-403c55c7-d996-4951-8e6b-c3a7dddd387c は #238 では「テスト計画そのものではない」と判断して見送ったが、
+> なっていた（当時の判断は Issue #211）。モジュールでの使い方そのものは [既に home-manager / NixOS / nix-darwin を使っている環境へ layat をモジュールとして組み込む](../use-cases/module-integration.md) が担い、
+> [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md) 等がそちらへ紐づく。テスト計画の型を新設して solution 直下で受けることに
+> したため、`derives_from` は [layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る](../solution/layat-placement-primitive.md) を指す。[非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](e2e-harness-scope.md)・[エンベロープの outturn 適合を Go テストと E2E の両方で検証する](json-conformance-verification.md) も同じ経緯で
+> 移設した。[lib.__internal は private helper のテスト seam として公開する](lib-internal-test-seam.md) は #238 では「テスト計画そのものではない」と判断して見送ったが、
 > Issue #239 でその判断を改めて移設した（経緯は同 item の注記）。

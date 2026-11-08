@@ -27,13 +27,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-d97154cd-a2e5-4853-a682-800ff9435c89, ADR-a91585ad-971a-4558-9f25-b7fcd6e57671, ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93, GitHub Issue #580, #406
+- 関連: [rollback は FS を収束させてからポインタを動かす](rollback-baseline-and-pointer-last.md), [古くなった配置の除去は、比較の基準を記録から優先して読む](baseline-prefers-record.md), [project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md), [1 config = 1 profile を全モードで自前に持つ](one-config-one-profile-all-modes.md), [古くなった配置の除去は manifest の差分で行う](stale-removal-by-manifest-diff.md), GitHub Issue #580, #406
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §3c を書き直した
 
 ## 背景
 
 rollback は、離れる世代 N を比較の基準、戻る世代 N-1 を target
-とした配置として行う（ADR-d97154cd-a2e5-4853-a682-800ff9435c89）。
+とした配置として行う（[rollback は FS を収束させてからポインタを動かす](rollback-baseline-and-pointer-last.md)）。
 比較の基準は記録を優先して読むようになった。target も記録から読めるのかを決める必要がある。
 
 ## 決定

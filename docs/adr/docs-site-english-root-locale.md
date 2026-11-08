@@ -20,12 +20,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4, GitHub Issue #57, `docs/glossary.md`
+- 関連: [ドキュメントサイトのソースを同じリポジトリの site/ に置く](docs-site-in-same-repository.md), GitHub Issue #57, `docs/glossary.md`
 - 起点: Issue #57 のサイト設計。ADR-0037 §4 を書き直した
 
 ## 背景
 
-ドキュメントサイトは英語と日本語の両方で出す（ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4）。
+ドキュメントサイトは英語と日本語の両方で出す（[ドキュメントサイトのソースを同じリポジトリの site/ に置く](docs-site-in-same-repository.md)）。
 Starlight の i18n で、どちらの言語をルートに置くかを決める必要があった。
 
 ## 決定
@@ -33,7 +33,7 @@ Starlight の i18n で、どちらの言語をルートに置くかを決める�
 Starlight の i18n では英語をルートのロケール（`/`）にし、日本語を `/ja/` に置く。訳していない
 ページは英語にフォールバックして表示する。
 
-用語の準拠先は INF-0865477b-21b2-4feb-9c06-1a882a4e595a に置く。
+用語の準拠先は [ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）](../infrastructure/docs-site.md) に置く。
 
 ## 根拠
 

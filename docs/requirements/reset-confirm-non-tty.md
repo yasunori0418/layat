@@ -30,12 +30,12 @@ generated:
 防ぐ）。
 
 > **上は原文の写しで、規範は frontmatter が正**。データ損失リスクのため確認プロンプトか
-> `-y` / `--yes` で同意を要求すること自体は REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6 の担当で、本 item はその同意取得が
+> `-y` / `--yes` で同意を要求すること自体は [reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す](reset-fs-only-teardown.md) の担当で、本 item はその同意取得が
 > TTY 有無でどう振る舞うかだけを規定する。`--json` 指定時に TTY でもプロンプトを出さない
-> ことは REQ-2a613337-7646-4ced-8807-e43bca18acf3 の担当。
+> ことは [reset --json は --yes を必須とし無ければ fail fast する](json-reset-requires-yes.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「配置動作仕様」→「recopy・reset」節の reset 箇条書き第 1 項。
 
-決定の実体は ADR-acc31876-df36-485e-b356-92ae60e26db7「reset は非対話の実行で --yes を必須にする」。
+決定の実体は [reset は非対話の実行で --yes を必須にする](../adr/reset-confirmation-and-yes.md)「reset は非対話の実行で --yes を必須にする」。

@@ -16,13 +16,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a
+- 関連: [キャッシュは 3 system の matrix ビルドで投入する](ci-cache-via-matrix-build.md)
 - 起点: 参照: https://github.com/yasunori0418/nur-packages の `.github/workflows/cachix-push.yml`。ADR-0028 §2b（投入は cachix-action の自動 push に任せる）を書き直した
 
 ## 背景
 
 キャッシュへの投入は、3 system の matrix で `nix build .#layat` を実行して行う
-（ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a）。ビルドした store パスをどうやってキャッシュへ
+（[キャッシュは 3 system の matrix ビルドで投入する](ci-cache-via-matrix-build.md)）。ビルドした store パスをどうやってキャッシュへ
 送るかを決める必要がある。参照した nur-packages は多数のパッケージを持ち、未キャッシュの
 パッケージだけを選ぶ `ci-matrix` の機構と、plan・collect・build-and-push の 3 段のジョブを組んでいる。
 
@@ -32,7 +32,7 @@ generated:
 `cachix-action` は authToken を受け取り、ビルドで生成したパスを自動で push する。明示の push
 ステップは置かず、未キャッシュのものを選ぶ機構も持たない。
 
-投入の構成は INF-af33c5a1-f846-4f09-8e43-c6ea042d6e06 に置く。
+投入の構成は [バイナリキャッシュ（main push 時の cachix 投入）](../infrastructure/binary-cache.md) に置く。
 
 ## 根拠
 

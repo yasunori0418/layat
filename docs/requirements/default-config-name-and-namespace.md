@@ -29,11 +29,11 @@ generated:
 （manifest が通常パッケージとして `nix flake show` / `nix build` に含まれない）。
 
 name 省略時に `default` が未定義ならエラーになることは `layat apply` の config 選択の
-規範であり、REQ-c2d44626-d8f4-446a-a80a-319a500129b4 の担当。
+規範であり、[apply の config 選択は name 省略で default・明示で単一・--all で全件](apply-config-selection.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「アドレッシング」節の末尾段落。
 
-決定の実体は ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1・ADR-65b3439a-b90a-4056-b55a-522399bc71e6（専用 `layat` 名前空間・`default` 慣例）と、棄却した代替案
+決定の実体は [named manifest を専用の layat.<name> 名前空間に公開する](../adr/layat-name-namespace.md)・[apply の config は名前省略で default を選び、--all で全件を選ぶ](../adr/config-selection-default-and-all.md)（専用 `layat` 名前空間・`default` 慣例）と、棄却した代替案
 「アドレッシングで `packages.<system>.<name>` を流用」の項。

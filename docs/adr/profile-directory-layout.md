@@ -18,7 +18,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75
+- 関連: [root は 3 つの marker で表す](three-root-markers.md), [profile は解決済み root の roothash でキーする](profile-keyed-by-roothash-of-resolved-root.md), [module と project では世代操作を公開しない](module-and-project-hide-generation-ops.md)
 - 起点: 実装前の残セマンティクス確定の第 7 巡（2026-06-14）。ADR-0025 §4 を書き直した
 
 ## 背景
@@ -37,7 +37,7 @@ config ごとに専用のディレクトリを与え、これを `profileDir` �
 pending out-link は、このディレクトリの中に兄弟として並べる。pending out-link の名前は `.pending` とする。
 backref は `<roothash>` 階層に置き、同じ root の config で共有する。
 
-ディレクトリの中の並びと基底ディレクトリは REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3 に置く。
+ディレクトリの中の並びと基底ディレクトリは [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](../requirements/profile-on-disk-layout.md) に置く。
 
 ## 根拠
 

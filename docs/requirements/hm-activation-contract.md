@@ -67,33 +67,33 @@ generated:
 > **上は原文の写しで、規範は frontmatter が正**。原文が参照する次の規範は本 item の担当では
 > ない。
 >
-> - method と `src` の組み合わせが選ぶ配置方法 → REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe。表が HM でも engine が扱う
->   （HM の `mkOutOfStoreSymlink` へ委譲しない）と述べる点は REQ-eb363122-385a-499c-a074-c95efb949d07 / REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9
+> - method と `src` の組み合わせが選ぶ配置方法 → [method は配置方法を選び symlink は世代管理下・copy は世代管理外になる](method-src-matrix.md)。表が HM でも engine が扱う
+>   （HM の `mkOutOfStoreSymlink` へ委譲しない）と述べる点は [mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](mkoutofstoresymlink-marker.md) / [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](modules-are-engine-wiring.md)
 > - `apply --manifest` の契約そのもの（entrypoint 発見・eval・build を行わないこと・
->   `-f` との併用エラー・`--all` と合成するときの `<name>=<link-farm>` の繰り返し）→ REQ-dec58330-6dad-47f7-8f56-2402764a89c7
-> - モジュールが root を pin し利用者が再指定しないこと → REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10。`homeRoot` の
->   層ごとの解決 → REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b
+>   `-f` との併用エラー・`--all` と合成するときの `<name>=<link-farm>` の繰り返し）→ [apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](apply-manifest-direct.md)
+> - モジュールが root を pin し利用者が再指定しないこと → [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)。`homeRoot` の
+>   層ごとの解決 → [home mode の root は層ごとに定まった供給元から解決する](home-mode-root-resolution.md)
 > - manifest を供給するオプションの定義（canonical は `layat.configs.<name>.entries`・
->   `layat.entries` はその糖衣）→ REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、1 config が 1 manifest = 1 profile に対応する
->   ことと profile 粒度 → REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a。本 item の写しにある `layat.entries` は原文逐語であり、
->   規範文では供給元を「config の entries」と述べて ADR-01abcd5a-464f-4c44-8afd-30950631487c と衝突しない形にしている。
->   activation が全 config を 1 回の `apply --all` 起動へ渡す規律（ADR-f58e9981-bacc-4937-98b8-bddce0a057db・`<name>` の
+>   `layat.entries` はその糖衣）→ [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)、1 config が 1 manifest = 1 profile に対応する
+>   ことと profile 粒度 → [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md)。本 item の写しにある `layat.entries` は原文逐語であり、
+>   規範文では供給元を「config の entries」と述べて [HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) と衝突しない形にしている。
+>   activation が全 config を 1 回の `apply --all` 起動へ渡す規律（[モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)・`<name>` の
 >   辞書順・`--jobs`・部分失敗の集約）は原文に対応記述が無いため本 item の写しには現れないが、
->   規範は REQ-c847d1af-a437-46bb-bd64-42083810d034 が持つ
-> - flock を既定 blocking で取ること → REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461。レポートと warning を stderr へ出す
->   ストリーム規律 → REQ-fea038de-55eb-45ac-87fc-ec3a7287592a。終了コードの体系 → REQ-2c5a10d8-112b-4f96-947a-aba7164779c4
-> - 世代が layat 自前 profile に乗ること → REQ-1be4d678-959c-44d7-a346-44bfd95af56e。profile 名の次元 → REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a、
->   profileDir のキー → REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81。rollback を host へ一本化すること → REQ-844ee375-919f-4341-81e1-a5f89fd32840
+>   規範は [HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う](hm-activation-per-config-kick.md) が持つ
+> - flock を既定 blocking で取ること → [flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする](flock-acquisition-mode.md)。レポートと warning を stderr へ出す
+>   ストリーム規律 → [stdout は機械可読出力を専有しレポートと warning は stderr へ出す](stream-discipline.md)。終了コードの体系 → [終了コードは 0 = 成功 / 1 = 一般エラー / 2 = dryrun の conflict とする](exit-codes.md)
+> - 世代が layat 自前 profile に乗ること → [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](generation-mechanism-link-farm-manifest.md)。profile 名の次元 → [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md)、
+>   profileDir のキー → [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md)。rollback を host へ一本化すること → [module 時は rollback を host へ一本化し、layat profile は前進のみで追従する](module-mode-profile-internal.md)
 > - `manifest.json` が唯一の安定契約で `schemaVersion` が 1 に固定であること →
->   REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b / REQ-250d936c-1df0-491d-a7af-708f38b61f33。本 item はそれを前提に「module の使い方では skew が構造的に
+>   [manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する](manifest-single-stable-contract.md) / [MVP は manifest v1 のみを発行・受理しマイグレーション機構を持たない](manifest-v1-only-no-migration.md)。本 item はそれを前提に「module の使い方では skew が構造的に
 >   起きない」ことだけを規定する
 >
 > 原文が世代の箇条書きに併記する「MVP は固定名 `default` の単一 profile
-> （`<state>/nix/profiles/layat/default`）」は、**ADR-01abcd5a-464f-4c44-8afd-30950631487c が `layat.configs.<name>` の実装を
-> 決定済み**で反転しているため写しから落とした（REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a / REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81 と同じ扱い）。
+> （`<state>/nix/profiles/layat/default`）」は、**[HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が `layat.configs.<name>` の実装を
+> 決定済み**で反転しているため写しから落とした（[HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md) / [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md) と同じ扱い）。
 > `docs/spec.md` の追従は本 item の担当範囲外。
 >
-> **2026-10-15 追記（ADR-f58e9981-bacc-4937-98b8-bddce0a057db）**: 上の写しの `layat apply --manifest <link-farm>` は、全 config の
+> **2026-10-15 追記（[モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)）**: 上の写しの `layat apply --manifest <link-farm>` は、全 config の
 > link-farm を渡す `layat apply --all --manifest <name>=<link-farm> …` の 1 回起動と読み替える。
 > blocking flock・レポート可視・非 0 終了で switch を止める点は変わらない。
 
@@ -101,6 +101,6 @@ generated:
 
 `docs/spec.md`「モジュール別動作仕様」→「home-manager モジュール」節の表と箇条書き。
 
-決定の実体は ADR-f58e9981-bacc-4937-98b8-bddce0a057db「モジュールの activation は apply --all --manifest を 1 回だけ起動する」と
-ADR-2aaf72ab-1dfc-4cde-852d-4b1f9916780b「モジュールの activation は lock を待ち、失敗したら switch を止める」。モジュールを配線に徹させることは ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880 が
-定めている。全 config を `apply --all` の 1 回の起動で渡す形は ADR-f58e9981-bacc-4937-98b8-bddce0a057db。
+決定の実体は [モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)「モジュールの activation は apply --all --manifest を 1 回だけ起動する」と
+[モジュールの activation は lock を待ち、失敗したら switch を止める](../adr/module-activation-waits-and-fails-switch.md)「モジュールの activation は lock を待ち、失敗したら switch を止める」。モジュールを配線に徹させることは [モジュールは root と起動の時機だけを供給して engine を起動する](../adr/modules-wire-engine-kick-only.md) が
+定めている。全 config を `apply --all` の 1 回の起動で渡す形は [モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)。

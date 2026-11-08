@@ -34,8 +34,8 @@ generated:
 | `identity`（任意） | string | 利用者が宣言する設定の識別子。宣言しなければ無い |
 
 上の表は原文の写しで、規範は frontmatter が正。`schemaVersion` の値と engine の拒否
-挙動は REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b、`root` オブジェクトの中身は REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb、`entries[]` の中身は
-REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336 が持つ。
+挙動は [manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する](manifest-single-stable-contract.md)、`root` オブジェクトの中身は [manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する](manifest-root-object.md)、`entries[]` の中身は
+[manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する](manifest-entries-array.md) が持つ。
 
 ```json
 {

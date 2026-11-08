@@ -13,7 +13,7 @@ generated:
 
 ## 条件
 
-評価アサートの層（TC-5a72b00e-2c03-4703-acdc-33cffb6fa994）で確かめられない部分、すなわち activate を実際に実行した
+評価アサートの層（[activation が評価時点で engine 起動へ配線され root と entry とオプションを届ける](activation-engine-kick-wiring.md)）で確かめられない部分、すなわち activate を実際に実行した
 ときに engine が起動して配置が行われることを確かめる。隔離した一時 HOME の下で、
 activation package を実際にビルドして実行する。
 

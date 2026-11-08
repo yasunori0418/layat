@@ -51,11 +51,11 @@ generated:
 語彙の具体（ラベル名と各ラベルの意味）・欠陥 issue に書く項目の様式・トラッカーの操作手順は
 本 item の規範に含めない。`docs/agents/triage-labels.md` と `docs/agents/issue-tracker.md` が
 持つ。規範がグラフ側だけに置かれることの裏返しの規範（規範をグラフが単独で持つこと）は
-QA-67715bb3-1162-4ccf-8441-2f44257a57da が持つ。
+[規範は 1 ファイル 1 item のグラフが持ち、概要文書は索引に縮退させる](normative-items-placement-and-authoring.md) が持つ。
 
 ## 出典
 
-SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed、SDR-9bec5976-67cd-407a-afa9-3d394a6204ca が置いた方針と、
+[欠陥はグラフに置かず GitHub Issues で管理する](../sara-adr/defects-in-github-issues.md)、[欠陥 issue のクローズ時にテスト系 item の欠落を追補する](../sara-adr/defect-close-backfills-risks.md) が置いた方針と、
 `docs/agents/issue-tracker.md` の Defect issues 節（片方向参照・クローズ前の shift-left
 ループ）、`docs/agents/triage-labels.md` の分類語彙、`.github/ISSUE_TEMPLATE/config.yml` の
 blank issue 禁止設定が実運用してきた規範を、Issue #272 で quality item として立てたもの。

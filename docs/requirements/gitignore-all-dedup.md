@@ -27,12 +27,12 @@ layat gitignore --all           # projectRoot の全 config の target をソー
 `gitignore --all` は projectRoot の全 config の target を **ソート + 重複除去**して
 出力する（repo の `.gitignore` は 1 つなので一括列挙が自然）。
 
-出力の書式（アンカー形式）は REQ-a480c183-40ce-4201-93b5-65a7a59c1b9e、`--json` 時に cross-config dedup をしない
-非対称は REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5 の担当。
+出力の書式（アンカー形式）は [gitignore は配置 target を stdout へ列挙するだけでファイルを書き込まない](gitignore-anchored-output.md)、`--json` 時に cross-config dedup をしない
+非対称は [--all は config ごとの SubjectResult を単一実行と同一形状で積む](json-all-subject-results.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `list-generations --all` /
 `gitignore --all` の箇条書き（後段）。
 
-決定の実体は ADR-d504b89e-9a2b-440f-83c1-be372b12241b「gitignore --all は project mode の全 config の target を重複なく整列して出す」。
+決定の実体は [gitignore --all は project mode の全 config の target を重複なく整列して出す](../adr/gitignore-all-sorted-deduplicated.md)「gitignore --all は project mode の全 config の target を重複なく整列して出す」。

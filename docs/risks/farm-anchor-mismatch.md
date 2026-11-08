@@ -19,8 +19,8 @@ generated:
 ## リスク
 
 symlink farm は GC アンカー専用で、アンカーは store-backed な symlink entry に限る
-（REQ-b12fc3c0-d7fe-4003-922c-f3ac0d969b66）。アンカー名は target のハッシュ（REQ-62eda895-efd4-4eaf-a58b-600e8637da75）で、farm derivation は
-`mkManifest` の返り値に含まれる（REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281）。
+（[symlink farm は GC アンカー専用でアンカーは store-backed な symlink entry に限る](../requirements/farm-gc-anchor-only.md)）。アンカー名は target のハッシュ（[symlink farm の GC アンカー名は target のハッシュとする](../requirements/farm-anchor-name-hash.md)）で、farm derivation は
+`mkManifest` の返り値に含まれる（[mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](../requirements/mkmanifest-return-value.md)）。
 
 **顕在化したときに起きること**: 抽出条件が緩めば copy や out-of-store の entry までアンカーを
 持ち、世代外・置き切りであるはずの配置が store の生存に紐づく。逆に厳しすぎれば store-backed
@@ -40,16 +40,16 @@ symlink farm は GC アンカー専用で、アンカーは store-backed な sym
 
 ## 対処
 
-TC-1d69350e-db3c-4d74-a24e-7a3fabb31b0a（アンカー対象の抽出と farm の組み立て）・TC-a6a14739-89e5-4eba-acee-3ed5be5a0b7e（アンカー名の形式と決定性）で
+[GC アンカー対象の抽出条件と farm の組み立て結果をアサートする](../test/manifest-eval/farm-anchor-derivation.md)（アンカー対象の抽出と farm の組み立て）・[GC アンカー名の形式・決定性・特殊文字耐性をアサートする](../test/manifest-eval/anchor-name-determinism.md)（アンカー名の形式と決定性）で
 緩和する。
 
 ただし本区分が見るのは抽出条件とアンカー名、および derivation のビルドスクリプトへの配線
-までで、**REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281 の「返り値が symlink farm を含む store オブジェクトである」ことそのもの
-は残余**として残る。TC-1d69350e-db3c-4d74-a24e-7a3fabb31b0a は fake な pkgs 越しにスクリプト本文を取り出すだけで実ビルドは
+までで、**[mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](../requirements/mkmanifest-return-value.md) の「返り値が symlink farm を含む store オブジェクトである」ことそのもの
+は残余**として残る。[GC アンカー対象の抽出条件と farm の組み立て結果をアサートする](../test/manifest-eval/farm-anchor-derivation.md) は fake な pkgs 越しにスクリプト本文を取り出すだけで実ビルドは
 行わないため、配置後の farm derivation の実体は評価テストの射程外にあり、`integration` 区分の
 E2E が担当する（→ Issue #289）。
 
 ## 出典
 
 `tests/nix-unit/farm-entries.nix` / `tests/nix-unit/anchor-name.nix` の現行実装からの逆算
-（→ Issue #273「L1〜L4」節）。GC アンカーの設計判断そのものは ADR-30f105c7-85a8-4fab-9dea-3277d932b524 が持つ。
+（→ Issue #273「L1〜L4」節）。GC アンカーの設計判断そのものは [symlink farm を GC アンカー専用にする](../adr/farm-as-gc-anchor-only.md) が持つ。

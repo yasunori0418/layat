@@ -20,7 +20,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988, GitHub Issue #580
+- 関連: [profile は解決済み root の roothash でキーする](profile-keyed-by-roothash-of-resolved-root.md), GitHub Issue #580
 - 起点: 次期マイルストーン計画の grilling（2026-07-04）。公開後の実運用で孤児系列が溜まり始めたことを消費側の要求と判断した。ADR-0034 §2c を書き直した
 
 ## 背景
@@ -32,7 +32,7 @@ layat は `--json` を全コマンドに一律で持たせている。prune を�
 
 prune は新設時から `--json` に対応し、削除した系列（`--dryrun` では削除予定の系列）と、
 残した系列を機械可読な形で出す。エンベロープへの載せ方と系列の形は
-REQ-a47fbfb0-c808-42e9-b2ad-767c933494d6 に置く。
+[prune --json はトップレベル info の removed に削除系列を、skipped に判定か削除に至れず残した系列を載せる](../requirements/prune-json-payload.md) に置く。
 
 ## 根拠
 

@@ -35,19 +35,19 @@ generated:
 | NixOS | ビルド済み manifest | `system.activationScripts.layat` から `apply --manifest` |
 | nix-darwin | ビルド済み manifest | `system.activationScripts.postActivation` への追記から `apply --manifest` |
 
-層ごとの root の供給元は REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b / REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e / REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、ユーザー向け
-rollback を公開する層は REQ-05abce3e-9797-432b-b93f-37c55d09afde / REQ-844ee375-919f-4341-81e1-a5f89fd32840 が定める。どちらも起動クラスとは
+層ごとの root の供給元は [home mode の root は層ごとに定まった供給元から解決する](../requirements/home-mode-root-resolution.md) / [project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない](../requirements/project-mode-root-resolution.md) / [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md)、ユーザー向け
+rollback を公開する層は [rollback と list-generations は home / system mode 限定にする](../requirements/rollback-list-generations-home-only.md) / [module 時は rollback を host へ一本化し、layat profile は前進のみで追従する](../requirements/module-mode-profile-internal.md) が定める。どちらも起動クラスとは
 独立に決まるため、本 item の担当ではない。
 
 **2 クラスに束ねる**ことが実現手段になっているのは次の点。
 
-- **REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 が求める「各層は engine をキックするだけの配線」**を、層の数（5）ではなく
+- **[全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md) が求める「各層は engine をキックするだけの配線」**を、層の数（5）ではなく
   クラスの数（2）で担保できる。層を増やしても新しい engine の処理が増えず、
   既存 2 クラスのどちらかへ割り当てるだけで済む
 - **クラスの分かれ目が「entrypoint を持つか」に一致する**。モジュールの `layat.configs` は
   モジュール config 内にあり flake output に現れないため、entrypoint 発見では到達できない。
-  そこで REQ-dec58330-6dad-47f7-8f56-2402764a89c7 の `apply --manifest` と REQ-8085f194-c903-4ecb-abd8-c719fe7b3292 の activation kick が
-  必要になる。逆に entrypoint 駆動側（REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9 の devShell 含む）は
+  そこで [apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](../requirements/apply-manifest-direct.md) の `apply --manifest` と [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](../requirements/hm-activation-contract.md) の activation kick が
+  必要になる。逆に entrypoint 駆動側（[devShell は shellHook から engine を起動する配線で、シェル入室のたびに project mode で配置する](../requirements/devshell-wiring.md) の devShell 含む）は
   activation 内で `nix build` / `eval` を行わない制約が無いので entrypoint 発見の処理を使える
 - **層ごとに違う要素がクラスの分岐に持ち込まれない**。root の供給元は engine から見れば
   `manifest.json` の root の種類に還元され、rollback の公開有無は profile の使い方の差に
@@ -60,5 +60,5 @@ rollback を公開する層は REQ-05abce3e-9797-432b-b93f-37c55d09afde / REQ-84
 
 なお同原文の統合層テーブルは home-manager 行に「MVP は profile `<name>` =
 `default` 固定の 1 profile・役割分離は不可」と書いているが、本 item はこれを採らない。
-ADR-01abcd5a-464f-4c44-8afd-30950631487c が `layat.configs.<name>` を導入し、REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a が HM 経由でも役割分離した
+[HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が `layat.configs.<name>` を導入し、[HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](../requirements/hm-named-configs-profiles.md) が HM 経由でも役割分離した
 独立 profile を取れることを規範化しているため。

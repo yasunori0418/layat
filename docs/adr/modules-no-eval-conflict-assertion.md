@@ -25,7 +25,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d, ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-af37a636-a798-4c03-8fa4-e73ed6375a92, ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4, GitHub Issue #585, `docs/spec.md`
+- 関連: [cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](cross-config-last-wins-with-foreign-warning.md), [apply --all は config ごとの情報を 1 回の eval でまとめて取る](apply-all-single-eval.md), [apply --all の集約は config 名の辞書順に並べる](apply-all-lexicographic-order.md), [配置の振動はユーザー責任とし、文書で注意するに留める](oscillation-is-user-responsibility.md), GitHub Issue #585, `docs/spec.md`
 - 起点: ADR-0060 §3 と ADR-0066 §3c を書き直した
 
 ## 背景
@@ -42,9 +42,9 @@ generated:
 モジュールは configs 間の target 衝突を、評価時の `assertions` で確認しない。検出は activation の
 `apply --all` の前段の確認に委ね、衝突があれば build と配置の前に止めて switch を失敗させる。
 
-衝突をどこで検出するかの分け方は REQ-5c6b07da-3d06-414d-8770-4f438234b322、HM の configs 間衝突での停止は
-REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44、前段の確認に掛からない config 間の衝突の扱いは
-REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 に置く。
+衝突をどこで検出するかの分け方は [target 衝突の検出処理を同一 manifest 内と cross-config で分ける](../requirements/target-collision-eval-detection.md)、HM の configs 間衝突での停止は
+[単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する](../requirements/hm-configs-target-collision-assertion.md)、前段の確認に掛からない config 間の衝突の扱いは
+[同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める](../requirements/cross-config-target-oscillation.md) に置く。
 
 ## 根拠
 

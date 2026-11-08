@@ -41,12 +41,12 @@ stdout 専有原則を貫き、`layat apply <name> --dryrun | ...` や
 `layat gitignore <name> >> .gitignore` のパイプを壊さない。
 
 `--json` 指定時に行指向 stdout を出さない（エンベロープが stdout を専有する）ことは
-REQ-2353259f-5878-452a-8e11-3445de69abc2 の担当。
+[--json 指定時は行指向 stdout を出さずエンベロープが stdout を専有する](json-stdout-exclusive.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」の「ストリーム規律」箇条書きと、
 同節末尾の「沈黙化の対象は stderr の配置レポートのみ」箇条書き。
 
-決定の実体は ADR-9e328362-2e90-441a-8eca-40081ce71b1b「エラーはエンベロープに構造化し stderr のテキストと併存させる」（ストリーム規律）と ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5「指定が無いときは成功時に何も出力しない」
+決定の実体は [エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)「エラーはエンベロープに構造化し stderr のテキストと併存させる」（ストリーム規律）と [指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)「指定が無いときは成功時に何も出力しない」
 （沈黙化の対象を stderr のレポートに限り stdout 専有出力は常に出す）。

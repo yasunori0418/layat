@@ -33,8 +33,8 @@ root に暗黙の既定値（`$HOME` など）を持たせるかどうかと、�
 root に暗黙の既定値を持たせない。`mkManifest` と CLI の entrypoint の層では `root` の指定を必須に
 し、省略は評価時のエラーにする。モジュール（HM は `homeRoot`、NixOS と nix-darwin は
 `systemRoot`、devShell は `projectRoot`）は自分の性質に合わせて root を固定し、モジュールの
-利用者は root を指定し直さない。規範の細目は REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4 と
-REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 に置く。
+利用者は root を指定し直さない。規範の細目は [root は明示必須で暗黙デフォルトを持たない](../requirements/root-explicit-required.md) と
+[全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md) に置く。
 
 ## 根拠
 

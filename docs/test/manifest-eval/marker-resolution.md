@@ -14,7 +14,7 @@ generated:
 ## テスト条件
 
 manifest 全体を組み立てずに、単一 entry の解決（`resolveEntry`）と型側の marker 判別述語を
-直接突いてアサートする。文書の形（TC-4e7cfae7-72bc-4af6-a1f5-1ead7db564b1）とは別の境界で、変換ロジックそのものを見る。
+直接突いてアサートする。文書の形（[manifest 文書の形（schemaVersion / root / entry 5 フィールド）を不変条件としてアサートする](manifest-shape-invariants.md)）とは別の境界で、変換ロジックそのものを見る。
 
 - store-backed な src が `srcKind = "store"` と文字列化された store パスへ解決されること
 - out-of-store marker が `srcKind = "outOfStore"` と marker の絶対パスへ解決されること
@@ -25,7 +25,7 @@ manifest 全体を組み立てずに、単一 entry の解決（`resolveEntry`�
 
 ## 覆う CASE
 
-- CASE-0c9d41d1-33fd-4982-aed9-fa575a56ee01（`tests/nix-unit/resolve-marker.nix`）
+- [nix-unit: resolve-marker.nix — src 解決と marker 判別述語](nix-unit-resolve-marker.md)（`tests/nix-unit/resolve-marker.nix`）
 
 ## 出典
 

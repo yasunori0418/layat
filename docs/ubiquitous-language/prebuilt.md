@@ -12,7 +12,7 @@ generated:
 
 ## Definition
 
-The generator behind `apply --manifest <link-farm>`: Discover returns the given path, Roots reads that link-farm's `manifest.json`, and Build / DryBuild return the path. It is not one of the `--generator` choices (→ [ADR-1ddf424a-db2c-4bcb-8823-bf7e4326b980](../adr/manifest-flag-as-prebuilt-generator.md)).
+The generator behind `apply --manifest <link-farm>`: Discover returns the given path, Roots reads that link-farm's `manifest.json`, and Build / DryBuild return the path. It is not one of the `--generator` choices (→ [--manifest を prebuilt 生成器に写す](../adr/manifest-flag-as-prebuilt-generator.md)).
 
 ## Avoid
 
@@ -20,7 +20,7 @@ Listing it as a `--generator` value; describing `--manifest` as a route separate
 
 ## 定義
 
-`apply --manifest <link-farm>` の実体である生成器。Discover は与えられたパス、Roots はその link-farm の `manifest.json` を読み、Build / DryBuild はそのパスを返す。`--generator` の選択肢には出ない（→ [ADR-1ddf424a-db2c-4bcb-8823-bf7e4326b980](../adr/manifest-flag-as-prebuilt-generator.md)）。
+`apply --manifest <link-farm>` の実体である生成器。Discover は与えられたパス、Roots はその link-farm の `manifest.json` を読み、Build / DryBuild はそのパスを返す。`--generator` の選択肢には出ない（→ [--manifest を prebuilt 生成器に写す](../adr/manifest-flag-as-prebuilt-generator.md)）。
 
 ## 避ける表現
 

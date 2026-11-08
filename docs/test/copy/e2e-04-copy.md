@@ -26,7 +26,7 @@ generated:
 - **copy の配置形**: target が store symlink ではなく実ディレクトリになること、内容が src
   どおりであること、配置されたファイルが書き込み可能であること（read-only な store の
   mode がそのまま残っていないこと。ツリー忠実性のうち e2e が覆うのはこの一点で、mode の
-  保存・実行ビット・内部 symlink の非 deref は CASE-82fdfb27-0bea-4833-b5e9-5f9e142a08df が扱う）
+  保存・実行ビット・内部 symlink の非 deref は [internal/engine/copytree_test.go — 再帰コピーの構造・mode・symlink 再現](copytree-test-go.md) が扱う）
 - **out-of-store の live 性**: live ディレクトリを指す symlink が張られること、src 側の
   ファイルを書き換えると target 越しにその内容が見えること
 - **place-once の冪等**: 配置済みファイルをローカル編集してから再 apply しても編集が残ること

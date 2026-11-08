@@ -52,7 +52,7 @@ manifest / derivation の変化を伴わず、shell 再入間でも起こり得�
 > - 退避対象を**種別の列挙ではなく判定各段の結論で括る**こと
 > - drift 修復の処理でも退避が実施されること
 >
-> 写しに現れる次の 3 点は本 item の規範ではなく REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b の担当で、原文の写しの一部と
+> 写しに現れる次の 3 点は本 item の規範ではなく [apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md) の担当で、原文の写しの一部と
 > して残しているだけである。
 >
 > - 退避対象の種別の列挙（foreign な通常ファイル / ディレクトリ・実 dir migration 失敗・
@@ -62,19 +62,19 @@ manifest / derivation の変化を伴わず、shell 再入間でも起こり得�
 > - 退避先 `<target>.<suffix>` が既存なら conflict で停止すること
 >
 > 退避そのもののその他の契約（suffix の既定と `=` 区切り・`reset` が復元しないこと）も同じく
-> REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b の担当。世代スキップとドリフト修復そのものは REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、undo ジャーナルは
-> REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の担当。
+> [apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md) の担当。世代スキップとドリフト修復そのものは [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md)、undo ジャーナルは
+> [途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](undo-journal-rollback.md) の担当。
 >
-> **結論で括る理由**: 原文は退避対象を 2 箇所で非対称に書く。「CLI 仕様」節（REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b の
+> **結論で括る理由**: 原文は退避対象を 2 箇所で非対称に書く。「CLI 仕様」節（[apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md) の
 > 出典）は種別を 4 つ（実 dir migration 失敗を欠く）並べるのに対し、「配置動作仕様」§0.7 は
 > それを加えた 5 つを並べる。列挙で規範化するとどちらを採るかで外延が変わるため、本 item は
 > 判定各段の結論（「エラーで停止」または「copy foreign スキップ」）で括り、広い方（5 種）と
-> 一致させた。実 dir migration 失敗（REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26）はこの括りに含まれる。
+> 一致させた。実 dir migration 失敗（[実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する](real-dir-target-migration.md)）はこの括りに含まれる。
 
 ## 出典
 
 `docs/spec.md`「配置動作仕様」→「symlink モード」の手順 0.7 と、「途中失敗時の巻き戻し」節の
 箇条書き第 4 項（世代スキップの処理での drift 修復と Backup）。
 
-決定の実体は ADR-3f97fc1d-188d-4013-bff0-16b67250f68e「退避を配置前除去の後の段として undo ジャーナルに載せる」・ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f で、
-PreRemove がドリフト修復の処理に到達しない不変条件は ADR-97248450-c19e-4857-94fb-2a10c2b1d80f が前提にしている。
+決定の実体は [退避を配置前除去の後の段として undo ジャーナルに載せる](../adr/backup-stage-in-undo-journal.md)「退避を配置前除去の後の段として undo ジャーナルに載せる」・[--backup は配置を塞ぐ記録外の実体だけを退避する](../adr/backup-scope-unrecorded-entities.md) で、
+PreRemove がドリフト修復の処理に到達しない不変条件は [世代スキップのときも退避を行う](../adr/backup-on-generation-skip.md) が前提にしている。

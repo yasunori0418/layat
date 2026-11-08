@@ -37,10 +37,10 @@ engine は `internal/` に置き、外部から import できない内部の層�
 engine を import し、両者を 1 つのバイナリとして配布する。外部に対する安定した面は `manifest.json` の
 入力契約だけにする。
 
-2 層構成は REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 に、`manifest.json` が唯一の安定した契約であることは
-REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b に、engine を内部の層に閉じることは
-REQ-b74a118a-1272-44eb-944c-7725163211c6 に、ディレクトリとパッケージの構成は
-DSG-1361df1a-31c4-46ed-a6ce-92938f94ac02 と DSG-7d354fe0-a333-495b-9f4b-14bba316dc47 に置く。
+2 層構成は [layat は CLI とエンジンの 2 層で構成する](../requirements/two-layer-architecture.md) に、`manifest.json` が唯一の安定した契約であることは
+[manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する](../requirements/manifest-single-stable-contract.md) に、engine を内部の層に閉じることは
+[engine は第三者依存ゼロの stdlib-only とし内部層に閉じる](../requirements/engine-stdlib-only.md) に、ディレクトリとパッケージの構成は
+[リポジトリを lib / cmd / internal / templates / modules のトップレベル 5 ディレクトリへ分ける](../design/repo-layout.md) と [Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする](../design/go-package-split.md) に置く。
 
 ## 根拠
 

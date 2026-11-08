@@ -24,10 +24,10 @@ commit の呼び出し記録を観測点にして「新世代が積まれたか�
 | home | 前回と同一 | 新世代を積む（世代スキップは project / system 限定）|
 
 スキップ時も完全な no-op にはならず、`lstat` によるドリフトの確認だけは実行されること
-（確認の中身は TC-765858b6-d596-4428-b4da-5d432944a714 が担当）。逆にスキップしない run では、修復ではなく通常の
+（確認の中身は [lstat ドリフト修復が破損した entry だけを直し、ユーザーの編集には触れない](drift-repair-scope.md) が担当）。逆にスキップしない run では、修復ではなく通常の
 plan / place の処理を通ること。
 
 ## 対応する CASE
 
-CASE-2de3a3d8-3b67-485a-8ddf-a97dd182af23（`internal/engine/drift_test.go`）。
-system mode の root 再 apply で世代が増えないことは CASE-99803cb0-6fd0-4004-af78-83e301320ce0（e2e `12-system`）も確かめる。
+[drift_test.go — 世代スキップの発火条件と lstat ドリフト修復の対象範囲](drift-test-go.md)（`internal/engine/drift_test.go`）。
+system mode の root 再 apply で世代が増えないことは [e2e 12-system — user namespace の root で system mode の配置・世代・権限の条件を往復する](e2e-12-system.md)（e2e `12-system`）も確かめる。

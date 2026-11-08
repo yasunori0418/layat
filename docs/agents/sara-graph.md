@@ -223,7 +223,7 @@ the test suite is `high`; stable code already covered by a mechanical check is `
 | `low` | Confined to development; never reaches the shipped artifact. |
 
 This axis asks one question only: **how recoverable is it once someone notices?** Whether
-anyone *would* notice is deliberately not scored (→ SDR-7178b787-cf37-4753-9cea-12a0d65df410). Silence is real and worth
+anyone *would* notice is deliberately not scored (→ [沈黙性を risk のスコア軸にせず本文に書く](../sara-adr/silence-not-a-score-axis.md)). Silence is real and worth
 recording, but nearly every threat in layat is silent — placement drifts without announcing
 itself — so scoring it saturates the scale and ranks nothing. Say it in the item's prose
 instead, where it stays legible without pretending to sort the corpus. The `medium` row

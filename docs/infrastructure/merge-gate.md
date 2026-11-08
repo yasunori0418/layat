@@ -22,7 +22,7 @@ generated:
 マージ条件へ課す。CLAUDE.md の「main 直接コミット禁止・PR 経由マージ」は運用ルールに過ぎず、
 テストが失敗していてもマージできる状態を塞ぐ。
 
-required status check に載せるのは、CI パイプライン（INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27）が PR で実際に出す 4 つの
+required status check に載せるのは、CI パイプライン（[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md)）が PR で実際に出す 4 つの
 check 名:
 
 - `e2e`
@@ -42,7 +42,7 @@ ruleset `main branch protection` は 4 ルールで構成する。
 | `deletion` | `main` の削除を禁止する |
 | `non_fast_forward` | `main` への force push を禁止する |
 
-`deletion` / `non_fast_forward` は ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511 / ADR-8035e7c6-7dc5-4aa8-9a37-403998fa7f9b が挙げていない。ruleset の適用時に追加した。
+`deletion` / `non_fast_forward` は [main へのマージにテストの成功を必須にする](../adr/tests-required-for-merge.md) / [main への直接 push を ruleset で禁じる](../adr/no-direct-push-to-main.md) が挙げていない。ruleset の適用時に追加した。
 
 縛りの度合い:
 
@@ -62,15 +62,15 @@ ruleset / branch protection は個人アカウント所有の private + free プ
 
 required status check は **実行されない check を `Expected / 待機中` として扱いマージをブロックし
 続ける**。一方で **ジョブが生成されたうえで `if:` によりスキップされた check は "Skipped" =
-成功扱い**になる。この非対称性が、INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 がトリガ段の `paths` フィルタを使わず変更検出
+成功扱い**になる。この非対称性が、[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md) がトリガ段の `paths` フィルタを使わず変更検出
 action + `if:` スキップを採る理由である。
 
 ただし `if:` を**ジョブ段**に置けるのは matrix を持たないジョブに限る。`(os, system)` 付きの
 3 context が required な `flake-check` はステップ段に条件を置く（理由と実装は
-INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27「トリガと変更検出」）。
+[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md)「トリガと変更検出」）。
 
 ## 出典
 
-ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511、ADR-8035e7c6-7dc5-4aa8-9a37-403998fa7f9b、
-ADR-cb010758-7887-470a-ba61-19b2e99f0053。`docs/dev/definition-of-done.md` の
+[main へのマージにテストの成功を必須にする](../adr/tests-required-for-merge.md)、[main への直接 push を ruleset で禁じる](../adr/no-direct-push-to-main.md)、
+[変更検出で nix を回さない PR の必須の確認を skip で通す](../adr/change-detection-gates-ci-jobs.md)。`docs/dev/definition-of-done.md` の
 DOD-01 / DOD-02 は、この ruleset の required check と同じ対象を指す。

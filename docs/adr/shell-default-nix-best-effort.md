@@ -33,7 +33,7 @@ CLI は flake.nix に加えて shell.nix / default.nix も entrypoint として�
 shell.nix / default.nix の entrypoint は best-effort で扱い、impure eval を許容する。再現性は、
 nixpkgs と layat lib を利用者が固定する責任とする。
 
-flake と legacy の entrypoint の eval と再現性の区別は REQ-67095391-eab2-45d2-b75b-b428d481bcc2 に置く。
+flake と legacy の entrypoint の eval と再現性の区別は [flake は pure eval で flake.lock が固定し legacy は impure を許容しユーザー責任とする](../requirements/reproducibility-stance.md) に置く。
 
 ## 根拠
 

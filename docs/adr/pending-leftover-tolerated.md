@@ -26,7 +26,7 @@ apply は link-farm を profileDir の `.pending` に out-link を張って buil
 
 失敗で残った `.pending` を回収する処理は持たない。次の apply が同じパスに out-link を張り直して上書きする。
 
-残留が config あたり最大 1 個に収まることは REQ-840b3641-6e76-46da-82e9-680cabd65abe に置く。
+残留が config あたり最大 1 個に収まることは [失敗時に残る pending gcroot は config あたり最大 1 個に有界とし回収処理を持たない](../requirements/pending-gcroot-bounded.md) に置く。
 
 ## 根拠
 

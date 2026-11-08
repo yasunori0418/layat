@@ -26,7 +26,7 @@ generated:
 
 symlink の張替えは unlink と symlink の 2 操作で行い、rename による atomic な差し替えは採らない。
 途中で異常終了して target が消えても、同じ apply をもう一度実行すれば収束する。規範の細目は
-REQ-61856da1-8883-401e-ad57-9f326b96d400 に置く。
+[既存 symlink の張替えは unlink + symlink の 2 操作で行い冪等な再実行で収束させる](../requirements/symlink-replace-unlink-symlink.md) に置く。
 
 ## 根拠
 

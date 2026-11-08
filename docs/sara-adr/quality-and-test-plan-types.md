@@ -26,7 +26,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #237, #203, `docs/model.yaml`
+- 関連: [model.yaml で組み込みモデルを全面置換し、汎用の型名を使う](model-yaml-full-replacement.md), GitHub Issue #583, #237, #203, `docs/model.yaml`
 - 起点: epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §2a・§2c を書き直した
 
 ## 背景

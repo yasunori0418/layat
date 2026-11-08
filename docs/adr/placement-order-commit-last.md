@@ -28,10 +28,10 @@ generated:
 新規配置と張替えを先に行い、古くなった配置の除去を最後に行う。FS への反映が全て成功してから世代を
 コミットし、このコミットを唯一のコミット点とする。途中で失敗したら非ゼロで中断してコミットせず、
 前の世代を保つ。クラッシュで FS が部分適用のまま残ることは受け入れ、冪等な再実行で収束させる。
-エラーを検知したときに FS を適用前の状態へ戻す手順は ADR-56325270-20bb-4959-8498-e3223c35e24b が決めている。
+エラーを検知したときに FS を適用前の状態へ戻す手順は [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md) が決めている。
 
-配置前の除去や copy の反映を含む実行段の順序は REQ-1be4d678-959c-44d7-a346-44bfd95af56e、
-張替えの手順と再実行による収束は REQ-61856da1-8883-401e-ad57-9f326b96d400 に置く。
+配置前の除去や copy の反映を含む実行段の順序は [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](../requirements/generation-mechanism-link-farm-manifest.md)、
+張替えの手順と再実行による収束は [既存 symlink の張替えは unlink + symlink の 2 操作で行い冪等な再実行で収束させる](../requirements/symlink-replace-unlink-symlink.md) に置く。
 
 ## 根拠
 

@@ -23,12 +23,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-33d8c466-6b38-46b6-8696-ad7521c72786, GitHub Issue #169, #172
+- 関連: [--backup を = 区切りで suffix を取る省略可能な値のフラグにする](backup-optional-value-flag.md), GitHub Issue #169, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §1（CLI）の退避先の決め方を書き直した
 
 ## 背景
 
-`apply --backup`（ADR-33d8c466-6b38-46b6-8696-ad7521c72786）は、配置を塞ぐ記録外の実体を
+`apply --backup`（[--backup を = 区切りで suffix を取る省略可能な値のフラグにする](backup-optional-value-flag.md)）は、配置を塞ぐ記録外の実体を
 rename で退避してから配置する。退避先の名前をどう決めるかを決める必要があった。
 
 ## 決定
@@ -36,7 +36,7 @@ rename で退避してから配置する。退避先の名前をどう決める�
 退避先は、target のパスに `.` と suffix を付けた `<target>.<suffix>` に固定する。entry ごとに
 退避先を変える手段は持たない。
 
-退避先の書式と既定の suffix は REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b に置く。
+退避先の書式と既定の suffix は [apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](../requirements/apply-backup-rename-aside.md) に置く。
 
 ## 根拠
 

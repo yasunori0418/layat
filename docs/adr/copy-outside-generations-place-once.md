@@ -18,7 +18,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-acc31876-df36-485e-b356-92ae60e26db7, `docs/concept.md`, `docs/spec.md`
+- 関連: [reset は非対話の実行で --yes を必須にする](reset-confirmation-and-yes.md), `docs/concept.md`, `docs/spec.md`
 - 起点: ADR-0002 の決定「copy は世代から除外する」と「copy の扱い」節を書き直した
 
 ## 背景
@@ -34,8 +34,8 @@ copy は世代管理の対象外とし、target が無いときだけ実体化�
 孤児として警告するにとどめる。
 
 store の更新を copy target へ反映することと copy target を消すことは、利用者が明示したときに限る
-（ADR-fb01d942-2875-4dcb-a7df-879e18f63883 の `apply --recopy` と ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7 の `layat reset`）。規範の細目は REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9・
-REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe・REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2 に置く。
+（[apply --recopy で全 copy target を src から無条件に上書きする](apply-recopy-overwrites-copies.md) の `apply --recopy` と [reset で profile を触らずに配置物を撤去する](reset-fs-only-teardown.md) の `layat reset`）。規範の細目は [copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](../requirements/copy-place-once.md)・
+[method は配置方法を選び symlink は世代管理下・copy は世代管理外になる](../requirements/method-src-matrix.md)・[古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](../requirements/stale-removal-invariants.md) に置く。
 
 ## 根拠
 

@@ -86,7 +86,7 @@ CASE とテスト資産を比べて 1:1 かを確かめる。本文の `## 対�
 
 item は Open Knowledge Format（OKF）v0.2 と互換のキーを持つ。対応はキー単位で取り、バンドル単位の
 適合（`okf_version` の宣言・`log.md`・frontmatter の無い文書への frontmatter 追加）は追わない。
-決定の理由は SDR-bab72f31-7cb1-47a3-bb2d-7876757d86fb とその後続の SDR が持つ。
+決定の理由は [OKF v0.2 と互換の frontmatter キーを item に足す](sara-adr/okf-compatible-frontmatter.md) とその後続の SDR が持つ。
 
 | キー | 対象の型 | 書き方 |
 |---|---|---|

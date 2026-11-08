@@ -28,9 +28,9 @@ generated:
 - `schemaVersion` は **`1`** で固定する。
 - engine は自身の対応版より新しい `schemaVersion` を拒否する。
 
-内部タグ `_layatMarker` を manifest に漏らさず判別タグを含まない enum で写すことは REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7 が
-持つ。返り値としての manifest.json の位置づけは REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281、スキーマの各フィールドは
-REQ-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f / REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb / REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336 が持つ。
+内部タグ `_layatMarker` を manifest に漏らさず判別タグを含まない enum で写すことは [marker は判別タグで識別し manifest.json には漏らさない](marker-tag-discrimination.md) が
+持つ。返り値としての manifest.json の位置づけは [mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](mkmanifest-return-value.md)、スキーマの各フィールドは
+[manifest.json のトップレベルは必須の schemaVersion / root / entries と任意の identity とする](manifest-toplevel-fields.md) / [manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する](manifest-root-object.md) / [manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する](manifest-entries-array.md) が持つ。
 
 ## 出典
 

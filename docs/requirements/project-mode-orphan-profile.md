@@ -38,16 +38,16 @@ generated:
 （実在しない root を指す孤児系列を backref で逆引きして削除する）。
 
 > **規範は frontmatter が正**。backref `.root` を roothash 階層へ置くこと自体と
-> `.pending` が config あたり最大 1 であることは REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3、store 解放に
-> `nix-collect-garbage` を使うことは REQ-706de717-4e47-471a-a1c0-448635be159c、profile を解決済み root でキーすること
-> （孤児が生じる前提）は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 の担当。`layat prune` の対象判定は
-> REQ-c44433a1-7ee7-459a-9aae-7cc42166876f、削除を守る条件（dryrun・確認・try-lock・`--json`）は
-> REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed が持つ。
+> `.pending` が config あたり最大 1 であることは [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](profile-on-disk-layout.md)、store 解放に
+> `nix-collect-garbage` を使うことは [世代操作は世代バックエンドの契約越しに行い、GC root の間引きと store 解放は nix コマンドへ分けて委譲する](generation-gc.md)、profile を解決済み root でキーすること
+> （孤児が生じる前提）は [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md) の担当。`layat prune` の対象判定は
+> [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](prune-target-selection.md)、削除を守る条件（dryrun・確認・try-lock・`--json`）は
+> [prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](prune-safety-gates.md) が持つ。
 
 ## 出典
 
 `docs/spec.md`「世代管理仕様」→「project mode の世代」節の箇条書き最終項。
 
-決定の実体は ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988「profile は解決済み root の roothash でキーする」（孤児 profile の
+決定の実体は [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)「profile は解決済み root の roothash でキーする」（孤児 profile の
 放置許容）で、backref による逆引きも同じ ADR が定めている。cleanup を持たず seam に留めていた判断は、
-ADR-b4be88b8-1c19-426d-885d-f5d80b95252f「prune は root が実在しない roothash 系列だけを削除する」で `layat prune` の実装に進めた。
+[prune は root が実在しない roothash 系列だけを削除する](../adr/prune-only-missing-root-series.md)「prune は root が実在しない roothash 系列だけを削除する」で `layat prune` の実装に進めた。

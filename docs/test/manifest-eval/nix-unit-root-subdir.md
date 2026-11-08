@@ -14,7 +14,7 @@ generated:
 
 ## 対象
 
-`tests/nix-unit/root-subdir.nix`（`tests/nix-unit.nix` のディレクトリ列挙で自動搭載。TP-36e90d5d-4524-4294-bc72-ee263bb02782
+`tests/nix-unit/root-subdir.nix`（`tests/nix-unit.nix` のディレクトリ列挙で自動搭載。[評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](../../test-plan/nix-unit-namaka-split.md)
 が定めるとおり、テスト名はファイル横断で一意でなければならない。本ファイルは
 `testRootSubdir*` 接頭辞を使う）
 
@@ -41,4 +41,4 @@ root マーカーの subdir 適用形を、marker 単体と `normalizeManifest` 
 
 ## 出典
 
-`tests/nix-unit/root-subdir.nix` の実装。規範は REQ-08c8f639-790c-4970-a954-c9567538cf9b。
+`tests/nix-unit/root-subdir.nix` の実装。規範は [root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](../../requirements/root-marker-subdir-sugar.md)。

@@ -25,18 +25,18 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-521765d7-7e31-42f4-b548-979185a7586a, ADR-88231ffc-4836-4252-be34-894944fd28c3, GitHub Issue #530, #493
+- 関連: [lib は純データ生成に徹する](lib-produces-data-only.md), [CLI が一次 UX で devShell に pin 版を同梱する](cli-primary-ux-devshell-pinned.md), GitHub Issue #530, #493
 - 起点: Issue #530 の grilling（2026-10-25）。ADR-0068 §1 を書き直した
 
 ## 背景
 
-project mode の devShell は pin 版の CLI を同梱し（ADR-88231ffc-4836-4252-be34-894944fd28c3）、
+project mode の devShell は pin 版の CLI を同梱し（[CLI が一次 UX で devShell に pin 版を同梱する](cli-primary-ux-devshell-pinned.md)）、
 `shellHook` で `layat apply <name>` を実行する。CLI はそのたびに entrypoint を cwd から探し、
 `nix eval` と `nix build` を実行する。
 
 HM / NixOS / nix-darwin のモジュールは、link-farm を評価時に作り、`apply --all --manifest` の
 1 行を組んでこれらを省いている。ただしこの組み立てはモジュールの内部にあり、devShell からは
-使えない。また `lib` は nixpkgs.lib だけに依存するので（ADR-521765d7-7e31-42f4-b548-979185a7586a）、
+使えない。また `lib` は nixpkgs.lib だけに依存するので（[lib は純データ生成に徹する](lib-produces-data-only.md)）、
 pin 版の CLI を `lib` の中から参照できない。
 
 ## 決定
@@ -44,8 +44,8 @@ pin 版の CLI を `lib` の中から参照できない。
 `lib` に `mkApplyCommand` を公開し、config 名から link-farm への attrset を受けて、事前展開した
 `apply --all --manifest` のコマンド行を組む。CLI は引数 `layatPackage` で受け取る。
 
-引数・戻り値の規範は REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f に、`lib/` の中での置き場所は
-DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5 に置く。
+引数・戻り値の規範は [lib.mkApplyCommand は事前展開した apply --all --manifest のコマンド行を返す](../requirements/lib-apply-command.md) に、`lib/` の中での置き場所は
+[lib は公開 API・型定義・manifest 生成・マーカー構築子・apply コマンド組み立ての 5 ファイルへ分割する](../design/lib-module-split.md) に置く。
 
 ## 根拠
 

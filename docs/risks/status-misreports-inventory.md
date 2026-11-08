@@ -17,7 +17,7 @@ generated:
 ## リスク
 
 `layat status` は「今なにが apply されているか」を確かめるためのコマンドで
-（→ REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173）、一覧が実態とずれると、利用者はずれた一覧を
+（→ [status は記録基底を走査して last-applied 記録を読み取り専用で表示する](../requirements/status-command.md)）、一覧が実態とずれると、利用者はずれた一覧を
 もとに判断する。どの方向のずれも、status 自身はエラーを出さない。
 
 **系列の取りこぼし** — 記録基底は `<name>` 直キーと `<roothash>/<name>` 系列の 2 つの形を持ち、
@@ -36,7 +36,7 @@ config が一覧から消える。system 基底が読めないのを「記録 0 
 ## 実現性
 
 **likelihood: medium** — 変更頻度の側では、記録基底のレイアウトは最近動いた領域で
-（現在の決定は → ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15 / ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c）、`ListRootHashSeries` は prune と共有するので、prune 側の都合で列挙条件が
+（現在の決定は → [last-applied 記録を profileDir と同じ鍵で state 基底に置く](../adr/last-applied-record-location.md) / [system mode の last-applied 記録を /var/lib/layat に置く](../adr/system-record-base-var-lib.md)）、`ListRootHashSeries` は prune と共有するので、prune 側の都合で列挙条件が
 変わりうる。自動検証の側では、status の走査は新規のコードで、既存のテストはどれも覆って
 いない。ただし列挙と並び順は tmpdir の実 FS で決定的に検証でき、blind spot に
 なりにくい。両軸を合わせて medium。
@@ -47,6 +47,6 @@ config が一覧から消える。system 基底が読めないのを「記録 0 
 
 ## 緩和
 
-TC-076bd7b4-6427-4a35-9bab-86daaaada504（一覧の網羅と記録の反映）が engine の走査を、
-TC-1bc3e39a-116a-4f26-96b4-1d15e6f837bd（CLI の出力契約）が subject 名・絞り込み・error 時の
+[status が記録基底の全系列を漏れなく列挙し、記録の内容をそのまま反映し、状態を変えない](../test/generations/status-inventory-fidelity.md)（一覧の網羅と記録の反映）が engine の走査を、
+[status の CLI がフィルタ・ストリームの排他・--json の形・error 時の続行の契約を守る](../test/cli-json/status-cli-contracts.md)（CLI の出力契約）が subject 名・絞り込み・error 時の
 続行を緩和する。

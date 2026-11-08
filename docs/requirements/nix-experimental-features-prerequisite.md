@@ -43,11 +43,11 @@ nix 生成器は `--extra-experimental-features` を自動付与しない（nix.
 
 機能未有効の判定と案内文は nix 生成器の中に閉じ、`generator.Error` の
 `Kind = PrerequisiteMissing` と `Guidance` で CLI へ渡す。表示の分担は
-REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd の担当。
+[生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める](generator-diagnostics-contract.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様（一次 UX）」の blockquote「前提条件: nix experimental-features」。
 
-決定の実体は ADR-63039f93-cd78-4356-8cd3-82c2f49a1aaa「nix の experimental-features は利用者が有効にしておく前提にする」。主語を nix 生成器に絞ったのは
-ADR-cd139de9-06a4-49a2-8bea-4801c8acc518「nix 固有の失敗判定と案内文を nix 生成器の中に閉じる」。
+決定の実体は [nix の experimental-features は利用者が有効にしておく前提にする](../adr/experimental-features-user-prerequisite.md)「nix の experimental-features は利用者が有効にしておく前提にする」。主語を nix 生成器に絞ったのは
+[nix 固有の失敗判定と案内文を nix 生成器の中に閉じる](../adr/nix-specific-diagnosis-inside-nixgen.md)「nix 固有の失敗判定と案内文を nix 生成器の中に閉じる」。

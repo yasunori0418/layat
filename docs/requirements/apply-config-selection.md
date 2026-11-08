@@ -35,13 +35,13 @@ layat apply <name>              # layat.<name> をビルドし新世代を作っ
 `layat.*` 全てを適用する。profile は config 単位で atomic。
 
 > **上は原文の写しで、規範は frontmatter が正**。`--all` の適用順・部分失敗時の挙動・
-> root モードフィルタは本 item の規範ではなく、REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af / REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b の担当。
-> profile の atomic 性そのもの（→ ADR-fe035038-4415-4a1e-aa5c-509fdfce9955）は REQ-1be4d678-959c-44d7-a346-44bfd95af56e の担当。
+> root モードフィルタは本 item の規範ではなく、[apply --all は選択された config を並列に適用し、集約表示と results\[\] を辞書順にし、部分失敗でも続行して最後に集約する](apply-all-lexical-order-continue.md) / [--all は root モードフィルタで対象 config を絞れる](apply-all-root-mode-filter.md) の担当。
+> profile の atomic 性そのもの（→ [1 config = 1 profile を全モードで自前に持つ](../adr/one-config-one-profile-all-modes.md)）は [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](generation-mechanism-link-farm-manifest.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」のコードブロックと、直後の箇条書き
 第 1 項。
 
-決定の実体は ADR-65b3439a-b90a-4056-b55a-522399bc71e6「apply の config は名前省略で default を選び、--all で全件を選ぶ」（name 省略時は `layat.default`・未定義ならエラー・
+決定の実体は [apply の config は名前省略で default を選び、--all で全件を選ぶ](../adr/config-selection-default-and-all.md)「apply の config は名前省略で default を選び、--all で全件を選ぶ」（name 省略時は `layat.default`・未定義ならエラー・
 一括適用は `--all`）。

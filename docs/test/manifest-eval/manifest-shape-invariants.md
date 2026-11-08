@@ -27,16 +27,16 @@ generated:
 - `identity` の有無でトップレベルの形が変わること。与えなければ `identity` キー自体を持たず、
   与えればその値を持ち、空文字は評価で止まる
 
-**この条件の適用範囲は project root に限る**。fixed root での絶対パス併記は TC-f9e927d0-8e10-4b8e-9870-5b5486949af6 が
+**この条件の適用範囲は project root に限る**。fixed root での絶対パス併記は [fixed root で rootKind が fixed になり絶対パスを併記する（home marker が倒れないことを含む）](fixed-root-absolute-path.md) が
 持ち、`homeRoot` の `rootKind` を実際の HM 統合で見る分は `checks.hm-module` と E2E
 （`integration` 区分）が担当する。ここを「全 root 種別を見ている」と読ませないために
 範囲を明示する。
 
-スナップショット（TC-de6514e2-9105-45a6-a5b9-d474911a401b）とは役割が重ならない。役割分担の規範は TP-36e90d5d-4524-4294-bc72-ee263bb02782 が持つ。
+スナップショット（[manifest 文書全体をスナップショットに固定し、どの不変条件も名指ししない変更を差分として出す](manifest-document-regression.md)）とは役割が重ならない。役割分担の規範は [評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](../../test-plan/nix-unit-namaka-split.md) が持つ。
 
 ## 覆う CASE
 
-- CASE-7a6c4957-9365-4490-b48f-9725f42162f2（`tests/nix-unit/structure.nix`）
+- [nix-unit: structure.nix — manifest 構造の不変条件](nix-unit-structure.md)（`tests/nix-unit/structure.nix`）
 
 ## 出典
 

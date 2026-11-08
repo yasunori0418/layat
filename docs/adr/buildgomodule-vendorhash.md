@@ -32,8 +32,8 @@ layat の CLI と engine は 1 つの Go バイナリで、cobra などの第三
 `packages.<system>.layat` は nixpkgs の `buildGoModule` でビルドし、依存を `vendorHash` の文字列で
 固定する。依存を変えたときは hash を更新する。
 
-依存の固定の規範は REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0 に、output の形は
-DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58 に置く。
+依存の固定の規範は [CLI が持ち込む依存は許可した第三者ライブラリと pin した Go に限り、いずれも固定する](../requirements/cli-dependency-policy.md) に、output の形は
+[layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する](../design/flake-outputs-attrs.md) に置く。
 
 ## 根拠
 

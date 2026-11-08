@@ -25,7 +25,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-8e253f2e-c255-482a-a0f8-0837e122e80f, ADR-0db061d1-fa30-436d-91d7-c0cec8804c52, ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e, GitHub Issue #580, #498
+- 関連: [記録の読みは不正な記録を error にする](record-read-strictly.md), [last-applied 記録に出所を持たせる](record-carries-origin.md), [同一 profileDir への同時実行は後勝ちにする](same-profiledir-target-last-wins.md), GitHub Issue #580, #498
 - 起点: Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §4 を書き直した
 
 ## 背景

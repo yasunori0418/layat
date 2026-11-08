@@ -41,7 +41,7 @@ project mode ではさらに git から root を解決する。起点が増え�
   同一の性質を両方の使い方へ期待すると誤った検証をすることになる
 - **flake-parts の使い方の分岐** — `perSystem.layat.<name>` の transpose が直書きと別の derivation を
   生むか、perSystem と別の `pkgs` で評価され、flake-parts を使うときだけ CLI のアドレッシングが
-  変わる（→ REQ-c50df875-2cb0-4e72-8a21-858359a11cae）
+  変わる（→ [flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない](../requirements/flake-parts-module-path.md)）
 
 ## 影響
 
@@ -49,8 +49,8 @@ project mode ではさらに git から root を解決する。起点が増え�
 root 解決の誤りが「利用者の意図しないディレクトリへ書き込む」形で現れ、どこへ書いたかが
 記録に残らない以上、原状回復の手立てが無いため。
 
-likelihood を medium とするのは、project mode の root 解決は TC-ec0bded4-c4bc-4a61-a2b5-0b652134b223 が、legacy 起点の
-配置と出力契約の同等性は TC-d9c78439-e478-4779-977c-9c4c02dd4e93 が覆っている一方、起点が flake / legacy の 2 つに
+likelihood を medium とするのは、project mode の root 解決は [project mode の root が git toplevel へ一意に解決し外では曖昧に成功しない](../test/integration/project-root-resolution.md) が、legacy 起点の
+配置と出力契約の同等性は [legacy entrypoint が canonical 形で同じ配置と出力契約を保ち素の nix-shell を壊さない](../test/integration/legacy-entrypoint-parity.md) が覆っている一方、起点が flake / legacy の 2 つに
 分かれ、そこへ git 解決が掛かるため、片方の起点だけを見た変更が他方との食い違いを作りうる
-ため。engine 層で同じ root 解決を扱う RISK-24e0805d-53cd-40dd-9e7a-b5c4bbf2a298 が low なのに対して本 item が medium に
+ため。engine 層で同じ root 解決を扱う [root 解決を誤り、意図しないディレクトリツリーへ配置する](root-resolution-wrong-tree.md) が low なのに対して本 item が medium に
 留まるのは、起点ごとの分岐という掛け算の側を持つぶん混入の余地が広いことによる。

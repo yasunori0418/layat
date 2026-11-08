@@ -73,19 +73,19 @@ generated:
   （孤児 profile 逆引き seam）
 
 > **上は原文の写しで、規範は frontmatter が正**。`profileDir` の**キー**そのものは、home
-> （`<name>` 直キー）・fixed・`--root` 上書き（`<roothash>/<name>`）が REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81、project mode
+> （`<name>` 直キー）・fixed・`--root` 上書き（`<roothash>/<name>`）が [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md)、project mode
 > （解決済み root でキーすること）とその理由・`<roothash>`（解決後の絶対 root パスの sha256
-> 短縮 hex）の定義が REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、孤児 profile の扱いが REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4 の担当。
+> 短縮 hex）の定義が [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md)、孤児 profile の扱いが [孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する](project-mode-orphan-profile.md) の担当。
 > HM モジュール経由も home mode の `<name>` 直キーに乗る（原文が挙げる「固定名 `default`」の
-> MVP 限定は ADR-01abcd5a-464f-4c44-8afd-30950631487c が反転済み・REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a）。本 item は「キーで指す先が
+> MVP 限定は [HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が反転済み・[HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md)）。本 item は「キーで指す先が
 > ディレクトリであり、その中に何をどう並べるか」という物理形を規定する。flock を blocking で
-> 取るか try-lock で取るかは REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461、pending out-link が gcroot を持ち config あたり
-> 最大 1 に抑えられることは REQ-840b3641-6e76-46da-82e9-680cabd65abe の担当。
+> 取るか try-lock で取るかは [flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする](flock-acquisition-mode.md)、pending out-link が gcroot を持ち config あたり
+> 最大 1 に抑えられることは [失敗時に残る pending gcroot は config あたり最大 1 個に有界とし回収処理を持たない](pending-gcroot-bounded.md) の担当。
 
-> **2026-10-11 追記（ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd）**: 上の写しの `nix-env --profile <profileDir>/profile ...` と
+> **2026-10-11 追記（[profileDir の内部レイアウトを世代バックエンド契約の固定部分にする](../adr/profiledir-layout-fixed-in-contract.md)）**: 上の写しの `nix-env --profile <profileDir>/profile ...` と
 > 基底 `<state>/nix/profiles/layat` は、既定の世代バックエンド nixprofile の内部と読み替える。
 > profile リンク・世代 `profile-N-link`・`.pending` が兄弟として並ぶレイアウトは世代バックエンドの
-> 契約の固定部分で（REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）、engine はこれを直接読む。基底は
+> 契約の固定部分で（[engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)）、engine はこれを直接読む。基底は
 > 契約の `UserBase` が与え、設定ファイルでは上書きできない。
 
 ## 出典
@@ -93,6 +93,6 @@ generated:
 `docs/spec.md`「世代管理仕様」→「機構」→「profile のオンディスクレイアウト」節と、
 同「機構」節の機構表直後の blockquote（`<state>` の定義）。
 
-決定の実体は ADR-419914ba-9896-4dd1-853b-fb514fcb9f38「profile は専用ディレクトリレイアウトに置く」。`<state>` の定義は ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203、backref
-`.root` による孤児逆引きは ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988 が定めている。基底の所有を世代バックエンドへ移し、レイアウトを
-契約の固定部分としたのは ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd・ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883。
+決定の実体は [profile は専用ディレクトリレイアウトに置く](../adr/profile-directory-layout.md)「profile は専用ディレクトリレイアウトに置く」。`<state>` の定義は [profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)、backref
+`.root` による孤児逆引きは [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md) が定めている。基底の所有を世代バックエンドへ移し、レイアウトを
+契約の固定部分としたのは [profileDir の内部レイアウトを世代バックエンド契約の固定部分にする](../adr/profiledir-layout-fixed-in-contract.md)・[state の基底を設定で上書きさせない](../adr/state-bases-not-configurable.md)。

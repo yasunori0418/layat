@@ -31,12 +31,12 @@ store パスは read-only（0444 / 0555）のため、そのまま保存する�
 group/other）は保ちつつ所有者が編集できる状態にする。
 
 > **上は原文の写しで、規範は frontmatter が正**。この mode 規則は通常の place-once コピーと
-> `apply --recopy` の再コピーの双方に適用される。place-once そのものは REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9、
-> recopy そのものは REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065 / REQ-b4e4b65d-6e35-40c3-a00e-20c14043df6f の担当。
+> `apply --recopy` の再コピーの双方に適用される。place-once そのものは [copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](copy-place-once.md)、
+> recopy そのものは [apply --recopy は config 内の全 copy target を src から無条件に上書き再コピーする](apply-recopy.md) / [recopy の上書きは削除ではなく同一親内への rename 退避で行う](recopy-rename-aside.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「配置動作仕様」→「copy モード（place-once・ユーザー管理）」節の箇条書き第 4 項
 （および同節コードブロック・「recopy」節の「mode 保存 + owner-write 付与」）。
 
-決定の実体は ADR-f27830a5-4d13-4f61-be9e-3f04240ff322「copy は再帰コピーで mode を保存し owner-write にする」。
+決定の実体は [copy は再帰コピーで mode を保存し owner-write にする](../adr/copy-recursive-mode-preserving-owner-write.md)「copy は再帰コピーで mode を保存し owner-write にする」。

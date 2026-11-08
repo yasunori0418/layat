@@ -16,7 +16,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc
+- 関連: [読み取り専用の列挙は info で返す](readonly-enumeration-as-info.md)
 - 起点: ADR-0033 §1a を書き直した
 
 ## 背景
@@ -32,7 +32,7 @@ CLI の機械可読な stdout は、`gitignore` の行と `apply --dryrun` の�
 「このコマンドでは使えない」というエラーの分岐を持たず、出すデータの少ないコマンドも最小の結果を
 返す。
 
-`--json` が出すエンベロープの形は REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead に置く。
+`--json` が出すエンベロープの形は [--json は outturn 規約準拠のエンベロープを出す第 2 契約とする](../requirements/json-outturn-envelope.md) に置く。
 
 ## 根拠
 

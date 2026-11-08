@@ -20,7 +20,7 @@ generated:
 
 ## 検証内容
 
-実 nix で `apply --all` を駆動し、並列化（→ ADR-75df92ae-0694-452b-8fb4-350994e31b25 / ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e / ADR-e7a57f51-41da-460c-8f51-c84e94643f3d）が利用者から見える形を
+実 nix で `apply --all` を駆動し、並列化（→ [apply --all は選択した config 間の target 重複を build 前に止める](../../adr/apply-all-preflight-target-conflict.md) / [apply --all の build を worker pool で並列に実行する](../../adr/apply-all-parallel-build-worker-pool.md) / [apply --all の配置を config 単位で並列に行う](../../adr/apply-all-parallel-placement-per-config.md)）が利用者から見える形を
 確かめる。fixture ごとに別 git repo（= 別 project root）を切り、lock・配置先を混ぜない。
 
 - **辞書順集約** — 宣言順と辞書順をずらした 4 つの projectRoot config で、`--json` の

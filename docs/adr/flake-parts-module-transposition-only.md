@@ -24,12 +24,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-e6820da0-fce3-4aef-8b79-d53abbca6051, ADR-db293e0c-4789-45b7-93a9-adedc021344f, GitHub Issue #26, #530
+- 関連: [layat output の flake-parts module を flakeModules.default で公開する](flake-parts-module-published.md), [lib.mkApplyCommand で事前展開した apply コマンドを組む](lib-mkapplycommand.md), GitHub Issue #26, #530
 - 起点: Issue #26 と Issue #530 の grilling（2026-10-25）。ADR-0029 §5 と ADR-0068 §5b を書き直した
 
 ## 背景
 
-flake-parts module（ADR-e6820da0-fce3-4aef-8b79-d53abbca6051）を import する利用者は、同じ
+flake-parts module（[layat output の flake-parts module を flakeModules.default で公開する](flake-parts-module-published.md)）を import する利用者は、同じ
 `inputs.layat` から `lib` も参照できる。module に便宜の機能を足すなら、候補は 2 つある。`mkManifest` や
 root マーカーを perSystem の引数として注入することと、事前展開した apply コマンドを devShell へ
 注入する option を持たせることである。
@@ -41,7 +41,7 @@ flake-parts module は `perSystem.layat` の転置だけを行う。`lib` の関
 直接参照する。
 
 option が `mkManifest` の derivation を入れるだけであることの規範は
-REQ-c50df875-2cb0-4e72-8a21-858359a11cae に置く。
+[flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない](../requirements/flake-parts-module-path.md) に置く。
 
 ## 根拠
 
@@ -49,7 +49,7 @@ REQ-c50df875-2cb0-4e72-8a21-858359a11cae に置く。
 足りる。注入すると、どこから来たか読み取れない引数が perSystem に増え、module も複雑になる。
 
 devShell への注入は、module が devShell の形を決めることになる。apply コマンドを組む関数を `lib` に
-公開しておけば（ADR-db293e0c-4789-45b7-93a9-adedc021344f）、利用者は任意の shell に自分で埋め込める。
+公開しておけば（[lib.mkApplyCommand で事前展開した apply コマンドを組む](lib-mkapplycommand.md)）、利用者は任意の shell に自分で埋め込める。
 
 ## 棄却した代替案
 

@@ -65,23 +65,23 @@ generated:
 - `<roothash>` 算出・backref（`.root`）は project mode と同一機構
 
 > **上は原文の写しに system の行と散文を足したもので、規範は frontmatter が正**。原文の表が持つ「HM モジュール経由（MVP）は
-> `<state>/nix/profiles/layat/default`（固定名 1 profile）」の行は、**ADR-01abcd5a-464f-4c44-8afd-30950631487c が HM の
+> `<state>/nix/profiles/layat/default`（固定名 1 profile）」の行は、**[HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が HM の
 > `layat.configs.<name>` 実装を決定済み**で反転している（HM も `<name>` 次元を持ち、home mode の
 > `<name>` 直キーにそのまま乗る。`default` は糖衣が指す config 名に過ぎない）。`docs/spec.md`
 > 側がこの改訂に追従できていないため、分割にあたって MVP 限定の行を規範へ持ち込まない判断を
-> した（REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a と同じ扱い）。`docs/spec.md` の追従は本 item の担当範囲外。
+> した（[HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md) と同じ扱い）。`docs/spec.md` の追従は本 item の担当範囲外。
 >
 > 原文が参照する次の規範は本 item の担当ではない。
 >
 > - profileDir の中に何をどう並べるか（profile リンク・世代・`.pending`・backref `.root` の
->   置き場所）と `<state>` の定義 → REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3
+>   置き場所）と `<state>` の定義 → [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](profile-on-disk-layout.md)
 > - `<roothash>`（解決後の絶対 root パスの sha256 短縮 hex）の定義と、project mode で
->   解決済み root をキーにする理由 → REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0
-> - `--root` が全モードの解決 root を一律上書きすること自体 → REQ-61c05e09-0bde-4f74-9a96-03185f9df606。ただし
->   **`--root` 明示時のキーイングは本 item の担当**で、REQ-61c05e09-0bde-4f74-9a96-03185f9df606 の規範からは落として
+>   解決済み root をキーにする理由 → [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md)
+> - `--root` が全モードの解決 root を一律上書きすること自体 → [--root は全モード共通で解決 root を明示上書きする](root-override-flag.md)。ただし
+>   **`--root` 明示時のキーイングは本 item の担当**で、[--root は全モード共通で解決 root を明示上書きする](root-override-flag.md) の規範からは落として
 >   ある（profileDir のキーは root の種別ごとに定まる一つの体系であり、`--root` の行だけを
->   切り出すと ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988 の改訂時に片方だけが直って食い違いが生じるため一本化した）
-> - 孤児 profile の放置許容と backref による逆引き → REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4
+>   切り出すと [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md) の改訂時に片方だけが直って食い違いが生じるため一本化した）
+> - 孤児 profile の放置許容と backref による逆引き → [孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する](project-mode-orphan-profile.md)
 
 ## 出典
 
@@ -89,7 +89,7 @@ generated:
 第 4〜5 項（`--root` 明示時のキーイング・fixed root mode のキーイング）と、
 第 5 項に付随する profileDir 表。
 
-決定の実体は ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988「profile は解決済み root の roothash でキーする」（`--root` 明示時の profileDir
+決定の実体は [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)「profile は解決済み root の roothash でキーする」（`--root` 明示時の profileDir
 キーイングを home / fixed へ拡張し、
 fixed root mode も常に `<roothash>` でキーする）。system の行と散文は原文に無く、決定の実体は
-ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203「profile の基底ディレクトリをモードで切り替える」・ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988（system mode の profile 基底と `<name>` 直キー）。
+[profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)「profile の基底ディレクトリをモードで切り替える」・[profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)（system mode の profile 基底と `<name>` 直キー）。

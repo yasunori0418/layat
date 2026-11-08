@@ -25,9 +25,9 @@ profileDir に並ぶ `profile-<N>-link` を読み取り専用で走査して世�
 - **読めない profileDir** — 不在以外の理由で profileDir を読めないときはエラーを返す。
   「世代 0 件」と見なすと、前世代が無いという最も危険な結論を利用者に知らせずに出すことになる
 
-上位の規範は TC-40b762fc-3b48-471c-b495-c5ffe1f584b5 と同じく TP-e7c25263-6d2d-4a37-8275-26906889d912。
+上位の規範は [state 基底・profileDir のキーイング・世代リンク名が root と mode ごとに正しく決まる](profile-path-keying.md) と同じく [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../../test-plan/go-test-layering.md)。
 世代リンクのレイアウトは tmpdir 上の実 FS に張って確かめ、nix-env は起動しない。
 
 ## 対応する CASE
 
-CASE-80a327c3-5fdd-48d4-9446-4b3e0e262105（`internal/generation/nixprofile/nixprofile_test.go`）。
+[nixprofile_test.go — 世代リンクの走査と 2 基底](nixprofile-test-go.md)（`internal/generation/nixprofile/nixprofile_test.go`）。

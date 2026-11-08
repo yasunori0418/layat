@@ -21,7 +21,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75, GitHub Issue #550
+- 関連: [root は 3 つの marker で表す](three-root-markers.md), [module と project では世代操作を公開しない](module-and-project-hide-generation-ops.md), GitHub Issue #550
 - 起点: 実装前レビュー第 3 巡（2026-06-14）で確定。ADR-0017 §1 を書き直した
 
 ## 背景
@@ -37,7 +37,7 @@ shellHook から素の `apply --all` を実行すると、project の config だ
 全 config を適用し、フィルタは opt-in の修飾にとどめる。
 
 フィルタの規範（名指し apply との関係、root 権限で絞らずに実行したときの warning を含む）は
-REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b に置く。
+[--all は root モードフィルタで対象 config を絞れる](../requirements/apply-all-root-mode-filter.md) に置く。
 
 ## 根拠
 
@@ -46,7 +46,7 @@ REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b に置く。
 使えば、home mode の config に触れない。
 
 フラグ名を root マーカーと揃えると、config の書き方と CLI の指定が 1 対 1 に対応する。
-`--system-root` は system mode（ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c）の config を選ぶ。
+`--system-root` は system mode（[rootKind に system を足しても schemaVersion を上げない](system-rootkind-without-version-bump.md)）の config を選ぶ。
 
 ## 棄却した代替案
 

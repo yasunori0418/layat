@@ -65,10 +65,10 @@ generated:
   foreign symlink 上書きは warning で可視化する
 
 > **上は原文の写しで、規範は frontmatter が正**。手順 0〜0.7（配置前除去・退避）は
-> REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575 / REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26 / REQ-2b48620a-abaa-43df-a106-954bbba3de56 / REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98、張替えを unlink + symlink の
-> 2 操作で行うことは REQ-61856da1-8883-401e-ad57-9f326b96d400 の担当。`shellHook` 再入で起きる cross-config の振動は
-> REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 の担当。記録済み symlink の張替えを既定 silent とし `-v` で可視化するという
-> 出力規律そのもの（→ ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5・ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）は REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 / REQ-0a123b89-0399-4f76-b988-56a5f7e0becf の担当で、本 item は
+> [祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する](ancestor-symlink-nest-migration.md) / [実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する](real-dir-target-migration.md) / [method 変更は symlink→copy のみ配置前除去で移行し、copy→symlink は移行しない](method-change-symlink-to-copy-migration.md) / [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](backup-stage-position.md)、張替えを unlink + symlink の
+> 2 操作で行うことは [既存 symlink の張替えは unlink + symlink の 2 操作で行い冪等な再実行で収束させる](symlink-replace-unlink-symlink.md) の担当。`shellHook` 再入で起きる cross-config の振動は
+> [同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める](cross-config-target-oscillation.md) の担当。記録済み symlink の張替えを既定 silent とし `-v` で可視化するという
+> 出力規律そのもの（→ [指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)・[-v で配置レポートを opt-in で出す](../adr/verbose-opts-into-placement-report.md)）は [成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](silent-on-success.md) / [冗長度は -v、デバッグは --debug に分離し --json と直交させる](verbose-and-debug-separation.md) の担当で、本 item は
 > 「記録済みは warning にせず配置レポート側で扱い、foreign は warning を出す」という
 > 対比だけを規範とする。
 
@@ -77,4 +77,4 @@ generated:
 `docs/spec.md`「配置動作仕様」→「symlink モード」の手順 1〜3 と、同節の箇条書き
 第 3・4 項。
 
-決定の実体は ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d「cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する」。root 相対の配置元は ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7「root 相対マーカーのリンクを target 起点の相対パスで張る」が加えた。
+決定の実体は [cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](../adr/cross-config-last-wins-with-foreign-warning.md)「cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する」。root 相対の配置元は [root 相対マーカーのリンクを target 起点の相対パスで張る](../adr/root-relative-link-as-relative-path.md)「root 相対マーカーのリンクを target 起点の相対パスで張る」が加えた。

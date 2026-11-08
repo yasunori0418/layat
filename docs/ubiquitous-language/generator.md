@@ -13,7 +13,7 @@ generated:
 
 ## Definition
 
-What the layat CLI obtains a manifest from. Its contract has four operations under `internal/generator`: Discover (find the entrypoint), Roots (return the root kind and root without building), Build (place a link-farm that can be committed as a generation — a store path — at the pending path), and DryBuild (return the store path without a gcroot). The nix implementation (nixgen, `internal/generator/nixgen`) is the default. A generator is chosen only explicitly: `--generator`, then `LAYAT_GENERATOR`, then `layat.toml`, then `$XDG_CONFIG_HOME/layat/config.toml`, then the default `nix`. The engine does not care which generator produced the manifest (→ [ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2](../adr/generator-four-operations.md), [ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964](../adr/generator-chosen-explicitly-only.md)).
+What the layat CLI obtains a manifest from. Its contract has four operations under `internal/generator`: Discover (find the entrypoint), Roots (return the root kind and root without building), Build (place a link-farm that can be committed as a generation — a store path — at the pending path), and DryBuild (return the store path without a gcroot). The nix implementation (nixgen, `internal/generator/nixgen`) is the default. A generator is chosen only explicitly: `--generator`, then `LAYAT_GENERATOR`, then `layat.toml`, then `$XDG_CONFIG_HOME/layat/config.toml`, then the default `nix`. The engine does not care which generator produced the manifest (→ [生成器の契約を Discover / Roots / Build / DryBuild の 4 操作にする](../adr/generator-four-operations.md), [生成器は明示の指定だけで選ぶ](../adr/generator-chosen-explicitly-only.md)).
 
 ## Avoid
 
@@ -21,7 +21,7 @@ Saying the CLI runs `nix build` / `nix eval` itself (the nix generator does); sa
 
 ## 定義
 
-layat CLI が manifest を得る相手（生成器）。契約は `internal/generator` に置く 4 操作で、Discover（entrypoint の発見）・Roots（build せずに root の種別と root を返す）・Build（世代コミット可能な link-farm = store path を pending に張る）・DryBuild（gcroot を張らずに store path を返す）。nix 実装（nixgen・`internal/generator/nixgen`）が既定。生成器は明示指定でのみ選ばれ、`--generator`・`LAYAT_GENERATOR`・`layat.toml`・`$XDG_CONFIG_HOME/layat/config.toml`・既定 `nix` の順に解決する。エンジンはどの生成器が manifest を作ったかに関知しない（→ [ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2](../adr/generator-four-operations.md), [ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964](../adr/generator-chosen-explicitly-only.md)）。
+layat CLI が manifest を得る相手（生成器）。契約は `internal/generator` に置く 4 操作で、Discover（entrypoint の発見）・Roots（build せずに root の種別と root を返す）・Build（世代コミット可能な link-farm = store path を pending に張る）・DryBuild（gcroot を張らずに store path を返す）。nix 実装（nixgen・`internal/generator/nixgen`）が既定。生成器は明示指定でのみ選ばれ、`--generator`・`LAYAT_GENERATOR`・`layat.toml`・`$XDG_CONFIG_HOME/layat/config.toml`・既定 `nix` の順に解決する。エンジンはどの生成器が manifest を作ったかに関知しない（→ [生成器の契約を Discover / Roots / Build / DryBuild の 4 操作にする](../adr/generator-four-operations.md), [生成器は明示の指定だけで選ぶ](../adr/generator-chosen-explicitly-only.md)）。
 
 ## 避ける表現
 

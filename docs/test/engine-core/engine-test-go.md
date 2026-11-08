@@ -48,7 +48,7 @@ cwd を削除して `os.Getwd` を失敗させる固定 root の Abs 失敗の�
   返る）、相対 override が cwd 起点で絶対化されて返ること、git repo 外でのエラー、
   固定絶対 root の解決失敗、`fixed` でパスを省いた
   ときの拒否（エラー本文一致。manifest 層が受理する組み合わせを engine が止める責務
-  → CASE-4179dcb2-f199-4469-ae87-0927ece06e65 / TC-172548ea-154a-4e22-a169-8252a43e3781）、rootKind 未決（`""`）と未知の値の拒否（いずれも
+  → [manifest_test.go — v1 の復元と版の境界・未知フィールド・root 種別の拒否・既知値の確認](../integration/manifest-test.md) / [manifest の読み取りが v1 を正確に復元し版の境界・未知フィールド・不整合な root 種別を拒否する](../integration/manifest-decode-schema-guard.md)）、rootKind 未決（`""`）と未知の値の拒否（いずれも
   エラー本文一致。未知の値は `%q` のクォートまで含めて固定する）、profile ディレクトリ作成失敗・backref 書き込み失敗の
   エラー化
 - **out-of-store**: live symlink の配置、古くなった配置の除去、リンク先不一致時の保持、marker の
@@ -61,7 +61,7 @@ cwd を削除して `os.Getwd` を失敗させる固定 root の Abs 失敗の�
 - **conflict 報告**: 複数 conflict の全件列挙と件数を含む集約エラー、dryrun と本番 apply が
   同数の conflict を報告すること、
   自己矛盾する祖先・copy 構造不一致それぞれのガイダンス、種類混在時のガイダンス対応付け
-- **system mode**（TC-be3d3dc9-1ead-4e2e-8eea-46e1c8884562）: euid 0 以外を注入した apply が
+- **system mode**（[system mode の root 解決・基底切替・euid の条件が仕様どおりであること](system-mode-root-gate.md)）: euid 0 以外を注入した apply が
   `fs.ErrPermission` を wrap したエラーで止まり、root・profile 基底・記録基底に何も作らないこと、
   同じ注入の dryrun は通ること。`Geteuid` 未設定の非 root 実行もプロセスの euid で同じく止まること
   （root 実行では skip）。euid 0 を注入し `--root` を tmp に向けた apply が system 基底の

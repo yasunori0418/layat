@@ -18,7 +18,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-12ad7852-e689-44d7-b9fe-0667effb3d13, ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a, `docs/spec.md`, UBQ-12218337-953b-40c8-b9ec-6d8ee8ec0d4e, UBQ-6e764ddd-03ce-4bd1-be53-64d651783241
+- 関連: [entry の未知のキーを評価時に拒否する](strict-unknown-keys-rejected.md), [entry の配置種別のフィールドを method と名付ける](mode-renamed-to-method.md), `docs/spec.md`, [subpath](../ubiquitous-language/subpath.md), [src](../ubiquitous-language/src.md)
 - 起点: 「リポジトリ全体を示す文字列として `"."` 以外の表現は無いか」という問いの設計検討。ADR-0008 §1 と §5 を書き直した
 
 ## 背景
@@ -32,8 +32,8 @@ entry には「どの配置元か」を表す `src` と、「その中のどの�
 
 配置元の中のパスを表すフィールドを `subpath` と呼ぶ。`src` は Nix の慣例どおり残す。
 entries の記述・`manifest.json` のキー・Go engine のどこでも同じ `subpath` を使う。
-entry のフィールドと旧名の扱いは REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51、manifest の
-キーは REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336 に置く。
+entry のフィールドと旧名の扱いは [entry submodule は strict とし未知キーと旧名を評価時エラーにする](../requirements/entry-submodule-strict.md)、manifest の
+キーは [manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する](../requirements/manifest-entries-array.md) に置く。
 
 ## 根拠
 

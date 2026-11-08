@@ -14,9 +14,9 @@ generated:
 ## 使われ方
 
 layat の**中心的な配置モード**。任意のプロジェクトに layat を組み込み、root をプロジェクト
-ルートに解決して repo 内の任意パスへ nix store の物を配置する（→ ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed / ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e）。
+ルートに解決して repo 内の任意パスへ nix store の物を配置する（→ [root は 3 つの marker で表す](../adr/three-root-markers.md) / [project mode を第一の使い方とする](../adr/project-first.md)）。
 新規プロジェクトは `layat init project`、既に `flake.nix` がある既存 repo へは手動で組み込む
-（→ ADR-9fde06e2-fe42-4274-8af3-da2298cdaeae）。
+（→ [既存 flake への組込手順を docs に置く](../adr/existing-flake-integration-docs.md)）。
 
 具体例:
 
@@ -26,7 +26,7 @@ layat の**中心的な配置モード**。任意のプロジェクトに layat 
 
 主トリガは devShell。`devShells.<name>` の `shellHook` から layat をキックし、`nix develop` /
 direnv でプロジェクトに入ったときに配置される。CLI 本体は devShell の `packages` に pin 版
-`layat` を同梱するのが canonical（→ ADR-88231ffc-4836-4252-be34-894944fd28c3）。
+`layat` を同梱するのが canonical（→ [CLI が一次 UX で devShell に pin 版を同梱する](../adr/cli-primary-ux-devshell-pinned.md)）。
 
 ```nix
 # entrypoint(flake.nix)が manifest を公開し、devShell で layat apply する
@@ -46,8 +46,8 @@ devShells.${system}.default = pkgs.mkShell {
 > **上は分割時点の `docs/concept.md`（原文）からの写し**（コメントの出典注記は省いた）。
 > use_case は使われ方を述べる層で規範を持たないため、この例が示す各要素の規範は
 > `requirement` 側にある
-> （devShell 同梱 → REQ-14f0aec9-abae-4621-82f3-40536a1ad904、`layat.<name>` のアドレッシング → REQ-496b1a07-5b74-416b-9e5f-3952b4c03737、
-> devShell からの engine 起動 → REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9）。
+> （devShell 同梱 → [layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする](../requirements/cli-primary-ux-installation.md)、`layat.<name>` のアドレッシング → [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md)、
+> devShell からの engine 起動 → [devShell は shellHook から engine を起動する配線で、シェル入室のたびに project mode で配置する](../requirements/devshell-wiring.md)）。
 
 配置物は per-clone で再生成される前提の **ephemeral** であり、プロジェクトにはコミットされ
 ない。したがって activation は git 状態に干渉せず、`.gitignore` に入れるべき target は専用
@@ -69,7 +69,7 @@ devShells.${system}.default = pkgs.mkShell {
 `docs/concept.md`「プロジェクトに閉じた配置（project mode）」と「想定ユースケース」の
 project mode 節。
 
-あわせて「設計の哲学」の「home-manager に依存しない」節も、UC-f2436d68-91ff-4c48-b1df-47acefe4f464 とともに本 item が
+あわせて「設計の哲学」の「home-manager に依存しない」節も、[home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する](home-mode-pinned-repo-placement.md) とともに本 item が
 引き受ける。同節が述べる「HM 不在の環境でも同じ設定定義で動く」ことを体現するのは統合ではなく
 CLI 単体の使われ方であり、本 item では devShell の `shellHook` から engine を起動する配線が
 HM を介さずに成立することが同節に対応する。

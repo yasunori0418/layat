@@ -31,11 +31,11 @@ generated:
 アンカー形式が git toplevel = `.gitignore` 置き場所を前提とし、home / fixed では意味を
 成さないため）。`rollback` / `list-generations` が home / system mode 限定なのと対称。
 
-アンカー形式そのものは REQ-a480c183-40ce-4201-93b5-65a7a59c1b9e、home / system mode 限定の側は REQ-05abce3e-9797-432b-b93f-37c55d09afde の担当。
+アンカー形式そのものは [gitignore は配置 target を stdout へ列挙するだけでファイルを書き込まない](gitignore-anchored-output.md)、home / system mode 限定の側は [rollback と list-generations は home / system mode 限定にする](rollback-list-generations-home-only.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `gitignore` project mode 限定の
 箇条書き。
 
-決定の実体は ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe「配置 target を gitignore コマンドで stdout へ列挙する」。
+決定の実体は [配置 target を gitignore コマンドで stdout へ列挙する](../adr/gitignore-command.md)「配置 target を gitignore コマンドで stdout へ列挙する」。

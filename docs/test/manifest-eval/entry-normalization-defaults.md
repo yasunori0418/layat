@@ -25,7 +25,7 @@ attrset で宣言された entries が配列へ正規化される過程を、3 �
 
 ## 覆う CASE
 
-- CASE-59de34d4-d9d5-4ae0-b1be-44d2e775f031（`tests/nix-unit/defaults.nix`）
+- [nix-unit: defaults.nix — 既定適用・明示上書き・target 辞書順](nix-unit-defaults.md)（`tests/nix-unit/defaults.nix`）
 
 ## 出典
 

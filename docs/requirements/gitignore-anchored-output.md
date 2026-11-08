@@ -38,12 +38,12 @@ layat gitignore <name>          # 配置 target を .gitignore 向けに stdout 
 root = git toplevel = `.gitignore` 置き場所なので先頭 `/` が正しくアンカーし、別階層の
 同名パスを誤って無視しない。ディレクトリ / ファイルとも末尾 `/` は付けない。
 
-project mode 限定であることは REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9、`method` を区別しない点は REQ-60787ed2-4176-4bdd-800f-1600c0315551、
-`--all` の集約は REQ-1f128917-4424-4e37-8a88-e0bb23a09da7 の担当。
+project mode 限定であることは [gitignore は project mode 限定で非 project config を指定したらエラーで停止する](gitignore-project-mode-only.md)、`method` を区別しない点は [gitignore は method を区別せず copy target も含めて全 target を列挙する](gitignore-includes-copy-targets.md)、
+`--all` の集約は [gitignore --all は projectRoot の全 config の target をソート + 重複除去して出力する](gitignore-all-dedup.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `gitignore <name>` の箇条書き。
 
-決定の実体は ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe「配置 target を gitignore コマンドで stdout へ列挙する」（更新責務はプロジェクト管理者・アンカー形式・
+決定の実体は [配置 target を gitignore コマンドで stdout へ列挙する](../adr/gitignore-command.md)「配置 target を gitignore コマンドで stdout へ列挙する」（更新責務はプロジェクト管理者・アンカー形式・
 末尾 `/` を付けない）。

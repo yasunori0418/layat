@@ -41,12 +41,12 @@ generated:
 「対で保守する」ことを求めるのは、英語版と日本語版が別々の文書として並ぶ散文の側になる。
 
 どの文書を公開面に載せるか（掲載範囲）・ロケールの構成・フォールバックの実装は本 item の規範に
-含めない。INF-0865477b-21b2-4feb-9c06-1a882a4e595a が持つ。用語の正名は QA-4a623664-650d-4a08-800f-691f4ea6ff91 が固定し、本 item はその上で言語の
+含めない。[ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）](../infrastructure/docs-site.md) が持つ。用語の正名は [用語の正名は用語 item が固定し、執筆はそれに従う](glossary-fixes-canonical-terms.md) が固定し、本 item はその上で言語の
 canonical 性と対の保守だけを定める（分界の宣言であり、依存関係ではない）。
 
 ## 出典
 
 `docs/publication-roadmap.md` §1（英語化する面と日本語のまま維持する面の境界）が置いた方針と、
-INF-0865477b-21b2-4feb-9c06-1a882a4e595a の i18n 節（root ロケール = 英語・日本語は別ロケール・未翻訳ページは英語へ
+[ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）](../infrastructure/docs-site.md) の i18n 節（root ロケール = 英語・日本語は別ロケール・未翻訳ページは英語へ
 フォールバック）、README / README.ja の対と用語 item の英日の正名（索引は `docs/glossary.md`）が実運用してきた規範を、
 Issue #272 で quality item として立てたもの。

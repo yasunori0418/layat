@@ -41,8 +41,8 @@ layat は、配置先に記録外の実体があると conflict で止まり、�
 区切りの `--backup bak` は suffix として扱わない。`--backup` は apply 全体の修飾とし、entry
 ごとには指定させない。
 
-既定の suffix とフラグの書式は REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b に、`--all` との
-合成は REQ-687e225f-5046-46db-88fb-f9e527a1e97a に置く。
+既定の suffix とフラグの書式は [apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](../requirements/apply-backup-rename-aside.md) に、`--all` との
+合成は [apply 修飾フラグは --all と合成できる](../requirements/apply-modifier-flag-composition.md) に置く。
 
 ## 根拠
 

@@ -29,7 +29,7 @@ generated:
 - **project rootKind の prebuilt の使い方** — `--manifest` で渡した project の link-farm が git
   toplevel ではない場所へ置かれる
 - **devShell の起動条件** — `shellHook` からの起動が git toplevel を root に取らないか、generation
-  skip の短絡を前提にせず、シェル入室のたびに配置をやり直す（→ REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9）
+  skip の短絡を前提にせず、シェル入室のたびに配置をやり直す（→ [devShell は shellHook から engine を起動する配線で、シェル入室のたびに project mode で配置する](../requirements/devshell-wiring.md)）
 
 ## 影響
 

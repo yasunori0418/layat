@@ -40,13 +40,13 @@ layat apply <name> --dryrun     # dry-run。副作用ゼロで place/replace/rem
 非 conflict プランへ変わる（exit 0）。退避先が既に存在する場合は `--backup` 下でも conflict の
 まま。
 
-conflict に対応する終了コード 2 そのものは REQ-2c5a10d8-112b-4f96-947a-aba7164779c4、`--dryrun` が root を解決しつつ
-flock も pending gcroot も取らない点は REQ-7a71a049-5876-4cfc-a65e-44e9a0349856 の担当（通常 apply が out-link で
-gcroot を張る段そのものは REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9）。
+conflict に対応する終了コード 2 そのものは [終了コードは 0 = 成功 / 1 = 一般エラー / 2 = dryrun の conflict とする](exit-codes.md)、`--dryrun` が root を解決しつつ
+flock も pending gcroot も取らない点は [--dryrun は root を解決するが flock も pending gcroot も取らない](dryrun-no-lock-no-gcroot.md) の担当（通常 apply が out-link で
+gcroot を張る段そのものは [実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](exec-flow-eval-lock-build.md)）。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply <name> --dryrun` の箇条書き。
 
-決定の実体は ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1（`--dryrun` の conflict で非ゼロ終了・CI の事前確認）と、
-`--dryrun --backup` の組み合わせを定めた ADR-04c3bc0a-140b-4bc3-a47c-cacddeba5a71。
+決定の実体は [終了コードは 0 / 1 / 2 の 3 値にする](../adr/exit-code-scheme.md)（`--dryrun` の conflict で非ゼロ終了・CI の事前確認）と、
+`--dryrun --backup` の組み合わせを定めた [--dryrun --backup は退避で解ける箇所を conflict にしない](../adr/dryrun-backup-not-conflict.md)。

@@ -21,7 +21,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c, ADR-2119433e-de69-4447-85a5-575d58246007, ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131, ADR-59f63d1f-25df-4290-913f-02804c5eeade, ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799, `docs/design.md`
+- 関連: [store link を既定にし、out-of-store は明示関数でのみ選ばせる](store-link-default-out-of-store-opt-in.md), [engine を単一の固定 Go バイナリにする](engine-fixed-go-binary.md), [src の型で素の文字列を拒否する](srctype-bare-string-rejected.md), [root の型を mkManifest だけに持たせる](roottype-mkmanifest-only.md), [devShell の shellHook で配線する](devshell-shellhook-wiring.md), `docs/design.md`
 - 起点: ADR-0001 §d と ADR-0003 §d を書き直した
 
 ## 背景
@@ -36,8 +36,8 @@ derivation を作り、`home.file` で配置する。layat の lib は nixpkgs �
 
 `mkOutOfStoreSymlink` は、渡されたパスをマーカーに包んで返すだけの純粋関数とする。リンクを実際に
 張るのは engine で、HM モジュールでも HM の `mkOutOfStoreSymlink` には委ねない。マーカーの形は
-REQ-eb363122-385a-499c-a074-c95efb949d07、src の解決の時点は
-REQ-81249072-56b8-42f5-807b-ea623c1efe99 に置く。
+[mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](../requirements/mkoutofstoresymlink-marker.md)、src の解決の時点は
+[out-of-store の src は評価時の絶対パスか配置 root 相対のどちらかで、root 相対は target と同じ root に対して実行時に解決する](../requirements/out-of-store-eval-time-path.md) に置く。
 
 ## 根拠
 

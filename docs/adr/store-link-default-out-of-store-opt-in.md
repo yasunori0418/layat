@@ -18,7 +18,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a, ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131, `docs/concept.md`, `docs/spec.md`
+- 関連: [entry の配置種別のフィールドを method と名付ける](mode-renamed-to-method.md), [src の型で素の文字列を拒否する](srctype-bare-string-rejected.md), `docs/concept.md`, `docs/spec.md`
 - 起点: ADR-0001 §a と §b を書き直した
 
 ## 背景
@@ -34,8 +34,8 @@ Nix ストアを経由しない out-of-store symlink（手元のパスを直接�
 
 `src` の既定の挙動は常に Nix ストアへの symlink とする。out-of-store は lib の明示関数が返す
 マーカーを `src` に渡したときにだけ選ばれる。値の型による暗黙の分岐は持たない。`src` が取る形と
-マーカーの構築子は REQ-99ca5381-6c53-426c-b145-7b4297c53868 と
-REQ-eb363122-385a-499c-a074-c95efb949d07 に置く。
+マーカーの構築子は [src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する](../requirements/src-kinds-store-default.md) と
+[mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](../requirements/mkoutofstoresymlink-marker.md) に置く。
 
 ## 根拠
 

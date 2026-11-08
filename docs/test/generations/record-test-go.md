@@ -24,13 +24,13 @@ generated:
 
 ## 検証内容
 
-**読み書き**（TC-3c28934c-d098-40a3-b598-1b08117f9cf1）
+**読み書き**（[比較の基準を last-applied 記録 → profile → 空の順で読み、各操作が記録を FS の事実どおりに保つ](last-applied-baseline-precedence.md)）
 
 - 記録が無ければ「記録なし」、書いた記録は読み戻せ、roothash 系列では backref `.root` も置く
 - 破損した JSON・各必須フィールドの欠落や型違い・未知のフィールド・`recordVersion` が 1 でも 2 でもない記録を error にする
 - 削除は不在でも error にしない
 
-**出所（origin）**（TC-f0958a4c-b585-49c5-96a9-d7beff571e71）
+**出所（origin）**（[記録は版 2 で出所を持ち、読みは版 1 と 2 を受け付け、出所の食い違いを警告し、書き直しは出所を引き継ぐ](origin-mismatch-detection.md)）
 
 - 書きは常に `recordVersion` 2 で `origin` を持つ。`entrypoint` が空なら省き、出所が不明なら `origin` 自体を省く
 - 版 1 と、`origin` が `null` か不在の版 2 は origin 無しとして読み、それ以外の `generator` の値は読んだまま受け付ける。
@@ -56,7 +56,7 @@ generated:
 - euid 0 を注入した system mode の apply は、記録をユーザー state ではなく `SystemStateDir` 配下の
   `layat/<roothash>/<name>` に backref 付きで書く。`SystemStateDir` が空なら記録基底は
   `/var/lib/layat` になり、鍵は `--root` なしで `<name>`、ありで `<roothash>/<name>`
-  （TC-be3d3dc9-1ead-4e2e-8eea-46e1c8884562）
+  （[system mode の root 解決・基底切替・euid の条件が仕様どおりであること](../engine-core/system-mode-root-gate.md)）
 - apply 成功後の記録が、そのまま（内容を変えずに）埋め込んだ manifest・`linkFarm`・`appliedAt` を持つ
 - 書いた記録ファイルの mode が 0644 になる
 - FS 失敗時は記録を書かない。記録の書き込み失敗で apply が失敗し、配置が巻き戻り commit しない

@@ -24,13 +24,13 @@ generated:
 
 - 入力は 2 entry。1 つは `subpath` を明示（`skills/nix`）、もう 1 つは `subpath` / `target` /
   `method` を全て省略して既定適用を通す。既定と明示の双方が文書へ現れる状態を固定する
-- 配置元は TP-d3d06fe4-6940-4df8-b111-bb4096d5444f の fake flake-input double イディオムに従い、2 つは store hash を
+- 配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) の fake flake-input double イディオムに従い、2 つは store hash を
   違える（`000…-fake-src` と `111…-other`）
 - どの不変条件も名指ししていないフィールドの追加・削除・改名が、ここで差分として現れる
 
-スナップショットに委ねてよい範囲をどこまでとするかは TC-de6514e2-9105-45a6-a5b9-d474911a401b が持つ。
+スナップショットに委ねてよい範囲をどこまでとするかは [manifest 文書全体をスナップショットに固定し、どの不変条件も名指ししない変更を差分として出す](manifest-document-regression.md) が持つ。
 
 ## 出典
 
 `tests/namaka/manifest-project/expr.nix` の現行実装からの逆算（→ Issue #273「L1〜L4」節）。
-namaka を併用する設計判断は ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0 / DSG-fb49e36c-eb20-4efa-8cac-88ef0873db8e が持つ。
+namaka を併用する設計判断は [テストを sandbox 可否で flake check と E2E に分ける](../../adr/test-strategy-layers.md) / [lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する](../../design/lib-test-nix-unit-namaka.md) が持つ。

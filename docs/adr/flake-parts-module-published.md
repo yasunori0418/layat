@@ -21,13 +21,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1, GitHub Issue #26
+- 関連: [named manifest を専用の layat.<name> 名前空間に公開する](layat-name-namespace.md), GitHub Issue #26
 - 起点: Issue #26。ADR-0029 §1 と ADR-0029 §4 を書き直した
 
 ## 背景
 
 named manifest は `layat.<system>.<name>` という専用の output に公開する
-（ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1）。`layat` は標準の flake output でも、flake-parts の
+（[named manifest を専用の layat.<name> 名前空間に公開する](layat-name-namespace.md)）。`layat` は標準の flake output でも、flake-parts の
 module が型を登録した output でもないので、`perSystem` に書いても top-level へ転置されない。
 
 そのため layat 自身の dogfood は、top-level の `flake` ブロックで system ごとに
@@ -45,8 +45,8 @@ flake-parts には、`perSystem.<name>` の値をそのまま `flake.<name>.<sys
 layat 自身の flake もこの module で dogfood する。dogfood の import は、`self.flakeModules.default` を
 経由せず、公開と同じパスを直接参照する。
 
-outputs の構成は DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58 に、`modules/` の中での位置付けは
-DSG-aeb5e219-4784-4950-845c-35f9bab9179c に置く。
+outputs の構成は [layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する](../design/flake-outputs-attrs.md) に、`modules/` の中での位置付けは
+[modules は common.nix に共通オプションを集約し、統合層ごとに 1 ファイルへ分ける](../design/modules-file-split.md) に置く。
 
 ## 根拠
 

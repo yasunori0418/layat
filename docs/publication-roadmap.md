@@ -134,7 +134,7 @@ sub-issue #76〜#82（+ 安全網テスト #97/#98）は全マージ済み・親
 すべて stdlib-only 制約に整合。→ この backlog は #60（sub-issue #83〜#90 + #81）として issue 化され、着手前にコードと比べた結果、perf 系タスク（#83/#86/#87/#89）は実体消滅（wontfix / 実装済み / 対象不在）と判明し、残る 5 件（#81/#84/#85/#88/#90）を軽量再スコープした上で全完了・親 #60 クローズ済み。再計画の経緯と各タスクの最終スコープは tracking #91 を参照。
 
 **高優先（当初計画・#60 で再スコープ済み）:**
-- `reverifyStale` の plan 時 Lstat 結果キャッシュ化（重複 I/O 削減）→ #83 は wontfix（ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c の TOCTOU 再検証と正面衝突・重複 I/O なしと判明）
+- `reverifyStale` の plan 時 Lstat 結果キャッシュ化（重複 I/O 削減）→ #83 は wontfix（[古くなった配置の除去は記録どおりの symlink だけに限る](adr/conservative-removal-invariant.md) の TOCTOU 再検証と正面衝突・重複 I/O なしと判明）
 - Apply / Rollback / Reset の「lock → 操作 → cleanup」共通化（`executeWithLock` 抽出）→ #84 で薄い `acquireProfileLock` ヘルパとして実装（closure 型 `executeWithLock` は不採用）
 - copy / symlink の `Executor` interface dispatch 統一（place.go / copy.go / drift.go の責務分散解消・テスト容易性向上）→ #85 で `ensureParentDir` 抽出として実装（Executor interface は不採用）
 

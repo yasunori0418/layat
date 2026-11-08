@@ -15,7 +15,7 @@ generated:
 
 `Apply` を end-to-end で実行し、FS を変更する各段の途中で失敗させたときに、その run が
 加えた変更が全て巻き戻り、apply 前の状態へ戻ることを検証する。故障は実 FS の条件で
-誘発する（→ TP-deb05610-44bc-4962-8939-952392e5fbd0）。
+誘発する（→ [原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](../../test-plan/fault-injection-atomicity.md)）。
 
 故障注入の手法は、対象ディレクトリを mode 0o555 にして「plan 時の `Lstat` / `ReadDir` は
 通るが execute 時の書き込みだけが EACCES で落ちる」状態を作ること。通常ファイルで
@@ -38,4 +38,4 @@ generated:
 
 ## 対応する CASE
 
-CASE-154af597-df3e-49fb-a96b-b4f371dfcc63（`internal/engine/undo_journal_test.go`）。
+[undo_journal_test.go — 実 FS 故障注入による end-to-end 巻き戻しと commit 失敗の非対称性](undo-journal-test-go.md)（`internal/engine/undo_journal_test.go`）。

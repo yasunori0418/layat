@@ -41,12 +41,12 @@ method 変更 copy→symlink は**自動移行しない**（ユーザー編集�
 従来通り conflict のまま）。
 
 > **上は原文の写しで、規範は frontmatter が正**。copy→symlink の conflict は `--backup`
-> を付ければ退避 + 配置される（REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b）。退避が配置手順のどの段に入るかは
-> REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 の担当。
+> を付ければ退避 + 配置される（[apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md)）。退避が配置手順のどの段に入るかは
+> [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](backup-stage-position.md) の担当。
 
-祖先 symlink の migration は REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575、実 dir target の migration は REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26 の
-担当。除去を既定 silent とし `-v` で可視化するという出力規律そのもの（→ ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5・ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）は
-REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 / REQ-0a123b89-0399-4f76-b988-56a5f7e0becf の担当で、本 item は「この除去を warning にせず配置レポート側で
+祖先 symlink の migration は [祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する](ancestor-symlink-nest-migration.md)、実 dir target の migration は [実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する](real-dir-target-migration.md) の
+担当。除去を既定 silent とし `-v` で可視化するという出力規律そのもの（→ [指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)・[-v で配置レポートを opt-in で出す](../adr/verbose-opts-into-placement-report.md)）は
+[成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](silent-on-success.md) / [冗長度は -v、デバッグは --debug に分離し --json と直交させる](verbose-and-debug-separation.md) の担当で、本 item は「この除去を warning にせず配置レポート側で
 扱う」ことだけを規範とする。
 
 ## 出典
@@ -54,4 +54,4 @@ REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 / REQ-0a123b89-0399-4f76-b988-56a5f7e0b
 `docs/spec.md`「配置動作仕様」→「symlink モード」の手順 0.6 と、同節の箇条書き
 「method 変更 copy→symlink は自動移行しない」。
 
-決定の実体は ADR-fc28d09c-9d52-4539-8838-e9ae5a414594・ADR-02ed93fa-c59f-4790-805d-759501017d2b。
+決定の実体は [method の symlink から copy への変更を自動で移行する](../adr/symlink-to-copy-migration.md)・[method の copy から symlink への変更は移行しない](../adr/copy-to-symlink-stays-conflict.md)。

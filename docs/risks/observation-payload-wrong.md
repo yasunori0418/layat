@@ -30,22 +30,22 @@ false」「到達しなかった entry が一覧から消える」といった�
 世代観測の nil 表現も同じ系統にある。世代を観測できない状況（profile リンクが世代リンク
 でない・そもそも世代を進めない run）で、観測できなかったことを nil で表さずに 0 や現在値を
 返せば、消費側は「世代 0 へ戻った」「世代が進んだ」と読む。project mode が世代をユーザーへ
-公開しない（`rollback` / `list-generations` を出さない → REQ-05abce3e-9797-432b-b93f-37c55d09afde）という区別も、
+公開しない（`rollback` / `list-generations` を出さない → [rollback と list-generations は home / system mode 限定にする](../requirements/rollback-list-generations-home-only.md)）という区別も、
 観測値が漏れ出せば崩れる。ただしその公開／非公開の強制は CLI 側にあり（名指しの実行は
 `rootKind` を見て拒否する分岐が、全 config を対象とする列挙は entrypoint を評価せず
 profile の配置構造だけで落とす別機構が担う）、engine 層の観測値が nil を正しく運ぶ
-ところまでが TC-1d19aebc-e1e6-4d6f-9440-3efbd69b18a8 / TC-527b5034-715a-4df1-871a-072dc9062704 の守備範囲になる。非公開の強制そのものは
-TC-f304d682-bc5e-4369-a427-f766fdfdd961 が持ち、名指しの拒否と全件列挙からの除外の両方の処理を覆う。前者は entrypoint の評価で
+ところまでが [実行結果のインベントリ・世代観測・到達状態・構造化 warning が実態を表す](../test/generations/result-observation-fields.md) / [実 nix を通した home mode で世代がコミットされ、rollback が前世代の配置へ戻る](../test/generations/home-generation-e2e.md) の守備範囲になる。非公開の強制そのものは
+[project mode の世代は公開されず、拒否のときは理由が利用者へ届く](../test/integration/project-mode-generation-nondisclosure.md) が持ち、名指しの拒否と全件列挙からの除外の両方の処理を覆う。前者は entrypoint の評価で
 root の種別を解決した後にしか機能しないため、実際に評価を通す e2e でしか見られない。
 覆えない範囲（fixed root での拒否の検証・名指しの拒否が engine へ到達しないこと）は
 同 TC が残件として挙げている。
 
 `list-generations --all` は観測しか行わない処理として約束されており（読み取り専用 →
-REQ-05abce3e-9797-432b-b93f-37c55d09afde）、列挙が profile リンクや世代の本数・配置を動かせばその約束が崩れる。
+[rollback と list-generations は home / system mode 限定にする](../requirements/rollback-list-generations-home-only.md)）、列挙が profile リンクや世代の本数・配置を動かせばその約束が崩れる。
 これを本 risk が抱えるのは、観測が実態を写し取るという前提そのものが破れる点で
 観測値のずれと同根だからで、値を読む側から見れば「読んだ結果と実態が違う」も
 「読んだこと自体が実態を変えた」も区別できない。どちらも失敗として現れない。
-ただしこれを確かめる範囲は home 側の profile / 世代 / 配置に限る（→ TC-527b5034-715a-4df1-871a-072dc9062704）。
+ただしこれを確かめる範囲は home 側の profile / 世代 / 配置に限る（→ [実 nix を通した home mode で世代がコミットされ、rollback が前世代の配置へ戻る](../test/generations/home-generation-e2e.md)）。
 
 ## 実現性
 
@@ -61,10 +61,10 @@ JSON を読んで判断する運用では誤った成功判定に直結する。
 
 ## 緩和
 
-TC-1d19aebc-e1e6-4d6f-9440-3efbd69b18a8（実行結果の観測フィールドと到達状態の分割）と TC-527b5034-715a-4df1-871a-072dc9062704（e2e での
+[実行結果のインベントリ・世代観測・到達状態・構造化 warning が実態を表す](../test/generations/result-observation-fields.md)（実行結果の観測フィールドと到達状態の分割）と [実 nix を通した home mode で世代がコミットされ、rollback が前世代の配置へ戻る](../test/generations/home-generation-e2e.md)（e2e での
 `--json` 観測と `--all` の読み取り専用）が緩和する。世代の公開／非公開の強制は
-TC-f304d682-bc5e-4369-a427-f766fdfdd961（project mode の世代は公開されず、拒否のときは理由が利用者へ届く）が
+[project mode の世代は公開されず、拒否のときは理由が利用者へ届く](../test/integration/project-mode-generation-nondisclosure.md)（project mode の世代は公開されず、拒否のときは理由が利用者へ届く）が
 緩和し、名指しした project mode の config に対する拒否（拒否の成立・理由の伝達・
-一覧の非漏出）を CASE-1fc8b8b9-d8c6-45f4-96a6-862de693822e が、全 config を対象とする列挙からの除外を
-CASE-2e7b9ea2-4e4d-48ca-9e1e-0bfbb6223ff2 が覆う。読み取り専用の被覆は列挙に現れる home 側に限り、除外された
-project mode の profile が動かないことは未被覆（→ TC-527b5034-715a-4df1-871a-072dc9062704）。
+一覧の非漏出）を [e2e 01-project — project mode の配置と --all の部分失敗を実 nix で通す](../test/integration/e2e-01-project.md) が、全 config を対象とする列挙からの除外を
+[e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復](../test/generations/e2e-02-home.md) が覆う。読み取り専用の被覆は列挙に現れる home 側に限り、除外された
+project mode の profile が動かないことは未被覆（→ [実 nix を通した home mode で世代がコミットされ、rollback が前世代の配置へ戻る](../test/generations/home-generation-e2e.md)）。

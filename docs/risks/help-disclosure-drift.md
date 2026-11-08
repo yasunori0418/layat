@@ -17,7 +17,7 @@ generated:
 ## リスク
 
 `layat --help` の開示ブロック（`cmd/layat/main.go` の `rootCmdLong`）は、
-REQ-4ffda99a-7062-4c00-915f-70b525cb215b の「内部実行する nix コマンドを開示する」規範の唯一の実装になっている。
+[内部実行する nix コマンドを開示し世代の切替と GC は標準の nix コマンドへ委譲する](../requirements/nix-command-transparency-and-delegation.md) の「内部実行する nix コマンドを開示する」規範の唯一の実装になっている。
 文面は手書きの定数で、実際に nix の引数を組み立てるのは `internal/generator/nixgen/nixgen.go` と
 `cmd/layat/init.go` である。両者は独立に編集されるため、サブコマンドの追加、build の段数の変更、
 フラグの差し替えがあっても文面は追随しないまま残りうる。
@@ -36,7 +36,7 @@ REQ-4ffda99a-7062-4c00-915f-70b525cb215b の「内部実行する nix コマン�
 
 ## 対処
 
-TC-b4262641-776c-427d-8331-1a94b29fa568（開示ブロックとサブコマンドごとの nix 呼び出しの一致）で緩和する。
+[--help の開示ブロックがサブコマンドごとに実際の nix 呼び出しと一致する](../test/cli-json/help-disclosure-matches-nixgen.md)（開示ブロックとサブコマンドごとの nix 呼び出しの一致）で緩和する。
 
 **緩和しきれない残余**:
 
@@ -48,7 +48,7 @@ TC-b4262641-776c-427d-8331-1a94b29fa568（開示ブロックとサブコマン�
 - 比較するサブコマンドはテストに列挙したものに限られる。新しく nix を実行するサブコマンドが
   増えても、テストに足さない限り検出しない
 - 世代バックエンドはテストで fake に差し替えるため、apply と rollback が実行する `nix-env` の
-  呼び出しは比較しない。REQ-4ffda99a-7062-4c00-915f-70b525cb215b が開示を求めるのは manifest 生成器の
+  呼び出しは比較しない。[内部実行する nix コマンドを開示し世代の切替と GC は標準の nix コマンドへ委譲する](../requirements/nix-command-transparency-and-delegation.md) が開示を求めるのは manifest 生成器の
   コマンドで、`nix-env` はブロックに載っていない
 - prune / status が nix を実行しないことの比較で観測するのは `nix` 実行ファイルの呼び出しだけで、
   `nix-env` などほかの nix 系コマンドの実行は検出しない

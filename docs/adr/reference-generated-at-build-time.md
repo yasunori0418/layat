@@ -20,13 +20,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4, GitHub Issue #57
+- 関連: [ドキュメントサイトのソースを同じリポジトリの site/ に置く](docs-site-in-same-repository.md), GitHub Issue #57
 - 起点: Issue #57 のサイト設計。ADR-0037 §3 を書き直した
 
 ## 背景
 
 ドキュメントサイトには、手書きの usage ガイドのほかに API リファレンスを載せる
-（ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4）。リファレンスの出どころは Nix の `lib/` と Go のソースの
+（[ドキュメントサイトのソースを同じリポジトリの site/ に置く](docs-site-in-same-repository.md)）。リファレンスの出どころは Nix の `lib/` と Go のソースの
 2 つである。これをソースからどう作り、生成物をどう扱うかが決まっていなかった。
 
 ## 決定
@@ -35,7 +35,7 @@ API リファレンスはソースのコメントから抽出して作る。Nix 
 付けて nixdoc で、Go は godoc のコメントから gomarkdoc で生成する。生成した markdown はリポジトリに
 コミットせず、CI とローカルのビルドで毎回生成する。
 
-抽出の対象と、Nix のコメントの使い分けは INF-0865477b-21b2-4feb-9c06-1a882a4e595a に置く。
+抽出の対象と、Nix のコメントの使い分けは [ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）](../infrastructure/docs-site.md) に置く。
 
 ## 根拠
 

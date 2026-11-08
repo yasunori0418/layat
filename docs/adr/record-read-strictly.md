@@ -31,7 +31,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-0db061d1-fa30-436d-91d7-c0cec8804c52, ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e, ADR-d97154cd-a2e5-4853-a682-800ff9435c89, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93, GitHub Issue #580, #406, #498
+- 関連: [last-applied 記録に出所を持たせる](record-carries-origin.md), [project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md), [同一 profileDir への同時実行は後勝ちにする](same-profiledir-target-last-wins.md), [rollback は FS を収束させてからポインタを動かす](rollback-baseline-and-pointer-last.md), [1 config = 1 profile を全モードで自前に持つ](one-config-one-profile-all-modes.md), [古くなった配置の除去は manifest の差分で行う](stale-removal-by-manifest-diff.md), GitHub Issue #580, #406, #498
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）と Issue #498（epic）の grilling（2026-10-31）。ADR-0058 §4d と ADR-0070 §2 を書き直した
 
 ## 背景
@@ -40,7 +40,7 @@ generated:
 比較の基準は profile か空へ後退し、記録が正しければ消したはずの entry を残したり、消すべきでない
 entry を消したりする。
 
-記録には版がある。記録に出所を持たせると（ADR-0db061d1-fa30-436d-91d7-c0cec8804c52）記録の形が変わるが、
+記録には版がある。記録に出所を持たせると（[last-applied 記録に出所を持たせる](record-carries-origin.md)）記録の形が変わるが、
 それより前に書かれた記録は手元に残る。
 
 ## 決定

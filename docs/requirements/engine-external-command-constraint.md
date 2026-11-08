@@ -33,10 +33,10 @@ engine は `manifest.json` を入力に取り、外部コマンドは `git`（to
 配置そのもの（place / replace / remove）と古くなった配置の保守的な除去は **ネイティブ FS 操作**で
 行う。世代操作（コミット・一覧・切替）は世代バックエンドの契約越しで、engine は世代を誰が
 管理するかに関知しない。既定バックエンド nixprofile が `nix-env` を自パッケージの内側で
-実行する（REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）。
+実行する（[engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)）。
 
 外部コマンドの依存を 1 つに閉じることで、engine の動作が実行環境のコマンド群に左右される
-範囲を限定する。2 層構成そのものは REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 が規定する。
+範囲を限定する。2 層構成そのものは [layat は CLI とエンジンの 2 層で構成する](two-layer-architecture.md) が規定する。
 
 ## 出典
 
@@ -44,6 +44,6 @@ engine は `manifest.json` を入力に取り、外部コマンドは `git`（to
 （「`manifest.json` を入力に取り nix(profile)/git(toplevel)のみ叩く」「ネイティブ FS
 操作で place/replace/remove、保守的 stale 除去、nix-env --set」）。
 
-決定の実体は ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7「engine が直接叩く外部コマンドを git に限る」で、`rsync` / `ln` の runtime 依存を落とし FS 操作を
+決定の実体は [engine が直接叩く外部コマンドを git に限る](../adr/engine-external-command-git-only.md)「engine が直接叩く外部コマンドを git に限る」で、`rsync` / `ln` の runtime 依存を落とし FS 操作を
 ネイティブ Go（`os.Symlink` / ネイティブ再帰コピー）で行うことを定めている。外部コマンドを
-`git` のみに限り、profile 操作を世代バックエンドの契約へ移したのは ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7。
+`git` のみに限り、profile 操作を世代バックエンドの契約へ移したのは [engine が直接叩く外部コマンドを git に限る](../adr/engine-external-command-git-only.md)。

@@ -13,22 +13,22 @@ generated:
 
 ## テスト条件
 
-`Prune`（→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1）の安全機構を、孤児系列を含む state dir の
+`Prune`（→ [prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする](../../design/prune-orphan-series.md)）の安全機構を、孤児系列を含む state dir の
 tmpdir で駆動して検証する。何を対象と判定するかは
-TC-bc653f83-70ce-4920-b7cd-9b70a4cd2cae の担当で、ここは「対象と判定したものを実際に消してよいか」
+[prune が孤児系列だけを系列ごと消し、生存・判定不能な系列は理由付きで残す](prune-target-accuracy.md) の担当で、ここは「対象と判定したものを実際に消してよいか」
 だけを見る。
 
 **`--dryrun` の非破壊性** — `DryRun` で駆動すると FS が一切変わらず、削除予定が `Removed` に
 入って返る。lock も取らないので、dryrun 中に他の engine が同じ系列の lock を取れる（dryrun が
-lock を取ると本番の apply をブロックする脅威は RISK-33e30498-6fa1-450b-a251-5624cbe837b9 が
+lock を取ると本番の apply をブロックする脅威は [dryrun が副作用を残す、または本番 apply と異なる結果を報告する](../../risks/dryrun-diverges-from-apply.md) が
 同型で持つ）。preview が preview であることの担保。
 
 **確認へ渡る情報** — `Confirm` コールバックに渡る `PruneResult` に、削除予定系列の root パスが
 入っている。CLI が root パス一覧を表示できる材料が engine から出ていることの担保
-（アンマウント中 root の誤判定に対する唯一の手段 → ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66）。**材料が出ていることまでが
+（アンマウント中 root の誤判定に対する唯一の手段 → [prune は削除前に root パスの一覧を示して確認を取る](../../adr/prune-confirms-with-root-list.md)）。**材料が出ていることまでが
 この TC の範囲**で、CLI が実際にそれを表示するかは cli-json 区分の残余になる（既存の
-TC-b0e0cdb8-0c56-4eb8-8d4e-86569af85dec はプロンプトを出すか出さないかの方針、
-TC-b4a365cd-0b1c-40ff-92c6-91f6cffe8e98 は stdout / stderr の排他しか見ておらず、プロンプトの
+[破壊的操作の確認が対話性と同意フラグの組み合わせで決まり非対話で止まらない](../cli-json/confirm-policy-interactivity.md) はプロンプトを出すか出さないかの方針、
+[stdout を機械可読出力が専有し人間向けの出力が stderr に留まる](../cli-json/stream-ownership.md) は stdout / stderr の排他しか見ておらず、プロンプトの
 中身はどちらの範囲にも入らない）。
 
 **非同意の中断** — `Confirm` が false を返したら削除せず、`Aborted` を立てて返る。FS は
@@ -40,7 +40,7 @@ TC-b4a365cd-0b1c-40ff-92c6-91f6cffe8e98 は stdout / stderr の排他しか見�
 warning になる（② 判定不能を削除として扱わない）。全部取れた系列は lock を保持したまま削除され、
 削除後に解放される（③）。③ は終点だけでなく**保持区間**を見る — 削除の最中に別プロセスが同じ
 profileDir の lock を取れないことまで確かめないと、削除前に解放する実装も同じく通ってしまう
-（早すぎる解放は RISK-2b17fefb-6e92-4513-9e7c-de21897c9cfe と同型の実害を生む）。`<name>` を
+（早すぎる解放は [flock による直列化が破れ、同一 config への同時実行が互いの配置を壊す](../../risks/lock-serialization-broken.md) と同型の実害を生む）。`<name>` を
 1 つも持たない `.root` だけの系列は lock なしで削除される（④）。同じ実行に含まれる他の孤児系列は
 削除される（1 系列の skip が全体を止めない）。lock の解放を待たないことも併せて見る。
 
@@ -48,9 +48,9 @@ profileDir の lock を取れないことまで確かめないと、削除前に
 `Skipped` になるのは 1 セルだけで、残る 3 セルはすべてエラーになる。
 
 - **何も消えていない × 権限** — `Skipped` に `permission-denied` として現れ、warning が出て、
-  他の基底・他の系列の削除は続く。ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e の非 root 実行がここに当たる。root で回すと権限
+  他の基底・他の系列の削除は続く。[prune は system 基底も走査し、権限の無い系列を見送る](../../adr/prune-scans-system-base-skips-unpermitted.md) の非 root 実行がここに当たる。root で回すと権限
   失敗を誘発できず何も確かめないまま通るので、`os.Geteuid() == 0` を検出して skip する
-  （→ TP-deb05610-44bc-4962-8939-952392e5fbd0 の横断規約）
+  （→ [原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](../../test-plan/fault-injection-atomicity.md) の横断規約）
 - **何も消えていない × 権限以外** — `Skipped` に入らずエラーで返る。`errors.Is` を省いて「着手前の
   失敗は理由を問わず skip」と書いた実装は、このセルが無ければ全ケースを通ってしまい、read-only
   FS 上の系列が「権限を直せば消える」と読める形で報告される。
@@ -84,7 +84,7 @@ profileDir の lock を取れないことまで確かめないと、削除前に
 - **`.root` の残存** — 失敗した系列に `.root` が残っており、再実行で同じ系列がふたたび走査対象に
   なる。削除順を破る実装（`<roothash>` を一発で `RemoveAll` する等）は「`Removed` に入らず
   エラーが返る」だけなら通ってしまうが、系列は二度と辿れなくなる
-  （→ RISK-0909e121-8ec4-40c8-ab1c-562e61f31067）
+  （→ [prune の dryrun・確認・lock の安全機構が働かず、同意なく削除が実行される](../../risks/prune-safety-gate-bypass.md)）
 
 安全機構としての意味は「消し切れなかったことがユーザーに届く」ことなので、どの場面でも失敗が握り潰され
 ないことを見る。
@@ -92,12 +92,12 @@ profileDir の lock を取れないことまで確かめないと、削除前に
 engine が見るのは `Confirm` コールバックだけで、TTY 判定と `--yes` / `--json` の解釈は CLI 側の
 責務（cli-json 区分の担当）。
 
-上位の規範は TP-e7c25263-6d2d-4a37-8275-26906889d912（`internal/engine/` を実 FS の tmpdir で
+上位の規範は [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../../test-plan/go-test-layering.md)（`internal/engine/` を実 FS の tmpdir で
 駆動する統合レベル）。
 
 ## 対応する CASE
 
-- CASE-49ac6d68-ed29-41aa-b939-dcfdc8711082（`internal/engine/prune_test.go`）
-- CASE-b19188cb-e3f0-4c52-8c92-6db96bbbb45a（`tests/e2e/scenarios/08-prune.sh`）— `--dryrun` の
+- [prune_test.go — 孤児系列の判定と系列ごとの削除・dryrun / 確認 / lock / 削除段の失敗](prune-test-go.md)（`internal/engine/prune_test.go`）
+- [e2e 08-prune — 実 apply が作った系列を root 削除で孤児にし、prune が系列ごと消して gcroot が外れる](e2e-08-prune.md)（`tests/e2e/scenarios/08-prune.sh`）— `--dryrun` の
   非破壊性を実 CLI を通して見るだけ。lock 規律と削除段の失敗は誘発が実機で成立しないので上の
   CASE が持つ

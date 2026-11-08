@@ -17,7 +17,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc
+- 関連: [読み取り専用の列挙は info で返す](readonly-enumeration-as-info.md)
 - 起点: ADR-0033 §1b を書き直した
 
 ## 背景
@@ -31,7 +31,7 @@ generated:
 `gitignore` の既定の出力は行指向のまま変えず、`--json` を付けたときだけ JSON に切り替える。行と
 JSON の 2 つの契約が並ぶことを受け入れる。
 
-`--json` のときに行指向の出力を出さないことは REQ-2353259f-5878-452a-8e11-3445de69abc2 に置く。
+`--json` のときに行指向の出力を出さないことは [--json 指定時は行指向 stdout を出さずエンベロープが stdout を専有する](../requirements/json-stdout-exclusive.md) に置く。
 
 ## 根拠
 

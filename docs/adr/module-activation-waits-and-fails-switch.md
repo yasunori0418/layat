@@ -30,7 +30,7 @@ lock を取れなければ待たずに諦める `--no-wait` があり、engine �
 
 activation は `--no-wait` を付けずに engine を起動し、lock を取れるまで待つ。engine が非 0 で
 終わったら activation もそのまま失敗させ、switch を止める。規範は
-REQ-8085f194-c903-4ecb-abd8-c719fe7b3292 に置く。
+[home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](../requirements/hm-activation-contract.md) に置く。
 
 ## 根拠
 

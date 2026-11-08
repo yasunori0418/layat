@@ -18,11 +18,11 @@ generated:
 `internal/engine/undo_test.go`
 
 tmpdir 上の実 FS に対し、`Apply` を通さず undo ジャーナルの内部関数を直接駆動する
-ユニットテスト（→ ADR-56325270-20bb-4959-8498-e3223c35e24b、issue #168）。
+ユニットテスト（→ [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](../../adr/in-memory-undo-journal.md)、issue #168）。
 
 ## 検証内容
 
-**逆操作単体**（TC-9504e908-a4bc-4d2d-80d3-af07264284f8）
+**逆操作単体**（[undo の逆操作が、対応する前方操作の直前状態を単体で復元する](undo-inverse-op-correctness.md)）
 
 - `undoUnlinkNew` — 新規配置した symlink を除去する。前方操作の配置先が既に消えている
   場合もエラーにしない
@@ -34,7 +34,7 @@ tmpdir 上の実 FS に対し、`Apply` を通さず undo ジャーナルの内�
   で戻す
 - `undoMkdir` — PreRemove の RemoveRmdir が消したディレクトリを再作成する
 
-**unwind とライフサイクル**（TC-83fe0d4a-9730-431a-b7f9-b731060b9484）
+**unwind とライフサイクル**（[unwind が LIFO で巻き戻し、1 件の失敗でも継続して全件報告し、成功時は journal を破棄する](unwind-lifo-and-journal-lifecycle.md)）
 
 - LIFO 順序 — 「子 symlink を unlink → 親を rmdir」の前方バッチを LIFO で巻き戻すと、
   親の mkdir が子の再作成より先になる

@@ -19,7 +19,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-45380022-d959-4b22-aa05-5993ac1f3c87, ADR-9e328362-2e90-441a-8eca-40081ce71b1b, ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4
+- 関連: [flock は明示実行で待ち、hook 実行でスキップする](flock-mode-explicit-wait-hook-skip.md), [エラーはエンベロープに構造化し stderr のテキストと併存させる](structured-errors-with-stderr.md), [配置の振動はユーザー責任とし、文書で注意するに留める](oscillation-is-user-responsibility.md)
 - 起点: ADR-0031 §1・§4 を書き直した
 
 ## 背景
@@ -36,8 +36,8 @@ generated:
 何も付けなければ沈黙するので、`--quiet` は持たない。
 
 warning / error と `reset` の確認プロンプトを沈黙の対象外にすることは
-REQ-8ef34101-8150-4124-92d5-94fabe6b5d90 に、`--quiet` を提供しないことは
-REQ-0a123b89-0399-4f76-b988-56a5f7e0becf に置く。
+[成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](../requirements/silent-on-success.md) に、`--quiet` を提供しないことは
+[冗長度は -v、デバッグは --debug に分離し --json と直交させる](../requirements/verbose-and-debug-separation.md) に置く。
 
 ## 根拠
 

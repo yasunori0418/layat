@@ -27,12 +27,12 @@ generated:
   `method` を全て省略して既定適用を通す
 - 両 entry の target が `.config/` 前置済みで、`root` が `{"rootKind":"home"}` だけである状態を
   固定する。`subdir` が文書のどこかへ現れれば差分になる
-- 配置元は TP-d3d06fe4-6940-4df8-b111-bb4096d5444f の fake flake-input double イディオムに従い、2 つは store hash を
+- 配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) の fake flake-input double イディオムに従い、2 つは store hash を
   違える（`000…-fake-src` と `111…-other`）
 
-スナップショットに委ねてよい範囲をどこまでとするかは TC-de6514e2-9105-45a6-a5b9-d474911a401b が持つ。前置と root の不変は
-TC-7d713505-5673-4e15-99bf-e98965e18892 の名前付きアサート（CASE-9e8e3151-2c56-4c53-89ec-3e9fc5f1e06f）でも守る。
+スナップショットに委ねてよい範囲をどこまでとするかは [manifest 文書全体をスナップショットに固定し、どの不変条件も名指ししない変更を差分として出す](manifest-document-regression.md) が持つ。前置と root の不変は
+[subdir 適用形が全 target に正規化済みの前置を施し、root と単体 marker を変えず、不正な subdir を評価時に拒否する](root-subdir-sugar.md) の名前付きアサート（[nix-unit: root-subdir.nix — root マーカーの subdir 適用形](nix-unit-root-subdir.md)）でも守る。
 
 ## 出典
 
-`tests/namaka/manifest-subdir/expr.nix` の実装。規範は REQ-08c8f639-790c-4970-a954-c9567538cf9b。
+`tests/namaka/manifest-subdir/expr.nix` の実装。規範は [root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](../../requirements/root-marker-subdir-sugar.md)。

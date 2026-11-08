@@ -30,8 +30,8 @@ profileDir に素の symlink を置いても GC root にはならない。
 既定の nix 生成器の Build は、link-farm を profileDir の中の固定パス `.pending` に out-link を張って build し、
 そのリンクから store path を返す。適用に成功したら、engine が `.pending` を消す。`--dryrun` は配置しないので、out-link を張らない。
 
-out-link を張る段は REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9、`--dryrun` の扱いは
-REQ-7a71a049-5876-4cfc-a65e-44e9a0349856 に置く。
+out-link を張る段は [実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](../requirements/exec-flow-eval-lock-build.md)、`--dryrun` の扱いは
+[--dryrun は root を解決するが flock も pending gcroot も取らない](../requirements/dryrun-no-lock-no-gcroot.md) に置く。
 
 ## 根拠
 

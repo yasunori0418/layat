@@ -30,12 +30,12 @@ generated:
 生成できなくなる形（doc-comment の構文エラーなど）は残るため、ビルド可能性の検証を CI に
 置いてマージ前に捕まえる。
 
-抽出元・抽出ツール・掲載範囲・サイトの構成は本 item の規範に含めない。INF-0865477b-21b2-4feb-9c06-1a882a4e595a が持つ。
+抽出元・抽出ツール・掲載範囲・サイトの構成は本 item の規範に含めない。[ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）](../infrastructure/docs-site.md) が持つ。
 
 ## 出典
 
-ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4、ADR-f82e33bd-0534-4266-89bf-f1d9a2dbe258、
-ADR-da7b74a6-bab4-43ea-8f1c-cf843b8b58cc、ADR-1e010fa2-a3d9-42b5-9641-d68d9db9f405 が
+[ドキュメントサイトのソースを同じリポジトリの site/ に置く](../adr/docs-site-in-same-repository.md)、[ドキュメントサイトを GitHub Actions から Cloudflare Pages へ配備する](../adr/docs-site-on-cloudflare-pages.md)、
+[リファレンスをビルド時に生成する](../adr/reference-generated-at-build-time.md)、[ドキュメントサイトは英語をルートのロケールにする](../adr/docs-site-english-root-locale.md) が
 置いた方針を、基盤（INF）から分離して quality item として立てたもの。当初は
-QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c（ドキュメントグラフの機械検証）と 1 件にまとめていたが、根拠 ADR も支える基盤も
+[ドキュメントグラフのトレーサビリティは機械的に検証する](document-graph-mechanically-verified.md)（ドキュメントグラフの機械検証）と 1 件にまとめていたが、根拠 ADR も支える基盤も
 別で片方だけ改訂され得るため、Issue #242 のレビューで 2 件へ分けた。

@@ -29,13 +29,13 @@ config から entry が消えたら、前回置いた symlink を除去しなけ
 store に埋め込む。比較の基準は last-applied 記録があれば記録の manifest、無ければ自 profile の
 current 世代の store manifest とし、host の世代は読まない。
 
-manifest の置き場所と比較の基準の選び方は REQ-1be4d678-959c-44d7-a346-44bfd95af56e、比較の基準を
-使った除去の条件は REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2 に置く。
+manifest の置き場所と比較の基準の選び方は [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](../requirements/generation-mechanism-link-farm-manifest.md)、比較の基準を
+使った除去の条件は [古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](../requirements/stale-removal-invariants.md) に置く。
 
 ## 根拠
 
 store に埋め込んだ manifest は変わらず、世代が GC root なので世代とともに残る。last-applied 記録が
-無いときも、前回の内容を自 profile の世代から読める。記録を優先する理由と優先順は ADR-a91585ad-971a-4558-9f25-b7fcd6e57671 が
+無いときも、前回の内容を自 profile の世代から読める。記録を優先する理由と優先順は [古くなった配置の除去は、比較の基準を記録から優先して読む](baseline-prefers-record.md) が
 決めている。home-manager も前世代と新世代の manifest を比べて除去しており、実績がある。
 
 ## 棄却した代替案
@@ -44,7 +44,7 @@ store に埋め込んだ manifest は変わらず、世代が GC root なので�
 
 世代に manifest が無いので、rollback で戻る世代の内容を世代から読めない。last-applied 記録は
 最後に置いたものしか持たず、rollback の戻り先は世代から読むので、世代ごとの store manifest を
-置き換えない（ADR-be5865a8-000a-491f-8438-6308076ea727）。
+置き換えない（[rollback の戻り先は世代リンクから読む](rollback-target-from-generation-link.md)）。
 
 ### 新しい manifest に無い target を全て除去する
 

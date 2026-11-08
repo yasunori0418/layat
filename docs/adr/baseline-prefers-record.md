@@ -29,13 +29,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93, ADR-facd3173-a5ce-4d81-90a9-370fb26428ff, ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-d97154cd-a2e5-4853-a682-800ff9435c89, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, GitHub Issue #580, #406
+- 関連: [古くなった配置の除去は manifest の差分で行う](stale-removal-by-manifest-diff.md), [apply は世代の commit の前に記録を書く](apply-writes-record-before-commit.md), [project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md), [rollback は FS を収束させてからポインタを動かす](rollback-baseline-and-pointer-last.md), [1 config = 1 profile を全モードで自前に持つ](one-config-one-profile-all-modes.md), GitHub Issue #580, #406
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §3a を書き直した
 
 ## 背景
 
 古くなった配置の除去は、前回の manifest（比較の基準）と新しい manifest
-の差分で行う（ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93）。last-applied 記録を導入しても、
+の差分で行う（[古くなった配置の除去は manifest の差分で行う](stale-removal-by-manifest-diff.md)）。last-applied 記録を導入しても、
 記録を持たない既存の環境はある。記録と profile が両方あって食い違うこともある。記録は世代の commit
 より前に書く。そのため commit が失敗すると、記録が新しく、profile が古いまま残る。
 
@@ -46,9 +46,9 @@ generated:
 warning を 1 行出す。どちらも無い初回は、「last-applied 記録なし」の warning を 1 行出す。
 
 この順序を使う処理（apply の古くなった配置の除去と drift 修復・reset の撤去対象・rollback
-の比較の基準）と warning の細目は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 と
-DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5 に、世代機構の側の読み方は
-REQ-1be4d678-959c-44d7-a346-44bfd95af56e に置く。
+の比較の基準）と warning の細目は [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](../requirements/last-applied-record.md) と
+[last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](../design/last-applied-record-layout.md) に、世代機構の側の読み方は
+[世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](../requirements/generation-mechanism-link-farm-manifest.md) に置く。
 
 ## 根拠
 

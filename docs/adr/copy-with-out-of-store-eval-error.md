@@ -19,7 +19,7 @@ generated:
 
 ## 背景
 
-entry の `src` に out-of-store マーカー（`mkOutOfStoreSymlink` や、ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb の root 相対マーカー
+entry の `src` に out-of-store マーカー（`mkOutOfStoreSymlink` や、[root 相対マーカーを別関数 mkRootRelativeSymlink で作る](mkrootrelativesymlink-separate-function.md) の root 相対マーカー
 `mkRootRelativeSymlink`）を渡し、`method = "copy"` を指定することは、型の上では書ける。この
 組み合わせで engine が何をするかを決める必要があった。
 
@@ -27,7 +27,7 @@ entry の `src` に out-of-store マーカー（`mkOutOfStoreSymlink` や、ADR-
 
 `method = "copy"` と out-of-store マーカーの併用は、`normalizeManifest` が評価時に `lib.throwIf`
 で拒否する。絶対パスのマーカーにも root 相対のマーカーにも同じく適用する。規範の細目は
-REQ-16faf428-77f3-492f-b858-222c5274cbf7 に置く。
+[意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](../requirements/normalize-manifest-cross-field-checks.md) に置く。
 
 ## 根拠
 

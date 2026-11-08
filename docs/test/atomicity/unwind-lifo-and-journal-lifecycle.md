@@ -14,7 +14,7 @@ generated:
 
 ## テスト条件
 
-個々の逆操作の正しさ（TC-9504e908-a4bc-4d2d-80d3-af07264284f8）ではなく、journal 全体を扱う層の振る舞いを検証する。
+個々の逆操作の正しさ（[undo の逆操作が、対応する前方操作の直前状態を単体で復元する](undo-inverse-op-correctness.md)）ではなく、journal 全体を扱う層の振る舞いを検証する。
 
 **LIFO 順序** — 複数エントリを積んだ journal は last-in-first-out で巻き戻される。順序が
 結果を左右するのは前方操作に依存関係があるときで、代表形は PreRemove の「子 symlink を unlink →
@@ -28,9 +28,9 @@ generated:
 
 **成功時の journal 破棄** — commit 成功後の discardJournal が `--recopy` の rename 退避
 ファイルを掃除する。undo は起きなかったのだから、新しい copy がそのまま残る。
-`--backup` の退避を掃除しない側は TC-ed4992c0-8513-4383-be0a-e45acbbc229f が担当する。
+`--backup` の退避を掃除しない側は [--backup の退避が opt-in で発動し、commit 後は残り、途中失敗では戻る](backup-aside-lifecycle.md) が担当する。
 
 ## 対応する CASE
 
-CASE-02475ac2-5555-4fa1-a3e5-cda5015919c5（`internal/engine/undo_test.go`）・CASE-154af597-df3e-49fb-a96b-b4f371dfcc63
+[undo_test.go — 逆操作単体と unwind の順序・best-effort・journal 破棄](undo-test-go.md)（`internal/engine/undo_test.go`）・[undo_journal_test.go — 実 FS 故障注入による end-to-end 巻き戻しと commit 失敗の非対称性](undo-journal-test-go.md)
 （`internal/engine/undo_journal_test.go` の `preRemove` 直接駆動）。

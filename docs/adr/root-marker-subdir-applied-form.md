@@ -18,7 +18,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137, `docs/spec.md`, UBQ-e6466d28-6ab6-43be-a370-cca82eb1cfdb
+- 関連: [root は 3 つの marker で表す](three-root-markers.md), [layat.lib.mkEnv で buildEnv 合成環境を提供する](mkenv-buildenv.md), `docs/spec.md`, [root](../ubiquitous-language/root.md)
 - 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。ADR-0040 §1a を書き直した
 
 ## 背景
@@ -28,14 +28,14 @@ generated:
 `--root` は実行時に一律に上書きするもので、絶対パス文字列は評価時に固定される root なので、
 どちらも「マーカーを実行時に解決し、その下へ宣言的にずらす」ことは表せない。grilling で、この
 要望は root より下の方向へずらす意図だと確かめた。root は 3 つのマーカー
-（ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed）か絶対パス文字列で指定する。
+（[root は 3 つの marker で表す](three-root-markers.md)）か絶対パス文字列で指定する。
 
 ## 決定
 
 3 つの root マーカーは、単体で使えば従来どおりのマーカーで、`homeRoot { subdir = ".config"; }`
 のように引数を適用すると `subdir` を持つマーカーを返す。単体での使い方は変えない。適用形の
-引数の規則は REQ-08c8f639-790c-4970-a954-c9567538cf9b、root が取る形は
-REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 に置く。
+引数の規則は [root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](../requirements/root-marker-subdir-sugar.md)、root が取る形は
+[root は 3 マーカーと絶対パス文字列の union を取る](../requirements/root-marker-kinds.md) に置く。
 
 ## 根拠
 

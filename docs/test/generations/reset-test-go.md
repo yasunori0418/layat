@@ -35,7 +35,7 @@ generated:
   （`TestResetRequiresBackend`）
 - euid 0 以外を注入した system mode の `reset` は `fs.ErrPermission` を wrap したエラーで止まり、
   root・profile 基底・記録基底に何も作らない。同じ注入の `--dryrun` は通る
-  （TC-be3d3dc9-1ead-4e2e-8eea-46e1c8884562）
+  （[system mode の root 解決・基底切替・euid の条件が仕様どおりであること](../engine-core/system-mode-root-gate.md)）
 - euid 0 を注入した system mode の `reset` は `SystemDir` の profile と `SystemStateDir` 配下の記録を
   対象に撤去し、全撤去で記録を消す。ユーザー state と `Backend.SystemBase` には何も作らない
-  （TC-be3d3dc9-1ead-4e2e-8eea-46e1c8884562）
+  （[system mode の root 解決・基底切替・euid の条件が仕様どおりであること](../engine-core/system-mode-root-gate.md)）

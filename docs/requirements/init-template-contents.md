@@ -61,10 +61,10 @@ starter を小さく保ち、ユーザーが不要分を削除する手間を最
 - `.envrc`（direnv）は同梱しない（非利用者に不要ファイルを増やすため。コメント案内に
   留める）。
 
-混在 footgun そのものは REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b の担当。
+混在 footgun そのものは [--all は root モードフィルタで対象 config を絞れる](apply-all-root-mode-filter.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「`layat init`」→「テンプレートの内容（最小 + 手厚いコメント）」。
 
-決定の実体は ADR-7b9ecd2c-6b77-43c4-8fb4-3ad034e618e1・ADR-75d1dcc2-e270-4193-a72c-863a57967baf・ADR-fcd03235-afe0-41ba-8ea9-c14bed3988da・ADR-653e6a28-76dd-44b3-99e2-3be189a3c1c4。
+決定の実体は [template に置く動く example を 1 config に絞る](../adr/templates-minimal-example-with-comments.md)・[project template の .gitignore 手順をコード近くのコメントで示す](../adr/project-template-gitignore-guide-in-comments.md)・[devShell の shellHook は config を名指しして apply する](../adr/shellhook-applies-named-config.md)・[template に .envrc を同梱しない](../adr/templates-without-envrc.md)。

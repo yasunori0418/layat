@@ -37,7 +37,7 @@ generated:
 
 規範は frontmatter が正。
 
-home mode と project mode は世代の扱いが異なる。この差異そのものは REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 の担当で、
+home mode と project mode は世代の扱いが異なる。この差異そのものは [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md) の担当で、
 本 item は root の値と対応するモードまでを規定する。
 
 ## 出典
@@ -45,9 +45,9 @@ home mode と project mode は世代の扱いが異なる。この差異その�
 `docs/spec.md`「lib API」→「`lib.mkManifest`」→「`root` の値」、および「root の解決」→
 「system mode（`root = systemRoot`・将来）」節。後者は「root = `/`」「distro 構想の system
 配置 seam」「今回の実装スコープ外」の 3 点からなり、規範として残る「root = `/`」が本 item の
-表と同一のため、独立 item を立てず本 item に含めた。残る 2 点は、ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c・ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed が system mode の
+表と同一のため、独立 item を立てず本 item に含めた。残る 2 点は、[rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)・[root は 3 つの marker で表す](../adr/three-root-markers.md) が system mode の
 実装を決定したため規範に採らない。
 
 > **marker の関数適用形（`subdir`）**: 適用形 `homeRoot { subdir = ".config"; }` は本 item の
-> 担当範囲外で、その規範は REQ-08c8f639-790c-4970-a954-c9567538cf9b が持つ。適用形は root の値と
+> 担当範囲外で、その規範は [root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](root-marker-subdir-sugar.md) が持つ。適用形は root の値と
 > `rootKind` を変えないので、本 item は原文の範囲（root の値と対応するモード）に留まる。

@@ -32,11 +32,11 @@ generated:
 許容する。commit 成功後の `.pending` の除去は build 出力の一時リンクの片付けで、engine の
 素の FS 操作（gcroot の概念を持たない）。
 
-pending out-link を張る段そのものは REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9 の担当。
+pending out-link を張る段そのものは [実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](exec-flow-eval-lock-build.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「実行フロー」の `.pending` gcroot 残存の箇条書き。
 
-決定の実体は ADR-58fdbad9-5ed7-469d-b6b2-6462b2173888「.pending の残留を許容する」。commit 後の片付けを engine の FS 操作として
-位置づけたのは ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818「.pending の後片付けを gcroot を知らない engine の FS 操作として行う」。
+決定の実体は [.pending の残留を許容する](../adr/pending-leftover-tolerated.md)「.pending の残留を許容する」。commit 後の片付けを engine の FS 操作として
+位置づけたのは [.pending の後片付けを gcroot を知らない engine の FS 操作として行う](../adr/pending-cleanup-without-gcroot.md)「.pending の後片付けを gcroot を知らない engine の FS 操作として行う」。

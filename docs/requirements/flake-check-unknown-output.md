@@ -45,12 +45,12 @@ generated:
 で行う。将来 upstream の flake-schemas（PR #8892）がマージされたら `schemas.layat` で
 消す余地を残す。
 
-専用 namespace を使う判断そのものは REQ-205d744d-5a53-4511-bc09-892ba01d4e6f の担当。
+専用 namespace を使う判断そのものは [config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない](default-config-name-and-namespace.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「再現性スタンス」節の blockquote「`nix flake check` と `layat`
 カスタム output」。
 
-決定の実体は ADR-40dd7945-5792-4b80-bdfa-43f95f482554「flake check の警告は無害として許容する」（unknown 警告は想定内・主検証は `nix build`。
+決定の実体は [flake check の警告は無害として許容する](../adr/flake-check-warnings-tolerated.md)「flake check の警告は無害として許容する」（unknown 警告は想定内・主検証は `nix build`。
 transpose しても警告が消えないことの確認を含む）。

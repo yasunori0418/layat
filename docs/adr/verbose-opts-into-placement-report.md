@@ -19,7 +19,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-45380022-d959-4b22-aa05-5993ac1f3c87, ADR-9e328362-2e90-441a-8eca-40081ce71b1b, ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4, ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc
+- 関連: [flock は明示実行で待ち、hook 実行でスキップする](flock-mode-explicit-wait-hook-skip.md), [エラーはエンベロープに構造化し stderr のテキストと併存させる](structured-errors-with-stderr.md), [配置の振動はユーザー責任とし、文書で注意するに留める](oscillation-is-user-responsibility.md), [読み取り専用の列挙は info で返す](readonly-enumeration-as-info.md)
 - 起点: ADR-0031 §2・ADR-0033 §2d を書き直した
 
 ## 背景
@@ -34,7 +34,7 @@ generated:
 `-v` / `--verbose` を付けたときだけ、配置レポート（サマリと target ごとの行）・skip の通知・
 `--all` の完了サマリを stderr に出す。`-v` と `--json` は互いに独立したフラグで、どちらも他方を含まない。
 
-レポートに含める内容とフラグの組み合わせは REQ-0a123b89-0399-4f76-b988-56a5f7e0becf に置く。
+レポートに含める内容とフラグの組み合わせは [冗長度は -v、デバッグは --debug に分離し --json と直交させる](../requirements/verbose-and-debug-separation.md) に置く。
 
 ## 根拠
 

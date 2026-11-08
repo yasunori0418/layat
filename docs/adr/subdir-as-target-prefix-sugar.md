@@ -19,7 +19,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509, ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137, `docs/spec.md`
+- 関連: [root マーカーに subdir の適用形を持たせる](root-marker-subdir-applied-form.md), [root は 3 つの marker で表す](three-root-markers.md), [layat.lib.mkEnv で buildEnv 合成環境を提供する](mkenv-buildenv.md), `docs/spec.md`
 - 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。ADR-0040 §2a を書き直した
 
 ## 背景
@@ -37,8 +37,8 @@ config の名前だけで鍵にするので、同じ名前の config が `subdir
 
 `subdir` は `normalizeManifest` が全 entry の正規化後の target に前置する、評価時の糖衣とする。
 root の解決値・`rootKind`・`manifest.json` のスキーマ・`schemaVersion` は変えず、engine は
-`subdir` を知らない。前置の規則は REQ-08c8f639-790c-4970-a954-c9567538cf9b、root マーカーが
-種別だけを運び解決を engine が行うことは REQ-3f541d39-da41-4ef8-858b-707f54cf6a29 に置く。
+`subdir` を知らない。前置の規則は [root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](../requirements/root-marker-subdir-sugar.md)、root マーカーが
+種別だけを運び解決を engine が行うことは [root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](../requirements/root-markers-runtime-resolution.md) に置く。
 
 ## 根拠
 

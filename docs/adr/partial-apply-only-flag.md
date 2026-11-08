@@ -20,14 +20,14 @@ generated:
 
 初期の spec では、config の一部の entry だけを適用する `--only` を CLI に持たせていた。
 
-世代管理を nix profile に乗せると決めた際（ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30）、この提案は実装に入る前に棄却された。
+世代管理を nix profile に乗せると決めた際（[世代は link farm と nix profile に乗せる](generations-on-link-farm-and-nix-profile.md)）、この提案は実装に入る前に棄却された。
 profile の世代は manifest 全体を単位に atomic に切り替わるので、一部の entry だけを適用すると
 世代の記録と実際の配置がずれるためである。CLI に `--only` が実装されたことは無い。
 
 ## 決定
 
 `--only` は提供しない。選択的に更新したいときは config（`layat.<name>`）を分ける。
-規範は REQ-4fc98fa6-fd5f-4f25-8b10-60755bf49bd2 に置く。
+規範は [一部 entry だけを適用する --only は提供しない](../requirements/no-only-flag.md) に置く。
 
 ## 根拠
 

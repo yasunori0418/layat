@@ -17,7 +17,7 @@ generated:
 
 `internal/engine/prune_test.go`
 
-`Prune`（→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1）を、tmpdir に手で組んだ 2 つの走査基底
+`Prune`（→ [prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする](../../design/prune-orphan-series.md)）を、tmpdir に手で組んだ 2 つの走査基底
 （`internal/generation` の `Fake` が state 配下に返すユーザー基底と、tmpdir の偽の system 基底）に
 対して駆動する統合レベルのテスト。判定の入力は backref `.root` と root の実在だけなので、fixture は
 `Apply` を回さずディレクトリとファイルで組む（root が一度も存在しなかった系列を表現するため）。
@@ -26,7 +26,7 @@ system 基底は `SystemDir` の上書きか `Fake{System}` で tmpdir へ向け
 
 ## 検証内容
 
-### 判定の正確性（→ TC-bc653f83-70ce-4920-b7cd-9b70a4cd2cae）
+### 判定の正確性（→ [prune が孤児系列だけを系列ごと消し、生存・判定不能な系列は理由付きで残す](prune-target-accuracy.md)）
 
 - **孤児の削除** — root を消した系列は `<roothash>` ごと消え、配下の `<name>` profile・世代
   リンク・`.pending`・`.root` が残らない
@@ -60,7 +60,7 @@ system 基底は `SystemDir` の上書きか `Fake{System}` で tmpdir へ向け
   全 skip が同一書式を通るため「何か warn されたか」に縮退し、理由や系列を取り違えた実装が通る）。
   基底が読めないケースは基底パスの名指しを見る
 
-### 安全機構（→ TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9）
+### 安全機構（→ [prune の dryrun が副作用ゼロで、非同意は中断し、lock 中の系列は skip され、削除段の失敗は進捗と理由で振り分けられる](prune-safety-gates.md)）
 
 - **dryrun の非破壊性** — FS が一切変わらず、削除予定が `Removed` に入る。lock も取らないので
   dryrun 後に同じ profileDir の lock が取れる。lock 保持中の系列も dryrun では `Removed` に載る
@@ -96,13 +96,13 @@ system 基底は `SystemDir` の上書きか `Fake{System}` で tmpdir へ向け
   rmdir を ENOTEMPTY で失敗させると、非権限の失敗がエラーで返り `permission-denied` へ丸められない
   （root でも成立する誘発）。**「何も消えていない × 権限以外」に直接対応するケースは持たない** —
   静的 fixture では root-proof に誘発できず、実装へフォールト注入の seam を足さない裁定に従う
-  （→ TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9 の但し書き）。`!removedAny` 条件を守るのは上の
+  （→ [prune の dryrun が副作用ゼロで、非同意は中断し、lock 中の系列は skip され、削除段の失敗は進捗と理由で振り分けられる](prune-safety-gates.md) の但し書き）。`!removedAny` 条件を守るのは上の
   権限 2 セルの対
 - **`Removed` の正の側** — 失敗より前に完了した系列は `Removed` に残る
 - **後続の系列へ進まない** — 失敗した系列より**後にソートされる**健全な孤児系列を fixture へ
   置き、それが削除されず `Removed` にも現れないことを見る。失敗系列が常に最後に処理される
   fixture だけだと、中途半端な状態の系列を残したまま後続を削除し続ける実装でも通ってしまう。これは
   **ENOTEMPTY 側（root でも成立する誘発）のケースが持つ** — 権限側に置くと root 実行で
-  被覆ごと消える（→ TP-deb05610-44bc-4962-8939-952392e5fbd0 の横断規約）
+  被覆ごと消える（→ [原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](../../test-plan/fault-injection-atomicity.md) の横断規約）
 - **`.root` の残存と再実行** — 失敗した系列に `.root` が残り、権限を戻した再実行が同じ系列を
   ふたたび対象にして削除する（削除順が `<name>` → `.root` → `<roothash>` であることの担保）

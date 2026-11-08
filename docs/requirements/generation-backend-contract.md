@@ -83,12 +83,12 @@ generated:
   `manifest.json`・世代リンクの解決）は契約を経由せず直接読む。外部バックエンドが実在した
   時点で読み操作を契約へ移す。
 - `.pending` の後片付けは build 出力の一時リンクの片付けであり、engine の `os.Remove` のまま。
-  pending の有界性は REQ-840b3641-6e76-46da-82e9-680cabd65abe の担当。
+  pending の有界性は [失敗時に残る pending gcroot は config あたり最大 1 個に有界とし回収処理を持たない](pending-gcroot-bounded.md) の担当。
 
-engine が叩く外部コマンドが `git` のみになることは REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564、
-世代操作と GC の委譲先は REQ-706de717-4e47-471a-a1c0-448635be159c、パッケージ構成は
-DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814 の担当。
+engine が叩く外部コマンドが `git` のみになることは [engine が叩く外部コマンドは git のみに限る](engine-external-command-constraint.md)、
+世代操作と GC の委譲先は [世代操作は世代バックエンドの契約越しに行い、GC root の間引きと store 解放は nix コマンドへ分けて委譲する](generation-gc.md)、パッケージ構成は
+[internal/generation は契約・Generation 型・FS ベースの Fake を親パッケージに、nix-env 実装を nixprofile サブパッケージに置き、engine は Backend 1 フィールドで受ける](../design/generation-package-layout.md) の担当。
 
 ## 出典
 
-ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9・ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8・ADR-1cbacca1-1930-46ca-bf82-30310f82216e・ADR-4c8d459a-c371-4f0d-b009-16e2ca096e49・ADR-eb1aa25f-a0ca-4efe-bcd9-4cbe11368764・ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd・ADR-8b8c9109-a479-4571-8b10-5a6079127441・ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7・ADR-efa7685c-6fa4-45df-b7a3-8f3f58e4118c・ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883。
+[世代バックエンドを nix 実装 1 つに留める](../adr/single-nix-generation-backend.md)・[世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)・[世代の一覧を nix-env を経由せず世代リンクの走査で得る](../adr/generation-list-scans-links.md)・[世代バックエンドのテストダブルを FS ベースの Fake に統一する](../adr/fs-based-generation-fake.md)・[世代バックエンドの注入を必須にし nix-env への暗黙のフォールバックを持たない](../adr/generation-backend-required-no-fallback.md)・[profileDir の内部レイアウトを世代バックエンド契約の固定部分にする](../adr/profiledir-layout-fixed-in-contract.md)・[前世代の読み取りは契約に載せず engine が直接読む](../adr/generation-reads-outside-contract.md)・[engine が直接叩く外部コマンドを git に限る](../adr/engine-external-command-git-only.md)・[Build の事後条件を世代バックエンドがコミットできる link-farm のパスに置く](../adr/build-postcondition-committable-link-farm.md)・[state の基底を設定で上書きさせない](../adr/state-bases-not-configurable.md)。

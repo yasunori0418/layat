@@ -24,12 +24,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-c4ad9987-850e-4834-bbea-d8de3b073548, ADR-a51897c5-f709-4b7a-8db2-61e6ebb0040c, ADR-acc31876-df36-485e-b356-92ae60e26db7
+- 関連: [copy は世代の外に place-once で置く](copy-outside-generations-place-once.md), [独立した操作はサブコマンドにし、操作の修飾はフラグにする](subcommand-set.md), [reset は非対話の実行で --yes を必須にする](reset-confirmation-and-yes.md)
 - 起点: ADR-0020 §1（apply --recopy で copy target を上書き再コピーする）を書き直した
 
 ## 背景
 
-copy は世代の外に place-once で置く（ADR-c4ad9987-850e-4834-bbea-d8de3b073548）。一度置いた
+copy は世代の外に place-once で置く（[copy は世代の外に place-once で置く](copy-outside-generations-place-once.md)）。一度置いた
 target には以後触れないので、`src` を更新しても copy した側には反映されない。反映するには、
 target を手で消してから apply をやり直すしかなかった。
 
@@ -42,9 +42,9 @@ layat は copy した内容の hash を記録していない。そのため、�
 config の全 copy target を現在の `src` から無条件に上書きする。copy は世代の外のままで、
 `--recopy` が世代を増やすことはない。
 
-上書きの対象と手順は REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065 に、上書き時の退避は
-REQ-b4e4b65d-6e35-40c3-a00e-20c14043df6f に、place-once の既定は
-REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9 に置く。
+上書きの対象と手順は [apply --recopy は config 内の全 copy target を src から無条件に上書き再コピーする](../requirements/apply-recopy.md) に、上書き時の退避は
+[recopy の上書きは削除ではなく同一親内への rename 退避で行う](../requirements/recopy-rename-aside.md) に、place-once の既定は
+[copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](../requirements/copy-place-once.md) に置く。
 
 ## 根拠
 

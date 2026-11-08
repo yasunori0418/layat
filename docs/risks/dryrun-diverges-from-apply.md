@@ -32,11 +32,11 @@ conflict / change が本番 apply の結果と一致することである。ど�
 
 ## 評価
 
-- likelihood: medium — TC-a5eb7de3-a1a7-41ae-8fb9-c2aa374ac894 が副作用の不在と conflict 件数の一致を覆っているが、
+- likelihood: medium — [dryrun が副作用を持たず、本番 apply と同数の conflict を報告すること](../test/engine-core/dryrun-readonly-parity.md) が副作用の不在と conflict 件数の一致を覆っているが、
   dryrun は本番 apply と同じ処理を分岐で共有するため、apply 側に段を足すたびに
   「dryrun でも実行されてしまう」形の混入が起こりうる。加えて同 TC は比較が件数までで
   「どの target が conflict になったか」の集合一致は見ていないことを自ら残余として挙げて
-  おり、「想定する失敗」4 点目の終了コードは RISK-bd1e4ada-4a0d-4672-96cf-028f488c0540 側が持つ
+  おり、「想定する失敗」4 点目の終了コードは [失敗の帰属層と終了コードがずれ部分失敗の成否判定を誤らせる](error-layering-exit-code.md) 側が持つ
 - impact: medium — 副作用側の破れが作る変化（profile ディレクトリ・flock・pending gcroot）は
   layat が自分で管理する範囲に閉じ、dryrun を読み取り専用へ直したうえでの再実行と、必要なら
   `reset` で回復する。ユーザーの実データは触らない。破れが成功時に表面化せず、並行実行や

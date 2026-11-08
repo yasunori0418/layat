@@ -58,4 +58,4 @@ engine の `Status` が記録基底を走査した結果について、網羅・
 - 実行の前後で記録ファイルの内容が変わらない（記録を書き換えない）
 - profileDir の lock を別に保持した状態でも、`Status` は待たずに返る（flock を取らない）
 
-上位の規範は TP-e7c25263-6d2d-4a37-8275-26906889d912（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。
+上位の規範は [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../../test-plan/go-test-layering.md)（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。

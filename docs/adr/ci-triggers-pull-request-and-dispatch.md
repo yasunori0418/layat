@@ -29,7 +29,7 @@ generated:
 ジョブ段のガードで push のイベントを除外する。`test-doc-matrix` は、生成の入力を変える PR では
 ステップ段の filter によって PR の上でも実行する。
 
-トリガとジョブ段のガードの細目は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 に置く。
+トリガとジョブ段のガードの細目は [CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](../infrastructure/ci-pipeline.md) に置く。
 
 ## 根拠
 

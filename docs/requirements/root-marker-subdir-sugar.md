@@ -57,14 +57,14 @@ root は動かず、`rootKind` も単体形と同じ値になる。`manifest.jso
 
 適用形は `subdir` だけを受け付ける。`homeRoot { }` と未知キー付きの引数は評価エラーになり、
 適用後のマーカーは関数ではないため再適用もできない。`target` の安全性の確認
-（REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f）は前置前の値に掛かるので、`subdir` を付けても
+（[target / subpath のパス安全性を評価時に確認する](path-safety-validation.md)）は前置前の値に掛かるので、`subdir` を付けても
 `..` 始まりの target は従来どおり拒否される。
 
 規範は frontmatter が正。
 
 ## 出典
 
-ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509・ADR-433b9539-21d9-46c5-91a1-fc2b04d5eb47（marker の関数適用形）と ADR-6669c002-1b90-47a2-8a84-a0f7bddfd965・ADR-d89c2ede-1aba-46fa-9f14-8dcf8a266e0e（`normalizeManifest` での target 前置糖衣）。
-root の値と対応するモードは REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66、マーカーが `kind` を運ぶ
-入れ物であることは REQ-3f541d39-da41-4ef8-858b-707f54cf6a29 が持ち、本 item はその上に乗る
+[root マーカーに subdir の適用形を持たせる](../adr/root-marker-subdir-applied-form.md)・[fixed root には subdir を提供しない](../adr/no-subdir-for-fixed-root.md)（marker の関数適用形）と [subdir は全 target へ前置する評価時の糖衣にし、root を動かさない](../adr/subdir-as-target-prefix-sugar.md)・[root 相対で指定するパスすべてにパス安全性の確認を課す](../adr/path-safety-for-root-relative-inputs.md)（`normalizeManifest` での target 前置糖衣）。
+root の値と対応するモードは [root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md)、マーカーが `kind` を運ぶ
+入れ物であることは [root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) が持ち、本 item はその上に乗る
 適用形だけを規定する。

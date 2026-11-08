@@ -30,10 +30,10 @@ indirect gcroot と、CLI の実際の処理（`--dryrun` / `--yes` / `--json`�
 
 `.pending` は逆に**ユニット側だけが持つ形**で、このシナリオには現れない。apply が成功すると
 `cleanupPending` が `--set` 直後に消し、以後は世代リンクが gcroot を継承する
-（→ `internal/engine/engine.go` 手順 10・ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1）。`.pending` だけの系列を prune が対象にすることは
+（→ `internal/engine/engine.go` 手順 10・[store path は out-link で受け取る](../../adr/store-path-via-out-link.md)）。`.pending` だけの系列を prune が対象にすることは
 `CASE-49ac6d68` の `TestPruneRemovesSeriesWithoutGenerations` が覆う。
 
-走査基底は 2 つある（→ ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e）。system 基底は絶対パスで `$HOME` / `$XDG_STATE_HOME` の
+走査基底は 2 つある（→ [prune は system 基底も走査し、権限の無い系列を見送る](../../adr/prune-scans-system-base-skips-unpermitted.md)）。system 基底は絶対パスで `$HOME` / `$XDG_STATE_HOME` の
 差し替えでは動かないため、`e2e_isolate` が `LAYAT_SYSTEM_PROFILE_BASE` で隔離先の tmpdir へ
 向ける（→ `cmd/layat/prune.go`）。これにより破壊的な `--yes` の実行でも実機の
 `/nix/var/nix/profiles/layat` には触れない。
@@ -54,8 +54,8 @@ indirect gcroot と、CLI の実際の処理（`--dryrun` / `--yes` / `--json`�
   fail として扱い、後段の陰性判定がコマンド失敗と区別できない形にならないようにする
 - **`prune --dryrun` の非破壊性** — 孤児系列を `remove-series` 行に root パス付きで挙げ、生存
   系列は挙げない。行はフィールド構造ごと比較する。実行後も `.root` と世代リンクが残る
-  （→ ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66）
-- **`prune --dryrun --json`** — payload の形は REQ-a47fbfb0-c808-42e9-b2ad-767c933494d6 が定める。同じ在庫をエンベロープの `info.removed` が含む。prune は config を
+  （→ [prune は削除前に root パスの一覧を示して確認を取る](../../adr/prune-confirms-with-root-list.md)）
+- **`prune --dryrun --json`** — payload の形は [prune --json はトップレベル info の removed に削除系列を、skipped に判定か削除に至れず残した系列を載せる](../../requirements/prune-json-payload.md) が定める。同じ在庫をエンベロープの `info.removed` が含む。prune は config を
   名指ししないので `results` は空配列のまま。孤児系列の `root` と `names`（`["docs"]`）が載り、
   生存系列は載らない。`info.skipped` が空であることも併せて見る（想定外の skip が `removed` の
   陽性に紛れて通らないように）。走査基底は 2 つとも隔離下にあり素性の分かる系列しか置いていない

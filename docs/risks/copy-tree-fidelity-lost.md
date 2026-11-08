@@ -35,8 +35,8 @@ copy の src は nix store の read-only なツリーであり、そのまま複
 
 ## 評価
 
-- likelihood: low — 忠実性の規範は copytree の 1 箇所に閉じており、TC-b1b8c163-9d37-47ee-9838-7168569df03a（構造・mode・
-  symlink の再現と owner-write 付与）と TC-cf1b44ec-2ec4-4ee1-9a37-378e41ccb01e（out-of-store marker の live 性）が
+- likelihood: low — 忠実性の規範は copytree の 1 箇所に閉じており、[コピーがツリー構造・mode・symlink を src どおりに再現し、owner-write を付与すること](../test/copy/tree-fidelity.md)（構造・mode・
+  symlink の再現と owner-write 付与）と [out-of-store marker が live symlink として配置され、src 側の変更が透過すること](../test/copy/out-of-store-live.md)（out-of-store marker の live 性）が
   機械的に覆っている
 - impact: medium — 配置物が使えない状態は目に見える形で現れ、規範どおりに直したうえでの
   再 apply で回復できる

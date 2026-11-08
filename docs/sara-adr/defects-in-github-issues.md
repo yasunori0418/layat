@@ -31,7 +31,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb, SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #268, #203, #267, `docs/model.yaml`, `docs/agents/issue-tracker.md`
+- 関連: [root は solution と ADR 系の型だけにする](roots-solution-and-adr-types-only.md), [sara check を strict モードで回す](sara-check-strict-mode.md), [model.yaml で組み込みモデルを全面置換し、汎用の型名を使う](model-yaml-full-replacement.md), GitHub Issue #583, #268, #203, #267, `docs/model.yaml`, `docs/agents/issue-tracker.md`
 - 起点: Issue #268（epic #203 残ブロッカー）の判断（2026-08-09）で確定。ADR-0051 §1・§2 を書き直した
 
 ## 背景
@@ -40,7 +40,7 @@ generated:
 下流向きの `reveals` で接続する唯一の型だった。そのため次の例外を抱えていた。
 
 - defect item は作った時点で必ず接続漏れになる
-- `sara check` が strict（SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626）なので、defect を起こすと即座に
+- `sara check` が strict（[sara check を strict モードで回す](sara-check-strict-mode.md)）なので、defect を起こすと即座に
   exit 1 になる
 - 型の関係図を機械生成するとき、上流の辺だけを描く規約から `reveals` だけが外れる
 
@@ -60,7 +60,7 @@ docs のグラフは、要求・設計からリスクとテストの観点を前
 追跡は issue tracker の領分である。
 
 defect の例外はこの食い違いの症状だった。型を外すと「張り忘れ = 接続漏れの warning」が例外なく全型で成り立ち
-（SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb）、strict とも無条件に両立する。
+（[root は solution と ADR 系の型だけにする](roots-solution-and-adr-types-only.md)）、strict とも無条件に両立する。
 
 ## 棄却した代替案
 

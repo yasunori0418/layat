@@ -27,7 +27,7 @@ entry の target は root からの相対パス、subpath は src の中の相�
 
 target と subpath が絶対パスである場合と、正規化すると `..` で root（target）や src（subpath）の
 外へ出る場合を、`normalizeManifest` が評価時に拒否する。規範の細目は
-REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f に置く。
+[target / subpath のパス安全性を評価時に確認する](../requirements/path-safety-validation.md) に置く。
 
 ## 根拠
 

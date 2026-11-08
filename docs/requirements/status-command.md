@@ -127,10 +127,10 @@ layat status --json     # outturn エンベロープで出す
 - **読み取り専用**: flock を取らず、ディレクトリ・`.pending`・`.root`・記録を作らない。記録は
   mode 0644 で書かれるので、system 基底も euid の確認なしに非 root で読める。
 
-`--json` の形は REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303、`--json` 時の stdout 専有は
-REQ-2353259f-5878-452a-8e11-3445de69abc2、記録の置き場と内容は
-REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 と REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4 の担当。
+`--json` の形は [読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す](json-readonly-payload.md)、`--json` 時の stdout 専有は
+[--json 指定時は行指向 stdout を出さずエンベロープが stdout を専有する](json-stdout-exclusive.md)、記録の置き場と内容は
+[apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md) と [system mode は root を / に解決し、変更系操作の前に euid 0 を確認し、profile と last-applied 記録を system 基底に置く](system-mode-root-gate-and-record-base.md) の担当。
 
 ## 出典
 
-ADR-7abe9cc7-30cd-49c9-b10e-bb5e1790ff0d・ADR-c2131901-290d-4311-8f84-64edb33e8897・ADR-54f09f52-1c2c-4b84-8f18-717fd93e4342。
+[status は 2 つの記録基底を走査して表示する](../adr/status-reads-record-bases.md)・[status は config 名の完全一致で絞り込む](../adr/status-subject-names-and-filter.md)・[status を読み取り専用にする](../adr/status-read-only.md)。

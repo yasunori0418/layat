@@ -60,11 +60,11 @@ generated:
   読み取りだけで動くので、非 root でも計画確認・世代閲覧・配置内容の確認ができる。
 - **変えないもの**: home / project / fixed の profileDir と記録の置き場。
 
-profileDir の鍵の一般規則は REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81 の担当。記録の内容・
-書き込み・比較の基準の優先順位は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当で、system mode
+profileDir の鍵の一般規則は [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md) の担当。記録の内容・
+書き込み・比較の基準の優先順位は [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md) の担当で、system mode
 でも変わらない。本 item が決めるのは置き場の基底だけ。
 
 ## 出典
 
-ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c・ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed・ADR-25d54346-f13a-4c12-9895-ab93dc6c183b・ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203・ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988・ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e、
-ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c・ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883。
+[rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)・[root は 3 つの marker で表す](../adr/three-root-markers.md)・[system mode の変更系操作の前に engine が euid 0 を確認する](../adr/system-mode-euid-gate.md)・[profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)・[profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)・[prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md)、
+[system mode の last-applied 記録を /var/lib/layat に置く](../adr/system-record-base-var-lib.md)・[state の基底を設定で上書きさせない](../adr/state-bases-not-configurable.md)。

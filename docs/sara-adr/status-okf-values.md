@@ -22,15 +22,15 @@ generated:
 - ステータス: stable
 - 日付: 2026-11-07
 - 関連: GitHub Issue #662, `docs/agents/adr-rules.md`, `dev/tests/adr-supersede.sh`
-- 起点: epic #662 の grilling（2026-11-07）で確定。SDR-d5304533-00ae-423b-a459-7c67c1cf093c を書き直した
+- 起点: epic #662 の grilling（2026-11-07）で確定。[提案を棄却した決定は status 不採用 で記録する](adr-status-rejected.md) を書き直した
 
 ## 背景
 
 `status` は ADR / SDR だけが持つフィールドで、日本語の 4 値（`提案` / `採用` / `不採用` / `廃止`）を
-取ってきた（SDR-d5304533-00ae-423b-a459-7c67c1cf093c）。他の型には `status` が無く、item が
+取ってきた（[提案を棄却した決定は status 不採用 で記録する](adr-status-rejected.md)）。他の型には `status` が無く、item が
 いまも有効かを frontmatter から読めない。
 
-OKF の `status` は `draft` / `stable` / `deprecated` の 3 値である。SDR-bab72f31-7cb1-47a3-bb2d-7876757d86fb で
+OKF の `status` は `draft` / `stable` / `deprecated` の 3 値である。[OKF v0.2 と互換の frontmatter キーを item に足す](okf-compatible-frontmatter.md) で
 OKF と互換のキーを足すと決めたので、`status` の値もこれに合わせる必要がある。
 
 ## 決定

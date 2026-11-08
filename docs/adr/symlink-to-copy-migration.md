@@ -23,7 +23,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b, GitHub Issue #175, #172
+- 関連: [配置前除去を planner が計算するデータとして表す](preremove-as-planner-data.md), GitHub Issue #175, #172
 - 起点: epic #172 の grilling セッション（2026-07-12）で確定。ADR-0047 §2 の symlink から copy への変更を書き直した
 
 ## 背景
@@ -35,10 +35,10 @@ generated:
 ## 決定
 
 同じ target で method が symlink から copy に変わり、on-disk の symlink が前世代の記録どおり
-なら、配置の前に除去（ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b）して copy を新しく置く。
+なら、配置の前に除去（[配置前除去を planner が計算するデータとして表す](preremove-as-planner-data.md)）して copy を新しく置く。
 readlink が記録と食い違うときは移行せず、通常の foreign の判定に戻す。
 
-判定の規範は REQ-2b48620a-abaa-43df-a106-954bbba3de56 に置く。
+判定の規範は [method 変更は symlink→copy のみ配置前除去で移行し、copy→symlink は移行しない](../requirements/method-change-symlink-to-copy-migration.md) に置く。
 
 ## 根拠
 

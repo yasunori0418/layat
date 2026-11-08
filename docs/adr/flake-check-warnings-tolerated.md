@@ -36,7 +36,7 @@ nix 2.27 / 2.34 で実際に動かした結果と、nix のソース（`src/nix/
 `layat` output に対する `nix flake check` の unknown 警告は、想定内で無害なものとして許容し、
 docs に明記する。`layat` の成果物の主な検証は `nix build .#layat.<system>.<name>` で行う。
 
-許容の条件と主検証の方法は REQ-d0aef5af-e922-400b-b250-ca38719c480b に置く。
+許容の条件と主検証の方法は [layat カスタム output は nix flake check の unknown 警告を許容し主検証は nix build で行う](../requirements/flake-check-unknown-output.md) に置く。
 
 ## 根拠
 

@@ -27,16 +27,16 @@ generated:
    conflict で停止せず rename してしまうと、前回退避した実データが消える
 2. **plan / execute 間の TOCTOU** — plan 時点で退避先が不在でも、execute 時点で他プロセスが
    そこにファイルを作っていることがある。rename 直前に再検証しなければ、その並行生成物を
-   利用者に知らせずに上書きする（→ ADR-37191429-2099-4217-a552-47b16a7e504c）
+   利用者に知らせずに上書きする（→ [退避先が既にあれば conflict で止める](../adr/backup-existing-destination-conflict.md)）
 3. **退避が commit 後に消える** — `--recopy` の rename 退避は成功時に discardJournal が
    掃除するが、`--backup` の退避はユーザーのバックアップであり永久に残す契約である
-   （→ ADR-18267548-27d0-430b-8149-b6124d02ce56・`reset` も復元しない）。掃除の対象を取り違えると、ユーザーが唯一の
+   （→ [退避物を成功後も残して利用者の所有物にする](../adr/backup-aside-left-to-user.md)・`reset` も復元しない）。掃除の対象を取り違えると、ユーザーが唯一の
    コピーだと思っていたものが消える
 
 逆方向の欠陥も本リスクに含む。`--backup` の指定が無いときは conflict のまま停止するはずの
 ケースが退避へ流れると、ユーザーが opt-in していない破壊的操作が、指定が無いまま実行されることになる。
 世代スキップ（drift 修復）の処理で Backup 段だけは到達し続けるという段の位置付け
-（→ REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98）が崩れる場合も、退避されるべき実体が conflict のまま放置されるか、
+（→ [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](../requirements/backup-stage-position.md)）が崩れる場合も、退避されるべき実体が conflict のまま放置されるか、
 逆に修復の処理で予期しない退避が起きるかのどちらかになる。
 
 ## 実現性
@@ -49,5 +49,5 @@ generated:
 
 ## 緩和
 
-TC-ed4992c0-8513-4383-be0a-e45acbbc229f（退避のライフサイクル: 発動・suffix・commit 後の存置・巻き戻し）と
-TC-cd03ff56-6ed0-4100-9ec4-eb681ab66407（退避先既存の conflict と rename 直前の再検証）が緩和する。
+[--backup の退避が opt-in で発動し、commit 後は残り、途中失敗では戻る](../test/atomicity/backup-aside-lifecycle.md)（退避のライフサイクル: 発動・suffix・commit 後の存置・巻き戻し）と
+[退避先が既存なら停止し、rename 直前に退避先を再検証する](../test/atomicity/backup-conflict-and-toctou.md)（退避先既存の conflict と rename 直前の再検証）が緩和する。

@@ -27,7 +27,7 @@ project mode は git リポジトリの作業ツリーの中へ配置する。�
 
 project mode の配置物は ephemeral とし、リポジトリにコミットしない。clone ごとに置き直す。
 activation は git の状態に干渉せず、`.gitignore` に触れず、target が git で追跡されているかも
-確認しない。規範の細目は REQ-e79178f5-5865-4444-a05d-3ab06f33cd6d に置く。
+確認しない。規範の細目は [project mode の配置物は ephemeral とし、activation は git 状態に干渉しない](../requirements/project-mode-ephemeral.md) に置く。
 
 ## 根拠
 

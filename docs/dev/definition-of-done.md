@@ -24,7 +24,7 @@
 | DOD-02 | nix flake check が通っていること | ci-check | flake-check (ubuntu-latest, x86_64-linux) | success |
 
 DOD-01 / DOD-02 は ruleset `main branch protection` の required status check でもあり、
-未達ならそもそも `main` へマージできない（→ ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511）。DOD-02 は matrix の代表 1 件のみを
+未達ならそもそも `main` へマージできない（→ [main へのマージにテストの成功を必須にする](../adr/tests-required-for-merge.md)）。DOD-02 は matrix の代表 1 件のみを
 挙げているが、ruleset 側では残る 2 プラットフォーム
 （`flake-check (ubuntu-24.04-arm, aarch64-linux)` / `flake-check (macos-latest, aarch64-darwin)`）
 も必須のまま強制される。job 名 / matrix を変えると check 名が変わるため、

@@ -30,11 +30,11 @@ generated:
 | `1` | 一般エラー（eval エラー・engine 実行時エラー・`apply --all` の部分失敗）|
 | `2` | `apply --dryrun` で conflict を検出（CI の事前 gate に使える）|
 
-`apply --all --dryrun` で error と conflict が同時に起きたときの優先度は REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32、
-`--json` の `status` がこの表に連動することは REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead の担当。
+`apply --all --dryrun` で error と conflict が同時に起きたときの優先度は [apply --all --dryrun の終了コードは error を conflict より優先する](apply-all-dryrun-exit-code-priority.md)、
+`--json` の `status` がこの表に連動することは [--json は outturn 規約準拠のエンベロープを出す第 2 契約とする](json-outturn-envelope.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」の終了コード表。
 
-決定の実体は ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1「終了コードは 0 / 1 / 2 の 3 値にする」。
+決定の実体は [終了コードは 0 / 1 / 2 の 3 値にする](../adr/exit-code-scheme.md)「終了コードは 0 / 1 / 2 の 3 値にする」。

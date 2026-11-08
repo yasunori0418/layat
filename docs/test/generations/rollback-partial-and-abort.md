@@ -13,12 +13,12 @@ generated:
 
 ## テスト条件
 
-TC-36ea3609-d52e-42d4-975c-40fb89b23919 の正常系に対し、`Rollback` の失敗時の処理を検証する。
+[rollback が FS を前世代へ再収束させてから最後にポインタを移す](rollback-reconvergence.md) の正常系に対し、`Rollback` の失敗時の処理を検証する。
 
 **途中失敗の巻き戻し** — 祖先 migration（PreRemove の unlink + それによって可能になった
 子の配置）が成功したあとで、同じバッチの無関係な配置が失敗したとき、migration ごと
 巻き戻る。rollback も apply と同じ undo journal に配線されている必要があり、half-migrated
-のまま「次の冪等な再実行が収束する」に頼ってはならない（→ ADR-4f08aa18-6a38-49fd-a784-450677d80e1a、issue #168）。
+のまま「次の冪等な再実行が収束する」に頼ってはならない（→ [配置前除去の除去も undo の対象にする](../../adr/undo-covers-preremove.md)、issue #168）。
 
 **ポインタ移動の失敗は巻き戻さない** — 世代バックエンドの `Switch` が失敗した時点では
 PreRemove / place / materializeCopies / removeStale の全 FS 書き込みが成功している。
@@ -39,5 +39,5 @@ apply と同じく全 conflict を stderr へ列挙してから、件数を持�
 
 ## 対応する CASE
 
-CASE-364ebb9d-b9f8-4c79-8509-8bbf31e73698（`internal/engine/generations_test.go`）。conflict / 部分失敗時の結果
-の構造は CASE-2008a909-b45e-49e1-adf1-39191a8ddd95 も隣接して検証する。
+[generations_test.go — rollback の再収束と失敗時の処理](generations-test-go.md)（`internal/engine/generations_test.go`）。conflict / 部分失敗時の結果
+の構造は [result_extensions_test.go — 実行結果のインベントリ・世代観測・到達状態・構造化 warning](result-extensions-test-go.md) も隣接して検証する。

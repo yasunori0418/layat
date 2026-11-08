@@ -22,7 +22,7 @@ generated:
 ```
 
 これは headline 機能ではなく**明示的な退避路**である。配置先のデフォルトは常に Nix ストアへの
-symlink であり、再現性を担保する（→ ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c）。out-of-store は型ベースの暗黙分岐ではなく、
+symlink であり、再現性を担保する（→ [store link を既定にし、out-of-store は明示関数でのみ選ばせる](../adr/store-link-default-out-of-store-opt-in.md)）。out-of-store は型ベースの暗黙分岐ではなく、
 ユーザーが明示関数を書いたときにだけ選ばれる。
 
 | 配置元 | 反映タイミング | 向いている用途 |
@@ -32,7 +32,7 @@ symlink であり、再現性を担保する（→ ADR-73c24620-d2c0-4249-97fa-1
 
 > **上表は分割時点の `docs/concept.md`（原文）からの写し**。use_case は規範を持たないため、
 > store link が既定であり、out-of-store が marker による opt-in であることの規範は
-> REQ-99ca5381-6c53-426c-b145-7b4297c53868 にある。
+> [src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する](../requirements/src-kinds-store-default.md) にある。
 
 指す先の内容は設計上ライブであり、版管理されるのはリンク先のマッピングのみ。世代管理は
 リンク先のみが対象になる。

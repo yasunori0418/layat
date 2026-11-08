@@ -24,7 +24,7 @@ profile が不要に見えるためである。
 ## 決定
 
 CLI 単体でも世代管理を切るモードやフラグは持たず、適用は常に profile と世代を経由する。
-世代を積む手順の細目は REQ-1be4d678-959c-44d7-a346-44bfd95af56e に置く。
+世代を積む手順の細目は [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](../requirements/generation-mechanism-link-farm-manifest.md) に置く。
 
 ## 根拠
 

@@ -51,9 +51,9 @@ macOS / Linux でホームの慣例が異なるため、絶対パスのローカ
 使えるが、通常は OS 判別で十分。
 
 > **規範は frontmatter が正**。`mkOutOfStoreSymlink` がマーカーを返す純粋関数であることと
-> 引数が評価時確定の絶対パスであること自体は REQ-eb363122-385a-499c-a074-c95efb949d07、
-> `mkRootRelativeSymlink` のマーカーとリンクの形は REQ-a77181dd-a59c-40bb-855e-3430ad970eb6、out-of-store entry
-> の配置と版管理の範囲は REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa、root マーカーの実行時解決は REQ-3f541d39-da41-4ef8-858b-707f54cf6a29 の担当。
+> 引数が評価時確定の絶対パスであること自体は [mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](mkoutofstoresymlink-marker.md)、
+> `mkRootRelativeSymlink` のマーカーとリンクの形は [mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](root-relative-symlink-marker.md)、out-of-store entry
+> の配置と版管理の範囲は [out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする](out-of-store-link-mapping-only.md)、root マーカーの実行時解決は [root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) の担当。
 > 本 item は「out-of-store の src が取る 2 形と、それぞれが target root の解決とどの時点で
 > 関係するか」を規定する。
 
@@ -62,6 +62,6 @@ macOS / Linux でホームの慣例が異なるため、絶対パスのローカ
 `docs/spec.md`「root の解決」→「ローカルパス（out-of-store）の扱い」節（本文・時点対比の
 コードブロック・OS 判別の推奨）。同節の `nix` 使用例は要求ではないため規範に採らない。
 
-決定の実体は root を marker 化して実行時解決へ寄せた ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed「root は 3 つの marker で表す」と、out-of-store symlink をネイティブ
-機構へ委譲せず engine が扱うと定めた ADR-70debe94-c7ce-492b-b938-4c62f7a781e7。root 相対の形は ADR-29c0838b-3e25-4b09-a479-9ebbbc4466c7「root 相対マーカーの基準点を manifest の配置 root にする」が加えた。ただし OS 判別によるローカルパス解決の推奨（`SHOULD`）は原文由来で、
+決定の実体は root を marker 化して実行時解決へ寄せた [root は 3 つの marker で表す](../adr/three-root-markers.md)「root は 3 つの marker で表す」と、out-of-store symlink をネイティブ
+機構へ委譲せず engine が扱うと定めた [out-of-store のリンクは lib の関数が包むだけにして engine が張る](../adr/out-of-store-linked-by-engine.md)。root 相対の形は [root 相対マーカーの基準点を manifest の配置 root にする](../adr/root-relative-base-is-placement-root.md)「root 相対マーカーの基準点を manifest の配置 root にする」が加えた。ただし OS 判別によるローカルパス解決の推奨（`SHOULD`）は原文由来で、
 対応する ADR を持たない（macOS / Linux のホーム慣例差を扱った ADR は無い）。

@@ -34,32 +34,32 @@ engine が独自に分類をやり直せば table のケースが増えても実
 
 ## 評価
 
-- likelihood: medium — TC-b329cafd-06c3-4b87-8357-229b69e5ba5c が「plan の計算が実 FS を触らない」ことを fake FS の
+- likelihood: medium — [plan の計算が実 FS を触らない純粋な関数として fake FS で網羅検証できること](../test/engine-core/plan-purity.md) が「plan の計算が実 FS を触らない」ことを fake FS の
   table-driven で覆っている。ただし層分割の維持は個々のアサートではなく実装の書き方に
   依存し、engine 側へ判断を足す変更で少しずつ崩れうる
 - impact: high — 乖離の結果は「テストは緑だが本番は誤動作している」という検証の空洞化なので、
   規約の継承則に従い「その条件が検出するはずの regression の impact」を継ぐ。この
-  table-driven テストが守っているのは配置分類（RISK-e8449214-7794-4d0d-b584-a3a152e2c1f9・high）で、そちらの破れは通常ファイルを
+  table-driven テストが守っているのは配置分類（[配置分類を誤り、利用者の実体を本人に知らせずに破損させる](placement-classification-misjudged.md)・high）で、そちらの破れは通常ファイルを
   symlink で上書きしてユーザーのファイルを消す形をとり、再実行では回復しない。層分割が開発内の
   事柄であることを理由に low へは落とさない——失われるのはテストではなくテストが与えていた保護
   である。そのテストが本来の検出力を失っていること自体は誰も知らせない
 
 ## 張り先の判断
 
-DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68 へ張るのは、この risk が懸念しているのが planner（分類判定に閉じた純粋計算）と
+[配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する](../design/planner-engine-split.md) へ張るのは、この risk が懸念しているのが planner（分類判定に閉じた純粋計算）と
 engine（FS 意味論の実行）という層分割そのものであり、同 item がその分割を主張しているから
 である。分割を採らず engine が分類と実行を一体で持つ設計へ差し替えれば、この乖離という失敗
 モードは消える（→ `docs/agents/sara-graph.md` の判別規約）。
 
-以前は分割を記述した design item が存在せず、テスト戦略の DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3 へ消去法で張っていた
-（#282）。DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68 の新設と DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3 のモック方針の改訂（対象を FS の意味論を実行する
+以前は分割を記述した design item が存在せず、テスト戦略の [engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する](../design/engine-test-go-unit-tmpdir.md) へ消去法で張っていた
+（#282）。[配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する](../design/planner-engine-split.md) の新設と [engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する](../design/engine-test-go-unit-tmpdir.md) のモック方針の改訂（対象を FS の意味論を実行する
 層に限り、planner は fake FS の table-driven で覆うと明示）により、張り先を分割そのものへ
 移し、拾える失敗モードを「想定する失敗」の 4 点に戻した。
 
-なお、FS に触れずに判断する層をユニットレベルで table-driven に覆うことは TP-e7c25263-6d2d-4a37-8275-26906889d912 が
-テスト計画として規範化している。DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68 はその規範が前提とする層分割を設計側で述べる
+なお、FS に触れずに判断する層をユニットレベルで table-driven に覆うことは [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../test-plan/go-test-layering.md) が
+テスト計画として規範化している。[配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する](../design/planner-engine-split.md) はその規範が前提とする層分割を設計側で述べる
 item であり、規範そのものではない。
 
-REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a へも張るが、対応するのは「想定する失敗」の 4 点目（評価時に検出すべき設定の誤りと
+[設定の誤りは評価時に、実体の不整合は engine 実行時に検出する層分けを守る](../requirements/error-detection-layering.md) へも張るが、対応するのは「想定する失敗」の 4 点目（評価時に検出すべき設定の誤りと
 engine 実行時に検出すべき実体の不整合の境界がずれる）だけである。同 REQ が規定するのは評価時と
 実行時の層分けであって、planner / engine というプロセス内の層分けではない。

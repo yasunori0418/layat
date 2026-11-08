@@ -37,9 +37,9 @@ generated:
 | `subpath` が `src` 内に存在しないパス | engine 実行時にエラーで停止 |
 
 > **上は原文の写しで、規範は frontmatter が正**。`src` が取りうる 3 種（path / set /
-> marker）と store link 既定は REQ-99ca5381-6c53-426c-b145-7b4297c53868、`subpath` が src 内相対で省略がリポジトリ
-> 全体を表すことは REQ-27b75fe6-6c36-44a8-8cd3-5cc98043022a、out-of-store のローカルパスが評価時に確定することは
-> REQ-81249072-56b8-42f5-807b-ea623c1efe99、層分けの原則そのものは REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a の担当。
+> marker）と store link 既定は [src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する](src-kinds-store-default.md)、`subpath` が src 内相対で省略がリポジトリ
+> 全体を表すことは [subpath は src 内の相対パスとし、リポジトリ全体は省略で表して専用トークンを設けない](subpath-omission-whole-repo.md)、out-of-store のローカルパスが評価時に確定することは
+> [out-of-store の src は評価時の絶対パスか配置 root 相対のどちらかで、root 相対は target と同じ root に対して実行時に解決する](out-of-store-eval-time-path.md)、層分けの原則そのものは [設定の誤りは評価時に、実体の不整合は engine 実行時に検出する層分けを守る](error-detection-layering.md) の担当。
 
 ## 出典
 
@@ -48,4 +48,4 @@ generated:
 この 3 行に対応する決定を持つ ADR は無く、`docs/spec.md` が一次記述にあたる（原文の表でも
 この 3 行は `→ ADR-00xx` の参照注記を持たない。同様に注記を持たない行は他にもある）。
 よって本 item に `justifies` は張られないが、これは張り忘れではない。層が分かれること自体の
-一般則は REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a の担当。
+一般則は [設定の誤りは評価時に、実体の不整合は engine 実行時に検出する層分けを守る](error-detection-layering.md) の担当。

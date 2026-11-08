@@ -29,17 +29,17 @@ generated:
 ## 仕様
 
 - symlink として配置する。指す先は marker の絶対パスまたは root 相対パス（ローカル FS）。
-  root 相対は `target` 起点の相対リンクとして張る（REQ-a77181dd-a59c-40bb-855e-3430ad970eb6）
+  root 相対は `target` 起点の相対リンクとして張る（[mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](root-relative-symlink-marker.md)）
 - 世代では「どのパスを指すか」のリンク先マッピングのみ版管理する。指す先の内容は設計上
   ライブで、永遠にスナップショットしない
 
-> **上は原文の写しに root 相対（→ ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7）を加えたもので、規範は frontmatter が正**。marker の生成と識別（`lib.mkOutOfStoreSymlink`・
-> marker の tag 判別）は REQ-eb363122-385a-499c-a074-c95efb949d07 / REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7、method と src の対応表は REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe、
-> symlink 配置の手順そのものは REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557 の担当。
+> **上は原文の写しに root 相対（→ [root 相対マーカーのリンクを target 起点の相対パスで張る](../adr/root-relative-link-as-relative-path.md)）を加えたもので、規範は frontmatter が正**。marker の生成と識別（`lib.mkOutOfStoreSymlink`・
+> marker の tag 判別）は [mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](mkoutofstoresymlink-marker.md) / [marker は判別タグで識別し manifest.json には漏らさない](marker-tag-discrimination.md)、method と src の対応表は [method は配置方法を選び symlink は世代管理下・copy は世代管理外になる](method-src-matrix.md)、
+> symlink 配置の手順そのものは [symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする](symlink-placement-procedure.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「配置動作仕様」→「out-of-store symlink」節。
 
-決定の実体は ADR-6d2327f7-f513-42c3-89f8-808467db1914「out-of-store はマッピングだけを追跡する」で確定した、out-of-store のリンク先
+決定の実体は [out-of-store はマッピングだけを追跡する](../adr/out-of-store-tracks-mapping-only.md)「out-of-store はマッピングだけを追跡する」で確定した、out-of-store のリンク先
 マッピングのみを版管理する方針。

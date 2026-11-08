@@ -40,10 +40,10 @@ layat apply <name> --recopy     # 通常 apply に加え config 内の全 copy t
 **ローカルの copy 編集は破棄され src 内容に戻る**（= upstream 追従の意図）。symlink 部の
 世代コミット挙動は不変（copy は世代を増やさない）。
 
-`--all` との合成可否は REQ-687e225f-5046-46db-88fb-f9e527a1e97a の担当。
+`--all` との合成可否は [apply 修飾フラグは --all と合成できる](apply-modifier-flag-composition.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply <name> --recopy` の箇条書き。
 
-決定の実体は ADR-fb01d942-2875-4dcb-a7df-879e18f63883「apply --recopy で全 copy target を src から無条件に上書きする」。
+決定の実体は [apply --recopy で全 copy target を src から無条件に上書きする](../adr/apply-recopy-overwrites-copies.md)「apply --recopy で全 copy target を src から無条件に上書きする」。

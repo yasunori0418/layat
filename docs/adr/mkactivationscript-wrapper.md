@@ -36,7 +36,7 @@ lib に `mkActivationScript` が実装されたことは無い。
 `mkActivationScript` は提供しない。entrypoint の公開面は `lib.mkManifest` が返す manifest だけにし、
 engine の起動は CLI とモジュールの配線が担う。
 
-CLI と engine の 2 層構成は REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645 に置く。
+CLI と engine の 2 層構成は [layat は CLI とエンジンの 2 層で構成する](../requirements/two-layer-architecture.md) に置く。
 
 ## 根拠
 

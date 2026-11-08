@@ -50,13 +50,13 @@ legacy entrypoint には flake の `<system>` に相当する次元が無く、a
 > **上の表は原文の写しで、規範は frontmatter が正**。表が併記する次の点は本 item の
 > 規範ではない。
 >
-> - flake-parts の使い方が満たすべき条件（transpose・`pkgs` の一貫性）→ REQ-c50df875-2cb0-4e72-8a21-858359a11cae
-> - passthru 形を canonical とする理由と `mkShell` との共存条件 → REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da
+> - flake-parts の使い方が満たすべき条件（transpose・`pkgs` の一貫性）→ [flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない](flake-parts-module-path.md)
+> - passthru 形を canonical とする理由と `mkShell` との共存条件 → [legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない](legacy-entrypoint-passthru-canonical.md)
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「アドレッシング（`layat.<name>`）」の本文と表。
 
-決定の実体は ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1「named manifest を専用の layat.<name> 名前空間に公開する」で、
+決定の実体は [named manifest を専用の layat.<name> 名前空間に公開する](../adr/layat-name-namespace.md)「named manifest を専用の layat.<name> 名前空間に公開する」で、
 legacy entrypoint の addressing を `nix build -f <ep> layat.<name>` に統一したのは
-ADR-c5ebc6d9-d218-45f7-bce1-4dd481766843「legacy entrypoint の eval と build は新 CLI の -f 形で行う」（旧決定の `nix-build -A` 記述を改訂）。
+[legacy entrypoint の eval と build は新 CLI の -f 形で行う](../adr/legacy-eval-via-nix-file-flag.md)「legacy entrypoint の eval と build は新 CLI の -f 形で行う」（旧決定の `nix-build -A` 記述を改訂）。

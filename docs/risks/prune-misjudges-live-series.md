@@ -17,7 +17,7 @@ generated:
 
 ## リスク
 
-`layat prune` は「root が実在しない」の 1 条件だけで系列を丸ごと消す（→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f）。
+`layat prune` は「root が実在しない」の 1 条件だけで系列を丸ごと消す（→ [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](../requirements/prune-target-selection.md)）。
 判定を誤ると、消してはいけない系列が消える。削除は `<roothash>` ディレクトリごとで、世代
 リンクも `.pending` も `.root` も一度に失われるため、後から戻す手段が無い。
 
@@ -28,7 +28,7 @@ generated:
 **`.root` を持たない系列への波及** — home mode / system mode の `<name>` 直キー系列は判定すべき
 root パスを持たないため構造的に対象外だが、列挙が `.root` の有無ではなくディレクトリの形で
 行われると、`$HOME` の profile 系列が走査に含まれる。走査基底が 2 つある（ユーザー state 基底と
-system 基底 `/nix/var/nix/profiles/layat/` → ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e）ぶん、基底ごとに列挙条件がずれる余地も
+system 基底 `/nix/var/nix/profiles/layat/` → [prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md)）ぶん、基底ごとに列挙条件がずれる余地も
 ある。
 
 **system 基底が権限で読めない場合** — 非 root 実行では system 基底の列挙そのものが失敗しうる。
@@ -38,7 +38,7 @@ system 基底 `/nix/var/nix/profiles/layat/` → ADR-7a3dc78d-8946-46ae-94ec-b75
 
 **アンマウント中 root の誤判定** — リムーバブルディスク・ネットワークマウント上のプロジェクトは
 アンマウント中「一時的に実在しない」。機械側でマウントポイント判定は行わない設計なので
-（→ ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66）、判定そのものはこの誤りを含んだまま通る。
+（→ [prune は削除前に root パスの一覧を示して確認を取る](../adr/prune-confirms-with-root-list.md)）、判定そのものはこの誤りを含んだまま通る。
 
 **判定不能を削除へ倒す** — backref が読めない・空・絶対パスでない、root の stat が権限等で
 失敗する。これらは「孤児と確認できていない」だけであって「孤児である」ではない。skip + warning
@@ -46,17 +46,17 @@ system 基底 `/nix/var/nix/profiles/layat/` → ADR-7a3dc78d-8946-46ae-94ec-b75
 
 **孤児の逆引きの喪失** — clone を消した後の profile が backref `.root` を失うか `<roothash>` の階層に
 置かれず、どの root 由来か辿れなくなる。prune はその系列を判定できず、孤児は手で消すしかなくなる
-（→ REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4）。
+（→ [孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する](../requirements/project-mode-orphan-profile.md)）。
 
 ## 実現性
 
 **likelihood: high** — 変更頻度の側では、判定が依存する profile レイアウト（`<roothash>` 階層・
 backref `.root` の位置・走査基底）が繰り返し動いてきた領域で
-（現在の決定は → ADR-419914ba-9896-4dd1-853b-fb514fcb9f38 / ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e /
-ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203）、
+（現在の決定は → [profile は専用ディレクトリレイアウトに置く](../adr/profile-directory-layout.md) / [prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md) /
+[profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)）、
 `layat status`（→ #198）が同じ列挙に相乗りする予定もあるため、この先も触られる。自動検証の
 側では、判定ロジックが新規で既存の配置系の条件（planner の分類・古くなった配置の除去の保守的不変条件
-→ RISK-e3d42a21-1f43-4ac6-835e-a5caf8d86363）のどれにも乗らず、blind spot にあたる。両軸とも
+→ [古くなった配置を保守的に除去するときの不変条件が破れ、layat が作っていない実体を消す](stale-removal-invariant-broken.md)）のどれにも乗らず、blind spot にあたる。両軸とも
 高いので high。
 
 **impact: high** — 系列削除は不可逆で、消えるのは実際に使われているプロジェクトの世代履歴。
@@ -64,7 +64,7 @@ ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203）、
 
 ## 緩和
 
-TC-bc653f83-70ce-4920-b7cd-9b70a4cd2cae（prune の対象判定の正確さ）が緩和する。判定と削除は
+[prune が孤児系列だけを系列ごと消し、生存・判定不能な系列は理由付きで残す](../test/generations/prune-target-accuracy.md)（prune の対象判定の正確さ）が緩和する。判定と削除は
 engine 層に閉じているので、この TC で覆える。アンマウント中 root の誤判定だけは機械側で
 区別しない設計上の残余で、確認プロンプトの root パス一覧が唯一の防波堤になる
-（→ RISK-0909e121-8ec4-40c8-ab1c-562e61f31067）。
+（→ [prune の dryrun・確認・lock の安全機構が働かず、同意なく削除が実行される](prune-safety-gate-bypass.md)）。

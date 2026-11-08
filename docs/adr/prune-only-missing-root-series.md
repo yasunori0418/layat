@@ -22,13 +22,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988, ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66, GitHub Issue #580
+- 関連: [profile は解決済み root の roothash でキーする](profile-keyed-by-roothash-of-resolved-root.md), [prune は削除前に root パスの一覧を示して確認を取る](prune-confirms-with-root-list.md), GitHub Issue #580
 - 起点: 次期マイルストーン計画の grilling（2026-07-04）。公開後の実運用で孤児系列が溜まり始めたことを消費側の要求と判断した。ADR-0034 §1a を書き直した
 
 ## 背景
 
 project mode と `--root` で root を上書きした config の profile は `<roothash>` 階層に積まれ、
-backref `.root` が root の絶対パスを記録する（ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988）。
+backref `.root` が root の絶対パスを記録する（[profile は解決済み root の roothash でキーする](profile-keyed-by-roothash-of-resolved-root.md)）。
 プロジェクトのクローンを消すと、その系列は世代 symlink のディレクトリとして残り続ける。
 
 孤児になった系列は store を占有しない（store は `nix-collect-garbage` で解放される）。
@@ -42,8 +42,8 @@ backref `.root` が root の絶対パスを記録する（ADR-ad1c2507-1f42-4cd3
 パスの実在だけで、root が実在する系列は、ほかに使われていない兆候があっても削除しない。`.root`
 を持たない `<name>` 直キーの系列は判定する root パスが無いので、構造的に対象から外れる。
 
-走査する基底と、root パスを決められない系列の扱いは REQ-c44433a1-7ee7-459a-9aae-7cc42166876f に、
-孤児系列を prune まで放置してよいとする前提は REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4 に置く。
+走査する基底と、root パスを決められない系列の扱いは [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](../requirements/prune-target-selection.md) に、
+孤児系列を prune まで放置してよいとする前提は [孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する](../requirements/project-mode-orphan-profile.md) に置く。
 
 ## 根拠
 

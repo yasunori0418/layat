@@ -27,7 +27,7 @@ generated:
 
 ## 背景
 
-`reset` は配置物を消す破壊的な操作で（ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7）、実行前に確認のプロンプトを出す。CI・direnv・
+`reset` は配置物を消す破壊的な操作で（[reset で profile を触らずに配置物を撤去する](reset-fs-only-teardown.md)）、実行前に確認のプロンプトを出す。CI・direnv・
 パイプのように stdin が TTY でない環境では、プロンプトが入力を待ってハングするか、空の入力を同意と
 取り違えて削除してしまうおそれがある。`--json` の出力を機械が読む場合も、プロンプトには誰も答えない。
 
@@ -37,8 +37,8 @@ generated:
 ないときと、`--json` を付けたときがこれに当たる。`--yes` が無ければ、プロンプトを出さずにエラーで
 止める。
 
-TTY でない場合の規範は REQ-31dae599-f3a3-4bbe-b367-c955535265da に、`--json` の場合の規範は
-REQ-2a613337-7646-4ced-8807-e43bca18acf3 に置く。
+TTY でない場合の規範は [reset の確認プロンプトは stdin が TTY のときだけ出し、非 TTY で同意が無ければ即エラー停止する](../requirements/reset-confirm-non-tty.md) に、`--json` の場合の規範は
+[reset --json は --yes を必須とし無ければ fail fast する](../requirements/json-reset-requires-yes.md) に置く。
 
 ## 根拠
 

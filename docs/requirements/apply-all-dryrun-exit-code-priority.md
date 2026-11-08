@@ -30,10 +30,10 @@ generated:
 （2 > 1 で conflict 優先）は採らない（より深刻な eval / engine エラーを CI で隠すため）。
 非 dryrun の `--all` は conflict 概念が無く 0 / 1 のみ。
 
-終了コード表そのものは REQ-2c5a10d8-112b-4f96-947a-aba7164779c4 の担当。
+終了コード表そのものは [終了コードは 0 = 成功 / 1 = 一般エラー / 2 = dryrun の conflict とする](exit-codes.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」の最終箇条書き。
 
-決定の実体は ADR-3c3aa4a5-083a-43c1-a99f-92b9e97a68b9「apply --all --dryrun の終了コードは error を conflict より優先する」。
+決定の実体は [apply --all --dryrun の終了コードは error を conflict より優先する](../adr/apply-all-dryrun-exit-code-priority.md)「apply --all --dryrun の終了コードは error を conflict より優先する」。

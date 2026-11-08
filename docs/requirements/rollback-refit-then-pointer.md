@@ -80,33 +80,33 @@ stale 除去の diff は次の基準・順序で行う:
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する次の点は本 item の担当ではない。
 >
 > - 任意世代切替・世代 GC に `nix-env --profile` 系 / `nix-collect-garbage` を使うこと →
->   REQ-706de717-4e47-471a-a1c0-448635be159c
-> - module で `layat rollback` を公開せず host へ一本化すること → REQ-844ee375-919f-4341-81e1-a5f89fd32840
-> - project mode で rollback を公開しないこと → REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0
+>   [世代操作は世代バックエンドの契約越しに行い、GC root の間引きと store 解放は nix コマンドへ分けて委譲する](generation-gc.md)
+> - module で `layat rollback` を公開せず host へ一本化すること → [module 時は rollback を host へ一本化し、layat profile は前進のみで追従する](module-mode-profile-internal.md)
+> - project mode で rollback を公開しないこと → [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md)
 > - `rollback` が名指し必須で `--all` に対応しないこと・`list-generations` が home / system mode
->   限定であること → REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796 / REQ-05abce3e-9797-432b-b93f-37c55d09afde
-> - 途中失敗時に undo ジャーナルで巻き戻すこと → REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940
-> - 配置前除去の判定そのもの → REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575
+>   限定であること → [rollback は名指し必須で --all に対応しない](rollback-named-only.md) / [rollback と list-generations は home / system mode 限定にする](rollback-list-generations-home-only.md)
+> - 途中失敗時に undo ジャーナルで巻き戻すこと → [途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](undo-journal-rollback.md)
+> - 配置前除去の判定そのもの → [祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する](ancestor-symlink-nest-migration.md)
 > - copy の place-once そのもの（配置先が不在のときだけコピーする分類）→
->   REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9
+>   [copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](copy-place-once.md)
 > - `apply --recopy` の契約（既存の copy 先を無条件で上書きする処理）→
->   REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065
+>   [apply --recopy は config 内の全 copy target を src から無条件に上書き再コピーする](apply-recopy.md)
 >
-> **2026-10-11 追記（ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8）**: 上の写しの手順 3「`nix-env --profile <profileDir>/profile --rollback`
+> **2026-10-11 追記（[世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)）**: 上の写しの手順 3「`nix-env --profile <profileDir>/profile --rollback`
 > （または `--switch-generation N-1`）」は、世代バックエンドの契約の Switch で N-1 へ移す、と読み替える
-> （`nix-env` は既定実装 nixprofile の内側に閉じる。REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）。
+> （`nix-env` は既定実装 nixprofile の内側に閉じる。[engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)）。
 > ポインタ移動を最後にする順序は変わらない。
 >
-> **2026-10-11 追記（ADR-a91585ad-971a-4558-9f25-b7fcd6e57671）**: 上の写しの手順 1「`baseline` = 現世代 N の manifest」は、離れる世代 N の
+> **2026-10-11 追記（[古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)）**: 上の写しの手順 1「`baseline` = 現世代 N の manifest」は、離れる世代 N の
 > manifest を last-applied 記録があれば記録から、無ければ profile の current 世代から読む、と読み替える。
 > `target`（N-1）は引き続き世代リンクから読み、FS の収束後・ポインタ移動の前に記録を N-1 の manifest と
-> link-farm で書き直す。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
+> link-farm で書き直す。記録の規範は [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「世代管理仕様」→「ロールバック」節の standalone（home mode）の箇条書き。
 
-決定の実体は ADR-d97154cd-a2e5-4853-a682-800ff9435c89「rollback は FS を収束させてからポインタを動かす」（rollback diff 基準）で、
-戻り先の祖先 symlink を配置前除去する処理は ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c が定めている。ポインタ移動を世代
-バックエンドの契約越しにしたのは ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」、比較の基準を
-last-applied 記録から優先して読むのは ADR-a91585ad-971a-4558-9f25-b7fcd6e57671・ADR-f3d06307-ae5b-4f17-94ad-db92e80e3415。
+決定の実体は [rollback は FS を収束させてからポインタを動かす](../adr/rollback-baseline-and-pointer-last.md)「rollback は FS を収束させてからポインタを動かす」（rollback diff 基準）で、
+戻り先の祖先 symlink を配置前除去する処理は [祖先 symlink は自己記録の古くなったものだけを移行する](../adr/ancestor-symlink-recorded-stale-only.md) が定めている。ポインタ移動を世代
+バックエンドの契約越しにしたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」、比較の基準を
+last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)・[rollback はポインタ移動の前に戻り先の manifest で記録を書き直す](../adr/rollback-rewrites-record-before-pointer.md)。

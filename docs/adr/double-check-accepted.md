@@ -28,7 +28,7 @@ generated:
 モジュールの使い方での二重の確認は許容する。モジュールの使い方のときだけ `mkManifest` の確認を省く
 分岐は作らない。
 
-entry の確認を `mkManifest` に集める規範は REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34 に置く。
+entry の確認を `mkManifest` に集める規範は [mkManifest 自身が evalModules で入力を確認する単一の箇所になる](../requirements/mkmanifest-input-validation.md) に置く。
 
 ## 根拠
 

@@ -44,12 +44,12 @@ layat apply <name> --dryrun    # 非 root でも計画を確認できる
 
 ## 出典
 
-ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c「rootKind に system を足しても schemaVersion を上げない」、
-ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed「root は 3 つの marker で表す」、
-ADR-25d54346-f13a-4c12-9895-ab93dc6c183b「system mode の変更系操作の前に engine が euid 0 を確認する」、
-ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203「profile の基底ディレクトリをモードで切り替える」、
-ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988「profile は解決済み root の roothash でキーする」、
-ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e「prune は system 基底も走査し、権限の無い系列を見送る」、
-ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75「module と project では世代操作を公開しない」、
-ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c「system mode の last-applied 記録を /var/lib/layat に置く」、
-ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883「state の基底を設定で上書きさせない」。
+[rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)「rootKind に system を足しても schemaVersion を上げない」、
+[root は 3 つの marker で表す](../adr/three-root-markers.md)「root は 3 つの marker で表す」、
+[system mode の変更系操作の前に engine が euid 0 を確認する](../adr/system-mode-euid-gate.md)「system mode の変更系操作の前に engine が euid 0 を確認する」、
+[profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)「profile の基底ディレクトリをモードで切り替える」、
+[profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)「profile は解決済み root の roothash でキーする」、
+[prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md)「prune は system 基底も走査し、権限の無い系列を見送る」、
+[module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)「module と project では世代操作を公開しない」、
+[system mode の last-applied 記録を /var/lib/layat に置く](../adr/system-record-base-var-lib.md)「system mode の last-applied 記録を /var/lib/layat に置く」、
+[state の基底を設定で上書きさせない](../adr/state-bases-not-configurable.md)「state の基底を設定で上書きさせない」。

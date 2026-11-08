@@ -189,13 +189,13 @@ generated:
 - **読み取り系の `dryRun` は常に `false`**（list-generations / status / gitignore / init）。
   `dryRun` は `--dryrun` フラグの反映に限定し、副作用の無さを `dryRun` で表現しない。
 
-変更系ペイロード（item 形・warnings 一覧・部分失敗の写像）は REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62 の担当。
+変更系ペイロード（item 形・warnings 一覧・部分失敗の写像）は [変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く](json-change-payload.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「読み取り系ペイロード（#132）」とその配下の全項目。
 
-決定の実体は ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc（読み取り系の info インベントリ・`init` の top-level info）、
-status の info の形を定めた ADR-11918a81-f98d-466d-8310-d990c59f59e1 と、
-`--recopy` が planner の分類ではなく engine の materialize の処理であることを定めた ADR-fb01d942-2875-4dcb-a7df-879e18f63883。
+決定の実体は [読み取り専用の列挙は info で返す](../adr/readonly-enumeration-as-info.md)（読み取り系の info インベントリ・`init` の top-level info）、
+status の info の形を定めた [status は entry ごとに配置先を出力する](../adr/status-output-format.md) と、
+`--recopy` が planner の分類ではなく engine の materialize の処理であることを定めた [apply --recopy で全 copy target を src から無条件に上書きする](../adr/apply-recopy-overwrites-copies.md)。

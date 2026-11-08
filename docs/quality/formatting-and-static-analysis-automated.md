@@ -28,7 +28,7 @@ generated:
 整形の揺れと静的解析が見つける類の誤りは、レビューで指摘できるが指摘に人の注意を払わせるだけの
 価値が無い。マージ前の自動検証の側へ回して、人のレビューを意味判断に集中させる。
 
-QA-a5f7f088-a459-4bb2-9674-82b1a4a52053 は「マージ前の自動検証を必須にすること」を規範化し、**検証項目の中身は委譲して
+[マージ前の自動検証を必須にし、プラットフォーム差が効く層は全プラットフォームで通す](cross-platform-verification-before-merge.md) は「マージ前の自動検証を必須にすること」を規範化し、**検証項目の中身は委譲して
 いる**。本 item はその委譲を受けて、整形と静的解析を項目に含めることを定める。
 
 **手元で同じ判定を得られること**が要点になる。パイプラインの手順としてしか書かれていない確認は、
@@ -37,11 +37,11 @@ QA-a5f7f088-a459-4bb2-9674-82b1a4a52053 は「マージ前の自動検証を必�
 実装形（宣言的なチェック定義など）は基盤の担当で、規範として固定するのは性質の側になる。
 
 対象言語ごとの整形器・解析器の選定、チェックの実装形、どのジョブで実行するかは本 item の
-規範に含めない。ADR-ef9e4099-0cf4-409a-9e73-518866aea676 と `flake.nix` のチェック定義、INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 が持つ。
+規範に含めない。[Go の整形は gofmt、静的解析は go vet と golangci-lint で行う](../adr/gofmt-vet-golangci.md) と `flake.nix` のチェック定義、[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](../infrastructure/ci-pipeline.md) が持つ。
 
 ## 出典
 
-ADR-ef9e4099-0cf4-409a-9e73-518866aea676（整形は treefmt へ gofmt を追加し、静的解析は go vet + golangci-lint の check
+[Go の整形は gofmt、静的解析は go vet と golangci-lint で行う](../adr/gofmt-vet-golangci.md)（整形は treefmt へ gofmt を追加し、静的解析は go vet + golangci-lint の check
 derivation として `nix flake check` に載せる）が置いた方針と、`flake.nix` の checks 定義・
 `.github/workflows/test.yml` の flake check ジョブが実運用してきた規範を、Issue #272 で
 quality item として立てたもの。

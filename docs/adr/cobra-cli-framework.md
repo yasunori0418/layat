@@ -31,7 +31,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e, ADR-f85f1afd-9b87-4f7a-922e-97c62554f198, ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-88231ffc-4836-4252-be34-894944fd28c3, ADR-86a77232-dc99-4c04-bd6d-2127410e8828, ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246, ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1, ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-955c2601-88fb-4be8-85de-ec7d0a8c727d, ADR-65b3439a-b90a-4056-b55a-522399bc71e6, ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d, ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3, GitHub Issue #552
+- 関連: [project mode を第一の使い方とする](project-first.md), [root の明示を mkManifest 層で必須にする](root-explicit-at-mkmanifest.md), [root は 3 つの marker で表す](three-root-markers.md), [CLI が一次 UX で devShell に pin 版を同梱する](cli-primary-ux-devshell-pinned.md), [mkActivationScript で config ごとのラッパー derivation を提供する](mkactivationscript-wrapper.md), [内部コマンドの開示で透明性を保つ](internal-command-disclosure.md), [named manifest を専用の layat.<name> 名前空間に公開する](layat-name-namespace.md), [apply --all は config ごとの情報を 1 回の eval でまとめて取る](apply-all-single-eval.md), [shell.nix / default.nix の再現性は利用者の責任にする](shell-default-nix-best-effort.md), [apply の config は名前省略で default を選び、--all で全件を選ぶ](config-selection-default-and-all.md), [templates と layat init は固定 ref で導入する](templates-and-init-fixed-ref.md), [engine は cmd/ と internal/ に置きライブラリ化しない](engine-internal-cmd-layout.md), GitHub Issue #552
 - 起点: engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §2 を書き直した
 
 ## 背景
@@ -43,12 +43,12 @@ CLI は、サブコマンド・フラグ・help・シェル補完を持つ。eng
 
 CLI のフレームワークに cobra を使う。
 
-CLI の依存の許可範囲と固定の方法は REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0 に置く。
+CLI の依存の許可範囲と固定の方法は [CLI が持ち込む依存は許可した第三者ライブラリと pin した Go に限り、いずれも固定する](../requirements/cli-dependency-policy.md) に置く。
 
 ## 根拠
 
 cobra は Go のエコシステムで事実上の標準で、nixpkgs でもパッケージが整っている。サブコマンド・
-フラグ・補完・help の整形が成熟しており、`--help` で内部の nix コマンドを開示する要件（ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246）にも
+フラグ・補完・help の整形が成熟しており、`--help` で内部の nix コマンドを開示する要件（[内部コマンドの開示で透明性を保つ](internal-command-disclosure.md)）にも
 help の整形の質で寄与する。
 
 ## 棄却した代替案

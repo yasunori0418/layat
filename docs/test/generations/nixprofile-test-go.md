@@ -22,7 +22,7 @@ generated:
 
 ## 検証内容
 
-**世代リンクの走査**（TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7）
+**世代リンクの走査**（[profileDir の世代リンクを番号順に列挙して current を判定し、読めない profileDir は黙認しない](generation-listing-parse.md)）
 
 - `profile-<N>-link` を番号の昇順に返し、`profile` の指す世代だけを current にする
 - 世代でない兄弟名（`profile.lock` 等）を無視する

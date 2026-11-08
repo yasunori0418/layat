@@ -14,7 +14,7 @@ generated:
 ## テスト条件
 
 symlink farm が GC アンカー専用であることを、対象の抽出と組み立て結果で見る。
-アンカー名そのものの形式・決定性は TC-a6a14739-89e5-4eba-acee-3ed5be5a0b7e の担当で、ここでは扱わない。
+アンカー名そのものの形式・決定性は [GC アンカー名の形式・決定性・特殊文字耐性をアサートする](anchor-name-determinism.md) の担当で、ここでは扱わない。
 
 **抽出条件**: store-backed かつ `method = "symlink"` の entry だけがアンカー対象になること。
 copy（世代外・置き切り）と out-of-store（store 非依存）は対象外であること。対象が皆無なら
@@ -43,7 +43,7 @@ copy（世代外・置き切り）と out-of-store（store 非依存）は対象
 
 ## 覆う CASE
 
-- CASE-3a1f403d-3c7b-4221-a32a-2ddc272a58a3（`tests/nix-unit/farm-entries.nix`）
+- [nix-unit: farm-entries.nix — アンカー対象の抽出と anchorLines の組み立て](nix-unit-farm-entries.md)（`tests/nix-unit/farm-entries.nix`）
 
 ## 出典
 

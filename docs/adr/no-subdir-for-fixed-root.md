@@ -18,7 +18,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509, ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137, `docs/spec.md`
+- 関連: [root マーカーに subdir の適用形を持たせる](root-marker-subdir-applied-form.md), [root は 3 つの marker で表す](three-root-markers.md), [layat.lib.mkEnv で buildEnv 合成環境を提供する](mkenv-buildenv.md), `docs/spec.md`
 - 起点: 次期マイルストーン追加計画の grilling（2026-07-04）。ADR-0040 §1b を書き直した
 
 ## 背景
@@ -30,7 +30,7 @@ root マーカーには `subdir` の適用形を持たせると決めたが、ro
 
 fixed root には `subdir` の仕組みを提供しない。fixed root の下を基点にしたいときは、
 `"/abs/path/sub"` のように連結したパスを root に書く。適用形の範囲は
-REQ-08c8f639-790c-4970-a954-c9567538cf9b に置く。
+[root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](../requirements/root-marker-subdir-sugar.md) に置く。
 
 ## 根拠
 

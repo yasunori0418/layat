@@ -46,11 +46,11 @@ generated:
 - `lib/types.nix` の `entriesType` を `evalModules` で直接評価し、未知キー `bogus` が
   モジュールという使い方（`modules/common.nix` が共有する型）でも eval エラーになること
 
-配置元は TP-d3d06fe4-6940-4df8-b111-bb4096d5444f の fake flake-input double イディオムに従う。
+配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) の fake flake-input double イディオムに従う。
 
 ## 出典
 
 `tests/nix-unit/gates.nix` の現行実装からの逆算（→ Issue #273「L1〜L4」節）。各拒否条件の
 設計判断は
-ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab / ADR-12ad7852-e689-44d7-b9fe-0667effb3d13 / ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131 / ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967 /
-ADR-00cc3497-654f-420a-928f-99f201e7efb0 / ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0 が持つ。
+[配置元の中のパスを全層で subpath と呼ぶ](../../adr/subpath-naming-across-layers.md) / [entry の未知のキーを評価時に拒否する](../../adr/strict-unknown-keys-rejected.md) / [src の型で素の文字列を拒否する](../../adr/srctype-bare-string-rejected.md) / [copy と out-of-store の併用を eval 時に拒否する](../../adr/copy-with-out-of-store-eval-error.md) /
+[絶対パスと .. エスケープは eval 時に拒否する](../../adr/path-safety-eval-rejection.md) / [manifest 内の target の衝突を評価時に検出する](../../adr/manifest-target-conflict-eval-error.md) が持つ。

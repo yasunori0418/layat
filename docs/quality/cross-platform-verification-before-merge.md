@@ -47,17 +47,17 @@ layat は複数の OS / system で動くことを主張するツールであり�
 ただし「実走を省く」ことが「マージできなくなる」に転化してはならない — 省略の手段はこの制約と
 両立するものに限られる。
 
-「検証対象として宣言するプラットフォーム」の実体は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 が持つ。これは `flake.nix` の
+「検証対象として宣言するプラットフォーム」の実体は [CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](../infrastructure/ci-pipeline.md) が持つ。これは `flake.nix` の
 `perSystem` が定義する system の集合とは一致せず、**CI で検証すると宣言した範囲**を指す。各
 テストレベルの範囲・アプローチも本 item は規定せず、何をどこまでテストするかは test_plan
 （`docs/test-plan/`）が、実装形は design が持つ。
 
 ## 出典
 
-ADR-ab400e58-afbd-40a0-8eae-239d3cfda211、ADR-b07bbe19-b8a7-4401-98b0-5ccaf798ad05、
-ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0、ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a、
-ADR-f2e72cfa-f46e-46b7-9d50-a98d60d8980f、ADR-3eb35e63-5465-44cd-8299-c2ac3e6034de、
-ADR-cb010758-7887-470a-ba61-19b2e99f0053、ADR-6f0383d9-0176-47c4-a9da-1a41e1fd3747、
-ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511、ADR-8035e7c6-7dc5-4aa8-9a37-403998fa7f9b が置いた方針を、
+[CI の nix インストーラは cryoflow 踏襲](../adr/ci-nix-installer-cryoflow.md)、[CI シェルは dev/flake.nix に公開する](../adr/ci-shell-in-dev-flake.md)、
+[テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)、[キャッシュは 3 system の matrix ビルドで投入する](../adr/ci-cache-via-matrix-build.md)、
+[flake check を 3 環境の os×system matrix で回す](../adr/flake-check-os-system-matrix.md)、[テスト系の CI を pull_request と workflow_dispatch で起動する](../adr/ci-triggers-pull-request-and-dispatch.md)、
+[変更検出で nix を回さない PR の必須の確認を skip で通す](../adr/change-detection-gates-ci-jobs.md)、[Go の静的解析を CGO_ENABLED=0 で行う](../adr/go-checks-without-cgo.md)、
+[main へのマージにテストの成功を必須にする](../adr/tests-required-for-merge.md)、[main への直接 push を ruleset で禁じる](../adr/no-direct-push-to-main.md) が置いた方針を、
 基盤（INF）から分離して
 quality item として立てたもの。具体的なジョブ構成・check 名・ruleset の設定は上記 INF が持つ。

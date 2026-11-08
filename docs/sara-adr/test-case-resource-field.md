@@ -28,7 +28,7 @@ test_case は、対応するテスト資産の正準表記を `target` フィー
 パスか、flake check の `checks.<name>` の形で、`dev/tests/test-doc-map.sh` が CASE とテスト資産の
 1:1 を確かめるのに使う。
 
-OKF には、item が説明する対象を指す `resource` キーがある。SDR-bab72f31-7cb1-47a3-bb2d-7876757d86fb で
+OKF には、item が説明する対象を指す `resource` キーがある。[OKF v0.2 と互換の frontmatter キーを item に足す](okf-compatible-frontmatter.md) で
 OKF と互換のキーを足すと決めたので、`target` が持つ情報を OKF の読み手にも読める名前にしたい。
 
 ## 決定

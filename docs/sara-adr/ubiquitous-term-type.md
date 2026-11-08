@@ -22,7 +22,7 @@ generated:
 - ステータス: stable
 - 日付: 2026-11-07
 - 関連: GitHub Issue #647, `docs/glossary.md`, `docs/glossary.ja.md`, `CONTEXT.md`
-- 起点: epic #647 の grilling（2026-11-06〜07）で確定。SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb を書き直した
+- 起点: epic #647 の grilling（2026-11-06〜07）で確定。[root は solution と ADR 系の型だけにする](roots-solution-and-adr-types-only.md) を書き直した
 
 ## 背景
 

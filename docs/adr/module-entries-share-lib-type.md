@@ -18,7 +18,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-c494e86e-ceb9-4380-b983-4e09553b01d6, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0, `docs/spec.md`
+- 関連: [entries を target をキーにした attrset にする](entries-keyed-by-target.md), [manifest.json を schemaVersion 1 の唯一の契約として固定する](manifest-json-contract-schemaversion-v1.md), [manifest 内の target の衝突を評価時に検出する](manifest-target-conflict-eval-error.md), `docs/spec.md`
 - 起点: ADR-0014 §4 を書き直した
 
 ## 背景
@@ -32,7 +32,7 @@ attrset である。
 
 モジュールのオプションで宣言する entries は、`lib/types.nix` が定義する lib と同じ
 `attrsOf (submodule …)` の型を共有する。モジュールの共通オプションの集合は
-REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 に置く。
+[全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md) に置く。
 
 ## 根拠
 

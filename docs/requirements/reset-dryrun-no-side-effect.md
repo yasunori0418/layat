@@ -32,11 +32,11 @@ layat reset <name> --dryrun     # 副作用ゼロで削除対象（symlink / cop
 exit する（FS 削除・confirm・flock いずれも行わない・`apply --dryrun` と対称）。
 終了コードは削除対象の有無に依らず 0。
 
-`apply --dryrun` 側の規範は REQ-02a33511-0941-4813-b289-a05eb8e9aa57 の担当（conflict 検出時に非ゼロ終了する点が
+`apply --dryrun` 側の規範は [apply --dryrun は読み取り専用で conflict 検出時に非ゼロ終了する](apply-dryrun-readonly.md) の担当（conflict 検出時に非ゼロ終了する点が
 異なる）。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `reset <name> --dryrun` の箇条書き。
 
-決定の実体は ADR-a86a8492-57fb-49d0-ba77-200f6dc49c3a「reset --dryrun は副作用なしで撤去対象を示す」。
+決定の実体は [reset --dryrun は副作用なしで撤去対象を示す](../adr/reset-dryrun-side-effect-free.md)「reset --dryrun は副作用なしで撤去対象を示す」。

@@ -31,7 +31,7 @@ HM モジュールは `layat.configs.<name>` で config ごとに entries を受
 
 `layat.entries` を `lib.mkRenamedOptionModule` で `configs.default.entries` への rename 糖衣として
 残し、deprecated とする。docs は `configs.<name>` を正として書き、削除の時期は定めない。規範は
-REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 に置く。
+[全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md) に置く。
 
 ## 根拠
 

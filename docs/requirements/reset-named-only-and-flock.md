@@ -39,9 +39,9 @@ roothash キー）。`reset` はさらに entries 読みのため entrypoint eva
 > 規範化しない。
 >
 > - 非 build コマンド一般の eval 先行（build しないコマンドでも rootKind 先取り eval →
->   root 解決を先行する）→ REQ-9c111c32-8f6c-4eda-859c-dae02c0624fc
-> - `--root` 時に profileDir を roothash でキーすること → REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81（`--root` が全モードの
->   解決 root を上書きすること自体は REQ-61c05e09-0bde-4f74-9a96-03185f9df606）
+>   root 解決を先行する）→ [非 build コマンドも eval 先行を共通前段に持つ](non-build-commands-eval-first.md)
+> - `--root` 時に profileDir を roothash でキーすること → [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md)（`--root` が全モードの
+>   解決 root を上書きすること自体は [--root は全モード共通で解決 root を明示上書きする](root-override-flag.md)）
 >
 > 本 item が規定するのは `reset` 固有の 3 点（名指し必須・profileDir 単位の blocking
 > flock・共通前段に加えて行う entrypoint eval）に限る。
@@ -50,5 +50,5 @@ roothash キー）。`reset` はさらに entries 読みのため entrypoint eva
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `reset` 名指し必須の箇条書き。
 
-決定の実体は ADR-56ac6298-db67-4f63-8b60-f14af3b9570a「reset は config の名指しを必須にする」と、`--all` 非対応の一貫性を与える ADR-997c2459-f2ab-4025-ac92-e9ce836fc9ed。flock の直列化は ADR-45380022-d959-4b22-aa05-5993ac1f3c87、
-非 build コマンドの eval 先行は ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9。
+決定の実体は [reset は config の名指しを必須にする](../adr/reset-requires-config-name.md)「reset は config の名指しを必須にする」と、`--all` 非対応の一貫性を与える [rollback に config の名指しを必須にする](../adr/rollback-requires-name-no-all.md)。flock の直列化は [flock は明示実行で待ち、hook 実行でスキップする](../adr/flock-mode-explicit-wait-hook-skip.md)、
+非 build コマンドの eval 先行は [eval を先に行い、flock を取ってから build する](../adr/eval-first-then-flock-then-build.md)。

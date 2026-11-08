@@ -13,7 +13,7 @@ generated:
 
 ## テスト条件
 
-`Prune`（→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1）を、複数の系列を並べた state dir の
+`Prune`（→ [prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする](../../design/prune-orphan-series.md)）を、複数の系列を並べた state dir の
 tmpdir に対して駆動して検証する。判定の入力は backref `.root` と root の実在だけなので、
 fixture は state dir の形と root ディレクトリの有無で作る。
 
@@ -30,9 +30,9 @@ root 不在なら同じく削除される。世代の有無を条件にしてい
 
 **`.root` を持たない dir** — home mode / system mode の `<name>` 直キー系列は走査に含まれない。
 判定すべき root パスが導けないため構造的に対象外という前提を、実際の列挙で確かめる。走査基底が
-2 つある（ユーザー state 基底と system 基底 → ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e）ので、**両方の基底で同じ列挙条件が
+2 つある（ユーザー state 基底と system 基底 → [prune は system 基底も走査し、権限の無い系列を見送る](../../adr/prune-scans-system-base-skips-unpermitted.md)）ので、**両方の基底で同じ列挙条件が
 適用されること**も見る。基底はどちらも `PruneOptions` のフィールドで受けるので、system 基底も tmpdir へ
-差し替えて駆動する（→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1。実 `/nix/var/nix/profiles/` は
+差し替えて駆動する（→ [prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする](../../design/prune-orphan-series.md)。実 `/nix/var/nix/profiles/` は
 触らない）。列挙そのもの（`ListRootHashSeries`）と backref 読み取り（`ReadBackref`）は
 `internal/paths` に置かれるが FS を読むので、同層の純関数と違って table では覆えず、この TC の
 tmpdir 駆動が覆う。
@@ -41,11 +41,11 @@ tmpdir 駆動が覆う。
 正常に続く（system mode を使ったことがない環境では system 基底が無いのが普通）。両基底とも
 不在でもエラーにしない。基底が存在するのに `ReadDir` が失敗するときは、その基底を名指しした
 warning が出て、もう一方の基底の処理は続く。**「基底が無い」と「基底が読めない」が区別される**
-ことの担保（→ RISK-f522a51b-db4b-4164-bd20-63fa4a0cb27d）。読めない側の誘発は root でも成立する
+ことの担保（→ [prune が生存系列や判定不能な系列を孤児と読み、不可逆に削除する](../../risks/prune-misjudges-live-series.md)）。読めない側の誘発は root でも成立する
 側を採る（基底のパスに通常ファイルを置いて ENOTDIR を出す。mode 0 の権限誘発は root では失敗に
-ならない → TP-deb05610-44bc-4962-8939-952392e5fbd0 の横断規約）。
+ならない → [原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](../../test-plan/fault-injection-atomicity.md) の横断規約）。
 
-削除段の失敗（権限不足を含む）は TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9 の担当。
+削除段の失敗（権限不足を含む）は [prune の dryrun が副作用ゼロで、非同意は中断し、lock 中の系列は skip され、削除段の失敗は進捗と理由で振り分けられる](prune-safety-gates.md) の担当。
 
 **判定不能な系列** — backref が読めない・空・絶対パスでない系列は残り、`Skipped` に
 `backref-unreadable` として理由付きで現れる。3 条件は実装上も別分岐（I/O エラー / 長さ 0 /
@@ -61,12 +61,12 @@ root の stat が不在以外の理由で失敗する系列も同様に残り、
 **系列単位の判定段失敗** — 列挙が系列ごとに載せる失敗（`BackrefErr` / `NamesErr` →
 `internal/paths` の `RootHashSeries`）は、どちらも基底全体を失敗にせず、その系列だけを残して
 理由付きで `Skipped` に載せる。`BackrefErr` は `backref-unreadable`、`NamesErr` は
-`series-unreadable`（→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1）。同じ基底の健全な孤児系列は
+`series-unreadable`（→ [prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする](../../design/prune-orphan-series.md)）。同じ基底の健全な孤児系列は
 変わらず削除されることを併せて見る。**`NamesErr` の系列を独立に置くのが要点**で、この系列は
 `Names` が nil のまま返るため、`NamesErr` を見ずに nil だけで分岐する実装では「`<name>` を
 持たない `.root` 単独の系列」と区別が付かず、lock を取らずに削除する処理へ進む。削除されず
 `series-unreadable` になることまで固定する。誘発は権限を落として行うため root 実行では skip
-する（→ TP-deb05610-44bc-4962-8939-952392e5fbd0 の横断規約）。
+する（→ [原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](../../test-plan/fault-injection-atomicity.md) の横断規約）。
 
 **dangling symlink の root** — symlink 越しにしか辿れず、その先が存在しない root は不在として
 扱われ、系列が削除される。
@@ -84,19 +84,19 @@ root の stat が不在以外の理由で失敗する系列も同様に残り、
 入る全ケースで `Warnf` を呼ぶ」を規律にしているのに `locked` だけ warning を確かめる形にすると、
 検証の側が禁じられた不揃いと同じ形になる。
 
-上位の規範は TP-e7c25263-6d2d-4a37-8275-26906889d912（`internal/engine/` を実 FS の tmpdir で
+上位の規範は [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../../test-plan/go-test-layering.md)（`internal/engine/` を実 FS の tmpdir で
 駆動する統合レベル）。安全機構の側（dryrun・確認・lock・削除段の失敗）は
-TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9 の担当。
+[prune の dryrun が副作用ゼロで、非同意は中断し、lock 中の系列は skip され、削除段の失敗は進捗と理由で振り分けられる](prune-safety-gates.md) の担当。
 
 ## 対応する CASE
 
-- CASE-49ac6d68-ed29-41aa-b939-dcfdc8711082（`internal/engine/prune_test.go`）— `Prune` を
+- [prune_test.go — 孤児系列の判定と系列ごとの削除・dryrun / 確認 / lock / 削除段の失敗](prune-test-go.md)（`internal/engine/prune_test.go`）— `Prune` を
   tmpdir の state dir / system 基底で駆動し、この TC の判定分岐を覆う主な CASE
-- CASE-ff4a842e-dd25-4c75-82ef-185507781d02（`internal/paths/paths_test.go`）— 列挙
+- [paths_test.go — state 基底の解決・roothash の性質・profileDir キーイング・世代リンク名と兄弟パス](paths-test-go.md)（`internal/paths/paths_test.go`）— 列挙
   （`ListRootHashSeries`）と backref 読み取り（`ReadBackref`）そのものを名指しで覆う。
   `.root` の有無による振り分け・基底が「無い」と「読めない」の区別・系列単位の
   `BackrefErr` / `NamesErr` はこちらが持ち、`Prune` 経由の結合は上の CASE が見る
-- CASE-b19188cb-e3f0-4c52-8c92-6db96bbbb45a（`tests/e2e/scenarios/08-prune.sh`）— 実 nix の
+- [e2e 08-prune — 実 apply が作った系列を root 削除で孤児にし、prune が系列ごと消して gcroot が外れる](e2e-08-prune.md)（`tests/e2e/scenarios/08-prune.sh`）— 実 nix の
   apply が置いたレイアウトで孤児と生存の振り分けが機能することを見る。分岐の網羅は上の 2 件が持ち、
   こちらは手組み fixture が再現しない実機の形（`nix-env --set` が `/nix/var/nix/gcroots/auto`
   経由で張る indirect gcroot と、CLI の実際の処理）が対象になることだけを担保する。`.pending` は

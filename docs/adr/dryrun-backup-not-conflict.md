@@ -24,22 +24,22 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1, ADR-37191429-2099-4217-a552-47b16a7e504c, GitHub Issue #169, #172
+- 関連: [終了コードは 0 / 1 / 2 の 3 値にする](exit-code-scheme.md), [退避先が既にあれば conflict で止める](backup-existing-destination-conflict.md), GitHub Issue #169, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §6（出力規律）の dryrun の扱いを書き直した
 
 ## 背景
 
 `apply --dryrun` は副作用なしに plan を示し、conflict があれば非ゼロで終わる。CI の事前の
-関門に使える（ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1）。`--backup` と組み合わせたとき、
+関門に使える（[終了コードは 0 / 1 / 2 の 3 値にする](exit-code-scheme.md)）。`--backup` と組み合わせたとき、
 退避で解ける箇所をどう示すかを決める必要があった。
 
 ## 決定
 
 `--dryrun --backup` では、`--backup` が無ければ conflict になる箇所を、退避と配置の予定として
 示す。conflict ではないので、それだけなら終了コードは 0 になる。退避先が既にある箇所は、
-dryrun でも conflict のままにする（ADR-37191429-2099-4217-a552-47b16a7e504c）。
+dryrun でも conflict のままにする（[退避先が既にあれば conflict で止める](backup-existing-destination-conflict.md)）。
 
-表示と終了コードの規範は REQ-02a33511-0941-4813-b289-a05eb8e9aa57 に置く。
+表示と終了コードの規範は [apply --dryrun は読み取り専用で conflict 検出時に非ゼロ終了する](../requirements/apply-dryrun-readonly.md) に置く。
 
 ## 根拠
 

@@ -34,8 +34,8 @@ HM モジュールが 1 つの entries（= 1 つの profile）しか持たない
 `mkManifest` を呼んで独立した link-farm を作り、1 config = 1 manifest = 1 profile とする。複数の
 config を 1 つの manifest へ合成するヘルパーは提供しない。
 
-オプションの型は REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、config と profile の対応は
-REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a に置く。
+オプションの型は [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md)、config と profile の対応は
+[HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](../requirements/hm-named-configs-profiles.md) に置く。
 
 ## 根拠
 

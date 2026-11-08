@@ -20,13 +20,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-07
-- 関連: GitHub Issue #90, ADR-fdb8003f-db36-424b-8484-6f2fd57a3027, UBQ-f5a31977-edde-4c0f-881f-28f709b0ef0b
+- 関連: GitHub Issue #90, [engine は JSON とエラーを標準ライブラリで扱う](json-and-errors-via-stdlib.md), [error-wrap convention](../ubiquitous-language/error-wrap-convention.md)
 - 起点: Issue #90 の再計画（2026-07-03）
 
 ## 背景
 
 engine はエラーを `fmt.Errorf` の `%w` で wrap し、`errors.Is` で判別する
-（→ ADR-fdb8003f-db36-424b-8484-6f2fd57a3027）。ただ、どこで何を付けて wrap するかは決まっていなかった。
+（→ [engine は JSON とエラーを標準ライブラリで扱う](json-and-errors-via-stdlib.md)）。ただ、どこで何を付けて wrap するかは決まっていなかった。
 利用者に見える失敗には、何をしようとしたか（op）と対象パスが要る。
 
 ## 決定
@@ -39,7 +39,7 @@ engine はエラーを `fmt.Errorf` の `%w` で wrap し、`errors.Is` で判�
 - sentinel（`ErrSkipped` = `lock.ErrLocked` など）は `%w` で透過させ、`errors.Is` で判定できる状態を保つ
 - 監査では、利用者に見える失敗が op と対象を 1 回以上含むかを基準にする
 
-規範の細目は DSG-9f5f949f-8b0e-4679-8f70-e0901a3d63b8 に置く。
+規範の細目は [engine のエラーは発生源で 1 回だけ op と対象パスを付けて wrap し、伝搬では素通しする](../design/engine-error-wrap-once-at-origin.md) に置く。
 
 ## 根拠
 

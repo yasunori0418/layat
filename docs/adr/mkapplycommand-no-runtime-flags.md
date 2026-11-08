@@ -20,12 +20,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-db293e0c-4789-45b7-93a9-adedc021344f, GitHub Issue #530
+- 関連: [lib.mkApplyCommand で事前展開した apply コマンドを組む](lib-mkapplycommand.md), GitHub Issue #530
 - 起点: Issue #530 の grilling（2026-10-25）。ADR-0068 §4 を書き直した
 
 ## 背景
 
-`mkApplyCommand`（ADR-db293e0c-4789-45b7-93a9-adedc021344f）が組む `apply` の行には、並列度や
+`mkApplyCommand`（[lib.mkApplyCommand で事前展開した apply コマンドを組む](lib-mkapplycommand.md)）が組む `apply` の行には、並列度や
 copy の再実行、退避といった実行時のフラグを足す場面がある。呼び出し側によって必要なフラグは違う。
 
 ## 決定
@@ -33,7 +33,7 @@ copy の再実行、退避といった実行時のフラグを足す場面があ
 `mkApplyCommand` は実行時フラグを引数に取らない。必要なフラグは、呼び出し側が戻り値の文字列の
 後ろに足す。
 
-引数に取らないフラグの範囲は REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f に置く。
+引数に取らないフラグの範囲は [lib.mkApplyCommand は事前展開した apply --all --manifest のコマンド行を返す](../requirements/lib-apply-command.md) に置く。
 
 ## 根拠
 

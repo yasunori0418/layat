@@ -23,7 +23,7 @@ suffix が変わる。
 
 **段の位置** — 世代スキップ（drift 修復）の処理でも Backup 段は到達し、通常 apply と同じく
 退避 + 配置を行う。PreRemove と違い「derivation 不変なら発火しない」という不変条件を
-持たないため（記録外実体は manifest の変化と無関係に現れる → REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98）。
+持たないため（記録外実体は manifest の変化と無関係に現れる → [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](../../requirements/backup-stage-position.md)）。
 
 **`--dryrun --backup`** — 塞いでいる target を conflict ではなく「退避 + 配置予定」として
 報告し、exit 2 相当の conflict をゼロにする。FS には一切触れない。
@@ -38,10 +38,10 @@ discardJournal の掃除対象ではない。ユーザーのバックアップ�
 記録している兄弟 leaf は removeStale から「planning 後に drift した」と報告されない
 （親ごと 1 回の rename で去ったのは想定内の挙動であって drift ではない）。
 
-上位の規範は TP-e7c25263-6d2d-4a37-8275-26906889d912（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。
-TP-deb05610-44bc-4962-8939-952392e5fbd0 の射程は 4 つの不変条件に閉じており、退避ポリシーそのものはそちらの担当では
-ない（巻き戻し対象としての退避は TC-3b02ab58-5bfb-4ae7-9ac1-c69e2ece2722 側で TP-deb05610-44bc-4962-8939-952392e5fbd0 の下に立つ）。
+上位の規範は [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../../test-plan/go-test-layering.md)（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。
+[原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](../../test-plan/fault-injection-atomicity.md) の射程は 4 つの不変条件に閉じており、退避ポリシーそのものはそちらの担当では
+ない（巻き戻し対象としての退避は [実 FS の故障注入で FS 変更段の途中を失敗させ、apply 前の状態が完全に復元される](mid-batch-rollback-restores-preapply.md) 側で [原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](../../test-plan/fault-injection-atomicity.md) の下に立つ）。
 
 ## 対応する CASE
 
-CASE-ed4b32fd-4f2e-497c-baa4-cc91f8a34e4a（`internal/engine/backup_test.go`）。
+[backup_test.go — --backup の退避ライフサイクルと退避先の保護](backup-test-go.md)（`internal/engine/backup_test.go`）。

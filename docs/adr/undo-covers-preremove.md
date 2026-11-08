@@ -28,7 +28,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-56325270-20bb-4959-8498-e3223c35e24b, ADR-74423bb8-1453-4689-a25e-30bf46536afc, GitHub Issue #168, #170, #172
+- 関連: [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md), [新規配置と張替えを先に、世代のコミットを最後に行う](placement-order-commit-last.md), GitHub Issue #168, #170, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0044 §5 と ADR-0046 §5（途中失敗の扱い）を書き直した
 
 ## 背景
@@ -40,13 +40,13 @@ symlink）は、配置の前に除去する。除去は symlink の unlink と�
 
 ## 決定
 
-配置前除去の unlink と rmdir も undo ジャーナル（ADR-56325270-20bb-4959-8498-e3223c35e24b）に
+配置前除去の unlink と rmdir も undo ジャーナル（[途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md)）に
 記録し、apply と rollback が途中失敗したら他の FS 変更と同じく巻き戻す。記録は配置前除去を
 実行した順のままにする。
 
 逆操作（記録 dest での symlink の再作成、空ディレクトリの再作成）は
-REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 に、故障を誘発した検証は
-TP-deb05610-44bc-4962-8939-952392e5fbd0 に置く。
+[途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](../requirements/undo-journal-rollback.md) に、故障を誘発した検証は
+[原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](../test-plan/fault-injection-atomicity.md) に置く。
 
 ## 根拠
 

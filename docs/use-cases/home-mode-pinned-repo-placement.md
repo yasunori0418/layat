@@ -65,7 +65,7 @@ npins update 等）後に再適用すると新しい内容へ切り替わる。
 
 あわせて「設計の哲学」の「home-manager に依存しない」節も本 item が引き受ける。同節が述べる
 「HM 不在の環境でも同じ設定定義で動く」ことを体現するのは統合ではなく CLI 単体の使われ方で、
-本 item と UC-19a90989-0ae3-438f-8a75-4e1e2637f81c がそれにあたる。本 item では「config を Nix で書き `layat` CLI が
+本 item と [プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する](project-mode-in-repo-placement.md) がそれにあたる。本 item では「config を Nix で書き `layat` CLI が
 entrypoint を発見して評価・適用すること」が同節に対応する要求になる。
 
 Issue #211 の素材リストはこの 3 例を別々に挙げるが、3 例とも紐づく `requirement` 群が重なる

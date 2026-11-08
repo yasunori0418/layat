@@ -26,7 +26,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: GitHub Issue #385, GitHub Issue #386, UBQ-c3e66a6c-906d-4083-b7ba-19618539c56c
+- 関連: GitHub Issue #385, GitHub Issue #386, [layat](../ubiquitous-language/layat.md)
 - 起点: Issue #385（epic）の grilling セッション（2026-09-04）で確定。ADR-0054 §1 を書き直した
 
 ## 背景
@@ -47,10 +47,10 @@ dotfiles は `mkOutOfStoreSymlink` による可変の symlink で配置してお
 ツールの名前を **layat** とする。"**lay** \<src\> **at** \<target\>" を縮めた造語で、CLI 名・
 Nix の名前空間・on-disk 名・エラーコードの接頭辞など、ツール名を含む字句はすべてこの名前で書く。
 
-字句の具体は、状態ディレクトリを REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3、退避の既定 suffix を
-REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b、flake-parts のモジュールを REQ-c50df875-2cb0-4e72-8a21-858359a11cae、
-モジュールの名前空間を REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 と
-REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、flake outputs を DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58 に置く。
+字句の具体は、状態ディレクトリを [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](../requirements/profile-on-disk-layout.md)、退避の既定 suffix を
+[apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](../requirements/apply-backup-rename-aside.md)、flake-parts のモジュールを [flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない](../requirements/flake-parts-module-path.md)、
+モジュールの名前空間を [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md) と
+[home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](../requirements/hm-activation-contract.md)、flake outputs を [layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する](../design/flake-outputs-attrs.md) に置く。
 
 ## 根拠
 

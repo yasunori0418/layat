@@ -17,7 +17,7 @@ generated:
 `internal/engine/lock_test.go`
 
 `Apply` / `Rollback` / `Reset` をブラックボックスで駆動し、`profileDir` の flock 意味論を
-観測する統合テスト（→ ADR-45380022-d959-4b22-aa05-5993ac1f3c87、`docs/spec.md` の実行フロー）。内部ヘルパーには結合しない。
+観測する統合テスト（→ [flock は明示実行で待ち、hook 実行でスキップする](../../adr/flock-mode-explicit-wait-hook-skip.md)、`docs/spec.md` の実行フロー）。内部ヘルパーには結合しない。
 進行の同期は channel で決定的に取り、`time.Sleep` によるタイミング依存を持たない。
 「保持中は進まない」の確認だけが短い timeout 付き select（取りこぼしても偽陽性にしか
 ならず flaky にならない）。

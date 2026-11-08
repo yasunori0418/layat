@@ -69,9 +69,9 @@ read-only 列挙（`list-generations` の世代・`gitignore` のパス）は
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する次の点は本 item の
 > 規範ではない。
 >
-> - エラー層の振り分け規則の詳細 → REQ-9341fa5d-836e-4023-af53-cc7d273438d1
-> - `--all` の `SubjectResult` の積み方・集約 `status`・順序 → REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5
-> - 変更系 / 読み取り系のペイロードの中身 → REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62 / REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303
+> - エラー層の振り分け規則の詳細 → [エンベロープのエラーは主体の有無で層を分けコードを分類する](json-error-layering.md)
+> - `--all` の `SubjectResult` の積み方・集約 `status`・順序 → [--all は config ごとの SubjectResult を単一実行と同一形状で積む](json-all-subject-results.md)
+> - 変更系 / 読み取り系のペイロードの中身 → [変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く](json-change-payload.md) / [読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す](json-readonly-payload.md)
 > - 実装 issue（#130 / #131 / #132 / #164）の進捗記述は要求ではなく履歴の注記
 
 ## 出典
@@ -80,4 +80,4 @@ read-only 列挙（`list-generations` の世代・`gitignore` のパス）は
 出力」箇条書き（親項目）と、そのサブ項目「時刻」、およびサブコマンド体系節の
 `--json` に関する blockquote。
 
-決定の実体は ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71「--json は outturn 規約に常時準拠する」・ADR-feb60906-1517-46b8-8fa5-e007df4d3e11・ADR-9e328362-2e90-441a-8eca-40081ce71b1b。`tool.version` の供給元は ADR-9ab223eb-99dc-4aa2-a671-c07f75f7ff3c。
+決定の実体は [--json は outturn 規約に常時準拠する](../adr/outturn-conformance-principle.md)「--json は outturn 規約に常時準拠する」・[--json は常に results\[\] エンベロープを出す](../adr/results-envelope-always.md)・[エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)。`tool.version` の供給元は [VERSION ファイルをバージョンの一次情報にする](../adr/version-file-single-source.md)。

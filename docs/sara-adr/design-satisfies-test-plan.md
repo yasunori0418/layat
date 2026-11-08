@@ -27,13 +27,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: SDR-34916a83-0cff-4524-a8ff-5a3195af52c3, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #237, #203, `docs/model.yaml`
+- 関連: [テスト計画の型を品質方針の型から分けて設ける](quality-and-test-plan-types.md), [model.yaml で組み込みモデルを全面置換し、汎用の型名を使う](model-yaml-full-replacement.md), GitHub Issue #583, #237, #203, `docs/model.yaml`
 - 起点: epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §4 を書き直した
 
 ## 背景
 
 design の `satisfies` は `requirement` だけを対象にしていた。テスト計画にあたる `requirement` を test_plan へ
-移す（SDR-34916a83-0cff-4524-a8ff-5a3195af52c3）と、それらを `satisfies` で指していた design item の辺は
+移す（[テスト計画の型を品質方針の型から分けて設ける](quality-and-test-plan-types.md)）と、それらを `satisfies` で指していた design item の辺は
 張り先を失う。中には `satisfies` がその 1 本だけの design item もあり、移した途端に design 側が接続漏れになる。
 
 ## 決定

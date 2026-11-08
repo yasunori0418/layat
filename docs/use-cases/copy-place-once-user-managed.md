@@ -22,7 +22,7 @@ symlink は read-only で編集できないため、この用途には copy を�
 copy は **place-once**（初回マテリアライズしたら以後 layat は触らない）。target が既に在れば
 上書きせず、編集済みの内容は不可触である。`src` 側の更新を反映したいときは
 `layat apply --recopy`（全 copy target を src から無条件上書き）か、`layat reset` で撤去して
-再 apply する（→ ADR-fb01d942-2875-4dcb-a7df-879e18f63883 / ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7）。
+再 apply する（→ [apply --recopy で全 copy target を src から無条件に上書きする](../adr/apply-recopy-overwrites-copies.md) / [reset で profile を触らずに配置物を撤去する](../adr/reset-fs-only-teardown.md)）。
 
 ```bash
 layat apply <name> --recopy   # copy target を src から無条件に上書き再コピー
@@ -41,7 +41,7 @@ copy は世代管理の対象外であり、ロールバックされない。ent
 - 配置物を明示的に撤去する手段があること。copy は世代の外に出るため、世代を戻しても消えず
   撤去には専用の手段が要る。その手段（`reset`）は copy を消す唯一の明示手段だが、reset 自体は
   copy 専用ではなく symlink を含む配置物を home / project の両モードで撤去する
-  （→ UC-f2436d68-91ff-4c48-b1df-47acefe4f464 / UC-19a90989-0ae3-438f-8a75-4e1e2637f81c）
+  （→ [home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する](home-mode-pinned-repo-placement.md) / [プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する](project-mode-in-repo-placement.md)）
 - layat が置いていない実ファイルが target に在るとき、利用者に知らせずに skip せず、可視化されること
 - src ツリー内の symlink が deref されず構造が保たれること
 

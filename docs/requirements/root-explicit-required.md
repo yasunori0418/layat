@@ -26,14 +26,14 @@ generated:
 - 「省略したら `$HOME`」のような暗黙の既定値は置かない。
 - 明示必須は `mkManifest` / CLI entrypoint の層に課す。モジュール（home-manager →
   `homeRoot` / devShell → `projectRoot`）は自分の性質で root を pin するため、
-  モジュール利用者は root を再指定しない（→ ADR-f85f1afd-9b87-4f7a-922e-97c62554f198）。
+  モジュール利用者は root を再指定しない（→ [root の明示を mkManifest 層で必須にする](../adr/root-explicit-at-mkmanifest.md)）。
 
 > **原文「root の解決」節の導入文の残る規範の所在**: root が target を絶対パスへ変換する基準で
-> あることは target を root 相対と定める REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336、配置の実体を全層で engine が実行する
-> ことは REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 / REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564 の担当。
+> あることは target を root 相対と定める [manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する](manifest-entries-array.md)、配置の実体を全層で engine が実行する
+> ことは [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](modules-are-engine-wiring.md) / [engine が叩く外部コマンドは git のみに限る](engine-external-command-constraint.md) の担当。
 >
 > 上の第 3 項が述べるモジュール側の root pin（HM → `homeRoot` / devShell → `projectRoot`・
-> モジュール利用者は root を再指定しない）は **REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 の担当**で、本 item の規範には
+> モジュール利用者は root を再指定しない）は **[全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md) の担当**で、本 item の規範には
 > 含めない。本 item が規定するのは `mkManifest` / CLI entrypoint の層で root が明示必須で
 > あることに限る。
 

@@ -34,8 +34,8 @@ activation の外で `layat apply --manifest … --recopy` を手で起動する
 `--recopy` を付ける。manifest には影響しない、起動の配線のオプションとする。オプションの説明文には、
 有効にすると activation のたびに copy target を src で上書きし、ローカルの編集を捨てることを明記する。
 
-規範は REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c、共通オプションの集合は
-REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 に置く。
+規範は [layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける](../requirements/recopy-wiring-layer.md)、共通オプションの集合は
+[全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md) に置く。
 
 ## 根拠
 

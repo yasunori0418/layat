@@ -23,12 +23,12 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb, GitHub Issue #366, #364
+- 関連: [ID はフル UUID に統一し 8 文字省略形を使わない](full-uuid-ids-no-short-form.md), GitHub Issue #366, #364
 - 起点: epic #364 の着手前 grilling（2026-08-17）で確定。ADR-0053 §2 を書き直した
 
 ## 背景
 
-8 文字の省略形を使わないという規則は SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb が決めた。本 ADR は、その禁止を
+8 文字の省略形を使わないという規則は [ID はフル UUID に統一し 8 文字省略形を使わない](full-uuid-ids-no-short-form.md) が決めた。本 ADR は、その禁止を
 どう担保するかだけを決める。担保の方法は、禁止の規則を変えずに単独で覆せる。後から CI の検出を入れるなら、
 本 ADR だけを廃止すればよい。そのため規則とは別の ADR にする。
 

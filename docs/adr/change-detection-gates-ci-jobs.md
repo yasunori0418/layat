@@ -17,14 +17,14 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511
+- 関連: [main へのマージにテストの成功を必須にする](tests-required-for-merge.md)
 - 起点: ADR-0030 §2 と ADR-0027 §2b（docs だけの変更で nix を回さない）を書き直した
 
 ## 背景
 
 docs だけを変える PR で、flake check の 3 環境の matrix と E2E を回すのは無駄になる。一方、main
 へのマージには flake check と `e2e` の check を必須にしている
-（ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511）。required status check は、生成されない check を
+（[main へのマージにテストの成功を必須にする](tests-required-for-merge.md)）。required status check は、生成されない check を
 `Expected` のまま扱い、マージをブロックし続ける。ジョブが生成されたうえで `if:` によって skip
 された check は、成功として扱われる。
 
@@ -37,8 +37,8 @@ composite action にまとめ、`changes` ジョブがそれを呼ぶ。後続�
 実行の条件を置く段はジョブごとに分ける。matrix を持つ `flake-check` はステップ段の `if:` に条件を置き、
 3 つの check を必ず生成する。`e2e` と `go-coverage` はジョブ段の `if:` に条件を置く。
 
-ジョブごとの条件の段は INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 に、required status check
-との関係は INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6 に置く。
+ジョブごとの条件の段は [CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](../infrastructure/ci-pipeline.md) に、required status check
+との関係は [マージの条件（main の ruleset と required status checks）](../infrastructure/merge-gate.md) に置く。
 
 ## 根拠
 

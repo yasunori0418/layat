@@ -26,7 +26,7 @@ config の世代を公開しないことを確かめる。engine 層が観測値
 - **理由が利用者へ届く** — エラーが home mode を要する旨を述べること。および拒否の判断に
   使った root の種別を名指すこと。利用者が「コマンドが無い」ではなく「この config の root では
   使えない」と読み取れることがこの条件の一部である。種別は値の表記ごと固定する。モード名は
-  system mode の追加で増える改訂が控える（→ ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed）一方、root の種別の値表記はその改訂の
+  system mode の追加で増える改訂が控える（→ [root は 3 つの marker で表す](../../adr/three-root-markers.md)）一方、root の種別の値表記はその改訂の
   対象ではないため、緩める理由が無い
 - **全件列挙が含めない** — 全 config を対象とする列挙（`list-generations --all`）が project
   mode の config を結果に含めないこと。除外が働いたことを「元から空」と区別するには home mode
@@ -45,6 +45,6 @@ config の世代を公開しないことを確かめる。engine 層が観測値
 
 > **区分の所在**。この条件の中心である名指しの拒否は entrypoint の評価を通す処理でしか
 > 観測できず、その処理を持つテスト資産は e2e 01-project だけである。その CASE が属する
-> integration 区分に置く。全件列挙からの除外を覆う CASE-2e7b9ea2-4e4d-48ca-9e1e-0bfbb6223ff2 は generations 区分に
+> integration 区分に置く。全件列挙からの除外を覆う [e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復](../generations/e2e-02-home.md) は generations 区分に
 > 属するが、区分はテスト資産の置き場所であって条件の所属先ではないため、区分をまたいで
-> `covers` を張る（同じ TC を別区分の CASE が覆う例は TC-cf8189c4-d680-4d7e-bcd3-810543762c50 に先例がある）。
+> `covers` を張る（同じ TC を別区分の CASE が覆う例は [engine 結果から item と change への写像がインベントリ全数と実差分に一致する](../cli-json/engine-result-inventory-mapping.md) に先例がある）。

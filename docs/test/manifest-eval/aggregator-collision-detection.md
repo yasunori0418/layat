@@ -14,7 +14,7 @@ generated:
 ## テスト条件
 
 nix-unit のスイートを組み立てるマージ（`tests/nix-unit-lib.nix` の `mergeTests`）が、
-TP-36e90d5d-4524-4294-bc72-ee263bb02782 の定めるテスト名の一意性を機械的に強制していることをアサートする。合成した
+[評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](../../test-plan/nix-unit-namaka-split.md) の定めるテスト名の一意性を機械的に強制していることをアサートする。合成した
 `{ file, tests }` のリストを渡し、readDir が返す実ファイル構成に依存せず throw 側の処理を
 実行する。
 
@@ -35,17 +35,17 @@ TP-36e90d5d-4524-4294-bc72-ee263bb02782 の定めるテスト名の一意性を�
 
 射程は `mergeTests` の入出力に限る。`tests/nix-unit.nix` が `builtins.readDir` で
 `tests/nix-unit/*.nix` を列挙して `{ file, tests }` を組み立てる側は見ない。列挙が leaf を
-取りこぼしても本条件は緑のままで、この残余は RISK-3de9753f-3fd3-4364-b1ab-64c68c15ec77 が引き続き持つ。
+取りこぼしても本条件は緑のままで、この残余は [評価スイート自身の盲点でアサートが空虚に緑になる](../../risks/eval-suite-blind-spot.md) が引き続き持つ。
 
 報告文字列の比較は nix-unit の `expectedError.msg`（正規表現マッチ）で行うため、
-CASE-879a93da-d22f-4397-84da-3544f8249af1 と同じく「メッセージ全体を固定していない」形の弱さを残す。owners の列挙と
+[nix-unit: gates.nix — 評価時に throw する拒否条件群](nix-unit-gates.md) と同じく「メッセージ全体を固定していない」形の弱さを残す。owners の列挙と
 行数は行そのものをパターンに書いて見るので、件数の打ち切りは検知する。
 
 ## 覆う CASE
 
-- CASE-276945a3-59c2-493d-9971-c080a9a8c066（`tests/nix-unit/aggregator-merge.nix`）
+- [nix-unit: aggregator-merge.nix — 衝突の確認をダミー入力で検証する](nix-unit-aggregator-merge.md)（`tests/nix-unit/aggregator-merge.nix`）
 
 ## 出典
 
 検出器自身を検証するテストが無いという検出（→ Issue #308。検出元は Issue #287 のレビュー
-収束）。検出器が緩和する脅威は RISK-3de9753f-3fd3-4364-b1ab-64c68c15ec77、一意性を要求する規約は TP-36e90d5d-4524-4294-bc72-ee263bb02782 が持つ。
+収束）。検出器が緩和する脅威は [評価スイート自身の盲点でアサートが空虚に緑になる](../../risks/eval-suite-blind-spot.md)、一意性を要求する規約は [評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](../../test-plan/nix-unit-namaka-split.md) が持つ。

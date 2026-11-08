@@ -20,17 +20,17 @@ generated:
 ## リスク
 
 project mode の配置物は commit の対象外で、activation は `.gitignore` に触れず git の状態に
-干渉しない（→ REQ-e79178f5-5865-4444-a05d-3ab06f33cd6d）。利用者は `layat gitignore` の出力を
+干渉しない（→ [project mode の配置物は ephemeral とし、activation は git 状態に干渉しない](../requirements/project-mode-ephemeral.md)）。利用者は `layat gitignore` の出力を
 `.gitignore` へ取り込んで配置物を追跡から外す。これが崩れる形は次のとおり。
 
 - **列挙の取りこぼし** — `gitignore` が `method` で target を選り分け、copy target を出さない
-  （→ REQ-60787ed2-4176-4bdd-800f-1600c0315551）。copy の配置物は通常ファイルなので、
+  （→ [gitignore は method を区別せず copy target も含めて全 target を列挙する](../requirements/gitignore-includes-copy-targets.md)）。copy の配置物は通常ファイルなので、
   `git add -A` でそのまま commit に入る
 - **全件出力の重複と並び順** — 行指向の `gitignore --all` が config ごとの出力を並べたままにするか、
-  並び替えと重複除去を欠く（→ REQ-1f128917-4424-4e37-8a88-e0bb23a09da7）。同じ target が二重に現れ、
+  並び替えと重複除去を欠く（→ [gitignore --all は projectRoot の全 config の target をソート + 重複除去して出力する](../requirements/gitignore-all-dedup.md)）。同じ target が二重に現れ、
   出力を取り込むたびに `.gitignore` に余計な差分が出る
 - **project mode 外での出力** — home / fixed の config を指定しても止まらず、git toplevel を
-  前提にした anchor 形の行を出す（→ REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9）。`.gitignore` の
+  前提にした anchor 形の行を出す（→ [gitignore は project mode 限定で非 project config を指定したらエラーで停止する](../requirements/gitignore-project-mode-only.md)）。`.gitignore` の
   位置と無関係な行が書き込まれ、意図しないパスが追跡から外れる
 - **activation の干渉** — activation が `.gitignore` を書き換えるか git の index に触れる。
   利用者の手元に、自分が書いていない変更が commit 候補として現れる
@@ -49,7 +49,7 @@ likelihood medium × impact medium から level は medium。
 4 つの崩れ方ごとの緩和と残余は次のとおり。
 
 - **列挙の取りこぼし** — copy target を列挙に含むことを確かめる検証条件は無く、残余として残る
-- **全件出力の重複と並び順** — TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12 が対象選択の使い方（名前の省略・単一・全件）の
+- **全件出力の重複と並び順** — [フラグの解釈と対象選択が仕様どおりで位置引数を飲み込まない](../test/cli-json/flag-parsing-target-selection.md) が対象選択の使い方（名前の省略・単一・全件）の
   区別を確かめ、全件指定が対象の config をすべて選ぶことだけを緩和する。行指向の `--all` の
   並び替えと重複除去は e2e 01-project と `cmd/layat/gitignore_test.go` が確かめているが、それを
   条件に持つ TC が無いので残余として残る

@@ -95,18 +95,18 @@ generated:
 > **上は原文の写しで、規範は frontmatter が正**。原文が参照する次の規範は本 item の担当ではない。
 >
 > - `<roothash>` 階層に backref `.root` を置き孤児 profile を逆引きできるようにすること →
->   REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3（レイアウト）・REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4（孤児 profile の扱い）
-> - flock のキーが解決後 profileDir であること → REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3 / REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461
-> - `<state>` の定義 → REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3
-> - cross-config で同一 target を狙ったときの振動がユーザー責任であること → REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693
-> - ドリフト修復の処理でも `--backup` の退避段が適用されること → REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98
-> - `rollback` / `list-generations` が home / system mode 限定であること（CLI 側の規範）→ REQ-05abce3e-9797-432b-b93f-37c55d09afde
-> - foreign symlink の warning そのもの → REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557、place-once そのもの → REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9
+>   [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](profile-on-disk-layout.md)（レイアウト）・[孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する](project-mode-orphan-profile.md)（孤児 profile の扱い）
+> - flock のキーが解決後 profileDir であること → [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](profile-on-disk-layout.md) / [flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする](flock-acquisition-mode.md)
+> - `<state>` の定義 → [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](profile-on-disk-layout.md)
+> - cross-config で同一 target を狙ったときの振動がユーザー責任であること → [同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める](cross-config-target-oscillation.md)
+> - ドリフト修復の処理でも `--backup` の退避段が適用されること → [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](backup-stage-position.md)
+> - `rollback` / `list-generations` が home / system mode 限定であること（CLI 側の規範）→ [rollback と list-generations は home / system mode 限定にする](rollback-list-generations-home-only.md)
+> - foreign symlink の warning そのもの → [symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする](symlink-placement-procedure.md)、place-once そのもの → [copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](copy-place-once.md)
 >
-> **2026-10-11 追記（ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444）**: 上の写しの「新 link farm derivation が前世代と同一なら」は、新 link-farm が
+> **2026-10-11 追記（[世代スキップには profile に加え記録の一致も要する](../adr/generation-skip-requires-both-match.md)）**: 上の写しの「新 link farm derivation が前世代と同一なら」は、新 link-farm が
 > profile の current 世代に一致し、last-applied 記録があればその `linkFarm` にも一致するなら、と読み替える
 > （profile が無ければ skip しない）。profile と記録が食い違う間は通常の処理で記録を比較の基準に古くなった配置の除去とコミットを行う。
-> lstat での確認の「記録通り」も記録を優先した比較の基準に照らす。記録の規範は REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 の担当。
+> lstat での確認の「記録通り」も記録を優先した比較の基準に照らす。記録の規範は [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md) の担当。
 >
 > **2026-10-24 追記**: 上の写しの「世代スキップは project mode 限定」は「project / system mode 限定」と読み替える。
 > system mode も同じ条件で世代を積まずドリフト修復だけ行い、home / fixed mode は従来どおり適用のたびに新世代を積む。
@@ -116,8 +116,8 @@ generated:
 
 `docs/spec.md`「世代管理仕様」→「project mode の世代」節の箇条書き第 1〜4 項。
 
-決定の実体は ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75「module と project では世代操作を公開しない」、
-ADR-4dca6ef4-2791-48d5-aa82-7037630968a6「ephemeral 配置は git に干渉しない」と ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d「project mode では同じ link farm なら世代を積まず drift だけを直す」。
-profile を解決済み root でキーすることと `<roothash>` の定義は ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988、`<state>` の確定は
-ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203、copy のドリフト修復の限定は ADR-5265f879-e623-44f9-9c58-8c14598e8b10 が定めている。世代スキップの判定元を profile と
-last-applied 記録の両方一致にし、比較の基準を記録優先にしたのは ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444・ADR-a91585ad-971a-4558-9f25-b7fcd6e57671。
+決定の実体は [module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)「module と project では世代操作を公開しない」、
+[ephemeral 配置は git に干渉しない](../adr/ephemeral-no-git-interference.md)「ephemeral 配置は git に干渉しない」と [project mode では同じ link farm なら世代を積まず drift だけを直す](../adr/project-mode-generation-skip-and-drift-repair.md)「project mode では同じ link farm なら世代を積まず drift だけを直す」。
+profile を解決済み root でキーすることと `<roothash>` の定義は [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)、`<state>` の確定は
+[profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)、copy のドリフト修復の限定は [世代スキップを project mode と system mode で行う](../adr/generation-skip-project-and-system.md) が定めている。世代スキップの判定元を profile と
+last-applied 記録の両方一致にし、比較の基準を記録優先にしたのは [世代スキップには profile に加え記録の一致も要する](../adr/generation-skip-requires-both-match.md)・[古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)。

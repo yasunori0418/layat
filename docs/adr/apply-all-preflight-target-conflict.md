@@ -24,19 +24,19 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d, ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-af37a636-a798-4c03-8fa4-e73ed6375a92, ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4
+- 関連: [cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](cross-config-last-wins-with-foreign-warning.md), [apply --all は config ごとの情報を 1 回の eval でまとめて取る](apply-all-single-eval.md), [apply --all の集約は config 名の辞書順に並べる](apply-all-lexicographic-order.md), [配置の振動はユーザー責任とし、文書で注意するに留める](oscillation-is-user-responsibility.md)
 - 起点: ADR-0038 §1（--all で選択した config 集合内の正規化後 target の重複を build 前に error 停止する）と §3（単一の apply は確かめず、検出できない衝突は後勝ちのままにする）を書き直した
 
 ## 背景
 
 別々の config が同じ target を持つと、engine はそれぞれ自分の前世代の manifest としか比べないので、
 相手の symlink を foreign と見て warning を出し、後勝ちで置き換える
-（ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d）。`apply --all` を実行するたびに所有者が入れ替わり、
+（[cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](cross-config-last-wins-with-foreign-warning.md)）。`apply --all` を実行するたびに所有者が入れ替わり、
 衝突はいつまでも解消しない。古くなった配置の除去の保守的な条件は衝突があっても保たれるので、実害は
 どちらの symlink が残るかに限られる。それでも設定の誤りであることに変わりはない。
 
 一方、`apply --all` が扱う config の正規化後 target は、build の前に分かる。同じ entrypoint から
-選んだ config なら一括 eval で取れ（ADR-28605860-770e-41df-95dd-7dc05b20497a）、`--manifest` で渡された
+選んだ config なら一括 eval で取れ（[apply --all は config ごとの情報を 1 回の eval でまとめて取る](apply-all-single-eval.md)）、`--manifest` で渡された
 ビルド済みの集合なら各 link-farm の `manifest.json` から読める。
 
 ## 決定
@@ -46,10 +46,10 @@ generated:
 同じ確認を通る。名指しの `apply <name>` ではこの確認をしない。
 この確認で見えない衝突は、これまでどおり実行時の後勝ちと foreign symlink の warning で扱う。
 
-確認の対象・バケットの分け方・終了コードは REQ-38506419-c23d-4fce-b167-30715ce6a69d に、
+確認の対象・バケットの分け方・終了コードは [apply --all は build 前に選択 config 間の target 衝突を検出して停止する](../requirements/apply-all-cross-config-preflight.md) に、
 同一 manifest 内の衝突と cross-config の衝突を別々に扱うことは
-REQ-5c6b07da-3d06-414d-8770-4f438234b322 に置く。判定を置く層は
-ADR-7f4fd2f6-672d-4d8c-a881-31024ad1d7c3 が定める。
+[target 衝突の検出処理を同一 manifest 内と cross-config で分ける](../requirements/target-collision-eval-detection.md) に置く。判定を置く層は
+[config 間の target 衝突は CLI が判定し engine に持ち込まない](cross-config-conflict-judged-by-cli.md) が定める。
 
 ## 根拠
 

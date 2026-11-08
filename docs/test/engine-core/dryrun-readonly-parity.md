@@ -18,7 +18,7 @@ generated:
 同じ入力に対して dryrun と本番 apply が同数の conflict を報告することを併せて検証する。
 祖先移行・実ディレクトリ移行のように plan が事前除去を伴う分類でも、dryrun が除去を実行せずに
 同じ判断へ至ることを含む。現状の比較は件数までで、どの target が conflict になったかの集合
-一致までは見ていない（RISK-33e30498-6fa1-450b-a251-5624cbe837b9 が恐れる乖離に対しては部分的な被覆にとどまる）。
+一致までは見ていない（[dryrun が副作用を残す、または本番 apply と異なる結果を報告する](../../risks/dryrun-diverges-from-apply.md) が恐れる乖離に対しては部分的な被覆にとどまる）。
 
 conflict 検出時の終了コード（CI の条件として機能すること）は CLI 面の契約であり、
 `cli-json` 対象の担当。ここでは engine が返す conflict の報告までを見る。

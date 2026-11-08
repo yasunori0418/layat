@@ -45,11 +45,11 @@ generated:
 config が無いときがこれにあたる。指定が無いときは出さず、`-v` のときだけ stderr に出す。
 どちらの場合も終了コードは 0 である。
 
-`-v` による opt-in と、stdout 専有出力が沈黙の対象外である点は REQ-0a123b89-0399-4f76-b988-56a5f7e0becf /
-REQ-fea038de-55eb-45ac-87fc-ec3a7287592a の担当。
+`-v` による opt-in と、stdout 専有出力が沈黙の対象外である点は [冗長度は -v、デバッグは --debug に分離し --json と直交させる](verbose-and-debug-separation.md) /
+[stdout は機械可読出力を専有しレポートと warning は stderr へ出す](stream-discipline.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」の第 1 箇条書き。
 
-決定の実体は ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5「指定が無いときは成功時に何も出力しない」。
+決定の実体は [指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)「指定が無いときは成功時に何も出力しない」。

@@ -25,13 +25,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-f85f1afd-9b87-4f7a-922e-97c62554f198, GitHub Issue #552, yasunori0418/outturn#1, outturn specVersion 1（yasunori0418/outturn）
+- 関連: [root は 3 つの marker で表す](three-root-markers.md), [root の明示を mkManifest 層で必須にする](root-explicit-at-mkmanifest.md), GitHub Issue #552, yasunori0418/outturn#1, outturn specVersion 1（yasunori0418/outturn）
 - 起点: layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §1 を書き直した
 
 ## 背景
 
 outturn（specVersion 1）は、エコシステムの各ツールを stdout / stdin の JSON パイプで合成するための
-共通規格である。単一責務のツールを outturn のパイプで組み立てることが、ADR-10dcf5a9-f298-4123-9a50-24f43e25d30c の north-star に
+共通規格である。単一責務のツールを outturn のパイプで組み立てることが、[コアを store パスを root 相対の target へ置くプリミティブにする](core-as-placement-primitive.md) の north-star に
 向かう手段になる。各ツールの出力を固定順に合成し、失敗時は逆順に rollback する
 オーケストレーションツールが構想されており、layat はその最初の適合実装にあたる。
 
@@ -42,8 +42,8 @@ outturn（specVersion 1）は、エコシステムの各ツールを stdout / st
 layat が出す JSON は、今ある機能も今後足す機能も、すべて outturn 規約に準拠させる。これを個々の
 機能の判断ではなく、layat の恒常的な設計制約とする。ツール固有の情報は outturn の `info` 配下にだけ置く。
 
-エンベロープの形は REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead に、適合の検証方法は
-TP-d3000054-42d9-4bac-912a-dd3abc38d3e9 に置く。
+エンベロープの形は [--json は outturn 規約準拠のエンベロープを出す第 2 契約とする](../requirements/json-outturn-envelope.md) に、適合の検証方法は
+[エンベロープの outturn 適合を Go テストと E2E の両方で検証する](../test-plan/json-conformance-verification.md) に置く。
 
 ## 根拠
 

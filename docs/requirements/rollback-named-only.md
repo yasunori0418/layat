@@ -23,10 +23,10 @@ generated:
 `rollback` は **名指し必須**（`--all` 非対応）。全 config を一斉に戻すのは破壊的で
 誤用の危険が大きく、途中失敗で状態が不揃いになり得るため。
 
-同じ理由による `reset` の名指し必須は REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4 の担当。
+同じ理由による `reset` の名指し必須は [reset は名指し必須で profileDir 単位の blocking flock を取る](reset-named-only-and-flock.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `rollback` 名指し必須の箇条書き。
 
-決定の実体は ADR-997c2459-f2ab-4025-ac92-e9ce836fc9ed「rollback に config の名指しを必須にする」。
+決定の実体は [rollback に config の名指しを必須にする](../adr/rollback-requires-name-no-all.md)「rollback に config の名指しを必須にする」。

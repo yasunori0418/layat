@@ -28,20 +28,20 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac, SDR-1a02013e-c57b-4079-9c72-8e9fe99e499a, SDR-7178b787-cf37-4753-9cea-12a0d65df410, GitHub Issue #583, #303, #292, `docs/agents/sara-graph.md`
+- 関連: [risk の impact を検出後の回復可能性で採点する](risk-impact-as-recoverability.md), [複数の失敗方向を持つ risk は最も重い方向で採点する](risk-heaviest-direction.md), [沈黙性を risk のスコア軸にせず本文に書く](silence-not-a-score-axis.md), GitHub Issue #583, #303, #292, `docs/agents/sara-graph.md`
 - 起点: Issue #303 の着手前 grilling（2026-08-12）で確定。ADR-0052 §2 を書き直した
 
 ## 背景
 
 自動検証が気づかれないまま形骸化する risk（テストは緑なのに何も確認していない類）は、その自動検証自身が開発の中で
-完結する。`impact` を回復可能性で採点し（SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac）、沈黙性を軸から
-外す（SDR-7178b787-cf37-4753-9cea-12a0d65df410）と、この類型はそのまま読めば low になる。
+完結する。`impact` を回復可能性で採点し（[risk の impact を検出後の回復可能性で採点する](risk-impact-as-recoverability.md)）、沈黙性を軸から
+外す（[沈黙性を risk のスコア軸にせず本文に書く](silence-not-a-score-axis.md)）と、この類型はそのまま読めば low になる。
 
 ## 決定
 
 自動検証の形骸化を表す risk の `impact` は、その自動検証が捕まえるはずの regression の `impact` を継承する。
 自動検証が開発の中で完結することを理由に low へ下げない。1 つの自動検証が複数の regression を守るときは、
-最も重い守備対象を継承する（SDR-1a02013e-c57b-4079-9c72-8e9fe99e499a）。
+最も重い守備対象を継承する（[複数の失敗方向を持つ risk は最も重い方向で採点する](risk-heaviest-direction.md)）。
 
 継承元は item の本文に名指しし、できるだけその regression を持つ risk の ID で書く。手順は
 `docs/agents/sara-graph.md` に置く。

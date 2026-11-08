@@ -14,7 +14,7 @@ generated:
 
 ## 対象
 
-`tests/nix-unit/escapes-base.nix`（TP-403c55c7-d996-4951-8e6b-c3a7dddd387c のテスト seam `layat.__internal` 経由で private
+`tests/nix-unit/escapes-base.nix`（[lib.__internal は private helper のテスト seam として公開する](../../test-plan/lib-internal-test-seam.md) のテスト seam `layat.__internal` 経由で private
 helper `escapesBase` / `pathChecks.isUnsafe` を直接叩く）
 
 ## 検証内容
@@ -35,4 +35,4 @@ helper `escapesBase` / `pathChecks.isUnsafe` を直接叩く）
 ## 出典
 
 `tests/nix-unit/escapes-base.nix` の現行実装からの逆算（→ Issue #273「L1〜L4」節）。
-パス安全性の確認の設計判断は ADR-00cc3497-654f-420a-928f-99f201e7efb0 が持つ。
+パス安全性の確認の設計判断は [絶対パスと .. エスケープは eval 時に拒否する](../../adr/path-safety-eval-rejection.md) が持つ。

@@ -34,8 +34,8 @@ root の種別を build せずに eval で読む。次にその profileDir の�
 build しないコマンドも同じ前段で profileDir を確定し、rollback と reset はそのあとでロックを取る。
 `--dryrun` も同じ前段で root を解決するが、配置しないのでロックは取らない。
 
-段ごとの手順は REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9、build しないコマンドの前段は
-REQ-9c111c32-8f6c-4eda-859c-dae02c0624fc、`--dryrun` の扱いは REQ-7a71a049-5876-4cfc-a65e-44e9a0349856 に置く。
+段ごとの手順は [実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](../requirements/exec-flow-eval-lock-build.md)、build しないコマンドの前段は
+[非 build コマンドも eval 先行を共通前段に持つ](../requirements/non-build-commands-eval-first.md)、`--dryrun` の扱いは [--dryrun は root を解決するが flock も pending gcroot も取らない](../requirements/dryrun-no-lock-no-gcroot.md) に置く。
 
 ## 根拠
 

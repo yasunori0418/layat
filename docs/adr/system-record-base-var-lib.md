@@ -37,7 +37,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c, ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-25d54346-f13a-4c12-9895-ab93dc6c183b, ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203, ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988, ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75, ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15, ADR-52423842-bacf-4773-bbca-bcb34ae71013, ADR-10c6dc33-d188-406b-beb4-d10ccbe3c645, ADR-a91585ad-971a-4558-9f25-b7fcd6e57671, ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444, ADR-be5865a8-000a-491f-8438-6308076ea727, ADR-facd3173-a5ce-4d81-90a9-370fb26428ff, ADR-f3d06307-ae5b-4f17-94ad-db92e80e3415, ADR-fd3353cf-00af-4343-bd3f-3369c21d7194, ADR-8e253f2e-c255-482a-a0f8-0837e122e80f
+- 関連: [rootKind に system を足しても schemaVersion を上げない](system-rootkind-without-version-bump.md), [root は 3 つの marker で表す](three-root-markers.md), [system mode の変更系操作の前に engine が euid 0 を確認する](system-mode-euid-gate.md), [profile の基底ディレクトリをモードで切り替える](profile-base-directory-per-mode.md), [profile は解決済み root の roothash でキーする](profile-keyed-by-roothash-of-resolved-root.md), [prune は system 基底も走査し、権限の無い系列を見送る](prune-scans-system-base-skips-unpermitted.md), [module と project では世代操作を公開しない](module-and-project-hide-generation-ops.md), [last-applied 記録を profileDir と同じ鍵で state 基底に置く](last-applied-record-location.md), [last-applied 記録は manifest を内容ごと持つ](record-embeds-manifest.md), [記録を書き直す操作ごとに linkFarm の値を定める](record-rewrite-linkfarm.md), [古くなった配置の除去は、比較の基準を記録から優先して読む](baseline-prefers-record.md), [世代スキップには profile に加え記録の一致も要する](generation-skip-requires-both-match.md), [rollback の戻り先は世代リンクから読む](rollback-target-from-generation-link.md), [apply は世代の commit の前に記録を書く](apply-writes-record-before-commit.md), [rollback はポインタ移動の前に戻り先の manifest で記録を書き直す](rollback-rewrites-record-before-pointer.md), [reset は撤去できなかった entry を残して記録を書き直す](reset-rewrites-record-with-survivors.md), [記録の読みは不正な記録を error にする](record-read-strictly.md)
 - 起点: Issue #140（epic #129: system mode の実装）の計画（2026-10-18）。ADR-0062 §1・ADR-0066 の既知の注意点（macOS の記録基底）を書き直した
 
 ## 背景
@@ -59,8 +59,8 @@ root で実行する engine が作る。
 
 home / project / fixed の記録の置き場と、記録の内容・書き込みの手順・古くなった配置を除去するときの基準をどこから読むかの優先順位は system mode でも変えない。
 
-置き場のパスと鍵の形は REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4 と
-REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 に置く。
+置き場のパスと鍵の形は [system mode は root を / に解決し、変更系操作の前に euid 0 を確認し、profile と last-applied 記録を system 基底に置く](../requirements/system-mode-root-gate-and-record-base.md) と
+[apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](../requirements/last-applied-record.md) に置く。
 
 ## 根拠
 

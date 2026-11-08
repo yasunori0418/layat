@@ -29,13 +29,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-6687c0dc-957d-4913-99c6-168b0fe552ad, ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9, ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1, ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246, ADR-63039f93-cd78-4356-8cd3-82c2f49a1aaa, ADR-6b7becf0-f029-41e3-895e-b672dce94d3d, ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, GitHub Issue #396
+- 関連: [生成器の診断を成功時も stderr へ素通しする](generator-diagnostics-passed-through.md), [apply --all は config ごとの情報を 1 回の eval でまとめて取る](apply-all-single-eval.md), [eval を先に行い、flock を取ってから build する](eval-first-then-flock-then-build.md), [store path は out-link で受け取る](store-path-via-out-link.md), [内部コマンドの開示で透明性を保つ](internal-command-disclosure.md), [nix の experimental-features は利用者が有効にしておく前提にする](experimental-features-user-prerequisite.md), [CLI は cobra で組む](cobra-cli-framework.md), [root の必須性を別の確認を書かずに標準のエラーで担保する](root-required.md), [home mode の CLI と lib の版ずれを manifest の確認に任せて許容する](home-mode-skew-guarded-by-schemaversion.md), [1 config = 1 profile を全モードで自前に持つ](one-config-one-profile-all-modes.md), GitHub Issue #396
 - 起点: Issue #396（評価器の診断の扱い）の結論。ADR-0055 §6 の失敗の返し方と表示の主体を書き直した
 
 ## 背景
 
 生成器の失敗は、人間向けの表示・`--json` のエンベロープ・`--debug` の表示のどれにも現れる。
-生成器の診断は実行中に既に stderr へ流れている（→ ADR-6687c0dc-957d-4913-99c6-168b0fe552ad）。
+生成器の診断は実行中に既に stderr へ流れている（→ [生成器の診断を成功時も stderr へ素通しする](generator-diagnostics-passed-through.md)）。
 
 ## 決定
 
@@ -43,7 +43,7 @@ generated:
 構造化した値（`generator.Error`）で CLI へ返す。どの形で表示するかは CLI が決める。人間向けの表示は
 要約と案内だけにし、生の診断は再掲しない。
 
-フィールドの一覧と各表示形式での扱いは REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd に置く。
+フィールドの一覧と各表示形式での扱いは [生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める](../requirements/generator-diagnostics-contract.md) に置く。
 
 ## 根拠
 

@@ -37,10 +37,10 @@ link-farm を `layat apply --all --manifest <name>=<link-farm> …` の 1 回の
 常に明示して付け、`--backup` や `--recopy` などの修飾も同じ起動に付ける。config が無いときは
 起動しない。activation の側には config のループも部分失敗の集約も書かない。
 
-組の並びと報告の順は REQ-c847d1af-a437-46bb-bd64-42083810d034、home-manager の起動の契約は
-REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、NixOS / nix-darwin の起動の契約は
-REQ-a220bb28-89de-42b0-a854-e7468755ecb1、`--backup` の配線は
-REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3 に置く。
+組の並びと報告の順は [HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う](../requirements/hm-activation-per-config-kick.md)、home-manager の起動の契約は
+[home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](../requirements/hm-activation-contract.md)、NixOS / nix-darwin の起動の契約は
+[NixOS / nix-darwin モジュールは activation から全 config のビルド済み link-farm を systemRoot で 1 回の起動に渡す](../requirements/system-module-activation-contract.md)、`--backup` の配線は
+[layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない](../requirements/backup-wiring-layer.md) に置く。
 
 ## 根拠
 

@@ -27,7 +27,7 @@ src のツリーにある symlink を symlink として写すのか、指す先�
 copy は src のツリーにある symlink をたどらず、symlink のまま複製する。相対 symlink はそのまま
 保つ。store の中を指す絶対 symlink を複製すると、複製先が store に依存したまま残る。この性質は
 docs に明記し、store から完全に切り離したい場合の対処は利用者に任せる。規範の細目は
-REQ-0bd55dfc-b28c-4ad2-ad50-bb1f76b2246c に置く。
+[copy は src ツリー内の symlink を deref せず symlink のまま複製する](../requirements/copy-preserves-inner-symlinks.md) に置く。
 
 ## 根拠
 

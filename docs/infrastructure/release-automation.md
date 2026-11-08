@@ -30,7 +30,7 @@ Go バイナリへは nix build の `ldflags`（`-X`）で埋め込む。単一�
 | `bump-version.yml` | `workflow_dispatch` | バージョン文字列を入力に取り、非 main ブランチ上で `VERSION` を書き換えてコミット・push する |
 | `release.yml` | `push: main` + `VERSION` の `paths`、および `workflow_dispatch`。`workflow_dispatch` はブランチを問わず起動できるため、ジョブに `if: github.ref == 'refs/heads/main'` を置いて main に限る。`concurrency` は group `release` で、走行中のリリースは走り切らせる（`cancel-in-progress: false`）| `VERSION` を読み、`softprops/action-gh-release`（SHA pin・版名はコメント併記）でタグ `vX.Y.Z` 作成 + リリースノート自動生成 + GitHub Release 作成 |
 
-マージの条件（INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6）が掛かるのは **bump PR の側**で、`release.yml` 自体は main への push 後に
+マージの条件（[マージの条件（main の ruleset と required status checks）](merge-gate.md)）が掛かるのは **bump PR の側**で、`release.yml` 自体は main への push 後に
 実行されるため required check の対象外。「bump PR のマージがリリースを駆動する」形が main 直コミット
 禁止と整合する。
 手元で `VERSION` を編集して PR を作る手動の使い方も同格に有効で、`bump-version.yml` は省力化で
@@ -68,7 +68,7 @@ main への push 後に実行されるため required check の対象外）た�
 
 ## 出典
 
-ADR-9ab223eb-99dc-4aa2-a671-c07f75f7ff3c、ADR-0dd4036d-594b-4f36-a509-e5498b231cf7、
-ADR-2fcf26b4-bce6-4ed6-a374-3afe560ead21、ADR-c2f0cdc9-284e-4425-8f60-15f3aa423ed4。「権限と入力検証」節は ADR の決定では
+[VERSION ファイルをバージョンの一次情報にする](../adr/version-file-single-source.md)、[bump-version.yml でバージョンを上げるコミットを push する](../adr/bump-version-workflow.md)、
+[VERSION の変更をきっかけに release を自動で作る](../adr/release-on-version-change.md)、[release に成果物を添付しない](../adr/release-without-artifacts.md)。「権限と入力検証」節は ADR の決定では
 なく、`bump-version.yml` / `release.yml` が実運用してきた規範を Issue #291 で本 item へ
 書き起こしたもの。

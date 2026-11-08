@@ -41,13 +41,13 @@ profile の on-disk レイアウトを決めるパス解決層を、環境変数
 
 **兄弟の配置** — `.pending` out-link が profileDir 内に置かれること。backref `.root` は
 roothash 階層（`<name>` dir の親）に置かれ、`<roothash>` キーのモードでのみ生じること
-（home / system の `<name>` 直キーでは空。→ REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3）。
+（home / system の `<name>` 直キーでは空。→ [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](../../requirements/profile-on-disk-layout.md)）。
 
-上位の規範は TP-e7c25263-6d2d-4a37-8275-26906889d912 の「FS に一切触れずに判断する層」。`internal/paths/` の解決と
+上位の規範は [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../../test-plan/go-test-layering.md) の「FS に一切触れずに判断する層」。`internal/paths/` の解決と
 ハッシュ化は入力が列挙可能なので、統合テストがたまたま到達する範囲に委ねず、ユニット
 レベルで table として覆う。
 
 ## 対応する CASE
 
-CASE-ff4a842e-dd25-4c75-82ef-185507781d02（`internal/paths/paths_test.go`）。root 解決そのもの（`rootKind` と
-`--root` から絶対 root を得る側）は CASE-31fdb776-9650-4ff9-97f6-45d56b2e7177 も隣接して検証する。
+[paths_test.go — state 基底の解決・roothash の性質・profileDir キーイング・世代リンク名と兄弟パス](paths-test-go.md)（`internal/paths/paths_test.go`）。root 解決そのもの（`rootKind` と
+`--root` から絶対 root を得る側）は [internal/engine/engine_test.go — 実 tmpdir に対する apply の統合テスト](../engine-core/engine-test-go.md) も隣接して検証する。

@@ -24,11 +24,11 @@ generated:
 - **集約順の非決定化** — config ごとの出力（`-v` レポート・`--dryrun` の計画・`apply <name>
   failed` / `skipped apply <name>` の行）を worker から直接書くと、完了順に並んで実行ごとに
   入れ替わる。subject を worker 内で登録すると `results[]` も完了順になり、辞書順集約を
-  求める REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af と、単一実行と同一形状・選択順という
-  REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5 の前提が崩れる
+  求める [apply --all は選択された config を並列に適用し、集約表示と results\[\] を辞書順にし、部分失敗でも続行して最後に集約する](../requirements/apply-all-lexical-order-continue.md) と、単一実行と同一形状・選択順という
+  [--all は config ごとの SubjectResult を単一実行と同一形状で積む](../requirements/json-all-subject-results.md) の前提が崩れる
 - **カウント・エンベロープのレース** — applied / skipped / failures と error / conflict の
   判定を保護なしで共有すると更新が失われ、失敗があるのに exit 0 になる・error が conflict に
-  負ける（REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32 の優先度が崩れる）。`outturnRun` の
+  負ける（[apply --all --dryrun の終了コードは error を conflict より優先する](../requirements/apply-all-dryrun-exit-code-priority.md) の優先度が崩れる）。`outturnRun` の
   subject 一覧への append が並行すると `results[]` から config が欠ける
 - **意味論の取り違え** — 並列化の書き換えで try-lock の skip を失敗へ数える・部分失敗時に
   成功 config の subject を捨てる、といった退行が入り込む

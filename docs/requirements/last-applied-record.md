@@ -105,7 +105,7 @@ generated:
   `<SystemStateDir>/layat/<鍵>/last-applied.json`（既定 `/var/lib`）。鍵は profileDir と同じ規則
   （`--root` なしの home と system は `<name>` 直、他は `<roothash>/<name>` + backref `.root`）。
 - **内容**: `recordVersion`（2）/ `linkFarm` / `appliedAt` / `manifest`（そのまま埋め込む）/ `origin`。
-  `origin` は直近に記録を書いた apply の出所で、分からなければ省く（規則は REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282）。manifest を
+  `origin` は直近に記録を書いた apply の出所で、分からなければ省く（規則は [apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する](apply-origin-mismatch-warning.md)）。manifest を
   内容ごと持つので、記録の有効性は store の GC と無関係。
 - **書き込み**: 全 FS 操作の成功直後・世代 commit の前に atomic に書く。記録は「この root に
   layat が最後に置いたもの」という FS の事実であり、commit の成否と独立。書けなければ apply は
@@ -129,12 +129,12 @@ generated:
   rollback の target（N-1）は世代リンクから読む。
 
 変えないもの: `--json` の契約（出所の食い違い警告を除く）・flock の鍵（profileDir）・prune の対象。記録のレイアウトは
-DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5、古くなった配置の除去の保守的不変条件は
-REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2、rollback の手順は
-REQ-0e341430-17f0-498b-9439-65491652163a、system mode の記録基底は
-REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4 の担当。
+[last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む](../design/last-applied-record-layout.md)、古くなった配置の除去の保守的不変条件は
+[古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](stale-removal-invariants.md)、rollback の手順は
+[rollback は FS を先に収束させてから profile ポインタを最後に移す](rollback-refit-then-pointer.md)、system mode の記録基底は
+[system mode は root を / に解決し、変更系操作の前に euid 0 を確認し、profile と last-applied 記録を system 基底に置く](system-mode-root-gate-and-record-base.md) の担当。
 
 ## 出典
 
-ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15・ADR-52423842-bacf-4773-bbca-bcb34ae71013・ADR-10c6dc33-d188-406b-beb4-d10ccbe3c645・ADR-a91585ad-971a-4558-9f25-b7fcd6e57671・ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444・ADR-be5865a8-000a-491f-8438-6308076ea727・ADR-facd3173-a5ce-4d81-90a9-370fb26428ff・ADR-f3d06307-ae5b-4f17-94ad-db92e80e3415・ADR-fd3353cf-00af-4343-bd3f-3369c21d7194・ADR-8e253f2e-c255-482a-a0f8-0837e122e80f。
-system の置き場は ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c「system mode の last-applied 記録を /var/lib/layat に置く」。`origin` と版 2 は ADR-0db061d1-fa30-436d-91d7-c0cec8804c52・ADR-8e253f2e-c255-482a-a0f8-0837e122e80f。
+[last-applied 記録を profileDir と同じ鍵で state 基底に置く](../adr/last-applied-record-location.md)・[last-applied 記録は manifest を内容ごと持つ](../adr/record-embeds-manifest.md)・[記録を書き直す操作ごとに linkFarm の値を定める](../adr/record-rewrite-linkfarm.md)・[古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)・[世代スキップには profile に加え記録の一致も要する](../adr/generation-skip-requires-both-match.md)・[rollback の戻り先は世代リンクから読む](../adr/rollback-target-from-generation-link.md)・[apply は世代の commit の前に記録を書く](../adr/apply-writes-record-before-commit.md)・[rollback はポインタ移動の前に戻り先の manifest で記録を書き直す](../adr/rollback-rewrites-record-before-pointer.md)・[reset は撤去できなかった entry を残して記録を書き直す](../adr/reset-rewrites-record-with-survivors.md)・[記録の読みは不正な記録を error にする](../adr/record-read-strictly.md)。
+system の置き場は [system mode の last-applied 記録を /var/lib/layat に置く](../adr/system-record-base-var-lib.md)「system mode の last-applied 記録を /var/lib/layat に置く」。`origin` と版 2 は [last-applied 記録に出所を持たせる](../adr/record-carries-origin.md)・[記録の読みは不正な記録を error にする](../adr/record-read-strictly.md)。

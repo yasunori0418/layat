@@ -34,8 +34,8 @@ generated:
 `mkManifest` は、前段で呼ぶ `normalizeManifest` の中で `entries` と `root` を `lib.evalModules` に
 通して確認・正規化する。設定だけで判定できる誤りは、この確認で評価時に止める。
 
-確認の主体と層の分け方の規範は REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34・
-REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a に置く。
+確認の主体と層の分け方の規範は [mkManifest 自身が evalModules で入力を確認する単一の箇所になる](../requirements/mkmanifest-input-validation.md)・
+[設定の誤りは評価時に、実体の不整合は engine 実行時に検出する層分けを守る](../requirements/error-detection-layering.md) に置く。
 
 ## 根拠
 

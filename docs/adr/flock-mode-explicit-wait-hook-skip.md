@@ -18,7 +18,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-419914ba-9896-4dd1-853b-fb514fcb9f38
+- 関連: [manifest.json を schemaVersion 1 の唯一の契約として固定する](manifest-json-contract-schemaversion-v1.md), [profile は専用ディレクトリレイアウトに置く](profile-directory-layout.md)
 - 起点: engine の設計と実行時セマンティクスの確定（2026-06-11〜06-13）。ADR-0006 §「決定」の並行実行・ADR-0013 §2 を書き直した
 
 ## 背景
@@ -36,8 +36,8 @@ profileDir のロックを取る apply / rollback / reset について、ロッ�
 実行したときは、ロックを取れるまで待つ。shellHook から `--no-wait` 付きで起動した apply は、ロックを
 取れなければ配置をスキップし、シェルに入るのを止めずに終える。
 
-フラグと待機中の表示は REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461、スキップ時の通知を `-v` なしでは出さないことは
-REQ-8ef34101-8150-4124-92d5-94fabe6b5d90、reset のロックは REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4 に置く。
+フラグと待機中の表示は [flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする](../requirements/flock-acquisition-mode.md)、スキップ時の通知を `-v` なしでは出さないことは
+[成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](../requirements/silent-on-success.md)、reset のロックは [reset は名指し必須で profileDir 単位の blocking flock を取る](../requirements/reset-named-only-and-flock.md) に置く。
 
 ## 根拠
 

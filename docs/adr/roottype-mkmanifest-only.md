@@ -19,7 +19,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75, ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c, ADR-2119433e-de69-4447-85a5-575d58246007, `docs/spec.md`
+- 関連: [1 config = 1 profile を全モードで自前に持つ](one-config-one-profile-all-modes.md), [module と project では世代操作を公開しない](module-and-project-hide-generation-ops.md), [古くなった配置の除去は記録どおりの symlink だけに限る](conservative-removal-invariant.md), [engine を単一の固定 Go バイナリにする](engine-fixed-go-binary.md), `docs/spec.md`
 - 起点: manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の rootType の項を書き直した
 
 ## 背景
@@ -34,7 +34,7 @@ entry の型は `lib/types.nix` に置き、`mkManifest` とモジュールの�
 
 `root` の型は `mkManifest` の確認だけに持たせ、モジュールとは共有しない。
 
-`mkManifest` の確認と型の共有範囲の規範は REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34 に置く。
+`mkManifest` の確認と型の共有範囲の規範は [mkManifest 自身が evalModules で入力を確認する単一の箇所になる](../requirements/mkmanifest-input-validation.md) に置く。
 
 ## 根拠
 

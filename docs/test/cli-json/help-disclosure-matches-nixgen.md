@@ -27,4 +27,4 @@ generated:
   実行しても nix を一度も呼ばずに成功する。prune `--yes` はその系列を削除するところまで進む。
   `--help` にはその旨の 1 行がある
 
-優先度は mitigates 先の RISK-81cadaa3-3ed2-4cb0-bc74-72ff3afa9cce の level（low）に従う。
+優先度は mitigates 先の [--help の nix コマンド開示が実際に実行する nix 呼び出しからずれる](../../risks/help-disclosure-drift.md) の level（low）に従う。

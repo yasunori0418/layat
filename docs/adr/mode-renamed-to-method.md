@@ -14,7 +14,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: `docs/spec.md`, UBQ-bc180161-69ea-4ec6-bae5-9c0e5853a112
+- 関連: `docs/spec.md`, [method](../ubiquitous-language/method.md)
 - 起点: 実装前の最終レビューで詰めた残りの細目。ADR-0015 §6 を書き直した
 
 ## 背景
@@ -30,10 +30,10 @@ entry は配置の種別（`"symlink"` か `"copy"`）を 1 つのフィール�
 ## 根拠
 
 `mode` はファイルのパーミッションを強く連想させ、配置種別の enum と紛らわしい。読み違えの原因は、
-実装が無く `schemaVersion` も初期のうちに取り除くのが最も安い。ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab の改名と同じ理屈。
+実装が無く `schemaVersion` も初期のうちに取り除くのが最も安い。[配置元の中のパスを全層で subpath と呼ぶ](subpath-naming-across-layers.md) の改名と同じ理屈。
 
 entry は未知のキーを拒否するので、旧名を書いた設定は評価時のエラーになり、その場で気付ける
-（REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51）。
+（[entry submodule は strict とし未知キーと旧名を評価時エラーにする](../requirements/entry-submodule-strict.md)）。
 
 ## 棄却した代替案
 

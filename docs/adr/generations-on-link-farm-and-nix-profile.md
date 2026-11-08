@@ -28,7 +28,7 @@ layat は配置を世代として積み、前の世代へ戻せるようにす�
 機構から得る。
 
 コミットは世代バックエンドの契約を通して行い、既定のバックエンドが nix profile を更新する。
-link farm の中身とコミットの手順は REQ-1be4d678-959c-44d7-a346-44bfd95af56e に置く。
+link farm の中身とコミットの手順は [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](../requirements/generation-mechanism-link-farm-manifest.md) に置く。
 
 ## 根拠
 

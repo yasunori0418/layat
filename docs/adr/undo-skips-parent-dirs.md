@@ -24,13 +24,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-56325270-20bb-4959-8498-e3223c35e24b, ADR-74423bb8-1453-4689-a25e-30bf46536afc, GitHub Issue #168, #172
+- 関連: [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md), [新規配置と張替えを先に、世代のコミットを最後に行う](placement-order-commit-last.md), GitHub Issue #168, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0044 §1（インメモリ undo ジャーナル）の中間ディレクトリの扱いを書き直した
 
 ## 背景
 
 途中失敗した apply は、FS への書き込みを undo ジャーナルで巻き戻す
-（ADR-56325270-20bb-4959-8498-e3223c35e24b）。配置の直前には、target の親ディレクトリを
+（[途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md)）。配置の直前には、target の親ディレクトリを
 `mkdir -p` 相当で作る。この中間ディレクトリもジャーナルに載せるかを決める必要があった。
 
 ## 決定
@@ -38,7 +38,7 @@ generated:
 配置の直前に新しく作った中間ディレクトリはジャーナルに記録しない。巻き戻しで leaf（symlink /
 copy）を消した後に残る空のディレクトリは、そのまま残す。
 
-ジャーナルに載せる FS 変更の範囲は REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 に置く。
+ジャーナルに載せる FS 変更の範囲は [途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](../requirements/undo-journal-rollback.md) に置く。
 
 ## 根拠
 

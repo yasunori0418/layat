@@ -35,8 +35,8 @@ generated:
 
 root の種別ごとの扱いも同じ場所にある。評価時に絶対パスが決まる種別と、実行時に解決する種別が
 あり、この区別を取り違えると配置先そのものが変わる。本 item はこの区別を消費側が受理の段で
-守ること（→ REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb）を射程に含む。生成側が同じ区別で文書を組み立てる側は
-RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d の担当で、同じ `requirement` を別の facet から脅かす。
+守ること（→ [manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する](../requirements/manifest-root-object.md)）を射程に含む。生成側が同じ区別で文書を組み立てる側は
+[manifest.json の形が engine の読む契約から気付かれずにずれる](manifest-contract-drift.md) の担当で、同じ `requirement` を別の facet から脅かす。
 
 ## 影響
 
@@ -48,12 +48,12 @@ RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d の担当で、同じ `requirement` �
 
 likelihood を low に留めるのは、本 item の射程が消費側の受理
 （版の拒否・未知フィールドの拒否・root の種別が空である文書の拒否・実行時に解決する種別が
-パスを併記した文書の拒否）と統合層の配線に限られ、前者は Go の契約テスト（TC-172548ea-154a-4e22-a169-8252a43e3781）が、
+パスを併記した文書の拒否）と統合層の配線に限られ、前者は Go の契約テスト（[manifest の読み取りが v1 を正確に復元し版の境界・未知フィールド・不整合な root 種別を拒否する](../test/integration/manifest-decode-schema-guard.md)）が、
 後者は activation が root と entry とオプションを engine へ届けることの評価アサート
-（TC-5a72b00e-2c03-4703-acdc-33cffb6fa994）が覆っているため。評価層が文書の形を変えてしまう側は本 item ではなく
-RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d の担当で、そちらはフィールド追加・既定値変更という通常の改修で動くぶん
+（[activation が評価時点で engine 起動へ配線され root と entry とオプションを届ける](../test/integration/activation-engine-kick-wiring.md)）が覆っているため。評価層が文書の形を変えてしまう側は本 item ではなく
+[manifest.json の形が engine の読む契約から気付かれずにずれる](manifest-contract-drift.md) の担当で、そちらはフィールド追加・既定値変更という通常の改修で動くぶん
 likelihood が一段高い。
 
 消費側の受理が見るのは root の種別が空でないことと、実行時に解決する種別がパスを併記して
-いないこと（→ REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb）までで、種別が既知の 4 値のいずれかであることは見ていない。
+いないこと（→ [manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する](../requirements/manifest-root-object.md)）までで、種別が既知の 4 値のいずれかであることは見ていない。
 そちらは engine の root 解決が未知の種別を弾いて止まるため、利用者に知らせずに通る処理にはならない。

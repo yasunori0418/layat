@@ -26,7 +26,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7, GitHub Issue #552, yasunori0418/outturn#1
+- 関連: [--json は outturn 規約に常時準拠する](outturn-conformance-principle.md), [--json の item id は subject スコープで導く](subject-scoped-ids.md), GitHub Issue #552, yasunori0418/outturn#1
 - 起点: layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §8 の Go 依存を書き直した
 
 ## 背景
@@ -41,8 +41,8 @@ CLI 層は `github.com/yasunori0418/outturn/go` に依存し、エンベロー�
 この依存は CLI 層に閉じる。`engine.Result` などを直接 marshal せず、DTO を通して outturn の型へ
 詰め替える。
 
-DTO を経た payload の生成は REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62 に、id の導出は
-REQ-57137302-de29-4f71-a565-034cd5de080b に、CLI の依存の許可範囲は REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0 に置く。
+DTO を経た payload の生成は [変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く](../requirements/json-change-payload.md) に、id の導出は
+[item id は identity の JCS を SHA-256 した小文字 hex とする](../requirements/json-item-id-derivation.md) に、CLI の依存の許可範囲は [CLI が持ち込む依存は許可した第三者ライブラリと pin した Go に限り、いずれも固定する](../requirements/cli-dependency-policy.md) に置く。
 
 ## 根拠
 

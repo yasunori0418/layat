@@ -22,7 +22,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-75df92ae-0694-452b-8fb4-350994e31b25, ADR-af37a636-a798-4c03-8fa4-e73ed6375a92, ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56
+- 関連: [apply --all は選択した config 間の target 重複を build 前に止める](apply-all-preflight-target-conflict.md), [apply --all の集約は config 名の辞書順に並べる](apply-all-lexicographic-order.md), [apply --all は失敗しても残りを続け、最後に集約して非 0 で終える](apply-all-continue-and-aggregate.md)
 - 起点: ADR-0039 §1（build 段階を worker pool で並列化する）を書き直した
 
 ## 背景
@@ -39,12 +39,12 @@ nix daemon が守る。target の衝突を調べるのは eval の段と配置�
 並列に実行する。上限は `--jobs` で指定できる。build に失敗した config は
 配置へ進めず、部分失敗として集約する。
 
-段の分け方・`--jobs` の解決・失敗の扱いは REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d に置く。
+段の分け方・`--jobs` の解決・失敗の扱いは [apply --all は build を --jobs の worker pool で先行並列実行し build 失敗 config を部分失敗として集約する](../requirements/apply-all-parallel-build-jobs.md) に置く。
 
 ## 根拠
 
 build は所要時間の大半を占め、配置先に触れないので、並列に実行しても配置の意味は変わらない。
-衝突の確認は build の前に済んでいる（ADR-75df92ae-0694-452b-8fb4-350994e31b25）。
+衝突の確認は build の前に済んでいる（[apply --all は選択した config 間の target 重複を build 前に止める](apply-all-preflight-target-conflict.md)）。
 
 上限は layat が同時に起動する build プロセスの数を抑えるもので、nix daemon 側のビルド並列度とは
 別の軸である。二重に制御することにはならない。

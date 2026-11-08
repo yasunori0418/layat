@@ -25,4 +25,4 @@ last-applied 記録の出所（`origin`）の書き・読み・比較・引き�
 
 ## 対応する CASE
 
-CASE-233855f7-912c-4477-af32-9a54c82353c3（`internal/engine/record_test.go`）、CASE-2e7b9ea2-4e4d-48ca-9e1e-0bfbb6223ff2（`tests/e2e/scenarios/02-home.sh`）。
+[record_test.go — last-applied 記録の読み書き・比較の基準の優先順位・各操作での更新](record-test-go.md)（`internal/engine/record_test.go`）、[e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復](e2e-02-home.md)（`tests/e2e/scenarios/02-home.sh`）。

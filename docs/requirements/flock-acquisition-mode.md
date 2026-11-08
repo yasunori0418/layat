@@ -37,14 +37,14 @@ shellHook の場面（`--no-wait`）では、try-lock（`LOCK_NB`）で保持中
 シェル入室はブロックしない）。明示 apply / rollback は blocking（`LOCK_EX`・取得まで待ち
 「他の apply 完了待ち」を表示）。
 
-この try-lock / blocking の取得が実行フローのどの段（2a）で行われるかは REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9 の
-担当。skip 通知が既定沈黙の対象であることは REQ-8ef34101-8150-4124-92d5-94fabe6b5d90、skip が終了コード 0 になることは
-REQ-2c5a10d8-112b-4f96-947a-aba7164779c4 の担当。
+この try-lock / blocking の取得が実行フローのどの段（2a）で行われるかは [実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](exec-flow-eval-lock-build.md) の
+担当。skip 通知が既定沈黙の対象であることは [成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](silent-on-success.md)、skip が終了コード 0 になることは
+[終了コードは 0 = 成功 / 1 = 一般エラー / 2 = dryrun の conflict とする](exit-codes.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」のグローバルフラグ表 `--no-wait` と、
 「実行フロー」2a の flock 取得（blocking / try-lock の別・待機表示・skip 通知）。
 
-決定の実体は ADR-45380022-d959-4b22-aa05-5993ac1f3c87「flock は明示実行で待ち、hook 実行でスキップする」（flock の待ち方と `--no-wait` の位置づけ）。shellHook の
+決定の実体は [flock は明示実行で待ち、hook 実行でスキップする](../adr/flock-mode-explicit-wait-hook-skip.md)「flock は明示実行で待ち、hook 実行でスキップする」（flock の待ち方と `--no-wait` の位置づけ）。shellHook の
 try-lock skip を無言にせず通知するとしていた旧決定は、同じ ADR で改められた。

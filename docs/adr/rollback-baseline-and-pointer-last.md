@@ -29,7 +29,7 @@ apply の engine を（基準世代, target）の差し替えで再利用し、F
 profile のポインタを N-1 へ移す。
 
 基準世代の読み方・実行段の順序・ポインタ移動の操作は
-REQ-0e341430-17f0-498b-9439-65491652163a に置く。
+[rollback は FS を先に収束させてから profile ポインタを最後に移す](../requirements/rollback-refit-then-pointer.md) に置く。
 
 ## 根拠
 

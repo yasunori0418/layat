@@ -36,11 +36,11 @@ conflict 検出時に「最初の 1 件で止めて残りを報告しない」�
 - out-of-store のリンク先が不在のまま配置し、dangling symlink を残す（また、確認自体が
   失敗しただけの状況をリンク先不在と誤って報告する）
 - 配置元の実在を判定できる層で確認せず、store path の `src` の不在が評価を通るか、out-of-store
-  のリンク先や `src` 内の `subpath` の不在が engine を止めない（→ REQ-9dc7dac7-4e9e-494a-a17b-73853c119653）
+  のリンク先や `src` 内の `subpath` の不在が engine を止めない（→ [配置元の実在は判定できる層で確認し、いずれの層でも停止する](../requirements/src-subpath-existence-checks.md)）
 
 ## 評価
 
-- likelihood: medium — 分類は TC-9df804ce-35ee-44a7-87b1-17935d53fab2 / TC-405606f0-3ac8-4cc2-998e-d4759a62a171 / TC-8435052a-5dcc-49e2-ac26-82f645cb6890 / TC-4da40ee8-877e-405b-98ca-6bf5de926ba4 の
+- likelihood: medium — 分類は [target の現況に応じた配置分類（新規 / 自己記録の張替え / foreign 後勝ち）が仕様どおりであること](../test/engine-core/placement-kinds.md) / [実体が占有する target と祖先 symlink を上書きせず停止すること](../test/engine-core/no-overwrite-stop.md) / [out-of-store の配置前の確認がリンク先不在と確認の失敗を区別すること](../test/engine-core/out-of-store-preflight.md) / [conflict が全件・種類に応じたガイダンス付きで列挙され、集約エラー 1 本で返ること](../test/engine-core/conflict-full-report.md) の
   4 本が対象・停止・確認・報告の各面を覆っており密度は高い。ただし分類そのものが engine の
   中心にあり、配置の形（method・祖先 symlink・out-of-store）を足すたびに枝が増える
 - impact: high — 通常ファイルを symlink で上書きする方向の誤りは、ユーザーのファイルを消す。

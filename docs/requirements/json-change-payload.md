@@ -180,7 +180,7 @@ generated:
   success のまま = 方針による不作為）/ `W_LAYAT_COPY_ORPHAN`（copy の孤児・subject 級）/
   `W_LAYAT_UNWOUND`（上記・subject 級）。`detail = {target}`。加えて
   `W_LAYAT_ORIGIN_MISMATCH`（last-applied 記録と今回の出所の食い違い・subject 級。
-  `detail = {recorded, current}`。各 origin は `identity` も持つ。規則は REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282）。stderr の人間向けテキストは
+  `detail = {recorded, current}`。各 origin は `identity` も持つ。規則は [apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する](apply-origin-mismatch-warning.md)）。stderr の人間向けテキストは
   常時併存。
 - **`reset` の changes**: 実際に除去したもののみ（symlink remove = `reversible:true` +
   `info.old` = 記録 dest、copy 削除 = `reversible:false`・info なし）。確認プロンプトで
@@ -190,19 +190,19 @@ generated:
 
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する実装 issue の進捗
 > （#131 時点の非対象・`--all` は #164）は
-> 要求ではなく履歴の注記で、`apply --dryrun` と `reset --dryrun` のペイロードは REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303、`--all` は
-> REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5 の担当。undo ジャーナルそのものの規範（→ ADR-56325270-20bb-4959-8498-e3223c35e24b）は REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の担当。
+> 要求ではなく履歴の注記で、`apply --dryrun` と `reset --dryrun` のペイロードは [読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す](json-readonly-payload.md)、`--all` は
+> [--all は config ごとの SubjectResult を単一実行と同一形状で積む](json-all-subject-results.md) の担当。undo ジャーナルそのものの規範（→ [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](../adr/in-memory-undo-journal.md)）は [途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](undo-journal-rollback.md) の担当。
 
 > **注記（規範ではない）— items / changes / 部分失敗 / conflict / generation / warnings を
 > 1 item に束ねる理由**: これらは「同一の payload builder が engine 結果から生成する
 > 1 つの DTO 契約」を成す規範であり、本 item は「変更系の 1 スキーマ契約」を満たすべき
 > こと 1 つと見なす。個別に切ると原文の 1 サブ項目（「#131 変更系ペイロード」）と item の
-> 対応が崩れ、出典の追跡性が落ちる。同じ理由で REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303（読み取り系）・
-> REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5（`--all`）も原文のサブ項目単位で切っている。
+> 対応が崩れ、出典の追跡性が落ちる。同じ理由で [読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す](json-readonly-payload.md)（読み取り系）・
+> [--all は config ごとの SubjectResult を単一実行と同一形状で積む](json-all-subject-results.md)（`--all`）も原文のサブ項目単位で切っている。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「#131 変更系ペイロード」とその配下の全項目。
 
-決定の実体は ADR-5d28818e-f7e1-45e8-a7fd-bbb6157b8586 / ADR-9e328362-2e90-441a-8eca-40081ce71b1b / ADR-bd8a4c8a-5e7e-485a-bccf-20dab63125f2・ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9。`W_LAYAT_ORIGIN_MISMATCH` は ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8。
+決定の実体は [--json は items を全件、changes を差分で持ち可逆性を reversible で表す](../adr/items-changes-reversible.md) / [エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md) / [CLI は outturn/go に依存する](../adr/outturn-go-dependency.md)・[エラーコードは共通コードを再利用し固有の意味だけを E_LAYAT_* にする](../adr/error-code-scheme.md)。`W_LAYAT_ORIGIN_MISMATCH` は [出所の食い違いは警告して apply を続ける](../adr/origin-mismatch-warns-and-continues.md)。

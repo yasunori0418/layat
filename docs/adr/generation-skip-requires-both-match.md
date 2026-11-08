@@ -28,13 +28,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-facd3173-a5ce-4d81-90a9-370fb26428ff, ADR-d97154cd-a2e5-4853-a682-800ff9435c89, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93, GitHub Issue #580, #406
+- 関連: [project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md), [apply は世代の commit の前に記録を書く](apply-writes-record-before-commit.md), [rollback は FS を収束させてからポインタを動かす](rollback-baseline-and-pointer-last.md), [1 config = 1 profile を全モードで自前に持つ](one-config-one-profile-all-modes.md), [古くなった配置の除去は manifest の差分で行う](stale-removal-by-manifest-diff.md), GitHub Issue #580, #406
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0058 §3b を書き直した
 
 ## 背景
 
 新しい link-farm が前回と同じなら、apply は世代を積まずに drift
-だけを直す（ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d）。「前回と同じ」を何と比べるかで、commit
+だけを直す（[project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md)）。「前回と同じ」を何と比べるかで、commit
 が失敗した後に収束するかどうかが変わる。記録は commit より前に書く。そのため commit が失敗すると、
 記録は新しく、profile は古いまま残る。
 

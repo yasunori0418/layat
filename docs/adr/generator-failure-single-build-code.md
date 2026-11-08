@@ -31,14 +31,14 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9, ADR-964e99a8-4aaa-46f6-b4ee-26270fc04649, ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9, ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1, ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246, ADR-63039f93-cd78-4356-8cd3-82c2f49a1aaa, ADR-6b7becf0-f029-41e3-895e-b672dce94d3d, ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, GitHub Issue #395
+- 関連: [エラーコードは共通コードを再利用し固有の意味だけを E_LAYAT_* にする](error-code-scheme.md), [生成器の失敗は構造化した値で CLI へ返す](generator-errors-structured-cli-renders.md), [apply --all は config ごとの情報を 1 回の eval でまとめて取る](apply-all-single-eval.md), [eval を先に行い、flock を取ってから build する](eval-first-then-flock-then-build.md), [store path は out-link で受け取る](store-path-via-out-link.md), [内部コマンドの開示で透明性を保つ](internal-command-disclosure.md), [nix の experimental-features は利用者が有効にしておく前提にする](experimental-features-user-prerequisite.md), [CLI は cobra で組む](cobra-cli-framework.md), [root の必須性を別の確認を書かずに標準のエラーで担保する](root-required.md), [home mode の CLI と lib の版ずれを manifest の確認に任せて許容する](home-mode-skew-guarded-by-schemaversion.md), [1 config = 1 profile を全モードで自前に持つ](one-config-one-profile-all-modes.md), GitHub Issue #395
 - 起点: Issue #395（epic: manifest 生成器のインターフェイス化）の grilling（2026-09-09）。ADR-0055 §7 を書き直した
 
 ## 背景
 
-layat 固有の失敗は `E_LAYAT_*` のコードで表す（→ ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9）。
+layat 固有の失敗は `E_LAYAT_*` のコードで表す（→ [エラーコードは共通コードを再利用し固有の意味だけを E_LAYAT_* にする](error-code-scheme.md)）。
 `E_LAYAT_BUILD` は nix の失敗を表していた。生成器の失敗は段階と種類を持つ構造化した値で返る
-（→ ADR-964e99a8-4aaa-46f6-b4ee-26270fc04649）ので、それを `--json` のコードへどう対応させるかを決める必要がある。
+（→ [生成器の失敗は構造化した値で CLI へ返す](generator-errors-structured-cli-renders.md)）ので、それを `--json` のコードへどう対応させるかを決める必要がある。
 
 ## 決定
 
@@ -47,8 +47,8 @@ layat 固有の失敗は `E_LAYAT_*` のコードで表す（→ ADR-64cff3f4-59
 失敗と prebuilt 生成器の失敗は、生成器を導入する前と同じく、原因の error から従来の規則で分類する。
 失敗の種類はコードに対応させず、エンベロープに生成器名を出さない。
 
-エンベロープのコードの層分けは REQ-9341fa5d-836e-4023-af53-cc7d273438d1、生成器の失敗の分類の細目は
-REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd に置く。
+エンベロープのコードの層分けは [エンベロープのエラーは主体の有無で層を分けコードを分類する](../requirements/json-error-layering.md)、生成器の失敗の分類の細目は
+[生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める](../requirements/generator-diagnostics-contract.md) に置く。
 
 ## 根拠
 

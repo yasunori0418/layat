@@ -36,13 +36,13 @@ symlink の foreign 警告と対称化し、「layat が中身を置いた」と
 上書きはせず apply 全体も止めない。「自分が置いたか」は前世代 manifest の entry 有無で判別し、
 内容は判別しない。
 
-> **上は原文の写しで、規範は frontmatter が正**。place-once そのものは REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9、
-> symlink 側の foreign 警告は REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557 の担当。`apply --backup` 有効時にこの skip +
-> warning が退避 + copy 新規配置へ変わることは REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b / REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 の担当。
+> **上は原文の写しで、規範は frontmatter が正**。place-once そのものは [copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](copy-place-once.md)、
+> symlink 側の foreign 警告は [symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする](symlink-placement-procedure.md) の担当。`apply --backup` 有効時にこの skip +
+> warning が退避 + copy 新規配置へ変わることは [apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md) / [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](backup-stage-position.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「配置動作仕様」→「copy モード（place-once・ユーザー管理）」節の箇条書き第 1 項。
 
-決定の実体は ADR-41d506b4-2c5c-4a17-9954-b0de37e97de5「copy は foreign の実ファイルを上書きせず warning を出して見送る」で、対称化の元に
-なる symlink の foreign 警告は ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d が定めている。
+決定の実体は [copy は foreign の実ファイルを上書きせず warning を出して見送る](../adr/copy-skips-foreign-file-with-warning.md)「copy は foreign の実ファイルを上書きせず warning を出して見送る」で、対称化の元に
+なる symlink の foreign 警告は [cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](../adr/cross-config-last-wins-with-foreign-warning.md) が定めている。

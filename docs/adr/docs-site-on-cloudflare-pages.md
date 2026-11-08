@@ -21,21 +21,21 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4, ADR-da7b74a6-bab4-43ea-8f1c-cf843b8b58cc, GitHub Issue #57
+- 関連: [ドキュメントサイトのソースを同じリポジトリの site/ に置く](docs-site-in-same-repository.md), [リファレンスをビルド時に生成する](reference-generated-at-build-time.md), GitHub Issue #57
 - 起点: Issue #57 のサイト設計。ADR-0037 §2 を書き直した
 
 ## 背景
 
-ドキュメントサイトのソースは同じリポジトリの `site/` に置く（ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4）。
+ドキュメントサイトのソースは同じリポジトリの `site/` に置く（[ドキュメントサイトのソースを同じリポジトリの site/ に置く](docs-site-in-same-repository.md)）。
 サイトのビルドでは nixdoc と gomarkdoc を nix から動かしてリファレンスを生成する
-（ADR-da7b74a6-bab4-43ea-8f1c-cf843b8b58cc）。これをどこでホストし、どこから配備するかを決める必要があった。
+（[リファレンスをビルド時に生成する](reference-generated-at-build-time.md)）。これをどこでホストし、どこから配備するかを決める必要があった。
 
 ## 決定
 
 ドキュメントサイトは Cloudflare Pages でホストする。配備は Cloudflare の Git 連携ビルドに任せず、
 GitHub Actions から wrangler で行う。あわせて、CI でサイトのビルドを検証する。
 
-本番と preview の打ち分けや workflow の分け方は INF-0865477b-21b2-4feb-9c06-1a882a4e595a に置く。
+本番と preview の打ち分けや workflow の分け方は [ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）](../infrastructure/docs-site.md) に置く。
 
 ## 根拠
 

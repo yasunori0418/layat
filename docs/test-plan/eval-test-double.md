@@ -42,7 +42,7 @@ generated:
 `{ outPath = "/nix/store/000…-fake-src"; }` の形の attribute set で与える。
 
 - **理由**: 実 import は store hash がマシン・nixpkgs revision で揺れ、emit される
-  `manifest.json` がバイト安定にならない。スナップショット比較（→ TP-36e90d5d-4524-4294-bc72-ee263bb02782）がそもそも
+  `manifest.json` がバイト安定にならない。スナップショット比較（→ [評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](nix-unit-namaka-split.md)）がそもそも
   成立しない
 - **正当性**: srcType の store-backed 判定は `? outPath` の有無を見る実装なので、この
   double は判定を迂回せず通る。テストが通る処理は実際の処理であって、double 用の分岐ではない
@@ -60,4 +60,4 @@ generated:
 述べている（配置元を入力に要さない純関数のテストは対象外）。
 
 > 本 item は個別のテストが何を検証するかではなく、評価レベルのテストが入力をどう用意するかの
-> 横断規約を定める。`checks.hm-module` が同じ double を使う位置づけは TP-0734996e-aea9-4229-8075-89a64bdf9f79 の担当。
+> 横断規約を定める。`checks.hm-module` が同じ double を使う位置づけは [home-manager モジュールの配線は build sandbox 内の評価アサートで検証する](hm-module-eval-assert.md) の担当。

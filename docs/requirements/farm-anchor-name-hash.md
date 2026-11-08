@@ -35,7 +35,7 @@ FS 安全）**を用いる。
 - farm は GC アンカー専用でアンカー名は可読である必要がなく、衝突不可能なハッシュで
   十分。engine が配置に使う値は `manifest.json` の解決済み `src` 文字列。
 
-farm が GC アンカー専用であることとアンカー対象の範囲は REQ-b12fc3c0-d7fe-4003-922c-f3ac0d969b66 が持つ。
+farm が GC アンカー専用であることとアンカー対象の範囲は [symlink farm は GC アンカー専用でアンカーは store-backed な symlink entry に限る](farm-gc-anchor-only.md) が持つ。
 
 ## 出典
 

@@ -21,7 +21,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: SDR-c15921a9-7aea-407c-a34b-7465783b1af1, SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed, GitHub Issue #203, `docs/model.yaml`
+- 関連: [sara 品質管理機構の決定は sara_adr 型に分ける](sara-adr-type-for-doc-process-decisions.md), [ADR も UUID で採番し、連番の旧 ADR は legacy_adr 型に凍結する](adr-uuid-ids-and-legacy-type.md), GitHub Issue #203, `docs/model.yaml`
 - 起点: epic #203 の grilling セッション（2026-07-31・2026-08-01）で確定。ADR-0048 §2 を書き直した
 
 ## 背景
@@ -36,7 +36,7 @@ sara は組み込みのモデル（型と relation）を持ち、カスタムス
 ハードウェア系の型と、対応する中間層の無い `scenario` / `system_architecture` は定義しない。
 
 型名とフィールド名には layat 固有の語を含めず、汎用の名前にする（例: `requirement` / `design` / `adr`）。
-型の内訳と relation は `docs/model.yaml` に置き、その変遷は SDR-34916a83-0cff-4524-a8ff-5a3195af52c3・SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed などが持つ。
+型の内訳と relation は `docs/model.yaml` に置き、その変遷は [テスト計画の型を品質方針の型から分けて設ける](quality-and-test-plan-types.md)・[欠陥はグラフに置かず GitHub Issues で管理する](defects-in-github-issues.md) などが持つ。
 
 ## 根拠
 

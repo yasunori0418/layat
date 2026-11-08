@@ -24,13 +24,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-3f97fc1d-188d-4013-bff0-16b67250f68e, GitHub Issue #169, #172
+- 関連: [退避を配置前除去の後の段として undo ジャーナルに載せる](backup-stage-in-undo-journal.md), GitHub Issue #169, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §5 と §4（成功時の扱いの非対称）を書き直した
 
 ## 背景
 
 `--backup` の退避は undo ジャーナルに載り、途中失敗すれば元へ戻る
-（ADR-3f97fc1d-188d-4013-bff0-16b67250f68e）。`--recopy` の上書きも rename で退避するが、
+（[退避を配置前除去の後の段として undo ジャーナルに載せる](backup-stage-in-undo-journal.md)）。`--recopy` の上書きも rename で退避するが、
 こちらの退避物は apply が成功すると削除する。`--backup` の退避物を成功後にどう扱うかを決める
 必要があった。
 
@@ -39,8 +39,8 @@ generated:
 `--backup` の退避物は apply が成功しても削除しない。以後は layat の管理対象にせず、`reset` も
 検出・復元しない。戻したいときは利用者が手で `mv` する。
 
-成功時に残す規範は REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 に、`reset` が復元しない規範は
-REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b に置く。
+成功時に残す規範は [途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](../requirements/undo-journal-rollback.md) に、`reset` が復元しない規範は
+[apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](../requirements/apply-backup-rename-aside.md) に置く。
 
 ## 根拠
 

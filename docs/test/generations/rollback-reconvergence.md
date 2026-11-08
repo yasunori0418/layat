@@ -19,26 +19,26 @@ gen2 へ向け、FS を gen2 の配置状態にする」形で組む。
 
 **素の再収束** — gen1 = {a, b}・gen2（current）= {a, c} のとき、c が古くなった配置として除去され、
 b が再配置され、a は据え置かれる。ポインタ移動は FS 収束の後に起きる
-（先に動かすと基準世代が N-2 へずれる → REQ-0e341430-17f0-498b-9439-65491652163a）。
+（先に動かすと基準世代が N-2 へずれる → [rollback は FS を先に収束させてから profile ポインタを最後に移す](../../requirements/rollback-refit-then-pointer.md)）。
 
 **copy 反映を含む再収束** — 再収束は symlink の配置だけでなく copy 反映段
 （`materializeCopies` の place-once）を含む。戻り先 N-1 の copy entry は配置先が不在なら
 実体化され、既存の copy 先は触られない（`rollback` に `--recopy` 相当は無い →
-REQ-0e341430-17f0-498b-9439-65491652163a）。祖先 migration 越しの copy child と、
+[rollback は FS を先に収束させてから profile ポインタを最後に移す](../../requirements/rollback-refit-then-pointer.md)）。祖先 migration 越しの copy child と、
 symlink → copy への method change の 2 形がこの条件に属する（→ issue #178）。
 
 **祖先 symlink からの復帰** — 世代 N が配下の per-file entries を祖先 symlink 1 本へ
 移行していた場合、N-1 へ戻るには plan の PreRemove がその祖先 symlink を先に除去し、
 配下の子 entries を実ディレクトリへ置き直す必要がある。PreRemove が無いと、
 `ensureParentDir` の `MkdirAll` が symlink 上で no-op になり、子の `os.Symlink` が
-symlink 越しに store を指して EEXIST / EROFS で失敗する（→ ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b、issue #173）。
+symlink 越しに store を指して EEXIST / EROFS で失敗する（→ [配置前除去を planner が計算するデータとして表す](../../adr/preremove-as-planner-data.md)、issue #173）。
 収束後に当該パスが実ディレクトリへ戻っていることを確認する。
 
 `rootKind` から絶対 root を得る側は本条件の担当から外れる。root 解決そのものは
-TC-b254a5a8-7fbf-4f31-8486-3e373d66bfa7（engine-core）へ一本化した（→ issue #328）。
+[root 解決と profile ディレクトリ準備の成功時・失敗時の処理が仕様どおりであること](../engine-core/root-resolution.md)（engine-core）へ一本化した（→ issue #328）。
 
-上位の規範は TP-e7c25263-6d2d-4a37-8275-26906889d912（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。
+上位の規範は [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../../test-plan/go-test-layering.md)（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。
 
 ## 対応する CASE
 
-CASE-364ebb9d-b9f8-4c79-8509-8bbf31e73698（`internal/engine/generations_test.go`）。
+[generations_test.go — rollback の再収束と失敗時の処理](generations-test-go.md)（`internal/engine/generations_test.go`）。

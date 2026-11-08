@@ -35,7 +35,7 @@ best-effort であり、失敗したときにエラーで apply 全体を落と�
 ## 評価
 
 - likelihood: low — 剪定は root 境界・祖先 symlink・非空判定の 3 つの停止条件を持つ安定した
-  ロジックで、TC-810d661d-6d3d-4199-828f-e44adcebad5a がその全てを機械的に覆っている
+  ロジックで、[空親ディレクトリの剪定が多階層を辿り、root・symlink・非空で停止すること](../test/migration-stale/ancestor-pruning-bounds.md) がその全てを機械的に覆っている
 - impact: medium — 行き過ぎた剪定は空ディレクトリの喪失に留まり、次の apply が作り直す。
   残骸側の失敗も配置の意味論は壊さない
 

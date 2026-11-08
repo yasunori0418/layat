@@ -26,18 +26,18 @@ prevDest を復元しない・PreRemove が消した実ディレクトリを作�
 
 被害は「失敗した apply が痕跡を残さない」という保証の喪失に留まらない。失敗 run が
 新規に置いた symlink は前世代 manifest に記録が無いため、次の apply の古くなった配置の除去でも
-対象にならず、FS 上に恒久的なゴミとして残る（→ ADR-56325270-20bb-4959-8498-e3223c35e24b の背景）。PreRemove の migration が
+対象にならず、FS 上に恒久的なゴミとして残る（→ [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](../adr/in-memory-undo-journal.md) の背景）。PreRemove の migration が
 半分だけ進んだ状態は更に悪く、実ディレクトリが消えたまま新しい dir symlink も無い、
 という配置前より劣化した状態を作る。
 
 逆に、巻き戻すべきでない段で巻き戻すのも同じ深刻度の欠陥である。commit（`nix-env
 --set`）の失敗時点では FS の全書き込みが成功しており整合しているため、ここで unwind
-すると整合状態を壊す（→ ADR-f29d1256-5e14-4b83-ac77-4717b2210193）。この非対称性が崩れる方向の欠陥も本リスクに含む。
+すると整合状態を壊す（→ [undo の発火を FS 反映の段に限り、世代コミットの後は対象にしない](../adr/undo-scope-ends-at-commit.md)）。この非対称性が崩れる方向の欠陥も本リスクに含む。
 
 `design` ではなく `requirement` へ張るのは、undo ジャーナルという機構そのものが
-REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の `specification` に「インメモリ undo ジャーナルへ逆操作を 1 件記録する」と
+[途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](../requirements/undo-journal-rollback.md) の `specification` に「インメモリ undo ジャーナルへ逆操作を 1 件記録する」と
 書き下ろされて要求へ昇格しており、対応する design item が `docs/design/` に存在しない
-ため（REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 を satisfies するのは DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3 というテスト戦略の design だけ）。
+ため（[途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](../requirements/undo-journal-rollback.md) を satisfies するのは [engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する](../design/engine-test-go-unit-tmpdir.md) というテスト戦略の design だけ）。
 
 ## 実現性
 
@@ -45,12 +45,12 @@ REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の `specification` に「インメモ�
 mkdir / backup 戻し）あり、それぞれの前方操作が置かれる段（PreRemove / Backup / place /
 materializeCopies / removeStale）と組み合わせで機能する。段の追加・順序変更のたびに
 journal への記録し忘れが入りうる構造で、実際に PreRemove の追加時に journal 側の対応が必要になっている
-（現在の決定は → ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b / ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c / ADR-77312c71-fa32-481b-ad80-c91e5b282edc）。
+（現在の決定は → [配置前除去を planner が計算するデータとして表す](../adr/preremove-as-planner-data.md) / [祖先 symlink は自己記録の古くなったものだけを移行する](../adr/ancestor-symlink-recorded-stale-only.md) / [実ディレクトリの target は全 leaf を除去できるときだけ移行する](../adr/real-dir-target-migration.md)）。
 
 **impact: high** — 復旧はユーザーの手作業になり、消えた実ディレクトリは復旧手段が無い。
 
 ## 緩和
 
-TC-9504e908-a4bc-4d2d-80d3-af07264284f8（逆操作単体の正しさ）・TC-83fe0d4a-9730-431a-b7f9-b731060b9484（LIFO 順序と journal のライフサイクル）・
-TC-3b02ab58-5bfb-4ae7-9ac1-c69e2ece2722（実 FS 故障注入による end-to-end 巻き戻し）・TC-e048211f-0844-4446-9957-fb444c1da4e5（commit 失敗は
-unwind しない非対称性）が緩和する。検証方針そのものは TP-deb05610-44bc-4962-8939-952392e5fbd0 が定める。
+[undo の逆操作が、対応する前方操作の直前状態を単体で復元する](../test/atomicity/undo-inverse-op-correctness.md)（逆操作単体の正しさ）・[unwind が LIFO で巻き戻し、1 件の失敗でも継続して全件報告し、成功時は journal を破棄する](../test/atomicity/unwind-lifo-and-journal-lifecycle.md)（LIFO 順序と journal のライフサイクル）・
+[実 FS の故障注入で FS 変更段の途中を失敗させ、apply 前の状態が完全に復元される](../test/atomicity/mid-batch-rollback-restores-preapply.md)（実 FS 故障注入による end-to-end 巻き戻し）・[commit 段の失敗では配置を巻き戻さず、退避ファイルも掃除しない](../test/atomicity/commit-failure-not-unwound.md)（commit 失敗は
+unwind しない非対称性）が緩和する。検証方針そのものは [原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](../test-plan/fault-injection-atomicity.md) が定める。

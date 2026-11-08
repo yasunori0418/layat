@@ -191,25 +191,25 @@ warnings / info）の写像規則は単一 config と同一で、`--all` 固有�
 > **上は原文の写しに system profile 基底と `list-generations --all` の subject 名を足したもので、規範は frontmatter が正**。「エラーの層」項のうち、item 起因の
 > 失敗を `item.error` に埋めて `results[i].errors[]` へ重複させないこと・トップ
 > `errors[]` に載るのが主体列挙前の失敗のみであることは、単一 config 実行と共通の
-> 振り分け規則であり REQ-9341fa5d-836e-4023-af53-cc7d273438d1 の規範。本 item が規範化するのは `--all` 固有の差分
+> 振り分け規則であり [エンベロープのエラーは主体の有無で層を分けコードを分類する](json-error-layering.md) の規範。本 item が規範化するのは `--all` 固有の差分
 > （集約エラーをトップへ重ねない）に限る。
 >
 > 同様に、次の 2 点も本 item の規範ではない。本 item が規範化するのは、それらを前提と
 > した `--all` の JSON 側の帰結（`status` が「非 0 ⇔ error」だけを厳守すること・
 > JSON では cross-config dedup をしないこと）に限る。
 >
-> - 終了コード同士の優先度（error(1) > conflict(2) > 0）→ REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32
-> - `gitignore --all` のテキスト既定出力が dedup + sort すること → REQ-1f128917-4424-4e37-8a88-e0bb23a09da7
+> - 終了コード同士の優先度（error(1) > conflict(2) > 0）→ [apply --all --dryrun の終了コードは error を conflict より優先する](apply-all-dryrun-exit-code-priority.md)
+> - `gitignore --all` のテキスト既定出力が dedup + sort すること → [gitignore --all は projectRoot の全 config の target をソート + 重複除去して出力する](gitignore-all-dedup.md)
 
-`--all` のテキスト側の挙動（辞書順・部分失敗でも続行）は REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af、エラー層の
-振り分け規則は REQ-9341fa5d-836e-4023-af53-cc7d273438d1、終了コードの優先度は REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32、`gitignore --all` の
-テキスト集約は REQ-1f128917-4424-4e37-8a88-e0bb23a09da7 の担当。
+`--all` のテキスト側の挙動（辞書順・部分失敗でも続行）は [apply --all は選択された config を並列に適用し、集約表示と results\[\] を辞書順にし、部分失敗でも続行して最後に集約する](apply-all-lexical-order-continue.md)、エラー層の
+振り分け規則は [エンベロープのエラーは主体の有無で層を分けコードを分類する](json-error-layering.md)、終了コードの優先度は [apply --all --dryrun の終了コードは error を conflict より優先する](apply-all-dryrun-exit-code-priority.md)、`gitignore --all` の
+テキスト集約は [gitignore --all は projectRoot の全 config の target をソート + 重複除去して出力する](gitignore-all-dedup.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「`--all` の複数 `SubjectResult`（#164）」とその配下の全項目。
 
-決定の実体は ADR-baf6346d-783b-4607-ab1c-c2c93c09e064（`--all` の複数 `SubjectResult`）・ADR-9e328362-2e90-441a-8eca-40081ce71b1b（conflict 1 件でも
-`status:error`）。system profile 基底と subject 名は原文に無く、決定の実体は ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203・ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75
+決定の実体は [--all は config ごとの SubjectResult を積む](../adr/all-as-multiple-subject-results.md)（`--all` の複数 `SubjectResult`）・[エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)（conflict 1 件でも
+`status:error`）。system profile 基底と subject 名は原文に無く、決定の実体は [profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)・[module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)
 （system の profile 基底と `list-generations` の home / system 公開）。

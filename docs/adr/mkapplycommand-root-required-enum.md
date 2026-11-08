@@ -21,21 +21,21 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429, ADR-db293e0c-4789-45b7-93a9-adedc021344f, GitHub Issue #530
+- 関連: [apply --all に root モードのフィルタを持たせる](apply-all-root-mode-filter.md), [lib.mkApplyCommand で事前展開した apply コマンドを組む](lib-mkapplycommand.md), GitHub Issue #530
 - 起点: Issue #530 の grilling（2026-10-25）。ADR-0068 §2 を書き直した
 
 ## 背景
 
-`mkApplyCommand`（ADR-db293e0c-4789-45b7-93a9-adedc021344f）が組むのは `apply --all` の行である。
+`mkApplyCommand`（[lib.mkApplyCommand で事前展開した apply コマンドを組む](lib-mkapplycommand.md)）が組むのは `apply --all` の行である。
 素の `--all` は全 config を適用し、root モードで絞るには `--project-root` などのフィルタを付ける
-（ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429）。
+（[apply --all に root モードのフィルタを持たせる](apply-all-root-mode-filter.md)）。
 
 ## 決定
 
 `mkApplyCommand` の `root` は既定値を持たない必須の引数にし、`"all"` / `"project"` / `"home"` /
 `"system"` だけを受ける。省略や範囲外の値は評価時に throw する。
 
-各値が付けるフィルタの規範は REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f に置く。
+各値が付けるフィルタの規範は [lib.mkApplyCommand は事前展開した apply --all --manifest のコマンド行を返す](../requirements/lib-apply-command.md) に置く。
 
 ## 根拠
 

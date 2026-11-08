@@ -64,7 +64,7 @@ layat apply --manifest <link-farm>  # ビルド済み link-farm を直接適用�
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する次の点は本 item の
 > 規範ではない。
 >
-> - 実行フローのどの段を skip するか（0〜1 と 2b）→ REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9 が規定する実行フローの
+> - 実行フローのどの段を skip するか（0〜1 と 2b）→ [実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](exec-flow-eval-lock-build.md) が規定する実行フローの
 >   上での位置づけで、`docs/spec.md`「実行フロー」節の同趣旨の箇条書きに対応する
 > - HM モジュールの activation での主な使い方であること → `docs/spec.md`
 >   「モジュール別動作仕様」節の担当（#209-PR5）
@@ -72,17 +72,17 @@ layat apply --manifest <link-farm>  # ビルド済み link-farm を直接適用�
 >   「モジュール別動作仕様」節の担当（#209-PR5）。同節の HM モジュールが同じ規範を
 >   述べており、manifest スキーマ節（#209-PR3 の担当範囲）には skew の記述が無い
 >
-> **2026-10-11 追記（ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8 / ADR-a91585ad-971a-4558-9f25-b7fcd6e57671）**: 上の写しの取得後の挙動のうち「`nix-env --set`」は世代バックエンドの
-> 契約越しの世代コミット（REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b。既定の nixprofile が
+> **2026-10-11 追記（[世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md) / [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)）**: 上の写しの取得後の挙動のうち「`nix-env --set`」は世代バックエンドの
+> 契約越しの世代コミット（[engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)。既定の nixprofile が
 > `nix-env --set` を実行する）、「前世代 diff」は last-applied 記録を優先した比較の基準との diff
-> （REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）と読み替える。通常 apply と同一であることは変わらない。
+> （[apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)）と読み替える。通常 apply と同一であることは変わらない。
 >
-> **2026-10-15 追記（ADR-24488788-a5e6-47a5-9074-97192880642a）**: 上の写しの「`--all` は併用エラー」は、`<link-farm>` 形に限る。
+> **2026-10-15 追記（[apply --manifest でビルド済み link-farm を engine へ直接渡す](../adr/apply-manifest-prebuilt-link-farm.md)）**: 上の写しの「`--all` は併用エラー」は、`<link-farm>` 形に限る。
 > `--all` と合成するときは `--manifest <name>=<link-farm>` を繰り返す（規範は frontmatter）。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply --manifest` の箇条書き。
 
-決定の実体は ADR-24488788-a5e6-47a5-9074-97192880642a「apply --manifest でビルド済み link-farm を engine へ直接渡す」。`--all` との合成は ADR-24488788-a5e6-47a5-9074-97192880642a。世代のコミットを世代バックエンドの契約越しにしたのは
-ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8、比較の基準を last-applied 記録から優先して読むのは ADR-a91585ad-971a-4558-9f25-b7fcd6e57671。
+決定の実体は [apply --manifest でビルド済み link-farm を engine へ直接渡す](../adr/apply-manifest-prebuilt-link-farm.md)「apply --manifest でビルド済み link-farm を engine へ直接渡す」。`--all` との合成は [apply --manifest でビルド済み link-farm を engine へ直接渡す](../adr/apply-manifest-prebuilt-link-farm.md)。世代のコミットを世代バックエンドの契約越しにしたのは
+[世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)、比較の基準を last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)。

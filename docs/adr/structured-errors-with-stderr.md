@@ -25,7 +25,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, GitHub Issue #552, yasunori0418/outturn#1
+- 関連: [--json は outturn 規約に常時準拠する](outturn-conformance-principle.md), GitHub Issue #552, yasunori0418/outturn#1
 - 起点: layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §6 を書き直した
 
 ## 背景
@@ -38,12 +38,12 @@ layat はエラーを stderr の人間向けテキストで出す。outturn は�
 `--json` のエラーはエンベロープに構造化して載せ、同時に stderr の人間向けテキストも常に出す。置き場は
 主体の有無で分ける。主体が決まる前の失敗はトップの `errors[]`、主体に紐づく失敗はその主体の
 `results[i].errors[]`、item 起因の失敗は `item.error` に置く。outturn の `status` は、終了コード 0 で `success`、非 0 で
-`error` に連動させる。`--json` は stdout に、`-v` の配置レポート（ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9）は stderr に出るので、
+`error` に連動させる。`--json` は stdout に、`-v` の配置レポート（[-v で配置レポートを opt-in で出す](verbose-opts-into-placement-report.md)）は stderr に出るので、
 両者は併用できる。
 
-stderr との併存と `status` の連動は REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead に、置き場の細目は
-REQ-9341fa5d-836e-4023-af53-cc7d273438d1 に、`-v` との直交は
-REQ-0a123b89-0399-4f76-b988-56a5f7e0becf に置く。
+stderr との併存と `status` の連動は [--json は outturn 規約準拠のエンベロープを出す第 2 契約とする](../requirements/json-outturn-envelope.md) に、置き場の細目は
+[エンベロープのエラーは主体の有無で層を分けコードを分類する](../requirements/json-error-layering.md) に、`-v` との直交は
+[冗長度は -v、デバッグは --debug に分離し --json と直交させる](../requirements/verbose-and-debug-separation.md) に置く。
 
 ## 根拠
 

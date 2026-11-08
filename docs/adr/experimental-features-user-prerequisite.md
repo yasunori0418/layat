@@ -26,9 +26,9 @@ generated:
 
 `nix-command`（flake の entrypoint ではさらに `flakes`）の experimental-features は、利用者の環境で
 有効化済みであることを前提にする。layat は `--extra-experimental-features` を自動で付けない。有効化されていないときは、前提条件と
-有効化の方法を案内するエラーで止まる。判定と案内文を nix 生成器に閉じることは ADR-cd139de9-06a4-49a2-8bea-4801c8acc518 が決める。
+有効化の方法を案内するエラーで止まる。判定と案内文を nix 生成器に閉じることは [nix 固有の失敗判定と案内文を nix 生成器の中に閉じる](nix-specific-diagnosis-inside-nixgen.md) が決める。
 
-前提条件とエラーの規範は REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6 に置く。
+前提条件とエラーの規範は [nix experimental-features は nix 生成器の前提条件とし、自動付与せず案内エラーで停止する](../requirements/nix-experimental-features-prerequisite.md) に置く。
 
 ## 根拠
 

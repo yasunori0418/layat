@@ -38,13 +38,13 @@ generated:
 re-symlink で復元する。
 
 > **上は原文の写しで、規範は frontmatter が正**。undo ジャーナルそのものの規範は
-> REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940 の担当で、本 item は張替えを 2 操作で行うことと、その復元素材（unlink 前の
+> [途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](undo-journal-rollback.md) の担当で、本 item は張替えを 2 操作で行うことと、その復元素材（unlink 前の
 > 張替え先）を捕捉することだけを規定する。「積まれる世代は常に完全適用済み」（コミット
-> 最後）は REQ-1be4d678-959c-44d7-a346-44bfd95af56e の担当。
+> 最後）は [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](generation-mechanism-link-farm-manifest.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「配置動作仕様」→「symlink モード」の箇条書き第 1 項。
 
-決定の実体は ADR-3aebefee-405d-4342-b754-eef8eac29b1b「symlink を unlink と symlink の 2 操作で張り替える」で、冪等再実行による収束の前提は ADR-74423bb8-1453-4689-a25e-30bf46536afc が、undo ジャーナルによる
-復元は ADR-56325270-20bb-4959-8498-e3223c35e24b が定めている。
+決定の実体は [symlink を unlink と symlink の 2 操作で張り替える](../adr/relink-unlink-then-symlink.md)「symlink を unlink と symlink の 2 操作で張り替える」で、冪等再実行による収束の前提は [新規配置と張替えを先に、世代のコミットを最後に行う](../adr/placement-order-commit-last.md) が、undo ジャーナルによる
+復元は [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](../adr/in-memory-undo-journal.md) が定めている。

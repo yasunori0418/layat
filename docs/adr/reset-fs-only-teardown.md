@@ -23,14 +23,14 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-c4ad9987-850e-4834-bbea-d8de3b073548, ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c, ADR-acc31876-df36-485e-b356-92ae60e26db7, ADR-a51897c5-f709-4b7a-8db2-61e6ebb0040c
+- 関連: [copy は世代の外に place-once で置く](copy-outside-generations-place-once.md), [古くなった配置の除去は記録どおりの symlink だけに限る](conservative-removal-invariant.md), [reset は非対話の実行で --yes を必須にする](reset-confirmation-and-yes.md), [独立した操作はサブコマンドにし、操作の修飾はフラグにする](subcommand-set.md)
 - 起点: ADR-0020 §2（layat reset で配置物を無い状態へ戻す）を書き直した
 
 ## 背景
 
 配置した物を明示的に無い状態へ戻す手段が無かった。古くなった配置の除去は config から消えた entry の
-symlink を保守的に消すが（ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c）、copy は世代の外に置くので
-自動では決して消さない（ADR-c4ad9987-850e-4834-bbea-d8de3b073548）。copy を消す手段はどこにも
+symlink を保守的に消すが（[古くなった配置の除去は記録どおりの symlink だけに限る](conservative-removal-invariant.md)）、copy は世代の外に置くので
+自動では決して消さない（[copy は世代の外に place-once で置く](copy-outside-generations-place-once.md)）。copy を消す手段はどこにも
 無かった。
 
 profile の世代は manifest 全体を単位にしているので、一部の entry だけを世代から抜くことはできない。
@@ -41,8 +41,8 @@ profile の世代は manifest 全体を単位にしているので、一部の e
 配置物を撤去する。symlink は古くなった配置の除去と同じ保守的な条件で消し、copy target は削除する。
 profile と世代には触れない。config に entry が残っていれば、次の apply で配置し直される。
 
-撤去の対象と条件は REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6 に置く。削除前の確認は
-ADR-acc31876-df36-485e-b356-92ae60e26db7 が定める。
+撤去の対象と条件は [reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す](../requirements/reset-fs-only-teardown.md) に置く。削除前の確認は
+[reset は非対話の実行で --yes を必須にする](reset-confirmation-and-yes.md) が定める。
 
 ## 根拠
 

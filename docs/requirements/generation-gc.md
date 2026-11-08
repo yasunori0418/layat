@@ -51,19 +51,19 @@ profile の各世代は GC root。`nix-env --profile <profileDir>/profile --dele
 
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する「可変 JSON 方式は GC root を
 > 作らず参照中 store パスが GC で消えるため採らない」は棄却案の理由であり要求ではない
-> （manifest を store 内へ埋め込むことは REQ-1be4d678-959c-44d7-a346-44bfd95af56e の担当）。`<profileDir>` のレイアウトは
-> REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3、`rollback` の手順は REQ-0e341430-17f0-498b-9439-65491652163a の担当。
+> （manifest を store 内へ埋め込むことは [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](generation-mechanism-link-farm-manifest.md) の担当）。`<profileDir>` のレイアウトは
+> [profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](profile-on-disk-layout.md)、`rollback` の手順は [rollback は FS を先に収束させてから profile ポインタを最後に移す](rollback-refit-then-pointer.md) の担当。
 
-> **2026-10-11 追記（ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8）**: 上の写しの「世代操作は `nix-env --profile` 系で統一する」は、
+> **2026-10-11 追記（[世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)）**: 上の写しの「世代操作は `nix-env --profile` 系で統一する」は、
 > layat が行う世代操作（コミット・切替・一覧）を世代バックエンドの契約越しに行い、`nix-env` 系は
 > その既定実装 nixprofile の内側に閉じる、と読み替える。間引きと store GC を nix コマンドへ
 > 委譲すること、`nix profile`（新 CLI）との非互換は変わらない。契約は
-> REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b の担当。
+> [engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「世代管理仕様」→「GC とストレージ解放」節。
 
 決定の実体は、世代操作を `nix-env --profile` 系で統一していた旧決定と、
-`<profileDir>` レイアウトを確定した ADR-419914ba-9896-4dd1-853b-fb514fcb9f38。世代操作を契約越しにしたのは
-ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」。
+`<profileDir>` レイアウトを確定した [profile は専用ディレクトリレイアウトに置く](../adr/profile-directory-layout.md)。世代操作を契約越しにしたのは
+[世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」。

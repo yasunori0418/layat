@@ -18,7 +18,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-c494e86e-ceb9-4380-b983-4e09553b01d6, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0, `docs/spec.md`
+- 関連: [entries を target をキーにした attrset にする](entries-keyed-by-target.md), [manifest.json を schemaVersion 1 の唯一の契約として固定する](manifest-json-contract-schemaversion-v1.md), [manifest 内の target の衝突を評価時に検出する](manifest-target-conflict-eval-error.md), `docs/spec.md`
 - 起点: ADR-0014 §3b を書き直した
 
 ## 背景
@@ -30,7 +30,7 @@ target をキーにした attrset にすると、Nix 側から `name` フィー�
 ## 決定
 
 `manifest.json` の `entries[]` は `name` を持たず、`target` を entry の識別子とする。属性キーも
-記録しない。記録するフィールドの一覧は REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336 に置く。
+記録しない。記録するフィールドの一覧は [manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する](../requirements/manifest-entries-array.md) に置く。
 
 ## 根拠
 

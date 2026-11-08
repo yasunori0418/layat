@@ -24,29 +24,29 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-75df92ae-0694-452b-8fb4-350994e31b25, ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e, ADR-ac648001-7e22-4fe2-a457-596064e32717, ADR-af37a636-a798-4c03-8fa4-e73ed6375a92, ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56
+- 関連: [apply --all は選択した config 間の target 重複を build 前に止める](apply-all-preflight-target-conflict.md), [apply --all の build を worker pool で並列に実行する](apply-all-parallel-build-worker-pool.md), [ロックのキーを解決後の profileDir にする](lock-key-is-resolved-profiledir.md), [apply --all の集約は config 名の辞書順に並べる](apply-all-lexicographic-order.md), [apply --all は失敗しても残りを続け、最後に集約して非 0 で終える](apply-all-continue-and-aggregate.md)
 - 起点: ADR-0039 §2a（配置段階も config 単位の goroutine で並列化する）と §3b（単一 config 内の entry 単位は並列化しない）を書き直した
 
 ## 背景
 
-`apply --all` の build は worker pool で並列に実行する（ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e）。
+`apply --all` の build は worker pool で並列に実行する（[apply --all の build を worker pool で並列に実行する](apply-all-parallel-build-worker-pool.md)）。
 配置は config ごとに順に処理していたが、`method = "copy"` の大きなツリーでは配置の時間も無視できない。
 
-ロックのキーは解決後の profileDir で（ADR-ac648001-7e22-4fe2-a457-596064e32717）、`--all` が扱う
+ロックのキーは解決後の profileDir で（[ロックのキーを解決後の profileDir にする](lock-key-is-resolved-profiledir.md)）、`--all` が扱う
 config は名前が一意なので profileDir も一意になる。同じプロセスの中で同じロックを取り合うことは
 起きない。
 
 配置を並列にしたときに変わりうるのは、config 間で同じ target を取り合ったときの後勝ちの順序だけ
 である。前段の確認で見える衝突は build の前に取り除かれ、見えない衝突はこれまでどおり後勝ちで扱う
-（ADR-75df92ae-0694-452b-8fb4-350994e31b25）。
+（[apply --all は選択した config 間の target 重複を build 前に止める](apply-all-preflight-target-conflict.md)）。
 
 ## 決定
 
 `apply --all` は配置も config 単位で並列に行う。1 つの config の中の配置は engine が順に行い、
 並列にしない。
 
-並列に適用したときの集約と部分失敗の扱いは REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af に置く。
-集約の並び順は ADR-af37a636-a798-4c03-8fa4-e73ed6375a92 が定める。
+並列に適用したときの集約と部分失敗の扱いは [apply --all は選択された config を並列に適用し、集約表示と results\[\] を辞書順にし、部分失敗でも続行して最後に集約する](../requirements/apply-all-lexical-order-continue.md) に置く。
+集約の並び順は [apply --all の集約は config 名の辞書順に並べる](apply-all-lexicographic-order.md) が定める。
 
 ## 根拠
 

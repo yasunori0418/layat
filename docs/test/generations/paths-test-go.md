@@ -29,7 +29,7 @@ generated:
 - **キーイングの分岐** — project は `<roothash>`、home（`--root` なし）は `<name>` 直キー、
   home + `--root` 上書きは `<roothash>`、fixed root も `<roothash>`。system（`--root` なし）は
   home と同じ `<name>` 直キー、system + `--root` は `<roothash>`
-- **配置の表**（TC-be3d3dc9-1ead-4e2e-8eea-46e1c8884562）— home / project / fixed / system と
+- **配置の表**（[system mode の root 解決・基底切替・euid の条件が仕様どおりであること](../engine-core/system-mode-root-gate.md)）— home / project / fixed / system と
   `--root` の有無の全組み合わせで、`Resolve` と `ResolveRecord` の結果をリテラルのパスで固定する。
   system への切替で他のモードの配置が 1 バイトも変わらないことの担保
 - **世代リンクの命名** — profile リンクに対する `profile-N-link` の形
@@ -50,13 +50,13 @@ generated:
 - **基底が「無い」と「読めない」の区別** — 基底が存在しないときは `fs.ErrNotExist` に一致する
   エラー、存在するが列挙できないとき（通常ファイル = ENOTDIR）は `fs.ErrNotExist` に一致しない
   エラーで返る。呼び出し側（engine）がこの区別で「利用者に知らせずに続ける」と「warning を出す」を
-  分けられることの担保（→ REQ-c44433a1-7ee7-459a-9aae-7cc42166876f）
+  分けられることの担保（→ [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](../../requirements/prune-target-selection.md)）
 - **系列単位の失敗で基底全体を失敗にしない** — backref を stat できない系列・配下を列挙できない
   系列は、それぞれ `BackrefErr` / `NamesErr` を載せて返り、同じ基底の健全な系列は変わらず
   列挙される。エラーで打ち切るのは基底そのものが読めないときだけ（系列を残して warning を
-  出す REQ-c44433a1-7ee7-459a-9aae-7cc42166876f の粒度に揃える）。この 2 つの場面は権限を落として
-  誘発するため root 実行では skip する（→ TP-deb05610-44bc-4962-8939-952392e5fbd0 の横断規約）
+  出す [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](../../requirements/prune-target-selection.md) の粒度に揃える）。この 2 つの場面は権限を落として
+  誘発するため root 実行では skip する（→ [原子性は実 FS の条件で故障を誘発して不変条件ごとに検証する](../../test-plan/fault-injection-atomicity.md) の横断規約）
 
 この 2 関数は同層の純関数と違って FS を読むため、table ではなく tmpdir を張って駆動する
-（→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1）。TC-bc653f83-70ce-4920-b7cd-9b70a4cd2cae は
+（→ [prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする](../../design/prune-orphan-series.md)）。[prune が孤児系列だけを系列ごと消し、生存・判定不能な系列は理由付きで残す](prune-target-accuracy.md) は
 この 2 関数を名指しで引き受けており、`Prune` 経由の結合は engine 側の CASE が覆う。

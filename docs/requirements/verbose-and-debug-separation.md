@@ -35,13 +35,13 @@ skip 通知・`apply --all` 完了サマリも含む）。**内部実行する n
 `--json`（stdout・機械向け）は `-v`（stderr・人間向け）と直交・併用可。`--quiet` は
 既定沈黙化に伴い廃止した。
 
-既定沈黙そのものは REQ-8ef34101-8150-4124-92d5-94fabe6b5d90、`--help` 等での nix コマンド開示（透明性）は
-REQ-4ffda99a-7062-4c00-915f-70b525cb215b の担当。
+既定沈黙そのものは [成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](silent-on-success.md)、`--help` 等での nix コマンド開示（透明性）は
+[内部実行する nix コマンドを開示し世代の切替と GC は標準の nix コマンドへ委譲する](nix-command-transparency-and-delegation.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」の `-v` / `--verbose` の
 箇条書き、およびグローバルフラグ表の `-v` / `--debug`。
 
-決定の実体は ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9「-v で配置レポートを opt-in で出す」・ADR-a19bf484-368d-4d01-b539-52de32510fa5「内部コマンドの開示を --debug に分ける」・
-ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5「指定が無いときは成功時に何も出力しない」。`--json` との直交は ADR-9e328362-2e90-441a-8eca-40081ce71b1b。
+決定の実体は [-v で配置レポートを opt-in で出す](../adr/verbose-opts-into-placement-report.md)「-v で配置レポートを opt-in で出す」・[内部コマンドの開示を --debug に分ける](../adr/debug-discloses-internal-commands.md)「内部コマンドの開示を --debug に分ける」・
+[指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)「指定が無いときは成功時に何も出力しない」。`--json` との直交は [エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)。

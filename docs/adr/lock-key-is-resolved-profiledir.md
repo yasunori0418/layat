@@ -32,8 +32,8 @@ profile は root ごとに分かれていて、同じ config 名でも root が�
 apply / rollback / reset は直列化し、別の profileDir どうしは互いに待たない。同じ root の別の config も、
 別の root の同名の config も、互いに待たない。
 
-ロックを取る段は REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9、ロックの単位となるディレクトリは
-REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3、reset のロックは REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4 に置く。
+ロックを取る段は [実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](../requirements/exec-flow-eval-lock-build.md)、ロックの単位となるディレクトリは
+[profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](../requirements/profile-on-disk-layout.md)、reset のロックは [reset は名指し必須で profileDir 単位の blocking flock を取る](../requirements/reset-named-only-and-flock.md) に置く。
 
 ## 根拠
 

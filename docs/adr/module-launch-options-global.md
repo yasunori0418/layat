@@ -32,8 +32,8 @@ generated:
 3 つとも global のオプションとし、`configs.<name>` ごとの上書きは持たない。1 回の起動に載る
 全 config へ一律に適用される。
 
-`--recopy` の配線は REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c、`--backup` の配線は
-REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3 に置く。
+`--recopy` の配線は [layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける](../requirements/recopy-wiring-layer.md)、`--backup` の配線は
+[layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない](../requirements/backup-wiring-layer.md) に置く。
 
 ## 根拠
 

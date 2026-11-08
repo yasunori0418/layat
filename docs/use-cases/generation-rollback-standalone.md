@@ -22,7 +22,7 @@ layat rollback <name>         # 前世代へ戻す
 layat list-generations <name> # 世代一覧
 ```
 
-世代は nix profile に乗る（→ ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30）。純粋関数 `lib.mkManifest` が link farm derivation
+世代は nix profile に乗る（→ [世代は link farm と nix profile に乗せる](../adr/generations-on-link-farm-and-nix-profile.md)）。純粋関数 `lib.mkManifest` が link farm derivation
 （`manifest.json` + ストア内の symlink ツリー）を生成し、engine が nix profile に登録する
 ことで、世代番号・GC root・ロールバックを Nix 標準機構から得る。粒度は `layat.<name>`
 単位 = 1 profile なので、役割ごとに独立したロールバック系列を持つ。
@@ -43,12 +43,12 @@ layat list-generations <name> # 世代一覧
 
 > **上表は分割時点の `docs/concept.md`（原文）からの写し**。use_case は規範を持たないため、
 > 配置種別ごとの世代管理の有無の規範は
-> REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe（method と世代管理の対応）/ REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9（copy が
-> 世代外であること）/ REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa（out-of-store の版管理範囲）にある。
+> [method は配置方法を選び symlink は世代管理下・copy は世代管理外になる](../requirements/method-src-matrix.md)（method と世代管理の対応）/ [copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](../requirements/copy-place-once.md)（copy が
+> 世代外であること）/ [out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする](../requirements/out-of-store-link-mapping-only.md)（out-of-store の版管理範囲）にある。
 
 この使われ方は CLI 単体（home mode）が対象。project mode は配置物が ephemeral なため
 rollback を公開せず、モジュール経由のときはユーザー向け rollback を host に一本化する
-（→ UC-19a90989-0ae3-438f-8a75-4e1e2637f81c / UC-d39c1994-f9a5-4860-80ba-f6e584adaf14）。
+（→ [プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する](project-mode-in-repo-placement.md) / [既に home-manager / NixOS / nix-darwin を使っている環境へ layat をモジュールとして組み込む](module-integration.md)）。
 
 なお、下に挙げる要求のうち古くなった配置の除去は本 use_case に固有のものではなく、全モードの apply が
 持つ冪等性の不変条件である。この使われ方に固有なのは「戻した世代の記録が除去の基準になる」

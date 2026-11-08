@@ -15,7 +15,7 @@ generated:
 
 home-manager のように全体を一括管理するのではなく、用途ごとに独立した配置単位を定義する。
 各配置単位は `layat.<name>` で識別され（1 つ = 1 profile）、独立した profile・世代系列として
-管理される（→ ADR-fe035038-4415-4a1e-aa5c-509fdfce9955）。
+管理される（→ [1 config = 1 profile を全モードで自前に持つ](../adr/one-config-one-profile-all-modes.md)）。
 
 ```bash
 # 役割ごとに独立して更新・適用できる（それぞれ別 profile）
@@ -33,7 +33,7 @@ layat apply claude-skills
 一括適用を諦める理由にはならない。
 
 この使われ方は配置モードに依らない。home mode でも project mode でも、role ごとの config
-分割と個別適用は同じ形で成立する（→ UC-f2436d68-91ff-4c48-b1df-47acefe4f464 / UC-19a90989-0ae3-438f-8a75-4e1e2637f81c）。
+分割と個別適用は同じ形で成立する（→ [home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する](home-mode-pinned-repo-placement.md) / [プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する](project-mode-in-repo-placement.md)）。
 
 ## この使われ方が要求すること
 

@@ -30,9 +30,9 @@ generated:
 | project mode で `git` が PATH に無い | engine 実行時にエラーで停止 |
 
 > **上は原文の写しで、規範は frontmatter が正**。project mode の root を git toplevel から
-> 解決し CWD 相対も config 相対も採らないことは REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e、`--root` が全モード共通の
-> 上書きであることは REQ-61c05e09-0bde-4f74-9a96-03185f9df606、engine が外部コマンドとして `git` を叩くことは
-> REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564 の担当。
+> 解決し CWD 相対も config 相対も採らないことは [project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない](project-mode-root-resolution.md)、`--root` が全モード共通の
+> 上書きであることは [--root は全モード共通で解決 root を明示上書きする](root-override-flag.md)、engine が外部コマンドとして `git` を叩くことは
+> [engine が叩く外部コマンドは git のみに限る](engine-external-command-constraint.md) の担当。
 
 ## 出典
 
@@ -41,6 +41,6 @@ generated:
 この 2 行が挙げる解決失敗時の停止そのものに対応する決定を持つ ADR は無く、
 `docs/spec.md` が一次記述にあたる。よって本 item に `justifies` は張られないが、これは
 張り忘れではない。前提となる「project root を git toplevel に置く」ことは
-ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed「root は 3 つの marker で表す」が定めるが、同 ADR は
+[root は 3 つの marker で表す](../adr/three-root-markers.md)「root は 3 つの marker で表す」が定めるが、同 ADR は
 解決に失敗したときの扱いを決めていないため、側面の根拠として `justifies` は張らない
-（前提そのものの帰属は REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e が担当する）。
+（前提そのものの帰属は [project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない](project-mode-root-resolution.md) が担当する）。

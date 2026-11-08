@@ -84,11 +84,11 @@ generated:
 | `--manifest` の link-farm・`manifest.json` が無い | `E_NOTFOUND` |
 | 上記の読み取りで権限エラー / その他の FS エラー | `E_PERMISSION` / `E_IO` |
 
-nix 生成器の前提条件と案内の中身は REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6、`--debug` の分離そのものは
-REQ-0a123b89-0399-4f76-b988-56a5f7e0becf、`--json` のエラーの置き場（トップ `errors[]` / `results[].errors[]`）は
-REQ-9341fa5d-836e-4023-af53-cc7d273438d1 の担当。
+nix 生成器の前提条件と案内の中身は [nix experimental-features は nix 生成器の前提条件とし、自動付与せず案内エラーで停止する](nix-experimental-features-prerequisite.md)、`--debug` の分離そのものは
+[冗長度は -v、デバッグは --debug に分離し --json と直交させる](verbose-and-debug-separation.md)、`--json` のエラーの置き場（トップ `errors[]` / `results[].errors[]`）は
+[エンベロープのエラーは主体の有無で層を分けコードを分類する](json-error-layering.md) の担当。
 
 ## 出典
 
-ADR-6687c0dc-957d-4913-99c6-168b0fe552ad・ADR-964e99a8-4aaa-46f6-b4ee-26270fc04649・ADR-cd139de9-06a4-49a2-8bea-4801c8acc518・ADR-494b6477-9d5b-4e29-879d-f7d16be5d466・ADR-5be36ff2-ed08-4e8e-8476-62ff2b08a9dd。起点は Issue #396（成功時に評価器の stderr を捨てる
+[生成器の診断を成功時も stderr へ素通しする](../adr/generator-diagnostics-passed-through.md)・[生成器の失敗は構造化した値で CLI へ返す](../adr/generator-errors-structured-cli-renders.md)・[nix 固有の失敗判定と案内文を nix 生成器の中に閉じる](../adr/nix-specific-diagnosis-inside-nixgen.md)・[生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する](../adr/generator-failure-single-build-code.md)・[内部コマンドの開示を CLI と生成器で分担する](../adr/internal-command-disclosure-split.md)。起点は Issue #396（成功時に評価器の stderr を捨てる
 現状と nix 固有のエラー分類）。

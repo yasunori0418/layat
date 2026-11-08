@@ -19,8 +19,8 @@ generated:
 ## リスク
 
 root 相対 src は `target` と同じ配置 root に対して解決され、`target` の親から
-`<src>/<subpath>` への相対リンクとして張られる（→ REQ-a77181dd-a59c-40bb-855e-3430ad970eb6・
-DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296）。これが崩れる形は 4 つある。
+`<src>/<subpath>` への相対リンクとして張られる（→ [mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](../requirements/root-relative-symlink-marker.md)・
+[rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは配置前の確認だけにする](../design/root-relative-linkdest.md)）。これが崩れる形は 4 つある。
 
 - **基準点の取り違え** — `LinkDest` が `target` の親ではなく root や cwd を起点に相対化する、
   あるいは配置前の確認が root ではなく cwd を基準に実在を確かめる。リンクは別の場所を指すか
@@ -32,7 +32,7 @@ DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296）。これが崩れる形は 4 つあ�
   評価時の条件が見逃すとリンクが自分自身か自分の祖先を指し、symlink ループになる
 - **2 つの形の混同** — `outOfStore` の評価時に確定した絶対パスが `target` 側の root 解決に影響する、
   あるいは `rootRelative` が `target` と別の root に対して解決される
-  （→ REQ-81249072-56b8-42f5-807b-ea623c1efe99）
+  （→ [out-of-store の src は評価時の絶対パスか配置 root 相対のどちらかで、root 相対は target と同じ root に対して実行時に解決する](../requirements/out-of-store-eval-time-path.md)）
 
 ## 影響
 

@@ -34,7 +34,7 @@ generated:
 status は、各記録を mode・config 名・root を含む名前で示す。`[name]` は config
 名の部分の完全一致で絞り込み、mode と root は問わない。一致が 0 件なら一覧を出さない。stderr
 に通知して exit 0 で終える。名前の書式と、backref や記録が読めない系列の名付けは
-REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173 に置く。
+[status は記録基底を走査して last-applied 記録を読み取り専用で表示する](../requirements/status-command.md) に置く。
 
 ## 根拠
 

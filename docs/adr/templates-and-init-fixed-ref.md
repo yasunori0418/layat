@@ -38,9 +38,9 @@ starter の flake は nix 標準の `templates` output（`standalone` / `project
 <template>` は `nix flake init -t github:yasunori0418/layat#<template>` をそのまま呼ぶラッパーとし、参照する
 flake ref はバイナリにハードコードした固定の文字列にする。
 
-ラッパーの規範は REQ-6be1cbf1-6c6e-498b-8acb-7f4b80037169 に、固定 ref は
-REQ-cbd61281-64b0-4487-a4b7-ce76e70dc4f9 に、`templates` output の公開形は
-DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58 に置く。
+ラッパーの規範は [layat init は nix flake init -t への透明なラッパーとしファイルを生成しない](../requirements/init-template-wrapper.md) に、固定 ref は
+[init のテンプレート参照はバイナリにハードコードした固定 flake ref とする](../requirements/init-fixed-flake-ref.md) に、`templates` output の公開形は
+[layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する](../design/flake-outputs-attrs.md) に置く。
 
 ## 根拠
 

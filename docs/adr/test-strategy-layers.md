@@ -41,11 +41,11 @@ sandbox で成立する lib と Go のテストは `nix flake check` に集め�
 `nix flake check` の外の別ジョブで実行する。NixOS モジュールの実際の activate は runNixOSTest の
 check で検証し、E2E のハーネスとは別系統に置く。
 
-層ごとの検証範囲は TP-36e90d5d-4524-4294-bc72-ee263bb02782・TP-e7c25263-6d2d-4a37-8275-26906889d912・
-TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9・TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2、手段は
-DSG-fb49e36c-eb20-4efa-8cac-88ef0873db8e・DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3・
-DSG-2947b4a5-ba5c-4218-8478-624cba156116・DSG-901351ea-f01b-4bb0-a470-b890d92c980b、CI のジョブ構成は
-INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27 に置く。
+層ごとの検証範囲は [評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](../test-plan/nix-unit-namaka-split.md)・[エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../test-plan/go-test-layering.md)・
+[非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](../test-plan/e2e-harness-scope.md)・[NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする](../test-plan/nixos-vm-test-future.md)、手段は
+[lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する](../design/lib-test-nix-unit-namaka.md)・[engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する](../design/engine-test-go-unit-tmpdir.md)・
+[E2E は tests/e2e の bash ハーネスに置き、シナリオの詳細は同ディレクトリの README へ委譲する](../design/e2e-harness-shape.md)・[NixOS モジュールの実 activate は runNixOSTest の checks.nixos-vm で検証し、E2E ハーネスとは別系統に置く](../design/nixos-vm-test-position.md)、CI のジョブ構成は
+[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](../infrastructure/ci-pipeline.md) に置く。
 
 ## 根拠
 

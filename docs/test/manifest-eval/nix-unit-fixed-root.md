@@ -14,7 +14,7 @@ generated:
 
 ## 対象
 
-`tests/nix-unit/fixed-root.nix`（`tests/nix-unit.nix` のディレクトリ列挙で自動搭載。TP-36e90d5d-4524-4294-bc72-ee263bb02782
+`tests/nix-unit/fixed-root.nix`（`tests/nix-unit.nix` のディレクトリ列挙で自動搭載。[評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](../../test-plan/nix-unit-namaka-split.md)
 が定めるとおり、テスト名はファイル横断で一意でなければならない。本ファイルは
 `testFixedRoot*` 接頭辞を使う）
 
@@ -30,18 +30,18 @@ generated:
 - 別の絶対パスでも同じ形になる（特定の値に依存した通り方をしない）。entries は同条件に
   揃え、差分がパス値の 1 軸だけになるようにする
 - 同じ entries を fixed root と project root へ与えたときの正規化結果が一致する
-  （既定値そのものは CASE-59de34d4-d9d5-4ae0-b1be-44d2e775f031 が持つので、ここは同値比較で独立性だけを見る）。
+  （既定値そのものは [nix-unit: defaults.nix — 既定適用・明示上書き・target 辞書順](nix-unit-defaults.md) が持つので、ここは同値比較で独立性だけを見る）。
   現行実装では `resolveEntry` が root を引数に取らないため、この結合は構造的に起こり
   得ない。将来 entry の解決へ root を渡す設計変更が入ったときに初めて働く回帰網である
 - `homeRoot` marker を渡した場合は `{ rootKind = "home"; }` に exact 一致し、fixed へ
   倒れず絶対パスも持たない（`root` フィールドの不在まで見る）
 
-project root の否定側（固定 root を持たない）は CASE-7a6c4957-9365-4490-b48f-9725f42162f2 が持つ。本 CASE はその対に
-なる肯定側で、両者で REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb の評価層分を挟む（→ TC-f9e927d0-8e10-4b8e-9870-5b5486949af6）。
+project root の否定側（固定 root を持たない）は [nix-unit: structure.nix — manifest 構造の不変条件](nix-unit-structure.md) が持つ。本 CASE はその対に
+なる肯定側で、両者で [manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する](../../requirements/manifest-root-object.md) の評価層分を挟む（→ [fixed root で rootKind が fixed になり絶対パスを併記する（home marker が倒れないことを含む）](fixed-root-absolute-path.md)）。
 
-配置元は TP-d3d06fe4-6940-4df8-b111-bb4096d5444f の fake flake-input double イディオムに従う。
+配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) の fake flake-input double イディオムに従う。
 
 ## 出典
 
-Issue #288（REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb の肯定側が 8 区分のどこにも無い。検出元は Issue #273 L1 レーンの
-逆算）。root オブジェクトの設計判断は ADR-59f63d1f-25df-4290-913f-02804c5eeade が持つ。
+Issue #288（[manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する](../../requirements/manifest-root-object.md) の肯定側が 8 区分のどこにも無い。検出元は Issue #273 L1 レーンの
+逆算）。root オブジェクトの設計判断は [root の型を mkManifest だけに持たせる](../../adr/roottype-mkmanifest-only.md) が持つ。

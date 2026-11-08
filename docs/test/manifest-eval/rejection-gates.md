@@ -15,7 +15,7 @@ generated:
 
 「この入力は評価が失敗する」を、エラー種別と拒否されたフィールドの名指しで直接アサートする。
 正常系のアサートでは、拒否条件が外れたことを検出できないため。判定ロジックそのものを private
-helper 越しに単体で見るのは TC-311ca3b2-d6d1-4712-9e2a-9027941d3527 の担当で、検証境界が異なる。
+helper 越しに単体で見るのは [パス脱出判定の深さ境界を private helper 越しに内側・外側の対でアサートする](path-escape-boundary.md) の担当で、検証境界が異なる。
 
 主たる処理は `normalizeManifest`（evalModules）だが、型の共有を確かめる 1 件だけは
 `entriesType` を直接 `evalModules` して見る（`normalizeManifest` を通さない）。同じ型定義が
@@ -32,7 +32,7 @@ helper 越しに単体で見るのは TC-311ca3b2-d6d1-4712-9e2a-9027941d3527 �
 
 ## 覆う CASE
 
-- CASE-879a93da-d22f-4397-84da-3544f8249af1（`tests/nix-unit/gates.nix`）
+- [nix-unit: gates.nix — 評価時に throw する拒否条件群](nix-unit-gates.md)（`tests/nix-unit/gates.nix`）
 
 ## 出典
 

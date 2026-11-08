@@ -28,11 +28,11 @@ generated:
 > 注記するが、これは規範ではなく利用した結果起きることへの注意なので規範文には含めない。
 
 この複製規則は通常の place-once コピーと `apply --recopy` の再コピーの双方に適用される。
-place-once そのものは REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9、recopy そのものは REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065 / REQ-b4e4b65d-6e35-40c3-a00e-20c14043df6f の担当。
+place-once そのものは [copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](copy-place-once.md)、recopy そのものは [apply --recopy は config 内の全 copy target を src から無条件に上書き再コピーする](apply-recopy.md) / [recopy の上書きは削除ではなく同一親内への rename 退避で行う](recopy-rename-aside.md) の担当。
 
 ## 出典
 
 `docs/spec.md`「配置動作仕様」→「copy モード（place-once・ユーザー管理）」節の箇条書き第 5 項
 （および「recopy」節の「symlink 複製は通常 copy と同じ」）。
 
-決定の実体は ADR-6d7e2201-3101-4d67-9112-a7e85d8c2ea0「copy 内の symlink は symlink のまま複製する」。
+決定の実体は [copy 内の symlink は symlink のまま複製する](../adr/symlink-inside-copy-kept.md)「copy 内の symlink は symlink のまま複製する」。

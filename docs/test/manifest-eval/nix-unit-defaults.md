@@ -27,10 +27,10 @@ generated:
 - **決定的な配列化**: 属性キー `b` / `a` / `c` を与えたとき、出力 entries の `target` 列が
   `[a b c]` の辞書順になること
 
-配置元は TP-d3d06fe4-6940-4df8-b111-bb4096d5444f の fake flake-input double イディオムに従う。
+配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) の fake flake-input double イディオムに従う。
 
 ## 出典
 
 `tests/nix-unit/defaults.nix` の現行実装からの逆算（→ Issue #273「L1〜L4」節）。既定と
-辞書順の設計判断は ADR-92258e55-0204-4ee3-ae0e-d76a8e7343ec / ADR-c494e86e-ceb9-4380-b983-4e09553b01d6 /
-ADR-af37a636-a798-4c03-8fa4-e73ed6375a92 が持つ。
+辞書順の設計判断は [入力の確認を normalizeManifest に切り出す](../../adr/normalize-then-mk-two-stage.md) / [entries を target をキーにした attrset にする](../../adr/entries-keyed-by-target.md) /
+[apply --all の集約は config 名の辞書順に並べる](../../adr/apply-all-lexicographic-order.md) が持つ。

@@ -28,7 +28,7 @@ main の ruleset で、CI が PR で出す flake check の 3 つの check と `e
 する。bypass を許さず、owner も PR とテストを通さなければマージできない。ブランチの up-to-date は
 強制せず、レビューの承認も要求しない。
 
-必須にする check 名と ruleset の設定は INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6 に置く。
+必須にする check 名と ruleset の設定は [マージの条件（main の ruleset と required status checks）](../infrastructure/merge-gate.md) に置く。
 
 ## 根拠
 

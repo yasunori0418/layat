@@ -33,7 +33,7 @@ generated:
 4 件はいずれも dev flake の `checks.*` としても露出しているが、CI の `flake-check` はルート
 flake を対象にするため到達しない。CI の明示ステップとして固定する。
 
-`sara` ジョブは `test.yml` に同居するが、CI パイプライン（INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27）の変更検出ジョブは
+`sara` ジョブは `test.yml` に同居するが、CI パイプライン（[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md)）の変更検出ジョブは
 **再利用しない**。あちらの filter は nix / Go のソースを対象にするのに対し、この確認が最も役立つのは
 docs のみの PR だからで、job ローカルの filter を別に置く。
 
@@ -64,27 +64,27 @@ ADR も同じ形式で採番する（`ADR-<フル UUIDv4>`・`SDR-<フル UUIDv4
 
 **`strict_mode = true` の非必須の確認**。確認自体は strict で、接続漏れを含む全 warning が
 error となり `sara check` は exit 1 を返す（epic #203 の移行完了・warning 0 到達を受けて有効化
-→ SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626）。合格条件は「warning 0 件」に一本化されている。
+→ [sara check を strict モードで回す](../sara-adr/sara-check-strict-mode.md)）。合格条件は「warning 0 件」に一本化されている。
 
-一方でマージの条件（INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6）の required status check には登録せず、DoD にも入れない。
+一方でマージの条件（[マージの条件（main の ruleset と required status checks）](merge-gate.md)）の required status check には登録せず、DoD にも入れない。
 これは移行中の暫定措置ではなく「**検出は機械・判断は人**」という分担を保つための恒久判断で、
 張り忘れの修正が自明でないケース（item 新設を伴う等）を CI が赤いままレビューで扱える余地を
-残す。再検討条件は廃止した旧 ADR が持っていた（現在の決定は → SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef）。
+残す。再検討条件は廃止した旧 ADR が持っていた（現在の決定は → [sara check を required status check にしない](../sara-adr/sara-check-not-required.md)）。
 
-閾値による条件を持たない点は CI パイプライン（INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27）の `go-coverage` ジョブと同方針で、
+閾値による条件を持たない点は CI パイプライン（[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md)）の `go-coverage` ジョブと同方針で、
 他 PR とのマージ順依存を避けるためでもある。
 
 ## 出典
 
-SDR-5ea31001-96f8-4324-a40b-647cdfa5cc9d、SDR-536848bb-8901-4e73-8c66-861de3f91bcd、
-SDR-2457aa00-fab7-4c99-af53-2e6643c21c79、SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed、
-SDR-c15921a9-7aea-407c-a34b-7465783b1af1、SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed、
-SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb、SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626、
-SDR-34916a83-0cff-4524-a8ff-5a3195af52c3、SDR-f3f9491f-d6f4-4742-82da-4933ad3d8db1、
-SDR-29ef8bb4-9349-47db-9e79-926bc71bbdd0、SDR-933a9191-f60e-45bc-bebc-bc09af8154cc、
-SDR-35636015-710a-4cf8-b6ba-48ca047efed0、SDR-1d295034-9bab-4e30-9ead-173e5f56c396、
-SDR-9bec5976-67cd-407a-afa9-3d394a6204ca、SDR-9f2ef734-a9a7-4b93-92a7-e8ed1c7cf8fe、
-SDR-d5304533-00ae-423b-a459-7c67c1cf093c、SDR-fa7eff8e-788f-48e7-951d-4cfbf95d5a1f、
-SDR-3ff9f355-a667-476e-b10d-087248cdbfcf、SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb、
-SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef、SDR-6c6c0681-4d5e-429e-8ee9-acf8dd94ad54。設計は epic GitHub Issue #203 の grilling
+[ドキュメントは sara のナレッジグラフとして item に分割する](../sara-adr/docs-as-sara-knowledge-graph.md)、[概要文書は item へのリンク集に縮退させる](../sara-adr/overview-docs-as-link-index.md)、
+[model.yaml で組み込みモデルを全面置換し、汎用の型名を使う](../sara-adr/model-yaml-full-replacement.md)、[欠陥はグラフに置かず GitHub Issues で管理する](../sara-adr/defects-in-github-issues.md)、
+[sara 品質管理機構の決定は sara_adr 型に分ける](../sara-adr/sara-adr-type-for-doc-process-decisions.md)、[ADR も UUID で採番し、連番の旧 ADR は legacy_adr 型に凍結する](../sara-adr/adr-uuid-ids-and-legacy-type.md)、
+[root は solution と ADR 系の型だけにする](../sara-adr/roots-solution-and-adr-types-only.md)、[sara check を strict モードで回す](../sara-adr/sara-check-strict-mode.md)、
+[テスト計画の型を品質方針の型から分けて設ける](../sara-adr/quality-and-test-plan-types.md)、[risk の親に test_plan を含めない](../sara-adr/risk-parent-excludes-test-plan.md)、
+[infrastructure を技術基盤として再定義し root から外す](../sara-adr/infrastructure-redefined-non-root.md)、[infrastructure 型を改名しない](../sara-adr/infrastructure-name-kept.md)、
+[design の satisfies 対象に test_plan を含める](../sara-adr/design-satisfies-test-plan.md)、[ADR の justifies 対象を specification を持つ全型に広げる](../sara-adr/adr-justifies-quality-and-test-plan.md)、
+[欠陥 issue のクローズ時にテスト系 item の欠落を追補する](../sara-adr/defect-close-backfills-risks.md)、[item にできない外部参照は text フィールドへ逃がす](../sara-adr/external-references-as-text-fields.md)、
+[提案を棄却した決定は status 不採用 で記録する](../sara-adr/adr-status-rejected.md)、[adr の status_note を持たない](../sara-adr/adr-status-note-removed.md)、
+[ADR の失効は supersedes と 廃止 で表す](../sara-adr/adr-supersedes-and-deprecated-status.md)、[ID はフル UUID に統一し 8 文字省略形を使わない](../sara-adr/full-uuid-ids-no-short-form.md)、
+[sara check を required status check にしない](../sara-adr/sara-check-not-required.md)、[item のファイル名は slug だけにする](../sara-adr/slug-only-filenames.md)。設計は epic GitHub Issue #203 の grilling
 セッション（2026-07-31・2026-08-01）で確定した。

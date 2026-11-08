@@ -32,9 +32,9 @@ layat は全モードで自前の profile を持つが、その世代を rollbac
 旧 config で layat を再び起動することで追従する。project mode では profile を古くなった配置の除去と世代
 スキップ判定のための内部機構に留める。
 
-モードごとの公開範囲は REQ-05abce3e-9797-432b-b93f-37c55d09afde、module での host との分担は
-REQ-844ee375-919f-4341-81e1-a5f89fd32840、project mode の世代の扱いは
-REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 に置く。
+モードごとの公開範囲は [rollback と list-generations は home / system mode 限定にする](../requirements/rollback-list-generations-home-only.md)、module での host との分担は
+[module 時は rollback を host へ一本化し、layat profile は前進のみで追従する](../requirements/module-mode-profile-internal.md)、project mode の世代の扱いは
+[project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](../requirements/project-mode-generation-skip.md) に置く。
 
 ## 根拠
 

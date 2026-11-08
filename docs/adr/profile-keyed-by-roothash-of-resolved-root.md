@@ -24,7 +24,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-01
-- 関連: ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429, ADR-27f99ee6-5fb4-4dbe-b0fd-8267eecaa3a1, ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d, ADR-3aebefee-405d-4342-b754-eef8eac29b1b, ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed, ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75
+- 関連: [apply --all に root モードのフィルタを持たせる](apply-all-root-mode-filter.md), [--root は全モードで root を上書きする](root-flag-overrides-all-modes.md), [project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md), [symlink を unlink と symlink の 2 操作で張り替える](relink-unlink-then-symlink.md), [root は 3 つの marker で表す](three-root-markers.md), [module と project では世代操作を公開しない](module-and-project-hide-generation-ops.md)
 - 起点: 実装前の残セマンティクス確定（2026-06-11〜06-14）。ADR-0005 §「profile は解決済み root でキーする」・ADR-0013 §7・ADR-0023 §3・ADR-0024 §1 を書き直した
 
 ## 背景
@@ -44,9 +44,9 @@ profileDir を config 名で直接キーするのは、root が 1 つに定ま�
 `<roothash>` と config 名でキーする。`<roothash>` は解決済み root パスの sha256 を短縮した hex とし、
 `<roothash>` 階層には元の root パスを記録した backref ファイルを置く。
 
-キーの対応表は REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81、`<roothash>` の定義は REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0、
-backref による孤児の逆引きは REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4、backref の置き場所は
-REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3 に置く。
+キーの対応表は [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](../requirements/profiledir-keying.md)、`<roothash>` の定義は [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](../requirements/project-mode-generation-skip.md)、
+backref による孤児の逆引きは [孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する](../requirements/project-mode-orphan-profile.md)、backref の置き場所は
+[profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる](../requirements/profile-on-disk-layout.md) に置く。
 
 ## 根拠
 

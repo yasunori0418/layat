@@ -26,20 +26,20 @@ generated:
 
 ## リスク
 
-`mkManifest` は `evalModules` で入力を確認する単一の箇所（REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34）で、パス安全性
-（REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f）・未知キーと旧名の拒否（REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51）・entry のフィールドを 4 つに限ること
-（REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74）・意図が矛盾する組み合わせ（REQ-16faf428-77f3-492f-b858-222c5274cbf7）・同一 manifest 内の target 衝突
-（REQ-5c6b07da-3d06-414d-8770-4f438234b322）・素の文字列 src の拒否（REQ-99ca5381-6c53-426c-b145-7b4297c53868）を全てここで止める。この確認は
-`modules/common.nix` が共有する entriesType にも適用される（REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10）。
-root マーカーの subdir 適用形（REQ-08c8f639-790c-4970-a954-c9567538cf9b）の拒否（絶対パス・`..` 脱出・空の
+`mkManifest` は `evalModules` で入力を確認する単一の箇所（[mkManifest 自身が evalModules で入力を確認する単一の箇所になる](../requirements/mkmanifest-input-validation.md)）で、パス安全性
+（[target / subpath のパス安全性を評価時に確認する](../requirements/path-safety-validation.md)）・未知キーと旧名の拒否（[entry submodule は strict とし未知キーと旧名を評価時エラーにする](../requirements/entry-submodule-strict.md)）・entry のフィールドを 4 つに限ること
+（[entry submodule のフィールドは src / subpath / target / method の 4 つとする](../requirements/entry-submodule-fields.md)）・意図が矛盾する組み合わせ（[意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](../requirements/normalize-manifest-cross-field-checks.md)）・同一 manifest 内の target 衝突
+（[target 衝突の検出処理を同一 manifest 内と cross-config で分ける](../requirements/target-collision-eval-detection.md)）・素の文字列 src の拒否（[src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する](../requirements/src-kinds-store-default.md)）を全てここで止める。この確認は
+`modules/common.nix` が共有する entriesType にも適用される（[全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md)）。
+root マーカーの subdir 適用形（[root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](../requirements/root-marker-subdir-sugar.md)）の拒否（絶対パス・`..` 脱出・空の
 `subdir`、前置で target の `..` 脱出を隠さないこと）も同じ条件で止める。
 
 `root = systemRoot`（system mode）は `rootKind = "system"` として評価を通り、評価時に止める
-入力ではない（→ ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c、REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66）。root 省略時のエラー（REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4 の明示必須）と、`pkgs` などの必須引数を
-省いた呼び出しのエラー（REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d）も、評価時に止める入力に当たる。
+入力ではない（→ [rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)、[root は 3 マーカーと絶対パス文字列の union を取る](../requirements/root-marker-kinds.md)）。root 省略時のエラー（[root は明示必須で暗黙デフォルトを持たない](../requirements/root-explicit-required.md) の明示必須）と、`pkgs` などの必須引数を
+省いた呼び出しのエラー（[mkManifest の引数は必須の pkgs / entries / root と任意の identity とする](../requirements/mkmanifest-arguments.md)）も、評価時に止める入力に当たる。
 どちらも型定義の条件ではなく関数の必須引数として止まり、省略を見るアサートは評価テストに存在しない。
-この 2 本へは緩和の無い残余として `threatens` を張る（REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d のうち
-`identity` の扱いは RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d 側の TC-4e7cfae7-72bc-4af6-a1f5-1ead7db564b1 が見る）。
+この 2 本へは緩和の無い残余として `threatens` を張る（[mkManifest の引数は必須の pkgs / entries / root と任意の identity とする](../requirements/mkmanifest-arguments.md) のうち
+`identity` の扱いは [manifest.json の形が engine の読む契約から気付かれずにずれる](manifest-contract-drift.md) 側の [manifest 文書の形（schemaVersion / root / entry 5 フィールド）を不変条件としてアサートする](../test/manifest-eval/manifest-shape-invariants.md) が見る）。
 
 **顕在化したときに起きること**: この条件が緩むと、`..` や絶対パスで root の外を指す target が
 engine まで届き、意図しない場所を書き換える。タイポした旧名は利用者に知らせずに無視され、ユーザーは
@@ -52,8 +52,8 @@ engine まで届き、意図しない場所を書き換える。タイポした�
 - likelihood: low — 条件は型定義とクロスフィールドの確認の 1 箇所に集約されており、
   境界条件（`..` の深さ・0 ちょうど）まで含めて nix-unit が対で覆っている。本 risk が
   扱う「止めるべき入力が止まらずに通る」方向、すなわち throw しなくなる退行はこの確認が
-  確実に捕まえる（どの条件が throw したかの取り違えは CASE-879a93da-d22f-4397-84da-3544f8249af1 の部分一致では
-  区別できないが、それは止まらずに通る失敗とは別の失敗モードで RISK-3de9753f-3fd3-4364-b1ab-64c68c15ec77 の担当）。
+  確実に捕まえる（どの条件が throw したかの取り違えは [nix-unit: gates.nix — 評価時に throw する拒否条件群](../test/manifest-eval/nix-unit-gates.md) の部分一致では
+  区別できないが、それは止まらずに通る失敗とは別の失敗モードで [評価スイート自身の盲点でアサートが空虚に緑になる](eval-suite-blind-spot.md) の担当）。
   ただし root と必須引数の省略はこの確認の外にあり、上の残余に当たる
 - impact: high — パス安全性の破れ、すなわち `..` や絶対パスが root の外を指したまま engine へ
   届く場面では、書き込み先が layat の記録に残らず原状回復の対象にすらならない。ここで継承則を
@@ -64,9 +64,9 @@ engine まで届き、意図しない場所を書き換える。タイポした�
 
 ## 対処
 
-TC-e7ff0e6d-32d7-4ed6-8c2f-449dba34b2f6（各条件が評価時に `ThrownError` を投げること。主な処理は `normalizeManifest`
-だが、型共有の 1 件は `entriesType` を直接評価する）・TC-311ca3b2-d6d1-4712-9e2a-9027941d3527（private helper を単体で
-叩いてパス脱出判定の深さ 0 境界を内側・外側の対で見ること）・TC-7d713505-5673-4e15-99bf-e98965e18892（subdir 適用形の
+[拒否すべき入力が評価時に throw することをアサートする](../test/manifest-eval/rejection-gates.md)（各条件が評価時に `ThrownError` を投げること。主な処理は `normalizeManifest`
+だが、型共有の 1 件は `entriesType` を直接評価する）・[パス脱出判定の深さ境界を private helper 越しに内側・外側の対でアサートする](../test/manifest-eval/path-escape-boundary.md)（private helper を単体で
+叩いてパス脱出判定の深さ 0 境界を内側・外側の対で見ること）・[subdir 適用形が全 target に正規化済みの前置を施し、root と単体 marker を変えず、不正な subdir を評価時に拒否する](../test/manifest-eval/root-subdir-sugar.md)（subdir 適用形の
 拒否の条件）で緩和する。1 つ目はエラーの到達性、2 つ目は判定ロジック単体、3 つ目は subdir
 適用形が足した拒否の条件という軸の違いで 3 つの TC に分ける。
 
@@ -74,5 +74,5 @@ TC-e7ff0e6d-32d7-4ed6-8c2f-449dba34b2f6（各条件が評価時に `ThrownError`
 
 `tests/nix-unit/gates.nix` / `tests/nix-unit/escapes-base.nix` の現行実装からの逆算
 （→ Issue #273「L1〜L4」節）。各条件の設計判断は
-ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab / ADR-12ad7852-e689-44d7-b9fe-0667effb3d13 / ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131 /
-ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967 / ADR-00cc3497-654f-420a-928f-99f201e7efb0 / ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0 が持つ。
+[配置元の中のパスを全層で subpath と呼ぶ](../adr/subpath-naming-across-layers.md) / [entry の未知のキーを評価時に拒否する](../adr/strict-unknown-keys-rejected.md) / [src の型で素の文字列を拒否する](../adr/srctype-bare-string-rejected.md) /
+[copy と out-of-store の併用を eval 時に拒否する](../adr/copy-with-out-of-store-eval-error.md) / [絶対パスと .. エスケープは eval 時に拒否する](../adr/path-safety-eval-rejection.md) / [manifest 内の target の衝突を評価時に検出する](../adr/manifest-target-conflict-eval-error.md) が持つ。

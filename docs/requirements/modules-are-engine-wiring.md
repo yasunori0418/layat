@@ -51,24 +51,24 @@ engine + store マニフェスト。
   関心外
 - nix-darwin モジュールは `system.activationScripts.postActivation` への追記から engine を起動する
 
-> **上は原文の写しを ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c に合わせて改めたもので、規範は frontmatter が正**。各層が供給する
-> root の具体は REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b（HM の `$HOME`）と REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10（NixOS / nix-darwin の `systemRoot`）、HM の
-> activation フックと起動契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、NixOS / nix-darwin の起動契約は REQ-a220bb28-89de-42b0-a854-e7468755ecb1、devShell の起動タイミングは REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9、
-> module の使い方での rollback を host 世代へ一本化することは REQ-844ee375-919f-4341-81e1-a5f89fd32840、engine 自身が
-> ネイティブ FS 操作で配置することは REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564 の担当。
+> **上は原文の写しを [NixOS / nix-darwin モジュールは root を systemRoot に固定する](../adr/system-modules-pin-systemroot.md) に合わせて改めたもので、規範は frontmatter が正**。各層が供給する
+> root の具体は [home mode の root は層ごとに定まった供給元から解決する](home-mode-root-resolution.md)（HM の `$HOME`）と [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)（NixOS / nix-darwin の `systemRoot`）、HM の
+> activation フックと起動契約は [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](hm-activation-contract.md)、NixOS / nix-darwin の起動契約は [NixOS / nix-darwin モジュールは activation から全 config のビルド済み link-farm を systemRoot で 1 回の起動に渡す](system-module-activation-contract.md)、devShell の起動タイミングは [devShell は shellHook から engine を起動する配線で、シェル入室のたびに project mode で配置する](devshell-wiring.md)、
+> module の使い方での rollback を host 世代へ一本化することは [module 時は rollback を host へ一本化し、layat profile は前進のみで追従する](module-mode-profile-internal.md)、engine 自身が
+> ネイティブ FS 操作で配置することは [engine が叩く外部コマンドは git のみに限る](engine-external-command-constraint.md) の担当。
 >
 > CLI が PATH 常駐の一次 UX であることと、その導入形（CLI 単体のグローバル導入・
-> project mode の devShell 同梱）は REQ-14f0aec9-abae-4621-82f3-40536a1ad904 の担当。本 item はモジュール対応の側から見た
+> project mode の devShell 同梱）は [layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする](cli-primary-ux-installation.md) の担当。本 item はモジュール対応の側から見た
 > 位置づけ（一括 switch 用途を拾うためだけに存在する配線であること）を規定する。
 
 ## 出典
 
 `docs/spec.md`「モジュール別動作仕様」の前文と、「NixOS モジュール（将来拡張）」
-「nix-darwin モジュール（将来拡張）」節。将来拡張 2 節のうち root の供給元は REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b、
-rollback の一本化は REQ-844ee375-919f-4341-81e1-a5f89fd32840 が担当し、残る「activation フックから engine を起動する
-配線に徹する」を本 item に畳んだ。NixOS / nix-darwin の root は、その後 ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c で
-REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 の `systemRoot` pin へ移った。
+「nix-darwin モジュール（将来拡張）」節。将来拡張 2 節のうち root の供給元は [home mode の root は層ごとに定まった供給元から解決する](home-mode-root-resolution.md)、
+rollback の一本化は [module 時は rollback を host へ一本化し、layat profile は前進のみで追従する](module-mode-profile-internal.md) が担当し、残る「activation フックから engine を起動する
+配線に徹する」を本 item に畳んだ。NixOS / nix-darwin の root は、その後 [NixOS / nix-darwin モジュールは root を systemRoot に固定する](../adr/system-modules-pin-systemroot.md) で
+[全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md) の `systemRoot` pin へ移った。
 
-決定の実体は ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880「モジュールは root と起動の時機だけを供給して engine を起動する」・ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7 で、
-モジュール対応を一括 switch 用途に限る positioning は ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e「project mode を第一の使い方とする」が定めている。NixOS / nix-darwin の hook を
-具体化したのは ADR-68f453b3-e6c7-4e0d-9978-32b5a00f627e・ADR-eee039fc-40af-42ac-bc65-979d6eaa0d06。
+決定の実体は [モジュールは root と起動の時機だけを供給して engine を起動する](../adr/modules-wire-engine-kick-only.md)「モジュールは root と起動の時機だけを供給して engine を起動する」・[配置は全層で engine が行い、ネイティブ機構へ翻訳しない](../adr/engine-owns-placement-no-native-translation.md) で、
+モジュール対応を一括 switch 用途に限る positioning は [project mode を第一の使い方とする](../adr/project-first.md)「project mode を第一の使い方とする」が定めている。NixOS / nix-darwin の hook を
+具体化したのは [NixOS モジュールは system.activationScripts.layat から起動する](../adr/nixos-activation-script-hook.md)・[nix-darwin モジュールは postActivation に起動を追記する](../adr/darwin-post-activation-hook.md)。

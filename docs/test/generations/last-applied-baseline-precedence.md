@@ -43,9 +43,9 @@ generated:
   backref `.root` も）を apply と同じ手順で作る
 - generation skip・rollback・reset も、記録を書けなければ失敗する
 
-上位の規範は TP-e7c25263-6d2d-4a37-8275-26906889d912（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。
+上位の規範は [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../../test-plan/go-test-layering.md)（`internal/engine/` を実 FS の tmpdir で駆動する統合レベル）。
 
 ## 対応する CASE
 
-CASE-233855f7-912c-4477-af32-9a54c82353c3（`internal/engine/record_test.go`）。実 nix での記録の
-位置と rollback 後の書き直しは CASE-2e7b9ea2-4e4d-48ca-9e1e-0bfbb6223ff2（e2e 02-home）が見る。
+[record_test.go — last-applied 記録の読み書き・比較の基準の優先順位・各操作での更新](record-test-go.md)（`internal/engine/record_test.go`）。実 nix での記録の
+位置と rollback 後の書き直しは [e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復](e2e-02-home.md)（e2e 02-home）が見る。

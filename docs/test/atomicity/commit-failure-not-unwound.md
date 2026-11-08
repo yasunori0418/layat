@@ -13,10 +13,10 @@ generated:
 
 ## テスト条件
 
-TC-3b02ab58-5bfb-4ae7-9ac1-c69e2ece2722 の裏返し。commit（`nix-env --set`）でのみ失敗させ、**巻き戻しが起きない**
+[実 FS の故障注入で FS 変更段の途中を失敗させ、apply 前の状態が完全に復元される](mid-batch-rollback-restores-preapply.md) の裏返し。commit（`nix-env --set`）でのみ失敗させ、**巻き戻しが起きない**
 ことを検証する。commit へ到達した時点でこの run の FS 書き込みは全て成功しており、FS は
 既に整合している。ここで unwind すればその整合状態を壊すため、巻き戻さないのが正しい
-（→ ADR-f29d1256-5e14-4b83-ac77-4717b2210193）。世代が進まないだけで、冪等な再実行が収束する。
+（→ [undo の発火を FS 反映の段に限り、世代コミットの後は対象にしない](../../adr/undo-scope-ends-at-commit.md)）。世代が進まないだけで、冪等な再実行が収束する。
 
 条件は次の 3 点。
 
@@ -31,6 +31,6 @@ commit 段は `Commit` 関数を差し替えて失敗させる。実 FS 条件�
 
 ## 対応する CASE
 
-CASE-154af597-df3e-49fb-a96b-b4f371dfcc63（`internal/engine/undo_journal_test.go`）。commit 失敗時の部分 `Result`
+[undo_journal_test.go — 実 FS 故障注入による end-to-end 巻き戻しと commit 失敗の非対称性](undo-journal-test-go.md)（`internal/engine/undo_journal_test.go`）。commit 失敗時の部分 `Result`
 の中身（`Unwound` が false であることを含む）は generations 側の
-CASE-2008a909-b45e-49e1-adf1-39191a8ddd95 も隣接して検証する。
+[result_extensions_test.go — 実行結果のインベントリ・世代観測・到達状態・構造化 warning](../generations/result-extensions-test-go.md) も隣接して検証する。

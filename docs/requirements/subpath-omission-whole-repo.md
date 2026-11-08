@@ -35,7 +35,7 @@ generated:
   明示形。
 - 「`"."` 以外で全体を表す専用トークン / marker」は設けない。`subpath` は評価時に確定
   する subpath 選択であり、糖衣 marker は marker パターン（実行時解決の種別を運ぶ
-  入れ物）と相反するため（→ ADR-2f5b8825-f13b-4f73-bdf1-fe14e0098d57）。
+  入れ物）と相反するため（→ [リポジトリ全体は subpath の省略で表す](../adr/whole-repo-by-omitting-subpath.md)）。
 
 ```nix
 # 省略 = リポジトリ全体（canonical）
@@ -44,8 +44,8 @@ subpath = "skills/nix";         # サブディレクトリのみ取り出す
 subpath = "themes/dark.json";   # 単一ファイル
 ```
 
-旧称 `source` からの改名理由（`src` との命名衝突の解消・→ ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab）は原文の注記で、
-規範ではない。旧名が評価時エラーになることは REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51 が持つ。
+旧称 `source` からの改名理由（`src` との命名衝突の解消・→ [配置元の中のパスを全層で subpath と呼ぶ](../adr/subpath-naming-across-layers.md)）は原文の注記で、
+規範ではない。旧名が評価時エラーになることは [entry submodule は strict とし未知キーと旧名を評価時エラーにする](entry-submodule-strict.md) が持つ。
 
 ## 出典
 

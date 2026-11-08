@@ -28,11 +28,11 @@ generated:
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する実装 issue の進捗
 > （#130 で導出関数を配線し id-vectors との整合をテストで固定した／変更系への実配線は
 > #131／読み取り系は #132）は要求ではなく履歴の注記。id-vectors との比較そのものは
-> TP-d3000054-42d9-4bac-912a-dd3abc38d3e9（適合検証）の担当。
+> [エンベロープの outturn 適合を Go テストと E2E の両方で検証する](../test-plan/json-conformance-verification.md)（適合検証）の担当。
 
 ## 出典
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「item id 導出 seam」。
 
-決定の実体は ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7「--json の item id は subject スコープで導く」。
+決定の実体は [--json の item id は subject スコープで導く](../adr/subject-scoped-ids.md)「--json の item id は subject スコープで導く」。

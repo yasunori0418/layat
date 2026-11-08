@@ -23,7 +23,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e, GitHub Issue #580, #498
+- 関連: [同一 profileDir への同時実行は後勝ちにする](same-profiledir-target-last-wins.md), GitHub Issue #580, #498
 - 起点: Issue #498（epic）の grilling（2026-10-31）。ADR-0070 §1 を書き直した
 
 ## 背景
@@ -40,7 +40,7 @@ target の衝突ではないので foreign symlink の warning も出ず、利�
 
 last-applied 記録に、その manifest がどこから来たかを示す出所（`origin`）を持たせる。出所は、
 生成器の種別、nix 生成器なら発見した entrypoint、manifest が宣言していれば利用者が付けた識別子
-`identity` で表す。フィールドの細目は REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282 に置く。
+`identity` で表す。フィールドの細目は [apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する](../requirements/apply-origin-mismatch-warning.md) に置く。
 
 ## 根拠
 
