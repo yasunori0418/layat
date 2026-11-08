@@ -2,9 +2,11 @@
 id: "ADR-29c0838b-3e25-4b09-a479-9ebbbc4466c7"
 type: adr
 name: "root 相対マーカーの基準点を manifest の配置 root にする"
-status: 採用
-issues:
-  - "#362"
+status: stable
+sources:
+  - id: "issue-362"
+    resource: "https://github.com/yasunori0418/layat/issues/362"
+    title: "#362"
 origin: "Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §2 を書き直した"
 justifies:
   - "REQ-81249072-56b8-42f5-807b-ea623c1efe99"
@@ -21,7 +23,7 @@ generated:
 ---
 # ADR-29c0838b-3e25-4b09-a479-9ebbbc4466c7: root 相対マーカーの基準点を manifest の配置 root にする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7, ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967, ADR-6d2327f7-f513-42c3-89f8-808467db1914, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, `docs/spec.md`
 - 起点: Issue #362（src 側のプロジェクトルート実行時解決）の grilling（2026-10-12）。ADR-0059 §2 を書き直した

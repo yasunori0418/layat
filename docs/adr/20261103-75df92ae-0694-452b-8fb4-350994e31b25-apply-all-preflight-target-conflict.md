@@ -2,9 +2,11 @@
 id: "ADR-75df92ae-0694-452b-8fb4-350994e31b25"
 type: adr
 name: "apply --all は選択した config 間の target 重複を build 前に止める"
-status: 採用
-issues:
-  - "#584"
+status: stable
+sources:
+  - id: "issue-584"
+    resource: "https://github.com/yasunori0418/layat/issues/584"
+    title: "#584"
 origin: "ADR-0038 §1（--all で選択した config 集合内の正規化後 target の重複を build 前に error 停止する）と §3（単一の apply は確かめず、検出できない衝突は後勝ちのままにする）を書き直した"
 justifies:
   - "REQ-38506419-c23d-4fce-b167-30715ce6a69d"
@@ -20,7 +22,7 @@ generated:
 ---
 # ADR-75df92ae-0694-452b-8fb4-350994e31b25: apply --all は選択した config 間の target 重複を build 前に止める
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d, ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-af37a636-a798-4c03-8fa4-e73ed6375a92, ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4
 - 起点: ADR-0038 §1（--all で選択した config 集合内の正規化後 target の重複を build 前に error 停止する）と §3（単一の apply は確かめず、検出できない衝突は後勝ちのままにする）を書き直した

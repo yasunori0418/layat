@@ -12,7 +12,7 @@ item_types:
     id_format: '{prefix}-{uuid4}'
     parent_types: []
     fields:
-      # OKF の status。ADR / SDR 以外の全ての型が持つ。
+      # OKF の status。全ての型が持つ。
       - &status_field
         name: status
         display_name: Status
@@ -200,23 +200,10 @@ item_types:
     id_format: '{prefix}-{uuid4}'
     parent_types: []
     fields: &adr_fields
-      # 廃止は supersedes で後継に置き換えられた ADR に付ける。
-      # 不採用は提案を棄却した決定の記録で、ADR 自体は有効。
-      - name: status
-        display_name: Status
-        field_type: !enum
-          values:
-            - 提案
-            - 採用
-            - 不採用
-            - 廃止
-        required: true
-        placeholder: 採用
-      # item にできない外部参照（GitHub Issue 番号・起点となったセッション等）。
-      - name: issues
-        display_name: Issues
-        field_type: !list text
-        required: false
+      # deprecated は supersedes で後継に置き換えられた ADR と、提案を棄却した ADR に付ける。
+      - *status_field
+      # 起点となったセッション等の散文。Issue は OKF の sources に書き、sara でなく
+      # dev/tests/okf-frontmatter.sh が形を確かめる。
       - name: origin
         display_name: Origin
         field_type: text
@@ -415,7 +402,7 @@ relations:
     primary: false
 
   # ---- 独自定義: ADR 間の peer 関係 ----
-  # 後継の ADR から置き換えた ADR へ張る。置き換えられた側は status が 廃止 になる。
+  # 後継の ADR から置き換えた ADR へ張る。置き換えられた側は status が deprecated になる。
   - id: supersedes
     display_name: Supersedes
     inverse: superseded_by

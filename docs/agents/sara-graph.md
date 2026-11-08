@@ -55,12 +55,12 @@ which mirror the primary direction one-to-one.
 
 ADR-to-ADR peer relations are drawn separately (rules in `docs/agents/adr-rules.md`, their
 mapping to the ADR document in `docs/adr/README.md`). `supersedes` replaces a whole ADR,
-whose status becomes `廃止`:
+whose status becomes `deprecated`:
 
 ```mermaid
 flowchart LR
     subgraph sup["whole-document replacement"]
-        A["adr / sara_adr (successor)"] -.->|supersedes| B["adr / sara_adr (廃止)"]
+        A["adr / sara_adr (successor)"] -.->|supersedes| B["adr / sara_adr (deprecated)"]
         B -.->|superseded_by| A
     end
     subgraph ref["ADR header 「関連:」"]

@@ -2,9 +2,11 @@
 id: "ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818"
 type: adr
 name: ".pending の後片付けを gcroot を知らない engine の FS 操作として行う"
-status: 採用
-issues:
-  - "#406"
+status: stable
+sources:
+  - id: "issue-406"
+    resource: "https://github.com/yasunori0418/layat/issues/406"
+    title: "#406"
 origin: "Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §7 を書き直した"
 justifies:
   - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"
@@ -26,7 +28,7 @@ generated:
 ---
 # ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818: .pending の後片付けを gcroot を知らない engine の FS 操作として行う
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1, ADR-30f105c7-85a8-4fab-9dea-3277d932b524, ADR-419914ba-9896-4dd1-853b-fb514fcb9f38, ADR-58fdbad9-5ed7-469d-b6b2-6462b2173888, ADR-5fc58c8f-dc0e-4c1d-8c1e-17d7ac7f0385, ADR-74423bb8-1453-4689-a25e-30bf46536afc, ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56, ADR-d97154cd-a2e5-4853-a682-800ff9435c89, ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30
 - 起点: Issue #406（epic: 世代バックエンドのインターフェイス化）の grilling（2026-10-11）。ADR-0057 §7 を書き直した

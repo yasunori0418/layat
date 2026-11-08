@@ -2,9 +2,11 @@
 id: "ADR-955c2601-88fb-4be8-85de-ec7d0a8c727d"
 type: adr
 name: "shell.nix / default.nix の再現性は利用者の責任にする"
-status: 採用
-issues:
-  - "#4"
+status: stable
+sources:
+  - id: "issue-4"
+    resource: "https://github.com/yasunori0418/layat/issues/4"
+    title: "#4"
 origin: "Issue #4（flake.nix 以外の entrypoint）。ADR-0007 §5 を書き直した"
 justifies:
   - "REQ-67095391-eab2-45d2-b75b-b428d481bcc2"
@@ -15,7 +17,7 @@ generated:
 ---
 # ADR-955c2601-88fb-4be8-85de-ec7d0a8c727d: shell.nix / default.nix の再現性は利用者の責任にする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: GitHub Issue #4
 - 起点: Issue #4（flake.nix 以外の entrypoint）。ADR-0007 §5 を書き直した

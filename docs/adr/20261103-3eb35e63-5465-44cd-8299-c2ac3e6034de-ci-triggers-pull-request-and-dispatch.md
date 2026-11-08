@@ -2,7 +2,7 @@
 id: "ADR-3eb35e63-5465-44cd-8299-c2ac3e6034de"
 type: adr
 name: "テスト系の CI を pull_request と workflow_dispatch で起動する"
-status: 採用
+status: stable
 origin: "参照: PR #40、https://github.com/yasunori0418/cryoflow の CI 構成。ADR-0027 §2a（トリガは pull_request と workflow_dispatch）を書き直した"
 justifies:
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
@@ -12,7 +12,7 @@ generated:
 ---
 # ADR-3eb35e63-5465-44cd-8299-c2ac3e6034de: テスト系の CI を pull_request と workflow_dispatch で起動する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 起点: 参照: PR #40、https://github.com/yasunori0418/cryoflow の CI 構成。ADR-0027 §2a（トリガは pull_request と workflow_dispatch）を書き直した
 

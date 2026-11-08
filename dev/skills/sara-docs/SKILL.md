@@ -93,7 +93,7 @@ relation は**起こした側（下流）の frontmatter に宣言する**（`sa
   （並列レーンでの採番衝突を構造的に避けるため）。手順は
   [references/sara-cli.md](references/sara-cli.md)。
 - ADR も UUID で採番する（`ADR-<フル UUIDv4>` / `SDR-<フル UUIDv4>`）。連番の `ADR-NNNN` は
-  削除済みで、新 ADR の `origin` と「起点:」行に来歴として残る。ADR の規則（粒度・`supersedes` と `廃止`・
+  削除済みで、新 ADR の `origin` と「起点:」行に来歴として残る。ADR の規則（粒度・`supersedes` と `deprecated`・
   `justifies` の選定基準）は `docs/agents/adr-rules.md`。
 
 ## risk の評価と優先度の導出

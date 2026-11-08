@@ -2,9 +2,11 @@
 id: "ADR-6687c0dc-957d-4913-99c6-168b0fe552ad"
 type: adr
 name: "生成器の診断を成功時も stderr へ素通しする"
-status: 採用
-issues:
-  - "#396"
+status: stable
+sources:
+  - id: "issue-396"
+    resource: "https://github.com/yasunori0418/layat/issues/396"
+    title: "#396"
 origin: "Issue #396（評価器の診断の扱い）の結論。ADR-0055 §6 の診断の出力先を書き直した"
 justifies:
   - "REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd"
@@ -27,7 +29,7 @@ generated:
 ---
 # ADR-6687c0dc-957d-4913-99c6-168b0fe552ad: 生成器の診断を成功時も stderr へ素通しする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5, ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9, ADR-a19bf484-368d-4d01-b539-52de32510fa5, ADR-28605860-770e-41df-95dd-7dc05b20497a, ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9, ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1, ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246, ADR-63039f93-cd78-4356-8cd3-82c2f49a1aaa, ADR-6b7becf0-f029-41e3-895e-b672dce94d3d, ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3, ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0, ADR-fe035038-4415-4a1e-aa5c-509fdfce9955, GitHub Issue #396
 - 起点: Issue #396（評価器の診断の扱い）の結論。ADR-0055 §6 の診断の出力先を書き直した

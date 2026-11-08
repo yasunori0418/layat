@@ -2,9 +2,11 @@
 id: "ADR-86a77232-dc99-4c04-bd6d-2127410e8828"
 type: adr
 name: "mkActivationScript で config ごとのラッパー derivation を提供する"
-status: 不採用
-issues:
-  - "#3"
+status: deprecated
+sources:
+  - id: "issue-3"
+    resource: "https://github.com/yasunori0418/layat/issues/3"
+    title: "#3"
 origin: "Issue #3（CLI 化）。ADR-0007 §3 で棄却された提案（ADR-0002 の初期設計、ADR-0006 の決定節での再定義）を書き直した"
 justifies:
   - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
@@ -14,7 +16,7 @@ generated:
 ---
 # ADR-86a77232-dc99-4c04-bd6d-2127410e8828: mkActivationScript で config ごとのラッパー derivation を提供する
 
-- ステータス: 不採用
+- ステータス: deprecated
 - 日付: 2026-11-01
 - 関連: GitHub Issue #3
 - 起点: Issue #3（CLI 化）。ADR-0007 §3 で棄却された提案（ADR-0002 の初期設計、ADR-0006 の決定節での再定義）を書き直した

@@ -2,7 +2,7 @@
 id: "ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1"
 type: adr
 name: "store path は out-link で受け取る"
-status: 採用
+status: stable
 origin: "engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §4 を書き直した"
 justifies:
   - "REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9"
@@ -13,7 +13,7 @@ generated:
 ---
 # ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1: store path は out-link で受け取る
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 起点: engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §4 を書き直した
 

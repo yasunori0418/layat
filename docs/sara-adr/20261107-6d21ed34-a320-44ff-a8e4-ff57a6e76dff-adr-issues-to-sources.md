@@ -3,19 +3,21 @@ id: "SDR-6d21ed34-a320-44ff-a8e4-ff57a6e76dff"
 type: sara_adr
 name: "ADR の issues を sources に移す"
 description: "ADR の外部参照の Issue を OKF の sources リストへ移し、origin は拡張キーとして残す"
-status: 採用
-issues:
-  - "#662"
+status: stable
+sources:
+  - id: "issue-662"
+    resource: "https://github.com/yasunori0418/layat/issues/662"
+    title: "#662"
 origin: "epic #662 の grilling（2026-11-07）で確定"
 justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-07T22:51:53+09:00"
+  at: "2026-11-08T00:27:08+09:00"
 ---
 # SDR-6d21ed34-a320-44ff-a8e4-ff57a6e76dff: ADR の issues を sources に移す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-07
 - 関連: GitHub Issue #662, `docs/adr/README.md`
 - 起点: epic #662 の grilling（2026-11-07）で確定
@@ -36,7 +38,8 @@ ADR / SDR の `issues` を `sources` のリストへ移す。`origin` は散文�
 - `resource` には Issue の URL を書く。`#N` は `https://github.com/yasunori0418/layat/issues/N`、
   `owner/repo#N` は `https://github.com/owner/repo/issues/N` にする
 - `id` は `issue-N`（他のリポジトリなら `issue-<repo>-N`）の形にし、1 つの item の中で一意にする
-- `title` には Issue のタイトルを書く
+- `title` には Issue のタイトルを書く。`issues` から移したエントリだけは、元の文字列（`#N` / `owner/repo#N`）を
+  `title` にする
 - `sources` の形（`resource` が空でないこと・`id` の一意性）は `dev/tests/okf-frontmatter.sh` が
   確かめる
 

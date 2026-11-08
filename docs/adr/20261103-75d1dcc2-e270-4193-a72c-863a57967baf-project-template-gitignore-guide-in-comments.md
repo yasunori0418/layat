@@ -2,7 +2,7 @@
 id: "ADR-75d1dcc2-e270-4193-a72c-863a57967baf"
 type: adr
 name: "project template の .gitignore 手順をコード近くのコメントで示す"
-status: 採用
+status: stable
 origin: "ADR-0018 §2 を書き直した"
 justifies:
   - "REQ-196ddabf-6569-4303-942e-050872972501"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-75d1dcc2-e270-4193-a72c-863a57967baf: project template の .gitignore 手順をコード近くのコメントで示す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-baf6346d-783b-4607-ab1c-c2c93c09e064
 - 起点: ADR-0018 §2 を書き直した

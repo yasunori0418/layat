@@ -2,10 +2,14 @@
 id: "ADR-ad1dd4ef-0b71-42cf-bc30-03eb11e5485c"
 type: adr
 name: "status は記録の確認を apply より緩めない"
-status: 採用
-issues:
-  - "#580"
-  - "#198"
+status: stable
+sources:
+  - id: "issue-580"
+    resource: "https://github.com/yasunori0418/layat/issues/580"
+    title: "#580"
+  - id: "issue-198"
+    resource: "https://github.com/yasunori0418/layat/issues/198"
+    title: "#198"
 origin: "Issue #198（`layat status [name]`）の実装前に、2026-07-19 の grilling 以後の実装の変化を差分 grilling で反映した（2026-10-23）。ADR-0065 §1b を書き直した"
 justifies:
   - "DSG-85439cb5-a149-422e-8596-fc4e860bc3a5"
@@ -17,7 +21,7 @@ generated:
 ---
 # ADR-ad1dd4ef-0b71-42cf-bc30-03eb11e5485c: status は記録の確認を apply より緩めない
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-8e253f2e-c255-482a-a0f8-0837e122e80f, GitHub Issue #580, #198
 - 起点: Issue #198（`layat status [name]`）の実装前に、2026-07-19 の grilling 以後の実装の変化を差分 grilling で反映した（2026-10-23）。ADR-0065 §1b を書き直した

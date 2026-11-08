@@ -2,7 +2,7 @@
 id: "ADR-7c8a0152-e034-4f16-9cf8-d5435be187e2"
 type: adr
 name: "gitignore は行指向の出力を既定のまま JSON を opt-in にする"
-status: 採用
+status: stable
 origin: "ADR-0033 §1b を書き直した"
 justifies:
   - "REQ-2353259f-5878-452a-8e11-3445de69abc2"
@@ -15,7 +15,7 @@ generated:
 ---
 # ADR-7c8a0152-e034-4f16-9cf8-d5435be187e2: gitignore は行指向の出力を既定のまま JSON を opt-in にする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc
 - 起点: ADR-0033 §1b を書き直した

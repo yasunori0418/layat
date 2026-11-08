@@ -2,9 +2,11 @@
 id: "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"
 type: sara_adr
 name: "model.yaml で組み込みモデルを全面置換し、汎用の型名を使う"
-status: 採用
-issues:
-  - "#203"
+status: stable
+sources:
+  - id: "issue-203"
+    resource: "https://github.com/yasunori0418/layat/issues/203"
+    title: "#203"
 origin: "epic #203 の grilling セッション（2026-07-31・2026-08-01）で確定。ADR-0048 §2 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
@@ -17,7 +19,7 @@ generated:
 ---
 # SDR-2457aa00-fab7-4c99-af53-2e6643c21c79: model.yaml で組み込みモデルを全面置換し、汎用の型名を使う
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: SDR-c15921a9-7aea-407c-a34b-7465783b1af1, SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed, GitHub Issue #203, `docs/model.yaml`
 - 起点: epic #203 の grilling セッション（2026-07-31・2026-08-01）で確定。ADR-0048 §2 を書き直した

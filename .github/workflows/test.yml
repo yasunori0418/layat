@@ -158,8 +158,7 @@ jobs:
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/sara-new.sh
 
-      # ADR status / supersedes consistency: every superseded ADR is 廃止, and
-      # every 廃止 ADR is superseded by at least one ADR. Reads frontmatter only.
+      # Every ADR pointed to by supersedes is deprecated. Reads frontmatter only.
       - name: Run adr-supersede contract test
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/adr-supersede.sh

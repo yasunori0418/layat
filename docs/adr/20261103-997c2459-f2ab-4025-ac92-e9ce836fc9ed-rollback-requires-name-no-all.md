@@ -2,7 +2,7 @@
 id: "ADR-997c2459-f2ab-4025-ac92-e9ce836fc9ed"
 type: adr
 name: "rollback に config の名指しを必須にする"
-status: 採用
+status: stable
 origin: "ADR-0018 §4c を書き直した"
 justifies:
   - "REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-997c2459-f2ab-4025-ac92-e9ce836fc9ed: rollback に config の名指しを必須にする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-baf6346d-783b-4607-ab1c-c2c93c09e064
 - 起点: ADR-0018 §4c を書き直した

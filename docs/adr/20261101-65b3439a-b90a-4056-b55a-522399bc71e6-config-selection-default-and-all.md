@@ -2,12 +2,20 @@
 id: "ADR-65b3439a-b90a-4056-b55a-522399bc71e6"
 type: adr
 name: "apply の config は名前省略で default を選び、--all で全件を選ぶ"
-status: 採用
-issues:
-  - "#2"
-  - "#3"
-  - "#4"
-  - "#550"
+status: stable
+sources:
+  - id: "issue-2"
+    resource: "https://github.com/yasunori0418/layat/issues/2"
+    title: "#2"
+  - id: "issue-3"
+    resource: "https://github.com/yasunori0418/layat/issues/3"
+    title: "#3"
+  - id: "issue-4"
+    resource: "https://github.com/yasunori0418/layat/issues/4"
+    title: "#4"
+  - id: "issue-550"
+    resource: "https://github.com/yasunori0418/layat/issues/550"
+    title: "#550"
 origin: "CLI 化と entrypoint の再設計（Issue #2・#3・#4、2026-06-13）で確定。ADR-0007 §4 を書き直した"
 justifies:
   - "REQ-c2d44626-d8f4-446a-a80a-319a500129b4"
@@ -17,7 +25,7 @@ generated:
 ---
 # ADR-65b3439a-b90a-4056-b55a-522399bc71e6: apply の config は名前省略で default を選び、--all で全件を選ぶ
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: GitHub Issue #2, #3, #4, #550
 - 起点: CLI 化と entrypoint の再設計（Issue #2・#3・#4、2026-06-13）で確定。ADR-0007 §4 を書き直した

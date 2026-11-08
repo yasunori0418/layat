@@ -2,12 +2,20 @@
 id: "SDR-9bec5976-67cd-407a-afa9-3d394a6204ca"
 type: sara_adr
 name: "欠陥 issue のクローズ時にテスト系 item の欠落を追補する"
-status: 採用
-issues:
-  - "#583"
-  - "#268"
-  - "#203"
-  - "#267"
+status: stable
+sources:
+  - id: "issue-583"
+    resource: "https://github.com/yasunori0418/layat/issues/583"
+    title: "#583"
+  - id: "issue-268"
+    resource: "https://github.com/yasunori0418/layat/issues/268"
+    title: "#268"
+  - id: "issue-203"
+    resource: "https://github.com/yasunori0418/layat/issues/203"
+    title: "#203"
+  - id: "issue-267"
+    resource: "https://github.com/yasunori0418/layat/issues/267"
+    title: "#267"
 origin: "Issue #268（epic #203 残ブロッカー）の判断（2026-08-09）で確定。ADR-0051 §3 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
@@ -20,7 +28,7 @@ generated:
 ---
 # SDR-9bec5976-67cd-407a-afa9-3d394a6204ca: 欠陥 issue のクローズ時にテスト系 item の欠落を追補する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #268, #203, #267, `docs/agents/issue-tracker.md`
 - 起点: Issue #268（epic #203 残ブロッカー）の判断（2026-08-09）で確定。ADR-0051 §3 を書き直した

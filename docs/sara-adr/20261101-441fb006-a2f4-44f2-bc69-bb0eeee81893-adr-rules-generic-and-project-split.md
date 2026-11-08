@@ -2,10 +2,14 @@
 id: "SDR-441fb006-a2f4-44f2-bc69-bb0eeee81893"
 type: sara_adr
 name: "ADR の規則を汎用とプロジェクト当てはめに分けて書く"
-status: 採用
-issues:
-  - "#499"
-  - "#500"
+status: stable
+sources:
+  - id: "issue-499"
+    resource: "https://github.com/yasunori0418/layat/issues/499"
+    title: "#499"
+  - id: "issue-500"
+    resource: "https://github.com/yasunori0418/layat/issues/500"
+    title: "#500"
 origin: "Issue #499 の grilling（2026-11-01）で確定"
 justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
@@ -15,7 +19,7 @@ generated:
 ---
 # SDR-441fb006-a2f4-44f2-bc69-bb0eeee81893: ADR の規則を汎用とプロジェクト当てはめに分けて書く
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: GitHub Issue #499, #500, `docs/agents/adr-rules.md`, `docs/adr/README.md`
 - 起点: Issue #499 の grilling（2026-11-01）で確定

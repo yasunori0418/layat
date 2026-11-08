@@ -2,7 +2,7 @@
 id: "ADR-cfd13fb6-d11e-4f3b-b0c6-40ee21b6b212"
 type: adr
 name: "list-generations --all は home mode と system mode の全 config を対象にする"
-status: 採用
+status: stable
 origin: "ADR-0018 §4b を書き直した"
 justifies:
   - "REQ-05abce3e-9797-432b-b93f-37c55d09afde"
@@ -14,7 +14,7 @@ generated:
 ---
 # ADR-cfd13fb6-d11e-4f3b-b0c6-40ee21b6b212: list-generations --all は home mode と system mode の全 config を対象にする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-baf6346d-783b-4607-ab1c-c2c93c09e064
 - 起点: ADR-0018 §4b を書き直した

@@ -2,7 +2,7 @@
 id: "ADR-9fde06e2-fe42-4274-8af3-da2298cdaeae"
 type: adr
 name: "既存 flake への組込手順を docs に置く"
-status: 採用
+status: stable
 origin: "垂直トレーサー弾の着手前の横断検査（実装前残セマンティクスの第 6 巡）。ADR-0024 §6 を書き直した"
 justifies:
   - "REQ-6be1cbf1-6c6e-498b-8acb-7f4b80037169"
@@ -12,7 +12,7 @@ generated:
 ---
 # ADR-9fde06e2-fe42-4274-8af3-da2298cdaeae: 既存 flake への組込手順を docs に置く
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: `README.md`
 - 起点: 垂直トレーサー弾の着手前の横断検査（実装前残セマンティクスの第 6 巡）。ADR-0024 §6 を書き直した

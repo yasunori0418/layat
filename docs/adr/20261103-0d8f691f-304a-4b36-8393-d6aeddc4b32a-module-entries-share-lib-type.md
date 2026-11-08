@@ -2,7 +2,7 @@
 id: "ADR-0d8f691f-304a-4b36-8393-d6aeddc4b32a"
 type: adr
 name: "モジュールの entries に lib と同じ型を使う"
-status: 採用
+status: stable
 origin: "ADR-0014 §4 を書き直した"
 justifies:
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"
@@ -16,7 +16,7 @@ generated:
 ---
 # ADR-0d8f691f-304a-4b36-8393-d6aeddc4b32a: モジュールの entries に lib と同じ型を使う
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-c494e86e-ceb9-4380-b983-4e09553b01d6, ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd, ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0, `docs/spec.md`
 - 起点: ADR-0014 §4 を書き直した

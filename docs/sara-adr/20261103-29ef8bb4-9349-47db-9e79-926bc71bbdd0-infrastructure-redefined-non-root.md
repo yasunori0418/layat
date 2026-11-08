@@ -2,11 +2,17 @@
 id: "SDR-29ef8bb4-9349-47db-9e79-926bc71bbdd0"
 type: sara_adr
 name: "infrastructure を技術基盤として再定義し root から外す"
-status: 採用
-issues:
-  - "#583"
-  - "#237"
-  - "#203"
+status: stable
+sources:
+  - id: "issue-583"
+    resource: "https://github.com/yasunori0418/layat/issues/583"
+    title: "#583"
+  - id: "issue-237"
+    resource: "https://github.com/yasunori0418/layat/issues/237"
+    title: "#237"
+  - id: "issue-203"
+    resource: "https://github.com/yasunori0418/layat/issues/203"
+    title: "#203"
 origin: "epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §3a を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
@@ -20,7 +26,7 @@ generated:
 ---
 # SDR-29ef8bb4-9349-47db-9e79-926bc71bbdd0: infrastructure を技術基盤として再定義し root から外す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb, SDR-34916a83-0cff-4524-a8ff-5a3195af52c3, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #237, #203, `docs/model.yaml`
 - 起点: epic #203 の grilling セッション（2026-08-08）で確定。ADR-0049 §3a を書き直した

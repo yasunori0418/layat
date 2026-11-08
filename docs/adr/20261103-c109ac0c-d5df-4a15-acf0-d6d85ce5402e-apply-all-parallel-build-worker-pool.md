@@ -2,9 +2,11 @@
 id: "ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e"
 type: adr
 name: "apply --all の build を worker pool で並列に実行する"
-status: 採用
-issues:
-  - "#584"
+status: stable
+sources:
+  - id: "issue-584"
+    resource: "https://github.com/yasunori0418/layat/issues/584"
+    title: "#584"
 origin: "ADR-0039 §1（build 段階を worker pool で並列化する）を書き直した"
 justifies:
   - "REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d"
@@ -18,7 +20,7 @@ generated:
 ---
 # ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e: apply --all の build を worker pool で並列に実行する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-75df92ae-0694-452b-8fb4-350994e31b25, ADR-af37a636-a798-4c03-8fa4-e73ed6375a92, ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56
 - 起点: ADR-0039 §1（build 段階を worker pool で並列化する）を書き直した

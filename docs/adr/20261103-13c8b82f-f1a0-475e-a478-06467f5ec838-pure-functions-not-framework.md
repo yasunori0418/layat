@@ -2,7 +2,7 @@
 id: "ADR-13c8b82f-f1a0-475e-a478-06467f5ec838"
 type: adr
 name: "layat をフレームワークではなく純粋関数群として提供する"
-status: 採用
+status: stable
 origin: "ADR-0004 §d を書き直した"
 justifies:
   - "REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4"
@@ -16,7 +16,7 @@ generated:
 ---
 # ADR-13c8b82f-f1a0-475e-a478-06467f5ec838: layat をフレームワークではなく純粋関数群として提供する
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137, `docs/concept.md`
 - 起点: ADR-0004 §d を書き直した

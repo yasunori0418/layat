@@ -2,10 +2,14 @@
 id: "ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9"
 type: adr
 name: "エラーコードは共通コードを再利用し固有の意味だけを E_LAYAT_* にする"
-status: 採用
-issues:
-  - "#552"
-  - "yasunori0418/outturn#1"
+status: stable
+sources:
+  - id: "issue-552"
+    resource: "https://github.com/yasunori0418/layat/issues/552"
+    title: "#552"
+  - id: "issue-outturn-1"
+    resource: "https://github.com/yasunori0418/outturn/issues/1"
+    title: "yasunori0418/outturn#1"
 origin: "layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §8 のエラーコードを書き直した"
 justifies:
   - "REQ-9341fa5d-836e-4023-af53-cc7d273438d1"
@@ -19,7 +23,7 @@ generated:
 ---
 # ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9: エラーコードは共通コードを再利用し固有の意味だけを E_LAYAT_* にする
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-01
 - 関連: ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71, ADR-9e328362-2e90-441a-8eca-40081ce71b1b, GitHub Issue #552, yasunori0418/outturn#1
 - 起点: layat の outturn 準拠化 grilling（2026-07-06）と outturn#1 の方針確定。ADR-0043 §8 のエラーコードを書き直した

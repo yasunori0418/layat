@@ -2,11 +2,17 @@
 id: "SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626"
 type: sara_adr
 name: "sara check を strict モードで回す"
-status: 採用
-issues:
-  - "#583"
-  - "#255"
-  - "#203"
+status: stable
+sources:
+  - id: "issue-583"
+    resource: "https://github.com/yasunori0418/layat/issues/583"
+    title: "#583"
+  - id: "issue-255"
+    resource: "https://github.com/yasunori0418/layat/issues/255"
+    title: "#255"
+  - id: "issue-203"
+    resource: "https://github.com/yasunori0418/layat/issues/203"
+    title: "#203"
 origin: "epic #203 の移行完了（Batch 2・2026-08-08）を受けた残論点判断（Issue #255）で確定。ADR-0050 §1・§3 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
@@ -19,7 +25,7 @@ generated:
 ---
 # SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626: sara check を strict モードで回す
 
-- ステータス: 採用
+- ステータス: stable
 - 日付: 2026-11-03
 - 関連: SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb, SDR-2457aa00-fab7-4c99-af53-2e6643c21c79, GitHub Issue #583, #255, #203, `sara.toml`
 - 起点: epic #203 の移行完了（Batch 2・2026-08-08）を受けた残論点判断（Issue #255）で確定。ADR-0050 §1・§3 を書き直した
