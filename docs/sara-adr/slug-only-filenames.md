@@ -2,7 +2,7 @@
 id: "SDR-6c6c0681-4d5e-429e-8ee9-acf8dd94ad54"
 type: sara_adr
 name: "item のファイル名は slug だけにする"
-description: "item のファイル名を `<slug>.md` にし、フル ID は frontmatter・relation・散文に残す。"
+description: "item のファイル名を `<slug>.md` にし、フル ID は frontmatter と H1 見出しだけに書き、散文は Markdown リンクで item を参照する。"
 status: stable
 sources:
   - id: "issue-674"
@@ -17,13 +17,13 @@ references:
   - "SDR-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-08T19:08:10+09:00"
+  at: "2026-11-08T20:13:24+09:00"
 ---
 # SDR-6c6c0681-4d5e-429e-8ee9-acf8dd94ad54: item のファイル名は slug だけにする
 
 - ステータス: stable
 - 日付: 2026-11-08
-- 関連: SDR-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103, GitHub Issue #674
+- 関連: [省略形の禁止は起票の機械化と全面移行で担保する](20261101-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103-short-form-ban-enforced-by-tooling.md), GitHub Issue #674
 - 起点: issue #674 の grilling（2026-11-08）で確定
 
 ## 背景
@@ -36,8 +36,11 @@ ID は frontmatter の `id:` が持ち、sara はファイル名を見ない。�
 
 ## 決定
 
-正式 ID・relation リスト・散文中の参照には、フル ID（`<PREFIX>-<フル UUIDv4>`）をそのまま書く。
-8 文字の省略形は使わない。
+フル ID（`<PREFIX>-<フル UUIDv4>`）を書くのは、frontmatter の `id:`・relation リストと、item 本文の
+H1 見出し `# <ID>: <name>` だけにする。8 文字の省略形は使わない。
+
+散文で item に触れるときは、`[item の name や自然な語句](相対パス)` の Markdown リンクにする。
+リンク文字列にも ID を書かない。
 
 item のファイル名は `<slug>.md` にし、日付と UUID を含めない。
 
@@ -47,15 +50,21 @@ slug は同じディレクトリの中で一意にする。`sara-new` は出力�
 並列のレーンが同じディレクトリに同じ slug を起こすと、起票では検出できない。この場合はマージの
 add/add 衝突で検出し、片方を改名する。ここは防がずに受け入れる。
 
-ID の規約は INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71 の「ID 規約」節に、ファイル名の形式は CLAUDE.md の
-「ID 規約」表に置く。省略形の禁止をどう担保するかは SDR-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103 が決める。
+ID の規約は [トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）](../infrastructure/20260802-659b139d-0cf8-4c65-b30d-93c5ee2dfc71-traceability-verification.md) の「ID 規約」節に、
+ファイル名の形式は CLAUDE.md の「ID 規約」表に置く。省略形の禁止をどう担保するかは
+[省略形の禁止は起票の機械化と全面移行で担保する](20261101-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103-short-form-ban-enforced-by-tooling.md) が決める。
 
 ## 根拠
 
 ファイル名が slug だけなら、URL・一覧・リンクの文字列から内容の見当がつく。
 
-ID をどこに書くかは、ファイル名を外しても困らない。目に付いた ID をそのまま grep すれば frontmatter の
-`id:` と参照元に当たり、`sara query` へ渡しても同じ item に当たる。省略形に戻さないのは、sara が見るのは
+散文にフル ID を書くと、文の途中に長い UUID が入って読みづらい。item どうしの参照関係は frontmatter の
+relation が担保するので、散文のフル ID は過剰である。Markdown リンクなら、読み手は item を名前で読める。
+
+リンクは item の改名で切れうる。epic #674 の全件移行で、すべてのリンク先を確かめる。
+
+ファイル名や散文に ID がなくても、item は frontmatter の `id:` で特定できる。ID を grep すれば `id:` と
+relation に当たり、`sara query` へ渡しても同じ item に当たる。省略形に戻さないのは、sara が見るのは
 正式 ID の一意性だけで、省略形を保つには sara の外の層を自前で保守し続けることになるため。
 
 slug の重複は UUID と違って起こりうる。ただし、同じ型のディレクトリで同じ slug を取ることは少なく、
