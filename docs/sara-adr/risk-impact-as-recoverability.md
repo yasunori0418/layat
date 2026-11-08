@@ -40,7 +40,7 @@ layat の脅威はほぼ全てが「配置結果が気づかれないままず�
 
 risk の `impact` は、検出された後にどこまで回復できるかの一軸で採点する。行の定義は
 `docs/agents/sara-graph.md` に置く。medium の行は沈黙するかどうかを問わないと明記し、その主語を出荷物に
-限る。medium と low の分界の例外は、自動検証の形骸化に当てる継承則（[自動検証の形骸化は守備対象の impact を継承する](gate-risk-inherits-impact.md)）だけである。
+限る。medium と low の分界の例外は、自動検証の形骸化に当てる継承則（[自動検証の形骸化は守備対象の impact を継承し、継承元をリンクで名指しする](gate-risk-inherits-impact-by-link.md)）だけである。
 
 ## 根拠
 
