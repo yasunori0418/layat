@@ -48,7 +48,7 @@ specification_ja: |
   ならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:29:58+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729: CLI は manifest 生成器の契約（Discover / Roots / Build / DryBuild）越しに manifest を得る
 
@@ -61,8 +61,8 @@ generated:
 | Build | `name` + pending のパス | 選択中の世代バックエンドがコミット可能な link-farm のパス（既定の nixprofile は store path）を pending に張って返す |
 | DryBuild | `name` | link-farm の store path を gcroot を張らずに返す |
 
-- Roots の先読みは能力宣言ではなく契約の前提条件。apply の「eval 先行 → flock → build」
-  （[実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](exec-flow-eval-lock-build.md)）を全ての生成器で成り立たせるため。
+- Roots の先読みは能力宣言ではなく契約の前提条件。apply の
+  [実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](exec-flow-eval-lock-build.md) を全ての生成器で成り立たせるため。
 - Build の事後条件は選択中の世代バックエンドに依存する。既定の nixprofile は `nix-env --set` が
   store 外のパスを拒否するため store path を要求し、非 store パスを受け入れる世代バックエンドは
   無い。世代バックエンドの契約は [engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md) の担当。

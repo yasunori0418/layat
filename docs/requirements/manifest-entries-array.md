@@ -26,7 +26,7 @@ specification_ja: |
   フィールドを持ってはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:05:37+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336: manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する
 
@@ -44,7 +44,7 @@ attrset を**配列に正規化**して記録する（Go は配列を読む）�
 
 上の表は原文の写しに `rootRelative`（→ [srcKind の列挙値は schemaVersion を上げずに足す](../adr/srckind-added-without-version-bump.md)）を加えたもので、規範は frontmatter が正。
 
-entry の `name` フィールドは持たない（識別子が属性キー = target であることは
+entry の `name` フィールドは持たない（識別子の規範は
 [entry の識別子は属性キー = target とし一意性は Nix が担保する](entry-identity-by-target-key.md)）。
 
 ## 出典

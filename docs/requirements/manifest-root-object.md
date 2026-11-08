@@ -21,7 +21,7 @@ specification_ja: |
   省略しなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:31:01+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb: manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する
 
@@ -37,8 +37,8 @@ generated:
 `project` / `home` / `system` は実行時解決（git toplevel / `$HOME` / `/`）のため
 パスを持たない。`fixed` のみ評価時確定の絶対パスを `root` に持つ。
 
-Nix 側の `root` 引数がどの値を取るか（3 マーカー + 絶対パス文字列の union）は
-[root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md)、marker が `kind` を運ぶ入れ物であることは [root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) が持つ。本 item は
+Nix 側の `root` 引数がどの値を取るかは
+[root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md)、marker の役割は [root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) が持つ。本 item は
 それが `manifest.json` にどう写るかを規定する。
 
 ## 出典

@@ -28,7 +28,7 @@ specification_ja: |
   本 item では重ねて規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-10-31T22:07:39+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d: mkManifest の引数は必須の pkgs / entries / root と任意の identity とする
 
@@ -44,8 +44,8 @@ generated:
 `pkgs` を引数で受け取るのは lib 層が unparameterized（`lib` / `pkgs` を自身で保持しない）
 であるため。各関数が呼び出し時に必要なものを明示引数として要求する。
 
-`root` の必須性と型の内訳は [root は明示必須で暗黙デフォルトを持たない](root-explicit-required.md)（明示必須・暗黙デフォルトなし）と
-[root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md)（`string | marker` の union と各マーカーの対応）が正とする。上の表は
+`root` の必須性と型の内訳は [root は明示必須で暗黙デフォルトを持たない](root-explicit-required.md) と
+[root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md) が正とする。上の表は
 原文の引数表をそのまま写したもので、規範の重複を避けるため本 item の規範文では
 `root` 固有の規定を持たない。
 

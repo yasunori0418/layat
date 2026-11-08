@@ -34,7 +34,7 @@ specification_ja: |
   何も削除しないため `--yes` を要求してはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:39:20+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed: prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る
 
@@ -57,7 +57,7 @@ warning を出して skip する。lock が取れない = その系列で engine
 ために待つ」倒錯した挙動になるので持たない。
 
 **`--json`** — 確認プロンプトは機械消費で扱えないため、`--json` は `--yes` を必須とし、無ければ
-即 `status:"error"` + 非ゼロで fail fast する（`reset --json` の [reset --json は --yes を必須とし無ければ fail fast する](json-reset-requires-yes.md) と同型）。
+即 `status:"error"` + 非ゼロで fail fast する（[reset --json は --yes を必須とし無ければ fail fast する](json-reset-requires-yes.md) と同型）。
 
 必須になるのは**削除を行う実行だけ**で、`--dryrun --json` は対象外。`--yes` を要求する理由は
 「削除の同意を機械消費の場面で取れない」ことにあり、副作用ゼロの preview には取るべき同意が無い

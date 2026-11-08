@@ -30,7 +30,7 @@ specification_ja: |
   規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:54:20+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-5c6b07da-3d06-414d-8770-4f438234b322: target 衝突の検出処理を同一 manifest 内と cross-config で分ける
 
@@ -47,9 +47,9 @@ cross-config（別 profile・別 manifest）の同一 target 衝突は eval で�
 > 検出不可」とするのに対し、規範文では**単一の eval に載らない場合**（別 entrypoint・別マシン・
 > 別ツール）へ限定した。**旧決定（[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md) で改訂）が、1 つのモジュール config 内の `layat.configs.<A>` と
 > `<B>` は全 config が同一のモジュール eval に載るため正規化後 target の衝突を静的に検出でき、
-> eval 時 assertion で停止すると決定済み**で、原文の無条件な言い切りはこれを否定してしまう
-> （原文が旧決定に未追従・[root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md) / [意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](normalize-manifest-cross-field-checks.md) で [rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)・[root は 3 つの marker で表す](../adr/three-root-markers.md) 由来の未追従を扱ったのと
-> 同じ扱い）。本 item は静的検出が可能な場合を妨げないことまでを規範とし、その場合に実際に
+> eval 時 assertion で停止すると決定済み**で、原文の無条件な言い切りはこれを否定してしまう。
+> 原文が旧決定に未追従なので、[rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)・[root は 3 つの marker で表す](../adr/three-root-markers.md) 由来の未追従を [root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md) / [意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](normalize-manifest-cross-field-checks.md) で扱ったのと
+> 同じように扱う。本 item は静的検出が可能な場合を妨げないことまでを規範とし、その場合に実際に
 > eval 停止する規範（旧決定）そのものは持たない。**その規範は [単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する](hm-configs-target-collision-assertion.md) が
 > 持つ**。`docs/spec.md` の追従は本 item の担当範囲外。
 >

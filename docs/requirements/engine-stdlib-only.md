@@ -21,7 +21,7 @@ specification_ja: |
   実行時に叩いてよい外部コマンドは [engine が叩く外部コマンドは git のみに限る](engine-external-command-constraint.md) の規範であり、ここでは再掲しない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:32:25+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-b74a118a-1272-44eb-944c-7725163211c6: engine は第三者依存ゼロの stdlib-only とし内部層に閉じる
 
@@ -43,6 +43,6 @@ generated:
 
 決定の実体は [engine は JSON とエラーを標準ライブラリで扱う](../adr/json-and-errors-via-stdlib.md)・[engine は cmd/ と internal/ に置きライブラリ化しない](../adr/engine-internal-cmd-layout.md)・[flock は syscall.Flock で実装する](../adr/flock-via-syscall-flock.md) で、engine を stdlib-only の
 内部層とすることを定めている。runtime に `nix` / `git` をサブプロセスで要求する形は
-旧決定が定めていた（現在は [engine が直接叩く外部コマンドを git に限る](../adr/engine-external-command-git-only.md) が `git` だけに限る）が、旧決定は
+旧決定が定めていた（現在の決定は [engine が直接叩く外部コマンドを git に限る](../adr/engine-external-command-git-only.md)）が、旧決定は
 stdlib-only 自体を決めていないため、側面の根拠として `justifies` は張らない（外部コマンドの
 限定そのものの帰属は [engine が叩く外部コマンドは git のみに限る](engine-external-command-constraint.md) が担当する）。

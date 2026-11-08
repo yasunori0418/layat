@@ -23,7 +23,7 @@ specification_ja: |
   対象外でなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:05:37+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe: method は配置方法を選び symlink は世代管理下・copy は世代管理外になる
 
@@ -40,7 +40,7 @@ generated:
 | `"copy"` | marker | **eval 時エラー**（意図矛盾・`lib.throwIf`）| — |
 
 上の表は原文の写しで、規範は frontmatter が正。最終行（`"copy"` + marker の eval 時
-エラー）は規範に含めない。この規範は [意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](normalize-manifest-cross-field-checks.md)（クロスフィールドチェック）が持ち、
+エラー）は規範に含めない。この規範は [意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](normalize-manifest-cross-field-checks.md) が持ち、
 本 item で二重に定義しないため。
 
 旧名 `mode` からの改名理由（unix file mode との誤読回避・→ [entry の配置種別のフィールドを method と名付ける](../adr/mode-renamed-to-method.md)）は原文の注記で、

@@ -40,7 +40,7 @@ specification_ja: |
   ならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:05:37+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d: apply --all は build を --jobs の worker pool で先行並列実行し build 失敗 config を部分失敗として集約する
 
@@ -50,7 +50,7 @@ generated:
   同時実行数 ≤ `--jobs`）、stage 2 = [apply --all は選択された config を並列に適用し、集約表示と results\[\] を辞書順にし、部分失敗でも続行して最後に集約する](apply-all-lexical-order-continue.md) に従う並列適用
   （集約表示と `results[]` は辞書順）。engine の in-lock build は残り、
   stage 1 で store が温まっているのでキャッシュヒットになる
-  （build をロック内に閉じる [実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](exec-flow-eval-lock-build.md) は不変）
+  （[実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](exec-flow-eval-lock-build.md) は不変）
 - **`--jobs`**: `apply` ローカル（persistent ではない）・既定 0 = 論理 CPU 数・負値はエラー・
   `--all` 無しはエラー（明示の `--jobs 0` も含む）
 - **build 失敗**: その config は stage 2 をスキップし、自身の subject に error で載り、失敗に

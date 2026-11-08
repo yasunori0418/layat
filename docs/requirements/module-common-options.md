@@ -44,7 +44,7 @@ specification_ja: |
   （[root は明示必須で暗黙デフォルトを持たない](root-explicit-required.md)）との差分である。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:31:01+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10: 全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する
 
@@ -69,10 +69,10 @@ layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-5af37
 > [layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない](backup-wiring-layer.md)、`layat.recopy` の配線は [layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける](recopy-wiring-layer.md) の担当。`layat.jobs` を activation の `--jobs` へ渡すことは
 > [HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う](hm-activation-per-config-kick.md) の担当。
 >
-> **2026-10-15 追記（[layat.recopy で activation の起動に --recopy を付ける](../adr/module-recopy-option.md) / [layat.jobs で activation の並列度を指定する](../adr/module-jobs-option.md)）**: 写しの表に無い `layat.recopy` / `layat.jobs` は [layat.recopy で activation の起動に --recopy を付ける](../adr/module-recopy-option.md)・[layat.jobs で activation の並列度を指定する](../adr/module-jobs-option.md) が
+> **2026-10-15 追記**: 写しの表に無い `layat.recopy` / `layat.jobs` は [layat.recopy で activation の起動に --recopy を付ける](../adr/module-recopy-option.md)・[layat.jobs で activation の並列度を指定する](../adr/module-jobs-option.md) が
 > 共通オプションへ足した（規範は frontmatter）。
 >
-> **2026-10-22 追記（[`configs.<name>.subdir` で config ごとに target の基点を寄せる](../adr/module-config-subdir-option.md)）**: 写しの表に無い `layat.configs.<name>.subdir` は [`configs.<name>.subdir` で config ごとに target の基点を寄せる](../adr/module-config-subdir-option.md) が
+> **2026-10-22 追記**: 写しの表に無い `layat.configs.<name>.subdir` は [`configs.<name>.subdir` で config ごとに target の基点を寄せる](../adr/module-config-subdir-option.md) が
 > `configs` submodule へ足した（型とデフォルトの規範は frontmatter）。subdir から root の適用形を
 > 組む HM の配線は [HM モジュールは `configs.<name>.subdir` が非 null の config を homeRoot の subdir 適用形で組み、全 target を `$HOME/<subdir>/` 配下に置く](hm-config-subdir-wiring.md) の担当で、root pin の条文は変わらない。
 >
@@ -84,8 +84,8 @@ layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-5af37
 > `configs.default.entries` への deprecated 糖衣へ降格することを決定済み**で、`docs/spec.md`
 > の当該表はこれに未追従。[HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) は `configs` の定義先を `modules/common.nix`
 > （全モジュール共通）と定めているため、これは HM 固有ではなく共通オプション集合の一部で
-> あり、本 item の規範に含めた（[root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md) / [意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](normalize-manifest-cross-field-checks.md) で [rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)・[root は 3 つの marker で表す](../adr/three-root-markers.md) 由来の未追従を
-> 扱ったのと同じ扱い）。`configs` の `<name>` 次元が profile の粒度にとって何を意味するか
+> あり、本 item の規範に含めた。[rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)・[root は 3 つの marker で表す](../adr/three-root-markers.md) 由来の未追従を [root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md) / [意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](normalize-manifest-cross-field-checks.md) で
+> 扱ったのと同じ扱いである。`configs` の `<name>` 次元が profile の粒度にとって何を意味するか
 > （役割分離が可能になること・`<name>` 次元の導入が非破壊であること）は [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md)、
 > profile dir をどうキーするかは [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md) の担当。`docs/spec.md` の追従は本 item の
 > 担当範囲外。

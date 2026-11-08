@@ -42,7 +42,7 @@ specification_ja: |
   両モードで使用できなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:29:58+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6: reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す
 
@@ -67,9 +67,8 @@ home / project 両モード可。
 >
 > - 保守的不変条件の中身 → [古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](stale-removal-invariants.md)、空親ディレクトリ剪定の規則 → [target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する](empty-parent-dir-pruning.md)。
 >   本 item はそれらを reset にも適用することだけを規定する
-> - project mode の lstat での確認による復帰（→ [project mode では同じ link farm なら世代を積まず drift だけを直す](../adr/project-mode-generation-skip-and-drift-repair.md)）→ [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md)
-> - 確認プロンプトを stdin が TTY のときだけ出し、非 TTY で同意が無ければ即エラー停止
->   すること（→ [reset は非対話の実行で --yes を必須にする](../adr/reset-confirmation-and-yes.md)）→ [reset の確認プロンプトは stdin が TTY のときだけ出し、非 TTY で同意が無ければ即エラー停止する](reset-confirm-non-tty.md)
+> - project mode の lstat での確認による復帰 → [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md)（決定は [project mode では同じ link farm なら世代を積まず drift だけを直す](../adr/project-mode-generation-skip-and-drift-repair.md)）
+> - 確認プロンプトの出し方 → [reset の確認プロンプトは stdin が TTY のときだけ出し、非 TTY で同意が無ければ即エラー停止する](reset-confirm-non-tty.md)（決定は [reset は非対話の実行で --yes を必須にする](../adr/reset-confirmation-and-yes.md)）
 >
 > 逆に、上の写しには現れないが規範文が持つものが 1 つある。同意を取る手段の短縮形
 > `-y` で、原文はこの箇条書きでは `--yes` としか書かない。短縮形はグローバルフラグ表

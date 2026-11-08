@@ -25,7 +25,7 @@ specification_ja: |
   規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:56+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74: entry submodule のフィールドは src / subpath / target / method の 4 つとする
 
@@ -53,8 +53,7 @@ entry :: {
 
 各フィールドは `lib/types.nix` の entry submodule（`lib.types`）として定義され、
 `mkManifest` の `evalModules` が確認・デフォルト適用する。この確認主体の規範は
-[mkManifest 自身が evalModules で入力を確認する単一の箇所になる](mkmanifest-input-validation.md)（`mkManifest` が入力を確認する単一の箇所）と [normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む](normalize-manifest-defaults.md)（`normalizeManifest` が
-確認・デフォルト適用を担う）が持つ。
+[mkManifest 自身が evalModules で入力を確認する単一の箇所になる](mkmanifest-input-validation.md) と [normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む](normalize-manifest-defaults.md) が持つ。
 
 各フィールドの値域・意味も個別 item が持つ（`src` は [src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する](src-kinds-store-default.md)、`subpath` は
 [subpath は src 内の相対パスとし、リポジトリ全体は省略で表して専用トークンを設けない](subpath-omission-whole-repo.md)、`target` の識別子性とデフォルトは [entry の識別子は属性キー = target とし一意性は Nix が担保する](entry-identity-by-target-key.md)、`method` の動作は
