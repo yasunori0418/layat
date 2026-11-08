@@ -293,6 +293,11 @@ present, never which spelling, and it does not look at `specification_ja` at all
 rules are therefore upheld by review. Should that prove too loose, the check belongs in a
 prose linter built for the job (textlint and the like) rather than in a hand-rolled script.
 
+When a `specification` or `specification_ja` mentions another item, write the mention as a
+Markdown link, `[name](relative path from this item's directory)`, the same form prose uses;
+do not write the bare ID. A Japanese `name` inside the English norm does not affect sara's
+RFC2119 check.
+
 ### `specification` uses the SHALL family only
 
 Write `SHALL` / `SHALL NOT`. Do not write `MUST` / `MUST NOT`, even though RFC2119 makes
