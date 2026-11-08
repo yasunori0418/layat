@@ -7,7 +7,7 @@ satisfies:
   - "TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T13:53:52+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # DSG-901351ea-f01b-4bb0-a470-b890d92c980b: NixOS モジュールの実 activate は runNixOSTest の checks.nixos-vm で検証し、E2E ハーネスとは別系統に置く
 
@@ -18,8 +18,7 @@ flake check `checks.nixos-vm` で検証する**。`tests/e2e/` の bash ハー�
 （[E2E は tests/e2e の bash ハーネスに置き、シナリオの詳細は同ディレクトリの README へ委譲する](e2e-harness-shape.md)）のスコープ外に置く。
 
 **E2E ハーネスへ入れずに別系統とする**理由は、要求する実行環境が違うため。
-[NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする](../test-plan/nixos-vm-test-future.md) が「NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの
-対象外」と定めているのは、E2E が非 NixOS（ubuntu ランナー）で「nix さえあれば動く」を
+[NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする](../test-plan/nixos-vm-test-future.md) のは、E2E が非 NixOS（ubuntu ランナー）で「nix さえあれば動く」を
 検証する趣旨で組まれているのに対し、NixOS モジュールの activate には NixOS 自体が
 要るからである。同じハーネスへ押し込むと、前提の異なるシナリオが 1 つの実行系に含まれる。
 

@@ -9,7 +9,7 @@ satisfies:
   - "REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # DSG-7d354fe0-a333-495b-9f4b-14bba316dc47: Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする
 
@@ -30,8 +30,8 @@ internal/              # 配置・diff・保守的 stale 除去の純ロジッ�
   `cmd/layat` に閉じ、[engine は第三者依存ゼロの stdlib-only とし内部層に閉じる](../requirements/engine-stdlib-only.md) が engine へ課す stdlib-only は `internal/` に閉じる。
   1 パッケージだと同一の import ブロックに両方が含まれ、どちらの制約が及ぶ範囲かが
   コードから読めなくなる
-- **`internal/` は Go の言語仕様で外部リポジトリから import できない**ため、engine を
-  内部層へ閉じる [engine は第三者依存ゼロの stdlib-only とし内部層に閉じる](../requirements/engine-stdlib-only.md) がコンパイラに強制される。engine をライブラリとして
+- **`internal/` は Go の言語仕様で外部リポジトリから import できない**ため、
+  [engine は第三者依存ゼロの stdlib-only とし内部層に閉じる](../requirements/engine-stdlib-only.md) という制約がコンパイラに強制される。engine をライブラリとして
   公開しない意思が構造で表明される
 - **テスト対象が `internal/` に集約される**。engine の振る舞い（[engine が叩く外部コマンドは git のみに限る](../requirements/engine-external-command-constraint.md) が許す
   外部コマンドの範囲を含む）を検証する対象が 1 パッケージに収まるため、engine 側の

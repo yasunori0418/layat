@@ -9,7 +9,7 @@ satisfies:
   - "REQ-a220bb28-89de-42b0-a854-e7468755ecb1"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:01:21+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda: NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする
 
@@ -32,7 +32,7 @@ generated:
 | NixOS | `systemRoot`（subdir 適用形を含む）| `system.activationScripts.layat`（`deps = [ "etc" "users" ]`・`supportsDryActivation = true`）|
 | nix-darwin | `systemRoot`（subdir 適用形を含む）| `system.activationScripts.postActivation.text` へ追記 |
 
-- **起動の組み立てを `kick.nix` 1 か所に置く**。[全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md) が求める共通オプション集合は
+- **起動の組み立てを `kick.nix` 1 か所に置く**。共通オプション集合（[全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md)）は
   `common.nix` の import で、その集合から起動を組む規則は `kick.nix` で全モジュールにそろう。
   モジュールごとに残るのは root マーカーと hook だけで、[全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md) の「配線に徹する」が
   ファイルの中身として見える

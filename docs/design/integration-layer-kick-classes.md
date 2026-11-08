@@ -10,7 +10,7 @@ satisfies:
   - "REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # DSG-98d7fa5d-c590-441a-b682-0ab7afa14233: engine の起動を entrypoint 駆動とビルド済み manifest の 2 クラスに束ね、統合層の差を link-farm の取得方法だけに閉じる
 
@@ -41,12 +41,12 @@ rollback を公開する層は [rollback と list-generations は home / system 
 
 **2 クラスに束ねる**ことが実現手段になっているのは次の点。
 
-- **[全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md) が求める「各層は engine をキックするだけの配線」**を、層の数（5）ではなく
+- **[全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md) という要求**を、層の数（5）ではなく
   クラスの数（2）で担保できる。層を増やしても新しい engine の処理が増えず、
   既存 2 クラスのどちらかへ割り当てるだけで済む
 - **クラスの分かれ目が「entrypoint を持つか」に一致する**。モジュールの `layat.configs` は
   モジュール config 内にあり flake output に現れないため、entrypoint 発見では到達できない。
-  そこで [apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](../requirements/apply-manifest-direct.md) の `apply --manifest` と [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](../requirements/hm-activation-contract.md) の activation kick が
+  そこで `apply --manifest`（[apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](../requirements/apply-manifest-direct.md)）と activation kick（[home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](../requirements/hm-activation-contract.md)）が
   必要になる。逆に entrypoint 駆動側（[devShell は shellHook から engine を起動する配線で、シェル入室のたびに project mode で配置する](../requirements/devshell-wiring.md) の devShell 含む）は
   activation 内で `nix build` / `eval` を行わない制約が無いので entrypoint 発見の処理を使える
 - **層ごとに違う要素がクラスの分岐に持ち込まれない**。root の供給元は engine から見れば
@@ -60,5 +60,4 @@ rollback を公開する層は [rollback と list-generations は home / system 
 
 なお同原文の統合層テーブルは home-manager 行に「MVP は profile `<name>` =
 `default` 固定の 1 profile・役割分離は不可」と書いているが、本 item はこれを採らない。
-[HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が `layat.configs.<name>` を導入し、[HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](../requirements/hm-named-configs-profiles.md) が HM 経由でも役割分離した
-独立 profile を取れることを規範化しているため。
+現行の規範は [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) と [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](../requirements/hm-named-configs-profiles.md) であるため。

@@ -10,7 +10,7 @@ satisfies:
   - "REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:53:31+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3: engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する
 
@@ -36,16 +36,15 @@ engine（`internal/`）は Go ユニットテスト + tmpdir 統合テストで�
   検証対象は失われない（→ [配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する](planner-engine-split.md) の層分割・[エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../test-plan/go-test-layering.md) が定める「FS に触れずに
   判断する層」のユニットレベル被覆）
 - **古くなった配置の除去に重点を置く**のは、そこに不具合が出たときの被害が非対称だからである。
-  [古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](../requirements/stale-removal-invariants.md) が定める不変条件（前世代の記録通りを指す symlink のみ消し、通常ファイル・
-  非管理 link には触れず、copy target は消さない）が破れるとユーザーの実ファイルが
+  [古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](../requirements/stale-removal-invariants.md) という不変条件が破れるとユーザーの実ファイルが
   消える。配置側の失敗は「置かれない」で済むが、除去側の失敗は復旧できない
 - **table-driven にする**のは、この不変条件が「前世代の記録 × 現状の実体」の
   組み合わせに対する判定表そのものだからである。記録あり/なし、実体が
   symlink/通常ファイル/ディレクトリ/不在、リンク先が記録通り/別物 — といった
   組み合わせを網羅する形式として、ケース表がそのままテストになる
 
-同じ tmpdir 統合テストが、[途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](../requirements/undo-journal-rollback.md) の undo ジャーナル（途中失敗時の巻き戻し）と
-[copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](../requirements/copy-place-once.md) の copy place-once（target 不在時のみマテリアライズ）の検証も担う。
+同じ tmpdir 統合テストが、[途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](../requirements/undo-journal-rollback.md) と
+[copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](../requirements/copy-place-once.md) という 2 つの要求の検証も担う。
 どちらも「途中で失敗させる」「target を先に作っておく」といった FS 状態の作り込みが
 必要で、実 FS 上でないと組めない。
 
