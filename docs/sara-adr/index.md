@@ -37,4 +37,4 @@
 * [OKF v0.2 と互換の frontmatter キーを item に足す](./20261107-bab72f31-7cb1-47a3-bb2d-7876757d86fb-okf-compatible-frontmatter.md) - OKF v0.2 と互換の frontmatter キーを sara の item に足す方針と、バンドル単位の適合を追わない範囲を決める (stable)
 * [用語を ubiquitous_term の item で管理する](./20261107-d3f88093-dc98-4703-af45-df5b27527ffa-ubiquitous-term-type.md) - 用語の正名・避ける綴り・定義は、`CONTEXT.md`（日本語の長い定義）と `docs/glossary.md` / `docs/glossary.ja.md`（英日の短い定義）の 3 ファイルが重ねて持っていた。3 ファイルの同期は手作業で、語の数も定義の中身もすでに食い違っている。用語を 2 語足すだけで 5 ファイルを直す必要があった（#644）。 (stable)
 * [test_case の target を resource に改名する](./20261107-e9de8d3d-fcb8-456d-a3af-2338f8080f4f-test-case-resource-field.md) - test_case のテスト資産の正準表記を OKF の resource キーで持ち、値はリポジトリ根からのパスのままにする (stable)
-* [item のファイル名は slug だけにする](./slug-only-filenames.md) - item のファイル名を `<slug>.md` にし、フル ID は frontmatter・relation・散文に残す。 (stable)
+* [item のファイル名は slug だけにする](./slug-only-filenames.md) - item のファイル名を `<slug>.md` にし、フル ID は frontmatter と H1 見出しだけに書き、散文は Markdown リンクで item を参照する。 (stable)
