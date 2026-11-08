@@ -64,8 +64,8 @@ event, and events belong to the tracker.
 
 - **File** a defect as a GitHub issue with the `bug` label.
 - **Trace** in the issue body, when the defect was revealed by executing a test case:
-  the revealing test case (`CASE-xxxxxxxx`) and the requirement or design it traces back
-  to (`REQ-xxxxxxxx` / `DSG-xxxxxxxx`). References are one-way — items in `docs/` never
+  the revealing test case and the requirement or design it traces back to, as Markdown links
+  to the items (`[name](docs/<型>/<slug>.md)`). References are one-way — items in `docs/` never
   link back to defect issues.
 - **Feed back** before closing: ask whether a `risk` or `test_condition` was missing that
   would have caught this defect earlier. If so, add the missing item(s) in `docs/` — this
