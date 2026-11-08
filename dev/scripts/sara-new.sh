@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sara init で item を起票し、`<YYYYMMDD>-<フル UUID>-<slug>.md` へ改名する。
+# sara init で item を起票し、`<slug>.md` へ配置する。
 #
 #   sara-new <型> <slug> <配置ディレクトリ> -- --description <要約> [<sara init のオプション>...]
 #
@@ -12,7 +12,8 @@ usage() {
 usage: sara-new <type> <slug> <dir> -- --description <要約> [<sara init options>...]
 
   type   sara の型名（requirement / test_case / adr / sara_adr …）
-  slug   ファイル名に使う短い識別子（英小文字・数字・ハイフン）
+  slug   ファイル名（<slug>.md）になる短い識別子（英小文字・数字・ハイフン）。
+         同じディレクトリで一意にする。index は使えない
   dir    配置ディレクトリ（カレントからの相対。無ければ作る）
   --     以降を sara init へそのまま渡す（--name / --specification …）。
          --description（-d）は必須
@@ -84,16 +85,28 @@ case "$generated_by" in
     ;;
 esac
 
-# slug はファイル名へそのまま入るため、起票の前に文字種を検査する。
+# slug はファイル名になるため、起票の前に文字種と生成物の index.md との衝突を検査する。
 case "$slug" in
   "" | *[!a-z0-9-]*)
     echo "sara-new: slug は英小文字・数字・ハイフンのみ（実際: '$slug'）" >&2
+    exit 2
+    ;;
+  index)
+    echo "sara-new: slug に index は使えない（生成物の index.md と衝突する）" >&2
     exit 2
     ;;
 esac
 
 # sara init のサブコマンド名はハイフン区切り（test-case）なので、型名の `_` を `-` へ寄せる。
 init_subcommand=$(printf '%s' "$type" | tr '_' '-')
+
+target="$dir/$slug.md"
+
+# 起票済み item を上書きしない。
+if [ -e "$target" ]; then
+  echo "sara-new: 出力先が既に存在する: $target" >&2
+  exit 1
+fi
 
 mkdir -p "$dir"
 
@@ -118,27 +131,6 @@ id=$(printf '%s\n' "$init_out" | sed -n 's/^[[:space:]]*ID:[[:space:]]*\([^[:spa
 if [ -z "$id" ]; then
   echo "sara-new: sara init の出力から ID を読めなかった（sara の出力形式が変わった可能性）" >&2
   printf '%s\n' "$init_out" >&2
-  exit 1
-fi
-
-# ファイル名は正式 ID から `<PREFIX>-` を落とした UUID 部を使う。
-uuid=${id#*-}
-
-# 剥がした残りが UUID の形か検査する。prefix がハイフンを含む型はここで落ちる。
-case "$uuid" in
-  [0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-[0-9a-f][0-9a-f][0-9a-f][0-9a-f]-[0-9a-f][0-9a-f][0-9a-f][0-9a-f]-[0-9a-f][0-9a-f][0-9a-f][0-9a-f]-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ;;
-  *)
-    echo "sara-new: 採番 ID から UUID 部を取り出せなかった: $id" >&2
-    echo "sara-new: prefix がハイフンを含む型は本ラッパーの対象外（ID 形式を確認すること）" >&2
-    exit 1
-    ;;
-esac
-
-target="$dir/$(date +%Y%m%d)-$uuid-$slug.md"
-
-# 起票済み item を上書きしない。
-if [ -e "$target" ]; then
-  echo "sara-new: 出力先が既に存在する: $target" >&2
   exit 1
 fi
 
