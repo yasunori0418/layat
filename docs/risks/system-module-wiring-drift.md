@@ -12,7 +12,7 @@ threatens:
   - "REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # RISK-70fc1db8-56ec-457d-af12-553d80a04d7d: NixOS / nix-darwin モジュールが system mode の engine 起動の配線から外れる
 
@@ -36,8 +36,7 @@ NixOS / nix-darwin のモジュールは、host の activation から system roo
 - **起動環境の欠落** — activation の PATH に `nix` が無いまま起動し、世代コミットが失敗する。
   `etc` / `users` より前に実行される
 
-いずれも、activation から全 config の link-farm を 1 回の起動に渡す契約
-（→ [NixOS / nix-darwin モジュールは activation から全 config のビルド済み link-farm を systemRoot で 1 回の起動に渡す](../requirements/system-module-activation-contract.md)）からの逸脱として現れる。
+いずれも、activation の契約（[NixOS / nix-darwin モジュールは activation から全 config のビルド済み link-farm を systemRoot で 1 回の起動に渡す](../requirements/system-module-activation-contract.md)）からの逸脱として現れる。
 
 ## 影響
 

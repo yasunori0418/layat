@@ -8,7 +8,7 @@ covers:
   - "TC-de6514e2-9105-45a6-a5b9-d474911a401b"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:49+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # CASE-7fb33044-b68c-4518-bd93-b258072235ee: namaka manifest-project
 
@@ -24,7 +24,7 @@ generated:
 
 - 入力は 2 entry。1 つは `subpath` を明示（`skills/nix`）、もう 1 つは `subpath` / `target` /
   `method` を全て省略して既定適用を通す。既定と明示の双方が文書へ現れる状態を固定する
-- 配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) の fake flake-input double イディオムに従い、2 つは store hash を
+- 配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) に従い、2 つは store hash を
   違える（`000…-fake-src` と `111…-other`）
 - どの不変条件も名指ししていないフィールドの追加・削除・改名が、ここで差分として現れる
 

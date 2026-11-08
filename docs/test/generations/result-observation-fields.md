@@ -7,7 +7,7 @@ mitigates:
   - "RISK-cdcc6faf-9164-409b-b584-2921fa036d10"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:27:49+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # TC-1d19aebc-e1e6-4d6f-9440-3efbd69b18a8: 実行結果のインベントリ・世代観測・到達状態・構造化 warning が実態を表す
 
@@ -26,8 +26,7 @@ nil であり、0 や現在値で埋めない。
 **世代観測の分解能** — 観測の下地である「profile symlink の指す先から世代番号を読む」
 層そのものも直接駆動して検証する。profile リンク不在 → nil、`profile-3-link` → 3、
 store パスなど世代リンクでない dest → nil、`profile-x-link` のような数値として読めない番号 → nil。
-[profileDir の世代リンクを番号順に列挙して current を判定し、読めない profileDir は黙認しない](generation-listing-parse.md) が扱う、profileDir の世代リンクを番号順に列挙して current を判定する
-走査とは別層（こちらは profile リンクの指す先の symlink 名のパース）である。
+[profileDir の世代リンクを番号順に列挙して current を判定し、読めない profileDir は黙認しない](generation-listing-parse.md) が扱う走査とは別層（こちらは profile リンクの指す先の symlink 名のパース）である。
 
 **失敗時の到達状態の分割** — 配置の途中で失敗した run では、完了済みの操作リストは
 「完了した記録」として残り、失敗した entry は `FailedTarget` に入って `Placed` には

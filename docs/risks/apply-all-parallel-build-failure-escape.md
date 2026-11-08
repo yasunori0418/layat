@@ -11,7 +11,7 @@ threatens:
   - "REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # RISK-87484de7-e767-493c-a3a4-c699591832c9: 並列 build の失敗が集約から抜けるか並列度が制御されず nix daemon を圧迫する
 
@@ -25,7 +25,7 @@ build を worker pool で先行並列にすると、逐次ループなら構造�
   失敗した config が `results[]` にも failures にも現れず、`apply --all` が exit 0 で終わる。
   逆に失敗 config を stage 2 へ流すと、先行 build の意味が消えて in-lock build でもう一度
   失敗する（あるいは stage 1 と 2 の結果が食い違う）。subject の登録位置がずれると
-  `results[]` の辞書順が `--jobs` によって変わり、単一実行と同一形状という
+  `results[]` の辞書順が `--jobs` によって変わり、
   [--all は config ごとの SubjectResult を単一実行と同一形状で積む](../requirements/json-all-subject-results.md) の前提が崩れる
 - **並列度が制御されない** — worker 数が `--jobs` を超える・`--jobs` の解決（0 → CPU 数・
   負値拒否）を誤ると、config 数だけ `nix build` が同時に立ち上がり、nix daemon のキューと

@@ -8,7 +8,7 @@ covers:
   - "TC-4e7cfae7-72bc-4af6-a1f5-1ead7db564b1"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:49+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # CASE-7a6c4957-9365-4490-b48f-9725f42162f2: nix-unit structure.nix
 
@@ -40,7 +40,7 @@ generated:
 これを受ける TC はまだ無い。fixed root の絶対パス併記と
 `homeRoot` marker の評価層での扱いは [nix-unit: fixed-root.nix — fixed root の絶対パス併記](nix-unit-fixed-root.md)（→ [fixed root で rootKind が fixed になり絶対パスを併記する（home marker が倒れないことを含む）](fixed-root-absolute-path.md)）、HM 統合での
 `homeRoot` は `checks.hm-module`（`integration` 区分）が担当する。
-配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) の fake flake-input double イディオムに従う。
+配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) に従う。
 
 ## 出典
 

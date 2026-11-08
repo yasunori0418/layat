@@ -31,7 +31,7 @@ specification_ja: |
   各シナリオが検証する仕様そのものは各担当 item の規範であり、ここでは再掲しない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T22:44:41+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9: 非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する
 
@@ -61,10 +61,8 @@ bash・詳細は `tests/e2e/README.md`）が、flake entrypoint からの `nix b
 | `14-flake-parts` | flake-parts + `lib.mkApplyCommand`。devShell の shellHook に埋めた apply が `nix develop -c true` だけで project 側を git toplevel 配下に配置し、home 側は `$HOME` に何も出さないことを検証 |
 
 > **表の `01-project`〜`07-legacy` の行は原文の写しで、規範は frontmatter が正**。その 7 行の右列が指す仕様そのものは、それぞれ
-> [project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない](../requirements/project-mode-root-resolution.md)（project mode の root 解決）・[世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](../requirements/generation-mechanism-link-farm-manifest.md) / [rollback は FS を先に収束させてから profile ポインタを最後に移す](../requirements/rollback-refit-then-pointer.md)（世代とロール
-> バック）・[古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](../requirements/stale-removal-invariants.md)（stale 除去）・[copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](../requirements/copy-place-once.md) / [copy は元の mode を保存しつつ owner-write を付与する](../requirements/copy-mode-owner-write.md) / [out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする](../requirements/out-of-store-link-mapping-only.md)（copy と
-> out-of-store）・[home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](../requirements/hm-activation-contract.md)（HM activation 契約）・[template は動く example を 1 config だけ置きバリエーションはコメントで示す](../requirements/init-template-contents.md)（init とテンプレ）・
-> [legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない](../requirements/legacy-entrypoint-passthru-canonical.md)（legacy entrypoint）の担当。`tests/e2e/` というパスと bash という実装手段は
+> [project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない](../requirements/project-mode-root-resolution.md)・[世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](../requirements/generation-mechanism-link-farm-manifest.md) / [rollback は FS を先に収束させてから profile ポインタを最後に移す](../requirements/rollback-refit-then-pointer.md)・[古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](../requirements/stale-removal-invariants.md)・[copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](../requirements/copy-place-once.md) / [copy は元の mode を保存しつつ owner-write を付与する](../requirements/copy-mode-owner-write.md) / [out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする](../requirements/out-of-store-link-mapping-only.md)・[home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](../requirements/hm-activation-contract.md)・[template は動く example を 1 config だけ置きバリエーションはコメントで示す](../requirements/init-template-contents.md)・
+> [legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない](../requirements/legacy-entrypoint-passthru-canonical.md)の担当。`tests/e2e/` というパスと bash という実装手段は
 > 現況であり、規範文では実装手段を固定していない。
 
 > **2026-08-09 改訂（→ Issue #273）**: シナリオ表を実装の 7 本へ更新し、規範文の対象範囲へ

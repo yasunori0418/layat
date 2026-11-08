@@ -7,7 +7,7 @@ mitigates:
   - "RISK-67e96e59-005f-439d-a230-834b0228801c"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:27:49+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # TC-1ee7a729-5629-4c92-b02a-4f6e11c0b57d: 世代スキップは project / system mode で derivation 同一のときだけ発火し、それ以外は新世代を積む
 
@@ -30,4 +30,4 @@ plan / place の処理を通ること。
 ## 対応する CASE
 
 [drift_test.go — 世代スキップの発火条件と lstat ドリフト修復の対象範囲](drift-test-go.md)（`internal/engine/drift_test.go`）。
-system mode の root 再 apply で世代が増えないことは [e2e 12-system — user namespace の root で system mode の配置・世代・権限の条件を往復する](e2e-12-system.md)（e2e `12-system`）も確かめる。
+system mode の root 再 apply で世代が増えないことは [e2e 12-system — user namespace の root で system mode の配置・世代・権限の条件を往復する](e2e-12-system.md) も確かめる。

@@ -7,7 +7,7 @@ mitigates:
   - "RISK-e916f742-59a3-4202-a316-603a908fd0db"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:27:22+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # TC-d9c78439-e478-4779-977c-9c4c02dd4e93: legacy entrypoint が canonical 形で同じ配置と出力契約を保ち素の nix-shell を壊さない
 
@@ -27,4 +27,4 @@ flake を持たない起点からでも layat が同じ意味で使えること�
 
 差が attr path の組み立てに閉じており、それ以外の nix 呼び出しの組み立てを分岐させないことは、
 この条件では確かめない。実際の起点を通した振る舞いではなく引数組み立ての構造的性質であり、
-[entrypoint の探索順序と nix へ渡す引数列が形ごとに正しく組み立てられる](../cli-json/nix-argv-assembly.md)（entrypoint の探索順序と引数列）が受ける。
+[entrypoint の探索順序と nix へ渡す引数列が形ごとに正しく組み立てられる](../cli-json/nix-argv-assembly.md) が受ける。

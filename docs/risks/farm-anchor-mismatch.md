@@ -12,14 +12,13 @@ threatens:
   - "REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # RISK-f67a0883-950a-4458-8b6d-1f95cb039cb1: GC アンカーの対象と名前を取り違えて世代が回収不能になる
 
 ## リスク
 
-symlink farm は GC アンカー専用で、アンカーは store-backed な symlink entry に限る
-（[symlink farm は GC アンカー専用でアンカーは store-backed な symlink entry に限る](../requirements/farm-gc-anchor-only.md)）。アンカー名は target のハッシュ（[symlink farm の GC アンカー名は target のハッシュとする](../requirements/farm-anchor-name-hash.md)）で、farm derivation は
+GC アンカーの対象と名前は、それぞれ [symlink farm は GC アンカー専用でアンカーは store-backed な symlink entry に限る](../requirements/farm-gc-anchor-only.md) と [symlink farm の GC アンカー名は target のハッシュとする](../requirements/farm-anchor-name-hash.md) が定める。farm derivation は
 `mkManifest` の返り値に含まれる（[mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](../requirements/mkmanifest-return-value.md)）。
 
 **顕在化したときに起きること**: 抽出条件が緩めば copy や out-of-store の entry までアンカーを

@@ -8,7 +8,7 @@ covers:
   - "TC-d9175bb5-d7ec-41e0-8bee-71de928a71fb"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:49+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # CASE-59de34d4-d9d5-4ae0-b1be-44d2e775f031: nix-unit defaults.nix
 
@@ -27,7 +27,7 @@ generated:
 - **決定的な配列化**: 属性キー `b` / `a` / `c` を与えたとき、出力 entries の `target` 列が
   `[a b c]` の辞書順になること
 
-配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) の fake flake-input double イディオムに従う。
+配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) に従う。
 
 ## 出典
 

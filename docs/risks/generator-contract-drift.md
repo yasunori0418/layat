@@ -11,13 +11,13 @@ threatens:
   - "REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T13:36:37+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # RISK-31b8346c-7f1d-406f-aa74-6e1024edee83: 生成器の実装が契約からずれ、実装ごとに manifest の取得や失敗の分類が食い違う
 
 ## リスク
 
-CLI は manifest を生成器の契約（Discover / Roots / AllRoots / Build / DryBuild）越しに得る
+生成器の契約の操作は Discover / Roots / AllRoots / Build / DryBuild である
 （→ [CLI は manifest 生成器の契約（Discover / Roots / Build / DryBuild）越しに manifest を得る](../requirements/manifest-generator-contract.md)）。実装は nix・prebuilt（`--manifest`）・テスト
 ダブルの 3 つで、CLI はどれが渡されても同じ手順で engine へ注入する。実装の 1 つが契約から
 ずれると、その実装を通る処理だけが正しく動かなくなる。
