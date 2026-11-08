@@ -254,6 +254,15 @@ else
   fault "英小文字・数字・ハイフンの slug を受理し、ファイル名へ入れる（exit=$status_capture file=$valid_slug_file）"
 fi
 
+# 予約は index の完全一致だけで、index で始まる slug は通す。
+run_sara_new "$repo5" sara-new requirement index-1 docs/requirements -- "${desc[@]}"
+index_prefix_file="$(field file)"
+if [[ "$status_capture" -eq 0 && "$index_prefix_file" == docs/requirements/index-1.md ]]; then
+  pass "index で始まる slug は受理する（予約の境界の有効側）"
+else
+  fault "index で始まる slug は受理する（exit=$status_capture file=$index_prefix_file）"
+fi
+
 # --- 6. ADR の型 ---------------------------------------------------------------
 #
 # adr と sara_adr は UUID で起票する。
@@ -327,6 +336,13 @@ case "${SARA_NEW_FAKE_MODE:-}" in
   unclosed-id)
     # frontmatter を開いて閉じない仮ファイルを作り、ID だけは正しく返す。
     printf -- '---\nid: "%s"\n' "$SARA_NEW_FAKE_ID" >"$tmp_path"
+    printf '  ID:   %s\n' "$SARA_NEW_FAKE_ID"
+    exit 0
+    ;;
+  race)
+    # 正しい仮ファイルを作り、その間に別の起票が同じ出力先を置いた状況を作る。
+    printf -- '---\nid: "%s"\n---\n' "$SARA_NEW_FAKE_ID" >"$tmp_path"
+    printf '先着\n' >"$SARA_NEW_FAKE_RACE_TARGET"
     printf '  ID:   %s\n' "$SARA_NEW_FAKE_ID"
     exit 0
     ;;
@@ -437,6 +453,23 @@ else
   else
     fault "既存ファイルを上書きせず、一時ファイル・一時ディレクトリも残さない（md $clobber_files 件 / tmp $clobber_tmp 件）"
   fi
+fi
+
+# 起票の最中に同じ出力先が現れても、先に置かれたファイルを上書きせず落ちる。
+repo9b="$work/race"
+make_repo "$repo9b"
+run_sara_new "$repo9b" env SARA_NEW_SARA="$fake_sara" SARA_NEW_FAKE_MODE=race \
+  SARA_NEW_FAKE_ID='REQ-11111111-2222-4333-8444-555555555555' \
+  SARA_NEW_FAKE_RACE_TARGET=docs/requirements/race.md \
+  SARA_NEW_FAKE_WANT_TYPE=requirement SARA_NEW_FAKE_WANT_STEM=race \
+  sara-new requirement race docs/requirements -- "${desc[@]}"
+race_status="$status_capture"
+race_content="$(cat "$repo9b/docs/requirements/race.md" 2>/dev/null)"
+race_tmp="$(find "$repo9b/docs" -name '.sara-new-*' | wc -l)"
+if [[ "$race_status" -eq 1 && "$race_content" == "先着" && "$race_tmp" -eq 0 ]]; then
+  pass "起票の最中に現れた出力先を上書きせず exit 1 で落ち、一時ディレクトリも残さない"
+else
+  fault "起票の最中に現れた出力先を上書きせず exit 1 で落ちる（exit=$race_status 内容: $race_content tmp $race_tmp 件）"
 fi
 
 # --- 10. 引数の異常系 ---------------------------------------------------------

@@ -147,7 +147,8 @@ if ! awk -v by="$generated_by" -v at="$generated_at" '
 fi
 mv "$tmp_file.generated" "$tmp_file"
 
-mv "$tmp_file" "$target"
+# 同時起票が先に同じ slug を置いていても上書きしない（ln は既存の出力先で失敗する）。
+ln "$tmp_file" "$target"
 
 printf 'id: %s\n' "$id"
 printf 'file: %s\n' "$target"
