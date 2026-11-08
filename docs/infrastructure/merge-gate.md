@@ -12,7 +12,7 @@ satisfies:
   - "QA-a5f7f088-a459-4bb2-9674-82b1a4a52053"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:53:38+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6: マージの条件（main の ruleset と required status checks）
 
@@ -22,7 +22,7 @@ generated:
 マージ条件へ課す。CLAUDE.md の「main 直接コミット禁止・PR 経由マージ」は運用ルールに過ぎず、
 テストが失敗していてもマージできる状態を塞ぐ。
 
-required status check に載せるのは、CI パイプライン（[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md)）が PR で実際に出す 4 つの
+required status check に載せるのは、[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md) が PR で実際に出す 4 つの
 check 名:
 
 - `e2e`

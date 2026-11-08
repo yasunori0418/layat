@@ -18,7 +18,7 @@ specification_ja: |
   もってこれを満たしたとみなしてはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:03+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c: ドキュメントグラフのトレーサビリティは機械的に検証する
 
@@ -54,5 +54,5 @@ generated:
 [sara check を required status check にしない](../sara-adr/sara-check-not-required.md) が置いた方針を、
 基盤（INF）から分離して
 quality item として立てたもの。model.yaml の型定義・`strict_mode` の設定・採番コマンドは
-[トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）](../infrastructure/traceability-verification.md) が持つ。当初はリファレンスの生成（[リファレンスドキュメントは記述対象のソースから生成し、生成物を持たない](reference-docs-generated-from-source.md)）と 1 件にまとめていたが、
+[トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）](../infrastructure/traceability-verification.md) が持つ。当初は [リファレンスドキュメントは記述対象のソースから生成し、生成物を持たない](reference-docs-generated-from-source.md) と 1 件にまとめていたが、
 根拠 ADR も支える基盤も別で片方だけ改訂され得るため、Issue #242 のレビューで 2 件へ分けた。

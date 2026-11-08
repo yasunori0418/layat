@@ -18,7 +18,7 @@ specification_ja: |
   設計記録は本規範の対象外であり、日本語だけで書いてもよい。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-07T02:02:33+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # QA-5ecd74ba-889a-4e06-b32b-e67f10a45051: 公開ドキュメントは英語を canonical とし、日本語版を対で保守する
 
@@ -41,7 +41,7 @@ generated:
 「対で保守する」ことを求めるのは、英語版と日本語版が別々の文書として並ぶ散文の側になる。
 
 どの文書を公開面に載せるか（掲載範囲）・ロケールの構成・フォールバックの実装は本 item の規範に
-含めない。[ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）](../infrastructure/docs-site.md) が持つ。用語の正名は [用語の正名は用語 item が固定し、執筆はそれに従う](glossary-fixes-canonical-terms.md) が固定し、本 item はその上で言語の
+含めない。[ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）](../infrastructure/docs-site.md) が持つ。正名の扱いは [用語の正名は用語 item が固定し、執筆はそれに従う](glossary-fixes-canonical-terms.md) に従い、本 item はその上で言語の
 canonical 性と対の保守だけを定める（分界の宣言であり、依存関係ではない）。
 
 ## 出典
