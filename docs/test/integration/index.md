@@ -4,7 +4,7 @@
 
 * [activation が評価時点で engine 起動へ配線され root と entry とオプションを届ける](./activation-engine-kick-wiring.md) - 統合層のモジュールを評価し、生成された activation の内容に対してアサートする。実際にactivate はしない。この層が独立して必要なのは、ここで確かめる性質が**評価時に決まるのにactivate 後にしか観測できない**ためで、評価だけで先に捕まえられる。
 * [HM の複数 config が独立した配置物と profile を持ち、衝突と部分失敗が config 単位で扱われる](./hm-multi-config-activation.md) - home-manager モジュールに名前つき config を複数与え、評価と実 activate の 2 層で確かめる。
-* [非 NixOS で HM configuration を実際に activate すると engine が配置する](./hm-real-activation.md) - 評価アサートの層（TC-5a72b00e-2c03-4703-acdc-33cffb6fa994）で確かめられない部分、すなわち activate を実際に実行したときに engine が起動して配置が行われることを確かめる。隔離した一時 HOME の下で、activation package を実際にビルドして実行する。
+* [非 NixOS で HM configuration を実際に activate すると engine が配置する](./hm-real-activation.md) - 評価アサートの層（[activation が評価時点で engine 起動へ配線され root と entry とオプションを届ける](activation-engine-kick-wiring.md)）で確かめられない部分、すなわち activate を実際に実行したときに engine が起動して配置が行われることを確かめる。隔離した一時 HOME の下で、activation package を実際にビルドして実行する。
 * [legacy entrypoint が canonical 形で同じ配置と出力契約を保ち素の nix-shell を壊さない](./legacy-entrypoint-parity.md) - flake を持たない起点からでも layat が同じ意味で使えることを確かめる。評価を再現可能にするため、参照する nixpkgs を lock の内容へ固定してから実行する。
 * [manifest の読み取りが v1 を正確に復元し版の境界・未知フィールド・不整合な root 種別を拒否する](./manifest-decode-schema-guard.md) - 契約の消費側が、渡された文書をどう読みどう拒むかを確かめる。
 * [NixOS の実 activate で system mode の配置・世代・記録が host の構成に収束する](./nixos-real-activation.md) - NixOS モジュールを組み込んだ host を VM で起動し、構成の切り替えを実際に activate して、その後のファイルシステムに対してアサートする。評価時の配線だけでは観測できない、activate 後の結果を確かめる。
