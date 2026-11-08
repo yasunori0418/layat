@@ -9,7 +9,7 @@ satisfies:
   - "QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:08:13+09:00"
+  at: "2026-11-09T08:08:50+09:00"
 ---
 # INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71: トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）
 
@@ -33,7 +33,7 @@ generated:
 4 件はいずれも dev flake の `checks.*` としても露出しているが、CI の `flake-check` はルート
 flake を対象にするため到達しない。CI の明示ステップとして固定する。
 
-`sara` ジョブは `test.yml` に同居するが、CI パイプライン（[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md)）の変更検出ジョブは
+`sara` ジョブは `test.yml` に同居するが、[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md) の変更検出ジョブは
 **再利用しない**。あちらの filter は nix / Go のソースを対象にするのに対し、この確認が最も役立つのは
 docs のみの PR だからで、job ローカルの filter を別に置く。
 
@@ -71,12 +71,12 @@ ADR も同じ形式で採番する（`ADR-<フル UUIDv4>`・`SDR-<フル UUIDv4
 error となり `sara check` は exit 1 を返す（epic #203 の移行完了・warning 0 到達を受けて有効化
 → [sara check を strict モードで回す](../sara-adr/sara-check-strict-mode.md)）。合格条件は「warning 0 件」に一本化されている。
 
-一方でマージの条件（[マージの条件（main の ruleset と required status checks）](merge-gate.md)）の required status check には登録せず、DoD にも入れない。
+一方で [マージの条件（main の ruleset と required status checks）](merge-gate.md) の required status check には登録せず、DoD にも入れない。
 これは移行中の暫定措置ではなく「**検出は機械・判断は人**」という分担を保つための恒久判断で、
 張り忘れの修正が自明でないケース（item 新設を伴う等）を CI が赤いままレビューで扱える余地を
 残す。再検討条件は廃止した旧 ADR が持っていた（現在の決定は → [sara check を required status check にしない](../sara-adr/sara-check-not-required.md)）。
 
-閾値による条件を持たない点は CI パイプライン（[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md)）の `go-coverage` ジョブと同方針で、
+閾値による条件を持たない点は [CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md) の `go-coverage` ジョブと同方針で、
 他 PR とのマージ順依存を避けるためでもある。
 
 ## 出典

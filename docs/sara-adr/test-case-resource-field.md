@@ -13,7 +13,7 @@ justifies:
   - "QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-07T23:10:46+09:00"
+  at: "2026-11-09T08:08:50+09:00"
 ---
 # SDR-e9de8d3d-fcb8-456d-a3af-2338f8080f4f: test_case の target を resource に改名する
 
@@ -28,8 +28,8 @@ test_case は、対応するテスト資産の正準表記を `target` フィー
 パスか、flake check の `checks.<name>` の形で、`dev/tests/test-doc-map.sh` が CASE とテスト資産の
 1:1 を確かめるのに使う。
 
-OKF には、item が説明する対象を指す `resource` キーがある。[OKF v0.2 と互換の frontmatter キーを item に足す](okf-compatible-frontmatter.md) で
-OKF と互換のキーを足すと決めたので、`target` が持つ情報を OKF の読み手にも読める名前にしたい。
+OKF には、item が説明する対象を指す `resource` キーがある。[OKF v0.2 と互換の frontmatter キーを item に足す](okf-compatible-frontmatter.md) と
+決めたので、`target` が持つ情報を OKF の読み手にも読める名前にしたい。
 
 ## 決定
 

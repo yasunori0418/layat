@@ -14,7 +14,7 @@ references:
   - "SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:24:32+09:00"
+  at: "2026-11-09T08:08:50+09:00"
 ---
 # SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed: ADR も UUID で採番し、連番の旧 ADR は legacy_adr 型に凍結する
 
@@ -33,7 +33,7 @@ ADR だけは連番（`ADR-NNNN`）で採番してきた。既存 ADR の相互�
 無効にしないためである。一方、並列レーンで ADR を起こすと、複数のレーンが同じ「次の番号」を取る構造が
 残っていた。
 
-1 決定 1 ADR の粒度（[ADR は単独で覆せる 1 つの決定だけを書く](adr-one-decision-granularity.md)）で旧 ADR を書き直すと、新しい ADR は
+[ADR は単独で覆せる 1 つの決定だけを書く](adr-one-decision-granularity.md) の粒度で旧 ADR を書き直すと、新しい ADR は
 100 本を超え、多くのレーンが並行して起票する。sara は型ごとに 1 つの `id_format` しか持てず、連番の
 ID は UUID 形式の検証を通らない。
 

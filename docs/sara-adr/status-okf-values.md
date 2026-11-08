@@ -15,7 +15,7 @@ supersedes:
   - "SDR-d5304533-00ae-423b-a459-7c67c1cf093c"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-07T23:10:46+09:00"
+  at: "2026-11-09T08:08:50+09:00"
 ---
 # SDR-7967c58b-2d03-40d6-89b4-680be30fa5d1: status を OKF の 3 値にし全ての型に持たせる
 
@@ -30,8 +30,8 @@ generated:
 取ってきた（[提案を棄却した決定は status 不採用 で記録する](adr-status-rejected.md)）。他の型には `status` が無く、item が
 いまも有効かを frontmatter から読めない。
 
-OKF の `status` は `draft` / `stable` / `deprecated` の 3 値である。[OKF v0.2 と互換の frontmatter キーを item に足す](okf-compatible-frontmatter.md) で
-OKF と互換のキーを足すと決めたので、`status` の値もこれに合わせる必要がある。
+OKF の `status` は `draft` / `stable` / `deprecated` の 3 値である。[OKF v0.2 と互換の frontmatter キーを item に足す](okf-compatible-frontmatter.md) と
+決めたので、`status` の値もこれに合わせる必要がある。
 
 ## 決定
 

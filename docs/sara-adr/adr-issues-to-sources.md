@@ -13,7 +13,7 @@ justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-08T00:27:08+09:00"
+  at: "2026-11-09T08:08:50+09:00"
 ---
 # SDR-6d21ed34-a320-44ff-a8e4-ff57a6e76dff: ADR の issues を sources に移す
 
@@ -29,7 +29,7 @@ ADR / SDR は、item にできない外部参照を `issues`（`#N` の文字列
 指す先が変わる。
 
 OKF には、item の出典を `id` / `resource` / `title` の組のリストで持つ `sources` キーがある。
-[OKF v0.2 と互換の frontmatter キーを item に足す](okf-compatible-frontmatter.md) で OKF と互換のキーを足すと決めた。
+すでに [OKF v0.2 と互換の frontmatter キーを item に足す](okf-compatible-frontmatter.md) と決めている。
 
 ## 決定
 

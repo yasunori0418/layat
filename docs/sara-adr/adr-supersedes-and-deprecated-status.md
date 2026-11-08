@@ -14,7 +14,7 @@ references:
   - "SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-01T21:41:20+09:00"
+  at: "2026-11-09T08:08:50+09:00"
 ---
 # SDR-3ff9f355-a667-476e-b10d-087248cdbfcf: ADR の失効は supersedes と 廃止 で表す
 
@@ -29,7 +29,7 @@ generated:
 文書丸ごとの失効を表す `supersedes` と、ステータスの `廃止` は持たなかった。当時は丸ごと失効した
 ADR の実例が無く、実例の無い関係を先に置くと部分改訂に誤用されると考えたためである。
 
-1 本の ADR に 1 つの決定だけを書く規則（[ADR は単独で覆せる 1 つの決定だけを書く](adr-one-decision-granularity.md)）を採ると、
+[ADR は単独で覆せる 1 つの決定だけを書く](adr-one-decision-granularity.md) という規則を採ると、
 決定の変更は ADR の丸ごとの置き換えになる。部分改訂という扱いは要らなくなる。
 
 ## 決定

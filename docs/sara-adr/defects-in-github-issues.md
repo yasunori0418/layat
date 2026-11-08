@@ -25,7 +25,7 @@ references:
   - "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T22:44:41+09:00"
+  at: "2026-11-09T08:08:50+09:00"
 ---
 # SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed: 欠陥はグラフに置かず GitHub Issues で管理する
 
@@ -40,7 +40,7 @@ generated:
 下流向きの `reveals` で接続する唯一の型だった。そのため次の例外を抱えていた。
 
 - defect item は作った時点で必ず接続漏れになる
-- `sara check` が strict（[sara check を strict モードで回す](sara-check-strict-mode.md)）なので、defect を起こすと即座に
+- [sara check を strict モードで回す](sara-check-strict-mode.md) ので、defect を起こすと即座に
   exit 1 になる
 - 型の関係図を機械生成するとき、上流の辺だけを描く規約から `reveals` だけが外れる
 
