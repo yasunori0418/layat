@@ -130,6 +130,10 @@ name: "タグ <state> 入りの name"
 [大文字の <Name> 入りのリンク](m.md)
 [後続もエスケープ \[y\] の繰り返し](n.md)「後続もエスケープ \[y\] の繰り返し」
 前置のエスケープ \[z\] の繰り返し（[前置のエスケープ \[z\] の繰り返し](o.md)）
+```
+[閉じたフェンスの中の <g>](p.md)
+```
+[閉じたフェンスの後の <h>](q.md)
 EOF
 
 # 閉じないフェンスで終わるファイルの次のファイルも走査できることを確かめる。
@@ -162,6 +166,7 @@ tag	detect.md:15
 tag	detect.md:16
 tag	detect.md:17
 tag	detect.md:2
+tag	detect.md:23
 tag	detect.md:4
 tag	detect.md:6
 EOF
@@ -208,7 +213,7 @@ description: "<frontmatter> と [タグ <name> 入り](a.md) の name 以外の�
 - リスト
 
   ```
-  # 字下げしたコードブロックの <name>
+  [字下げしたコードブロックの <name>](e.md)
   ```
 EOF
 
