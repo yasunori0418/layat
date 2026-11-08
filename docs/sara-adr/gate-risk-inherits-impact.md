@@ -26,6 +26,10 @@ generated:
 ---
 # SDR-c2989d44-2ba4-4a42-9f4f-35871405be65: 自動検証の形骸化は守備対象の impact を継承する
 
+> **廃止（2026-11-08）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 全体 → [自動検証の形骸化は守備対象の impact を継承し、継承元をリンクで名指しする](gate-risk-inherits-impact-by-link.md)
+
 - ステータス: deprecated
 - 日付: 2026-11-03
 - 関連: [risk の impact を検出後の回復可能性で採点する](risk-impact-as-recoverability.md), [複数の失敗方向を持つ risk は最も重い方向で採点する](risk-heaviest-direction.md), [沈黙性を risk のスコア軸にせず本文に書く](silence-not-a-score-axis.md), GitHub Issue #583, #303, #292, `docs/agents/sara-graph.md`

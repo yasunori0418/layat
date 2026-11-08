@@ -21,6 +21,10 @@ generated:
 ---
 # SDR-f5443db0-6407-41c0-9ab5-55f22dc4de5e: sara-id を廃止し sara init を包む起票ラッパーを使う
 
+> **廃止（2026-11-08）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 全体 → [sara-id を廃止し sara init を包む起票ラッパーで slug のファイル名を適用する](sara-new-wrapper-applies-slug-filename.md)
+
 - ステータス: deprecated
 - 日付: 2026-11-01
 - 関連: [ID はフル UUID に統一し 8 文字省略形を使わない](full-uuid-ids-no-short-form.md), GitHub Issue #366, #364

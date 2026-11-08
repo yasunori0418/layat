@@ -19,6 +19,10 @@ generated:
 ---
 # SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb: ID はフル UUID に統一し 8 文字省略形を使わない
 
+> **廃止（2026-11-08）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 全体 → [フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる](full-ids-in-frontmatter-and-h1.md)
+
 - ステータス: deprecated
 - 日付: 2026-11-01
 - 関連: [省略形の禁止は起票の機械化と全面移行で担保する](short-form-ban-enforced-by-tooling.md), GitHub Issue #366, #364
