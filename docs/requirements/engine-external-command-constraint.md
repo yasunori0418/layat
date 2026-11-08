@@ -10,14 +10,14 @@ specification: |
   The engine SHALL invoke only `git` (for obtaining the toplevel) as an external command.
   Place / replace / remove and conservative stale removal SHALL be performed with native
   filesystem operations. Generation operations (commit, list, switch) SHALL go through the
-  generation backend contract (REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b) and SHALL NOT be
+  generation backend contract ([engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)) and SHALL NOT be
   invoked by the engine as external commands; the default backend nixprofile runs
   `nix-env` inside its own package.
 specification_ja: |
   engine が外部コマンドとして叩いてよいのは `git`（toplevel の取得）のみでなければならない。
   place / replace / remove と古くなった配置の保守的な除去はネイティブ FS 操作で行わなければならない。
   世代操作（コミット・一覧・切替）は世代バックエンドの契約
-  （REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）越しに行わなければならず、engine が外部コマンド
+  （[engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)）越しに行わなければならず、engine が外部コマンド
   として呼び出してはならない。既定バックエンド nixprofile は自パッケージの内側で `nix-env` を
   実行する。
 generated:

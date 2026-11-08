@@ -12,7 +12,7 @@ specification: |
   `target` (`string`, optional), and `method` (`"symlink" | "copy"`, optional). `target`
   SHALL be a path relative to the `root` selected explicitly in `mkManifest`. The
   concrete default of each optional field, and which component validates and applies
-  those defaults, are stated by REQ-b232ec98-af3b-41f3-a050-29d417322002, REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 and REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34 and are NOT
+  those defaults, are stated by [normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む](normalize-manifest-defaults.md), [entry の識別子は属性キー = target とし一意性は Nix が担保する](entry-identity-by-target-key.md) and [mkManifest 自身が evalModules で入力を確認する単一の箇所になる](mkmanifest-input-validation.md) and are NOT
   restated here.
 specification_ja: |
   `entries` の各属性値は entry submodule とし、フィールドは `src`
@@ -21,7 +21,7 @@ specification_ja: |
   ならない。`target` は `mkManifest` で明示選択した `root` からの相対パスでなければ
   ならない。
   各省略可フィールドの具体的なデフォルト値と、それを確認・適用する主体は
-  REQ-b232ec98-af3b-41f3-a050-29d417322002 / REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7 / REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34 が規定しており、本 item では重ねて
+  [normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む](normalize-manifest-defaults.md) / [entry の識別子は属性キー = target とし一意性は Nix が担保する](entry-identity-by-target-key.md) / [mkManifest 自身が evalModules で入力を確認する単一の箇所になる](mkmanifest-input-validation.md) が規定しており、本 item では重ねて
   規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"

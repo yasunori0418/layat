@@ -18,13 +18,13 @@ specification: |
   store link and the absolute path held by the marker for an out-of-store symlink
   (`srcKind: "outOfStore"`). For a root-relative symlink (`srcKind: "rootRelative"`) the
   link SHALL instead point at the relative path from the directory of the target to
-  `<src>/<subpath>`, computed as specified by DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296. The
+  `<src>/<subpath>`, computed as specified by [rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは配置前の確認だけにする](../design/root-relative-linkdest.md). The
   processing SHALL be the same whether the subpath denotes a file or a directory. Two
   different configs (profiles) aiming at the same target SHALL be treated as something not
   meant to happen; the last writer SHALL be tolerated and the overwriting of a foreign
   symlink SHALL be made visible by the warning. As an exception, a conflict between configs
   selected by one `apply --all` of a single entrypoint SHALL be stopped before the build by
-  the preflight of REQ-38506419-c23d-4fce-b167-30715ce6a69d.
+  the preflight of [apply --all は build 前に選択 config 間の target 衝突を検出して停止する](apply-all-cross-config-preflight.md).
 specification_ja: |
   symlink の配置にあたり engine は、まず target の親ディレクトリを作成し（`mkdir -p` 相当）、
   次に target の既存 symlink を扱わなければならない。当該 entry 自身の前世代 manifest が記録
@@ -35,11 +35,11 @@ specification_ja: |
   ストアパス、out-of-store symlink（`srcKind: "outOfStore"`）では marker の絶対パスで
   なければならない。root 相対の symlink（`srcKind: "rootRelative"`）では、target の親
   ディレクトリから `<src>/<subpath>` への相対パスを指さなければならない（計算は
-  DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296 の担当）。subpath がファイル・
+  [rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは配置前の確認だけにする](../design/root-relative-linkdest.md) の担当）。subpath がファイル・
   ディレクトリのいずれでも処理は同じでなければならない。別 config（別 profile）が同一
   target を狙うことは起きない前提として扱わなければならず、後勝ちを許容しつつ foreign
   symlink の上書きは warning で可視化しなければならない。例外として、同一 entrypoint の
-  `apply --all` で選択された config 間の衝突は REQ-38506419-c23d-4fce-b167-30715ce6a69d の前段の確認で build 前に
+  `apply --all` で選択された config 間の衝突は [apply --all は build 前に選択 config 間の target 衝突を検出して停止する](apply-all-cross-config-preflight.md) の前段の確認で build 前に
   止まらなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"

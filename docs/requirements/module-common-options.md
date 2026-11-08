@@ -17,12 +17,12 @@ specification: |
   A module SHALL pass `configs.<name>.identity` unchanged to `mkManifest` as `identity`.
   These SHALL be defined jointly for every module, so that the set does not diverge per
   module. What the `<name>` dimension of `configs` means for the granularity of profiles
-  is stated by REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a and is not restated here. A module SHALL pin the root by its
+  is stated by [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md) and is not restated here. A module SHALL pin the root by its
   own nature — home-manager to `homeRoot`, NixOS and nix-darwin to `systemRoot`, a devShell
   to `projectRoot` — and SHALL NOT
   expose a `root` option, so that a user of a module never restates it. This is a
   departure from `mkManifest` and the CLI entrypoint, where `root` is required to be
-  stated explicitly (REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4).
+  stated explicitly ([root は明示必須で暗黙デフォルトを持たない](root-explicit-required.md)).
 specification_ja: |
   全モジュール（home-manager / NixOS / nix-darwin）は共通オプションとして同一の集合を
   公開しなければならない: `layat.enable :: bool`（デフォルト false）・
@@ -36,12 +36,12 @@ specification_ja: |
   `identity` へ渡さなければならない。
   これらは全モジュール共通に定義し、モジュールごとに集合が分岐しないようにしなければ
   ならない。`configs` の `<name>` 次元が profile の粒度にとって何を意味するかは
-  REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a の担当で、本 item では規定しない。モジュールは自分の性質で root を pin
+  [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md) の担当で、本 item では規定しない。モジュールは自分の性質で root を pin
   しなければならず（home-manager は `homeRoot`・NixOS / nix-darwin は `systemRoot`・
   devShell は `projectRoot`）、`root`
   オプションを公開してはならない。モジュール利用者が root を再指定しないようにするため
   である。これは `root` を明示必須とする `mkManifest` / CLI entrypoint の層
-  （REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4）との差分である。
+  （[root は明示必須で暗黙デフォルトを持たない](root-explicit-required.md)）との差分である。
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"

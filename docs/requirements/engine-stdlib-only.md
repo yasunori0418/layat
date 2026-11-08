@@ -11,14 +11,14 @@ specification: |
   internal layer rather than a public module, so that what it depends on is confined to the
   Go standard library and the runtime commands it invokes. File locking, recursive copying,
   the manifest contract and error wrapping SHALL all be realised with the standard library.
-  Which external commands it may invoke at run time is stated by REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564 and SHALL NOT
+  Which external commands it may invoke at run time is stated by [engine が叩く外部コマンドは git のみに限る](engine-external-command-constraint.md) and SHALL NOT
   be restated here.
 specification_ja: |
   engine は第三者依存ゼロの stdlib-only とし、公開モジュールではなく内部層としなければ
   ならない（依存を Go 標準ライブラリと実行時に叩くコマンドだけに閉じるため）。ファイル
   ロック・再帰コピー・manifest 契約・エラーラップはいずれも標準ライブラリで実現しなければ
   ならない。
-  実行時に叩いてよい外部コマンドは REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564 の規範であり、ここでは再掲しない。
+  実行時に叩いてよい外部コマンドは [engine が叩く外部コマンドは git のみに限る](engine-external-command-constraint.md) の規範であり、ここでは再掲しない。
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:32:25+09:00"

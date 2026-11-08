@@ -8,23 +8,23 @@ derives_from:
 specification: |
   The local path of an out-of-store entry SHALL take one of two forms. For
   `srcKind: "outOfStore"` it SHALL be an absolute path settled at Nix evaluation time
-  (REQ-eb363122-385a-499c-a074-c95efb949d07) and SHALL be hard-coded into the manifest as
+  ([mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](mkoutofstoresymlink-marker.md)) and SHALL be hard-coded into the manifest as
   it stands. Because the root of a `target` is resolved at run time by the engine, that
   absolute path SHALL NOT affect the resolution on the `target` side; the two SHALL belong
   to separate points in time and SHALL be independent. For `srcKind: "rootRelative"` it
   SHALL be a path relative to the placement root, recorded in the manifest as it stands,
   and SHALL be resolved at run time against the same root as the `target`
-  (REQ-a77181dd-a59c-40bb-855e-3430ad970eb6). Since the convention for the home directory
+  ([mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](root-relative-symlink-marker.md)). Since the convention for the home directory
   differs between macOS and Linux, an absolute local path SHOULD be resolved by
   discriminating the operating system within the flake.
 specification_ja: |
   out-of-store entry のローカルパスは次の 2 形のどちらかでなければならない。
-  `srcKind: "outOfStore"` では Nix 評価時に確定する絶対パス（REQ-eb363122-385a-499c-a074-c95efb949d07）とし、
+  `srcKind: "outOfStore"` では Nix 評価時に確定する絶対パス（[mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](mkoutofstoresymlink-marker.md)）とし、
   そのまま manifest へハードコードされなければならない。`target` の root 解決は engine が
   実行時に行うため、その絶対パスは `target` 側の解決に影響してはならない（両者は別の時点に
   属し独立である）。`srcKind: "rootRelative"` では配置 root 相対のパスとし、そのまま
   manifest へ記録され、実行時に `target` と同じ root に対して解決されなければならない
-  （REQ-a77181dd-a59c-40bb-855e-3430ad970eb6）。macOS / Linux でホームの慣例が異なるため、絶対パスの
+  （[mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](root-relative-symlink-marker.md)）。macOS / Linux でホームの慣例が異なるため、絶対パスの
   ローカルパスは flake 内で OS を判別して解決するべきである。
 generated:
   by: "claude-code/claude-opus-5-5"

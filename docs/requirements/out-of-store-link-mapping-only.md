@@ -9,14 +9,14 @@ specification: |
   For an out-of-store entry, which is placed as a symlink pointing either at the absolute
   path held by the marker or, for a root-relative marker, at the relative path from the
   directory of the target to `<src>/<subpath>` that realises the marker's root-relative
-  path (REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557, REQ-a77181dd-a59c-40bb-855e-3430ad970eb6),
+  path ([symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする](symlink-placement-procedure.md), [mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](root-relative-symlink-marker.md)),
   generations SHALL version only the mapping of which
   path is pointed at, and SHALL NOT version the content of the destination, which is live
   by design and SHALL never be snapshotted.
 specification_ja: |
   out-of-store entry は symlink として配置され、marker の絶対パスを指す。root 相対の
   marker では、target の親から `<src>/<subpath>` への相対パスを指す（marker の root 相対
-  パスを相対リンクとして実現したもの。REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557・REQ-a77181dd-a59c-40bb-855e-3430ad970eb6）。
+  パスを相対リンクとして実現したもの。[symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする](symlink-placement-procedure.md)・[mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](root-relative-symlink-marker.md)）。
   この entry について、世代が版管理するのは「どのパスを指すか」というリンク先
   マッピングのみとし、指す先の内容は版管理してはならない（設計上ライブであり、永遠に
   スナップショットしない）。

@@ -15,7 +15,7 @@ specification: |
   `runCommandLocal`) and to obtain `pkgs.lib`, and it SHALL be REQUIRED with no default.
   `entries` SHALL be an attrset of placement definitions. `root` SHALL be the base of the
   placement destination. The obligations specific to `root` — that it is REQUIRED and that
-  its type is `string | marker` — are stated by REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4 and REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 and are NOT
+  its type is `string | marker` — are stated by [root は明示必須で暗黙デフォルトを持たない](root-explicit-required.md) and [root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md) and are NOT
   restated here.
 specification_ja: |
   `lib.mkManifest` は必須の引数として `pkgs` / `entries` / `root` の 3 つを取らなければ
@@ -24,7 +24,7 @@ specification_ja: |
   使う nixpkgs の attrset でなければならず、デフォルトを持たない必須引数でなければ
   ならない。`entries` は配置定義の attrset でなければならない。`root` は配置先の基準で
   なければならない。`root` 固有の規範（明示必須であること・
-  型が `string | marker` であること）は REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4 と REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 が規定しており、
+  型が `string | marker` であること）は [root は明示必須で暗黙デフォルトを持たない](root-explicit-required.md) と [root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md) が規定しており、
   本 item では重ねて規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"

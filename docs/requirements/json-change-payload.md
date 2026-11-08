@@ -67,7 +67,7 @@ specification: |
   `subjectResult.warnings` with `detail = {recorded, current}`, each an origin object
   carrying `generator`, `entrypoint` and `identity` (each omitted when empty), when the last-applied record
   has an origin and it differs from the origin of the current apply (the comparison rule is
-  REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282). The human-facing text
+  [apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する](apply-origin-mismatch-warning.md)). The human-facing text
   on stderr SHALL always coexist.
 
   The changes of `reset` SHALL be only what was actually removed. A rename aside by
@@ -122,7 +122,7 @@ specification_ja: |
   `W_LAYAT_UNWOUND` としなければならず、`detail = {target}` を付けなければならない。
   last-applied 記録に出所があり、今回の apply の出所と食い違うときは、subject 警告
   `W_LAYAT_ORIGIN_MISMATCH` を `detail = {recorded, current}`（各 origin は `generator`・`entrypoint`・
-  `identity` を持ち、空なら省く）で `subjectResult.warnings` に載せなければならない。比較の規則は REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282 の担当。stderr の人間向けテキストは常時併存させなければならない。
+  `identity` を持ち、空なら省く）で `subjectResult.warnings` に載せなければならない。比較の規則は [apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する](apply-origin-mismatch-warning.md) の担当。stderr の人間向けテキストは常時併存させなければならない。
 
   `reset` の changes は実際に除去したもののみでなければならない。`--backup` の退避と
   空親ディレクトリ剪定は entry の状態遷移ではないため changes / items に載せてはならない。

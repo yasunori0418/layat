@@ -13,8 +13,8 @@ specification: |
   root. Because a `shellHook` runs at high frequency, the generation-skip short circuit of
   project mode, which makes an unchanged application a no-op, SHALL be a premise of this
   wiring. That it holds no placement logic of its own and supplies only the root and the
-  timing of activation is stated by REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9, and that it pins `projectRoot` by
-  REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10; neither is restated here.
+  timing of activation is stated by [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](modules-are-engine-wiring.md), and that it pins `projectRoot` by
+  [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md); neither is restated here.
 specification_ja: |
   devShell は `devShells.<name>` の `shellHook` から engine を起動しなければならない
   （HM モジュールと同型）。供給する activation タイミングはシェル入室でなければならず、
@@ -22,8 +22,8 @@ specification_ja: |
   git toplevel を root にプロジェクト内へ配置しなければならない。`shellHook` は高頻度で
   走るため、変更なしなら no-op になる project mode の世代スキップ短絡をこの配線の前提と
   しなければならない。配置ロジックを持たず root と
-  activation タイミングだけを供給することは REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9、`projectRoot` を pin することは
-  REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 の担当で、いずれも本 item では規定しない。
+  activation タイミングだけを供給することは [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](modules-are-engine-wiring.md)、`projectRoot` を pin することは
+  [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md) の担当で、いずれも本 item では規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"

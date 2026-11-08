@@ -15,9 +15,9 @@ specification: |
   Introducing the `<name>` dimension SHALL be non-breaking: a config named `default` SHALL
   go on resolving to the same profile as before, and no change to the layout of the
   profile directory SHALL be entailed. How the profile directory is keyed is stated by
-  REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81, and the definition of the options themselves — that
+  [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md), and the definition of the options themselves — that
   `layat.configs.<name>.entries` is the canonical form and the bare `layat.entries` a
-  deprecated sugar onto `configs.default.entries` — by REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10, being common to every
+  deprecated sugar onto `configs.default.entries` — by [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md), being common to every
   module; neither is restated here.
 specification_ja: |
   home-manager モジュールの利用者も、役割分離された複数の独立 profile（それぞれが自分の
@@ -26,11 +26,11 @@ specification_ja: |
   「1 config = 1 profile = 1 manifest」の atomic 性は保たなければならず、複数 config を
   合成するヘルパを提供してはならない。`<name>` 次元の導入は非破壊でなければならず、`default`
   という名の config は従来と同じ profile に解決され続け、profile ディレクトリのレイアウト
-  変更を伴ってはならない。profile ディレクトリをどうキーするかは REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81、
+  変更を伴ってはならない。profile ディレクトリをどうキーするかは [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md)、
   オプション自体の定義
   （canonical な形が `layat.configs.<name>.entries` であり、素の `layat.entries` が
   `configs.default.entries` への deprecated 糖衣であること）は全モジュール共通であり
-  REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 の担当で、いずれも本 item では規定しない。
+  [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md) の担当で、いずれも本 item では規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"

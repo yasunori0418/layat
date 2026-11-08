@@ -17,15 +17,15 @@ specification: |
   deletion for a newly placed symlink or copy; re-creation with the old destination
   (captured before the unlink) for a replacement; re-creation with the destination
   recorded in the baseline manifest (the last-applied record when one exists, otherwise
-  the current generation of the profile; REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) for a stale-removed link or a PreRemove
+  the current generation of the profile; [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)) for a stale-removed link or a PreRemove
   unlink; re-creation of the empty directory for a PreRemove rmdir; and renaming back for
   the aside made by `--recopy` or `--backup`. Once an error occurs, the journal recorded so
   far SHALL be rolled back in reverse (LIFO) order before the error is returned. When
-  writing the last-applied record (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) fails, in an
+  writing the last-applied record ([apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)) fails, in an
   apply (the generation-skip path included) or in a rollback, the run SHALL fail and the
   journal SHALL be rolled back by the same mechanism. The journal SHALL be discarded once
   the generation commit through the generation backend contract
-  (REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b) has succeeded, a failure of the commit itself
+  ([engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)) has succeeded, a failure of the commit itself
   being outside the scope of rollback because an idempotent re-run converges. On the
   success of the run, the aside made by `--recopy` SHALL be deleted, whereas the aside
   made by `--backup` SHALL be left in place. Crashes such as
@@ -45,13 +45,13 @@ specification_ja: |
   逆操作を 1 件記録しなければならない。新規配置 symlink / copy は削除、張替えは unlink 前に捕捉
   した旧リンク先での symlink 再作成、古くなった配置として除去したリンクと PreRemove の unlink は比較の基準の
   manifest（last-applied 記録があれば記録、無ければ profile の current 世代。
-  REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）の記録 dest での symlink 再作成、PreRemove の rmdir は空 dir の再作成、`--recopy` / `--backup`
+  [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)）の記録 dest での symlink 再作成、PreRemove の rmdir は空 dir の再作成、`--recopy` / `--backup`
   の rename 退避は退避物の rename back としなければならない。エラーが発生したら、それまでに
   記録したジャーナルを
   逆順（LIFO）で巻き戻してからエラーを返さなければならない。apply（世代スキップの処理を含む）
-  と rollback で last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）を書けなければ、
+  と rollback で last-applied 記録（[apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)）を書けなければ、
   run を失敗させ、同じ機構でジャーナルを巻き戻さなければならない。世代バックエンドの契約
-  （REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）越しの世代コミットが成功した後はジャーナルを
+  （[engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)）越しの世代コミットが成功した後はジャーナルを
   破棄しなければならない（コミット自体の失敗は冪等再実行で収束するため巻き戻し対象外）。`--recopy` の退避物は成功時に削除しなければならず、`--backup` の退避物は成功時も
   残置しなければならない。クラッシュ（SIGKILL・電源断）は対象外としなければならない
   （ジャーナルはプロセスメモリ上にのみ存在し永続 WAL を持たないため）。この場合は

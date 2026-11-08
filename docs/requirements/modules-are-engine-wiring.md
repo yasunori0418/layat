@@ -18,7 +18,7 @@ specification: |
   NixOS module SHALL kick the engine from `system.activationScripts.layat`, and the
   nix-darwin module SHALL kick it from what it appends to
   `system.activationScripts.postActivation`; the hook the home-manager module uses is
-  stated by REQ-8085f194-c903-4ecb-abd8-c719fe7b3292.
+  stated by [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](hm-activation-contract.md).
 specification_ja: |
   基本的な利用は project mode（プロジェクト内配置）と CLI 単体を中心に考えなければ
   ならず、モジュール対応は、他のモジュールシステムの switch と一括で動いてほしいユースケースを
@@ -30,7 +30,7 @@ specification_ja: |
   layat の関心外でなければならない。NixOS モジュールは `system.activationScripts.layat` から、
   nix-darwin モジュールは `system.activationScripts.postActivation` への追記から engine を
   起動しなければならない（home-manager モジュールが使うフックは
-  REQ-8085f194-c903-4ecb-abd8-c719fe7b3292 の担当）。
+  [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](hm-activation-contract.md) の担当）。
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"

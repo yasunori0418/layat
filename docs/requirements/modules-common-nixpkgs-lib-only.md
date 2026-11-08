@@ -9,20 +9,20 @@ specification: |
   `modules/common.nix` SHALL depend only on nixpkgs.lib. It SHALL NOT introduce a
   dependency on the module system of home-manager, NixOS or nix-darwin, so that the common
   option set it holds can be imported from every integration layer without one layer's
-  module system leaking into another. Which options it defines is stated by REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10,
-  and the same constraint on `lib` by REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51; neither is restated here. What the
+  module system leaking into another. Which options it defines is stated by [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md),
+  and the same constraint on `lib` by [lib は nixpkgs.lib のみに依存する純データ生成器である](lib-pure-data-generator.md); neither is restated here. What the
   per-layer files (`modules/home-manager.nix` and its counterparts) may depend on is
   outside the scope of this item and is not stated here; that they are wiring which kicks
-  the engine is stated by REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9.
+  the engine is stated by [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](modules-are-engine-wiring.md).
 specification_ja: |
   `modules/common.nix` は nixpkgs.lib のみに依存しなければならない。home-manager /
   NixOS / nix-darwin の module system への依存を持ち込んではならない。同ファイルが持つ
   共通オプション集合を、ある統合層の module system を別の統合層へ漏らすことなく全統合層
   から import できるようにするためである。同ファイルがどのオプションを定義するかは
-  REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10、`lib` に対する同種の制約は REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51 の担当で、いずれも本 item では
+  [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)、`lib` に対する同種の制約は [lib は nixpkgs.lib のみに依存する純データ生成器である](lib-pure-data-generator.md) の担当で、いずれも本 item では
   規定しない。統合層ごとのファイル（`modules/home-manager.nix` 等）が何に依存してよいかは
   本 item の射程外であり、ここでは規定しない。それらが engine を起動する配線であることは
-  REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9 の担当である。
+  [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](modules-are-engine-wiring.md) の担当である。
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"

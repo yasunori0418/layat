@@ -16,7 +16,7 @@ specification: |
   is the relative path from the directory of `target` to `<src>/<subpath>`. The marker
   SHALL be accepted for every root kind. Combining it with `method = "copy"` SHALL be
   rejected at evaluation time in the same way as for `mkOutOfStoreSymlink`
-  (REQ-16faf428-77f3-492f-b858-222c5274cbf7), and an entry whose `<src>/<subpath>` and
+  ([意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](normalize-manifest-cross-field-checks.md)), and an entry whose `<src>/<subpath>` and
   `target` are equal or one of which is an ancestor of the other SHALL be rejected at
   evaluation time as well. When `<root>/<src>/<subpath>` does not exist, the engine SHALL
   stop before placement and SHALL NOT create a dangling symlink.
@@ -29,7 +29,7 @@ specification_ja: |
   親ディレクトリから `<src>/<subpath>` への相対パスを指す symlink として配置しなければ
   ならない。このマーカーは全ての root 種別で受け付けなければならない。`method = "copy"`
   との併用は `mkOutOfStoreSymlink` と同じく評価時に拒否しなければならない
-  （REQ-16faf428-77f3-492f-b858-222c5274cbf7）。`<src>/<subpath>` と `target` が一致する entry と、
+  （[意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](normalize-manifest-cross-field-checks.md)）。`<src>/<subpath>` と `target` が一致する entry と、
   一方が他方の祖先である entry も、評価時に拒否しなければならない。`<root>/<src>/<subpath>` が存在
   しないとき、engine は配置の前に停止しなければならず、dangling symlink を作っては
   ならない。

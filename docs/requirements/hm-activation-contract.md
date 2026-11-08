@@ -18,10 +18,10 @@ specification: |
   switch. Because the pinned layat CLI (`packages.layat`) and `mkManifest` come of the same
   flake input, a schemaVersion skew SHALL NOT arise structurally. This states the contract
   of the kick; the correspondence of one config to one manifest and one profile is stated
-  by REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a, and the definition of the option supplying
-  its entries by REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10, neither being restated here. The
+  by [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md), and the definition of the option supplying
+  its entries by [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md), neither being restated here. The
   order of the `<name>=<link-farm>` pairs, `--jobs`, how a partial failure is aggregated,
-  and not invoking `layat` when no config is present are stated by REQ-c847d1af-a437-46bb-bd64-42083810d034 and are likewise not
+  and not invoking `layat` when no config is present are stated by [HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う](hm-activation-per-config-kick.md) and are likewise not
   restated here.
 specification_ja: |
   `layat.configs` に config が 1 つ以上あるとき、home-manager モジュールは
@@ -34,10 +34,10 @@ specification_ja: |
   `home.file` の clobber エラーと同型）。pin 版 layat CLI（`packages.layat`）と `mkManifest` が
   同一 flake input 由来のため、schemaVersion skew は構造的に起きてはならない。本 item が
   規定するのは起動の契約であり、1 config が 1 manifest = 1 profile に対応することは
-  REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a、その entries を供給するオプションの定義は
-  REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 の担当で、いずれも本 item では規定しない。
+  [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md)、その entries を供給するオプションの定義は
+  [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md) の担当で、いずれも本 item では規定しない。
   `<name>=<link-farm>` の並び・`--jobs`・部分失敗の集約・config が無いときに `layat` を起動しないことは
-  REQ-c847d1af-a437-46bb-bd64-42083810d034 の担当で、これも本 item では規定しない。
+  [HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う](hm-activation-per-config-kick.md) の担当で、これも本 item では規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"

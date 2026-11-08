@@ -14,9 +14,9 @@ specification: |
   foreign symlink warning and SHALL NOT hold any mechanism that detects and stops it at
   engine runtime. Where several configs ride on a single invocation, as the `layat.configs`
   of one module configuration do through the `apply --all` of the activation, a detection
-  before placement is possible and SHALL NOT be precluded by this; that case is stated by REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 and is not restated here.
+  before placement is possible and SHALL NOT be precluded by this; that case is stated by [単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する](hm-configs-target-collision-assertion.md) and is not restated here.
   As an exception, a conflict between configs selected by one `apply --all` of a single
-  entrypoint SHALL be stopped before the build by the preflight of REQ-38506419-c23d-4fce-b167-30715ce6a69d.
+  entrypoint SHALL be stopped before the build by the preflight of [apply --all は build 前に選択 config 間の target 衝突を検出して停止する](apply-all-cross-config-preflight.md).
   The foreign warning during an oscillation will keep appearing under the high frequency
   at which a `shellHook` runs, and this SHALL be regarded as correct, being the signal of
   a misconfiguration; the warning SHALL be outside the scope of silence on success and
@@ -29,9 +29,9 @@ specification_ja: |
   「同一 target を複数 config で狙わない」はユーザー責任とし、layat は foreign symlink warning で
   可視化するに留め、engine 実行時に検知して止める機構を持ってはならない。単一の起動に載る
   複数 config（activation の `apply --all` に載る 1 つのモジュール config の `layat.configs` など）
-  については配置前の検出が可能であり、本 item はそれを妨げない。その場合の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の担当で、本 item
+  については配置前の検出が可能であり、本 item はそれを妨げない。その場合の規範は [単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する](hm-configs-target-collision-assertion.md) の担当で、本 item
   では規定しない。例外として、同一 entrypoint の `apply --all` で選択された config 間の衝突は
-  REQ-38506419-c23d-4fce-b167-30715ce6a69d の前段の確認で build 前に止まらなければならない。振動中の foreign warning は
+  [apply --all は build 前に選択 config 間の target 衝突を検出して停止する](apply-all-cross-config-preflight.md) の前段の確認で build 前に止まらなければならない。振動中の foreign warning は
   `shellHook` の高頻度実行で出続けるが、これは設定ミスのシグナルとして正しいものと
   みなさなければならない。この warning は成功時沈黙の対象外でなければならず、`-v` の有無に
   関わらず常時出さなければならない。MVP では抑制 / 集約機構を持ってはならず、

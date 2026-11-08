@@ -15,7 +15,7 @@ specification: |
   The record SHALL contain `recordVersion` (2), `linkFarm` (the store path of the placed
   link-farm), `appliedAt` (RFC 3339), `manifest` (the placed `manifest.json` embedded
   verbatim) and, when known, `origin` (the source of the most recent apply that wrote the record, as specified by
-  REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282), so that its content does not depend on the store. The record SHALL be written
+  [apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する](apply-origin-mismatch-warning.md)), so that its content does not depend on the store. The record SHALL be written
   atomically (temporary file + rename) immediately after all filesystem operations have
   succeeded and before the generation commit; a failure to write it SHALL fail the apply,
   and the undo journal SHALL roll the filesystem back. The record file SHALL be written with
@@ -46,14 +46,14 @@ specification: |
   SHALL win and one warning line SHALL be written; when neither exists the baseline SHALL
   be empty and one warning line stating that there is no last-applied record SHALL be
   written (warnings go to stderr under the output discipline of
-  REQ-8ef34101-8150-4124-92d5-94fabe6b5d90). The generation skip SHALL be taken only when
+  [成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](silent-on-success.md)). The generation skip SHALL be taken only when
   the new link-farm equals the current generation of the profile and, when a record exists,
   also its `linkFarm`; it SHALL NOT be taken when no profile exists, even if a record does;
   when the record and the profile disagree, the full apply path SHALL run with the record as
   baseline, so that a re-run after a failed commit still commits and entries placed by the
   uncommitted attempt are removed. The rollback target (N-1)
   SHALL still be read from the generation link. The `--json` contract (apart from the
-  origin mismatch warning of REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282), the flock key
+  origin mismatch warning of [apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する](apply-origin-mismatch-warning.md)), the flock key
   (profileDir) and the prune targets SHALL NOT change.
 specification_ja: |
   engine は配置が成功するたびに last-applied 記録を、home / project / fixed の config では
@@ -64,7 +64,7 @@ specification_ja: |
   （配置した link-farm の store path）・`appliedAt`（RFC 3339）・`manifest`（配置した
   `manifest.json` をそのまま埋め込む）と、分かっていれば `origin` を含まなければならず、内容が
   store に依存しないようにする。`origin` は直近に記録を書いた apply の出所で、規則は
-  REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282 が定める。記録は全 FS 操作の成功直後・世代 commit の前に、temp + rename で atomic に
+  [apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する](apply-origin-mismatch-warning.md) が定める。記録は全 FS 操作の成功直後・世代 commit の前に、temp + rename で atomic に
   書かなければならず、書けなければ apply は失敗し undo journal が FS を巻き戻さなければ
   ならない。記録ファイルは全ユーザーが読める mode 0644 で書かなければならない（`apply --dryrun`
   などの読み取り専用の操作に書き手の権限を要さないため）。generation skip の処理でも apply と同じ失敗規則で更新しなければならない。rollback
@@ -85,14 +85,14 @@ specification_ja: |
   対象の比較の基準と、rollback で離れる基準世代は、記録があれば記録から、無ければ nix profile の
   current から取らなければならない。両方あって link-farm が食い違えば記録を採り warning を
   1 行出さなければならない。どちらも無ければそれらは空とし、last-applied 記録が無い旨を
-  warning 1 行として出さなければならない（warning は REQ-8ef34101-8150-4124-92d5-94fabe6b5d90
+  warning 1 行として出さなければならない（warning は [成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](silent-on-success.md)
   の出力規律に従い stderr へ出る）。generation skip は、新 link-farm が profile の current 世代に
   一致し、記録があればその `linkFarm` にも一致するときだけ行わなければならない。profile が
   無ければ（記録だけがあっても）skip してはならない。記録と profile が食い違うときは記録を比較の基準に通常の apply の処理を
   走らせなければならない（commit 失敗後の再実行が commit を飛ばさず、未コミットの試行が置いた
   entry が撤去されるため）。rollback の target（N-1）は引き続き世代リンクから読まなければ
   ならない。`--json` の
-  契約（REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282 の出所の食い違い警告を除く）・flock の鍵（profileDir）・prune の対象は変えてはならない。
+  契約（[apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する](apply-origin-mismatch-warning.md) の出所の食い違い警告を除く）・flock の鍵（profileDir）・prune の対象は変えてはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:55:00+09:00"

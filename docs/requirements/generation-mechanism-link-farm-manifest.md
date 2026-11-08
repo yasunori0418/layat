@@ -10,8 +10,8 @@ derives_from:
 specification: |
   The manifest of what has been placed SHALL be embedded inside the store, as part of the
   link farm derivation produced by `lib.mkManifest` (what that derivation contains is
-  stated by REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281 and is NOT restated here); the last-applied record
-  (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) SHALL be the only mutable JSON kept outside
+  stated by [mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](mkmanifest-return-value.md) and is NOT restated here); the last-applied record
+  ([apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)) SHALL be the only mutable JSON kept outside
   the store, and `manifest.json` SHALL be immutable.
   At run time the engine SHALL, in this order: acquire a flock keyed on the resolved
   `profileDir`; read the baseline manifest (the last-applied record when one exists,
@@ -32,9 +32,9 @@ specification: |
   tracking. One profile SHALL correspond to one config, each config being atomic.
 specification_ja: |
   「配置したもの」のマニフェストは、純粋関数 `lib.mkManifest` が生成する link farm derivation の
-  一部として store 内に埋め込まなければならない（当該 derivation が何を含むかは REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281 が
+  一部として store 内に埋め込まなければならない（当該 derivation が何を含むかは [mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](mkmanifest-return-value.md) が
   規定し、ここでは繰り返さない）。store 外に持つ可変 JSON は last-applied 記録
-  （REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）だけでなければならず、`manifest.json` は
+  （[apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)）だけでなければならず、`manifest.json` は
   不変でなければならない。
   engine は実行時に、解決後 `profileDir` 単位の flock を取得し、比較の基準の manifest
   （last-applied 記録があれば記録、無ければ前世代の store マニフェスト）と

@@ -9,7 +9,7 @@ specification: |
   Every generation of the profile SHALL be a GC root. The generation operations that
   layat performs — the commit, switching to a generation (rollback included) and listing —
   SHALL go through the generation backend contract
-  (REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b); the default backend nixprofile SHALL
+  ([engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)); the default backend nixprofile SHALL
   implement the commit and the switch with the `nix-env --profile <profileDir>/profile`
   family (`--set`, `--switch-generation`) and the listing by scanning the generation links
   read-only. Thinning out old generations SHALL be
@@ -21,7 +21,7 @@ specification: |
   made by `nix-env --set` has a link farm there, containing layat's `manifest.json`.
 specification_ja: |
   profile の各世代は GC root でなければならない。layat が行う世代操作（コミット・世代の切替
-  （rollback を含む）・一覧）は世代バックエンドの契約（REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）
+  （rollback を含む）・一覧）は世代バックエンドの契約（[engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)）
   越しに行わなければならず、既定バックエンド nixprofile はコミットと切替を
   `nix-env --profile <profileDir>/profile` 系（`--set` / `--switch-generation`）で、一覧を
   世代リンクの読み取り専用の走査で実装しなければならない。旧世代の間引きは
