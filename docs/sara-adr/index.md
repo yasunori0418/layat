@@ -33,7 +33,7 @@
 * [sara 品質管理機構の決定は sara_adr 型に分ける](./sara-adr-type-for-doc-process-decisions.md) - `docs/adr/` には、layat 本体の設計判断と、sara による品質管理機構（`docs/model.yaml`・グラフの検証・起票ラッパー・item の運用規約）の設計判断が混在していた。後者は layat に固有ではなく、#500 で別のリポジトリへ切り出す予定がある。 (stable)
 * [sara check を required status check にしない](./sara-check-not-required.md) - [sara check を strict モードで回す](sara-check-strict-mode.md) と決めたことで、CI の `sara` ジョブは張り忘れで失敗するようになった。このジョブの失敗でマージを止めるかどうかを決める必要があった。 (stable)
 * [sara check を strict モードで回す](./sara-check-strict-mode.md) - `sara check` は接続漏れを warning に留める設定で導入された。移行の途中では、まだ親を持たない item が正常に存在し、接続漏れを error にすると移行そのものが止まるためである。 (stable)
-* [sara-id を廃止し sara init を包む起票ラッパーで slug のファイル名を適用する](./sara-new-wrapper-applies-slug-filename.md) - 採番を `sara init` に任せ、薄い起票ラッパー `sara-new` が `<slug>.md` のファイル名規約だけを適用する。 (stable)
+* [sara-id を廃止し sara init を包む起票ラッパーで slug のファイル名を適用する](./sara-new-wrapper-applies-slug-filename.md) - 採番を `sara init` に任せ、薄い起票ラッパー `sara-new` が `<slug>.md` のファイル名規約を適用する。 (stable)
 * [sara-id を廃止し sara init を包む起票ラッパーを使う](./sara-new-wrapper-replaces-sara-id.md) - `sara-id` は devShell 同梱の採番コマンドで、UUIDv4 の採番・8 文字の重複の確認・省略形の出力・型名からprefix への写像・ファイル名素材の組み立てを担っていた。item ファイルの作成は `sara init` が担当した。 (deprecated)
 * [省略形の禁止は起票の機械化と全面移行で担保する](./short-form-ban-enforced-by-tooling.md) - 8 文字の省略形を使わないという規則は [ID はフル UUID に統一し 8 文字省略形を使わない](full-uuid-ids-no-short-form.md) が決めた。本 ADR は、その禁止をどう担保するかだけを決める。担保の方法は、禁止の規則を変えずに単独で覆せる。後から CI の検出を入れるなら、本 ADR だけを廃止すればよい。そのため規則とは別の ADR にする。 (stable)
 * [沈黙性を risk のスコア軸にせず本文に書く](./silence-not-a-score-axis.md) - [risk の impact を検出後の回復可能性で採点する](risk-impact-as-recoverability.md) と決め、`impact` から沈黙の不整合を外した。気づけるかどうかは脅威の性質として重要な情報で、捨てるには惜しい。これをどこに残すかを決める必要があった。 (stable)
