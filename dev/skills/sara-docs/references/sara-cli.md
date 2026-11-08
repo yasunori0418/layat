@@ -60,7 +60,7 @@ sara query <フル ID> -u --depth 1
 sara query <フル ID> -d --format json
 ```
 
-**`sara query` はフル ID しか受け付けない**が、散文もファイル名も relation リストも同じ
+**`sara query` はフル ID しか受け付けない**が、散文も relation リストも同じ
 フル ID を書くので、目に付いた ID をそのままコピーして渡せる（省略形からの復元は要らない）。
 同じ文字列で grep すれば、宣言側（frontmatter の `id:`）と参照側（relation リスト・散文）の
 両方に当たる:

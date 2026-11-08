@@ -8,8 +8,8 @@ ADR の粒度・ステータス・`supersedes` と `deprecated`・`justifies` �
 
 | 型 | prefix | ID | ファイル | 置き場所 |
 |---|---|---|---|---|
-| `adr` | `ADR` | `ADR-<フル UUIDv4>` | `<YYYYMMDD>-<フル UUIDv4>-<slug>.md` | `docs/adr/` |
-| `sara_adr` | `SDR` | `SDR-<フル UUIDv4>` | `<YYYYMMDD>-<フル UUIDv4>-<slug>.md` | `docs/sara-adr/` |
+| `adr` | `ADR` | `ADR-<フル UUIDv4>` | `<slug>.md` | `docs/adr/` |
+| `sara_adr` | `SDR` | `SDR-<フル UUIDv4>` | `<slug>.md` | `docs/sara-adr/` |
 
 - `adr` は layat の設計判断を記録する
 - `sara_adr` は sara による品質管理機構（`docs/model.yaml`・グラフの検証・起票ラッパー・item の運用規約）

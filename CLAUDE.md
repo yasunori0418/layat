@@ -93,12 +93,12 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
 | 用途 | 形式 | 例 |
 |---|---|---|
 | 正式 ID（frontmatter `id:`・relation リスト）| `<PREFIX>-<フル UUIDv4>` | `REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4` |
-| ファイル名 | `<YYYYMMDD>-<フル UUIDv4>-<slug>.md` | `20260802-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4-mkmanifest-pure-function.md` |
+| ファイル名 | `<slug>.md` | `mkmanifest-pure-function.md` |
 | 散文中の参照 | `<PREFIX>-<フル UUIDv4>` | `REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4` |
 
-**どの面でもフル ID をそのまま書く**（→ SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb）。8 文字省略形は使わない。ファイル名・
-散文・relation リストの表記が一致するので、ID をそのまま grep しても `sara query` へ渡しても
-同じものに当たる（省略形と正式 ID を突き合わせる手順が要らない）。
+**ID を書くときはフル ID をそのまま書く**（→ SDR-6c6c0681-4d5e-429e-8ee9-acf8dd94ad54）。8 文字省略形は使わない。
+散文・relation リストの表記が一致するので、ID をそのまま grep すれば frontmatter の `id:` と参照元に当たり、
+`sara query` へ渡しても同じものに当たる（省略形から正式 ID を探す手順が要らない）。
 
 - 起票は ADR を含め devShell 同梱の `sara-new` コマンドで行う。採番（`sara init` が引く
   UUIDv4）とファイル名規約の適用を一手で済ませ、`id:` と `file:` の 2 行を返す。連番を手で
@@ -140,7 +140,7 @@ sara report coverage                       # カバー率
 sara report matrix                         # トレーサビリティマトリクス
 ```
 
-**`sara query` はフル ID しか受け付けない**が、散文もファイル名もフル ID で書くので、
+**`sara query` はフル ID しか受け付けない**が、散文も relation リストもフル ID で書くので、
 目に付いた ID をそのままコピーして渡せる（変換は要らない）。同じ文字列で参照元も辿れる。
 
 ```bash
