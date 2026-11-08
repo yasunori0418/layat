@@ -81,7 +81,7 @@ jobs:
 
   sara:
     # Knowledge-graph validation of docs/ plus the test-doc-map / glossary-index / risk-matrix /
-    # sara-gap / sara-new / adr-supersede / okf-frontmatter / term-avoid contract tests. Not a
+    # sara-gap / sara-new / adr-supersede / okf-frontmatter / okf-index / term-avoid contract tests. Not a
     # required status check. Uses a job-local path filter instead of the `changes` job.
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
@@ -168,6 +168,12 @@ jobs:
       - name: Run okf-frontmatter contract test
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/okf-frontmatter.sh
+
+      # The committed OKF index.md files under docs/ must match what
+      # dev/scripts/okf-index.sh generates from the sara graph.
+      - name: Run okf-index contract test
+        if: steps.filter.outputs.relevant != 'false'
+        run: nix develop '.?dir=dev#sara' -c dev/tests/okf-index.sh
 
       # Spellings listed under `avoid` in ubiquitous_term items must not appear in
       # the prose of docs/, README.md, README.ja.md or CLAUDE.md (textlint + prh).

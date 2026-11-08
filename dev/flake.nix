@@ -327,6 +327,37 @@
                 touch "$out"
               '';
 
+          # OKF の index.md と生成結果の差分ゼロの契約テスト（dev/tests/okf-index.sh）。CI はこの派生ではなく devShells.sara で走らせる。
+          # ルート flake の store path を書き込み可能な場所へ複製し、dev/ は dev flake 側から重ねて走らせる。
+          checks.okf-index =
+            pkgs.runCommandLocal "okf-index"
+              {
+                nativeBuildInputs = [
+                  inputs'.nur.packages.sara
+                  pkgs.jq
+                  pkgs.git
+                  pkgs.coreutils
+                  pkgs.gnused
+                  pkgs.gnugrep
+                  pkgs.gawk
+                  pkgs.diffutils
+                  pkgs.findutils
+                ];
+              }
+              ''
+                cp -r ${inputs.root} repo
+                chmod -R u+w repo
+                rm -rf repo/dev/scripts repo/dev/tests
+                mkdir -p repo/dev
+                cp -r ${./scripts} repo/dev/scripts
+                cp -r ${./tests} repo/dev/tests
+                chmod -R u+w repo/dev
+                cd repo
+                # テスト側の走査基点はカレントへフォールバックする（git 管理外のため）。
+                bash dev/tests/okf-index.sh
+                touch "$out"
+              '';
+
           # avoid の綴りの検出の契約テスト（dev/tests/term-avoid.sh）。CI はこの派生ではなく devShells.sara で走らせる。
           # ルート flake の store path を書き込み可能な場所へ複製し、dev/ は dev flake 側から重ねて走らせる。
           checks.term-avoid =

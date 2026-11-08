@@ -124,6 +124,10 @@ item は OKF v0.2 と互換のキー（`description` / `status` / `generated` / 
 起票では `sara-new` が `--description` を求め、`generated` を環境変数 `SARA_NEW_GENERATED_BY` の
 actor で埋める。本文を変えたら `generated` の `by` / `at` を更新する。
 
+`docs/index.md` と型ごとのディレクトリ・`docs/test/` 配下の `index.md` は `dev/scripts/okf-index.sh` の生成物で、
+手で編集しない。item を足したり `name`・`description`・本文の冒頭を変えたりしたら、同じスクリプトで
+再生成してコミットする（食い違いは契約テスト `dev/tests/okf-index.sh` が検出する）。
+
 ### item を辿る（`sara query`）
 
 `sara` は devShell 経由で使う（`nix develop ./dev --command sara ...`）。
