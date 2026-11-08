@@ -35,7 +35,7 @@ references:
   - "ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-05T00:35:05+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-8b7cd75f-5521-4805-b7bc-105b5c56ee38: 移行する祖先の配下の entry は lstat を経ず不在として配置する
 
@@ -46,8 +46,7 @@ generated:
 
 ## 背景
 
-祖先の symlink が、自己記録の古くなったものなら、配置の前に除去して配下へ子を置く
-（[祖先 symlink は自己記録の古くなったものだけを移行する](ancestor-symlink-recorded-stale-only.md)）。plan を計算する時点では祖先の symlink がまだ
+[祖先 symlink は自己記録の古くなったものだけを移行する](ancestor-symlink-recorded-stale-only.md)。移行では配置の前に祖先の symlink を除去し、配下へ子を置く。plan を計算する時点では祖先の symlink がまだ
 FS に残っているので、この時点で配下の子をどう分類するかを決める必要があった。
 
 ## 決定

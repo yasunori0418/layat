@@ -12,7 +12,7 @@ references:
   - "ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-07T02:02:56+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509: root マーカーに subdir の適用形を持たせる
 
@@ -27,8 +27,7 @@ generated:
 したい場合がある。これまでは全 entry の `target` に共通の接頭辞を書くしかなく、宣言が重複していた。
 `--root` は実行時に一律に上書きするもので、絶対パス文字列は評価時に固定される root なので、
 どちらも「マーカーを実行時に解決し、その下へ宣言的にずらす」ことは表せない。grilling で、この
-要望は root より下の方向へずらす意図だと確かめた。root は 3 つのマーカー
-（[root は 3 つの marker で表す](three-root-markers.md)）か絶対パス文字列で指定する。
+要望は root より下の方向へずらす意図だと確かめた。[root は 3 つの marker で表す](three-root-markers.md)。絶対パス文字列でも指定できる。
 
 ## 決定
 

@@ -15,7 +15,7 @@ references:
   - "ADR-db293e0c-4789-45b7-93a9-adedc021344f"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T15:54:50+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-7f064851-02e3-40bf-aca3-9de2b0b4f6a7: config の選別を CLI だけに任せる
 
@@ -26,7 +26,7 @@ generated:
 
 ## 背景
 
-`mkApplyCommand`（[lib.mkApplyCommand で事前展開した apply コマンドを組む](lib-mkapplycommand.md)）は root を指定して呼ばれる。指定した
+[lib.mkApplyCommand で事前展開した apply コマンドを組む](lib-mkapplycommand.md)。`mkApplyCommand` は root を指定して呼ばれる。指定した
 root の config だけを適用する方法は 2 つある。Nix 側で各 farm の `passthru.rootKind` を見て
 `--manifest` に渡す config を絞る方法と、全 config を渡して CLI の root フィルタ
 （[apply --all に root モードのフィルタを持たせる](apply-all-root-mode-filter.md)）に絞らせる方法である。

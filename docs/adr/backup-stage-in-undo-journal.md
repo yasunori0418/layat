@@ -19,7 +19,7 @@ references:
   - "ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-05T00:35:05+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-3f97fc1d-188d-4013-bff0-16b67250f68e: 退避を配置前除去の後の段として undo ジャーナルに載せる
 
@@ -30,9 +30,8 @@ generated:
 
 ## 背景
 
-`--backup` は配置を塞ぐ記録外の実体を rename で退避し
-（[--backup は配置を塞ぐ記録外の実体だけを退避する](backup-scope-unrecorded-entities.md)）、apply は途中失敗した FS 変更を undo ジャーナルで
-巻き戻す（[途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md)）。退避を apply のどの段で行い、途中失敗
+[--backup は配置を塞ぐ記録外の実体だけを退避する](backup-scope-unrecorded-entities.md)。退避は rename で行う。
+[途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md)。退避を apply のどの段で行い、途中失敗
 したときにどう扱うかを決める必要があった。
 
 ## 決定

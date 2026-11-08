@@ -21,7 +21,7 @@ references:
   - "ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-05T00:29:04+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-f3d06307-ae5b-4f17-94ad-db92e80e3415: rollback はポインタ移動の前に戻り先の manifest で記録を書き直す
 
@@ -32,8 +32,7 @@ generated:
 
 ## 背景
 
-rollback は FS を N-1 に収束させてから、最後に profile
-のポインタを動かす（[rollback は FS を収束させてからポインタを動かす](rollback-baseline-and-pointer-last.md)）。記録は世代ではなく、
+[rollback は FS を収束させてからポインタを動かす](rollback-baseline-and-pointer-last.md)。FS の収束先は N-1 で、動かすのは profile のポインタである。記録は世代ではなく、
 「最後に置いたもの」である。世代のポインタを戻しても、記録は巻き戻らない。rollback で FS が N-1
 になったら、記録も N-1 の内容にする必要がある。
 

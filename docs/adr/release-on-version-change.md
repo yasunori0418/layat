@@ -11,7 +11,7 @@ references:
   - "ADR-0dd4036d-594b-4f36-a509-e5498b231cf7"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T17:26:22+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-2fcf26b4-bce6-4ed6-a374-3afe560ead21: VERSION の変更をきっかけに release を自動で作る
 
@@ -22,8 +22,8 @@ generated:
 
 ## 背景
 
-バージョンは `VERSION` ファイルを一次情報にし（[VERSION ファイルをバージョンの一次情報にする](version-file-single-source.md)）、
-それを上げる変更は PR で main へ入る（[bump-version.yml でバージョンを上げるコミットを push する](bump-version-workflow.md)）。タグと GitHub
+[VERSION ファイルをバージョンの一次情報にする](version-file-single-source.md)。
+バージョンを上げる変更は PR で main へ入る（[bump-version.yml でバージョンを上げるコミットを push する](bump-version-workflow.md)）。タグと GitHub
 Release をいつ、どうやって作るかを決める必要がある。
 
 ## 決定

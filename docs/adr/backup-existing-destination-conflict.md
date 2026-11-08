@@ -18,7 +18,7 @@ references:
   - "ADR-65e41903-5eee-4a00-a154-be8c830cdca9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T17:28:05+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-37191429-2099-4217-a552-47b16a7e504c: 退避先が既にあれば conflict で止める
 
@@ -29,7 +29,7 @@ generated:
 
 ## 背景
 
-退避先は `<target>.<suffix>` に固定している（[退避先を target に suffix を付けた名前に固定する](backup-destination-suffix.md)）。
+[退避先を target に suffix を付けた名前に固定する](backup-destination-suffix.md)。退避先は `<target>.<suffix>` である。
 前回の `--backup` で退避したものが残っていれば、同じ名前がもう使われている。このときの
 扱いを決める必要があった。
 

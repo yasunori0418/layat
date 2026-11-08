@@ -37,7 +37,7 @@ references:
   - "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:00:56+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56: apply --all は失敗しても残りを続け、最後に集約して非 0 で終える
 
@@ -64,7 +64,7 @@ generated:
 他の config の状態を壊すことはないので、残りを止める理由がない。非 0 で終えれば、集約の結果を
 CI の合否判定にも使える。
 
-config は並列に適用する（[apply --all の配置を config 単位で並列に行う](apply-all-parallel-placement-per-config.md)）が、継続と集約の振る舞いは並列でも同じである。
+[apply --all の配置を config 単位で並列に行う](apply-all-parallel-placement-per-config.md)。継続と集約の振る舞いは並列でも同じである。
 
 ## 棄却した代替案
 

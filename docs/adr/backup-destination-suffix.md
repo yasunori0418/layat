@@ -17,7 +17,7 @@ references:
   - "ADR-33d8c466-6b38-46b6-8696-ad7521c72786"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T15:57:37+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-65e41903-5eee-4a00-a154-be8c830cdca9: 退避先を target に suffix を付けた名前に固定する
 
@@ -28,7 +28,7 @@ generated:
 
 ## 背景
 
-`apply --backup`（[--backup を = 区切りで suffix を取る省略可能な値のフラグにする](backup-optional-value-flag.md)）は、配置を塞ぐ記録外の実体を
+[--backup を = 区切りで suffix を取る省略可能な値のフラグにする](backup-optional-value-flag.md)。`apply --backup` は、配置を塞ぐ記録外の実体を
 rename で退避してから配置する。退避先の名前をどう決めるかを決める必要があった。
 
 ## 決定

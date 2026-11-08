@@ -10,7 +10,7 @@ references:
   - "ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:24:30+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-6c477b0f-cd25-417d-91a0-172dd0ed084f: キャッシュへの投入を main への push で起動する
 
@@ -21,8 +21,7 @@ generated:
 
 ## 背景
 
-layat のバイナリは、3 system の matrix でビルドして cachix のキャッシュ `yasunori0418` へ投入する
-（[キャッシュは 3 system の matrix ビルドで投入する](ci-cache-via-matrix-build.md)）。layat は flake input として消費される CLI で、
+layat のバイナリの投入先は cachix のキャッシュ `yasunori0418` である。[キャッシュは 3 system の matrix ビルドで投入する](ci-cache-via-matrix-build.md)。layat は flake input として消費される CLI で、
 利用者の CI や手元は main の最新を参照することが多い。投入をどのイベントで起動するかを決める
 必要がある。
 

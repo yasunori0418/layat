@@ -32,7 +32,7 @@ references:
   - "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:24:30+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-5fc58c8f-dc0e-4c1d-8c1e-17d7ac7f0385: 空の entries を正当な全クリアとして許可する
 
@@ -56,7 +56,7 @@ generated:
 
 ## 根拠
 
-古くなった配置の除去は保守的で、layat が置いた symlink だけを消し、実ファイルには触れない（[古くなった配置の除去は記録どおりの symlink だけに限る](conservative-removal-invariant.md)）。
+[古くなった配置の除去は記録どおりの symlink だけに限る](conservative-removal-invariant.md)。layat が置いた symlink だけを消し、実ファイルには触れない。
 全て撤去しても利用者のデータは失われないので、空を特別に扱う理由が無い。
 
 entry を 1 つ以上必須にすると、config の配置を消すという正当な手段が無くなる。

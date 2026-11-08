@@ -3,24 +3,24 @@ id: "ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131"
 type: adr
 name: "src の型で素の文字列を拒否する"
 status: stable
-origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の srcType の項を書き直した"
+origin: "manifest の型チェックを NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の srcType の項を書き直した"
 justifies:
   - "REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74"
   - "REQ-99ca5381-6c53-426c-b145-7b4297c53868"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:00:56+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131: src の型で素の文字列を拒否する
 
 - ステータス: stable
 - 日付: 2026-11-01
 - 関連: `docs/spec.md`
-- 起点: manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の srcType の項を書き直した
+- 起点: manifest の型チェックを NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の srcType の項を書き直した
 
 ## 背景
 
-out-of-store の配置は、明示の関数が返す marker を渡したときだけ選べる（[store link を既定にし、out-of-store は明示関数でのみ選ばせる](store-link-default-out-of-store-opt-in.md)）。`src` に文字列を
+[store link を既定にし、out-of-store は明示関数でのみ選ばせる](store-link-default-out-of-store-opt-in.md)。選ぶときは明示の関数が返す marker を渡す。`src` に文字列を
 直接渡すと暗黙に out-of-store になる形は提供しない。この取り決めを、文書だけでなく型でも守らせるか
 を決める必要があった。
 

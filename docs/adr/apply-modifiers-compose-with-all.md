@@ -16,7 +16,7 @@ references:
   - "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T22:55:03+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-b08479ba-0eae-4668-a4a2-910cd40bd316: apply の修飾フラグを --all と合成できるようにする
 
@@ -31,8 +31,7 @@ generated:
 `--all` で選んだ複数の config を一度に扱えるが、`--all` と `--recopy` を同時に指定したときの扱いが
 決まっていなかった。
 
-layat は、独立した操作をサブコマンドにし、操作の修飾をフラグにしている
-（[独立した操作はサブコマンドにし、操作の修飾はフラグにする](subcommand-set.md)）。
+layat は [独立した操作はサブコマンドにし、操作の修飾はフラグにする](subcommand-set.md)。
 
 ## 決定
 

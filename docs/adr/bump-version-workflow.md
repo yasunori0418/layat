@@ -11,7 +11,7 @@ references:
   - "ADR-8035e7c6-7dc5-4aa8-9a37-403998fa7f9b"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T17:26:22+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-0dd4036d-594b-4f36-a509-e5498b231cf7: bump-version.yml でバージョンを上げるコミットを push する
 
@@ -22,8 +22,8 @@ generated:
 
 ## 背景
 
-バージョンの一次情報は `VERSION` ファイルにある（[VERSION ファイルをバージョンの一次情報にする](version-file-single-source.md)）。
-main への直接の push は ruleset で禁じている（[main への直接 push を ruleset で禁じる](no-direct-push-to-main.md)）ので、
+[VERSION ファイルをバージョンの一次情報にする](version-file-single-source.md)。
+[main への直接 push を ruleset で禁じる](no-direct-push-to-main.md)。そのため、
 `VERSION` の書き換えも PR を通して main へ入れる必要がある。
 
 ## 決定

@@ -11,7 +11,7 @@ references:
   - "ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:06+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-cb010758-7887-470a-ba61-19b2e99f0053: 変更検出で nix を回さない PR の必須の確認を skip で通す
 
@@ -22,9 +22,8 @@ generated:
 
 ## 背景
 
-docs だけを変える PR で、flake check の 3 環境の matrix と E2E を回すのは無駄になる。一方、main
-へのマージには flake check と `e2e` の check を必須にしている
-（[main へのマージにテストの成功を必須にする](tests-required-for-merge.md)）。required status check は、生成されない check を
+docs だけを変える PR で、flake check の 3 環境の matrix と E2E を回すのは無駄になる。一方、
+[main へのマージにテストの成功を必須にする](tests-required-for-merge.md)。必須にしている check は flake check と `e2e` である。required status check は、生成されない check を
 `Expected` のまま扱い、マージをブロックし続ける。ジョブが生成されたうえで `if:` によって skip
 された check は、成功として扱われる。
 

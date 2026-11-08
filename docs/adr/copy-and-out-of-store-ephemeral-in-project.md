@@ -11,7 +11,7 @@ references:
   - "ADR-4dca6ef4-2791-48d5-aa82-7037630968a6"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-01T23:17:11+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c: project mode では copy と out-of-store も ephemeral として扱う
 
@@ -22,7 +22,7 @@ generated:
 
 ## 背景
 
-project mode の配置物は ephemeral で、リポジトリにコミットしない（[ephemeral 配置は git に干渉しない](ephemeral-no-git-interference.md)）。
+project mode の配置物は ephemeral である。[ephemeral 配置は git に干渉しない](ephemeral-no-git-interference.md)。リポジトリにはコミットしない。
 一方で copy は利用者が持ち主となって編集する実ファイルで（[copy は世代の外に place-once で置く](copy-outside-generations-place-once.md)）、out-of-store は store の外を指す。
 この 2 つの method も ephemeral として扱うのか、コミットしてよいのかを決める必要があった。
 

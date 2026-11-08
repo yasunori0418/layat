@@ -15,7 +15,7 @@ references:
   - "ADR-ef9e4099-0cf4-409a-9e73-518866aea676"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T22:55:03+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-aec6bd1d-f776-4d7c-9337-1ed78fee6180: CLI の依存に go-toml/v2 を許可する
 
@@ -26,7 +26,7 @@ generated:
 
 ## 背景
 
-設定ファイルは strict な TOML で書く（→ [設定ファイルを strict な TOML で書く](config-file-strict-toml.md)）。Go の標準ライブラリには
+[設定ファイルを strict な TOML で書く](config-file-strict-toml.md)。Go の標準ライブラリには
 TOML のパーサが無い。layat の Go の依存は層ごとの許可制で、engine は標準ライブラリだけに依存する。
 
 ## 決定
