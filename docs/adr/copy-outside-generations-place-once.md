@@ -12,7 +12,7 @@ references:
   - "ADR-acc31876-df36-485e-b356-92ae60e26db7"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:26:59+09:00"
+  at: "2026-11-09T08:39:38+09:00"
 ---
 # ADR-c4ad9987-850e-4834-bbea-d8de3b073548: copy は世代の外に place-once で置く
 
@@ -34,7 +34,7 @@ copy は世代管理の対象外とし、target が無いときだけ実体化�
 孤児として警告するにとどめる。
 
 store の更新を copy target へ反映することと copy target を消すことは、利用者が明示したときに限る。
-[apply --recopy で全 copy target を src から無条件に上書きする](apply-recopy-overwrites-copies.md)。[reset で profile を触らずに配置物を撤去する](reset-fs-only-teardown.md)。規範の細目は [copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](../requirements/copy-place-once.md)・
+明示の手段は [apply --recopy で全 copy target を src から無条件に上書きする](apply-recopy-overwrites-copies.md) と [reset で profile を触らずに配置物を撤去する](reset-fs-only-teardown.md) である。規範の細目は [copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](../requirements/copy-place-once.md)・
 [method は配置方法を選び symlink は世代管理下・copy は世代管理外になる](../requirements/method-src-matrix.md)・[古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](../requirements/stale-removal-invariants.md) に置く。
 
 ## 根拠

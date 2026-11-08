@@ -3,20 +3,20 @@ id: "ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131"
 type: adr
 name: "src の型で素の文字列を拒否する"
 status: stable
-origin: "manifest の型チェックを NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の srcType の項を書き直した"
+origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の srcType の項を書き直した"
 justifies:
   - "REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74"
   - "REQ-99ca5381-6c53-426c-b145-7b4297c53868"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:26:59+09:00"
+  at: "2026-11-09T08:39:38+09:00"
 ---
 # ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131: src の型で素の文字列を拒否する
 
 - ステータス: stable
 - 日付: 2026-11-01
 - 関連: `docs/spec.md`
-- 起点: manifest の型チェックを NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の srcType の項を書き直した
+- 起点: manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の srcType の項を書き直した
 
 ## 背景
 

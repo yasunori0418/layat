@@ -15,7 +15,7 @@ references:
   - "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:26:59+09:00"
+  at: "2026-11-09T08:39:38+09:00"
 ---
 # ADR-af37a636-a798-4c03-8fa4-e73ed6375a92: apply --all の集約は config 名の辞書順に並べる
 
@@ -46,7 +46,7 @@ attrset で、Nix の attrset は定義順を保持しない。
 並べ直せば、出力は決定的なまま保てる。1 回の `apply --all` に載る config どうしの target 衝突の
 うち、eval で検出できるものは適用前に止まる（[apply --all は選択した config 間の target 重複を build 前に止める](apply-all-preflight-target-conflict.md)）。検出できない衝突は実行時の後勝ち
 （[cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](cross-config-last-wins-with-foreign-warning.md)）になり、どちらが残るかは適用順で変わる。
-[配置の振動はユーザー責任とし、文書で注意するに留める](oscillation-is-user-responsibility.md)。
+同じ target を複数の config で狙ったときは、[配置の振動はユーザー責任とし、文書で注意するに留める](oscillation-is-user-responsibility.md)。
 
 ## 棄却した代替案
 

@@ -22,7 +22,7 @@ references:
   - "ADR-74423bb8-1453-4689-a25e-30bf46536afc"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:26:59+09:00"
+  at: "2026-11-09T08:39:38+09:00"
 ---
 # ADR-4f08aa18-6a38-49fd-a784-450677d80e1a: 配置前除去の除去も undo の対象にする
 
@@ -40,8 +40,8 @@ symlink）は、配置の前に除去する。除去は symlink の unlink と�
 
 ## 決定
 
-[途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md)。配置前除去の unlink と rmdir もこのジャーナルに
-記録し、apply と rollback が途中失敗したら他の FS 変更と同じく巻き戻す。記録は配置前除去を
+配置前除去の unlink と rmdir も undo ジャーナルに
+記録し、apply と rollback が途中失敗したら他の FS 変更と同じく巻き戻す（[途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md)）。記録は配置前除去を
 実行した順のままにする。
 
 逆操作（記録 dest での symlink の再作成、空ディレクトリの再作成）は
