@@ -2,6 +2,7 @@
 id: "REQ-67095391-eab2-45d2-b75b-b428d481bcc2"
 type: requirement
 name: "flake は pure eval で flake.lock が固定し legacy は impure を許容しユーザー責任とする"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -18,6 +19,9 @@ specification_ja: |
   `shell.nix` / `default.nix` entrypoint は impure eval（NIX_PATH / channels 依存）を
   許容しなければならず、その再現性はユーザー責任としなければならない。layat lib を含め
   nixpkgs を npins / fetchTarball / flake-compat 等で固定することを推奨すべきである。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:04:55+09:00"
 ---
 # REQ-67095391-eab2-45d2-b75b-b428d481bcc2: flake は pure eval で flake.lock が固定し legacy は impure を許容しユーザー責任とする
 

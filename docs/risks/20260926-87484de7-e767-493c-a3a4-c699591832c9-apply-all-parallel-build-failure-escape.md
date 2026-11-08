@@ -2,12 +2,16 @@
 id: "RISK-87484de7-e767-493c-a3a4-c699591832c9"
 type: risk
 name: "並列 build の失敗が集約から抜けるか並列度が制御されず nix daemon を圧迫する"
+status: stable
 likelihood: medium
 impact: high
 level: high
 threatens:
   - "REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d"
   - "REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-87484de7-e767-493c-a3a4-c699591832c9: 並列 build の失敗が集約から抜けるか並列度が制御されず nix daemon を圧迫する
 

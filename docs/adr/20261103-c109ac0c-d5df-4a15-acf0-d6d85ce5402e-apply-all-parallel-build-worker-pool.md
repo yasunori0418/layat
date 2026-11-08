@@ -12,6 +12,9 @@ references:
   - "ADR-75df92ae-0694-452b-8fb4-350994e31b25"
   - "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"
   - "ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e: apply --all の build を worker pool で並列に実行する
 

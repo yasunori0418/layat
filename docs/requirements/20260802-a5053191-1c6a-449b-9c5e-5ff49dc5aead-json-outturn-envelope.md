@@ -2,6 +2,7 @@
 id: "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
 type: requirement
 name: "--json は outturn 規約準拠のエンベロープを出す第 2 契約とする"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -32,6 +33,9 @@ specification_ja: |
   1・2 → `error` に連動させなければならない。`tool.version` は ldflags 埋め込みの
   `main.version` としなければならない。layat の JSON 出力は現在も将来の機能も outturn
   規約に準拠しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:23:46+09:00"
 ---
 # REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead: --json は outturn 規約準拠のエンベロープを出す第 2 契約とする
 

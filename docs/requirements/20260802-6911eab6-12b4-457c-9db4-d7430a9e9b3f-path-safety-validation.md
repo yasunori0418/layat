@@ -2,6 +2,7 @@
 id: "REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f"
 type: requirement
 name: "target / subpath のパス安全性を評価時に確認する"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -17,6 +18,9 @@ specification_ja: |
   うえで `..` によって root / src の外へ出るものを拒否しなければならない。`target` の
   静的な絶対 / `..` 判定は root の
   実体値（実行時解決）に依らず eval 時に可能でなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:54:20+09:00"
 ---
 # REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f: target / subpath のパス安全性を評価時に確認する
 

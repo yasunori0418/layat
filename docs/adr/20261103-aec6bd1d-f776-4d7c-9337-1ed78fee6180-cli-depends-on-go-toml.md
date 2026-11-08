@@ -11,6 +11,9 @@ justifies:
 references:
   - "ADR-e88f074e-95f4-4e04-97fc-eae2d0c695a3"
   - "ADR-ef9e4099-0cf4-409a-9e73-518866aea676"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-aec6bd1d-f776-4d7c-9337-1ed78fee6180: CLI の依存に go-toml/v2 を許可する
 

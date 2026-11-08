@@ -21,6 +21,9 @@ references:
   - "ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3"
   - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-494b6477-9d5b-4e29-879d-f7d16be5d466: 生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する
 

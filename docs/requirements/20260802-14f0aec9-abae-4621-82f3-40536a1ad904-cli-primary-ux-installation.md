@@ -2,6 +2,7 @@
 id: "REQ-14f0aec9-abae-4621-82f3-40536a1ad904"
 type: requirement
 name: "layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -29,6 +30,9 @@ specification_ja: |
   が同一 flake 入力から来て `schemaVersion` が一致するようにしなければならない。
   skew した `schemaVersion` に engine がどう反応するかは manifest スキーマ仕様の担当で、
   本 item では規定しない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-14f0aec9-abae-4621-82f3-40536a1ad904: layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする
 

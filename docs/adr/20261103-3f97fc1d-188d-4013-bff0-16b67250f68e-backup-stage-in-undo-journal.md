@@ -13,6 +13,9 @@ justifies:
 references:
   - "ADR-56325270-20bb-4959-8498-e3223c35e24b"
   - "ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:35:05+09:00"
 ---
 # ADR-3f97fc1d-188d-4013-bff0-16b67250f68e: 退避を配置前除去の後の段として undo ジャーナルに載せる
 

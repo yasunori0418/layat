@@ -2,6 +2,7 @@
 id: "RISK-238bc9da-353b-4699-94f2-ea871e305f45"
 type: risk
 name: "root 相対 src が誤った基準点に解決される、または target と重なって symlink ループになる"
+status: stable
 likelihood: medium
 impact: medium
 level: medium
@@ -9,6 +10,9 @@ threatens:
   - "REQ-a77181dd-a59c-40bb-855e-3430ad970eb6"
   - "DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296"
   - "REQ-81249072-56b8-42f5-807b-ea623c1efe99"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-238bc9da-353b-4699-94f2-ea871e305f45: root 相対 src が誤った基準点に解決される、または target と重なって symlink ループになる
 

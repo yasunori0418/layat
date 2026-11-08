@@ -2,6 +2,7 @@
 id: "REQ-a77181dd-a59c-40bb-855e-3430ad970eb6"
 type: requirement
 name: "mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る"
+status: stable
 derives_from:
   - "UC-01b896b4-04b9-40d0-bf9e-966eaf64c3d4"
 specification: |
@@ -32,6 +33,9 @@ specification_ja: |
   一方が他方の祖先である entry も、評価時に拒否しなければならない。`<root>/<src>/<subpath>` が存在
   しないとき、engine は配置の前に停止しなければならず、dangling symlink を作っては
   ならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-a77181dd-a59c-40bb-855e-3430ad970eb6: mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る
 

@@ -2,6 +2,7 @@
 id: "REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d"
 type: requirement
 name: "mkManifest の引数は必須の pkgs / entries / root と任意の identity とする"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -25,6 +26,9 @@ specification_ja: |
   なければならない。`root` 固有の規範（明示必須であること・
   型が `string | marker` であること）は REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4 と REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66 が規定しており、
   本 item では重ねて規定しない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-10-31T22:07:39+09:00"
 ---
 # REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d: mkManifest の引数は必須の pkgs / entries / root と任意の identity とする
 

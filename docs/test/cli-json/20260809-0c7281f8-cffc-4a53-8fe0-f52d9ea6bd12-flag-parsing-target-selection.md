@@ -2,9 +2,13 @@
 id: "TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12"
 type: test_condition
 name: "フラグの解釈と対象選択が仕様どおりで位置引数を飲み込まない"
+status: stable
 mitigates:
   - "RISK-c9197b73-483b-4d42-8541-49bee039f5ee"
   - "RISK-5f3c98b8-bd78-4bee-95af-b35e6ade35f9"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:34+09:00"
 ---
 # TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12: フラグの解釈と対象選択が仕様どおりで位置引数を飲み込まない
 

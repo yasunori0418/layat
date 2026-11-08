@@ -2,10 +2,14 @@
 id: "CASE-f5fce7b7-9780-4c8e-bf6b-f3e4b7b3bb3d"
 type: test_case
 name: "checks.hm-module — activation の配線を評価アサートで検証する flake check"
+status: stable
 target: "checks.hm-module"
 covers:
   - "TC-5a72b00e-2c03-4703-acdc-33cffb6fa994"
   - "TC-17fb5cfd-a691-475e-84e8-aa1853711b16"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:22+09:00"
 ---
 # CASE-f5fce7b7-9780-4c8e-bf6b-f3e4b7b3bb3d: checks.hm-module — activation の配線を評価アサートで検証する flake check
 

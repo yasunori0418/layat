@@ -10,6 +10,9 @@ origin: "実装前残セマンティクス確定の第7巡（2026-06-14）で確
 justifies:
   - "REQ-31dae599-f3a3-4bbe-b367-c955535265da"
   - "REQ-2a613337-7646-4ced-8807-e43bca18acf3"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:00:56+09:00"
 ---
 # ADR-acc31876-df36-485e-b356-92ae60e26db7: reset は非対話の実行で --yes を必須にする
 

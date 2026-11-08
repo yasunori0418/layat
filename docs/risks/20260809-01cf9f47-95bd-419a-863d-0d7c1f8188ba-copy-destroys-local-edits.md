@@ -2,6 +2,7 @@
 id: "RISK-01cf9f47-95bd-419a-863d-0d7c1f8188ba"
 type: risk
 name: "copy が place-once を破り、ユーザーのローカル編集を失わせる"
+status: stable
 threatens:
   - "REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9"
   - "REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065"
@@ -10,6 +11,9 @@ threatens:
 likelihood: medium
 impact: high
 level: high
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-01cf9f47-95bd-419a-863d-0d7c1f8188ba: copy が place-once を破り、ユーザーのローカル編集を失わせる
 

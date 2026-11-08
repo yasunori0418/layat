@@ -10,6 +10,9 @@ justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
 references:
   - "SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:32+09:00"
 ---
 # SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed: ADR も UUID で採番し、連番の旧 ADR は legacy_adr 型に凍結する
 

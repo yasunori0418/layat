@@ -11,6 +11,9 @@ references:
   - "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"
   - "ADR-9e328362-2e90-441a-8eca-40081ce71b1b"
   - "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5: 指定が無いときは成功時に何も出力しない
 

@@ -2,6 +2,7 @@
 id: "REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282"
 type: requirement
 name: "apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する"
+status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
@@ -55,6 +56,9 @@ specification_ja: |
   reset と rollback が記録を書き直すときは記録済みの origin を引き継がなければならない。
   記録済みの origin が無ければ（記録が無く profile から比較の基準（rollback では基準世代）を取った場合を含む）、
   `origin` を省いて `recordVersion` 2 で書かなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:55:00+09:00"
 ---
 # REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282: apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する
 

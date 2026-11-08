@@ -6,6 +6,9 @@ status: 採用
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の strict の項を書き直した"
 justifies:
   - "REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-12ad7852-e689-44d7-b9fe-0667effb3d13: entry の未知のキーを評価時に拒否する
 

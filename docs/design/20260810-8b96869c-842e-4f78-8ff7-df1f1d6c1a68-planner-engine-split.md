@@ -2,9 +2,13 @@
 id: "DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68"
 type: design
 name: "配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する"
+status: stable
 satisfies:
   - "REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303"
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68: 配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する
 

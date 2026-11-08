@@ -2,6 +2,7 @@
 id: "RISK-e8449214-7794-4d0d-b584-a3a152e2c1f9"
 type: risk
 name: "配置分類を誤り、利用者の実体を本人に知らせずに破損させる"
+status: stable
 threatens:
   - "REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557"
   - "REQ-053cfed2-265a-4997-a27b-97b0bed10d8a"
@@ -10,6 +11,9 @@ threatens:
 likelihood: medium
 impact: high
 level: high
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T13:36:37+09:00"
 ---
 # RISK-e8449214-7794-4d0d-b584-a3a152e2c1f9: 配置分類を誤り、利用者の実体を本人に知らせずに破損させる
 

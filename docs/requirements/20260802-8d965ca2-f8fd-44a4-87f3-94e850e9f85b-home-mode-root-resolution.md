@@ -2,6 +2,7 @@
 id: "REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b"
 type: requirement
 name: "home mode の root は層ごとに定まった供給元から解決する"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
@@ -16,6 +17,9 @@ specification_ja: |
   CLI 単体は実行時のシェル環境変数 `$HOME`、home-manager モジュールは HM が内部解決した
   `$HOME`（モジュールが `homeRoot` を pin する）から解決しなければならず、いずれも OS を
   問わず動作しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b: home mode の root は層ごとに定まった供給元から解決する
 

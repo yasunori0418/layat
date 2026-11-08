@@ -2,6 +2,7 @@
 id: "REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d"
 type: requirement
 name: "apply --all は build を --jobs の worker pool で先行並列実行し build 失敗 config を部分失敗として集約する"
+status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
 specification: |
@@ -37,6 +38,9 @@ specification_ja: |
   `[<name>] ` の prefix を付けなければならず、build が並行するため開示行はどの順で現れても
   よい。stage 1 の nix 自身の出力は捕捉され、失敗した config の error にのみ現れなければ
   ならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d: apply --all は build を --jobs の worker pool で先行並列実行し build 失敗 config を部分失敗として集約する
 

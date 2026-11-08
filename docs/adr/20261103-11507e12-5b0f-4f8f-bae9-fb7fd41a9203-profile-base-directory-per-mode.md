@@ -28,6 +28,9 @@ references:
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
   - "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"
   - "ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203: profile の基底ディレクトリをモードで切り替える
 

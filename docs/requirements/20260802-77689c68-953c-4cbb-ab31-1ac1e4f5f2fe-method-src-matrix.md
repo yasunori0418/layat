@@ -2,6 +2,7 @@
 id: "REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe"
 type: requirement
 name: "method は配置方法を選び symlink は世代管理下・copy は世代管理外になる"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
@@ -20,6 +21,9 @@ specification_ja: |
   いずれも世代管理下に置かれなければならない。`method = "copy"` では、store 由来の `src` に
   対して place-once コピー（書き込み可・ユーザー管理）とならなければならず、世代管理の
   対象外でなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe: method は配置方法を選び symlink は世代管理下・copy は世代管理外になる
 

@@ -2,9 +2,13 @@
 id: "CASE-a09f5137-2386-4bea-bcf9-a82504a988e6"
 type: test_case
 name: "apply_all_parallel_test.go — 完了順逆転時の辞書順集約・部分失敗と skip・カウントの並行安全性"
+status: stable
 target: "cmd/layat/apply_all_parallel_test.go"
 covers:
   - "TC-9ccb2ffe-7bf6-41ea-a9ce-df06cdda0509"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-09-26T02:11:41+09:00"
 ---
 # CASE-a09f5137-2386-4bea-bcf9-a82504a988e6: apply_all_parallel_test.go — 完了順逆転時の辞書順集約・部分失敗と skip・カウントの並行安全性
 

@@ -13,6 +13,9 @@ justifies:
 references:
   - "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
   - "ADR-f85f1afd-9b87-4f7a-922e-97c62554f198"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:00:56+09:00"
 ---
 # ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71: --json は outturn 規約に常時準拠する
 

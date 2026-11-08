@@ -8,6 +8,9 @@ justifies:
   - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
 references:
   - "ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-0346fdd2-bd05-4793-bcd0-9c3ce64c8657: --json を全サブコマンド共通の persistent フラグにする
 

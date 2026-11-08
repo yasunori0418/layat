@@ -2,6 +2,7 @@
 id: "REQ-844ee375-919f-4341-81e1-a5f89fd32840"
 type: requirement
 name: "module 時は rollback を host へ一本化し、layat profile は前進のみで追従する"
+status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
 specification: |
@@ -19,6 +20,9 @@ specification_ja: |
   layat profile は前進のみ（旧内容の新世代を積む）でなければならない。host から layat へ
   要求するのは switch 時の kick だけとしなければならず、ホストの `oldGenPath` 配管を要求
   してはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:23:46+09:00"
 ---
 # REQ-844ee375-919f-4341-81e1-a5f89fd32840: module 時は rollback を host へ一本化し、layat profile は前進のみで追従する
 

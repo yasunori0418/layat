@@ -2,6 +2,7 @@
 id: "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 type: test_plan
 name: "エンベロープの outturn 適合を Go テストと E2E の両方で検証する"
+status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 specification: |
@@ -38,6 +39,9 @@ specification_ja: |
   世代番号が profile の有無に応じて存在または省略されること。これらのアサートは文書をテキストで
   比較するのではなく抽出したフィールドに対して行わなければならない（書式や当該アサートの
   関知しないフィールドで失敗しないようにするため）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:44:41+09:00"
 ---
 # TP-d3000054-42d9-4bac-912a-dd3abc38d3e9: エンベロープの outturn 適合を Go テストと E2E の両方で検証する
 

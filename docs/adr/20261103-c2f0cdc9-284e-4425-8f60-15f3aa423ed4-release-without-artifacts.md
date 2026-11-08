@@ -8,6 +8,9 @@ justifies:
   - "INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43"
 references:
   - "ADR-2fcf26b4-bce6-4ed6-a374-3afe560ead21"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:00:19+09:00"
 ---
 # ADR-c2f0cdc9-284e-4425-8f60-15f3aa423ed4: release に成果物を添付しない
 

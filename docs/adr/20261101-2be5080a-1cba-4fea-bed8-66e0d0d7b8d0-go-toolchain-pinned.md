@@ -10,6 +10,9 @@ justifies:
   - "REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0"
 references:
   - "ADR-97edd9af-befb-4a9f-a8ef-de038c76336a"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T23:01:38+09:00"
 ---
 # ADR-2be5080a-1cba-4fea-bed8-66e0d0d7b8d0: Go toolchain は nixpkgs の go に pin する
 

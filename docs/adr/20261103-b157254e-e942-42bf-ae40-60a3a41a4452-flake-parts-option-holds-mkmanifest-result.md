@@ -10,6 +10,9 @@ justifies:
   - "REQ-c50df875-2cb0-4e72-8a21-858359a11cae"
 references:
   - "ADR-e6820da0-fce3-4aef-8b79-d53abbca6051"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-b157254e-e942-42bf-ae40-60a3a41a4452: flake-parts module の option に mkManifest の結果を入れる
 

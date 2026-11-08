@@ -10,6 +10,9 @@ justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
 references:
   - "SDR-3ff9f355-a667-476e-b10d-087248cdbfcf"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T21:41:20+09:00"
 ---
 # SDR-fa7eff8e-788f-48e7-951d-4cfbf95d5a1f: adr の status_note を持たない
 

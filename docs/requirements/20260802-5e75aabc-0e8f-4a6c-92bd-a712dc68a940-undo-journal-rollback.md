@@ -2,6 +2,7 @@
 id: "REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940"
 type: requirement
 name: "途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す"
+status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
@@ -58,6 +59,9 @@ specification_ja: |
   巻き戻さなければならず、`rollback` も apply と同じ機構を使わなければならない。ただし profile
   ポインタの移動はこの時点で全 FS 変更が成功済みのため巻き戻し対象外とし、`rollback` には
   `--backup` 相当のフラグが無いため Backup 段は常に空でなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
 ---
 # REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940: 途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す
 

@@ -10,6 +10,9 @@ references:
   - "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"
   - "ADR-9e328362-2e90-441a-8eca-40081ce71b1b"
   - "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-a19bf484-368d-4d01-b539-52de32510fa5: 内部コマンドの開示を --debug に分ける
 

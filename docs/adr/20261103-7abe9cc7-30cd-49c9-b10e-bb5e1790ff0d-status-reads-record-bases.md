@@ -12,6 +12,9 @@ justifies:
   - "DSG-85439cb5-a149-422e-8596-fc4e860bc3a5"
 references:
   - "ADR-52423842-bacf-4773-bbca-bcb34ae71013"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:33:20+09:00"
 ---
 # ADR-7abe9cc7-30cd-49c9-b10e-bb5e1790ff0d: status は 2 つの記録基底を走査して表示する
 

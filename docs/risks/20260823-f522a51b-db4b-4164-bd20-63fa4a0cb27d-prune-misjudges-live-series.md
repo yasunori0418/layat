@@ -2,12 +2,16 @@
 id: "RISK-f522a51b-db4b-4164-bd20-63fa4a0cb27d"
 type: risk
 name: "prune が生存系列や判定不能な系列を孤児と読み、不可逆に削除する"
+status: stable
 threatens:
   - "REQ-c44433a1-7ee7-459a-9aae-7cc42166876f"
   - "REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4"
 likelihood: high
 impact: high
 level: high
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:25:57+09:00"
 ---
 # RISK-f522a51b-db4b-4164-bd20-63fa4a0cb27d: prune が生存系列や判定不能な系列を孤児と読み、不可逆に削除する
 

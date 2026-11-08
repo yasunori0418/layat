@@ -2,6 +2,7 @@
 id: "QA-0d42104c-a3c2-4bd1-9cad-a42d9e5a56a1"
 type: quality
 name: "リファレンスドキュメントは記述対象のソースから生成し、生成物を持たない"
+status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 specification: |
@@ -14,6 +15,9 @@ specification_ja: |
   コミットしてはならない（ソースとの乖離が起こり得ないようにするため）。そのビルド可能性は、
   要求されたときではなく CI で検証されなければならない（抽出の破損をマージ前に捕まえる
   ため）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:01:21+09:00"
 ---
 # QA-0d42104c-a3c2-4bd1-9cad-a42d9e5a56a1: リファレンスドキュメントは記述対象のソースから生成し、生成物を持たない
 

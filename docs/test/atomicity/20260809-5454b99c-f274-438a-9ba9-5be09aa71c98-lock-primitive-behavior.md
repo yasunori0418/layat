@@ -2,8 +2,12 @@
 id: "TC-5454b99c-f274-438a-9ba9-5be09aa71c98"
 type: test_condition
 name: "lock プリミティブが try で競合を弾き、blocking で待ち、解放後に再取得できる"
+status: stable
 mitigates:
   - "RISK-2b17fefb-6e92-4513-9e7c-de21897c9cfe"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:31+09:00"
 ---
 # TC-5454b99c-f274-438a-9ba9-5be09aa71c98: lock プリミティブが try で競合を弾き、blocking で待ち、解放後に再取得できる
 

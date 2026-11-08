@@ -16,6 +16,9 @@ references:
   - "ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1"
   - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-c973a6e3-b6d9-45d3-b237-83fb1b361b22: 複数の manifest を inputsFrom で合成するヘルパを持たない
 

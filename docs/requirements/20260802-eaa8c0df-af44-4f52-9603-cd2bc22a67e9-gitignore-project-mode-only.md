@@ -2,6 +2,7 @@
 id: "REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9"
 type: requirement
 name: "gitignore は project mode 限定で非 project config を指定したらエラーで停止する"
+status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
@@ -17,6 +18,9 @@ specification_ja: |
   エラーで停止しなければならない（出力のアンカー形式が root = git toplevel =
   `.gitignore` の置き場所を前提とし、home / fixed では意味を成さないため）。
   これは `rollback` / `list-generations` が home / system mode 限定であるのと対称である。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9: gitignore は project mode 限定で非 project config を指定したらエラーで停止する
 

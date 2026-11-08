@@ -2,6 +2,7 @@
 id: "REQ-053cfed2-265a-4997-a27b-97b0bed10d8a"
 type: requirement
 name: "target に通常ファイル・ディレクトリが在れば上書きせずエラーで停止する"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -14,6 +15,9 @@ specification_ja: |
   symlink entry の target に通常ファイルまたはディレクトリが存在する場合、engine は
   エラーで停止しなければならず、上書きしてはならない。実 dir のみが例外でなければならず、
   実 dir migration の条件を満たす場合に限り配置前に除去して配置しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:35:05+09:00"
 ---
 # REQ-053cfed2-265a-4997-a27b-97b0bed10d8a: target に通常ファイル・ディレクトリが在れば上書きせずエラーで停止する
 

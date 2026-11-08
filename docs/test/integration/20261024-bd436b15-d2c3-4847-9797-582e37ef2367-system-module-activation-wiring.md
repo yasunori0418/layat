@@ -2,8 +2,12 @@
 id: "TC-bd436b15-d2c3-4847-9797-582e37ef2367"
 type: test_condition
 name: "NixOS / nix-darwin の activation が評価時点で system root を pin した engine 起動へ配線される"
+status: stable
 mitigates:
   - "RISK-70fc1db8-56ec-457d-af12-553d80a04d7d"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:22+09:00"
 ---
 # TC-bd436b15-d2c3-4847-9797-582e37ef2367: NixOS / nix-darwin の activation が評価時点で system root を pin した engine 起動へ配線される
 

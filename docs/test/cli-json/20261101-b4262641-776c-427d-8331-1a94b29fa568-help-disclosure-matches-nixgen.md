@@ -2,8 +2,12 @@
 id: "TC-b4262641-776c-427d-8331-1a94b29fa568"
 type: test_condition
 name: "--help の開示ブロックがサブコマンドごとに実際の nix 呼び出しと一致する"
+status: stable
 mitigates:
   - "RISK-81cadaa3-3ed2-4cb0-bc74-72ff3afa9cce"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T23:40:51+09:00"
 ---
 # TC-b4262641-776c-427d-8331-1a94b29fa568: --help の開示ブロックがサブコマンドごとに実際の nix 呼び出しと一致する
 

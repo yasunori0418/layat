@@ -2,9 +2,13 @@
 id: "DSG-9f5f949f-8b0e-4679-8f70-e0901a3d63b8"
 type: design
 name: "engine のエラーは発生源で 1 回だけ op と対象パスを付けて wrap し、伝搬では素通しする"
+status: stable
 satisfies:
   - "REQ-9341fa5d-836e-4023-af53-cc7d273438d1"
   - "REQ-b74a118a-1272-44eb-944c-7725163211c6"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T22:29:30+09:00"
 ---
 # DSG-9f5f949f-8b0e-4679-8f70-e0901a3d63b8: engine のエラーは発生源で 1 回だけ op と対象パスを付けて wrap し、伝搬では素通しする
 

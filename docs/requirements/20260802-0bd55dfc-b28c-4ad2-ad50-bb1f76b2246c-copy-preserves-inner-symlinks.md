@@ -2,6 +2,7 @@
 id: "REQ-0bd55dfc-b28c-4ad2-ad50-bb1f76b2246c"
 type: requirement
 name: "copy は src ツリー内の symlink を deref せず symlink のまま複製する"
+status: stable
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
 specification: |
@@ -11,6 +12,9 @@ specification: |
 specification_ja: |
   src ツリー内の symlink は symlink のまま複製しなければならず、deref してはならない
   （循環・サイズ膨張を避けるため）。相対 symlink はそのまま保たなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
 ---
 # REQ-0bd55dfc-b28c-4ad2-ad50-bb1f76b2246c: copy は src ツリー内の symlink を deref せず symlink のまま複製する
 

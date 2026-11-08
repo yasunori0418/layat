@@ -10,6 +10,9 @@ references:
   - "ADR-c494e86e-ceb9-4380-b983-4e09553b01d6"
   - "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
   - "ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-1848079b-7011-4653-b7cd-c279205262c4: manifest.json の entry は target を識別子にして name を持たない
 

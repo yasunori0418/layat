@@ -2,6 +2,7 @@
 id: "DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5"
 type: design
 name: "lib は公開 API・型定義・manifest 生成・マーカー構築子・apply コマンド組み立ての 5 ファイルへ分割する"
+status: stable
 satisfies:
   - "REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51"
   - "REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d"
@@ -11,6 +12,9 @@ satisfies:
   - "TP-403c55c7-d996-4951-8e6b-c3a7dddd387c"
   - "REQ-b232ec98-af3b-41f3-a050-29d417322002"
   - "REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:46:06+09:00"
 ---
 # DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5: lib は公開 API・型定義・manifest 生成・マーカー構築子・apply コマンド組み立ての 5 ファイルへ分割する
 

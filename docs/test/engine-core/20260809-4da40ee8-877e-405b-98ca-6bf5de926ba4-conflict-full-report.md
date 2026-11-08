@@ -2,8 +2,12 @@
 id: "TC-4da40ee8-877e-405b-98ca-6bf5de926ba4"
 type: test_condition
 name: "conflict が全件・種類に応じたガイダンス付きで列挙され、集約エラー 1 本で返ること"
+status: stable
 mitigates:
   - "RISK-e8449214-7794-4d0d-b584-a3a152e2c1f9"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-08-18T22:23:49+09:00"
 ---
 # TC-4da40ee8-877e-405b-98ca-6bf5de926ba4: conflict の全件列挙とガイダンス
 

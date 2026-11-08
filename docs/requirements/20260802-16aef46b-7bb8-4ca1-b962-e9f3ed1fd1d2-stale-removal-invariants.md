@@ -2,6 +2,7 @@
 id: "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
 type: requirement
 name: "古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する"
+status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -29,6 +30,9 @@ specification_ja: |
   世代も無く比較の基準が空）では何も消してはならない。entry が消えたとき、symlink（store / out-of-store）は上記の不変条件を
   満たすもののみ除去しなければならず、copy は除去してはならない（ユーザー所有データの
   ため）。ただし copy が孤児になったことは警告で通知しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:43:21+09:00"
 ---
 # REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2: 古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する
 

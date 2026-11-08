@@ -2,8 +2,12 @@
 id: "TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7"
 type: test_condition
 name: "profileDir の世代リンクを番号順に列挙して current を判定し、読めない profileDir は黙認しない"
+status: stable
 mitigates:
   - "RISK-ac5cd9b4-58f9-43d8-9fae-66f7b5940beb"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:49+09:00"
 ---
 # TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7: profileDir の世代リンクを番号順に列挙して current を判定し、読めない profileDir は黙認しない
 

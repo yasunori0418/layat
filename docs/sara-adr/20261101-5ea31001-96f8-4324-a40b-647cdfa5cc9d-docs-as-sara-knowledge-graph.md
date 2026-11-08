@@ -10,6 +10,9 @@ issues:
 origin: "epic #203 の grilling セッション（2026-07-31・2026-08-01）で確定。ADR-0048 §1 を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:32+09:00"
 ---
 # SDR-5ea31001-96f8-4324-a40b-647cdfa5cc9d: ドキュメントは sara のナレッジグラフとして item に分割する
 

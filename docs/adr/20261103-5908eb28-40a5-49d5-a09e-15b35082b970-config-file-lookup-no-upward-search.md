@@ -11,6 +11,9 @@ justifies:
 references:
   - "ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964"
   - "ADR-ef9e4099-0cf4-409a-9e73-518866aea676"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-5908eb28-40a5-49d5-a09e-15b35082b970: 設定ファイルは -f のディレクトリか cwd だけで探す
 

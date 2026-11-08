@@ -50,6 +50,8 @@ type になる。使えるプレースホルダは `{prefix}` / `{id}` / `{seq[:
 
 | 型 | フィールド | 読み方 |
 |---|---|---|
+| `adr` / `sara_adr` 以外の全て | `status` | `draft` / `stable` / `deprecated` の 3 値。必須 |
+| 全て | `stale_after` | 期限の時刻。任意。値の形は sara でなく `dev/tests/okf-frontmatter.sh` が確かめる |
 | `requirement` / `quality` / `test_plan` | `specification` | 英語の規範文。RFC2119 キーワードを含める |
 | `requirement` / `quality` / `test_plan` | `specification_ja` | `specification` と対になる日本語の規範文。sara はこのフィールドを検査しない |
 | `infrastructure` | `dod` | `docs/dev/definition-of-done.md` の項目 ID（`DOD-01` …）のリスト。任意 |
@@ -145,8 +147,9 @@ layat の値は URI ではない。根もリポジトリ根で、index.md のバ
 
 ### 検証の分担
 
-平たいキー（`status` / `stale_after` / `resource`）は `docs/model.yaml` のフィールドとして sara が
-確かめる。入れ子のキー（`generated` / `verified` / `sources`）は sara が型を持たないので、
+平たいキーのうち `status` と `resource` は、`docs/model.yaml` のフィールドとして sara が確かめる。
+`stale_after` も `docs/model.yaml` のフィールドだが、sara は値の形を確かめない。`stale_after` と、
+sara が型を持たない入れ子のキー（`generated` / `verified` / `sources`）は、
 `dev/tests/okf-frontmatter.sh` が形を確かめる。本文の変更と `generated` の更新が揃っているかは
 確かめず、規約で守る。
 

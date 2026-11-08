@@ -2,8 +2,12 @@
 id: "TC-f304d682-bc5e-4369-a427-f766fdfdd961"
 type: test_condition
 name: "project mode の世代は公開されず、拒否のときは理由が利用者へ届く"
+status: stable
 mitigates:
   - "RISK-cdcc6faf-9164-409b-b584-2921fa036d10"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:22+09:00"
 ---
 # TC-f304d682-bc5e-4369-a427-f766fdfdd961: project mode の世代は公開されず、拒否のときは理由が利用者へ届く
 

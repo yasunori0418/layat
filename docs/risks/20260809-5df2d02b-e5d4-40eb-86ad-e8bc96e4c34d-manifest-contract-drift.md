@@ -2,6 +2,7 @@
 id: "RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d"
 type: risk
 name: "manifest.json の形が engine の読む契約から気付かれずにずれる"
+status: stable
 likelihood: medium
 impact: medium
 level: medium
@@ -16,6 +17,9 @@ threatens:
   - "REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe"
   - "REQ-eb363122-385a-499c-a074-c95efb949d07"
   - "REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:26:05+09:00"
 ---
 # RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d: manifest.json の形が engine の読む契約から気付かれずにずれる
 

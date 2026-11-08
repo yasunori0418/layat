@@ -2,8 +2,12 @@
 id: "TC-810d661d-6d3d-4199-828f-e44adcebad5a"
 type: test_condition
 name: "空親ディレクトリの剪定が多階層を辿り、root・symlink・非空で停止すること"
+status: stable
 mitigates:
   - "RISK-e659f9dd-fbc9-48aa-8ae5-ecc4faf2a85c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:20+09:00"
 ---
 # TC-810d661d-6d3d-4199-828f-e44adcebad5a: 空親剪定の境界
 

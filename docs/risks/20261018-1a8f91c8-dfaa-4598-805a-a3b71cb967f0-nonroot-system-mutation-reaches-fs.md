@@ -2,11 +2,15 @@
 id: "RISK-1a8f91c8-dfaa-4598-805a-a3b71cb967f0"
 type: risk
 name: "非 root の system mode の変更系操作が権限の確認を経ずに FS へ触れる"
+status: stable
 likelihood: medium
 impact: medium
 level: medium
 threatens:
   - "REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:53:31+09:00"
 ---
 # RISK-1a8f91c8-dfaa-4598-805a-a3b71cb967f0: 非 root の system mode の変更系操作が権限の確認を経ずに FS へ触れる
 

@@ -8,6 +8,9 @@ issues:
 origin: "Issue #3（CLI 化）。ADR-0007 §3 で棄却された提案（ADR-0002 の初期設計、ADR-0006 の決定節での再定義）を書き直した"
 justifies:
   - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-02T22:56:50+09:00"
 ---
 # ADR-86a77232-dc99-4c04-bd6d-2127410e8828: mkActivationScript で config ごとのラッパー derivation を提供する
 

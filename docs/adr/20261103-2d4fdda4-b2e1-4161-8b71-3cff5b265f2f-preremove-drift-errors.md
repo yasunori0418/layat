@@ -36,6 +36,9 @@ references:
   - "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
   - "ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b"
   - "ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:27:41+09:00"
 ---
 # ADR-2d4fdda4-b2e1-4161-8b71-3cff5b265f2f: 配置前除去は drift を見つけたら error で止める
 

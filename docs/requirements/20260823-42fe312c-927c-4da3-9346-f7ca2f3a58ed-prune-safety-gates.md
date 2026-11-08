@@ -2,6 +2,7 @@
 id: "REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed"
 type: requirement
 name: "prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る"
+status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
@@ -31,6 +32,9 @@ specification_ja: |
   削除を行う `layat prune --json`（すなわち `--dryrun` を伴わないもの）は `--yes` を必須とし、
   無ければ `status:"error"` + 非ゼロで fail fast しなければならない。`--dryrun --json` は
   何も削除しないため `--yes` を要求してはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:39:20+09:00"
 ---
 # REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed: prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る
 

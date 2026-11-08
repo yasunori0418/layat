@@ -2,6 +2,7 @@
 id: "REQ-774cef80-2872-4ea1-937b-a0fbabc305a9"
 type: requirement
 name: "要求された操作が成立しないときは CLI がエラーで停止し、暗黙のフォールバックを採らない"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -23,6 +24,9 @@ specification_ja: |
   （`rollback` は停止前にエラーメッセージを出力しなければならない）。いずれの場合も、
   別 config の推測・no-op 扱い・空 manifest
   での続行を採ってはならない（ユーザーが要求していない配置を利用者に知らせずに生むため）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
 ---
 # REQ-774cef80-2872-4ea1-937b-a0fbabc305a9: 要求された操作が成立しないときは CLI がエラーで停止し、暗黙のフォールバックを採らない
 

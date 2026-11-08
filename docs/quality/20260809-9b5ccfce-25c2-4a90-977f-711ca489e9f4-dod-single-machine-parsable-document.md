@@ -2,6 +2,7 @@
 id: "QA-9b5ccfce-25c2-4a90-977f-711ca489e9f4"
 type: quality
 name: "完成の定義は単一の機械パース可能な文書で持ち、項目数を上限で縛る"
+status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 depends_on:
@@ -20,6 +21,9 @@ specification_ja: |
   項目を足すことが、完成を遠のかせるのではなく既存項目の統合か削除を迫るようにしなければ
   ならない。マージを塞ぐ確認を名指しする項目は、実際に必須とされている確認と一致
   させ続けなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:03+09:00"
 ---
 # QA-9b5ccfce-25c2-4a90-977f-711ca489e9f4: 完成の定義は単一の機械パース可能な文書で持ち、項目数を上限で縛る
 

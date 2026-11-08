@@ -12,6 +12,9 @@ justifies:
   - "REQ-95e97d01-5c34-44b3-bc85-9ca53472bc3d"
 references:
   - "ADR-65e41903-5eee-4a00-a154-be8c830cdca9"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:28:05+09:00"
 ---
 # ADR-37191429-2099-4217-a552-47b16a7e504c: 退避先が既にあれば conflict で止める
 

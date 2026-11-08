@@ -2,6 +2,7 @@
 id: "REQ-6be1cbf1-6c6e-498b-8acb-7f4b80037169"
 type: requirement
 name: "layat init は nix flake init -t への透明なラッパーとしファイルを生成しない"
+status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
@@ -17,6 +18,9 @@ specification_ja: |
   layat 自身が generate してはならない（「設定を生成しない」thesis を維持するため）。
   `nix flake init` の「既存ファイルを上書きしない」保守性を継承しなければならない。
   テンプレートは `standalone` と `project` の 2 つを提供しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:04:55+09:00"
 ---
 # REQ-6be1cbf1-6c6e-498b-8acb-7f4b80037169: layat init は nix flake init -t への透明なラッパーとしファイルを生成しない
 

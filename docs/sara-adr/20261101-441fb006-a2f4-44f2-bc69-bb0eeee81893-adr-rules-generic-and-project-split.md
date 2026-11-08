@@ -9,6 +9,9 @@ issues:
 origin: "Issue #499 の grilling（2026-11-01）で確定"
 justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:32+09:00"
 ---
 # SDR-441fb006-a2f4-44f2-bc69-bb0eeee81893: ADR の規則を汎用とプロジェクト当てはめに分けて書く
 

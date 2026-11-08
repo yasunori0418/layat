@@ -10,6 +10,9 @@ justifies:
   - "INF-0865477b-21b2-4feb-9c06-1a882a4e595a"
 references:
   - "ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T17:34:16+09:00"
 ---
 # ADR-da7b74a6-bab4-43ea-8f1c-cf843b8b58cc: リファレンスをビルド時に生成する
 

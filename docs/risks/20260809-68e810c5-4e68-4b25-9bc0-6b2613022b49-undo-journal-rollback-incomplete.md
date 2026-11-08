@@ -2,12 +2,16 @@
 id: "RISK-68e810c5-4e68-4b25-9bc0-6b2613022b49"
 type: risk
 name: "途中失敗した run の巻き戻しが不完全で、FS に部分適用の痕跡が残る"
+status: stable
 threatens:
   - "REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940"
   - "REQ-61856da1-8883-401e-ad57-9f326b96d400"
 likelihood: high
 impact: high
 level: high
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:25:33+09:00"
 ---
 # RISK-68e810c5-4e68-4b25-9bc0-6b2613022b49: 途中失敗した run の巻き戻しが不完全で、FS に部分適用の痕跡が残る
 

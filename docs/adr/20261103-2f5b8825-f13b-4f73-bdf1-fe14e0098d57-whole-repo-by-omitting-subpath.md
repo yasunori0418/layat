@@ -10,6 +10,9 @@ references:
   - "ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab"
   - "ADR-12ad7852-e689-44d7-b9fe-0667effb3d13"
   - "ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T02:02:56+09:00"
 ---
 # ADR-2f5b8825-f13b-4f73-bdf1-fe14e0098d57: リポジトリ全体は subpath の省略で表す
 

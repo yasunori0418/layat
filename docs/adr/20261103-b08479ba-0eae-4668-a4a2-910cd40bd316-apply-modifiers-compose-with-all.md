@@ -12,6 +12,9 @@ references:
   - "ADR-fb01d942-2875-4dcb-a7df-879e18f63883"
   - "ADR-a51897c5-f709-4b7a-8db2-61e6ebb0040c"
   - "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-b08479ba-0eae-4668-a4a2-910cd40bd316: apply の修飾フラグを --all と合成できるようにする
 

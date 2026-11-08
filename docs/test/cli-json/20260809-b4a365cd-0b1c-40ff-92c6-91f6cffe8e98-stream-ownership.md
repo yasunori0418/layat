@@ -2,8 +2,12 @@
 id: "TC-b4a365cd-0b1c-40ff-92c6-91f6cffe8e98"
 type: test_condition
 name: "stdout を機械可読出力が専有し人間向けの出力が stderr に留まる"
+status: stable
 mitigates:
   - "RISK-687993a2-4863-483c-a957-8a5d6faa4b82"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:24:34+09:00"
 ---
 # TC-b4a365cd-0b1c-40ff-92c6-91f6cffe8e98: stdout を機械可読出力が専有し人間向けの出力が stderr に留まる
 

@@ -2,6 +2,7 @@
 id: "REQ-05abce3e-9797-432b-b93f-37c55d09afde"
 type: requirement
 name: "rollback と list-generations は home / system mode 限定にする"
+status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"
   - "UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d"
@@ -18,6 +19,9 @@ specification_ja: |
   `list-generations --all` は home mode の全 config、続けて system mode の全 config の世代を
   一覧しなければならず、読み取り専用でなければならない。system 基底が存在しなければ空として
   扱わなければならず、読めなければ warning を出してその基底の走査を省かなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
 ---
 # REQ-05abce3e-9797-432b-b93f-37c55d09afde: rollback と list-generations は home / system mode 限定にする
 

@@ -47,6 +47,9 @@ references:
   - "ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56"
   - "ADR-d97154cd-a2e5-4853-a682-800ff9435c89"
   - "ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9: 世代バックエンドを nix 実装 1 つに留める
 

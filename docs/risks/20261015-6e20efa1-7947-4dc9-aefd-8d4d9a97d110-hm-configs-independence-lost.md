@@ -2,6 +2,7 @@
 id: "RISK-6e20efa1-7947-4dc9-aefd-8d4d9a97d110"
 type: risk
 name: "home-manager モジュールで名前つき config ごとの独立性が失われる"
+status: stable
 threatens:
   - "REQ-c847d1af-a437-46bb-bd64-42083810d034"
   - "REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a"
@@ -9,6 +10,9 @@ threatens:
 likelihood: medium
 impact: medium
 level: medium
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-6e20efa1-7947-4dc9-aefd-8d4d9a97d110: home-manager モジュールで名前つき config ごとの独立性が失われる
 

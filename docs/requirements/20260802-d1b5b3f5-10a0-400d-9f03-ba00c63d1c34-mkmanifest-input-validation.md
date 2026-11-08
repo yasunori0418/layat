@@ -2,6 +2,7 @@
 id: "REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34"
 type: requirement
 name: "mkManifest 自身が evalModules で入力を確認する単一の箇所になる"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -20,6 +21,9 @@ specification_ja: |
   確認を働かせる目的で `mkManifest` 自身が確認を持たなければならない。entry の型定義
   （`lib/types.nix` の submodule）は `modules/common.nix` の `attrsOf (submodule …)` と
   共有しなければならず、モジュールの使い方での二重の確認は純粋・冪等であるため許容される。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:54:35+09:00"
 ---
 # REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34: mkManifest 自身が evalModules で入力を確認する単一の箇所になる
 

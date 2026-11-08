@@ -2,6 +2,7 @@
 id: "REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26"
 type: requirement
 name: "実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -27,6 +28,9 @@ specification_ja: |
   file / dir・foreign symlink・
   次世代にも残る自己矛盾）ときは target 全体をエラーで停止しなければならず、部分除去を
   してはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26: 実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する
 

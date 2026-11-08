@@ -2,8 +2,12 @@
 id: "TC-76597b11-8199-4682-8f53-008e5208bd9c"
 type: test_condition
 name: "移行が部分適用されず、中断後の再実行で収束すること"
+status: stable
 mitigates:
   - "RISK-3e8dd093-f21f-49c6-8d8c-7d62a6fad1e5"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-08-18T22:23:49+09:00"
 ---
 # TC-76597b11-8199-4682-8f53-008e5208bd9c: 移行の全か無かと収束
 

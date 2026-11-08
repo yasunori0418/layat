@@ -13,6 +13,9 @@ justifies:
 references:
   - "SDR-34916a83-0cff-4524-a8ff-5a3195af52c3"
   - "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # SDR-f3f9491f-d6f4-4742-82da-4933ad3d8db1: risk の親に test_plan を含めない
 

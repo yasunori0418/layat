@@ -21,6 +21,9 @@ references:
   - "ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1"
   - "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2: 生成器の契約を Discover / Roots / Build / DryBuild の 4 操作にする
 

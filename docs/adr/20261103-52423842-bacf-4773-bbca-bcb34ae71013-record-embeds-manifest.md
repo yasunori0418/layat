@@ -15,6 +15,9 @@ references:
   - "ADR-d97154cd-a2e5-4853-a682-800ff9435c89"
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
   - "ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-52423842-bacf-4773-bbca-bcb34ae71013: last-applied 記録は manifest を内容ごと持つ
 

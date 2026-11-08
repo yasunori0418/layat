@@ -2,6 +2,7 @@
 id: "REQ-3f541d39-da41-4ef8-858b-707f54cf6a29"
 type: requirement
 name: "root マーカーは kind を運ぶ入れ物でパス解決は engine が行う"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -15,6 +16,9 @@ specification_ja: |
   運ぶマーカー attrset を返す純粋関数でなければならない。パス文字列を返す糖衣であっては
   ならない。`mkManifest` は kind を `manifest.json` に記録しなければならず、実体パスの
   解決は engine の実行時責務としなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:36:11+09:00"
 ---
 # REQ-3f541d39-da41-4ef8-858b-707f54cf6a29: root マーカーは kind を運ぶ入れ物でパス解決は engine が行う
 

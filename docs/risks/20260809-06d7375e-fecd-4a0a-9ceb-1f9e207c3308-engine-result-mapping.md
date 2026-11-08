@@ -2,6 +2,7 @@
 id: "RISK-06d7375e-fecd-4a0a-9ceb-1f9e207c3308"
 type: risk
 name: "engine の実行結果から JSON ペイロードへの写像が実際に起きたことと食い違う"
+status: stable
 threatens:
   - "REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62"
   - "REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303"
@@ -9,6 +10,9 @@ threatens:
 likelihood: medium
 impact: medium
 level: medium
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # RISK-06d7375e-fecd-4a0a-9ceb-1f9e207c3308: engine の実行結果から JSON ペイロードへの写像が実際に起きたことと食い違う
 

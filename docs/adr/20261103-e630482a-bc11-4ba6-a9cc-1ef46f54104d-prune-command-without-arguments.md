@@ -10,6 +10,9 @@ justifies:
   - "REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4"
 references:
   - "ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T22:55:03+09:00"
 ---
 # ADR-e630482a-bc11-4ba6-a9cc-1ef46f54104d: prune は引数を取らない
 

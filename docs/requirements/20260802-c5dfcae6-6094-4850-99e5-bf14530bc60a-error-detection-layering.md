@@ -2,6 +2,7 @@
 id: "REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a"
 type: requirement
 name: "設定の誤りは評価時に、実体の不整合は engine 実行時に検出する層分けを守る"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -26,6 +27,9 @@ specification_ja: |
   規定する。上に挙げた条件は
   その事例として示すもので、個々の条件とその動作、および識別子の一意性が native に
   担保されること自体は各担当 item の規範であって、ここでは再掲しない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:39:11+09:00"
 ---
 # REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a: 設定の誤りは評価時に、実体の不整合は engine 実行時に検出する層分けを守る
 

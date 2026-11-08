@@ -2,6 +2,7 @@
 id: "REQ-687e225f-5046-46db-88fb-f9e527a1e97a"
 type: requirement
 name: "apply 修飾フラグは --all と合成できる"
+status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"
@@ -15,6 +16,9 @@ specification_ja: |
   `--all` と直交するため、`--all`（必要なら `--project-root` 等のフィルタ）が選んだ各
   config に `--recopy` を適用しなければならない。`--all --backup[=<suffix>]` も同様に
   合成可能でなければならない（`--backup` も apply の修飾であるため）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-687e225f-5046-46db-88fb-f9e527a1e97a: apply 修飾フラグは --all と合成できる
 

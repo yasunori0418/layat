@@ -2,8 +2,12 @@
 id: "DSG-85439cb5-a149-422e-8596-fc4e860bc3a5"
 type: design
 name: "status を engine の記録基底走査と CLI の絞り込み・出力に分ける"
+status: stable
 satisfies:
   - "REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:36:11+09:00"
 ---
 # DSG-85439cb5-a149-422e-8596-fc4e860bc3a5: status を engine の記録基底走査と CLI の絞り込み・出力に分ける
 

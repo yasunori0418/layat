@@ -2,6 +2,10 @@
 id: "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 type: solution
 name: "layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る"
+status: stable
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:30:36+09:00"
 ---
 # SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e: layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る
 

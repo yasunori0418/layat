@@ -2,6 +2,7 @@
 id: "REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6"
 type: requirement
 name: "nix experimental-features は nix 生成器の前提条件とし、自動付与せず案内エラーで停止する"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -23,6 +24,9 @@ specification_ja: |
   組織ポリシーの設定を利用者に知らせずに上書きしないため）。未有効で nix が機能未有効エラーを
   返したときは、nix 生成器が前提条件の未充足として有効化方法と共に報告し、CLI は前提条件と
   有効化方法を案内するエラーで停止しなければならず、生の nix エラーを握り潰してはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:31:01+09:00"
 ---
 # REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6: nix experimental-features は nix 生成器の前提条件とし、自動付与せず案内エラーで停止する
 

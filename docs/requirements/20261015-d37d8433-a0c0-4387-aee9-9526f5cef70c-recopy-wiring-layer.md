@@ -2,6 +2,7 @@
 id: "REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c"
 type: requirement
 name: "layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける"
+status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"
 specification: |
@@ -23,6 +24,9 @@ specification_ja: |
   `entries`（manifest v1 契約）とは独立な起動配線レイヤーのオプションでなければならず、
   manifest 自体に影響してはならない。オプションの説明文には、有効にすると activation のたびに
   全 copy target を src から上書きしローカル編集を捨てることを明記しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:04:55+09:00"
 ---
 # REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c: layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける
 

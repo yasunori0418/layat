@@ -2,8 +2,12 @@
 id: "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 type: use_case
 name: "プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する"
+status: stable
 refines:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:30:05+09:00"
 ---
 # UC-19a90989-0ae3-438f-8a75-4e1e2637f81c: プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する
 

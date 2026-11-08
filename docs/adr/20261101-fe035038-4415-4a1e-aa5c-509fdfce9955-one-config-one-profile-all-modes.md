@@ -20,6 +20,9 @@ references:
   - "ADR-65b3439a-b90a-4056-b55a-522399bc71e6"
   - "ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d"
   - "ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:06+09:00"
 ---
 # ADR-fe035038-4415-4a1e-aa5c-509fdfce9955: 1 config = 1 profile を全モードで自前に持つ
 

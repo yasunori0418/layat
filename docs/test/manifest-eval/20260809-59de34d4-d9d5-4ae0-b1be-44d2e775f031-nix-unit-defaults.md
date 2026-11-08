@@ -2,9 +2,13 @@
 id: "CASE-59de34d4-d9d5-4ae0-b1be-44d2e775f031"
 type: test_case
 name: "nix-unit: defaults.nix — 既定適用・明示上書き・target 辞書順"
+status: stable
 target: "tests/nix-unit/defaults.nix"
 covers:
   - "TC-d9175bb5-d7ec-41e0-8bee-71de928a71fb"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:28:49+09:00"
 ---
 # CASE-59de34d4-d9d5-4ae0-b1be-44d2e775f031: nix-unit defaults.nix
 

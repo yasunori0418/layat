@@ -2,6 +2,7 @@
 id: "REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336"
 type: requirement
 name: "manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -23,6 +24,9 @@ specification_ja: |
   省略形も `"."` で記録する）・`target`（string。root 相対の配置先で entry の
   identity）・`method`（`"symlink"` / `"copy"`。デフォルト適用後）。entry の `name`
   フィールドを持ってはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336: manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する
 

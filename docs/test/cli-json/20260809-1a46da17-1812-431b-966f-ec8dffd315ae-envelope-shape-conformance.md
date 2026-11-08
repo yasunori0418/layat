@@ -2,8 +2,12 @@
 id: "TC-1a46da17-1812-431b-966f-ec8dffd315ae"
 type: test_condition
 name: "エンベロープが全形状で outturn 適合を保ち subject 件数で形が揺れない"
+status: stable
 mitigates:
   - "RISK-4936a47d-796b-4f1f-8ae4-eb87f6c64e71"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:34:43+09:00"
 ---
 # TC-1a46da17-1812-431b-966f-ec8dffd315ae: エンベロープが全形状で outturn 適合を保ち subject 件数で形が揺れない
 

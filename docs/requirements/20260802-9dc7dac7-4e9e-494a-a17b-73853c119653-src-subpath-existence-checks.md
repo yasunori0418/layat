@@ -2,6 +2,7 @@
 id: "REQ-9dc7dac7-4e9e-494a-a17b-73853c119653"
 type: requirement
 name: "配置元の実在は判定できる層で確認し、いずれの層でも停止する"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
@@ -21,6 +22,9 @@ specification_ja: |
   しない場合と、`subpath` が `src` 内に存在しない場合は、実体を見るまで判定できないため
   engine 実行時のエラーとして停止しなければならない。いずれの場合も停止を動作としなければ
   ならず、配置元の不在を利用者に知らせずに見過ごしたり dangling symlink に変えたりしてはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:54:35+09:00"
 ---
 # REQ-9dc7dac7-4e9e-494a-a17b-73853c119653: 配置元の実在は判定できる層で確認し、いずれの層でも停止する
 

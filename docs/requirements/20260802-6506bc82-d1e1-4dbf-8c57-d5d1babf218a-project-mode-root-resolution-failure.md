@@ -2,6 +2,7 @@
 id: "REQ-6506bc82-d1e1-4dbf-8c57-d5d1babf218a"
 type: requirement
 name: "project mode で git から root を解決できないときは engine 実行時に停止する"
+status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
@@ -15,6 +16,9 @@ specification_ja: |
   実行時にエラーで停止しなければならない（意図と異なる root へ配置すればプロジェクト外へ
   ファイルを撒くため）。git リポジトリ外かつ `--root` 未指定で toplevel の解決に失敗する
   場合と、`git` が PATH に無い場合の双方に適用しなければならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:29:58+09:00"
 ---
 # REQ-6506bc82-d1e1-4dbf-8c57-d5d1babf218a: project mode で git から root を解決できないときは engine 実行時に停止する
 

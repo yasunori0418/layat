@@ -10,6 +10,9 @@ justifies:
   - "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
 references:
   - "ADR-acc31876-df36-485e-b356-92ae60e26db7"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:42:46+09:00"
 ---
 # ADR-c4ad9987-850e-4834-bbea-d8de3b073548: copy は世代の外に place-once で置く
 

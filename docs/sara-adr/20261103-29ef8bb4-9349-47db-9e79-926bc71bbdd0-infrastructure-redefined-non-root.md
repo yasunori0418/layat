@@ -14,6 +14,9 @@ references:
   - "SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb"
   - "SDR-34916a83-0cff-4524-a8ff-5a3195af52c3"
   - "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:44:41+09:00"
 ---
 # SDR-29ef8bb4-9349-47db-9e79-926bc71bbdd0: infrastructure を技術基盤として再定義し root から外す
 

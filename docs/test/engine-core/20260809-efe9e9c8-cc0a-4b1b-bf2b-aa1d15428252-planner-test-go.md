@@ -2,6 +2,7 @@
 id: "CASE-efe9e9c8-cc0a-4b1b-bf2b-aa1d15428252"
 type: test_case
 name: "internal/planner/planner_test.go — fake FS による plan 計算の table-driven 網羅"
+status: stable
 target: "internal/planner/planner_test.go"
 covers:
   - "TC-b329cafd-06c3-4b87-8357-229b69e5ba5c"
@@ -10,6 +11,9 @@ covers:
   - "TC-d160e18b-4c0c-4531-a506-e7d00d88788a"
   - "TC-596d697f-4ba6-4ec1-b71e-8b5375806c08"
   - "TC-f1da084f-c0f0-4aba-85d9-f273c04eb373"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:43:19+09:00"
 ---
 # CASE-efe9e9c8-cc0a-4b1b-bf2b-aa1d15428252: planner_test.go
 

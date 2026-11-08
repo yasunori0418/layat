@@ -12,6 +12,9 @@ justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
 references:
   - "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T22:44:41+09:00"
 ---
 # SDR-34916a83-0cff-4524-a8ff-5a3195af52c3: テスト計画の型を品質方針の型から分けて設ける
 

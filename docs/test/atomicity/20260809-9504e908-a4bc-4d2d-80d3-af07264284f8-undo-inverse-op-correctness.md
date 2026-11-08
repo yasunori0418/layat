@@ -2,8 +2,12 @@
 id: "TC-9504e908-a4bc-4d2d-80d3-af07264284f8"
 type: test_condition
 name: "undo の逆操作が、対応する前方操作の直前状態を単体で復元する"
+status: stable
 mitigates:
   - "RISK-68e810c5-4e68-4b25-9bc0-6b2613022b49"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-05T00:26:53+09:00"
 ---
 # TC-9504e908-a4bc-4d2d-80d3-af07264284f8: undo の逆操作が、対応する前方操作の直前状態を単体で復元する
 

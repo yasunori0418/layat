@@ -14,6 +14,9 @@ justifies:
 references:
   - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
   - "ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-01T23:14:40+09:00"
 ---
 # ADR-bd8a4c8a-5e7e-485a-bccf-20dab63125f2: CLI は outturn/go に依存する
 

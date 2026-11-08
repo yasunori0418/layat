@@ -2,6 +2,7 @@
 id: "REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f"
 type: requirement
 name: "lib.mkApplyCommand は事前展開した apply --all --manifest のコマンド行を返す"
+status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
@@ -24,6 +25,9 @@ specification_ja: |
   ならない。省略・範囲外の `root` は評価時に throw しなければならない。Nix 側で `rootKind` による
   config の選別をしてはならず、実行時フラグ（`--jobs` / `--recopy` / `--backup` / `--no-wait`）を
   引数に取ってはならない。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f: lib.mkApplyCommand は事前展開した apply --all --manifest のコマンド行を返す
 

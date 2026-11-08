@@ -2,6 +2,7 @@
 id: "REQ-27b75fe6-6c36-44a8-8cd3-5cc98043022a"
 type: requirement
 name: "subpath は src 内の相対パスとし、リポジトリ全体は省略で表して専用トークンを設けない"
+status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"
 specification: |
@@ -19,6 +20,9 @@ specification_ja: |
   「リポジトリ全体」を表す専用トークン / marker を設けてはならない。`subpath` は評価時に
   確定する subpath 選択であり、実行時解決の種別を運ぶ入れ物である marker とは相反する
   ためである。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:05:37+09:00"
 ---
 # REQ-27b75fe6-6c36-44a8-8cd3-5cc98043022a: subpath は src 内の相対パスとし、リポジトリ全体は省略で表して専用トークンを設けない
 

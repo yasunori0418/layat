@@ -2,6 +2,7 @@
 id: "REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e"
 type: requirement
 name: "project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない"
+status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 specification: |
@@ -21,6 +22,9 @@ specification_ja: |
   （Nix で flake source が store にコピーされ store path 化するため成立しないため）。
   CWD（`$PWD`）相対も採っては
   ならない（実行場所で配置先がズレ冪等性を壊すため）。
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-03T23:23:46+09:00"
 ---
 # REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e: project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない
 

@@ -2,6 +2,7 @@
 id: "REQ-eb363122-385a-499c-a074-c95efb949d07"
 type: requirement
 name: "mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す"
+status: stable
 derives_from:
   - "UC-01b896b4-04b9-40d0-bf9e-966eaf64c3d4"
 specification: |
@@ -19,6 +20,9 @@ specification_ja: |
   使えてはならない。core lib ではパスをマーカー attrset に包むだけとしなければならず、
   実際の link 生成は engine が行わなければならない。プラットフォームのネイティブ機構
   （home-manager の `config.lib.file.mkOutOfStoreSymlink` 等）へは委譲してはならない。
+generated:
+  by: "claude-code/claude-opus-5"
+  at: "2026-09-20T08:21:50+09:00"
 ---
 # REQ-eb363122-385a-499c-a074-c95efb949d07: mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す
 

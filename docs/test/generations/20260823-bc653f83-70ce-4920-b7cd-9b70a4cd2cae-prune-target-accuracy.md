@@ -2,8 +2,12 @@
 id: "TC-bc653f83-70ce-4920-b7cd-9b70a4cd2cae"
 type: test_condition
 name: "prune が孤児系列だけを系列ごと消し、生存・判定不能な系列は理由付きで残す"
+status: stable
 mitigates:
   - "RISK-f522a51b-db4b-4164-bd20-63fa4a0cb27d"
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-04T09:34:43+09:00"
 ---
 # TC-bc653f83-70ce-4920-b7cd-9b70a4cd2cae: prune が孤児系列だけを系列ごと消し、生存・判定不能な系列は理由付きで残す
 
