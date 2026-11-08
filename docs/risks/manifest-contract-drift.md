@@ -19,14 +19,15 @@ threatens:
   - "REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:28:26+09:00"
+  at: "2026-11-09T08:42:17+09:00"
 ---
 # RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d: manifest.json の形が engine の読む契約から気付かれずにずれる
 
 ## リスク
 
-`manifest.json` の位置づけは [manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する](../requirements/manifest-single-stable-contract.md) と [MVP は manifest v1 のみを発行・受理しマイグレーション機構を持たない](../requirements/manifest-v1-only-no-migration.md) が定める。`normalizeManifest` が出す文書の形は、
-トップレベルを [manifest.json のトップレベルは必須の schemaVersion / root / entries と任意の identity とする](../requirements/manifest-toplevel-fields.md)、`root` を [manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する](../requirements/manifest-root-object.md)、entry と辞書順を [manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する](../requirements/manifest-entries-array.md)、marker の判別タグの扱いを [marker は判別タグで識別し manifest.json には漏らさない](../requirements/marker-tag-discrimination.md) が定める。
+`manifest.json` の位置づけは [manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する](../requirements/manifest-single-stable-contract.md) と [MVP は manifest v1 のみを発行・受理しマイグレーション機構を持たない](../requirements/manifest-v1-only-no-migration.md) が定める。`normalizeManifest` が出す文書の形のうち、
+トップレベルは [manifest.json のトップレベルは必須の schemaVersion / root / entries と任意の identity とする](../requirements/manifest-toplevel-fields.md)、`root` は [manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する](../requirements/manifest-root-object.md) が定める。
+entry と辞書順は [manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する](../requirements/manifest-entries-array.md)、marker の判別タグの扱いは [marker は判別タグで識別し manifest.json には漏らさない](../requirements/marker-tag-discrimination.md) が定める。
 この形が、評価層の変更で気づかれずに変わりうる。
 
 **顕在化したときに起きること**: engine 側は不正な文書を読んで失敗するか、より悪いことに
@@ -34,9 +35,9 @@ generated:
 FS も nix daemon も介さない（[mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md)）ため、この破れは実行するまで観測されず、
 E2E まで落ちてこないと検出できない（純粋性そのものが脅かされるわけでは
 ないので `threatens` は張らない。検出が難しい理由としてここに書くに留める）。`method` の既定や defaults の適用が変われば（規範は [method は配置方法を選び symlink は世代管理下・copy は世代管理外になる](../requirements/method-src-matrix.md) と [normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む](../requirements/normalize-manifest-defaults.md)）、世代管理下に置くつもりの entry が
-世代外へ回る。`mkOutOfStoreSymlink` のマーカー（[mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](../requirements/mkoutofstoresymlink-marker.md)）の形が
+世代外へ回る。`mkOutOfStoreSymlink` のマーカーの形が
 変われば、manifest の `srcKind` と local path の写しがずれ、engine は out-of-store の entry を別の
-種類として読む。`identity` を null のまま渡したときに manifest へ `identity` を出す
+種類として読む（マーカーの規範は [mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](../requirements/mkoutofstoresymlink-marker.md)）。`identity` を null のまま渡したときに manifest へ `identity` を出す
 （→ [mkManifest の引数は必須の pkgs / entries / root と任意の identity とする](../requirements/mkmanifest-arguments.md)）のも、文書の形のずれに当たる。
 
 ## 評価

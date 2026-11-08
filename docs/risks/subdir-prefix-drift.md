@@ -11,14 +11,13 @@ threatens:
   - "REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:28:26+09:00"
+  at: "2026-11-09T08:42:17+09:00"
 ---
 # RISK-e65844ea-a7b7-4bad-b15b-f60130b7e8fa: subdir 適用形の前置が一部の target で抜ける、root 側へ混入する、または単体 marker の形が変わる
 
 ## リスク
 
-root マーカーの subdir 適用形の規範は [root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](../requirements/root-marker-subdir-sugar.md) である。全 entry の target に
-`<subdir>/` を前置し、root も `rootKind` も動かさない。前提として、単体の
+subdir の適用は [root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](../requirements/root-marker-subdir-sugar.md) に従い、`rootKind` も動かさない。前提として、単体の
 マーカーは従来どおり `kind` を運ぶだけの入れ物で、root の値の型は [root は 3 マーカーと絶対パス文字列の union を取る](../requirements/root-marker-kinds.md) が定める。この糖衣が崩れる形は 3 つある。
 
 - **前置の抜け・揺れ**: 明示 target や既定 target の一部にだけ前置が掛からない。または

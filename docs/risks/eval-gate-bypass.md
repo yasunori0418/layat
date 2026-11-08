@@ -20,13 +20,15 @@ threatens:
   - "REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:28:26+09:00"
+  at: "2026-11-09T08:42:17+09:00"
 ---
 # RISK-09df40d3-2752-433e-9ab0-2816fbd14969: 評価時に止めるべき入力が止まらずに engine 実行時まで到達する
 
 ## リスク
 
-評価時の入力の確認は `mkManifest` に集める（[mkManifest 自身が evalModules で入力を確認する単一の箇所になる](../requirements/mkmanifest-input-validation.md)）。ここで止める入力は次の規範が定める。
+評価時に止める入力を確認する箇所は [mkManifest 自身が evalModules で入力を確認する単一の箇所になる](../requirements/mkmanifest-input-validation.md) が定める。
+
+ここで止める入力の規範は次のとおり。
 
 - [target / subpath のパス安全性を評価時に確認する](../requirements/path-safety-validation.md)
 - [entry submodule は strict とし未知キーと旧名を評価時エラーにする](../requirements/entry-submodule-strict.md)
