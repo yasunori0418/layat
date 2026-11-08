@@ -8,7 +8,7 @@ sources:
   - id: "issue-662"
     resource: "https://github.com/yasunori0418/layat/issues/662"
     title: "#662"
-origin: "epic #662 の grilling（2026-11-07）で確定。SDR-d5304533-00ae-423b-a459-7c67c1cf093c を書き直した"
+origin: "epic #662 の grilling（2026-11-07）で確定。[提案を棄却した決定は status 不採用 で記録する](adr-status-rejected.md) を書き直した"
 justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
 supersedes:

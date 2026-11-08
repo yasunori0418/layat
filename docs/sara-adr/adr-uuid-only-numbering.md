@@ -10,7 +10,7 @@ sources:
   - id: "issue-492"
     resource: "https://github.com/yasunori0418/layat/issues/492"
     title: "#492"
-origin: "Issue #558 の分解（job adr-finish・2026-11-03）で確定。SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed を書き直した"
+origin: "Issue #558 の分解（job adr-finish・2026-11-03）で確定。[ADR も UUID で採番し、連番の旧 ADR は legacy_adr 型に凍結する](adr-uuid-ids-and-legacy-type.md) を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
 supersedes:
