@@ -8,7 +8,7 @@ satisfies:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:22:37+09:00"
+  at: "2026-11-09T08:40:55+09:00"
 ---
 # DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68: 配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する
 
@@ -38,7 +38,7 @@ manifest の copy entry を直接走査する（配置の可否は plan の conf
   dryRun パリティは、「dryrun 用に予定差分を別途組み立てない」ことで構造的に保証される。
   plan の算出が engine の実行処理から切り離されていなければ、dryrun は実行しない代わりに
   予定を再現する第 2 の実装が必要になり、パリティは実装の一致を人手で維持する約束でしか
-  保てなくなる。`--recopy` の上書きが dryrun の plan に現れないこと（同 REQ）も、recopy が
+  保てなくなる。`--recopy` の上書きが dryrun の plan に現れないこと（同じ要求）も、recopy が
   planner の分類ではなく engine の materialize 側の処理にあるというこの分割から生じる結果である
 - **分類層を fake FS の table-driven で覆える**。[エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](../test-plan/go-test-layering.md) がユニットレベルの table-driven を
   規範化する対象（同 item の言う「FS に触れずに判断する層」＝ FS 意味論を実行せず判定だけを

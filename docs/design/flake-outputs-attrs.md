@@ -10,7 +10,7 @@ satisfies:
   - "REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:22:37+09:00"
+  at: "2026-11-09T08:40:55+09:00"
 ---
 # DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58: layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する
 
@@ -45,7 +45,7 @@ outputs = { ... }: {
   `buildGoModule` で `cmd/layat` + `internal` をまとめてビルドする形にすることで、
   [CLI が持ち込む依存は許可した第三者ライブラリと pin した Go に限り、いずれも固定する](../requirements/cli-dependency-policy.md) が求める vendorHash による依存の固定が output の作り方として表れる
   （Go を nixpkgs の go に pin することと `toolchain` ディレクティブ不使用は
-  同 REQ の規範で、output の形では表れない）。project mode で devShell へ同梱する
+  同じ要求の規範で、output の形では表れない）。project mode で devShell へ同梱する
   ときもこの attr を参照する
 - **`templates.<name>`**: [layat init は nix flake init -t への透明なラッパーとしファイルを生成しない](../requirements/init-template-wrapper.md) という要求があるため、
   テンプレート実体は nix 標準の `templates` output に
