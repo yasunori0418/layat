@@ -230,7 +230,7 @@ func TestPruneRemovesSeriesWithoutGenerations(t *testing.T) {
 	state, system := pruneBases(t)
 	base := fakeBase(state)
 	// The majority shape in the wild: .pending out-links only, no generation
-	// link anywhere (→ DSG-096dc893 「世代を持たない系列も対象」).
+	// link anywhere.
 	pendingOnly := writeSeries(t, base, seriesSpec{
 		hash:    "bbbb",
 		backref: filepath.Join(realTempDir(t), "gone"),
@@ -363,7 +363,7 @@ func TestPruneWarnsOnUnlistableBase(t *testing.T) {
 	state, system := pruneBases(t)
 	stateOrphan := orphanSeries(t, fakeBase(state), "aaaa", "cfg")
 	// A regular file where the system base should be: ReadDir fails with
-	// ENOTDIR, which root cannot bypass either (→ TP-deb05610 の横断規約).
+	// ENOTDIR, which root cannot bypass either.
 	if err := os.RemoveAll(system); err != nil {
 		t.Fatal(err)
 	}
