@@ -58,7 +58,7 @@ type になる。使えるプレースホルダは `{prefix}` / `{id}` / `{seq[:
 | `adr` / `sara_adr` | `origin` | 起点となったセッション等の散文。任意 |
 | `adr` / `sara_adr` | `sources` | 起点となった GitHub Issue 等の出典。書き方は「OKF 互換の frontmatter」節 |
 | `risk` | `likelihood` / `impact` / `level` | `high` / `medium` / `low`。採点規約と `level` の導出は [sara-graph.md](agents/sara-graph.md) |
-| `test_case` | `target` | 対応するテスト資産の正準表記（単一値）|
+| `test_case` | `resource` | 対応するテスト資産の正準表記（単一値）|
 | `ubiquitous_term` | `name_ja` | 日本語の正名。英語のまま使う語では省く。英語の正名は組み込みの `name` に置く |
 | `ubiquitous_term` | `avoid` | 執筆で使わない綴りのリスト。任意。綴りだけを書き、説明は本文に置く |
 
@@ -72,7 +72,7 @@ type になる。使えるプレースホルダは `{prefix}` / `{id}` / `{seq[:
 `dev/tests/adr-supersede.sh` が frontmatter から確かめる。`deprecated` は提案を棄却した ADR にも
 付くため、逆向き（`deprecated` の ADR が `supersedes` で指されるか）は確かめない。
 
-### `test_case` の `target`
+### `test_case` の `resource`
 
 正準表記は次の 2 規則だけで、`dev/tests/test-doc-map.sh` が
 CASE とテスト資産を比べて 1:1 かを確かめる。本文の `## 対象` 節は人向けの補足で、比較の対象にしない。
@@ -145,7 +145,7 @@ sources:
 
 ### `resource`
 
-値の規則は「`test_case` の `target`」の 2 規則と同じ。OKF の `resource` は URI を想定するが、
+値は「`test_case` の `resource`」節の 2 規則に従う。OKF の `resource` は URI を想定するが、
 layat の値は URI ではない。根もリポジトリ根で、index.md のバンドル根（`docs/`）とは異なる。
 
 ### 検証の分担

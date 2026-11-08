@@ -3,7 +3,7 @@ id: "CASE-8b3feeb2-7b7b-482c-bba2-6db0b923647a"
 type: test_case
 name: "outturn_all_test.go — --all の subject 件数不変性と部分失敗の非汚染"
 status: stable
-target: "cmd/layat/outturn_all_test.go"
+resource: "cmd/layat/outturn_all_test.go"
 covers:
   - "TC-1a46da17-1812-431b-966f-ec8dffd315ae"
   - "TC-733ac4ed-dac3-4bb8-9bfd-fd1cbdc300c9"

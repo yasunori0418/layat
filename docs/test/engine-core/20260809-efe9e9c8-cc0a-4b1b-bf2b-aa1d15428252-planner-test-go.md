@@ -3,7 +3,7 @@ id: "CASE-efe9e9c8-cc0a-4b1b-bf2b-aa1d15428252"
 type: test_case
 name: "internal/planner/planner_test.go — fake FS による plan 計算の table-driven 網羅"
 status: stable
-target: "internal/planner/planner_test.go"
+resource: "internal/planner/planner_test.go"
 covers:
   - "TC-b329cafd-06c3-4b87-8357-229b69e5ba5c"
   - "TC-9df804ce-35ee-44a7-87b1-17935d53fab2"

@@ -3,7 +3,7 @@ id: "CASE-0c2cec08-db65-427c-9480-ac0dcacc8d31"
 type: test_case
 name: "internal/engine/dryrun_test.go — dryrun の無副作用と除去なしの移行判断"
 status: stable
-target: "internal/engine/dryrun_test.go"
+resource: "internal/engine/dryrun_test.go"
 covers:
   - "TC-a5eb7de3-a1a7-41ae-8fb9-c2aa374ac894"
 generated:
