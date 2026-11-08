@@ -254,7 +254,7 @@ Many nixpkgs packages split man pages into a separate output, so a bare `buildEn
 `share/man` empty; set `extraOutputsToInstall = [ "man" ]` when you need them. You write the
 environment-variable wiring (`env.sh`, `environment.d`, `.envrc`, …) yourself; layat does not
 generate it. See
-[the wiring idioms](docs/design/20261030-f1d4c295-54ae-4def-951c-901b42dea008-buildenv-placement-env-wiring-idioms.md).
+[the wiring idioms](docs/design/buildenv-placement-env-wiring-idioms.md).
 
 ### home-manager module
 

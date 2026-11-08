@@ -1,0 +1,27 @@
+---
+id: "UBQ-9425b2c7-3f62-4994-9269-cd79dd1261f7"
+type: ubiquitous_term
+name: "systemRoot"
+status: stable
+generated:
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-07T01:45:24+09:00"
+---
+
+# UBQ-9425b2c7-3f62-4994-9269-cd79dd1261f7: systemRoot
+
+## Definition
+
+The root marker selecting system mode (root = `/`). Promotes what was once called a "future absolute-path string seam" into a first-class marker (→ [ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed](../adr/three-root-markers.md)). Also accepts the applied form `systemRoot { subdir = "..."; }` (see root).
+
+## Avoid
+
+なし。
+
+## 定義
+
+system mode（root = `/`）を選ぶ root マーカー。「将来、絶対パス文字列を受ける差し替え点」とされていたものを第一級のマーカーへ昇格したもの（→ [ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed](../adr/three-root-markers.md)）。適用形 `systemRoot { subdir = "..."; }` も受け付ける（意味は root の項）。
+
+## 避ける表現
+
+なし。
