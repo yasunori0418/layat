@@ -3,7 +3,7 @@ id: "SDR-6c6c0681-4d5e-429e-8ee9-acf8dd94ad54"
 type: sara_adr
 name: "item のファイル名は slug だけにする"
 description: "item のファイル名を `<slug>.md` にし、フル ID は frontmatter と H1 見出しだけに書き、散文は Markdown リンクで item を参照する。"
-status: stable
+status: deprecated
 sources:
   - id: "issue-674"
     resource: "https://github.com/yasunori0418/layat/issues/674"
@@ -21,7 +21,7 @@ generated:
 ---
 # SDR-6c6c0681-4d5e-429e-8ee9-acf8dd94ad54: item のファイル名は slug だけにする
 
-- ステータス: stable
+- ステータス: deprecated
 - 日付: 2026-11-08
 - 関連: [省略形の禁止は起票の機械化と全面移行で担保する](short-form-ban-enforced-by-tooling.md), GitHub Issue #674
 - 起点: issue #674 の grilling（2026-11-08）で確定
