@@ -9,7 +9,7 @@ satisfies:
   - "QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:08:50+09:00"
+  at: "2026-11-09T08:09:04+09:00"
 ---
 # INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71: トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）
 
@@ -23,14 +23,15 @@ generated:
 |---|---|
 | `docs/model.yaml` | カスタムスキーマ。11 型と relation を定義し、sara の組み込みモデルを全面置換する |
 | `sara.toml` | リポジトリ設定 |
-| `sara` ジョブ | `test.yml` 内の 1 ジョブ。`sara check` で broken reference / duplicate ID / cycles を検出し、同じジョブで契約テスト 4 件を実行する |
+| `sara` ジョブ | `test.yml` 内の 1 ジョブ。`sara check` で broken reference / duplicate ID / cycles を検出し、同じジョブで契約テスト 5 件を実行する |
 | `dev/tests/test-doc-map.sh` | テスト資産 ⇔ CASE の 1:1 対応を検証する（→ Issue #304）。区分と除外の正本は `dev/tests/` のデータファイルが持つ |
 | `dev/tests/risk-matrix.sh` | risk の `level` が `likelihood` × `impact` のマトリクス導出と一致するかを検証する（→ Issue #303）。マトリクスの正本は `dev/tests/risk-matrix.tsv` |
 | `dev/tests/sara-gap.sh` | `sara-gap` の未カバー 3 段の列挙契約を検証する。判定は fixture 基準で、実グラフのどの item がギャップかは見ない（件数が動き続けるため契約にできない）|
 | `dev/tests/sara-new.sh` | `sara-new` の起票契約（採番・ファイル名規約の適用）を検証する（→ Issue #367）。fixture は実物の `docs/model.yaml` を重ねて使う |
+| `dev/tests/link-text.sh` | リンク文字列の裸のタグと、リンク直後の name の繰り返しを検出する |
 
 契約テストを同じジョブへ載せるのは、テストが「人が思い出したときだけ動く」状態を避けるため。
-4 件はいずれも dev flake の `checks.*` としても露出しているが、CI の `flake-check` はルート
+5 件はいずれも dev flake の `checks.*` としても露出しているが、CI の `flake-check` はルート
 flake を対象にするため到達しない。CI の明示ステップとして固定する。
 
 `sara` ジョブは `test.yml` に同居するが、[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md) の変更検出ジョブは
