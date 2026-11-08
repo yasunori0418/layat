@@ -55,7 +55,7 @@ sara check --format json | jq -r '
 
 ```bash
 sara-new ubiquitous_term <slug> docs/ubiquitous-language -- \
-  --name '<英語の正名>' [--name-ja '<日本語の正名>'] [--avoid '<綴り>' ...]
+  --name '<英語の正名>' --description '<1 文の要約>' [--name-ja '<日本語の正名>'] [--avoid '<綴り>' ...]
 ```
 
 `--avoid` は綴り 1 つごとにフラグを繰り返す。起こしたら本文の 4 節を書き、`docs/glossary.md` の

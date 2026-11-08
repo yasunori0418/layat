@@ -23,7 +23,7 @@ ADR の粒度・ステータス・`supersedes` と `廃止`・`justifies` の選
 
 ```bash
 nix develop '.?dir=dev#sara' -c sara-new adr <slug> docs/adr -- \
-  --name '<タイトル>' --status 採用 \
+  --name '<タイトル>' --description '<1 文の要約>' --status 採用 \
   --issues '#<sub-issue>' --origin '…' \
   --justifies '<ID>' [--supersedes '<ADR>'] [--references '<ADR>']
 ```
