@@ -127,6 +127,9 @@ name: "タグ <state> 入りの name"
 閉じない ` がある行の [タグ <d> 入り](j.md)
 ``` `span` の行の [タグ <e> 入り](k.md)
 [前の行でフェンスに入らない <f>](l.md)
+[大文字の <Name> 入りのリンク](m.md)
+[後続もエスケープ \[y\] の繰り返し](n.md)「後続もエスケープ \[y\] の繰り返し」
+前置のエスケープ \[z\] の繰り返し（[前置のエスケープ \[z\] の繰り返し](o.md)）
 EOF
 
 # 閉じないフェンスで終わるファイルの次のファイルも走査できることを確かめる。
@@ -144,6 +147,8 @@ EOF
 cat > "$work/detect.expected" <<'EOF'
 dup	detect.md:10
 dup	detect.md:11
+dup	detect.md:18
+dup	detect.md:19
 dup	detect.md:7
 dup	detect.md:8
 dup	detect.md:9
@@ -155,6 +160,7 @@ tag	detect.md:13
 tag	detect.md:14
 tag	detect.md:15
 tag	detect.md:16
+tag	detect.md:17
 tag	detect.md:2
 tag	detect.md:4
 tag	detect.md:6
@@ -163,7 +169,7 @@ EOF
 cat > "$fixture/clean.md" <<'EOF'
 ---
 name: "コードスパンの `<state>` は許す"
-description: "<frontmatter> の name 以外のキーは見ない"
+description: "<frontmatter> と [タグ <name> 入り](a.md) の name 以外のキーは見ない"
 ---
 # コードスパンの `<name>` は許す
 
@@ -172,6 +178,7 @@ description: "<frontmatter> の name 以外のキーは見ない"
 [コードスパンの `<name>` は許す](a.md)
 [非 ASCII の <鍵> は許す](b.md)
 [a < b と c > d は語でない](c.md)
+[空白入りの <a b> は語でない](c.md)
 [リンク](d.md)「別の語」
 [リンク](d.md)（別の語）
 別の語（[リンク](d.md)）
