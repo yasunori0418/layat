@@ -387,6 +387,34 @@
                 touch "$out"
               '';
 
+          # リンク文字列の裸のタグと name の繰り返しの契約テスト（dev/tests/link-text.sh）。CI はこの派生ではなく devShells.sara で走らせる。
+          # ルート flake の store path を書き込み可能な場所へ複製し、dev/ は dev flake 側から重ねて走らせる。
+          checks.link-text =
+            pkgs.runCommandLocal "link-text"
+              {
+                nativeBuildInputs = [
+                  pkgs.git
+                  pkgs.coreutils
+                  pkgs.gawk
+                  pkgs.gnugrep
+                  pkgs.findutils
+                  pkgs.diffutils
+                ];
+              }
+              ''
+                cp -r ${inputs.root} repo
+                chmod -R u+w repo
+                rm -rf repo/dev/scripts repo/dev/tests
+                mkdir -p repo/dev
+                cp -r ${./scripts} repo/dev/scripts
+                cp -r ${./tests} repo/dev/tests
+                chmod -R u+w repo/dev
+                cd repo
+                # テスト側の走査基点はカレントへフォールバックする（git 管理外のため）。
+                bash dev/tests/link-text.sh
+                touch "$out"
+              '';
+
           # risk の level 導出マトリクス整合の契約テスト（dev/tests/risk-matrix.sh）。CI はこの派生ではなく devShells.sara で走らせる。
           checks.risk-matrix =
             pkgs.runCommandLocal "risk-matrix"

@@ -69,6 +69,7 @@ FLAKE_CHECKS=(
   checks.layat
   checks.treefmt
   dev:checks.glossary-index
+  dev:checks.link-text
   dev:checks.okf-frontmatter
   dev:checks.okf-index
   dev:checks.risk-matrix
