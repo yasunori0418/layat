@@ -20,7 +20,7 @@ references:
   - "SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T15:56:23+09:00"
+  at: "2026-11-09T08:08:50+09:00"
 ---
 # SDR-7178b787-cf37-4753-9cea-12a0d65df410: 沈黙性を risk のスコア軸にせず本文に書く
 
@@ -31,7 +31,7 @@ generated:
 
 ## 背景
 
-risk の `impact` から沈黙の不整合を外し、回復可能性の一軸にした（[risk の impact を検出後の回復可能性で採点する](risk-impact-as-recoverability.md)）。
+[risk の impact を検出後の回復可能性で採点する](risk-impact-as-recoverability.md) と決め、`impact` から沈黙の不整合を外した。
 気づけるかどうかは脅威の性質として重要な情報で、捨てるには惜しい。これをどこに残すかを決める必要があった。
 
 ## 決定

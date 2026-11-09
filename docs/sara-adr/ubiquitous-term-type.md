@@ -7,7 +7,7 @@ sources:
   - id: "issue-647"
     resource: "https://github.com/yasunori0418/layat/issues/647"
     title: "#647"
-origin: "epic #647 の grilling（2026-11-06〜07）で確定。SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb を書き直した"
+origin: "epic #647 の grilling（2026-11-06〜07）で確定。[root は solution と ADR 系の型だけにする](roots-solution-and-adr-types-only.md) を書き直した"
 justifies:
   - "QA-4a623664-650d-4a08-800f-691f4ea6ff91"
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"

@@ -14,7 +14,7 @@ references:
   - "SDR-5ea31001-96f8-4324-a40b-647cdfa5cc9d"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:24:32+09:00"
+  at: "2026-11-09T08:08:50+09:00"
 ---
 # SDR-536848bb-8901-4e73-8c66-861de3f91bcd: 概要文書は item へのリンク集に縮退させる
 
@@ -25,7 +25,7 @@ generated:
 
 ## 背景
 
-ドキュメントを item に分割する決定（[ドキュメントは sara のナレッジグラフとして item に分割する](docs-as-sara-knowledge-graph.md)）で、`docs/spec.md`・
+[ドキュメントは sara のナレッジグラフとして item に分割する](docs-as-sara-knowledge-graph.md) と決めたので、`docs/spec.md`・
 `docs/design.md`・`docs/concept.md` の規範的な内容は item へ移る。元の 3 文書をどう扱うかを決める
 必要があった。
 

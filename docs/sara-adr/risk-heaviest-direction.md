@@ -20,7 +20,7 @@ references:
   - "SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T17:00:43+09:00"
+  at: "2026-11-09T08:08:50+09:00"
 ---
 # SDR-1a02013e-c57b-4079-9c72-8e9fe99e499a: 複数の失敗方向を持つ risk は最も重い方向で採点する
 
@@ -31,7 +31,7 @@ generated:
 
 ## 背景
 
-risk の `impact` は検出後の回復可能性で採点する（[risk の impact を検出後の回復可能性で採点する](risk-impact-as-recoverability.md)）。1 つの
+[risk の impact を検出後の回復可能性で採点する](risk-impact-as-recoverability.md) と決めた。1 つの
 risk が複数の失敗の仕方を持ち、方向によって回復できる度合いが違うとき、どの方向で採点するかを決める
 必要があった。
 

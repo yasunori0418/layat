@@ -13,7 +13,7 @@ justifies:
   - "QA-67715bb3-1162-4ccf-8441-2f44257a57da"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-07T23:10:46+09:00"
+  at: "2026-11-09T08:08:50+09:00"
 ---
 # SDR-52dccd7e-666c-46f8-8a8d-1a50dd0f721b: OKF の index.md を sara check の出力から生成してコミットする
 
@@ -27,8 +27,7 @@ generated:
 OKF の読み手は、ディレクトリごとの index.md から item を探す。sara の item には index.md が無く、
 一覧は `sara query` や `sara report` で取る。sara を持たない読み手は、これらを使えない。
 
-[リファレンスドキュメントは記述対象のソースから生成し、生成物を持たない](../quality/reference-docs-generated-from-source.md) は、リファレンスドキュメントをソースから生成し、生成物を
-リポジトリに持たないと定めている。
+[リファレンスドキュメントは記述対象のソースから生成し、生成物を持たない](../quality/reference-docs-generated-from-source.md) という規範がある。
 
 ## 決定
 

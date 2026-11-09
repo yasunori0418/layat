@@ -23,7 +23,7 @@ references:
   - "ADR-cb010758-7887-470a-ba61-19b2e99f0053"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T22:55:03+09:00"
+  at: "2026-11-09T08:08:50+09:00"
 ---
 # SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef: sara check を required status check にしない
 
@@ -34,7 +34,7 @@ generated:
 
 ## 背景
 
-`sara check` を strict にした（[sara check を strict モードで回す](sara-check-strict-mode.md)）ことで、CI の `sara` ジョブは
+[sara check を strict モードで回す](sara-check-strict-mode.md) と決めたことで、CI の `sara` ジョブは
 張り忘れで失敗するようになった。このジョブの失敗でマージを止めるかどうかを決める必要があった。
 
 ## 決定

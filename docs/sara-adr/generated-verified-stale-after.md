@@ -13,7 +13,7 @@ justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-07T23:10:46+09:00"
+  at: "2026-11-09T08:08:50+09:00"
 ---
 # SDR-9a646576-31bd-4cea-996d-54993ff2b8fa: item に生成者・確認の記録・期限を持たせる
 
@@ -29,7 +29,7 @@ git の履歴には書いた時刻が残るが、frontmatter だけを直した�
 本文を最後に変えた時刻を取り出すには手間がかかる。
 
 OKF には、生成者と時刻の `generated`、確認の記録の `verified`、期限の `stale_after` がある。
-[OKF v0.2 と互換の frontmatter キーを item に足す](okf-compatible-frontmatter.md) で OKF と互換のキーを足すと決めた。
+すでに [OKF v0.2 と互換の frontmatter キーを item に足す](okf-compatible-frontmatter.md) と決めている。
 
 ## 決定
 

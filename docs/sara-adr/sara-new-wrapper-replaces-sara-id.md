@@ -2,7 +2,7 @@
 id: "SDR-f5443db0-6407-41c0-9ab5-55f22dc4de5e"
 type: sara_adr
 name: "sara-id を廃止し sara init を包む起票ラッパーを使う"
-status: stable
+status: deprecated
 sources:
   - id: "issue-366"
     resource: "https://github.com/yasunori0418/layat/issues/366"
@@ -21,7 +21,11 @@ generated:
 ---
 # SDR-f5443db0-6407-41c0-9ab5-55f22dc4de5e: sara-id を廃止し sara init を包む起票ラッパーを使う
 
-- ステータス: stable
+> **廃止（2026-11-08）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 全体 → [sara-id を廃止し sara init を包む起票ラッパーで slug のファイル名を適用する](sara-new-wrapper-applies-slug-filename.md)
+
+- ステータス: deprecated
 - 日付: 2026-11-01
 - 関連: [ID はフル UUID に統一し 8 文字省略形を使わない](full-uuid-ids-no-short-form.md), GitHub Issue #366, #364
 - 起点: epic #364 の着手前 grilling（2026-08-17）で確定。ADR-0053 §3 を書き直した

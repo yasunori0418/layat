@@ -86,8 +86,12 @@ relation は**起こした側（下流）の frontmatter に宣言する**（`sa
 | 散文中の参照 | `[item の name](相対パス)` | `[mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md)` |
 
 - **フル ID を書くのは frontmatter の `id:`・relation リストと、item 本文の H1 見出し `# <ID>: <name>` だけにする**
-  （→ [ID の書き方の決定](../../../docs/sara-adr/slug-only-filenames.md)）。8 文字省略形は使わない。
+  （→ [フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる](../../../docs/sara-adr/full-ids-in-frontmatter-and-h1.md)）。8 文字省略形は使わない。
 - 散文で item に触れるときは Markdown リンクにし、リンク文字列にも ID を書かない。
+- `specification` / `specification_ja` / `origin` の文字列の中で item に触れるときも、
+  `[item の name](item のディレクトリからの相対パス)` の Markdown リンクにする。
+- `name` と H1 に `<name>` のような `<…>` を含む語があればコードスパンに入れる（Markdown でタグに解釈され、描画で消えるため）。
+- 散文でリンクの直後に同じ name を鉤括弧や丸括弧で繰り返さない。
 - ID をそのまま grep すれば frontmatter の `id:` と relation に当たり、`sara query` へ渡しても同じものに当たる。
 - 起票は ADR を含め **`sara-new` コマンド**。採番とファイル名規約の適用、`sara init` の
   呼び出しまでを一手で済ませ、`id:` / `file:` の 2 行を返す。連番を手で振らない

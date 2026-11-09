@@ -14,7 +14,7 @@ references:
   - "SDR-3ff9f355-a667-476e-b10d-087248cdbfcf"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-01T21:41:20+09:00"
+  at: "2026-11-09T08:08:50+09:00"
 ---
 # SDR-fa7eff8e-788f-48e7-951d-4cfbf95d5a1f: adr の status_note を持たない
 
@@ -28,7 +28,7 @@ generated:
 ADR のステータス行には「採用（2026-06-14 改訂: … → ADR-0015）」のようなカッコ書きの改訂注記が
 付いていた。enum の値に収まらないので、frontmatter に `status_note` フィールドを設けて受け皿にしていた。
 
-失効を `supersedes` と `廃止` で表す決定（[ADR の失効は supersedes と 廃止 で表す](adr-supersedes-and-deprecated-status.md)）により、ADR は
+[ADR の失効は supersedes と 廃止 で表す](adr-supersedes-and-deprecated-status.md) と決めたので、ADR は
 部分改訂を受けなくなる。
 
 ## 決定
