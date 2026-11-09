@@ -120,20 +120,13 @@ scan_ids() {
       short = "[^A-Za-z0-9-]" prefix "-" hex(8) "[^0-9a-f-]"
       id_line = "^id:[ \t]*\"?" full "\"?[ \t]*$"
       relation_line = "^[ \t]*-[ \t]+\"?" full "\"?[ \t]*$"
-      h1_line = "^# " full ": "
     }
     FNR == 1 {
       in_fm = (FILENAME ~ /\.md$/ && $0 == "---")
-      has_fm = in_fm
-      h1_seen = 0
       if (in_fm) next
     }
     in_fm && $0 == "---" { in_fm = 0; next }
     in_fm && ($0 ~ id_line || $0 ~ relation_line) { next }
-    has_fm && !in_fm && !h1_seen && substr($0, 1, 2) == "# " {
-      h1_seen = 1
-      if ($0 ~ h1_line) next
-    }
     {
       line = $0
       while (match(line, full)) {
@@ -340,7 +333,7 @@ id: REQ-11111111-2222-4333-8444-555555555555
 satisfies:
   - REQ-11111111-2222-4333-8444-555555555556
 ---
-# REQ-11111111-2222-4333-8444-555555555555: 自身の H1
+# name だけの H1
 
 REQ-xxxxxxxx と ADR-0012 と ADR-NNNN と TC-999 と REQ-ABCDEF01
 XREQ-abcdef01 と REQ-abcdef01-foo と REQ-abcdef012 と abcdef01
@@ -349,6 +342,7 @@ EOF
 LC_ALL=C sort > "$work/ids.expected" <<'EOF'
 full	detect.md:3
 short	detect.md:4
+full	detect.md:8
 full	detect.md:10
 full	detect.md:12
 full	detect.md:12
