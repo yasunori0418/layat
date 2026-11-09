@@ -17,9 +17,10 @@ threatens:
   - "REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe"
   - "REQ-eb363122-385a-499c-a074-c95efb949d07"
   - "REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d"
+  - "REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:42:17+09:00"
+  at: "2026-11-09T23:36:39+09:00"
 ---
 # manifest.json の形が engine の読む契約から気付かれずにずれる
 
@@ -39,6 +40,9 @@ E2E まで落ちてこないと検出できない（純粋性そのものが脅�
 変われば、manifest の `srcKind` と local path の写しがずれ、engine は out-of-store の entry を別の
 種類として読む（マーカーの規範は [mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](../requirements/mkoutofstoresymlink-marker.md)）。`identity` を null のまま渡したときに manifest へ `identity` を出す
 （→ [mkManifest の引数は必須の pkgs / entries / root と任意の identity とする](../requirements/mkmanifest-arguments.md)）のも、文書の形のずれに当たる。
+
+[entry の識別子は属性キー = target とし一意性は Nix が担保する](../requirements/entry-identity-by-target-key.md) が定めるとおり、属性キーは entry の識別子であり、`target` を省いたときの既定値でもある。
+文書の `target` が属性キーからずれる懸念は、正規化の実装を置き換えても残るので `requirement` へ張る。
 
 ## 評価
 

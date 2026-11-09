@@ -23,6 +23,7 @@ specification_ja: |
   規定しない。統合層ごとのファイル（`modules/home-manager.nix` 等）が何に依存してよいかは
   本 item の射程外であり、ここでは規定しない。それらが engine を起動する配線であることは
   [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](modules-are-engine-wiring.md) の担当である。
+risk_exempt: "`modules/common.nix` の依存の制約であり、評価テストが nixpkgs だけで通ることが傍証になる。"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"

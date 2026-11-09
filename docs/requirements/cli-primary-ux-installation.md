@@ -30,6 +30,7 @@ specification_ja: |
   が同一 flake 入力から来て `schemaVersion` が一致するようにしなければならない。
   skew した `schemaVersion` に engine がどう反応するかは manifest スキーマ仕様の担当で、
   本 item では規定しない。
+risk_exempt: "配布形態の宣言であり、テストで確かめる振る舞いが無い。"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"

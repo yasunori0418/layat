@@ -8,12 +8,13 @@ threatens:
   - "REQ-6506bc82-d1e1-4dbf-8c57-d5d1babf218a"
   - "REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b"
   - "REQ-61c05e09-0bde-4f74-9a96-03185f9df606"
+  - "REQ-3f541d39-da41-4ef8-858b-707f54cf6a29"
 likelihood: low
 impact: high
 level: medium
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T23:36:39+09:00"
 ---
 # root 解決を誤り、意図しないディレクトリツリーへ配置する
 
@@ -51,5 +52,8 @@ git から root を解決できないときに engine 実行時ではなく評�
 
 ## 張り先の判断
 
-4 本とも `requirement` へ張る。root をどこから解決するかはユーザーが直接触れる契約であり、
+5 本とも `requirement` へ張る。root をどこから解決するかはユーザーが直接触れる契約であり、
 解決の処理の実装を差し替えても「意図しないツリーへ配置される」懸念は消えない。
+
+[root マーカーは `kind` を運ぶ入れ物でパス解決は engine が行う](../requirements/root-markers-runtime-resolution.md) は、マーカーが運ぶ種別から実パスを engine が解決することを定める。
+解決の処理をどう作り替えても、種別と違うツリーへ解決される懸念は残る。
