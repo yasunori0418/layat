@@ -3,7 +3,7 @@ id: "SDR-a28f6eb7-f0ab-4a3c-9a94-c8a0d0a6a66f"
 type: sara_adr
 name: "ID の書き場所と省略形の禁止は起票の機械化と契約テストで担保する"
 description: "フル ID の書き場所と 8 文字省略形の禁止を、起票ラッパーによる機械化と契約テスト link-text.sh の検出で担保する。"
-status: stable
+status: deprecated
 sources:
   - id: "issue-692"
     resource: "https://github.com/yasunori0418/layat/issues/692"
@@ -21,7 +21,11 @@ generated:
 ---
 # SDR-a28f6eb7-f0ab-4a3c-9a94-c8a0d0a6a66f: ID の書き場所と省略形の禁止は起票の機械化と契約テストで担保する
 
-- ステータス: stable
+> **廃止（2026-11-09）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 全体 → [frontmatter の外のフル ID と省略形は起票の機械化と契約テストで防ぐ](frontmatter-only-ids-checked-by-contract-test.md)
+
+- ステータス: deprecated
 - 日付: 2026-11-09
 - 関連: [フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる](full-ids-in-frontmatter-and-h1.md), GitHub Issue #692
 - 起点: epic #692 の完了後の残存調査（2026-11-09）で確定。[省略形の禁止は起票の機械化と全面移行で担保する](short-form-ban-enforced-by-tooling.md) を書き直した
