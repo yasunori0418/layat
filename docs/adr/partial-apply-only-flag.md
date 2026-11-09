@@ -8,7 +8,7 @@ justifies:
   - "REQ-4fc98fa6-fd5f-4f25-8b10-60755bf49bd2"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:06+09:00"
+  at: "2026-11-10T00:44:25+09:00"
 ---
 # 一部の entry だけを適用する --only を提供する
 
@@ -27,7 +27,7 @@ profile の世代は manifest 全体を単位に atomic に切り替わるので
 ## 決定
 
 `--only` は提供しない。選択的に更新したいときは config（`layat.<name>`）を分ける。
-規範は [一部 entry だけを適用する --only は提供しない](../requirements/no-only-flag.md) に置く。
+棄却した提案の記録は [一部の entry だけを適用する --only を提供する](../requirements/no-only-flag.md) に置く。
 
 ## 根拠
 

@@ -95,7 +95,7 @@ item は Open Knowledge Format（OKF）v0.2 と互換のキーを持つ。対応
 | `type` | 全て | sara の組み込みフィールドをそのまま OKF の `type` とみなす |
 | `name` | 全て | OKF の `title` とみなす。`title` は書かない |
 | `description` | 全て | item の 1 文の要約。新しく起こす item では必須。既存の item は index.md の生成器が本文の最初の段落で代用する |
-| `status` | 全て | `draft`（検討中でまだ有効でない）/ `stable`（有効）/ `deprecated`（もう有効でない）の 3 値 |
+| `status` | 全て | `draft`（検討中でまだ有効でない）/ `stable`（有効）/ `deprecated`（もう有効でない。`requirement` / `design` では棄却した提案の記録も表す）の 3 値 |
 | `generated` | 全て | `by`（actor）と `at`（時刻）の組 |
 | `verified` | 全て | `generated` と同じ形の要素のリスト。任意 |
 | `stale_after` | 全て | 期限の時刻。任意 |

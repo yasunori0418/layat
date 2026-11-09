@@ -28,7 +28,7 @@ generated:
 
 `rollback` は `--all` を受けない。戻す config の名指しを必須にする。
 
-引数の形は [rollback は名指し必須で --all に対応しない](../requirements/rollback-named-only.md) に置く。
+引数の形は [rollback は config の名指しを必須にする](../requirements/rollback-named-only.md) に置く。
 
 ## 根拠
 

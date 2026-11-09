@@ -53,7 +53,7 @@ attr path の解決も同じ層にある。名前を省いたときに `default`
 振り分けを誤る（→ [apply --all は rootKind を 1 回の一括 eval で取る](../requirements/apply-all-batched-eval.md)）と、意図しない config を build する。
 entrypoint や `layat.<name>` が見つからないときに別の config を推測するか空の manifest で続ける
 （→ [要求された操作が成立しないときは CLI がエラーで停止し、暗黙のフォールバックを採らない](../requirements/cli-stop-conditions.md)）、`rollback` が `--all` を受け付ける
-（→ [rollback は名指し必須で --all に対応しない](../requirements/rollback-named-only.md)）のも、利用者が求めていない対象へ作用する形である。
+（→ [rollback は config の名指しを必須にする](../requirements/rollback-named-only.md)）のも、利用者が求めていない対象へ作用する形である。
 このうち flake と legacy の attr path の組み立てと、entrypoint が見つからないときのエラー（明示指定・
 CWD の自動探索とも）は [entrypoint の探索順序と nix へ渡す引数列が形ごとに正しく組み立てられる](../test/cli-json/nix-argv-assembly.md) が、名前を省略した既定の使い方の区別は
 [フラグの解釈と対象選択が仕様どおりで位置引数を飲み込まない](../test/cli-json/flag-parsing-target-selection.md) が覆う。省略した名前が `default` という名前そのものへ解決すること、

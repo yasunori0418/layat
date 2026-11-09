@@ -127,7 +127,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](requirements/prune-target-selection.md) — prune は backref の root が実在しない roothash 系列だけを系列ごと削除する
 - [prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](requirements/prune-safety-gates.md) — prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る
 - [rollback と list-generations は home / system mode 限定にする](requirements/rollback-list-generations-home-only.md) — rollback と list-generations は home / system mode 限定にする
-- [rollback は名指し必須で --all に対応しない](requirements/rollback-named-only.md) — rollback は名指し必須で --all に対応しない
+- [rollback は config の名指しを必須にする](requirements/rollback-named-only.md) — rollback は config の名指しを必須にする
 - [status は記録基底を走査して last-applied 記録を読み取り専用で表示する](requirements/status-command.md) — status は記録基底を走査して last-applied 記録を読み取り専用で表示する
 - [gitignore は配置 target を stdout へ列挙するだけでファイルを書き込まない](requirements/gitignore-anchored-output.md) — gitignore は配置 target を stdout へ列挙するだけでファイルを書き込まない
 - [gitignore は project mode 限定で非 project config を指定したらエラーで停止する](requirements/gitignore-project-mode-only.md) — gitignore は project mode 限定で非 project config を指定したらエラーで停止する
@@ -139,7 +139,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [--root は全モード共通で解決 root を明示上書きする](requirements/root-override-flag.md) — --root は全モード共通で解決 root を明示上書きする
 - [flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする](requirements/flock-acquisition-mode.md) — flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする
 - [--version は埋め込みバージョンを cobra 既定書式で表示して終了し短縮形を持たない](requirements/version-flag.md) — --version は埋め込みバージョンを cobra 既定書式で表示して終了し短縮形を持たない
-- [一部 entry だけを適用する --only は提供しない](requirements/no-only-flag.md) — 一部 entry だけを適用する --only は提供しない
+- [一部の entry だけを適用する --only を提供する](requirements/no-only-flag.md) — 棄却した提案。`--only` は提供しない
 - [内部実行する nix コマンドを開示し世代の切替と GC は標準の nix コマンドへ委譲する](requirements/nix-command-transparency-and-delegation.md) — 内部実行する nix コマンドを開示し世代の切替と GC は標準の nix コマンドへ委譲する
 
 ### 出力ストリームと終了コード

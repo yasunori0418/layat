@@ -111,11 +111,11 @@ error にする。先行 ADR 側からは `sara query` の `Is referenced by` �
   [世代スキップを project mode と system mode で行う](generation-skip-project-and-system.md) / [module と project では世代操作を公開しない](module-and-project-hide-generation-ops.md) の 5 本が張る。
   [--json は outturn 規約準拠のエンベロープを出す第 2 契約とする](../requirements/json-outturn-envelope.md) へは帰属の [--json は outturn 規約に常時準拠する](outturn-conformance-principle.md) に加え、`--json` を導入した
   [--json を全サブコマンド共通の persistent フラグにする](json-global-flag-for-all-subcommands.md) と `tool.version` の供給元である [VERSION ファイルをバージョンの一次情報にする](version-file-single-source.md) が張る
-- item が `justifies` を受けない理由を明記している: [動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す](../design/lib-no-dynamic-entries.md) の
+- item が `justifies` を受けない理由を明記している: [動的 entry 生成のヘルパを lib に置く](../design/lib-no-dynamic-entries.md) の
   「根拠が ADR 以外にあることによる」。一方 [root マーカーは `kind` を運ぶ入れ物でパス解決は engine が行う](../requirements/root-markers-runtime-resolution.md) の「`subdir`
   適用形は担当範囲外」は規範に含めないという宣言で、ADR に依拠していないことではない
 - 背景で前提として言及するだけ: [apply --all の build を worker pool で並列に実行する](apply-all-parallel-build-worker-pool.md) → [apply --all は rootKind を 1 回の一括 eval で取る](../requirements/apply-all-batched-eval.md)
-- 出典節が ADR を名指ししない item: [一部 entry だけを適用する --only は提供しない](../requirements/no-only-flag.md) は [一部の entry だけを適用する --only を提供する](partial-apply-only-flag.md) の決定から見つけた
+- 出典節が ADR を名指ししない item: [一部の entry だけを適用する --only を提供する](../requirements/no-only-flag.md) は [一部の entry だけを適用する --only を提供する](partial-apply-only-flag.md) の決定から見つけた
 - 規範文が対称化の対象として直に述べるので張る: [copy が foreign 実ファイルを skip したときは warning で可視化する](../requirements/copy-foreign-skip-warning.md) は symlink 側の
   foreign 警告を [symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする](../requirements/symlink-placement-procedure.md) へ委譲しつつ、規範文が "symmetrically with the
   foreign warning for symlinks" と名指しするので [cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](cross-config-last-wins-with-foreign-warning.md) を張る
