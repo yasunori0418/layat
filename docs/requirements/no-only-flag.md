@@ -12,7 +12,7 @@ specification: |
 specification_ja: |
   一部 entry だけを適用する `--only` は提供してはならない。profile 世代の atomic 性と
   衝突するため。選択的更新は config（`layat.<name>`）の分割で担保しなければならない。
-risk_exempt: "`--only` を提供しないという不在の要件であり、テストで確かめる振る舞いが無い。"
+risk_exempt: "`--only` を提供しないと定める要件であり、テストで確かめる振る舞いが無い。"
 generated:
   by: "claude-code/claude-opus-5"
   at: "2026-09-20T08:21:50+09:00"

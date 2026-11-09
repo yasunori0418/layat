@@ -21,7 +21,7 @@ threatens:
   - "REQ-27b75fe6-6c36-44a8-8cd3-5cc98043022a"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T23:36:39+09:00"
+  at: "2026-11-09T23:37:58+09:00"
 ---
 # 評価時に止めるべき入力が止まらずに engine 実行時まで到達する
 
@@ -51,7 +51,7 @@ root マーカーの subdir 適用形の拒否（絶対パス・`..` 脱出・�
 `identity` は、別のリスク [manifest.json の形が engine の読む契約から気付かれずにずれる](manifest-contract-drift.md) の側で [manifest 文書の形（schemaVersion / root / entry 5 フィールド）を不変条件としてアサートする](../test/manifest-eval/manifest-shape-invariants.md) が見る。
 
 [subpath は src 内の相対パスとし、リポジトリ全体は省略で表して専用トークンを設けない](../requirements/subpath-omission-whole-repo.md) の「`src` 内の相対パス」という前提も、この確認が止めることで成り立つ。
-確認の実装を置き換えても `src` の外を指す `subpath` が通る懸念は残るので、`requirement` へ張る。
+確認の実装を置き換えても `src` の外を指す `subpath` が止まらずに engine へ届く懸念は残るので、`requirement` へ張る。
 
 **顕在化したときに起きること**: この条件が緩むと、`..` や絶対パスで root の外を指す target が
 engine まで届き、意図しない場所を書き換える。タイポした旧名は利用者に知らせずに無視され、ユーザーは

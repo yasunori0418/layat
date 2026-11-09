@@ -20,7 +20,7 @@ specification_ja: |
   （[engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)）越しに行わなければならず、engine が外部コマンド
   として呼び出してはならない。既定バックエンド nixprofile は自パッケージの内側で `nix-env` を
   実行する。
-risk_exempt: "engine が叩くコマンドを限る依存の制約であり、レビューで守る。"
+risk_exempt: "engine が実行するコマンドを限る依存の制約であり、レビューで守る。"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T13:39:28+09:00"
