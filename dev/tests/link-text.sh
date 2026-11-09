@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # リンク文字列・frontmatter の name・H1 の裸のタグと、リンク前後の name の繰り返しが無いことを確かめる契約テスト。
+# 文書とコードに、許可外の場所のフル ID と 8 文字省略形が無いことも確かめる。
 #
 # 実行:
 #   nix develop '.?dir=dev#sara' -c dev/tests/link-text.sh               # devShell / CI から直接
@@ -101,6 +102,50 @@ scan() {
       masked = mask($0)
       if ($0 ~ /^# /) check_tag(masked, $0)
       check_links($0, masked)
+    }
+  ' "$@"
+}
+
+# CLAUDE.md と dev/skills/ が ID 規約の例として使う ID。
+example_id=REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4
+
+# 検出を「<種別>\t<path>:<line>: <ID>」で標準出力へ出す。種別は full（許可外のフル ID）と short（8 文字省略形）。
+scan_ids() {
+  LC_ALL=C awk -v example="$example_id" '
+    function hex(n, s) { s = ""; while (n-- > 0) s = s "[0-9a-f]"; return s }
+    function report(kind, id) { printf "%s\t%s:%d: %s\n", kind, FILENAME, FNR, id }
+    BEGIN {
+      prefix = "(SOL|UC|REQ|DSG|QA|TP|INF|RISK|TC|CASE|ADR|SDR|UBQ)"
+      full = prefix "-" hex(8) "-" hex(4) "-" hex(4) "-" hex(4) "-" hex(12)
+      short = "[^A-Za-z0-9-]" prefix "-" hex(8) "[^0-9a-f-]"
+      id_line = "^id:[ \t]*\"?" full "\"?[ \t]*$"
+      relation_line = "^[ \t]*-[ \t]+\"?" full "\"?[ \t]*$"
+      h1_line = "^# " full ": "
+    }
+    FNR == 1 {
+      in_fm = (FILENAME ~ /\.md$/ && $0 == "---")
+      has_fm = in_fm
+      h1_seen = 0
+      if (in_fm) next
+    }
+    in_fm && $0 == "---" { in_fm = 0; next }
+    in_fm && ($0 ~ id_line || $0 ~ relation_line) { next }
+    has_fm && !in_fm && !h1_seen && substr($0, 1, 2) == "# " {
+      h1_seen = 1
+      if ($0 ~ h1_line) next
+    }
+    {
+      line = $0
+      while (match(line, full)) {
+        id = substr(line, RSTART, RLENGTH)
+        if (!(id == example && (FILENAME == "CLAUDE.md" || FILENAME ~ /^dev\/skills\//))) report("full", id)
+        line = substr(line, 1, RSTART - 1) " " substr(line, RSTART + RLENGTH)
+      }
+      line = " " line " "
+      while (match(line, short)) {
+        report("short", substr(line, RSTART + 1, RLENGTH - 2))
+        line = substr(line, RSTART + RLENGTH - 1)
+      }
     }
   ' "$@"
 }
@@ -238,6 +283,105 @@ else
   pass "自己テスト: 検出してはいけない例を 0 件にする"
 fi
 
+ids="$work/ids"
+mkdir -p "$ids/dev/skills" "$ids/dev/other"
+
+cat > "$ids/detect.md" <<'EOF'
+---
+id: "REQ-11111111-2222-4333-8444-555555555555"
+description: "REQ-11111111-2222-4333-8444-555555555556 を説明文に書く"
+origin: "→ REQ-abcdef01 を来歴に書く"
+derives_from:
+  - "UC-11111111-2222-4333-8444-555555555555"
+---
+# REQ-11111111-2222-4333-8444-555555555555: 自身の H1
+
+# REQ-11111111-2222-4333-8444-555555555557: 二つ目の H1
+
+地の文 REQ-11111111-2222-4333-8444-555555555558 と `TP-11111111-2222-4333-8444-555555555559`
+[DSG-11111111-2222-4333-8444-55555555555a](../x.md) と [x](../REQ-11111111-2222-4333-8444-55555555555b.md)
+- REQ-11111111-2222-4333-8444-55555555555c の説明
+- "RISK-11111111-2222-4333-8444-55555555555d"
+
+日本語に隣接する省略形（→ REQ-abcdef01）
+```
+CASE-abcdef01 と ADR-12345678
+```
+EOF
+
+cat > "$ids/detect.sh" <<'EOF'
+# REQ-11111111-2222-4333-8444-555555555555: シェルのコメント
+id: "REQ-11111111-2222-4333-8444-555555555555"
+  - "REQ-11111111-2222-4333-8444-555555555555"
+echo "→ TP-abcdef01"
+EOF
+
+cat > "$ids/nofm.md" <<'EOF'
+# REQ-11111111-2222-4333-8444-555555555555: frontmatter の無い文書の H1
+REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4 は例示の場所の外
+EOF
+
+cat > "$ids/CLAUDE.md" <<'EOF'
+`REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4` は規約の例
+`REQ-11111111-2222-4333-8444-555555555555` は例ではない
+EOF
+
+cat > "$ids/dev/skills/example.md" <<'EOF'
+`REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4` は規約の例
+EOF
+
+cat > "$ids/dev/other/example.md" <<'EOF'
+`REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4` は dev/skills の外
+EOF
+
+cat > "$ids/clean.md" <<'EOF'
+---
+id: REQ-11111111-2222-4333-8444-555555555555
+satisfies:
+  - REQ-11111111-2222-4333-8444-555555555556
+---
+# REQ-11111111-2222-4333-8444-555555555555: 自身の H1
+
+REQ-xxxxxxxx と ADR-0012 と ADR-NNNN と TC-999 と REQ-ABCDEF01
+XREQ-abcdef01 と REQ-abcdef01-foo と REQ-abcdef012 と abcdef01
+EOF
+
+LC_ALL=C sort > "$work/ids.expected" <<'EOF'
+full	detect.md:3
+short	detect.md:4
+full	detect.md:10
+full	detect.md:12
+full	detect.md:12
+full	detect.md:13
+full	detect.md:13
+full	detect.md:14
+full	detect.md:15
+short	detect.md:17
+short	detect.md:19
+short	detect.md:19
+full	detect.sh:1
+full	detect.sh:2
+full	detect.sh:3
+short	detect.sh:4
+full	nofm.md:1
+full	nofm.md:2
+full	CLAUDE.md:2
+full	dev/other/example.md:1
+EOF
+
+(cd "$ids" && scan_ids detect.md detect.sh nofm.md CLAUDE.md dev/skills/example.md dev/other/example.md clean.md) > "$work/ids.out"
+ids_rc=$?
+if [ "$ids_rc" -ne 0 ]; then
+  fault "自己テスト: ID の走査が異常終了した（exit $ids_rc）"
+fi
+
+if diff <(cut -d: -f1,2 "$work/ids.out" | LC_ALL=C sort) "$work/ids.expected" > "$work/ids.diff"; then
+  pass "自己テスト: 許可外の ID だけを検出する"
+else
+  fault "自己テスト: ID の検出が期待と食い違う"
+  cat "$work/ids.diff"
+fi
+
 if [ "$fail" -ne 0 ]; then
   echo
   printf 'link-text: 自己テストに失敗したため本番の走査へ進まない\n' >&2
@@ -283,6 +427,30 @@ if [ "$scan_rc" -ne 0 ]; then
   exit 1
 fi
 
+id_roots=(docs internal cmd lib modules tests templates .github dev/scripts dev/skills)
+id_files=(README.md README.ja.md CLAUDE.md sara.toml flake.nix example.envrc example.worktreeinclude example.worktreeskip)
+if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+  git ls-files -z -- "${id_roots[@]}" "${id_files[@]}"
+else
+  find "${id_roots[@]}" -type f -print0
+  printf '%s\0' "${id_files[@]}"
+fi | LC_ALL=C sort -z > "$work/id-targets"
+
+mapfile -d '' -t id_targets < "$work/id-targets"
+for f in "${id_targets[@]}"; do
+  if [ ! -f "$f" ]; then
+    echo "link-text.sh: 対象ファイルが無い: $f" >&2
+    exit 1
+  fi
+done
+
+scan_ids "${id_targets[@]}" >> "$work/scan.out"
+ids_rc=$?
+if [ "$ids_rc" -ne 0 ]; then
+  echo "link-text.sh: ID の走査が異常終了した（exit $ids_rc）" >&2
+  exit 1
+fi
+
 report_kind() {
   local kind=$1 label=$2 count
   count=$(grep -c "^$kind"$'\t' "$work/scan.out")
@@ -296,9 +464,11 @@ report_kind() {
 
 report_kind tag "リンク文字列・name・H1 の裸のタグ"
 report_kind dup "リンク前後の name の繰り返し"
+report_kind full "許可外の場所のフル ID"
+report_kind short "8 文字省略形"
 
 if [ -s "$work/scan.out" ] && [ "$fail" -eq 0 ]; then
-  fault "走査の検出が tag / dup のどちらにも分類されない"
+  fault "走査の検出がどの種別にも分類されない"
   cat "$work/scan.out"
 fi
 
@@ -306,7 +476,7 @@ fi
 
 echo
 if [ "$fail" -eq 0 ]; then
-  printf 'link-text: 全アサーション通過（対象ファイル %d 件）\n' "${#targets[@]}"
+  printf 'link-text: 全アサーション通過（表記 %d 件・ID %d 件）\n' "${#targets[@]}" "${#id_targets[@]}"
   exit 0
 fi
 

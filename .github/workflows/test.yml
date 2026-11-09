@@ -115,6 +115,15 @@ jobs:
               - 'README.md'
               - 'README.ja.md'
               - 'CLAUDE.md'
+              # Code and config the link-text contract test scans for item IDs.
+              - 'internal/**'
+              - 'cmd/**'
+              - 'lib/**'
+              - 'modules/**'
+              - 'templates/**'
+              - '.github/**'
+              - 'dev/skills/**'
+              - 'example.*'
 
       - name: Setup Nix
         if: steps.filter.outputs.relevant != 'false'

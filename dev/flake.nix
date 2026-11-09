@@ -387,7 +387,7 @@
                 touch "$out"
               '';
 
-          # リンク文字列の裸のタグと name の繰り返しの契約テスト（dev/tests/link-text.sh）。CI はこの派生ではなく devShells.sara で走らせる。
+          # リンク文字列の裸のタグと name の繰り返し、許可外の ID の契約テスト（dev/tests/link-text.sh）。CI はこの派生ではなく devShells.sara で走らせる。
           # ルート flake の store path を書き込み可能な場所へ複製し、dev/ は dev flake 側から重ねて走らせる。
           checks.link-text =
             pkgs.runCommandLocal "link-text"
