@@ -9,7 +9,7 @@ satisfies:
   - "QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T22:24:35+09:00"
+  at: "2026-11-09T23:41:29+09:00"
 ---
 # トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）
 
@@ -26,7 +26,7 @@ generated:
 | `sara` ジョブ | `test.yml` 内の 1 ジョブ。`sara check` で broken reference / duplicate ID / cycles を検出し、同じジョブで契約テスト（この表の `dev/tests/` の 5 件を含む）を実行する |
 | `dev/tests/test-doc-map.sh` | テスト資産 ⇔ CASE の 1:1 対応を検証する（→ Issue #304）。区分と除外の正本は `dev/tests/` のデータファイルが持つ |
 | `dev/tests/risk-matrix.sh` | risk の `level` が `likelihood` × `impact` のマトリクス導出と一致するかを検証する（→ Issue #303）。マトリクスの正本は `dev/tests/risk-matrix.tsv` |
-| `dev/tests/sara-gap.sh` | `sara-gap` の未カバー 3 段の列挙契約を検証する。判定は fixture 基準で、実グラフのどの item がギャップかは見ない（件数が動き続けるため契約にできない）|
+| `dev/tests/sara-gap.sh` | `sara-gap` が出す未カバーの 7 節と到達率の契約、および exit code を検証する。判定は fixture 基準で、実グラフのどの item がギャップかは見ない（件数が動き続けるため契約にできない）|
 | `dev/tests/sara-new.sh` | `sara-new` の起票契約（採番・ファイル名規約の適用）を検証する（→ Issue #367）。fixture は実物の `docs/model.yaml` を重ねて使う |
 | `dev/tests/link-text.sh` | リンク文字列の裸のタグと、リンク直後の name の繰り返しを検出する。文書とコードにある許可外の場所のフル ID と 8 文字省略形も検出する |
 
