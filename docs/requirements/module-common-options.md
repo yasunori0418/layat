@@ -44,7 +44,7 @@ specification_ja: |
   （[root は明示必須で暗黙デフォルトを持たない](root-explicit-required.md)）との差分である。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:28:26+09:00"
+  at: "2026-11-09T22:03:12+09:00"
 ---
 # REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10: 全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する
 
@@ -52,11 +52,11 @@ generated:
 
 ```
 layat.enable  :: bool          # デフォルト: false
-layat.entries :: attrsOf entry # デフォルト: {}（属性キー = target・→ ADR-c494e86e-ceb9-4380-b983-4e09553b01d6）
-                              # ← ADR-3447db4a-cdec-4573-bbad-05bbffc34a65 により layat.configs.<name>.entries の
+layat.entries :: attrsOf entry # デフォルト: {}（属性キー = target）
+                              # layat.configs.<name>.entries の
                               #   deprecated 糖衣へ降格済み（規範は frontmatter・下の注記を参照）
-layat.backup.enable :: bool    # デフォルト: false（→ ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3）
-layat.backup.suffix :: str     # デフォルト: "layat-backup"（→ ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3）
+layat.backup.enable :: bool    # デフォルト: false
+layat.backup.suffix :: str     # デフォルト: "layat-backup"
 ```
 
 モジュールは自分の性質で root を pin する（HM → `homeRoot` / NixOS / nix-darwin → `systemRoot` / devShell → `projectRoot`）ため、

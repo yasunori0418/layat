@@ -106,21 +106,21 @@ error にする。先行 ADR 側からは `sara query` の `Is referenced by` �
 選定基準（寄与の有無・張らない 2 条件・監査の 2 方向）は [adr-rules.md](../agents/adr-rules.md) が
 持つ。layat での判定の実例:
 
-- 寄与した ADR が複数張る: `REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0` は [世代スキップには profile に加え記録の一致も要する](generation-skip-requires-both-match.md) /
+- 寄与した ADR が複数張る: [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](../requirements/project-mode-generation-skip.md) へは [世代スキップには profile に加え記録の一致も要する](generation-skip-requires-both-match.md) /
   [profile は解決済み root の roothash でキーする](profile-keyed-by-roothash-of-resolved-root.md) / [project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md) /
   [世代スキップを project mode と system mode で行う](generation-skip-project-and-system.md) / [module と project では世代操作を公開しない](module-and-project-hide-generation-ops.md) の 5 本が張る。
-  `REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead` は帰属の [--json は outturn 規約に常時準拠する](outturn-conformance-principle.md) に加え、`--json` を導入した
+  [--json は outturn 規約準拠のエンベロープを出す第 2 契約とする](../requirements/json-outturn-envelope.md) へは帰属の [--json は outturn 規約に常時準拠する](outturn-conformance-principle.md) に加え、`--json` を導入した
   [--json を全サブコマンド共通の persistent フラグにする](json-global-flag-for-all-subcommands.md) と `tool.version` の供給元である [VERSION ファイルをバージョンの一次情報にする](version-file-single-source.md) が張る
-- item が `justifies` を受けない理由を明記している: `DSG-d2e17f4f-0d32-45c1-8125-17e589664c85` の
-  「根拠が ADR 以外にあることによる」。一方 `REQ-3f541d39-da41-4ef8-858b-707f54cf6a29` の「`subdir`
+- item が `justifies` を受けない理由を明記している: [動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す](../design/lib-no-dynamic-entries.md) の
+  「根拠が ADR 以外にあることによる」。一方 [root マーカーは `kind` を運ぶ入れ物でパス解決は engine が行う](../requirements/root-markers-runtime-resolution.md) の「`subdir`
   適用形は担当範囲外」は規範に含めないという宣言で、ADR に依拠していないことではない
-- 背景で前提として言及するだけ: [apply --all の build を worker pool で並列に実行する](apply-all-parallel-build-worker-pool.md) → `REQ-535b811d-dfc5-4eac-92db-737e70eb5415` の一括 eval
-- 出典節が ADR を名指ししない item: `REQ-4fc98fa6-fd5f-4f25-8b10-60755bf49bd2` は [一部の entry だけを適用する --only を提供する](partial-apply-only-flag.md) の決定から見つけた
-- 規範文が対称化の対象として直に述べるので張る: `REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7` は symlink 側の
-  foreign 警告を `REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557` へ委譲しつつ、規範文が "symmetrically with the
+- 背景で前提として言及するだけ: [apply --all の build を worker pool で並列に実行する](apply-all-parallel-build-worker-pool.md) → [apply --all は rootKind を 1 回の一括 eval で取る](../requirements/apply-all-batched-eval.md)
+- 出典節が ADR を名指ししない item: [一部 entry だけを適用する --only は提供しない](../requirements/no-only-flag.md) は [一部の entry だけを適用する --only を提供する](partial-apply-only-flag.md) の決定から見つけた
+- 規範文が対称化の対象として直に述べるので張る: [copy が foreign 実ファイルを skip したときは warning で可視化する](../requirements/copy-foreign-skip-warning.md) は symlink 側の
+  foreign 警告を [symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする](../requirements/symlink-placement-procedure.md) へ委譲しつつ、規範文が "symmetrically with the
   foreign warning for symlinks" と名指しするので [cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](cross-config-last-wins-with-foreign-warning.md) を張る
 - 決定節が実際に決めているので張る: [新規配置と張替えを先に、世代のコミットを最後に行う](placement-order-commit-last.md) →
-  `REQ-61856da1-8883-401e-ad57-9f326b96d400` の「冪等再実行による収束の前提」
+  [既存 symlink の張替えは unlink + symlink の 2 操作で行い冪等な再実行で収束させる](../requirements/symlink-replace-unlink-symlink.md) の「冪等再実行による収束の前提」
 
 `justifies` を受けない理由を散文で書いている item は次で列挙できる。
 

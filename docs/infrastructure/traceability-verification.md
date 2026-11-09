@@ -9,7 +9,7 @@ satisfies:
   - "QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:23:54+09:00"
+  at: "2026-11-09T22:04:42+09:00"
 ---
 # INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71: トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）
 
@@ -28,7 +28,7 @@ generated:
 | `dev/tests/risk-matrix.sh` | risk の `level` が `likelihood` × `impact` のマトリクス導出と一致するかを検証する（→ Issue #303）。マトリクスの正本は `dev/tests/risk-matrix.tsv` |
 | `dev/tests/sara-gap.sh` | `sara-gap` の未カバー 3 段の列挙契約を検証する。判定は fixture 基準で、実グラフのどの item がギャップかは見ない（件数が動き続けるため契約にできない）|
 | `dev/tests/sara-new.sh` | `sara-new` の起票契約（採番・ファイル名規約の適用）を検証する（→ Issue #367）。fixture は実物の `docs/model.yaml` を重ねて使う |
-| `dev/tests/link-text.sh` | リンク文字列の裸のタグと、リンク直後の name の繰り返しを検出する |
+| `dev/tests/link-text.sh` | リンク文字列の裸のタグと、リンク直後の name の繰り返しを検出する。文書とコードにある許可外の場所のフル ID と 8 文字省略形も検出する |
 
 契約テストを同じジョブへ載せるのは、テストが「人が思い出したときだけ動く」状態を避けるため。
 表の `dev/tests/` の 5 件はいずれも dev flake の `checks.*` としても露出しているが、CI の `flake-check` はルート
@@ -38,13 +38,15 @@ flake を対象にするため到達しない。CI の明示ステップとし�
 **再利用しない**。あちらの filter は nix / Go のソースを対象にするのに対し、この確認が最も役立つのは
 docs のみの PR だからで、job ローカルの filter を別に置く。
 
-filter が対象にするのは 3 種類。確認の対象の文書とその設定（`docs/**` / `sara.toml`）、この確認自身の
+filter が対象にするのは 4 種類。確認の対象の文書とその設定（`docs/**` / `sara.toml`）、この確認自身の
 実行環境を決めるもの（sara 本体と dev ツールを供給する dev flake・その lock・契約テストの実装＝
 `dev/tests/**` とそれが依存する `dev/scripts/**`・この workflow 自身）、そして**契約テストが
 入力に取るテスト資産そのもの**（Go のテストファイル・`tests/**`・`flake.nix` の checks 定義）。
 3 つ目は `test-doc-map.sh` が「テスト資産 ⇔ CASE の 1:1」を確認する以上避けられない — テスト
 ファイルを追加・改名しても CASE を更新しなければジョブごとスキップされ、検出したいはずの
 乖離がそのままマージされてしまう（→ Issue #304）。
+4 つ目は `link-text.sh` が ID を走査するコードと設定（`internal/**`・`cmd/**`・`lib/**`・`modules/**` など）で、
+これが無いとコードだけの PR で許可外の ID を見逃す。
 CI 用の devShell も sara 専用のものへ分ける。
 
 先行して試作された grep / awk による ID の比較は、参照先 ID の実在を検証しないという不足を抱えていた
@@ -57,6 +59,7 @@ CI 用の devShell も sara 専用のものへ分ける。
 item 本文の H1 見出しだけにする**（→ [フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる](../sara-adr/full-ids-in-frontmatter-and-h1.md)）。
 散文で item に触れるときは Markdown リンクにし、リンク文字列にも ID を書かない。乱数 ID により並列レーンでの採番衝突を構造的に回避する。
 ID をそのまま grep すれば frontmatter の `id:` と relation に当たり、`sara query` へ渡しても同じものに当たる。
+規則に反するフル ID と 8 文字省略形は、契約テスト `dev/tests/link-text.sh` が検出する（→ [ID の書き場所と省略形の禁止は起票の機械化と契約テストで担保する](../sara-adr/id-placement-enforced-by-contract-test.md)）。
 
 `specification` / `specification_ja` / `origin` の文字列の中で item に触れるときも、
 `[item の name](item のディレクトリからの相対パス)` の Markdown リンクにする。
@@ -92,5 +95,5 @@ error となり `sara check` は exit 1 を返す（epic #203 の移行完了・
 [欠陥 issue のクローズ時にテスト系 item の欠落を追補する](../sara-adr/defect-close-backfills-risks.md)、[item にできない外部参照は text フィールドへ逃がす](../sara-adr/external-references-as-text-fields.md)、
 [提案を棄却した決定は status 不採用 で記録する](../sara-adr/adr-status-rejected.md)、[adr の status_note を持たない](../sara-adr/adr-status-note-removed.md)、
 [ADR の失効は supersedes と 廃止 で表す](../sara-adr/adr-supersedes-and-deprecated-status.md)、[ID はフル UUID に統一し 8 文字省略形を使わない](../sara-adr/full-uuid-ids-no-short-form.md)、
-[sara check を required status check にしない](../sara-adr/sara-check-not-required.md)、[フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる](../sara-adr/full-ids-in-frontmatter-and-h1.md)。設計は epic GitHub Issue #203 の grilling
+[sara check を required status check にしない](../sara-adr/sara-check-not-required.md)、[フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる](../sara-adr/full-ids-in-frontmatter-and-h1.md)、[ID の書き場所と省略形の禁止は起票の機械化と契約テストで担保する](../sara-adr/id-placement-enforced-by-contract-test.md)。設計は epic GitHub Issue #203 の grilling
 セッション（2026-07-31・2026-08-01）で確定した。

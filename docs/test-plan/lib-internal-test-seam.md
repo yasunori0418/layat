@@ -20,7 +20,7 @@ issues:
   - "#289"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T22:44:41+09:00"
+  at: "2026-11-09T22:03:12+09:00"
 ---
 # TP-403c55c7-d996-4951-8e6b-c3a7dddd387c: lib.__internal で private helper をテストへ公開する
 
@@ -45,8 +45,8 @@ generated:
 > `lib.__internal` を決めた ADR は存在しない。frontmatter の `issues` がこれを受けている。
 > `justifies` を持たないのは張り忘れではなく、根拠が ADR 以外にあることによる。
 
-> **本 item は `requirement` から `test_plan` へ移設した**（→ Issue #239。旧 ID は
-> `REQ-901993e9-771c-480a-ba0d-ca4be042e206`）。`lib.__internal` を公開する唯一の動機は評価テストから内部関数を呼び出せる
+> **本 item は `requirement` から `test_plan` へ移設した**（→ Issue #239）。
+> `lib.__internal` を公開する唯一の動機は評価テストから内部関数を呼び出せる
 > ようにすること、すなわちテスト対象へのアクセス手段の確保であり、ユーザーの使われ方
 > （use_case）から導かれるプロダクトの振る舞いではないため、use_case を親に持てず接続漏れに
 > なっていた（当時の判断は Issue #211）。`lib.__internal` を「利用者への API 契約の宣言」と

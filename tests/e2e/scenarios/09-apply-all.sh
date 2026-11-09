@@ -53,7 +53,7 @@ mk_fixture "$LEX" zeta=out/zeta alpha=out/alpha mid=out/mid delta=out/delta
 cd "$LEX"
 LEX_ORDER='["alpha", "delta", "mid", "zeta"]'
 
-e2e_step "apply --all -v --json: results[] と done 行が辞書順（→ REQ-4cbd9a0d）"
+e2e_step "apply --all -v --json: results[] と done 行が辞書順"
 ENV_LEX="$E2E_WORK/lex.json"
 ERR_LEX="$E2E_WORK/lex.err"
 code=0

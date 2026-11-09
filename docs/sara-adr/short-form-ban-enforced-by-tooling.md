@@ -2,7 +2,7 @@
 id: "SDR-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103"
 type: sara_adr
 name: "省略形の禁止は起票の機械化と全面移行で担保する"
-status: stable
+status: deprecated
 sources:
   - id: "issue-366"
     resource: "https://github.com/yasunori0418/layat/issues/366"
@@ -21,7 +21,11 @@ generated:
 ---
 # SDR-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103: 省略形の禁止は起票の機械化と全面移行で担保する
 
-- ステータス: stable
+> **廃止（2026-11-09）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 全体 → [ID の書き場所と省略形の禁止は起票の機械化と契約テストで担保する](id-placement-enforced-by-contract-test.md)
+
+- ステータス: deprecated
 - 日付: 2026-11-01
 - 関連: [ID はフル UUID に統一し 8 文字省略形を使わない](full-uuid-ids-no-short-form.md), GitHub Issue #366, #364
 - 起点: epic #364 の着手前 grilling（2026-08-17）で確定。ADR-0053 §2 を書き直した
