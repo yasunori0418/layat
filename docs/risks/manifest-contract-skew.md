@@ -8,12 +8,13 @@ threatens:
   - "REQ-250d936c-1df0-491d-a7af-708f38b61f33"
   - "REQ-dec58330-6dad-47f7-8f56-2402764a89c7"
   - "REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb"
+  - "REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4"
 likelihood: low
 impact: high
 level: medium
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T23:36:39+09:00"
 ---
 # Nix と engine の唯一の契約である manifest の生成側と消費側がずれる
 
@@ -57,3 +58,6 @@ likelihood が一段高い。
 消費側の受理が見るのは root の種別が空でないことと、実行時に解決する種別がパスを併記して
 いないこと（→ [manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する](../requirements/manifest-root-object.md)）までで、種別が既知の 4 値のいずれかであることは見ていない。
 そちらは engine の root 解決が未知の種別を弾いて止まるため、利用者に知らせずに通る処理にはならない。
+
+[mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md) は、配置を engine の実行時の責務とし、生成した結果を CLI が engine へ渡すことも定める。
+純粋性が破れなくても、受け渡す文書の読み方がずれればこの分担は成り立たない。受け渡しの実装を置き換えても残るので `requirement` へ張る。

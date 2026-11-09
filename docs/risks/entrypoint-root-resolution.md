@@ -10,12 +10,13 @@ threatens:
   - "REQ-da253cab-34d4-4d6e-96f0-de99e012b376"
   - "DSG-92f54490-872a-42ac-bbd7-d06e9ee381c6"
   - "REQ-c50df875-2cb0-4e72-8a21-858359a11cae"
+  - "REQ-67095391-eab2-45d2-b75b-b428d481bcc2"
 likelihood: medium
 impact: high
 level: high
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T23:36:39+09:00"
 ---
 # entrypoint の形ごとに root 解決と配置の意味論が食い違う
 
@@ -42,6 +43,9 @@ project mode ではさらに git から root を解決する。起点が増え�
 - **flake-parts の使い方の分岐** — `perSystem.layat.<name>` の transpose が直書きと別の derivation を
   生むか、perSystem と別の `pkgs` で評価され、flake-parts を使うときだけ CLI のアドレッシングが
   変わる（→ [flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない](../requirements/flake-parts-module-path.md)）
+
+store 化の差は [flake は pure eval で flake.lock が固定し legacy は impure を許容しユーザー責任とする](../requirements/reproducibility-stance.md) が定める pure と impure の区別から生じる。
+起点の実装をどう組み直しても利用者が受け取る区別なので、この辺は `design` ではなく `requirement` へ張る。
 
 ## 影響
 

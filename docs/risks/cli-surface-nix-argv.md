@@ -16,12 +16,13 @@ threatens:
   - "REQ-535b811d-dfc5-4eac-92db-737e70eb5415"
   - "REQ-774cef80-2872-4ea1-937b-a0fbabc305a9"
   - "REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796"
+  - "REQ-1767b250-b475-4276-a551-20dc79e75a30"
 likelihood: medium
 impact: medium
 level: medium
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T23:36:39+09:00"
 ---
 # フラグ解釈と nix 呼び出しの引数組み立てが仕様とずれ意図しない対象へ作用する
 
@@ -58,6 +59,9 @@ CWD の自動探索とも）は [entrypoint の探索順序と nix へ渡す引�
 [フラグの解釈と対象選択が仕様どおりで位置引数を飲み込まない](../test/cli-json/flag-parsing-target-selection.md) が覆う。省略した名前が `default` という名前そのものへ解決すること、
 `layat` 名前空間、一括 eval からのフィルタの振り分け、`layat.<name>` が無いときの停止、`rollback --all` の
 拒否を確かめる検証条件はこの risk に無く、残余として残る。
+
+[config は Nix で書き nix build で評価する](../requirements/config-written-in-nix.md) は、CLI が発見するのは entrypoint のファイルで、その評価は `nix build` に任せることを定める。
+探索や引数列がずれて別の config を評価する懸念は、組み立ての実装を置き換えても残るので `requirement` へ張る。
 
 > **[entrypoint の形ごとに root 解決と配置の意味論が食い違う](entrypoint-root-resolution.md) との境界**。本 item が扱うのは CLI 表層で引数列を組み立てる過程そのもので、
 > どの起点を選んでも同じ配置の意味論が成り立つかは [entrypoint の形ごとに root 解決と配置の意味論が食い違う](entrypoint-root-resolution.md) の担当。分岐を attr path の
