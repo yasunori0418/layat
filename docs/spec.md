@@ -139,7 +139,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [--root は全モード共通で解決 root を明示上書きする](requirements/root-override-flag.md) — --root は全モード共通で解決 root を明示上書きする
 - [flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする](requirements/flock-acquisition-mode.md) — flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする
 - [--version は埋め込みバージョンを cobra 既定書式で表示して終了し短縮形を持たない](requirements/version-flag.md) — --version は埋め込みバージョンを cobra 既定書式で表示して終了し短縮形を持たない
-- [一部 entry だけを適用する --only は提供しない](requirements/no-only-flag.md) — 一部 entry だけを適用する --only は提供しない
+- [一部の entry だけを適用する --only を提供する](requirements/no-only-flag.md) — 棄却した提案。`--only` は提供しない
 - [内部実行する nix コマンドを開示し世代の切替と GC は標準の nix コマンドへ委譲する](requirements/nix-command-transparency-and-delegation.md) — 内部実行する nix コマンドを開示し世代の切替と GC は標準の nix コマンドへ委譲する
 
 ### 出力ストリームと終了コード

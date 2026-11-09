@@ -1,20 +1,20 @@
 ---
 id: "DSG-d2e17f4f-0d32-45c1-8125-17e589664c85"
 type: design
-name: "動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す"
-status: stable
+name: "動的 entry 生成のヘルパを lib に置く"
+status: deprecated
 satisfies:
   - "REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51"
   - "REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:22:37+09:00"
+  at: "2026-11-10T00:44:25+09:00"
 ---
-# 動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す
+# 動的 entry 生成のヘルパを lib に置く
 
 ## 設計
 
-「リポジトリ内のファイルを列挙して entries を組み立てる」需要に対し、**lib は関数を
+この設計は棄却した。「リポジトリ内のファイルを列挙して entries を組み立てる」需要に対し、**lib は関数を
 提供しない**。既に realise 済みの store パスまたは flake input を `builtins.readDir`
 する idiom をドキュメント側（`docs/spec.md` 応用節）で示すに留める。
 

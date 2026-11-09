@@ -91,7 +91,7 @@ layat 自身の flake outputs は packages / templates / 各モジュール / fl
 
 - [layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する](design/flake-outputs-attrs.md) — layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する
 - [NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする](design/module-stubs.md) — NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする
-- [動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す](design/lib-no-dynamic-entries.md) — 動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す
+- [動的 entry 生成のヘルパを lib に置く](design/lib-no-dynamic-entries.md) — 棄却した設計。readDir する idiom をドキュメントで示す
 - [legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する](design/legacy-nix-invocation-reuse.md) — legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する
 - [hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす](design/hook-composition-idioms.md) — hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす
 - [buildEnv の合成環境は entry の src に置く配置 idiom で扱い、環境変数の配線は利用者側の idiom で行う](design/buildenv-placement-env-wiring-idioms.md) — buildEnv の合成環境は entry の src に置く配置 idiom で扱い、環境変数の配線は利用者側の idiom で行う
