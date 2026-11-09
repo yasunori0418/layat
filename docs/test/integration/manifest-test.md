@@ -6,6 +6,8 @@ status: stable
 resource: "internal/manifest/manifest_test.go"
 covers:
   - "TC-172548ea-154a-4e22-a169-8252a43e3781"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:44+09:00"

@@ -6,6 +6,8 @@ status: stable
 resource: "tests/e2e/scenarios/11-root-relative.sh"
 covers:
   - "TC-f1da084f-c0f0-4aba-85d9-f273c04eb373"
+follows:
+  - "TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:44+09:00"

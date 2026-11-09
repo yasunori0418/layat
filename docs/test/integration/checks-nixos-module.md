@@ -6,6 +6,8 @@ status: stable
 resource: "checks.nixos-module"
 covers:
   - "TC-bd436b15-d2c3-4847-9797-582e37ef2367"
+follows:
+  - "TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-24T09:17:32+09:00"

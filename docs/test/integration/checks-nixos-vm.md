@@ -6,6 +6,8 @@ status: stable
 resource: "checks.nixos-vm"
 covers:
   - "TC-1b492e41-ee81-4945-a42b-0669dd574809"
+follows:
+  - "TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-24T09:52:17+09:00"
