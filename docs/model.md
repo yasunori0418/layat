@@ -15,8 +15,8 @@
 | 型 | 書くもの |
 |---|---|
 | `solution` | layat というプロダクトが何であるか（1 件）|
-| `use_case` | ユーザーがどう使うか |
-| `requirement` | 何を満たすべきか |
+| `use_case` | 要求。ユーザーがどう使うか |
+| `requirement` | 要件。何を満たすべきか |
 | `design` | どう実現するか。テストハーネスの実装形は `test_plan` を満たす `design` として書く |
 | `quality` | 品質方針・規約・プロセス横断のガバナンス。テストプロセスの外にある関心事 |
 | `test_plan` | テスト計画活動の成果物（テストスコープ・スコープ外宣言・テストレベル・アプローチ・テスト容易性）|
@@ -28,8 +28,9 @@
 | `test_case` | 具体的なテストケース（テスト資産 1 つに 1 件）|
 | `ubiquitous_term` | ユビキタス言語の 1 語。relation を持たない根で、どの item ともつながない。索引は `docs/glossary.md` |
 
-`risk` の親に `test_plan` は無い。テスト計画がどのリスクを扱うかは
-`test_condition` の `mitigates` を辿って追跡する。
+`test_plan` から `test_case` へは `is_followed_by`（`test_case` が張る `follows` の逆向き）で届く。
+`risk` の親に `test_plan` は無いままで、テスト計画がどのリスクを扱うかは、`test_case` から
+`covers` と `mitigates` を辿って追跡する。
 
 組み込みモデルの `hardware_requirement` / `hardware_detailed_design` / `scenario` /
 `system_architecture` は定義しない。組み込みの `system_requirement` / `software_requirement` /
@@ -54,6 +55,7 @@ type になる。使えるプレースホルダは `{prefix}` / `{id}` / `{seq[:
 | 全て | `stale_after` | 期限の時刻。任意。値の形は sara でなく `dev/tests/okf-frontmatter.sh` が確かめる |
 | `requirement` / `quality` / `test_plan` | `specification` | 英語の規範文。RFC2119 キーワードを含める |
 | `requirement` / `quality` / `test_plan` | `specification_ja` | `specification` と対になる日本語の規範文。sara はこのフィールドを検査しない |
+| `requirement` | `risk_exempt` | `requirement` 水準の `risk` を持たない理由を 1 文で書く。任意。`sara-gap` は値を持つ `requirement` を免除として扱う |
 | `infrastructure` | `dod` | `docs/dev/definition-of-done.md` の項目 ID（`DOD-01` …）のリスト。任意 |
 | `adr` / `sara_adr` | `origin` | 起点となったセッション等の散文。任意 |
 | `adr` / `sara_adr` | `sources` | 起点となった GitHub Issue 等の出典。書き方は「OKF 互換の frontmatter」節 |
@@ -170,10 +172,11 @@ sara が型を持たない入れ子のキー（`generated` / `verified` / `sourc
 | `threatens` | upstream | 脅威 |
 | `mitigates` | upstream | 緩和 |
 | `covers` | upstream | 網羅 |
+| `follows` | upstream | テスト計画への準拠。逆向きは `is_followed_by` |
 | `depends_on` | peer | 同じ型の item どうしの依存 |
 | `supersedes` | peer | `adr` / `sara_adr` から置き換えた ADR へ。文書丸ごとの失効 |
 | `references` | peer | ADR ヘッダの「関連:」。改訂を伴わない参照 |
 
 `refines` / `derives_from` / `satisfies` / `depends_on` / `justifies` / `supersedes` は組み込み由来、
-`references` / `threatens` / `mitigates` / `covers` は独自定義。
+`references` / `threatens` / `mitigates` / `covers` / `follows` は独自定義。
 決定を変えるときは ADR を丸ごと書き直して `supersedes` で置き換える。
