@@ -2,7 +2,7 @@
 id: "SDR-ba95c0c6-ea15-4e97-95a9-925ac04df58d"
 type: sara_adr
 name: "sara-id を廃止し sara init を包む起票ラッパーで slug のファイル名を適用する"
-description: "採番を `sara init` に任せ、薄い起票ラッパー `sara-new` が `<slug>.md` のファイル名規約を適用する。"
+description: "採番を `sara init` に任せ、薄い起票ラッパー `sara-new` が `<slug>.md` のファイル名規約の適用、`--description` の必須チェック、`generated` の付与を担う。"
 status: stable
 sources:
   - id: "issue-366"
@@ -23,7 +23,7 @@ references:
   - "SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:30:23+09:00"
+  at: "2026-11-09T09:15:32+09:00"
 ---
 # SDR-ba95c0c6-ea15-4e97-95a9-925ac04df58d: sara-id を廃止し sara init を包む起票ラッパーで slug のファイル名を適用する
 
@@ -45,14 +45,15 @@ sara 0.10.0 から、`sara init` が `id_format` に従って UUIDv4 を採番�
 
 `sara-id` を廃止する。後継として、`sara init` の呼び出しを前後から包む薄い起票ラッパー `sara-new` を
 使う。採番は `sara init` に任せ、ラッパーは ID を生成しない。ラッパーが担うのは、ファイル名規約
-（`<slug>.md`）の適用だけである。
+（`<slug>.md`）の適用、`--description` の必須チェック、`generated` の付与である。
 
 ラッパーは `dev/scripts/` の独立したファイルに置き、契約テストを持つ。test_plan は起こさない。
 
 ## 根拠
 
 採番を sara に一本化すれば、採番のロジックを二重に持たずに済む。ラッパーに残る責務はファイル名の
-組み立てだけで、守るべき規範を持たない。逆算の階層（test_plan）を起こすほどのものではない。
+組み立て、`--description` の必須チェック、`generated` の付与である。いずれも別の決定が定めた規約を起票時に
+適用するもので、ラッパー自身は守るべき規範を持たない。逆算の階層（test_plan）を起こすほどのものではない。
 
 devShell の定義に埋め込まず独立したファイルにしておけば、別のリポジトリへ持ち出しやすい。
 
