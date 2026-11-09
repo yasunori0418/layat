@@ -68,6 +68,11 @@ item_types:
         field_type: text
         required: true
         placeholder: layat は <要求> を満たさなければならない。
+      # requirement 水準の risk を持たない理由を 1 文で書く。
+      - name: risk_exempt
+        display_name: Risk Exempt
+        field_type: text
+        required: false
       - *status_field
       - *stale_after_field
     allowed_targets:
@@ -328,6 +333,7 @@ item_types:
     id_format: '{prefix}-{uuid4}'
     parent_types:
       - test_condition
+      - test_plan
     fields:
       # 対応するテスト資産の正準表記（単一値）。正準形は docs/model.md を参照。
       # dev/tests/test-doc-map.sh が CASE とテスト資産の 1:1 を照合する。
@@ -342,6 +348,9 @@ item_types:
       - relation: covers
         targets:
           - test_condition
+      - relation: follows
+        targets:
+          - test_plan
 
 relations:
   # ---- 組み込み由来（そのまま使う）----
@@ -461,5 +470,17 @@ relations:
   - id: is_covered_by
     display_name: Is covered by
     inverse: covers
+    direction: downstream
+    primary: false
+
+  # test_case → test_plan。
+  - id: follows
+    display_name: Follows
+    inverse: is_followed_by
+    direction: upstream
+    primary: true
+  - id: is_followed_by
+    display_name: Is followed by
+    inverse: follows
     direction: downstream
     primary: false
