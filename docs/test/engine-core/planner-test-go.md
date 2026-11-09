@@ -11,6 +11,8 @@ covers:
   - "TC-d160e18b-4c0c-4531-a506-e7d00d88788a"
   - "TC-596d697f-4ba6-4ec1-b71e-8b5375806c08"
   - "TC-f1da084f-c0f0-4aba-85d9-f273c04eb373"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T22:43:19+09:00"

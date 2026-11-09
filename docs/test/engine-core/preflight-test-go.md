@@ -7,6 +7,8 @@ resource: "internal/engine/preflight_test.go"
 covers:
   - "TC-8435052a-5dcc-49e2-ac26-82f645cb6890"
   - "TC-f1da084f-c0f0-4aba-85d9-f273c04eb373"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:54+09:00"

@@ -6,6 +6,8 @@ status: stable
 resource: "internal/engine/dryrun_test.go"
 covers:
   - "TC-a5eb7de3-a1a7-41ae-8fb9-c2aa374ac894"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:54+09:00"
