@@ -18,7 +18,7 @@ references:
   - "ADR-74423bb8-1453-4689-a25e-30bf46536afc"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:06+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-c45921e1-e543-47ef-8d34-b52f2810eee3: 配置の前に作った中間ディレクトリを undo の対象にしない
 
@@ -29,8 +29,7 @@ generated:
 
 ## 背景
 
-途中失敗した apply は、FS への書き込みを undo ジャーナルで巻き戻す
-（[途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md)）。配置の直前には、target の親ディレクトリを
+[途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md)。巻き戻す対象は FS への書き込みである。配置の直前には、target の親ディレクトリを
 `mkdir -p` 相当で作る。この中間ディレクトリもジャーナルに載せるかを決める必要があった。
 
 ## 決定

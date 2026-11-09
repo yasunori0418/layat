@@ -10,7 +10,7 @@ references:
   - "ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T17:00:19+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-8035e7c6-7dc5-4aa8-9a37-403998fa7f9b: main への直接 push を ruleset で禁じる
 
@@ -22,7 +22,7 @@ generated:
 ## 背景
 
 layat は main へ直接コミットせず、ブランチを切って PR 経由でマージする運用を取っている。
-main へのマージにはテストの成功を必須にした（[main へのマージにテストの成功を必須にする](tests-required-for-merge.md)）が、
+[main へのマージにテストの成功を必須にする](tests-required-for-merge.md)。しかし、
 PR を通らない直接の push には、この条件が掛からない。
 
 ## 決定

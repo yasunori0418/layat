@@ -19,7 +19,7 @@ references:
   - "ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-05T00:35:05+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-77312c71-fa32-481b-ad80-c91e5b282edc: 実ディレクトリの target は全 leaf を除去できるときだけ移行する
 
@@ -34,7 +34,7 @@ generated:
 symlink にすると、`foo` は実ディレクトリとして残っているので conflict になる。2026-07-12 の
 実障害（`.claude/hooks/<name>/main.sh` を `.claude/hooks/<name>` のディレクトリ symlink に
 まとめた変更）がこの形だった。祖先の symlink の移行だけでは、target そのものが実ディレクトリの
-場合を救えない。配置前除去（[配置前除去を planner が計算するデータとして表す](preremove-as-planner-data.md)）の対象を広げるかを
+場合を救えない。[配置前除去を planner が計算するデータとして表す](preremove-as-planner-data.md)。この配置前除去の対象を広げるかを
 決める必要があった。
 
 ## 決定

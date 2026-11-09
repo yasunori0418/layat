@@ -18,7 +18,7 @@ references:
   - "ADR-74423bb8-1453-4689-a25e-30bf46536afc"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T22:55:03+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-a00bb2de-a8c5-4816-892b-4fa1f5299935: 巻き戻しの失敗は best-effort で続行する
 
@@ -29,7 +29,7 @@ generated:
 
 ## 背景
 
-undo ジャーナル（[途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md)）の逆操作も失敗しうる。たとえば
+[途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](in-memory-undo-journal.md)。このジャーナルの逆操作も失敗しうる。たとえば
 symlink を作り直そうとした親ディレクトリを、別のプロセスが消していることがある。1 件の
 逆操作が失敗したときに残りをどう扱うかを決める必要があった。
 

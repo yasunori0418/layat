@@ -10,7 +10,7 @@ references:
   - "ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T17:00:19+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-21570c09-066c-471b-b605-3364265c8736: キャッシュへの投入を cachix-action の自動 push に任せる
 
@@ -21,8 +21,7 @@ generated:
 
 ## 背景
 
-キャッシュへの投入は、3 system の matrix で `nix build .#layat` を実行して行う
-（[キャッシュは 3 system の matrix ビルドで投入する](ci-cache-via-matrix-build.md)）。ビルドした store パスをどうやってキャッシュへ
+[キャッシュは 3 system の matrix ビルドで投入する](ci-cache-via-matrix-build.md)。ビルドのコマンドは `nix build .#layat` である。ビルドした store パスをどうやってキャッシュへ
 送るかを決める必要がある。参照した nur-packages は多数のパッケージを持ち、未キャッシュの
 パッケージだけを選ぶ `ci-matrix` の機構と、plan・collect・build-and-push の 3 段のジョブを組んでいる。
 

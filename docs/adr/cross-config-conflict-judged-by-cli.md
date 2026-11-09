@@ -18,7 +18,7 @@ references:
   - "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:24:30+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-7f4fd2f6-672d-4d8c-a881-31024ad1d7c3: config 間の target 衝突は CLI が判定し engine に持ち込まない
 
@@ -29,12 +29,10 @@ generated:
 
 ## 背景
 
-`apply --all` は、選択した config 間の target 重複を build の前に止める
-（[apply --all は選択した config 間の target 重複を build 前に止める](apply-all-preflight-target-conflict.md)）。この確認に要る正規化後の target をどこで算出し、
+[apply --all は選択した config 間の target 重複を build 前に止める](apply-all-preflight-target-conflict.md)。この確認に要る正規化後の target をどこで算出し、
 重複の判定をどの層に置くかを決める必要があった。
 
-`apply --all` は build の前に、config ごとの情報を 1 回の eval でまとめて取っている
-（[apply --all は config ごとの情報を 1 回の eval でまとめて取る](apply-all-single-eval.md)）。どの config を対象にするかを決める root モードの
+[apply --all は config ごとの情報を 1 回の eval でまとめて取る](apply-all-single-eval.md)。この eval は build の前に行う。どの config を対象にするかを決める root モードの
 フィルタは、CLI にしかない。engine は 1 回の起動で 1 つの manifest だけを扱う。
 
 ## 決定

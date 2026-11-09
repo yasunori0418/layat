@@ -19,7 +19,7 @@ references:
   - "ADR-88231ffc-4836-4252-be34-894944fd28c3"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T22:55:03+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-baf6346d-783b-4607-ab1c-c2c93c09e064: --all は config ごとの SubjectResult を積む
 
@@ -31,7 +31,7 @@ generated:
 ## 背景
 
 `apply --all` / `list-generations --all` / `gitignore --all` は、複数の config を 1 回の実行で扱う。
-トップレベルを常に `results[]` にする決定（[--json は常に results\[\] エンベロープを出す](results-envelope-always.md)）の上で、複数の
+[--json は常に results\[\] エンベロープを出す](results-envelope-always.md)。この決定の上で、複数の
 config の結果をどう並べるかを決める必要がある。
 
 ## 決定

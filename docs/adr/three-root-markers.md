@@ -17,7 +17,7 @@ references:
   - "ADR-f85f1afd-9b87-4f7a-922e-97c62554f198"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:27:41+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed: root は 3 つの marker で表す
 
@@ -28,7 +28,7 @@ generated:
 
 ## 背景
 
-root は明示が必須である（[root の明示を mkManifest 層で必須にする](root-explicit-at-mkmanifest.md)）。git toplevel や `$HOME`
+[root の明示を mkManifest 層で必須にする](root-explicit-at-mkmanifest.md)。git toplevel や `$HOME`
 は実行する環境によって変わるので、Nix の評価時にはパスへ展開できない。評価時に決まらない root
 をどう書かせるかを決める必要があった。
 

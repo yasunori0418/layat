@@ -18,7 +18,7 @@ references:
   - "ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:06+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-e7a57f51-41da-460c-8f51-c84e94643f3d: apply --all の配置を config 単位で並列に行う
 
@@ -29,10 +29,10 @@ generated:
 
 ## 背景
 
-`apply --all` の build は worker pool で並列に実行する（[apply --all の build を worker pool で並列に実行する](apply-all-parallel-build-worker-pool.md)）。
+[apply --all の build を worker pool で並列に実行する](apply-all-parallel-build-worker-pool.md)。
 配置は config ごとに順に処理していたが、`method = "copy"` の大きなツリーでは配置の時間も無視できない。
 
-ロックのキーは解決後の profileDir で（[ロックのキーを解決後の profileDir にする](lock-key-is-resolved-profiledir.md)）、`--all` が扱う
+[ロックのキーを解決後の profileDir にする](lock-key-is-resolved-profiledir.md)。`--all` が扱う
 config は名前が一意なので profileDir も一意になる。同じプロセスの中で同じロックを取り合うことは
 起きない。
 

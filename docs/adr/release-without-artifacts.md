@@ -10,7 +10,7 @@ references:
   - "ADR-2fcf26b4-bce6-4ed6-a374-3afe560ead21"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T17:00:19+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-c2f0cdc9-284e-4425-8f60-15f3aa423ed4: release に成果物を添付しない
 
@@ -21,8 +21,7 @@ generated:
 
 ## 背景
 
-`VERSION` の変更をきっかけに、タグと GitHub Release を自動で作る
-（[VERSION の変更をきっかけに release を自動で作る](release-on-version-change.md)）。Release にバイナリなどの成果物を添付するかを
+[VERSION の変更をきっかけに release を自動で作る](release-on-version-change.md)。作るのはタグと GitHub Release である。Release にバイナリなどの成果物を添付するかを
 決める必要がある。
 
 ## 決定

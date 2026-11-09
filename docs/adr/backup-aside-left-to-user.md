@@ -18,7 +18,7 @@ references:
   - "ADR-3f97fc1d-188d-4013-bff0-16b67250f68e"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T16:53:49+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-18267548-27d0-430b-8149-b6124d02ce56: 退避物を成功後も残して利用者の所有物にする
 
@@ -29,8 +29,7 @@ generated:
 
 ## 背景
 
-`--backup` の退避は undo ジャーナルに載り、途中失敗すれば元へ戻る
-（[退避を配置前除去の後の段として undo ジャーナルに載せる](backup-stage-in-undo-journal.md)）。`--recopy` の上書きも rename で退避するが、
+[退避を配置前除去の後の段として undo ジャーナルに載せる](backup-stage-in-undo-journal.md)。`--backup` の退避は途中失敗すれば元へ戻る。`--recopy` の上書きも rename で退避するが、
 こちらの退避物は apply が成功すると削除する。`--backup` の退避物を成功後にどう扱うかを決める
 必要があった。
 

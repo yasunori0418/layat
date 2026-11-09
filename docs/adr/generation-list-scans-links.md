@@ -25,7 +25,7 @@ references:
   - "ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T22:55:03+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-1cbacca1-1930-46ca-bf82-30310f82216e: 世代の一覧を nix-env を経由せず世代リンクの走査で得る
 
@@ -61,7 +61,7 @@ nix 本体の世代の列挙も、世代リンクの走査とリンクの更新�
 
 列挙のロジックを Fake と共用すれば、engine と cmd のテストが Fake で確かめた列挙が本番でも同じ結果になる。
 
-profileDir のレイアウトは契約の固定部分（→ [profileDir の内部レイアウトを世代バックエンド契約の固定部分にする](profiledir-layout-fixed-in-contract.md)）で、engine はすでに
+[profileDir の内部レイアウトを世代バックエンド契約の固定部分にする](profiledir-layout-fixed-in-contract.md)。engine はこのレイアウトをすでに
 直接読んでいる。バックエンドの側で同じレイアウトを読んでも、契約の形は変わらない。
 
 ## 棄却した代替案

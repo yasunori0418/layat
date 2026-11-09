@@ -23,7 +23,7 @@ references:
   - "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T22:55:03+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-a91585ad-971a-4558-9f25-b7fcd6e57671: 古くなった配置の除去は、比較の基準を記録から優先して読む
 
@@ -34,8 +34,7 @@ generated:
 
 ## 背景
 
-古くなった配置の除去は、前回の manifest（比較の基準）と新しい manifest
-の差分で行う（[古くなった配置の除去は manifest の差分で行う](stale-removal-by-manifest-diff.md)）。last-applied 記録を導入しても、
+[古くなった配置の除去は manifest の差分で行う](stale-removal-by-manifest-diff.md)。前回の manifest を比較の基準にして、新しい manifest と比べる。last-applied 記録を導入しても、
 記録を持たない既存の環境はある。記録と profile が両方あって食い違うこともある。記録は世代の commit
 より前に書く。そのため commit が失敗すると、記録が新しく、profile が古いまま残る。
 

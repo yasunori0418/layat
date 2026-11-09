@@ -15,7 +15,7 @@ references:
   - "ADR-da7b74a6-bab4-43ea-8f1c-cf843b8b58cc"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T17:00:12+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-f82e33bd-0534-4266-89bf-f1d9a2dbe258: ドキュメントサイトを GitHub Actions から Cloudflare Pages へ配備する
 
@@ -26,7 +26,7 @@ generated:
 
 ## 背景
 
-ドキュメントサイトのソースは同じリポジトリの `site/` に置く（[ドキュメントサイトのソースを同じリポジトリの site/ に置く](docs-site-in-same-repository.md)）。
+[ドキュメントサイトのソースを同じリポジトリの site/ に置く](docs-site-in-same-repository.md)。
 サイトのビルドでは nixdoc と gomarkdoc を nix から動かしてリファレンスを生成する
 （[リファレンスをビルド時に生成する](reference-generated-at-build-time.md)）。これをどこでホストし、どこから配備するかを決める必要があった。
 

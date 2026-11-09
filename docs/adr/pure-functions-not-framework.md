@@ -12,7 +12,7 @@ references:
   - "ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T22:55:03+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-13c8b82f-f1a0-475e-a478-06467f5ec838: layat をフレームワークではなく純粋関数群として提供する
 
@@ -36,8 +36,8 @@ layat はフレームワークではなく、テスト可能な純粋関数群�
 distro は利用者が layat の関数を合成して組むものとし、振る舞いをモジュールのオプションの奥に隠す
 抽象は意図して持たない。
 
-関数群の性質は [mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md)（`mkManifest` が純粋関数であること）と
-[lib は nixpkgs.lib のみに依存する純データ生成器である](../requirements/lib-pure-data-generator.md)（`lib` が nixpkgs.lib だけに依存する純データ生成器であること）に置く。
+関数群の性質は [mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md) と
+[lib は nixpkgs.lib のみに依存する純データ生成器である](../requirements/lib-pure-data-generator.md) に置く。
 
 ## 根拠
 

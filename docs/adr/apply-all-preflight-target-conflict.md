@@ -18,7 +18,7 @@ references:
   - "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:24:30+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-75df92ae-0694-452b-8fb4-350994e31b25: apply --all は選択した config 間の target 重複を build 前に止める
 
@@ -30,8 +30,7 @@ generated:
 ## 背景
 
 別々の config が同じ target を持つと、engine はそれぞれ自分の前世代の manifest としか比べないので、
-相手の symlink を foreign と見て warning を出し、後勝ちで置き換える
-（[cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](cross-config-last-wins-with-foreign-warning.md)）。`apply --all` を実行するたびに所有者が入れ替わり、
+相手の symlink を foreign と見る。[cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する](cross-config-last-wins-with-foreign-warning.md)。`apply --all` を実行するたびに所有者が入れ替わり、
 衝突はいつまでも解消しない。古くなった配置の除去の保守的な条件は衝突があっても保たれるので、実害は
 どちらの symlink が残るかに限られる。それでも設定の誤りであることに変わりはない。
 

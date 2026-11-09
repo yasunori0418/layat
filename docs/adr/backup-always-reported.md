@@ -20,7 +20,7 @@ references:
   - "ADR-a19bf484-368d-4d01-b539-52de32510fa5"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:16:45+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-c0a91b81-f54f-4790-9295-f90656f53de8: 退避の発生は常に stderr へ出す
 
@@ -31,7 +31,7 @@ generated:
 
 ## 背景
 
-layat は成功したときに何も出さず（[指定が無いときは成功時に何も出力しない](silent-on-success.md)）、配置のレポートは `-v` を付けたときだけ出す（[-v で配置レポートを opt-in で出す](verbose-opts-into-placement-report.md)）。
+layat は [指定が無いときは成功時に何も出力しない](silent-on-success.md)。[-v で配置レポートを opt-in で出す](verbose-opts-into-placement-report.md)。
 `--backup` による退避をこの沈黙の対象にするかを決める必要があった。
 
 ## 決定

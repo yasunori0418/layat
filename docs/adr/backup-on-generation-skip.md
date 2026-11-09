@@ -18,7 +18,7 @@ references:
   - "ADR-3f97fc1d-188d-4013-bff0-16b67250f68e"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T17:28:05+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-97248450-c19e-4857-94fb-2a10c2b1d80f: 世代スキップのときも退避を行う
 
@@ -29,8 +29,7 @@ generated:
 
 ## 背景
 
-project mode は、link farm が前と同じなら世代を積まず、drift だけを直す
-（[project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md)）。世代スキップでは配置前除去が構造的に空になる。
+[project mode では同じ link farm なら世代を積まず drift だけを直す](project-mode-generation-skip-and-drift-repair.md)。世代スキップでは配置前除去が構造的に空になる。
 配置前除去の発生源は全て manifest の差分を伴い、link farm を変えるからである。退避の段
 （[退避を配置前除去の後の段として undo ジャーナルに載せる](backup-stage-in-undo-journal.md)）も世代スキップで空とみなしてよいかを決める必要が
 あった。

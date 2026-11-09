@@ -21,7 +21,7 @@ references:
   - "ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:00:56+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e: 同一 profileDir への同時実行は後勝ちにする
 
@@ -51,7 +51,7 @@ lock を待って取る明示 apply どうしでは後勝ちにする。後か�
 flock の待機で直列になるので、後勝ちにすれば追加の仕組みなしに整合した状態へ収束する。後の apply は
 前の apply が書いた世代を前世代として読むため、前世代にだけある古い配置の除去も正しく働く。
 
-profileDir は解決済みの root でキーするので（[profile は解決済み root の roothash でキーする](profile-keyed-by-roothash-of-resolved-root.md)）、同じプロジェクトの別クローンは別の profileDir に
+[profile は解決済み root の roothash でキーする](profile-keyed-by-roothash-of-resolved-root.md)。そのため、同じプロジェクトの別クローンは別の profileDir に
 なり、この衝突に巻き込まれない。出所の異なる apply が profileDir を共有したときの警告は [出所の食い違いは警告して apply を続ける](origin-mismatch-warns-and-continues.md) が持ち、
 後勝ちという決定は変えない。
 

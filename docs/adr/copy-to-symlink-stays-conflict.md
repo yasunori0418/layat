@@ -19,7 +19,7 @@ references:
   - "ADR-fc28d09c-9d52-4539-8838-e9ae5a414594"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T17:28:05+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-02ed93fa-c59f-4790-805d-759501017d2b: method の copy から symlink への変更は移行しない
 
@@ -30,8 +30,7 @@ generated:
 
 ## 背景
 
-method の symlink から copy への変更は自動で移行する
-（[method の symlink から copy への変更を自動で移行する](symlink-to-copy-migration.md)）。逆向きの copy から symlink への変更でも、前世代が
+[method の symlink から copy への変更を自動で移行する](symlink-to-copy-migration.md)。逆向きの copy から symlink への変更でも、前世代が
 置いた copy が target を占めている。こちらも自動で移行するかを決める必要があった。
 
 ## 決定

@@ -18,7 +18,7 @@ references:
   - "ADR-f85f1afd-9b87-4f7a-922e-97c62554f198"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:06+09:00"
+  at: "2026-11-09T08:26:59+09:00"
 ---
 # ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137: layat.lib.mkEnv で buildEnv 合成環境を提供する
 
@@ -59,7 +59,7 @@ hook の需要を engine に持ち込まず配線層の idiom で満たした [e
 
 ### 提案どおり `mkEnv` を提供する
 
-#162 が実装の対象にした案で、`mkEnv` を 1 entry の mkManifest へ脱糖する。[subdir は全 target へ前置する評価時の糖衣にし、root を動かさない](subdir-as-target-prefix-sugar.md) の root marker
+#162 が実装の対象にした案で、`mkEnv` を 1 entry の mkManifest へ脱糖する。[subdir は全 target へ前置する評価時の糖衣にし、root を動かさない](subdir-as-target-prefix-sugar.md) と決めた root marker の
 `subdir` と同じく lib 層の糖衣で、engine は変えない。role ごとに独立した profile は得られるが、
 それは専用の config に 1 entry を置けば今でも得られる。増える API に見合う価値が無い。
 

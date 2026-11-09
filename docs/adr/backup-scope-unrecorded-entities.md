@@ -18,7 +18,7 @@ references:
   - "ADR-33d8c466-6b38-46b6-8696-ad7521c72786"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:06+09:00"
+  at: "2026-11-09T08:39:38+09:00"
 ---
 # ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f: --backup は配置を塞ぐ記録外の実体だけを退避する
 
@@ -31,7 +31,7 @@ generated:
 
 layat は、自分が前世代に置いて古くなったものなら配置前に除去して自動で移行する。一方、記録外の実体
 （他人のデータ）は判定なしに動かすと危険なので、自動移行の対象から外して conflict で止めて
-いる。`--backup`（[--backup を = 区切りで suffix を取る省略可能な値のフラグにする](backup-optional-value-flag.md)）はこの隙間を埋める手段で、
+いる。`--backup` はこの隙間を埋める手段で（[--backup を = 区切りで suffix を取る省略可能な値のフラグにする](backup-optional-value-flag.md)）、
 何を退避の対象にするかを決める必要があった。
 
 ## 決定
