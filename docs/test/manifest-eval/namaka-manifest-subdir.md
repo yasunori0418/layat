@@ -7,6 +7,9 @@ resource: "tests/namaka/manifest-subdir/"
 covers:
   - "TC-7d713505-5673-4e15-99bf-e98965e18892"
   - "TC-de6514e2-9105-45a6-a5b9-d474911a401b"
+follows:
+  - "TP-36e90d5d-4524-4294-bc72-ee263bb02782"
+  - "TP-d3d06fe4-6940-4df8-b111-bb4096d5444f"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"

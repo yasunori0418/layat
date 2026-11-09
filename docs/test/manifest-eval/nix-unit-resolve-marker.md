@@ -6,6 +6,10 @@ status: stable
 resource: "tests/nix-unit/resolve-marker.nix"
 covers:
   - "TC-81be084d-709f-481b-9b61-5d2d11c317a0"
+follows:
+  - "TP-36e90d5d-4524-4294-bc72-ee263bb02782"
+  - "TP-d3d06fe4-6940-4df8-b111-bb4096d5444f"
+  - "TP-403c55c7-d996-4951-8e6b-c3a7dddd387c"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T10:25:27+09:00"
