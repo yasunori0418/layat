@@ -7,7 +7,7 @@ mitigates:
   - "RISK-ac5cd9b4-58f9-43d8-9fae-66f7b5940beb"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:53:33+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # TC-3c28934c-d098-40a3-b598-1b08117f9cf1: 比較の基準を last-applied 記録 → profile → 空の順で読み、各操作が記録を FS の事実どおりに保つ
 
@@ -48,4 +48,4 @@ generated:
 ## 対応する CASE
 
 [record_test.go — last-applied 記録の読み書き・比較の基準の優先順位・各操作での更新](record-test-go.md)（`internal/engine/record_test.go`）。実 nix での記録の
-位置と rollback 後の書き直しは [e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復](e2e-02-home.md)（e2e 02-home）が見る。
+位置と rollback 後の書き直しは [e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復](e2e-02-home.md) が見る。

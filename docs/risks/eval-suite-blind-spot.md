@@ -10,14 +10,13 @@ threatens:
   - "DSG-fb49e36c-eb20-4efa-8cac-88ef0873db8e"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-05T00:35:05+09:00"
+  at: "2026-11-09T08:42:17+09:00"
 ---
 # RISK-3de9753f-3fd3-4364-b1ab-64c68c15ec77: 評価スイート自身の盲点でアサートが空虚に緑になる
 
 ## リスク
 
-検証手段を nix-unit（点の不変条件）と namaka（面のスナップショット）の 2 本立てにする設計
-（[lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する](../design/lib-test-nix-unit-namaka.md)）には、その組み合わせに固有の盲点が 2 つある。どちらも「スイートが緑なのに
+評価の検証手段の設計（[lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する](../design/lib-test-nix-unit-namaka.md)）には、nix-unit（点の不変条件）と namaka（面のスナップショット）の組み合わせに固有の盲点が 2 つある。どちらも「スイートが緑なのに
 守られていない」という形をとり、他のどのアサートの信頼性も同時に下げる。
 
 **テスト名の後勝ち衝突**: nix-unit のスイートはテストディレクトリの列挙で組み立てられ、

@@ -7,7 +7,7 @@ mitigates:
   - "RISK-f522a51b-db4b-4164-bd20-63fa4a0cb27d"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:34:43+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # TC-bc653f83-70ce-4920-b7cd-9b70a4cd2cae: prune が孤児系列だけを系列ごと消し、生存・判定不能な系列は理由付きで残す
 
@@ -80,7 +80,7 @@ root の stat が不在以外の理由で失敗する系列も同様に残り、
 
 **warning** — `Skipped` に入るケース（`backref-unreadable` / `series-unreadable` /
 `root-stat-failed`）では、`Skipped`
-への計上だけでなく **`Warnf` が理由付きで呼ばれる**ことも各ケースで見る。DSG が「`Skipped` に
+への計上だけでなく **`Warnf` が理由付きで呼ばれる**ことも各ケースで見る。設計 [prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする](../../design/prune-orphan-series.md) が「`Skipped` に
 入る全ケースで `Warnf` を呼ぶ」を規律にしているのに `locked` だけ warning を確かめる形にすると、
 検証の側が禁じられた不揃いと同じ形になる。
 

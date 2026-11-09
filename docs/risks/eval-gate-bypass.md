@@ -20,26 +20,34 @@ threatens:
   - "REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-05T00:26:05+09:00"
+  at: "2026-11-09T08:42:17+09:00"
 ---
 # RISK-09df40d3-2752-433e-9ab0-2816fbd14969: 評価時に止めるべき入力が止まらずに engine 実行時まで到達する
 
 ## リスク
 
-`mkManifest` は `evalModules` で入力を確認する単一の箇所（[mkManifest 自身が evalModules で入力を確認する単一の箇所になる](../requirements/mkmanifest-input-validation.md)）で、パス安全性
-（[target / subpath のパス安全性を評価時に確認する](../requirements/path-safety-validation.md)）・未知キーと旧名の拒否（[entry submodule は strict とし未知キーと旧名を評価時エラーにする](../requirements/entry-submodule-strict.md)）・entry のフィールドを 4 つに限ること
-（[entry submodule のフィールドは src / subpath / target / method の 4 つとする](../requirements/entry-submodule-fields.md)）・意図が矛盾する組み合わせ（[意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](../requirements/normalize-manifest-cross-field-checks.md)）・同一 manifest 内の target 衝突
-（[target 衝突の検出処理を同一 manifest 内と cross-config で分ける](../requirements/target-collision-eval-detection.md)）・素の文字列 src の拒否（[src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する](../requirements/src-kinds-store-default.md)）を全てここで止める。この確認は
+評価時に止める入力を確認する箇所は [mkManifest 自身が evalModules で入力を確認する単一の箇所になる](../requirements/mkmanifest-input-validation.md) が定める。
+
+ここで止める入力の規範は次のとおり。
+
+- [target / subpath のパス安全性を評価時に確認する](../requirements/path-safety-validation.md)
+- [entry submodule は strict とし未知キーと旧名を評価時エラーにする](../requirements/entry-submodule-strict.md)
+- [entry submodule のフィールドは src / subpath / target / method の 4 つとする](../requirements/entry-submodule-fields.md)
+- [意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](../requirements/normalize-manifest-cross-field-checks.md)
+- [target 衝突の検出処理を同一 manifest 内と cross-config で分ける](../requirements/target-collision-eval-detection.md)（同一 manifest 内の衝突）
+- [src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する](../requirements/src-kinds-store-default.md)（素の文字列 src の拒否）
+
+この確認は
 `modules/common.nix` が共有する entriesType にも適用される（[全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md)）。
-root マーカーの subdir 適用形（[root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](../requirements/root-marker-subdir-sugar.md)）の拒否（絶対パス・`..` 脱出・空の
-`subdir`、前置で target の `..` 脱出を隠さないこと）も同じ条件で止める。
+root マーカーの subdir 適用形の拒否（絶対パス・`..` 脱出・空の
+`subdir`、前置で target の `..` 脱出を隠さないこと）も同じ条件で止める（適用形の規範は [root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](../requirements/root-marker-subdir-sugar.md)）。
 
 `root = systemRoot`（system mode）は `rootKind = "system"` として評価を通り、評価時に止める
-入力ではない（→ [rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)、[root は 3 マーカーと絶対パス文字列の union を取る](../requirements/root-marker-kinds.md)）。root 省略時のエラー（[root は明示必須で暗黙デフォルトを持たない](../requirements/root-explicit-required.md) の明示必須）と、`pkgs` などの必須引数を
+入力ではない（→ [rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)、[root は 3 マーカーと絶対パス文字列の union を取る](../requirements/root-marker-kinds.md)）。root 省略時のエラー（[root は明示必須で暗黙デフォルトを持たない](../requirements/root-explicit-required.md)）と、`pkgs` などの必須引数を
 省いた呼び出しのエラー（[mkManifest の引数は必須の pkgs / entries / root と任意の identity とする](../requirements/mkmanifest-arguments.md)）も、評価時に止める入力に当たる。
 どちらも型定義の条件ではなく関数の必須引数として止まり、省略を見るアサートは評価テストに存在しない。
-この 2 本へは緩和の無い残余として `threatens` を張る（[mkManifest の引数は必須の pkgs / entries / root と任意の identity とする](../requirements/mkmanifest-arguments.md) のうち
-`identity` の扱いは [manifest.json の形が engine の読む契約から気付かれずにずれる](manifest-contract-drift.md) 側の [manifest 文書の形（schemaVersion / root / entry 5 フィールド）を不変条件としてアサートする](../test/manifest-eval/manifest-shape-invariants.md) が見る）。
+この 2 本へは緩和の無い残余として `threatens` を張る。[mkManifest の引数は必須の pkgs / entries / root と任意の identity とする](../requirements/mkmanifest-arguments.md) が定める引数のうち
+`identity` は、別のリスク [manifest.json の形が engine の読む契約から気付かれずにずれる](manifest-contract-drift.md) の側で [manifest 文書の形（schemaVersion / root / entry 5 フィールド）を不変条件としてアサートする](../test/manifest-eval/manifest-shape-invariants.md) が見る。
 
 **顕在化したときに起きること**: この条件が緩むと、`..` や絶対パスで root の外を指す target が
 engine まで届き、意図しない場所を書き換える。タイポした旧名は利用者に知らせずに無視され、ユーザーは

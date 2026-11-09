@@ -11,15 +11,14 @@ threatens:
   - "REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # RISK-cdca94ab-ed44-4d60-a04d-4dc75d61f731: 生成器の診断が握り潰され、前提条件の案内も出ない
 
 ## リスク
 
-生成器は診断を CLI が渡す writer へ素通しし、失敗を `generator.Error` で構造化して返す
-（→ [生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める](../requirements/generator-diagnostics-contract.md)）。nix 生成器は experimental-features が未有効の
-とき、自動付与せず有効化の手段を案内して止まる（→ [nix experimental-features は nix 生成器の前提条件とし、自動付与せず案内エラーで停止する](../requirements/nix-experimental-features-prerequisite.md)）。
+生成器の診断と失敗の扱いは [生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める](../requirements/generator-diagnostics-contract.md) が定め、失敗は `generator.Error` で返す。experimental-features が未有効の
+ときの nix 生成器の動作は [nix experimental-features は nix 生成器の前提条件とし、自動付与せず案内エラーで停止する](../requirements/nix-experimental-features-prerequisite.md) が定める。
 これが崩れる形は 3 つある。
 
 - **成功時の握り潰し** — eval の処理が nix の stderr をキャプチャしたまま捨て、成功時の警告

@@ -9,7 +9,7 @@ covers:
   - "TC-de6514e2-9105-45a6-a5b9-d474911a401b"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:49+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # CASE-9e44bd6d-f6b4-4d12-990e-349a4b5c0dda: namaka manifest-subdir
 
@@ -27,7 +27,7 @@ generated:
   `method` を全て省略して既定適用を通す
 - 両 entry の target が `.config/` 前置済みで、`root` が `{"rootKind":"home"}` だけである状態を
   固定する。`subdir` が文書のどこかへ現れれば差分になる
-- 配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) の fake flake-input double イディオムに従い、2 つは store hash を
+- 配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) に従い、2 つは store hash を
   違える（`000…-fake-src` と `111…-other`）
 
 スナップショットに委ねてよい範囲をどこまでとするかは [manifest 文書全体をスナップショットに固定し、どの不変条件も名指ししない変更を差分として出す](manifest-document-regression.md) が持つ。前置と root の不変は

@@ -22,19 +22,19 @@ specification_ja: |
   スナップショットしない）。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:05:37+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa: out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする
 
 ## 仕様
 
 - symlink として配置する。指す先は marker の絶対パスまたは root 相対パス（ローカル FS）。
-  root 相対は `target` 起点の相対リンクとして張る（[mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](root-relative-symlink-marker.md)）
+  root 相対の張り方は [mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](root-relative-symlink-marker.md) に従う
 - 世代では「どのパスを指すか」のリンク先マッピングのみ版管理する。指す先の内容は設計上
   ライブで、永遠にスナップショットしない
 
-> **上は原文の写しに root 相対（→ [root 相対マーカーのリンクを target 起点の相対パスで張る](../adr/root-relative-link-as-relative-path.md)）を加えたもので、規範は frontmatter が正**。marker の生成と識別（`lib.mkOutOfStoreSymlink`・
-> marker の tag 判別）は [mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](mkoutofstoresymlink-marker.md) / [marker は判別タグで識別し manifest.json には漏らさない](marker-tag-discrimination.md)、method と src の対応表は [method は配置方法を選び symlink は世代管理下・copy は世代管理外になる](method-src-matrix.md)、
+> **上は原文の写しに root 相対（→ [root 相対マーカーのリンクを target 起点の相対パスで張る](../adr/root-relative-link-as-relative-path.md)）を加えたもので、規範は frontmatter が正**。marker の生成と識別は
+> [mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](mkoutofstoresymlink-marker.md) / [marker は判別タグで識別し manifest.json には漏らさない](marker-tag-discrimination.md)、method と src の対応表は [method は配置方法を選び symlink は世代管理下・copy は世代管理外になる](method-src-matrix.md)、
 > symlink 配置の手順そのものは [symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする](symlink-placement-procedure.md) の担当。
 
 ## 出典

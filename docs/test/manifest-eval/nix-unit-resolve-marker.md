@@ -8,7 +8,7 @@ covers:
   - "TC-81be084d-709f-481b-9b61-5d2d11c317a0"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:49+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # CASE-0c9d41d1-33fd-4982-aed9-fa575a56ee01: nix-unit resolve-marker.nix
 
@@ -40,7 +40,7 @@ store / out-of-store / root 相対それぞれに重ねて置く。どの段で�
 - **`isRootMarker`**: projectRoot / homeRoot / systemRoot には true、out-of-store marker と
   絶対パス文字列には false
 
-配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) の fake flake-input double イディオムに従う。
+配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) に従う。
 
 ## 出典
 

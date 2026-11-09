@@ -8,7 +8,7 @@ mitigates:
   - "RISK-09df40d3-2752-433e-9ab0-2816fbd14969"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:49+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # TC-7d713505-5673-4e15-99bf-e98965e18892: subdir 適用形の前置・不変・拒否
 
@@ -29,8 +29,8 @@ root マーカーの subdir 適用形（[root マーカーの subdir 適用形�
   `subdir` が `"root subdir"` を含む `ThrownError` になる。entries が空でも拒否される。target の
   `..` 脱出は前置した後も従来どおり拒否される
 
-前 4 項目は [subdir 適用形の前置が一部の target で抜ける、root 側へ混入する、または単体 marker の形が変わる](../../risks/subdir-prefix-drift.md)、拒否条件は [評価時に止めるべき入力が止まらずに engine 実行時まで到達する](../../risks/eval-gate-bypass.md) を
-緩和する。文書全体の形は [manifest 文書全体をスナップショットに固定し、どの不変条件も名指ししない変更を差分として出す](manifest-document-regression.md) のスナップショットでも固定する。
+前 4 項目で緩和するリスクは [subdir 適用形の前置が一部の target で抜ける、root 側へ混入する、または単体 marker の形が変わる](../../risks/subdir-prefix-drift.md) で、拒否条件で緩和するリスクは [評価時に止めるべき入力が止まらずに engine 実行時まで到達する](../../risks/eval-gate-bypass.md) である。
+文書全体の形は [manifest 文書全体をスナップショットに固定し、どの不変条件も名指ししない変更を差分として出す](manifest-document-regression.md) のスナップショットでも固定する。
 
 ## 覆う CASE
 

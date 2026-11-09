@@ -35,7 +35,7 @@ specification_ja: |
   ならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:05:37+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-a77181dd-a59c-40bb-855e-3430ad970eb6: mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る
 
@@ -58,8 +58,8 @@ generated:
 | 実行時の停止 | `<root>/<src>/<subpath>` が不在なら配置前に停止（dangling を作らない）|
 | 版管理 | 相対のリンク先文字列のみ。指す先の内容はライブ（[out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする](out-of-store-link-mapping-only.md) の担当）|
 
-`mkOutOfStoreSymlink`（[mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](mkoutofstoresymlink-marker.md)）は絶対パス専用のまま据え置き、
-相対文字列を受理させない。manifest での表現（`srcKind: "rootRelative"`）は
+`mkOutOfStoreSymlink` は絶対パス専用のまま据え置き、
+相対文字列を受理させない（この関数の規範は [mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](mkoutofstoresymlink-marker.md)）。manifest での表現（`srcKind: "rootRelative"`）は
 [manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する](manifest-entries-array.md)、マーカーの判別は [marker は判別タグで識別し manifest.json には漏らさない](marker-tag-discrimination.md)、
 src と target root の時点の関係は [out-of-store の src は評価時の絶対パスか配置 root 相対のどちらかで、root 相対は target と同じ root に対して実行時に解決する](out-of-store-eval-time-path.md) の担当。
 

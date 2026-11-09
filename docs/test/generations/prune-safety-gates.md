@@ -7,7 +7,7 @@ mitigates:
   - "RISK-0909e121-8ec4-40c8-ab1c-562e61f31067"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:34:43+09:00"
+  at: "2026-11-09T09:19:35+09:00"
 ---
 # TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9: prune の dryrun が副作用ゼロで、非同意は中断し、lock 中の系列は skip され、削除段の失敗は進捗と理由で振り分けられる
 
@@ -44,7 +44,7 @@ profileDir の lock を取れないことまで確かめないと、削除前に
 1 つも持たない `.root` だけの系列は lock なしで削除される（④）。同じ実行に含まれる他の孤児系列は
 削除される（1 系列の skip が全体を止めない）。lock の解放を待たないことも併せて見る。
 
-**削除段の失敗** — DSG の 2×2（そこまでに何か消えたか × 理由が権限か）を全セル固定する。
+**削除段の失敗** — 設計 [prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする](../../design/prune-orphan-series.md) が定める 2×2（そこまでに何か消えたか × 理由が権限か）を全セル固定する。
 `Skipped` になるのは 1 セルだけで、残る 3 セルはすべてエラーになる。
 
 - **何も消えていない × 権限** — `Skipped` に `permission-denied` として現れ、warning が出て、
@@ -59,7 +59,7 @@ profileDir の lock を取れないことまで確かめないと、削除前に
   確認済みの `<name>` ディレクトリの unlink で、そこを静的な fixture から非権限の errno で失敗させる
   手段が無い（ENOTDIR / ENOTEMPTY はいずれも `.root` 削除後 = 「1 つ以上消した」側にしか現れず、
   `.root` を非空ディレクトリにする案は `ReadBackref` が先に失敗して `backref-unreadable` になる）。
-  production コードへフォールト注入の seam を足すのは採らない（2026-08-23 の裁定）。代わりに
+  production コードへフォールト注入用のフックを足すのは採らない（2026-08-23 の裁定）。代わりに
   **「着手前の失敗で理由が権限でないときエラーになる」ことを permission 側と対にした形で検証する**
   — 系列直下に stray file を置いて最終 rmdir を ENOTEMPTY で失敗させ（root でも成立する）、非権限の
   失敗が `Skipped{permission-denied}` へ丸められずエラーで返ることを固定する。分岐としては下の
@@ -74,7 +74,7 @@ profileDir の lock を取れないことまで確かめないと、削除前に
   `os.Geteuid() == 0` で skip する）。errno の別と報告の別を 1 ケースに束ねると、root 環境で
   後者と一緒に前者の確認も skip される
 - **1 つ以上消した × 権限** — 同じくエラー。理由が権限でも `Skipped{permission-denied}` には
-  ならない。**このセルを省くと、`errors.Is` を先に見て権限なら無条件 skip する実装（DSG が定めた
+  ならない。**このセルを省くと、`errors.Is` を先に見て権限なら無条件 skip する実装（この設計が定めた
   「状態を先に見る」順序を逆にした実装）が他の 3 セルをすべて通過してしまう**。1 つ目の `<name>`
   を消させた後、2 つ目で権限失敗を誘発する（root では誘発できないので `os.Geteuid() == 0` で
   skip する）

@@ -33,7 +33,7 @@ derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:29:58+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-08c8f639-790c-4970-a954-c9567538cf9b: root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない
 
@@ -56,9 +56,8 @@ root は動かず、`rootKind` も単体形と同じ値になる。`manifest.jso
 | `""` / `"."` / `"a/.."`（正規化で空）| 同上 |
 
 適用形は `subdir` だけを受け付ける。`homeRoot { }` と未知キー付きの引数は評価エラーになり、
-適用後のマーカーは関数ではないため再適用もできない。`target` の安全性の確認
-（[target / subpath のパス安全性を評価時に確認する](path-safety-validation.md)）は前置前の値に掛かるので、`subdir` を付けても
-`..` 始まりの target は従来どおり拒否される。
+適用後のマーカーは関数ではないため再適用もできない。`target` の安全性の確認は前置前の値に掛かるので、`subdir` を付けても
+`..` 始まりの target は従来どおり拒否される（確認の規範は [target / subpath のパス安全性を評価時に確認する](path-safety-validation.md)）。
 
 規範は frontmatter が正。
 

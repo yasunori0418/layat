@@ -17,7 +17,7 @@ specification_ja: |
   自身の対応版より新しい `schemaVersion` を拒否しなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:29:58+09:00"
+  at: "2026-11-09T08:42:17+09:00"
 ---
 # REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b: manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する
 
@@ -28,7 +28,7 @@ generated:
 - `schemaVersion` は **`1`** で固定する。
 - engine は自身の対応版より新しい `schemaVersion` を拒否する。
 
-内部タグ `_layatMarker` を manifest に漏らさず判別タグを含まない enum で写すことは [marker は判別タグで識別し manifest.json には漏らさない](marker-tag-discrimination.md) が
+marker を内部タグ `_layatMarker` を含まない enum で manifest へ写すことは [marker は判別タグで識別し manifest.json には漏らさない](marker-tag-discrimination.md) が
 持つ。返り値としての manifest.json の位置づけは [mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](mkmanifest-return-value.md)、スキーマの各フィールドは
 [manifest.json のトップレベルは必須の schemaVersion / root / entries と任意の identity とする](manifest-toplevel-fields.md) / [manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する](manifest-root-object.md) / [manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する](manifest-entries-array.md) が持つ。
 

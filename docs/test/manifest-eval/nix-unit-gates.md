@@ -9,7 +9,7 @@ covers:
   - "TC-f1da084f-c0f0-4aba-85d9-f273c04eb373"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:49+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # CASE-879a93da-d22f-4397-84da-3544f8249af1: nix-unit gates.nix
 
@@ -46,7 +46,7 @@ generated:
 - `lib/types.nix` の `entriesType` を `evalModules` で直接評価し、未知キー `bogus` が
   モジュールという使い方（`modules/common.nix` が共有する型）でも eval エラーになること
 
-配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) の fake flake-input double イディオムに従う。
+配置元は [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](../../test-plan/eval-test-double.md) に従う。
 
 ## 出典
 

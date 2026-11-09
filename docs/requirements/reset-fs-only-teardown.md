@@ -42,7 +42,7 @@ specification_ja: |
   両モードで使用できなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:29:58+09:00"
+  at: "2026-11-09T09:19:35+09:00"
 ---
 # REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6: reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す
 
@@ -52,13 +52,13 @@ generated:
 layat reset <name> [target...]  # 配置物を無い状態へ戻す。target 省略で全 entry、指定でその entry のみ
 ```
 
-`reset <name> [target...]` は配置物を**無い状態へ戻す** teardown。symlink は stale 除去と
+`reset <name> [target...]` は配置物を**無い状態へ戻す** teardown。symlink は古くなった配置の除去と
 同じ**保守的不変条件**（layat 管理・記録通りのみ・foreign は warning で残す）で除去し、
 **copy target も削除**する（copy を消す唯一の明示手段）。symlink・copy いずれの除去後も
 空親ディレクトリ剪定を適用する。データ損失リスクのため**確認プロンプト**を出すか
 `--yes` で同意を要求し、削除 target をレポート表示する。**profile / 世代は触らない
 FS-only teardown** で、config が entry を残す限り次の apply で再配置される（transient・
-project mode は lstat 検査で復帰）。恒久除去は config から entry を消して apply、
+project mode は lstat の確認で復帰）。恒久除去は config から entry を消して apply、
 profile 完全除去は `nix-env --profile <profileDir>/profile --delete-generations`。
 home / project 両モード可。
 
@@ -67,9 +67,8 @@ home / project 両モード可。
 >
 > - 保守的不変条件の中身 → [古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](stale-removal-invariants.md)、空親ディレクトリ剪定の規則 → [target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する](empty-parent-dir-pruning.md)。
 >   本 item はそれらを reset にも適用することだけを規定する
-> - project mode の lstat での確認による復帰（→ [project mode では同じ link farm なら世代を積まず drift だけを直す](../adr/project-mode-generation-skip-and-drift-repair.md)）→ [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md)
-> - 確認プロンプトを stdin が TTY のときだけ出し、非 TTY で同意が無ければ即エラー停止
->   すること（→ [reset は非対話の実行で --yes を必須にする](../adr/reset-confirmation-and-yes.md)）→ [reset の確認プロンプトは stdin が TTY のときだけ出し、非 TTY で同意が無ければ即エラー停止する](reset-confirm-non-tty.md)
+> - project mode の lstat での確認による復帰 → [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md)（決定は [project mode では同じ link farm なら世代を積まず drift だけを直す](../adr/project-mode-generation-skip-and-drift-repair.md)）
+> - 確認プロンプトの出し方 → [reset の確認プロンプトは stdin が TTY のときだけ出し、非 TTY で同意が無ければ即エラー停止する](reset-confirm-non-tty.md)（決定は [reset は非対話の実行で --yes を必須にする](../adr/reset-confirmation-and-yes.md)）
 >
 > 逆に、上の写しには現れないが規範文が持つものが 1 つある。同意を取る手段の短縮形
 > `-y` で、原文はこの箇条書きでは `--yes` としか書かない。短縮形はグローバルフラグ表

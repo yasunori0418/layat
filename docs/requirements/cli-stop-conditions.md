@@ -26,7 +26,7 @@ specification_ja: |
   での続行を採ってはならない（ユーザーが要求していない配置を利用者に知らせずに生むため）。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:29:58+09:00"
+  at: "2026-11-09T08:28:26+09:00"
 ---
 # REQ-774cef80-2872-4ea1-937b-a0fbabc305a9: 要求された操作が成立しないときは CLI がエラーで停止し、暗黙のフォールバックを採らない
 
@@ -56,6 +56,6 @@ generated:
 
 この 3 行が挙げる停止そのものに対応する決定を持つ ADR は無く、`docs/spec.md` が一次記述に
 あたる。よって本 item に `justifies` は張られないが、これは張り忘れではない。前提となる
-「CLI が entrypoint と named manifest を解決する」ことは旧決定が定めていた（現在は [生成器の契約を Discover / Roots / Build / DryBuild の 4 操作にする](../adr/generator-four-operations.md) の生成器が担う）が、旧決定は解決できなかった
+「CLI が entrypoint と named manifest を解決する」ことは旧決定が定めていた（現在の担当は生成器で、決定 [生成器の契約を Discover / Roots / Build / DryBuild の 4 操作にする](../adr/generator-four-operations.md) が契約を定める）が、旧決定は解決できなかった
 ときの扱いを決めていないため、側面の根拠として `justifies` は張らない（前提そのものの帰属は
 [entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする](entrypoint-discovery-order.md) / [entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する](named-manifest-addressing.md) が担当する）。
