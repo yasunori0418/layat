@@ -81,7 +81,7 @@ jobs:
 
   sara:
     # Knowledge-graph validation of docs/ plus the test-doc-map / glossary-index / risk-matrix /
-    # sara-gap / sara-new / adr-supersede / okf-frontmatter / okf-index / term-avoid contract tests. Not a
+    # sara-gap / sara-new / adr-supersede / okf-frontmatter / okf-index / term-avoid / link-text contract tests. Not a
     # required status check. Uses a job-local path filter instead of the `changes` job.
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
@@ -180,6 +180,12 @@ jobs:
       - name: Run term-avoid contract test
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/term-avoid.sh
+
+      # Link text, frontmatter `name` and H1 must not carry bare tags, and a link
+      # must not be followed or wrapped by its own name.
+      - name: Run link-text contract test
+        if: steps.filter.outputs.relevant != 'false'
+        run: nix develop '.?dir=dev#sara' -c dev/tests/link-text.sh
 
   e2e:
     needs: changes

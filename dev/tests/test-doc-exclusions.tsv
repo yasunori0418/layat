@@ -22,6 +22,7 @@ checks.treefmt	フォーマッタ検査（treefmt-nix が自動生成）。quali
 checks.namaka	namaka アグリゲータ。leaf の tests/namaka/<name>/ を CASE が持つ
 checks.nix-unit	nix-unit アグリゲータ。leaf の tests/nix-unit/*.nix を CASE が持ち、固有ロジック（重複検査）は tests/nix-unit/aggregator-merge.nix の CASE が検証する
 dev:checks.glossary-index	用語索引 ⇔ 用語 item の 1:1 の契約テスト。確かめる対象は layat の振る舞いではなく docs の索引規約なので TC / CASE へ展開しない
+dev:checks.link-text	リンク文字列の裸のタグと name の繰り返しの検出の契約テスト。確かめる対象は layat の振る舞いではなく docs の表記規約なので TC / CASE へ展開しない
 dev:checks.okf-frontmatter	OKF 互換の入れ子キーの形の契約テスト。確かめる対象は layat の振る舞いではなく docs の frontmatter 規約なので TC / CASE へ展開しない
 dev:checks.okf-index	OKF の index.md と生成結果の差分ゼロの契約テスト。確かめる対象は layat の振る舞いではなく docs の索引の生成規約なので TC / CASE へ展開しない
 dev:checks.risk-matrix	risk の level 導出マトリクス整合の契約テスト。検査対象は layat の振る舞いではなく docs のスコアリング規約なので TC / CASE へ展開しない
