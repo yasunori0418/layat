@@ -30,18 +30,18 @@ specification_ja: |
   規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:28:26+09:00"
+  at: "2026-11-09T09:19:35+09:00"
 ---
 # REQ-5c6b07da-3d06-414d-8770-4f438234b322: target 衝突の検出処理を同一 manifest 内と cross-config で分ける
 
 ## 仕様
 
-属性キーによる一意性担保だけでは塞げない経路として、**別キー A/B が `target` フィールドを
+属性キーによる一意性担保だけでは塞げない場合として、**別キー A/B が `target` フィールドを
 同値に明示上書きした衝突**がある。これは正規化後 target 文字列の重複として eval 時に
 `lib.throwIf` で検出・停止する（engine 実行時ではない）。
 
 cross-config（別 profile・別 manifest）の同一 target 衝突は eval では検出不可で、
-これは engine 実行時の後勝ち + foreign symlink warning になる。両者は別経路。
+これは engine 実行時の後勝ち + foreign symlink warning になる。両者は扱う段階が別である。
 
 > **上は原文の写しで、規範は frontmatter が正**。原文が「cross-config」を無条件に「eval では
 > 検出不可」とするのに対し、規範文では**単一の eval に載らない場合**（別 entrypoint・別マシン・
@@ -59,7 +59,7 @@ cross-config（別 profile・別 manifest）の同一 target 衝突は eval で�
 
 ## 出典
 
-`docs/spec.md`「lib API」→「入力検査（`evalModules` + `normalizeManifest`）」。
+`docs/spec.md`「lib API」→「入力の確認（`evalModules` + `normalizeManifest`）」。
 
 決定の実体は同一 manifest 内の target 衝突を eval 時に検出すると定めた
 [manifest 内の target の衝突を評価時に検出する](../adr/manifest-target-conflict-eval-error.md)で、cross-config を「単一の eval に載らない場合」へ限定した

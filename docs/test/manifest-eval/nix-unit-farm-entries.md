@@ -8,7 +8,7 @@ covers:
   - "TC-1d69350e-db3c-4d74-a24e-7a3fabb31b0a"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:28:26+09:00"
+  at: "2026-11-09T09:19:35+09:00"
 ---
 # CASE-3a1f403d-3c7b-4221-a32a-2ddc272a58a3: nix-unit farm-entries.nix
 
@@ -37,7 +37,7 @@ generated:
 - **farm derivation への配線**: 混在 manifest を `mkManifest` へ与え、そのビルドスクリプト
   本文が `mkdir` → `manifest.json` のコピー → アンカー行の順で組まれ、アンカー行が farm 対象の
   2 件だけから成ること。期待するアンカー行は同じ `anchorLines` で組むので、生成式を変えれば
-  両辺が揃って動き、ここで落ちるのは配線の誤り（フィルタ漏れ・埋め込み忘れ・順序の崩れ）
+  両辺が揃って動き、ここで落ちるのは配線の誤り（フィルタの除外し損ね・埋め込み忘れ・順序の崩れ）
   だけである（内容の正しさは前項が固定する）
 - **アンカー対象が皆無のときの配線**: copy しか無い manifest では `ln -s` 行が 1 行も現れず、
   それでも `manifest.json` のコピーまでは行うこと。「アンカーが無い」と「ビルドスクリプトが

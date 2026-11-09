@@ -26,7 +26,7 @@ specification_ja: |
   フィールドを持ってはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:28:26+09:00"
+  at: "2026-11-09T09:19:35+09:00"
 ---
 # REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336: manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する
 
@@ -39,7 +39,7 @@ attrset を**配列に正規化**して記録する（Go は配列を読む）�
 | `srcKind` | `"store"` \| `"outOfStore"` \| `"rootRelative"` | 配置元の種別 |
 | `src` | string | `store`: 解決済み store パス文字列 / `outOfStore`: marker の絶対パス / `rootRelative`: marker の root 相対パス |
 | `subpath` | string | src 内の相対パス（デフォルト適用後。省略形も `"."` で記録）|
-| `target` | string | root 相対の配置先。**entry の identity**（属性キー由来・stale 除去の diff キー）|
+| `target` | string | root 相対の配置先。**entry の identity**（属性キー由来・古くなった配置を除去するときの diff キー）|
 | `method` | `"symlink"` \| `"copy"` | 配置種別（デフォルト適用後。旧名 `mode`）|
 
 上の表は原文の写しに `rootRelative`（→ [srcKind の列挙値は schemaVersion を上げずに足す](../adr/srckind-added-without-version-bump.md)）を加えたもので、規範は frontmatter が正。

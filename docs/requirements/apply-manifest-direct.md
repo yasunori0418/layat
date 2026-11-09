@@ -40,7 +40,7 @@ specification_ja: |
   重複は入力エラーとしなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:28:26+09:00"
+  at: "2026-11-09T09:19:35+09:00"
 ---
 # REQ-dec58330-6dad-47f7-8f56-2402764a89c7: apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す
 
@@ -51,11 +51,11 @@ layat apply --manifest <link-farm>  # ビルド済み link-farm を直接適用�
 ```
 
 `apply --manifest <link-farm>` は **ビルド済み link-farm を engine へ直接適用**する
-（host / module activation の seam）。entrypoint 発見・rootKind 先取り eval・`nix build` を
+（host / module activation から engine を起動する手段）。entrypoint 発見・rootKind 先取り eval・`nix build` を
 **行わず**、引数の link-farm 内 `manifest.json` から engine が rootKind を読む
 （project / home / fixed の全モード対応）。取得後の挙動（flock → 前世代 diff → 配置 →
-保守的 stale 除去 → `nix-env --set` → レポート）は通常 apply と同一で、配置ロジックは
-二重化しない（engine の `Build` / `LinkFarm` seam に対応）。
+古くなった配置の保守的な除去 → `nix-env --set` → レポート）は通常 apply と同一で、配置ロジックは
+二重化しない（engine の `Build` / `LinkFarm` オプションに対応）。
 
 引数は **link-farm**（`mkManifest` 出力の store パス = 世代としてコミットされる対象）で、
 `manifest.json` 単体ファイルは渡さない。`-f` / `--all` は取得元が衝突するため

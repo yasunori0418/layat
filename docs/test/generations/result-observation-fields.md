@@ -7,7 +7,7 @@ mitigates:
   - "RISK-cdcc6faf-9164-409b-b584-2921fa036d10"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:28:26+09:00"
+  at: "2026-11-09T09:19:35+09:00"
 ---
 # TC-1d19aebc-e1e6-4d6f-9440-3efbd69b18a8: 実行結果のインベントリ・世代観測・到達状態・構造化 warning が実態を表す
 
@@ -41,7 +41,7 @@ store パスなど世代リンクでない dest → nil、`profile-x-link` の�
 **conflict と部分失敗** — apply の conflict、reset の部分失敗、rollback の conflict の
 いずれでも部分の結果が返る。`Apply` は張替えた dest と除去 entry も記録する。
 
-**構造化 warning** — planner の entry warning が kind + target の構造で結果に
+**構造化 warning** — planner の entry warning が `Kind` + target の構造で結果に
 載り、テキストの stderr 出力とは別に消費できる。`ResetResult` では同じ warning が、
 preview 向けの `KeptForeign` と構造化 `Warnings` の両方に現れる。
 

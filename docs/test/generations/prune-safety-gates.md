@@ -7,7 +7,7 @@ mitigates:
   - "RISK-0909e121-8ec4-40c8-ab1c-562e61f31067"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:28:26+09:00"
+  at: "2026-11-09T09:19:35+09:00"
 ---
 # TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9: prune の dryrun が副作用ゼロで、非同意は中断し、lock 中の系列は skip され、削除段の失敗は進捗と理由で振り分けられる
 
@@ -59,7 +59,7 @@ profileDir の lock を取れないことまで確かめないと、削除前に
   確認済みの `<name>` ディレクトリの unlink で、そこを静的な fixture から非権限の errno で失敗させる
   手段が無い（ENOTDIR / ENOTEMPTY はいずれも `.root` 削除後 = 「1 つ以上消した」側にしか現れず、
   `.root` を非空ディレクトリにする案は `ReadBackref` が先に失敗して `backref-unreadable` になる）。
-  production コードへフォールト注入の seam を足すのは採らない（2026-08-23 の裁定）。代わりに
+  production コードへフォールト注入用のフックを足すのは採らない（2026-08-23 の裁定）。代わりに
   **「着手前の失敗で理由が権限でないときエラーになる」ことを permission 側と対にした形で検証する**
   — 系列直下に stray file を置いて最終 rmdir を ENOTEMPTY で失敗させ（root でも成立する）、非権限の
   失敗が `Skipped{permission-denied}` へ丸められずエラーで返ることを固定する。分岐としては下の
