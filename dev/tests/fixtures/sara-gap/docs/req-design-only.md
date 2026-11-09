@@ -12,4 +12,4 @@ specification_ja: |
 ---
 # REQ-dddd0004: design 側にだけ risk がある要求
 
-要求に直接 `threatens` する risk を持たない。`unthreatened` に印付きで出ることを固定する。
+要求に直接 `threatens` する risk を持たない。`unthreatened` に `(design 側に risk あり)` を付けて出ることを固定する。

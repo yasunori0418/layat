@@ -108,7 +108,7 @@ sara-gap --json    # {unthreatened, unmitigated, uncovered, unfollowed, unsatisf
 | 3 | `uncovered` | `covers` されていない `test_condition` |
 | 4 | `unfollowed` | `follows` を持たない `test_case` |
 | 5 | `unsatisfied_quality` | `infrastructure` に `satisfies` されていない `quality` |
-| 6 | `exempt` | `risk_exempt` を持つ `requirement`（情報。exit code に影響しない）|
+| 6 | `exempt` | `risk_exempt` を持つ `requirement`。情報として出し、exit code に影響しない |
 | 7 | `reach` | `requirement` / `test_plan` / `quality` ごとの `{total, reached, ratio}` |
 
 節 1〜6 の `--json` の行は `{id, name, file}` で、`id` はフル ID。節 7 の text の行は
