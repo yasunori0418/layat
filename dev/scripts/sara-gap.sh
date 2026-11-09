@@ -12,9 +12,10 @@ usage() {
 usage: sara-gap [--json]
 
 sara ドキュメントグラフの未カバーを 3 段で列挙する:
-  1. threatens されていない requirement / design
+  1. threatens も risk_exempt も無い requirement
   2. mitigates されていない risk
   3. covers されていない test_condition
+  4. risk_exempt を持つ requirement（情報）
 
 exit code:
   0  ギャップなし
@@ -76,37 +77,47 @@ fi
 gaps=$(printf '%s' "$graph" | jq '
   def targets(t): [.items[] | (.relations[t]? // [])[]] | unique;
   def row: {id, name, file: (.file | ltrimstr("./"))};
+  def has_exempt: (.fields.risk_exempt? // "") != "";
   targets("threatens") as $threatened
+  | ([.items[] | select(.type == "design")
+      | select(.id as $i | $threatened | index($i))
+      | (.relations.satisfies? // [])[]] | unique) as $risky_design_reqs
   | targets("mitigates") as $mitigated
   | targets("covers") as $covered
   | {
       unthreatened: ([.items[]
-        | select(.type == "requirement" or .type == "design")
-        | select(.id as $i | ($threatened | index($i)) | not) | row] | sort_by(.id)),
+        | select(.type == "requirement")
+        | select(has_exempt | not)
+        | select(.id as $i | ($threatened | index($i)) | not)
+        | row + {design_risk: (.id as $i | $risky_design_reqs | index($i) != null)}] | sort_by(.id)),
       unmitigated: ([.items[]
         | select(.type == "risk")
         | select(.id as $i | ($mitigated | index($i)) | not) | row] | sort_by(.id)),
       uncovered: ([.items[]
         | select(.type == "test_condition")
-        | select(.id as $i | ($covered | index($i)) | not) | row] | sort_by(.id))
+        | select(.id as $i | ($covered | index($i)) | not) | row] | sort_by(.id)),
+      exempt: ([.items[] | select(.type == "requirement") | select(has_exempt) | row] | sort_by(.id))
     }')
 
 if [ "$json_out" -eq 1 ]; then
-  printf '%s\n' "$gaps"
+  printf '%s' "$gaps" | jq 'del(.unthreatened[].design_risk)'
 else
   printf '%s' "$gaps" | jq -r '
     def section(title; rows):
       ["## " + title]
-      + (if (rows | length) == 0 then ["なし"] else [rows[] | "\(.id)\t\(.name)\t\(.file)"] end);
-    section("threatens されていない requirement / design"; .unthreatened)
+      + (if (rows | length) == 0 then ["なし"]
+         else [rows[] | "\(.id)\t\(.name)\t\(.file)" + (if .design_risk then "\t(design 側に risk あり)" else "" end)] end);
+    section("threatens も risk_exempt も無い requirement"; .unthreatened)
     + [""]
     + section("mitigates されていない risk"; .unmitigated)
     + [""]
     + section("covers されていない test_condition"; .uncovered)
+    + [""]
+    + section("risk_exempt を持つ requirement（情報）"; .exempt)
     | .[]'
 fi
 
-total=$(printf '%s' "$gaps" | jq '[.[] | length] | add')
+total=$(printf '%s' "$gaps" | jq '[.unthreatened, .unmitigated, .uncovered | length] | add')
 if [ "$total" -gt 0 ]; then
   exit 1
 fi
