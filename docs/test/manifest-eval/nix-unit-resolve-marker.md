@@ -8,13 +8,13 @@ covers:
   - "TC-81be084d-709f-481b-9b61-5d2d11c317a0"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:28:26+09:00"
+  at: "2026-11-09T10:25:27+09:00"
 ---
 # CASE-0c9d41d1-33fd-4982-aed9-fa575a56ee01: nix-unit resolve-marker.nix
 
 ## 対象
 
-`tests/nix-unit/resolve-marker.nix`（[lib.__internal で private helper をテストへ公開する](../../test-plan/lib-internal-test-seam.md) のテスト seam `layat.__internal.resolveEntry`
+`tests/nix-unit/resolve-marker.nix`（[lib.__internal で private helper をテストへ公開する](../../test-plan/lib-internal-test-seam.md) のテスト用の公開点 `layat.__internal.resolveEntry`
 と `lib/types.nix` の `isRootMarker` / `isOutOfStoreMarker` / `isRootRelativeMarker` を直接叩く。manifest 全体を介さず
 単一 entry の src 種別判定・文字列化だけを見る最小の境界。root 相対 marker だけは、
 `normalizeManifest` を通した entries の形も 1 件確かめる）

@@ -8,13 +8,13 @@ covers:
   - "TC-1d69350e-db3c-4d74-a24e-7a3fabb31b0a"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T09:19:35+09:00"
+  at: "2026-11-09T10:25:27+09:00"
 ---
 # CASE-3a1f403d-3c7b-4221-a32a-2ddc272a58a3: nix-unit farm-entries.nix
 
 ## 対象
 
-`tests/nix-unit/farm-entries.nix`（[lib.__internal で private helper をテストへ公開する](../../test-plan/lib-internal-test-seam.md) のテスト seam `layat.__internal.farmEntries` /
+`tests/nix-unit/farm-entries.nix`（[lib.__internal で private helper をテストへ公開する](../../test-plan/lib-internal-test-seam.md) のテスト用の公開点 `layat.__internal.farmEntries` /
 `layat.__internal.anchorName` / `layat.__internal.anchorLines` を直接叩き、加えて `mkManifest` の
 ビルドスクリプトへの配線を fake pkgs 経由で見る。anchorLines は `lib/manifest.nix` が
 `mkManifest` から呼ぶ生成式そのもので、テスト側に複製は持たない → Issue #289）
