@@ -20,7 +20,7 @@ issues:
   - "#289"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T10:11:12+09:00"
+  at: "2026-11-04T22:44:41+09:00"
 ---
 # TP-403c55c7-d996-4951-8e6b-c3a7dddd387c: lib.__internal で private helper をテストへ公開する
 

@@ -18,7 +18,7 @@ specification_ja: |
   解決は engine の実行時責務としなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T10:11:12+09:00"
+  at: "2026-11-03T23:36:11+09:00"
 ---
 # REQ-3f541d39-da41-4ef8-858b-707f54cf6a29: root マーカーは `kind` を運ぶ入れ物でパス解決は engine が行う
 

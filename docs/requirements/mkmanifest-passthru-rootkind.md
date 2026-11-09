@@ -21,8 +21,8 @@ specification_ja: |
   `nix eval <ep>#layat.<system>.<name>.rootKind` で profileDir を確定して flock → build の
   順に進められるようにする。
 generated:
-  by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T10:11:12+09:00"
+  by: "claude-code/claude-opus-5"
+  at: "2026-09-20T08:21:50+09:00"
 ---
 # REQ-2f9205ee-cec5-4072-ac3e-890caae79904: mkManifest の返り値は passthru で `rootKind` を露出する
 
