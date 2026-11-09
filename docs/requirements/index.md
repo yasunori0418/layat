@@ -1,4 +1,4 @@
-# 要求（`requirement`）
+# 要件（`requirement`）
 
 * [祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する](./ancestor-symlink-nest-migration.md) - 実 dir target の migration は [実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する](real-dir-target-migration.md)、method 変更 symlink→copy の migration は[method 変更は symlink→copy のみ配置前除去で移行し、copy→symlink は移行しない](method-change-symlink-to-copy-migration.md) の担当。
 * [apply --all は rootKind を 1 回の一括 eval で取る](./apply-all-batched-eval.md) - **`apply --all` は rootKind を 1 回の一括 eval で取る**。`nix eval <ep>#layat.<system> --apply 'cs: builtins.mapAttrs (_: c: { rootKind = c.rootKind; targets = c.targets; } // …) cs' --json`（legacy は per-system 次元なし: `nix eval -f <ep> layat --apply 'cs: …' --json`）でconfig 名 → `{ rootKind, targets }`（fixed root は `root` も）マップを 1 回で取得し、各 profileDir を確定する。`--project-root` 等のフィルタもこの結果で振り分ける。build だけは atomic 性のため config ごと N 回。eval プロセス起動コストを N→1 に固定する。
