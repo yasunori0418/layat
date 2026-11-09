@@ -110,7 +110,7 @@
               inputs'.nur.packages.sara
               # item 起票ラッパー（sara init + 規約どおりの rename）。
               sara-new
-              # グラフ未カバー 3 段の列挙。
+              # グラフ未カバーと到達率の列挙。
               sara-gap
               # CASE frontmatter を読む yq-go（mikefarah/yq v4）。python-yq とは別実装。
               yq-go

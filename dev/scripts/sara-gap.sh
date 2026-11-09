@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# sara ドキュメントグラフの未カバーを 3 段で列挙する。
+# sara ドキュメントグラフの未カバーを 6 節で列挙し、到達率を出す。
 #
 #   sara-gap [--json]
 #
-# exit code は 0 = ギャップなし / 1 = ギャップあり / 2 = sara check 失敗・JSON 形状異常。
+# exit code は 0 = ギャップなし / 1 = ギャップあり・到達率 1 未満 / 2 = sara check 失敗・JSON 形状異常。
 
 set -euo pipefail
 
@@ -11,17 +11,18 @@ usage() {
   cat >&2 <<'EOF'
 usage: sara-gap [--json]
 
-sara ドキュメントグラフの未カバーを 3 段で列挙する:
+sara ドキュメントグラフの未カバーと到達率を 7 節で出す:
   1. threatens も risk_exempt も無い requirement
   2. mitigates されていない risk
   3. covers されていない test_condition
   4. follows を持たない test_case
   5. infrastructure に satisfies されていない quality
   6. risk_exempt を持つ requirement（情報）
+  7. 到達率
 
 exit code:
-  0  ギャップなし
-  1  ギャップあり
+  0  節 1〜5 が空で、到達率がすべて 1
+  1  節 1〜5 のいずれかが空でない、または到達率のいずれかが 1 未満
   2  sara check の失敗・JSON 形状の異常
 EOF
 }
@@ -80,6 +81,8 @@ gaps=$(printf '%s' "$graph" | jq '
   def targets(t): [.items[] | (.relations[t]? // [])[]] | unique;
   def row: {id, name, file: (.file | ltrimstr("./"))};
   def has_exempt: (.fields.risk_exempt? // "") != "";
+  def reach_of(f): length as $total | ([.[] | select(f)] | length) as $reached
+    | {total: $total, reached: $reached, ratio: (if $total == 0 then 1 else $reached / $total end)};
   targets("threatens") as $threatened
   | ([.items[] | select(.type == "design")
       | select(.id as $i | $threatened | index($i))
@@ -87,6 +90,11 @@ gaps=$(printf '%s' "$graph" | jq '
   | targets("mitigates") as $mitigated
   | targets("covers") as $covered
   | ([.items[] | select(.type == "infrastructure") | (.relations.satisfies? // [])[]] | unique) as $inf_satisfied
+  | targets("follows") as $followed
+  | ([.items[] | select(.type == "test_condition") | select(.id as $i | $covered | index($i))
+      | (.relations.mitigates? // [])[]] | unique) as $case_backed_risks
+  | ([.items[] | select(.type == "risk") | select(.id as $i | $case_backed_risks | index($i))
+      | (.relations.threatens? // [])[]] | unique) as $chained_reqs
   | {
       unthreatened: ([.items[]
         | select(.type == "requirement")
@@ -105,7 +113,15 @@ gaps=$(printf '%s' "$graph" | jq '
       unsatisfied_quality: ([.items[]
         | select(.type == "quality")
         | select(.id as $i | ($inf_satisfied | index($i)) | not) | row] | sort_by(.id)),
-      exempt: ([.items[] | select(.type == "requirement") | select(has_exempt) | row] | sort_by(.id))
+      exempt: ([.items[] | select(.type == "requirement") | select(has_exempt) | row] | sort_by(.id)),
+      reach: {
+        requirement: ([.items[] | select(.type == "requirement") | select(has_exempt | not)]
+          | reach_of(.id as $i | $chained_reqs | index($i))),
+        test_plan: ([.items[] | select(.type == "test_plan")]
+          | reach_of(.id as $i | $followed | index($i))),
+        quality: ([.items[] | select(.type == "quality")]
+          | reach_of(.id as $i | $inf_satisfied | index($i)))
+      }
     }')
 
 if [ "$json_out" -eq 1 ]; then
@@ -127,10 +143,15 @@ else
     + section("infrastructure に satisfies されていない quality"; .unsatisfied_quality)
     + [""]
     + section("risk_exempt を持つ requirement（情報）"; .exempt)
+    + [""]
+    + ["## 到達率"]
+    + (.reach as $r | ["requirement", "test_plan", "quality"]
+       | map(. as $k | $r[$k] | "\($k)\t\(.reached)/\(.total)\t\((.ratio * 1000 | floor) / 10)%"))
     | .[]'
 fi
 
-total=$(printf '%s' "$gaps" | jq '[.unthreatened, .unmitigated, .uncovered, .unfollowed, .unsatisfied_quality | length] | add')
-if [ "$total" -gt 0 ]; then
+if printf '%s' "$gaps" | jq -e '
+  ([.unthreatened, .unmitigated, .uncovered, .unfollowed, .unsatisfied_quality | length] | add) > 0
+  or ([.reach[].ratio] | any(. < 1))' >/dev/null; then
   exit 1
 fi
