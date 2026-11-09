@@ -11,9 +11,11 @@ sources:
 origin: "epic #648 の grilling セッション（2026-11-08）で確定"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+references:
+  - "SDR-eff65cfa-2fd4-449a-94b2-d4b9948b76e1"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T22:59:08+09:00"
+  at: "2026-11-09T23:11:00+09:00"
 ---
 # requirement に risk_exempt を設け、理由を書いた requirement を未カバーから外す
 
@@ -34,7 +36,7 @@ generated:
 
 値を持つ `requirement` は `sara-gap` の未カバーの一覧から外し、免除として別の節に列挙する。
 
-`design` には設けない。[risk を持たない design は正常と定めた](guaranteed-chain-design-optional.md)ので、免除を書く必要が無い。
+`design` には設けない。[保証する連鎖は requirement → risk → test_condition → test_case とし、design は任意の中継点にする](guaranteed-chain-design-optional.md) により `risk` を持たない `design` は正常なので、免除を書く必要が無い。
 
 ## 根拠
 
