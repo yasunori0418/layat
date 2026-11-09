@@ -10,7 +10,7 @@ satisfies:
   - "QA-d028e302-8262-428c-9030-98d46b4b0cd3"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-05T00:26:19+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43: リリース自動化（VERSION ファイル起点の bump PR・自動タグ・自動リリースノート）
 
@@ -30,7 +30,7 @@ Go バイナリへは nix build の `ldflags`（`-X`）で埋め込む。単一�
 | `bump-version.yml` | `workflow_dispatch` | バージョン文字列を入力に取り、非 main ブランチ上で `VERSION` を書き換えてコミット・push する |
 | `release.yml` | `push: main` + `VERSION` の `paths`、および `workflow_dispatch`。`workflow_dispatch` はブランチを問わず起動できるため、ジョブに `if: github.ref == 'refs/heads/main'` を置いて main に限る。`concurrency` は group `release` で、走行中のリリースは走り切らせる（`cancel-in-progress: false`）| `VERSION` を読み、`softprops/action-gh-release`（SHA pin・版名はコメント併記）でタグ `vX.Y.Z` 作成 + リリースノート自動生成 + GitHub Release 作成 |
 
-マージの条件（[マージの条件（main の ruleset と required status checks）](merge-gate.md)）が掛かるのは **bump PR の側**で、`release.yml` 自体は main への push 後に
+[マージの条件（main の ruleset と required status checks）](merge-gate.md) が掛かるのは **bump PR の側**で、`release.yml` 自体は main への push 後に
 実行されるため required check の対象外。「bump PR のマージがリリースを駆動する」形が main 直コミット
 禁止と整合する。
 手元で `VERSION` を編集して PR を作る手動の使い方も同格に有効で、`bump-version.yml` は省力化で

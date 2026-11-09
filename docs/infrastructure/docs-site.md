@@ -10,7 +10,7 @@ satisfies:
   - "QA-5ecd74ba-889a-4e06-b32b-e67f10a45051"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-07T02:02:33+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # INF-0865477b-21b2-4feb-9c06-1a882a4e595a: ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）
 
@@ -31,7 +31,7 @@ API 変更とドキュメント更新が同一 PR で原子的に進む。
 - デプロイは Cloudflare の Git 連携ビルドではなく **GitHub Actions から wrangler で行う**。
   ビルドに nix（nixdoc / gomarkdoc の実行）が要り、Cloudflare 側のビルド環境では賄えないため。
   main への push で本番デプロイ、PR で preview デプロイ
-- **ビルド検証**は CI パイプライン（[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md)）の check 群へ加え、リファレンス抽出の破損
+- **ビルド検証**は [CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md) の check 群へ加え、リファレンス抽出の破損
   （doc-comment の構文エラー等）をマージ前に検出する。**デプロイ**はそれとは別の workflow で
   行い、main への push と PR で本番 / preview を打ち分ける
 

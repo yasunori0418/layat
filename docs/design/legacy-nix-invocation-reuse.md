@@ -9,7 +9,7 @@ satisfies:
   - "REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # DSG-92f54490-872a-42ac-bbd7-d06e9ee381c6: legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する
 
@@ -29,12 +29,12 @@ nix コマンドの形が異なる。
 
 処理ごとにコマンド実行から書き下ろすのではなく組み立てだけを分岐させる理由は次の 2 つ。
 
-- **[legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない](../requirements/legacy-entrypoint-passthru-canonical.md) が「passthru 形とトップレベル attrset 形の間で実装を分岐させない」**
-  ことを定めている（`layat.<name>` の attr path はどちらの形でも同一）。legacy の処理の
+- **[legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない](../requirements/legacy-entrypoint-passthru-canonical.md) という要求がある**
+  （`layat.<name>` の attr path は passthru 形でもトップレベル attrset 形でも同一）。legacy の処理の
   分岐が attr path の組み立て 1 箇所に閉じていれば、その内側で形の違いによる分岐が
   生じる余地がそもそも無くなる。実行系まで処理ごとに書き下ろすと、形ごとの差が
   紛れ込む面が増える
-- **[実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](../requirements/exec-flow-eval-lock-build.md) が定める実行フローの順序（eval 先行 → flock → build）を処理によらず
+- **[実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](../requirements/exec-flow-eval-lock-build.md) という順序を処理によらず
   1 つに保てる**。順序を守るのはフローを組む側の責務で、そこが共通なら legacy の処理にだけ
   順序違反が入り込むことがない。[entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md) が求める「形ごとの attr path で build する」も、
   形の違いが組み立てに局所化されている限り満たされる

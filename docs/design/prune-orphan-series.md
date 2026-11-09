@@ -9,7 +9,7 @@ satisfies:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # DSG-096dc893-21f4-45e3-9347-986e9275b4d1: prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする
 
@@ -190,7 +190,7 @@ warning・判定不能系は黙殺、という不揃いは [prune は backref �
   なので `Skipped` へ倒し、他の基底・他の系列の削除は続ける
   （→ [prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md)）。
   非 root で system 基底の孤児系列を消そうとすれば最初の `RemoveAll` が `fs.ErrPermission` で
-  落ちるので、[prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md) が想定する状況はここに当てはまる
+  落ちるので、この決定が想定する状況はここに当てはまる
 - **何も消えていない × 権限以外** — 手付かずではあるが、権限を上げれば消えるとは限らない
   （read-only FS はそもそも消せない）。`permission-denied` へ丸めると「権限を直せば消える」と
   読める誤った案内になるので、エラーで返す。`Skipped` に受け皿となる理由を足さないのは、

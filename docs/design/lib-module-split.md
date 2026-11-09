@@ -14,7 +14,7 @@ satisfies:
   - "REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:46:06+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5: lib は公開 API・型定義・manifest 生成・マーカー構築子・apply コマンド組み立ての 5 ファイルへ分割する
 
@@ -31,19 +31,17 @@ lib/
 
 分割の軸は「公開 API 面 / 型 / 生成ロジック / マーカー / コマンド組み立て」の 5 つで、次の理由による。
 
-- **`default.nix` を公開 API のまとめに限る**ことで、[mkManifest の引数は必須の pkgs / entries / root と任意の identity とする](../requirements/mkmanifest-arguments.md)（`mkManifest` の引数は
-  必須の pkgs / entries / root と任意の identity）・[mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](../requirements/mkmanifest-return-value.md)（返り値）・[mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](../requirements/mkoutofstoresymlink-marker.md)
-  （`mkOutOfStoreSymlink`）・[root は 3 マーカーと絶対パス文字列の union を取る](../requirements/root-marker-kinds.md)（root マーカー 3 種）が定める API 面が 1 ファイルを
+- **`default.nix` を公開 API のまとめに限る**ことで、[mkManifest の引数は必須の pkgs / entries / root と任意の identity とする](../requirements/mkmanifest-arguments.md)・[mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](../requirements/mkmanifest-return-value.md)・[mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](../requirements/mkoutofstoresymlink-marker.md)・[root は 3 マーカーと絶対パス文字列の union を取る](../requirements/root-marker-kinds.md) の 4 要求が定める API 面が 1 ファイルを
   読めば分かる。`__internal` はここから露出するが安定 API ではなく、[lib.__internal は private helper のテスト seam として公開する](../test-plan/lib-internal-test-seam.md) が定める、
   テストから内部へ到達するための公開点に限る
 - **`types.nix` を独立させる**のは、entries の型定義を `lib` と `modules/` の双方が
   共有するため。共有できる形にしておかないと、モジュール側が型を再定義して二重管理になる
   （`modules/common.nix` からの共有は [modules は common.nix に共通オプションを集約し、統合層ごとに 1 ファイルへ分ける](modules-file-split.md)）
-- **`manifest.nix` と `out-of-store.nix` を分ける**のは、前者が [normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む](../requirements/normalize-manifest-defaults.md) の
-  `normalizeManifest`（確認・デフォルト適用・marker 変換）と derivation 組み立てを持つのに対し、
+- **`manifest.nix` と `out-of-store.nix` を分ける**のは、前者が `normalizeManifest` と derivation 組み立て
+  （[normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む](../requirements/normalize-manifest-defaults.md)）を持つのに対し、
   後者はマーカーという不活性なデータ構造を返すだけで、依存の向きが一方向（manifest → marker）に
   なるため
-- **`apply-command.nix` を分ける**のは、[lib.mkApplyCommand は事前展開した apply --all --manifest のコマンド行を返す](../requirements/lib-apply-command.md) の `mkApplyCommand` が
+- **`apply-command.nix` を分ける**のは、`mkApplyCommand`（[lib.mkApplyCommand は事前展開した apply --all --manifest のコマンド行を返す](../requirements/lib-apply-command.md)）が
   manifest を作らず、出来上がった link-farm の集合から CLI のコマンド行を組むだけで、manifest の
   生成ロジックにもマーカーにも依存しないため。`modules/kick.nix` もこの関数を使う
 

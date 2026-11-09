@@ -10,7 +10,7 @@ satisfies:
   - "TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # DSG-bb6e03fd-e1c4-47c4-bfa0-a73e9457b184: E2E に legacy entrypoint シナリオを置き、NIX_PATH を flake.lock の nixpkgs に pin して検証する
 
@@ -27,7 +27,7 @@ E2E に置く。
 | nixpkgs の供給 | `NIX_PATH` を flake.lock の nixpkgs に pin |
 
 **このシナリオを足す理由**は、legacy entrypoint が flake の使い方とは**別の実行パスを通る**
-ことにある。[legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない](../requirements/legacy-entrypoint-passthru-canonical.md) が canonical と定める `mkShell` passthru 形は、
+ことにある。`mkShell` passthru 形（[legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない](../requirements/legacy-entrypoint-passthru-canonical.md)）は、
 `nix build -f <ep> layat.<name>` という flake とは異なる attr path 解決を経る
 （内部の共通化は [legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する](legacy-nix-invocation-reuse.md)）。attr path の同一性を CLI 内部で保っていても、
 実際に nix が解決できるかは実 nix で叩かないと分からない。
@@ -42,7 +42,7 @@ E2E に置く。
 再現性のない E2E になる。pin する先を flake.lock に揃えれば、flake の使い方の
 シナリオと同じ nixpkgs で実行される。
 
-[legacy entrypoint では相対 path の src が自動で store 化されない](../requirements/legacy-src-not-auto-stored.md) が定める「legacy では相対 path の src が自動で store 化されない」性質も、
+[legacy entrypoint では相対 path の src が自動で store 化されない](../requirements/legacy-src-not-auto-stored.md) という性質も、
 このシナリオで実際に踏まれる（fixture の組み方がそれを前提にする必要がある）。
 
 ## 出典

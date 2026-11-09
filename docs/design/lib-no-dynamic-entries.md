@@ -8,7 +8,7 @@ satisfies:
   - "REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # DSG-d2e17f4f-0d32-45c1-8125-17e589664c85: 動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す
 
@@ -24,10 +24,10 @@ lib へヘルパを置かない理由は、置いた場合に **IFD（import fro
 
 これは次の 2 つの要求の実現手段になっている。
 
-- **[lib は nixpkgs.lib のみに依存する純データ生成器である](../requirements/lib-pure-data-generator.md)（lib は nixpkgs.lib のみに依存する純データ生成器）**: 列挙ヘルパは
+- **[lib は nixpkgs.lib のみに依存する純データ生成器である](../requirements/lib-pure-data-generator.md)**: 列挙ヘルパは
   実質的に「FS を読む」機能で、純データ生成の枠を越える。API 面に置かないことで
   lib の役割が entries を受け取って manifest を組むことに限定され続ける
-- **[mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md)（mkManifest は純粋関数）**: 動的生成を lib の内側へ入れると、
+- **[mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md)**: 動的生成を lib の内側へ入れると、
   `mkManifest` の入力が「評価時に確定したデータ」でなくなる余地が生まれる。
   列挙をユーザー側の評価コードに置けば、`mkManifest` が受け取る `entries` は
   常に確定済みの attrset になる

@@ -8,7 +8,7 @@ satisfies:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:01:21+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # DSG-f1d4c295-54ae-4def-951c-901b42dea008: buildEnv の合成環境は entry の src に置く配置 idiom で扱い、環境変数の配線は利用者側の idiom で行う
 
@@ -18,10 +18,10 @@ generated:
 （→ [layat.lib.mkEnv で buildEnv 合成環境を提供する](../adr/mkenv-buildenv.md)）。`pkgs.buildEnv` の結果を entry の `src` に置けば、既存の配置プリミティブで
 そのまま満たせるため。
 
-- **[src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する](../requirements/src-kinds-store-default.md)（`src` は path / set / marker の 3 種）**:
+- **[src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する](../requirements/src-kinds-store-default.md)**:
   `pkgs.buildEnv { … }` は derivation（set）なので、現行スキーマの `src` にそのまま渡せる。
   engine・manifest schema・passthru は変わらない
-- **[全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md)（モジュールは engine をキックするだけの配線）**:
+- **[全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md)**:
   環境変数の設定はシェル・systemd・direnv の機構で、layat の関心外。layat は配線ファイル
   （env.sh / environment.d / `.envrc`）を生成せず、書き方を idiom として示すに留める
 

@@ -8,7 +8,7 @@ satisfies:
   - "REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # DSG-f286746c-56ca-4f0c-bb95-7c74d0cea7c0: hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす
 
@@ -20,13 +20,13 @@ generated:
 
 engine 側に置かない理由は 2 つの要求に対応する。
 
-- **[全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md)（モジュールと devShell は engine をキックする
-  だけの配線）**: hook ポイントは既に配線層が持っている（devShell の `shellHook`・
+- **[全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md)**:
+  hook を掛ける場所は既に配線層が持っている（devShell の `shellHook`・
   home-manager の activation DAG・CLI 単体の shell 合成）。engine 内 hook はこれらと重複し、
   しかも層をバイパスして engine に配線責務を持ち込む
-- **[engine が叩く外部コマンドは git のみに限る](../requirements/engine-external-command-constraint.md)（engine が叩く外部コマンドは nix と git のみ）**:
+- **[engine が叩く外部コマンドは git のみに限る](../requirements/engine-external-command-constraint.md)**:
   任意スクリプトの実行は、サブプロセスの失敗・出力・タイムアウトという新しい失敗モード群を
-  engine の意味論へ持ち込む。外部コマンドを 2 つに閉じる制約と両立しない
+  engine の意味論へ持ち込む。外部コマンドを git に閉じる制約と両立しない
 
 後処理コマンドの中身（`systemctl` / 通知コマンド等）は OS の機構であり layat の関心外
 （→ [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md)）。以下の例は後処理を `./post.sh` と置く。

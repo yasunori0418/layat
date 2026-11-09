@@ -14,7 +14,7 @@ satisfies:
   - "QA-d028e302-8262-428c-9030-98d46b4b0cd3"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T13:36:07+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27: CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）
 
@@ -22,7 +22,7 @@ generated:
 
 GitHub Actions 上の `test.yml` のうち、**flake check と E2E の系統**と、テストを実行しないが
 同じ workflow が抱える対応表生成（`test-doc-matrix`）。同居する `sara` ジョブだけは
-トレーサビリティ検証基盤（[トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）](traceability-verification.md)）の担当で、本 item には入らない。
+[トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）](traceability-verification.md) の担当で、本 item には入らない。
 
 ## 構成
 
@@ -31,10 +31,10 @@ GitHub Actions 上の `test.yml` のうち、**flake check と E2E の系統**�
 
 | ジョブ | 内容 | 実行環境 |
 |---|---|---|
-| `changes` | 変更検出。後続ジョブのゲート条件を outputs で返す | `ubuntu-latest` |
+| `changes` | 変更検出。後続ジョブの実行条件を outputs で返す | `ubuntu-latest` |
 | `flake-check` | `nix flake check -L`（lib のテストと engine の Go check を集約） | os×system の 3 環境マトリクス |
-| `go-coverage` | `nix build` の checkPhase が出す coverprofile を Job Summary へ表示する。計測のみで閾値ゲートを持たない（他 PR とのマージ順依存を避けるため） | `ubuntu-latest` |
-| `e2e` | CI 用 devShell から E2E ハーネスを走らせ、フィクスチャへ `layat apply` して FS / nix profile / rollback をアサートする | `ubuntu-latest` |
+| `go-coverage` | `nix build` の checkPhase が出す coverprofile を Job Summary へ表示する。計測のみで、閾値による不合格判定を持たない（他 PR とのマージ順依存を避けるため） | `ubuntu-latest` |
+| `e2e` | CI 用 devShell から E2E ハーネスを実行し、フィクスチャへ `layat apply` して FS / nix profile / rollback をアサートする | `ubuntu-latest` |
 | `test-doc-matrix` | `dev/scripts/test-doc-matrix.sh` でテスト資産 ⇔ CASE ⇔ TC ⇔ RISK の対応表を生成し、Job Summary へ出力 + artifact へアップロードする | `ubuntu-latest` |
 
 最後の `test-doc-matrix` だけはテストを実行するジョブではなく、テスト資産とテスト文書
@@ -102,18 +102,18 @@ action（`.github/actions/changes`）を `changes` ジョブが呼び、後続�
 この `changes` の outputs を消費する側では、条件を置く段が required かどうかで分かれる
 （`test-doc-matrix` は `changes` を使わずジョブローカルの filter を持つので、この分岐の外）。
 
-| ジョブ | ゲートの段 | 理由 |
+| ジョブ | 条件を置く段 | 理由 |
 |---|---|---|
 | `flake-check` | **ステップ段**（`Setup Nix` / `Run nix flake check` の `if:`） | ジョブ段の `if:` だと matrix が展開されず、ruleset が要求する `flake-check (os, system)` の 3 context が生成されない。`Expected` のまま永久にマージがブロックされる |
 | `e2e` / `go-coverage` | ジョブ段の `if:` | skip → "Skipped" = 成功扱いになるので required check でも成立する |
 
 ## 依存関係
 
-- ここで出る check 名が [マージの条件（main の ruleset と required status checks）](merge-gate.md)（マージの条件）の required status check の実体になる
-- [バイナリキャッシュ（main push 時の cachix 投入）](binary-cache.md)（バイナリキャッシュ）はこのパイプラインと同じ 3 環境マトリクスと `setup-nix` を
+- ここで出る check 名が [マージの条件（main の ruleset と required status checks）](merge-gate.md) の required status check の実体になる
+- [バイナリキャッシュ（main push 時の cachix 投入）](binary-cache.md) はこのパイプラインと同じ 3 環境マトリクスと `setup-nix` を
   使うが、投入自体は独立した workflow が main push で自らビルドして行う。本パイプラインの
   ビルド結果を受け渡す関係ではない
-- [ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）](docs-site.md)（docs サイト）のビルド検証は本パイプラインの check 群へ加わる
+- [ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）](docs-site.md) のビルド検証は本パイプラインの check 群へ加わる
 
 `docs/dev/definition-of-done.md` の DOD-01（E2E 成功）/ DOD-02（flake check 成功）は、
 このパイプラインのジョブを直接指す。

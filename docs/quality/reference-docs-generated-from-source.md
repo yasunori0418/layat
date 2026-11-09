@@ -17,7 +17,7 @@ specification_ja: |
   ため）。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:01:21+09:00"
+  at: "2026-11-09T08:22:37+09:00"
 ---
 # QA-0d42104c-a3c2-4bd1-9cad-a42d9e5a56a1: リファレンスドキュメントは記述対象のソースから生成し、生成物を持たない
 
@@ -37,5 +37,5 @@ generated:
 [ドキュメントサイトのソースを同じリポジトリの site/ に置く](../adr/docs-site-in-same-repository.md)、[ドキュメントサイトを GitHub Actions から Cloudflare Pages へ配備する](../adr/docs-site-on-cloudflare-pages.md)、
 [リファレンスをビルド時に生成する](../adr/reference-generated-at-build-time.md)、[ドキュメントサイトは英語をルートのロケールにする](../adr/docs-site-english-root-locale.md) が
 置いた方針を、基盤（INF）から分離して quality item として立てたもの。当初は
-[ドキュメントグラフのトレーサビリティは機械的に検証する](document-graph-mechanically-verified.md)（ドキュメントグラフの機械検証）と 1 件にまとめていたが、根拠 ADR も支える基盤も
+[ドキュメントグラフのトレーサビリティは機械的に検証する](document-graph-mechanically-verified.md) と 1 件にまとめていたが、根拠 ADR も支える基盤も
 別で片方だけ改訂され得るため、Issue #242 のレビューで 2 件へ分けた。
