@@ -15,7 +15,7 @@ references:
   - "SDR-f3f9491f-d6f4-4742-82da-4933ad3d8db1"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T22:59:08+09:00"
+  at: "2026-11-09T23:31:56+09:00"
 ---
 # test_case から test_plan へ follows を張る
 
@@ -26,9 +26,9 @@ generated:
 
 ## 背景
 
-`test_plan` はテストのスコープ・レベル・アプローチを定める。2026-11-06 の監査（sara 0.12.0）で、`test_plan` から個々のテストへ届く辺がモデルに無く、どの `test_case` がどの計画に従っているかをグラフで辿れないと分かった。
+`test_plan` はテストのスコープ・レベル・アプローチを定める。2026-11-06 の監査（sara 0.12.0）で、`test_plan` から個々のテストへ届く辺がモデルに無いと分かった。どの `test_case` がどの計画に従っているかを、グラフで辿れない。
 
-[risk の親に test_plan を含めない](risk-parent-excludes-test-plan.md) は、`risk` と `test_plan` の間の peer relation を「不足が見えないうちに relation を足さない」として棄却している。今回不足が見えたのは `risk` との間でなく、`test_plan` と `test_case` の間である。
+[risk の親に test_plan を含めない](risk-parent-excludes-test-plan.md) は、`risk` と `test_plan` の間の peer relation を「不足が見えないうちに relation を足さない」として棄却している。今回足りないと分かったのは `risk` との間でなく、`test_plan` と `test_case` の間である。
 
 `test_plan` 9 本の specification はテスト資産の種類で書かれている。`test_case` は `resource` にテスト資産を持つので、主担当の `test_plan` は `resource` から機械的に決まる。
 
@@ -40,11 +40,11 @@ relation `follows`（inverse は `is_followed_by`、upstream の primary）を�
 
 ## 根拠
 
-計画に従って実行されるのはテスト資産であり、グラフ上でテスト資産に 1:1 で対応するのは `test_case` である。辺の起点を `test_case` にすれば、`resource` を見るだけで張り先を決められる。
+テスト資産は計画に従って実行される。グラフ上でテスト資産に 1:1 で対応するのは `test_case` である。辺の起点を `test_case` にすれば、`resource` を見るだけで、どの `test_plan` へ張るかを決められる。
 
-`covers` はどの検証テーマを確かめるかを表し、`follows` はどの計画に従って確かめるかを表す。軸が違うので、1 件の `test_case` が両方を持つ。
+`covers` はどの検証テーマを確かめるかを表し、`follows` はどの計画に従って確かめるかを表す。表すものが違うので、1 件の `test_case` が両方を持つ。
 
-`test_plan` から `is_followed_by` で `test_case` へ下り、そこから `covers`・`mitigates` を上れば、テスト計画がどの `risk` を扱うかも読める。`risk` の親に `test_plan` を加える必要は生じない。
+`test_plan` から `is_followed_by` で `test_case` へ下り、`covers` と `mitigates` を上流へ辿れば、テスト計画がどの `risk` を扱うかも読める。`risk` の親に `test_plan` を加える必要は生じない。
 
 ## 棄却した代替案
 
@@ -54,4 +54,4 @@ relation `follows`（inverse は `is_followed_by`、upstream の primary）を�
 
 ### `derives_from` を再利用する
 
-`derives_from` は `requirement` から `use_case` へ、`quality`・`test_plan` から `solution` へ張り、上位の item から規範を導く関係を表す。`test_case` は `test_plan` から規範を導く item でなく、計画の定めたやり方で実行される実体である。同じ relation にすると、`sara query` の上流を読むときに 2 つの意味が混ざる。
+`derives_from` は `requirement` から `use_case` へ、`quality`・`test_plan` から `solution` へ張り、上位の item から規範を導く関係を表す。`test_case` は `test_plan` から規範を導く item でなく、計画の定めたやり方で実行される実体である。同じ relation にすると、`sara query` の上流を読むときに 2 つの意味を区別できない。

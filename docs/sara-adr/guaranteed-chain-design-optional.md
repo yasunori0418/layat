@@ -13,7 +13,7 @@ justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T22:59:08+09:00"
+  at: "2026-11-09T23:31:26+09:00"
 ---
 # 保証する連鎖は requirement → risk → test_condition → test_case とし、design は任意の中継点にする
 
@@ -26,7 +26,7 @@ generated:
 
 `docs/model.yaml` の辺をどこまでつなげば「要件がテストで確かめられている」と言えるのかが、決まっていなかった。
 
-[型グラフの規約](../agents/sara-graph.md)では、`risk` は原則として `requirement` へ張り、`design` へ張るのは設計を差し替えると消える懸念に限られる。この規約に従うと、`risk` を持たない `design` は普通に現れる。一方で `sara-gap` は、threatens されていない `design` を未カバーとして数えている。
+[型グラフの規約](../agents/sara-graph.md)では、`risk` は原則として `requirement` へ張り、`design` へ張るのは設計を差し替えると消える懸念に限られる。この規約に従うと、`risk` を持たない `design` が生じる。一方で `sara-gap` は、threatens されていない `design` を未カバーとして数えている。
 
 ## 決定
 
@@ -38,7 +38,7 @@ generated:
 
 テストが確かめるのは懸念であり、懸念を表す型は `risk` である。`requirement` から `risk` を経て `test_case` まで届いていれば、設計の有無にかかわらず、その要件の懸念はテストまでつながっている。
 
-`risk` を `requirement` へ張る既定の規約と揃うので、規約に従って書いた item が未カバーに数えられることがなくなる。
+`risk` を `requirement` へ張る既定の規約と一致するので、規約に従って書いた item が未カバーに数えられることがなくなる。
 
 ## 棄却した代替案
 
@@ -48,4 +48,4 @@ generated:
 
 ### `risk` を持たない `design` を未カバーに数え続ける
 
-設計に固有の懸念が無い `design` が、着手すべき項目として一覧に残り続ける。一覧を埋めるには、規約に反して `requirement` 水準の懸念を `design` へ張るしかない。
+設計に固有の懸念が無い `design` が、着手すべき項目として一覧に残り続ける。一覧から外すには、規約に反して `requirement` 水準の懸念を `design` へ張るしかない。

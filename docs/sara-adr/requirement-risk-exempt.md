@@ -15,7 +15,7 @@ references:
   - "SDR-eff65cfa-2fd4-449a-94b2-d4b9948b76e1"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T23:11:00+09:00"
+  at: "2026-11-09T23:31:26+09:00"
 ---
 # requirement に risk_exempt を設け、理由を書いた requirement を未カバーから外す
 
@@ -42,7 +42,7 @@ generated:
 
 理由が item に残るので、免除の妥当性をレビューで確かめられる。真偽値では「免除した」という事実しか残らない。
 
-免除の一覧が別の節に出るので、免除した `requirement` が増えても見えなくならない。
+免除の一覧が別の節に出るので、免除した `requirement` が増えても一覧で確認できる。
 
 任意フィールドの追加なので、既存の item は書き換えなくても `sara check` を通る。
 
