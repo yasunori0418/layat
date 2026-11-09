@@ -15,7 +15,9 @@ sara ドキュメントグラフの未カバーを 3 段で列挙する:
   1. threatens も risk_exempt も無い requirement
   2. mitigates されていない risk
   3. covers されていない test_condition
-  4. risk_exempt を持つ requirement（情報）
+  4. follows を持たない test_case
+  5. infrastructure に satisfies されていない quality
+  6. risk_exempt を持つ requirement（情報）
 
 exit code:
   0  ギャップなし
@@ -84,6 +86,7 @@ gaps=$(printf '%s' "$graph" | jq '
       | (.relations.satisfies? // [])[]] | unique) as $risky_design_reqs
   | targets("mitigates") as $mitigated
   | targets("covers") as $covered
+  | ([.items[] | select(.type == "infrastructure") | (.relations.satisfies? // [])[]] | unique) as $inf_satisfied
   | {
       unthreatened: ([.items[]
         | select(.type == "requirement")
@@ -96,6 +99,12 @@ gaps=$(printf '%s' "$graph" | jq '
       uncovered: ([.items[]
         | select(.type == "test_condition")
         | select(.id as $i | ($covered | index($i)) | not) | row] | sort_by(.id)),
+      unfollowed: ([.items[]
+        | select(.type == "test_case")
+        | select((.relations.follows? // []) | length == 0) | row] | sort_by(.id)),
+      unsatisfied_quality: ([.items[]
+        | select(.type == "quality")
+        | select(.id as $i | ($inf_satisfied | index($i)) | not) | row] | sort_by(.id)),
       exempt: ([.items[] | select(.type == "requirement") | select(has_exempt) | row] | sort_by(.id))
     }')
 
@@ -113,11 +122,15 @@ else
     + [""]
     + section("covers されていない test_condition"; .uncovered)
     + [""]
+    + section("follows を持たない test_case"; .unfollowed)
+    + [""]
+    + section("infrastructure に satisfies されていない quality"; .unsatisfied_quality)
+    + [""]
     + section("risk_exempt を持つ requirement（情報）"; .exempt)
     | .[]'
 fi
 
-total=$(printf '%s' "$gaps" | jq '[.unthreatened, .unmitigated, .uncovered | length] | add')
+total=$(printf '%s' "$gaps" | jq '[.unthreatened, .unmitigated, .uncovered, .unfollowed, .unsatisfied_quality | length] | add')
 if [ "$total" -gt 0 ]; then
   exit 1
 fi
