@@ -22,7 +22,7 @@ impact: medium
 level: medium
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T23:36:39+09:00"
+  at: "2026-11-09T23:49:03+09:00"
 ---
 # フラグ解釈と nix 呼び出しの引数組み立てが仕様とずれ意図しない対象へ作用する
 
@@ -61,7 +61,7 @@ CWD の自動探索とも）は [entrypoint の探索順序と nix へ渡す引�
 拒否を確かめる検証条件はこの risk に無く、残余として残る。
 
 [config は Nix で書き nix build で評価する](../requirements/config-written-in-nix.md) は、CLI が発見するのは entrypoint のファイルで、その評価は `nix build` に任せることを定める。
-探索や引数列がずれて別の config を評価する懸念は、組み立ての実装を置き換えても残るので `requirement` へ張る。
+発見したファイルを評価する `nix build` の引数列がずれて別の config を指す懸念は、組み立ての実装を置き換えても残るので `requirement` へ張る。
 
 > **[entrypoint の形ごとに root 解決と配置の意味論が食い違う](entrypoint-root-resolution.md) との境界**。本 item が扱うのは CLI 表層で引数列を組み立てる過程そのもので、
 > どの起点を選んでも同じ配置の意味論が成り立つかは [entrypoint の形ごとに root 解決と配置の意味論が食い違う](entrypoint-root-resolution.md) の担当。分岐を attr path の

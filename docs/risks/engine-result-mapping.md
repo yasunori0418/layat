@@ -13,7 +13,7 @@ impact: medium
 level: medium
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T23:36:39+09:00"
+  at: "2026-11-09T23:49:03+09:00"
 ---
 # engine の実行結果から JSON ペイロードへの写像が実際に起きたことと食い違う
 
@@ -37,8 +37,8 @@ schema に適合していても、その文書が述べている内容が実行�
   0 件のときにキーごと消えて「列挙していない」と区別できなくなる
 
 [prune --json はトップレベル info の removed に削除系列を、skipped に判定か削除に至れず残した系列を載せる](../requirements/prune-json-payload.md) が定める `removed` と `skipped` が実際に削除した系列や残した系列と食い違うのも、
-この写像の誤りである。エンベロープを組み立てる実装を置き換えても消費側はこの一覧を読むので、
-懸念は `requirement` の側に残る。
+この写像の誤りであり、エンベロープを組み立てる実装を置き換えても消費側はこの一覧を読むので、懸念は `requirement` の側に残る。
+この risk の `test_condition` は prune の payload を見ておらず、緩和の無い残余である。payload の形は [prune_test.go — prune の確認ポリシー・root パス一覧の提示・ストリーム排他と --json の形状](../test/cli-json/prune-cli-test-go.md) が確かめる。
 
 ## 影響
 

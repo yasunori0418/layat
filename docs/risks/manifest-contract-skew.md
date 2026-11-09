@@ -14,7 +14,7 @@ impact: high
 level: medium
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T23:37:58+09:00"
+  at: "2026-11-09T23:49:03+09:00"
 ---
 # Nix と engine の唯一の契約である manifest の生成側と消費側がずれる
 
@@ -60,4 +60,4 @@ likelihood が一段高い。
 そちらは engine の root 解決が未知の種別を弾いて止まるため、利用者に知らせずに通る処理にはならない。
 
 [mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md) は、配置を engine の実行時の責務とし、生成した結果を CLI が engine へ渡すことも定める。
-受け渡す文書の読み方がずれると純粋性が破れなくてもこの分担は成り立たず、この懸念は受け渡しの実装を置き換えても残るので `requirement` へ張る。
+脅かされるのは純粋性ではなくこの受け渡しであり、生成側と消費側で文書の読み方がずれる懸念は実装を置き換えても残るので `requirement` へ張る。

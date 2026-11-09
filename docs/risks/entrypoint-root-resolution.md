@@ -16,7 +16,7 @@ impact: high
 level: high
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T23:37:58+09:00"
+  at: "2026-11-09T23:49:03+09:00"
 ---
 # entrypoint の形ごとに root 解決と配置の意味論が食い違う
 
@@ -44,8 +44,9 @@ project mode ではさらに git から root を解決する。起点が増え�
   生むか、perSystem と別の `pkgs` で評価され、flake-parts を使うときだけ CLI のアドレッシングが
   変わる（→ [flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない](../requirements/flake-parts-module-path.md)）
 
-store 化の差は [flake は pure eval で flake.lock が固定し legacy は impure を許容しユーザー責任とする](../requirements/reproducibility-stance.md) が定める pure と impure の区別から生じる。
-起点の実装をどう組み直しても利用者が受け取る区別なので、この `threatens` は `design` ではなく `requirement` へ張る。
+[flake は pure eval で flake.lock が固定し legacy は impure を許容しユーザー責任とする](../requirements/reproducibility-stance.md) が定める再現性の扱いが起点ごとに崩れる懸念は、
+起点の実装をどう組み直しても残るので、この `threatens` は `design` ではなく `requirement` へ張る。
+この扱いを確かめる `test_condition` はまだ無く、緩和の無い残余である。
 
 ## 影響
 
