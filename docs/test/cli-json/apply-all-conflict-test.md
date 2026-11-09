@@ -7,6 +7,8 @@ resource: "cmd/layat/apply_all_conflict_test.go"
 covers:
   - "TC-1de3feef-3d6e-4310-adb3-ef659f4175bc"
   - "TC-e54fe715-7b49-431c-a611-25e196b1d0a0"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:14+09:00"

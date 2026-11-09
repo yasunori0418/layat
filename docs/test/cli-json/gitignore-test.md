@@ -7,6 +7,8 @@ resource: "cmd/layat/gitignore_test.go"
 covers:
   - "TC-4e0a14d6-342c-448b-964b-b8e87520e89b"
   - "TC-1a46da17-1812-431b-966f-ec8dffd315ae"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"

@@ -6,6 +6,8 @@ status: stable
 resource: "cmd/layat/help_disclosure_test.go"
 covers:
   - "TC-b4262641-776c-427d-8331-1a94b29fa568"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"

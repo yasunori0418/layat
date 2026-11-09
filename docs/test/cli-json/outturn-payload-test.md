@@ -10,6 +10,9 @@ covers:
   - "TC-733ac4ed-dac3-4bb8-9bfd-fd1cbdc300c9"
   - "TC-4e0a14d6-342c-448b-964b-b8e87520e89b"
   - "TC-ddee6cc4-bc10-4107-bc7e-288a5fb62f1f"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
+  - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"

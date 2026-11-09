@@ -6,6 +6,8 @@ status: stable
 resource: "cmd/layat/generator_error_test.go"
 covers:
   - "TC-4a39ca86-e866-41ec-93d2-663f8e6c1ce0"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-02T12:16:38+09:00"

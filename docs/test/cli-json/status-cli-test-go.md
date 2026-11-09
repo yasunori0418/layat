@@ -6,6 +6,8 @@ status: stable
 resource: "cmd/layat/status_test.go"
 covers:
   - "TC-1bc3e39a-116a-4f26-96b4-1d15e6f837bd"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"

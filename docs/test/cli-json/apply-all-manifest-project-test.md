@@ -7,6 +7,8 @@ resource: "cmd/layat/apply_all_manifest_project_test.go"
 covers:
   - "TC-4d477235-5917-469b-926b-119266048643"
   - "TC-b4a365cd-0b1c-40ff-92c6-91f6cffe8e98"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-05T00:26:57+09:00"
