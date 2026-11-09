@@ -7,6 +7,9 @@ resource: "tests/nix-unit/gates.nix"
 covers:
   - "TC-e7ff0e6d-32d7-4ed6-8c2f-449dba34b2f6"
   - "TC-f1da084f-c0f0-4aba-85d9-f273c04eb373"
+follows:
+  - "TP-36e90d5d-4524-4294-bc72-ee263bb02782"
+  - "TP-d3d06fe4-6940-4df8-b111-bb4096d5444f"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"

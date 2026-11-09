@@ -7,6 +7,9 @@ resource: "internal/engine/undo_test.go"
 covers:
   - "TC-9504e908-a4bc-4d2d-80d3-af07264284f8"
   - "TC-83fe0d4a-9730-431a-b7f9-b731060b9484"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
+  - "TP-deb05610-44bc-4962-8939-952392e5fbd0"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:01:21+09:00"

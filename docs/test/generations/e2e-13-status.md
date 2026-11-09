@@ -7,6 +7,9 @@ resource: "tests/e2e/scenarios/13-status.sh"
 covers:
   - "TC-076bd7b4-6427-4a35-9bab-86daaaada504"
   - "TC-1bc3e39a-116a-4f26-96b4-1d15e6f837bd"
+follows:
+  - "TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9"
+  - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:49+09:00"

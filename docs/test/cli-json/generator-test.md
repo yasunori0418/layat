@@ -7,6 +7,8 @@ resource: "internal/generator/generator_test.go"
 covers:
   - "TC-b6d6cf76-16f9-4c9f-9b50-74104254ad6e"
   - "TC-e54fe715-7b49-431c-a611-25e196b1d0a0"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"

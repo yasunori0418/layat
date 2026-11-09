@@ -7,6 +7,9 @@ resource: "tests/e2e/scenarios/12-system.sh"
 covers:
   - "TC-3f8d24a7-4e43-4998-b47f-a9e03cbcbfee"
   - "TC-1ee7a729-5629-4c92-b02a-4f6e11c0b57d"
+follows:
+  - "TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9"
+  - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:14+09:00"

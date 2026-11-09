@@ -6,6 +6,8 @@ status: stable
 resource: "cmd/layat/backup_flag_test.go"
 covers:
   - "TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5"
   at: "2026-09-20T08:21:50+09:00"

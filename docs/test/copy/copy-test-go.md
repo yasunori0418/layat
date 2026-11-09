@@ -7,6 +7,8 @@ resource: "internal/engine/copy_test.go"
 covers:
   - "TC-4f315cfc-446c-4c3f-8dc9-c36b10073e9d"
   - "TC-d1eb1814-ac5e-4576-b092-7db4929fba43"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:13+09:00"

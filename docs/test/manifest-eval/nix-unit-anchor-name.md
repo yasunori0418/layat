@@ -6,6 +6,10 @@ status: stable
 resource: "tests/nix-unit/anchor-name.nix"
 covers:
   - "TC-a6a14739-89e5-4eba-acee-3ed5be5a0b7e"
+follows:
+  - "TP-36e90d5d-4524-4294-bc72-ee263bb02782"
+  - "TP-d3d06fe4-6940-4df8-b111-bb4096d5444f"
+  - "TP-403c55c7-d996-4951-8e6b-c3a7dddd387c"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:49+09:00"

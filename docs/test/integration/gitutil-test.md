@@ -6,6 +6,8 @@ status: stable
 resource: "internal/gitutil/gitutil_test.go"
 covers:
   - "TC-ec0bded4-c4bc-4a61-a2b5-0b652134b223"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-08-18T22:23:49+09:00"

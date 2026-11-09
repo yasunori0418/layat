@@ -8,6 +8,8 @@ covers:
   - "TC-69537269-32d7-4e04-8722-806b58e7db7a"
   - "TC-b6d6cf76-16f9-4c9f-9b50-74104254ad6e"
   - "TC-4a39ca86-e866-41ec-93d2-663f8e6c1ce0"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"

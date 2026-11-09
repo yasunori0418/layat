@@ -6,6 +6,8 @@ status: stable
 resource: "internal/engine/result_extensions_test.go"
 covers:
   - "TC-1d19aebc-e1e6-4d6f-9440-3efbd69b18a8"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:49+09:00"

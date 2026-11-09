@@ -6,6 +6,9 @@ status: stable
 resource: "tests/e2e/scenarios/10-generator-select.sh"
 covers:
   - "TC-8377d290-1f47-48f3-844c-bd51f257e25e"
+follows:
+  - "TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9"
+  - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:44+09:00"

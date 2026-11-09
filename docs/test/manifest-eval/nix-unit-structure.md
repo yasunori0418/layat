@@ -6,6 +6,9 @@ status: stable
 resource: "tests/nix-unit/structure.nix"
 covers:
   - "TC-4e7cfae7-72bc-4af6-a1f5-1ead7db564b1"
+follows:
+  - "TP-36e90d5d-4524-4294-bc72-ee263bb02782"
+  - "TP-d3d06fe4-6940-4df8-b111-bb4096d5444f"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"

@@ -6,6 +6,9 @@ status: stable
 resource: "tests/e2e/scenarios/06-init-templates.sh"
 covers:
   - "TC-7e1e6a63-80d5-452c-bc49-81854ffac5a4"
+follows:
+  - "TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9"
+  - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-08-18T22:23:49+09:00"

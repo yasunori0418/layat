@@ -6,6 +6,8 @@ status: stable
 resource: "cmd/layat/apply_all_parallel_test.go"
 covers:
   - "TC-9ccb2ffe-7bf6-41ea-a9ce-df06cdda0509"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-09-26T02:11:41+09:00"

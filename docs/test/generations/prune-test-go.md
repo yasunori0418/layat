@@ -7,6 +7,8 @@ resource: "internal/engine/prune_test.go"
 covers:
   - "TC-bc653f83-70ce-4920-b7cd-9b70a4cd2cae"
   - "TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:49+09:00"

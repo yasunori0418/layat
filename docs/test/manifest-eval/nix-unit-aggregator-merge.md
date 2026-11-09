@@ -6,6 +6,9 @@ status: stable
 resource: "tests/nix-unit/aggregator-merge.nix"
 covers:
   - "TC-539ce047-3ec3-4fb2-a4d1-9f83a4f75101"
+follows:
+  - "TP-36e90d5d-4524-4294-bc72-ee263bb02782"
+  - "TP-d3d06fe4-6940-4df8-b111-bb4096d5444f"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:49+09:00"

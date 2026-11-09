@@ -7,6 +7,8 @@ resource: "internal/engine/drift_test.go"
 covers:
   - "TC-765858b6-d596-4428-b4da-5d432944a714"
   - "TC-1ee7a729-5629-4c92-b02a-4f6e11c0b57d"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:49+09:00"

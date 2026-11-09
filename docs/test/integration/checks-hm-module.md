@@ -7,6 +7,9 @@ resource: "checks.hm-module"
 covers:
   - "TC-5a72b00e-2c03-4703-acdc-33cffb6fa994"
   - "TC-17fb5cfd-a691-475e-84e8-aa1853711b16"
+follows:
+  - "TP-0734996e-aea9-4229-8075-89a64bdf9f79"
+  - "TP-d3d06fe4-6940-4df8-b111-bb4096d5444f"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:22+09:00"

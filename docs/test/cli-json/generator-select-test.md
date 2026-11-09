@@ -7,6 +7,8 @@ resource: "cmd/layat/generator_select_test.go"
 covers:
   - "TC-8377d290-1f47-48f3-844c-bd51f257e25e"
   - "TC-e54fe715-7b49-431c-a611-25e196b1d0a0"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:14+09:00"

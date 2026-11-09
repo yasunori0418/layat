@@ -6,6 +6,8 @@ status: stable
 resource: "tests/e2e/scenarios/14-flake-parts.sh"
 covers:
   - "TC-4d477235-5917-469b-926b-119266048643"
+follows:
+  - "TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-25T21:55:25+09:00"
