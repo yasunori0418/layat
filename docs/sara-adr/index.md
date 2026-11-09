@@ -30,6 +30,7 @@
 * [OKF の index.md を sara check の出力から生成してコミットする](./okf-index-generation.md) - OKF の index.md を sara check --format json から生成し、コミットして契約テストで差分ゼロを守る (stable)
 * [概要文書は item へのリンク集に縮退させる](./overview-docs-as-link-index.md) - [ドキュメントは sara のナレッジグラフとして item に分割する](docs-as-sara-knowledge-graph.md) と決めたので、`docs/spec.md`・`docs/design.md`・`docs/concept.md` の規範的な内容は item へ移る。元の 3 文書をどう扱うかを決める必要があった。 (stable)
 * [テスト計画の型を品質方針の型から分けて設ける](./quality-and-test-plan-types.md) - テスト計画や品質方針にあたる文書は、受け皿の型が無いため `requirement` として置かれていた。`requirement` の親は use_case だが、これらの文書は「ユーザーがどう使うか」から導かれないので親を持てず、接続漏れのまま残っていた。 (stable)
+* [棄却した提案の要件と設計は提案の形の題で deprecated にして残す](./rejected-proposals-deprecated.md) - 棄却した提案を記録する要件と設計は、提案の形の題と本文に棄却の記述を添え、status を deprecated にして残す。 (stable)
 * [requirement に risk_exempt を設け、理由を書いた requirement を未カバーから外す](./requirement-risk-exempt.md) - requirement に任意フィールド risk_exempt を設け、requirement 水準の risk を持たない理由を 1 文で書いた requirement を未カバーの一覧から外して免除として列挙する。 (stable)
 * [複数の失敗方向を持つ risk は最も重い方向で採点する](./risk-heaviest-direction.md) - [risk の impact を検出後の回復可能性で採点する](risk-impact-as-recoverability.md) と決めた。1 つのrisk が複数の失敗の仕方を持ち、方向によって回復できる度合いが違うとき、どの方向で採点するかを決める必要があった。 (stable)
 * [risk の impact を検出後の回復可能性で採点する](./risk-impact-as-recoverability.md) - risk の `impact` の high 行は、「ユーザー環境・実データの破壊」と「沈黙の不整合を残すこと」を並べていた。気づかれないまま通る脅威は、開発の中に留まるものでも high を採る読み方だった。 (stable)
