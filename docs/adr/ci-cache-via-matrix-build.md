@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:00:56+09:00"
 ---
-# ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a: キャッシュは 3 system の matrix ビルドで投入する
+# キャッシュは 3 system の matrix ビルドで投入する
 
 - ステータス: stable
 - 日付: 2026-11-01

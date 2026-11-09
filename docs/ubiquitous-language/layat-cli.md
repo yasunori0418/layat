@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-285b8069-6e9d-4845-a9b5-634e91338bfe: layat CLI
+# layat CLI
 
 ## Definition
 

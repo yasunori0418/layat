@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-0d8f691f-304a-4b36-8393-d6aeddc4b32a: モジュールの entries に lib と同じ型を使う
+# モジュールの entries に lib と同じ型を使う
 
 - ステータス: stable
 - 日付: 2026-11-03

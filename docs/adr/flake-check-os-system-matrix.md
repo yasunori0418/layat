@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T17:26:22+09:00"
 ---
-# ADR-f2e72cfa-f46e-46b7-9d50-a98d60d8980f: flake check を 3 環境の os×system matrix で回す
+# flake check を 3 環境の os×system matrix で回す
 
 - ステータス: stable
 - 日付: 2026-11-03

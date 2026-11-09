@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-d0d09a24-f641-447d-b490-d33ca57fe862: projectRoot
+# projectRoot
 
 ## Definition
 

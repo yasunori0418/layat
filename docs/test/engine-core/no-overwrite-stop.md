@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:54+09:00"
 ---
-# TC-405606f0-3ac8-4cc2-998e-d4759a62a171: 実体が占有する target と祖先 symlink での停止
+# 実体が占有する target と祖先 symlink での停止
 
 target に通常ファイル・実ディレクトリが在るとき、および target の祖先コンポーネントが
 symlink であるとき、engine が配置を行わず conflict として停止することを検証する。

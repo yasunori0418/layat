@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:13:30+09:00"
 ---
-# ADR-65b3439a-b90a-4056-b55a-522399bc71e6: apply の config は名前省略で default を選び、--all で全件を選ぶ
+# apply の config は名前省略で default を選び、--all で全件を選ぶ
 
 - ステータス: stable
 - 日付: 2026-11-01

@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0: manifest 内の target の衝突を評価時に検出する
+# manifest 内の target の衝突を評価時に検出する
 
 - ステータス: stable
 - 日付: 2026-11-01

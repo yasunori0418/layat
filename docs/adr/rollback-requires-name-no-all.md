@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-997c2459-f2ab-4025-ac92-e9ce836fc9ed: rollback に config の名指しを必須にする
+# rollback に config の名指しを必須にする
 
 - ステータス: stable
 - 日付: 2026-11-03

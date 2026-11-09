@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880: モジュールは root と起動の時機だけを供給して engine を起動する
+# モジュールは root と起動の時機だけを供給して engine を起動する
 
 - ステータス: stable
 - 日付: 2026-11-03

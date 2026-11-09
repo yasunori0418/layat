@@ -26,7 +26,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3: layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない
+# layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない
 
 ## 仕様
 

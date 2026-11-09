@@ -28,7 +28,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:04:55+09:00"
 ---
-# REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c: layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける
+# layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける
 
 ## 仕様
 

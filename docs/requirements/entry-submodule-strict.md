@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51: entry submodule は strict とし未知キーと旧名を評価時エラーにする
+# entry submodule は strict とし未知キーと旧名を評価時エラーにする
 
 ## 仕様
 

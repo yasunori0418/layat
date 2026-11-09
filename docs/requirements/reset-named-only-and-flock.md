@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-a8edc58f-4adc-4637-b888-ab8ccc7e73e4: reset は名指し必須で profileDir 単位の blocking flock を取る
+# reset は名指し必須で profileDir 単位の blocking flock を取る
 
 ## 仕様
 

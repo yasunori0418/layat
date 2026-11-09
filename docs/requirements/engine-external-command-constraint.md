@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T13:39:28+09:00"
 ---
-# REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564: engine が叩く外部コマンドは git のみに限る
+# engine が叩く外部コマンドは git のみに限る
 
 ## 仕様
 

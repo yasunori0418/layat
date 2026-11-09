@@ -68,7 +68,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:54:59+09:00"
 ---
-# REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0: project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う
+# project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う
 
 ## 仕様
 

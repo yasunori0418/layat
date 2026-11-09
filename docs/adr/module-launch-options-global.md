@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:30+09:00"
 ---
-# ADR-7b9e4a7b-56d3-4356-9f67-bedbde8f0a52: モジュールの起動修飾オプションを config ごとに持たない
+# モジュールの起動修飾オプションを config ごとに持たない
 
 - ステータス: stable
 - 日付: 2026-11-03

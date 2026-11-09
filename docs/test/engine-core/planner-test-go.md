@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T22:43:19+09:00"
 ---
-# CASE-efe9e9c8-cc0a-4b1b-bf2b-aa1d15428252: planner_test.go
+# planner_test.go
 
 ## 対象
 

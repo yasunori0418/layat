@@ -93,7 +93,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173: status は記録基底を走査して last-applied 記録を読み取り専用で表示する
+# status は記録基底を走査して last-applied 記録を読み取り専用で表示する
 
 ## 仕様
 

@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9: eval を先に行い、flock を取ってから build する
+# eval を先に行い、flock を取ってから build する
 
 - ステータス: stable
 - 日付: 2026-11-01

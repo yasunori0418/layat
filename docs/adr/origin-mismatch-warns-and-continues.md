@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-05T00:40:25+09:00"
 ---
-# ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8: 出所の食い違いは警告して apply を続ける
+# 出所の食い違いは警告して apply を続ける
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-fcd03235-afe0-41ba-8ea9-c14bed3988da: devShell の shellHook は config を名指しして apply する
+# devShell の shellHook は config を名指しして apply する
 
 - ステータス: stable
 - 日付: 2026-11-03

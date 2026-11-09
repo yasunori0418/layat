@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-1338a293-3f69-48f5-9164-efb4ec6994d6: モジュールは configs 間の target 衝突を評価時に確認しない
+# モジュールは configs 間の target 衝突を評価時に確認しない
 
 - ステータス: stable
 - 日付: 2026-11-03

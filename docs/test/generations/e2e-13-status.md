@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:49+09:00"
 ---
-# CASE-b2a424d5-991d-4534-b52f-62c9704a0b8b: e2e 13-status — 実 apply が書いた記録を status が列挙し、[name] で絞り、system 基底の記録も拾う
+# e2e 13-status — 実 apply が書いた記録を status が列挙し、[name] で絞り、system 基底の記録も拾う
 
 ## 対象
 

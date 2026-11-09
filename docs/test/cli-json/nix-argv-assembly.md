@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# TC-69537269-32d7-4e04-8722-806b58e7db7a: entrypoint の探索順序と nix へ渡す引数列が形ごとに正しく組み立てられる
+# entrypoint の探索順序と nix へ渡す引数列が形ごとに正しく組み立てられる
 
 ## 条件
 

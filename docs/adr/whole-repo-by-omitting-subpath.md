@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-07T02:02:56+09:00"
 ---
-# ADR-2f5b8825-f13b-4f73-bdf1-fe14e0098d57: リポジトリ全体は subpath の省略で表す
+# リポジトリ全体は subpath の省略で表す
 
 - ステータス: stable
 - 日付: 2026-11-03

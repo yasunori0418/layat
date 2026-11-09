@@ -32,7 +32,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203: profile の基底ディレクトリをモードで切り替える
+# profile の基底ディレクトリをモードで切り替える
 
 - ステータス: stable
 - 日付: 2026-11-03

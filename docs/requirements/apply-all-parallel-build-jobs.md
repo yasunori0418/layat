@@ -42,7 +42,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d: apply --all は build を --jobs の worker pool で先行並列実行し build 失敗 config を部分失敗として集約する
+# apply --all は build を --jobs の worker pool で先行並列実行し build 失敗 config を部分失敗として集約する
 
 ## 仕様
 

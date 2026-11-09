@@ -52,7 +52,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:54:59+09:00"
 ---
-# REQ-1be4d678-959c-44d7-a346-44bfd95af56e: 世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する
+# 世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する
 
 ## 仕様
 

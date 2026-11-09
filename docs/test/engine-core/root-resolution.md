@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:44+09:00"
 ---
-# TC-b254a5a8-7fbf-4f31-8486-3e373d66bfa7: root 解決と profile 準備の処理
+# root 解決と profile 準備の処理
 
 project mode の root が git toplevel から解決されること、git repo の外で実行したときに
 engine 実行時に停止すること、および root 解決に失敗したときに配置へ進まないことを検証する。

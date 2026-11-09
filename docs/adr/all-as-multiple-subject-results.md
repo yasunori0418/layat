@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-baf6346d-783b-4607-ab1c-c2c93c09e064: --all は config ごとの SubjectResult を積む
+# --all は config ごとの SubjectResult を積む
 
 - ステータス: stable
 - 日付: 2026-11-01

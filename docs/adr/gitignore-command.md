@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:17:11+09:00"
 ---
-# ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe: 配置 target を gitignore コマンドで stdout へ列挙する
+# 配置 target を gitignore コマンドで stdout へ列挙する
 
 - ステータス: stable
 - 日付: 2026-11-01

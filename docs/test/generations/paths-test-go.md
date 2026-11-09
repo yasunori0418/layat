@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:49+09:00"
 ---
-# CASE-ff4a842e-dd25-4c75-82ef-185507781d02: paths_test.go — state 基底の解決・roothash の性質・profileDir キーイング・世代リンク名と兄弟パス
+# paths_test.go — state 基底の解決・roothash の性質・profileDir キーイング・世代リンク名と兄弟パス
 
 ## 対象
 

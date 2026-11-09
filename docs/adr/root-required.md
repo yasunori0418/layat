@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:30:50+09:00"
 ---
-# ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3: root の必須性を別の確認を書かずに標準のエラーで担保する
+# root の必須性を別の確認を書かずに標準のエラーで担保する
 
 - ステータス: stable
 - 日付: 2026-11-01

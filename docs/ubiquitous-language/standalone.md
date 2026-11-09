@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:42:11+09:00"
 ---
 
-# UBQ-f7799808-267e-40c4-aaa7-d85e568f11c4: `standalone`
+# `standalone`
 
 ## Definition
 

@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967: copy と out-of-store の併用を eval 時に拒否する
+# copy と out-of-store の併用を eval 時に拒否する
 
 - ステータス: stable
 - 日付: 2026-11-01

@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:30+09:00"
 ---
-# ADR-83a1275b-85bb-4918-8d21-8db9ab18a58c: manifest.json へ marker を `clean` enum で写す
+# manifest.json へ marker を `clean` enum で写す
 
 - ステータス: stable
 - 日付: 2026-11-01

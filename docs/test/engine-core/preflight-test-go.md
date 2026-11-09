@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:54+09:00"
 ---
-# CASE-f3a5fee2-1981-42c3-ba5b-81b75fd7a3ad: preflight_test.go
+# preflight_test.go
 
 ## 対象
 

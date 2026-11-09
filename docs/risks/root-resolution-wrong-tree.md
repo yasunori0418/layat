@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-24e0805d-53cd-40dd-9e7a-b5c4bbf2a298: root 解決を誤り、意図しないディレクトリツリーへ配置する
+# root 解決を誤り、意図しないディレクトリツリーへ配置する
 
 全ての配置先は `<root>/<target>` として組み立てられるため、root の解決を誤ると entry 単位の
 正しさに関わらず配置全体が別のツリーへ流れ込む。project mode の root を CWD 相対や config

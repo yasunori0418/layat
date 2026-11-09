@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-0da9d817-c870-4f48-8a6d-8fb9b55e2a70: NixOS の activation の PATH に nix を前置する
+# NixOS の activation の PATH に nix を前置する
 
 - ステータス: stable
 - 日付: 2026-11-03

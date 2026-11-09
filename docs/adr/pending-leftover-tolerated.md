@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-58fdbad9-5ed7-469d-b6b2-6462b2173888: .pending の残留を許容する
+# .pending の残留を許容する
 
 - ステータス: stable
 - 日付: 2026-11-01

@@ -31,7 +31,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:54:35+09:00"
 ---
-# REQ-b232ec98-af3b-41f3-a050-29d417322002: normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む
+# normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む
 
 ## 仕様
 

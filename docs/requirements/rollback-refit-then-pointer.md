@@ -56,7 +56,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T13:39:28+09:00"
 ---
-# REQ-0e341430-17f0-498b-9439-65491652163a: rollback は FS を先に収束させてから profile ポインタを最後に移す
+# rollback は FS を先に収束させてから profile ポインタを最後に移す
 
 ## 仕様
 

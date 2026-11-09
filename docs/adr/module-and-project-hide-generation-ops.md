@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-15a358f4-1c81-49d5-b658-3a1fe39f0f75: module と project では世代操作を公開しない
+# module と project では世代操作を公開しない
 
 - ステータス: stable
 - 日付: 2026-11-01

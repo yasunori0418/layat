@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e: 同一 profileDir への同時実行は後勝ちにする
+# 同一 profileDir への同時実行は後勝ちにする
 
 - ステータス: stable
 - 日付: 2026-11-01

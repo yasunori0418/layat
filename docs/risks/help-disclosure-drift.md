@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-81cadaa3-3ed2-4cb0-bc74-72ff3afa9cce: --help の nix コマンド開示が実際に実行する nix 呼び出しからずれる
+# --help の nix コマンド開示が実際に実行する nix 呼び出しからずれる
 
 ## リスク
 

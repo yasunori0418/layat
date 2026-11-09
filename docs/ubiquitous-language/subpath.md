@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-12218337-953b-40c8-b9ec-6d8ee8ec0d4e: subpath
+# subpath
 
 ## Definition
 

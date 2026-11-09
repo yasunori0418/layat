@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-56ac6298-db67-4f63-8b60-f14af3b9570a: reset は config の名指しを必須にする
+# reset は config の名指しを必須にする
 
 - ステータス: stable
 - 日付: 2026-11-03

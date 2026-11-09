@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-cbac86c1-d774-4cf3-abe6-ca8a7c2f1995: 一部の entry だけを適用する --only を提供する
+# 一部の entry だけを適用する --only を提供する
 
 - ステータス: deprecated
 - 日付: 2026-11-01

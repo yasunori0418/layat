@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30: 世代は link farm と nix profile に乗せる
+# 世代は link farm と nix profile に乗せる
 
 - ステータス: stable
 - 日付: 2026-11-01

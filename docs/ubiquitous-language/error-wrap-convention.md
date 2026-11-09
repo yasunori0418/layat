@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T22:24:21+09:00"
 ---
 
-# UBQ-f5a31977-edde-4c0f-881f-28f709b0ef0b: error-wrap convention
+# error-wrap convention
 
 ## Definition
 

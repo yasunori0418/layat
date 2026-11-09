@@ -130,7 +130,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T22:43:21+09:00"
 ---
-# REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62: 変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く
+# 変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く
 
 ## 仕様
 

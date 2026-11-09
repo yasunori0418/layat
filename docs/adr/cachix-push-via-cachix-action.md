@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-21570c09-066c-471b-b605-3364265c8736: キャッシュへの投入を cachix-action の自動 push に任せる
+# キャッシュへの投入を cachix-action の自動 push に任せる
 
 - ステータス: stable
 - 日付: 2026-11-03

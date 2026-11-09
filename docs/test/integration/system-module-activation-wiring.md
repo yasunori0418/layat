@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:22+09:00"
 ---
-# TC-bd436b15-d2c3-4847-9797-582e37ef2367: NixOS / nix-darwin の activation が評価時点で system root を pin した engine 起動へ配線される
+# NixOS / nix-darwin の activation が評価時点で system root を pin した engine 起動へ配線される
 
 ## 条件
 

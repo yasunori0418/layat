@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-05T00:26:57+09:00"
 ---
-# CASE-c4ffa8b1-4058-4cba-b911-520ee970b2ae: apply_all_manifest_project_test.go
+# apply_all_manifest_project_test.go
 
 ## 対象
 

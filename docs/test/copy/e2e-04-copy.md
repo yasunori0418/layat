@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:13+09:00"
 ---
-# CASE-601db08c-2323-48eb-99f5-8774bba2fa6e: e2e 04-copy
+# e2e 04-copy
 
 ## 対象
 

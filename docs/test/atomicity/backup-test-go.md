@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:31+09:00"
 ---
-# CASE-ed4b32fd-4f2e-497c-baa4-cc91f8a34e4a: backup_test.go — --backup の退避ライフサイクルと退避先の保護
+# backup_test.go — --backup の退避ライフサイクルと退避先の保護
 
 ## 対象
 

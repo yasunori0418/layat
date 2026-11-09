@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-75d1dcc2-e270-4193-a72c-863a57967baf: project template の .gitignore 手順をコード近くのコメントで示す
+# project template の .gitignore 手順をコード近くのコメントで示す
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-1848079b-7011-4653-b7cd-c279205262c4: manifest.json の entry は target を識別子にして name を持たない
+# manifest.json の entry は target を識別子にして name を持たない
 
 - ステータス: stable
 - 日付: 2026-11-03

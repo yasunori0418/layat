@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-63ec1446-d328-42d2-b8d2-e8a11d752ed7: prune は新設時から --json に対応する
+# prune は新設時から --json に対応する
 
 - ステータス: stable
 - 日付: 2026-11-03

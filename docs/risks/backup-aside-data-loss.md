@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-3719d298-8175-4501-95d5-75f3a29568fe: --backup の rename 退避がユーザーの実データを上書き・喪失させる
+# --backup の rename 退避がユーザーの実データを上書き・喪失させる
 
 ## リスク
 

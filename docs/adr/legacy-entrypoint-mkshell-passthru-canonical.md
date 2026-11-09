@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:30+09:00"
 ---
-# ADR-925b0011-e2a2-43ac-a5d3-5e4a10f52470: legacy entrypoint は mkShell の passthru 形を正準にする
+# legacy entrypoint は mkShell の passthru 形を正準にする
 
 - ステータス: stable
 - 日付: 2026-11-03

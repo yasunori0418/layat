@@ -14,7 +14,7 @@ generated:
   at: "2026-11-07T01:40:14+09:00"
 ---
 
-# UBQ-3046d454-1ff1-48e2-9b05-0aad11c52ea6: placement primitive
+# placement primitive
 
 ## Definition
 

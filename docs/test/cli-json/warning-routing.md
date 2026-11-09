@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# TC-71fdbbfb-cf81-4aba-8254-59d7cb45d5ab: warning が対象の有無で item と subject へ振り分けられ全種別がコードへ写る
+# warning が対象の有無で item と subject へ振り分けられ全種別がコードへ写る
 
 ## 条件
 

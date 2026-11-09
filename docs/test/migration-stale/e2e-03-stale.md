@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:37:16+09:00"
 ---
-# CASE-e4683bd5-1603-41e5-81ba-98373780f47c: e2e 03-stale
+# e2e 03-stale
 
 ## 対象
 

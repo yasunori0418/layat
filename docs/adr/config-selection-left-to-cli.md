@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-7f064851-02e3-40bf-aca3-9de2b0b4f6a7: config の選別を CLI だけに任せる
+# config の選別を CLI だけに任せる
 
 - ステータス: stable
 - 日付: 2026-11-03

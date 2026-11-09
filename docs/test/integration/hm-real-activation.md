@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:22+09:00"
 ---
-# TC-2f51dc14-f938-439d-b0c8-1d535914b2d3: 非 NixOS で HM configuration を実際に activate すると engine が配置する
+# 非 NixOS で HM configuration を実際に activate すると engine が配置する
 
 ## 条件
 

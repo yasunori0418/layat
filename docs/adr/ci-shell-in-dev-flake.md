@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T00:40:30+09:00"
 ---
-# ADR-b07bbe19-b8a7-4401-98b0-5ccaf798ad05: CI シェルは dev/flake.nix に公開する
+# CI シェルは dev/flake.nix に公開する
 
 - ステータス: stable
 - 日付: 2026-11-01

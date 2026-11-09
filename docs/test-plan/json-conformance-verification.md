@@ -43,7 +43,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T22:03:12+09:00"
 ---
-# TP-d3000054-42d9-4bac-912a-dd3abc38d3e9: エンベロープの outturn 適合を Go テストと E2E の両方で検証する
+# エンベロープの outturn 適合を Go テストと E2E の両方で検証する
 
 ## 仕様
 

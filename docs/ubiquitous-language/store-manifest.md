@@ -9,7 +9,7 @@ generated:
   at: "2026-11-07T01:41:26+09:00"
 ---
 
-# UBQ-836edea0-547e-4b96-a1b3-783c6ca86bde: store manifest
+# store manifest
 
 ## Definition
 

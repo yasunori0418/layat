@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:08:50+09:00"
 ---
-# SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed: ADR も UUID で採番し、連番の旧 ADR は legacy_adr 型に凍結する
+# ADR も UUID で採番し、連番の旧 ADR は legacy_adr 型に凍結する
 
 > **廃止（2026-11-04）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
 >

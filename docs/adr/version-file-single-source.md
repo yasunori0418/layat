@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T17:00:19+09:00"
 ---
-# ADR-9ab223eb-99dc-4aa2-a671-c07f75f7ff3c: VERSION ファイルをバージョンの一次情報にする
+# VERSION ファイルをバージョンの一次情報にする
 
 - ステータス: stable
 - 日付: 2026-11-03

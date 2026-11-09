@@ -9,7 +9,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-1660e016-7a0a-4319-9346-466f759fe759: generation backend
+# generation backend
 
 ## Definition
 

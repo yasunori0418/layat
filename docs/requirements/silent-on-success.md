@@ -31,7 +31,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-05T00:26:18+09:00"
 ---
-# REQ-8ef34101-8150-4124-92d5-94fabe6b5d90: 成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す
+# 成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す
 
 ## 仕様
 

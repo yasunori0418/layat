@@ -13,7 +13,7 @@ generated:
   at: "2026-11-07T21:38:16+09:00"
 ---
 
-# UBQ-c3e66a6c-906d-4083-b7ba-19618539c56c: layat
+# layat
 
 ## Definition
 

@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# TC-ddee6cc4-bc10-4107-bc7e-288a5fb62f1f: 終了コードの集約が優先順位に従い skip を失敗として数えない
+# 終了コードの集約が優先順位に従い skip を失敗として数えない
 
 ## 条件
 

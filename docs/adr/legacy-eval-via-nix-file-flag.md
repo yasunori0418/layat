@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-c5ebc6d9-d218-45f7-bce1-4dd481766843: legacy entrypoint の eval と build は新 CLI の -f 形で行う
+# legacy entrypoint の eval と build は新 CLI の -f 形で行う
 
 - ステータス: stable
 - 日付: 2026-11-03

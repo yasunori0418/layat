@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:42:17+09:00"
 ---
-# REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b: manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する
+# manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する
 
 ## 仕様
 

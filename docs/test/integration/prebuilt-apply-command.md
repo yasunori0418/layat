@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:22+09:00"
 ---
-# TC-4d477235-5917-469b-926b-119266048643: 事前展開した apply コマンドが全 config を渡し、root の選別を CLI のフィルタだけに委ねる
+# 事前展開した apply コマンドが全 config を渡し、root の選別を CLI のフィルタだけに委ねる
 
 ## 条件
 

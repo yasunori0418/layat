@@ -32,7 +32,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T09:19:35+09:00"
 ---
-# REQ-5c6b07da-3d06-414d-8770-4f438234b322: target 衝突の検出処理を同一 manifest 内と cross-config で分ける
+# target 衝突の検出処理を同一 manifest 内と cross-config で分ける
 
 ## 仕様
 

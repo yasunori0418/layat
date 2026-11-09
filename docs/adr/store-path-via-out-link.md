@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1: store path は out-link で受け取る
+# store path は out-link で受け取る
 
 - ステータス: stable
 - 日付: 2026-11-01

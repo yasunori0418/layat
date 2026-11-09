@@ -40,7 +40,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693: 同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める
+# 同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める
 
 ## 仕様
 

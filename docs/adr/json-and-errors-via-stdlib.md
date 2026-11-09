@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:13:39+09:00"
 ---
-# ADR-fdb8003f-db36-424b-8484-6f2fd57a3027: engine は JSON とエラーを標準ライブラリで扱う
+# engine は JSON とエラーを標準ライブラリで扱う
 
 - ステータス: stable
 - 日付: 2026-11-01

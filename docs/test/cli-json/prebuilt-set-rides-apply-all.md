@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# TC-e54fe715-7b49-431c-a611-25e196b1d0a0: apply --all が `--manifest <name>=<link-farm>` の集合に乗り、集合の形の不正を E_INPUT で拒否する
+# apply --all が `--manifest <name>=<link-farm>` の集合に乗り、集合の形の不正を E_INPUT で拒否する
 
 ## 条件
 

@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-1743c957-a732-4a44-a89a-4c03ab277f0c: NixOS の dry-activate では --dryrun を付けて起動する
+# NixOS の dry-activate では --dryrun を付けて起動する
 
 - ステータス: stable
 - 日付: 2026-11-03

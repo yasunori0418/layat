@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-07T02:02:56+09:00"
 ---
-# ADR-5ee0230d-765f-450a-b9f7-929c13d6b694: engine の実行イベントにユーザー定義スクリプトの hook を掛ける
+# engine の実行イベントにユーザー定義スクリプトの hook を掛ける
 
 - ステータス: deprecated
 - 日付: 2026-11-03

@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# CASE-ad7299c1-e8af-4298-88a4-e1c61062ba30: help_disclosure_test.go — --help の開示ブロックと nix 呼び出しの突合・nix を実行しないサブコマンド
+# help_disclosure_test.go — --help の開示ブロックと nix 呼び出しの突合・nix を実行しないサブコマンド
 
 ## 対象
 

@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T09:19:35+09:00"
 ---
-# TC-1d19aebc-e1e6-4d6f-9440-3efbd69b18a8: 実行結果のインベントリ・世代観測・到達状態・構造化 warning が実態を表す
+# 実行結果のインベントリ・世代観測・到達状態・構造化 warning が実態を表す
 
 ## テスト条件
 

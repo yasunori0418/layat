@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:22:37+09:00"
 ---
-# DSG-0b94308c-6b15-46d1-854c-5945ae587b0d: 配置と cleanup のアルゴリズムは home-manager の linkGeneration / cleanup を範として Go で再実装する
+# 配置と cleanup のアルゴリズムは home-manager の linkGeneration / cleanup を範として Go で再実装する
 
 ## 設計
 

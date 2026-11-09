@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T10:25:27+09:00"
 ---
-# CASE-3a1f403d-3c7b-4221-a32a-2ddc272a58a3: nix-unit farm-entries.nix
+# nix-unit farm-entries.nix
 
 ## 対象
 

@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:32+09:00"
 ---
-# SDR-5ea31001-96f8-4324-a40b-647cdfa5cc9d: ドキュメントは sara のナレッジグラフとして item に分割する
+# ドキュメントは sara のナレッジグラフとして item に分割する
 
 - ステータス: stable
 - 日付: 2026-11-01

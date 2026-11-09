@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:39:38+09:00"
 ---
-# ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f: --backup は配置を塞ぐ記録外の実体だけを退避する
+# --backup は配置を塞ぐ記録外の実体だけを退避する
 
 - ステータス: stable
 - 日付: 2026-11-03

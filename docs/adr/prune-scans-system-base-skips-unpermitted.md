@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e: prune は system 基底も走査し、権限の無い系列を見送る
+# prune は system 基底も走査し、権限の無い系列を見送る
 
 - ステータス: stable
 - 日付: 2026-11-03

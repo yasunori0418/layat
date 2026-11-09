@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:30:50+09:00"
 ---
-# ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93: 古くなった配置の除去は manifest の差分で行う
+# 古くなった配置の除去は manifest の差分で行う
 
 - ステータス: stable
 - 日付: 2026-11-01

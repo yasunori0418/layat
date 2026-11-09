@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15: last-applied 記録を profileDir と同じ鍵で state 基底に置く
+# last-applied 記録を profileDir と同じ鍵で state 基底に置く
 
 - ステータス: stable
 - 日付: 2026-11-03

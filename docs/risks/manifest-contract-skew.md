@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-7808768d-bd87-429a-af42-52e8559d940c: Nix と engine の唯一の契約である manifest の生成側と消費側がずれる
+# Nix と engine の唯一の契約である manifest の生成側と消費側がずれる
 
 ## リスク
 

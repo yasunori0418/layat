@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-04c3bc0a-140b-4bc3-a47c-cacddeba5a71: --dryrun --backup は退避で解ける箇所を conflict にしない
+# --dryrun --backup は退避で解ける箇所を conflict にしない
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -27,7 +27,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:08:50+09:00"
 ---
-# SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed: 欠陥はグラフに置かず GitHub Issues で管理する
+# 欠陥はグラフに置かず GitHub Issues で管理する
 
 - ステータス: stable
 - 日付: 2026-11-03

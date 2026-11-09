@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:31+09:00"
 ---
-# RISK-fbf029f6-866c-4a08-a4eb-f09e3c7e907e: rollback が FS を前世代へ収束させ損ね、世代表示と実配置が食い違う
+# rollback が FS を前世代へ収束させ損ね、世代表示と実配置が食い違う
 
 ## リスク
 

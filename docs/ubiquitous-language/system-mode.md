@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-4cf59313-b234-4534-95c6-d8dd3dbd99a2: system mode
+# system mode
 
 ## Definition
 

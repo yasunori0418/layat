@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0: テストを sandbox 可否で flake check と E2E に分ける
+# テストを sandbox 可否で flake check と E2E に分ける
 
 - ステータス: stable
 - 日付: 2026-11-01

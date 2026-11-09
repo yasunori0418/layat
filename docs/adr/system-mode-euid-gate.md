@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-25d54346-f13a-4c12-9895-ab93dc6c183b: system mode の変更系操作の前に engine が euid 0 を確認する
+# system mode の変更系操作の前に engine が euid 0 を確認する
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-433b9539-21d9-46c5-91a1-fc2b04d5eb47: fixed root には subdir を提供しない
+# fixed root には subdir を提供しない
 
 - ステータス: stable
 - 日付: 2026-11-03

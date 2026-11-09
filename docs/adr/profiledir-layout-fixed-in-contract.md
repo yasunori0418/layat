@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd: profileDir の内部レイアウトを世代バックエンド契約の固定部分にする
+# profileDir の内部レイアウトを世代バックエンド契約の固定部分にする
 
 - ステータス: stable
 - 日付: 2026-11-03

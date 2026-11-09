@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-41d506b4-2c5c-4a17-9954-b0de37e97de5: copy は foreign の実ファイルを上書きせず warning を出して見送る
+# copy は foreign の実ファイルを上書きせず warning を出して見送る
 
 - ステータス: stable
 - 日付: 2026-11-03

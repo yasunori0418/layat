@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5"
   at: "2026-09-20T08:21:50+09:00"
 ---
-# TC-81be084d-709f-481b-9b61-5d2d11c317a0: marker の判別と src 種別への変換をアサートする
+# marker の判別と src 種別への変換をアサートする
 
 ## テスト条件
 

@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T21:26:22+09:00"
 ---
-# SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd: ADR は単独で覆せる 1 つの決定だけを書く
+# ADR は単独で覆せる 1 つの決定だけを書く
 
 - ステータス: stable
 - 日付: 2026-11-01

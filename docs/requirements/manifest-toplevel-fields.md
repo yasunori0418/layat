@@ -22,7 +22,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-31T21:49:26+09:00"
 ---
-# REQ-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f: manifest.json のトップレベルは必須の schemaVersion / root / entries と任意の identity とする
+# manifest.json のトップレベルは必須の schemaVersion / root / entries と任意の identity とする
 
 ## 仕様
 

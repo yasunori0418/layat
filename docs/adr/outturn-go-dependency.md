@@ -22,7 +22,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:14:40+09:00"
 ---
-# ADR-bd8a4c8a-5e7e-485a-bccf-20dab63125f2: CLI は outturn/go に依存する
+# CLI は outturn/go に依存する
 
 - ステータス: stable
 - 日付: 2026-11-01

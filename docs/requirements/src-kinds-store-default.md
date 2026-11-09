@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-99ca5381-6c53-426c-b145-7b4297c53868: src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する
+# src は path / set / marker の 3 種を取り store link を既定として out-of-store は marker で opt-in する
 
 ## 仕様
 

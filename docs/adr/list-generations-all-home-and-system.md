@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-cfd13fb6-d11e-4f3b-b0c6-40ee21b6b212: list-generations --all は home mode と system mode の全 config を対象にする
+# list-generations --all は home mode と system mode の全 config を対象にする
 
 - ステータス: stable
 - 日付: 2026-11-03

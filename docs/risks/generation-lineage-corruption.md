@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T22:43:20+09:00"
 ---
-# RISK-ac5cd9b4-58f9-43d8-9fae-66f7b5940beb: profile のキーイングか世代の読み取りが誤り、別 config の世代系列を取り違える
+# profile のキーイングか世代の読み取りが誤り、別 config の世代系列を取り違える
 
 ## リスク
 

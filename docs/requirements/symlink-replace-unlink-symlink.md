@@ -27,7 +27,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-61856da1-8883-401e-ad57-9f326b96d400: 既存 symlink の張替えは unlink + symlink の 2 操作で行い冪等な再実行で収束させる
+# 既存 symlink の張替えは unlink + symlink の 2 操作で行い冪等な再実行で収束させる
 
 ## 仕様
 

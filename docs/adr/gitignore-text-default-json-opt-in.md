@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-7c8a0152-e034-4f16-9cf8-d5435be187e2: gitignore は行指向の出力を既定のまま JSON を opt-in にする
+# gitignore は行指向の出力を既定のまま JSON を opt-in にする
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -29,7 +29,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:54:35+09:00"
 ---
-# REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98: backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する
+# backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する
 
 ## 仕様
 

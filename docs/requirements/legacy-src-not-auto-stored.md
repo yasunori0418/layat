@@ -26,7 +26,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-da253cab-34d4-4d6e-96f0-de99e012b376: legacy entrypoint では相対 path の src が自動で store 化されない
+# legacy entrypoint では相対 path の src が自動で store 化されない
 
 ## 仕様
 

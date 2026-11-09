@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T17:34:16+09:00"
 ---
-# ADR-da7b74a6-bab4-43ea-8f1c-cf843b8b58cc: リファレンスをビルド時に生成する
+# リファレンスをビルド時に生成する
 
 - ステータス: stable
 - 日付: 2026-11-03

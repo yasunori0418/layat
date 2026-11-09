@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-55db6ca4-63de-437d-a667-a0e71676e9f1: homeRoot
+# homeRoot
 
 ## Definition
 

@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-9acd3e01-58f1-48ca-b84f-f33a5bc1aaa5: 生成器の選択値を nix だけにする
+# 生成器の選択値を nix だけにする
 
 - ステータス: stable
 - 日付: 2026-11-03

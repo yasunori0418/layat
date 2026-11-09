@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:42:11+09:00"
 ---
 
-# UBQ-bc180161-69ea-4ec6-bae5-9c0e5853a112: method
+# method
 
 ## Definition
 

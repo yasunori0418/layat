@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:22:37+09:00"
 ---
-# INF-0865477b-21b2-4feb-9c06-1a882a4e595a: ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）
+# ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）
 
 ## 構成
 

@@ -36,7 +36,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:04:55+09:00"
 ---
-# REQ-a220bb28-89de-42b0-a854-e7468755ecb1: NixOS / nix-darwin モジュールは activation から全 config のビルド済み link-farm を systemRoot で 1 回の起動に渡す
+# NixOS / nix-darwin モジュールは activation から全 config のビルド済み link-farm を systemRoot で 1 回の起動に渡す
 
 ## 仕様
 

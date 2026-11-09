@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# TC-b4a365cd-0b1c-40ff-92c6-91f6cffe8e98: stdout を機械可読出力が専有し人間向けの出力が stderr に留まる
+# stdout を機械可読出力が専有し人間向けの出力が stderr に留まる
 
 ## 条件
 

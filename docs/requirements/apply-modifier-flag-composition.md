@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-687e225f-5046-46db-88fb-f9e527a1e97a: apply 修飾フラグは --all と合成できる
+# apply 修飾フラグは --all と合成できる
 
 ## 仕様
 

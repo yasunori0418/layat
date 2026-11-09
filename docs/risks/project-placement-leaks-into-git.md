@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:31+09:00"
 ---
-# RISK-5f3c98b8-bd78-4bee-95af-b35e6ade35f9: project mode の配置物が ephemeral に保たれず、git の追跡対象に入る
+# project mode の配置物が ephemeral に保たれず、git の追跡対象に入る
 
 ## リスク
 

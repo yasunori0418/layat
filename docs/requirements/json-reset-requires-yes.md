@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:04:55+09:00"
 ---
-# REQ-2a613337-7646-4ced-8807-e43bca18acf3: reset --json は --yes を必須とし無ければ fail fast する
+# reset --json は --yes を必須とし無ければ fail fast する
 
 ## 仕様
 

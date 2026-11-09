@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-18T16:41:13+09:00"
 ---
-# CASE-503c9021-a43f-4c06-8ef6-8630a7d4aeac: reset_test.go — FS-only teardown の除去範囲・フィルタ・dryrun・同意
+# reset_test.go — FS-only teardown の除去範囲・フィルタ・dryrun・同意
 
 ## 対象
 

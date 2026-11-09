@@ -32,7 +32,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T22:43:18+09:00"
 ---
-# REQ-b12fc3c0-d7fe-4003-922c-f3ac0d969b66: symlink farm は GC アンカー専用でアンカーは store-backed な symlink entry に限る
+# symlink farm は GC アンカー専用でアンカーは store-backed な symlink entry に限る
 
 ## 仕様
 

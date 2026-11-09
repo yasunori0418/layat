@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-07c3b735-3744-4778-a640-8c6fb66f4aa7: copy が foreign 実ファイルを skip したときは warning で可視化する
+# copy が foreign 実ファイルを skip したときは warning で可視化する
 
 ## 仕様
 

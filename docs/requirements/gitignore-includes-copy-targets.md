@@ -22,7 +22,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-60787ed2-4176-4bdd-800f-1600c0315551: gitignore は method を区別せず copy target も含めて全 target を列挙する
+# gitignore は method を区別せず copy target も含めて全 target を列挙する
 
 ## 仕様
 

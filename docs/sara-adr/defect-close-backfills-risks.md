@@ -26,7 +26,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# SDR-9bec5976-67cd-407a-afa9-3d394a6204ca: 欠陥 issue のクローズ時にテスト系 item の欠落を追補する
+# 欠陥 issue のクローズ時にテスト系 item の欠落を追補する
 
 - ステータス: stable
 - 日付: 2026-11-03

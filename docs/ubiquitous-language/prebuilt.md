@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-fbb72ad3-f0d8-4403-8775-705fb0275ade: prebuilt
+# prebuilt
 
 ## Definition
 

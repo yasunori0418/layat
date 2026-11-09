@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:14+09:00"
 ---
-# CASE-16289504-60e7-4046-9deb-7e2c962c5abf: apply_all_conflict_test.go — 前段の衝突の確認のバケット判定・選択集合・build 前停止・単一 apply では確認しないこと・--manifest 集合
+# apply_all_conflict_test.go — 前段の衝突の確認のバケット判定・選択集合・build 前停止・単一 apply では確認しないこと・--manifest 集合
 
 ## 対象
 

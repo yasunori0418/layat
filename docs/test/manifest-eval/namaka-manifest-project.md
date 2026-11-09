@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# CASE-7fb33044-b68c-4518-bd93-b258072235ee: namaka manifest-project
+# namaka manifest-project
 
 ## 対象
 

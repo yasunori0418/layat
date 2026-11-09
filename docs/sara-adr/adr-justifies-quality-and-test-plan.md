@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# SDR-1d295034-9bab-4e30-9ead-173e5f56c396: ADR の justifies 対象を specification を持つ全型に広げる
+# ADR の justifies 対象を specification を持つ全型に広げる
 
 - ステータス: stable
 - 日付: 2026-11-03

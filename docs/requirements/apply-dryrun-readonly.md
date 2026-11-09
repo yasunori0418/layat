@@ -26,7 +26,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-02a33511-0941-4813-b289-a05eb8e9aa57: apply --dryrun は読み取り専用で conflict 検出時に非ゼロ終了する
+# apply --dryrun は読み取り専用で conflict 検出時に非ゼロ終了する
 
 ## 仕様
 

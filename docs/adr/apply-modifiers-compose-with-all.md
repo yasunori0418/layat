@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-b08479ba-0eae-4668-a4a2-910cd40bd316: apply の修飾フラグを --all と合成できるようにする
+# apply の修飾フラグを --all と合成できるようにする
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-24T09:52:17+09:00"
 ---
-# CASE-68cfc77e-05c0-4b22-93fb-c7fdc5a91fac: checks.nixos-vm — NixOS モジュールの実 activate を VM で検証する flake check
+# checks.nixos-vm — NixOS モジュールの実 activate を VM で検証する flake check
 
 ## 対象
 

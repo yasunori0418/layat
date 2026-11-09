@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:00:36+09:00"
 ---
-# ADR-feb60906-1517-46b8-8fa5-e007df4d3e11: --json は常に results[] エンベロープを出す
+# --json は常に results[] エンベロープを出す
 
 - ステータス: stable
 - 日付: 2026-11-01

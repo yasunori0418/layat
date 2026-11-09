@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5"
   at: "2026-09-20T08:21:50+09:00"
 ---
-# CASE-cd3e3428-3fe0-4d33-a64c-1931ac11d07d: backup_flag_test.go — 値を省略できるフラグが位置引数を飲み込まない
+# backup_flag_test.go — 値を省略できるフラグが位置引数を飲み込まない
 
 ## 対象
 

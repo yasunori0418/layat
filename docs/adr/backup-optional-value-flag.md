@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T15:57:37+09:00"
 ---
-# ADR-33d8c466-6b38-46b6-8696-ad7521c72786: --backup を = 区切りで suffix を取る省略可能な値のフラグにする
+# --backup を = 区切りで suffix を取る省略可能な値のフラグにする
 
 - ステータス: stable
 - 日付: 2026-11-03

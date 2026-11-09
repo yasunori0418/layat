@@ -27,7 +27,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-8e253f2e-c255-482a-a0f8-0837e122e80f: 記録の読みは不正な記録を error にする
+# 記録の読みは不正な記録を error にする
 
 - ステータス: stable
 - 日付: 2026-11-03

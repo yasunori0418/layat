@@ -44,7 +44,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T21:09:38+09:00"
 ---
-# REQ-a47fbfb0-c808-42e9-b2ad-767c933494d6: prune --json はトップレベル info の removed に削除系列を、skipped に判定か削除に至れず残した系列を載せる
+# prune --json はトップレベル info の removed に削除系列を、skipped に判定か削除に至れず残した系列を載せる
 
 ## 仕様
 

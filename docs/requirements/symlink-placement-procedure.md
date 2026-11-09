@@ -45,7 +45,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T22:03:12+09:00"
 ---
-# REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557: symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする
+# symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする
 
 ## 仕様
 

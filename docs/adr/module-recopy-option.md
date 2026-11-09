@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T17:34:10+09:00"
 ---
-# ADR-9506276e-2108-4962-9f90-efe82fec7f66: layat.recopy で activation の起動に --recopy を付ける
+# layat.recopy で activation の起動に --recopy を付ける
 
 - ステータス: stable
 - 日付: 2026-11-03

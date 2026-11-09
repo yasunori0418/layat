@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:22:37+09:00"
 ---
-# INF-8b97573f-d4d6-4abf-85e2-d859afbd96c6: マージの条件（main の ruleset と required status checks）
+# マージの条件（main の ruleset と required status checks）
 
 ## 構成
 

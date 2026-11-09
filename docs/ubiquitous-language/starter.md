@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:40:14+09:00"
 ---
 
-# UBQ-3f190b7f-08dc-4b64-ab48-4be319a7d48f: starter
+# starter
 
 ## Definition
 

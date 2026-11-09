@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# CASE-c5c6d127-c227-4f01-9a5d-fc09e7412175: gitignore_test.go — パス正規化と列挙結果の info 表現
+# gitignore_test.go — パス正規化と列挙結果の info 表現
 
 ## 対象
 

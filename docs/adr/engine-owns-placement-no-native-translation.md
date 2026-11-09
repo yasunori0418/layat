@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7: 配置は全層で engine が行い、ネイティブ機構へ翻訳しない
+# 配置は全層で engine が行い、ネイティブ機構へ翻訳しない
 
 - ステータス: stable
 - 日付: 2026-11-03

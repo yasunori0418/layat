@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T15:55:37+09:00"
 ---
-# ADR-d2da8a69-f92b-4bb3-9ed9-9a1f7e8297ff: flake-parts の利用者には module 経由を正準にする
+# flake-parts の利用者には module 経由を正準にする
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -63,7 +63,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940: 途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す
+# 途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す
 
 ## 仕様
 

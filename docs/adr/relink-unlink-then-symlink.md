@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:17:11+09:00"
 ---
-# ADR-3aebefee-405d-4342-b754-eef8eac29b1b: symlink を unlink と symlink の 2 操作で張り替える
+# symlink を unlink と symlink の 2 操作で張り替える
 
 - ステータス: stable
 - 日付: 2026-11-01

@@ -37,7 +37,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b: apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する
+# apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する
 
 ## 仕様
 

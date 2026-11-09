@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:49+09:00"
 ---
-# CASE-b2455b29-6f7a-451b-a667-9d0719808eb5: nix-unit apply-command.nix
+# nix-unit apply-command.nix
 
 ## 対象
 

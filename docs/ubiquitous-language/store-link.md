@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-d0332595-e976-4942-b218-728e428ecc26: store link
+# store link
 
 ## Definition
 

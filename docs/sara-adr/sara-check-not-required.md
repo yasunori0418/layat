@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:08:50+09:00"
 ---
-# SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef: sara check を required status check にしない
+# sara check を required status check にしない
 
 - ステータス: stable
 - 日付: 2026-11-03

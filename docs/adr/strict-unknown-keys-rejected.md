@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-12ad7852-e689-44d7-b9fe-0667effb3d13: entry の未知のキーを評価時に拒否する
+# entry の未知のキーを評価時に拒否する
 
 - ステータス: stable
 - 日付: 2026-11-01

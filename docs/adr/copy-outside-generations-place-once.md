@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:39:38+09:00"
 ---
-# ADR-c4ad9987-850e-4834-bbea-d8de3b073548: copy は世代の外に place-once で置く
+# copy は世代の外に place-once で置く
 
 - ステータス: stable
 - 日付: 2026-11-01

@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# CASE-be10d33c-3715-41a3-8b98-951e95cb5e3f: prune_test.go — prune の確認ポリシー・root パス一覧の提示・ストリーム排他と --json の形状
+# prune_test.go — prune の確認ポリシー・root パス一覧の提示・ストリーム排他と --json の形状
 
 ## 対象
 

@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe: method は配置方法を選び symlink は世代管理下・copy は世代管理外になる
+# method は配置方法を選び symlink は世代管理下・copy は世代管理外になる
 
 ## 仕様
 

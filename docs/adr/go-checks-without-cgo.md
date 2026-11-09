@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T17:26:22+09:00"
 ---
-# ADR-6f0383d9-0176-47c4-a9da-1a41e1fd3747: Go の静的解析を CGO_ENABLED=0 で行う
+# Go の静的解析を CGO_ENABLED=0 で行う
 
 - ステータス: stable
 - 日付: 2026-11-03

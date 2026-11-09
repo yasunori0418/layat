@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-250d936c-1df0-491d-a7af-708f38b61f33: MVP は manifest v1 のみを発行・受理しマイグレーション機構を持たない
+# MVP は manifest v1 のみを発行・受理しマイグレーション機構を持たない
 
 ## 仕様
 

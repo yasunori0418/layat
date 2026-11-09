@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T15:59:52+09:00"
 ---
-# ADR-fc28d09c-9d52-4539-8838-e9ae5a414594: method の symlink から copy への変更を自動で移行する
+# method の symlink から copy への変更を自動で移行する
 
 - ステータス: stable
 - 日付: 2026-11-03

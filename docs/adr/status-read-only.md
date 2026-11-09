@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T17:33:20+09:00"
 ---
-# ADR-54f09f52-1c2c-4b84-8f18-717fd93e4342: status を読み取り専用にする
+# status を読み取り専用にする
 
 - ステータス: stable
 - 日付: 2026-11-03

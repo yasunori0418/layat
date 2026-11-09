@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-08T20:13:24+09:00"
 ---
-# SDR-6c6c0681-4d5e-429e-8ee9-acf8dd94ad54: item のファイル名は slug だけにする
+# item のファイル名は slug だけにする
 
 > **廃止（2026-11-08）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
 >

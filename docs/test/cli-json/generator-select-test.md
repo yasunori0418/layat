@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:14+09:00"
 ---
-# CASE-28e6be05-f3d5-46c9-84b1-7ddfa07d253b: generator_select_test.go — 選択の優先順位・strict な設定ファイル・--manifest の処理の環境非依存
+# generator_select_test.go — 選択の優先順位・strict な設定ファイル・--manifest の処理の環境非依存
 
 ## 対象
 

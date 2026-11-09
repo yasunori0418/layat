@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:08:50+09:00"
 ---
-# SDR-3ff9f355-a667-476e-b10d-087248cdbfcf: ADR の失効は supersedes と 廃止 で表す
+# ADR の失効は supersedes と 廃止 で表す
 
 - ステータス: stable
 - 日付: 2026-11-01

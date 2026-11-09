@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:54:35+09:00"
 ---
-# REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34: mkManifest 自身が evalModules で入力を確認する単一の箇所になる
+# mkManifest 自身が evalModules で入力を確認する単一の箇所になる
 
 ## 仕様
 

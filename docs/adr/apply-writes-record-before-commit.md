@@ -22,7 +22,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-05T00:40:25+09:00"
 ---
-# ADR-facd3173-a5ce-4d81-90a9-370fb26428ff: apply は世代の commit の前に記録を書く
+# apply は世代の commit の前に記録を書く
 
 - ステータス: stable
 - 日付: 2026-11-03

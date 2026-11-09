@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c: rootKind に system を足しても schemaVersion を上げない
+# rootKind に system を足しても schemaVersion を上げない
 
 - ステータス: stable
 - 日付: 2026-11-03

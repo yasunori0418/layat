@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-1f128917-4424-4e37-8a88-e0bb23a09da7: gitignore --all は projectRoot の全 config の target をソート + 重複除去して出力する
+# gitignore --all は projectRoot の全 config の target をソート + 重複除去して出力する
 
 ## 仕様
 

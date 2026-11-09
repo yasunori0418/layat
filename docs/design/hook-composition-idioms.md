@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:22:37+09:00"
 ---
-# DSG-f286746c-56ca-4f0c-bb95-7c74d0cea7c0: hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす
+# hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす
 
 ## 設計
 

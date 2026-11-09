@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-c2d44626-d8f4-446a-a80a-319a500129b4: apply の config 選択は name 省略で default・明示で単一・--all で全件
+# apply の config 選択は name 省略で default・明示で単一・--all で全件
 
 ## 仕様
 

@@ -27,7 +27,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74: entry submodule のフィールドは src / subpath / target / method の 4 つとする
+# entry submodule のフィールドは src / subpath / target / method の 4 つとする
 
 ## 仕様
 

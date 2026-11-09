@@ -41,7 +41,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-38506419-c23d-4fce-b167-30715ce6a69d: apply --all は build 前に選択 config 間の target 衝突を検出して停止する
+# apply --all は build 前に選択 config 間の target 衝突を検出して停止する
 
 ## 仕様
 

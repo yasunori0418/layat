@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:22:37+09:00"
 ---
-# DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda: NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする
+# NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする
 
 ## 設計
 

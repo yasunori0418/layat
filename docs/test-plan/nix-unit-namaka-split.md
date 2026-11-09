@@ -40,7 +40,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:26:39+09:00"
 ---
-# TP-36e90d5d-4524-4294-bc72-ee263bb02782: 評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る
+# 評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る
 
 ## 仕様
 

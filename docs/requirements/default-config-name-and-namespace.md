@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-205d744d-5a53-4511-bc09-892ba01d4e6f: config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない
+# config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない
 
 ## 仕様
 

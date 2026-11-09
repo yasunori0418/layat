@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:04:55+09:00"
 ---
-# REQ-1cc080f6-ae91-4c1f-973e-b7054cfc0198: entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする
+# entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする
 
 ## 仕様
 

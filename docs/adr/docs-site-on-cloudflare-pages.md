@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-f82e33bd-0534-4266-89bf-f1d9a2dbe258: ドキュメントサイトを GitHub Actions から Cloudflare Pages へ配備する
+# ドキュメントサイトを GitHub Actions から Cloudflare Pages へ配備する
 
 - ステータス: stable
 - 日付: 2026-11-03

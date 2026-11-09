@@ -42,7 +42,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T09:19:35+09:00"
 ---
-# REQ-dec58330-6dad-47f7-8f56-2402764a89c7: apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す
+# apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す
 
 ## 仕様
 

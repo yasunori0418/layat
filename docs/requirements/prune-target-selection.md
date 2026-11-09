@@ -47,7 +47,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-c44433a1-7ee7-459a-9aae-7cc42166876f: prune は backref の root が実在しない roothash 系列だけを系列ごと削除する
+# prune は backref の root が実在しない roothash 系列だけを系列ごと削除する
 
 ## 仕様
 

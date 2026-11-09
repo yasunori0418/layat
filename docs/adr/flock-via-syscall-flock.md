@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:01:53+09:00"
 ---
-# ADR-a0bac33b-d195-4dfd-9e74-61673c655873: flock は syscall.Flock で実装する
+# flock は syscall.Flock で実装する
 
 - ステータス: stable
 - 日付: 2026-11-01

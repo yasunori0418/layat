@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c: project mode では copy と out-of-store も ephemeral として扱う
+# project mode では copy と out-of-store も ephemeral として扱う
 
 - ステータス: stable
 - 日付: 2026-11-01

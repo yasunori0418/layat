@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:40:14+09:00"
 ---
 
-# UBQ-ba99246c-fd5b-4469-bb30-afcf33e83699: entrypoint
+# entrypoint
 
 ## Definition
 

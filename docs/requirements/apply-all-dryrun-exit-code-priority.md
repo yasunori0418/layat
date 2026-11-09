@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32: apply --all --dryrun の終了コードは error を conflict より優先する
+# apply --all --dryrun の終了コードは error を conflict より優先する
 
 ## 仕様
 

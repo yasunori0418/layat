@@ -30,7 +30,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-496b1a07-5b74-416b-9e5f-3952b4c03737: entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する
+# entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する
 
 ## 仕様
 

@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:54+09:00"
 ---
-# TC-9df804ce-35ee-44a7-87b1-17935d53fab2: 配置分類が仕様どおりであること
+# 配置分類が仕様どおりであること
 
 target が「不在」「前世代 manifest に記録され記録先を指す symlink」「記録に無い symlink
 （foreign）」のいずれであるかに応じて、新規配置 / 無警告の張替え / 警告付き後勝ちへ振り分けられる

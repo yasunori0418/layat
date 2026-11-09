@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-d504b89e-9a2b-440f-83c1-be372b12241b: gitignore --all は project mode の全 config の target を重複なく整列して出す
+# gitignore --all は project mode の全 config の target を重複なく整列して出す
 
 - ステータス: stable
 - 日付: 2026-11-03

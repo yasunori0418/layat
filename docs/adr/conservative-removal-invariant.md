@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:30:55+09:00"
 ---
-# ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c: 古くなった配置の除去は記録どおりの symlink だけに限る
+# 古くなった配置の除去は記録どおりの symlink だけに限る
 
 - ステータス: stable
 - 日付: 2026-11-01

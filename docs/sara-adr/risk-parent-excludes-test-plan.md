@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# SDR-f3f9491f-d6f4-4742-82da-4933ad3d8db1: risk の親に test_plan を含めない
+# risk の親に test_plan を含めない
 
 - ステータス: stable
 - 日付: 2026-11-03

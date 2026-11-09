@@ -37,7 +37,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-d95b814f-aa7a-470e-9320-c14f9c14da7b: --all は root モードフィルタで対象 config を絞れる
+# --all は root モードフィルタで対象 config を絞れる
 
 ## 仕様
 

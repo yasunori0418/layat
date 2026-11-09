@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T17:33:20+09:00"
 ---
-# ADR-c2131901-290d-4311-8f84-64edb33e8897: status は config 名の完全一致で絞り込む
+# status は config 名の完全一致で絞り込む
 
 - ステータス: stable
 - 日付: 2026-11-03

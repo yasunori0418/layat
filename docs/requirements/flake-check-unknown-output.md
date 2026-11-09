@@ -30,7 +30,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-d0aef5af-e922-400b-b250-ca38719c480b: layat カスタム output は nix flake check の unknown 警告を許容し主検証は nix build で行う
+# layat カスタム output は nix flake check の unknown 警告を許容し主検証は nix build で行う
 
 ## 仕様
 

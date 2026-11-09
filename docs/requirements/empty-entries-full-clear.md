@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T22:44:47+09:00"
 ---
-# REQ-fc64de4c-c82b-419c-8706-07d8d97daa37: 空の entries は正当な全クリアとして扱い、エラーにも警告にもしない
+# 空の entries は正当な全クリアとして扱い、エラーにも警告にもしない
 
 ## 仕様
 

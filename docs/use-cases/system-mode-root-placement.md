@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:30:05+09:00"
 ---
-# UC-6b8d31ea-3d5a-4334-aac7-8706df190e7d: system mode で `/` 配下へ配置し、root 権限で世代とともに管理する
+# system mode で `/` 配下へ配置し、root 権限で世代とともに管理する
 
 ## 使われ方
 

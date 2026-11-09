@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# CASE-a9ff732c-af30-4f13-862d-92e3074d390d: outturn_payload_test.go — engine 結果からペイロードへの写像
+# outturn_payload_test.go — engine 結果からペイロードへの写像
 
 ## 対象
 

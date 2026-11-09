@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# TC-1ee7a729-5629-4c92-b02a-4f6e11c0b57d: 世代スキップは project / system mode で derivation 同一のときだけ発火し、それ以外は新世代を積む
+# 世代スキップは project / system mode で derivation 同一のときだけ発火し、それ以外は新世代を積む
 
 ## テスト条件
 

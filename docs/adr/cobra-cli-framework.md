@@ -27,7 +27,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:00:56+09:00"
 ---
-# ADR-6b7becf0-f029-41e3-895e-b672dce94d3d: CLI は cobra で組む
+# CLI は cobra で組む
 
 - ステータス: stable
 - 日付: 2026-11-01

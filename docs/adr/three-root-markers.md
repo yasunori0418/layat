@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed: root は 3 つの marker で表す
+# root は 3 つの marker で表す
 
 - ステータス: stable
 - 日付: 2026-11-01

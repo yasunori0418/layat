@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:44+09:00"
 ---
-# TC-d160e18b-4c0c-4531-a506-e7d00d88788a: 古くなった配置の除去の対象限定
+# 古くなった配置の除去の対象限定
 
 新世代の manifest から消えた entry のうち、前世代 manifest に記録されており実 FS 上でも
 記録先を指したままである symlink だけが除去されることを検証する。記録に無い foreign

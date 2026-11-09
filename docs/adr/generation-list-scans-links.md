@@ -27,7 +27,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-1cbacca1-1930-46ca-bf82-30310f82216e: 世代の一覧を nix-env を経由せず世代リンクの走査で得る
+# 世代の一覧を nix-env を経由せず世代リンクの走査で得る
 
 - ステータス: stable
 - 日付: 2026-11-03

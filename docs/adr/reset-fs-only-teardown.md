@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7: reset で profile を触らずに配置物を撤去する
+# reset で profile を触らずに配置物を撤去する
 
 - ステータス: stable
 - 日付: 2026-11-03

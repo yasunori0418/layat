@@ -33,7 +33,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c: system mode の last-applied 記録を /var/lib/layat に置く
+# system mode の last-applied 記録を /var/lib/layat に置く
 
 - ステータス: stable
 - 日付: 2026-11-03

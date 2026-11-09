@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-575f2527-64a9-4f8b-ae68-1131b053cf66: target
+# target
 
 ## Definition
 

@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:23:46+09:00"
 ---
-# REQ-844ee375-919f-4341-81e1-a5f89fd32840: module 時は rollback を host へ一本化し、layat profile は前進のみで追従する
+# module 時は rollback を host へ一本化し、layat profile は前進のみで追従する
 
 ## 仕様
 

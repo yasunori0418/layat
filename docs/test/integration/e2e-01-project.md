@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:22+09:00"
 ---
-# CASE-1fc8b8b9-d8c6-45f4-96a6-862de693822e: e2e 01-project — project mode の配置と --all の部分失敗を実 nix で通す
+# e2e 01-project — project mode の配置と --all の部分失敗を実 nix で通す
 
 ## 対象
 

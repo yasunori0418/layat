@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-b4be88b8-1c19-426d-885d-f5d80b95252f: prune は root が実在しない roothash 系列だけを削除する
+# prune は root が実在しない roothash 系列だけを削除する
 
 - ステータス: stable
 - 日付: 2026-11-03

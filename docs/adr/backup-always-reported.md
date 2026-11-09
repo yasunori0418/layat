@@ -22,7 +22,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-c0a91b81-f54f-4790-9295-f90656f53de8: 退避の発生は常に stderr へ出す
+# 退避の発生は常に stderr へ出す
 
 - ステータス: stable
 - 日付: 2026-11-03

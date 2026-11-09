@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:30:05+09:00"
 ---
-# UC-01b896b4-04b9-40d0-bf9e-966eaf64c3d4: 開発中の手元 dotfiles を out-of-store symlink で参照し、編集と同時に反映しながら育てる
+# 開発中の手元 dotfiles を out-of-store symlink で参照し、編集と同時に反映しながら育てる
 
 ## 使われ方
 

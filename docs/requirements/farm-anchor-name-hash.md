@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-08-18T22:23:49+09:00"
 ---
-# REQ-62eda895-efd4-4eaf-a58b-600e8637da75: symlink farm の GC アンカー名は target のハッシュとする
+# symlink farm の GC アンカー名は target のハッシュとする
 
 ## 仕様
 

@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-3878ea60-4f4f-48a3-a389-3b7fbb672897: --generator を prune と init では無視する
+# --generator を prune と init では無視する
 
 - ステータス: stable
 - 日付: 2026-11-03

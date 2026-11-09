@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e: apply --all の build を worker pool で並列に実行する
+# apply --all の build を worker pool で並列に実行する
 
 - ステータス: stable
 - 日付: 2026-11-03

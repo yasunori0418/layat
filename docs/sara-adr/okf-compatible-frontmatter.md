@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-07T23:10:46+09:00"
 ---
-# SDR-bab72f31-7cb1-47a3-bb2d-7876757d86fb: OKF v0.2 と互換の frontmatter キーを item に足す
+# OKF v0.2 と互換の frontmatter キーを item に足す
 
 - ステータス: stable
 - 日付: 2026-11-07

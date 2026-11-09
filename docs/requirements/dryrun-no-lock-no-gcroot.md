@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-7a71a049-5876-4cfc-a65e-44e9a0349856: --dryrun は root を解決するが flock も pending gcroot も取らない
+# --dryrun は root を解決するが flock も pending gcroot も取らない
 
 ## 仕様
 

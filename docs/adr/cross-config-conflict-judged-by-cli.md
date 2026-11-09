@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-7f4fd2f6-672d-4d8c-a881-31024ad1d7c3: config 間の target 衝突は CLI が判定し engine に持ち込まない
+# config 間の target 衝突は CLI が判定し engine に持ち込まない
 
 - ステータス: stable
 - 日付: 2026-11-03

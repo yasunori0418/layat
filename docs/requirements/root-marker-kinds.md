@@ -22,7 +22,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66: root は 3 マーカーと絶対パス文字列の union を取る
+# root は 3 マーカーと絶対パス文字列の union を取る
 
 ## 仕様
 

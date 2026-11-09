@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# DSG-1361df1a-31c4-46ed-a6ce-92938f94ac02: リポジトリを lib / cmd / internal / templates / modules のトップレベル 5 ディレクトリへ分ける
+# リポジトリを lib / cmd / internal / templates / modules のトップレベル 5 ディレクトリへ分ける
 
 ## 設計
 

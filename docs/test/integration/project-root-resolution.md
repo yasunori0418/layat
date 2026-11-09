@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:22+09:00"
 ---
-# TC-ec0bded4-c4bc-4a61-a2b5-0b652134b223: project mode の root が git toplevel へ一意に解決し外では曖昧に成功しない
+# project mode の root が git toplevel へ一意に解決し外では曖昧に成功しない
 
 ## 条件
 

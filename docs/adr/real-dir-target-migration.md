@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-77312c71-fa32-481b-ad80-c91e5b282edc: 実ディレクトリの target は全 leaf を除去できるときだけ移行する
+# 実ディレクトリの target は全 leaf を除去できるときだけ移行する
 
 - ステータス: stable
 - 日付: 2026-11-03

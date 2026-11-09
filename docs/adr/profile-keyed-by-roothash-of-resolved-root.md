@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988: profile は解決済み root の roothash でキーする
+# profile は解決済み root の roothash でキーする
 
 - ステータス: stable
 - 日付: 2026-11-01

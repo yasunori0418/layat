@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:08:50+09:00"
 ---
-# SDR-e9de8d3d-fcb8-456d-a3af-2338f8080f4f: test_case の target を resource に改名する
+# test_case の target を resource に改名する
 
 - ステータス: stable
 - 日付: 2026-11-07

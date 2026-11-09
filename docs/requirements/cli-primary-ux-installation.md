@@ -34,7 +34,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-14f0aec9-abae-4621-82f3-40536a1ad904: layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする
+# layat CLI は PATH 常駐の一次 UX で、project mode は devShell 同梱を canonical とする
 
 ## 仕様
 

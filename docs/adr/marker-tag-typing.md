@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-d9cad6f6-d694-4c1d-afee-b57b129955dc: marker を判別タグで derivation と見分ける
+# marker を判別タグで derivation と見分ける
 
 - ステータス: stable
 - 日付: 2026-11-01

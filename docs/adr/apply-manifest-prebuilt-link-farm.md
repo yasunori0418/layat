@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:38:08+09:00"
 ---
-# ADR-24488788-a5e6-47a5-9074-97192880642a: apply --manifest でビルド済み link-farm を engine へ直接渡す
+# apply --manifest でビルド済み link-farm を engine へ直接渡す
 
 - ステータス: stable
 - 日付: 2026-11-03

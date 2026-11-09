@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-24T09:17:32+09:00"
 ---
-# CASE-f6c9eb4d-d2ed-4992-b57b-a0fbbc9963b6: checks.nixos-module — NixOS の activation の配線を評価アサートで検証する flake check
+# checks.nixos-module — NixOS の activation の配線を評価アサートで検証する flake check
 
 ## 対象
 

@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:22:37+09:00"
 ---
-# INF-af33c5a1-f846-4f09-8e43-c6ea042d6e06: バイナリキャッシュ（main push 時の cachix 投入）
+# バイナリキャッシュ（main push 時の cachix 投入）
 
 ## 構成
 

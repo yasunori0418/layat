@@ -41,7 +41,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-196ddabf-6569-4303-942e-050872972501: template は動く example を 1 config だけ置きバリエーションはコメントで示す
+# template は動く example を 1 config だけ置きバリエーションはコメントで示す
 
 ## 仕様
 

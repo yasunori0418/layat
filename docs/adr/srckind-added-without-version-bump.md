@@ -22,7 +22,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-b5431ecf-fe60-4b29-86af-9857478ce663: srcKind の列挙値は schemaVersion を上げずに足す
+# srcKind の列挙値は schemaVersion を上げずに足す
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:44+09:00"
 ---
-# CASE-4179dcb2-f199-4469-ae87-0927ece06e65: manifest_test.go — v1 の復元と版の境界・未知フィールド・root 種別の拒否・既知値の確認
+# manifest_test.go — v1 の復元と版の境界・未知フィールド・root 種別の拒否・既知値の確認
 
 ## 対象
 

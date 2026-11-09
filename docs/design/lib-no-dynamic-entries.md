@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:22:37+09:00"
 ---
-# DSG-d2e17f4f-0d32-45c1-8125-17e589664c85: 動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す
+# 動的 entry 生成のヘルパを lib に置かず、readDir する idiom をドキュメントで示す
 
 ## 設計
 

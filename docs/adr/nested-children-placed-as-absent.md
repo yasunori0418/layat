@@ -37,7 +37,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-8b7cd75f-5521-4805-b7bc-105b5c56ee38: 移行する祖先の配下の entry は lstat を経ず不在として配置する
+# 移行する祖先の配下の entry は lstat を経ず不在として配置する
 
 - ステータス: stable
 - 日付: 2026-11-03

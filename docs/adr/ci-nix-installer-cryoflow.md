@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T00:40:30+09:00"
 ---
-# ADR-ab400e58-afbd-40a0-8eae-239d3cfda211: CI の nix インストーラは cryoflow 踏襲
+# CI の nix インストーラは cryoflow 踏襲
 
 - ステータス: stable
 - 日付: 2026-11-01

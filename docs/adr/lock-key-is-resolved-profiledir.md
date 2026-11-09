@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:16:14+09:00"
 ---
-# ADR-ac648001-7e22-4fe2-a457-596064e32717: ロックのキーを解決後の profileDir にする
+# ロックのキーを解決後の profileDir にする
 
 - ステータス: stable
 - 日付: 2026-11-01

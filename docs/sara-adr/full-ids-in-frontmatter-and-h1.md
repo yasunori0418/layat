@@ -22,7 +22,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:09:48+09:00"
 ---
-# SDR-bd136f38-c991-46f9-ada9-06499d259a8b: フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる
+# フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる
 
 > **廃止（2026-11-09）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
 >

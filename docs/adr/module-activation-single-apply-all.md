@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T21:51:56+09:00"
 ---
-# ADR-f58e9981-bacc-4937-98b8-bddce0a057db: モジュールの activation は apply --all --manifest を 1 回だけ起動する
+# モジュールの activation は apply --all --manifest を 1 回だけ起動する
 
 - ステータス: stable
 - 日付: 2026-11-03

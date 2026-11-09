@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:30+09:00"
 ---
-# ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799: devShell の shellHook で配線する
+# devShell の shellHook で配線する
 
 - ステータス: stable
 - 日付: 2026-11-01

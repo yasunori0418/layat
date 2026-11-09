@@ -9,7 +9,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-b3174f13-88f4-4163-8f56-33d41e21cf77: generator
+# generator
 
 ## Definition
 

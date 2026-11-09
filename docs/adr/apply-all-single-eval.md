@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:00:56+09:00"
 ---
-# ADR-28605860-770e-41df-95dd-7dc05b20497a: apply --all は config ごとの情報を 1 回の eval でまとめて取る
+# apply --all は config ごとの情報を 1 回の eval でまとめて取る
 
 - ステータス: stable
 - 日付: 2026-11-01

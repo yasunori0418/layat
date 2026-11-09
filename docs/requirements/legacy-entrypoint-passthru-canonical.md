@@ -32,7 +32,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-05T00:29:04+09:00"
 ---
-# REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da: legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない
+# legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない
 
 ## 仕様
 

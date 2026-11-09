@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:22+09:00"
 ---
-# CASE-f5fce7b7-9780-4c8e-bf6b-f3e4b7b3bb3d: checks.hm-module — activation の配線を評価アサートで検証する flake check
+# checks.hm-module — activation の配線を評価アサートで検証する flake check
 
 ## 対象
 

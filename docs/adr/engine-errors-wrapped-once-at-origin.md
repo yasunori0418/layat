@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-07T22:24:21+09:00"
 ---
-# ADR-5228fec0-09ad-494f-8c8d-d887fc009999: engine のエラーは発生源で 1 回だけ wrap し、伝搬では再 wrap しない
+# engine のエラーは発生源で 1 回だけ wrap し、伝搬では再 wrap しない
 
 - ステータス: stable
 - 日付: 2026-11-07

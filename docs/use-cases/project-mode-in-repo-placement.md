@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:30:05+09:00"
 ---
-# UC-19a90989-0ae3-438f-8a75-4e1e2637f81c: プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する
+# プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する
 
 ## 使われ方
 

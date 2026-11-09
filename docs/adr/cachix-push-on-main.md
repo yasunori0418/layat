@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-6c477b0f-cd25-417d-91a0-172dd0ed084f: キャッシュへの投入を main への push で起動する
+# キャッシュへの投入を main への push で起動する
 
 - ステータス: stable
 - 日付: 2026-11-03

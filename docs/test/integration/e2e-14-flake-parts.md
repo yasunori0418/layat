@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-25T21:55:25+09:00"
 ---
-# CASE-9cd12012-54c0-4c97-8502-9bfb4aa7363e: e2e 14-flake-parts — mkApplyCommand を埋めた devShell が project config だけを配置する
+# e2e 14-flake-parts — mkApplyCommand を埋めた devShell が project config だけを配置する
 
 ## 対象
 

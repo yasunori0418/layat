@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-0dd4036d-594b-4f36-a509-e5498b231cf7: bump-version.yml でバージョンを上げるコミットを push する
+# bump-version.yml でバージョンを上げるコミットを push する
 
 - ステータス: stable
 - 日付: 2026-11-03

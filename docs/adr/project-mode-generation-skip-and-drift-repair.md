@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:30+09:00"
 ---
-# ADR-55d8ecdf-86bb-45d0-8c60-ac9c630cb62d: project mode では同じ link farm なら世代を積まず drift だけを直す
+# project mode では同じ link farm なら世代を積まず drift だけを直す
 
 - ステータス: stable
 - 日付: 2026-11-01

@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:49+09:00"
 ---
-# CASE-ead15d61-8ca7-41fb-9121-a5d247ef727a: nix-unit anchor-name.nix
+# nix-unit anchor-name.nix
 
 ## 対象
 

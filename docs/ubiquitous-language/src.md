@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-6e764ddd-03ce-4bd1-be53-64d651783241: src
+# src
 
 ## Definition
 

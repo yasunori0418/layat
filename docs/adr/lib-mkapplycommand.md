@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T17:26:08+09:00"
 ---
-# ADR-db293e0c-4789-45b7-93a9-adedc021344f: lib.mkApplyCommand で事前展開した apply コマンドを組む
+# lib.mkApplyCommand で事前展開した apply コマンドを組む
 
 - ステータス: stable
 - 日付: 2026-11-03

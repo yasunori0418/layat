@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-08-18T22:23:49+09:00"
 ---
-# CASE-aa967f9a-8020-44f8-b45f-57244711e1b5: gitutil_test.go — toplevel 解決の一意性とリポジトリ外・git 不在の失敗
+# gitutil_test.go — toplevel 解決の一意性とリポジトリ外・git 不在の失敗
 
 ## 対象
 

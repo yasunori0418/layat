@@ -22,7 +22,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-07T02:02:56+09:00"
 ---
-# ADR-6cd587e8-7aa2-4624-be78-7f6501bf0d6f: ツール名を layat にする
+# ツール名を layat にする
 
 - ステータス: stable
 - 日付: 2026-11-03

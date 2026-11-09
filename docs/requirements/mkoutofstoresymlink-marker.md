@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5"
   at: "2026-09-20T08:21:50+09:00"
 ---
-# REQ-eb363122-385a-499c-a074-c95efb949d07: mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す
+# mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す
 
 ## 仕様
 

@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-9425b2c7-3f62-4994-9269-cd79dd1261f7: systemRoot
+# systemRoot
 
 ## Definition
 

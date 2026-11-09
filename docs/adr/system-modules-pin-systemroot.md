@@ -36,7 +36,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c: NixOS / nix-darwin モジュールは root を systemRoot に固定する
+# NixOS / nix-darwin モジュールは root を systemRoot に固定する
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-095220c9-5a3d-4fd4-94bd-8fa1a02dd36d: cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する
+# cross-config の同一 target は後勝ちにし、foreign symlink の上書きで警告する
 
 - ステータス: stable
 - 日付: 2026-11-01

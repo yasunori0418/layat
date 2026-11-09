@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-08-18T22:23:49+09:00"
 ---
-# REQ-1767b250-b475-4276-a551-20dc79e75a30: config は Nix で書き nix build で評価する
+# config は Nix で書き nix build で評価する
 
 ## 仕様
 

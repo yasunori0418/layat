@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-dbbd91ee-1d41-438b-9c6f-6972643741cb: project mode
+# project mode
 
 ## Definition
 

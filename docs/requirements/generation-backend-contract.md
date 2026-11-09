@@ -61,7 +61,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-05T00:27:23+09:00"
 ---
-# REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b: engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う
+# engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う
 
 ## 仕様
 

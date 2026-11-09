@@ -34,7 +34,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-05T00:29:04+09:00"
 ---
-# ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c: 祖先 symlink は自己記録の古くなったものだけを移行する
+# 祖先 symlink は自己記録の古くなったものだけを移行する
 
 - ステータス: stable
 - 日付: 2026-11-03

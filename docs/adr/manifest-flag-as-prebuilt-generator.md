@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-1ddf424a-db2c-4bcb-8823-bf7e4326b980: --manifest を prebuilt 生成器に写す
+# --manifest を prebuilt 生成器に写す
 
 - ステータス: stable
 - 日付: 2026-11-03

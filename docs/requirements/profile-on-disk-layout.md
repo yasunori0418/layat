@@ -45,7 +45,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3: profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる
+# profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる
 
 ## 仕様
 

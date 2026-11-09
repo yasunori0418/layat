@@ -97,7 +97,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T13:39:28+09:00"
 ---
-# REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9: 実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる
+# 実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる
 
 ## 仕様
 

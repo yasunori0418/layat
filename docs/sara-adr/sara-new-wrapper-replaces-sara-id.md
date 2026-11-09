@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:32+09:00"
 ---
-# SDR-f5443db0-6407-41c0-9ab5-55f22dc4de5e: sara-id を廃止し sara init を包む起票ラッパーを使う
+# sara-id を廃止し sara init を包む起票ラッパーを使う
 
 > **廃止（2026-11-08）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
 >

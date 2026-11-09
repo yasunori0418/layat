@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T17:34:10+09:00"
 ---
-# ADR-e8bb6153-2528-419e-8be0-c862a3eb4e05: layat.jobs で activation の並列度を指定する
+# layat.jobs で activation の並列度を指定する
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -28,7 +28,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:00:56+09:00"
 ---
-# ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3: モジュールに layat.backup を起動配線のオプションとして持つ
+# モジュールに layat.backup を起動配線のオプションとして持つ
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -27,7 +27,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-494b6477-9d5b-4e29-879d-f7d16be5d466: 生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する
+# 生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する
 
 - ステータス: stable
 - 日付: 2026-11-03

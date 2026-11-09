@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-84e3c717-adf5-4ff3-b0db-d039b82ef19c: copy は元の mode を保存しつつ owner-write を付与する
+# copy は元の mode を保存しつつ owner-write を付与する
 
 ## 仕様
 

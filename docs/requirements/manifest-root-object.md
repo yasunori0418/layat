@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# REQ-dd10d820-e453-4099-a47a-ffb9a7de02fb: manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する
+# manifest.json の root は rootKind を持ち fixed のときだけ絶対パスを併記する
 
 ## 仕様
 

@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:22:37+09:00"
 ---
-# INF-9878e9f5-1ec0-4ef2-879b-859ea538cc43: リリース自動化（VERSION ファイル起点の bump PR・自動タグ・自動リリースノート）
+# リリース自動化（VERSION ファイル起点の bump PR・自動タグ・自動リリースノート）
 
 ## 構成
 

@@ -28,7 +28,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T09:19:35+09:00"
 ---
-# REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336: manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する
+# manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する
 
 ## 仕様
 

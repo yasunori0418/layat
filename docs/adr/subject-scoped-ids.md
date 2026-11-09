@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:01:38+09:00"
 ---
-# ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7: --json の item id は subject スコープで導く
+# --json の item id は subject スコープで導く
 
 - ステータス: stable
 - 日付: 2026-11-01

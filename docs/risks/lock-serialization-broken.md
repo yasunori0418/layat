@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-2b17fefb-6e92-4513-9e7c-de21897c9cfe: flock による直列化が破れ、同一 config への同時実行が互いの配置を壊す
+# flock による直列化が破れ、同一 config への同時実行が互いの配置を壊す
 
 ## リスク
 

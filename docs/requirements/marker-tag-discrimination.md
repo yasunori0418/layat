@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7: marker は判別タグで識別し manifest.json には漏らさない
+# marker は判別タグで識別し manifest.json には漏らさない
 
 ## 仕様
 
