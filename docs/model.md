@@ -172,10 +172,11 @@ sara が型を持たない入れ子のキー（`generated` / `verified` / `sourc
 | `threatens` | upstream | 脅威 |
 | `mitigates` | upstream | 緩和 |
 | `covers` | upstream | 網羅 |
+| `follows` | upstream | テスト計画への準拠。逆向きは `is_followed_by` |
 | `depends_on` | peer | 同じ型の item どうしの依存 |
 | `supersedes` | peer | `adr` / `sara_adr` から置き換えた ADR へ。文書丸ごとの失効 |
 | `references` | peer | ADR ヘッダの「関連:」。改訂を伴わない参照 |
 
 `refines` / `derives_from` / `satisfies` / `depends_on` / `justifies` / `supersedes` は組み込み由来、
-`references` / `threatens` / `mitigates` / `covers` は独自定義。
+`references` / `threatens` / `mitigates` / `covers` / `follows` は独自定義。
 決定を変えるときは ADR を丸ごと書き直して `supersedes` で置き換える。

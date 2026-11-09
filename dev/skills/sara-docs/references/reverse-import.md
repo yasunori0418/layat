@@ -26,8 +26,9 @@ forward と逆に、実体に近い側から束ねながら遡る:
 
 ## 途中状態の扱い
 
-逆算の途中は構造的にギャップが残る（CASE だけ在って TC が無い等は strict check の
-orphan error になるため、**束ねる先を起こすまでは commit 単位を跨がない**）。
+逆算の途中は構造的にギャップが残る。`covers` も `follows` も持たない CASE は strict check の
+orphan error になる。`follows` だけを持ち `covers` が無い CASE は orphan error にならず
+strict check を通るが、この場合も**束ねる先を起こすまでは commit 単位を跨がない**。
 `sara check` green を保てる単位（CASE + TC + risk + threatens を揃えた一塊）で進め、
 残りの未着手は `sara-gap` で追跡する。
 
