@@ -7,6 +7,8 @@ resource: "internal/engine/reset_test.go"
 covers:
   - "TC-06052178-ed49-4800-beb2-1d7c5d696ea8"
   - "TC-be3d3dc9-1ead-4e2e-8eea-46e1c8884562"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-18T16:41:13+09:00"

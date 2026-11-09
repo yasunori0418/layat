@@ -7,6 +7,9 @@ resource: "tests/e2e/scenarios/08-prune.sh"
 covers:
   - "TC-bc653f83-70ce-4920-b7cd-9b70a4cd2cae"
   - "TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9"
+follows:
+  - "TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9"
+  - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:49+09:00"

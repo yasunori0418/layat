@@ -6,6 +6,8 @@ status: stable
 resource: "internal/generation/nixprofile/nixprofile_test.go"
 covers:
   - "TC-746cb5b9-fe27-4d09-a51d-eb03d56a93a7"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-18T23:49:36+09:00"

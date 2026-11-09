@@ -6,6 +6,9 @@ status: stable
 resource: "internal/lock/lock_test.go"
 covers:
   - "TC-5454b99c-f274-438a-9ba9-5be09aa71c98"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
+  - "TP-deb05610-44bc-4962-8939-952392e5fbd0"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-08-18T22:23:49+09:00"

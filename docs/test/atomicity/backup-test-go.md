@@ -7,6 +7,9 @@ resource: "internal/engine/backup_test.go"
 covers:
   - "TC-ed4992c0-8513-4383-be0a-e45acbbc229f"
   - "TC-cd03ff56-6ed0-4100-9ec4-eb681ab66407"
+follows:
+  - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
+  - "TP-deb05610-44bc-4962-8939-952392e5fbd0"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:31+09:00"
