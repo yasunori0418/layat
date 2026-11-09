@@ -127,7 +127,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 - [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](requirements/prune-target-selection.md) — prune は backref の root が実在しない roothash 系列だけを系列ごと削除する
 - [prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](requirements/prune-safety-gates.md) — prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る
 - [rollback と list-generations は home / system mode 限定にする](requirements/rollback-list-generations-home-only.md) — rollback と list-generations は home / system mode 限定にする
-- [rollback は名指し必須で --all に対応しない](requirements/rollback-named-only.md) — rollback は名指し必須で --all に対応しない
+- [rollback は config の名指しを必須にする](requirements/rollback-named-only.md) — rollback は config の名指しを必須にする
 - [status は記録基底を走査して last-applied 記録を読み取り専用で表示する](requirements/status-command.md) — status は記録基底を走査して last-applied 記録を読み取り専用で表示する
 - [gitignore は配置 target を stdout へ列挙するだけでファイルを書き込まない](requirements/gitignore-anchored-output.md) — gitignore は配置 target を stdout へ列挙するだけでファイルを書き込まない
 - [gitignore は project mode 限定で非 project config を指定したらエラーで停止する](requirements/gitignore-project-mode-only.md) — gitignore は project mode 限定で非 project config を指定したらエラーで停止する

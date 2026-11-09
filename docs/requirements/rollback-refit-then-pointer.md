@@ -84,7 +84,7 @@ stale 除去の diff は次の基準・順序で行う:
 > - module で `layat rollback` を公開せず host へ一本化すること → [module 時は rollback を host へ一本化し、layat profile は前進のみで追従する](module-mode-profile-internal.md)
 > - project mode で rollback を公開しないこと → [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md)
 > - `rollback` が名指し必須で `--all` に対応しないこと・`list-generations` が home / system mode
->   限定であること → [rollback は名指し必須で --all に対応しない](rollback-named-only.md) / [rollback と list-generations は home / system mode 限定にする](rollback-list-generations-home-only.md)
+>   限定であること → [rollback は config の名指しを必須にする](rollback-named-only.md) / [rollback と list-generations は home / system mode 限定にする](rollback-list-generations-home-only.md)
 > - 途中失敗時に undo ジャーナルで巻き戻すこと → [途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](undo-journal-rollback.md)
 > - 配置前除去の判定そのもの → [祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する](ancestor-symlink-nest-migration.md)
 > - copy の place-once そのもの（配置先が不在のときだけコピーする分類）→

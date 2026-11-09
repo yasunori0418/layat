@@ -42,7 +42,7 @@ generated:
 > [entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする](entrypoint-discovery-order.md)、`layat.<name>` のアドレッシングは [entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する](named-manifest-addressing.md)、`apply` で name を省略した
 > ときに `default` へ解決すること（および `layat.default` 未定義でのエラー停止）は
 > [apply の config 選択は name 省略で default・明示で単一・--all で全件](apply-config-selection.md) / [config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない](default-config-name-and-namespace.md)、`rollback` が名指し必須で home / system mode 限定であることは
-> [rollback は名指し必須で --all に対応しない](rollback-named-only.md) / [rollback と list-generations は home / system mode 限定にする](rollback-list-generations-home-only.md)、`gitignore` を非 project config へ与えたときのエラー停止は
+> [rollback は config の名指しを必須にする](rollback-named-only.md) / [rollback と list-generations は home / system mode 限定にする](rollback-list-generations-home-only.md)、`gitignore` を非 project config へ与えたときのエラー停止は
 > [gitignore は project mode 限定で非 project config を指定したらエラーで停止する](gitignore-project-mode-only.md)、`--manifest` と `-f` の併用エラー、および `--all` と合成するときの形の制約は [apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す](apply-manifest-direct.md)、
 > experimental-features 未有効の案内エラーは [nix experimental-features は nix 生成器の前提条件とし、自動付与せず案内エラーで停止する](nix-experimental-features-prerequisite.md) の担当。停止時の終了コードは
 > [終了コードは 0 = 成功 / 1 = 一般エラー / 2 = dryrun の conflict とする](exit-codes.md) の担当。

@@ -38,7 +38,7 @@ layat list-generations --all    # home mode、続けて system mode の全 confi
 config、続けて system 基底（system mode）の全 config の世代を一覧する（読み取り専用）。
 system 基底が無ければ空として扱い、読めなければ warning を出してその基底を走査しない。
 
-`rollback` が名指し必須である点は [rollback は名指し必須で --all に対応しない](rollback-named-only.md) の担当。
+`rollback` が名指し必須である点は [rollback は config の名指しを必須にする](rollback-named-only.md) の担当。
 
 > **原文「standalone（CLI）」節の残る規範の所在**: 同節の第 1 文（`layat apply <name>` の
 > 明示実行と、CLI による entrypoint 発見・manifest ビルド・エンジン駆動）は [layat は CLI とエンジンの 2 層で構成する](two-layer-architecture.md) /
