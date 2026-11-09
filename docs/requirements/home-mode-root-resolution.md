@@ -31,7 +31,7 @@ generated:
 | home-manager | `$HOME`（HM が内部解決・モジュールが `homeRoot` を pin）| OS 問わず動作 |
 
 > **上は原文の写しを [NixOS / nix-darwin モジュールは root を systemRoot に固定する](../adr/system-modules-pin-systemroot.md) に合わせて改めたもので、規範は frontmatter が正**。`homeRoot` が marker であり `kind` を運ぶこと
-> （実体パス解決は engine の実行時責務）は [root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) / [root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md)、`--root` による全モード
+> （実体パス解決は engine の実行時責務）は [root マーカーは `kind` を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) / [root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md)、`--root` による全モード
 > 共通の上書きは [--root は全モード共通で解決 root を明示上書きする](root-override-flag.md)、
 > home mode の profileDir キーは [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md) の担当。**モジュールが `homeRoot` を pin する
 > こと自体は [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md) の担当**で、本 item の規範に現れる「モジュールが `homeRoot` を

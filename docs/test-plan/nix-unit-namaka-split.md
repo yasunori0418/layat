@@ -65,7 +65,7 @@ generated:
 自身がダミー入力で検証されている（→ Issue #308、[nix-unit: aggregator-merge.nix — 衝突の確認をダミー入力で検証する](../test/manifest-eval/nix-unit-aggregator-merge.md)）ため、確認が常に「衝突なし」を
 返す退行も捕まる。ファイル固有の接頭辞を付ける慣行は、確認に頼る前の第一手として残る。
 
-評価テストが内部関数を呼び出すための seam は [lib.__internal は private helper のテスト seam として公開する](lib-internal-test-seam.md)、store hash の揺れを避ける test double
+評価テストが内部関数を呼び出すための seam は [lib.__internal で private helper をテストへ公開する](lib-internal-test-seam.md)、store hash の揺れを避ける test double
 のイディオムは [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](eval-test-double.md) の担当。
 
 ## 出典

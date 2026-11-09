@@ -98,5 +98,5 @@ item id の導出規則そのものは [item id は identity の JCS を SHA-256
 > テストアプローチの規定であり、ユーザーの使われ方からは導かれないため、use_case を親に
 > 持てず接続漏れになっていた（当時の判断は Issue #211）。テスト計画の型を新設して solution
 > 直下で受けることにしたため、`derives_from` は [layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る](../solution/layat-placement-primitive.md) を指す。[非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](e2e-harness-scope.md)・
-> [NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする](nixos-vm-test-future.md) も同じ経緯で移設した。[lib.__internal は private helper のテスト seam として公開する](lib-internal-test-seam.md) は #238 では「テスト計画そのものではない」
+> [NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする](nixos-vm-test-future.md) も同じ経緯で移設した。[lib.__internal で private helper をテストへ公開する](lib-internal-test-seam.md) は #238 では「テスト計画そのものではない」
 > と判断して見送ったが、Issue #239 でその判断を改めて移設した（経緯は同 item の注記）。

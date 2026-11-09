@@ -38,7 +38,7 @@ generated:
 パスを持たない。`fixed` のみ評価時確定の絶対パスを `root` に持つ。
 
 Nix 側の `root` 引数がどの値を取るかは
-[root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md)、marker の役割は [root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) が持つ。本 item は
+[root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md)、marker の役割は [root マーカーは `kind` を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) が持つ。本 item は
 それが `manifest.json` にどう写るかを規定する。
 
 ## 出典

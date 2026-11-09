@@ -48,7 +48,7 @@ profileDir を読めない失敗を黙認して「世代 0 件」と見なすの
 危険な結論を沈黙で作る。
 
 キーイングの前提と世代を操作する処理も同じ系統にある。build 前に profileDir を決めるための
-`passthru.rootKind`（→ [mkManifest の返り値は passthru で root kind を露出する](../requirements/mkmanifest-passthru-rootkind.md)）が評価時に取れないか実際の root と
+`passthru.rootKind`（→ [mkManifest の返り値は passthru で `rootKind` を露出する](../requirements/mkmanifest-passthru-rootkind.md)）が評価時に取れないか実際の root と
 食い違うと、flock と前世代の読み取りが別の profileDir に対して行われる。build しないコマンドが eval 先行を
 省くか、`--root` で作った世代を同じ `--root` 無しで操作できてしまうと、別の系列を読む
 （→ [非 build コマンドも eval 先行を共通前段に持つ](../requirements/non-build-commands-eval-first.md)）。世代の commit・列挙・切替が世代バックエンドの契約

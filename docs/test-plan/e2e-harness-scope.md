@@ -83,6 +83,6 @@ bash・詳細は `tests/e2e/README.md`）が、flake entrypoint からの `nix b
 > スコープの規定であり、ユーザーの使われ方（use_case）から導かれるプロダクトの振る舞いでは
 > ないため、use_case を親に持てず上流へ接続できていなかった（当時の判断は Issue #211）。テスト計画
 > の型を新設して solution 直下で受けることにしたため、`derives_from` は
-> [layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る](../solution/layat-placement-primitive.md) を指す。[エンベロープの outturn 適合を Go テストと E2E の両方で検証する](json-conformance-verification.md)・[NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする](nixos-vm-test-future.md) も同じ経緯で移設した。[lib.__internal は private helper のテスト seam として公開する](lib-internal-test-seam.md) は
+> [layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る](../solution/layat-placement-primitive.md) を指す。[エンベロープの outturn 適合を Go テストと E2E の両方で検証する](json-conformance-verification.md)・[NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする](nixos-vm-test-future.md) も同じ経緯で移設した。[lib.__internal で private helper をテストへ公開する](lib-internal-test-seam.md) は
 > #238 では「テスト計画そのものではない」と判断して見送ったが、Issue #239 でその判断を
 > 改めて移設した（経緯は同 item の注記）。

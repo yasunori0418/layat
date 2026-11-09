@@ -45,5 +45,5 @@ generated:
 ## 出典
 
 `tests/nix-unit/structure.nix` の現行実装からの逆算（→ Issue #273「L1〜L4」節）。manifest
-構造の設計判断は [manifest.json を schemaVersion 1 の唯一の契約として固定する](../../adr/manifest-json-contract-schemaversion-v1.md) / [manifest.json へ marker を clean enum で写す](../../adr/wire-format-clean-enum.md) /
+構造の設計判断は [manifest.json を schemaVersion 1 の唯一の契約として固定する](../../adr/manifest-json-contract-schemaversion-v1.md) / [manifest.json へ marker を `clean` enum で写す](../../adr/wire-format-clean-enum.md) /
 [manifest.json の entry は target を識別子にして name を持たない](../../adr/manifest-entry-identity-is-target.md) が持つ。

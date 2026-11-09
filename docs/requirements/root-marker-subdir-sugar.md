@@ -65,5 +65,5 @@ root は動かず、`rootKind` も単体形と同じ値になる。`manifest.jso
 
 [root マーカーに subdir の適用形を持たせる](../adr/root-marker-subdir-applied-form.md)・[fixed root には subdir を提供しない](../adr/no-subdir-for-fixed-root.md)（marker の関数適用形）と [subdir は全 target へ前置する評価時の糖衣にし、root を動かさない](../adr/subdir-as-target-prefix-sugar.md)・[root 相対で指定するパスすべてにパス安全性の確認を課す](../adr/path-safety-for-root-relative-inputs.md)（`normalizeManifest` での target 前置糖衣）。
 root の値と対応するモードは [root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md)、マーカーが `kind` を運ぶ
-入れ物であることは [root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) が持ち、本 item はその上に乗る
+入れ物であることは [root マーカーは `kind` を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) が持ち、本 item はその上に乗る
 適用形だけを規定する。

@@ -53,7 +53,7 @@ macOS / Linux でホームの慣例が異なるため、絶対パスのローカ
 > **規範は frontmatter が正**。`mkOutOfStoreSymlink` がマーカーを返す純粋関数であることと
 > 引数が評価時確定の絶対パスであること自体は [mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](mkoutofstoresymlink-marker.md)、
 > `mkRootRelativeSymlink` のマーカーとリンクの形は [mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](root-relative-symlink-marker.md)、out-of-store entry
-> の配置と版管理の範囲は [out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする](out-of-store-link-mapping-only.md)、root マーカーの実行時解決は [root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) の担当。
+> の配置と版管理の範囲は [out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする](out-of-store-link-mapping-only.md)、root マーカーの実行時解決は [root マーカーは `kind` を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) の担当。
 > 本 item は「out-of-store の src が取る 2 形と、それぞれが target root の解決とどの時点で
 > 関係するか」を規定する。
 

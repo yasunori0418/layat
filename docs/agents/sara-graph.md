@@ -250,8 +250,8 @@ the corpus entirely: neither item scores it.
 reports success while checking nothing is confined to development, so the `low` row would
 take it; do not let it. What is lost is not the gate but the protection it gave, and that
 protection is worth exactly what it guarded — score the risk as the regression the gate was
-meant to catch. Name the inheritance source in the item's prose, and prefer naming the
-`risk` that holds the regression over describing it, so that a later re-scoring of the
+meant to catch. Name the inheritance source in the item's prose with a Markdown link to the
+`risk` that holds the regression, so that a later re-scoring of the
 source is traceable to everything that inherits from it. Where the gate guards several
 regressions, the heaviest-direction rule applies to the sources too: a suite covering both
 a path-safety gate (`high`) and a document-shape contract (`medium`) inherits `high`.

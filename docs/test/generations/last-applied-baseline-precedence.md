@@ -47,5 +47,5 @@ generated:
 
 ## 対応する CASE
 
-[record_test.go — last-applied 記録の読み書き・比較の基準の優先順位・各操作での更新](record-test-go.md)（`internal/engine/record_test.go`）。実 nix での記録の
+[`record_test.go` — last-applied 記録の読み書き・比較の基準の優先順位・各操作での更新](record-test-go.md)（`internal/engine/record_test.go`）。実 nix での記録の
 位置と rollback 後の書き直しは [e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復](e2e-02-home.md) が見る。

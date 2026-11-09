@@ -25,7 +25,7 @@ layat のユビキタス言語の索引。用語の正名・避ける綴り・�
 - [entrypoint](ubiquitous-language/entrypoint.md) — `entrypoint`
 - [starter](ubiquitous-language/starter.md) — `starter`
 - [module](ubiquitous-language/module.md) — `module`（モジュール）
-- [standalone](ubiquitous-language/standalone.md) — `standalone`
+- [`standalone`](ubiquitous-language/standalone.md) — `standalone`
 
 ## Placement input and output
 
