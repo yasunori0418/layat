@@ -41,7 +41,7 @@ specification_ja: |
   関知しないフィールドで失敗しないようにするため）。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T22:44:41+09:00"
+  at: "2026-11-09T22:03:12+09:00"
 ---
 # TP-d3000054-42d9-4bac-912a-dd3abc38d3e9: エンベロープの outturn 適合を Go テストと E2E の両方で検証する
 
@@ -92,8 +92,8 @@ item id の導出規則そのものは [item id は identity の JCS を SHA-256
 > 意味論・item インベントリ・エラーコード・世代番号を jq で構造的にアサートしている。適合
 > 検証だけを規範に置くと、この層が退行しても item に照らして検出できないため規範へ引き上げた。
 
-> **本 item は `requirement` から `test_plan` へ移設した**（→ Issue #238。旧 ID は
-> `REQ-2381d93a-732e-4437-910b-fac14d398aa0`）。エンベロープを outturn 規約準拠にすること自体は [--json は outturn 規約準拠のエンベロープを出す第 2 契約とする](../requirements/json-outturn-envelope.md) が担い、
+> **本 item は `requirement` から `test_plan` へ移設した**（→ Issue #238）。
+> エンベロープを outturn 規約準拠にすること自体は [--json は outturn 規約準拠のエンベロープを出す第 2 契約とする](../requirements/json-outturn-envelope.md) が担い、
 > そちらは use_case へ紐づく。本 item はその適合をどのテストレベルでどう検証するかを定める
 > テストアプローチの規定であり、ユーザーの使われ方からは導かれないため、use_case を親に
 > 持てず接続漏れになっていた（当時の判断は Issue #211）。テスト計画の型を新設して solution

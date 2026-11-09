@@ -31,7 +31,7 @@ specification_ja: |
   各シナリオが検証する仕様そのものは各担当 item の規範であり、ここでは再掲しない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T09:19:35+09:00"
+  at: "2026-11-09T22:03:12+09:00"
 ---
 # TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9: 非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する
 
@@ -78,8 +78,8 @@ bash・詳細は `tests/e2e/README.md`）が、flake entrypoint からの `nix b
 決定の実体は [テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)で、非 NixOS の
 実 nix 上で E2E を回す検証範囲を定めている。
 
-> **本 item は `requirement` から `test_plan` へ移設した**（→ Issue #238。旧 ID は
-> `REQ-6419e4b0-629c-435f-b1e1-0bc996b5e61d`）。「非 NixOS で動く」主張を何をどこまで E2E で検証するかを定めるテスト
+> **本 item は `requirement` から `test_plan` へ移設した**（→ Issue #238）。
+> 「非 NixOS で動く」主張を何をどこまで E2E で検証するかを定めるテスト
 > スコープの規定であり、ユーザーの使われ方（use_case）から導かれるプロダクトの振る舞いでは
 > ないため、use_case を親に持てず上流へ接続できていなかった（当時の判断は Issue #211）。テスト計画
 > の型を新設して solution 直下で受けることにしたため、`derives_from` は

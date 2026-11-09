@@ -43,7 +43,7 @@ specification_ja: |
   止まらなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:05:37+09:00"
+  at: "2026-11-09T22:03:12+09:00"
 ---
 # REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557: symlink 配置は親 dir を作り配置元/subpath を指すリンクを張り、foreign symlink は警告して後勝ちする
 
@@ -57,7 +57,7 @@ generated:
 3. <配置元>/<subpath> を指す symlink を <root>/<target> に作成（os.Symlink）
    - store link:        配置元 = Nix ストアパス
    - out-of-store:      配置元 = marker の絶対パス
-   - root 相対:         target の親から <src>/<subpath> への相対パス（→ DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296）
+   - root 相対:         target の親から <src>/<subpath> への相対パス
 ```
 
 - subpath がファイル・ディレクトリどちらでも同じ処理

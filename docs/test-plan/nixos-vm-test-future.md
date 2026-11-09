@@ -19,7 +19,7 @@ specification_ja: |
   ならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T22:44:41+09:00"
+  at: "2026-11-09T22:03:12+09:00"
 ---
 # TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2: NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする
 
@@ -42,8 +42,8 @@ NixOS / nix-darwin モジュールで使うときの実 activate は VM / sandbo
 [モジュールの検証を flake check と VM テストに置く](../adr/module-checks-separate-from-e2e.md)で、
 NixOS VM テストを E2E のハーネスとは別系統の check で検証すると定めている。
 
-> **本 item は `requirement` から `test_plan` へ移設した**（→ Issue #238。旧 ID は
-> `REQ-690f2730-2628-420d-8e72-ed1ce747ac1e`）。E2E ハーネスの検証範囲からの除外を宣言するスコープ外規定であり、
+> **本 item は `requirement` から `test_plan` へ移設した**（→ Issue #238）。
+> E2E ハーネスの検証範囲からの除外を宣言するスコープ外規定であり、
 > ユーザーの使われ方（use_case）から導かれるものではないため、use_case を親に持てず接続漏れに
 > なっていた（当時の判断は Issue #211）。モジュールでの使い方そのものは [既に home-manager / NixOS / nix-darwin を使っている環境へ layat をモジュールとして組み込む](../use-cases/module-integration.md) が担い、
 > [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md) 等がそちらへ紐づく。テスト計画の型を新設して solution 直下で受けることに

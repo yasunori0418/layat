@@ -7,7 +7,7 @@ refines:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:53:38+09:00"
+  at: "2026-11-09T22:03:12+09:00"
 ---
 # UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6: 配置に失敗・後悔したとき CLI 単体で前の世代へロールバックして元の状態へ戻す
 
@@ -29,8 +29,10 @@ layat list-generations <name> # 世代一覧
 
 ```
 純粋関数:  lib.mkManifest が link farm derivation（manifest.json + symlink farm）を生成（副作用なし）
-実行時:    固定 Go エンジンが配置し profile を swap（副作用はここだけ・→ ADR-521765d7-7e31-42f4-b548-979185a7586a）
+実行時:    固定 Go エンジンが配置し profile を swap（副作用はここだけ）
 ```
+
+lib が副作用を持たず、engine だけが実行時に副作用を起こすことは [lib は純データ生成に徹する](../adr/lib-produces-data-only.md) が定める。
 
 世代管理の対象になるのは symlink 配置。out-of-store symlink はリンク先のみが世代管理され
 （指す先の内容は設計上ライブ）、copy は世代外である。
