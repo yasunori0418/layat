@@ -22,7 +22,7 @@ import (
 
 // pruneBases returns a state dir (whose user base is created) and a system
 // base (created as-is), both under tmpdirs. The system base is a tmpdir so no
-// test ever reaches the real /nix/var/nix/profiles (→ DSG-096dc893-21f4-45e3-9347-986e9275b4d1).
+// test ever reaches the real /nix/var/nix/profiles.
 func pruneBases(t *testing.T) (stateDir, systemDir string) {
 	t.Helper()
 	stateDir = realTempDir(t)
@@ -191,7 +191,7 @@ func mustExist(t *testing.T, path, what string) {
 	}
 }
 
-// --- target accuracy (→ TC-bc653f83-70ce-4920-b7cd-9b70a4cd2cae) -----------
+// --- target accuracy -------------------------------------------------------
 
 func TestPruneRemovesOrphanSeriesWhole(t *testing.T) {
 	state, system := pruneBases(t)
@@ -230,7 +230,7 @@ func TestPruneRemovesSeriesWithoutGenerations(t *testing.T) {
 	state, system := pruneBases(t)
 	base := fakeBase(state)
 	// The majority shape in the wild: .pending out-links only, no generation
-	// link anywhere (→ DSG-096dc893 「世代を持たない系列も対象」).
+	// link anywhere.
 	pendingOnly := writeSeries(t, base, seriesSpec{
 		hash:    "bbbb",
 		backref: filepath.Join(realTempDir(t), "gone"),
@@ -363,7 +363,7 @@ func TestPruneWarnsOnUnlistableBase(t *testing.T) {
 	state, system := pruneBases(t)
 	stateOrphan := orphanSeries(t, fakeBase(state), "aaaa", "cfg")
 	// A regular file where the system base should be: ReadDir fails with
-	// ENOTDIR, which root cannot bypass either (→ TP-deb05610 の横断規約).
+	// ENOTDIR, which root cannot bypass either.
 	if err := os.RemoveAll(system); err != nil {
 		t.Fatal(err)
 	}
@@ -578,7 +578,7 @@ func TestPruneKeepsSeriesWhoseNamesCannotBeListed(t *testing.T) {
 	}
 }
 
-// --- safety gates (→ TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9) --------------
+// --- safety gates ----------------------------------------------------------
 
 func TestPruneDryRunChangesNothing(t *testing.T) {
 	state, system := pruneBases(t)
