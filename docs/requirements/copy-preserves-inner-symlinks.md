@@ -35,4 +35,4 @@ place-once そのものは [copy は target 不在のときだけマテリアラ
 `docs/spec.md`「配置動作仕様」→「copy モード（place-once・ユーザー管理）」節の箇条書き第 5 項
 （および「recopy」節の「symlink 複製は通常 copy と同じ」）。
 
-決定の実体は [copy 内の symlink は symlink のまま複製する](../adr/symlink-inside-copy-kept.md)「copy 内の symlink は symlink のまま複製する」。
+決定の実体は [copy 内の symlink は symlink のまま複製する](../adr/symlink-inside-copy-kept.md)。

@@ -39,5 +39,5 @@ cmd/layat                       ← 生成器の選択と注入だけ（newGener
 
 ## 出典
 
-[manifest の取得をプロセス内の Go インターフェイスの生成器越しにする](../adr/manifest-generator-in-process-interface.md)「manifest の取得をプロセス内の Go インターフェイスの生成器越しにする」と、Issue #395 の計画（2026-09-26）の裁定「テストダブル
+[manifest の取得をプロセス内の Go インターフェイスの生成器越しにする](../adr/manifest-generator-in-process-interface.md)と、Issue #395 の計画（2026-09-26）の裁定「テストダブル
 `Fake` は `internal/generator/fake.go`（非 `_test` ファイル）に置く」。

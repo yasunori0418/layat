@@ -15,7 +15,7 @@ specification: |
   The two SHALL remain separate paths. Where several configs do ride on a single
   invocation, as the `layat.configs` of one module configuration do through the `apply
   --all` of the activation, detection before placement is possible and SHALL NOT be
-  precluded by this; that case is stated by REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 and is
+  precluded by this; that case is stated by [単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する](hm-configs-target-collision-assertion.md) and is
   not restated here.
 specification_ja: |
   別キー A / B が `target` フィールドを同値に明示上書きした衝突は、正規化後 target
@@ -26,7 +26,7 @@ specification_ja: |
   foreign symlink warning として扱わなければならない。両者は別の処理として保たなければ
   ならない。単一の起動に載る複数 config
   （activation の `apply --all` に載る 1 つのモジュール config の `layat.configs` など）に
-  ついては配置前の検出が可能であり、本 item はそれを妨げない。その場合の規範は REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44 の担当で、本 item では
+  ついては配置前の検出が可能であり、本 item はそれを妨げない。その場合の規範は [単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する](hm-configs-target-collision-assertion.md) の担当で、本 item では
   規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"
@@ -62,6 +62,6 @@ cross-config（別 profile・別 manifest）の同一 target 衝突は eval で�
 `docs/spec.md`「lib API」→「入力検査（`evalModules` + `normalizeManifest`）」。
 
 決定の実体は同一 manifest 内の target 衝突を eval 時に検出すると定めた
-[manifest 内の target の衝突を評価時に検出する](../adr/manifest-target-conflict-eval-error.md)「manifest 内の target の衝突を評価時に検出する」で、cross-config を「単一の eval に載らない場合」へ限定した
+[manifest 内の target の衝突を評価時に検出する](../adr/manifest-target-conflict-eval-error.md)で、cross-config を「単一の eval に載らない場合」へ限定した
 のは旧決定（単一のモジュール eval に載る config 間は静的検出が可能）。例外の条件を「単一の起動」へ改めたのは
-[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)「モジュールは configs 間の target 衝突を評価時に確認しない」。
+[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)。

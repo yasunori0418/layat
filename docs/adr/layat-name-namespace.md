@@ -1,7 +1,7 @@
 ---
 id: "ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1"
 type: adr
-name: "named manifest を専用の layat.<name> 名前空間に公開する"
+name: "named manifest を専用の `layat.<name>` 名前空間に公開する"
 status: stable
 sources:
   - id: "issue-4"
@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1: named manifest を専用の layat.<name> 名前空間に公開する
+# ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1: named manifest を専用の `layat.<name>` 名前空間に公開する
 
 - ステータス: stable
 - 日付: 2026-11-01
@@ -39,7 +39,7 @@ entrypoint は named manifest を専用の `layat` 名前空間の `layat.<name>
 `layat.<system>.<name>` とし、system は CLI が補う。shell.nix / default.nix での公開形は [legacy entrypoint は mkShell の passthru 形を正準にする](legacy-entrypoint-mkshell-passthru-canonical.md) が
 決める。
 
-entrypoint の形ごとの公開形と build の attr path は [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md) に、
+entrypoint の形ごとの公開形と build の attr path は [entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md) に、
 名前空間を分けて `packages` に manifest を含めないことは [config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない](../requirements/default-config-name-and-namespace.md) に置く。
 
 ## 根拠

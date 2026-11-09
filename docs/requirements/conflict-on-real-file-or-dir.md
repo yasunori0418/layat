@@ -34,5 +34,5 @@ target に通常ファイルまたはディレクトリが存在する場合は�
 
 `docs/spec.md`「配置動作仕様」→「symlink モード」の箇条書き第 2 項。
 
-決定の実体は [祖先 symlink は自己記録の古くなったものだけを移行する](../adr/ancestor-symlink-recorded-stale-only.md)「祖先 symlink は自己記録の古くなったものだけを移行する」（祖先 symlink /
+決定の実体は [祖先 symlink は自己記録の古くなったものだけを移行する](../adr/ancestor-symlink-recorded-stale-only.md)（祖先 symlink /
 実体衝突の扱い）で、実 dir の例外化は [実ディレクトリの target は全 leaf を除去できるときだけ移行する](../adr/real-dir-target-migration.md) が追加した。

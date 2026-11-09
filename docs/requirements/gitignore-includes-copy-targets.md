@@ -37,4 +37,4 @@ project mode の copy target も ephemeral 扱いで、各 clone で place-once 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `gitignore` の `method` 非区別の
 箇条書き。
 
-決定の実体は [project mode では copy と out-of-store も ephemeral として扱う](../adr/copy-and-out-of-store-ephemeral-in-project.md)「project mode では copy と out-of-store も ephemeral として扱う」。
+決定の実体は [project mode では copy と out-of-store も ephemeral として扱う](../adr/copy-and-out-of-store-ephemeral-in-project.md)。

@@ -77,7 +77,7 @@ bash・詳細は `tests/e2e/README.md`）が、flake entrypoint からの `nix b
 
 `docs/spec.md`「E2E 検証範囲（非 NixOS）」節の導入文と表。
 
-決定の実体は [テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)「テストを sandbox 可否で flake check と E2E に分ける」で、非 NixOS の
+決定の実体は [テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)で、非 NixOS の
 実 nix 上で E2E を回す検証範囲を定めている。
 
 > **本 item は `requirement` から `test_plan` へ移設した**（→ Issue #238。旧 ID は

@@ -32,7 +32,7 @@ git 状態に干渉しない。
 
 `docs/spec.md`「root の解決」→「project mode（`root = projectRoot`）」節の箇条書き最終項。
 
-決定の実体は [ephemeral 配置は git に干渉しない](../adr/ephemeral-no-git-interference.md)「ephemeral 配置は git に干渉しない」。
+決定の実体は [ephemeral 配置は git に干渉しない](../adr/ephemeral-no-git-interference.md)。
 copy target まで ephemeral 扱いとする範囲は [project mode では copy と out-of-store も ephemeral として扱う](../adr/copy-and-out-of-store-ephemeral-in-project.md) が定めているが、本 item の規範に
 copy 固有の記述は無く、その範囲は [gitignore は method を区別せず copy target も含めて全 target を列挙する](gitignore-includes-copy-targets.md) の担当のため [project mode では copy と out-of-store も ephemeral として扱う](../adr/copy-and-out-of-store-ephemeral-in-project.md) からの `justifies` は
 張らない。

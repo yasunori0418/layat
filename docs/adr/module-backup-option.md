@@ -32,7 +32,7 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: [apply --manifest でビルド済み link-farm を engine へ直接渡す](apply-manifest-prebuilt-link-farm.md), [モジュールの activation は apply --all --manifest を 1 回だけ起動する](module-activation-single-apply-all.md), [モジュールの activation は lock を待ち、失敗したら switch を止める](module-activation-waits-and-fails-switch.md), [指定が無いときは成功時に何も出力しない](silent-on-success.md), [HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](hm-configs-independent-profiles.md), [layat.recopy で activation の起動に --recopy を付ける](module-recopy-option.md), [layat.jobs で activation の並列度を指定する](module-jobs-option.md), [configs.<name>.subdir で config ごとに target の基点を寄せる](module-config-subdir-option.md), [--backup を = 区切りで suffix を取る省略可能な値のフラグにする](backup-optional-value-flag.md), GitHub Issue #169, #172
+- 関連: [apply --manifest でビルド済み link-farm を engine へ直接渡す](apply-manifest-prebuilt-link-farm.md), [モジュールの activation は apply --all --manifest を 1 回だけ起動する](module-activation-single-apply-all.md), [モジュールの activation は lock を待ち、失敗したら switch を止める](module-activation-waits-and-fails-switch.md), [指定が無いときは成功時に何も出力しない](silent-on-success.md), [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](hm-configs-independent-profiles.md), [layat.recopy で activation の起動に --recopy を付ける](module-recopy-option.md), [layat.jobs で activation の並列度を指定する](module-jobs-option.md), [`configs.<name>.subdir` で config ごとに target の基点を寄せる](module-config-subdir-option.md), [--backup を = 区切りで suffix を取る省略可能な値のフラグにする](backup-optional-value-flag.md), GitHub Issue #169, #172
 - 起点: 旧 epic #167 から統合された epic #172 の grilling セッション（2026-07-11・2026-07-12）で確定。ADR-0045 §8 を書き直した
 
 ## 背景

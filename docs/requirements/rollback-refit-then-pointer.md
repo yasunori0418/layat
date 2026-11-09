@@ -12,7 +12,7 @@ specification: |
   mandatory. The diff for stale removal SHALL take
   the manifest of the departing generation N — the present state of the filesystem — as the
   `baseline`, read from the last-applied record when one exists and otherwise from the
-  current generation of the profile (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35), and the manifest of the
+  current generation of the profile ([apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)), and the manifest of the
   generation N-1 being returned to, read from its generation link, as the `target`, and
   the planner SHALL be computed from that pair and reflected onto the filesystem in the
   same order as an apply: pre-placement removal, then placement and replacement, then copy
@@ -25,7 +25,7 @@ specification: |
   execution path as the pre-placement removal of an apply, stopping with an error on drift
   in the same way. Only at the very end SHALL the profile pointer be moved to N-1 through
   the switch operation of the generation backend contract
-  (REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b), the default nixprofile backend running
+  ([engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)), the default nixprofile backend running
   `nix-env --profile <profileDir>/profile --switch-generation N-1`; moving the pointer
   first would shift the baseline to N-2 and make stale removal wrong,
   so the filesystem SHALL converge first and the pointer move SHALL come last. After the
@@ -37,7 +37,7 @@ specification_ja: |
   dir 自体ではなく任意 root に配置するため、profile ポインタの移動だけでは FS が変わらず、
   再配置が必須である。古くなった配置の除去の diff は、`baseline` を離れる世代 N の manifest（FS の現状。
   last-applied 記録があれば記録から、無ければ profile の current 世代から読む。
-  REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）、`target` を戻る世代 N-1 の manifest（世代リンクから
+  [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)）、`target` を戻る世代 N-1 の manifest（世代リンクから
   読む）とし、この組で planner を計算して apply と同順
   （配置前除去 → 配置 / 張替え → copy 反映 → 古くなった配置の除去）で FS へ反映しなければならない。
   copy 反映は place-once でなければならず、配置先が不在のときだけコピーしなければならず、
@@ -45,7 +45,7 @@ specification_ja: |
   祖先 symlink を配下ネスト entries へ移行した世代であれば、配置前除去は戻り先 N-1 の祖先を
   塞いでいる自己記録 symlink を配置前に除去しなければならない（apply の配置前除去と同一の実行
   処理・drift 時は同じくエラー停止）。最後に世代バックエンドの契約
-  （REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）の切替操作で profile ポインタを N-1 へ移さなければ
+  （[engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)）の切替操作で profile ポインタを N-1 へ移さなければ
   ならない（既定の nixprofile は `nix-env --profile <profileDir>/profile --switch-generation N-1`
   を実行する）。
   ポインタを先に動かすと基準世代が N-2 へずれ古くなった配置の除去が誤るため、FS 収束を先に、
@@ -106,7 +106,7 @@ stale 除去の diff は次の基準・順序で行う:
 
 `docs/spec.md`「世代管理仕様」→「ロールバック」節の standalone（home mode）の箇条書き。
 
-決定の実体は [rollback は FS を収束させてからポインタを動かす](../adr/rollback-baseline-and-pointer-last.md)「rollback は FS を収束させてからポインタを動かす」（rollback diff 基準）で、
+決定の実体は [rollback は FS を収束させてからポインタを動かす](../adr/rollback-baseline-and-pointer-last.md)（rollback diff 基準）で、
 戻り先の祖先 symlink を配置前除去する処理は [祖先 symlink は自己記録の古くなったものだけを移行する](../adr/ancestor-symlink-recorded-stale-only.md) が定めている。ポインタ移動を世代
-バックエンドの契約越しにしたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」、比較の基準を
+バックエンドの契約越しにしたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)、比較の基準を
 last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)・[rollback はポインタ移動の前に戻り先の manifest で記録を書き直す](../adr/rollback-rewrites-record-before-pointer.md)。

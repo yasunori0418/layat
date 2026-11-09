@@ -52,5 +52,5 @@ generated:
 `docs/spec.md`「CLI 仕様」→「再現性スタンス」節の blockquote「`nix flake check` と `layat`
 カスタム output」。
 
-決定の実体は [flake check の警告は無害として許容する](../adr/flake-check-warnings-tolerated.md)「flake check の警告は無害として許容する」（unknown 警告は想定内・主検証は `nix build`。
+決定の実体は [flake check の警告は無害として許容する](../adr/flake-check-warnings-tolerated.md)（unknown 警告は想定内・主検証は `nix build`。
 transpose しても警告が消えないことの確認を含む）。

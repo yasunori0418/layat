@@ -49,5 +49,5 @@ config 内の各 copy entry について:
 `docs/spec.md`「配置動作仕様」→「recopy（`apply --recopy`）・reset（`layat reset`）」節の
 recopy コードブロックと、同節箇条書き第 3 項。
 
-決定の実体は [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](../adr/in-memory-undo-journal.md)「途中失敗した apply をインメモリ undo ジャーナルで巻き戻す」（rename
+決定の実体は [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](../adr/in-memory-undo-journal.md)（rename
 退避による上書きと復元）で、`--recopy` の追加自体は [apply --recopy で全 copy target を src から無条件に上書きする](../adr/apply-recopy-overwrites-copies.md) が決めている。

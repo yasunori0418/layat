@@ -15,7 +15,7 @@ specification: |
   record; foreign ones SHALL be left with a warning), the selected entries and the
   destinations recorded for them being taken from the last-applied record when one exists
   and otherwise from the current generation of the profile
-  (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35), and copy targets SHALL also be
+  ([apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)), and copy targets SHALL also be
   deleted, `reset` being the only explicit means of deleting a copy. After removing either
   a symlink or a copy, empty-parent-directory pruning SHALL be applied. Because of the
   risk of data loss, the command SHALL request consent, either through a confirmation
@@ -24,19 +24,19 @@ specification: |
   teardown that leaves the profile and generations untouched, while rewriting the
   last-applied record (and, when only a record exists, creating the profileDir that is the
   flock key together with the backref `.root` for the roothash series) as stated by
-  REQ-9d622539-a1e5-4719-af51-e0cd85b66f35; as long as the config still holds the entry,
+  [apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md); as long as the config still holds the entry,
   the next apply SHALL place it again. It SHALL be usable in both home and project mode.
 specification_ja: |
   `layat reset <name> [target...]` は配置物を無い状態へ戻す teardown でなければならない。
   target 省略で全 entry、指定でその entry のみを対象としなければならない。symlink は古くなった配置の
   除去と同じ保守的不変条件（layat 管理・記録通りのみ・foreign は warning で残す）で除去し
   （対象の entry と manifest が記録する配置先は、last-applied 記録があれば記録から、無ければ profile の current
-  世代から取る。REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）、
+  世代から取る。[apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)）、
   copy target も削除しなければならない（copy を消す唯一の明示手段）。symlink・copy いずれの
   除去後も空親ディレクトリ剪定を適用しなければならない。データ損失リスクのため確認プロンプトを
   出すか `-y` / `--yes`（スクリプト / CI 用）で同意を要求し、削除 target をレポート表示
   しなければならない。`reset` は profile / 世代を触らない FS-only teardown でなければならず
-  （REQ-9d622539-a1e5-4719-af51-e0cd85b66f35 が定める last-applied 記録の書き直しと、記録だけが
+  （[apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md) が定める last-applied 記録の書き直しと、記録だけが
   あるときの flock の鍵である profileDir（roothash 系列は backref `.root` も）の作成は行う）、
   config が entry を残す限り次の apply がこれを再配置しなければならない。home / project の
   両モードで使用できなければならない。
@@ -94,6 +94,6 @@ home / project 両モード可。
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `reset <name> [target...]` の箇条書きと、
 同節グローバルフラグ表の `-y, --yes`。
 
-決定の実体は [reset で profile を触らずに配置物を撤去する](../adr/reset-fs-only-teardown.md)「reset で profile を触らずに配置物を撤去する」で、`-y` / `--yes` に
+決定の実体は [reset で profile を触らずに配置物を撤去する](../adr/reset-fs-only-teardown.md)で、`-y` / `--yes` に
 よる同意は [reset は非対話の実行で --yes を必須にする](../adr/reset-confirmation-and-yes.md) が決めている。撤去対象を last-applied 記録から優先して取り、記録を書き直すのは
 [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)・[reset は撤去できなかった entry を残して記録を書き直す](../adr/reset-rewrites-record-with-survivors.md)。

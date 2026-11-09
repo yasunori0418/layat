@@ -35,4 +35,4 @@ generated:
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply --all --recopy` の箇条書き。
 
-決定の実体は [apply の修飾フラグを --all と合成できるようにする](../adr/apply-modifiers-compose-with-all.md)「apply の修飾フラグを --all と合成できるようにする」と、`--backup` について同じ直交性を定めた [--backup を = 区切りで suffix を取る省略可能な値のフラグにする](../adr/backup-optional-value-flag.md)。
+決定の実体は [apply の修飾フラグを --all と合成できるようにする](../adr/apply-modifiers-compose-with-all.md)と、`--backup` について同じ直交性を定めた [--backup を = 区切りで suffix を取る省略可能な値のフラグにする](../adr/backup-optional-value-flag.md)。

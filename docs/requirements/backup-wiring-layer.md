@@ -11,7 +11,7 @@ specification: |
   the `layat apply --all --manifest <name>=<link-farm> …` invocation performed at
   activation only where
   `layat.backup.enable` is true, setting it aside being an explicit opt-in by the user; the
-  suffix SHALL be the value of `layat.backup.suffix`, whose default REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 states.
+  suffix SHALL be the value of `layat.backup.suffix`, whose default [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md) states.
   `layat.backup` SHALL be an option of the invocation-wiring layer, independent of `entries`
   (the manifest v1 contract), and SHALL NOT affect the manifest itself.
 specification_ja: |
@@ -19,7 +19,7 @@ specification_ja: |
   activation で行う `layat apply --all --manifest <name>=<link-farm> …` 起動へ
   `--backup=<suffix>` を配線しなければ
   ならない（退避はユーザーの明示 opt-in であるため）。suffix は `layat.backup.suffix` の値で
-  なければならず、そのデフォルトは REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10 が定める。`layat.backup` は `entries`
+  なければならず、そのデフォルトは [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md) が定める。`layat.backup` は `entries`
   （manifest v1 契約）とは独立な起動配線レイヤーのオプションであり、manifest 自体に影響して
   はならない。
 generated:
@@ -53,6 +53,6 @@ generated:
 `docs/spec.md`「モジュールオプション仕様」→「共通オプション（全モジュール）」節の
 `layat.backup` の段落。
 
-決定の実体は [モジュールに layat.backup を起動配線のオプションとして持つ](../adr/module-backup-option.md)「モジュールに layat.backup を起動配線のオプションとして持つ」で、
+決定の実体は [モジュールに layat.backup を起動配線のオプションとして持つ](../adr/module-backup-option.md)で、
 module の使い方への配線は同 ADR が Issue #169 とともに定めている。配線先を全 config の
 `apply --all --manifest <name>=<link-farm> …` 起動にしたのは [モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)。

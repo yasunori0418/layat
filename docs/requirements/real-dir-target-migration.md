@@ -61,4 +61,4 @@ target 自身が実 dir のとき、配下（任意深さ）の全 leaf を判�
 「target に通常ファイルまたはディレクトリが存在する場合はエラーで停止（上書きしない）。
 ただし実 dir は §0.5 の条件を満たせば例外的に PreRemove で除去して配置する」。
 
-決定の実体は [実ディレクトリの target は全 leaf を除去できるときだけ移行する](../adr/real-dir-target-migration.md)「実ディレクトリの target は全 leaf を除去できるときだけ移行する」。
+決定の実体は [実ディレクトリの target は全 leaf を除去できるときだけ移行する](../adr/real-dir-target-migration.md)。

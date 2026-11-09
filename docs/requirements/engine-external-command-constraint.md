@@ -10,14 +10,14 @@ specification: |
   The engine SHALL invoke only `git` (for obtaining the toplevel) as an external command.
   Place / replace / remove and conservative stale removal SHALL be performed with native
   filesystem operations. Generation operations (commit, list, switch) SHALL go through the
-  generation backend contract (REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b) and SHALL NOT be
+  generation backend contract ([engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)) and SHALL NOT be
   invoked by the engine as external commands; the default backend nixprofile runs
   `nix-env` inside its own package.
 specification_ja: |
   engine が外部コマンドとして叩いてよいのは `git`（toplevel の取得）のみでなければならない。
   place / replace / remove と古くなった配置の保守的な除去はネイティブ FS 操作で行わなければならない。
   世代操作（コミット・一覧・切替）は世代バックエンドの契約
-  （REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）越しに行わなければならず、engine が外部コマンド
+  （[engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)）越しに行わなければならず、engine が外部コマンド
   として呼び出してはならない。既定バックエンド nixprofile は自パッケージの内側で `nix-env` を
   実行する。
 generated:
@@ -44,6 +44,6 @@ engine は `manifest.json` を入力に取り、外部コマンドは `git`（to
 （「`manifest.json` を入力に取り nix(profile)/git(toplevel)のみ叩く」「ネイティブ FS
 操作で place/replace/remove、保守的 stale 除去、nix-env --set」）。
 
-決定の実体は [engine が直接叩く外部コマンドを git に限る](../adr/engine-external-command-git-only.md)「engine が直接叩く外部コマンドを git に限る」で、`rsync` / `ln` の runtime 依存を落とし FS 操作を
+決定の実体は [engine が直接叩く外部コマンドを git に限る](../adr/engine-external-command-git-only.md)で、`rsync` / `ln` の runtime 依存を落とし FS 操作を
 ネイティブ Go（`os.Symlink` / ネイティブ再帰コピー）で行うことを定めている。外部コマンドを
 `git` のみに限り、profile 操作を世代バックエンドの契約へ移したのは [engine が直接叩く外部コマンドを git に限る](../adr/engine-external-command-git-only.md)。

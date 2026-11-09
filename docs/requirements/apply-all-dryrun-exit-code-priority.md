@@ -36,4 +36,4 @@ generated:
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」の最終箇条書き。
 
-決定の実体は [apply --all --dryrun の終了コードは error を conflict より優先する](../adr/apply-all-dryrun-exit-code-priority.md)「apply --all --dryrun の終了コードは error を conflict より優先する」。
+決定の実体は [apply --all --dryrun の終了コードは error を conflict より優先する](../adr/apply-all-dryrun-exit-code-priority.md)。

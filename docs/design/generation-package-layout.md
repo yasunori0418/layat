@@ -61,11 +61,11 @@ type Backend interface {
 
 ## 出典
 
-[世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)「世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う」、
-[世代の一覧を nix-env を経由せず世代リンクの走査で得る](../adr/generation-list-scans-links.md)「世代の一覧を nix-env を経由せず世代リンクの走査で得る」、
-[世代バックエンドのテストダブルを FS ベースの Fake に統一する](../adr/fs-based-generation-fake.md)「世代バックエンドのテストダブルを FS ベースの Fake に統一する」、
-[世代バックエンドの注入を必須にし nix-env への暗黙のフォールバックを持たない](../adr/generation-backend-required-no-fallback.md)「世代バックエンドの注入を必須にし nix-env への暗黙のフォールバックを持たない」、
-[profileDir の内部レイアウトを世代バックエンド契約の固定部分にする](../adr/profiledir-layout-fixed-in-contract.md)「profileDir の内部レイアウトを世代バックエンド契約の固定部分にする」、
-[前世代の読み取りは契約に載せず engine が直接読む](../adr/generation-reads-outside-contract.md)「前世代の読み取りは契約に載せず engine が直接読む」、
-[engine が直接叩く外部コマンドを git に限る](../adr/engine-external-command-git-only.md)「engine が直接叩く外部コマンドを git に限る」、
-[.pending の後片付けを gcroot を知らない engine の FS 操作として行う](../adr/pending-cleanup-without-gcroot.md)「.pending の後片付けを gcroot を知らない engine の FS 操作として行う」。
+[世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)、
+[世代の一覧を nix-env を経由せず世代リンクの走査で得る](../adr/generation-list-scans-links.md)、
+[世代バックエンドのテストダブルを FS ベースの Fake に統一する](../adr/fs-based-generation-fake.md)、
+[世代バックエンドの注入を必須にし nix-env への暗黙のフォールバックを持たない](../adr/generation-backend-required-no-fallback.md)、
+[profileDir の内部レイアウトを世代バックエンド契約の固定部分にする](../adr/profiledir-layout-fixed-in-contract.md)、
+[前世代の読み取りは契約に載せず engine が直接読む](../adr/generation-reads-outside-contract.md)、
+[engine が直接叩く外部コマンドを git に限る](../adr/engine-external-command-git-only.md)、
+[.pending の後片付けを gcroot を知らない engine の FS 操作として行う](../adr/pending-cleanup-without-gcroot.md)。

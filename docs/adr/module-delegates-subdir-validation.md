@@ -30,7 +30,7 @@ generated:
 
 モジュールは subdir の確認・正規化・空文字の読み替えを持たず、値をそのまま lib へ渡す。`""` を
 null と同一視しない。不正な値は lib の評価エラーで止まる。規範は
-[HM モジュールは configs.<name>.subdir が非 null の config を homeRoot の subdir 適用形で組み、全 target を $HOME/<subdir>/ 配下に置く](../requirements/hm-config-subdir-wiring.md) に置く。
+[HM モジュールは `configs.<name>.subdir` が非 null の config を homeRoot の subdir 適用形で組み、全 target を `$HOME/<subdir>/` 配下に置く](../requirements/hm-config-subdir-wiring.md) に置く。
 
 ## 根拠
 

@@ -10,7 +10,7 @@ specification: |
   `layat apply <name> --backup[=<suffix>]` SHALL rename an existing *unrecorded* entity
   that blocks placement — such as a foreign regular file / directory, a copy structure
   mismatch, a foreign real file under a copy, or a method change from copy to symlink, the
-  extension of the subjects being settled by REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 — aside to
+  extension of the subjects being settled by [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](backup-stage-position.md) — aside to
   `<target>.<suffix>` before placing, as an escape hatch out of a conflict. Omitting the
   value SHALL mean the suffix `layat-backup`. Because of the cobra `NoOptDefVal`
   constraint, specifying a suffix SHALL require the `=` form (`--backup=bak`); the
@@ -23,7 +23,7 @@ specification: |
 specification_ja: |
   `layat apply <name> --backup[=<suffix>]` は、配置を塞ぐ既存の記録外実体（例: foreign な
   通常ファイル / ディレクトリ・copy 構造不一致・copy foreign 実ファイル・method 変更
-  copy→symlink。対象の外延は REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98 が定める）を `<target>.<suffix>` へ rename 退避して
+  copy→symlink。対象の外延は [backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する](backup-stage-position.md) が定める）を `<target>.<suffix>` へ rename 退避して
   から配置しなければならない（conflict の脱出ハッチ）。値なしは suffix `layat-backup` を
   意味しなければならない。cobra `NoOptDefVal` の制約により suffix 指定は `=` 区切り必須と
   しなければならず（`--backup=bak`）、スペース区切りは suffix として扱ってはならない。

@@ -22,7 +22,7 @@ git repo を 2 つ用意して実 nix 経由で apply する E2E シナリオ。
 `<roothash>` 系列が立つので、一方の root を `rm -rf` して孤児にし、もう一方は生存させたまま
 `layat prune` を駆動する。
 
-判定分岐そのものは `CASE-49ac6d68-ed29-41aa-b939-dcfdc8711082`（tmpdir に手で組んだ fixture）が
+判定分岐そのものは [prune_test.go — 孤児系列の判定と系列ごとの削除・dryrun / 確認 / lock / 削除段の失敗](prune-test-go.md)（tmpdir に手で組んだ fixture）が
 覆っている。**このシナリオの持ち分は「実 apply が置いた本物のレイアウトを prune が対象にできるか」**で、
 手組み fixture が再現しないのは `nix-env --set` が `/nix/var/nix/gcroots/auto` 経由で張る
 indirect gcroot と、CLI の実際の処理（`--dryrun` / `--yes` / `--json`）を通ることの 2 点。engine の
@@ -31,7 +31,7 @@ indirect gcroot と、CLI の実際の処理（`--dryrun` / `--yes` / `--json`�
 `.pending` は逆に**ユニット側だけが持つ形**で、このシナリオには現れない。apply が成功すると
 `cleanupPending` が `--set` 直後に消し、以後は世代リンクが gcroot を継承する
 （→ `internal/engine/engine.go` 手順 10・[store path は out-link で受け取る](../../adr/store-path-via-out-link.md)）。`.pending` だけの系列を prune が対象にすることは
-`CASE-49ac6d68` の `TestPruneRemovesSeriesWithoutGenerations` が覆う。
+[prune_test.go — 孤児系列の判定と系列ごとの削除・dryrun / 確認 / lock / 削除段の失敗](prune-test-go.md) の `TestPruneRemovesSeriesWithoutGenerations` が覆う。
 
 走査基底は 2 つある（→ [prune は system 基底も走査し、権限の無い系列を見送る](../../adr/prune-scans-system-base-skips-unpermitted.md)）。system 基底は絶対パスで `$HOME` / `$XDG_STATE_HOME` の
 差し替えでは動かないため、`e2e_isolate` が `LAYAT_SYSTEM_PROFILE_BASE` で隔離先の tmpdir へ
@@ -72,5 +72,5 @@ indirect gcroot と、CLI の実際の処理（`--dryrun` / `--yes` / `--json`�
   残した」が区別できなくなるから
 
 破壊的実行のインベントリ（`--yes` の結果を `--json` で見る形）と削除段の失敗分岐は、権限操作を
-要して実機では割に合わないので `CASE-be10d33c`（`cmd/layat/prune_test.go`）と `CASE-49ac6d68` の
+要して実機では割に合わないので [prune_test.go — prune の確認ポリシー・root パス一覧の提示・ストリーム排他と --json の形状](../cli-json/prune-cli-test-go.md)（`cmd/layat/prune_test.go`）と [prune_test.go — 孤児系列の判定と系列ごとの削除・dryrun / 確認 / lock / 削除段の失敗](prune-test-go.md) の
 担当。このシナリオは持たない。

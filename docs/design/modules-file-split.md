@@ -40,7 +40,7 @@ modules/
 どのモジュールも公開せず、各モジュールが自分の性質で pin する（home-manager → `homeRoot`、
 NixOS / nix-darwin → `systemRoot`）。
 home-manager は config ごとに `subdir` が非 null なら `homeRoot { subdir = <subdir>; }` を、null なら素の
-`homeRoot` を root に組む（[HM モジュールは configs.<name>.subdir が非 null の config を homeRoot の subdir 適用形で組み、全 target を $HOME/<subdir>/ 配下に置く](../requirements/hm-config-subdir-wiring.md)）。subdir の確認は `common.nix` にも
+`homeRoot` を root に組む（[HM モジュールは `configs.<name>.subdir` が非 null の config を homeRoot の subdir 適用形で組み、全 target を `$HOME/<subdir>/` 配下に置く](../requirements/hm-config-subdir-wiring.md)）。subdir の確認は `common.nix` にも
 `home-manager.nix` にも置かず、lib の manifest 評価に委ねる。
 
 **engine 起動の組み立ては `kick.nix` へ切り出し、`common.nix` には置かない**。`kick.nix` は
@@ -62,5 +62,5 @@ transpose を担う。
 「モジュール統合設計」→「共通オプション」節。
 
 なお同原文の当該節は `options.layat.entries` を直下に置く旧形で書かれているが、
-本 item は [HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が導入した `layat.configs.<name>` を反映した [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md) /
+本 item は [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が導入した `layat.configs.<name>` を反映した [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md) /
 [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](../requirements/hm-named-configs-profiles.md) の現行規範に合わせている。

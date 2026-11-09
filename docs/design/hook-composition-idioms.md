@@ -136,6 +136,6 @@ fi
 
 ## 出典
 
-[engine の実行イベントにユーザー定義スクリプトの hook を掛ける](../adr/engine-event-hooks.md)「engine の実行イベントにユーザー定義スクリプトの hook を掛ける」の決定節。
+[engine の実行イベントにユーザー定義スクリプトの hook を掛ける](../adr/engine-event-hooks.md)の決定節。
 同 ADR は hook が欲しくなる場面を配線層ごとの合成で満たすと定め、合成のしかたを本 item に置いており、
 本 item がその実体。

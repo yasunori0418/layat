@@ -21,13 +21,13 @@ generated:
 
 - ステータス: stable
 - 日付: 2026-11-03
-- 関連: [named manifest を専用の layat.<name> 名前空間に公開する](layat-name-namespace.md), GitHub Issue #26
+- 関連: [named manifest を専用の `layat.<name>` 名前空間に公開する](layat-name-namespace.md), GitHub Issue #26
 - 起点: Issue #26。ADR-0029 §1 と ADR-0029 §4 を書き直した
 
 ## 背景
 
 named manifest は `layat.<system>.<name>` という専用の output に公開する
-（[named manifest を専用の layat.<name> 名前空間に公開する](layat-name-namespace.md)）。`layat` は標準の flake output でも、flake-parts の
+（[named manifest を専用の `layat.<name>` 名前空間に公開する](layat-name-namespace.md)）。`layat` は標準の flake output でも、flake-parts の
 module が型を登録した output でもないので、`perSystem` に書いても top-level へ転置されない。
 
 そのため layat 自身の dogfood は、top-level の `flake` ブロックで system ごとに

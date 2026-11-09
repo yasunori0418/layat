@@ -29,4 +29,4 @@ generated:
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `rollback` 名指し必須の箇条書き。
 
-決定の実体は [rollback に config の名指しを必須にする](../adr/rollback-requires-name-no-all.md)「rollback に config の名指しを必須にする」。
+決定の実体は [rollback に config の名指しを必須にする](../adr/rollback-requires-name-no-all.md)。

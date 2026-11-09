@@ -1,7 +1,7 @@
 ---
 id: "ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98"
 type: adr
-name: "configs.<name>.subdir で config ごとに target の基点を寄せる"
+name: "`configs.<name>.subdir` で config ごとに target の基点を寄せる"
 status: stable
 sources:
   - id: "issue-585"
@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T17:34:10+09:00"
 ---
-# ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98: configs.<name>.subdir で config ごとに target の基点を寄せる
+# ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98: `configs.<name>.subdir` で config ごとに target の基点を寄せる
 
 - ステータス: stable
 - 日付: 2026-11-03
@@ -39,7 +39,7 @@ subdir が null なら素の root marker を、非 null なら subdir 適用形�
 全 config 共通の `layat.subdir` は設けない。
 
 共通オプションの型は [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](../requirements/module-common-options.md)、home-manager での配線は
-[HM モジュールは configs.<name>.subdir が非 null の config を homeRoot の subdir 適用形で組み、全 target を $HOME/<subdir>/ 配下に置く](../requirements/hm-config-subdir-wiring.md) に置く。
+[HM モジュールは `configs.<name>.subdir` が非 null の config を homeRoot の subdir 適用形で組み、全 target を `$HOME/<subdir>/` 配下に置く](../requirements/hm-config-subdir-wiring.md) に置く。
 
 ## 根拠
 

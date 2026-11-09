@@ -43,4 +43,4 @@ thesis を維持）。`nix flake init` の「既存ファイルを上書きし�
 `docs/spec.md`「CLI 仕様」→「`layat init`（テンプレート展開）」のコードブロックと
 箇条書き第 1・2 項。
 
-決定の実体は [templates と layat init は固定 ref で導入する](../adr/templates-and-init-fixed-ref.md)「templates と layat init は固定 ref で導入する」。
+決定の実体は [templates と layat init は固定 ref で導入する](../adr/templates-and-init-fixed-ref.md)。

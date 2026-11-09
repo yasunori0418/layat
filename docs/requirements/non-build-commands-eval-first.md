@@ -46,4 +46,4 @@ apply を含む実行フロー全体の順序規範は [実行フローの順序
 
 `docs/spec.md`「CLI 仕様」→「実行フロー」の非 build コマンドの箇条書き。
 
-決定の実体は [eval を先に行い、flock を取ってから build する](../adr/eval-first-then-flock-then-build.md)「eval を先に行い、flock を取ってから build する」。
+決定の実体は [eval を先に行い、flock を取ってから build する](../adr/eval-first-then-flock-then-build.md)。

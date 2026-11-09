@@ -10,7 +10,7 @@ specification: |
   in two stages. Stage 1 SHALL realize every selected config's build read-only (without an
   out-link gcroot) on a worker pool that runs at most N builds at once, where N is the
   resolved value of `--jobs`; stage 2 SHALL then apply the configs in parallel as specified
-  by REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af, presenting the aggregated display and
+  by [apply --all は選択された config を並列に適用し、集約表示と results\[\] を辞書順にし、部分失敗でも続行して最後に集約する](apply-all-lexical-order-continue.md), presenting the aggregated display and
   `results[]` in lexical order, with the build still performed inside the engine's lock. `--jobs` SHALL be a flag
   local to `apply`, SHALL default to 0, which resolves to the logical CPU count, SHALL be
   rejected with an error when negative, and SHALL be rejected with an error when given
@@ -26,7 +26,7 @@ specification_ja: |
   `apply --all` は前段の cross-config 衝突の確認の後、選択された config を 2 段で処理しなければ
   ならない。stage 1 は選択された全 config の build を読み取り専用（out-link gcroot を置かない）
   で先行 realize し、同時実行数が `--jobs` の解決値 N を超えない worker pool で実行しなければ
-  ならない。stage 2 はその後 REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af に従い config を並列に
+  ならない。stage 2 はその後 [apply --all は選択された config を並列に適用し、集約表示と results\[\] を辞書順にし、部分失敗でも続行して最後に集約する](apply-all-lexical-order-continue.md) に従い config を並列に
   適用し、集約表示と `results[]` を辞書順にしなければならず、build は従来どおり engine の
   ロック内で行わなければならない。`--jobs` は `apply` ローカルのフラグでなければ
   ならず、既定値 0 は論理 CPU 数に解決されなければならず、負値はエラーとしなければならず、
@@ -64,4 +64,4 @@ generated:
 
 ## 出典
 
-[apply --all の build を worker pool で並列に実行する](../adr/apply-all-parallel-build-worker-pool.md)「apply --all の build を worker pool で並列に実行する」（Issue #153 で起票）。
+[apply --all の build を worker pool で並列に実行する](../adr/apply-all-parallel-build-worker-pool.md)（Issue #153 で起票）。

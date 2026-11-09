@@ -62,7 +62,7 @@ manifest を合成するヘルパは持たない（1 profile = 1 config の atom
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する次の点は本 item の
 > 規範ではない。
 >
-> - legacy entrypoint の addressing がフラットな `layat.<name>` になること → [entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](named-manifest-addressing.md)
+> - legacy entrypoint の addressing がフラットな `layat.<name>` になること → [entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する](named-manifest-addressing.md)
 > - `apply --all` の一括 eval そのもの → [apply --all は rootKind を 1 回の一括 eval で取る](apply-all-batched-eval.md)
 > - 1 profile = 1 config の atomic 性（→ [1 config = 1 profile を全モードで自前に持つ](../adr/one-config-one-profile-all-modes.md)）→ [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](generation-mechanism-link-farm-manifest.md)
 

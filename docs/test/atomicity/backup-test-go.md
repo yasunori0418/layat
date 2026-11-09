@@ -33,7 +33,7 @@ generated:
 **run 終了後の扱い**（[--backup の退避が opt-in で発動し、commit 後は残り、途中失敗では戻る](backup-aside-lifecycle.md)）
 
 - commit 成功後も退避物が残る（`--recopy` の退避と異なり、ユーザーのバックアップとして
-  無期限に保持する → [退避物を成功後も残して利用者の所有物にする](../../adr/backup-aside-left-to-user.md)「退避物を成功後も残して利用者の所有物にする」）
+  無期限に保持する → [退避物を成功後も残して利用者の所有物にする](../../adr/backup-aside-left-to-user.md)）
 - 同一バッチの後続配置が失敗すると退避が rename で戻り、target が pre-apply の内容へ
   復元され、退避先パスは消える
 

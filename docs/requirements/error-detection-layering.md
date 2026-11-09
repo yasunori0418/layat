@@ -62,10 +62,10 @@ attrset のため Nix のキー重複不可で担保され、**重複 `name` と
 `docs/spec.md`「エラー仕様」節の導入文と、同節の表のうち評価時エラー行・engine 実行時
 エラー行の別。
 
-決定の実体は [mkManifest の入力を evalModules で確認する](../adr/mkmanifest-evalmodules.md)「mkManifest の入力を evalModules で確認する」（設定の
+決定の実体は [mkManifest の入力を evalModules で確認する](../adr/mkmanifest-evalmodules.md)（設定の
 誤りを `mkManifest` の評価時に閉じる）と、native に担保される性質へ確認を置かない根拠と
-なる [entries を target をキーにした attrset にする](../adr/entries-keyed-by-target.md)「entries を target をキーにした attrset にする」。
+なる [entries を target をキーにした attrset にする](../adr/entries-keyed-by-target.md)。
 
-実体依存の判定を engine 実行時へ回すことは、[copy と out-of-store の併用を eval 時に拒否する](../adr/copy-with-out-of-store-eval-error.md)「copy と out-of-store の併用を eval 時に拒否する」などの個別の決定に現れる層の分かれ方を、節の導入文が
+実体依存の判定を engine 実行時へ回すことは、[copy と out-of-store の併用を eval 時に拒否する](../adr/copy-with-out-of-store-eval-error.md)などの個別の決定に現れる層の分かれ方を、節の導入文が
 一般則としてまとめたものである。この一般則そのものを表明した ADR は無いため、これらの ADR からは
 側面の根拠として `justifies` は張らない（個別の決定の帰属は [意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](normalize-manifest-cross-field-checks.md) が担当する）。

@@ -80,4 +80,4 @@ read-only 列挙（`list-generations` の世代・`gitignore` のパス）は
 出力」箇条書き（親項目）と、そのサブ項目「時刻」、およびサブコマンド体系節の
 `--json` に関する blockquote。
 
-決定の実体は [--json は outturn 規約に常時準拠する](../adr/outturn-conformance-principle.md)「--json は outturn 規約に常時準拠する」・[--json は常に results\[\] エンベロープを出す](../adr/results-envelope-always.md)・[エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)。`tool.version` の供給元は [VERSION ファイルをバージョンの一次情報にする](../adr/version-file-single-source.md)。
+決定の実体は [--json は outturn 規約に常時準拠する](../adr/outturn-conformance-principle.md)・[--json は常に results\[\] エンベロープを出す](../adr/results-envelope-always.md)・[エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)。`tool.version` の供給元は [VERSION ファイルをバージョンの一次情報にする](../adr/version-file-single-source.md)。

@@ -100,4 +100,4 @@ target を除去した後、その親ディレクトリチェーンを root 方�
 
 `docs/spec.md`「世代管理仕様」→「stale 除去の対象と安全不変条件」→「空親ディレクトリ剪定」節。
 
-決定の実体は [配置前除去は空の祖先ディレクトリを剪定しない](../adr/preremove-skips-ancestor-pruning.md)「配置前除去は空の祖先ディレクトリを剪定しない」と、出力規律を定める [指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)。剪定そのものは epic #172 D4（Issue #174）で確定した。
+決定の実体は [配置前除去は空の祖先ディレクトリを剪定しない](../adr/preremove-skips-ancestor-pruning.md)と、出力規律を定める [指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)。剪定そのものは epic #172 D4（Issue #174）で確定した。

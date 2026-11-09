@@ -38,4 +38,4 @@ legacy entrypoint で `src` が自動で store 化されないことは [legacy 
 
 `docs/spec.md`「CLI 仕様」→「再現性スタンス」の表。
 
-決定の実体は [shell.nix / default.nix の再現性は利用者の責任にする](../adr/shell-default-nix-best-effort.md)「shell.nix / default.nix の再現性は利用者の責任にする」。
+決定の実体は [shell.nix / default.nix の再現性は利用者の責任にする](../adr/shell-default-nix-best-effort.md)。

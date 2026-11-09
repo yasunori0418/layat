@@ -11,7 +11,7 @@ specification: |
   between the pre-placement removal (PreRemove) and the placement itself, and its subjects
   SHALL be delimited not by an enumeration of kinds but by the conclusion each
   classification stage reached — those unrecorded entities it decided to stop with an error
-  or to skip as a copy foreign file — save for the exclusion that REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b states. On
+  or to skip as a copy foreign file — save for the exclusion that [apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md) states. On
   the generation-skip path, where drift repair takes place, PreRemove SHALL never be
   reached because of the invariants that govern it, whereas the Backup stage SHALL remain
   in effect and SHALL rename aside and place in the same way as an ordinary apply, because
@@ -21,7 +21,7 @@ specification_ja: |
   `apply --backup` による rename 退避は、配置前除去（PreRemove）の後・配置の前の独立した
   段として置かなければならない。その対象は種別の列挙ではなく判定各段の結論で括らなければ
   ならず、各段が「エラーで停止」または「copy foreign スキップ」と判定した記録外実体で
-  なければならない（REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b が定める除外を除く）。ドリフト修復を行う世代スキップの処理
+  なければならない（[apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する](apply-backup-rename-aside.md) が定める除外を除く）。ドリフト修復を行う世代スキップの処理
   では、PreRemove はその不変条件により到達しないが、Backup 段は対象であり続け、通常 apply と
   同じく退避 + 配置を行わなければならない（target への記録外実体の出現は manifest /
   derivation の変化を伴わず、shell 再入間でも起こり得るため）。
@@ -76,5 +76,5 @@ manifest / derivation の変化を伴わず、shell 再入間でも起こり得�
 `docs/spec.md`「配置動作仕様」→「symlink モード」の手順 0.7 と、「途中失敗時の巻き戻し」節の
 箇条書き第 4 項（世代スキップの処理での drift 修復と Backup）。
 
-決定の実体は [退避を配置前除去の後の段として undo ジャーナルに載せる](../adr/backup-stage-in-undo-journal.md)「退避を配置前除去の後の段として undo ジャーナルに載せる」・[--backup は配置を塞ぐ記録外の実体だけを退避する](../adr/backup-scope-unrecorded-entities.md) で、
+決定の実体は [退避を配置前除去の後の段として undo ジャーナルに載せる](../adr/backup-stage-in-undo-journal.md)・[--backup は配置を塞ぐ記録外の実体だけを退避する](../adr/backup-scope-unrecorded-entities.md) で、
 PreRemove がドリフト修復の処理に到達しない不変条件は [世代スキップのときも退避を行う](../adr/backup-on-generation-skip.md) が前提にしている。

@@ -63,7 +63,7 @@ JSON を読んで判断する運用では誤った成功判定に直結する。
 
 [実行結果のインベントリ・世代観測・到達状態・構造化 warning が実態を表す](../test/generations/result-observation-fields.md)（実行結果の観測フィールドと到達状態の分割）と [実 nix を通した home mode で世代がコミットされ、rollback が前世代の配置へ戻る](../test/generations/home-generation-e2e.md)（e2e での
 `--json` 観測と `--all` の読み取り専用）が緩和する。世代の公開／非公開の強制は
-[project mode の世代は公開されず、拒否のときは理由が利用者へ届く](../test/integration/project-mode-generation-nondisclosure.md)（project mode の世代は公開されず、拒否のときは理由が利用者へ届く）が
+[project mode の世代は公開されず、拒否のときは理由が利用者へ届く](../test/integration/project-mode-generation-nondisclosure.md)が
 緩和し、名指しした project mode の config に対する拒否（拒否の成立・理由の伝達・
 一覧の非漏出）を [e2e 01-project — project mode の配置と --all の部分失敗を実 nix で通す](../test/integration/e2e-01-project.md) が、全 config を対象とする列挙からの除外を
 [e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復](../test/generations/e2e-02-home.md) が覆う。読み取り専用の被覆は列挙に現れる home 側に限り、除外された

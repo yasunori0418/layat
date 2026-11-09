@@ -1,7 +1,7 @@
 ---
 id: "DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5"
 type: design
-name: "last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む"
+name: "last-applied 記録は `<state>/layat/<鍵>/last-applied.json` に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む"
 status: stable
 satisfies:
   - "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:31+09:00"
 ---
-# DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5: last-applied 記録は <state>/layat/<鍵>/last-applied.json に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む
+# DSG-3c156bbe-e72b-43dd-8cb0-2cc105314ad5: last-applied 記録は `<state>/layat/<鍵>/last-applied.json` に manifest をそのまま埋め込み、比較の基準は記録 → profile → 空の順に読む
 
 ## 設計
 
@@ -69,18 +69,18 @@ generated:
 
 ## 出典
 
-[last-applied 記録を profileDir と同じ鍵で state 基底に置く](../adr/last-applied-record-location.md)「last-applied 記録を profileDir と同じ鍵で state 基底に置く」、
-[last-applied 記録は manifest を内容ごと持つ](../adr/record-embeds-manifest.md)「last-applied 記録は manifest を内容ごと持つ」、
-[記録を書き直す操作ごとに linkFarm の値を定める](../adr/record-rewrite-linkfarm.md)「記録を書き直す操作ごとに linkFarm の値を定める」、
-[古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)「古くなった配置の除去は、比較の基準を記録から優先して読む」、
-[世代スキップには profile に加え記録の一致も要する](../adr/generation-skip-requires-both-match.md)「世代スキップには profile に加え記録の一致も要する」、
-[rollback の戻り先は世代リンクから読む](../adr/rollback-target-from-generation-link.md)「rollback の戻り先は世代リンクから読む」、
-[apply は世代の commit の前に記録を書く](../adr/apply-writes-record-before-commit.md)「apply は世代の commit の前に記録を書く」、
-[rollback はポインタ移動の前に戻り先の manifest で記録を書き直す](../adr/rollback-rewrites-record-before-pointer.md)「rollback はポインタ移動の前に戻り先の manifest で記録を書き直す」、
-[reset は撤去できなかった entry を残して記録を書き直す](../adr/reset-rewrites-record-with-survivors.md)「reset は撤去できなかった entry を残して記録を書き直す」、
-[記録の読みは不正な記録を error にする](../adr/record-read-strictly.md)「記録の読みは不正な記録を error にする」。
+[last-applied 記録を profileDir と同じ鍵で state 基底に置く](../adr/last-applied-record-location.md)、
+[last-applied 記録は manifest を内容ごと持つ](../adr/record-embeds-manifest.md)、
+[記録を書き直す操作ごとに linkFarm の値を定める](../adr/record-rewrite-linkfarm.md)、
+[古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)、
+[世代スキップには profile に加え記録の一致も要する](../adr/generation-skip-requires-both-match.md)、
+[rollback の戻り先は世代リンクから読む](../adr/rollback-target-from-generation-link.md)、
+[apply は世代の commit の前に記録を書く](../adr/apply-writes-record-before-commit.md)、
+[rollback はポインタ移動の前に戻り先の manifest で記録を書き直す](../adr/rollback-rewrites-record-before-pointer.md)、
+[reset は撤去できなかった entry を残して記録を書き直す](../adr/reset-rewrites-record-with-survivors.md)、
+[記録の読みは不正な記録を error にする](../adr/record-read-strictly.md)。
 `origin` と版 2 は
-[last-applied 記録に出所を持たせる](../adr/record-carries-origin.md)「last-applied 記録に出所を持たせる」、
-[記録の読みは不正な記録を error にする](../adr/record-read-strictly.md)「記録の読みは不正な記録を error にする」、
-[出所の食い違いは警告して apply を続ける](../adr/origin-mismatch-warns-and-continues.md)「出所の食い違いは警告して apply を続ける」、
-[記録を書き直す操作は記録済みの出所を引き継ぐ](../adr/reset-rollback-inherit-origin.md)「記録を書き直す操作は記録済みの出所を引き継ぐ」。
+[last-applied 記録に出所を持たせる](../adr/record-carries-origin.md)、
+[記録の読みは不正な記録を error にする](../adr/record-read-strictly.md)、
+[出所の食い違いは警告して apply を続ける](../adr/origin-mismatch-warns-and-continues.md)、
+[記録を書き直す操作は記録済みの出所を引き継ぐ](../adr/reset-rollback-inherit-origin.md)。

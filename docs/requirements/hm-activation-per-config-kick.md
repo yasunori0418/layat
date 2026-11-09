@@ -14,14 +14,14 @@ specification: |
   0. Each `<name>=<link-farm>` SHALL be applied as its own profile with its own generation
   commit, so that the unit of atomicity stays one profile. Continuing past a partial
   failure, aggregating it and exiting non-zero SHALL be those of `apply --all` stated by
-  REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af; the activation SHALL NOT loop over the configs
+  [apply --all は選択された config を並列に適用し、集約表示と results\[\] を辞書順にし、部分失敗でも続行して最後に集約する](apply-all-lexical-order-continue.md); the activation SHALL NOT loop over the configs
   nor aggregate failures in the shell, and SHALL only return the non-zero exit through
   `run` so that the switch stops. The report SHALL be presented in the lexical order of
   `<name>`, while the parallelism of the placement SHALL follow `--jobs`. Where
   `layat.configs` holds no config, the activation SHALL NOT invoke `layat`, since an
   `apply --all` without `--manifest` would take the entrypoint path. The contract of
-  the kick is stated by REQ-8085f194-c903-4ecb-abd8-c719fe7b3292, and the correspondence of
-  one config to one manifest and one profile by REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a;
+  the kick is stated by [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](hm-activation-contract.md), and the correspondence of
+  one config to one manifest and one profile by [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md);
   neither is restated here.
 specification_ja: |
   `layat.configs` に config が 1 つ以上あるとき、home-manager モジュールの
@@ -31,13 +31,13 @@ specification_ja: |
   の辞書順に並べなければならない。`--jobs` は `layat.jobs` の値で、値が 0 でも常に明示で
   付けなければならない。各 `<name>=<link-farm>` はそれぞれ独立した profile として独立に世代を
   コミットしなければならない（atomic 性の単位を 1 profile に保つため）。部分失敗での続行・
-  集約・非ゼロ終了は REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af が定める `apply --all` の
+  集約・非ゼロ終了は [apply --all は選択された config を並列に適用し、集約表示と results\[\] を辞書順にし、部分失敗でも続行して最後に集約する](apply-all-lexical-order-continue.md) が定める `apply --all` の
   ものでなければならない。activation は config をシェルでループしてはならず、失敗をシェルで
   集約してもならず、非ゼロ終了を `run` で返して switch を止めるだけにしなければならない。
   報告は `<name>` の辞書順で示さなければならず、配置の並列度は `--jobs` に従わなければ
   ならない。`layat.configs` に config が 1 つも無いときは、activation は `layat` を起動しては
-  ならない（`--manifest` の無い `apply --all` は entrypoint を通る処理になるため）。起動の契約は REQ-8085f194-c903-4ecb-abd8-c719fe7b3292、1 config が
-  1 manifest = 1 profile に対応することは REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a の担当で、
+  ならない（`--manifest` の無い `apply --all` は entrypoint を通る処理になるため）。起動の契約は [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](hm-activation-contract.md)、1 config が
+  1 manifest = 1 profile に対応することは [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md) の担当で、
   いずれも本 item では規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"
@@ -77,7 +77,7 @@ generated:
 
 ## 出典
 
-[モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)「モジュールの activation は apply --all --manifest を 1 回だけ起動する」。`layat.jobs` の定義は [layat.jobs で activation の並列度を指定する](../adr/module-jobs-option.md)。
+[モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)。`layat.jobs` の定義は [layat.jobs で activation の並列度を指定する](../adr/module-jobs-option.md)。
 
 `docs/spec.md` には対応記述が無いため、原文の写しは持たない（規範は frontmatter が正で、
 上の箇条書きは ADR 本文の要約）。旧版（config ごとに起動し bash で集約する形）は

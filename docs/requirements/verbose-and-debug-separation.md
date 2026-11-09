@@ -43,5 +43,5 @@ skip 通知・`apply --all` 完了サマリも含む）。**内部実行する n
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」の `-v` / `--verbose` の
 箇条書き、およびグローバルフラグ表の `-v` / `--debug`。
 
-決定の実体は [-v で配置レポートを opt-in で出す](../adr/verbose-opts-into-placement-report.md)「-v で配置レポートを opt-in で出す」・[内部コマンドの開示を --debug に分ける](../adr/debug-discloses-internal-commands.md)「内部コマンドの開示を --debug に分ける」・
-[指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)「指定が無いときは成功時に何も出力しない」。`--json` との直交は [エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)。
+決定の実体は [-v で配置レポートを opt-in で出す](../adr/verbose-opts-into-placement-report.md)・[内部コマンドの開示を --debug に分ける](../adr/debug-discloses-internal-commands.md)・
+[指定が無いときは成功時に何も出力しない](../adr/silent-on-success.md)。`--json` との直交は [エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)。

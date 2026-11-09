@@ -30,10 +30,10 @@ specification: |
   window between placement and the generation commit, and the build being inside the lock so that
   out-link contention cannot structurally occur; (c) read the baseline manifest — the
   last-applied record when one exists, otherwise the `manifest.json` of the current
-  generation of `profileDir` (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35) — an absent one
+  generation of `profileDir` ([apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)) — an absent one
   meaning the first run with zero removal targets; (d) in project mode, skip stacking a
   new generation when the generation-skip condition stated by
-  REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 holds, while still lstat-checking each target and re-linking
+  [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md) holds, while still lstat-checking each target and re-linking
   only the drifted entries rather than making it a complete no-op, and then writing the
   last-applied record, a failure to write it being unwound by the undo journal; (e) diff the old and
   new `manifest.json`, remove before placement the self-recorded stale entries that block
@@ -42,10 +42,10 @@ specification: |
   with native filesystem operations, any mid-way failure among these four stages unwinding
   every filesystem change made by this run via the in-memory undo journal back to the
   pre-apply state, and once they have succeeded write the last-applied record
-  (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35), a failure to write it being unwound by the same
+  ([apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)), a failure to write it being unwound by the same
   undo journal;
   (f) commit the link-farm as a new generation through the generation backend contract
-  (REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b), the commit point, the default nixprofile
+  ([engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)), the commit point, the default nixprofile
   backend running `nix-env --profile <profileDir>/profile --set <link-farm>`; and
   (g) after the commit succeeds, delete `<profileDir>/.pending` as a plain filesystem
   operation that cleans up the temporary build output link.
@@ -73,8 +73,8 @@ specification_ja: |
   `os.Readlink` で link-farm store path を得る。out-link が indirect gcroot を張り、
   配置〜世代コミットの GC 窓を塞ぐ。build がロック内なので out-link 競合は構造的に起きない。
   (c) 比較の基準の manifest を読む（last-applied 記録があれば記録、無ければ profileDir の
-  current 世代の `manifest.json`。REQ-9d622539-a1e5-4719-af51-e0cd85b66f35。どちらも無ければ初回 = 削除対象ゼロ）。
-  (d) project mode かつ REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0 が定める世代スキップの条件を満たすなら
+  current 世代の `manifest.json`。[apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)。どちらも無ければ初回 = 削除対象ゼロ）。
+  (d) project mode かつ [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md) が定める世代スキップの条件を満たすなら
   新世代は積まない。ただし各 target を
   lstat で確認し、ドリフトした entry だけ再張りする（完全 no-op にしない）。その後 last-applied
   記録を書き、書けなければ undo ジャーナルで巻き戻す。(e)
@@ -82,9 +82,9 @@ specification_ja: |
   method 変更）を配置前除去し、新規 / 張替を配置し、copy 反映を行い、古くなった配置の保守的な除去
   （ネイティブ FS）を行う。この 4 段のいずれかが途中失敗すると、この run が行った FS 変更を
   全てインメモリ undo ジャーナルで巻き戻し pre-apply 状態へ戻す。4 段が成功したら last-applied
-  記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）を書き、書けなければ同じ undo ジャーナルで
+  記録（[apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)）を書き、書けなければ同じ undo ジャーナルで
   巻き戻す。(f) 世代バックエンドの
-  契約（REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b）越しに link-farm を新世代としてコミットする
+  契約（[engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)）越しに link-farm を新世代としてコミットする
   （コミット点。既定の nixprofile は `nix-env --profile <profileDir>/profile --set <link-farm>`
   を実行する）。(g) コミット成功後に `<profileDir>/.pending` を素の FS 操作で削除する
   （build 出力の一時リンクの片付け）。
@@ -174,10 +174,10 @@ rootKind は link-farm 内 `manifest.json` から engine が読む。2a（flock 
 `docs/spec.md`「CLI 仕様」→「実行フロー」の本文・コードブロックと、
 `apply --manifest` の skip を述べる最終箇条書き。
 
-決定の実体は [eval を先に行い、flock を取ってから build する](../adr/eval-first-then-flock-then-build.md)「eval を先に行い、flock を取ってから build する」で、out-link に
+決定の実体は [eval を先に行い、flock を取ってから build する](../adr/eval-first-then-flock-then-build.md)で、out-link に
 よる indirect gcroot は [store path は out-link で受け取る](../adr/store-path-via-out-link.md)、同一 profileDir 同時実行の後勝ちは [同一 profileDir への同時実行は後勝ちにする](../adr/same-profiledir-target-last-wins.md)、
 `apply --manifest` の skip は [apply --manifest でビルド済み link-farm を engine へ直接渡す](../adr/apply-manifest-prebuilt-link-farm.md)。2a の flock を blocking で取るか try-lock で取るか
 （shellHook の skip 通知を含む）は [flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする](flock-acquisition-mode.md) の担当で、その決定元となる ADR は
 本 item の出典には含めない。世代のコミットを世代バックエンドの契約越しにし、`.pending` の
 削除を engine の FS 操作として位置づけたのは [世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う](../adr/generation-backend-contract-paths-and-ints.md)・[.pending の後片付けを gcroot を知らない engine の FS 操作として行う](../adr/pending-cleanup-without-gcroot.md)、比較の基準を
-last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)「古くなった配置の除去は、比較の基準を記録から優先して読む」。
+last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)。

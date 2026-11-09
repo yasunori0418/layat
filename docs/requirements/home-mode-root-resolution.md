@@ -47,5 +47,5 @@ generated:
 `docs/spec.md`「root の解決」→「home mode（`root = homeRoot`）」節の表。
 
 決定の実体は root を 3 マーカーへ昇格し `$HOME` を `homeRoot` としたうえで各層が root を
-供給すると定めた [root は 3 つの marker で表す](../adr/three-root-markers.md)「root は 3 つの marker で表す」と、各層を配線に徹させ root と activation タイミングだけを供給させる
+供給すると定めた [root は 3 つの marker で表す](../adr/three-root-markers.md)と、各層を配線に徹させ root と activation タイミングだけを供給させる
 [モジュールは root と起動の時機だけを供給して engine を起動する](../adr/modules-wire-engine-kick-only.md)。

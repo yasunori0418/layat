@@ -1,7 +1,7 @@
 ---
 id: "REQ-496b1a07-5b74-416b-9e5f-3952b4c03737"
 type: requirement
-name: "entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する"
+name: "entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する"
 status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"
@@ -30,7 +30,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-496b1a07-5b74-416b-9e5f-3952b4c03737: entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する
+# REQ-496b1a07-5b74-416b-9e5f-3952b4c03737: entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する
 
 ## 仕様
 
@@ -57,6 +57,6 @@ legacy entrypoint には flake の `<system>` に相当する次元が無く、a
 
 `docs/spec.md`「CLI 仕様」→「アドレッシング（`layat.<name>`）」の本文と表。
 
-決定の実体は [named manifest を専用の layat.<name> 名前空間に公開する](../adr/layat-name-namespace.md)「named manifest を専用の layat.<name> 名前空間に公開する」で、
+決定の実体は [named manifest を専用の `layat.<name>` 名前空間に公開する](../adr/layat-name-namespace.md)で、
 legacy entrypoint の addressing を `nix build -f <ep> layat.<name>` に統一したのは
-[legacy entrypoint の eval と build は新 CLI の -f 形で行う](../adr/legacy-eval-via-nix-file-flag.md)「legacy entrypoint の eval と build は新 CLI の -f 形で行う」（旧決定の `nix-build -A` 記述を改訂）。
+[legacy entrypoint の eval と build は新 CLI の -f 形で行う](../adr/legacy-eval-via-nix-file-flag.md)（旧決定の `nix-build -A` 記述を改訂）。

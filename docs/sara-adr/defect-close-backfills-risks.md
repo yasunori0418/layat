@@ -35,7 +35,7 @@ generated:
 
 ## 背景
 
-欠陥はグラフに置かず GitHub Issues で管理する（[欠陥はグラフに置かず GitHub Issues で管理する](defects-in-github-issues.md)）。グラフの
+[欠陥はグラフに置かず GitHub Issues で管理する](defects-in-github-issues.md)。グラフの
 risk / test_condition は予防の体系だが、起きた欠陥から学ばなければ、ある時点の分析を写したまま古びていく。
 
 ## 決定

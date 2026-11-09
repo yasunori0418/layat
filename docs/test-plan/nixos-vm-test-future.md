@@ -38,8 +38,8 @@ NixOS / nix-darwin モジュールで使うときの実 activate は VM / sandbo
 
 `docs/spec.md`「E2E 検証範囲（非 NixOS）」節の末尾の注記。
 
-決定の実体は [テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)「テストを sandbox 可否で flake check と E2E に分ける」と
-[モジュールの検証を flake check と VM テストに置く](../adr/module-checks-separate-from-e2e.md)「モジュールの検証を flake check と VM テストに置く」で、
+決定の実体は [テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)と
+[モジュールの検証を flake check と VM テストに置く](../adr/module-checks-separate-from-e2e.md)で、
 NixOS VM テストを E2E のハーネスとは別系統の check で検証すると定めている。
 
 > **本 item は `requirement` から `test_plan` へ移設した**（→ Issue #238。旧 ID は

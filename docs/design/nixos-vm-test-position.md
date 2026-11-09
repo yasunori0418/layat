@@ -42,5 +42,5 @@ activate は VM で回せないため、評価結果のアサートに留める�
 ## 出典
 
 `docs/design.md`「テスト戦略」の NixOS VM テストの段落と、
-[module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)「module と project では世代操作を公開しない」、
-[モジュールの検証を flake check と VM テストに置く](../adr/module-checks-separate-from-e2e.md)「モジュールの検証を flake check と VM テストに置く」。
+[module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)、
+[モジュールの検証を flake check と VM テストに置く](../adr/module-checks-separate-from-e2e.md)。

@@ -36,7 +36,7 @@ nix コマンドの形が異なる。
   紛れ込む面が増える
 - **[実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる](../requirements/exec-flow-eval-lock-build.md) が定める実行フローの順序（eval 先行 → flock → build）を処理によらず
   1 つに保てる**。順序を守るのはフローを組む側の責務で、そこが共通なら legacy の処理にだけ
-  順序違反が入り込むことがない。[entrypoint は layat.<name> に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md) が求める「形ごとの attr path で build する」も、
+  順序違反が入り込むことがない。[entrypoint は `layat.<name>` に named manifest を公開し CLI は形ごとの attr path で build する](../requirements/named-manifest-addressing.md) が求める「形ごとの attr path で build する」も、
   形の違いが組み立てに局所化されている限り満たされる
 
 ## 出典

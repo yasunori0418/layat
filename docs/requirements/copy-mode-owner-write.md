@@ -39,4 +39,4 @@ group/other）は保ちつつ所有者が編集できる状態にする。
 `docs/spec.md`「配置動作仕様」→「copy モード（place-once・ユーザー管理）」節の箇条書き第 4 項
 （および同節コードブロック・「recopy」節の「mode 保存 + owner-write 付与」）。
 
-決定の実体は [copy は再帰コピーで mode を保存し owner-write にする](../adr/copy-recursive-mode-preserving-owner-write.md)「copy は再帰コピーで mode を保存し owner-write にする」。
+決定の実体は [copy は再帰コピーで mode を保存し owner-write にする](../adr/copy-recursive-mode-preserving-owner-write.md)。

@@ -47,13 +47,13 @@ generated:
 
 ## 出典
 
-[NixOS / nix-darwin モジュールは root を systemRoot に固定する](../adr/system-modules-pin-systemroot.md)「NixOS / nix-darwin モジュールは root を systemRoot に固定する」、
-[NixOS モジュールは system.activationScripts.layat から起動する](../adr/nixos-activation-script-hook.md)「NixOS モジュールは system.activationScripts.layat から起動する」、
-[nix-darwin モジュールは postActivation に起動を追記する](../adr/darwin-post-activation-hook.md)「nix-darwin モジュールは postActivation に起動を追記する」、
-[モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)「モジュールの activation は apply --all --manifest を 1 回だけ起動する」、
-[activation の起動文字列を modules/kick.nix で組み立てる](../adr/modules-kick-builder.md)「activation の起動文字列を modules/kick.nix で組み立てる」、
-[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)「モジュールは configs 間の target 衝突を評価時に確認しない」、
-[NixOS の dry-activate では --dryrun を付けて起動する](../adr/nixos-dry-activate-dryrun.md)「NixOS の dry-activate では --dryrun を付けて起動する」、
-[NixOS の activation の PATH に nix を前置する](../adr/nixos-activation-path-nix.md)「NixOS の activation の PATH に nix を前置する」。
+[NixOS / nix-darwin モジュールは root を systemRoot に固定する](../adr/system-modules-pin-systemroot.md)、
+[NixOS モジュールは system.activationScripts.layat から起動する](../adr/nixos-activation-script-hook.md)、
+[nix-darwin モジュールは postActivation に起動を追記する](../adr/darwin-post-activation-hook.md)、
+[モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)、
+[activation の起動文字列を modules/kick.nix で組み立てる](../adr/modules-kick-builder.md)、
+[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)、
+[NixOS の dry-activate では --dryrun を付けて起動する](../adr/nixos-dry-activate-dryrun.md)、
+[NixOS の activation の PATH に nix を前置する](../adr/nixos-activation-path-nix.md)。
 本 item は分割時点の原文の「flake.nix outputs 設計」にあったスタブ公開の項から起こし、
 同 ADR で実装の形へ書き換えた。

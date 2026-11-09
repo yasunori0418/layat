@@ -50,5 +50,5 @@ roothash キー）。`reset` はさらに entries 読みのため entrypoint eva
 
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `reset` 名指し必須の箇条書き。
 
-決定の実体は [reset は config の名指しを必須にする](../adr/reset-requires-config-name.md)「reset は config の名指しを必須にする」と、`--all` 非対応の一貫性を与える [rollback に config の名指しを必須にする](../adr/rollback-requires-name-no-all.md)。flock の直列化は [flock は明示実行で待ち、hook 実行でスキップする](../adr/flock-mode-explicit-wait-hook-skip.md)、
+決定の実体は [reset は config の名指しを必須にする](../adr/reset-requires-config-name.md)と、`--all` 非対応の一貫性を与える [rollback に config の名指しを必須にする](../adr/rollback-requires-name-no-all.md)。flock の直列化は [flock は明示実行で待ち、hook 実行でスキップする](../adr/flock-mode-explicit-wait-hook-skip.md)、
 非 build コマンドの eval 先行は [eval を先に行い、flock を取ってから build する](../adr/eval-first-then-flock-then-build.md)。

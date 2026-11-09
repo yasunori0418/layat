@@ -65,7 +65,7 @@ generated:
 - `<roothash>` 算出・backref（`.root`）は project mode と同一機構
 
 > **上は原文の写しに system の行と散文を足したもので、規範は frontmatter が正**。原文の表が持つ「HM モジュール経由（MVP）は
-> `<state>/nix/profiles/layat/default`（固定名 1 profile）」の行は、**[HM モジュールは layat.configs.<name> ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が HM の
+> `<state>/nix/profiles/layat/default`（固定名 1 profile）」の行は、**[HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が HM の
 > `layat.configs.<name>` 実装を決定済み**で反転している（HM も `<name>` 次元を持ち、home mode の
 > `<name>` 直キーにそのまま乗る。`default` は糖衣が指す config 名に過ぎない）。`docs/spec.md`
 > 側がこの改訂に追従できていないため、分割にあたって MVP 限定の行を規範へ持ち込まない判断を
@@ -89,7 +89,7 @@ generated:
 第 4〜5 項（`--root` 明示時のキーイング・fixed root mode のキーイング）と、
 第 5 項に付随する profileDir 表。
 
-決定の実体は [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)「profile は解決済み root の roothash でキーする」（`--root` 明示時の profileDir
+決定の実体は [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)（`--root` 明示時の profileDir
 キーイングを home / fixed へ拡張し、
 fixed root mode も常に `<roothash>` でキーする）。system の行と散文は原文に無く、決定の実体は
-[profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)「profile の基底ディレクトリをモードで切り替える」・[profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)（system mode の profile 基底と `<name>` 直キー）。
+[profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)・[profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)（system mode の profile 基底と `<name>` 直キー）。

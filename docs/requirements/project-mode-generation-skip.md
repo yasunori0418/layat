@@ -17,7 +17,7 @@ specification: |
   the placed objects being ephemeral and there being no host generation to return to when
   kicked from a devShell. When the new link farm derivation is identical to the current
   generation of the profile and, when a last-applied record exists, also to its `linkFarm`
-  (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35), no new generation SHALL be stacked; the
+  ([apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)), no new generation SHALL be stacked; the
   skip SHALL never be taken when no profile exists, and while the profile and the record
   disagree the full apply path SHALL run instead. Skipping is mandatory, since under
   devShell / direnv the `shellHook` runs on every shell re-entry and stacking a generation
@@ -48,7 +48,7 @@ specification_ja: |
   公開してはならない。profile は古くなった配置の除去と世代スキップ判定の内部機構に留めなければならず、
   `rollback` / `list-generations` を出してはならない（配置物が ephemeral で rollback の意味が薄く、
   devShell キック時は戻し先 host 世代も無いため）。新 link farm derivation が profile の
-  current 世代に一致し、last-applied 記録（REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）が
+  current 世代に一致し、last-applied 記録（[apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)）が
   あればその `linkFarm` にも一致するなら新世代を積んではならない。profile が無ければ skip
   してはならず、profile と記録が食い違う間は通常の apply の処理を走らせなければならない。skip は必須であり、devShell / direnv 運用では `shellHook` がシェル
   再入のたびに走るため、毎回新世代を積むと世代が無限増殖するからである。system mode でも同じ
@@ -116,8 +116,8 @@ generated:
 
 `docs/spec.md`「世代管理仕様」→「project mode の世代」節の箇条書き第 1〜4 項。
 
-決定の実体は [module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)「module と project では世代操作を公開しない」、
-[ephemeral 配置は git に干渉しない](../adr/ephemeral-no-git-interference.md)「ephemeral 配置は git に干渉しない」と [project mode では同じ link farm なら世代を積まず drift だけを直す](../adr/project-mode-generation-skip-and-drift-repair.md)「project mode では同じ link farm なら世代を積まず drift だけを直す」。
+決定の実体は [module と project では世代操作を公開しない](../adr/module-and-project-hide-generation-ops.md)、
+[ephemeral 配置は git に干渉しない](../adr/ephemeral-no-git-interference.md)と [project mode では同じ link farm なら世代を積まず drift だけを直す](../adr/project-mode-generation-skip-and-drift-repair.md)。
 profile を解決済み root でキーすることと `<roothash>` の定義は [profile は解決済み root の roothash でキーする](../adr/profile-keyed-by-roothash-of-resolved-root.md)、`<state>` の確定は
 [profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)、copy のドリフト修復の限定は [世代スキップを project mode と system mode で行う](../adr/generation-skip-project-and-system.md) が定めている。世代スキップの判定元を profile と
 last-applied 記録の両方一致にし、比較の基準を記録優先にしたのは [世代スキップには profile に加え記録の一致も要する](../adr/generation-skip-requires-both-match.md)・[古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)。

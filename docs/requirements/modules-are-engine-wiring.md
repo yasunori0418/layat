@@ -18,7 +18,7 @@ specification: |
   NixOS module SHALL kick the engine from `system.activationScripts.layat`, and the
   nix-darwin module SHALL kick it from what it appends to
   `system.activationScripts.postActivation`; the hook the home-manager module uses is
-  stated by REQ-8085f194-c903-4ecb-abd8-c719fe7b3292.
+  stated by [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](hm-activation-contract.md).
 specification_ja: |
   基本的な利用は project mode（プロジェクト内配置）と CLI 単体を中心に考えなければ
   ならず、モジュール対応は、他のモジュールシステムの switch と一括で動いてほしいユースケースを
@@ -30,7 +30,7 @@ specification_ja: |
   layat の関心外でなければならない。NixOS モジュールは `system.activationScripts.layat` から、
   nix-darwin モジュールは `system.activationScripts.postActivation` への追記から engine を
   起動しなければならない（home-manager モジュールが使うフックは
-  REQ-8085f194-c903-4ecb-abd8-c719fe7b3292 の担当）。
+  [home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める](hm-activation-contract.md) の担当）。
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
@@ -69,6 +69,6 @@ rollback の一本化は [module 時は rollback を host へ一本化し、laya
 配線に徹する」を本 item に畳んだ。NixOS / nix-darwin の root は、その後 [NixOS / nix-darwin モジュールは root を systemRoot に固定する](../adr/system-modules-pin-systemroot.md) で
 [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md) の `systemRoot` pin へ移った。
 
-決定の実体は [モジュールは root と起動の時機だけを供給して engine を起動する](../adr/modules-wire-engine-kick-only.md)「モジュールは root と起動の時機だけを供給して engine を起動する」・[配置は全層で engine が行い、ネイティブ機構へ翻訳しない](../adr/engine-owns-placement-no-native-translation.md) で、
-モジュール対応を一括 switch 用途に限る positioning は [project mode を第一の使い方とする](../adr/project-first.md)「project mode を第一の使い方とする」が定めている。NixOS / nix-darwin の hook を
+決定の実体は [モジュールは root と起動の時機だけを供給して engine を起動する](../adr/modules-wire-engine-kick-only.md)・[配置は全層で engine が行い、ネイティブ機構へ翻訳しない](../adr/engine-owns-placement-no-native-translation.md) で、
+モジュール対応を一括 switch 用途に限る positioning は [project mode を第一の使い方とする](../adr/project-first.md)が定めている。NixOS / nix-darwin の hook を
 具体化したのは [NixOS モジュールは system.activationScripts.layat から起動する](../adr/nixos-activation-script-hook.md)・[nix-darwin モジュールは postActivation に起動を追記する](../adr/darwin-post-activation-hook.md)。

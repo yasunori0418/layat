@@ -49,4 +49,4 @@ generated:
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「emit タイミングと成立条件」。
 
-決定の実体は [--json は常に results\[\] エンベロープを出す](../adr/results-envelope-always.md)「--json は常に results[] エンベロープを出す」。
+決定の実体は [--json は常に results\[\] エンベロープを出す](../adr/results-envelope-always.md)。

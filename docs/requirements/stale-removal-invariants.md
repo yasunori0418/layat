@@ -10,7 +10,7 @@ derives_from:
 specification: |
   Removal SHALL be conservative. The baseline manifest SHALL be the last-applied record
   when one exists and otherwise the manifest of the current generation of the profile
-  (REQ-9d622539-a1e5-4719-af51-e0cd85b66f35). Only a symlink that the baseline manifest
+  ([apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)). Only a symlink that the baseline manifest
   records as having been placed by layat, and that still points at the destination so
   recorded — the store path that the baseline records, or the recorded out-of-store path — SHALL
   be removed. Regular files and links not managed by layat SHALL NOT be touched. Where the
@@ -23,7 +23,7 @@ specification: |
 specification_ja: |
   削除は保守的に行わなければならない。比較の基準のマニフェストは、last-applied 記録があれば
   記録、無ければ profile の current 世代のマニフェストとしなければならない
-  （REQ-9d622539-a1e5-4719-af51-e0cd85b66f35）。比較の基準のマニフェストが「layat が配置した」と記録し、かつ
+  （[apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)）。比較の基準のマニフェストが「layat が配置した」と記録し、かつ
   現状もその記録通りの先（比較の基準が記録する store パス / 記録された out-of-store パス）を指す symlink
   のみを削除しなければならない。通常ファイルや layat 非管理の link には触れてはならない。
   記録と実体が不一致なら削除してはならず、警告しなければならない。初回（last-applied 記録も
@@ -61,5 +61,5 @@ generated:
 
 `docs/spec.md`「世代管理仕様」→「stale 除去の対象と安全不変条件」節の導入文と表。
 
-決定の実体は [古くなった配置の除去は記録どおりの symlink だけに限る](../adr/conservative-removal-invariant.md)「古くなった配置の除去は記録どおりの symlink だけに限る」。比較の基準を
-last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)「古くなった配置の除去は、比較の基準を記録から優先して読む」。
+決定の実体は [古くなった配置の除去は記録どおりの symlink だけに限る](../adr/conservative-removal-invariant.md)。比較の基準を
+last-applied 記録から優先して読むのは [古くなった配置の除去は、比較の基準を記録から優先して読む](../adr/baseline-prefers-record.md)。

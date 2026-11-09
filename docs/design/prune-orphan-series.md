@@ -188,7 +188,7 @@ warning・判定不能系は黙殺、という不揃いは [prune は backref �
 
 - **何も消えていない × 権限** — その系列はまだ手付かずで、かつ「消せない環境で実行された」だけ
   なので `Skipped` へ倒し、他の基底・他の系列の削除は続ける
-  （→ [prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md)「prune は system 基底も走査し、権限の無い系列を見送る」）。
+  （→ [prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md)）。
   非 root で system 基底の孤児系列を消そうとすれば最初の `RemoveAll` が `fs.ErrPermission` で
   落ちるので、[prune は system 基底も走査し、権限の無い系列を見送る](../adr/prune-scans-system-base-skips-unpermitted.md) が想定する状況はここに当てはまる
 - **何も消えていない × 権限以外** — 手付かずではあるが、権限を上げれば消えるとは限らない

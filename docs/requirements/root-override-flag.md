@@ -9,13 +9,13 @@ derives_from:
 specification: |
   The `--root <path>` flag SHALL explicitly override the resolved root, in every mode
   alike: with it, project mode SHALL NOT use the git toplevel and home mode SHALL NOT use
-  `$HOME`. How `profileDir` is keyed when it is given is stated by REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81 and is not
+  `$HOME`. How `profileDir` is keyed when it is given is stated by [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md) and is not
   restated here.
 specification_ja: |
   `--root <path>` は解決 root を明示上書きするフラグでなければならず、全モード共通で
   効かなければならない（project は git toplevel を、home は `$HOME` を使ってはならない）。
   明示時に profileDir を
-  どうキーするかは REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81 の担当で、本 item では規定しない。
+  どうキーするかは [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md) の担当で、本 item では規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
@@ -43,4 +43,4 @@ generated:
 「root の解決」→「project mode（`root = projectRoot`）」節の箇条書き第 3 項（`--root` は
 project mode に限らず全モードの解決 root を一律上書きする）。
 
-決定の実体は [--root は全モードで root を上書きする](../adr/root-flag-overrides-all-modes.md)「--root は全モードで root を上書きする」。
+決定の実体は [--root は全モードで root を上書きする](../adr/root-flag-overrides-all-modes.md)。

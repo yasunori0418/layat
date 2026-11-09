@@ -53,4 +53,4 @@ config 間衝突が排除され、実行順が結果に影響しなくなった�
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」の `apply --all` の箇条書き。
 
 決定の実体は [apply --all の配置を config 単位で並列に行う](../adr/apply-all-parallel-placement-per-config.md)・[apply --all の集約は config 名の辞書順に並べる](../adr/apply-all-lexicographic-order.md)（並列適用・完了後の辞書順集約）、旧決定「`--all` 適用順」
-（改訂前の辞書順・決定的）と [apply --all は失敗しても残りを続け、最後に集約して非 0 で終える](../adr/apply-all-continue-and-aggregate.md)「apply --all は失敗しても残りを続け、最後に集約して非 0 で終える」。
+（改訂前の辞書順・決定的）と [apply --all は失敗しても残りを続け、最後に集約して非 0 で終える](../adr/apply-all-continue-and-aggregate.md)。

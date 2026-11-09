@@ -9,14 +9,14 @@ specification: |
   When the name is omitted, `layat apply` SHALL apply `layat.default`, following the flake
   `default` convention, and SHALL fail with an error when `default` is not defined.
   Specifying `<name>` explicitly SHALL apply that config, and `--all` SHALL apply all of
-  `layat.*`. That a profile is atomic per config is stated by REQ-1be4d678-959c-44d7-a346-44bfd95af56e and is not
+  `layat.*`. That a profile is atomic per config is stated by [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](generation-mechanism-link-farm-manifest.md) and is not
   restated here.
 specification_ja: |
   `layat apply` は name 省略時に `layat.default` を適用しなければならない（flake の
   `default` 慣例に倣う）。`default` が未定義ならエラーとしなければならない。`<name>` を
   明示すればその config を、`--all` で `layat.*` 全てを適用しなければならない。profile が
   config 単位で atomic で
-  あることは REQ-1be4d678-959c-44d7-a346-44bfd95af56e の担当で、本 item では規定しない。
+  あることは [世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する](generation-mechanism-link-farm-manifest.md) の担当で、本 item では規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
@@ -43,5 +43,5 @@ layat apply <name>              # layat.<name> をビルドし新世代を作っ
 `docs/spec.md`「CLI 仕様」→「サブコマンド体系」のコードブロックと、直後の箇条書き
 第 1 項。
 
-決定の実体は [apply の config は名前省略で default を選び、--all で全件を選ぶ](../adr/config-selection-default-and-all.md)「apply の config は名前省略で default を選び、--all で全件を選ぶ」（name 省略時は `layat.default`・未定義ならエラー・
+決定の実体は [apply の config は名前省略で default を選び、--all で全件を選ぶ](../adr/config-selection-default-and-all.md)（name 省略時は `layat.default`・未定義ならエラー・
 一括適用は `--all`）。

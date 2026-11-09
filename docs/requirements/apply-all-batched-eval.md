@@ -44,5 +44,5 @@ eval プロセス起動コストを N→1 に固定する。
 
 `docs/spec.md`「CLI 仕様」→「実行フロー」の `apply --all` 一括 eval の箇条書き。
 
-決定の実体は [apply --all は config ごとの情報を 1 回の eval でまとめて取る](../adr/apply-all-single-eval.md)「apply --all は config ごとの情報を 1 回の eval でまとめて取る」で、legacy entrypoint の eval 形は [legacy entrypoint の eval と build は新 CLI の -f 形で行う](../adr/legacy-eval-via-nix-file-flag.md)。
+決定の実体は [apply --all は config ごとの情報を 1 回の eval でまとめて取る](../adr/apply-all-single-eval.md)で、legacy entrypoint の eval 形は [legacy entrypoint の eval と build は新 CLI の -f 形で行う](../adr/legacy-eval-via-nix-file-flag.md)。
 `targets` を取得に加えたのは [config 間の target 衝突は CLI が判定し engine に持ち込まない](../adr/cross-config-conflict-judged-by-cli.md)（前段での衝突の確認 [apply --all は build 前に選択 config 間の target 衝突を検出して停止する](apply-all-cross-config-preflight.md) が使う）。

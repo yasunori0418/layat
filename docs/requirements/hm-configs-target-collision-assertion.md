@@ -9,13 +9,13 @@ specification: |
   Where `configs.<A>` and `configs.<B>` of a single home-manager configuration duplicate a
   normalized target — the string resolved after the attribute-key default and any explicit
   `target` override — the activation SHALL be stopped by the preflight of the `apply --all`
-  it invokes (REQ-38506419-c23d-4fce-b167-30715ce6a69d), before any config is built or
+  it invokes ([apply --all は build 前に選択 config 間の target 衝突を検出して停止する](apply-all-cross-config-preflight.md)), before any config is built or
   placed, so that the activation exits non-zero and the switch stops. The module
   evaluation SHALL NOT detect this collision. This is possible because every config of one
   module configuration rides on that single `apply --all` invocation. It SHALL be an
   exception to the general cross-config collision, which does not ride on a single
-  invocation and which REQ-5c6b07da-3d06-414d-8770-4f438234b322 and
-  REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 leave to last-writer-wins plus a foreign symlink
+  invocation and which [target 衝突の検出処理を同一 manifest 内と cross-config で分ける](target-collision-eval-detection.md) and
+  [同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める](cross-config-target-oscillation.md) leave to last-writer-wins plus a foreign symlink
   warning at engine runtime; how a collision across separate entrypoints, machines or
   tools is treated is stated by those two items and is not restated or altered here.
   Without this detection, the two configs would take the same target from each other at
@@ -24,12 +24,12 @@ specification: |
 specification_ja: |
   単一の home-manager config 内の `configs.<A>` と `configs.<B>` が正規化後 target
   （属性キー既定値・明示 `target` 上書きを解決した後の文字列）を重複させた場合、activation が
-  起動する `apply --all` の前段の確認（REQ-38506419-c23d-4fce-b167-30715ce6a69d）で、どの
+  起動する `apply --all` の前段の確認（[apply --all は build 前に選択 config 間の target 衝突を検出して停止する](apply-all-cross-config-preflight.md)）で、どの
   config の build・配置にも入る前に停止させなければならない。activation は非ゼロで終わり
   switch が止まる。モジュール eval はこの衝突を検出してはならない。1 つのモジュール config の
   全 config が単一の `apply --all` 起動に載るため検出が可能である。これは単一の起動に載らない
-  一般の cross-config 衝突（REQ-5c6b07da-3d06-414d-8770-4f438234b322 /
-  REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693 が engine 実行時の後勝ち + foreign symlink warning に
+  一般の cross-config 衝突（[target 衝突の検出処理を同一 manifest 内と cross-config で分ける](target-collision-eval-detection.md) /
+  [同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める](cross-config-target-oscillation.md) が engine 実行時の後勝ち + foreign symlink warning に
   委ねるもの）に対する例外でなければならない。別 entrypoint・別マシン・別ツールに跨る衝突を
   どう扱うかは同 2 item の担当であり、本 item では再掲も変更もしない。
   検出しなければ、activation のたびに A と B が同じ target を交互に奪い合う
@@ -70,7 +70,7 @@ generated:
 
 ## 出典
 
-[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)「モジュールは configs 間の target 衝突を評価時に確認しない」。旧版（module eval の assertion で停止する形）は
+[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)。旧版（module eval の assertion で停止する形）は
 同じ ADR で改められた。
 
 `docs/spec.md` には対応記述が無いため、原文の写しは持たない（規範は frontmatter が正で、

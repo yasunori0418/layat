@@ -37,4 +37,4 @@ generated:
 
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」の終了コード表。
 
-決定の実体は [終了コードは 0 / 1 / 2 の 3 値にする](../adr/exit-code-scheme.md)「終了コードは 0 / 1 / 2 の 3 値にする」。
+決定の実体は [終了コードは 0 / 1 / 2 の 3 値にする](../adr/exit-code-scheme.md)。
