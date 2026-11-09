@@ -221,6 +221,25 @@ reach_only_out="$stdout_capture"
 assert_eq "到達率だけが 1 未満でも exit 1" 1 "$status_capture"
 assert_eq "到達率だけが 1 未満のとき節 1〜5 は空" 5 "$(grep -c '^なし$' <<<"$reach_only_out")"
 
+# 到達率がすべて 1 のまま節 2〜4 のどれか 1 件だけが残っても exit 1 になる。
+for gap_file in risk-gap tc-gap case; do
+  single="$work/single-$gap_file"
+  fill_gaps "$single"
+  cp "$fixture/docs/$gap_file.md" "$single/docs/$gap_file.md"
+  run_gap env SARA_GAP_ROOT="$single" sara-gap --json
+  assert_eq "$gap_file.md のギャップだけで exit 1（到達率はすべて 1）" "1:1,1,1" \
+    "$status_capture:$(jq -r '[.reach.requirement, .reach.test_plan, .reach.quality | .ratio] | join(",")' <<<"$stdout_capture" 2>/dev/null)"
+done
+
+# design があっても risk に threatens されていなければ印を付けない。
+no_design_risk="$work/no-design-risk"
+make_fixture "$no_design_risk"
+rm "$no_design_risk/docs/risk-on-design.md"
+
+run_gap env SARA_GAP_ROOT="$no_design_risk" sara-gap
+assert_has "risk の無い design しか持たない REQ を節 1 に出す" '^REQ-dddd0004' "$stdout_capture"
+assert_lacks "risk の無い design しか持たない REQ には印を付けない" "^REQ-dddd0004.*$design_mark" "$stdout_capture"
+
 # CASE が無くなると TC までつながっていても requirement は到達にならない。
 no_case="$work/no-case"
 fill_gaps "$no_case"
