@@ -85,8 +85,8 @@ relation は**起こした側（下流）の frontmatter に宣言する**（`sa
 | ファイル名 | `<slug>.md` | `mkmanifest-pure-function.md` |
 | 散文中の参照 | `[item の name](相対パス)` | `[mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md)` |
 
-- **フル ID を書くのは frontmatter の `id:`・relation リストと、item 本文の H1 見出し `# <ID>: <name>` だけにする**
-  （→ [フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる](../../../docs/sara-adr/full-ids-in-frontmatter-and-h1.md)）。8 文字省略形は使わない。
+- **フル ID を書くのは frontmatter の `id:` と relation リストだけにする**
+  （→ [フル ID は frontmatter だけに書き、item にはリンクで触れる](../../../docs/sara-adr/full-ids-in-frontmatter-only.md)）。item 本文の H1 見出しは `# <name>` とし、ID を書かない。8 文字省略形は使わない。
 - 散文で item に触れるときは Markdown リンクにし、リンク文字列にも ID を書かない。
 - `specification` / `specification_ja` / `origin` の文字列の中で item に触れるときも、
   `[item の name](item のディレクトリからの相対パス)` の Markdown リンクにする。

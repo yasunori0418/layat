@@ -7,7 +7,7 @@ frontmatter は `sara init` が生成する（手順は sara-docs の references
 ## test_condition item（`docs/test/` 配下・区分はプロジェクト規約）
 
 ```markdown
-# TC-<前方8>: <検証テーマの短い名前>
+# <検証テーマの短い名前>
 
 <リード文: 何を検証する条件か。「どんな入力・状況でどう振る舞うべきか」の
  抽象レベルで 1〜2 段落。期待結果の具体値・検証手段は書かない>

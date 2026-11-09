@@ -29,7 +29,7 @@ nix develop '.?dir=dev#sara' -c sara-new adr <slug> docs/adr -- \
 ```
 
 `sara_adr` は型を `sara_adr`、配置ディレクトリを `docs/sara-adr` にする。本文のタイトル行は
-`# ADR-<フル UUIDv4>: <タイトル>`（`sara_adr` は `# SDR-…`）とし、採番結果の ID で書く。
+`# <タイトル>` とし、ID を書かない。
 
 `--name` は必須フィールドなので省略しない。`sources` は `sara-new` のフラグで渡せないので、
 起票後に frontmatter へ手で書く。

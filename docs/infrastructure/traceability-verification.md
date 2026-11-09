@@ -9,7 +9,7 @@ satisfies:
   - "QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T22:04:42+09:00"
+  at: "2026-11-09T22:24:35+09:00"
 ---
 # INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71: トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）
 
@@ -55,11 +55,11 @@ CI 用の devShell も sara 専用のものへ分ける。
 
 ## ID 規約
 
-正式 ID は `<PREFIX>-<フル UUIDv4>`。**フル ID を書くのは frontmatter の `id:`・relation リストと、
-item 本文の H1 見出しだけにする**（→ [フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる](../sara-adr/full-ids-in-frontmatter-and-h1.md)）。
+正式 ID は `<PREFIX>-<フル UUIDv4>`。**フル ID を書くのは frontmatter の `id:` と relation リストだけにする**（→ [フル ID は frontmatter だけに書き、item にはリンクで触れる](../sara-adr/full-ids-in-frontmatter-only.md)）。
+item 本文の H1 見出しは `# <name>` とし、ID を書かない。
 散文で item に触れるときは Markdown リンクにし、リンク文字列にも ID を書かない。乱数 ID により並列レーンでの採番衝突を構造的に回避する。
 ID をそのまま grep すれば frontmatter の `id:` と relation に当たり、`sara query` へ渡しても同じものに当たる。
-規則に反するフル ID と 8 文字省略形は、契約テスト `dev/tests/link-text.sh` が検出する（→ [ID の書き場所と省略形の禁止は起票の機械化と契約テストで担保する](../sara-adr/id-placement-enforced-by-contract-test.md)）。
+規則に反するフル ID と 8 文字省略形は、契約テスト `dev/tests/link-text.sh` が検出する（→ [frontmatter の外のフル ID と省略形は起票の機械化と契約テストで防ぐ](../sara-adr/frontmatter-only-ids-checked-by-contract-test.md)）。
 
 `specification` / `specification_ja` / `origin` の文字列の中で item に触れるときも、
 `[item の name](item のディレクトリからの相対パス)` の Markdown リンクにする。
@@ -95,5 +95,5 @@ error となり `sara check` は exit 1 を返す（epic #203 の移行完了・
 [欠陥 issue のクローズ時にテスト系 item の欠落を追補する](../sara-adr/defect-close-backfills-risks.md)、[item にできない外部参照は text フィールドへ逃がす](../sara-adr/external-references-as-text-fields.md)、
 [提案を棄却した決定は status 不採用 で記録する](../sara-adr/adr-status-rejected.md)、[adr の status_note を持たない](../sara-adr/adr-status-note-removed.md)、
 [ADR の失効は supersedes と 廃止 で表す](../sara-adr/adr-supersedes-and-deprecated-status.md)、[ID はフル UUID に統一し 8 文字省略形を使わない](../sara-adr/full-uuid-ids-no-short-form.md)、
-[sara check を required status check にしない](../sara-adr/sara-check-not-required.md)、[フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる](../sara-adr/full-ids-in-frontmatter-and-h1.md)、[ID の書き場所と省略形の禁止は起票の機械化と契約テストで担保する](../sara-adr/id-placement-enforced-by-contract-test.md)。設計は epic GitHub Issue #203 の grilling
+[sara check を required status check にしない](../sara-adr/sara-check-not-required.md)、[フル ID は frontmatter だけに書き、item にはリンクで触れる](../sara-adr/full-ids-in-frontmatter-only.md)、[frontmatter の外のフル ID と省略形は起票の機械化と契約テストで防ぐ](../sara-adr/frontmatter-only-ids-checked-by-contract-test.md)。設計は epic GitHub Issue #203 の grilling
 セッション（2026-07-31・2026-08-01）で確定した。

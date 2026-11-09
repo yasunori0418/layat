@@ -32,7 +32,7 @@ sara-new risk lock-ordering docs/risks -- \
 - 起票した item の frontmatter の末尾（閉じの `---` の直前）に `generated` を付ける。`by` は
   `SARA_NEW_GENERATED_BY` の値、`at` は起票時の `date --iso-8601=seconds` の値（UTC オフセット付き）。
 - ADR は `adr` / `sara_adr` で起票する（`--status` を渡す）。
-- 生成後に本文（`# <フル ID>: <name>` の見出し + 散文）を書き足し、`sara check` で green
+- 生成後に本文（`# <name>` の見出し + 散文）を書き足し、`sara check` で green
   を確認する。
 - 既存 item のフィールド・relation の変更は `sara edit <フル ID> --<フィールド> ...`
   でもよい（対話モードは TTY 前提なので、非対話ではフラグを明示する）。
