@@ -75,20 +75,20 @@ fi
 # file はリポジトリルート相対で ./ が前置されるので剥がす。
 gaps=$(printf '%s' "$graph" | jq '
   def targets(t): [.items[] | (.relations[t]? // [])[]] | unique;
-  def row: {ref: (.id | split("-") | .[0] + "-" + .[1][0:8]), name, file: (.file | ltrimstr("./"))};
+  def row: {id, name, file: (.file | ltrimstr("./"))};
   targets("threatens") as $threatened
   | targets("mitigates") as $mitigated
   | targets("covers") as $covered
   | {
       unthreatened: ([.items[]
         | select(.type == "requirement" or .type == "design")
-        | select(.id as $i | ($threatened | index($i)) | not) | row] | sort_by(.ref)),
+        | select(.id as $i | ($threatened | index($i)) | not) | row] | sort_by(.id)),
       unmitigated: ([.items[]
         | select(.type == "risk")
-        | select(.id as $i | ($mitigated | index($i)) | not) | row] | sort_by(.ref)),
+        | select(.id as $i | ($mitigated | index($i)) | not) | row] | sort_by(.id)),
       uncovered: ([.items[]
         | select(.type == "test_condition")
-        | select(.id as $i | ($covered | index($i)) | not) | row] | sort_by(.ref))
+        | select(.id as $i | ($covered | index($i)) | not) | row] | sort_by(.id))
     }')
 
 if [ "$json_out" -eq 1 ]; then
@@ -97,7 +97,7 @@ else
   printf '%s' "$gaps" | jq -r '
     def section(title; rows):
       ["## " + title]
-      + (if (rows | length) == 0 then ["なし"] else [rows[] | "\(.ref)\t\(.name)\t\(.file)"] end);
+      + (if (rows | length) == 0 then ["なし"] else [rows[] | "\(.id)\t\(.name)\t\(.file)"] end);
     section("threatens されていない requirement / design"; .unthreatened)
     + [""]
     + section("mitigates されていない risk"; .unmitigated)
