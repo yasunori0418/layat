@@ -240,6 +240,17 @@ run_gap env SARA_GAP_ROOT="$no_design_risk" sara-gap
 assert_has "risk の無い design しか持たない REQ を節 1 に出す" '^REQ-dddd0004' "$stdout_capture"
 assert_lacks "risk の無い design しか持たない REQ には印を付けない" "^REQ-dddd0004.*$design_mark" "$stdout_capture"
 
+# 値が空の risk_exempt は免除にならない。
+empty_exempt="$work/empty-exempt"
+make_fixture "$empty_exempt"
+sed -i 's/^risk_exempt: .*/risk_exempt: ""/' "$empty_exempt/docs/req-exempt.md"
+
+run_gap env SARA_GAP_ROOT="$empty_exempt" sara-gap --json
+assert_eq "空の risk_exempt を持つ REQ は exempt に出ず unthreatened に出る" "0:true" \
+  "$(jq -r '"\(.exempt | length):\([.unthreatened[].id] | any(startswith("REQ-cccc0003")))"' <<<"$stdout_capture" 2>/dev/null)"
+assert_eq "空の risk_exempt を持つ REQ は到達率の total に入る" "4" \
+  "$(jq -r '.reach.requirement.total' <<<"$stdout_capture" 2>/dev/null)"
+
 # CASE が無くなると TC までつながっていても requirement は到達にならない。
 no_case="$work/no-case"
 fill_gaps "$no_case"
