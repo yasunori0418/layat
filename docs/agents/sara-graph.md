@@ -38,6 +38,7 @@ flowchart BT
     RISK -->|threatens| DSG
     TC -->|mitigates| RISK
     CASE -->|covers| TC
+    CASE -->|follows| TP
     ADR -.->|justifies| REQ
     ADR -.->|justifies| DSG
     ADR -.->|justifies| INF
@@ -193,6 +194,9 @@ Examples:
 Attaching a design-specific risk to the requirement loses the information that the risk is
 a cost of one particular choice. Attaching a requirement-level risk to a design hides it
 from every other design that has the same exposure.
+
+A `requirement` that holds no requirement-level risk states why in `risk_exempt`, in one
+sentence.
 
 ## Why this matters
 

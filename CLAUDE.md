@@ -30,7 +30,7 @@ item を新設し、概要文書にはリンクを 1 行足すに留める。
 | `docs/infrastructure/` | infrastructure | `INF` | quality / design |
 | `docs/risks/` | risk | `RISK` | requirement / design |
 | `docs/test/<対象>/` | test_condition | `TC` | risk |
-| `docs/test/<対象>/` | test_case | `CASE` | test_condition |
+| `docs/test/<対象>/` | test_case | `CASE` | test_condition / test_plan |
 | `docs/adr/` | adr | `ADR` | なし（分離型）|
 | `docs/sara-adr/` | sara_adr | `SDR` | なし（分離型）|
 | `docs/ubiquitous-language/` | ubiquitous_term | `UBQ` | なし（relation を持たない根）|
@@ -83,7 +83,7 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
 - **TC** = 検証テーマ単位（対象あたり数件）。同じ不変条件・観点を検証する CASE 群を束ねる
 - **RISK** = TC を束ねる脅威単位（対象あたり 2〜5 件）。「このテーマが壊れると何が起きるか」を
   requirement / design への `threatens` で表す
-- 関係の向き: CASE -covers→ TC -mitigates→ RISK -threatens→ REQ / DSG
+- 関係の向き: CASE -covers→ TC -mitigates→ RISK -threatens→ REQ / DSG、CASE -follows→ TP
 
 **risk / TC / CASE は `docs/spec.md` へ索引しない**（`sara query` / `sara report` で辿る）。
 `docs/spec.md` のリンク集に載せるのは requirement / quality / test_plan まで。

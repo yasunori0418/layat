@@ -1,6 +1,6 @@
 ---
 name: sara-docs
-description: sara ドキュメントグラフの基盤知識・規約スキル。次のコンテキストが現れたら作業前に必ず読み込む — ① sara.toml と docs/model.yaml を持つリポジトリで docs/ 配下の item（YAML frontmatter に id / type / relation を持つ Markdown）を作成・編集・削除しようとしている。② REQ- / DSG- / RISK- / TC- / CASE- / TP- / QA- / INF- / UC- / SOL- / ADR- / SDR- / UBQ- 形式の ID、または threatens / mitigates / covers / derives_from / satisfies / refines / justifies といった relation が依頼・ファイル・エラーに現れた。③ sara / sara-new / sara-gap コマンドを実行しようとしている、または sara check の orphan・broken reference エラーを直そうとしている。④ 要求・設計・リスク・テスト条件・テストケース・ADR を「item として起こして」と依頼された。工程スキル（/test-plan・/test-analyze 等）が前提とする型・relation・ID・specification 規約の一次の参照先。sara を使わないリポジトリの Markdown ドキュメント一般は対象外。
+description: sara ドキュメントグラフの基盤知識・規約スキル。次のコンテキストが現れたら作業前に必ず読み込む — ① sara.toml と docs/model.yaml を持つリポジトリで docs/ 配下の item（YAML frontmatter に id / type / relation を持つ Markdown）を作成・編集・削除しようとしている。② REQ- / DSG- / RISK- / TC- / CASE- / TP- / QA- / INF- / UC- / SOL- / ADR- / SDR- / UBQ- 形式の ID、または threatens / mitigates / covers / follows / derives_from / satisfies / refines / justifies といった relation が依頼・ファイル・エラーに現れた。③ sara / sara-new / sara-gap コマンドを実行しようとしている、または sara check の orphan・broken reference エラーを直そうとしている。④ 要求・設計・リスク・テスト条件・テストケース・ADR を「item として起こして」と依頼された。工程スキル（/test-plan・/test-analyze 等）が前提とする型・relation・ID・specification 規約の一次の参照先。sara を使わないリポジトリの Markdown ドキュメント一般は対象外。
 license: MIT
 ---
 
@@ -34,7 +34,7 @@ sara（Requirements Knowledge Graph CLI）で管理する `docs/` の読み書�
 | sara_adr | `SDR` | `docs/sara-adr/` | なし（adr と同じ。sara 品質管理機構の決定）|
 | risk | `RISK` | `docs/risks/` | requirement / design（`threatens`）|
 | test_condition | `TC` | `docs/test/…` | risk（`mitigates`）|
-| test_case | `CASE` | `docs/test/…` | test_condition（`covers`）|
+| test_case | `CASE` | `docs/test/…` | test_condition（`covers`）/ test_plan（`follows`）|
 | ubiquitous_term | `UBQ` | `docs/ubiquitous-language/` | なし（relation を持たない根）|
 
 テスト系 item（TC / CASE）を `docs/test/` 配下でどう区分けするか（サブディレクトリの
@@ -70,7 +70,7 @@ item は**上流から下流へ、親が先に在る順**で起こす。テス�
 1. REQ / DSG（仕様・設計）が在る
 2. それを脅かす risk を起こし `threatens` を張る
 3. risk を潰すテーマとして test_condition を起こし `mitigates` を張る
-4. テーマを検証する実体として test_case を起こし `covers` を張る
+4. テーマを検証する実体として test_case を起こし `covers` を張る。従う計画へは `follows` で test_plan へ張る
 
 relation は**起こした側（下流）の frontmatter に宣言する**（`sara check` の JSON も
 宣言辺だけを持つ）。前工程の item が無いまま下流を起こさない — 無ければ前工程の実行を
