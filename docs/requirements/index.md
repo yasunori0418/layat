@@ -89,7 +89,7 @@
 * [method は配置方法を選び symlink は世代管理下・copy は世代管理外になる](./method-src-matrix.md) - `method` は `"symlink"` | `"copy"`・省略可・デフォルト `"symlink"`。`src` の種別との組み合わせで動作が決まる。
 * [mkManifest の引数は必須の pkgs / entries / root と任意の identity とする](./mkmanifest-arguments.md) - `pkgs` を引数で受け取るのは lib 層が unparameterized（`lib` / `pkgs` を自身で保持しない）であるため。各関数が呼び出し時に必要なものを明示引数として要求する。
 * [mkManifest 自身が evalModules で入力を確認する単一の箇所になる](./mkmanifest-input-validation.md) - `mkManifest` は内部で `lib.evalModules` を回して `entries` / `root` を確認・正規化する。
-* [mkManifest の返り値は passthru で root kind を露出する](./mkmanifest-passthru-rootkind.md) - 返り値 derivation は `passthru.rootKind`（`"project"` / `"home"` / `"system"` / `"fixed"`、`fixed` のときは `passthru.root` に絶対パス文字列）を持つ。
+* [mkManifest の返り値は passthru で `rootKind` を露出する](./mkmanifest-passthru-rootkind.md) - 返り値 derivation は `passthru.rootKind`（`"project"` / `"home"` / `"system"` / `"fixed"`、`fixed` のときは `passthru.root` に絶対パス文字列）を持つ。
 * [mkManifest は配置データを生成する純粋関数である](./mkmanifest-pure-function.md) - `lib.mkManifest` は配置データを生成する**純粋関数**。返り値 derivation が何を含むかは[mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](mkmanifest-return-value.md) が正で、本 item では規定しない。
 * [mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](./mkmanifest-return-value.md) - 返り値は profile が指す store オブジェクト。以下を含む。
 * [mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](./mkoutofstoresymlink-marker.md) - ローカルパスへの out-of-store symlink を表すマーカーを返す。`entry.src` に渡すことで、その entry を Nix ストア経由ではなくローカル FS への symlink にする。ファイル編集が即座に反映されるライブ用途のための明示的退避路である。
@@ -132,7 +132,7 @@
 * [root は明示必須で暗黙デフォルトを持たない](./root-explicit-required.md) - `root` は**明示必須**で、暗黙デフォルトを持たない。
 * [root は 3 マーカーと絶対パス文字列の union を取る](./root-marker-kinds.md) - `root` の型は `string（評価時固定）| marker（実行時解決）` の union。
 * [root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない](./root-marker-subdir-sugar.md) - 適用形は、全 entry の target に `<subdir>/` を書いた manifest と同じものを生成する。root は動かず、`rootKind` も単体形と同じ値になる。`manifest.json` に新しいフィールドは現れない。
-* [root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](./root-markers-runtime-resolution.md) - `root` 引数に渡す **root マーカー**は、`mkOutOfStoreSymlink` と同じ「マーカーを渡して挙動を opt-in する」パターンに従う。
+* [root マーカーは `kind` を運ぶ入れ物でパス解決は engine が行う](./root-markers-runtime-resolution.md) - `root` 引数に渡す **root マーカー**は、`mkOutOfStoreSymlink` と同じ「マーカーを渡して挙動を opt-in する」パターンに従う。
 * [--root は全モード共通で解決 root を明示上書きする](./root-override-flag.md) - `docs/spec.md`「CLI 仕様」→「サブコマンド体系」のグローバルフラグ表 `--root <path>`、および「root の解決」→「project mode（`root = projectRoot`）」節の箇条書き第 3 項（`--root` はproject mode に限らず全モードの解決 root を一律上書きする）。
 * [mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](./root-relative-symlink-marker.md) - リポジトリ内の実体を、そのリポジトリを root とする配置先へ可変 symlink で置くためのマーカー。`mkOutOfStoreSymlink` の引数は評価時に確定する絶対パスで、pure eval の flake は自身のチェックアウトの絶対パスを得られない。root 相対で宣言すれば評価時に絶対パスが要らない。
 * [成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す](./silent-on-success.md) - **成功時はデフォルト沈黙**（UNIX 哲学「沈黙は金」）。`apply` / `reset` / `rollback` の**成功は終了コード 0 が語り、配置レポート（サマリ + per-target 行）・try-lock skip 通知・`apply --all` 完了サマリは指定が無いときは出さない**。**warning（foreign symlink 等）と error は常時 stderr に出す**（沈黙対象外）。`reset` の確認プロンプト・中止通知も存続する。

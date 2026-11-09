@@ -34,7 +34,7 @@ generated:
 
 いずれも実際のビルドを伴わない評価だけで完結するのが選択理由でもある。
 [mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md) という要求がある以上、検証も評価層で閉じるのが自然で、
-FS も nix daemon も要らない。テスト対象の private helper へは、テスト用の公開点 `lib.__internal`（[lib.__internal は private helper のテスト seam として公開する](../test-plan/lib-internal-test-seam.md)）から到達する。
+FS も nix daemon も要らない。テスト対象の private helper へは、テスト用の公開点 `lib.__internal`（[lib.__internal で private helper をテストへ公開する](../test-plan/lib-internal-test-seam.md)）から到達する。
 
 engine 側の検証は [engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する](engine-test-go-unit-tmpdir.md) が、実際の使い方の一気通貫は [E2E は tests/e2e の bash ハーネスに置き、シナリオの詳細は同ディレクトリの README へ委譲する](e2e-harness-shape.md) が担う。
 

@@ -34,8 +34,8 @@ generated:
 人が別途タグを打つ工程を挟むと「マージしたがタグを忘れた」状態が生じ、CHANGELOG を手書き
 すればコミット履歴との二重管理になる。
 
-リリースを駆動する変更も main への変更である以上、[マージ前の自動検証を必須にし、プラットフォーム差が効く層は全プラットフォームで通す](cross-platform-verification-before-merge.md) が定めるマージの条件の対象になる。
-「main 直接コミット禁止」と「リリースの自動化」がここで整合する。この規範は [マージ前の自動検証を必須にし、プラットフォーム差が効く層は全プラットフォームで通す](cross-platform-verification-before-merge.md) の
+リリースを駆動する変更も main への変更である以上、[マージ前の自動検証を必須にし、プラットフォーム差が出る層は全プラットフォームで通す](cross-platform-verification-before-merge.md) が定めるマージの条件の対象になる。
+「main 直接コミット禁止」と「リリースの自動化」がここで整合する。この規範は [マージ前の自動検証を必須にし、プラットフォーム差が出る層は全プラットフォームで通す](cross-platform-verification-before-merge.md) の
 担当なので本 item の specification では繰り返さず、`depends_on` で依存だけを示す。
 
 ## 出典

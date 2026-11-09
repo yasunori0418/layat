@@ -45,7 +45,7 @@ generated:
 
 項目の具体・判定手段の語彙・上限の値は本 item の規範に含めない。
 `docs/dev/definition-of-done.md` が持つ。必須の確認との一致を保つ規範は、必須化そのものを
-定める [マージ前の自動検証を必須にし、プラットフォーム差が効く層は全プラットフォームで通す](cross-platform-verification-before-merge.md) に依存する。
+定める [マージ前の自動検証を必須にし、プラットフォーム差が出る層は全プラットフォームで通す](cross-platform-verification-before-merge.md) に依存する。
 
 ## 出典
 

@@ -1,14 +1,14 @@
 ---
 id: "UBQ-f7799808-267e-40c4-aaa7-d85e568f11c4"
 type: ubiquitous_term
-name: "standalone"
+name: "`standalone`"
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-07T01:42:11+09:00"
+  at: "2026-11-09T10:11:12+09:00"
 ---
 
-# UBQ-f7799808-267e-40c4-aaa7-d85e568f11c4: standalone
+# UBQ-f7799808-267e-40c4-aaa7-d85e568f11c4: `standalone`
 
 ## Definition
 

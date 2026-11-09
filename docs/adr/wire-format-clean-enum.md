@@ -1,16 +1,16 @@
 ---
 id: "ADR-83a1275b-85bb-4918-8d21-8db9ab18a58c"
 type: adr
-name: "manifest.json へ marker を clean enum で写す"
+name: "manifest.json へ marker を `clean` enum で写す"
 status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §5（manifest.json ワイヤ形式）を書き直した"
 justifies:
   - "REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:24:30+09:00"
+  at: "2026-11-09T10:11:12+09:00"
 ---
-# ADR-83a1275b-85bb-4918-8d21-8db9ab18a58c: manifest.json へ marker を clean enum で写す
+# ADR-83a1275b-85bb-4918-8d21-8db9ab18a58c: manifest.json へ marker を `clean` enum で写す
 
 - ステータス: stable
 - 日付: 2026-11-01

@@ -48,5 +48,5 @@ NixOS VM テストを E2E のハーネスとは別系統の check で検証す�
 > なっていた（当時の判断は Issue #211）。モジュールでの使い方そのものは [既に home-manager / NixOS / nix-darwin を使っている環境へ layat をモジュールとして組み込む](../use-cases/module-integration.md) が担い、
 > [全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない](../requirements/modules-are-engine-wiring.md) 等がそちらへ紐づく。テスト計画の型を新設して solution 直下で受けることに
 > したため、`derives_from` は [layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る](../solution/layat-placement-primitive.md) を指す。[非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](e2e-harness-scope.md)・[エンベロープの outturn 適合を Go テストと E2E の両方で検証する](json-conformance-verification.md) も同じ経緯で
-> 移設した。[lib.__internal は private helper のテスト seam として公開する](lib-internal-test-seam.md) は #238 では「テスト計画そのものではない」と判断して見送ったが、
+> 移設した。[lib.__internal で private helper をテストへ公開する](lib-internal-test-seam.md) は #238 では「テスト計画そのものではない」と判断して見送ったが、
 > Issue #239 でその判断を改めて移設した（経緯は同 item の注記）。

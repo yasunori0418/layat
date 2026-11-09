@@ -31,7 +31,7 @@ generated:
 （`integration` 区分）が担当する。
 
 射程は `normalizeManifest` が返す文書に限る。同じ絶対パスが `mkManifest` の
-`passthru.root`（CLI が build 前に `nix eval` で読む処理・[mkManifest の返り値は passthru で root kind を露出する](../../requirements/mkmanifest-passthru-rootkind.md)）へ写る側は
+`passthru.root`（CLI が build 前に `nix eval` で読む処理・[mkManifest の返り値は passthru で `rootKind` を露出する](../../requirements/mkmanifest-passthru-rootkind.md)）へ写る側は
 derivation 層の話で、本条件は見ない。fixed root で絶対パスを渡しても相対パスを渡しても
 `rootKind = "fixed"` になる（絶対性を強制する確認が実装に無い）点も同じく射程外。
 どちらも [manifest.json の形が engine の読む契約から気付かれずにずれる](../../risks/manifest-contract-drift.md) の残余として記録してあり、passthru 側の受け皿は `cli-json` 区分に

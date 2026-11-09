@@ -1,7 +1,7 @@
 ---
 id: "TP-403c55c7-d996-4951-8e6b-c3a7dddd387c"
 type: test_plan
-name: "lib.__internal は private helper のテスト seam として公開する"
+name: "lib.__internal で private helper をテストへ公開する"
 status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
@@ -20,9 +20,9 @@ issues:
   - "#289"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T22:44:41+09:00"
+  at: "2026-11-09T10:11:12+09:00"
 ---
-# TP-403c55c7-d996-4951-8e6b-c3a7dddd387c: lib.__internal は private helper のテスト seam として公開する
+# TP-403c55c7-d996-4951-8e6b-c3a7dddd387c: lib.__internal で private helper をテストへ公開する
 
 ## 仕様
 

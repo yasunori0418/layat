@@ -62,7 +62,7 @@ layat は **CLI とエンジンの 2 層**で構成する（→ [engine を単�
 - [mkManifest は配置データを生成する純粋関数である](requirements/mkmanifest-pure-function.md) — mkManifest は配置データを生成する純粋関数である
 - [mkManifest の引数は必須の pkgs / entries / root と任意の identity とする](requirements/mkmanifest-arguments.md) — mkManifest の引数は必須の pkgs / entries / root と任意の identity とする
 - [mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す](requirements/mkmanifest-return-value.md) — mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す
-- [mkManifest の返り値は passthru で root kind を露出する](requirements/mkmanifest-passthru-rootkind.md) — mkManifest の返り値は passthru で root kind を露出する
+- [mkManifest の返り値は passthru で `rootKind` を露出する](requirements/mkmanifest-passthru-rootkind.md) — mkManifest の返り値は passthru で root kind を露出する
 - [entry の識別子は属性キー = target とし一意性は Nix が担保する](requirements/entry-identity-by-target-key.md) — entry の識別子は属性キー = target とし一意性は Nix が担保する
 - [root は明示必須で暗黙デフォルトを持たない](requirements/root-explicit-required.md) — root は明示必須で暗黙デフォルトを持たない
 - [root は 3 マーカーと絶対パス文字列の union を取る](requirements/root-marker-kinds.md) — root は 3 マーカーと絶対パス文字列の union を取る
@@ -72,7 +72,7 @@ layat は **CLI とエンジンの 2 層**で構成する（→ [engine を単�
 
 - [mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す](requirements/mkoutofstoresymlink-marker.md) — mkOutOfStoreSymlink は out-of-store symlink を表すマーカーを返す
 - [mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る](requirements/root-relative-symlink-marker.md) — mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る
-- [root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](requirements/root-markers-runtime-resolution.md) — root マーカーは kind を運ぶ入れ物でパス解決は engine が行う
+- [root マーカーは `kind` を運ぶ入れ物でパス解決は engine が行う](requirements/root-markers-runtime-resolution.md) — root マーカーは kind を運ぶ入れ物でパス解決は engine が行う
 
 ### `lib.mkApplyCommand`
 
@@ -192,7 +192,7 @@ eval して root を解決し、flock を取ってから `nix build` をロッ�
 
 ## manifest.json スキーマ（v1・Nix↔Go 契約）
 
-`manifest.json` は Nix とエンジンの唯一の安定契約（→ [manifest.json へ marker を clean enum で写す](adr/wire-format-clean-enum.md), [manifest.json を schemaVersion 1 の唯一の契約として固定する](adr/manifest-json-contract-schemaversion-v1.md)）。
+`manifest.json` は Nix とエンジンの唯一の安定契約（→ [manifest.json へ marker を `clean` enum で写す](adr/wire-format-clean-enum.md), [manifest.json を schemaVersion 1 の唯一の契約として固定する](adr/manifest-json-contract-schemaversion-v1.md)）。
 
 - [manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する](requirements/manifest-single-stable-contract.md) — manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する
 - [MVP は manifest v1 のみを発行・受理しマイグレーション機構を持たない](requirements/manifest-v1-only-no-migration.md) — MVP は manifest v1 のみを発行・受理しマイグレーション機構を持たない
@@ -329,7 +329,7 @@ item が持ち、`satisfies` で `quality` へ接続する。
 - [欠陥はトラッカーが持ちドキュメントグラフは規範のみを持つ。起票は分類語彙を経由する](quality/defects-in-tracker-graph-holds-norms.md) — 欠陥はトラッカーが持ちドキュメントグラフは規範のみを持つ。起票は分類語彙を経由する
 - [傾向の計測は報告に留め、マージの条件にしない](quality/measurement-reports-without-gating.md) — 傾向の計測は報告に留め、マージの条件にしない
 - [完成の定義は単一の機械パース可能な文書で持ち、項目数を上限で縛る](quality/dod-single-machine-parsable-document.md) — 完成の定義は単一の機械パース可能な文書で持ち、項目数を上限で縛る
-- [マージ前の自動検証を必須にし、プラットフォーム差が効く層は全プラットフォームで通す](quality/cross-platform-verification-before-merge.md) — マージ前の自動検証を必須にし、プラットフォーム差が効く層は全プラットフォームで通す
+- [マージ前の自動検証を必須にし、プラットフォーム差が出る層は全プラットフォームで通す](quality/cross-platform-verification-before-merge.md) — マージ前の自動検証を必須にし、プラットフォーム差が効く層は全プラットフォームで通す
 - [コード整形と静的解析を自動検証に載せ、同じ判定を手元でも得られるようにする](quality/formatting-and-static-analysis-automated.md) — コード整形と静的解析を自動検証に載せ、同じ判定を手元でも得られるようにする
 - [自動化が取り込む実行物は不変な識別子で固定し、権限は最小に絞り、不正入力では成果物を作る前に失敗する](quality/automation-supply-chain-safety.md) — 自動化が取り込む実行物は不変な識別子で固定し、権限は最小に絞り、不正入力では成果物を作る前に失敗する
 
@@ -342,7 +342,7 @@ item が持ち、`satisfies` で `quality` へ接続する。
 - [home-manager モジュールの配線は build sandbox 内の評価アサートで検証する](test-plan/hm-module-eval-assert.md) — home-manager モジュールの配線は build sandbox 内の評価アサートで検証する
 - [非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](test-plan/e2e-harness-scope.md) — 非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する
 - [評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](test-plan/nix-unit-namaka-split.md) — 評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る
-- [lib.__internal は private helper のテスト seam として公開する](test-plan/lib-internal-test-seam.md) — lib.\_\_internal は private helper のテスト seam として公開する
+- [lib.__internal で private helper をテストへ公開する](test-plan/lib-internal-test-seam.md) — lib.\_\_internal は private helper のテスト seam として公開する
 - [NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする](test-plan/nixos-vm-test-future.md) — NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする
 - [エンベロープの outturn 適合を Go テストと E2E の両方で検証する](test-plan/json-conformance-verification.md) — エンベロープの outturn 適合を Go テストと E2E の両方で検証する
 - [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](test-plan/eval-test-double.md) — 評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える

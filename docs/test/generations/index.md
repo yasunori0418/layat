@@ -30,6 +30,6 @@
 * [nixprofile_test.go — 世代リンクの走査と 2 基底](./nixprofile-test-go.md) - `internal/generation/nixprofile/nixprofile_test.go`
 * [paths_test.go — state 基底の解決・roothash の性質・profileDir キーイング・世代リンク名と兄弟パス](./paths-test-go.md) - `internal/paths/paths_test.go`
 * [prune_test.go — 孤児系列の判定と系列ごとの削除・dryrun / 確認 / lock / 削除段の失敗](./prune-test-go.md) - `internal/engine/prune_test.go`
-* [record_test.go — last-applied 記録の読み書き・比較の基準の優先順位・各操作での更新](./record-test-go.md) - `internal/engine/record_test.go`
+* [`record_test.go` — last-applied 記録の読み書き・比較の基準の優先順位・各操作での更新](./record-test-go.md) - `internal/engine/record_test.go`
 * [reset_test.go — FS-only teardown の除去範囲・フィルタ・dryrun・同意](./reset-test-go.md) - `internal/engine/reset_test.go`
 * [result_extensions_test.go — 実行結果のインベントリ・世代観測・到達状態・構造化 warning](./result-extensions-test-go.md) - `internal/engine/result_extensions_test.go`

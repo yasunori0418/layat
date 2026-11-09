@@ -14,7 +14,7 @@ generated:
 
 ## 対象
 
-`tests/nix-unit/resolve-marker.nix`（[lib.__internal は private helper のテスト seam として公開する](../../test-plan/lib-internal-test-seam.md) のテスト seam `layat.__internal.resolveEntry`
+`tests/nix-unit/resolve-marker.nix`（[lib.__internal で private helper をテストへ公開する](../../test-plan/lib-internal-test-seam.md) のテスト seam `layat.__internal.resolveEntry`
 と `lib/types.nix` の `isRootMarker` / `isOutOfStoreMarker` / `isRootRelativeMarker` を直接叩く。manifest 全体を介さず
 単一 entry の src 種別判定・文字列化だけを見る最小の境界。root 相対 marker だけは、
 `normalizeManifest` を通した entries の形も 1 件確かめる）

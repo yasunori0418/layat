@@ -61,7 +61,7 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
 
 | `<対象>` | 含むテスト資産 | 上位の test_plan |
 |---|---|---|
-| `manifest-eval` | `tests/nix-unit/` と `tests/namaka/` 配下の全テスト | [評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](docs/test-plan/nix-unit-namaka-split.md) / [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](docs/test-plan/eval-test-double.md) / [lib.__internal は private helper のテスト seam として公開する](docs/test-plan/lib-internal-test-seam.md) |
+| `manifest-eval` | `tests/nix-unit/` と `tests/namaka/` 配下の全テスト | [評価テストは nix-unit で不変条件を、namaka で manifest 全体のスナップショットを見る](docs/test-plan/nix-unit-namaka-split.md) / [評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える](docs/test-plan/eval-test-double.md) / [lib.__internal で private helper をテストへ公開する](docs/test-plan/lib-internal-test-seam.md) |
 | `engine-core` | `internal/engine/` の engine / dryrun / preflight、`internal/planner/` | [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](docs/test-plan/go-test-layering.md) |
 | `copy` | copytree / copy、e2e `04-copy` | [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](docs/test-plan/go-test-layering.md) / [非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](docs/test-plan/e2e-harness-scope.md) |
 | `migration-stale` | preremove_generalization / staleremove、e2e `03-stale` | [エンジンとコマンド層の Go テストは nix を介さない実 FS 統合テストを主戦力とする](docs/test-plan/go-test-layering.md) / [非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する](docs/test-plan/e2e-harness-scope.md) |

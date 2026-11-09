@@ -41,7 +41,7 @@ generated:
 
 > **上は原文の写しで、規範は frontmatter が正**。`--root` が project mode に限らず全モードの
 > 解決 root を一律上書きすることは [--root は全モード共通で解決 root を明示上書きする](root-override-flag.md)、明示時の profileDir キーイングは [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md)、
-> `projectRoot` が marker であることは [root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) / [root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md)、engine が外部コマンドとして
+> `projectRoot` が marker であることは [root マーカーは `kind` を運ぶ入れ物でパス解決は engine が行う](root-markers-runtime-resolution.md) / [root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md)、engine が外部コマンドとして
 > `git` を叩くことは [engine が叩く外部コマンドは git のみに限る](engine-external-command-constraint.md)、project mode の配置物が ephemeral であることは [project mode の配置物は ephemeral とし、activation は git 状態に干渉しない](project-mode-ephemeral.md)、
 > 世代の扱い（非公開・世代スキップ）は [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](project-mode-generation-skip.md) の担当。
 

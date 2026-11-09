@@ -86,7 +86,7 @@ REQ 側に無い（[manifest.json の root は rootKind を持ち fixed のと�
 project root に限られ、system の変換を受ける TC はまだ無い。`system` は規範側に所在を持つが、
 条件側には持たない。
 
-第四に、`fixed` の絶対パスが `mkManifest` の `passthru.root`（[mkManifest の返り値は passthru で root kind を露出する](../requirements/mkmanifest-passthru-rootkind.md)）へ写る側は
+第四に、`fixed` の絶対パスが `mkManifest` の `passthru.root`（[mkManifest の返り値は passthru で `rootKind` を露出する](../requirements/mkmanifest-passthru-rootkind.md)）へ写る側は
 derivation 層の担当で、本区分の TC 群は見ない（[fixed root で rootKind が fixed になり絶対パスを併記する（home marker が倒れないことを含む）](../test/manifest-eval/fixed-root-absolute-path.md) が射程外と宣言している）。この
 分岐は fixed のときだけ通り、CLI が build 前に `nix eval` で読む処理（`cli-json` 区分）の
 入力になるが、現状どの risk も残余として引き取っておらず、CASE も無い。評価層が出す文書の
@@ -102,4 +102,4 @@ derivation 層の担当で、本区分の TC 群は見ない（[fixed root で r
 
 `tests/nix-unit/structure.nix` / `defaults.nix` / `resolve-marker.nix` と
 `tests/namaka/manifest-project/expr.nix` の現行実装からの逆算（→ Issue #273「L1〜L4」節）。
-manifest 契約の設計判断は [manifest.json へ marker を clean enum で写す](../adr/wire-format-clean-enum.md) / [manifest.json の entry は target を識別子にして name を持たない](../adr/manifest-entry-identity-is-target.md) が持つ。
+manifest 契約の設計判断は [manifest.json へ marker を `clean` enum で写す](../adr/wire-format-clean-enum.md) / [manifest.json の entry は target を識別子にして name を持たない](../adr/manifest-entry-identity-is-target.md) が持つ。

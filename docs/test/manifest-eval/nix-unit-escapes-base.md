@@ -14,7 +14,7 @@ generated:
 
 ## 対象
 
-`tests/nix-unit/escapes-base.nix`（[lib.__internal は private helper のテスト seam として公開する](../../test-plan/lib-internal-test-seam.md) のテスト seam `layat.__internal` 経由で private
+`tests/nix-unit/escapes-base.nix`（[lib.__internal で private helper をテストへ公開する](../../test-plan/lib-internal-test-seam.md) のテスト seam `layat.__internal` 経由で private
 helper `escapesBase` / `pathChecks.isUnsafe` を直接叩く）
 
 ## 検証内容

@@ -39,7 +39,7 @@ generated:
 は `/` に、それぞれ engine が実行時に解決する。marker はパスを返す糖衣ではなく、解決の種別を
 運ぶ入れ物で、種別は `manifest.json` の `rootKind` に記録される。`systemRoot` の実装は [rootKind に system を足しても schemaVersion を上げない](system-rootkind-without-version-bump.md)、
 marker の `subdir` 適用形は [root マーカーに subdir の適用形を持たせる](root-marker-subdir-applied-form.md) が定める。規範の細目は
-[root は 3 マーカーと絶対パス文字列の union を取る](../requirements/root-marker-kinds.md)・[root マーカーは kind を運ぶ入れ物でパス解決は engine が行う](../requirements/root-markers-runtime-resolution.md)・
+[root は 3 マーカーと絶対パス文字列の union を取る](../requirements/root-marker-kinds.md)・[root マーカーは `kind` を運ぶ入れ物でパス解決は engine が行う](../requirements/root-markers-runtime-resolution.md)・
 [home mode の root は層ごとに定まった供給元から解決する](../requirements/home-mode-root-resolution.md) に置く。
 
 ## 根拠

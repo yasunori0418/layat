@@ -14,7 +14,7 @@ generated:
 
 ## 対象
 
-`tests/nix-unit/farm-entries.nix`（[lib.__internal は private helper のテスト seam として公開する](../../test-plan/lib-internal-test-seam.md) のテスト seam `layat.__internal.farmEntries` /
+`tests/nix-unit/farm-entries.nix`（[lib.__internal で private helper をテストへ公開する](../../test-plan/lib-internal-test-seam.md) のテスト seam `layat.__internal.farmEntries` /
 `layat.__internal.anchorName` / `layat.__internal.anchorLines` を直接叩き、加えて `mkManifest` の
 ビルドスクリプトへの配線を fake pkgs 経由で見る。anchorLines は `lib/manifest.nix` が
 `mkManifest` から呼ぶ生成式そのもので、テスト側に複製は持たない → Issue #289）

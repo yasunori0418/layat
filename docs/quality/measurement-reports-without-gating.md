@@ -33,7 +33,7 @@ generated:
 
 ## 仕様
 
-[マージ前の自動検証を必須にし、プラットフォーム差が効く層は全プラットフォームで通す](cross-platform-verification-before-merge.md) が必須にする側の規範であるのに対し、本 item は
+[マージ前の自動検証を必須にし、プラットフォーム差が出る層は全プラットフォームで通す](cross-platform-verification-before-merge.md) が必須にする側の規範であるのに対し、本 item は
 **必須化しない側の境界**を定める。両方が無いと、必須化の規範が「検証と名の付くものは
 すべて塞ぐ」と読めてしまう。
 
@@ -46,7 +46,7 @@ generated:
 結果を決める。塞ぐ代わりに読める場所へ出し、下がったことをどう扱うかは人が判断する。
 
 **「計測でない = 必須」ではない。** 本 item が定めるのは計測を必須条件にしないことだけで、
-何を必須にするかは [マージ前の自動検証を必須にし、プラットフォーム差が効く層は全プラットフォームで通す](cross-platform-verification-before-merge.md) の担当になる。実際、`sara check` は破損を検出する
+何を必須にするかは [マージ前の自動検証を必須にし、プラットフォーム差が出る層は全プラットフォームで通す](cross-platform-verification-before-merge.md) の担当になる。実際、`sara check` は破損を検出する
 検証でありながら required status check にしない判断が別途置かれている（→ [sara check を required status check にしない](../sara-adr/sara-check-not-required.md)）。本 item
 の規範をその判断の否定として読んではならない。
 

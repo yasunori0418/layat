@@ -50,6 +50,6 @@ switch と一括で動いてほしいユースケースを拾うために存在�
 
 なお同原文の「使用パターン」→「パターン 2」は CLI 単体を
 「`standalone CLI`（home mode）」と呼んでいたが、本 item はこれを採らない。用語 item
-[standalone](../ubiquitous-language/standalone.md) が、CLI 単体は配置モードではなく
+[`standalone`](../ubiquitous-language/standalone.md) が、CLI 単体は配置モードではなく
 起動形態であり、「`standalone = home mode`」と短絡しない（配置モードは `root` マーカーが決める）と
 定めているため。
