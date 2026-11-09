@@ -16,6 +16,7 @@ specification_ja: |
   `lib`（`mkManifest` / `mkApplyCommand` / マーカー群）は nixpkgs.lib のみに依存する
   純データ生成器でなければならない。配置ロジック（FS 操作・profile swap・古くなった配置の除去）を持ってはならず、
   home-manager / NixOS / nix-darwin への依存を持ち込んではならない。
+risk_exempt: "`lib` の依存の制約であり、評価テストが nixpkgs だけで通ることが傍証になる。"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"

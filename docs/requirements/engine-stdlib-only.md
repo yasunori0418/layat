@@ -19,6 +19,7 @@ specification_ja: |
   ロック・再帰コピー・manifest 契約・エラーラップはいずれも標準ライブラリで実現しなければ
   ならない。
   実行時に叩いてよい外部コマンドは [engine が叩く外部コマンドは git のみに限る](engine-external-command-constraint.md) の規範であり、ここでは再掲しない。
+risk_exempt: "engine の依存の制約であり、`go.mod` と `vendorHash` で守る。"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"

@@ -25,6 +25,7 @@ specification_ja: |
   2 層の境界は `manifest.json` だけとし、engine が Nix の評価結果へ直接依存しないように
   しなければならない。どのファイルを entrypoint として発見するかは CLI 仕様の担当、
   engine がどう配置を行うかは [engine が叩く外部コマンドは git のみに限る](engine-external-command-constraint.md) の担当で、いずれも本 item では規定しない。
+risk_exempt: "2 層に分ける構造の制約であり、パッケージ配置で守る。"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"

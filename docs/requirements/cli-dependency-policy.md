@@ -26,6 +26,7 @@ specification_ja: |
   ならない。
   Go ツールチェーンは nixpkgs の go に pin しなければならず、`toolchain` ディレクティブを
   使ってはならない（ビルドが独自にツールチェーンを取得せず Nix の下で再現可能に保つため）。
+risk_exempt: "CLI の依存の制約であり、`go.mod` と `vendorHash` で守る。"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
