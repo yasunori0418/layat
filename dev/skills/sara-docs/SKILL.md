@@ -132,10 +132,14 @@ relation は**起こした側（下流）の frontmatter に宣言する**（`sa
 
 - **`sara check`** — グラフの整合（broken reference・duplicate ID・cycle・orphan）。
   書き込みのたびに回す。green が完了条件。
-- **`sara-gap`** — valid なグラフの**未カバー 3 段**（threatens されていない REQ/DSG・
-  mitigates されていない risk・covers されていない TC）。工程の着手点リストとして使う
-  （unthreatened = リスク識別の未着手、unmitigated = テスト分析の未着手、
-  uncovered = テスト実装の未着手）。exit 0 = ギャップなし / 1 = あり / 2 = check 失敗。
+- **`sara-gap`** — valid なグラフの**未カバーと到達率**を 7 節で出す。工程の着手点リストとして使う
+  （`unthreatened` = リスク識別の未着手（`threatens` も `risk_exempt` も無い `requirement`）、
+  `unmitigated` = テスト分析の未着手、`uncovered` = テスト実装の未着手、
+  `unfollowed` = `test_plan` への `follows` が無い `test_case`、
+  `unsatisfied_quality` = `infrastructure` に `satisfies` されていない `quality`、
+  `exempt` = `risk_exempt` を持つ `requirement`（情報）、
+  `reach` = `requirement`・`test_plan`・`quality` の到達率）。
+  exit 0 = ギャップなしで到達率がすべて 1 / 1 = ギャップありか到達率が 1 未満 / 2 = check 失敗。
 
 CLI の詳しい使い方（`sara-new` による起票手順を含む）は
 [references/sara-cli.md](references/sara-cli.md)。

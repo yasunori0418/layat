@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sara-gap（グラフ未カバー 3 段の列挙コマンド）の検証。fixture に実物の docs/model.yaml を重ねる。
+# sara-gap（グラフ未カバーの 7 節と到達率の列挙コマンド）の検証。fixture に実物の docs/model.yaml を重ねる。
 #
 # 実行:
 #   nix develop ./dev -c dev/tests/sara-gap.sh   # devShell から直接
@@ -45,119 +45,220 @@ make_fixture() {
 base="$work/base"
 make_fixture "$base"
 
-# fixture は 3 段のギャップを 1 件ずつ持つ:
-#   unthreatened: REQ-bbbb0002（risk 無し要求）・DSG-dd000001（risk 無し設計）
-#   unmitigated:  RISK-22220002（TC 無しリスク）
-#   uncovered:    TC-44440002（CASE 無しテスト条件）
-# 張り先を持つ側: REQ-aaaa0001 / RISK-11110001 / TC-33330001。
+# base の期待値は unthreatened 2・unmitigated 2・uncovered 1・unfollowed 1・unsatisfied_quality 1・exempt 1。
+# 鎖が最後までつながる要求は REQ-aaaa0001 だけで、DSG-dd000001 は risk の有無によらず列挙しない。
 
 run_gap() {
   stdout_capture="$("$@" 2>/dev/null)" && status_capture=0 || status_capture=$?
 }
 
-# --- 1. 3 段の検出と exit 1 ---------------------------------------------------
+# 値が一致すれば pass、違えば実際の値つきで fault にする。
+assert_eq() {
+  if [[ "$2" == "$3" ]]; then
+    pass "$1"
+  else
+    fault "$1（期待: $2 実際: $3）"
+  fi
+}
+
+# 文字列 $3 に正規表現 $2 が一致するかを確かめる。
+assert_has() {
+  if grep -Eq -- "$2" <<<"$3"; then
+    pass "$1"
+  else
+    fault "$1（$2 が出力に無い）"
+  fi
+}
+
+assert_lacks() {
+  if ! grep -Eq -- "$2" <<<"$3"; then
+    pass "$1"
+  else
+    fault "$1（$2 が出力に出ている）"
+  fi
+}
+
+# text 出力 $2 から見出し $1 の節の本文だけを取り出す。
+section_body() {
+  local line inside=0
+  while IFS= read -r line; do
+    if [[ "$line" == "## "* ]]; then
+      if [[ "$line" == "$1" ]]; then inside=1; else inside=0; fi
+      continue
+    fi
+    if [[ "$inside" -eq 1 ]]; then printf '%s\n' "$line"; fi
+  done <<<"$2"
+}
+
+h_unthreatened='## threatens も risk_exempt も無い requirement'
+h_unmitigated='## mitigates されていない risk'
+h_uncovered='## covers されていない test_condition'
+h_unfollowed='## follows を持たない test_case'
+h_unsatisfied='## infrastructure に satisfies されていない quality'
+h_exempt='## risk_exempt を持つ requirement（情報）'
+h_reach='## 到達率'
+expected_headings="$(printf '%s\n' "$h_unthreatened" "$h_unmitigated" "$h_uncovered" "$h_unfollowed" "$h_unsatisfied" "$h_exempt" "$h_reach")"
+design_mark='\(design 側に risk あり\)$'
+full_id='^[A-Z]+-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'$'\t'
+short_id='^[A-Z]+-[0-9a-f]{8}'$'\t'
+
+# --- 1. 7 節の検出と exit 1 ---------------------------------------------------
 
 run_gap env SARA_GAP_ROOT="$base" sara-gap
 gap_out="$stdout_capture"
 
-if [[ "$status_capture" -eq 1 ]]; then
-  pass "ギャップがあれば exit 1"
-else
-  fault "ギャップがあれば exit 1（実際: exit=$status_capture）"
-fi
+assert_eq "ギャップがあれば exit 1" 1 "$status_capture"
+assert_eq "見出しを 7 つ、この順に出す" "$expected_headings" "$(grep '^## ' <<<"$gap_out")"
 
-for want in REQ-bbbb0002 DSG-dd000001 RISK-22220002 TC-44440002; do
-  if grep -q "^$want" <<<"$gap_out"; then
-    pass "$want を列挙する"
-  else
-    fault "$want を列挙する（出力に無い）"
-  fi
+sec_unthreatened="$(section_body "$h_unthreatened" "$gap_out")"
+sec_unfollowed="$(section_body "$h_unfollowed" "$gap_out")"
+sec_exempt="$(section_body "$h_exempt" "$gap_out")"
+
+assert_has "risk の無い REQ を節 1 に出す" '^REQ-bbbb0002' "$sec_unthreatened"
+assert_has "mitigates されていない RISK を節 2 に出す" '^RISK-22220002' "$(section_body "$h_unmitigated" "$gap_out")"
+assert_has "covers されていない TC を節 3 に出す" '^TC-44440002' "$(section_body "$h_uncovered" "$gap_out")"
+assert_has "follows の無い CASE を節 4 に出す" '^CASE-55550001' "$sec_unfollowed"
+assert_has "INF に satisfies されない QA を節 5 に出す" '^QA-88880002' "$(section_body "$h_unsatisfied" "$gap_out")"
+
+for nowant in REQ-aaaa0001 RISK-11110001 TC-33330001 CASE-66660002 QA-88880001; do
+  assert_lacks "張り先を持つ $nowant を列挙しない" "^$nowant" "$gap_out"
 done
 
-for nowant in REQ-aaaa0001 RISK-11110001 TC-33330001 CASE-55550001; do
-  if ! grep -q "$nowant" <<<"$gap_out"; then
-    pass "張り先を持つ $nowant を列挙しない"
-  else
-    fault "張り先を持つ $nowant を列挙しない（出力に出ている）"
-  fi
-done
-
-# 3 セクションの見出しが揃っている。
-if [[ "$(grep -c '^## ' <<<"$gap_out")" -eq 3 ]]; then
-  pass "セクション見出しを 3 つ出す"
-else
-  fault "セクション見出しを 3 つ出す（実際: $(grep -c '^## ' <<<"$gap_out") 個）"
-fi
+assert_lacks "design を列挙しない" 'DSG-dd000001' "$gap_out"
+assert_lacks "risk_exempt を持つ REQ を節 1 に出さない" 'REQ-cccc0003' "$sec_unthreatened"
+assert_has "risk_exempt を持つ REQ を節 6 に出す" '^REQ-cccc0003' "$sec_exempt"
+assert_has "design 側にだけ risk がある REQ に印を付ける" "^REQ-dddd0004.*$design_mark" "$sec_unthreatened"
+assert_lacks "design 側に risk が無い REQ には印を付けない" "^REQ-bbbb0002.*$design_mark" "$sec_unthreatened"
 
 # --- 2. text の行形式 ----------------------------------------------------------
 
 req_line="$(grep '^REQ-bbbb0002' <<<"$gap_out")"
-if [[ "$req_line" == REQ-bbbb0002$'\t'*$'\t'docs/*.md ]]; then
-  pass "行が <ID 前方8>\\t<name>\\t<docs/ 前置の file> の形"
-else
-  fault "行が <ID 前方8>\\t<name>\\t<docs/ 前置の file> の形（実際: $req_line）"
-fi
+assert_eq "行が <フル ID>\\t<name>\\t<docs/ 前置の file> の形" \
+  $'REQ-bbbb0002-0000-4000-8000-000000000004\trisk が無い要求\tdocs/req-gap.md' "$req_line"
+
+# 節 7 の前までの行だけを見る。節 7 の行は ID を持たない。
+item_lines="$(grep -Ev '^(## .*|なし|)$' <<<"${gap_out%%"$h_reach"*}")"
+assert_eq "節 1〜6 の行は 8 件" 8 "$(grep -c '' <<<"$item_lines")"
+assert_eq "節 1〜6 の行の先頭がすべてフル ID" 8 "$(grep -Ec "$full_id" <<<"$item_lines")"
+assert_eq "8 文字省略形を出さない" 0 "$(grep -Ec "$short_id" <<<"$gap_out")"
+
+sec_reach="$(section_body "$h_reach" "$gap_out")"
+assert_has "節 7 に requirement の到達率を出す" $'^requirement\t1/3\t33\\.3%$' "$sec_reach"
+assert_has "節 7 に test_plan の到達率を出す" $'^test_plan\t1/1\t100%$' "$sec_reach"
+assert_has "節 7 に quality の到達率を出す" $'^quality\t1/2\t50%$' "$sec_reach"
 
 # --- 3. --json -----------------------------------------------------------------
 
 run_gap env SARA_GAP_ROOT="$base" sara-gap --json
 json_out="$stdout_capture"
 
-if [[ "$status_capture" -eq 1 ]]; then
-  pass "--json でも exit code は同じ（ギャップあり = 1）"
-else
-  fault "--json でも exit code は同じ（実際: exit=$status_capture）"
-fi
+assert_eq "--json でも exit code は同じ（ギャップあり = 1）" 1 "$status_capture"
+assert_eq "--json は 7 キーのオブジェクトを返す" \
+  "exempt,reach,uncovered,unfollowed,unmitigated,unsatisfied_quality,unthreatened" \
+  "$(jq -r 'keys | join(",")' <<<"$json_out" 2>/dev/null)"
+assert_eq "--json の件数が 2,2,1,1,1,1" "2,2,1,1,1,1" \
+  "$(jq -r '[.unthreatened, .unmitigated, .uncovered, .unfollowed, .unsatisfied_quality, .exempt | length] | join(",")' <<<"$json_out" 2>/dev/null)"
+assert_eq "--json の行のキーは id / name / file だけ" '["file,id,name"]' \
+  "$(jq -c '[.unthreatened, .unmitigated, .uncovered, .unfollowed, .unsatisfied_quality, .exempt | .[] | keys | join(",")] | unique' <<<"$json_out" 2>/dev/null)"
+assert_eq "--json の行の id はフル ID で file は docs/ 前置" "true" \
+  "$(jq -r '.unsatisfied_quality[0] | (.id == "QA-88880002-0000-4000-8000-000000000010") and (.name != "") and (.file | startswith("docs/"))' <<<"$json_out" 2>/dev/null)"
+assert_eq "exempt に risk_exempt を持つ REQ が入る" "REQ-cccc0003-0000-4000-8000-00000000000b" \
+  "$(jq -r '.exempt[0].id' <<<"$json_out" 2>/dev/null)"
+assert_eq "unfollowed に follows の無い CASE だけが入る" "CASE-55550001-0000-4000-8000-00000000000a" \
+  "$(jq -r '[.unfollowed[].id] | join(",")' <<<"$json_out" 2>/dev/null)"
+assert_eq "reach の 3 値が期待どおり" "true" \
+  "$(jq '.reach == {requirement: {total: 3, reached: 1, ratio: (1 / 3)}, test_plan: {total: 1, reached: 1, ratio: 1}, quality: {total: 2, reached: 1, ratio: 0.5}}' <<<"$json_out" 2>/dev/null)"
 
-if [[ "$(jq -r 'keys | join(",")' <<<"$json_out" 2>/dev/null)" == "uncovered,unmitigated,unthreatened" ]]; then
-  pass "--json は 3 キーのオブジェクトを返す"
-else
-  fault "--json は 3 キーのオブジェクトを返す（実際: $(jq -r 'keys | join(",")' <<<"$json_out" 2>/dev/null)）"
-fi
-
-counts="$(jq -r '[.unthreatened, .unmitigated, .uncovered | length] | join(",")' <<<"$json_out" 2>/dev/null)"
-if [[ "$counts" == "2,1,1" ]]; then
-  pass "--json の件数が 3 段で 2,1,1"
-else
-  fault "--json の件数が 3 段で 2,1,1（実際: $counts）"
-fi
-
-row_ok="$(jq -r '.unmitigated[0] | (.ref == "RISK-22220002") and (.name != "") and (.file | startswith("docs/"))' <<<"$json_out" 2>/dev/null)"
-if [[ "$row_ok" == "true" ]]; then
-  pass "--json の行が ref / name / file（docs/ 前置）を持つ"
-else
-  fault "--json の行が ref / name / file（docs/ 前置）を持つ（実際: $(jq -c '.unmitigated[0]' <<<"$json_out" 2>/dev/null)）"
-fi
-
-# --- 4. ギャップなしのグラフでは exit 0 ----------------------------------------
+# --- 4. ギャップを埋めた派生 fixture ------------------------------------------
 #
-# ギャップ側の item を除き、SOL → UC → REQ-aaaa0001 ← RISK-11110001 ← TC-33330001 ← CASE-55550001
-# の一本鎖だけを残す。
+# 免除の REQ と risk の無い DSG-dd000001 は残し、どちらも exit に効かないことを確かめる。
+
+fill_gaps() {
+  make_fixture "$1"
+  rm "$1"/docs/{req-gap,risk-gap,tc-gap,qa-gap,req-design-only,risk-on-design}.md
+  sed -i '/REQ-dddd0004/d' "$1/docs/dsg-gap.md"
+  sed -i 's|^covers:$|follows:\n  - "TP-77770001-0000-4000-8000-00000000000e"\ncovers:|' "$1/docs/case.md"
+}
 
 clean="$work/clean"
-make_fixture "$clean"
-rm "$clean/docs/req-gap.md" "$clean/docs/dsg-gap.md" "$clean/docs/risk-gap.md" "$clean/docs/tc-gap.md"
+fill_gaps "$clean"
 
 run_gap env SARA_GAP_ROOT="$clean" sara-gap
 clean_out="$stdout_capture"
-if [[ "$status_capture" -eq 0 ]]; then
-  pass "ギャップが無ければ exit 0"
-else
-  fault "ギャップが無ければ exit 0（実際: exit=$status_capture 出力: $clean_out）"
-fi
-
-if [[ "$(grep -c '^なし$' <<<"$clean_out")" -eq 3 ]]; then
-  pass "0 件のセクションは「なし」と出す"
-else
-  fault "0 件のセクションは「なし」と出す（実際: $(grep -c '^なし$' <<<"$clean_out") 個）"
-fi
+assert_eq "ギャップが無ければ exit 0（exempt は exit に影響しない）" 0 "$status_capture"
+assert_eq "見出しは埋めても 7 つ" 7 "$(grep -c '^## ' <<<"$clean_out")"
+assert_eq "0 件の節 1〜5 は「なし」と出す" 5 "$(grep -c '^なし$' <<<"$clean_out")"
+assert_has "exempt は埋めても節 6 に出る" '^REQ-cccc0003' "$(section_body "$h_exempt" "$clean_out")"
+assert_lacks "risk の無い design を列挙しない" 'DSG-dd000001' "$clean_out"
 
 run_gap env SARA_GAP_ROOT="$clean" sara-gap --json
-if [[ "$status_capture" -eq 0 && "$(jq -r '[.[] | length] | add' <<<"$stdout_capture" 2>/dev/null)" == "0" ]]; then
-  pass "--json でも空配列 3 本で exit 0"
-else
-  fault "--json でも空配列 3 本で exit 0（exit=$status_capture 出力: $stdout_capture）"
-fi
+assert_eq "--json でもギャップ 5 配列が空で exit 0" "0:0" \
+  "$status_capture:$(jq -r '[.unthreatened, .unmitigated, .uncovered, .unfollowed, .unsatisfied_quality | length] | add' <<<"$stdout_capture" 2>/dev/null)"
+assert_eq "--json の reach がすべて 1" "1,1,1" \
+  "$(jq -r '[.reach.requirement, .reach.test_plan, .reach.quality | .ratio] | join(",")' <<<"$stdout_capture" 2>/dev/null)"
+
+# 節 1〜5 が空でも、follows されない TP があれば到達率だけで exit 1 になる。
+reach_only="$work/reach-only"
+fill_gaps "$reach_only"
+cat >"$reach_only/docs/tp-unfollowed.md" <<'MD'
+---
+id: "TP-77770002-0000-4000-8000-000000000013"
+type: test_plan
+name: "follows されないテスト計画"
+status: stable
+derives_from:
+  - "SOL-5011a001-0000-4000-8000-000000000001"
+specification: |
+  The test process SHALL leave this test plan unfollowed.
+specification_ja: |
+  テストプロセスはこのテスト計画を follows されない状態に保たなければならない。
+---
+# TP-77770002: follows されないテスト計画
+MD
+
+run_gap env SARA_GAP_ROOT="$reach_only" sara-gap
+reach_only_out="$stdout_capture"
+assert_eq "到達率だけが 1 未満でも exit 1" 1 "$status_capture"
+assert_eq "到達率だけが 1 未満のとき節 1〜5 は空" 5 "$(grep -c '^なし$' <<<"$reach_only_out")"
+
+# 到達率がすべて 1 のまま節 2〜4 のどれか 1 件だけが残っても exit 1 になる。
+for gap_file in risk-gap tc-gap case; do
+  single="$work/single-$gap_file"
+  fill_gaps "$single"
+  cp "$fixture/docs/$gap_file.md" "$single/docs/$gap_file.md"
+  run_gap env SARA_GAP_ROOT="$single" sara-gap --json
+  assert_eq "$gap_file.md のギャップだけで exit 1（到達率はすべて 1）" "1:1,1,1" \
+    "$status_capture:$(jq -r '[.reach.requirement, .reach.test_plan, .reach.quality | .ratio] | join(",")' <<<"$stdout_capture" 2>/dev/null)"
+done
+
+# design があっても risk に threatens されていなければ印を付けない。
+no_design_risk="$work/no-design-risk"
+make_fixture "$no_design_risk"
+rm "$no_design_risk/docs/risk-on-design.md"
+
+run_gap env SARA_GAP_ROOT="$no_design_risk" sara-gap
+assert_has "risk の無い design しか持たない REQ を節 1 に出す" '^REQ-dddd0004' "$stdout_capture"
+assert_lacks "risk の無い design しか持たない REQ には印を付けない" "^REQ-dddd0004.*$design_mark" "$stdout_capture"
+
+# 値が空の risk_exempt は免除にならない。
+empty_exempt="$work/empty-exempt"
+make_fixture "$empty_exempt"
+sed -i 's/^risk_exempt: .*/risk_exempt: ""/' "$empty_exempt/docs/req-exempt.md"
+
+run_gap env SARA_GAP_ROOT="$empty_exempt" sara-gap --json
+assert_eq "空の risk_exempt を持つ REQ は exempt に出ず unthreatened に出る" "0:true" \
+  "$(jq -r '"\(.exempt | length):\([.unthreatened[].id] | any(startswith("REQ-cccc0003")))"' <<<"$stdout_capture" 2>/dev/null)"
+assert_eq "空の risk_exempt を持つ REQ は到達率の total に入る" "4" \
+  "$(jq -r '.reach.requirement.total' <<<"$stdout_capture" 2>/dev/null)"
+
+# CASE が無くなると TC までつながっていても requirement は到達にならない。
+no_case="$work/no-case"
+fill_gaps "$no_case"
+rm "$no_case/docs/case.md" "$no_case/docs/case-followed.md"
+
+run_gap env SARA_GAP_ROOT="$no_case" sara-gap --json
+assert_eq "鎖が CASE まで届かない REQ は reached に数えない" "true" \
+  "$(jq '.reach.requirement == {total: 1, reached: 0, ratio: 0}' <<<"$stdout_capture" 2>/dev/null)"
 
 # --- 5. sara check が失敗するグラフでは exit 2 ---------------------------------
 #
@@ -220,6 +321,18 @@ if [[ "$status_capture" -eq 2 ]]; then
 else
   fault "exit 0 でも valid: false の JSON では exit 2（実際: exit=$status_capture）"
 fi
+
+# item が 0 件のグラフは全 reach の total が 0 で、ratio は 1 として exit 0 にする。
+fake_empty="$work/fake-sara-empty"
+{
+  printf '#!%s\n' "$BASH"
+  printf "printf %%s '{\"items\": [], \"valid\": true}'\n"
+} >"$fake_empty"
+chmod +x "$fake_empty"
+
+run_gap env SARA_GAP_ROOT="$base" SARA_GAP_SARA="$fake_empty" sara-gap --json
+assert_eq "item が 0 件なら reach の ratio は 1 で exit 0" "0:1,1,1" \
+  "$status_capture:$(jq -r '[.reach.requirement, .reach.test_plan, .reach.quality | .ratio] | join(",")' <<<"$stdout_capture" 2>/dev/null)"
 
 # --- 7. 走査先をリポジトリルート基準で解決する ---------------------------------
 #

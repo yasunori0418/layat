@@ -94,12 +94,34 @@ sara schema            # 有効な model schema を YAML で出力
 
 型・relation・フィールド定義の正本は `docs/model.yaml`。編集前に schema で現状を確認する。
 
-## sara-gap — 未カバー 3 段の列挙（別コマンド）
+## sara-gap — 未カバーの 7 節と到達率（別コマンド）
 
 ```bash
-sara-gap           # text: セクション見出し + <ref>\t<name>\t<file>
-sara-gap --json    # {unthreatened, unmitigated, uncovered}
+sara-gap           # text: 7 節の見出し + <フル ID>\t<name>\t<file>
+sara-gap --json    # {unthreatened, unmitigated, uncovered, unfollowed, unsatisfied_quality, exempt, reach}
 ```
+
+| 節 | `--json` のキー | 内容 |
+|---|---|---|
+| 1 | `unthreatened` | `threatens` も `risk_exempt` も無い `requirement`。`design` は列挙しない。`design` 側にだけ `risk` があれば text の行末に `(design 側に risk あり)` を付ける |
+| 2 | `unmitigated` | `mitigates` されていない `risk` |
+| 3 | `uncovered` | `covers` されていない `test_condition` |
+| 4 | `unfollowed` | `follows` を持たない `test_case` |
+| 5 | `unsatisfied_quality` | `infrastructure` に `satisfies` されていない `quality` |
+| 6 | `exempt` | `risk_exempt` を持つ `requirement`。情報として出し、exit code に影響しない |
+| 7 | `reach` | `requirement` / `test_plan` / `quality` ごとの `{total, reached, ratio}` |
+
+節 1〜6 の `--json` の行は `{id, name, file}` で、`id` はフル ID。節 7 の text の行は
+`<型>\t<reached>/<total>\t<割合>%`。
+
+到達と数えるのは次のもの。
+
+- `requirement`: `risk_exempt` を持つものを `total` から除き、`requirement` ← `risk` ← `test_condition` ← `test_case` の辺がすべてつながるもの
+- `test_plan`: 1 件以上の `test_case` から `follows` されるもの
+- `quality`: 1 件以上の `infrastructure` から `satisfies` されるもの
+
+exit code は、節 1〜5 のすべてが空で `ratio` がすべて 1 なら 0、それ以外は 1。`sara check` の失敗と
+JSON 形状の異常は 2。
 
 sara 本体ではなく devShell 同梱の独立コマンド。valid なグラフに対してだけ動く
 （`sara check` が落ちる間は exit 2 で一覧を出さない）。工程スキルは着手点の特定に使う。

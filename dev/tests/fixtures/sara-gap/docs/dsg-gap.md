@@ -1,11 +1,12 @@
 ---
 id: "DSG-dd000001-0000-4000-8000-000000000005"
 type: design
-name: "risk が無い設計"
+name: "sara-gap が列挙しない設計"
 status: stable
 satisfies:
   - "REQ-aaaa0001-0000-4000-8000-000000000003"
+  - "REQ-dddd0004-0000-4000-8000-00000000000c"
 ---
-# DSG-dd000001: risk が無い設計
+# DSG-dd000001: sara-gap が列挙しない設計
 
-unthreatened の design 分岐を固定する（requirement だけでなく design も対象）。
+`design` を列挙しないことを固定する。

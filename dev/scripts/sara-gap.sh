@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+# sara ドキュメントグラフの未カバーを 6 節で列挙し、到達率を出す。
+#
+#   sara-gap [--json]
+#
+# exit code は 0 = ギャップなし / 1 = ギャップあり・到達率 1 未満 / 2 = sara check 失敗・JSON 形状異常。
+
+set -euo pipefail
+
+usage() {
+  cat >&2 <<'EOF'
+usage: sara-gap [--json]
+
+sara ドキュメントグラフの未カバーと到達率を 7 節で出す:
+  1. threatens も risk_exempt も無い requirement
+  2. mitigates されていない risk
+  3. covers されていない test_condition
+  4. follows を持たない test_case
+  5. infrastructure に satisfies されていない quality
+  6. risk_exempt を持つ requirement（情報）
+  7. 到達率
+
+exit code:
+  0  節 1〜5 が空で、到達率がすべて 1
+  1  節 1〜5 のいずれかが空でない、または到達率のいずれかが 1 未満
+  2  sara check の失敗・JSON 形状の異常
+EOF
+}
+
+json_out=0
+case "${1-}" in
+  -h | --help)
+    usage
+    exit 0
+    ;;
+  --json) json_out=1 ;;
+  "") ;;
+  *)
+    usage
+    exit 2
+    ;;
+esac
+if [ "$#" -gt 1 ]; then
+  usage
+  exit 2
+fi
+
+# sara.toml のあるリポジトリルートで sara を実行する。
+# SARA_GAP_ROOT はサンドボックスの契約テストが fixture を指すための seam。
+repo_root=${SARA_GAP_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || printf '.')}
+cd "$repo_root" || {
+  echo "sara-gap: リポジトリルートへ移動できない: $repo_root" >&2
+  exit 2
+}
+
+# sara 呼び出しの seam（テストが JSON 形状異常を決定論的に再現するため）。
+sara_cmd=${SARA_GAP_SARA:-sara}
+
+# グラフが invalid の間はギャップを算出しない（壊れたグラフから作る一覧は
+# 信用できないため。stderr は sara の診断をそのまま通す）。
+if ! graph=$("$sara_cmd" check --format json); then
+  echo "sara-gap: sara check が失敗した（先にグラフを valid にすること）" >&2
+  exit 2
+fi
+
+# .items 配列と valid を確認する。sara のバージョン更新で JSON 形状が変わった
+# とき、黙って空の結果（＝ギャップなし）を返す事故を防ぐガード。
+if ! printf '%s' "$graph" | jq -e '(.items | type) == "array"' >/dev/null; then
+  echo "sara-gap: sara check の JSON に .items 配列が無い（sara の出力形状が変わった可能性）" >&2
+  exit 2
+fi
+if ! printf '%s' "$graph" | jq -e '.valid == true' >/dev/null; then
+  echo "sara-gap: sara check が invalid を報告した（先にグラフを valid にすること）" >&2
+  exit 2
+fi
+
+# 宣言辺（relations.<型> の ID 配列）から張り先の集合を作り、各段の未カバーを
+# 逆引きする 1 パス。relations を持たない item もあるので欠落は空配列に倒す。
+# file はリポジトリルート相対で ./ が前置されるので剥がす。
+gaps=$(printf '%s' "$graph" | jq '
+  def targets(t): [.items[] | (.relations[t]? // [])[]] | unique;
+  def row: {id, name, file: (.file | ltrimstr("./"))};
+  def has_exempt: (.fields.risk_exempt? // "") != "";
+  def reach_of(f): length as $total | ([.[] | select(f)] | length) as $reached
+    | {total: $total, reached: $reached, ratio: (if $total == 0 then 1 else $reached / $total end)};
+  targets("threatens") as $threatened
+  | ([.items[] | select(.type == "design")
+      | select(.id as $i | $threatened | index($i))
+      | (.relations.satisfies? // [])[]] | unique) as $risky_design_reqs
+  | targets("mitigates") as $mitigated
+  | targets("covers") as $covered
+  | ([.items[] | select(.type == "infrastructure") | (.relations.satisfies? // [])[]] | unique) as $inf_satisfied
+  | targets("follows") as $followed
+  | ([.items[] | select(.type == "test_condition") | select(.id as $i | $covered | index($i))
+      | (.relations.mitigates? // [])[]] | unique) as $case_backed_risks
+  | ([.items[] | select(.type == "risk") | select(.id as $i | $case_backed_risks | index($i))
+      | (.relations.threatens? // [])[]] | unique) as $chained_reqs
+  | {
+      unthreatened: ([.items[]
+        | select(.type == "requirement")
+        | select(has_exempt | not)
+        | select(.id as $i | ($threatened | index($i)) | not)
+        | row + {design_risk: (.id as $i | $risky_design_reqs | index($i) != null)}] | sort_by(.id)),
+      unmitigated: ([.items[]
+        | select(.type == "risk")
+        | select(.id as $i | ($mitigated | index($i)) | not) | row] | sort_by(.id)),
+      uncovered: ([.items[]
+        | select(.type == "test_condition")
+        | select(.id as $i | ($covered | index($i)) | not) | row] | sort_by(.id)),
+      unfollowed: ([.items[]
+        | select(.type == "test_case")
+        | select((.relations.follows? // []) | length == 0) | row] | sort_by(.id)),
+      unsatisfied_quality: ([.items[]
+        | select(.type == "quality")
+        | select(.id as $i | ($inf_satisfied | index($i)) | not) | row] | sort_by(.id)),
+      exempt: ([.items[] | select(.type == "requirement") | select(has_exempt) | row] | sort_by(.id)),
+      reach: {
+        requirement: ([.items[] | select(.type == "requirement") | select(has_exempt | not)]
+          | reach_of(.id as $i | $chained_reqs | index($i))),
+        test_plan: ([.items[] | select(.type == "test_plan")]
+          | reach_of(.id as $i | $followed | index($i))),
+        quality: ([.items[] | select(.type == "quality")]
+          | reach_of(.id as $i | $inf_satisfied | index($i)))
+      }
+    }')
+
+if [ "$json_out" -eq 1 ]; then
+  printf '%s' "$gaps" | jq 'del(.unthreatened[].design_risk)'
+else
+  printf '%s' "$gaps" | jq -r '
+    def section(title; rows):
+      ["## " + title]
+      + (if (rows | length) == 0 then ["なし"]
+         else [rows[] | "\(.id)\t\(.name)\t\(.file)" + (if .design_risk then "\t(design 側に risk あり)" else "" end)] end);
+    section("threatens も risk_exempt も無い requirement"; .unthreatened)
+    + [""]
+    + section("mitigates されていない risk"; .unmitigated)
+    + [""]
+    + section("covers されていない test_condition"; .uncovered)
+    + [""]
+    + section("follows を持たない test_case"; .unfollowed)
+    + [""]
+    + section("infrastructure に satisfies されていない quality"; .unsatisfied_quality)
+    + [""]
+    + section("risk_exempt を持つ requirement（情報）"; .exempt)
+    + [""]
+    + ["## 到達率"]
+    + (.reach as $r | ["requirement", "test_plan", "quality"]
+       | map(. as $k | $r[$k] | "\($k)\t\(.reached)/\(.total)\t\((.ratio * 1000 | floor) / 10)%"))
+    | .[]'
+fi
+
+if printf '%s' "$gaps" | jq -e '
+  ([.unthreatened, .unmitigated, .uncovered, .unfollowed, .unsatisfied_quality | length] | add) > 0
+  or ([.reach[].ratio] | any(. < 1))' >/dev/null; then
+  exit 1
+fi

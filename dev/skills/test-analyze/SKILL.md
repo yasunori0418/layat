@@ -47,7 +47,7 @@ ISTQB/JSTQB のテストプロセス 7 活動のうち **テスト分析（test 
 原則 2 に従い、以下を**自分で調べる**（利用者に訊かない）:
 
 - **前工程成果物（グラフ走査）**: 対象の REQ / DSG に `threatens` している risk item を
-  特定する（`sara query <REQ/DSG のフル ID> -d`。対象周辺の未着手は `sara-gap` の
+  特定する（`sara query <REQ/DSG のフル ID> -d`。対象周辺の REQ の未着手は `sara-gap` の
   unthreatened 一覧がそのまま示す）。risk の評価（likelihood / impact / level）と
   対応する test_plan のアプローチを優先度付けの主根拠にする。
 - **仕様・設計**: 対象の REQ / DSG item 本文・`specification`・受け入れ条件。
