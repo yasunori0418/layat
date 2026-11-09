@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T00:12:45+09:00"
 ---
-# SDR-3e5b9994-a905-44d8-8256-2bd65b12b87e: ADR は UUID だけで採番する
+# ADR は UUID だけで採番する
 
 - ステータス: stable
 - 日付: 2026-11-04

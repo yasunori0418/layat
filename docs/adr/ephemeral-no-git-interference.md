@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-4dca6ef4-2791-48d5-aa82-7037630968a6: ephemeral 配置は git に干渉しない
+# ephemeral 配置は git に干渉しない
 
 - ステータス: stable
 - 日付: 2026-11-01

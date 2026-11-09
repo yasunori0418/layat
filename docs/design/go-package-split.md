@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:32:50+09:00"
 ---
-# DSG-7d354fe0-a333-495b-9f4b-14bba316dc47: Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする
+# Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする
 
 ## 設計
 

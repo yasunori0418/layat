@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# TC-733ac4ed-dac3-4bb8-9bfd-fd1cbdc300c9: 失敗が item と subject とトップレベルの正しい層に 1 度だけ載り原因で分類される
+# 失敗が item と subject とトップレベルの正しい層に 1 度だけ載り原因で分類される
 
 ## 条件
 

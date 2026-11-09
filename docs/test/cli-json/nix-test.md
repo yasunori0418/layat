@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# CASE-eec02695-ac60-4ea9-a825-f23f7669d132: nixgen_test.go — entrypoint 探索順序と installable 引数の 2 形式
+# nixgen_test.go — entrypoint 探索順序と installable 引数の 2 形式
 
 ## 対象
 

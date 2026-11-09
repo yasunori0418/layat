@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:16:56+09:00"
 ---
-# ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e: project mode を第一の使い方とする
+# project mode を第一の使い方とする
 
 - ステータス: stable
 - 日付: 2026-11-01

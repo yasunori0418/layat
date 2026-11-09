@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-b4e4b65d-6e35-40c3-a00e-20c14043df6f: recopy の上書きは削除ではなく同一親内への rename 退避で行う
+# recopy の上書きは削除ではなく同一親内への rename 退避で行う
 
 ## 仕様
 

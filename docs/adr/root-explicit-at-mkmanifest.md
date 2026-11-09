@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-f85f1afd-9b87-4f7a-922e-97c62554f198: root の明示を mkManifest 層で必須にする
+# root の明示を mkManifest 層で必須にする
 
 - ステータス: stable
 - 日付: 2026-11-01

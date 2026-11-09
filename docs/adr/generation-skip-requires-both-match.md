@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-05T00:40:25+09:00"
 ---
-# ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444: 世代スキップには profile に加え記録の一致も要する
+# 世代スキップには profile に加え記録の一致も要する
 
 - ステータス: stable
 - 日付: 2026-11-03

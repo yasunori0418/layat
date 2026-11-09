@@ -22,7 +22,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-10c6dc33-d188-406b-beb4-d10ccbe3c645: 記録を書き直す操作ごとに linkFarm の値を定める
+# 記録を書き直す操作ごとに linkFarm の値を定める
 
 - ステータス: stable
 - 日付: 2026-11-03

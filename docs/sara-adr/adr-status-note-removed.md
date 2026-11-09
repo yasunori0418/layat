@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:08:50+09:00"
 ---
-# SDR-fa7eff8e-788f-48e7-951d-4cfbf95d5a1f: adr の status_note を持たない
+# adr の status_note を持たない
 
 - ステータス: stable
 - 日付: 2026-11-01

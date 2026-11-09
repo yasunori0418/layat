@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-37519471-be48-4427-ac5b-4d285e7a0bb1: 事前展開した apply コマンドが意図と違う config の集合や root を配置する
+# 事前展開した apply コマンドが意図と違う config の集合や root を配置する
 
 ## リスク
 

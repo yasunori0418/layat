@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:49+09:00"
 ---
-# TC-3f8d24a7-4e43-4998-b47f-a9e03cbcbfee: 実 nix を通した system mode で世代がコミット・往復し、非 root の変更系は FS に触れずに止まる
+# 実 nix を通した system mode で世代がコミット・往復し、非 root の変更系は FS に触れずに止まる
 
 ## テスト条件
 

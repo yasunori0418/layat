@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-2340b0fd-6444-4946-94a6-43f874e37615: out-of-store symlink
+# out-of-store symlink
 
 ## Definition
 

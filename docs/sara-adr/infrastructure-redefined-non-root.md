@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T22:44:41+09:00"
 ---
-# SDR-29ef8bb4-9349-47db-9e79-926bc71bbdd0: infrastructure を技術基盤として再定義し root から外す
+# infrastructure を技術基盤として再定義し root から外す
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:22:37+09:00"
 ---
-# DSG-fb49e36c-eb20-4efa-8cac-88ef0873db8e: lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する
+# lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する
 
 ## 設計
 

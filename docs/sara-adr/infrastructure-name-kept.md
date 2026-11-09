@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# SDR-933a9191-f60e-45bc-bebc-bc09af8154cc: infrastructure 型を改名しない
+# infrastructure 型を改名しない
 
 - ステータス: stable
 - 日付: 2026-11-03

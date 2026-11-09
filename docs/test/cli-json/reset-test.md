@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# CASE-020fa59e-9aaa-498b-ad5f-dd49b8b48f78: reset_test.go — 確認ポリシーと出力ストリームの排他
+# reset_test.go — 確認ポリシーと出力ストリームの排他
 
 ## 対象
 

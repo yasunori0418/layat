@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-01cf9f47-95bd-419a-863d-0d7c1f8188ba: copy が place-once を破り、ユーザーのローカル編集を失わせる
+# copy が place-once を破り、ユーザーのローカル編集を失わせる
 
 copy は「target 不在のときにだけマテリアライズし、以後は触らない」という place-once の契約で
 成り立っている。ユーザーは配置後のファイルを自分で編集する前提で copy を選ぶため、再 apply が

@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:49+09:00"
 ---
-# TC-1d69350e-db3c-4d74-a24e-7a3fabb31b0a: アンカー対象の抽出と farm の組み立てをアサートする
+# アンカー対象の抽出と farm の組み立てをアサートする
 
 ## テスト条件
 

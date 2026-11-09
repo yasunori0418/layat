@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:22:37+09:00"
 ---
-# DSG-901351ea-f01b-4bb0-a470-b890d92c980b: NixOS モジュールの実 activate は runNixOSTest の checks.nixos-vm で検証し、E2E ハーネスとは別系統に置く
+# NixOS モジュールの実 activate は runNixOSTest の checks.nixos-vm で検証し、E2E ハーネスとは別系統に置く
 
 ## 設計
 

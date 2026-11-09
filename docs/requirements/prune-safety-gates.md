@@ -36,7 +36,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed: prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る
+# prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る
 
 ## 仕様
 

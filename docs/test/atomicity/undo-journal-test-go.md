@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:31+09:00"
 ---
-# CASE-154af597-df3e-49fb-a96b-b4f371dfcc63: undo_journal_test.go — 実 FS 故障注入による end-to-end 巻き戻しと commit 失敗の非対称性
+# undo_journal_test.go — 実 FS 故障注入による end-to-end 巻き戻しと commit 失敗の非対称性
 
 ## 対象
 

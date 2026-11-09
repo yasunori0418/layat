@@ -32,7 +32,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26: 実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する
+# 実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する
 
 ## 仕様
 

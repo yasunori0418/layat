@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-29c0838b-3e25-4b09-a479-9ebbbc4466c7: root 相対マーカーの基準点を manifest の配置 root にする
+# root 相対マーカーの基準点を manifest の配置 root にする
 
 - ステータス: stable
 - 日付: 2026-11-03

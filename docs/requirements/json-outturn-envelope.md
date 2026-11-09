@@ -37,7 +37,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:23:46+09:00"
 ---
-# REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead: --json は outturn 規約準拠のエンベロープを出す第 2 契約とする
+# --json は outturn 規約準拠のエンベロープを出す第 2 契約とする
 
 ## 仕様
 

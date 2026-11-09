@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# DSG-85439cb5-a149-422e-8596-fc4e860bc3a5: status を engine の記録基底走査と CLI の絞り込み・出力に分ける
+# status を engine の記録基底走査と CLI の絞り込み・出力に分ける
 
 ## 設計
 

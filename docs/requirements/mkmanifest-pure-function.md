@@ -26,7 +26,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-31T22:07:39+09:00"
 ---
-# REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4: mkManifest は配置データを生成する純粋関数である
+# mkManifest は配置データを生成する純粋関数である
 
 ## 仕様
 

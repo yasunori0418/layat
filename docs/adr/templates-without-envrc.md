@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:30+09:00"
 ---
-# ADR-653e6a28-76dd-44b3-99e2-3be189a3c1c4: template に .envrc を同梱しない
+# template に .envrc を同梱しない
 
 - ステータス: stable
 - 日付: 2026-11-03

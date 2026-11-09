@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:39:20+09:00"
 ---
-# REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461: flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする
+# flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする
 
 ## 仕様
 

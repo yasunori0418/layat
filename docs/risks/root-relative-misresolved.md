@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-238bc9da-353b-4699-94f2-ea871e305f45: root 相対 src が誤った基準点に解決される、または target と重なって symlink ループになる
+# root 相対 src が誤った基準点に解決される、または target と重なって symlink ループになる
 
 ## リスク
 

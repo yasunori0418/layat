@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T17:33:20+09:00"
 ---
-# ADR-7abe9cc7-30cd-49c9-b10e-bb5e1790ff0d: status は 2 つの記録基底を走査して表示する
+# status は 2 つの記録基底を走査して表示する
 
 - ステータス: stable
 - 日付: 2026-11-03

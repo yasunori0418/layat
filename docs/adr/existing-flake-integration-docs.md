@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:00:59+09:00"
 ---
-# ADR-9fde06e2-fe42-4274-8af3-da2298cdaeae: 既存 flake への組込手順を docs に置く
+# 既存 flake への組込手順を docs に置く
 
 - ステータス: stable
 - 日付: 2026-11-01

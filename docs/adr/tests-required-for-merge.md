@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511: main へのマージにテストの成功を必須にする
+# main へのマージにテストの成功を必須にする
 
 - ステータス: stable
 - 日付: 2026-11-03

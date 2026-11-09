@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# TC-d9c78439-e478-4779-977c-9c4c02dd4e93: legacy entrypoint が canonical 形で同じ配置と出力契約を保ち素の nix-shell を壊さない
+# legacy entrypoint が canonical 形で同じ配置と出力契約を保ち素の nix-shell を壊さない
 
 ## 条件
 

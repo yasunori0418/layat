@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:42:17+09:00"
 ---
-# RISK-e65844ea-a7b7-4bad-b15b-f60130b7e8fa: subdir 適用形の前置が一部の target で抜ける、root 側へ混入する、または単体 marker の形が変わる
+# subdir 適用形の前置が一部の target で抜ける、root 側へ混入する、または単体 marker の形が変わる
 
 ## リスク
 

@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T17:33:20+09:00"
 ---
-# ADR-ad1dd4ef-0b71-42cf-bc30-03eb11e5485c: status は記録の確認を apply より緩めない
+# status は記録の確認を apply より緩めない
 
 - ステータス: stable
 - 日付: 2026-11-03

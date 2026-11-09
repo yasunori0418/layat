@@ -2,12 +2,12 @@
 
 frontmatter は `sara init` が生成する（手順は sara-docs の references/sara-cli.md、
 フィールドの正本は `docs/model.yaml`）。ここは本文（Markdown 部分）の節構成を定める。
-どちらの item も本文は `# <PREFIX>-<前方8>: <name>` の見出しで始める。
+どちらの item も本文は `# <name>` の見出しで始める。
 
 ## test_plan item（`docs/test-plan/`）
 
 ```markdown
-# TP-<前方8>: <name>
+# <name>
 
 ## 仕様
 
@@ -32,7 +32,7 @@ frontmatter は `sara init` が生成する（手順は sara-docs の references
 ## risk item（`docs/risks/`）
 
 ```markdown
-# RISK-<前方8>: <name>
+# <name>
 
 <リード文: 何がどう壊れると、誰にどんな悪影響が出るか。1〜2 段落>
 

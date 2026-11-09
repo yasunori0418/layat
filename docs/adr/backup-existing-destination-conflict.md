@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-37191429-2099-4217-a552-47b16a7e504c: 退避先が既にあれば conflict で止める
+# 退避先が既にあれば conflict で止める
 
 - ステータス: stable
 - 日付: 2026-11-03

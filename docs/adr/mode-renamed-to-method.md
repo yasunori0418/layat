@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-07T02:02:56+09:00"
 ---
-# ADR-3e283fe2-0177-4caf-8b60-577c5ee3b10a: entry の配置種別のフィールドを method と名付ける
+# entry の配置種別のフィールドを method と名付ける
 
 - ステータス: stable
 - 日付: 2026-11-01

@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# CASE-879a93da-d22f-4397-84da-3544f8249af1: nix-unit gates.nix
+# nix-unit gates.nix
 
 ## 対象
 

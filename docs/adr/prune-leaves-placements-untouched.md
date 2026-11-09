@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-95b45d12-d4a7-4374-8624-f5ceed7044ee: prune は配置物に触れない
+# prune は配置物に触れない
 
 - ステータス: stable
 - 日付: 2026-11-03

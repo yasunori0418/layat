@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# TC-7d713505-5673-4e15-99bf-e98965e18892: subdir 適用形の前置・不変・拒否
+# subdir 適用形の前置・不変・拒否
 
 ## テスト条件
 

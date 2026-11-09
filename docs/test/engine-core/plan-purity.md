@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:54+09:00"
 ---
-# TC-b329cafd-06c3-4b87-8357-229b69e5ba5c: plan 計算の純粋性と網羅
+# plan 計算の純粋性と網羅
 
 plan の計算が (前世代 manifest, 新 manifest, root, FS プローブ) のみを入力とし、fake FS を
 差し込むだけで分類の全パターンを table-driven に列挙できることを検証する。実 FS へ触る実装が

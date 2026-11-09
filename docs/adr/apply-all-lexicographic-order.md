@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:39:38+09:00"
 ---
-# ADR-af37a636-a798-4c03-8fa4-e73ed6375a92: apply --all の集約は config 名の辞書順に並べる
+# apply --all の集約は config 名の辞書順に並べる
 
 - ステータス: stable
 - 日付: 2026-11-01

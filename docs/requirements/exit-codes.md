@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-2c5a10d8-112b-4f96-947a-aba7164779c4: 終了コードは 0 = 成功 / 1 = 一般エラー / 2 = dryrun の conflict とする
+# 終了コードは 0 = 成功 / 1 = 一般エラー / 2 = dryrun の conflict とする
 
 ## 仕様
 

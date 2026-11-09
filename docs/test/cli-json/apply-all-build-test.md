@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# CASE-9d21aef7-487d-4193-ad79-131c569db1e8: apply_all_build_test.go — 並列 build の並列度上限・失敗集約・--jobs の値域・--debug prefix・集約の同一性
+# apply_all_build_test.go — 並列 build の並列度上限・失敗集約・--jobs の値域・--debug prefix・集約の同一性
 
 ## 対象
 

@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-e630482a-bc11-4ba6-a9cc-1ef46f54104d: prune は引数を取らない
+# prune は引数を取らない
 
 - ステータス: stable
 - 日付: 2026-11-03

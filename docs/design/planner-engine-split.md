@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:40:55+09:00"
 ---
-# DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68: 配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する
+# 配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する
 
 ## 設計
 

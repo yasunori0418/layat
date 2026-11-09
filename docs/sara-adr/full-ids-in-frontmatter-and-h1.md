@@ -3,7 +3,7 @@ id: "SDR-bd136f38-c991-46f9-ada9-06499d259a8b"
 type: sara_adr
 name: "フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる"
 description: "フル ID の書き場所を frontmatter と H1 見出しに限り、`specification` などの文字列でも item へは Markdown リンクで触れ、ファイル名は `<slug>.md` にする。"
-status: stable
+status: deprecated
 sources:
   - id: "issue-674"
     resource: "https://github.com/yasunori0418/layat/issues/674"
@@ -22,9 +22,13 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:09:48+09:00"
 ---
-# SDR-bd136f38-c991-46f9-ada9-06499d259a8b: フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる
+# フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる
 
-- ステータス: stable
+> **廃止（2026-11-09）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 全体 → [フル ID は frontmatter だけに書き、item にはリンクで触れる](full-ids-in-frontmatter-only.md)
+
+- ステータス: deprecated
 - 日付: 2026-11-08
 - 関連: [省略形の禁止は起票の機械化と全面移行で担保する](short-form-ban-enforced-by-tooling.md), GitHub Issue #674, #692
 - 起点: epic #692 の grilling（2026-11-08）で確定。[item のファイル名は slug だけにする](slug-only-filenames.md) を書き直した

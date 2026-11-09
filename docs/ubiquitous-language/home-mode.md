@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:55:15+09:00"
 ---
 
-# UBQ-229fb5db-7865-4679-917c-2c067ea571c9: home mode
+# home mode
 
 ## Definition
 

@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-419914ba-9896-4dd1-853b-fb514fcb9f38: profile は専用ディレクトリレイアウトに置く
+# profile は専用ディレクトリレイアウトに置く
 
 - ステータス: stable
 - 日付: 2026-11-01

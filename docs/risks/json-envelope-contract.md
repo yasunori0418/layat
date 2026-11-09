@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:31+09:00"
 ---
-# RISK-4936a47d-796b-4f1f-8ae4-eb87f6c64e71: --json のエンベロープが outturn 規約から外れ機械可読出力の消費側が処理に失敗する
+# --json のエンベロープが outturn 規約から外れ機械可読出力の消費側が処理に失敗する
 
 ## リスク
 

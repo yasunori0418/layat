@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:31+09:00"
 ---
-# TC-cd03ff56-6ed0-4100-9ec4-eb681ab66407: 退避先が既存なら停止し、rename 直前に退避先を再検証する
+# 退避先が既存なら停止し、rename 直前に退避先を再検証する
 
 ## テスト条件
 

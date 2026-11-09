@@ -38,7 +38,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:26:39+09:00"
 ---
-# TP-0734996e-aea9-4229-8075-89a64bdf9f79: home-manager モジュールの配線は build sandbox 内の評価アサートで検証する
+# home-manager モジュールの配線は build sandbox 内の評価アサートで検証する
 
 ## 仕様
 

@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-c973a6e3-b6d9-45d3-b237-83fb1b361b22: 複数の manifest を inputsFrom で合成するヘルパを持たない
+# 複数の manifest を inputsFrom で合成するヘルパを持たない
 
 - ステータス: stable
 - 日付: 2026-11-03

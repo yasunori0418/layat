@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5"
   at: "2026-09-20T08:21:50+09:00"
 ---
-# REQ-4fc98fa6-fd5f-4f25-8b10-60755bf49bd2: 一部 entry だけを適用する --only は提供しない
+# 一部 entry だけを適用する --only は提供しない
 
 ## 仕様
 

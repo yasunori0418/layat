@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:14+09:00"
 ---
-# CASE-364ebb9d-b9f8-4c79-8509-8bbf31e73698: generations_test.go — rollback の再収束と失敗時の処理
+# generations_test.go — rollback の再収束と失敗時の処理
 
 ## 対象
 

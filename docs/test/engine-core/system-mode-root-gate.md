@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:44+09:00"
 ---
-# TC-be3d3dc9-1ead-4e2e-8eea-46e1c8884562: system mode の root 解決・基底切替・euid の条件
+# system mode の root 解決・基底切替・euid の条件
 
 `rootKind=system` が root `/` に解決され、`--root` 上書きが優先されることを検証する。
 

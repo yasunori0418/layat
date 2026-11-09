@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-68f453b3-e6c7-4e0d-9978-32b5a00f627e: NixOS モジュールは system.activationScripts.layat から起動する
+# NixOS モジュールは system.activationScripts.layat から起動する
 
 - ステータス: stable
 - 日付: 2026-11-03

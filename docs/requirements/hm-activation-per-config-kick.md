@@ -43,7 +43,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-c847d1af-a437-46bb-bd64-42083810d034: HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う
+# HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う
 
 ## 仕様
 

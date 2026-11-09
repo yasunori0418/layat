@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-9fca28c9-d3b1-4ad7-8f24-13b2ec7aeab2: 巻き戻し自体の失敗は best-effort で続行し、全件を stderr へ報告して停止する
+# 巻き戻し自体の失敗は best-effort で続行し、全件を stderr へ報告して停止する
 
 ## 仕様
 

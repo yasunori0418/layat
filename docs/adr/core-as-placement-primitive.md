@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:38:08+09:00"
 ---
-# ADR-10dcf5a9-f298-4123-9a50-24f43e25d30c: コアを store パスを root 相対の target へ置くプリミティブにする
+# コアを store パスを root 相対の target へ置くプリミティブにする
 
 - ステータス: stable
 - 日付: 2026-11-03

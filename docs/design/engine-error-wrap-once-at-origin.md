@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-07T22:29:30+09:00"
 ---
-# DSG-9f5f949f-8b0e-4679-8f70-e0901a3d63b8: engine のエラーは発生源で 1 回だけ op と対象パスを付けて wrap し、伝搬では素通しする
+# engine のエラーは発生源で 1 回だけ op と対象パスを付けて wrap し、伝搬では素通しする
 
 ## 設計
 

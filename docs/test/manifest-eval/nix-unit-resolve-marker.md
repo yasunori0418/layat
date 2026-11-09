@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T10:25:27+09:00"
 ---
-# CASE-0c9d41d1-33fd-4982-aed9-fa575a56ee01: nix-unit resolve-marker.nix
+# nix-unit resolve-marker.nix
 
 ## 対象
 

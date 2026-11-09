@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:13+09:00"
 ---
-# TC-4f315cfc-446c-4c3f-8dc9-c36b10073e9d: コピー失敗の伝播
+# コピー失敗の伝播
 
 コピー処理の各 syscall（mkdir / open / open-file / read-write / readlink / lstat）の
 失敗がそれぞれエラーとして呼び出し元へ伝わることを検証する。エラーメッセージによる段の特定は、

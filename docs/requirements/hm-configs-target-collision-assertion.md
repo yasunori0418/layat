@@ -38,7 +38,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:54:20+09:00"
 ---
-# REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44: 単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する
+# 単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する
 
 ## 仕様
 

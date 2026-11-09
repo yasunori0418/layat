@@ -26,7 +26,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-87a2cf34-9592-4c81-8980-246bca579ca0: manifest の取得をプロセス内の Go インターフェイスの生成器越しにする
+# manifest の取得をプロセス内の Go インターフェイスの生成器越しにする
 
 - ステータス: stable
 - 日付: 2026-11-03

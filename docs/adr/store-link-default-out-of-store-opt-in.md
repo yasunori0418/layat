@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:30+09:00"
 ---
-# ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c: store link を既定にし、out-of-store は明示関数でのみ選ばせる
+# store link を既定にし、out-of-store は明示関数でのみ選ばせる
 
 - ステータス: stable
 - 日付: 2026-11-03

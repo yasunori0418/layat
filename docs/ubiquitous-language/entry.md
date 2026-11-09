@@ -11,7 +11,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-5caf1573-b91f-40dd-a414-58b5f49bf0d9: entry / entries
+# entry / entries
 
 ## Definition
 

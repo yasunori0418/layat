@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T22:44:41+09:00"
 ---
-# SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626: sara check を strict モードで回す
+# sara check を strict モードで回す
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:13+09:00"
 ---
-# TC-cf1b44ec-2ec4-4ee1-9a37-378e41ccb01e: out-of-store の live 性
+# out-of-store の live 性
 
 `mkOutOfStoreSymlink` で作った marker が、コピーではなく marker の絶対パスを指す symlink
 として配置されることを検証する。配置後に src 側のファイルを書き換えたとき、target 越しに

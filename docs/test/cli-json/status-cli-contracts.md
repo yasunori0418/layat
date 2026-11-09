@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# TC-1bc3e39a-116a-4f26-96b4-1d15e6f837bd: status の CLI がフィルタ・ストリームの排他・--json の形・error 時の続行の契約を守る
+# status の CLI がフィルタ・ストリームの排他・--json の形・error 時の続行の契約を守る
 
 ## テスト条件
 

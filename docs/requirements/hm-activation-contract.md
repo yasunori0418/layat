@@ -42,7 +42,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-8085f194-c903-4ecb-abd8-c719fe7b3292: home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める
+# home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める
 
 ## 仕様
 

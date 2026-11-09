@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-07T01:29:00+09:00"
 ---
-# SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb: root は solution と ADR 系の型だけにする
+# root は solution と ADR 系の型だけにする
 
 > **廃止（2026-11-07）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
 >

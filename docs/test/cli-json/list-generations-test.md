@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# CASE-d0505d58-ef48-4fe2-ab7c-77002109d1c4: list-generations_test.go — 世代一覧の info 表現と二重エンコードの禁止
+# list-generations_test.go — 世代一覧の info 表現と二重エンコードの禁止
 
 ## 対象
 

@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:30:55+09:00"
 ---
-# ADR-92258e55-0204-4ee3-ae0e-d76a8e7343ec: 入力の確認を normalizeManifest に切り出す
+# 入力の確認を normalizeManifest に切り出す
 
 - ステータス: stable
 - 日付: 2026-11-01

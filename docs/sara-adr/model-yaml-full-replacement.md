@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:32+09:00"
 ---
-# SDR-2457aa00-fab7-4c99-af53-2e6643c21c79: model.yaml で組み込みモデルを全面置換し、汎用の型名を使う
+# model.yaml で組み込みモデルを全面置換し、汎用の型名を使う
 
 - ステータス: stable
 - 日付: 2026-11-01

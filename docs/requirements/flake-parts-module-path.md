@@ -29,7 +29,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:54:35+09:00"
 ---
-# REQ-c50df875-2cb0-4e72-8a21-858359a11cae: flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない
+# flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない
 
 ## 仕様
 

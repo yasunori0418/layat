@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:31+09:00"
 ---
-# RISK-bb54245e-b284-4b4d-9896-8fec2b4e521c: reset の teardown が管理外の実体まで消し、preview と同意の条件も機能しない
+# reset の teardown が管理外の実体まで消し、preview と同意の条件も機能しない
 
 ## リスク
 

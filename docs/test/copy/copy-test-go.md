@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:13+09:00"
 ---
-# CASE-dcd5e7e4-9190-4b13-9521-9b8801ec85fb: copy_test.go
+# copy_test.go
 
 ## 対象
 

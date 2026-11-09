@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-8035e7c6-7dc5-4aa8-9a37-403998fa7f9b: main への直接 push を ruleset で禁じる
+# main への直接 push を ruleset で禁じる
 
 - ステータス: stable
 - 日付: 2026-11-03

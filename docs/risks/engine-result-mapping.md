@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-06d7375e-fecd-4a0a-9ceb-1f9e207c3308: engine の実行結果から JSON ペイロードへの写像が実際に起きたことと食い違う
+# engine の実行結果から JSON ペイロードへの写像が実際に起きたことと食い違う
 
 ## リスク
 

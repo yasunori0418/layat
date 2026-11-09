@@ -60,7 +60,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:55:00+09:00"
 ---
-# REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282: apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する
+# apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する
 
 ## 仕様
 

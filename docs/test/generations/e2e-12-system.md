@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:14+09:00"
 ---
-# CASE-99803cb0-6fd0-4004-af78-83e301320ce0: e2e 12-system — user namespace の root で system mode の配置・世代・権限の条件を往復する
+# e2e 12-system — user namespace の root で system mode の配置・世代・権限の条件を往復する
 
 ## 対象
 

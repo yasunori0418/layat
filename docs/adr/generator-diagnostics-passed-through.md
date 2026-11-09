@@ -27,7 +27,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:00:56+09:00"
 ---
-# ADR-6687c0dc-957d-4913-99c6-168b0fe552ad: 生成器の診断を成功時も stderr へ素通しする
+# 生成器の診断を成功時も stderr へ素通しする
 
 - ステータス: stable
 - 日付: 2026-11-03

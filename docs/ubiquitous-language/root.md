@@ -8,7 +8,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-e6466d28-6ab6-43be-a370-cca82eb1cfdb: root
+# root
 
 ## Definition
 

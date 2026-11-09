@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-a00bb2de-a8c5-4816-892b-4fa1f5299935: 巻き戻しの失敗は best-effort で続行する
+# 巻き戻しの失敗は best-effort で続行する
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-cbd61281-64b0-4487-a4b7-ce76e70dc4f9: init のテンプレート参照はバイナリにハードコードした固定 flake ref とする
+# init のテンプレート参照はバイナリにハードコードした固定 flake ref とする
 
 ## 仕様
 

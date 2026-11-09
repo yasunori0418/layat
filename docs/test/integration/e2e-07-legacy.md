@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:22+09:00"
 ---
-# CASE-8dd7bf87-687b-4ff9-bea2-0c4b3088c1c2: e2e 07-legacy — 非 flake entrypoint から同じ配置と出力契約を通す
+# e2e 07-legacy — 非 flake entrypoint から同じ配置と出力契約を通す
 
 ## 対象
 

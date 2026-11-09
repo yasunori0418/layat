@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-40dd7945-5792-4b80-bdfa-43f95f482554: flake check の警告は無害として許容する
+# flake check の警告は無害として許容する
 
 - ステータス: stable
 - 日付: 2026-11-01

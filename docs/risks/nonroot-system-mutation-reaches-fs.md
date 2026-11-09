@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:31+09:00"
 ---
-# RISK-1a8f91c8-dfaa-4598-805a-a3b71cb967f0: 非 root の system mode の変更系操作が権限の確認を経ずに FS へ触れる
+# 非 root の system mode の変更系操作が権限の確認を経ずに FS へ触れる
 
 ## リスク
 

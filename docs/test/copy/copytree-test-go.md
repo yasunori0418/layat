@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:13+09:00"
 ---
-# CASE-82fdfb27-0bea-4833-b5e9-5f9e142a08df: copytree_test.go
+# copytree_test.go
 
 ## 対象
 

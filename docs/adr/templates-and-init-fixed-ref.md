@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d: templates と layat init は固定 ref で導入する
+# templates と layat init は固定 ref で導入する
 
 - ステータス: stable
 - 日付: 2026-11-01

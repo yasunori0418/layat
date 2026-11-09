@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509: root マーカーに subdir の適用形を持たせる
+# root マーカーに subdir の適用形を持たせる
 
 - ステータス: stable
 - 日付: 2026-11-03

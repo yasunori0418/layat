@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-08-18T22:23:49+09:00"
 ---
-# CASE-474dc938-dec8-4aae-9d91-607cfcd6dec0: e2e 06-init-templates — テンプレを展開して展開物の評価が通ることを確かめる
+# e2e 06-init-templates — テンプレを展開して展開物の評価が通ることを確かめる
 
 ## 対象
 

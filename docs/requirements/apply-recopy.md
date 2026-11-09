@@ -26,7 +26,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-7cc32a2b-eee4-4a29-8dc1-a1dc23e7a065: apply --recopy は config 内の全 copy target を src から無条件に上書き再コピーする
+# apply --recopy は config 内の全 copy target を src から無条件に上書き再コピーする
 
 ## 仕様
 

@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:30:05+09:00"
 ---
-# UC-f2436d68-91ff-4c48-b1df-47acefe4f464: home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する
+# home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する
 
 ## 使われ方
 

@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-57137302-de29-4f71-a565-034cd5de080b: item id は identity の JCS を SHA-256 した小文字 hex とする
+# item id は identity の JCS を SHA-256 した小文字 hex とする
 
 ## 仕様
 

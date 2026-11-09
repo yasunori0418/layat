@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:49+09:00"
 ---
-# CASE-2de3a3d8-3b67-485a-8ddf-a97dd182af23: drift_test.go — 世代スキップの発火条件と lstat ドリフト修復の対象範囲
+# drift_test.go — 世代スキップの発火条件と lstat ドリフト修復の対象範囲
 
 ## 対象
 

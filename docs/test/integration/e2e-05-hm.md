@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:22+09:00"
 ---
-# CASE-3d858338-ceba-420b-87b7-995acff8a0a1: e2e 05-hm — 非 NixOS で HM configuration を実際に activate する
+# e2e 05-hm — 非 NixOS で HM configuration を実際に activate する
 
 ## 対象
 

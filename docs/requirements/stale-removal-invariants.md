@@ -34,7 +34,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T22:43:21+09:00"
 ---
-# REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2: 古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する
+# 古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する
 
 ## 仕様
 

@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137: layat.lib.mkEnv で buildEnv 合成環境を提供する
+# layat.lib.mkEnv で buildEnv 合成環境を提供する
 
 - ステータス: deprecated
 - 日付: 2026-11-01

@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:44+09:00"
 ---
-# TC-8435052a-5dcc-49e2-ac26-82f645cb6890: out-of-store の配置前の確認
+# out-of-store の配置前の確認
 
 out-of-store entry の配置直前に marker のリンク先の存在を確かめ、不在のときは dangling
 symlink を作らずに engine 実行時エラーで停止することを検証する。

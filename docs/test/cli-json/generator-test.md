@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# CASE-1d6ff920-79d1-4bf7-bcee-48b5c06b0134: generator_test.go — 契約の失敗型・prebuilt 実装・テストダブル
+# generator_test.go — 契約の失敗型・prebuilt 実装・テストダブル
 
 ## 対象
 

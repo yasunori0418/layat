@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-05T00:25:57+09:00"
 ---
-# SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac: risk の impact を検出後の回復可能性で採点する
+# risk の impact を検出後の回復可能性で採点する
 
 - ステータス: stable
 - 日付: 2026-11-03

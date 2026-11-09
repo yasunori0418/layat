@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-08-18T22:23:49+09:00"
 ---
-# REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7: entry の識別子は属性キー = target とし一意性は Nix が担保する
+# entry の識別子は属性キー = target とし一意性は Nix が担保する
 
 ## 仕様
 

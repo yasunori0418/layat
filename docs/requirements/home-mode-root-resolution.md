@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b: home mode の root は層ごとに定まった供給元から解決する
+# home mode の root は層ごとに定まった供給元から解決する
 
 ## 仕様
 

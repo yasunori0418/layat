@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# TC-3c28934c-d098-40a3-b598-1b08117f9cf1: 比較の基準を last-applied 記録 → profile → 空の順で読み、各操作が記録を FS の事実どおりに保つ
+# 比較の基準を last-applied 記録 → profile → 空の順で読み、各操作が記録を FS の事実どおりに保つ
 
 ## テスト条件
 

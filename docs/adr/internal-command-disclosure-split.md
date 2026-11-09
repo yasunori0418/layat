@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-5be36ff2-ed08-4e8e-8476-62ff2b08a9dd: 内部コマンドの開示を CLI と生成器で分担する
+# 内部コマンドの開示を CLI と生成器で分担する
 
 - ステータス: stable
 - 日付: 2026-11-03

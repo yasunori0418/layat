@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7: root 相対マーカーのリンクを target 起点の相対パスで張る
+# root 相対マーカーのリンクを target 起点の相対パスで張る
 
 - ステータス: stable
 - 日付: 2026-11-03

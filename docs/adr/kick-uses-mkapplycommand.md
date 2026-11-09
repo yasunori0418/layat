@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T15:55:37+09:00"
 ---
-# ADR-ffbb755c-f548-4ee4-8cea-f6a9b6d98adb: モジュールの kick も mkApplyCommand で組む
+# モジュールの kick も mkApplyCommand で組む
 
 - ステータス: stable
 - 日付: 2026-11-03

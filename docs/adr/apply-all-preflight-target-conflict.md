@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-75df92ae-0694-452b-8fb4-350994e31b25: apply --all は選択した config 間の target 重複を build 前に止める
+# apply --all は選択した config 間の target 重複を build 前に止める
 
 - ステータス: stable
 - 日付: 2026-11-03

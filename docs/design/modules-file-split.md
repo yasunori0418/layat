@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:22:37+09:00"
 ---
-# DSG-aeb5e219-4784-4950-845c-35f9bab9179c: modules は common.nix に共通オプションを集約し、統合層ごとに 1 ファイルへ分ける
+# modules は common.nix に共通オプションを集約し、統合層ごとに 1 ファイルへ分ける
 
 ## 設計
 

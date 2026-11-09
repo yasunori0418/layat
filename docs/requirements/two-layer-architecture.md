@@ -29,7 +29,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645: layat は CLI とエンジンの 2 層で構成する
+# layat は CLI とエンジンの 2 層で構成する
 
 ## 仕様
 

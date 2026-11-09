@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-07T02:02:56+09:00"
 ---
-# ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab: 配置元の中のパスを全層で subpath と呼ぶ
+# 配置元の中のパスを全層で subpath と呼ぶ
 
 - ステータス: stable
 - 日付: 2026-11-03

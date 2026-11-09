@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-a86a8492-57fb-49d0-ba77-200f6dc49c3a: reset --dryrun は副作用なしで撤去対象を示す
+# reset --dryrun は副作用なしで撤去対象を示す
 
 - ステータス: stable
 - 日付: 2026-11-03

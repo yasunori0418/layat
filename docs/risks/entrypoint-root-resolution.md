@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-e916f742-59a3-4202-a316-603a908fd0db: entrypoint の形ごとに root 解決と配置の意味論が食い違う
+# entrypoint の形ごとに root 解決と配置の意味論が食い違う
 
 ## リスク
 

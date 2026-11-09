@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:22:37+09:00"
 ---
-# INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27: CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）
+# CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）
 
 ## 範囲
 

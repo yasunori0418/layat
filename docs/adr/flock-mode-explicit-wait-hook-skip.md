@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-45380022-d959-4b22-aa05-5993ac1f3c87: flock は明示実行で待ち、hook 実行でスキップする
+# flock は明示実行で待ち、hook 実行でスキップする
 
 - ステータス: stable
 - 日付: 2026-11-01

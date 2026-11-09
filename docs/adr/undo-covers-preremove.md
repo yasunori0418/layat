@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:50:22+09:00"
 ---
-# ADR-4f08aa18-6a38-49fd-a784-450677d80e1a: 配置前除去の除去も undo の対象にする
+# 配置前除去の除去も undo の対象にする
 
 - ステータス: stable
 - 日付: 2026-11-03

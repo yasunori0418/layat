@@ -46,7 +46,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T22:03:12+09:00"
 ---
-# REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10: 全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する
+# 全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する
 
 ## 仕様
 

@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T09:19:35+09:00"
 ---
-# TC-a9857bf7-f7f9-41f9-b42c-9993fd16a5e9: prune の dryrun が副作用ゼロで、非同意は中断し、lock 中の系列は skip され、削除段の失敗は進捗と理由で振り分けられる
+# prune の dryrun が副作用ゼロで、非同意は中断し、lock 中の系列は skip され、削除段の失敗は進捗と理由で振り分けられる
 
 ## テスト条件
 

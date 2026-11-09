@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-f3d06307-ae5b-4f17-94ad-db92e80e3415: rollback はポインタ移動の前に戻り先の manifest で記録を書き直す
+# rollback はポインタ移動の前に戻り先の manifest で記録を書き直す
 
 - ステータス: stable
 - 日付: 2026-11-03

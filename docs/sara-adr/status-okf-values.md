@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:08:50+09:00"
 ---
-# SDR-7967c58b-2d03-40d6-89b4-680be30fa5d1: status を OKF の 3 値にし全ての型に持たせる
+# status を OKF の 3 値にし全ての型に持たせる
 
 - ステータス: stable
 - 日付: 2026-11-07

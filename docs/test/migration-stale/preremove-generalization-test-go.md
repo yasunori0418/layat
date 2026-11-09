@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:20+09:00"
 ---
-# CASE-39fbf9f0-ddd6-4d57-9c77-00b4f3eae488: preremove_generalization_test.go
+# preremove_generalization_test.go
 
 ## 対象
 

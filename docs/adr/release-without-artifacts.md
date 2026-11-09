@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-c2f0cdc9-284e-4425-8f60-15f3aa423ed4: release に成果物を添付しない
+# release に成果物を添付しない
 
 - ステータス: stable
 - 日付: 2026-11-03

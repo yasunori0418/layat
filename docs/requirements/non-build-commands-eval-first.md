@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-9c111c32-8f6c-4eda-859c-dae02c0624fc: 非 build コマンドも eval 先行を共通前段に持つ
+# 非 build コマンドも eval 先行を共通前段に持つ
 
 ## 仕様
 

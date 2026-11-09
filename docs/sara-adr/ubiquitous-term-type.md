@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-07T08:29:10+09:00"
 ---
-# SDR-d3f88093-dc98-4703-af45-df5b27527ffa: 用語を ubiquitous_term の item で管理する
+# 用語を ubiquitous_term の item で管理する
 
 - ステータス: stable
 - 日付: 2026-11-07

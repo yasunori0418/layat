@@ -29,7 +29,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:00:56+09:00"
 ---
-# ADR-ef9e4099-0cf4-409a-9e73-518866aea676: Go の整形は gofmt、静的解析は go vet と golangci-lint で行う
+# Go の整形は gofmt、静的解析は go vet と golangci-lint で行う
 
 - ステータス: stable
 - 日付: 2026-11-01

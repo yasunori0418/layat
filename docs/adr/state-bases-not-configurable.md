@@ -31,7 +31,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883: state の基底を設定で上書きさせない
+# state の基底を設定で上書きさせない
 
 - ステータス: stable
 - 日付: 2026-11-03

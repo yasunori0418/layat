@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:32:50+09:00"
 ---
-# QA-5ecd74ba-889a-4e06-b32b-e67f10a45051: 公開ドキュメントは英語を canonical とし、日本語版を対で保守する
+# 公開ドキュメントは英語を canonical とし、日本語版を対で保守する
 
 ## 仕様
 

@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:40:55+09:00"
 ---
-# DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58: layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する
+# layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する
 
 ## 設計
 

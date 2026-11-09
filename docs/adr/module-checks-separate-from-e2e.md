@@ -28,7 +28,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-d01223d3-47a2-4bdd-ac5d-26370d553f7c: モジュールの検証を flake check と VM テストに置く
+# モジュールの検証を flake check と VM テストに置く
 
 - ステータス: stable
 - 日付: 2026-11-03

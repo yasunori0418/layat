@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T22:03:12+09:00"
 ---
-# TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2: NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする
+# NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする
 
 ## 仕様
 

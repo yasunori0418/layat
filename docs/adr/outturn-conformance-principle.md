@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:00:56+09:00"
 ---
-# ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71: --json は outturn 規約に常時準拠する
+# --json は outturn 規約に常時準拠する
 
 - ステータス: stable
 - 日付: 2026-11-01

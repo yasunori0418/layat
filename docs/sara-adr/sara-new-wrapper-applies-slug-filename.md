@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T09:15:32+09:00"
 ---
-# SDR-ba95c0c6-ea15-4e97-95a9-925ac04df58d: sara-id を廃止し sara init を包む起票ラッパーで slug のファイル名を適用する
+# sara-id を廃止し sara init を包む起票ラッパーで slug のファイル名を適用する
 
 - ステータス: stable
 - 日付: 2026-11-08

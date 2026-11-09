@@ -32,7 +32,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-efa7685c-6fa4-45df-b7a3-8f3f58e4118c: Build の事後条件を世代バックエンドがコミットできる link-farm のパスに置く
+# Build の事後条件を世代バックエンドがコミットできる link-farm のパスに置く
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -9,7 +9,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-7e8e239e-e11b-414e-b6e7-295520d6a1a9: last-applied record
+# last-applied record
 
 ## Definition
 

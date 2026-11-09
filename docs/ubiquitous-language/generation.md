@@ -9,7 +9,7 @@ generated:
   at: "2026-11-07T01:45:24+09:00"
 ---
 
-# UBQ-10bcf077-1e99-456b-bb0a-c9b87daf526e: generation
+# generation
 
 ## Definition
 

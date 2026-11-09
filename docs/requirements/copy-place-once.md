@@ -44,7 +44,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9: copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする
+# copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする
 
 ## 仕様
 

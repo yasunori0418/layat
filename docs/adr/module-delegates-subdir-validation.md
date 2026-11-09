@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T17:34:10+09:00"
 ---
-# ADR-2230e78f-770a-447e-9c5d-6eba1e9a7359: モジュールは subdir の確認を lib に委ねる
+# モジュールは subdir の確認を lib に委ねる
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-6506bc82-d1e1-4dbf-8c57-d5d1babf218a: project mode で git から root を解決できないときは engine 実行時に停止する
+# project mode で git から root を解決できないときは engine 実行時に停止する
 
 ## 仕様
 

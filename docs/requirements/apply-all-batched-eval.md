@@ -27,7 +27,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-535b811d-dfc5-4eac-92db-737e70eb5415: apply --all は rootKind を 1 回の一括 eval で取る
+# apply --all は rootKind を 1 回の一括 eval で取る
 
 ## 仕様
 

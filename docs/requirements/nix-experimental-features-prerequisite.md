@@ -28,7 +28,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6: nix experimental-features は nix 生成器の前提条件とし、自動付与せず案内エラーで停止する
+# nix experimental-features は nix 生成器の前提条件とし、自動付与せず案内エラーで停止する
 
 ## 仕様
 

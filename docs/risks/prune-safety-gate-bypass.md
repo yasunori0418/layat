@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-05T00:26:05+09:00"
 ---
-# RISK-0909e121-8ec4-40c8-ab1c-562e61f31067: prune の dryrun・確認・lock の安全機構が働かず、同意なく削除が実行される
+# prune の dryrun・確認・lock の安全機構が働かず、同意なく削除が実行される
 
 ## リスク
 

@@ -22,7 +22,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-14cf38ad-23d3-4d25-b14e-3e5da5ac7826: manifest に identity を足しても schemaVersion を据え置く
+# manifest に identity を足しても schemaVersion を据え置く
 
 - ステータス: stable
 - 日付: 2026-11-03

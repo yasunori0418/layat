@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-2353259f-5878-452a-8e11-3445de69abc2: --json 指定時は行指向 stdout を出さずエンベロープが stdout を専有する
+# --json 指定時は行指向 stdout を出さずエンベロープが stdout を専有する
 
 ## 仕様
 

@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-0a123b89-0399-4f76-b988-56a5f7e0becf: 冗長度は -v、デバッグは --debug に分離し --json と直交させる
+# 冗長度は -v、デバッグは --debug に分離し --json と直交させる
 
 ## 仕様
 

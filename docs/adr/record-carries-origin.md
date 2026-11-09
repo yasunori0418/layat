@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-0db061d1-fa30-436d-91d7-c0cec8804c52: last-applied 記録に出所を持たせる
+# last-applied 記録に出所を持たせる
 
 - ステータス: stable
 - 日付: 2026-11-03

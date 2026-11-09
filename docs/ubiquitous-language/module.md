@@ -9,7 +9,7 @@ generated:
   at: "2026-11-07T01:40:14+09:00"
 ---
 
-# UBQ-57c32ea5-8b3d-4b5d-b1f8-daee58ecbe40: module
+# module
 
 ## Definition
 

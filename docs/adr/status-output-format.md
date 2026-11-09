@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T15:59:17+09:00"
 ---
-# ADR-11918a81-f98d-466d-8310-d990c59f59e1: status は entry ごとに配置先を出力する
+# status は entry ごとに配置先を出力する
 
 - ステータス: stable
 - 日付: 2026-11-03

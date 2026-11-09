@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# CASE-dc611f8f-4ee4-44cb-8b34-01d68da1b918: status_test.go — status の subject 名・フィルタ・一致 0 件・ストリームの排他・--json の形・error 時の続行
+# status_test.go — status の subject 名・フィルタ・一致 0 件・ストリームの排他・--json の形・error 時の続行
 
 ## 対象
 

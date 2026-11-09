@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:33+09:00"
 ---
-# TC-36ea3609-d52e-42d4-975c-40fb89b23919: rollback が FS を前世代へ再収束させてから最後にポインタを移す
+# rollback が FS を前世代へ再収束させてから最後にポインタを移す
 
 ## テスト条件
 

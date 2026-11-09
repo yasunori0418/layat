@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:44+09:00"
 ---
-# CASE-e85f46cc-5876-4646-a7b2-15a7c71a22b8: e2e 10-generator-select — --manifest を使う場面の環境非依存と入力不正の E_INPUT
+# e2e 10-generator-select — --manifest を使う場面の環境非依存と入力不正の E_INPUT
 
 ## 対象
 

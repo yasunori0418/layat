@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-15T14:38:14+09:00"
 ---
-# TC-17fb5cfd-a691-475e-84e8-aa1853711b16: HM の複数 config が独立した配置物と profile を持ち、衝突と部分失敗が config 単位で扱われる
+# HM の複数 config が独立した配置物と profile を持ち、衝突と部分失敗が config 単位で扱われる
 
 ## 条件
 

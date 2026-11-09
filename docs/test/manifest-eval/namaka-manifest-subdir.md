@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# CASE-9e44bd6d-f6b4-4d12-990e-349a4b5c0dda: namaka manifest-subdir
+# namaka manifest-subdir
 
 ## 対象
 

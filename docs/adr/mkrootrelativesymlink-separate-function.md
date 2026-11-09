@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb: root 相対マーカーを別関数 mkRootRelativeSymlink で作る
+# root 相対マーカーを別関数 mkRootRelativeSymlink で作る
 
 - ステータス: stable
 - 日付: 2026-11-03

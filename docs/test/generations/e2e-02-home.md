@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:49+09:00"
 ---
-# CASE-2e7b9ea2-4e4d-48ca-9e1e-0bfbb6223ff2: e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復
+# e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復
 
 ## 対象
 

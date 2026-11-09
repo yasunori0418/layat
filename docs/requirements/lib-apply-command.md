@@ -29,7 +29,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f: lib.mkApplyCommand は事前展開した apply --all --manifest のコマンド行を返す
+# lib.mkApplyCommand は事前展開した apply --all --manifest のコマンド行を返す
 
 ## 仕様
 

@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# CASE-59de34d4-d9d5-4ae0-b1be-44d2e775f031: nix-unit defaults.nix
+# nix-unit defaults.nix
 
 ## 対象
 

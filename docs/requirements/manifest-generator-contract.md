@@ -50,7 +50,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:42:17+09:00"
 ---
-# REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729: CLI は manifest 生成器の契約（Discover / Roots / Build / DryBuild）越しに manifest を得る
+# CLI は manifest 生成器の契約（Discover / Roots / Build / DryBuild）越しに manifest を得る
 
 ## 仕様
 

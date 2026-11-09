@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:01:19+09:00"
 ---
-# ADR-3c3aa4a5-083a-43c1-a99f-92b9e97a68b9: apply --all --dryrun の終了コードは error を conflict より優先する
+# apply --all --dryrun の終了コードは error を conflict より優先する
 
 - ステータス: stable
 - 日付: 2026-11-01

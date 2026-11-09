@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-89c7baf9-9be0-417b-bd2d-b2e4edabe796: rollback は名指し必須で --all に対応しない
+# rollback は名指し必須で --all に対応しない
 
 ## 仕様
 

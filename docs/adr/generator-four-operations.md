@@ -27,7 +27,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2: 生成器の契約を Discover / Roots / Build / DryBuild の 4 操作にする
+# 生成器の契約を Discover / Roots / Build / DryBuild の 4 操作にする
 
 - ステータス: stable
 - 日付: 2026-11-03

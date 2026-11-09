@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:33+09:00"
 ---
-# CASE-233855f7-912c-4477-af32-9a54c82353c3: `record_test.go` — last-applied 記録の読み書き・比較の基準の優先順位・各操作での更新
+# `record_test.go` — last-applied 記録の読み書き・比較の基準の優先順位・各操作での更新
 
 ## 対象
 

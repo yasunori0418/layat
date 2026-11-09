@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-e7a57f51-41da-460c-8f51-c84e94643f3d: apply --all の配置を config 単位で並列に行う
+# apply --all の配置を config 単位で並列に行う
 
 - ステータス: stable
 - 日付: 2026-11-03

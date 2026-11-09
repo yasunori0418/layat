@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-07T02:02:56+09:00"
 ---
-# ADR-c494e86e-ceb9-4380-b983-4e09553b01d6: entries を target をキーにした attrset にする
+# entries を target をキーにした attrset にする
 
 - ステータス: stable
 - 日付: 2026-11-03

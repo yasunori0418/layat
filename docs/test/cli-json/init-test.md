@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5"
   at: "2026-09-20T08:21:50+09:00"
 ---
-# CASE-5ad75041-e529-4f01-a8a6-8f15e40be33e: init_test.go — テンプレート名の受理集合と subject を持たない文書形
+# init_test.go — テンプレート名の受理集合と subject を持たない文書形
 
 ## 対象
 

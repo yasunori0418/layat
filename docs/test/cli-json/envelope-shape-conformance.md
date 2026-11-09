@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:34:43+09:00"
 ---
-# TC-1a46da17-1812-431b-966f-ec8dffd315ae: エンベロープが全形状で outturn 適合を保ち subject 件数で形が揺れない
+# エンベロープが全形状で outturn 適合を保ち subject 件数で形が揺れない
 
 ## 条件
 

@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T17:34:22+09:00"
 ---
-# ADR-3eb35e63-5465-44cd-8299-c2ac3e6034de: テスト系の CI を pull_request と workflow_dispatch で起動する
+# テスト系の CI を pull_request と workflow_dispatch で起動する
 
 - ステータス: stable
 - 日付: 2026-11-03

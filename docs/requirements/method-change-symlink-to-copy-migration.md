@@ -27,7 +27,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-2b48620a-abaa-43df-a106-954bbba3de56: method 変更は symlink→copy のみ配置前除去で移行し、copy→symlink は移行しない
+# method 変更は symlink→copy のみ配置前除去で移行し、copy→symlink は移行しない
 
 ## 仕様
 

@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-e79178f5-5865-4444-a05d-3ab06f33cd6d: project mode の配置物は ephemeral とし、activation は git 状態に干渉しない
+# project mode の配置物は ephemeral とし、activation は git 状態に干渉しない
 
 ## 仕様
 

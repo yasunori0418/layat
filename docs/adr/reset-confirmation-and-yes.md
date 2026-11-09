@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:00:56+09:00"
 ---
-# ADR-acc31876-df36-485e-b356-92ae60e26db7: reset は非対話の実行で --yes を必須にする
+# reset は非対話の実行で --yes を必須にする
 
 - ステータス: stable
 - 日付: 2026-11-01

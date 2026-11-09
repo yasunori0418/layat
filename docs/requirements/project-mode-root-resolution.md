@@ -26,7 +26,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:23:46+09:00"
 ---
-# REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e: project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない
+# project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない
 
 ## 仕様
 

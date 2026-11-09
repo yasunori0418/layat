@@ -35,7 +35,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# REQ-08c8f639-790c-4970-a954-c9567538cf9b: root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない
+# root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない
 
 ## 仕様
 

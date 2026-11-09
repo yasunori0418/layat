@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# CASE-932e218b-5bfb-4d66-98a3-41054c0d863f: outturn_test.go — エンベロープ基礎形・id 導出・エラー分類・stdout 所有権
+# outturn_test.go — エンベロープ基礎形・id 導出・エラー分類・stdout 所有権
 
 ## 対象
 

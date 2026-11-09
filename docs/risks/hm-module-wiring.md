@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-d734e24e-9af9-49f1-a22d-ade92f6554eb: home-manager モジュールが engine をキックする配線から外れ native 機構へ翻訳される
+# home-manager モジュールが engine をキックする配線から外れ native 機構へ翻訳される
 
 ## リスク
 

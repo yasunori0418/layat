@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T22:44:41+09:00"
 ---
-# UC-d39c1994-f9a5-4860-80ba-f6e584adaf14: 既に home-manager / NixOS / nix-darwin を使っている環境へ layat をモジュールとして組み込む
+# 既に home-manager / NixOS / nix-darwin を使っている環境へ layat をモジュールとして組み込む
 
 ## 使われ方
 

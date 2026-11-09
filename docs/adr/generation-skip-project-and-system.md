@@ -45,7 +45,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-5265f879-e623-44f9-9c58-8c14598e8b10: 世代スキップを project mode と system mode で行う
+# 世代スキップを project mode と system mode で行う
 
 - ステータス: stable
 - 日付: 2026-11-03

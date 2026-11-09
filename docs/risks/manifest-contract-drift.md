@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:42:17+09:00"
 ---
-# RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d: manifest.json の形が engine の読む契約から気付かれずにずれる
+# manifest.json の形が engine の読む契約から気付かれずにずれる
 
 ## リスク
 

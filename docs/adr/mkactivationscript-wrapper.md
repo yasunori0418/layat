@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-02T22:56:50+09:00"
 ---
-# ADR-86a77232-dc99-4c04-bd6d-2127410e8828: mkActivationScript で config ごとのラッパー derivation を提供する
+# mkActivationScript で config ごとのラッパー derivation を提供する
 
 - ステータス: deprecated
 - 日付: 2026-11-01

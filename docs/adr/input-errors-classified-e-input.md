@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:00:56+09:00"
 ---
-# ADR-c4a3d9be-19ea-461d-ab0f-2037adc494e1: 入力の不正を E_INPUT に分類する
+# 入力の不正を E_INPUT に分類する
 
 - ステータス: stable
 - 日付: 2026-11-03

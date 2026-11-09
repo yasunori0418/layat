@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:30+09:00"
 ---
-# ADR-5d28818e-f7e1-45e8-a7fd-bbb6157b8586: --json は items を全件、changes を差分で持ち可逆性を reversible で表す
+# --json は items を全件、changes を差分で持ち可逆性を reversible で表す
 
 - ステータス: stable
 - 日付: 2026-11-01

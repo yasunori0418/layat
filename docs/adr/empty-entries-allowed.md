@@ -34,7 +34,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-5fc58c8f-dc0e-4c1d-8c1e-17d7ac7f0385: 空の entries を正当な全クリアとして許可する
+# 空の entries を正当な全クリアとして許可する
 
 - ステータス: stable
 - 日付: 2026-11-01

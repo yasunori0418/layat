@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-fea038de-55eb-45ac-87fc-ec3a7287592a: stdout は機械可読出力を専有しレポートと warning は stderr へ出す
+# stdout は機械可読出力を専有しレポートと warning は stderr へ出す
 
 ## 仕様
 

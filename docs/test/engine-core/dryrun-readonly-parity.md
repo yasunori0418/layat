@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:54+09:00"
 ---
-# TC-a5eb7de3-a1a7-41ae-8fb9-c2aa374ac894: dryrun の無副作用と本番との conflict 件数の一致
+# dryrun の無副作用と本番との conflict 件数の一致
 
 `apply --dryrun` が FS へ一切の変更を残さないこと（配置物・profile ディレクトリのいずれも
 生成しないこと）を検証する。副作用は成功時に表面化しないため、実行前後の FS 状態を比較する形で

@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-3447db4a-cdec-4573-bbad-05bbffc34a65: layat.entries を configs.default.entries への rename 糖衣として残す
+# layat.entries を configs.default.entries への rename 糖衣として残す
 
 - ステータス: stable
 - 日付: 2026-11-03

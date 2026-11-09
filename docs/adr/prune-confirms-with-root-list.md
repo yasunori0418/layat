@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66: prune は削除前に root パスの一覧を示して確認を取る
+# prune は削除前に root パスの一覧を示して確認を取る
 
 - ステータス: stable
 - 日付: 2026-11-03

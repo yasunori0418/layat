@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:49+09:00"
 ---
-# TC-4e7cfae7-72bc-4af6-a1f5-1ead7db564b1: manifest 文書の形を不変条件としてアサートする
+# manifest 文書の形を不変条件としてアサートする
 
 ## テスト条件
 

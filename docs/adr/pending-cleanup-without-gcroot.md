@@ -26,7 +26,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818: .pending の後片付けを gcroot を知らない engine の FS 操作として行う
+# .pending の後片付けを gcroot を知らない engine の FS 操作として行う
 
 - ステータス: stable
 - 日付: 2026-11-03

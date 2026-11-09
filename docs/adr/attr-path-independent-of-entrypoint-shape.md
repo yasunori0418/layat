@@ -26,7 +26,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-05T00:29:04+09:00"
 ---
-# ADR-08a6e1be-e424-4cfe-a529-e123a50cd6ca: CLI が評価する attr path を legacy entrypoint の書き方で分岐させない
+# CLI が評価する attr path を legacy entrypoint の書き方で分岐させない
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:22:37+09:00"
 ---
-# DSG-92f54490-872a-42ac-bbd7-d06e9ee381c6: legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する
+# legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する
 
 ## 設計
 

@@ -138,7 +138,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303: 読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す
+# 読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す
 
 ## 仕様
 

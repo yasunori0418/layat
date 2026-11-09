@@ -34,7 +34,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:26:39+09:00"
 ---
-# TP-d3d06fe4-6940-4df8-b111-bb4096d5444f: 評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える
+# 評価テストの store-backed な入力は固定 outPath を持つ fake flake-input で与える
 
 ## 仕様
 

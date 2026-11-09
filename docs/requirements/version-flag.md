@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-9ed6b500-a11f-414e-a763-adb47c89f7d4: --version は埋め込みバージョンを cobra 既定書式で表示して終了し短縮形を持たない
+# --version は埋め込みバージョンを cobra 既定書式で表示して終了し短縮形を持たない
 
 ## 仕様
 

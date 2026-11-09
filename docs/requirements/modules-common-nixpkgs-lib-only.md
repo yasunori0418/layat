@@ -27,7 +27,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-2bd0d35f-dc29-4771-9cfe-6998247afa0f: modules/common.nix は nixpkgs.lib のみに依存する
+# modules/common.nix は nixpkgs.lib のみに依存する
 
 ## 仕様
 

@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:22+09:00"
 ---
-# CASE-2def907b-3815-4801-8ea6-03662ee66aa3: checks.darwin-module — nix-darwin の postActivation の配線を評価アサートで検証する flake check
+# checks.darwin-module — nix-darwin の postActivation の配線を評価アサートで検証する flake check
 
 ## 対象
 

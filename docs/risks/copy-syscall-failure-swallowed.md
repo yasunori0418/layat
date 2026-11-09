@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-bc7526c2-2a2d-427f-9490-92d7d262fce3: コピー中の syscall 失敗が握り潰され、中途半端な配置物と誤った成功報告が残る
+# コピー中の syscall 失敗が握り潰され、中途半端な配置物と誤った成功報告が残る
 
 copy は mkdir / open / read-write / readlink / lstat という複数の syscall の連なりで、
 どれもが権限・ENOTDIR・容量などで失敗しうる。個々の失敗を握り潰すと、部分的にしか書かれて

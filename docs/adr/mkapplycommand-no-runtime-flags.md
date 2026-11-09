@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T15:54:50+09:00"
 ---
-# ADR-bc334f0c-ac3b-44cf-8d0d-31034ef420ac: mkApplyCommand は実行時フラグを引数に取らない
+# mkApplyCommand は実行時フラグを引数に取らない
 
 - ステータス: stable
 - 日付: 2026-11-03

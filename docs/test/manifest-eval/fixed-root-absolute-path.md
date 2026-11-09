@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:49+09:00"
 ---
-# TC-f9e927d0-8e10-4b8e-9870-5b5486949af6: fixed root で絶対パスを併記する
+# fixed root で絶対パスを併記する
 
 ## テスト条件
 

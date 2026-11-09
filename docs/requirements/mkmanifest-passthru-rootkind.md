@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5"
   at: "2026-09-20T08:21:50+09:00"
 ---
-# REQ-2f9205ee-cec5-4072-ac3e-890caae79904: mkManifest の返り値は passthru で `rootKind` を露出する
+# mkManifest の返り値は passthru で `rootKind` を露出する
 
 ## 仕様
 

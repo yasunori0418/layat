@@ -127,7 +127,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:32:25+09:00"
 ---
-# REQ-059eb4d5-63fb-4f8e-b705-11b5e2ed4ae5: --all は config ごとの SubjectResult を単一実行と同一形状で積む
+# --all は config ごとの SubjectResult を単一実行と同一形状で積む
 
 ## 仕様
 

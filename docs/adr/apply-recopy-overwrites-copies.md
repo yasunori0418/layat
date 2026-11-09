@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-fb01d942-2875-4dcb-a7df-879e18f63883: apply --recopy で全 copy target を src から無条件に上書きする
+# apply --recopy で全 copy target を src から無条件に上書きする
 
 - ステータス: stable
 - 日付: 2026-11-03

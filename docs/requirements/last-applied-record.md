@@ -97,7 +97,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:55:00+09:00"
 ---
-# REQ-9d622539-a1e5-4719-af51-e0cd85b66f35: apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む
+# apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む
 
 ## 仕様
 

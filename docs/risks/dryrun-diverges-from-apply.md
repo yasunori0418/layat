@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-33e30498-6fa1-450b-a251-5624cbe837b9: dryrun が副作用を残す、または本番 apply と異なる結果を報告する
+# dryrun が副作用を残す、または本番 apply と異なる結果を報告する
 
 `apply --dryrun` はユーザーが「実行前に安全を確認する」ための唯一の手段であり、2 つの性質に
 依存している。読み取り専用であること（FS も flock も pending gcroot も触らない）と、報告する

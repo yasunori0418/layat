@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:22:37+09:00"
 ---
-# DSG-4a84f282-76ea-47c9-aede-deac12ff5257: 実装スコープを CLI 単体 + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする
+# 実装スコープを CLI 単体 + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする
 
 ## 設計
 

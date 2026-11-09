@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:22+09:00"
 ---
-# TC-1b492e41-ee81-4945-a42b-0669dd574809: NixOS の実 activate で system mode の配置・世代・記録が host の構成に収束する
+# NixOS の実 activate で system mode の配置・世代・記録が host の構成に収束する
 
 ## 条件
 

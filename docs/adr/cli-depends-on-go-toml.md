@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-aec6bd1d-f776-4d7c-9337-1ed78fee6180: CLI の依存に go-toml/v2 を許可する
+# CLI の依存に go-toml/v2 を許可する
 
 - ステータス: stable
 - 日付: 2026-11-03

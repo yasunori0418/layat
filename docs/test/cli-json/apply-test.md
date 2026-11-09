@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# CASE-81d876af-a1e3-4348-a827-81c8ba7ef39b: apply_test.go — 終了コード集約・root フィルタ・退避行の出力
+# apply_test.go — 終了コード集約・root フィルタ・退避行の出力
 
 ## 対象
 

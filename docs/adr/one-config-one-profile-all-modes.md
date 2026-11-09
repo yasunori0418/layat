@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-fe035038-4415-4a1e-aa5c-509fdfce9955: 1 config = 1 profile を全モードで自前に持つ
+# 1 config = 1 profile を全モードで自前に持つ
 
 - ステータス: stable
 - 日付: 2026-11-01

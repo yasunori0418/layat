@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-2fcf26b4-bce6-4ed6-a374-3afe560ead21: VERSION の変更をきっかけに release を自動で作る
+# VERSION の変更をきっかけに release を自動で作る
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:34+09:00"
 ---
-# CASE-3b8d14a5-192b-46ba-94bd-ce1e78c4e8de: version_test.go — バージョンの供給元一致・--version の出力書式
+# version_test.go — バージョンの供給元一致・--version の出力書式
 
 ## 対象
 

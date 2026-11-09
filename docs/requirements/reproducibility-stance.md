@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:04:55+09:00"
 ---
-# REQ-67095391-eab2-45d2-b75b-b428d481bcc2: flake は pure eval で flake.lock が固定し legacy は impure を許容しユーザー責任とする
+# flake は pure eval で flake.lock が固定し legacy は impure を許容しユーザー責任とする
 
 ## 仕様
 

@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-0bd55dfc-b28c-4ad2-ad50-bb1f76b2246c: copy は src ツリー内の symlink を deref せず symlink のまま複製する
+# copy は src ツリー内の symlink を deref せず symlink のまま複製する
 
 ## 仕様
 

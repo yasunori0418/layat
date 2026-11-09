@@ -38,7 +38,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:54:59+09:00"
 ---
-# REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4: system mode は root を / に解決し、変更系操作の前に euid 0 を確認し、profile と last-applied 記録を system 基底に置く
+# system mode は root を / に解決し、変更系操作の前に euid 0 を確認し、profile と last-applied 記録を system 基底に置く
 
 ## 仕様
 

@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# REQ-b74a118a-1272-44eb-944c-7725163211c6: engine は第三者依存ゼロの stdlib-only とし内部層に閉じる
+# engine は第三者依存ゼロの stdlib-only とし内部層に閉じる
 
 ## 仕様
 

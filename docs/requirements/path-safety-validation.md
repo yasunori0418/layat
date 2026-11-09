@@ -22,7 +22,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:54:20+09:00"
 ---
-# REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f: target / subpath のパス安全性を評価時に確認する
+# target / subpath のパス安全性を評価時に確認する
 
 ## 仕様
 

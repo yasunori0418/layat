@@ -96,8 +96,8 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
 | ファイル名 | `<slug>.md` | `mkmanifest-pure-function.md` |
 | 散文中の参照 | `[item の name](相対パス)` | `[mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md)` |
 
-**フル ID を書くのは frontmatter の `id:`・relation リストと、item 本文の H1 見出し `# <ID>: <name>` だけにする**
-（→ [フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる](docs/sara-adr/full-ids-in-frontmatter-and-h1.md)）。8 文字省略形は使わない。
+**フル ID を書くのは frontmatter の `id:` と relation リストだけにする**
+（→ [フル ID は frontmatter だけに書き、item にはリンクで触れる](docs/sara-adr/full-ids-in-frontmatter-only.md)）。item 本文の H1 見出しは `# <name>` とし、ID を書かない。8 文字省略形は使わない。
 散文で item に触れるときは Markdown リンクにし、リンク文字列にも ID を書かない。ID をそのまま grep すれば
 frontmatter の `id:` と relation に当たり、`sara query` へ渡しても同じものに当たる（省略形から正式 ID を探す手順が要らない）。
 

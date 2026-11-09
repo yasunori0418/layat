@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:49+09:00"
 ---
-# CASE-276945a3-59c2-493d-9971-c080a9a8c066: nix-unit aggregator-merge.nix
+# nix-unit aggregator-merge.nix
 
 ## 対象
 

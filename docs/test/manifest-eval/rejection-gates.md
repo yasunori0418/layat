@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T13:39:04+09:00"
 ---
-# TC-e7ff0e6d-32d7-4ed6-8c2f-449dba34b2f6: 拒否すべき入力が評価時に throw することをアサートする
+# 拒否すべき入力が評価時に throw することをアサートする
 
 ## テスト条件
 

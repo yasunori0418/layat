@@ -28,7 +28,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9: devShell は shellHook から engine を起動する配線で、シェル入室のたびに project mode で配置する
+# devShell は shellHook から engine を起動する配線で、シェル入室のたびに project mode で配置する
 
 ## 仕様
 

@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T21:26:22+09:00"
 ---
-# SDR-c15921a9-7aea-407c-a34b-7465783b1af1: sara 品質管理機構の決定は sara_adr 型に分ける
+# sara 品質管理機構の決定は sara_adr 型に分ける
 
 - ステータス: stable
 - 日付: 2026-11-01

@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:54+09:00"
 ---
-# CASE-0c2cec08-db65-427c-9480-ac0dcacc8d31: dryrun_test.go
+# dryrun_test.go
 
 ## 対象
 

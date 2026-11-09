@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-65e41903-5eee-4a00-a154-be8c830cdca9: 退避先を target に suffix を付けた名前に固定する
+# 退避先を target に suffix を付けた名前に固定する
 
 - ステータス: stable
 - 日付: 2026-11-03

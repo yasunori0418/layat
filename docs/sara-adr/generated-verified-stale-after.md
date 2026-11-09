@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:08:50+09:00"
 ---
-# SDR-9a646576-31bd-4cea-996d-54993ff2b8fa: item に生成者・確認の記録・期限を持たせる
+# item に生成者・確認の記録・期限を持たせる
 
 - ステータス: stable
 - 日付: 2026-11-07

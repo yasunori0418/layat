@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-f87d4909-6dea-4ead-8e72-994c498a14df: status が flock を取り、ディレクトリを作り、記録を書き換えて読み取り専用でなくなる
+# status が flock を取り、ディレクトリを作り、記録を書き換えて読み取り専用でなくなる
 
 ## リスク
 

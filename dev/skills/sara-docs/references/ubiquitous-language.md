@@ -35,7 +35,7 @@ sara check --format json | jq -r '
   他の語の正名として正しく使う綴り（`copy` / `mode` など）は入れない。入れると検出が偽陽性になる
 - relation は持たない。ADR や QA、REQ / DSG へ辺を張らない
 
-本文は `# UBQ-<フル UUIDv4>: <name>` の見出しの下に、次の 4 節をこの順で置く。`sara init` が
+本文は `# <name>` の見出しの下に、次の 4 節をこの順で置く。`sara init` が
 生成する `## Overview` と `## Name (ja)` の雛形は消す。
 
 | 見出し | 書くこと |

@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:49+09:00"
 ---
-# TC-527b5034-715a-4df1-871a-072dc9062704: 実 nix を通した home mode で世代がコミットされ、rollback が前世代の配置へ戻る
+# 実 nix を通した home mode で世代がコミットされ、rollback が前世代の配置へ戻る
 
 ## テスト条件
 

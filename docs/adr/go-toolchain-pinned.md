@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:01:38+09:00"
 ---
-# ADR-2be5080a-1cba-4fea-bed8-66e0d0d7b8d0: Go toolchain は nixpkgs の go に pin する
+# Go toolchain は nixpkgs の go に pin する
 
 - ステータス: stable
 - 日付: 2026-11-01

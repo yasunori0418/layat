@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-27f99ee6-5fb4-4dbe-b0fd-8267eecaa3a1: --root は全モードで root を上書きする
+# --root は全モードで root を上書きする
 
 - ステータス: stable
 - 日付: 2026-11-01

@@ -36,7 +36,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-30f105c7-85a8-4fab-9dea-3277d932b524: symlink farm を GC アンカー専用にする
+# symlink farm を GC アンカー専用にする
 
 - ステータス: stable
 - 日付: 2026-11-01

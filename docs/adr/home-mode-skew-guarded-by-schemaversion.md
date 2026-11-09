@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:30:50+09:00"
 ---
-# ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0: home mode の CLI と lib の版ずれを manifest の確認に任せて許容する
+# home mode の CLI と lib の版ずれを manifest の確認に任せて許容する
 
 - ステータス: stable
 - 日付: 2026-11-01

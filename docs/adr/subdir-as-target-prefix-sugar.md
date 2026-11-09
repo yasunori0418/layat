@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-6669c002-1b90-47a2-8a84-a0f7bddfd965: subdir は全 target へ前置する評価時の糖衣にし、root を動かさない
+# subdir は全 target へ前置する評価時の糖衣にし、root を動かさない
 
 - ステータス: stable
 - 日付: 2026-11-03

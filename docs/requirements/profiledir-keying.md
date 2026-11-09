@@ -38,7 +38,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T22:44:47+09:00"
 ---
-# REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81: profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする
+# profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする
 
 ## 仕様
 

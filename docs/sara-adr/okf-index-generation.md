@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:08:50+09:00"
 ---
-# SDR-52dccd7e-666c-46f8-8a8d-1a50dd0f721b: OKF の index.md を sara check の出力から生成してコミットする
+# OKF の index.md を sara check の出力から生成してコミットする
 
 - ステータス: stable
 - 日付: 2026-11-07

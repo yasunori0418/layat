@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T15:56:40+09:00"
 ---
-# ADR-2aaf72ab-1dfc-4cde-852d-4b1f9916780b: モジュールの activation は lock を待ち、失敗したら switch を止める
+# モジュールの activation は lock を待ち、失敗したら switch を止める
 
 - ステータス: stable
 - 日付: 2026-11-03

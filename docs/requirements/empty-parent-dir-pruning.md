@@ -57,7 +57,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-8409db86-a1ba-4053-86dc-588985cc1ca7: target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する
+# target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する
 
 ## 仕様
 

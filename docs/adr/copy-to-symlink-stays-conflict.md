@@ -21,7 +21,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:26:59+09:00"
 ---
-# ADR-02ed93fa-c59f-4790-805d-759501017d2b: method の copy から symlink への変更は移行しない
+# method の copy から symlink への変更は移行しない
 
 - ステータス: stable
 - 日付: 2026-11-03

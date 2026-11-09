@@ -17,7 +17,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd: manifest.json を schemaVersion 1 の唯一の契約として固定する
+# manifest.json を schemaVersion 1 の唯一の契約として固定する
 
 - ステータス: stable
 - 日付: 2026-11-01

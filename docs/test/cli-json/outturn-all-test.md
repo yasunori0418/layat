@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:34:43+09:00"
 ---
-# CASE-8b3feeb2-7b7b-482c-bba2-6db0b923647a: outturn_all_test.go — --all の subject 件数不変性と部分失敗の非汚染
+# outturn_all_test.go — --all の subject 件数不変性と部分失敗の非汚染
 
 ## 対象
 

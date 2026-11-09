@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:01:21+09:00"
 ---
-# CASE-02475ac2-5555-4fa1-a3e5-cda5015919c5: undo_test.go — 逆操作単体と unwind の順序・best-effort・journal 破棄
+# undo_test.go — 逆操作単体と unwind の順序・best-effort・journal 破棄
 
 ## 対象
 

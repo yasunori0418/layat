@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-52423842-bacf-4773-bbca-bcb34ae71013: last-applied 記録は manifest を内容ごと持つ
+# last-applied 記録は manifest を内容ごと持つ
 
 - ステータス: stable
 - 日付: 2026-11-03

@@ -46,7 +46,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7: engine が直接叩く外部コマンドを git に限る
+# engine が直接叩く外部コマンドを git に限る
 
 - ステータス: stable
 - 日付: 2026-11-03

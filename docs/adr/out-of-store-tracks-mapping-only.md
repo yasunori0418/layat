@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:30+09:00"
 ---
-# ADR-6d2327f7-f513-42c3-89f8-808467db1914: out-of-store はマッピングだけを追跡する
+# out-of-store はマッピングだけを追跡する
 
 - ステータス: stable
 - 日付: 2026-11-01

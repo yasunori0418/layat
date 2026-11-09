@@ -30,7 +30,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d: mkManifest の引数は必須の pkgs / entries / root と任意の identity とする
+# mkManifest の引数は必須の pkgs / entries / root と任意の identity とする
 
 ## 仕様
 

@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# RISK-70fc1db8-56ec-457d-af12-553d80a04d7d: NixOS / nix-darwin モジュールが system mode の engine 起動の配線から外れる
+# NixOS / nix-darwin モジュールが system mode の engine 起動の配線から外れる
 
 ## リスク
 

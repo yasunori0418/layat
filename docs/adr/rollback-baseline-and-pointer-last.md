@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:28:06+09:00"
 ---
-# ADR-d97154cd-a2e5-4853-a682-800ff9435c89: rollback は FS を収束させてからポインタを動かす
+# rollback は FS を収束させてからポインタを動かす
 
 - ステータス: stable
 - 日付: 2026-11-01

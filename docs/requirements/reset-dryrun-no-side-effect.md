@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-6a950d6d-c191-4235-a1b4-73ffc7c2bb38: reset --dryrun は副作用ゼロで削除対象を表示して終了する
+# reset --dryrun は副作用ゼロで削除対象を表示して終了する
 
 ## 仕様
 

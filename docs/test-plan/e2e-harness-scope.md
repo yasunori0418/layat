@@ -33,7 +33,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T22:03:12+09:00"
 ---
-# TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9: 非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する
+# 非 NixOS で動く主張を実 nix の一気通貫 E2E で検証する
 
 ## 仕様
 

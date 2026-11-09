@@ -12,7 +12,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:20+09:00"
 ---
-# CASE-b5d8c327-1f52-4566-98d3-22216d609d94: staleremove_test.go
+# staleremove_test.go
 
 ## 対象
 

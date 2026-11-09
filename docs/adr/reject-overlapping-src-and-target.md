@@ -19,7 +19,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-796508e6-2845-467d-83f8-386930a48bfb: src が target に重なる root 相対 entry を評価時に拒否する
+# src が target に重なる root 相対 entry を評価時に拒否する
 
 - ステータス: stable
 - 日付: 2026-11-03

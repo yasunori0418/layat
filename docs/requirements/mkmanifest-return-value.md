@@ -26,7 +26,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281: mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す
+# mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す
 
 ## 仕様
 

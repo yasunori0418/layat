@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T22:44:41+09:00"
 ---
-# SDR-35636015-710a-4cf8-b6ba-48ca047efed0: design の satisfies 対象に test_plan を含める
+# design の satisfies 対象に test_plan を含める
 
 - ステータス: stable
 - 日付: 2026-11-03

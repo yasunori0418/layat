@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:30+09:00"
 ---
-# ADR-59f63d1f-25df-4290-913f-02804c5eeade: root の型を mkManifest だけに持たせる
+# root の型を mkManifest だけに持たせる
 
 - ステータス: stable
 - 日付: 2026-11-01

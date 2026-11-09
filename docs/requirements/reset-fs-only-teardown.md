@@ -44,7 +44,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T09:19:35+09:00"
 ---
-# REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6: reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す
+# reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す
 
 ## 仕様
 

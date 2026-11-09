@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-02T12:16:38+09:00"
 ---
-# CASE-83bd9936-cfb5-4e1d-a9a7-b85f049991b8: generator_error_test.go — 生成器の失敗の人間向け / --json / --debug の 3 形
+# generator_error_test.go — 生成器の失敗の人間向け / --json / --debug の 3 形
 
 ## 対象
 

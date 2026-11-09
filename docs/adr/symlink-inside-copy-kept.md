@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:17:11+09:00"
 ---
-# ADR-6d7e2201-3101-4d67-9112-a7e85d8c2ea0: copy 内の symlink は symlink のまま複製する
+# copy 内の symlink は symlink のまま複製する
 
 - ステータス: stable
 - 日付: 2026-11-01

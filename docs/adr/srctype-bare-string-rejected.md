@@ -11,7 +11,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T09:15:16+09:00"
 ---
-# ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131: src の型で素の文字列を拒否する
+# src の型で素の文字列を拒否する
 
 - ステータス: stable
 - 日付: 2026-11-01

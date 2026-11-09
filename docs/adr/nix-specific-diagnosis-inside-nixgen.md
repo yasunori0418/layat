@@ -25,7 +25,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-cd139de9-06a4-49a2-8bea-4801c8acc518: nix 固有の失敗判定と案内文を nix 生成器の中に閉じる
+# nix 固有の失敗判定と案内文を nix 生成器の中に閉じる
 
 - ステータス: stable
 - 日付: 2026-11-03

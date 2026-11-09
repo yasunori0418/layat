@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:53:44+09:00"
 ---
-# CASE-96b537f7-0bc9-4669-bead-743d0fc30e00: e2e 11-root-relative — root 相対 symlink の相対形・移動耐性・古くなった配置の除去を実 nix で通す
+# e2e 11-root-relative — root 相対 symlink の相対形・移動耐性・古くなった配置の除去を実 nix で通す
 
 ## 対象
 

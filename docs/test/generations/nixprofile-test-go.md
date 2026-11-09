@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-10-18T23:49:36+09:00"
 ---
-# CASE-80a327c3-5fdd-48d4-9446-4b3e0e262105: nixprofile_test.go — 世代リンクの走査と 2 基底
+# nixprofile_test.go — 世代リンクの走査と 2 基底
 
 ## 対象
 

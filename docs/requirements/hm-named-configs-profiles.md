@@ -35,7 +35,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a: HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる
+# HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる
 
 ## 仕様
 

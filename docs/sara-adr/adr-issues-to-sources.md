@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:08:50+09:00"
 ---
-# SDR-6d21ed34-a320-44ff-a8e4-ff57a6e76dff: ADR の issues を sources に移す
+# ADR の issues を sources に移す
 
 - ステータス: stable
 - 日付: 2026-11-07

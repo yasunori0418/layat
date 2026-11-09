@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51: lib は nixpkgs.lib のみに依存する純データ生成器である
+# lib は nixpkgs.lib のみに依存する純データ生成器である
 
 ## 仕様
 

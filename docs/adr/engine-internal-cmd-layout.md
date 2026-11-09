@@ -18,7 +18,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:30+09:00"
 ---
-# ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3: engine は cmd/ と internal/ に置きライブラリ化しない
+# engine は cmd/ と internal/ に置きライブラリ化しない
 
 - ステータス: stable
 - 日付: 2026-11-01

@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:25:13+09:00"
 ---
-# TC-d1eb1814-ac5e-4576-b092-7db4929fba43: recopy の上書き
+# recopy の上書き
 
 `apply --recopy` が config 内の copy target を（place-once の判定を経ずに）src から
 無条件に再コピーすることを検証する。foreign な実ファイルが占有している target も対象に含まれる

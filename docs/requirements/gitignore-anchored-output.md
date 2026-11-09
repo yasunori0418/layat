@@ -24,7 +24,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-a480c183-40ce-4201-93b5-65a7a59c1b9e: gitignore は配置 target を stdout へ列挙するだけでファイルを書き込まない
+# gitignore は配置 target を stdout へ列挙するだけでファイルを書き込まない
 
 ## 仕様
 

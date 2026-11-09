@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T08:28:26+09:00"
 ---
-# RISK-87484de7-e767-493c-a3a4-c699591832c9: 並列 build の失敗が集約から抜けるか並列度が制御されず nix daemon を圧迫する
+# 並列 build の失敗が集約から抜けるか並列度が制御されず nix daemon を圧迫する
 
 ## リスク
 

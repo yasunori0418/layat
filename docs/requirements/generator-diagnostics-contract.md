@@ -54,7 +54,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:04:55+09:00"
 ---
-# REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd: 生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める
+# 生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める
 
 ## 仕様
 

@@ -13,7 +13,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:36:11+09:00"
 ---
-# RISK-f8e14849-3bff-4755-b75f-c80b85990ce1: plan と engine が乖離し、table-driven テストが実挙動を保証しなくなる
+# plan と engine が乖離し、table-driven テストが実挙動を保証しなくなる
 
 配置ロジックは planner（manifest 2 世代 + FS プローブから plan を計算する純粋な層）と engine
 （plan を実 FS へマテリアライズする層）に分かれており、分類の網羅は fake FS を使った

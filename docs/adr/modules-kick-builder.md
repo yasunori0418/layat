@@ -27,7 +27,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-a0d0cf15-8234-42be-b83e-9b8271850475: activation の起動文字列を modules/kick.nix で組み立てる
+# activation の起動文字列を modules/kick.nix で組み立てる
 
 - ステータス: stable
 - 日付: 2026-11-03

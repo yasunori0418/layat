@@ -10,7 +10,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T23:02:52+09:00"
 ---
-# ADR-f27830a5-4d13-4f61-be9e-3f04240ff322: copy は再帰コピーで mode を保存し owner-write にする
+# copy は再帰コピーで mode を保存し owner-write にする
 
 - ステータス: stable
 - 日付: 2026-11-01

@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-61c05e09-0bde-4f74-9a96-03185f9df606: --root は全モード共通で解決 root を明示上書きする
+# --root は全モード共通で解決 root を明示上書きする
 
 ## 仕様
 

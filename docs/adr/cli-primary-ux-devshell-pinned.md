@@ -14,7 +14,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:24:30+09:00"
 ---
-# ADR-88231ffc-4836-4252-be34-894944fd28c3: CLI が一次 UX で devShell に pin 版を同梱する
+# CLI が一次 UX で devShell に pin 版を同梱する
 
 - ステータス: stable
 - 日付: 2026-11-01

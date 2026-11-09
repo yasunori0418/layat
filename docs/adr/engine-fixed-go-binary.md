@@ -15,7 +15,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:27:41+09:00"
 ---
-# ADR-2119433e-de69-4447-85a5-575d58246007: engine を単一の固定 Go バイナリにする
+# engine を単一の固定 Go バイナリにする
 
 - ステータス: stable
 - 日付: 2026-11-01

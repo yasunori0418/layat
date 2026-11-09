@@ -22,7 +22,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:05:37+09:00"
 ---
-# REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9: gitignore は project mode 限定で非 project config を指定したらエラーで停止する
+# gitignore は project mode 限定で非 project config を指定したらエラーで停止する
 
 ## 仕様
 

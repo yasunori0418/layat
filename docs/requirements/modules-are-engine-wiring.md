@@ -35,7 +35,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:31:01+09:00"
 ---
-# REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9: 全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない
+# 全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない
 
 ## 仕様
 

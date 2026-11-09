@@ -16,7 +16,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4: root は明示必須で暗黙デフォルトを持たない
+# root は明示必須で暗黙デフォルトを持たない
 
 ## 仕様
 

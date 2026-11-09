@@ -9,7 +9,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-08-18T22:23:49+09:00"
 ---
-# TC-4da40ee8-877e-405b-98ca-6bf5de926ba4: conflict の全件列挙とガイダンス
+# conflict の全件列挙とガイダンス
 
 conflict が複数あるとき、最初の 1 件で打ち切らず全件を列挙し、件数を含む集約エラー 1 本を
 返すことを検証する。ユーザーが 1 回の apply で対処すべき全てを把握できることがこの条件の

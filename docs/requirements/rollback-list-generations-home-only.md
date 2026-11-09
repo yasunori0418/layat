@@ -23,7 +23,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-04T09:29:58+09:00"
 ---
-# REQ-05abce3e-9797-432b-b93f-37c55d09afde: rollback と list-generations は home / system mode 限定にする
+# rollback と list-generations は home / system mode 限定にする
 
 ## 仕様
 

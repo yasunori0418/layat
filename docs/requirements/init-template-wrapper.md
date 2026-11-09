@@ -22,7 +22,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T23:04:55+09:00"
 ---
-# REQ-6be1cbf1-6c6e-498b-8acb-7f4b80037169: layat init は nix flake init -t への透明なラッパーとしファイルを生成しない
+# layat init は nix flake init -t への透明なラッパーとしファイルを生成しない
 
 ## 仕様
 

@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-5d85f49f-c136-425f-bea4-ad8ab8dd8632: root 相対 entry で engine が root を使うのは配置前の実在確認だけにする
+# root 相対 entry で engine が root を使うのは配置前の実在確認だけにする
 
 - ステータス: stable
 - 日付: 2026-11-03

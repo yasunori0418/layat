@@ -20,7 +20,7 @@ generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-03T22:55:03+09:00"
 ---
-# ADR-963df3dd-ac51-41fc-94e2-a89c0675dc23: 版 1 しか読めない engine との非互換を受け入れる
+# 版 1 しか読めない engine との非互換を受け入れる
 
 - ステータス: stable
 - 日付: 2026-11-03
