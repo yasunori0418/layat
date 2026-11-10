@@ -28,7 +28,7 @@ specification_ja: |
   守られなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-11T00:28:41+09:00"
+  at: "2026-11-11T00:32:18+09:00"
 ---
 # 設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる
 
@@ -48,10 +48,10 @@ generated:
 後継が揃っているかは視野の外にあり、そこは人手のレビューで守る（判定の条件は下の
 「deprecated にできる条件」節が持つ）。
 
-ADR の粒度・本文の構成・統合と分割の手順・`justifies` の選定基準と、接続先の型の一覧は本 item の
-規範に含めない。前者は [ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る](adr-one-decision-four-sections-justifies-by-contribution.md) が、
-layat への当てはめは `docs/adr/README.md` が、接続可能な型は `docs/model.yaml` が持つ。
-ステータス・出典・置き換え・採番の手引きを次に示す。
+ADR の粒度・本文の構成・統合と分割の手順・`justifies` の選定基準は本 item の規範に含めず、
+[ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る](adr-one-decision-four-sections-justifies-by-contribution.md) が持つ。
+接続可能な型の一覧も本 item の規範に含めず、`docs/model.yaml` が持つ。layat への当てはめは
+`docs/adr/README.md` が持つ。ステータス・出典・置き換え・採番の手引きは次の節に示す。
 
 ### ステータス
 

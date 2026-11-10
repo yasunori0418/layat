@@ -90,9 +90,9 @@ relation は**起こした側（下流）の frontmatter に宣言する**（`sa
 
 ## risk の評価と優先度の導出
 
-- threatens の張り先: [risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る](../../../docs/quality/risk-attaches-to-requirement-by-default.md)
-- likelihood・impact の採点、`level` の導出、test_condition の優先度の導出:
-  [risk の level は likelihood と impact から導き、手で決めない](../../../docs/quality/risk-level-derived-from-likelihood-and-impact.md)
+- threatens の張り先は [risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る](../../../docs/quality/risk-attaches-to-requirement-by-default.md)。
+- likelihood・impact の採点と、`level` と test_condition の優先度の導出は
+  [risk の level は likelihood と impact から導き、手で決めない](../../../docs/quality/risk-level-derived-from-likelihood-and-impact.md)。
 
 ## specification 規約
 
