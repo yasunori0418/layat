@@ -13,18 +13,19 @@ specification: |
   approach of testing SHALL be placed in a `test_plan`. Between the two types under the
   `solution`, the `test_plan` question SHALL be asked first: an item that exists because
   something has to be verified SHALL be a `test_plan`, and `quality` SHALL take what
-  remains. The norm itself SHALL be held by a `quality`, and the machinery that upholds it
-  SHALL be held by an `infrastructure`.
+  remains. Between `quality` and `infrastructure`, the norm itself SHALL be held by the
+  `quality`, and the machinery that upholds it SHALL be held by the `infrastructure`.
 specification_ja: |
   製品の振る舞いと契約を利用者から見える形で縛る規範は `requirement` に置かなければならず、
   開発の進め方・規約・ガバナンスを縛る規範は `quality` に置かなければならず、テストの範囲・
   レベル・方法を縛る規範は `test_plan` に置かなければならない。`solution` 直下の 2 型の間では
   `test_plan` の問いを先に当てなければならない。何かを検証する必要があるから存在する item は
-  `test_plan` としなければならず、残りを `quality` としなければならない。規範そのものは
-  `quality` が持たなければならず、それを支える仕組みは `infrastructure` が持たなければならない。
+  `test_plan` としなければならず、残りを `quality` としなければならない。`quality` と
+  `infrastructure` の間では、規範そのものは `quality` が持たなければならず、それを支える仕組みは
+  `infrastructure` が持たなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-10T23:06:41+09:00"
+  at: "2026-11-10T23:13:33+09:00"
 ---
 # 規範の型は、それが誰を縛るかで決める
 
