@@ -13,7 +13,7 @@ justifies:
   - "QA-1f2fac5e-cfc3-46d7-89eb-34a9be7a07bf"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-11T00:07:44+09:00"
+  at: "2026-11-11T00:12:36+09:00"
 ---
 # specification の必須の強度を SHALL 系の綴りに固定する
 
@@ -36,7 +36,7 @@ generated:
 - `specification_ja` で規範を述べる文は、同じ強度の規範助動詞で終える。背景・根拠・例を述べる文は
   平叙文のままにする
 - 強度の対応は SHALL を「しなければならない」、SHALL NOT を「してはならない」、SHOULD を
-  「すべきである」、MAY を「してもよい」に固定する
+  「すべきである」、SHOULD NOT を「すべきでない」、MAY を「してもよい」に固定する
 - これらはレビューで守る。検査が要るときは散文の linter（textlint など）に置き、自前のスクリプトは書かない
 
 ## 根拠
