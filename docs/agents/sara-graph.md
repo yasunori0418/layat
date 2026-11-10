@@ -1,7 +1,8 @@
 # Sara Document Graph
 
-How to place items in this repo's sara knowledge graph (`docs/model.yaml`, validated by
-`sara check`). Covers the conventions that the model schema itself cannot enforce.
+A reading aid for this repo's sara knowledge graph (`docs/model.yaml`, validated by
+`sara check`): the type graph in two figures, and an index of the quality items that hold the
+conventions the model schema itself cannot enforce (→ [Norms for placing and writing items](#norms-for-placing-and-writing-items)).
 What each type, field and relation in the schema means is explained in [`docs/model.md`](../model.md).
 
 ## The type graph at a glance
@@ -9,7 +10,7 @@ What each type, field and relation in the schema means is explained in [`docs/mo
 Every type and every primary (upstream) relation `docs/model.yaml` defines, in one figure.
 The YAML is the single source of truth; this figure is a hand-maintained reading aid, so a
 change touching `item_types` or `allowed_targets` updates it in the same commit. Nothing
-mechanical detects drift — upheld by review, like everything else in this file.
+mechanical detects drift — upheld by review.
 
 ```mermaid
 flowchart BT
@@ -54,7 +55,7 @@ families of relations are deliberately absent from the figure: the peer `depends
 an item of their own type), and the downstream inverses (`is_refined_by`, `derives`, …),
 which mirror the primary direction one-to-one.
 
-ADR-to-ADR peer relations are drawn separately (rules in `docs/agents/adr-rules.md`, their
+ADR-to-ADR peer relations are drawn separately (rules in [設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる](../quality/adr-decisions-recorded-and-connected.md), their
 mapping to the ADR document in `docs/adr/README.md`). `supersedes` replaces a whole ADR,
 whose status becomes `deprecated`:
 
@@ -70,266 +71,14 @@ flowchart LR
     end
 ```
 
-## Where a norm belongs: `requirement`, `quality` or `test_plan`
+## Norms for placing and writing items
 
-Three types carry a `specification` / `specification_ja` pair and hang off the spec side of
-the graph: `requirement` (under a `use_case`), `quality` (under the `solution`) and
-`test_plan` (under the `solution`). Nothing mechanical tells them apart. A wrong parent of
-the right shape is indistinguishable from a right one, so an item placed in the wrong type
-still passes `sara check`; and the RFC2119 check offers no help either, since sara applies
-it to any non-empty `specification` whatever the type holding it (`validate_item_metadata`
-branches on the field, not on `item_type` — verified against sara 0.9.4 by stripping the
-SHALL from a `test_plan` and watching the check fail). The choice is therefore a judgement
-call, made by the rule below and upheld by review alone.
+Each convention is a `quality` item; its `specification` states the norm and its body holds the
+guidance for applying it.
 
-> Ask **who the norm binds**. A norm binding the product as the user meets it is a
-> `requirement`. A norm binding the people and the process that build the product is a
-> `quality`. A norm binding what and how we test is a `test_plan`.
-
-Stated as a discriminator per type:
-
-| Type | The norm binds | Parent | Signature test |
-|---|---|---|---|
-| `requirement` | The product's behaviour and contracts. Observable by a user who never reads this repo. | `use_case` | Some way of *using* layat would change if it were dropped. |
-| `quality` | The development process, conventions and governance. Cuts across the work rather than attaching to a feature, and is not itself about verifying anything. | `solution` | Only contributors would notice it being dropped; the shipped artifact is unchanged, and no verification is lost. |
-| `test_plan` | The scope, levels and approach of testing, including access to what is under test. | `solution` | The reason it exists at all is that something has to be verified. |
-
-The two `solution`-level types overlap on the contributor test — dropping either is
-invisible to a user — so run the `test_plan` question first. If the item exists because
-something has to be verified, it is a `test_plan`; `quality` is what remains.
-
-Examples: exit-code meanings, the field layout of `manifest.json` and stopping on a
-conflict are `requirement`. "Write `specification` in English", "run `flake check` on every
-platform in CI" are `quality`. The scope of the E2E harness, a declaration that something
-is out of scope *for testing*, and securing testability are `test_plan`.
-
-### Grey zones
-
-The rule above decides most items on its own. The cases where it does not are these; the
-precedents settle them so that parallel lanes do not diverge.
-
-**An API surface opened for testing.** [lib.__internal で private helper をテストへ公開する](../test-plan/lib-internal-test-seam.md) (formerly a
-`requirement`) was settled as `test_plan` in Issue #239. It is a real attrset the product
-exposes, so it reads as a contract, but its only motive is to let evaluation tests reach
-private helpers, and its `specification` spends its SHALL NOTs *excluding* the surface from
-stability and backward compatibility. Where a surface exists solely so that something can
-be tested, and disclaims the guarantees a contract would carry, testability dominates and
-the item is a `test_plan`.
-
-**A norm about how layat is built.** Constraints such as "the engine is stdlib-only", "the
-CLI's third-party dependencies are limited to cobra and pinned by vendorHash", "`lib`
-depends on nixpkgs.lib alone" look like process rules, but they stay `requirement`. They
-are architectural boundaries the user meets: `lib` depending on nixpkgs.lib alone is what
-lets a user import it into any Nix environment without dragging in home-manager. The
-discriminator is the signature test — drop the norm and a way of using layat changes. A
-genuine `quality` counterpart would be a rule about *how the repo works* (a review
-convention, a CI obligation) that no consumer can observe.
-
-**A declaration that something is out of scope.** Ask *whose* scope. A declaration that the
-product will not offer something — "no `--only` flag", "no cleanup command in the MVP",
-"aiming two configs at one target is the user's responsibility" — is a `requirement`: it
-delimits what a user can do, and a user meets the absence directly. A declaration that
-something will not be *verified* — [NixOS / nix-darwin モジュールで使うときの実 activate は E2E ハーネスの対象外とする](../test-plan/nixos-vm-test-future.md), which puts actually activating the
-NixOS / nix-darwin module paths outside the E2E harness — is a `test_plan`: the product
-still offers the thing, only the testing stops short of it.
-
-**A norm about error and warning output.** "An error carries a line of remediation
-guidance", "success is silent by default", "warnings go to stderr while stdout is reserved
-for machine-readable output" are all `requirement`, whether they bind the wording, the
-stream or the verbosity level. Output is part of the CLI's observable behaviour, and a user
-— or a pipe — meets it directly. It would be a `quality` only if it were a repo-wide writing
-convention that no single command's contract depended on.
-
-**A version or compatibility policy.** "`schemaVersion` is fixed at 1", "the MVP emits and
-accepts v1 only and builds no migration mechanism" are `requirement`. They bind the
-contract a consumer of `manifest.json` reads, and the second additionally binds what the
-engine accepts at run time. A policy that only told contributors when they may bump a
-version — without changing what the product emits or accepts — would be `quality`.
-
-**A norm about a nix-level workflow.** These are `requirement` whenever the workflow they
-bind is the *consumer's*. "`nix flake check` warns `unknown flake output` and this is
-accepted; primary verification is `nix build`" binds what the consumer's own flake emits —
-a property of the output namespace layat asks users to adopt. "A flake entrypoint evaluates
-purely and a legacy one may evaluate impurely at the user's own risk" and
-"`experimental-features` is a precondition the CLI will not paper over" bind what the
-consumer's nix environment must supply for layat to work at all. Had any of them been a rule
-about this repository's own CI, it would be `quality` (or `infrastructure`, if it were about
-the pipeline that runs it rather than the norm it upholds).
-
-### `quality` versus `infrastructure`
-
-`quality` holds the norm; `infrastructure` holds the machinery that upholds it. "Every
-platform's `flake check` passes before merge" is a `quality`; the CI pipeline that runs it
-is an `infrastructure`. When in doubt, ask whether the item would still hold if the tooling
-were replaced — if so, it is the norm.
-
-## Where a risk attaches: `requirement` or `design`
-
-A `risk` may point at a `requirement` or a `design` via `threatens`. The model permits
-both, and constrains neither the count nor the mix, so the choice is a judgement call —
-make it by this rule.
-
-> A risk attaches to `requirement` by default. Attach it to `design` only when it is a
-> risk that **would disappear if the design were replaced by an alternative** — that is, a
-> risk intrinsic to the design choice. A concern that the requirement itself might not be
-> met always attaches to `requirement`.
-
-The test: imagine the design being swapped for a different one that satisfies the same
-requirement. If the risk goes away with it, it belongs to the design. If it survives the
-swap, it belongs to the requirement.
-
-Apply the test once per `threatens` edge, not once per risk. A risk that names several
-facets of one threat may hold edges of both kinds at once — the facets that survive the
-swap to `requirement`, the facet intrinsic to the design to `design` — and the design-side
-example below is exactly that shape. What the rule forbids is an edge whose kind the test
-does not support, not a risk that earns more than one.
-
-Examples:
-
-| Risk | Attaches to | Why |
-|---|---|---|
-| The semantics of root resolution and placement diverge per entrypoint form ([entrypoint の形ごとに root 解決と配置の意味論が食い違う](../risks/entrypoint-root-resolution.md) → [legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する](../design/legacy-nix-invocation-reuse.md)) | `design` | Confining the legacy branch to the attr path assembly is one design for "one implementation across entrypoint forms". Replace it — e.g. write each entrypoint's nix invocation out separately — and this particular divergence is gone. |
-| `apply` leaves traces on the filesystem when it fails | `requirement` | This is the requirement itself being broken. Every design has to answer for it; no change of design makes the concern go away. |
-
-Attaching a design-specific risk to the requirement loses the information that the risk is
-a cost of one particular choice. Attaching a requirement-level risk to a design hides it
-from every other design that has the same exposure.
-
-A `requirement` that holds no requirement-level risk states why in `risk_exempt`, in one
-sentence.
-
-## Why this matters
-
-Risks are where test conditions hang from (`test_condition --mitigates--> risk`), so
-misplacing a risk misplaces the tests that cover it. A requirement-level risk parked under
-one design leaves the other designs looking untested for a concern they share.
-
-## How a risk is scored: `likelihood`, `impact` and `level`
-
-`docs/model.yaml` requires all three on every `risk` and constrains each to
-`high` / `medium` / `low`, but the enum alone says nothing about how to choose a value.
-Left unstated, parallel lanes invent their own scales and the corpus stops ranking
-anything — which is the same reason the `specification` and `threatens` conventions live
-in this file. The rules below fix the scale; `level` is then derived, not judged.
-
-### `likelihood` — how easily a regression that realises the threat gets in
-
-Judge it as "how often the code in question changes" × "how far the existing verification
-gates would miss the regression". Code that changes frequently and sits in a blind spot of
-the test suite is `high`; stable code already covered by a mechanical check is `low`.
-
-### `impact` — how recoverable it is once realised
-
-| Value | What is at stake |
-|---|---|
-| `high` | Reaches the user and destroys their environment or real data, or leaves them with something no re-run or rebuild recovers once noticed. |
-| `medium` | The shipped artifact misbehaves — silently or not — but a re-run or a rebuild recovers it once noticed. |
-| `low` | Confined to development; never reaches the shipped artifact. |
-
-This axis asks one question only: **how recoverable is it once someone notices?** Whether
-anyone *would* notice is deliberately not scored (→ [沈黙性を risk のスコア軸にせず本文に書く](../sara-adr/silence-not-a-score-axis.md)). Silence is real and worth
-recording, but nearly every threat in layat is silent — placement drifts without announcing
-itself — so scoring it saturates the scale and ranks nothing. Say it in the item's prose
-instead, where it stays legible without pretending to sort the corpus. The `medium` row
-spells out "silently or not" for the same reason: an earlier version of this scale sent
-every silent threat to `high`, and that reading must not survive by habit.
-
-Read the rows top-down and take the first that fits. The rows are disjoint by their subject:
-`high` and `medium` are about what the user meets, `low` about what never leaves the repo.
-A threat confined to development is therefore `low` and not `medium`, with one exception —
-the inheritance rule below.
-
-**A risk with several failure directions takes the heaviest one.** Judge each direction
-against the rows and score the risk by the direction that lands highest; say so in the
-prose, so a later reader does not mistake the lighter directions for the whole. Averaging
-them, or scoring by the most likely direction, loses exactly the case the risk exists to
-warn about.
-
-A direction may be left out of that judgement only when **another risk explicitly holds it
-as its own** — check the sibling item and cite it. Without that check, a heavy direction can
-be delegated to a risk whose scope does not in fact reach it, and the weight drops out of
-the corpus entirely: neither item scores it.
-
-**A verification gate that silently stops verifying inherits what it guarded.** A suite that
-reports success while checking nothing is confined to development, so the `low` row would
-take it; do not let it. What is lost is not the gate but the protection it gave, and that
-protection is worth exactly what it guarded — score the risk as the regression the gate was
-meant to catch. Name the inheritance source in the item's prose with a Markdown link to the
-`risk` that holds the regression, so that a later re-scoring of the
-source is traceable to everything that inherits from it. Where the gate guards several
-regressions, the heaviest-direction rule applies to the sources too: a suite covering both
-a path-safety gate (`high`) and a document-shape contract (`medium`) inherits `high`.
-
-### `level` — derived from the two, never judged by hand
-
-**The source of truth is `dev/tests/risk-matrix.tsv`**, which lists the nine cells in
-machine-readable form. The table below is a reading aid — the same relationship the data
-file holds, laid out for the eye. A change to the derivation edits the TSV and this table in
-the same commit (the same arrangement `dev/tests/test-categories.tsv` has with the
-eight-category table in `CLAUDE.md`).
-
-| `likelihood` \ `impact` | `high` | `medium` | `low` |
-|---|---|---|---|
-| **`high`** | `high` | `high` | `medium` |
-| **`medium`** | `high` | `medium` | `low` |
-| **`low`** | `medium` | `low` | `low` |
-
-Unlike the rest of this file, this rule is not upheld by review: `dev/tests/risk-matrix.sh`
-reads the TSV and checks every item in `docs/risks/` against it, wired into
-`checks.risk-matrix` for `nix flake check ./dev` and into the CI `sara` job (→ #303).
-`sara check` validates the enum of each field but never the relation between the three,
-which is the gap that test fills. It is the one convention here a script can decide
-outright — a pure mapping over three frontmatter fields with no prose to interpret.
-
-A `level` that does not match the cell is a defect in the item, not a considered override:
-if the matrix feels wrong for an item, the mis-scored field is `likelihood` or `impact`.
-
-## How an item states its norm: `specification` / `specification_ja`
-
-The three types of the section above — `requirement`, `quality` and `test_plan` — each
-carry their norm twice: `specification` in English (which sara validates for the presence
-of an RFC2119 keyword, whatever the type) and `specification_ja` in Japanese (which sara
-does not inspect at all). Both are normative; neither is a translation gloss of the other.
-The rules below apply to all three and keep the two fields readable as one norm.
-
-Nothing enforces them mechanically. sara only asks whether *some* RFC2119 keyword is
-present, never which spelling, and it does not look at `specification_ja` at all. These
-rules are therefore upheld by review. Should that prove too loose, the check belongs in a
-prose linter built for the job (textlint and the like) rather than in a hand-rolled script.
-
-When a `specification` or `specification_ja` mentions another item, write the mention as a
-Markdown link, `[name](relative path from this item's directory)`, the same form prose uses;
-do not write the bare ID. A Japanese `name` inside the English norm does not affect sara's
-RFC2119 check.
-
-### `specification` uses the SHALL family only
-
-Write `SHALL` / `SHALL NOT`. Do not write `MUST` / `MUST NOT`, even though RFC2119 makes
-them synonyms — mixing both spellings for one strength makes the corpus read as if the two
-differ. `SHOULD` / `SHOULD NOT` / `MAY` stay as they are; they carry strengths of their own.
-The `placeholder` in `docs/model.yaml` uses SHALL for the same reason.
-
-### `specification_ja` uses normative auxiliaries, not the plain declarative
-
-A sentence that states the norm must end in a normative auxiliary. The plain declarative
-("〜する", "〜となる") reads as a description of the current implementation rather than as a
-demand on it, which is exactly the distinction the item exists to record.
-
-This applies per sentence, not per item: within one `specification_ja`, the sentences that
-state the norm take an auxiliary, while sentences that supply background, rationale, or a
-worked example stay in the declarative. Do not force an auxiliary onto a sentence that is
-not itself normative.
-
-### The strength mapping is fixed
-
-| `specification` | `specification_ja` |
-|---|---|
-| SHALL (= MUST) | 〜しなければならない |
-| SHALL NOT (= MUST NOT) | 〜してはならない |
-| SHOULD / SHOULD NOT | 〜すべきである / 〜すべきでない |
-| MAY | 〜してもよい |
-
-Inflected forms of these are fine where the sentence needs them (e.g. 「〜してはならず、」 to
-join a following clause), as long as the strength is unchanged. What must not happen is a
-strength drifting across the two fields — a `SHALL` rendered as 「〜すべきである」 weakens the
-norm in the field most readers of this repo actually read.
+- Which type a norm belongs to (`requirement`, `quality` or `test_plan`): [規範の型は、それが誰を縛るかで決める](../quality/norm-type-by-who-it-binds.md)
+- Where a risk attaches (`requirement` or `design`): [risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る](../quality/risk-attaches-to-requirement-by-default.md)
+- How a risk is scored: [risk の level は likelihood と impact から導き、手で決めない](../quality/risk-level-derived-from-likelihood-and-impact.md)
+- How an item states its norm: [specification は SHALL 系で書き、日本語の規範文は同じ強度の規範助動詞で終える](../quality/specification-shall-family-and-matching-auxiliaries.md)
+- The granularity of test items: [テスト系 item は、テスト資産・検証テーマ・脅威の 3 段の粒度で起こす](../quality/test-items-three-tier-granularity.md)
+- Where full IDs go and how prose refers to an item: [フル ID は frontmatter だけに書き、散文では item にリンクで触れる](../quality/full-ids-in-frontmatter-links-in-prose.md)
