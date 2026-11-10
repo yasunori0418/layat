@@ -7,6 +7,9 @@ depends_on:
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
 satisfies:
   - "QA-6bf957d9-17d9-4660-92b7-ebd6eeb71a8c"
+  - "QA-b14e0a14-b9c9-4cc6-9b7a-0ce95d30d289"
+  - "QA-bf975ac7-1e84-4f75-9fe7-8d6154d69ba1"
+  - "QA-1dd63789-24ed-4a86-bf12-b62d8c526ba5"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-09T23:41:29+09:00"
