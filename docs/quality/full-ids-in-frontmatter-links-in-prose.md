@@ -18,7 +18,7 @@ specification_ja: |
   しなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-10T23:44:58+09:00"
+  at: "2026-11-10T23:55:19+09:00"
 ---
 # フル ID は frontmatter だけに書き、散文では item にリンクで触れる
 
@@ -52,7 +52,7 @@ relation に当たり、`sara query` へ渡しても同じものに当たる。�
 
 - ADR も UUID で採番する（`ADR-<フル UUIDv4>`。sara 品質管理機構の決定は
   `SDR-<フル UUIDv4>`）。連番の `ADR-NNNN` は削除済みで、新 ADR の `origin` と「起点:」行に
-  来歴として残る。ADR の書き方は
+  来歴として残る。ADR の粒度・本文の構成・`justifies` の選定基準は
   [ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る](adr-one-decision-four-sections-justifies-by-contribution.md)、
   layat への当てはめは `docs/adr/README.md` が持つ
 
