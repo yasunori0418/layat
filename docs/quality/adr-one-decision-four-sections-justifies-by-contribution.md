@@ -10,17 +10,18 @@ specification: |
   ADRs SHALL be split so that each one holds a single decision that can be overturned on
   its own. The body of an ADR SHALL consist of four sections: background, decision,
   rationale and rejected alternatives. When ADRs are merged or split, no decision that is
-  still in effect SHALL be omitted, and each such decision SHALL be raised as one ADR.
+  still in effect, other than a completed one-off process decision, SHALL be omitted, and
+  each such decision SHALL be raised as one ADR.
   The `justifies` of an ADR SHALL point to one or more items, each of whose norm the ADR
   substantively contributed to forming.
 specification_ja: |
   ADR は、単独で覆せる決定ごとに分けなければならない。ADR の本文は、背景・決定・根拠・
-  棄却した代替案の 4 節としなければならない。ADR の統合と分割では、有効な決定を省かず、
-  1 決定 1 本で起こさなければならない。ADR の `justifies` は、その ADR が規範の形成に
+  棄却した代替案の 4 節としなければならない。ADR の統合と分割では、完了した一回限りの
+  プロセス決定を除き、有効な決定を省かず 1 決定 1 本で起こさなければならない。ADR の `justifies` は、その ADR が規範の形成に
   実質的に寄与した item を 1 本以上指さなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-10T23:44:58+09:00"
+  at: "2026-11-10T23:55:19+09:00"
 ---
 # ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る
 
