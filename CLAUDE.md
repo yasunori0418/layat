@@ -41,7 +41,7 @@ ADR の 2 型（adr / sara_adr）と ubiquitous_term のみ**で、他の型は 
 検出した欠陥（defect）は型として持たず、GitHub Issues（`bug` label）で管理する
 （→ [欠陥はグラフに置かず GitHub Issues で管理する](docs/sara-adr/defects-in-github-issues.md)。運用規約は `docs/agents/issue-tracker.md` の「Defect issues」節）。
 
-risk を `requirement` と `design` のどちらに張るかの使い分けは `docs/agents/sara-graph.md`。
+risk を `requirement` と `design` のどちらに張るかの使い分けは [risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る](docs/quality/risk-attaches-to-requirement-by-default.md)。
 
 ### テスト系 item の粒度（`docs/risks/` と `docs/test/<対象>/`）
 
@@ -74,19 +74,8 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
 持たないテスト資産の規範は `dev/tests/test-doc-exclusions.tsv`**（除外理由付き。ここに無い
 資産が CASE 無しで現れると契約テストが落ちる）。
 
-**逆算階層の粒度**（既存のテスト実装から item を起こすときの単位）:
-
-- **CASE** = テストファイル / e2e シナリオ / flake check 単位。frontmatter の `resource`
-  （必須・単一値）に対象を正準表記で書き、本文の `## 対象` 節に人間向けの補足を書く。
-  主な検証内容（テスト関数のテーマ列挙）も本文へ。テスト関数単位には割らない。
-  CASE ⟷ テスト資産の 1:1 は `dev/tests/test-doc-map.sh` が強制する
-- **TC** = 検証テーマ単位（対象あたり数件）。同じ不変条件・観点を検証する CASE 群を束ねる
-- **RISK** = TC を束ねる脅威単位（対象あたり 2〜5 件）。「このテーマが壊れると何が起きるか」を
-  requirement / design への `threatens` で表す
-- 関係の向き: CASE -covers→ TC -mitigates→ RISK -threatens→ REQ / DSG、CASE -follows→ TP
-
-**risk / TC / CASE は `docs/spec.md` へ索引しない**（`sara query` / `sara report` で辿る）。
-`docs/spec.md` のリンク集に載せるのは requirement / quality / test_plan まで。
+既存のテスト実装から item を起こすときの粒度（CASE・TC・RISK の 3 段）と、risk / TC / CASE を
+`docs/spec.md` へ索引しない規則は [テスト系 item は、テスト資産・検証テーマ・脅威の 3 段の粒度で起こす](docs/quality/test-items-three-tier-granularity.md)。
 
 ### ID 規約（フル UUIDv4）
 
@@ -96,15 +85,9 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは `
 | ファイル名 | `<slug>.md` | `mkmanifest-pure-function.md` |
 | 散文中の参照 | `[item の name](相対パス)` | `[mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md)` |
 
-**フル ID を書くのは frontmatter の `id:` と relation リストだけにする**
-（→ [フル ID は frontmatter だけに書き、item にはリンクで触れる](docs/sara-adr/full-ids-in-frontmatter-only.md)）。item 本文の H1 見出しは `# <name>` とし、ID を書かない。8 文字省略形は使わない。
-散文で item に触れるときは Markdown リンクにし、リンク文字列にも ID を書かない。ID をそのまま grep すれば
-frontmatter の `id:` と relation に当たり、`sara query` へ渡しても同じものに当たる（省略形から正式 ID を探す手順が要らない）。
+ID とファイル名の形式・フル ID を書く場所・散文と `specification` での item への触れ方・ADR の採番は
+[フル ID は frontmatter だけに書き、散文では item にリンクで触れる](docs/quality/full-ids-in-frontmatter-links-in-prose.md)。
 
-- `specification` / `specification_ja` / `origin` の文字列の中で item に触れるときも、
-  `[item の name](item のディレクトリからの相対パス)` の Markdown リンクにする
-- `name` と H1 に `<name>` のような `<…>` を含む語があればコードスパンに入れる（Markdown でタグに解釈され、描画で消えるため）
-- 散文でリンクの直後に同じ name を鉤括弧や丸括弧で繰り返さない
 - 起票は ADR を含め devShell 同梱の `sara-new` コマンドで行う。採番（`sara init` が引く
   UUIDv4）とファイル名規約の適用を一手で済ませ、`id:` と `file:` の 2 行を返す。連番を手で
   振らない（並列レーンでの採番衝突を構造的に避けるため）
@@ -114,13 +97,9 @@ frontmatter の `id:` と relation に当たり、`sara query` へ渡しても�
   sara-new requirement lock-ordering docs/requirements -- --description '<1 文の要約>'
   ```
 
-- ADR も UUID で採番する（`ADR-<フル UUIDv4>`、sara 品質管理機構の決定は `SDR-<フル UUIDv4>`）。
-  連番の `ADR-NNNN` は削除済みで、新 ADR の `origin` と「起点:」行に来歴として残る。
-  ADR の規則は `docs/agents/adr-rules.md`、layat への当てはめは `docs/adr/README.md`
-- `specification` フィールドを持つ型（requirement / quality / test_plan）は**英語で書く**。
-  sara が RFC2119 キーワード（MUST / SHALL / SHOULD …）の存在をハードコードで検証するため。
-  対になる日本語の規範文は `specification_ja` に併記する。ただし検証が効くのは requirement
-  だけ（型名がハードコードされている）で、quality / test_plan の様式はレビューで守る
+ADR の粒度・本文の構成・`justifies` の選定基準は [ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る](docs/quality/adr-one-decision-four-sections-justifies-by-contribution.md)、
+layat への当てはめは `docs/adr/README.md`。`specification`（英語）と `specification_ja`（日本語）の
+様式は [specification は SHALL 系で書き、日本語の規範文は同じ強度の規範助動詞で終える](docs/quality/specification-shall-family-and-matching-auxiliaries.md)。
 
 ### OKF 互換の frontmatter
 
@@ -176,11 +155,7 @@ nix develop ./dev -c dev/scripts/test-doc-matrix.sh out.md  # 対応表の生成
   要件は `docs/requirements/`、リスクは `docs/risks/`、テスト成果物は `docs/test/<対象>/` へ
   1 ファイル 1 item で置き、起票は ADR を含め `sara-new` で行う。
   スキル既定の出力先・採番方式（散文への ID 直書き・連番）がこれと食い違う場合はプロジェクト規約に従う
-- **コメント規約**:
-  - 連続するコメント行の散文は 3 行以内（箇条書きも散文に数える）
-  - 現在の動作だけを書く。経緯と ADR / Issue / PR 参照を書かない
-  - 利用者向け文字列（ヘルプ・エラーメッセージ等）に ADR 番号を出さない
-  - コードブロックを残してよいのは判定表・利用者向けサンプル・実行例だけ
+- **コメント規約**: [コメントと利用者向け文字列は現在の動作だけを書き、決定の記録を参照しない](docs/quality/comments-state-current-behaviour-only.md)
 - ユーザーに確認・質問する際は、テキストで質問を投げず **AskUserQuestion ツールを積極的に使う**。設計判断の確認・曖昧な依頼の解釈確認・代替案の選択などで使い、各質問は推奨オプションを先頭に置く
 
 ## Agent skills
@@ -205,4 +180,4 @@ Issue は GitHub Issues で管理し、`gh` コマンドで操作する。epic�
 ### Sara document graph
 
 `docs/` は sara のナレッジグラフ（`docs/model.yaml` + `sara check`）。risk を
-`requirement` と `design` のどちらに張るかの使い分け規約は `docs/agents/sara-graph.md`。
+`requirement` と `design` のどちらに張るかの使い分けは [risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る](docs/quality/risk-attaches-to-requirement-by-default.md)。
