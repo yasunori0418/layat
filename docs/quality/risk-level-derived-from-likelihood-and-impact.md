@@ -10,28 +10,30 @@ specification: |
   The `likelihood` of a `risk` SHALL be scored by how easily a regression that realises
   the threat gets in, and its `impact` SHALL be scored by how recoverable the threat is
   once someone notices it. A risk with several failure directions SHALL be scored by the
-  heaviest direction, and a direction SHALL NOT be left out unless another risk explicitly
-  holds it as its own. A risk that a verification gate silently stops verifying SHALL inherit the
-  `impact` of what the gate guarded and SHALL name that source with a link. Whether anyone
-  would notice the threat SHALL NOT be scored and SHALL be stated in the prose instead.
+  heaviest direction, and a direction SHALL NOT be left out unless another risk
+  explicitly holds it as its own. A risk that a verification gate silently stops
+  verifying SHALL inherit the `impact` of what the gate guarded and SHALL name that source
+  with a link. Whether anyone would notice the threat SHALL NOT be scored and SHALL be
+  stated in the prose instead.
   The `level` SHALL be derived from `likelihood` and `impact` by the matrix in
   `dev/tests/risk-matrix.tsv` and SHALL NOT be judged by hand. The priority of a
   `test_condition` SHALL be derived from the highest `level` among the risks it mitigates,
-  and a `test_condition` treated at a different priority SHALL state the reason in its prose.
+  and a `test_condition` treated at a different priority SHALL state the reason in its
+  prose and SHALL have that exception decided by a maintainer.
 specification_ja: |
   `risk` の `likelihood` は脅威を実現する退行がどれだけ入り込みやすいかで採点しなければ
   ならず、`impact` は気付いた後に回復できるかで採点しなければならない。失敗の向きが複数ある
-  risk は最も重い向きで採点しなければならず、別の risk がそれを自身のものとして明示的に持つ
-  ときを除き、ある向きを外してはならない。自動検証が何も確かめなくなる risk は、その検証が守っていた
-  対象の `impact` を引き継がなければならず、引き継ぎ元をリンクで名指ししなければならない。
+  risk は最も重い向きで採点しなければならない。ある向きは、別の risk がその向きを自身のものと
+  して明示的に持つときを除き、外してはならない。自動検証が何も確かめなくなる risk は、その検証が
+  守っていた対象の `impact` を引き継がなければならず、引き継ぎ元をリンクで名指ししなければならない。
   気付かれにくさは採点してはならず、本文に書かなければならない。`level` は
   `dev/tests/risk-matrix.tsv` の表で `likelihood` と `impact` から導かなければならず、手で
   決めてはならない。`test_condition` の優先度は、`mitigates` 先の risk のうち最も高い `level`
   から導かなければならず、導いた優先度と違う扱いをする `test_condition` は、その理由を本文に
-  書かなければならない。
+  書かなければならず、その例外はメンテナが決めなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-10T23:13:33+09:00"
+  at: "2026-11-10T23:17:43+09:00"
 ---
 # risk の level は likelihood と impact から導き、手で決めない
 
@@ -101,8 +103,8 @@ generated:
 | **`medium`** | `high` | `medium` | `low` |
 | **`low`** | `medium` | `low` | `low` |
 
-この item の他の規則と違い、`level` の導出はレビューでは守らない。`dev/tests/risk-matrix.sh` が TSV を読み、
-`docs/risks/` のすべての item をそれと突き合わせる。この検査は `nix flake check ./dev` の
+この item の他の規則と違い、`level` の導出はレビューでは守らない。`dev/tests/risk-matrix.sh`
+が TSV を読み、`docs/risks/` のすべての item をそれと突き合わせる。この検査は `nix flake check ./dev` の
 `checks.risk-matrix` と CI の `sara` ジョブに組み込まれている（→ #303）。`sara check` は各
 フィールドの enum を検証するが、3 つの間の関係は見ない。その隙間をこのテストが埋める。frontmatter
 の 3 フィールドの純粋な対応づけで、解釈する散文が無いので、スクリプトが完全に判定できる。
@@ -115,7 +117,9 @@ generated:
 `test_condition` は優先度をフィールドに持たない。優先度は `mitigates` 先の risk の `level` から
 導き、複数の risk を `mitigates` するなら、そのうち最も高い `level` を採る。優先度を risk と
 test_condition の両方に持つと二重管理になり、片方だけが古くなる。導いた優先度と違う扱いをしたい
-例外があるときだけ、その根拠を test_condition の本文に書く。
+例外があるときだけ、その根拠を test_condition の本文に書き、メンテナの決定を得る。`level` と
+違って優先度はフィールドを持たず機械検査の対象でもないので、例外を本文で扱える。`level` は理由を
+書いても上書きできない。
 
 ## 出典
 
