@@ -15,7 +15,7 @@ frontmatter は `sara init` が生成する（手順は sara-docs の references
 ## 切り口とテストベース
 
 - 切り口: <機能要求 / 入力の区分 / 状態・遷移 / 例外・エラー処理 / 非機能 / 相互作用・依存>
-- テストベース: <対応する REQ / DSG の省略形参照（REQ-xxxxxxxx）・コード箇所・受け入れ条件>
+- テストベース: <対応する REQ / DSG への Markdown リンク（`[item の name](相対パス)`）・コード箇所・受け入れ条件>
 
 ## 備考（test-design への引き継ぎ）
 
@@ -24,7 +24,7 @@ frontmatter は `sara init` が生成する（手順は sara-docs の references
 ```
 
 - 対応する risk は frontmatter の `mitigates` が正本なので、本文に「対応リスク」節は
-  持たない（二重管理になる）。リード文で言及したいときは省略形参照で書く。
+  持たない（二重管理になる）。リード文で言及したいときは、item の name を文字列にした Markdown リンク（`[item の name](相対パス)`）で書く。
 - **優先度の節は原則持たない**。優先度は `mitigates` 先 risk の `level` から導出する
   （複数なら最高 level）。導出と違う扱いをする例外のときだけ、根拠と利用者決定を
   リード文または備考に書く。
