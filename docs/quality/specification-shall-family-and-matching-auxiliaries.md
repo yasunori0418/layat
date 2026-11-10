@@ -23,13 +23,13 @@ specification_ja: |
   Markdown リンクで書かなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-10T23:08:41+09:00"
+  at: "2026-11-10T23:49:00+09:00"
 ---
 # specification は SHALL 系で書き、日本語の規範文は同じ強度の規範助動詞で終える
 
 ## 仕様
 
-`requirement`・`quality`・`test_plan` の 3 型は、どれも規範を 2 度持つ。英語の `specification`
+`requirement`・`quality`・`test_plan` の 3 型はどれも規範を 2 度持つ。英語の `specification`
 （sara は型を問わず RFC2119 キーワードの有無を検証する）と、日本語の `specification_ja`（sara は
 まったく検査しない）である。どちらも規範であり、どちらも他方の訳注ではない。以下の規則は 3 型の
 すべてに当てはまり、2 つの欄を 1 つの規範として読めるようにする。

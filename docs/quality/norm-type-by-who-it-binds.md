@@ -25,7 +25,7 @@ specification_ja: |
   `infrastructure` が持たなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-10T23:17:43+09:00"
+  at: "2026-11-10T23:49:00+09:00"
 ---
 # 規範の型は、それが誰を縛るかで決める
 
@@ -49,7 +49,7 @@ generated:
 | `quality` | 開発の進め方・規約・ガバナンス。機能に付くのではなく作業を横断し、それ自体は何かの検証を目的としない。 | `solution` | 外しても気付くのは開発者だけで、出荷物は変わらず、失われる検証も無い。 |
 | `test_plan` | テストの範囲・レベル・方法。テスト対象へ手が届くようにすることを含む。 | `solution` | そもそも存在する理由が、何かを検証しなければならないことにある。 |
 
-`solution` 直下の 2 型は、開発者の問いで重なる。どちらを外しても利用者には見えない。そこで
+`solution` 直下の 2 型は開発者の問いで重なる。どちらを外しても利用者には見えない。そこで
 `test_plan` の問いを先に当てる。何かを検証する必要があるから存在する item は `test_plan` で、
 残りが `quality` になる。
 
@@ -98,7 +98,7 @@ cobra に限り vendorHash で固定する」「`lib` は nixpkgs.lib だけに�
 **nix の作業手順についての規範。** 縛る作業手順が*利用者の*ものなら `requirement` である。
 「`nix flake check` が `unknown flake output` を警告するのは受け入れ、主な検証は `nix build`
 とする」は、利用者自身の flake が出すものを縛る。layat が利用者に採ってもらう出力の名前空間の
-性質である。「flake の入口は純粋に評価し、legacy の入口は利用者の責任で非純粋に評価してよい」と
+性質である。「flake の entrypoint は純粋に評価し、legacy の entrypoint は利用者の責任で非純粋に評価してよい」と
 「`experimental-features` は CLI が肩代わりしない前提条件である」は、layat がそもそも動くために
 利用者の nix 環境が満たすべきものを縛る。どれかがこのリポジトリ自身の CI についての規則なら
 `quality` になる（守る規範ではなくそれを回すパイプラインについての規則なら `infrastructure`）。
@@ -107,7 +107,7 @@ cobra に限り vendorHash で固定する」「`lib` は nixpkgs.lib だけに�
 
 `quality` は規範を持ち、`infrastructure` はそれを支える仕組みを持つ。「マージ前に全プラット
 フォームの `flake check` が通る」は `quality`、それを回す CI パイプラインは `infrastructure` で
-ある。迷ったら、道具を差し替えてもその item が成り立つかを問う。成り立つなら規範である。
+ある。迷ったら、ツールを差し替えてもその item が成り立つかを問う。成り立つなら規範である。
 
 ## 出典
 
