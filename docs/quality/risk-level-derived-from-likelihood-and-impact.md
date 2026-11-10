@@ -19,7 +19,7 @@ specification: |
   `dev/tests/risk-matrix.tsv` and SHALL NOT be judged by hand. The priority of a
   `test_condition` SHALL be derived from the highest `level` among the risks it mitigates,
   and a `test_condition` treated at a different priority SHALL state the reason in its
-  prose and SHALL have that exception decided by a maintainer.
+  prose.
 specification_ja: |
   `risk` の `likelihood` は脅威を実現する退行がどれだけ入り込みやすいかで採点しなければ
   ならず、`impact` は気付いた後に回復できるかで採点しなければならない。失敗の向きが複数ある
@@ -30,10 +30,10 @@ specification_ja: |
   `dev/tests/risk-matrix.tsv` の表で `likelihood` と `impact` から導かなければならず、手で
   決めてはならない。`test_condition` の優先度は、`mitigates` 先の risk のうち最も高い `level`
   から導かなければならず、導いた優先度と違う扱いをする `test_condition` は、その理由を本文に
-  書かなければならず、その例外はメンテナが決めなければならない。
+  書かなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-10T23:17:43+09:00"
+  at: "2026-11-10T23:27:44+09:00"
 ---
 # risk の level は likelihood と impact から導き、手で決めない
 
@@ -117,7 +117,7 @@ generated:
 `test_condition` は優先度をフィールドに持たない。優先度は `mitigates` 先の risk の `level` から
 導き、複数の risk を `mitigates` するなら、そのうち最も高い `level` を採る。優先度を risk と
 test_condition の両方に持つと二重管理になり、片方だけが古くなる。導いた優先度と違う扱いをしたい
-例外があるときだけ、その根拠を test_condition の本文に書き、メンテナの決定を得る。`level` と
+例外があるときだけ、その根拠を test_condition の本文に書く。`level` と
 違って優先度はフィールドを持たず機械検査の対象でもないので、例外を本文で扱える。`level` は理由を
 書いても上書きできない。
 
