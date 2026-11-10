@@ -18,7 +18,7 @@ specification_ja: |
   索引してはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-10T23:44:58+09:00"
+  at: "2026-11-11T00:57:16+09:00"
 ---
 # テスト系 item は、テスト資産・検証テーマ・脅威の 3 段の粒度で起こす
 
@@ -50,3 +50,4 @@ risk・TC・CASE は `sara query` / `sara report` で辿る。`docs/spec.md` の
 
 Issue #273 と Issue #304 で決めたテスト系 item の粒度を規約として運用してきたものを、
 Issue #649 で quality item として立てた。
+この規約を定めた決定は [テスト系 item を CASE・TC・RISK の 3 段で起こし、概要文書へ索引しない](../sara-adr/test-items-three-tier-granularity.md) に記録してある。

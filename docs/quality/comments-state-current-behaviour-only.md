@@ -19,7 +19,7 @@ specification_ja: |
   コメントには、判定表・利用者向けのサンプル・実行例のほかにコードブロックを残してはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-10T23:44:58+09:00"
+  at: "2026-11-11T00:57:16+09:00"
 ---
 # コメントと利用者向け文字列は現在の動作だけを書き、決定の記録を参照しない
 
@@ -35,3 +35,4 @@ generated:
 ## 出典
 
 CLAUDE.md の規約として運用してきたコメント規約を、Issue #649 で quality item として立てた。
+この規約を定めた決定は [コメントに経緯と決定の記録への参照を書かない](../adr/comments-no-history-or-decision-references.md) に記録してある。

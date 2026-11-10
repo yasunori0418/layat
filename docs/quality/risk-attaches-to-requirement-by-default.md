@@ -22,7 +22,7 @@ specification_ja: |
   書かなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-10T23:49:00+09:00"
+  at: "2026-11-11T00:57:16+09:00"
 ---
 # risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る
 
@@ -65,3 +65,4 @@ test_condition は risk からぶら下がる（`test_condition --mitigates--> r
 
 epic #203 が定めた使い分けを規約として運用してきたものに、[requirement に risk_exempt を設け、理由を書いた requirement を未カバーから外す](../sara-adr/requirement-risk-exempt.md) が置いた
 `risk_exempt` の書き方を合わせ、Issue #649 で quality item として立てた。
+この規約を定めた決定は [risk の張り先は requirement を既定にし、threatens の 1 本ごとに判定する](../sara-adr/risk-attaches-to-requirement-by-default.md) に記録してある。
