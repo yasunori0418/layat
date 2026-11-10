@@ -19,7 +19,7 @@ sources:
     title: "epic: 散文リンク移行の後始末 — 表示崩れ・重複表記・文の破綻・frontmatter のフル ID"
 origin: "epic #692 の grilling（2026-11-08）で確定。[自動検証の形骸化は守備対象の impact を継承する](gate-risk-inherits-impact.md) を書き直した"
 justifies:
-  - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+  - "QA-b14e0a14-b9c9-4cc6-9b7a-0ce95d30d289"
 supersedes:
   - "SDR-c2989d44-2ba4-4a42-9f4f-35871405be65"
 references:

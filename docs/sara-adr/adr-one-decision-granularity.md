@@ -9,7 +9,7 @@ sources:
     title: "#499"
 origin: "Issue #499 の grilling（2026-11-01）で確定"
 justifies:
-  - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
+  - "QA-6de13779-f0bc-4e47-8ffd-3d58de265762"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-01T21:26:22+09:00"

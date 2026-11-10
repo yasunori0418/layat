@@ -11,6 +11,7 @@ sources:
 origin: "H1 見出しの ID の要否の見直し（2026-11-09）で確定。[ID の書き場所と省略形の禁止は起票の機械化と契約テストで担保する](id-placement-enforced-by-contract-test.md) を書き直した"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+  - "QA-1dd63789-24ed-4a86-bf12-b62d8c526ba5"
 supersedes:
   - "SDR-a28f6eb7-f0ab-4a3c-9a94-c8a0d0a6a66f"
 references:

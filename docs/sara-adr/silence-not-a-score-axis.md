@@ -15,7 +15,7 @@ sources:
     title: "#292"
 origin: "Issue #303 の着手前 grilling（2026-08-12）で確定。ADR-0052 §1c と題名の決定を書き直した"
 justifies:
-  - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+  - "QA-b14e0a14-b9c9-4cc6-9b7a-0ce95d30d289"
 references:
   - "SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac"
 generated:

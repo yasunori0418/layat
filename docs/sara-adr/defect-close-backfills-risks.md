@@ -18,7 +18,7 @@ sources:
     title: "#267"
 origin: "Issue #268（epic #203 残ブロッカー）の判断（2026-08-09）で確定。ADR-0051 §3 を書き直した"
 justifies:
-  - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+  - "QA-87b7776a-9ece-42ac-9a56-78daacb42217"
 references:
   - "SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed"
   - "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"
