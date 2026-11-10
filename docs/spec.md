@@ -332,6 +332,10 @@ item が持ち、`satisfies` で `quality` へ接続する。
 - [マージ前の自動検証を必須にし、プラットフォーム差が出る層は全プラットフォームで通す](quality/cross-platform-verification-before-merge.md) — マージ前の自動検証を必須にし、プラットフォーム差が効く層は全プラットフォームで通す
 - [コード整形と静的解析を自動検証に載せ、同じ判定を手元でも得られるようにする](quality/formatting-and-static-analysis-automated.md) — コード整形と静的解析を自動検証に載せ、同じ判定を手元でも得られるようにする
 - [自動化が取り込む実行物は不変な識別子で固定し、権限は最小に絞り、不正入力では成果物を作る前に失敗する](quality/automation-supply-chain-safety.md) — 自動化が取り込む実行物は不変な識別子で固定し、権限は最小に絞り、不正入力では成果物を作る前に失敗する
+- [規範の型は、それが誰を縛るかで決める](quality/norm-type-by-who-it-binds.md) — 規範の型は、それが誰を縛るかで requirement・quality・test_plan から選ぶ
+- [risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る](quality/risk-attaches-to-requirement-by-default.md) — risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る
+- [risk の level は likelihood と impact から導き、手で決めない](quality/risk-level-derived-from-likelihood-and-impact.md) — risk の likelihood と impact を決まった尺度で採点し、level はその 2 つから導く
+- [specification は SHALL 系で書き、日本語の規範文は同じ強度の規範助動詞で終える](quality/specification-shall-family-and-matching-auxiliaries.md) — specification は SHALL 系で書き、specification_ja は同じ強度の規範助動詞で終える
 
 ---
 
