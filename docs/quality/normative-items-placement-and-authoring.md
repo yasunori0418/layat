@@ -24,7 +24,7 @@ specification_ja: |
   いずれの欄も他方の訳注として扱ってはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:03+09:00"
+  at: "2026-11-11T00:30:18+09:00"
 ---
 # 規範は 1 ファイル 1 item のグラフが持ち、概要文書は索引に縮退させる
 
@@ -41,15 +41,15 @@ generated:
 
 二言語で書く規範は、英語と日本語のどちらも正として扱うことを含む。片方を訳注に降格させると、
 実際に読まれる側の言語で規範の強度が落ちる。強度の対応（SHALL と「〜しなければならない」など）
-まで含めた執筆規約は `docs/agents/sara-graph.md` が持ち、これも機械検証されないためレビューで
+まで含めた執筆規約は [specification は SHALL 系で書き、日本語の規範文は同じ強度の規範助動詞で終える](specification-shall-family-and-matching-auxiliaries.md) が持ち、これも機械検証されないためレビューで
 守る。
 
-型の判別基準の具体・採番コマンドの実装・強度の対応表は本 item の規範に含めない。判別と執筆の
-規約は `docs/agents/sara-graph.md` が、採番の仕組みは [トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）](../infrastructure/traceability-verification.md) が持つ。
+型の判別基準の具体・採番コマンドの実装・強度の対応表は本 item の規範に含めない。判別は
+[規範の型は、それが誰を縛るかで決める](norm-type-by-who-it-binds.md) が、執筆の規約は [specification は SHALL 系で書き、日本語の規範文は同じ強度の規範助動詞で終える](specification-shall-family-and-matching-auxiliaries.md) が、採番の仕組みは [トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）](../infrastructure/traceability-verification.md) が持つ。
 
 ## 出典
 
-`docs/spec.md` 冒頭の書き方の規約、`docs/agents/sara-graph.md` の型判別規約と
+`docs/spec.md` 冒頭の書き方の規約、型判別規約と
 `specification` / `specification_ja` の執筆規約、`CLAUDE.md` の ID 規約節、
 `docs/dev/definition-of-done.md` の DOD-04 が実運用してきた規範を、Issue #272 で quality item
 として立てたもの。

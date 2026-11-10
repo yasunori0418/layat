@@ -11,7 +11,7 @@ impact: high
 level: high
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-11T00:30:18+09:00"
 ---
 # plan と engine が乖離し、table-driven テストが実挙動を保証しなくなる
 
@@ -49,7 +49,7 @@ engine が独自に分類をやり直せば table のケースが増えても実
 [配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する](../design/planner-engine-split.md) へ張るのは、この risk が懸念しているのが planner（分類判定に閉じた純粋計算）と
 engine（FS 意味論の実行）という層分割そのものであり、同 item がその分割を主張しているから
 である。分割を採らず engine が分類と実行を一体で持つ設計へ差し替えれば、この乖離という失敗
-モードは消える（→ `docs/agents/sara-graph.md` の判別規約）。
+モードは消える（→ [risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る](../quality/risk-attaches-to-requirement-by-default.md)）。
 
 以前は分割を記述した design item が存在せず、テスト戦略の [engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する](../design/engine-test-go-unit-tmpdir.md) へ消去法で張っていた
 （#282）。[配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する](../design/planner-engine-split.md) の新設と [engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する](../design/engine-test-go-unit-tmpdir.md) のモック方針の改訂（対象を FS の意味論を実行する

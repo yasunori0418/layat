@@ -10,7 +10,7 @@ impact: medium
 level: medium
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:36:11+09:00"
+  at: "2026-11-11T00:30:18+09:00"
 ---
 # status が flock を取り、ディレクトリを作り、記録を書き換えて読み取り専用でなくなる
 
@@ -32,7 +32,7 @@ system 基底では lock ファイルを作れず、非 root の status が失�
 `linkFarm` を取り違えれば、次の apply の古くなった配置の除去が誤った比較の基準から始まる。
 
 この脅威は status をどう設計しても残る要求側の脅威なので、`design` ではなく `requirement` に張る
-（→ `docs/agents/sara-graph.md`）。
+（→ [risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る](../quality/risk-attaches-to-requirement-by-default.md)）。
 
 ## 実現性
 

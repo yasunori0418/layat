@@ -1,7 +1,7 @@
 # layat の ADR
 
-ADR の粒度・ステータス・`supersedes` と `deprecated`・`justifies` の選定基準といった汎用の規則は
-[adr-rules.md](../agents/adr-rules.md) が持つ。この文書はそれを layat へ当てはめた部分
+ADR の粒度・本文の構成・`justifies` の選定基準は [ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る](../quality/adr-one-decision-four-sections-justifies-by-contribution.md) が、
+ステータス・`supersedes` と `deprecated` は [設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる](../quality/adr-decisions-recorded-and-connected.md) が持つ。この文書はそれを layat へ当てはめた部分
 （型とディレクトリ・起票の手順・frontmatter の対応表・検算用の実データ）だけを持つ。
 
 ## 型とディレクトリ
@@ -103,7 +103,7 @@ error にする。先行 ADR 側からは `sara query` の `Is referenced by` �
 
 ## `justifies` の実例
 
-選定基準（寄与の有無・張らない 2 条件・監査の 2 方向）は [adr-rules.md](../agents/adr-rules.md) が
+選定基準（寄与の有無・張らない 2 条件・監査の 2 方向）は [ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る](../quality/adr-one-decision-four-sections-justifies-by-contribution.md) が
 持つ。layat での判定の実例:
 
 - 寄与した ADR が複数張る: [project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う](../requirements/project-mode-generation-skip.md) へは [世代スキップには profile に加え記録の一致も要する](generation-skip-requires-both-match.md) /
