@@ -73,6 +73,7 @@ FLAKE_CHECKS=(
   dev:checks.okf-frontmatter
   dev:checks.okf-index
   dev:checks.risk-matrix
+  dev:checks.sara-fresh
   dev:checks.sara-gap
   dev:checks.sara-new
   dev:checks.term-avoid

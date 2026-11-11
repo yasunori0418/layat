@@ -98,6 +98,31 @@
               exec bash ${./scripts/sara-gap.sh} "$@"
             '';
           };
+
+          # 上流より古い item と人の確認が無い high の risk を列挙する決定論コマンド。
+          #
+          #   sara-fresh [--json]
+          #
+          # 実体の dev/scripts/sara-fresh.sh を PATH に載せる薄い wrapper。
+          sara-fresh = pkgs.writeShellApplication {
+            name = "sara-fresh";
+            runtimeInputs = [
+              inputs'.nur.packages.sara
+              pkgs.jq
+              # frontmatter の generated / verified を読む yq-go（mikefarah/yq v4）。
+              pkgs.yq-go
+              # frontmatter を 1 本の multi-document にまとめるのに使う。
+              pkgs.gawk
+              pkgs.coreutils
+              # sara.toml のある走査基点をリポジトリルート基準で解決するため。
+              pkgs.git
+              # 下の text が exec するインタプリタ自身。
+              pkgs.bash
+            ];
+            text = ''
+              exec bash ${./scripts/sara-fresh.sh} "$@"
+            '';
+          };
         in
         {
           devShells.default = pkgs.mkShell {
@@ -112,6 +137,8 @@
               sara-new
               # グラフ未カバーと到達率の列挙。
               sara-gap
+              # 再検証待ちの item と人の確認が無い high の risk の列挙。
+              sara-fresh
               # CASE frontmatter を読む yq-go（mikefarah/yq v4）。python-yq とは別実装。
               yq-go
               # test-doc-matrix.sh が sara report matrix --format json を整形するのに使う。
@@ -363,6 +390,28 @@
                 touch "$out"
               '';
 
+          # sara-fresh の列挙契約を固定するテスト（dev/tests/sara-fresh.sh）。CI はこの派生ではなく devShells.sara で走らせる。
+          checks.sara-fresh =
+            pkgs.runCommandLocal "sara-fresh-test"
+              {
+                # テストが一時ディレクトリのグラフへ重ねる実物の docs/model.yaml を store path で渡す。
+                SARA_FRESH_MODEL_YAML = ../docs/model.yaml;
+                nativeBuildInputs = [
+                  sara-fresh
+                  # テスト自身のアサーション用。
+                  pkgs.jq
+                  pkgs.coreutils
+                  pkgs.gnugrep
+                  pkgs.gnused
+                  # テストが一時リポジトリを git init する。
+                  pkgs.git
+                ];
+              }
+              ''
+                bash ${./tests/sara-fresh.sh}
+                touch "$out"
+              '';
+
           # sara-new の起票契約を固定するテスト（dev/tests/sara-new.sh）。CI はこの派生ではなく devShells.sara で走らせる。
           checks.sara-new =
             pkgs.runCommandLocal "sara-new-test"
@@ -394,6 +443,7 @@
               inputs'.nur.packages.sara
               sara-new
               sara-gap
+              sara-fresh
               # 以下は dev/tests/ の各テストが使う。対応する checks 派生と揃えて明示する。
               pkgs.git
               pkgs.gnused
