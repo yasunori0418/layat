@@ -171,8 +171,8 @@ layat の値は URI ではない。根もリポジトリ根で、index.md のバ
 平たいキーのうち `status` と `resource` は、`docs/model.yaml` のフィールドとして sara が確かめる。
 `stale_after` も `docs/model.yaml` のフィールドだが、sara は値の形を確かめない。`stale_after` と、
 sara が型を持たない入れ子のキー（`generated` / `verified` / `sources`）は、
-`dev/tests/okf-frontmatter.sh` が形を確かめる。本文の変更と `generated` の更新が揃っているかは
-確かめず、規約で守る。
+`dev/tests/okf-frontmatter.sh` が形を確かめる。本文を変えたのに `generated` を更新していない item は、
+`sara-fresh --base <ref>` が base との差分から列挙して報告する。列挙はマージを止めない。
 
 ## 関係
 
