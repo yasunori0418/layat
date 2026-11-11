@@ -126,25 +126,35 @@ JSON 形状の異常は 2。
 sara 本体ではなく devShell 同梱の独立コマンド。valid なグラフに対してだけ動く
 （`sara check` が落ちる間は exit 2 で一覧を出さない）。工程スキルは着手点の特定に使う。
 
-## 別コマンド sara-fresh による再検証待ちと人の確認が無い high の risk の列挙
+## 別コマンド sara-fresh による再検証待ち・generated の更新漏れ・人の確認が無い high の risk の列挙
 
 ```bash
-sara-fresh         # text: 2 節の見出し + <フル ID>\t<name>\t<file>
-sara-fresh --json  # {stale, unverified_high_risk}
+sara-fresh                     # text: 節 1・節 3 の見出し + 各行
+sara-fresh --base main         # text: 節 1〜3 の見出し + 各行
+sara-fresh --json [--base <ref>]  # {stale, generated_not_updated, unverified_high_risk}
 ```
 
 | 節 | `--json` のキー | 内容 |
 |---|---|---|
 | 1 | `stale` | `refines` / `derives_from` / `satisfies` / `threatens` / `mitigates` / `covers` / `follows` で指している上流の `generated.at` が、自身の基準時刻より新しい item。text の行末に、その上流のフル ID をカンマ区切りで足す |
-| 2 | `unverified_high_risk` | `level: high` の `risk` のうち、`by` が `human:` で始まり `at` が `generated.at` 以降の `verified` を持たないもの |
+| 2 | `generated_not_updated` | `--base <ref>` を渡したときだけ出す。`git merge-base <ref> HEAD` のコミットと作業ツリーを比べ、本文が変わったのに `generated.at` の値が変わっていない item |
+| 3 | `unverified_high_risk` | `level: high` の `risk` のうち、`by` が `human:` で始まり `at` が `generated.at` 以降の `verified` を持たないもの |
 
 基準時刻は `generated.at` と `generated.at` 以降の `verified[].at`（actor を問わない）のうち最も新しい時刻。
 `justifies` と peer の relation（`depends_on` / `supersedes` / `references`）は辿らない。`status: deprecated` の
-item は上流・下流のどちらとしても扱わない。
+item はどの節でも扱わない。
+
+節 2 の本文は frontmatter の外の行で、`# ` で始まる H1 の行と `- ステータス:` で始まる行を除き、空白だけの差は
+数えない。2 点の間で足した item と削除した item は比べない。base に同じパスが無い item は、同じ ID を持つ
+base 側のファイルを旧パスとみなして比べる。未コミットの変更も比べる対象に入る。
 
 `stale` の `--json` の要素は `{id, name, file, upstreams}` で、`upstreams` は上流ごとの
-`{id, relation, at}`（`at` は上流の `generated.at`）。`unverified_high_risk` の要素は `{id, name, file}`。
+`{id, relation, at}`（`at` は上流の `generated.at`）。`generated_not_updated` と `unverified_high_risk` の
+要素は `{id, name, file}`。`--base` を渡さないとき、`--json` に `generated_not_updated` のキーは無い。
 
-exit code は、どの節も空なら 0、いずれかの節に item があれば 1。`sara check` の失敗、JSON 形状の異常、
-`generated.at` や `verified` の `at` を時刻として読めない item は 2。結果は報告に留め、`verified` は人が
-内容を確かめたときにだけ手で足す。
+exit code は、出力したどの節も空なら 0、いずれかの節に item があれば 1。引数の誤り、`sara check` の失敗、
+JSON 形状の異常、frontmatter を YAML として読めない item、`verified` がリストでない item、`generated.at` や
+`verified` の `at` を時刻として読めない item があるとき、`--base` の ref を解決できないとき、`--base` の ref と
+HEAD の merge-base が無いときは、一覧を出さずに 2 を返す。結果は報告に留め、`verified` は人が内容を確かめた
+ときにだけ手で足す。CI の `sara` ジョブは pull_request で base ブランチを `--base` に渡して実行し、exit 1 では
+落ちない。

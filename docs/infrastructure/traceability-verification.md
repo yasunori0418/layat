@@ -14,7 +14,7 @@ satisfies:
   - "QA-aa70fff6-3e0a-4163-bf4c-97f1730f7496"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-12T00:15:52+09:00"
+  at: "2026-11-12T00:46:40+09:00"
 ---
 # トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）
 
@@ -28,13 +28,13 @@ generated:
 |---|---|
 | `docs/model.yaml` | カスタムスキーマ。13 型と relation を定義し、sara の組み込みモデルを全面置換する |
 | `sara.toml` | リポジトリ設定 |
-| `sara` ジョブ | `test.yml` 内の 1 ジョブ。`sara check` で broken reference / duplicate ID / cycles を検出し、同じジョブで契約テスト（この表の `dev/tests/` の 11 件）を実行する |
+| `sara` ジョブ | `test.yml` 内の 1 ジョブ。`sara check` で broken reference / duplicate ID / cycles を検出し、同じジョブで契約テスト（この表の `dev/tests/` の 11 件）を実行し、`sara-fresh` で実物のグラフの一覧を出す |
 | `dev/tests/test-doc-map.sh` | テスト資産 ⇔ CASE の 1:1 対応を検証する（→ Issue #304）。区分と除外の正本は `dev/tests/` のデータファイルが持つ |
 | `dev/tests/glossary-index.sh` | 用語索引（`docs/glossary.md`）と用語 item（ubiquitous_term）が 1:1 に対応するかを検証する |
 | `dev/tests/risk-matrix.sh` | risk の `level` が `likelihood` × `impact` のマトリクス導出と一致するかを検証する（→ Issue #303）。マトリクスの正本は `dev/tests/risk-matrix.tsv` |
 | `dev/tests/sara-gap.sh` | `sara-gap` が出す未カバーの 7 節と到達率の契約、および exit code を検証する。判定は fixture 基準で、実グラフのどの item がギャップかは見ない（件数が動き続けるため契約にできない）|
-| `sara-fresh` | `dev/scripts/sara-fresh.sh` を包む devShell のコマンド。上流の `generated.at` が自身の基準時刻より新しい item と、`generated.at` 以降の `human:` の `verified` を持たない high の risk を列挙する。結果は報告に留める |
-| `dev/tests/sara-fresh.sh` | `sara-fresh` の 2 節の列挙と exit code の契約を検証する。グラフはテストが一時ディレクトリに作り、実物の `docs/model.yaml` を重ねる |
+| `sara-fresh` | `dev/scripts/sara-fresh.sh` を包む devShell のコマンド。上流の `generated.at` が自身の基準時刻より新しい item、`--base <ref>` との差分で本文が変わったのに `generated.at` が変わっていない item、`generated.at` 以降の `human:` の `verified` を持たない high の risk を列挙する。結果は報告に留める |
+| `dev/tests/sara-fresh.sh` | `sara-fresh` の 3 節の列挙と exit code の契約を検証する。グラフはテストが一時ディレクトリに作り、実物の `docs/model.yaml` を重ねる。`--base` の節は、一時ディレクトリに `git init` したリポジトリで確かめる |
 | `dev/tests/sara-new.sh` | `sara-new` の起票契約（採番・ファイル名規約の適用）を検証する（→ Issue #367）。fixture は実物の `docs/model.yaml` を重ねて使う |
 | `dev/tests/adr-supersede.sh` | `supersedes` が指す ADR が `status: deprecated` かを frontmatter から検証する |
 | `dev/tests/okf-frontmatter.sh` | OKF 互換の入れ子キー（`generated` / `verified` / `sources`）と `stale_after` の形を frontmatter から検証する |
@@ -45,6 +45,12 @@ generated:
 契約テストを同じジョブへ載せるのは、テストが「人が思い出したときだけ動く」状態を避けるため。
 表の `dev/tests/` の 11 件のうち `adr-supersede.sh` を除く 10 件は dev flake の `checks.*` としても露出しているが、CI の `flake-check` はルート
 flake を対象にするため到達しない。CI の明示ステップとして固定する。
+
+`sara` ジョブは契約テストに続けて、実物のグラフに `sara-fresh` を実行し、一覧をログとジョブのサマリーへ出す。
+pull_request では base ブランチを `--base` に渡し、workflow_dispatch では `--base` を付けない。merge-base を引けるよう、
+このジョブの checkout は全履歴を取る。挙がった item は読み直しが要ることを示すだけで破損を意味しないため、
+一覧に item が挙がっても（exit 1）ジョブは落とさず、実行に失敗したとき（exit 2）だけ落とす
+（→ [上流より古い item と generated の更新漏れは機械的に列挙する](../quality/stale-items-enumerated-mechanically.md)）。
 
 `sara` ジョブは `test.yml` に同居するが、[CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](ci-pipeline.md) の変更検出ジョブは
 **再利用しない**。あちらの filter は nix / Go のソースを対象にするのに対し、この確認が最も役立つのは
