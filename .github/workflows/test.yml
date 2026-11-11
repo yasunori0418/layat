@@ -81,7 +81,7 @@ jobs:
 
   sara:
     # Knowledge-graph validation of docs/ plus the test-doc-map / glossary-index / risk-matrix /
-    # sara-gap / sara-new / adr-supersede / okf-frontmatter / okf-index / term-avoid / link-text contract tests. Not a
+    # sara-gap / sara-fresh / sara-new / adr-supersede / okf-frontmatter / okf-index / term-avoid / link-text contract tests. Not a
     # required status check. Uses a job-local path filter instead of the `changes` job.
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
@@ -160,6 +160,12 @@ jobs:
       - name: Run sara-gap contract test
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/sara-gap.sh
+
+      # The stale-item and high-risk verification enumeration contract for
+      # sara-fresh, run against a graph the test builds in a temporary directory.
+      - name: Run sara-fresh contract test
+        if: steps.filter.outputs.relevant != 'false'
+        run: nix develop '.?dir=dev#sara' -c dev/tests/sara-fresh.sh
 
       # The item-creation contract for sara-new, the wrapper around `sara init`
       # that enforces the <slug>.md filename convention.
