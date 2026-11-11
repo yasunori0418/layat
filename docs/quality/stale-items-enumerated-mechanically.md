@@ -24,18 +24,19 @@ specification_ja: |
   `satisfies`・`threatens`・`mitigates`・`covers`・`follows` の relation を宣言している item は、
   指している item の `generated.at` が自身の基準時刻より新しいとき、再検証待ちとして列挙され
   なければならない。`justifies` と peer の relation は対象にしてはならず、`status` が
-  `deprecated` の item は両端のどちらでも除かなければならない。base と `HEAD` の merge-base と
-  作業ツリーを比べ、本文が変わったのに `generated.at` が変わっていない item は、`generated` の
-  更新漏れとして列挙されなければならない。本文は frontmatter の外の行とし、`# ` で始まる H1 の行、
-  `- ステータス:` で始まる行、空白だけの差を除かなければならない。2 点の間で足した item と削除した
-  item は比べてはならず、改名した item は旧パスの内容と比べなければならない。2 つの列挙は機械的に行わなければならず、その結果は報告に留め、
-  マージの条件にしてはならない。
+  `deprecated` の item は両端のどちらでも除かなければならない。`git merge-base <base> HEAD` の
+  コミットと作業ツリーを比べ、本文が変わったのに `generated.at` が変わっていない item は、
+  `generated` の更新漏れとして列挙されなければならない。本文は frontmatter の外の行とし、`# ` で
+  始まる H1 の行、`- ステータス:` で始まる行、空白だけの差を除かなければならない。2 点の間で
+  足した item と削除した item は比べてはならず、改名した item は旧パスの内容と比べなければ
+  ならない。2 つの列挙は機械的に行わなければならず、その結果は報告に留め、マージの条件に
+  してはならない。
 status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-11T23:59:24+09:00"
+  at: "2026-11-12T00:02:04+09:00"
 ---
 # 上流より古い item と generated の更新漏れは機械的に列挙する
 
@@ -50,8 +51,8 @@ sara の構造の検査は、型・relation・接続性が正しいかを見る�
 [鮮度は上流の relation を辿って下流へ伝播させる](../sara-adr/freshness-propagates-along-upstream-relations.md) が持つ。
 
 `generated` の更新漏れは、base との差分で本文が変わったのに `generated.at` が変わっていない
-item を挙げる。比べる 2 点は base と `HEAD` の merge-base と作業ツリーで、本文は frontmatter の
-外の行から H1 の行と `- ステータス:` の行を除いたものとし、空白だけの差は数えない。新しく足した
+item を挙げる。比べる 2 点は `git merge-base <base> HEAD` のコミットと作業ツリーで、本文は
+frontmatter の外の行から H1 の行と `- ステータス:` の行を除いたものとし、空白だけの差は数えない。新しく足した
 item と削除した item は比べず、改名した item は旧パスの内容と比べる。この範囲にした理由と、時刻を
 比べない理由は [generated の更新漏れは PR の差分で確かめる](../sara-adr/generated-update-checked-in-pr-diff.md) が持つ。
 
