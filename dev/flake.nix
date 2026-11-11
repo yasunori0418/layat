@@ -101,7 +101,7 @@
 
           # 上流より古い item と人の確認が無い high の risk を列挙する決定論コマンド。
           #
-          #   sara-fresh [--json]
+          #   sara-fresh [--json] [--base <ref>]
           #
           # 実体の dev/scripts/sara-fresh.sh を PATH に載せる薄い wrapper。
           sara-fresh = pkgs.writeShellApplication {

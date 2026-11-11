@@ -113,8 +113,9 @@ relation は**起こした側（下流）の frontmatter に宣言する**（`sa
   `exempt` = `risk_exempt` を持つ `requirement`（情報）、
   `reach` = `requirement`・`test_plan`・`quality` の到達率）。
   exit 0 = ギャップなしで到達率がすべて 1 / 1 = ギャップありか到達率が 1 未満 / 2 = check 失敗。
-- **`sara-fresh`**: valid なグラフから、`generated` と `verified` で見て確かめ直しが要る item を 2 節で出す
+- **`sara-fresh`**: valid なグラフから、`generated` と `verified` で見て確かめ直しが要る item を 3 節で出す
   （`stale` = 上流の `generated.at` が自身の基準時刻より新しい item、
+  `generated_not_updated` = `--base <ref>` を渡したときだけ出す節で、ref との merge-base から本文が変わったのに `generated.at` が変わっていない item、
   `unverified_high_risk` = `generated.at` 以降の `human:` の `verified` を持たない high の `risk`）。
   上流の item を書き換えた後に、下流で読み直す item を探すのに使う。結果は報告に留め、`verified` は自動で付けない。
   exit 0 = どの節も空 / 1 = いずれかの節に item がある / 2 = check 失敗か frontmatter を読めない item がある。
