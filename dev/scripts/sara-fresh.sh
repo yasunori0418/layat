@@ -125,7 +125,7 @@ if ! result=$(printf '%s' "$graph" | jq --slurpfile fm <(printf '%s\n' "$frontma
   | [$items[]
      | (if .gen_ep == null then "\(.file): generated.at を時刻として読めない（実際: \(.gen_at // "無し")）" else empty end),
        (if .verified_raw != null and .verified == null then "\(.file): verified がリストでない" else empty end),
-       (.verified // [] | .[] | select(.ep == null) | "\(.file): verified の at を時刻として読めない（実際: \(.at // "無し")）")
+       (.file as $file | .verified // [] | .[] | select(.ep == null) | "\($file): verified の at を時刻として読めない（実際: \(.at // "無し")）")
     ] as $errors
   | if ($errors | length) > 0 then {errors: $errors}
     else
