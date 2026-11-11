@@ -2,7 +2,7 @@
 id: "SDR-dfff5637-f0a4-4e5d-a57e-f4dd1e7dbb42"
 type: sara_adr
 name: "鮮度は上流の relation を辿って下流へ伝播させる"
-description: "下流の item の基準時刻より上流の generated.at が新しければ、justifies と peer を除く 7 種の relation を辿って下流を再検証待ちとして挙げる"
+description: "下流の item の基準時刻より上流の generated.at が新しければ、上流の relation のうち justifies を除く 7 種を辿って下流を再検証待ちとして挙げる"
 status: stable
 sources:
   - id: "issue-676"
@@ -13,7 +13,7 @@ justifies:
   - "QA-611977bd-3d11-4695-9fb2-a9f7211fcfbd"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-11T23:49:55+09:00"
+  at: "2026-11-11T23:59:24+09:00"
 ---
 # 鮮度は上流の relation を辿って下流へ伝播させる
 
@@ -48,8 +48,9 @@ generated:
 ## 根拠
 
 7 種の relation は、下流の規範が上流の規範から導かれることを表す。上流の本文が変われば、下流が
-前提にした上流の規範が、もう成り立っていない可能性がある。直接の辺だけを比べるのは、間の item を確かめ直せば、その下流にも
-順に伝わるためである。
+前提にした上流の規範が、もう成り立っていない可能性がある。直接の辺だけを比べるのは、間の item の本文を書き換えればその
+`generated.at` が進み、その下流も挙がるためである。間の item に確認の記録だけを足したときは、
+その下流は挙げない。
 
 基準時刻に `verified` を含めるのは、上流が変わったあとで下流を読み直し、本文を変える必要が
 無かった場合に、その確認を記録する手段を残すためである。`generated.at` より前の `verified` は、

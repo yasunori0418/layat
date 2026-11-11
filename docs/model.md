@@ -128,8 +128,8 @@ item の**基準時刻**はその item の `generated.at` と、`generated.at` �
 
 `generated` と `verified` は文書の鮮度と信頼を確かめる 3 つの確認に使われる。どれも結果を報告に留める。
 
-- 再検証待ち: 上流の relation（`justifies` と peer を除く 7 種）で指している item の `generated.at` が、
-  自身の基準時刻より新しい item を挙げる（→ [上流より古い item と generated の更新漏れは機械的に列挙する](quality/stale-items-enumerated-mechanically.md)）
+- 再検証待ち: 上流の relation のうち `justifies` を除く 7 種で指している item の `generated.at` が、
+  自身の基準時刻より新しい item を挙げる。peer の relation は対象にしない（→ [上流より古い item と generated の更新漏れは機械的に列挙する](quality/stale-items-enumerated-mechanically.md)）
 - `generated` の更新漏れ: base との差分で本文が変わったのに `generated.at` が変わっていない item を挙げる
   （→ 同上）
 - 人の確認が無い high の risk: `level` が high の risk のうち、`generated.at` 以降の `human:` の `verified` を

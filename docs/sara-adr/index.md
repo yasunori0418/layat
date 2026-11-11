@@ -14,7 +14,7 @@
 * [design の satisfies 対象に test_plan を含める](./design-satisfies-test-plan.md) - design の `satisfies` は `requirement` だけを対象にしていた。テスト計画にあたる `requirement` を test_plan へ移す（[テスト計画の型を品質方針の型から分けて設ける](quality-and-test-plan-types.md)）と、それらを `satisfies` で指していた design item の辺は張り先を失う。中には `satisfies` がその 1 本だけの design item もあり、移した途端に design 側が接続漏れになる。 (stable)
 * [ドキュメントは sara のナレッジグラフとして item に分割する](./docs-as-sara-knowledge-graph.md) - layat の仕様・設計・テストは、`docs/spec.md`・`docs/design.md`・`docs/concept.md` と ADR に散文で書かれていた。この形では、要求とリスクの紐付けが一貫しているかを機械的に確かめられない。 (stable)
 * [item にできない外部参照は text フィールドへ逃がす](./external-references-as-text-fields.md) - ADR は GitHub の Issue や、決定の起点になったセッションを参照する。これらは sara の item ではないので、relation では表せない。relation の参照先は実在する item でなければならず、実在しない ID は破損した参照として検出される。 (stable)
-* [鮮度は上流の relation を辿って下流へ伝播させる](./freshness-propagates-along-upstream-relations.md) - 下流の item の基準時刻より上流の generated.at が新しければ、justifies と peer を除く 7 種の relation を辿って下流を再検証待ちとして挙げる (stable)
+* [鮮度は上流の relation を辿って下流へ伝播させる](./freshness-propagates-along-upstream-relations.md) - 下流の item の基準時刻より上流の generated.at が新しければ、上流の relation のうち justifies を除く 7 種を辿って下流を再検証待ちとして挙げる (stable)
 * [frontmatter の外のフル ID と省略形は起票の機械化と契約テストで防ぐ](./frontmatter-only-ids-checked-by-contract-test.md) - フル ID の書き場所と 8 文字省略形の禁止を、起票ラッパーによる機械化と契約テスト link-text.sh の検出で担保する。 (stable)
 * [フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる](./full-ids-in-frontmatter-and-h1.md) - フル ID の書き場所を frontmatter と H1 見出しに限り、`specification` などの文字列でも item へは Markdown リンクで触れ、ファイル名は `<slug>.md` にする。 (deprecated)
 * [フル ID は frontmatter だけに書き、item にはリンクで触れる](./full-ids-in-frontmatter-only.md) - フル ID の書き場所を frontmatter の id と relation リストに限り、H1 見出しは name だけにし、本文や specification などの文字列では item へ Markdown リンクで触れる。 (stable)
