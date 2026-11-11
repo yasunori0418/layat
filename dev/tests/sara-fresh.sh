@@ -568,7 +568,100 @@ sub_status=0
 (cd "$gitrepo/sub" && sara-fresh >/dev/null 2>&1) || sub_status=$?
 assert_eq "サブディレクトリから叩いても git ルートのグラフを対象にする（列挙あり = exit 1）" 1 "$sub_status"
 
-# --- 7. 引数 -------------------------------------------------------------------
+# --- 7. 節 2: --base との差分で generated の更新漏れ -----------------------------
+
+h_gen='## generated の更新漏れ（base との差分で本文が変わったのに generated.at が変わっていない item）'
+
+# 利用者の git 設定（署名・既定ブランチ）に左右されないようにする。
+export GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1
+diffrepo="$work/diffrepo"
+g() { git -C "$diffrepo" -c user.name=fixture -c user.email=fixture@example.invalid -c commit.gpgsign=false "$@"; }
+
+make_graph "$diffrepo"
+for f in req-stale req-fresh req-equal req-offset req-ver-before req-dep-up risk-old tc-old; do
+  printf '\n本文 の 行。\n' >>"$diffrepo/docs/$f.md"
+done
+printf -- '- ステータス: stable\n' >>"$diffrepo/docs/req-ver-after.md"
+g init -q -b main
+g add -A
+g commit -q -m base
+g checkout -q -b topic
+
+# コミット済みの変更。
+printf '本文を足した。\n' >>"$diffrepo/docs/req-stale.md"
+printf '本文を足した。\n' >>"$diffrepo/docs/req-fresh.md"
+sed -i 's/^  at: "2026-04-01T00:00:00+09:00"$/  at: "2026-04-02T00:00:00+09:00"/' "$diffrepo/docs/req-fresh.md"
+sed -i 's|^  by: "claude-code/fixture"$|  by: "claude-code/other"|' "$diffrepo/docs/req-equal.md"
+sed -i 's/^# オフセット違いで新しい要求$/# 見出しだけ変えた要求/' "$diffrepo/docs/req-offset.md"
+sed -i 's/^- ステータス: stable$/- ステータス: deprecated/' "$diffrepo/docs/req-ver-after.md"
+sed -i 's/^本文 の 行。$/  本文の行。  /' "$diffrepo/docs/req-ver-before.md"
+printf '\n\n' >>"$diffrepo/docs/req-ver-before.md"
+REQ_NEW="REQ-aaaa000b-0000-4000-8000-00000000001a"
+item "$diffrepo" req-new "$REQ_NEW" requirement "新しく足した要求" <<YAML
+status: stable
+derives_from:
+  - "$UC"
+$req_spec
+generated:
+  by: "claude-code/fixture"
+  at: "2026-01-01T00:00:00+09:00"
+YAML
+printf '\n新しい本文。\n' >>"$diffrepo/docs/req-new.md"
+g rm -q docs/req-two.md
+g mv docs/req-dep-up.md docs/req-moved.md
+printf '改名で本文も変えた。\n' >>"$diffrepo/docs/req-moved.md"
+g add -A
+g commit -q -m topic
+
+# 未コミットの変更（作業ツリーの改名を含む）。
+printf '未コミットの本文。\n' >>"$diffrepo/docs/risk-old.md"
+mv "$diffrepo/docs/tc-old.md" "$diffrepo/docs/tc-moved.md"
+printf '未コミットの改名で本文も変えた。\n' >>"$diffrepo/docs/tc-moved.md"
+
+run_fresh env SARA_FRESH_ROOT="$diffrepo" sara-fresh --base main
+out="$stdout_capture"
+assert_eq "--base で更新漏れがあれば exit 1" 1 "$status_capture"
+assert_eq "--base では見出しを 3 つ、節の番号順に出す" "$(printf '%s\n' "$h_stale" "$h_gen" "$h_risk")" "$(grep '^## ' <<<"$out")"
+
+sec_gen="$(section_body "$h_gen" "$out")"
+assert_has "本文を変えて generated.at を据え置いた item を挙げる" "^$REQ_STALE"$'\t' "$sec_gen"
+assert_lacks "本文と generated.at を両方変えた item を挙げない" "^$REQ_FRESH" "$sec_gen"
+assert_lacks "frontmatter だけ変えた item を挙げない" "^$REQ_EQUAL" "$sec_gen"
+assert_lacks "H1 だけ変えた item を挙げない" "^$REQ_OFFSET" "$sec_gen"
+assert_lacks "- ステータス: の行だけ変えた item を挙げない" "^$REQ_VER_AFTER" "$sec_gen"
+assert_lacks "空白だけ変えた item を挙げない" "^$REQ_VER_BEFORE" "$sec_gen"
+assert_lacks "新規の item を挙げない" "^$REQ_NEW" "$sec_gen"
+assert_lacks "削除した item を挙げない" "^$REQ_TWO" "$sec_gen"
+assert_eq "改名して本文を変えた item を新しいパスで挙げる" \
+  "$REQ_DEP_UP"$'\t'"廃止した上流を指す要求"$'\t'"docs/req-moved.md" \
+  "$(grep "^$REQ_DEP_UP" <<<"$sec_gen")"
+assert_has "未コミットの本文の変更を挙げる" "^$RISK_OLD"$'\t' "$sec_gen"
+assert_has "未コミットの改名で本文を変えた item を挙げる" "^$TC_OLD"$'\t'".*"$'\t'"docs/tc-moved.md$" "$sec_gen"
+assert_eq "節 2 の行は <フル ID>\\t<name>\\t<file> の形" \
+  "$REQ_STALE"$'\t'"上流より古い要求"$'\t'"docs/req-stale.md" \
+  "$(grep "^$REQ_STALE" <<<"$sec_gen")"
+
+run_fresh env SARA_FRESH_ROOT="$diffrepo" sara-fresh --base main --json
+json="$stdout_capture"
+assert_eq "--base の --json は generated_not_updated のキーを足す" "generated_not_updated,stale,unverified_high_risk" \
+  "$(jq -r 'keys | join(",")' <<<"$json" 2>/dev/null)"
+assert_eq "generated_not_updated は 4 件を ID 順に並べる" "$REQ_STALE,$REQ_DEP_UP,$RISK_OLD,$TC_OLD" \
+  "$(jq -r '[.generated_not_updated[].id] | join(",")' <<<"$json" 2>/dev/null)"
+assert_eq "generated_not_updated の要素のキーは file / id / name" '["file,id,name"]' \
+  "$(jq -c '[.generated_not_updated[] | keys | join(",")] | unique' <<<"$json" 2>/dev/null)"
+
+run_fresh env SARA_FRESH_ROOT="$diffrepo" sara-fresh
+assert_eq "--base が無ければ節 2 を出さない" "$(printf '%s\n' "$h_stale" "$h_risk")" "$(grep '^## ' <<<"$stdout_capture")"
+
+expect_exit2 "解決できない --base の ref" env SARA_FRESH_ROOT="$diffrepo" sara-fresh --base no-such-ref
+assert_has "解決できない ref は stderr に ref を挙げる" 'no-such-ref' \
+  "$(env SARA_FRESH_ROOT="$diffrepo" sara-fresh --base no-such-ref 2>&1 >/dev/null)"
+g branch lonely "$(g commit-tree "$(g mktree </dev/null)" -m lonely)"
+expect_exit2 "HEAD との merge-base が無い --base の ref" env SARA_FRESH_ROOT="$diffrepo" sara-fresh --base lonely
+assert_has "merge-base が無いときは stderr でその旨を知らせる" 'merge-base' \
+  "$(env SARA_FRESH_ROOT="$diffrepo" sara-fresh --base lonely 2>&1 >/dev/null)"
+
+# --- 8. 引数 -------------------------------------------------------------------
 
 run_fresh sara-fresh --help
 assert_eq "--help は exit 0" 0 "$status_capture"
@@ -580,5 +673,10 @@ assert_has "未知の引数では usage を出す" '^usage: sara-fresh' "$usage_
 
 run_fresh sara-fresh --json extra
 assert_eq "引数過多は exit 2" 2 "$status_capture"
+
+base_status=0
+base_err="$(sara-fresh --base 2>&1 >/dev/null)" || base_status=$?
+assert_eq "--base に値が無ければ exit 2" 2 "$base_status"
+assert_has "--base に値が無ければ usage を出す" '^usage: sara-fresh' "$base_err"
 
 exit "$fail"
