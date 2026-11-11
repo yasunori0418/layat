@@ -145,7 +145,7 @@ sara-fresh --json [--base <ref>]  # {stale, generated_not_updated, unverified_hi
 item はどの節でも扱わない。
 
 節 2 の本文は frontmatter の外の行で、`# ` で始まる H1 の行と `- ステータス:` で始まる行を除き、空白だけの差は
-数えない。2 点の間で足した item と削除した item は比べない。base に同じパスが無い item は、同じ ID を持つ
+数えない。コードフェンスの中の `# ` で始まる行は H1 として除かず、本文として比べる。2 点の間で足した item と削除した item は比べない。base に同じパスが無い item は、同じ ID を持つ
 base 側のファイルを旧パスとみなして比べる。未コミットの変更も比べる対象に入る。
 
 `stale` の `--json` の要素は `{id, name, file, upstreams}` で、`upstreams` は上流ごとの
