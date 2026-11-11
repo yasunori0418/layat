@@ -2,7 +2,7 @@
 id: "QA-1b4601e5-33cb-435f-812e-052cc159ce8b"
 type: quality
 name: "コメントと利用者向け文字列は現在の動作だけを書き、決定の記録を参照しない"
-description: "コメントは 3 行以内で現在の動作だけを書き、経緯と決定の記録への参照を書かない。利用者向け文字列に ADR 番号を出さない"
+description: "コメントは 3 行以内で現在の動作だけを書き、経緯と ADR・Issue・PR への参照を書かない。利用者向け文字列に ADR 番号を出さない"
 status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"

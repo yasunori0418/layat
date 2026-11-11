@@ -23,8 +23,8 @@ specification_ja: |
   その規範を英語で述べなければならず、対応する日本語の規範文を併記しなければならない。
   いずれの欄も他方の訳注として扱ってはならない。
 generated:
-  by: "claude-code/claude-opus-5-5"
-  at: "2026-11-11T00:30:18+09:00"
+  by: "claude-code/claude-fable-5-2"
+  at: "2026-11-11T22:30:00+09:00"
 ---
 # 規範は 1 ファイル 1 item のグラフが持ち、概要文書は索引に縮退させる
 
@@ -49,7 +49,7 @@ generated:
 
 ## 出典
 
-`docs/spec.md` 冒頭の書き方の規約、型判別規約と
+`docs/spec.md` 冒頭の書き方の規約、規約文書の型判別規約と
 `specification` / `specification_ja` の執筆規約、`CLAUDE.md` の ID 規約節、
 `docs/dev/definition-of-done.md` の DOD-04 が実運用してきた規範を、Issue #272 で quality item
 として立てたもの。

@@ -1,7 +1,7 @@
 # layat の ADR
 
 ADR の粒度・本文の構成・`justifies` の選定基準は [ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る](../quality/adr-one-decision-four-sections-justifies-by-contribution.md) が、
-ステータス・`supersedes` と `deprecated` は [設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる](../quality/adr-decisions-recorded-and-connected.md) が持つ。この文書はそれを layat へ当てはめた部分
+ステータス・出典・`supersedes` と `deprecated`・採番は [設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる](../quality/adr-decisions-recorded-and-connected.md) が持つ。この文書はそれを layat へ当てはめた部分
 （型とディレクトリ・起票の手順・frontmatter の対応表・検算用の実データ）だけを持つ。
 
 ## 型とディレクトリ

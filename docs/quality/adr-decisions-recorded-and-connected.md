@@ -27,8 +27,8 @@ specification_ja: |
   保つため）。置き換えで deprecated にする ADR の全決定に後継が揃っているかは機械的に検証されないため、レビューで
   守られなければならない。
 generated:
-  by: "claude-code/claude-opus-5-5"
-  at: "2026-11-11T00:32:18+09:00"
+  by: "claude-code/claude-fable-5-2"
+  at: "2026-11-11T22:30:00+09:00"
 ---
 # 設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる
 
@@ -64,7 +64,7 @@ ADR の粒度・本文の構成・統合と分割の手順・`justifies` の選�
 `deprecated` の ADR には 2 種類ある。`supersedes` で指されていれば後継に置き換わった ADR で、
 指されていなければ提案を棄却した記録になる。
 
-### 出典
+### 出典（sources）
 
 起点になった Issue など、item にできない外部の出典は frontmatter の `sources` に書く。
 要素は `id` / `resource` / `title` の組にする。
