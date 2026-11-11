@@ -574,13 +574,34 @@ h_gen='## generated の更新漏れ（base との差分で本文が変わった�
 
 # 利用者の git 設定（署名・既定ブランチ）に左右されないようにする。
 export GIT_CONFIG_GLOBAL=/dev/null GIT_CONFIG_NOSYSTEM=1
-diffrepo="$work/diffrepo"
-g() { git -C "$diffrepo" -c user.name=fixture -c user.email=fixture@example.invalid -c commit.gpgsign=false "$@"; }
+# g は $grepo の git を叩く。
+g() { git -C "$grepo" -c user.name=fixture -c user.email=fixture@example.invalid -c commit.gpgsign=false "$@"; }
 
+# 節 1・節 3 が空のグラフで、節 2 だけが exit code を決める側を確かめる。
+grepo="$work/diffclean"
+make_graph "$grepo"
+rm "$grepo"/docs/{req-stale,req-ver-before,req-two,risk-old,tc-old,case-old,dsg-old,uc-old,risk-none,risk-agent,risk-human-before}.md
+printf '\n本文 の 行。\n' >>"$grepo/docs/req-fresh.md"
+g init -q -b main
+g add -A
+g commit -q -m base
+run_fresh env SARA_FRESH_ROOT="$grepo" sara-fresh --base main
+assert_eq "--base で全節が空なら exit 0" 0 "$status_capture"
+assert_eq "--base で空の 3 節は「なし」と出す" 3 "$(grep -c '^なし$' <<<"$stdout_capture")"
+run_fresh env SARA_FRESH_ROOT="$grepo" sara-fresh --base main --json
+assert_eq "--base の --json で全節が空なら exit 0 で 3 配列が空" '0:{"stale":[],"generated_not_updated":[],"unverified_high_risk":[]}' \
+  "$status_capture:$(jq -c '.' <<<"$stdout_capture" 2>/dev/null)"
+printf '本文を足した。\n' >>"$grepo/docs/req-fresh.md"
+run_fresh env SARA_FRESH_ROOT="$grepo" sara-fresh --base main
+assert_eq "節 2 だけが空でなければ exit 1" 1 "$status_capture"
+
+diffrepo="$work/diffrepo"
+grepo="$diffrepo"
 make_graph "$diffrepo"
-for f in req-stale req-fresh req-equal req-offset req-ver-before req-dep-up risk-old tc-old; do
+for f in req-stale req-fresh req-equal req-offset req-ver-before req-dep-up req-dep-down risk-old risk-medium tc-old; do
   printf '\n本文 の 行。\n' >>"$diffrepo/docs/$f.md"
 done
+printf '\n```bash\n# 例のコメント\n```\n' >>"$diffrepo/docs/uc-new.md"
 printf -- '- ステータス: stable\n' >>"$diffrepo/docs/req-ver-after.md"
 g init -q -b main
 g add -A
@@ -596,6 +617,8 @@ sed -i 's/^# オフセット違いで新しい要求$/# 見出しだけ変えた
 sed -i 's/^- ステータス: stable$/- ステータス: deprecated/' "$diffrepo/docs/req-ver-after.md"
 sed -i 's/^本文 の 行。$/  本文の行。  /' "$diffrepo/docs/req-ver-before.md"
 printf '\n\n' >>"$diffrepo/docs/req-ver-before.md"
+sed -i 's/^# 例のコメント$/# 変えたコメント/' "$diffrepo/docs/uc-new.md"
+printf '本文を足した。\n' >>"$diffrepo/docs/req-dep-down.md"
 REQ_NEW="REQ-aaaa000b-0000-4000-8000-00000000001a"
 item "$diffrepo" req-new "$REQ_NEW" requirement "新しく足した要求" <<YAML
 status: stable
@@ -612,6 +635,12 @@ g mv docs/req-dep-up.md docs/req-moved.md
 printf '改名で本文も変えた。\n' >>"$diffrepo/docs/req-moved.md"
 g add -A
 g commit -q -m topic
+
+# 分岐のあとに base 側だけで本文を変える。比べる相手は base の先端でなく merge-base。
+g checkout -q main
+printf 'base 側で本文を足した。\n' >>"$diffrepo/docs/risk-medium.md"
+g commit -q -am 'base moves on'
+g checkout -q topic
 
 # 未コミットの変更（作業ツリーの改名を含む）。
 printf '未コミットの本文。\n' >>"$diffrepo/docs/risk-old.md"
@@ -632,6 +661,9 @@ assert_lacks "- ステータス: の行だけ変えた item を挙げない" "^$
 assert_lacks "空白だけ変えた item を挙げない" "^$REQ_VER_BEFORE" "$sec_gen"
 assert_lacks "新規の item を挙げない" "^$REQ_NEW" "$sec_gen"
 assert_lacks "削除した item を挙げない" "^$REQ_TWO" "$sec_gen"
+assert_lacks "deprecated の item を挙げない" "^$REQ_DEP_DOWN" "$sec_gen"
+assert_lacks "分岐のあとに base 側だけで変えた item を挙げない（merge-base と比べる）" "^$RISK_MEDIUM" "$sec_gen"
+assert_has "コードフェンスの中の # の行だけ変えた item を挙げる" "^$UC_NEW"$'\t' "$sec_gen"
 assert_eq "改名して本文を変えた item を新しいパスで挙げる" \
   "$REQ_DEP_UP"$'\t'"廃止した上流を指す要求"$'\t'"docs/req-moved.md" \
   "$(grep "^$REQ_DEP_UP" <<<"$sec_gen")"
@@ -645,7 +677,7 @@ run_fresh env SARA_FRESH_ROOT="$diffrepo" sara-fresh --base main --json
 json="$stdout_capture"
 assert_eq "--base の --json は generated_not_updated のキーを足す" "generated_not_updated,stale,unverified_high_risk" \
   "$(jq -r 'keys | join(",")' <<<"$json" 2>/dev/null)"
-assert_eq "generated_not_updated は 4 件を ID 順に並べる" "$REQ_STALE,$REQ_DEP_UP,$RISK_OLD,$TC_OLD" \
+assert_eq "generated_not_updated は 5 件を ID 順に並べる" "$REQ_STALE,$REQ_DEP_UP,$RISK_OLD,$TC_OLD,$UC_NEW" \
   "$(jq -r '[.generated_not_updated[].id] | join(",")' <<<"$json" 2>/dev/null)"
 assert_eq "generated_not_updated の要素のキーは file / id / name" '["file,id,name"]' \
   "$(jq -c '[.generated_not_updated[] | keys | join(",")] | unique' <<<"$json" 2>/dev/null)"
