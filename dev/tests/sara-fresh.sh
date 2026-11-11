@@ -97,6 +97,7 @@ REQ_VER_BEFORE="REQ-aaaa0006-0000-4000-8000-000000000015"
 REQ_DEP_UP="REQ-aaaa0007-0000-4000-8000-000000000016"
 REQ_DEP_DOWN="REQ-aaaa0008-0000-4000-8000-000000000017"
 REQ_TWO="REQ-aaaa0009-0000-4000-8000-000000000018"
+REQ_PEER="REQ-aaaa000a-0000-4000-8000-000000000019"
 SDR="SDR-dddd0001-0000-4000-8000-000000000020"
 RISK_NONE="RISK-11110001-0000-4000-8000-000000000030"
 RISK_AGENT="RISK-11110002-0000-4000-8000-000000000031"
@@ -256,6 +257,18 @@ generated:
   by: "claude-code/fixture"
   at: "2026-02-01T00:00:00+09:00"
 YAML
+  # depends_on で指す要求（2026-04-01）より古いが、peer の relation は辿らない。derives_from の上流よりは新しい。
+  item "$repo" req-peer "$REQ_PEER" requirement "依存先より古い要求" <<YAML
+status: stable
+derives_from:
+  - "$UC"
+depends_on:
+  - "$REQ_FRESH"
+$req_spec
+generated:
+  by: "claude-code/fixture"
+  at: "2026-03-20T00:00:00+09:00"
+YAML
   # justifies で指す要求（2026-04-01）より古いが、justifies は辿らない。
   item "$repo" sdr "$SDR" sara_adr "古い決定の記録" <<YAML
 status: stable
@@ -395,6 +408,7 @@ assert_lacks "UTC オフセットを揃えて比べる（文字列順では古�
 assert_lacks "generated.at 以降の verified で基準時刻が進んだ下流を挙げない" "^$REQ_VER_AFTER" "$sec_stale"
 assert_has "generated.at より前の verified は基準時刻に効かない" "^$REQ_VER_BEFORE"$'\t' "$sec_stale"
 assert_lacks "justifies の辺は挙げない" "^$SDR" "$sec_stale"
+assert_lacks "peer の relation（depends_on）の辺は挙げない" "^$REQ_PEER" "$sec_stale"
 assert_lacks "deprecated の上流しか指さない下流を挙げない" "^$REQ_DEP_UP" "$sec_stale"
 assert_lacks "deprecated の下流を挙げない" "^$REQ_DEP_DOWN" "$sec_stale"
 assert_lacks "上流より新しい根とユースケースを挙げない" "^($SOL|$UC)" "$sec_stale"
