@@ -75,7 +75,7 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは [
 資産が CASE 無しで現れると契約テストが落ちる）。
 
 既存のテスト実装から item を起こすときの粒度（CASE・TC・RISK の 3 段）と、risk / TC / CASE を
-`docs/spec.md` へ索引しない規則は [テスト系 item は、テスト資産・検証テーマ・脅威の 3 段の粒度で起こす](docs/quality/test-items-three-tier-granularity.md)。
+概要文書へ索引しない規則は [テスト系 item は、テスト資産・検証テーマ・脅威の 3 段の粒度で起こす](docs/quality/test-items-three-tier-granularity.md)。
 
 ### ID 規約（フル UUIDv4）
 
@@ -98,7 +98,7 @@ ID とファイル名の形式・フル ID を書く場所・散文と `specific
   ```
 
 ADR の粒度・本文の構成・`justifies` の選定基準は [ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る](docs/quality/adr-one-decision-four-sections-justifies-by-contribution.md)、
-ステータス・`supersedes` と `deprecated` は [設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる](docs/quality/adr-decisions-recorded-and-connected.md)、
+ステータス・出典・`supersedes` と `deprecated`・採番は [設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる](docs/quality/adr-decisions-recorded-and-connected.md)、
 layat への当てはめは `docs/adr/README.md`。`specification`（英語）と `specification_ja`（日本語）の
 様式は [specification は SHALL 系で書き、日本語の規範文は同じ強度の規範助動詞で終える](docs/quality/specification-shall-family-and-matching-auxiliaries.md)。
 
