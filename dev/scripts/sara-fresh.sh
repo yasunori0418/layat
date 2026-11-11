@@ -187,7 +187,7 @@ if printf '%s' "$result" | jq -e 'has("errors")' >/dev/null; then
   exit 2
 fi
 
-# 節 2 で比べる本文: frontmatter の外の行から、コードフェンスの外の H1 と "- ステータス:" の行を除き、空白を取り去る。
+# 節 2 で比べる本文: frontmatter の外の行から、コードフェンスの外の H1 の行と、位置を問わず "- ステータス:" の行を除き、空白を取り去る。
 body_of() {
   awk '
     NR == 1 && $0 == "---" { fm = 1; next }
