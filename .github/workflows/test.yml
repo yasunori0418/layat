@@ -86,7 +86,10 @@ jobs:
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:
+      # Full history so `sara-fresh --base` can find the merge base with the PR's base branch.
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
 
       # Scoped to the inputs this job exercises. On workflow_dispatch the step is
       # skipped and `relevant` stays empty, which the guards below treat as "run".
@@ -166,6 +169,34 @@ jobs:
       - name: Run sara-fresh contract test
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/sara-fresh.sh
+
+      # Lists stale items, missing `generated` updates (pull_request only, against
+      # the base branch) and high risks without a human `verified`, to the log and
+      # the job summary. Findings (exit 1) pass; only a failed run (exit 2) fails.
+      - name: Report stale items with sara-fresh
+        if: steps.filter.outputs.relevant != 'false'
+        env:
+          BASE_REF: ${{ github.event_name == 'pull_request' && github.base_ref || '' }}
+        run: |
+          args=()
+          if [ -n "$BASE_REF" ]; then
+            args=(--base "origin/$BASE_REF")
+          fi
+          out="$RUNNER_TEMP/sara-fresh.txt"
+          status=0
+          nix develop '.?dir=dev#sara' -c sara-fresh "${args[@]}" >"$out" || status=$?
+          cat "$out"
+          if [ "$status" -gt 1 ] || ! grep -q '^## ' "$out"; then
+            echo "::error::sara-fresh failed (exit $status)"
+            exit 1
+          fi
+          {
+            echo '### sara-fresh'
+            echo
+            echo '```'
+            cat "$out"
+            echo '```'
+          } >>"$GITHUB_STEP_SUMMARY"
 
       # The item-creation contract for sara-new, the wrapper around `sara init`
       # that enforces the <slug>.md filename convention.
