@@ -340,6 +340,8 @@ item が持ち、`satisfies` で `quality` へ接続する。
 - [コメントと利用者向け文字列は現在の動作だけを書き、決定の記録を参照しない](quality/comments-state-current-behaviour-only.md) — コメントは 3 行以内で現在の動作だけを書き、経緯と決定の記録への参照を書かない。利用者向け文字列に ADR 番号を出さない
 - [フル ID は frontmatter だけに書き、散文では item にリンクで触れる](quality/full-ids-in-frontmatter-links-in-prose.md) — ID はフル UUIDv4 で frontmatter だけに書き、ファイル名は slug とし、散文では name を文字列にしたリンクで item に触れる
 - [ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る](quality/adr-one-decision-four-sections-justifies-by-contribution.md) — ADR は単独で覆せる決定ごとに 1 本を 4 節で書き、justifies は規範の形成に寄与した item へ張る
+- [上流より古い item と generated の更新漏れは機械的に列挙する](quality/stale-items-enumerated-mechanically.md) — 上流より基準時刻が古い下流の item と、本文を変えたのに generated を更新していない item を機械的に列挙し、結果は報告に留める
+- [level が high の risk は人が確かめた記録を持つ](quality/high-risk-verified-by-human.md) — level が high の risk は、generated.at 以降に人が内容を確かめた verified を持つ
 
 ---
 

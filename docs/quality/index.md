@@ -11,6 +11,7 @@
 * [コード整形と静的解析を自動検証に載せ、同じ判定を手元でも得られるようにする](./formatting-and-static-analysis-automated.md) - 整形の揺れと静的解析が見つける類の誤りは、レビューで指摘できるが指摘に人の注意を払わせるだけの価値が無い。マージ前の自動検証の側へ回して、人のレビューを意味判断に集中させる。
 * [フル ID は frontmatter だけに書き、散文では item にリンクで触れる](./full-ids-in-frontmatter-links-in-prose.md) - ID はフル UUIDv4 で frontmatter だけに書き、ファイル名は slug とし、散文では name を文字列にしたリンクで item に触れる
 * [用語の正名は用語 item が固定し、執筆はそれに従う](./glossary-fixes-canonical-terms.md) - 同じ概念が箇所ごとに違う語で呼ばれると、読み手は同じものを指しているのか判断できず、検索も当たらなくなる。正名を 1 箇所で固定し、執筆はそこに従う。
+* [level が high の risk は人が確かめた記録を持つ](./high-risk-verified-by-human.md) - level が high の risk は、generated.at 以降に人が内容を確かめた verified を持つ
 * [傾向の計測は報告に留め、マージの条件にしない](./measurement-reports-without-gating.md) - [マージ前の自動検証を必須にし、プラットフォーム差が出る層は全プラットフォームで通す](cross-platform-verification-before-merge.md) が必須にする側の規範であるのに対し、本 item は**必須化しない側の境界**を定める。両方が無いと、必須化の規範が「検証と名の付くものはすべて塞ぐ」と読めてしまう。
 * [規範の型は、それが誰を縛るかで決める](./norm-type-by-who-it-binds.md) - 規範の型は、それが誰を縛るかで requirement・quality・test_plan から選ぶ
 * [規範は 1 ファイル 1 item のグラフが持ち、概要文書は索引に縮退させる](./normative-items-placement-and-authoring.md) - 規範を概要文書と item の両方に書くと二重管理になり、改訂で片方だけが古くなる。規範の所在をグラフ側に一本化し、概要文書は通読の起点としての索引に徹する。この分担は文書の分量ではなく**どちらを正とするか**の宣言であり、概要文書へ仕様を書き足すことは規範の複製にあたる。
@@ -21,4 +22,5 @@
 * [risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る](./risk-attaches-to-requirement-by-default.md) - risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る
 * [risk の level は likelihood と impact から導き、手で決めない](./risk-level-derived-from-likelihood-and-impact.md) - risk の likelihood と impact を決まった尺度で採点し、level はその 2 つから導く
 * [specification は SHALL 系で書き、日本語の規範文は同じ強度の規範助動詞で終える](./specification-shall-family-and-matching-auxiliaries.md) - specification は SHALL 系で書き、specification_ja は同じ強度の規範助動詞で終える
+* [上流より古い item と generated の更新漏れは機械的に列挙する](./stale-items-enumerated-mechanically.md) - 上流より基準時刻が古い下流の item と、本文を変えたのに generated を更新していない item を機械的に列挙し、結果は報告に留める
 * [テスト系 item は、テスト資産・検証テーマ・脅威の 3 段の粒度で起こす](./test-items-three-tier-granularity.md) - テスト系 item は CASE をテスト資産・TC を検証テーマ・RISK を脅威の単位で起こし、概要文書へ索引しない
