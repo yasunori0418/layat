@@ -107,6 +107,11 @@ RISK_MEDIUM="RISK-11110006-0000-4000-8000-000000000035"
 RISK_HIGH_DEP="RISK-11110007-0000-4000-8000-000000000036"
 RISK_OLD="RISK-11110008-0000-4000-8000-000000000037"
 TC_OLD="TC-33330001-0000-4000-8000-000000000040"
+CASE_OLD="CASE-55550001-0000-4000-8000-000000000050"
+DSG_OLD="DSG-dd000001-0000-4000-8000-000000000051"
+TP="TP-77770001-0000-4000-8000-000000000052"
+SOL_NEW="SOL-5011a002-0000-4000-8000-000000000053"
+UC_OLD="UC-0ca11004-0000-4000-8000-000000000054"
 
 # 上流が新しい下流・上流が古い下流・verified の効き方・justifies・deprecated・high の risk の各側を 1 つのグラフに置く。
 make_graph() {
@@ -261,7 +266,7 @@ generated:
   at: "2026-01-10T00:00:00+09:00"
 YAML
 
-  # risk はどれも上流（2026-04-01）より新しく、節 1 には出ない。
+  # risk() で作る risk はどれも上流（2026-04-01）より新しく、節 1 には出ない。
   risk "$repo" risk-none "$RISK_NONE" "確認の無い high の risk" high stable ""
   risk "$repo" risk-agent "$RISK_AGENT" "エージェントの確認だけの high の risk" high stable '
 verified:
@@ -284,7 +289,7 @@ verified:
   risk "$repo" risk-medium "$RISK_MEDIUM" "確認の無い medium の risk" medium stable ""
   risk "$repo" risk-high-dep "$RISK_HIGH_DEP" "廃止した確認の無い high の risk" high deprecated ""
 
-  # derives_from 以外の relation で新しい上流を指す下流。threatens の先は 2026-04-01、mitigates の先は 2026-05-01。
+  # derives_from 以外の relation で新しい上流を指す下流。
   item "$repo" risk-old "$RISK_OLD" risk "要求より古い medium の risk" <<YAML
 status: stable
 threatens:
@@ -303,6 +308,52 @@ mitigates:
 generated:
   by: "claude-code/fixture"
   at: "2026-04-15T00:00:00+09:00"
+YAML
+  item "$repo" dsg-old "$DSG_OLD" design "要求より古い設計" <<YAML
+status: stable
+satisfies:
+  - "$REQ_FRESH"
+generated:
+  by: "claude-code/fixture"
+  at: "2026-03-25T00:00:00+09:00"
+YAML
+  item "$repo" tp "$TP" test_plan "新しいテスト計画" <<YAML
+status: stable
+derives_from:
+  - "$SOL"
+specification: |
+  The test process SHALL keep this test plan.
+specification_ja: |
+  テストプロセスはこのテスト計画を保たなければならない。
+generated:
+  by: "claude-code/fixture"
+  at: "2026-05-10T00:00:00+09:00"
+YAML
+  # covers の先は 2026-04-15、follows の先は 2026-05-10。
+  item "$repo" case-old "$CASE_OLD" test_case "テスト条件とテスト計画より古いテストケース" <<YAML
+status: stable
+resource: "tests/fixture/dummy_test.go"
+covers:
+  - "$TC_OLD"
+follows:
+  - "$TP"
+generated:
+  by: "claude-code/fixture"
+  at: "2026-04-01T00:00:00+09:00"
+YAML
+  item "$repo" sol-new "$SOL_NEW" solution "新しい根" <<'YAML'
+status: stable
+generated:
+  by: "human:fixture"
+  at: "2026-06-01T00:00:00+09:00"
+YAML
+  item "$repo" uc-old "$UC_OLD" use_case "根より古いユースケース" <<YAML
+status: stable
+refines:
+  - "$SOL_NEW"
+generated:
+  by: "human:fixture"
+  at: "2026-02-01T00:00:00+09:00"
 YAML
 }
 
@@ -346,10 +397,13 @@ assert_has "generated.at より前の verified は基準時刻に効かない" "
 assert_lacks "justifies の辺は挙げない" "^$SDR" "$sec_stale"
 assert_lacks "deprecated の上流しか指さない下流を挙げない" "^$REQ_DEP_UP" "$sec_stale"
 assert_lacks "deprecated の下流を挙げない" "^$REQ_DEP_DOWN" "$sec_stale"
-assert_lacks "上流より古い根やユースケースが無ければ挙げない" "^($SOL|$UC)" "$sec_stale"
+assert_lacks "上流より新しい根とユースケースを挙げない" "^($SOL|$UC)" "$sec_stale"
 assert_has "threatens で新しい上流を指す下流を挙げる" "^$RISK_OLD"$'\t' "$sec_stale"
 assert_has "mitigates で新しい上流を指す下流を挙げる" "^$TC_OLD"$'\t' "$sec_stale"
-assert_eq "節 1 は 5 件" 5 "$(grep -c '' <<<"$sec_stale")"
+assert_has "satisfies で新しい上流を指す下流を挙げる" "^$DSG_OLD"$'\t' "$sec_stale"
+assert_has "covers と follows で新しい上流を指す下流を挙げる" "^$CASE_OLD"$'\t' "$sec_stale"
+assert_has "refines で新しい上流を指す下流を挙げる" "^$UC_OLD"$'\t' "$sec_stale"
+assert_eq "節 1 は 8 件" 8 "$(grep -c '' <<<"$sec_stale")"
 
 assert_eq "行が <フル ID>\\t<name>\\t<file>\\t<新しい上流の ID> の形" \
   "$REQ_STALE"$'\t'"上流より古い要求"$'\t'"docs/req-stale.md"$'\t'"$UC" \
@@ -386,13 +440,13 @@ assert_eq "upstreams の要素のキーは at / id / relation" '["at,id,relation
   "$(jq -c '[.stale[].upstreams[] | keys | join(",")] | unique' <<<"$json" 2>/dev/null)"
 assert_eq "unverified_high_risk の要素のキーは file / id / name" '["file,id,name"]' \
   "$(jq -c '[.unverified_high_risk[] | keys | join(",")] | unique' <<<"$json" 2>/dev/null)"
-assert_eq "stale の ID は text と同じ 5 件を ID 順に並べる" "$REQ_STALE,$REQ_VER_BEFORE,$REQ_TWO,$RISK_OLD,$TC_OLD" \
+assert_eq "stale の ID は text と同じ 8 件を ID 順に並べる" "$CASE_OLD,$DSG_OLD,$REQ_STALE,$REQ_VER_BEFORE,$REQ_TWO,$RISK_OLD,$TC_OLD,$UC_OLD" \
   "$(jq -r '[.stale[].id] | join(",")' <<<"$json" 2>/dev/null)"
 assert_eq "upstreams は上流の ID・relation・generated.at の元の文字列を持つ" \
   "[{\"id\":\"$UC\",\"relation\":\"derives_from\",\"at\":\"2026-03-01T00:00:00+09:00\"}]" \
   "$(jq -c --arg id "$REQ_STALE" '.stale[] | select(.id == $id) | .upstreams' <<<"$json" 2>/dev/null)"
-assert_eq "upstreams の relation は宣言した relation の名前" "threatens,mitigates" \
-  "$(jq -r --arg r "$RISK_OLD" --arg t "$TC_OLD" '[.stale[] | select(.id == $r or .id == $t) | .upstreams[].relation] | join(",")' <<<"$json" 2>/dev/null)"
+assert_eq "upstreams の relation は宣言した relation の名前" "covers,follows,satisfies,threatens,mitigates,refines" \
+  "$(jq -r '[.stale[] | select(.id | test("^(CASE|DSG|RISK|TC|UC)-")) | .upstreams[].relation] | join(",")' <<<"$json" 2>/dev/null)"
 assert_eq "unverified_high_risk の ID は 3 件を ID 順に並べる" "$RISK_NONE,$RISK_AGENT,$RISK_HUMAN_BEFORE" \
   "$(jq -r '[.unverified_high_risk[].id] | join(",")' <<<"$json" 2>/dev/null)"
 assert_eq "--json の file は docs/ 前置" "docs/risk-none.md" \
@@ -402,7 +456,7 @@ assert_eq "--json の file は docs/ 前置" "docs/risk-none.md" \
 
 clean="$work/clean"
 make_graph "$clean"
-rm "$clean"/docs/{req-stale,req-ver-before,req-two,risk-old,tc-old,risk-none,risk-agent,risk-human-before}.md
+rm "$clean"/docs/{req-stale,req-ver-before,req-two,risk-old,tc-old,case-old,dsg-old,uc-old,risk-none,risk-agent,risk-human-before}.md
 
 run_fresh env SARA_FRESH_ROOT="$clean" sara-fresh
 assert_eq "列挙が空なら exit 0" 0 "$status_capture"
