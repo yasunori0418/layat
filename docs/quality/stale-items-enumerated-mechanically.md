@@ -10,9 +10,13 @@ specification: |
   `follows` relation SHALL be enumerated as awaiting re-verification when the
   `generated.at` of the item it points to is later than its own reference time;
   `justifies` and the peer relations SHALL NOT take part, and an item whose `status` is
-  `deprecated` SHALL be left out on either end. Against a base revision, an item that
-  existed on both sides and whose body changed while its `generated.at` did not SHALL be
-  enumerated as missing a `generated` update. Both enumerations SHALL be mechanical, and
+  `deprecated` SHALL be left out on either end. Comparing the merge base of a base
+  revision and `HEAD` with the working tree, an item whose body changed while its
+  `generated.at` did not SHALL be enumerated as missing a `generated` update. The body
+  SHALL be the lines outside the frontmatter, with the H1 line starting with `# `, lines
+  starting with `- ステータス:` and whitespace-only differences disregarded. An item added
+  or deleted between the two sides SHALL NOT be compared, and a renamed item SHALL be
+  compared with the content at its old path. Both enumerations SHALL be mechanical, and
   their results SHALL be reported without gating merging.
 specification_ja: |
   item の基準時刻は、その item の `generated.at` と、`generated.at` 以降の `verified[].at`
@@ -20,16 +24,18 @@ specification_ja: |
   `satisfies`・`threatens`・`mitigates`・`covers`・`follows` の relation を宣言している item は、
   指している item の `generated.at` が自身の基準時刻より新しいとき、再検証待ちとして列挙され
   なければならない。`justifies` と peer の relation は対象にしてはならず、`status` が
-  `deprecated` の item は両端のどちらでも除かなければならない。base との比較で、両側に在り、
-  本文が変わったのに `generated.at` が変わっていない item は、`generated` の更新漏れとして
-  列挙されなければならない。2 つの列挙は機械的に行わなければならず、その結果は報告に留め、
+  `deprecated` の item は両端のどちらでも除かなければならない。base と `HEAD` の merge-base と
+  作業ツリーを比べ、本文が変わったのに `generated.at` が変わっていない item は、`generated` の
+  更新漏れとして列挙されなければならない。本文は frontmatter の外の行とし、`# ` で始まる H1 の行、
+  `- ステータス:` で始まる行、空白だけの差を除かなければならない。2 点の間で足した item と削除した
+  item は比べてはならず、改名した item は旧パスの内容と比べなければならない。2 つの列挙は機械的に行わなければならず、その結果は報告に留め、
   マージの条件にしてはならない。
 status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-11T23:49:49+09:00"
+  at: "2026-11-11T23:59:24+09:00"
 ---
 # 上流より古い item と generated の更新漏れは機械的に列挙する
 
@@ -44,8 +50,10 @@ sara の構造の検査は、型・relation・接続性が正しいかを見る�
 [鮮度は上流の relation を辿って下流へ伝播させる](../sara-adr/freshness-propagates-along-upstream-relations.md) が持つ。
 
 `generated` の更新漏れは、base との差分で本文が変わったのに `generated.at` が変わっていない
-item を挙げる。本文の範囲と比べる 2 点、時刻を比べない理由は
-[generated の更新漏れは PR の差分で確かめる](../sara-adr/generated-update-checked-in-pr-diff.md) が持つ。
+item を挙げる。比べる 2 点は base と `HEAD` の merge-base と作業ツリーで、本文は frontmatter の
+外の行から H1 の行と `- ステータス:` の行を除いたものとし、空白だけの差は数えない。新しく足した
+item と削除した item は比べず、改名した item は旧パスの内容と比べる。この範囲にした理由と、時刻を
+比べない理由は [generated の更新漏れは PR の差分で確かめる](../sara-adr/generated-update-checked-in-pr-diff.md) が持つ。
 
 どちらの列挙も、挙がったことは何かが破損したことを意味しない。上流を書き換えれば、下流の読み直しが
 済むまで件数が増える。そのため結果は報告に留め、マージの条件にしない
