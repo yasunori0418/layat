@@ -123,6 +123,18 @@ verified:
 - 起票では `sara-new` が `generated` を付ける（`by` は環境変数 `SARA_NEW_GENERATED_BY` から取る）
 - `verified` は自動では付けない。人が内容を確かめたときにだけ、手で要素を足す
 
+item の**基準時刻**はその item の `generated.at` と、`generated.at` 以降の `verified[].at`
+（actor を問わない）のうち最も新しい時刻とする。`verified` が無い item では `generated.at` が基準時刻になる。
+
+`generated` と `verified` は文書の鮮度と信頼を確かめる 3 つの確認に使われる。どれも結果を報告に留める。
+
+- 再検証待ち: 上流の relation（`justifies` と peer を除く 7 種）で指している item の `generated.at` が、
+  自身の基準時刻より新しい item を挙げる（→ [上流より古い item と generated の更新漏れは機械的に列挙する](quality/stale-items-enumerated-mechanically.md)）
+- `generated` の更新漏れ: base との差分で本文が変わったのに `generated.at` が変わっていない item を挙げる
+  （→ 同上）
+- 人の確認が無い high の risk: `level` が high の risk のうち、`generated.at` 以降の `human:` の `verified` を
+  持たないものを挙げる（→ [level が high の risk は人が確かめた記録を持つ](quality/high-risk-verified-by-human.md)）
+
 ### `stale_after`
 
 UTC オフセット付きの ISO 8601 の時刻を書く。外部ツールの版や公開状況など、期限のある事実を含む
