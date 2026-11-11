@@ -13,7 +13,7 @@ sources:
     title: "epic: 散文リンク移行の後始末 — 表示崩れ・重複表記・文の破綻・frontmatter のフル ID"
 origin: "H1 見出しの ID の要否の見直し（2026-11-09）で確定。[フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる](full-ids-in-frontmatter-and-h1.md) を書き直した"
 justifies:
-  - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+  - "QA-1dd63789-24ed-4a86-bf12-b62d8c526ba5"
 supersedes:
   - "SDR-bd136f38-c991-46f9-ada9-06499d259a8b"
 generated:

@@ -5,8 +5,8 @@
 この文書は YAML だけでは読み取りにくい型・ID・フィールド・関係の意味を説明する。
 
 - [型と prefix・配置ディレクトリ・親の一覧と ID 規約](../CLAUDE.md)（「ドキュメント」節）
-- [型グラフの図と、item をどの型・どこへ張るかの判断規約](agents/sara-graph.md)
-- [ADR の規則と `justifies` の選定基準](agents/adr-rules.md)・[layat への当てはめ](adr/README.md)
+- [型グラフの図と、item をどの型・どこへ張るかの規範の索引](agents/sara-graph.md)
+- ADR の規則: [ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る](quality/adr-one-decision-four-sections-justifies-by-contribution.md)・[設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる](quality/adr-decisions-recorded-and-connected.md)・[layat への当てはめ](adr/README.md)
 
 ## 型構成
 
@@ -59,13 +59,13 @@ type になる。使えるプレースホルダは `{prefix}` / `{id}` / `{seq[:
 | `infrastructure` | `dod` | `docs/dev/definition-of-done.md` の項目 ID（`DOD-01` …）のリスト。任意 |
 | `adr` / `sara_adr` | `origin` | 起点となったセッション等の散文。任意 |
 | `adr` / `sara_adr` | `sources` | 起点となった GitHub Issue 等の出典。書き方は「OKF 互換の frontmatter」節 |
-| `risk` | `likelihood` / `impact` / `level` | `high` / `medium` / `low`。採点規約と `level` の導出は [sara-graph.md](agents/sara-graph.md) |
+| `risk` | `likelihood` / `impact` / `level` | `high` / `medium` / `low`。採点規約と `level` の導出は [risk の level は likelihood と impact から導き、手で決めない](quality/risk-level-derived-from-likelihood-and-impact.md) |
 | `test_case` | `resource` | 対応するテスト資産の正準表記（単一値）|
 | `ubiquitous_term` | `name_ja` | 日本語の正名。英語のまま使う語では省く。英語の正名は組み込みの `name` に置く |
 | `ubiquitous_term` | `avoid` | 執筆で使わない綴りのリスト。任意。綴りだけを書き、説明は本文に置く |
 
 `specification` / `specification_ja` の様式（SHALL 系に揃える・強度の写像）は
-[sara-graph.md](agents/sara-graph.md) が持つ。
+[specification は SHALL 系で書き、日本語の規範文は同じ強度の規範助動詞で終える](quality/specification-shall-family-and-matching-auxiliaries.md) が持つ。
 
 `dod` の値が実在する DoD 項目かは検証されない。sara は text フィールドの中身を見ないので、
 存在しない項目 ID を書いても `sara check` は通る。

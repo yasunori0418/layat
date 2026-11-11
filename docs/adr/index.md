@@ -38,6 +38,7 @@
 * [CLI の依存に go-toml/v2 を許可する](./cli-depends-on-go-toml.md) - [設定ファイルを strict な TOML で書く](config-file-strict-toml.md)。Go の標準ライブラリにはTOML のパーサが無い。layat の Go の依存は層ごとの許可制で、engine は標準ライブラリだけに依存する。 (stable)
 * [CLI が一次 UX で devShell に pin 版を同梱する](./cli-primary-ux-devshell-pinned.md) - 配置を行う engine は固定のバイナリで、利用者はそれを何らかのコマンドから起動する。config ごとに起動用のラッパーを用意させる形では、ラッパーを作らないと layat を使えず、flake 以外の entrypoint にも対応しにくい（#3）。 (stable)
 * [CLI は cobra で組む](./cobra-cli-framework.md) - CLI は、サブコマンド・フラグ・help・シェル補完を持つ。engine は第三者依存を持たないが、CLI 層には人間向けの使い勝手のために最小限の第三者依存を許している。 (stable)
+* [コメントに経緯と決定の記録への参照を書かない](./comments-no-history-or-decision-references.md) - コメントは 3 行以内で現在の動作だけを書き、経緯と ADR・Issue・PR への参照を書かない。利用者向け文字列に ADR 番号を出さない。 (stable)
 * [設定ファイルは -f のディレクトリか cwd だけで探す](./config-file-lookup-no-upward-search.md) - 生成器の選択にはプロジェクト設定 `layat.toml` の段がある（→ [生成器は明示の指定だけで選ぶ](generator-chosen-explicitly-only.md)）。layat はこれまで設定ファイルを読まず、config を設定ファイルから発見する機構も持たない。entrypoint の発見は生成器の Discover が行うので、設定ファイルを探すために entrypoint を使うと、生成器を決める前に生成器が要ることになる。 (stable)
 * [設定ファイルを strict な TOML で書く](./config-file-strict-toml.md) - 生成器の選択はプロジェクト設定とユーザー設定からも読む（→ [生成器は明示の指定だけで選ぶ](generator-chosen-explicitly-only.md)）。設定ファイルは利用者が手で書くもので、項目は当面 `generator` だけである。 (stable)
 * [apply の config は名前省略で default を選び、--all で全件を選ぶ](./config-selection-default-and-all.md) - entrypoint は `layat.<name>` に複数の config を公開できる。1 つのプロジェクトに役割の違う config（skills・vim-plugins など）を置き、それぞれを独立した profile で管理するためである。CLI は、どの config を適用するかを利用者の指定から決める必要がある。 (stable)

@@ -12,7 +12,7 @@ threatens:
   - "REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:28:26+09:00"
+  at: "2026-11-11T00:30:18+09:00"
 ---
 # GC アンカーの対象と名前を取り違えて世代が回収不能になる
 
@@ -29,7 +29,7 @@ GC アンカーの対象と名前は、それぞれ [symlink farm は GC アン�
 初めて破損した形で現れる。
 
 **この破れが `requirement` に張る理由**: 検証手段を変えても、GC アンカーの取り違えという破れ
-自体は残る。`docs/agents/sara-graph.md` の判別規約に従い `requirement` 側へ張る。
+自体は残る。[risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る](../quality/risk-attaches-to-requirement-by-default.md) に従い `requirement` 側へ張る。
 
 ## 評価
 

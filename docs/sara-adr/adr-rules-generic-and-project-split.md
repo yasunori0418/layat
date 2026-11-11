@@ -2,7 +2,7 @@
 id: "SDR-441fb006-a2f4-44f2-bc69-bb0eeee81893"
 type: sara_adr
 name: "ADR の規則を汎用とプロジェクト当てはめに分けて書く"
-status: stable
+status: deprecated
 sources:
   - id: "issue-499"
     resource: "https://github.com/yasunori0418/layat/issues/499"
@@ -15,11 +15,16 @@ justifies:
   - "QA-030f926b-5ae7-4543-b8cb-e66aae5e2b5e"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:24:32+09:00"
+  at: "2026-11-11T00:07:44+09:00"
 ---
 # ADR の規則を汎用とプロジェクト当てはめに分けて書く
 
-- ステータス: stable
+> **廃止（2026-11-11）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 汎用の規則の置き場所 → [sara の運用規範は quality の item が持ち、規約文書は図と索引に縮退させる](operational-norms-held-by-quality-items.md)
+> - layat への当てはめの置き場所 → [sara の運用規範は quality の item が持ち、規約文書は図と索引に縮退させる](operational-norms-held-by-quality-items.md)
+
+- ステータス: deprecated
 - 日付: 2026-11-01
 - 関連: GitHub Issue #499, #500, `docs/agents/adr-rules.md`, `docs/adr/README.md`
 - 起点: Issue #499 の grilling（2026-11-01）で確定

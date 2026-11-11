@@ -332,6 +332,14 @@ item が持ち、`satisfies` で `quality` へ接続する。
 - [マージ前の自動検証を必須にし、プラットフォーム差が出る層は全プラットフォームで通す](quality/cross-platform-verification-before-merge.md) — マージ前の自動検証を必須にし、プラットフォーム差が効く層は全プラットフォームで通す
 - [コード整形と静的解析を自動検証に載せ、同じ判定を手元でも得られるようにする](quality/formatting-and-static-analysis-automated.md) — コード整形と静的解析を自動検証に載せ、同じ判定を手元でも得られるようにする
 - [自動化が取り込む実行物は不変な識別子で固定し、権限は最小に絞り、不正入力では成果物を作る前に失敗する](quality/automation-supply-chain-safety.md) — 自動化が取り込む実行物は不変な識別子で固定し、権限は最小に絞り、不正入力では成果物を作る前に失敗する
+- [規範の型は、それが誰を縛るかで決める](quality/norm-type-by-who-it-binds.md) — 規範の型は、それが誰を縛るかで requirement・quality・test_plan から選ぶ
+- [risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る](quality/risk-attaches-to-requirement-by-default.md) — risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る
+- [risk の level は likelihood と impact から導き、手で決めない](quality/risk-level-derived-from-likelihood-and-impact.md) — risk の likelihood と impact を決まった尺度で採点し、level はその 2 つから導く
+- [specification は SHALL 系で書き、日本語の規範文は同じ強度の規範助動詞で終える](quality/specification-shall-family-and-matching-auxiliaries.md) — specification は SHALL 系で書き、specification_ja は同じ強度の規範助動詞で終える
+- [テスト系 item は、テスト資産・検証テーマ・脅威の 3 段の粒度で起こす](quality/test-items-three-tier-granularity.md) — テスト系 item は CASE をテスト資産・TC を検証テーマ・RISK を脅威の単位で起こし、概要文書へ索引しない
+- [コメントと利用者向け文字列は現在の動作だけを書き、決定の記録を参照しない](quality/comments-state-current-behaviour-only.md) — コメントは 3 行以内で現在の動作だけを書き、経緯と決定の記録への参照を書かない。利用者向け文字列に ADR 番号を出さない
+- [フル ID は frontmatter だけに書き、散文では item にリンクで触れる](quality/full-ids-in-frontmatter-links-in-prose.md) — ID はフル UUIDv4 で frontmatter だけに書き、ファイル名は slug とし、散文では name を文字列にしたリンクで item に触れる
+- [ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る](quality/adr-one-decision-four-sections-justifies-by-contribution.md) — ADR は単独で覆せる決定ごとに 1 本を 4 節で書き、justifies は規範の形成に寄与した item へ張る
 
 ---
 

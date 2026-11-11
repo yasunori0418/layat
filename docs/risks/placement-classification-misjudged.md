@@ -13,7 +13,7 @@ impact: high
 level: high
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T13:36:37+09:00"
+  at: "2026-11-11T00:30:18+09:00"
 ---
 # 配置分類を誤り、利用者の実体を本人に知らせずに破損させる
 
@@ -52,4 +52,4 @@ conflict 検出時に「最初の 1 件で止めて残りを報告しない」�
 
 4 本とも `requirement` へ張る。いずれも「target を上書きしない」「foreign は警告して後勝ち」
 「conflict は全件列挙する」「配置元の不在で停止する」というプロダクトの観測可能な振る舞い
-そのものへの懸念であり、配置アルゴリズムを別設計へ差し替えても懸念は残る（→ `docs/agents/sara-graph.md`）。
+そのものへの懸念であり、配置アルゴリズムを別設計へ差し替えても懸念は残る（→ [risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る](../quality/risk-attaches-to-requirement-by-default.md)）。

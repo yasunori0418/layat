@@ -10,7 +10,7 @@ sources:
     title: "PR #716 のレビューコメント"
 origin: "PR #716 のレビューコメント（2026-11-10）で確定"
 justifies:
-  - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+  - "QA-67715bb3-1162-4ccf-8441-2f44257a57da"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-10T00:43:33+09:00"

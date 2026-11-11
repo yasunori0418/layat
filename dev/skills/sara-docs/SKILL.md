@@ -79,54 +79,27 @@ relation は**起こした側（下流）の frontmatter に宣言する**（`sa
 
 ## ID 規約（フル UUIDv4）
 
-| 用途 | 形式 | 例 |
-|---|---|---|
-| 正式 ID（frontmatter `id:`・relation リスト）| `<PREFIX>-<フル UUIDv4>` | `REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4` |
-| ファイル名 | `<slug>.md` | `mkmanifest-pure-function.md` |
-| 散文中の参照 | `[item の name](相対パス)` | `[mkManifest は配置データを生成する純粋関数である](../requirements/mkmanifest-pure-function.md)` |
-
-- **フル ID を書くのは frontmatter の `id:` と relation リストだけにする**
-  （→ [フル ID は frontmatter だけに書き、item にはリンクで触れる](../../../docs/sara-adr/full-ids-in-frontmatter-only.md)）。item 本文の H1 見出しは `# <name>` とし、ID を書かない。8 文字省略形は使わない。
-- 散文で item に触れるときは Markdown リンクにし、リンク文字列にも ID を書かない。
-- `specification` / `specification_ja` / `origin` の文字列の中で item に触れるときも、
-  `[item の name](item のディレクトリからの相対パス)` の Markdown リンクにする。
-- `name` と H1 に `<name>` のような `<…>` を含む語があればコードスパンに入れる（Markdown でタグに解釈され、描画で消えるため）。
-- 散文でリンクの直後に同じ name を鉤括弧や丸括弧で繰り返さない。
-- ID をそのまま grep すれば frontmatter の `id:` と relation に当たり、`sara query` へ渡しても同じものに当たる。
+- ID とファイル名の形式・フル ID を書く場所・散文と `specification` での item への触れ方・ADR の採番は
+  [フル ID は frontmatter だけに書き、散文では item にリンクで触れる](../../../docs/quality/full-ids-in-frontmatter-links-in-prose.md)。
 - 起票は ADR を含め **`sara-new` コマンド**。採番とファイル名規約の適用、`sara init` の
   呼び出しまでを一手で済ませ、`id:` / `file:` の 2 行を返す。連番を手で振らない
   （並列レーンでの採番衝突を構造的に避けるため）。手順は
   [references/sara-cli.md](references/sara-cli.md)。
-- ADR も UUID で採番する（`ADR-<フル UUIDv4>` / `SDR-<フル UUIDv4>`）。連番の `ADR-NNNN` は
-  削除済みで、新 ADR の `origin` と「起点:」行に来歴として残る。ADR の規則（粒度・`supersedes` と `deprecated`・
-  `justifies` の選定基準）は `docs/agents/adr-rules.md`。
+- ADR の規則のうち、粒度・本文の構成・`justifies` の選定基準は
+  [ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る](../../../docs/quality/adr-one-decision-four-sections-justifies-by-contribution.md)、
+  ステータス・`supersedes` と `deprecated` は
+  [設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる](../../../docs/quality/adr-decisions-recorded-and-connected.md)。
 
 ## risk の評価と優先度の導出
 
-- **threatens の張り先は requirement が既定**。設計を差し替えたら消える懸念（設計選択に
-  固有のリスク）だけを design へ張る。判断は risk 単位でなく edge ごとに行う。
-- **risk の `level` は likelihood × impact から導出する**（手で判断しない）:
-
-  | likelihood \ impact | high | medium | low |
-  |---|---|---|---|
-  | **high** | high | high | medium |
-  | **medium** | high | medium | low |
-  | **low** | medium | low | low |
-
-  プロジェクトが独自の導出規約・契約テストを持つ場合はそちらが正本。
-- **test_condition の優先度はフィールドにしない**。mitigates 先 risk の `level` から
-  導出する（複数なら最高 level。例外は item 本文に根拠付きで記載）。
+- threatens の張り先は [risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る](../../../docs/quality/risk-attaches-to-requirement-by-default.md)。
+- likelihood・impact の採点と、`level` と test_condition の優先度の導出は
+  [risk の level は likelihood と impact から導き、手で決めない](../../../docs/quality/risk-level-derived-from-likelihood-and-impact.md)。
 
 ## specification 規約
 
-`specification` フィールドを持つ型（requirement / quality / test_plan）は:
-
-- **`specification` は英語**で書く。sara が RFC2119 キーワードの存在を検証するため。
-  綴りは **SHALL 系に固定**（SHALL / SHALL NOT。MUST / MUST NOT は書かない。
-  SHOULD / MAY はそのまま）。
-- 対になる日本語の規範文を **`specification_ja` に併記**する。規範を述べる文は平叙形でなく
-  規範助動詞で終える（SHALL = 〜しなければならない / SHALL NOT = 〜してはならない /
-  SHOULD = 〜すべきである / MAY = 〜してもよい）。強度を 2 フィールド間でずらさない。
+`specification`（英語）と `specification_ja`（日本語）の様式は
+[specification は SHALL 系で書き、日本語の規範文は同じ強度の規範助動詞で終える](../../../docs/quality/specification-shall-family-and-matching-auxiliaries.md)。
 
 ## 機械的検出の使い分け
 

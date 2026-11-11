@@ -11,6 +11,7 @@ sources:
 origin: "epic #648 の grilling セッション（2026-11-08）で確定"
 justifies:
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
+  - "QA-d9cf5fcb-6363-49eb-9511-48b233c0c978"
 references:
   - "SDR-eff65cfa-2fd4-449a-94b2-d4b9948b76e1"
 generated:

@@ -10,7 +10,7 @@ threatens:
   - "DSG-fb49e36c-eb20-4efa-8cac-88ef0873db8e"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:42:17+09:00"
+  at: "2026-11-11T00:30:18+09:00"
 ---
 # 評価スイート自身の盲点でアサートが空虚に緑になる
 
@@ -30,7 +30,7 @@ generated:
 
 **この破れが design に張る理由**: どちらも 2 手段併用という検証設計の選択に由来し、別の設計
 （例: 生成した文書を Go 側の契約テストで直接検証する）へ置き換えれば消える。
-`docs/agents/sara-graph.md` の判別規約に従い design 側へ張る。
+[risk はまず requirement に張り、設計を差し替えると消える懸念だけを design に張る](../quality/risk-attaches-to-requirement-by-default.md) に従い design 側へ張る。
 
 ## 評価
 

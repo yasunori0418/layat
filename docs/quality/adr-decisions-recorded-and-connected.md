@@ -28,7 +28,7 @@ specification_ja: |
   守られなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-08T00:53:48+09:00"
+  at: "2026-11-11T00:32:18+09:00"
 ---
 # 設計判断は ADR に記録し、改訂の書き戻しと item への接続を同じ変更の中で完了させる
 
@@ -45,16 +45,72 @@ generated:
 接続を空のまま残さない規範は、**空を埋め忘れとして機械判定できる状態**を保つためにある。
 接続の非空性は [ドキュメントグラフのトレーサビリティは機械的に検証する](document-graph-mechanically-verified.md) の機械検証が見つけ、`deprecated` と `supersedes` の対応は
 `dev/tests/adr-supersede.sh` が見つける。どちらも frontmatter しか見ないので、置き換えで deprecated にする ADR の全決定に
-後継が揃っているかは視野の外にあり、そこは人手のレビューで守る（判定の条件は
-`docs/agents/adr-rules.md` の「deprecated にできる条件」節が持つ）。
+後継が揃っているかは視野の外にあり、そこは人手のレビューで守る（判定の条件は下の
+「deprecated にできる条件」節が持つ）。
 
-ADR の粒度・置き換えの手順・接続先の型の一覧は本 item の規範に含めない。規則は
-`docs/agents/adr-rules.md` が、layat への当てはめは `docs/adr/README.md` が、接続可能な型は
-`docs/model.yaml` が持つ。
+ADR の粒度・本文の構成・統合と分割の手順・`justifies` の選定基準は本 item の規範に含めず、
+[ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る](adr-one-decision-four-sections-justifies-by-contribution.md) が持つ。
+接続可能な型の一覧も本 item の規範に含めず、`docs/model.yaml` が持つ。layat への当てはめは
+`docs/adr/README.md` が持つ。ステータス・出典・置き換え・採番の手引きは次の節に示す。
+
+### ステータス
+
+| ステータス | 意味 |
+|---|---|
+| `draft` | 検討中で、まだ決定していない |
+| `stable` | 決定として有効 |
+| `deprecated` | 後継の ADR に置き換えられた ADR と、提案を棄却した ADR |
+
+`deprecated` の ADR には 2 種類ある。`supersedes` で指されていれば後継に置き換わった ADR で、
+指されていなければ提案を棄却した記録になる。
+
+### 出典
+
+起点になった Issue など、item にできない外部の出典は frontmatter の `sources` に書く。
+要素は `id` / `resource` / `title` の組にする。
+
+- `resource` には出典の URL を書く
+- `id` は 1 本の ADR の中で一意にする
+- `title` には、URL を開かなくても出典の見当がつく文字列を書く
+
+### 改訂は丸ごとの置き換えで表す
+
+既存の ADR の決定を 1 つでも変えるときは、その ADR を部分的に書き換えず、**丸ごと新しい ADR として
+書き直し、古い ADR を `deprecated` にする**。節単位の部分改訂を表す関係や、古い ADR への改訂注記は使わない。
+部分改訂を積み重ねると、古い ADR のどこが生きているかを読者が注記から再構成しなければならなくなるため。
+
+- `supersedes` は文書丸ごとの失効だけを表す。後継の ADR から置き換えた ADR へ張る
+- `supersedes` で指された ADR は `deprecated` にする。この対応は frontmatter だけで機械的に確かめる
+- 改訂を伴わない参照は `references` で表す。`supersedes` とは併用しない
+
+#### deprecated にできる条件
+
+古い ADR を置き換えて `deprecated` にできるのは、**古い ADR の全決定に後継が揃ったとき**だけ。後継は、
+新しく起こした ADR か、別の有効な ADR に既にある決定のどちらでもよい。
+
+1 本の古い ADR を複数の新しい ADR へ分けて書き直す途中では、新しい ADR の `origin` に元の ADR と節を
+書くにとどめ、`supersedes` はまだ張らない。最後の決定に後継が揃い、古い ADR を `deprecated` にする変更の
+中で、全ての後継から `supersedes` をまとめて張る。
+
+#### deprecated にした ADR に残すもの
+
+置き換えで `deprecated` にした ADR は、本文も既存の注記も原文のまま残す。変えるのは次の 3 つだけ。
+
+- 本文のステータス行
+- frontmatter の `status`
+- 冒頭に置く後継の一覧（どの決定がどの ADR に移ったかを示すバナー）
+
+`justifies` も外さない。要求や設計の item の出典が古い ADR を指していても、その参照は経緯として
+そのまま有効になる。
+
+### 採番
+
+ADR も他の item と同じく UUID で採番する。連番は並列の作業で同じ番号を取り合い、マージ後に
+採り直しが要る。UUID ならこの衝突が構造的に起きない。
 
 ## 出典
 
-`docs/agents/adr-rules.md`（置き換えの規則・`justifies` 必須の規約）と `docs/adr/README.md`
+ADR の規則として運用してきた置き換えの規則・`justifies` 必須の規約と `docs/adr/README.md`
 （セルフチェック手順）、`docs/dev/definition-of-done.md` の DOD-03、
 `.github/PULL_REQUEST_TEMPLATE.md` の「docs / ADR 影響」欄が実運用してきた規範を、Issue #272 で
 quality item として立てたもの。

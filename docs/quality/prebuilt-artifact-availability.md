@@ -19,7 +19,7 @@ specification_ja: |
   頻度ではなく main に追従するようにするため）。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:03+09:00"
+  at: "2026-11-11T00:30:18+09:00"
 ---
 # 最新 main のビルド成果物を再ビルドなしに消費できる状態を保つ
 
@@ -34,10 +34,10 @@ layat は flake input として消費されるツールであり、消費側の 
 消費のされ方と噛み合わない。リリース（[リリースはバージョンの一次情報の変更で駆動し、手作業の工程を挟まない](release-driven-by-source-of-truth.md)）とキャッシュは互いに独立に駆動する。
 
 > **受益者は消費側だが、型は quality に置いた。** この norm を落として困るのはビルド時間を
-> 払う消費側であり、`docs/agents/sara-graph.md` の quality の signature test（落ちて気づくのは
+> 払う消費側であり、[規範の型は、それが誰を縛るかで決める](norm-type-by-who-it-binds.md) の quality の判定の問い（落ちて気づくのは
 > contributor だけ）とは張力がある。それでも quality に置くのは、落としても **shipped artifact も
 > 検証も変わらない**（同一 derivation をキャッシュから取得するか実ビルドするかの差でしかない）ため。
-> `requirement` の signature test「layat の使い方が変わるか」は成立せず、対応する use_case も無い。
+> `requirement` の判定の問い「layat の使い方が変わるか」は成立せず、対応する use_case も無い。
 
 ## 出典
 

@@ -55,14 +55,14 @@ item_types:
       - use_case
     fields:
       # 英語の規範文。sara が RFC2119 キーワードの存在を検証する。
-      # SHALL 系だけを使う規約は docs/agents/sara-graph.md が持つ。
+      # SHALL 系だけを使う規約は docs/quality/specification-shall-family-and-matching-auxiliaries.md が持つ。
       - name: specification
         display_name: Specification
         field_type: text
         required: true
         placeholder: The system SHALL <describe the requirement>.
       # specification と対になる日本語の規範文。sara は検査しない。
-      # 規範助動詞で終える規約と強度の写像は docs/agents/sara-graph.md が持つ。
+      # 規範助動詞で終える規約と強度の写像は docs/quality/specification-shall-family-and-matching-auxiliaries.md が持つ。
       - name: specification_ja
         display_name: Specification (ja)
         field_type: text
@@ -198,7 +198,8 @@ item_types:
   # ---- 独立した根 ----
 
   # 意思決定の記録。docs/adr/。justifies で 1 本以上の item へ接続する
-  # （規則は docs/agents/adr-rules.md、当てはめは docs/adr/README.md）。
+  # （規則は docs/quality/adr-one-decision-four-sections-justifies-by-contribution.md と
+  # docs/quality/adr-decisions-recorded-and-connected.md、当てはめは docs/adr/README.md）。
   - id: adr
     display_name: Architecture Decision Record
     prefix: ADR
@@ -267,7 +268,8 @@ item_types:
   # ---- リスクとテストの系統（risk → test_condition → test_case）----
 
   # 満たされない懸念。docs/risks/。requirement と design の両方を脅かせる。
-  # どちらへ張るかの規約と採点規約は docs/agents/sara-graph.md。
+  # どちらへ張るかの規約は docs/quality/risk-attaches-to-requirement-by-default.md、
+  # 採点規約は docs/quality/risk-level-derived-from-likelihood-and-impact.md。
   - id: risk
     display_name: Risk
     prefix: RISK
