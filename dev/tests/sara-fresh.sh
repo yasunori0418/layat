@@ -105,6 +105,8 @@ RISK_HUMAN_AFTER="RISK-11110004-0000-4000-8000-000000000033"
 RISK_HUMAN_EQUAL="RISK-11110005-0000-4000-8000-000000000034"
 RISK_MEDIUM="RISK-11110006-0000-4000-8000-000000000035"
 RISK_HIGH_DEP="RISK-11110007-0000-4000-8000-000000000036"
+RISK_OLD="RISK-11110008-0000-4000-8000-000000000037"
+TC_OLD="TC-33330001-0000-4000-8000-000000000040"
 
 # 上流が新しい下流・上流が古い下流・verified の効き方・justifies・deprecated・high の risk の各側を 1 つのグラフに置く。
 make_graph() {
@@ -281,6 +283,27 @@ verified:
     at: "2026-04-30T16:00:00Z"'
   risk "$repo" risk-medium "$RISK_MEDIUM" "確認の無い medium の risk" medium stable ""
   risk "$repo" risk-high-dep "$RISK_HIGH_DEP" "廃止した確認の無い high の risk" high deprecated ""
+
+  # derives_from 以外の relation で新しい上流を指す下流。threatens の先は 2026-04-01、mitigates の先は 2026-05-01。
+  item "$repo" risk-old "$RISK_OLD" risk "要求より古い medium の risk" <<YAML
+status: stable
+threatens:
+  - "$REQ_FRESH"
+likelihood: medium
+impact: medium
+level: medium
+generated:
+  by: "claude-code/fixture"
+  at: "2026-03-20T00:00:00+09:00"
+YAML
+  item "$repo" tc-old "$TC_OLD" test_condition "risk より古いテスト条件" <<YAML
+status: stable
+mitigates:
+  - "$RISK_NONE"
+generated:
+  by: "claude-code/fixture"
+  at: "2026-04-15T00:00:00+09:00"
+YAML
 }
 
 # <リポジトリ> <ファイル名> <ID> <name> <level> <status> <verified の YAML>。generated.at は 2026-05-01T01:00:00+09:00。
@@ -324,7 +347,9 @@ assert_lacks "justifies の辺は挙げない" "^$SDR" "$sec_stale"
 assert_lacks "deprecated の上流しか指さない下流を挙げない" "^$REQ_DEP_UP" "$sec_stale"
 assert_lacks "deprecated の下流を挙げない" "^$REQ_DEP_DOWN" "$sec_stale"
 assert_lacks "上流より古い根やユースケースが無ければ挙げない" "^($SOL|$UC)" "$sec_stale"
-assert_eq "節 1 は 3 件" 3 "$(grep -c '' <<<"$sec_stale")"
+assert_has "threatens で新しい上流を指す下流を挙げる" "^$RISK_OLD"$'\t' "$sec_stale"
+assert_has "mitigates で新しい上流を指す下流を挙げる" "^$TC_OLD"$'\t' "$sec_stale"
+assert_eq "節 1 は 5 件" 5 "$(grep -c '' <<<"$sec_stale")"
 
 assert_eq "行が <フル ID>\\t<name>\\t<file>\\t<新しい上流の ID> の形" \
   "$REQ_STALE"$'\t'"上流より古い要求"$'\t'"docs/req-stale.md"$'\t'"$UC" \
@@ -333,7 +358,7 @@ assert_eq "新しい上流が複数なら ID 順にカンマ区切りで並べ�
   "$REQ_TWO"$'\t'"新しい上流を 2 つ持つ要求"$'\t'"docs/req-two.md"$'\t'"$UC,$UC_NEW" \
   "$(grep "^$REQ_TWO" <<<"$sec_stale")"
 
-# --- 2. 節 3: human: の verified が無い high の risk -----------------------------
+# --- 2. human: の verified が無い high の risk ----------------------------------
 
 sec_risk="$(section_body "$h_risk" "$out")"
 assert_has "verified の無い high の risk を挙げる" "^$RISK_NONE"$'\t' "$sec_risk"
@@ -343,7 +368,7 @@ assert_lacks "generated.at より後の human: の verified を持つ high の r
 assert_lacks "generated.at と同じ時刻の human: の verified を持つ high の risk を挙げない" "^$RISK_HUMAN_EQUAL" "$sec_risk"
 assert_lacks "medium の risk を挙げない" "^$RISK_MEDIUM" "$sec_risk"
 assert_lacks "deprecated の high の risk を挙げない" "^$RISK_HIGH_DEP" "$sec_risk"
-assert_eq "節 3 の行は <フル ID>\\t<name>\\t<file> の形" \
+assert_eq "high の risk の節の行は <フル ID>\\t<name>\\t<file> の形" \
   "$RISK_NONE"$'\t'"確認の無い high の risk"$'\t'"docs/risk-none.md" \
   "$(grep "^$RISK_NONE" <<<"$sec_risk")"
 
@@ -361,11 +386,13 @@ assert_eq "upstreams の要素のキーは at / id / relation" '["at,id,relation
   "$(jq -c '[.stale[].upstreams[] | keys | join(",")] | unique' <<<"$json" 2>/dev/null)"
 assert_eq "unverified_high_risk の要素のキーは file / id / name" '["file,id,name"]' \
   "$(jq -c '[.unverified_high_risk[] | keys | join(",")] | unique' <<<"$json" 2>/dev/null)"
-assert_eq "stale の ID は text と同じ 3 件を ID 順に並べる" "$REQ_STALE,$REQ_VER_BEFORE,$REQ_TWO" \
+assert_eq "stale の ID は text と同じ 5 件を ID 順に並べる" "$REQ_STALE,$REQ_VER_BEFORE,$REQ_TWO,$RISK_OLD,$TC_OLD" \
   "$(jq -r '[.stale[].id] | join(",")' <<<"$json" 2>/dev/null)"
 assert_eq "upstreams は上流の ID・relation・generated.at の元の文字列を持つ" \
   "[{\"id\":\"$UC\",\"relation\":\"derives_from\",\"at\":\"2026-03-01T00:00:00+09:00\"}]" \
   "$(jq -c --arg id "$REQ_STALE" '.stale[] | select(.id == $id) | .upstreams' <<<"$json" 2>/dev/null)"
+assert_eq "upstreams の relation は宣言した relation の名前" "threatens,mitigates" \
+  "$(jq -r --arg r "$RISK_OLD" --arg t "$TC_OLD" '[.stale[] | select(.id == $r or .id == $t) | .upstreams[].relation] | join(",")' <<<"$json" 2>/dev/null)"
 assert_eq "unverified_high_risk の ID は 3 件を ID 順に並べる" "$RISK_NONE,$RISK_AGENT,$RISK_HUMAN_BEFORE" \
   "$(jq -r '[.unverified_high_risk[].id] | join(",")' <<<"$json" 2>/dev/null)"
 assert_eq "--json の file は docs/ 前置" "docs/risk-none.md" \
@@ -375,7 +402,7 @@ assert_eq "--json の file は docs/ 前置" "docs/risk-none.md" \
 
 clean="$work/clean"
 make_graph "$clean"
-rm "$clean"/docs/{req-stale,req-ver-before,req-two,risk-none,risk-agent,risk-human-before}.md
+rm "$clean"/docs/{req-stale,req-ver-before,req-two,risk-old,tc-old,risk-none,risk-agent,risk-human-before}.md
 
 run_fresh env SARA_FRESH_ROOT="$clean" sara-fresh
 assert_eq "列挙が空なら exit 0" 0 "$status_capture"
@@ -420,10 +447,18 @@ make_graph "$bad_at"
 sed -i 's/^  at: "2026-04-01T00:00:00+09:00"$/  at: "2026-04-01 00:00"/' "$bad_at/docs/req-fresh.md"
 expect_exit2 "時刻として読めない at" env SARA_FRESH_ROOT="$bad_at" sara-fresh
 
-bad_yaml="$work/bad-yaml"
-make_graph "$bad_yaml"
-sed -i 's/^verified:$/verified: [/' "$bad_yaml/docs/req-ver-after.md"
-expect_exit2 "frontmatter を YAML として読めない item" env SARA_FRESH_ROOT="$bad_yaml" sara-fresh
+not_list="$work/not-list"
+make_graph "$not_list"
+sed -i '/^verified:$/,$d' "$not_list/docs/req-ver-after.md"
+printf 'verified: "human:fixture"\n---\n# 確認で基準時刻が進んだ要求\n' >>"$not_list/docs/req-ver-after.md"
+expect_exit2 "verified がリストでない item" env SARA_FRESH_ROOT="$not_list" sara-fresh
+
+bad_verified_at="$work/bad-verified-at"
+make_graph "$bad_verified_at"
+sed -i 's/^    at: "2026-03-15T00:00:00+09:00"$/    at: "soon"/' "$bad_verified_at/docs/req-ver-after.md"
+expect_exit2 "verified の at を時刻として読めない item" env SARA_FRESH_ROOT="$bad_verified_at" sara-fresh
+assert_has "verified の at を読めない item のファイル名を stderr に挙げる" '^  \./docs/req-ver-after\.md: verified の at' \
+  "$(env SARA_FRESH_ROOT="$bad_verified_at" sara-fresh 2>&1 >/dev/null)"
 
 # 偽の sara で JSON の形の異常を再現する。shebang はサンドボックスに /usr/bin/env が無いため実行中の bash の絶対パスを埋め込む。
 fake_sara() {
@@ -433,6 +468,16 @@ fake_sara() {
   } >"$1"
   chmod +x "$1"
 }
+
+# sara check が受け付けても yq が読めない frontmatter は、偽の sara で item として渡して再現する。
+bad_yaml="$work/bad-yaml"
+mkdir -p "$bad_yaml/docs"
+printf -- '---\nverified: [\n---\n# 壊れた frontmatter\n' >"$bad_yaml/docs/bad.md"
+fake_sara "$work/fake-bad-yaml" '{"valid": true, "items": [{"id": "SOL-5011a001-0000-4000-8000-000000000001", "type": "solution", "name": "x", "file": "./docs/bad.md", "relations": {}, "fields": {"status": "stable"}}]}'
+expect_exit2 "frontmatter を YAML として読めない item" env SARA_FRESH_ROOT="$bad_yaml" SARA_FRESH_SARA="$work/fake-bad-yaml" sara-fresh
+yaml_err="$(env SARA_FRESH_ROOT="$bad_yaml" SARA_FRESH_SARA="$work/fake-bad-yaml" sara-fresh 2>&1 >/dev/null)"
+assert_has "YAML として読めない item は stderr でその旨を知らせる" 'YAML として読めない' "$yaml_err"
+assert_has "YAML として読めない item の名前を stderr に挙げる" '^  \./docs/bad\.md$' "$yaml_err"
 
 fake_sara "$work/fake-noitems" '{}'
 expect_exit2 ".items 配列が無い JSON" env SARA_FRESH_ROOT="$base" SARA_FRESH_SARA="$work/fake-noitems" sara-fresh
