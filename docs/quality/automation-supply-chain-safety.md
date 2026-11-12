@@ -20,7 +20,7 @@ specification_ja: |
   場合は、それに由来する成果物を作るのではなく、成果物を作る前に失敗しなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:28:03+09:00"
+  at: "2026-11-13T00:10:58+09:00"
 ---
 # 自動化が取り込む実行物は不変な識別子で固定し、権限は最小に絞り、不正入力では成果物を作る前に失敗する
 
@@ -43,15 +43,13 @@ CI と自動化は、このリポジトリの変更なしに振る舞いが変�
 製品側にも依存の固定（[CLI が持ち込む依存は許可した第三者ライブラリと pin した Go に限り、いずれも固定する](../requirements/cli-dependency-policy.md)）と不正入力での早期失敗（[要求された操作が成立しないときは CLI がエラーで停止し、暗黙のフォールバックを採らない](../requirements/cli-stop-conditions.md)）の規範があるが、
 それらは利用者が触れる振る舞いを縛るもので、系統が異なる。固定の方式・権限の具体値・検証の
 実装形は本 item の規範に含めない。規範は横断で立て、実現手段は workflow ごとの
-infrastructure item が分担する。CI パイプラインが参照する外部 action の固定は
+infrastructure item が分担する。全 workflow が参照する外部 action の固定は
 [CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）](../infrastructure/ci-pipeline.md) が、リリース系 2 workflow（`bump-version.yml` / `release.yml`）の権限配分と
 入力検証は [リリース自動化（VERSION ファイル起点の bump PR・自動タグ・自動リリースノート）](../infrastructure/release-automation.md) が持つ。
 
-規範は全 workflow を縛るので、現状は次の 2 点が未充足として残る。いずれも
-`.github/workflows/` 側の変更を伴うため、item を張り替えるだけでは解消しない。
+規範は全 workflow を縛るので、現状は次の 1 点が未充足として残る。`.github/workflows/` 側の
+変更を伴うため、item を張り替えるだけでは解消しない。
 
-- `test.yml` の `sara` ジョブと `cachix-push.yml` が直書きする外部 action の固定を、
-  規範として引き受ける infrastructure item が無い（実装としては SHA で固定されている）
 - `test.yml` / `cachix-push.yml` が `permissions` を明示せず、既定の広い権限を継承している
 
 ## 出典

@@ -73,7 +73,7 @@ let
         else
           {
             srcKind = "store";
-            src = toString e.src;
+            src = "${e.src}";
           };
     in
     {

@@ -144,5 +144,5 @@ sub-issue #76〜#82（+ 安全網テスト #97/#98）は全マージ済み・親
 
 ## 5. 技術メモ（grilling 中の Q&A）
 
-- **IFD と src**: `entries.<name>.src` は engine 実行時解決なので IFD を起こさない（`toString` して symlink するだけ）。IFD を誘発するのは eval 時に `readDir` する `listFilesInSrc` のみ（→ ブロッカー① の除去で論点ごと消える）
+- **IFD と src**: `entries.<name>.src` は engine 実行時解決なので IFD を起こさない（store パスへ文字列化して symlink するだけ）。IFD を誘発するのは eval 時に `readDir` する `listFilesInSrc` のみ（→ ブロッカー① の除去で論点ごと消える）
 - **`pkgs.hello` を src に渡せるか**: 可能。`srcType` が derivation を許容するため `src = pkgs.hello` は型を通り、`subpath` で内部ファイル（例 `bin/hello`）も指定できる。ただし `listFilesInSrc { src = pkgs.hello; }` は IFD 回避で不可（除去後は idiom 側の注意書きに移る）
