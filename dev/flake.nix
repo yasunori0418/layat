@@ -137,7 +137,7 @@
               sara-new
               # グラフ未カバーと到達率の列挙。
               sara-gap
-              # 再検証待ちの item と人の確認が無い high の risk の列挙。
+              # 再検証待ちの item・generated の更新漏れ・人の確認が無い high の risk の列挙。
               sara-fresh
               # CASE frontmatter を読む yq-go（mikefarah/yq v4）。python-yq とは別実装。
               yq-go

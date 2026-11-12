@@ -164,8 +164,9 @@ jobs:
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/sara-gap.sh
 
-      # The stale-item and high-risk verification enumeration contract for
-      # sara-fresh, run against a graph the test builds in a temporary directory.
+      # The stale-item, missing `generated` update, and high-risk verification
+      # enumeration contract for sara-fresh, run against a graph the test builds
+      # in a temporary directory.
       - name: Run sara-fresh contract test
         if: steps.filter.outputs.relevant != 'false'
         run: nix develop '.?dir=dev#sara' -c dev/tests/sara-fresh.sh
