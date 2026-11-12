@@ -14,14 +14,15 @@ satisfies:
   - "QA-d028e302-8262-428c-9030-98d46b4b0cd3"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:22:37+09:00"
+  at: "2026-11-13T00:10:58+09:00"
 ---
 # CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）
 
 ## 範囲
 
 GitHub Actions 上の `test.yml` のうち、**flake check と E2E の系統**と、テストを実行しないが
-同じ workflow が抱える対応表生成（`test-doc-matrix`）。同居する `sara` ジョブだけは
+同じ workflow が抱える対応表生成（`test-doc-matrix`）。あわせて、全 workflow が参照する外部 action の
+固定（`actions.lock` と、それを検証する `verify-lockfile.yml`）を持つ。同居する `sara` ジョブだけは
 [トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）](traceability-verification.md) の担当で、本 item には入らない。
 
 ## 構成
@@ -53,13 +54,17 @@ cgo 未使用のため、サンドボックスに C コンパイラを持ち込�
 
 nix を使う `flake-check` / `go-coverage` / `e2e` / `test-doc-matrix` では、セットアップを
 composite action `.github/actions/setup-nix`（`cachix/install-nix-action` +
-`cachix/cachix-action`・各 action は SHA pin）に閉じる。`changes` は checkout と変更検出
+`cachix/cachix-action`）に閉じる。`changes` は checkout と変更検出
 action だけで完結し、nix を入れない。
 
-本パイプラインが参照する外部 action は、`setup-nix` の中もジョブの直書きも**コミット SHA で
-固定し、可読性のための版名（`# v7.0.0` 等）をコメントで併記する**。版タグは同じ名前のまま
-中身を差し替えられるため、参照側を変えずに実行される内容が変わり得る。SHA なら更新は
-このリポジトリへの変更として PR に現れ、マージ前の検証を必ず通る。これが本パイプラインの
+`.github/workflows/` の全 workflow が参照する外部 action は、`setup-nix` の中もジョブの直書きも
+**`gh actions-lock` が生成する `.github/workflows/actions.lock` で推移的な依存までコミット SHA に
+固定する**。`uses:` には完全な semver タグ（`actions/checkout@v7.0.1` 等）を書き、同じリポジトリの
+composite action は `uses: $/.github/actions/<name>` で参照する。版タグは同じ名前のまま中身を
+差し替えられるが、runner はジョブの開始時に lockfile の SHA と照合するため、参照側を変えずに
+実行される内容が変わることはない。更新は lockfile の差分として PR に現れ、マージ前の検証を必ず
+通る。`verify-lockfile.yml` が pull_request と main への push で `gh actions-lock --verify` を
+実行し、lockfile とワークフローの食い違いを検出する。これが本パイプラインの
 引き受ける「不変な識別子での固定」の実体になる（→ [自動化が取り込む実行物は不変な識別子で固定し、権限は最小に絞り、不正入力では成果物を作る前に失敗する](../quality/automation-supply-chain-safety.md)）。
 
 その先のコマンド実行は 2 通りに分かれる。`flake-check` と `go-coverage` は `nix flake check -L` /
@@ -125,7 +130,7 @@ E2E をコンテナで回す案（`pkgs.dockerTools` によるテストイメー
 
 ## 出典
 
-[CI の nix インストーラは cryoflow 踏襲](../adr/ci-nix-installer-cryoflow.md)、[CI シェルは dev/flake.nix に公開する](../adr/ci-shell-in-dev-flake.md)、
+[CI の nix は install-nix-action で入れ、setup-nix composite action にまとめる](../adr/ci-nix-via-install-nix-action-and-setup-nix.md)、[CI の外部 action は actions.lock で固定し、uses には semver タグを書く](../adr/ci-actions-pinned-by-actions-lock.md)、[CI シェルは dev/flake.nix に公開する](../adr/ci-shell-in-dev-flake.md)、
 [テストを sandbox 可否で flake check と E2E に分ける](../adr/test-strategy-layers.md)、[キャッシュは 3 system の matrix ビルドで投入する](../adr/ci-cache-via-matrix-build.md)、
 [flake check を 3 環境の os×system matrix で回す](../adr/flake-check-os-system-matrix.md)、[テスト系の CI を pull_request と workflow_dispatch で起動する](../adr/ci-triggers-pull-request-and-dispatch.md)、
 [変更検出で nix を回さない PR の必須の確認を skip で通す](../adr/change-detection-gates-ci-jobs.md)、[Go の静的解析を CGO_ENABLED=0 で行う](../adr/go-checks-without-cgo.md)。
