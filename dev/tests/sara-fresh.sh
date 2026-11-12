@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sara-fresh（再検証待ちの item と人の確認が無い high の risk の列挙コマンド）の検証。
+# sara-fresh（再検証待ちの item・generated の更新漏れ・人の確認が無い high の risk の列挙コマンド）の検証。
 # item と sara.toml は一時ディレクトリに作り、実物の docs/model.yaml を重ねる。
 #
 # 実行:

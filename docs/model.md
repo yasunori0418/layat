@@ -137,7 +137,7 @@ item の**基準時刻**はその item の `generated.at` と、`generated.at` �
 - 人の確認が無い high の risk: `level` が high の risk のうち、`generated.at` 以降の `human:` の `verified` を
   持たないものを挙げる（→ [level が high の risk は人が確かめた記録を持つ](quality/high-risk-verified-by-human.md)）
 
-再検証待ちと人の確認が無い high の risk は、devShell の `sara-fresh` が列挙する。
+再検証待ちと人の確認が無い high の risk は、devShell の `sara-fresh` が列挙する。`generated` の更新漏れは、`--base <ref>` を渡した `sara-fresh` が列挙する。
 
 ### `stale_after`
 
