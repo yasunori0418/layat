@@ -25,7 +25,7 @@ jobs:
     # リリースは main の内容だけを対象にする（workflow_dispatch はブランチを問わず起動できる）。
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@v7.0.1
 
       # VERSION の先頭 1 行を取り前後空白を落として正規化し、semver（X.Y.Z）に合致しなければ fail させる。
       - name: Read and validate version
@@ -46,7 +46,7 @@ jobs:
       # 成果物は添付しない。既存の Release があれば action-gh-release がそれを更新するため、
       # 同一 VERSION の再実行は本文の再生成だけで冪等になる。
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
+        uses: softprops/action-gh-release@v3.0.4
         with:
           tag_name: v${{ steps.version.outputs.version }}
           generate_release_notes: true

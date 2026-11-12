@@ -19,11 +19,11 @@ jobs:
     outputs:
       run: ${{ steps.detect.outputs.run }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@v7.0.1
 
       - name: Detect relevant changes
         id: detect
-        uses: ./.github/actions/changes
+        uses: $/.github/actions/changes
 
   flake-check:
     needs: changes
@@ -42,11 +42,11 @@ jobs:
             system: aarch64-darwin
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@v7.0.1
 
       - name: Setup Nix
         if: needs.changes.outputs.run == 'true'
-        uses: ./.github/actions/setup-nix
+        uses: $/.github/actions/setup-nix
         with:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
@@ -60,10 +60,10 @@ jobs:
     # buildGoModule の checkPhase が $out へ出力する func レポートを Job Summary に表示する（閾値ゲートは持たない）。
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@v7.0.1
 
       - name: Setup Nix
-        uses: ./.github/actions/setup-nix
+        uses: $/.github/actions/setup-nix
         with:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
@@ -87,7 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Full history so `sara-fresh --base` can find the merge base with the PR's base branch.
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
@@ -96,7 +96,7 @@ jobs:
       - name: Detect sara-relevant changes
         id: filter
         if: github.event_name == 'pull_request'
-        uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v4.0.1
+        uses: dorny/paths-filter@v4.0.3
         with:
           filters: |
             relevant:
@@ -130,7 +130,7 @@ jobs:
 
       - name: Setup Nix
         if: steps.filter.outputs.relevant != 'false'
-        uses: ./.github/actions/setup-nix
+        uses: $/.github/actions/setup-nix
         with:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
@@ -241,10 +241,10 @@ jobs:
     # the ci devShell (layat / git / jq / coreutils).
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@v7.0.1
 
       - name: Setup Nix
-        uses: ./.github/actions/setup-nix
+        uses: $/.github/actions/setup-nix
         with:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
@@ -257,7 +257,7 @@ jobs:
     # the generator's inputs.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@v7.0.1
 
       # On push / workflow_dispatch this step is skipped and `relevant` stays
       # empty, which the guards below treat as "run". The filter covers the
@@ -265,7 +265,7 @@ jobs:
       - name: Detect generation-relevant changes
         id: filter
         if: github.event_name == 'pull_request'
-        uses: dorny/paths-filter@d1c1ffe0248fe513906c8e24db8ea791d46f8590 # v4.0.1
+        uses: dorny/paths-filter@v4.0.3
         with:
           filters: |
             relevant:
@@ -291,7 +291,7 @@ jobs:
 
       - name: Setup Nix
         if: steps.filter.outputs.relevant != 'false'
-        uses: ./.github/actions/setup-nix
+        uses: $/.github/actions/setup-nix
         with:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
@@ -313,7 +313,7 @@ jobs:
 
       - name: Upload correspondence table
         if: steps.filter.outputs.relevant != 'false'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@v7.0.2
         with:
           name: test-doc-matrix
           path: test-doc-matrix.md
