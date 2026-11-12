@@ -118,7 +118,7 @@
             pname = "layat";
             inherit version;
             src = goSrc;
-            vendorHash = "sha256-2iRx+oLX7Wz5bQMrW1Lttg0jQpjeJ2ftrPZBB5XmBI0=";
+            vendorHash = "sha256-anMW/i5vILk1XTeaYH9EZ+WgIlew+8+XPLMWJrjS8IM=";
             doCheck = true;
             env.GOTOOLCHAIN = "local";
             # VERSION の値を main.version へ埋め込む。素の go build では "dev" のまま。
@@ -155,6 +155,8 @@
               mainProgram = "layat";
             };
           };
+          # `nix run .#` / `nix run github:yasunori0418/layat` で layat CLI を起動する。
+          packages.default = config.packages.layat;
 
           # ドッグフーディング用の project mode config。本 repo の docs を .layat-example/docs へ配置する。
           # `nix flake check` は `warning: unknown flake output 'layat'`（exit 0）を出す。
