@@ -155,6 +155,8 @@
               mainProgram = "layat";
             };
           };
+          # `nix run .#` / `nix run github:yasunori0418/layat` で layat CLI を起動する。
+          packages.default = config.packages.layat;
 
           # ドッグフーディング用の project mode config。本 repo の docs を .layat-example/docs へ配置する。
           # `nix flake check` は `warning: unknown flake output 'layat'`（exit 0）を出す。
