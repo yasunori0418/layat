@@ -1,6 +1,6 @@
 ---
 name: sara-docs
-description: sara ドキュメントグラフの基盤知識・規約スキル。次のコンテキストが現れたら作業前に必ず読み込む — ① sara.toml と docs/model.yaml を持つリポジトリで docs/ 配下の item（YAML frontmatter に id / type / relation を持つ Markdown）を作成・編集・削除しようとしている。② REQ- / DSG- / RISK- / TC- / CASE- / TP- / QA- / INF- / UC- / SOL- / ADR- / SDR- / UBQ- 形式の ID、または threatens / mitigates / covers / follows / derives_from / satisfies / refines / justifies といった relation が依頼・ファイル・エラーに現れた。③ sara / sara-new / sara-gap コマンドを実行しようとしている、または sara check の orphan・broken reference エラーを直そうとしている。④ 要求・設計・リスク・テスト条件・テストケース・ADR を「item として起こして」と依頼された。工程スキル（/test-plan・/test-analyze 等）が前提とする型・relation・ID・specification 規約の一次の参照先。sara を使わないリポジトリの Markdown ドキュメント一般は対象外。
+description: sara ドキュメントグラフの基盤知識・規約スキル。次のコンテキストが現れたら作業前に必ず読み込む — ① sara.toml と docs/model.yaml を持つリポジトリで docs/ 配下の item（YAML frontmatter に id / type / relation を持つ Markdown）を作成・編集・削除しようとしている。② REQ- / DSG- / RISK- / TC- / CASE- / TP- / QA- / INF- / UC- / SOL- / ADR- / SDR- / UBQ- 形式の ID、または threatens / mitigates / covers / follows / derives_from / satisfies / refines / justifies といった relation が依頼・ファイル・エラーに現れた。③ sara / sara-new / sara-gap / sara-fresh コマンドを実行しようとしている、または sara check の orphan・broken reference エラーを直そうとしている。④ 要求・設計・リスク・テスト条件・テストケース・ADR を「item として起こして」と依頼された。工程スキル（/test-plan・/test-analyze 等）が前提とする型・relation・ID・specification 規約の一次の参照先。sara を使わないリポジトリの Markdown ドキュメント一般は対象外。
 license: MIT
 ---
 
@@ -113,6 +113,12 @@ relation は**起こした側（下流）の frontmatter に宣言する**（`sa
   `exempt` = `risk_exempt` を持つ `requirement`（情報）、
   `reach` = `requirement`・`test_plan`・`quality` の到達率）。
   exit 0 = ギャップなしで到達率がすべて 1 / 1 = ギャップありか到達率が 1 未満 / 2 = check 失敗。
+- **`sara-fresh`**: valid なグラフから、`generated` と `verified` で見て確かめ直しが要る item を 3 節で出す
+  （`stale` = 上流の `generated.at` が自身の基準時刻より新しい item、
+  `generated_not_updated` = `--base <ref>` を渡したときだけ出す節で、ref との merge-base から本文が変わったのに `generated.at` が変わっていない item、
+  `unverified_high_risk` = `generated.at` 以降の `human:` の `verified` を持たない high の `risk`）。
+  上流の item を書き換えた後に、下流で読み直す item を探すのに使う。結果は報告に留め、`verified` は自動で付けない。
+  exit 0 = どの節も空 / 1 = いずれかの節に item がある / 2 = check 失敗か frontmatter を読めない item がある、または `--base` の ref を解決できないか merge-base が無い。
 
 CLI の詳しい使い方（`sara-new` による起票手順を含む）は
 [references/sara-cli.md](references/sara-cli.md)。
