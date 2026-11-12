@@ -2,17 +2,22 @@
 id: "ADR-ab400e58-afbd-40a0-8eae-239d3cfda211"
 type: adr
 name: "CI の nix インストーラは cryoflow 踏襲"
-status: stable
+status: deprecated
 origin: "参照: https://github.com/yasunori0418/cryoflow の CI 構成（同一メンテナの実績構成）。ADR-0012 §1 を書き直した"
 justifies:
   - "INF-d1230e1f-8ba8-49d8-8386-409bfbb7dd27"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T00:40:30+09:00"
+  at: "2026-11-13T00:10:58+09:00"
 ---
 # CI の nix インストーラは cryoflow 踏襲
 
-- ステータス: stable
+> **廃止（2026-11-13）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - nix のインストーラと setup-nix composite action → [CI の nix は install-nix-action で入れ、setup-nix composite action にまとめる](ci-nix-via-install-nix-action-and-setup-nix.md)
+> - 外部 action の固定 → [CI の外部 action は actions.lock で固定し、uses には semver タグを書く](ci-actions-pinned-by-actions-lock.md)
+
+- ステータス: deprecated
 - 日付: 2026-11-01
 - 起点: 参照: https://github.com/yasunori0418/cryoflow の CI 構成（同一メンテナの実績構成）。ADR-0012 §1 を書き直した
 
