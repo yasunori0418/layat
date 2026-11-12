@@ -99,7 +99,7 @@
             '';
           };
 
-          # 上流より古い item と人の確認が無い high の risk を列挙する決定論コマンド。
+          # 上流より古い item・`--base` の ref からの generated の更新漏れ・人の確認が無い high の risk を列挙する決定論コマンド。
           #
           #   sara-fresh [--json] [--base <ref>]
           #

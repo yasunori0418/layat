@@ -118,7 +118,7 @@ relation は**起こした側（下流）の frontmatter に宣言する**（`sa
   `generated_not_updated` = `--base <ref>` を渡したときだけ出す節で、ref との merge-base から本文が変わったのに `generated.at` が変わっていない item、
   `unverified_high_risk` = `generated.at` 以降の `human:` の `verified` を持たない high の `risk`）。
   上流の item を書き換えた後に、下流で読み直す item を探すのに使う。結果は報告に留め、`verified` は自動で付けない。
-  exit 0 = どの節も空 / 1 = いずれかの節に item がある / 2 = check 失敗か frontmatter を読めない item がある。
+  exit 0 = どの節も空 / 1 = いずれかの節に item がある / 2 = check 失敗か frontmatter を読めない item がある、または `--base` の ref を解決できないか merge-base が無い。
 
 CLI の詳しい使い方（`sara-new` による起票手順を含む）は
 [references/sara-cli.md](references/sara-cli.md)。
