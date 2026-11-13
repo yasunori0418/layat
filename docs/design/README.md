@@ -4,7 +4,7 @@
 `design` item の一覧は、生成した [index.md](index.md) が持つ。
 
 設計判断は **すべて `docs/design/` の item が持ち**、その決定と根拠は `docs/adr/` の ADR が
-`justifies` で裏づける。本文書は通読の起点として全体像だけを散文で述べ、item の一覧は持たない。
+`justifies` で裏づける。本文書は通読の起点として全体像だけを散文で述べる。
 
 > **この文書の書き方（規約）**
 >
