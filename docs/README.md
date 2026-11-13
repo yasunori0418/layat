@@ -100,11 +100,11 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 **自己記録の manifest** を一次情報に持ち、HM は on-disk の readlink パターンマッチで判定する
 （HM 現行実装〔2026-07 時点〕との比較・→ [祖先 symlink は自己記録の古くなったものだけを移行する](adr/ancestor-symlink-recorded-stale-only.md), [配置前除去は drift を見つけたら error で止める](adr/preremove-drift-errors.md)）。差は次の 5 点に表れる。
 
-1. **同名 leaf を含む per-file → dir symlink 遷移の自動移行** — HM は旧 leaf の残存を誤認して失敗しうるが、layat は manifest 記録との一致判定（recorded ∧ stale）で安全に移行する
-2. **所有判定の厳密さ** — HM は readlink の glob マッチ、layat は記録済みの配置先のうち readlink が記録 dest と完全一致するものだけを所有とみなす
-3. **配置を塞ぐ空 dir の除去** — HM は collision で停止するが、layat は rmdir が空 dir にしか成功しないことを利用し、由来を問わず除去する
-4. **祖先 symlink の安全性** — HM は確認せずに辿るが、layat は foreign な祖先 symlink を conflict で停止し、自己記録の古くなった配置だけを移行する
-5. **rename 可用性 + fail-fast drift** — 配置を塞ぐ依存除去だけを前段化し、その除去が drift を検出したら skip せず error で停止する
+1. **同名 leaf を含む per-file → dir symlink 遷移の自動移行** — HM は旧 leaf の残存を誤認して失敗しうるが、layat は manifest 記録との一致判定（recorded ∧ stale）で安全に移行する（→ [実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する](requirements/real-dir-target-migration.md)）
+2. **所有判定の厳密さ** — HM は readlink の glob マッチ、layat は記録済みの配置先のうち readlink が記録 dest と完全一致するものだけを所有とみなす（→ [古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する](requirements/stale-removal-invariants.md)）
+3. **配置を塞ぐ空 dir の除去** — HM は collision で停止するが、layat は rmdir が空 dir にしか成功しないことを利用し、由来を問わず除去する（→ [実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する](requirements/real-dir-target-migration.md)）
+4. **祖先 symlink の安全性** — HM は確認せずに辿るが、layat は foreign な祖先 symlink を conflict で停止し、自己記録の古くなった配置だけを移行する（→ [祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する](requirements/ancestor-symlink-nest-migration.md)）
+5. **rename 可用性 + fail-fast drift** — 配置を塞ぐ依存除去だけを前段化し、その除去が drift を検出したら skip せず error で停止する（→ [実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する](requirements/real-dir-target-migration.md)・[rollback は FS を先に収束させてから profile ポインタを最後に移す](requirements/rollback-refit-then-pointer.md)）
 
 空親ディレクトリ剪定・conflict 全件報告は同等。copy は HM に存在しないため比較の対象外。
 

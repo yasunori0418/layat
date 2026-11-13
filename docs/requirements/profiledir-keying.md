@@ -38,7 +38,7 @@ specification_ja: |
   `<roothash>` の算出と backref（`.root`）は project mode と同一機構でなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T22:44:47+09:00"
+  at: "2026-11-14T01:44:52+09:00"
 ---
 # profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする
 
@@ -71,7 +71,7 @@ generated:
 > `layat.configs.<name>` 実装を決定済み**で反転している（HM も `<name>` 次元を持ち、home mode の
 > `<name>` 直キーにそのまま乗る。`default` は糖衣が指す config 名に過ぎない）。`docs/spec.md`
 > 側がこの改訂に追従できていないため、分割にあたって MVP 限定の行を規範へ持ち込まない判断を
-> した（[HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md) と同じ扱い）。`docs/spec.md` の追従は本 item の担当範囲外。
+> した（[HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md) と同じ扱い）。
 >
 > 原文が参照する次の規範は本 item の担当ではない。
 >

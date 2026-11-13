@@ -9,7 +9,7 @@ satisfies:
   - "REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-10T00:44:25+09:00"
+  at: "2026-11-14T01:44:52+09:00"
 ---
 # 動的 entry 生成のヘルパを lib に置く
 
@@ -17,7 +17,7 @@ generated:
 
 この設計は棄却した。「リポジトリ内のファイルを列挙して entries を組み立てる」需要に対し、**lib は関数を
 提供しない**。既に realise 済みの store パスまたは flake input を `builtins.readDir`
-する idiom をドキュメント側（`docs/spec.md` 応用節）で示すに留める。
+する idiom をドキュメント側（[`README.md` の「Generating entries dynamically」](../../README.md#generating-entries-dynamically)）で示すに留める。
 
 lib へヘルパを置かない理由は、置いた場合に **IFD（import from derivation）を
 誘発する API になる**こと。列挙対象を「まだ realise していない derivation」で
