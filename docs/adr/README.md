@@ -43,7 +43,7 @@ nix develop '.?dir=dev#sara' -c sara-new adr <slug> docs/adr -- \
 ---
 id: "ADR-<フル UUIDv4>"
 type: adr
-name: "<タイトル行から `# ADR-…: ` を除いた部分>"
+name: "<タイトル行と同じ文字列（先頭の `# ` は除く）>"
 status: stable          # draft / stable / deprecated
 sources:                # 「関連:」「起点 Issue:」「起点:」の GitHub Issue
   - id: "issue-123"
