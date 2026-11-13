@@ -15,13 +15,13 @@ supersedes:
   - "SDR-536848bb-8901-4e73-8c66-861de3f91bcd"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-13T14:35:27+09:00"
+  at: "2026-11-13T14:41:56+09:00"
 ---
 # item の一覧は生成した index.md だけが持つ
 
 - ステータス: stable
 - 日付: 2026-11-13
-- 関連: [概要文書は item へのリンク集に縮退させる](overview-docs-as-link-index.md), [OKF の index.md を sara check の出力から生成してコミットする](okf-index-generation.md), GitHub Issue #719, `dev/scripts/okf-index.sh`
+- 関連: GitHub Issue #719, `dev/scripts/okf-index.sh`
 - 起点: epic #719 の grilling（2026-11-13）で確定
 
 ## 背景
@@ -46,7 +46,7 @@ index.md を生成するようになった。3 文書のリンク集は index.md
 ## 根拠
 
 一覧を生成物だけに置けば、item を足したときに直す手書きの文書が無くなる。生成物と item の食い違いは
-`dev/tests/okf-index.sh` が検出するので、手書きのリンク集で起きていた更新漏れは起きない。
+`dev/tests/okf-index.sh` が検出するので、手書きのリンク集で起きていた直し忘れは起きない。
 
 リンク集を残した理由は、全体像を通読する起点が要ることだった。起点に要るのは全体像の散文で、
 item の一覧ではない。一覧は index.md から辿れる。
@@ -59,5 +59,5 @@ item の一覧ではない。一覧は index.md から辿れる。
 
 ### index.md を手で書き、生成をやめる
 
-item の `name` や `description` を変えるたびに一覧を直すことになり、手書きのリンク集と同じ更新漏れが
+item の `name` や `description` を変えるたびに一覧を直すことになり、手書きのリンク集と同じ直し忘れが
 起きる。

@@ -8,10 +8,7 @@ sources:
   - id: "issue-719"
     resource: "https://github.com/yasunori0418/layat/issues/719"
     title: "#719"
-  - id: "issue-647"
-    resource: "https://github.com/yasunori0418/layat/issues/647"
-    title: "#647"
-origin: "epic #719 の grilling（2026-11-13）で確定。[用語を ubiquitous_term の item で管理する](ubiquitous-term-type.md) を書き直した"
+origin: "epic #719 の grilling（2026-11-13）で確定"
 justifies:
   - "QA-4a623664-650d-4a08-800f-691f4ea6ff91"
   - "INF-659b139d-0cf8-4c65-b30d-93c5ee2dfc71"
@@ -19,14 +16,14 @@ supersedes:
   - "SDR-d3f88093-dc98-4703-af45-df5b27527ffa"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-13T14:35:49+09:00"
+  at: "2026-11-13T14:41:56+09:00"
 ---
 # 用語は ubiquitous_term の item で管理し、一覧は生成した index.md が持つ
 
 - ステータス: stable
 - 日付: 2026-11-13
-- 関連: [item の一覧は生成した index.md だけが持つ](item-lists-held-by-generated-index.md), GitHub Issue #719, #647, `docs/ubiquitous-language/index.md`, `dev/scripts/okf-index.sh`
-- 起点: epic #719 の grilling（2026-11-13）で確定。[用語を ubiquitous_term の item で管理する](ubiquitous-term-type.md) を書き直した
+- 関連: GitHub Issue #719, `docs/ubiquitous-language/index.md`, `dev/scripts/okf-index.sh`
+- 起点: epic #719 の grilling（2026-11-13）で確定
 
 ## 背景
 
@@ -66,7 +63,7 @@ item は接続漏れにならない。
 ## 根拠
 
 1 語 1 ファイルにすれば、語を足すのも直すのも 1 ファイルで済む。正名をフィールドに置くと
-`sara check --format json` から機械的に取り出せるので、一覧の生成や、将来の綴りの
+`sara check --format json` から機械的に取り出せるので、一覧の生成や、綴りの
 自動検出に使える。`avoid` を綴りだけに限るのも同じ理由で、説明が入ると、文中の綴りと
 比べる用途に使えなくなる。
 

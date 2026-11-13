@@ -15,13 +15,13 @@ supersedes:
   - "SDR-536848bb-8901-4e73-8c66-861de3f91bcd"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-13T14:35:49+09:00"
+  at: "2026-11-13T14:41:56+09:00"
 ---
 # 手書きの概要は各ディレクトリの README.md に置く
 
 - ステータス: stable
 - 日付: 2026-11-13
-- 関連: [概要文書は item へのリンク集に縮退させる](overview-docs-as-link-index.md), [item の一覧は生成した index.md だけが持つ](item-lists-held-by-generated-index.md), GitHub Issue #719, `docs/README.md`, `docs/requirements/README.md`, `docs/design/README.md`
+- 関連: GitHub Issue #719, `docs/README.md`, `docs/requirements/README.md`, `docs/design/README.md`
 - 起点: epic #719 の grilling（2026-11-13）で確定
 
 ## 背景
@@ -33,22 +33,20 @@ generated:
 
 ## 決定
 
-手書きの概要はその主題の item を置くディレクトリの README.md に置く。
+手書きの概要はその主題の item を置くディレクトリの README.md に置く。`docs/concept.md` は
+`docs/README.md` に、`docs/spec.md` は `docs/requirements/README.md` に、`docs/design.md` は
+`docs/design/README.md` に移す。
 
-- `docs/concept.md` を `docs/README.md` に、`docs/spec.md` を `docs/requirements/README.md` に、
-  `docs/design.md` を `docs/design/README.md` に移す
-- README.md は frontmatter を持たず、item の一覧も持たない。冒頭で同じディレクトリの index.md を
-  1 本だけ指す
-- 散文の中のリンクは、散文が必要とするもの（根拠の ADR など）に限る
-- `docs/index.md` から README.md へのリンクは足さない
-- 書き方の規約（散文の行数上限など）は、各 README.md の冒頭に置く
+README.md は frontmatter を持たず、item の一覧も持たない。冒頭で同じディレクトリの index.md を
+1 本だけ指し、散文の中のリンクは散文が必要とするもの（根拠の ADR など）に限る。`docs/index.md` から
+README.md へのリンクは足さない。書き方の規約（散文の行数上限など）は、各 README.md の冒頭に置く。
 
 ## 根拠
 
 GitHub はディレクトリを開くと README.md を表示する。ディレクトリを辿った読み手は、全体像の散文と
-index.md への入口に同じ場所で出会える。
+index.md へのリンクに同じ場所で出会える。
 
-frontmatter を持たない README.md は `sara` が読み飛ばすので、item でない文書がグラフに混ざらない。
+frontmatter を持たない README.md は `sara` が読み飛ばすので、item でない文書がグラフに入らない。
 散文は item から導けないので生成できず、手で書くしかない。一覧を持たなければ、item を足しても
 README.md を直す必要は無い。
 
@@ -62,7 +60,7 @@ README.md を直す必要は無い。
 ### 散文も item にする
 
 哲学・比較・north-star は規範にあたらず、受け皿になる型も無い。item にすると、規範を持たない item が
-グラフに混ざる。
+グラフに入る。
 
 ### 散文を index.md の冒頭に埋め込んで生成する
 

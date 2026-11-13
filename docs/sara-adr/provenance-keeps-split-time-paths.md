@@ -13,13 +13,13 @@ justifies:
   - "QA-67715bb3-1162-4ccf-8441-2f44257a57da"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-13T14:35:49+09:00"
+  at: "2026-11-13T14:41:56+09:00"
 ---
 # item の出典は分割した時点のパスのまま残す
 
 - ステータス: stable
 - 日付: 2026-11-13
-- 関連: [手書きの概要は各ディレクトリの README.md に置く](overview-prose-in-directory-readme.md), GitHub Issue #719, #203, `docs/model.md`
+- 関連: GitHub Issue #719, `docs/model.md`
 - 起点: epic #719 の grilling（2026-11-13）で確定
 
 ## 背景
