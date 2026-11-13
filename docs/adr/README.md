@@ -92,8 +92,9 @@ references:             # 「関連:」の ADR
   `"参照: PR #40, …"` のようにラベルを残す
 - 同じ ADR を `supersedes` と `references` の両方に入れない。
   前者を優先する（同一ペアに relation を二重に張らない）
-- `docs/*.md` 参照は、その ADR が参照する記述が全て item へ分割され終わってから除く（→ #213）。
-  `docs/concept.md`（現在は `docs/README.md`）を指す参照は、「設計の哲学」など item を立てない節を指しうるので保留する
+- 旧文書（`docs/spec.md`・`docs/design.md`・`docs/concept.md`・`docs/glossary.md`・`docs/publication-roadmap.md`）
+  への参照は、来歴として本文に残す。旧文書は現在のリポジトリに無く、原文の読み方は `docs/model.md` の
+  「item の `## 出典` の読み方」節にある
 
 ### `references` の向き
 
