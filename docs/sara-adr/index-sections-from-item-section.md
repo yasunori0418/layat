@@ -15,7 +15,7 @@ references:
   - "SDR-52dccd7e-666c-46f8-8a8d-1a50dd0f721b"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-13T14:07:01+09:00"
+  at: "2026-11-13T14:18:35+09:00"
 ---
 # index.md の節は item の section から生成する
 
