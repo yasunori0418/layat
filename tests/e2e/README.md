@@ -25,22 +25,22 @@ fixture flake は `layat` を `path:<repo>` input で参照し、`nixpkgs` / `ho
 
 ## シナリオ範囲
 
-| シナリオ | 検証内容 |
+| シナリオ | テストケース |
 |---|---|
-| `01-project` | project mode。一時 git repo で `layat apply` → git toplevel 配下に store symlink 配置・再 apply の冪等性 |
-| `02-home`    | home mode。仮 `$HOME` で apply → `$HOME` 配下配置 + profile 世代コミット、entry 入替で世代を進め `layat rollback` で前世代へ復帰 |
-| `03-stale`   | stale 除去。entry を config から削除 → 再 apply で旧 symlink が消える（保守的不変条件） |
-| `04-copy`    | copy place-once / out-of-store。copy が通常ファイル（書込可）・place-once 冪等（ローカル編集を破棄しない）・out-of-store の live symlink |
-| `05-hm`      | HM module。home-manager standalone configuration を非 NixOS で評価・activate し、activation が engine を起動して配置すること。`layat.entries` と別名の config を併せ持つ構成で 2 profile が独立した世代を持つこと、2 config が同一 target を持つと何も置かずに非ゼロで止まること、後の config の target を外来ファイルで塞ぐと前の config だけ配置・コミットされ非ゼロになることを検証 |
-| `06-init-templates` | init + templates。`layat init <t>` で standalone / project テンプレを展開し、展開後 flake が `nix flake check`（layat を局所 override）を通ること |
-| `07-legacy`  | legacy entrypoint（shell.nix・passthru canonical 形・→ [legacy entrypoint は mkShell の passthru 形を正準にする](../../docs/adr/legacy-entrypoint-mkshell-passthru-canonical.md)）。`NIX_PATH` を flake.lock の nixpkgs に pin し、`layat apply` / `apply --all` / 素の `nix-shell` 互換を検証 |
-| `08-prune`   | prune（→ [prune は root が実在しない roothash 系列だけを削除する](../../docs/adr/prune-only-missing-root-series.md)）。apply した 2 系列の一方の root を消して孤児にし、`--dryrun` の非破壊性・`--yes` の系列ごと削除・生存系列と配置物の不変・`print-roots` から gcroot が外れることを検証 |
-| `09-apply-all` | `apply --all` の並列化（→ [apply --all は選択した config 間の target 重複を build 前に止める](../../docs/adr/apply-all-preflight-target-conflict.md) / [apply --all の build を worker pool で並列に実行する](../../docs/adr/apply-all-parallel-build-worker-pool.md)）。4 つの projectRoot config で `results[]` と `-v` の done 行が辞書順・`--jobs 1` と既定並列度で `results[]` が同一、同じ target を持つ 2 config が `--dryrun` 含め exit 1 で何も置かずに止まり `--json` ではトップ `errors[]` に載る、`--no-wait` 併用の初回 apply で全 config が applied になることを検証 |
-| `10-generator-select` | 生成器の選択（→ [生成器は明示の指定だけで選ぶ](../../docs/adr/generator-chosen-explicitly-only.md)）。`LAYAT_GENERATOR=bogus` と未知キー入りの `layat.toml` を cwd に置いても `apply --manifest` が配置すること（activation の環境不定に耐える）、`apply --generator bogus` と不正な `layat.toml` での `apply` が exit 1 + 1 行・`--json` で `E_INPUT` になること、`LAYAT_GENERATOR=nix` の `apply` が通常どおり配置することを検証 |
-| `11-root-relative` | root 相対 out-of-store（`mkRootRelativeSymlink`）。project mode で apply → readlink が target 起点の相対文字列で内容へ到達できること、再 apply が warning 無しで冪等なこと、リポジトリを移動しても readlink が不変で、移動先での再 apply が foreign の last-wins 置換と記録なしの warning だけで成功すること、`--root` で上書きした root に対して src の実在判定と配置が行われること、entry を外した apply で stale 除去されることを検証 |
-| `12-system` | system mode。root を user namespace（`unshare -Ur`、不可なら `sudo -n`）で取り、`systemRoot` の config を `--root` の sysroot へ apply → 隔離した system 基底に `<roothash>/<name>` の profile・backref と記録が立つこと、世代 2 から `rollback` で世代 1 へ戻り `reset --yes` で撤去されること、`--all` が `<roothash>` 系列を除外することを検証。非 root の `apply` / `rollback` / `reset --yes` が `E_PERMISSION` で何も変えずに止まり、`apply --dryrun` / `list-generations` は通ることも見る |
-| `13-status` | status。home mode と project mode の config を 1 つずつ apply し、`layat status` が `home:<name>` と `project:<name>@<root>` を見出し行と entry 行で出すこと、`[name]` で片方に絞れること・一致 0 件が stdout 空と stderr 1 行で exit 0 になること、`--json` の `info`（mode・root・entries の target）を検証。隔離した system の記録基底に置いた記録が user 基底の後に `system:<name>` で出ることも見る |
-| `14-flake-parts` | flake-parts + `lib.mkApplyCommand`。`flakeModules.default` を import した fixture に projectRoot と homeRoot の config を 1 つずつ持たせ、devShell の shellHook に `mkApplyCommand { …; manifests = config.layat; root = "project"; }` へ `--no-wait` を足した文字列を埋める。git repo のサブディレクトリで `nix develop -c true` を実行すると、project 側が git toplevel 配下に配置され、home 側は CLI の `--project-root` で外れて隔離した `$HOME` に何も出ないことを検証 |
+| `01-project` | [e2e 01-project — project mode の配置と --all の部分失敗を実 nix で通す](../../docs/test/integration/e2e-01-project.md) |
+| `02-home` | [e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復](../../docs/test/generations/e2e-02-home.md) |
+| `03-stale` | [tests/e2e/scenarios/03-stale.sh — 実 nix での古くなった配置の除去](../../docs/test/migration-stale/e2e-03-stale.md) |
+| `04-copy` | [tests/e2e/scenarios/04-copy.sh — 実 nix での copy place-once と out-of-store](../../docs/test/copy/e2e-04-copy.md) |
+| `05-hm` | [e2e 05-hm — 非 NixOS で HM configuration を実際に activate する](../../docs/test/integration/e2e-05-hm.md) |
+| `06-init-templates` | [e2e 06-init-templates — テンプレを展開して展開物の評価が通ることを確かめる](../../docs/test/integration/e2e-06-init-templates.md) |
+| `07-legacy` | [e2e 07-legacy — 非 flake entrypoint から同じ配置と出力契約を通す](../../docs/test/integration/e2e-07-legacy.md) |
+| `08-prune` | [e2e 08-prune — 実 apply が作った系列を root 削除で孤児にし、prune が系列ごと消して gcroot が外れる](../../docs/test/generations/e2e-08-prune.md) |
+| `09-apply-all` | [e2e 09-apply-all — apply --all の辞書順集約・並列度非依存・前段衝突 error・--no-wait 併用](../../docs/test/integration/e2e-09-apply-all.md) |
+| `10-generator-select` | [e2e 10-generator-select — --manifest を使う場面の環境非依存と入力不正の E_INPUT](../../docs/test/integration/e2e-10-generator-select.md) |
+| `11-root-relative` | [e2e 11-root-relative — root 相対 symlink の相対形・移動耐性・古くなった配置の除去を実 nix で通す](../../docs/test/integration/e2e-11-root-relative.md) |
+| `12-system` | [e2e 12-system — user namespace の root で system mode の配置・世代・権限の条件を往復する](../../docs/test/generations/e2e-12-system.md) |
+| `13-status` | [e2e 13-status — 実 apply が書いた記録を status が列挙し、[name] で絞り、system 基底の記録も拾う](../../docs/test/generations/e2e-13-status.md) |
+| `14-flake-parts` | [e2e 14-flake-parts — mkApplyCommand を埋めた devShell が project config だけを配置する](../../docs/test/integration/e2e-14-flake-parts.md) |
 
 ## NixOS VM テスト（別系統）
 
