@@ -23,7 +23,7 @@ supersedes:
   - "SDR-441fb006-a2f4-44f2-bc69-bb0eeee81893"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-11T00:07:44+09:00"
+  at: "2026-11-13T14:34:03+09:00"
 ---
 # sara の運用規範は quality の item が持ち、規約文書は図と索引に縮退させる
 
@@ -37,7 +37,7 @@ generated:
 sara の運用規範は `docs/agents/sara-graph.md`・`docs/agents/adr-rules.md`・CLAUDE.md・sara-docs の
 SKILL.md の散文に書かれていた。規範の型の判別、risk の張り先と採点、specification の様式、
 テスト系 item の粒度、ID の書き場所、コメント規約、ADR の書き方がこれに当たる。
-[規範は 1 ファイル 1 item のグラフが持ち、概要文書は索引に縮退させる](../quality/normative-items-placement-and-authoring.md) に反して、同じ規範が
+[規範は 1 ファイル 1 item のグラフが持ち、item の一覧は生成した index.md だけが持つ](../quality/normative-items-placement-and-authoring.md) に反して、同じ規範が
 複数の文書に重なり、RFC2119 の検査範囲のように食い違う記述もあった。規範を持つ item が無いので、
 決定を記録した SDR は機構の item にしか `justifies` を張れなかった。
 

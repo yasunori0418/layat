@@ -2,6 +2,7 @@
 id: "REQ-5c2e64c3-09a7-4ae8-b60c-4f1ccabce4fd"
 type: requirement
 name: "エンベロープはコマンド完了時に 1 回だけ出し成立条件を満たさない実行では出さない"
+section: cli-json
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

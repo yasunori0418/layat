@@ -2,6 +2,7 @@
 id: "REQ-cb77ea05-bab8-4ccf-b09e-d23d8f71cdc7"
 type: requirement
 name: "entry の識別子は属性キー = target とし一意性は Nix が担保する"
+section: lib-mkmanifest
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

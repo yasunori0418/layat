@@ -2,6 +2,7 @@
 id: "UBQ-b3174f13-88f4-4163-8f56-33d41e21cf77"
 type: ubiquitous_term
 name: "generator"
+section: core
 status: stable
 name_ja: "生成器"
 generated:

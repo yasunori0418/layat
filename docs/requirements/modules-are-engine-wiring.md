@@ -2,6 +2,7 @@
 id: "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"
 type: requirement
 name: "全モジュールと devShell は engine をキックするだけの配線とし、ネイティブ機構へ翻訳しない"
+section: modules
 status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"

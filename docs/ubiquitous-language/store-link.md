@@ -2,6 +2,7 @@
 id: "UBQ-d0332595-e976-4942-b218-728e428ecc26"
 type: ubiquitous_term
 name: "store link"
+section: kinds
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

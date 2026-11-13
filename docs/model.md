@@ -26,7 +26,7 @@
 | `risk` | 満たされない懸念。`requirement` か `design` を脅かす |
 | `test_condition` | リスクを潰すためのテスト条件 |
 | `test_case` | 具体的なテストケース（テスト資産 1 つに 1 件）|
-| `ubiquitous_term` | ユビキタス言語の 1 語。relation を持たない根で、どの item ともつながない。索引は `docs/glossary.md` |
+| `ubiquitous_term` | ユビキタス言語の 1 語。relation を持たない根で、どの item ともつながない。索引は `docs/ubiquitous-language/index.md` |
 
 `test_plan` から `test_case` へは `is_followed_by`（`test_case` が張る `follows` の逆向き）で届く。
 `risk` の親に `test_plan` は無いままで、テスト計画がどのリスクを扱うかは、`test_case` から
@@ -55,6 +55,7 @@ type になる。使えるプレースホルダは `{prefix}` / `{id}` / `{seq[:
 | 全て | `stale_after` | 期限の時刻。任意。値の形は sara でなく `dev/tests/okf-frontmatter.sh` が確かめる |
 | `requirement` / `quality` / `test_plan` | `specification` | 英語の規範文。RFC2119 キーワードを含める |
 | `requirement` / `quality` / `test_plan` | `specification_ja` | `specification` と対になる日本語の規範文。sara はこのフィールドを検査しない |
+| `requirement` / `design` / `ubiquitous_term` | `section` | 型ごとの index.md で item を載せる節。必須の enum で、取りうる値は `docs/model.yaml` が持つ。見出しの文言と節の並び順は `dev/scripts/okf-index.sh` の表が持ち、表に無い値があると生成が exit 2 で止まる。値を足すときは両方を直す |
 | `requirement` | `risk_exempt` | `requirement` 水準の `risk` を持たない理由を 1 文で書く。任意。`sara-gap` は値を持つ `requirement` を免除として扱う |
 | `infrastructure` | `dod` | `docs/dev/definition-of-done.md` の項目 ID（`DOD-01` …）のリスト。任意 |
 | `adr` / `sara_adr` | `origin` | 起点となったセッション等の散文。任意 |
@@ -196,3 +197,22 @@ sara が型を持たない入れ子のキー（`generated` / `verified` / `sourc
 `refines` / `derives_from` / `satisfies` / `depends_on` / `justifies` / `supersedes` は組み込み由来、
 `references` / `threatens` / `mitigates` / `covers` / `follows` は独自定義。
 決定を変えるときは ADR を丸ごと書き直して `supersedes` で置き換える。
+
+## item の `## 出典` の読み方
+
+item の `## 出典` は、item へ分割した時点で原文のどこにあったかを記録している。出典が名指しする
+`docs/spec.md`・`docs/design.md`・`docs/concept.md`・`docs/glossary.md` は、現在のリポジトリに無い。
+item から現行の仕様へ辿るには relation（`sara query`）を使う。
+
+原文を読むときは、出典が名指しする文書を縮退させたコミットの親を見る。
+
+| 出典が名指しする文書 | 縮退させたコミット |
+|---|---|
+| `docs/spec.md` | `cf76bf89` |
+| `docs/design.md` | `705766d1` |
+| `docs/concept.md` | `686f9604` |
+| `docs/glossary.md` | `341d4ed3` |
+
+```bash
+git show cf76bf89^:docs/spec.md   # 縮退させたコミットの親が、縮退前の原文
+```

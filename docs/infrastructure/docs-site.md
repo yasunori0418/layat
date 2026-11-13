@@ -10,7 +10,7 @@ satisfies:
   - "QA-5ecd74ba-889a-4e06-b32b-e67f10a45051"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:22:37+09:00"
+  at: "2026-11-13T14:33:07+09:00"
 ---
 # ドキュメントサイト（Astro Starlight + Cloudflare Pages・ビルド時リファレンス生成）
 
@@ -21,7 +21,7 @@ Astro（Starlight）のサイトを **同一リポジトリの `site/`** に置�
 API 変更とドキュメント更新が同一 PR で原子的に進む。
 
 載せる内容は **usage ガイド + API リファレンス（英日）**。設計根拠のドキュメント（ADR /
-`docs/ubiquitous-language/` / `docs/spec.md` / `docs/design.md`・日本語）はリポジトリ内に留め、サイトには
+`docs/ubiquitous-language/` / `docs/requirements/README.md` / `docs/design/README.md`・日本語）はリポジトリ内に留め、サイトには
 載せない。
 
 ## ホスティングとデプロイ
@@ -52,7 +52,7 @@ Nix lib のコメントは役割で使い分ける — `/** */` が公開 API �
 
 Starlight の i18n で **root ロケール = 英語（`/`）、日本語 = `/ja/`**。README を英語 canonical と
 した公開方針と一貫させる。未翻訳ページは標準機構で英語へフォールバックし、日本語訳の遅れが
-リンク切れにならない。用語は `docs/glossary.md` の索引が指す用語 item（英語の正名が一次、日本語の正名は `name_ja`）に準拠する。
+リンク切れにならない。用語は `docs/ubiquitous-language/index.md` の索引が指す用語 item（英語の正名が一次、日本語の正名は `name_ja`）に準拠する。
 
 ## 出典
 

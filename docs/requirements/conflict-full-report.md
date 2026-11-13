@@ -2,6 +2,7 @@
 id: "REQ-95e97d01-5c34-44b3-bc85-9ca53472bc3d"
 type: requirement
 name: "conflict で停止するときは全件を対処ガイダンス付きで列挙してから 1 本の集約エラーを返す"
+section: errors
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

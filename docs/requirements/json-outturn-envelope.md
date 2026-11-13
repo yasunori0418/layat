@@ -2,6 +2,7 @@
 id: "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"
 type: requirement
 name: "--json は outturn 規約準拠のエンベロープを出す第 2 契約とする"
+section: cli-json
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

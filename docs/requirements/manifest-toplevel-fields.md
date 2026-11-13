@@ -2,6 +2,7 @@
 id: "REQ-dedd2c28-bba3-4ecf-80c9-8c77347e8e1f"
 type: requirement
 name: "manifest.json のトップレベルは必須の schemaVersion / root / entries と任意の identity とする"
+section: manifest-schema
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

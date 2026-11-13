@@ -2,6 +2,7 @@
 id: "REQ-81249072-56b8-42f5-807b-ea623c1efe99"
 type: requirement
 name: "out-of-store の src は評価時の絶対パスか配置 root 相対のどちらかで、root 相対は target と同じ root に対して実行時に解決する"
+section: root-resolution
 status: stable
 derives_from:
   - "UC-01b896b4-04b9-40d0-bf9e-966eaf64c3d4"

@@ -2,6 +2,7 @@
 id: "REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51"
 type: requirement
 name: "lib は nixpkgs.lib のみに依存する純データ生成器である"
+section: lib-api
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

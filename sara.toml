@@ -5,7 +5,7 @@ model_schema = "docs/model.yaml"
 
 [repositories]
 # docs/ 配下を再帰スキャンする。frontmatter の無い .md は ParseResult::Skipped で
-# 静かに無視されるため、README / 概要文書 / test-plan.md 等への除外設定は不要。
+# 静かに無視されるため、README.md / index.md / test-plan.md 等への除外設定は不要。
 paths = ["./docs"]
 
 [validation]

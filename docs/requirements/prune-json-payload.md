@@ -2,6 +2,7 @@
 id: "REQ-a47fbfb0-c808-42e9-b2ad-767c933494d6"
 type: requirement
 name: "prune --json はトップレベル info の removed に削除系列を、skipped に判定か削除に至れず残した系列を載せる"
+section: cli-json
 status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"

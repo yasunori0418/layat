@@ -2,6 +2,7 @@
 id: "REQ-4ffda99a-7062-4c00-915f-70b525cb215b"
 type: requirement
 name: "内部実行する nix コマンドを開示し世代の切替と GC は標準の nix コマンドへ委譲する"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"

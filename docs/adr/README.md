@@ -93,7 +93,7 @@ references:             # 「関連:」の ADR
 - 同じ ADR を `supersedes` と `references` の両方に入れない。
   前者を優先する（同一ペアに relation を二重に張らない）
 - `docs/*.md` 参照は、その ADR が参照する記述が全て item へ分割され終わってから除く（→ #213）。
-  `docs/concept.md` を指す参照は、「設計の哲学」など item を立てない節を指しうるので保留する
+  `docs/concept.md`（現在は `docs/README.md`）を指す参照は、「設計の哲学」など item を立てない節を指しうるので保留する
 
 ### `references` の向き
 

@@ -2,6 +2,7 @@
 id: "REQ-0bd55dfc-b28c-4ad2-ad50-bb1f76b2246c"
 type: requirement
 name: "copy は src ツリー内の symlink を deref せず symlink のまま複製する"
+section: placement-copy
 status: stable
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"

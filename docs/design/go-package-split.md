@@ -2,6 +2,7 @@
 id: "DSG-7d354fe0-a333-495b-9f4b-14bba316dc47"
 type: design
 name: "Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする"
+section: project-layout
 status: stable
 satisfies:
   - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"

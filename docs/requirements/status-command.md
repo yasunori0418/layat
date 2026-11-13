@@ -2,6 +2,7 @@
 id: "REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173"
 type: requirement
 name: "status は記録基底を走査して last-applied 記録を読み取り専用で表示する"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

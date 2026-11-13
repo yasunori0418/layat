@@ -2,6 +2,7 @@
 id: "REQ-a77181dd-a59c-40bb-855e-3430ad970eb6"
 type: requirement
 name: "mkRootRelativeSymlink は配置 root 相対の src を表すマーカーを返し、engine が target 起点の相対 symlink として張る"
+section: lib-markers
 status: stable
 derives_from:
   - "UC-01b896b4-04b9-40d0-bf9e-966eaf64c3d4"

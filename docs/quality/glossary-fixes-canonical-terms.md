@@ -7,22 +7,20 @@ derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 specification: |
   The canonical spelling of each domain term SHALL be fixed by a single `ubiquitous_term`
-  item, and the index (`docs/glossary.md`) and every other document that states the same
-  term SHALL derive from that item rather than fix a spelling of its own. Writing across
-  the repository SHALL use the canonical term and SHALL avoid the spellings the item lists
-  as ones to avoid. Where a term needed while writing has no item, the gap SHALL be
-  resolved by adding an item or by choosing an existing one, rather than by coining a
-  spelling in place.
+  item, and every document that states the same term SHALL derive from that item rather
+  than fix a spelling of its own. Writing across the repository SHALL use the canonical
+  term and SHALL avoid the spellings the item lists as ones to avoid. Where a term needed
+  while writing has no item, the gap SHALL be resolved by adding an item or by choosing an
+  existing one, rather than by coining a spelling in place.
 specification_ja: |
-  各ドメイン用語の正名は、単一の `ubiquitous_term` の item が固定しなければならず、索引
-  （`docs/glossary.md`）と同じ用語を述べる他の文書は、独自に綴りを固定するのではなくその
-  item から導出されなければならない。リポジトリ全体の執筆はその正名を用いなければならず、
-  item が避けるものとして挙げる綴りを避けなければならない。執筆中に必要になった用語に item が
-  無い場合、その欠落は、その場で綴りを作り出すのではなく、item を追加するか既存の用語を
-  選ぶことで解消されなければならない。
+  各ドメイン用語の正名は、単一の `ubiquitous_term` の item が固定しなければならず、同じ用語を
+  述べる文書は、独自に綴りを固定するのではなくその item から導出されなければならない。
+  リポジトリ全体の執筆はその正名を用いなければならず、item が避けるものとして挙げる綴りを
+  避けなければならない。執筆中に必要になった用語に item が無い場合、その欠落は、その場で綴りを
+  作り出すのではなく、item を追加するか既存の用語を選ぶことで解消されなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-07T01:11:46+09:00"
+  at: "2026-11-13T14:34:03+09:00"
 ---
 # 用語の正名は用語 item が固定し、執筆はそれに従う
 
@@ -45,8 +43,8 @@ generated:
 
 正名を述べる文書が複数あること自体は妨げない。索引や他の文書が同じ語を挙げてもよく、規範が
 求めるのは**綴りを固定する一次が 1 つであること**になる。各語の英語と日本語の正名・避ける綴り・
-定義は本 item の規範に含めず、`docs/ubiquitous-language/` の用語 item が持つ。語の一覧と item への
-索引は `docs/glossary.md` が持つ。
+定義は本 item の規範に含めず、`docs/ubiquitous-language/` の用語 item が持つ。語の一覧は、
+生成した `docs/ubiquitous-language/index.md` が持つ。
 
 ## 出典
 

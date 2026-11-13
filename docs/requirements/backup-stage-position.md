@@ -2,6 +2,7 @@
 id: "REQ-9b0046e0-8ddc-4c0b-940e-3fe6f36d0e98"
 type: requirement
 name: "backup 退避は配置前除去の後・配置の前に置き、drift 修復の処理でも同じく実施する"
+section: placement-symlink
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

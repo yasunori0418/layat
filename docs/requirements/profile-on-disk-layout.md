@@ -2,6 +2,8 @@
 id: "REQ-2aa3abbc-90b2-486e-92de-d785554bdeb3"
 type: requirement
 name: "profileDir は config 専用ディレクトリとし、profile リンク・世代・pending out-link をその中に並べる"
+description: "profileDir は config 専用のディレクトリとし、profile リンク・世代・.pending の out-link を兄弟として並べ、.root の backref を roothash 階層で共有しなければならない"
+section: generations
 status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"

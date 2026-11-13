@@ -2,6 +2,7 @@
 id: "REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b"
 type: requirement
 name: "manifest.json が Nix と engine の唯一の安定契約であり schemaVersion は 1 に固定する"
+section: manifest-schema
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

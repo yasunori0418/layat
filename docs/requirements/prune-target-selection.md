@@ -2,6 +2,7 @@
 id: "REQ-c44433a1-7ee7-459a-9aae-7cc42166876f"
 type: requirement
 name: "prune は backref の root が実在しない roothash 系列だけを系列ごと削除する"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"

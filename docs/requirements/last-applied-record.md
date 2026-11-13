@@ -2,6 +2,7 @@
 id: "REQ-9d622539-a1e5-4719-af51-e0cd85b66f35"
 type: requirement
 name: "apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む"
+section: generations
 status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"

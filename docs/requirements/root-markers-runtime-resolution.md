@@ -2,6 +2,7 @@
 id: "REQ-3f541d39-da41-4ef8-858b-707f54cf6a29"
 type: requirement
 name: "root マーカーは `kind` を運ぶ入れ物でパス解決は engine が行う"
+section: lib-markers
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

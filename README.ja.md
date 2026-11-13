@@ -18,7 +18,7 @@ layat は **フェッチ**(`src` は store パス)と **配置**(固定の実行
 - **設定生成をしない。** リポジトリにすでにある内容を配置する。
 - **独立した単位。** 各 config(`layat.<name>`)はそれ自体が独立した Nix profile。ある更新が別へ波及しない。
 - **home-manager 非依存。** `lib/` は nixpkgs のみに依存する。module 統合はエンジンを *起動するだけ*。
-- **readlink パターンマッチではなく自己記録の manifest。** 古くなった配置の除去には前世代の manifest を使う。詳細は [`docs/concept.md`](docs/concept.md#home-manager-homefile-との配置意味論の差) を参照。
+- **readlink パターンマッチではなく自己記録の manifest。** 古くなった配置の除去には前世代の manifest を使う。詳細は [`docs/README.md`](docs/README.md#home-manager-homefile-との配置意味論の差) を参照。
 
 ---
 
@@ -606,22 +606,13 @@ target を `home.file` から layat へ移す手順:
 
 ## ドキュメント
 
-`docs/` は **README → 概要文書 → item の 3 層構造**。規範的な内容は item(1 ファイル 1 主張の
-Markdown + YAML frontmatter)が持ち、概要文書は通読の起点として全体像と item への索引を担う。
+`docs/` の規範的な内容は item(1 ファイル 1 主張の Markdown + YAML frontmatter)が持つ。
+item のほかに、次の 2 種類の文書がある。
 
-- `docs/concept.md` — コンセプト(`solution` / `use_case` item と ADR への索引)、設計の哲学、north-star、既存ツールとの比較
-- `docs/design.md` — 設計(`design` item への索引)
-- `docs/spec.md` — 仕様(`requirement` item への索引)
-- `docs/glossary.md` — ユビキタス言語の索引(用語 item は `docs/ubiquitous-language/`)
-
-| ディレクトリ | 型 | prefix |
-|---|---|---|
-| `docs/solution/` | solution | `SOL` |
-| `docs/use-cases/` | use_case | `UC` |
-| `docs/requirements/` | requirement | `REQ` |
-| `docs/design/` | design | `DSG` |
-| `docs/infrastructure/` | infrastructure | `INF` |
-| `docs/adr/` | adr(ツリーから分離) | `ADR` |
+- `README.md`: 手で書いた概要。item の一覧は持たない
+  - `docs/README.md`: コンセプト。設計の哲学、既存ツールとの比較、north-star、設計の変遷を書く
+  - 型のディレクトリの `README.md`(`docs/requirements/`・`docs/design/`): そのディレクトリの概要
+- `index.md`: 生成した item の一覧。[`docs/index.md`](docs/index.md) が型を並べ、型のディレクトリごとの `index.md` へリンクする
 
 item はグラフを成す(型と関係の定義は `docs/model.yaml`)。辿るには devShell の `sara` を使う。
 

@@ -2,6 +2,7 @@
 id: "DSG-836aa5cb-0389-4adb-990b-144fe5aeffe3"
 type: design
 name: "engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する"
+section: test-strategy
 status: stable
 satisfies:
   - "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"

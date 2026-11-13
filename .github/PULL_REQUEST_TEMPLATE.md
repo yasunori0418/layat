@@ -15,7 +15,7 @@ PR テンプレート（ソロ運用・最小構成）。
 
 <!--
 このリポジトリはドキュメント主導。配置動作・API・方針に触れる変更は docs の更新がセットになる。
-- concept / design / spec の更新有無
+- docs/README.md・docs/design/README.md・docs/requirements/README.md の更新有無
 - 方針転換や trade-off を伴うなら ADR を追加したか（docs/adr/）
 影響がなければ「なし」と明記する。
 -->

@@ -2,6 +2,7 @@
 id: "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"
 type: requirement
 name: "古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する"
+section: generations
 status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"

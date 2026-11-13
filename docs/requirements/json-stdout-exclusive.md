@@ -2,6 +2,7 @@
 id: "REQ-2353259f-5878-452a-8e11-3445de69abc2"
 type: requirement
 name: "--json 指定時は行指向 stdout を出さずエンベロープが stdout を専有する"
+section: cli-json
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

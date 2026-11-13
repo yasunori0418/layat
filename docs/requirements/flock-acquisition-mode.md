@@ -2,6 +2,7 @@
 id: "REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461"
 type: requirement
 name: "flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"

@@ -2,6 +2,7 @@
 id: "REQ-60787ed2-4176-4bdd-800f-1600c0315551"
 type: requirement
 name: "gitignore は method を区別せず copy target も含めて全 target を列挙する"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"

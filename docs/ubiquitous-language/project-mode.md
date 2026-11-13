@@ -2,6 +2,7 @@
 id: "UBQ-dbbd91ee-1d41-438b-9c6f-6972643741cb"
 type: ubiquitous_term
 name: "project mode"
+section: modes
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

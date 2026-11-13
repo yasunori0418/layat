@@ -2,6 +2,8 @@
 id: "REQ-637599dc-a1ec-4af5-9e97-e882c7df56d0"
 type: requirement
 name: "CLI が持ち込む依存は許可した第三者ライブラリと pin した Go に限り、いずれも固定する"
+description: "CLI の第三者依存は cobra・go-toml・outturn の 3 つに限って vendorHash で固定し、Go ツールチェーンは nixpkgs の go に pin しなければならない"
+section: dependencies
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

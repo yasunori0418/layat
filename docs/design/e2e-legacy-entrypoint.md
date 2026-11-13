@@ -2,6 +2,7 @@
 id: "DSG-bb6e03fd-e1c4-47c4-bfa0-a73e9457b184"
 type: design
 name: "E2E に legacy entrypoint シナリオを置き、NIX_PATH を flake.lock の nixpkgs に pin して検証する"
+section: test-strategy
 status: stable
 satisfies:
   - "REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da"

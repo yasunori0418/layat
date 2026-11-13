@@ -2,6 +2,7 @@
 id: "REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62"
 type: requirement
 name: "変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く"
+section: cli-json
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

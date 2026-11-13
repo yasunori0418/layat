@@ -2,6 +2,7 @@
 id: "DSG-16373ec2-3496-4b12-b3b1-ef74e0435b58"
 type: design
 name: "layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する"
+section: flake-outputs
 status: stable
 satisfies:
   - "REQ-14f0aec9-abae-4621-82f3-40536a1ad904"

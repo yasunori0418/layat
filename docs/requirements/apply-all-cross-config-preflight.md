@@ -2,6 +2,8 @@
 id: "REQ-38506419-c23d-4fce-b167-30715ce6a69d"
 type: requirement
 name: "apply --all は build 前に選択 config 間の target 衝突を検出して停止する"
+description: "apply --all は build の前に、選択した config をバケットに分けて正規化後 target の重複を確かめ、重複があれば衝突 target と両 config 名を示して exit 1 で停止しなければならない"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"

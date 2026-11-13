@@ -2,6 +2,7 @@
 id: "REQ-053cfed2-265a-4997-a27b-97b0bed10d8a"
 type: requirement
 name: "target に通常ファイル・ディレクトリが在れば上書きせずエラーで停止する"
+section: placement-symlink
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

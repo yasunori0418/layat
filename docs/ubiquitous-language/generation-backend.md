@@ -2,6 +2,7 @@
 id: "UBQ-1660e016-7a0a-4319-9346-466f759fe759"
 type: ubiquitous_term
 name: "generation backend"
+section: core
 status: stable
 name_ja: "世代バックエンド"
 generated:

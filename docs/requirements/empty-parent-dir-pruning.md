@@ -2,6 +2,7 @@
 id: "REQ-8409db86-a1ba-4053-86dc-588985cc1ca7"
 type: requirement
 name: "target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する"
+section: generations
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

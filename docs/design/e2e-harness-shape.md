@@ -2,6 +2,7 @@
 id: "DSG-2947b4a5-ba5c-4218-8478-624cba156116"
 type: design
 name: "E2E は tests/e2e の bash ハーネスに置き、シナリオの詳細は同ディレクトリの README へ委譲する"
+section: test-strategy
 status: stable
 satisfies:
   - "TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9"

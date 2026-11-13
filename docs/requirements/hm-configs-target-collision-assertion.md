@@ -2,6 +2,8 @@
 id: "REQ-5923ac79-4a2d-43cd-b56c-2f1000c01b44"
 type: requirement
 name: "単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する"
+description: "単一の HM config 内で configs 同士が正規化後 target を重複させたら、activation が起動する apply --all の前段の確認で build と配置の前に停止しなければならない"
+section: modules
 status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"

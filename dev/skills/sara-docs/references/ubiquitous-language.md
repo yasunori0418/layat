@@ -1,15 +1,15 @@
 # 用語（ubiquitous_term）の引き方と起こし方
 
 用語の正名は `ubiquitous_term` 型の item（`docs/ubiquitous-language/`、1 語 1 ファイル）が固定する。
-`docs/glossary.md` は語の一覧と item へのリンクだけを持つ索引で、定義は書かない。
+`docs/ubiquitous-language/index.md` は `dev/scripts/okf-index.sh` が生成する語の一覧で、手で編集しない。
 
-## 索引から item を辿る
+## 一覧から item を辿る
 
-1. `docs/glossary.md` を開き、主題の節から語を探す。各行は
-   `` - [<item の name>](ubiquitous-language/<ファイル名>) — `<英語の正名>`（<日本語の正名>） `` の形になっている。
-   英語の正名はコード表記で書き、`name_ja` の無い語は括弧ごと省く
+1. `docs/ubiquitous-language/index.md` を開き、主題の節から語を探す。各行は
+   `` * [<英語の正名>（<日本語の正名>）](./<ファイル名>) - <description> `` の形になっている。
+   `name_ja` の無い語は括弧ごと省く
 2. リンク先の item を読む。正名は frontmatter、定義と避ける表現は本文にある
-3. 索引で見つからないときは、綴りが揺れている可能性があるので item 全体を検索する
+3. 一覧で見つからないときは、綴りが揺れている可能性があるので item 全体を検索する
 
 ```bash
 rg -l -i '<探す語>' docs/ubiquitous-language/
@@ -55,8 +55,10 @@ sara check --format json | jq -r '
 
 ```bash
 sara-new ubiquitous_term <slug> docs/ubiquitous-language -- \
-  --name '<英語の正名>' --description '<1 文の要約>' [--name-ja '<日本語の正名>'] [--avoid '<綴り>' ...]
+  --name '<英語の正名>' --description '<1 文の要約>' --section '<節の値>' \
+  [--name-ja '<日本語の正名>'] [--avoid '<綴り>' ...]
 ```
 
-`--avoid` は綴り 1 つごとにフラグを繰り返す。起こしたら本文の 4 節を書き、`docs/glossary.md` の
-該当する節に 1 行を足して、`sara check` が通ることを確かめる。
+`--section` は語を載せる index.md の節の値で、省かずに渡す。取りうる値は `docs/model.yaml` の
+`ubiquitous_term` の enum にある。`--avoid` は綴り 1 つごとにフラグを繰り返す。起こしたら本文の
+4 節を書き、`dev/scripts/okf-index.sh` で index.md を再生成して、`sara check` が通ることを確かめる。

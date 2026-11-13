@@ -2,6 +2,8 @@
 id: "DSG-25ad3cce-f921-4db2-aae0-c0263d4b8295"
 type: design
 name: "internal/generator は契約・prebuilt・Fake を親パッケージに、nix 実装を nixgen サブパッケージに置き、cmd 層は注入点だけを持つ"
+description: "internal/generator は契約・prebuilt 実装・Fake を親パッケージに、nix 固有の知識を nixgen サブパッケージに置き、cmd 層は newGenerator() で選んだ生成器を各サブコマンドへ注入するだけにする"
+section: layers
 status: stable
 satisfies:
   - "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"

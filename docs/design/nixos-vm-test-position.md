@@ -2,6 +2,7 @@
 id: "DSG-901351ea-f01b-4bb0-a470-b890d92c980b"
 type: design
 name: "NixOS モジュールの実 activate は runNixOSTest の checks.nixos-vm で検証し、E2E ハーネスとは別系統に置く"
+section: test-strategy
 status: stable
 satisfies:
   - "TP-b7f1dc79-0222-4b6e-9e91-0545046e34f2"

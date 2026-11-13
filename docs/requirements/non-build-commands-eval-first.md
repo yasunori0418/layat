@@ -2,6 +2,7 @@
 id: "REQ-9c111c32-8f6c-4eda-859c-dae02c0624fc"
 type: requirement
 name: "非 build コマンドも eval 先行を共通前段に持つ"
+section: cli-flow
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

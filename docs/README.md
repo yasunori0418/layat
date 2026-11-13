@@ -1,11 +1,10 @@
 # layat コンセプト
 
-layat が何であり何を解決するかの全体像と、`solution` / `use_case` item への索引。
+layat が何であり何を解決するかの全体像を述べる散文。item の一覧は、生成した [index.md](index.md) が持つ。
 
 解決したい課題・解決策の核心・想定する使われ方は **`docs/solution/` と `docs/use-cases/` の
-item が持つ**。本文書は通読の起点として全体像を述べ、詳細は item へのリンクで示す
-（README → 本文書 → item の 3 層構造）。「設計の哲学」「既存ツールとの比較」「north-star」は
-item を立てず本文書に書き下す。
+item が持つ**。本文書は通読の起点として全体像を散文で述べる。
+「設計の哲学」「既存ツールとの比較」「north-star」は item を立てず本文書に書き下す。
 
 > **この文書の書き方（規約）**
 >
@@ -16,8 +15,7 @@ item を立てず本文書に書き下す。
 >   索引の節（課題と核心・想定する使われ方・設計の変遷）は本文書に置くが、内容は item / ADR が
 >   持つ。この 3 節以外で書き下したい内容が出てきたら、item を立てて本文書からはリンクへ置き換える
 > - item を横断して検索・追跡するには `sara query`（→ `CLAUDE.md` の「item を辿る（`sara query`）」節）を使う
-> - item の `## 出典` は本文書の現行章立てを指さない。原文の読み方を含め `docs/spec.md` の
->   同項が正（同項は 3 文書共通の手順として書いてある）
+> - item の `## 出典` の読み方は `docs/model.md` の「item の `## 出典` の読み方」の節に従う
 
 ---
 
@@ -31,23 +29,12 @@ layat はフレームワークではなく **配置プリミティブ**である
 任意パスへ symlink または copy で置く」という単一の責務を、テスト可能な純粋関数として提供し、
 設定は生成しない。
 
-- [layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る](solution/layat-placement-primitive.md) — layat は nix store の物を任意パスへ置く配置プリミティブであり、設定を生成せずユーザーが配置を明示的に握る
-
 ---
 
 ## 想定する使われ方
 
 中心は project mode（プロジェクト内配置）。`$HOME` 配置（home mode）・system 配置は明示マーカーで
 opt-in する例外として位置づける（→ [project mode を第一の使い方とする](adr/project-first.md)）。
-
-- [プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する](use-cases/project-mode-in-repo-placement.md) — プロジェクト repo 内へ nix store の物を devShell 入室のたびに配置してチームで共有する
-- [home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する](use-cases/home-mode-pinned-repo-placement.md) — home mode で外部リポジトリの中身をバージョン固定して $HOME 配下の任意パスへ配置する
-- [system mode で `/` 配下へ配置し、root 権限で世代とともに管理する](use-cases/system-mode-root-placement.md) — system mode で `/` 配下へ配置し、root 権限で世代とともに管理する
-- [役割ごとに config を分けて更新を独立させ、1 つの更新を他の役割へ波及させない](use-cases/independent-update-cycles.md) — 役割ごとに config を分けて更新を独立させ、1 つの更新を他の役割へ波及させない
-- [配置に失敗・後悔したとき CLI 単体で前の世代へロールバックして元の状態へ戻す](use-cases/generation-rollback-standalone.md) — 配置に失敗・後悔したとき CLI 単体で前の世代へロールバックして元の状態へ戻す
-- [リポジトリの内容を copy で初回だけ配置し、その後はユーザーが手で編集して育てる](use-cases/copy-place-once-user-managed.md) — リポジトリの内容を copy で初回だけ配置し、その後はユーザーが手で編集して育てる
-- [開発中の手元 dotfiles を out-of-store symlink で参照し、編集と同時に反映しながら育てる](use-cases/out-of-store-live-editing.md) — 開発中の手元 dotfiles を out-of-store symlink で参照し、編集と同時に反映しながら育てる
-- [既に home-manager / NixOS / nix-darwin を使っている環境へ layat をモジュールとして組み込む](use-cases/module-integration.md) — 既に home-manager / NixOS / nix-darwin を使っている環境へ layat をモジュールとして組み込む
 
 ---
 
@@ -158,7 +145,7 @@ HM 非依存の純粋関数コア + クロスプラットフォーム共通ス�
 ## 関連文書
 
 - `README.md` / `README.ja.md` — 3 層構造の最上段（導入と使い方）
-- `docs/spec.md` — 仕様（`requirement` item への索引）
-- `docs/design.md` — 設計（`design` item への索引）
+- `docs/requirements/README.md` — 仕様の全体像（`requirement`）
+- `docs/design/README.md` — 設計の全体像（`design`）
 - `docs/adr/` — 意思決定の記録
 - `docs/model.yaml` — sara の型定義（item の型・関係・ID 形式）

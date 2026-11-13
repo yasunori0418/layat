@@ -2,6 +2,7 @@
 id: "REQ-da253cab-34d4-4d6e-96f0-de99e012b376"
 type: requirement
 name: "legacy entrypoint では相対 path の src が自動で store 化されない"
+section: cli-entrypoint
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

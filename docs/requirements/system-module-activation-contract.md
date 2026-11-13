@@ -2,6 +2,8 @@
 id: "REQ-a220bb28-89de-42b0-a854-e7468755ecb1"
 type: requirement
 name: "NixOS / nix-darwin モジュールは activation から全 config のビルド済み link-farm を systemRoot で 1 回の起動に渡す"
+description: "NixOS / nix-darwin モジュールは activation から全 config のビルド済み link-farm を systemRoot で apply --all 1 回の起動に渡し、engine error で activation を非 0 終了させなければならない"
+section: modules
 status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"

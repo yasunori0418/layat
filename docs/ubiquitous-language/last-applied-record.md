@@ -2,6 +2,7 @@
 id: "UBQ-7e8e239e-e11b-414e-b6e7-295520d6a1a9"
 type: ubiquitous_term
 name: "last-applied record"
+section: state
 status: stable
 name_ja: "last-applied 記録"
 generated:

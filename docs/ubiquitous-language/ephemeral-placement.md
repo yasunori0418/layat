@@ -2,6 +2,7 @@
 id: "UBQ-30bf2772-cc17-483e-9b0c-79bbeab2d0ed"
 type: ubiquitous_term
 name: "ephemeral placement"
+section: modes
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

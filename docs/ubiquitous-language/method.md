@@ -2,6 +2,7 @@
 id: "UBQ-bc180161-69ea-4ec6-bae5-9c0e5853a112"
 type: ubiquitous_term
 name: "method"
+section: state
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

@@ -2,6 +2,7 @@
 id: "REQ-7cee95dd-bc5a-4e86-bebc-6080ef78fe26"
 type: requirement
 name: "実 dir の target は全 leaf が除去可能なときだけ全体を配置前除去して symlink 化する"
+section: placement-symlink
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

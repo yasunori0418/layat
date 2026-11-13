@@ -2,6 +2,8 @@
 id: "REQ-d37d8433-a0c0-4387-aee9-9526f5cef70c"
 type: requirement
 name: "layat.recopy は engine 起動の配線レイヤーのオプションで、true のときだけ activation の起動へ --recopy を付ける"
+description: "layat.recopy は true のときだけ activation の apply --all 起動へ --recopy を付ける起動配線のオプションで、全 config に一律に効き、manifest に影響してはならない"
+section: modules
 status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"

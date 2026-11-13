@@ -14,7 +14,7 @@
 * [level が high の risk は人が確かめた記録を持つ](./high-risk-verified-by-human.md) - level が high の risk は、generated.at 以降に人が内容を確かめた verified を持つ
 * [傾向の計測は報告に留め、マージの条件にしない](./measurement-reports-without-gating.md) - [マージ前の自動検証を必須にし、プラットフォーム差が出る層は全プラットフォームで通す](cross-platform-verification-before-merge.md) が必須にする側の規範であるのに対し、本 item は**必須化しない側の境界**を定める。両方が無いと、必須化の規範が「検証と名の付くものはすべて塞ぐ」と読めてしまう。
 * [規範の型は、それが誰を縛るかで決める](./norm-type-by-who-it-binds.md) - 規範の型は、それが誰を縛るかで requirement・quality・test_plan から選ぶ
-* [規範は 1 ファイル 1 item のグラフが持ち、概要文書は索引に縮退させる](./normative-items-placement-and-authoring.md) - 規範を概要文書と item の両方に書くと二重管理になり、改訂で片方だけが古くなる。規範の所在をグラフ側に一本化し、概要文書は通読の起点としての索引に徹する。この分担は文書の分量ではなく**どちらを正とするか**の宣言であり、概要文書へ仕様を書き足すことは規範の複製にあたる。
+* [規範は 1 ファイル 1 item のグラフが持ち、item の一覧は生成した index.md だけが持つ](./normative-items-placement-and-authoring.md) - 規範を手書きの文書と item の両方に書くと二重管理になり、改訂で片方だけが古くなる。規範の所在をグラフ側に一本化し、型ごとの item の一覧はグラフから生成した index.md が持つ。各ディレクトリの手書きの README.md は、item から導けない全体像の散文だけを持つ。この分担は文書の分量ではなく**どちらを正とするか**の宣言であり、README.md へ仕様や item の一覧を書き足すことは規範の複製にあたる。
 * [最新 main のビルド成果物を再ビルドなしに消費できる状態を保つ](./prebuilt-artifact-availability.md) - layat は flake input として消費されるツールであり、消費側の CI やローカル環境が layat を使うたびにソースからビルドするのは実用上のコストになる。最新 main の成果物を公開キャッシュから取得できる状態を保つ。
 * [公開ドキュメントは英語を canonical とし、日本語版を対で保守する](./public-docs-english-canonical.md) - 公開されたリポジトリの読者は日本語話者に限らない。利用者に向けた面は英語を canonical に置き、日本語版はその対として保守する。どちらが原本かを固定しないと、片方だけ更新されたときにどちらが正しいかを読者が判断できなくなる。
 * [リファレンスドキュメントは記述対象のソースから生成し、生成物を持たない](./reference-docs-generated-from-source.md) - 記述対象を変えたのに記述を直し忘れる、というずれ方は「気づいた人が直す」運用では検出できない。ソースの doc-comment から毎回生成し、生成物をコミットしないことで、乖離が起こり得る状態そのものを作らない。
@@ -23,4 +23,4 @@
 * [risk の level は likelihood と impact から導き、手で決めない](./risk-level-derived-from-likelihood-and-impact.md) - risk の likelihood と impact を決まった尺度で採点し、level はその 2 つから導く
 * [specification は SHALL 系で書き、日本語の規範文は同じ強度の規範助動詞で終える](./specification-shall-family-and-matching-auxiliaries.md) - specification は SHALL 系で書き、specification_ja は同じ強度の規範助動詞で終える
 * [上流より古い item と generated の更新漏れは機械的に列挙する](./stale-items-enumerated-mechanically.md) - 上流より基準時刻が古い下流の item と、本文を変えたのに generated を更新していない item を機械的に列挙し、結果は報告に留める
-* [テスト系 item は、テスト資産・検証テーマ・脅威の 3 段の粒度で起こす](./test-items-three-tier-granularity.md) - テスト系 item は CASE をテスト資産・TC を検証テーマ・RISK を脅威の単位で起こし、概要文書へ索引しない
+* [テスト系 item は、テスト資産・検証テーマ・脅威の 3 段の粒度で起こす](./test-items-three-tier-granularity.md) - テスト系 item は CASE をテスト資産・TC を検証テーマ・RISK を脅威の単位で起こす

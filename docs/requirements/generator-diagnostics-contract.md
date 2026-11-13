@@ -2,6 +2,7 @@
 id: "REQ-7a2f1ecf-4675-45aa-80c0-a8fc58db9edd"
 type: requirement
 name: "生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める"
+section: cli
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

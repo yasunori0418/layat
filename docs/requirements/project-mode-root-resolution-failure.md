@@ -2,6 +2,8 @@
 id: "REQ-6506bc82-d1e1-4dbf-8c57-d5d1babf218a"
 type: requirement
 name: "project mode で git から root を解決できないときは engine 実行時に停止する"
+description: "project mode で git から root を解決できないときは、git リポジトリの外でも git が PATH に無いときも、別の root で続行せず engine 実行時にエラーで停止しなければならない"
+section: errors
 status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"

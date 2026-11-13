@@ -2,6 +2,7 @@
 id: "DSG-107c19ea-bc90-4914-aaaa-5f2da4f3e082"
 type: design
 name: "配置プリミティブを store link・copy・out-of-store symlink の 3 種に定め、世代・reset・gitignore での扱いを種別ごとに固定する"
+section: core-logic
 status: stable
 satisfies:
   - "REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557"

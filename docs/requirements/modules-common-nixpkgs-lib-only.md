@@ -2,6 +2,8 @@
 id: "REQ-2bd0d35f-dc29-4771-9cfe-6998247afa0f"
 type: requirement
 name: "modules/common.nix は nixpkgs.lib のみに依存する"
+description: "modules/common.nix は nixpkgs.lib だけに依存し、home-manager・NixOS・nix-darwin の module system への依存を持ち込んではならない"
+section: dependencies
 status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"

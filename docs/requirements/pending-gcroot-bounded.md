@@ -2,6 +2,7 @@
 id: "REQ-840b3641-6e76-46da-82e9-680cabd65abe"
 type: requirement
 name: "失敗時に残る pending gcroot は config あたり最大 1 個に有界とし回収処理を持たない"
+section: cli-flow
 status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"

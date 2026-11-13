@@ -2,6 +2,7 @@
 id: "REQ-2c5a10d8-112b-4f96-947a-aba7164779c4"
 type: requirement
 name: "終了コードは 0 = 成功 / 1 = 一般エラー / 2 = dryrun の conflict とする"
+section: cli-output
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

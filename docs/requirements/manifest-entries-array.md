@@ -2,6 +2,7 @@
 id: "REQ-0b0cd1e3-bfeb-45c1-978d-e2e11c568336"
 type: requirement
 name: "manifest.json の entries は attrset を配列へ正規化し 5 フィールドを記録する"
+section: manifest-schema
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

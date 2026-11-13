@@ -2,6 +2,7 @@
 id: "REQ-ee5085a5-077b-4f5a-aa6a-841bc5515282"
 type: requirement
 name: "apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する"
+section: generations
 status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"

@@ -2,6 +2,7 @@
 id: "REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575"
 type: requirement
 name: "祖先 symlink は自己記録の古くなったものだけを配置前除去し、それ以外はエラーで停止する"
+section: placement-symlink
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

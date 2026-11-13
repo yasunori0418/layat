@@ -2,6 +2,7 @@
 id: "DSG-e4d5db6b-5bac-4fd6-b2fb-ed07bdec30f5"
 type: design
 name: "lib は公開 API・型定義・manifest 生成・マーカー構築子・apply コマンド組み立ての 5 ファイルへ分割する"
+section: project-layout
 status: stable
 satisfies:
   - "REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51"

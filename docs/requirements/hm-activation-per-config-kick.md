@@ -2,6 +2,8 @@
 id: "REQ-c847d1af-a437-46bb-bd64-42083810d034"
 type: requirement
 name: "HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う"
+description: "HM の activation は config ごとの name=link-farm を辞書順に並べ、--jobs を常に明示した apply --all を 1 回だけ起動し、config が無ければ layat を起動してはならない"
+section: modules
 status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"

@@ -2,6 +2,7 @@
 id: "UBQ-5caf1573-b91f-40dd-a414-58b5f49bf0d9"
 type: ubiquitous_term
 name: "entry / entries"
+section: input-output
 status: stable
 avoid:
   - "file entry"

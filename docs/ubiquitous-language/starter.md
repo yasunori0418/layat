@@ -2,6 +2,7 @@
 id: "UBQ-3f190b7f-08dc-4b64-ab48-4be319a7d48f"
 type: ubiquitous_term
 name: "starter"
+section: core
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

@@ -2,6 +2,7 @@
 id: "REQ-0e341430-17f0-498b-9439-65491652163a"
 type: requirement
 name: "rollback は FS を先に収束させてから profile ポインタを最後に移す"
+section: generations
 status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"

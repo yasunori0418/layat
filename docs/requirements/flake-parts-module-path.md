@@ -2,6 +2,7 @@
 id: "REQ-c50df875-2cb0-4e72-8a21-858359a11cae"
 type: requirement
 name: "flake-parts での使い方は直書きと同一の derivation を生み CLI のアドレッシングを変えない"
+section: cli-entrypoint
 status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"

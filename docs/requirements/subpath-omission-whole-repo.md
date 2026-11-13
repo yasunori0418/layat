@@ -2,6 +2,7 @@
 id: "REQ-27b75fe6-6c36-44a8-8cd3-5cc98043022a"
 type: requirement
 name: "subpath は src 内の相対パスとし、リポジトリ全体は省略で表して専用トークンを設けない"
+section: entries-schema
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

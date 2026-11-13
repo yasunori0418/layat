@@ -2,6 +2,7 @@
 id: "REQ-1cc080f6-ae91-4c1f-973e-b7054cfc0198"
 type: requirement
 name: "entrypoint は CWD で flake.nix → shell.nix → default.nix の順に探し -f で上書きする"
+section: cli-entrypoint
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

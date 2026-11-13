@@ -2,6 +2,7 @@
 id: "DSG-4a84f282-76ea-47c9-aede-deac12ff5257"
 type: design
 name: "実装スコープを CLI 単体 + project mode + home mode + system mode と、home-manager / NixOS / nix-darwin モジュールとする"
+section: project-layout
 status: stable
 satisfies:
   - "REQ-14f0aec9-abae-4621-82f3-40536a1ad904"

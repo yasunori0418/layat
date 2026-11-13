@@ -2,6 +2,7 @@
 id: "UBQ-10bcf077-1e99-456b-bb0a-c9b87daf526e"
 type: ubiquitous_term
 name: "generation"
+section: state
 status: stable
 name_ja: "世代"
 generated:

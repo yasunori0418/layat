@@ -177,7 +177,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 		return nil, err
 	}
 
-	// 5. make the existing copy targets removal candidates (absent ones are a no-op · → docs/spec.md error spec).
+	// 5. make the existing copy targets removal candidates (absent ones are a no-op).
 	copyTargets := make([]string, 0, len(copyEntries))
 	for _, e := range copyEntries {
 		targetAbs := filepath.Join(root, filepath.Clean(e.Target))

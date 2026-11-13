@@ -2,6 +2,8 @@
 id: "REQ-8d965ca2-f8fd-44a4-87f3-94e850e9f85b"
 type: requirement
 name: "home mode の root は層ごとに定まった供給元から解決する"
+description: "home mode の root は、CLI 単体では実行時の $HOME、home-manager モジュールでは HM が解決した $HOME から解決し、OS を問わず動作しなければならない"
+section: root-resolution
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

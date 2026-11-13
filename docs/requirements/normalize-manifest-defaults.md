@@ -2,6 +2,7 @@
 id: "REQ-b232ec98-af3b-41f3-a050-29d417322002"
 type: requirement
 name: "normalizeManifest が確認・デフォルト適用・marker 変換を行い mkManifest が derivation を組む"
+section: lib-input-validation
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

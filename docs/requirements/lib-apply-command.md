@@ -2,6 +2,7 @@
 id: "REQ-6c51facc-fa7a-4b5e-939b-44e7578d7a4f"
 type: requirement
 name: "lib.mkApplyCommand は事前展開した apply --all --manifest のコマンド行を返す"
+section: lib-mkapplycommand
 status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"

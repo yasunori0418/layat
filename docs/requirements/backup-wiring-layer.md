@@ -2,6 +2,7 @@
 id: "REQ-e1e1114b-ba07-4d57-8e04-6e30e39a5da3"
 type: requirement
 name: "layat.backup は engine 起動の配線レイヤーのオプションで manifest には影響しない"
+section: modules
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

@@ -2,6 +2,7 @@
 id: "UBQ-ba99246c-fd5b-4469-bb30-afcf33e83699"
 type: ubiquitous_term
 name: "entrypoint"
+section: core
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

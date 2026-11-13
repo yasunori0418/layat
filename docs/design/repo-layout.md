@@ -2,6 +2,7 @@
 id: "DSG-1361df1a-31c4-46ed-a6ce-92938f94ac02"
 type: design
 name: "リポジトリを lib / cmd / internal / templates / modules のトップレベル 5 ディレクトリへ分ける"
+section: project-layout
 status: stable
 satisfies:
   - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"

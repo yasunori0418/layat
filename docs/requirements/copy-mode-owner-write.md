@@ -2,6 +2,7 @@
 id: "REQ-84e3c717-adf5-4ff3-b0db-d039b82ef19c"
 type: requirement
 name: "copy は元の mode を保存しつつ owner-write を付与する"
+section: placement-copy
 status: stable
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"

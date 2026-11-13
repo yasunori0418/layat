@@ -2,6 +2,7 @@
 id: "REQ-bbbb0002-0000-4000-8000-000000000004"
 type: requirement
 name: "risk が無い要求"
+section: architecture
 status: stable
 derives_from:
   - "UC-0ca11001-0000-4000-8000-000000000002"

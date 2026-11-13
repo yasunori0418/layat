@@ -2,6 +2,7 @@
 id: "UBQ-c3e66a6c-906d-4083-b7ba-19618539c56c"
 type: ubiquitous_term
 name: "layat"
+section: core
 status: stable
 avoid:
   - "nput"

@@ -2,6 +2,7 @@
 id: "REQ-77689c68-953c-4cbb-ab31-1ac1e4f5f2fe"
 type: requirement
 name: "method は配置方法を選び symlink は世代管理下・copy は世代管理外になる"
+section: entries-schema
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

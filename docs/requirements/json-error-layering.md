@@ -2,6 +2,7 @@
 id: "REQ-9341fa5d-836e-4023-af53-cc7d273438d1"
 type: requirement
 name: "エンベロープのエラーは主体の有無で層を分けコードを分類する"
+section: cli-json
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

@@ -3,7 +3,7 @@ id: "SDR-e444ba7f-eac7-4cac-bff8-c3d7910d836a"
 type: sara_adr
 name: "テスト系 item を CASE・TC・RISK の 3 段で起こし、概要文書へ索引しない"
 description: "CASE はテスト資産、TC は検証テーマ、RISK は TC を束ねる脅威の単位で起こし、概要文書へ索引しない。"
-status: stable
+status: deprecated
 sources:
   - id: "issue-273"
     resource: "https://github.com/yasunori0418/layat/issues/273"
@@ -23,7 +23,11 @@ generated:
 ---
 # テスト系 item を CASE・TC・RISK の 3 段で起こし、概要文書へ索引しない
 
-- ステータス: stable
+> **廃止（2026-11-13）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 全体 → [テスト系 item を CASE・TC・RISK の 3 段で起こす](test-items-in-three-tiers.md)
+
+- ステータス: deprecated
 - 日付: 2026-11-11
 - 関連: GitHub Issue #273, #304, #649
 - 起点: Issue #273 の grilling（2026-08-09）で確定

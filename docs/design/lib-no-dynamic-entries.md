@@ -2,6 +2,7 @@
 id: "DSG-d2e17f4f-0d32-45c1-8125-17e589664c85"
 type: design
 name: "動的 entry 生成のヘルパを lib に置く"
+section: flake-outputs
 status: deprecated
 satisfies:
   - "REQ-d85f0cef-0f1e-4897-a841-41b61a8dae51"

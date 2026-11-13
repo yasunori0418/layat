@@ -2,6 +2,7 @@
 id: "REQ-eaa8c0df-af44-4f52-9603-cd2bc22a67e9"
 type: requirement
 name: "gitignore は project mode 限定で非 project config を指定したらエラーで停止する"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"

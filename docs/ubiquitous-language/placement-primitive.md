@@ -2,6 +2,7 @@
 id: "UBQ-3046d454-1ff1-48e2-9b05-0aad11c52ea6"
 type: ubiquitous_term
 name: "placement primitive"
+section: core
 status: stable
 name_ja: "配置プリミティブ"
 avoid:

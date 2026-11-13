@@ -2,6 +2,7 @@
 id: "REQ-250d936c-1df0-491d-a7af-708f38b61f33"
 type: requirement
 name: "MVP は manifest v1 のみを発行・受理しマイグレーション機構を持たない"
+section: manifest-schema
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

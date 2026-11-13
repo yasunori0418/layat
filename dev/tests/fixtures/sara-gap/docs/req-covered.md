@@ -2,6 +2,7 @@
 id: "REQ-aaaa0001-0000-4000-8000-000000000003"
 type: requirement
 name: "risk に threatens されている要求"
+section: architecture
 status: stable
 derives_from:
   - "UC-0ca11001-0000-4000-8000-000000000002"

@@ -2,6 +2,7 @@
 id: "REQ-844ee375-919f-4341-81e1-a5f89fd32840"
 type: requirement
 name: "module 時は rollback を host へ一本化し、layat profile は前進のみで追従する"
+section: generations
 status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"

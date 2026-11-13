@@ -73,6 +73,35 @@ item_types:
         display_name: Risk Exempt
         field_type: text
         required: false
+      # index.md の節。見出しと並び順は dev/scripts/okf-index.sh の表が持つ。
+      - name: section
+        display_name: Section
+        field_type: !enum
+          values:
+            - architecture
+            - lib-api
+            - lib-mkmanifest
+            - lib-markers
+            - lib-mkapplycommand
+            - lib-input-validation
+            - cli
+            - cli-entrypoint
+            - cli-subcommands
+            - cli-output
+            - cli-json
+            - cli-flow
+            - cli-reproducibility
+            - entries-schema
+            - manifest-schema
+            - placement-symlink
+            - placement-rollback
+            - placement-copy
+            - generations
+            - root-resolution
+            - modules
+            - errors
+            - dependencies
+        required: true
       - *status_field
       - *stale_after_field
     allowed_targets:
@@ -92,6 +121,18 @@ item_types:
       - requirement
       - test_plan
     fields:
+      # index.md の節。見出しと並び順は dev/scripts/okf-index.sh の表が持つ。
+      - name: section
+        display_name: Section
+        field_type: !enum
+          values:
+            - project-layout
+            - layers
+            - flake-outputs
+            - core-logic
+            - module-integration
+            - test-strategy
+        required: true
       - *status_field
       - *stale_after_field
     allowed_targets:
@@ -244,7 +285,7 @@ item_types:
     allowed_targets: *adr_targets
 
   # ユビキタス言語の 1 語。docs/ubiquitous-language/。組み込みの name が英語の正名。
-  # どの item ともつながない根で、索引は docs/glossary.md。
+  # どの item ともつながない根で、索引は docs/ubiquitous-language/index.md。
   - id: ubiquitous_term
     display_name: Ubiquitous Term
     prefix: UBQ
@@ -261,6 +302,18 @@ item_types:
         display_name: Avoid
         field_type: !list text
         required: false
+      # index.md の節。見出しと並び順は dev/scripts/okf-index.sh の表が持つ。
+      - name: section
+        display_name: Section
+        field_type: !enum
+          values:
+            - core
+            - input-output
+            - modes
+            - kinds
+            - state
+            - errors
+        required: true
       - *status_field
       - *stale_after_field
     allowed_targets: []

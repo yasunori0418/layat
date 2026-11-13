@@ -2,6 +2,7 @@
 id: "UBQ-6e764ddd-03ce-4bd1-be53-64d651783241"
 type: ubiquitous_term
 name: "src"
+section: input-output
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"
