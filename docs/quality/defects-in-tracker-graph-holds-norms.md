@@ -25,7 +25,7 @@ specification_ja: |
   それを強制できる起票の使い方では、分類を経ない起票が提供されてはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:22:37+09:00"
+  at: "2026-11-13T14:34:03+09:00"
 ---
 # 欠陥はトラッカーが持ちドキュメントグラフは規範のみを持つ。起票は分類語彙を経由する
 
@@ -51,7 +51,7 @@ generated:
 語彙の具体（ラベル名と各ラベルの意味）・欠陥 issue に書く項目の様式・トラッカーの操作手順は
 本 item の規範に含めない。`docs/agents/triage-labels.md` と `docs/agents/issue-tracker.md` が
 持つ。規範がグラフ側だけに置かれることの裏返しの規範は
-[規範は 1 ファイル 1 item のグラフが持ち、概要文書は索引に縮退させる](normative-items-placement-and-authoring.md) が持つ。
+[規範は 1 ファイル 1 item のグラフが持ち、item の一覧は生成した index.md だけが持つ](normative-items-placement-and-authoring.md) が持つ。
 
 ## 出典
 

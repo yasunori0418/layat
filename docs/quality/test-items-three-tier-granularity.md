@@ -2,23 +2,21 @@
 id: "QA-bf975ac7-1e84-4f75-9fe7-8d6154d69ba1"
 type: quality
 name: "テスト系 item は、テスト資産・検証テーマ・脅威の 3 段の粒度で起こす"
-description: "テスト系 item は CASE をテスト資産・TC を検証テーマ・RISK を脅威の単位で起こし、概要文書へ索引しない"
+description: "テスト系 item は CASE をテスト資産・TC を検証テーマ・RISK を脅威の単位で起こす"
 status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 specification: |
   A `test_case` SHALL be raised one per test asset (a test file, an e2e scenario or a flake
   check). A `test_condition` SHALL be raised per verification theme, and a `risk` SHALL be
-  raised per threat that groups `test_condition`s. A `risk`, `test_condition` or
-  `test_case` SHALL NOT be indexed in an overview document.
+  raised per threat that groups `test_condition`s.
 specification_ja: |
   `test_case` はテスト資産（テストファイル・e2e シナリオ・flake check）1 つにつき 1 件で
   起こさなければならない。`test_condition` は検証テーマごとに、`risk` は `test_condition` を
-  束ねる脅威ごとに起こさなければならない。`risk`・`test_condition`・`test_case` を概要文書へ
-  索引してはならない。
+  束ねる脅威ごとに起こさなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-11T00:57:16+09:00"
+  at: "2026-11-13T14:34:03+09:00"
 ---
 # テスト系 item は、テスト資産・検証テーマ・脅威の 3 段の粒度で起こす
 
@@ -40,11 +38,6 @@ generated:
 
 - CASE -`covers`→ TC -`mitigates`→ RISK -`threatens`→ REQ / DSG
 - CASE -`follows`→ TP
-
-### risk・TC・CASE は概要文書へ索引しない
-
-risk・TC・CASE は `sara query` / `sara report` で辿る。`docs/spec.md` のリンク集に載せるのは
-`requirement`・`quality`・`test_plan` までとする。
 
 ## 出典
 

@@ -1,38 +1,41 @@
 ---
 id: "QA-67715bb3-1162-4ccf-8441-2f44257a57da"
 type: quality
-name: "規範は 1 ファイル 1 item のグラフが持ち、概要文書は索引に縮退させる"
+name: "規範は 1 ファイル 1 item のグラフが持ち、item の一覧は生成した index.md だけが持つ"
 status: stable
 derives_from:
   - "SOL-9fcd1d6e-6204-42e6-92bb-1faf966f0b3e"
 specification: |
-  Normative content SHALL be held by the item graph alone, one item per file, and the
-  overview documents SHALL be reduced to indexes that link to those items rather than
-  restating them. Each item SHALL be placed under the type its norm binds, following the
-  project's discrimination rule, and its identifier SHALL be drawn from the project's
-  numbering command rather than assigned by hand, so that parallel lanes cannot collide on
-  a number. An item whose type carries a specification SHALL state that norm in English and
+  Normative content SHALL be held by the item graph alone, one item per file. The list of
+  items of each type SHALL be held only by the index.md generated from the graph, and a
+  hand-written document SHALL NOT keep such a list or restate the norms of the items.
+  Each item SHALL be placed under the type its norm binds, following the project's
+  discrimination rule, and its identifier SHALL be drawn from the project's numbering
+  command rather than assigned by hand, so that parallel lanes cannot collide on a number.
+  An item whose type carries a specification SHALL state that norm in English and
   SHALL carry the corresponding Japanese norm alongside it; neither field SHALL be treated
   as a gloss of the other.
 specification_ja: |
-  規範的な内容は 1 ファイル 1 item の item グラフだけが持たなければならず、概要文書は
-  それらの item へリンクする索引へ縮退させなければならない（内容を書き写してはならない）。
+  規範的な内容は 1 ファイル 1 item の item グラフだけが持たなければならない。型ごとの item の
+  一覧は、グラフから生成した index.md だけが持たなければならず、手書きの文書はその一覧を持っては
+  ならず、item の規範を書き写してもならない。
   各 item は、その規範が何を縛るかに応じてプロジェクトの型判別規約に従った型の下へ配置され
   なければならず、その識別子は手で振るのではなくプロジェクトの採番コマンドから採らなければ
   ならない（並列レーンで採番が衝突しないようにするため）。specification を持つ型の item は、
   その規範を英語で述べなければならず、対応する日本語の規範文を併記しなければならない。
   いずれの欄も他方の訳注として扱ってはならない。
 generated:
-  by: "claude-code/claude-fable-5-2"
-  at: "2026-11-11T22:30:00+09:00"
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-13T14:34:03+09:00"
 ---
-# 規範は 1 ファイル 1 item のグラフが持ち、概要文書は索引に縮退させる
+# 規範は 1 ファイル 1 item のグラフが持ち、item の一覧は生成した index.md だけが持つ
 
 ## 仕様
 
-規範を概要文書と item の両方に書くと二重管理になり、改訂で片方だけが古くなる。規範の所在を
-グラフ側に一本化し、概要文書は通読の起点としての索引に徹する。この分担は文書の分量ではなく
-**どちらを正とするか**の宣言であり、概要文書へ仕様を書き足すことは規範の複製にあたる。
+規範を手書きの文書と item の両方に書くと二重管理になり、改訂で片方だけが古くなる。規範の所在を
+グラフ側に一本化し、型ごとの item の一覧はグラフから生成した index.md が持つ。各ディレクトリの
+手書きの README.md は、item から導けない全体像の散文だけを持つ。この分担は文書の分量ではなく
+**どちらを正とするか**の宣言であり、README.md へ仕様や item の一覧を書き足すことは規範の複製にあたる。
 
 **配置と採番を規約で固定する**のが要点になる。型を取り違えた item は形が正しい限り機械検証を
 検出されずに通るため（[ドキュメントグラフのトレーサビリティは機械的に検証する](document-graph-mechanically-verified.md) の検証は参照の解決・一意性・非循環しか見ない）、正しい型へ置く
