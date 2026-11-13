@@ -1,7 +1,7 @@
 # layat E2E ハーネス（非 NixOS）
 
 実 nix を使って `layat` を end-to-end に駆動し、**「非 NixOS でも nix さえあれば動く」**という
-主張を検証する bash ハーネス（→ `docs/design.md`「テスト戦略」・[テストを sandbox 可否で flake check と E2E に分ける](../../docs/adr/test-strategy-layers.md)）。
+主張を検証する bash ハーネス（→ `docs/design/README.md`「テスト戦略」・[テストを sandbox 可否で flake check と E2E に分ける](../../docs/adr/test-strategy-layers.md)）。
 
 `lib`（nix-unit / namaka の評価テスト）や配置エンジン（Go の tmpdir 統合テスト）が
 **nix を使わずに**純ロジック / FS 操作を検証するのに対し、ここでは **flake entrypoint からの
