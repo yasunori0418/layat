@@ -178,7 +178,8 @@ Issue は GitHub Issues で管理し、`gh` コマンドで操作する。epic�
 ### Triage labels
 
 トリアージのラベルは `needs-triage` / `needs-info` / `ready-for-agent` / `ready-for-human` / `wontfix` の 5 つ。
-意味と、構造ラベル（`tracking` / `epic` / `task`）は `docs/agents/triage-labels.md`。
+意味と、構造ラベル（`tracking` / `epic` / `task`）・種別のラベル（`bug` / `documentation` /
+`enhancement`）・欠陥の分類のラベル（`risk-expected` / `risk-unexpected`）は `docs/agents/triage-labels.md` が持つ。
 
 ### Ubiquitous language
 

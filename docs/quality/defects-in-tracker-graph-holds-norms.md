@@ -13,7 +13,9 @@ specification: |
   condition would have caught it earlier SHALL be asked, and any item found missing SHALL
   be added, so that the risk and test analysis does not decay into a static snapshot. An
   issue SHALL be classified by the project's fixed vocabulary, and on the filing routes
-  where the tracker can enforce this, filing without it SHALL NOT be offered.
+  where the tracker can enforce this, filing without it SHALL NOT be offered. When a defect
+  is closed, whether it could be traced to a risk or test condition that already existed
+  when the defect was filed SHALL be recorded in a fixed vocabulary.
 specification_ja: |
   製品に見つかった欠陥はイシュートラッカーに記録されなければならず、ドキュメントグラフの
   item として記録してはならない（グラフが持つのは出来事ではなく規範であるため）。欠陥が
@@ -22,10 +24,12 @@ specification_ja: |
   test_condition の欠落がなかったかを問わなければならず、欠落が見つかった item は追加され
   なければならない（リスク分析とテスト分析が静的なスナップショットへ劣化しないようにする
   ため）。issue はプロジェクトが定める分類語彙によって分類されなければならず、トラッカーが
-  それを強制できる起票の使い方では、分類を経ない起票が提供されてはならない。
+  それを強制できる起票の使い方では、分類を経ない起票が提供されてはならない。欠陥を
+  クローズするときは、欠陥を起票した時点で既にあった risk または test_condition に辿れた
+  かを、固定した語彙で記録しなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-13T14:34:03+09:00"
+  at: "2026-11-14T01:48:40+09:00"
 ---
 # 欠陥はトラッカーが持ちドキュメントグラフは規範のみを持つ。起票は分類語彙を経由する
 
@@ -48,6 +52,11 @@ generated:
 できる度合いが違うため。フォームを経由する使い方は未分類の起票を提供しない形にでき、コマンド
 経由の起票はそうできない。後者を理由に前者の強制を緩めることはしない。
 
+クローズ時に既存の risk か test_condition に辿れたかを記録するのは、リスク分析が欠陥を
+どれだけ予見できていたかを後から数えるため。判定は欠陥を起票した時点の状態で行う。クローズ前の
+フィードバックで item を足した後の状態で判定すると、足した欠陥も辿れたことになり、予見できていた
+欠陥と区別できない。
+
 語彙の具体（ラベル名と各ラベルの意味）・欠陥 issue に書く項目の様式・トラッカーの操作手順は
 本 item の規範に含めない。`docs/agents/triage-labels.md` と `docs/agents/issue-tracker.md` が
 持つ。規範がグラフ側だけに置かれることの裏返しの規範は
@@ -55,7 +64,7 @@ generated:
 
 ## 出典
 
-[欠陥はグラフに置かず GitHub Issues で管理する](../sara-adr/defects-in-github-issues.md)、[欠陥 issue のクローズ時にテスト系 item の欠落を追補する](../sara-adr/defect-close-backfills-risks.md) が置いた方針と、
+[欠陥はグラフに置かず GitHub Issues で管理する](../sara-adr/defects-in-github-issues.md)、[欠陥 issue のクローズ時にテスト系 item の欠落を追補する](../sara-adr/defect-close-backfills-risks.md)、[欠陥を既存の RISK / TC に辿れたかで分類して数える](../sara-adr/defects-classified-by-risk-foresight.md) が置いた方針と、
 `docs/agents/issue-tracker.md` の Defect issues 節（片方向参照・クローズ前の shift-left
 ループ）、`docs/agents/triage-labels.md` の分類語彙、`.github/ISSUE_TEMPLATE/config.yml` の
 blank issue 禁止設定が実運用してきた規範を、Issue #272 で quality item として立てたもの。
