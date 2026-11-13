@@ -14,7 +14,7 @@ satisfies:
   - "QA-aa70fff6-3e0a-4163-bf4c-97f1730f7496"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-13T14:33:07+09:00"
+  at: "2026-11-13T14:53:19+09:00"
 ---
 # トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）
 
@@ -42,7 +42,7 @@ generated:
 | `dev/tests/link-text.sh` | リンク文字列の裸のタグと、リンク直後の name の繰り返しを検出する。文書とコードにある許可外の場所のフル ID と 8 文字省略形も検出する |
 
 契約テストを同じジョブへ載せるのは、テストが「人が思い出したときだけ動く」状態を避けるため。
-表の `dev/tests/` の 11 件のうち `adr-supersede.sh` を除く 10 件は dev flake の `checks.*` としても露出しているが、CI の `flake-check` はルート
+表の `dev/tests/` の 10 件のうち `adr-supersede.sh` を除く 9 件は dev flake の `checks.*` としても露出しているが、CI の `flake-check` はルート
 flake を対象にするため到達しない。CI の明示ステップとして固定する。
 
 `sara` ジョブは契約テストに続けて、実物のグラフに `sara-fresh` を実行し、一覧をログとジョブのサマリーへ出す。
