@@ -56,7 +56,7 @@ func TestLoadRejectsNewerSchema(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for schemaVersion 2, got nil")
 	}
-	// The sentinel must be detectable via errors.Is so the CLI can add skew guidance (→ docs/spec.md).
+	// The sentinel must be detectable via errors.Is so the CLI can add skew guidance.
 	if !errors.Is(err, ErrSchemaVersionUnsupported) {
 		t.Errorf("error should wrap ErrSchemaVersionUnsupported, got %v", err)
 	}

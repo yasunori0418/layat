@@ -47,8 +47,7 @@ func TestApplyDryRunNoSideEffects(t *testing.T) {
 }
 
 // TestApplyDryRunConflict verifies that when the target is occupied by a regular file a
-// conflict is recorded in the plan and the FS is left unchanged (the CLI decides exit 2 ·
-// → docs/spec.md exit code table).
+// conflict is recorded in the plan and the FS is left unchanged (the CLI decides exit 2).
 func TestApplyDryRunConflict(t *testing.T) {
 	root := realTempDir(t)
 	state := realTempDir(t)

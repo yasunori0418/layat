@@ -32,7 +32,7 @@ in
               Attrset of placement definitions. The attribute key = the placement target
               (identifier), and each value is an entry submodule (src / subpath / target /
               method). The type is shared with lib/types.nix, and unknown keys are an eval
-              error (→ docs/spec.md "entries schema").
+              error.
             '';
           };
           options.subdir = lib.mkOption {
