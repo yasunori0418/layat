@@ -1,5 +1,5 @@
 name: ドキュメント改善
-description: コンセプト・設計・仕様の README.md / ADR / 用語（ubiquitous-language/）の誤り・不整合・分かりにくさ
+description: README.md・item・ADR と SDR・用語（ubiquitous-language/）・運用文書の誤り・不整合・分かりにくさ
 labels: ["documentation", "needs-triage"]
 body:
   - type: dropdown
@@ -8,11 +8,16 @@ body:
       label: 対象ドキュメント
       multiple: true
       options:
-        - docs/README.md
-        - docs/design/README.md
-        - docs/requirements/README.md
-        - docs/adr/
+        - docs/README.md（コンセプト）
+        - docs/requirements/（仕様の README と item）
+        - docs/design/（設計の README と item）
+        - docs/solution/・docs/use-cases/
+        - docs/quality/・docs/infrastructure/
+        - docs/risks/・docs/test/・docs/test-plan/
+        - docs/adr/・docs/sara-adr/
         - docs/ubiquitous-language/
+        - docs/agents/・docs/model.md（運用文書）
+        - README.md・README.ja.md
         - その他
     validations:
       required: true
