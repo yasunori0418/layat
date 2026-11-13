@@ -14,20 +14,7 @@ layat が「何を満たすべきか」の全体像を述べる散文。`require
 >   二重管理になり、改訂時に片方だけ古くなる
 > - 本文書へ仕様を書き足さない
 > - item を横断して検索・追跡するには `sara query`（→ `CLAUDE.md` の「item を辿る（`sara query`）」節）を使う
->
-> **item の `## 出典` は概要文書の現行章立てを指さない。** 出典が記録するのは分割時点
-> （epic #203）の原文の記述箇所であり、節見出しに限らず表の行・blockquote・箇条書きの項も
-> 指す。縮退で章立てを再編したため、出典の節名の多くは現行の見出しと一致しない。item から
-> 現行仕様へ辿るのは出典ではなく relation（`sara query`）の役割。
->
-> 原文を読むときは、**出典が名指しする文書**（`docs/spec.md` / `docs/design.md` /
-> `docs/concept.md` のいずれか。以下 `<doc>`）の縮退コミットの親を見る。3 文書とも同じ形の
-> subject（`docs(<scope>): <doc> を概要 + item リンク集へ縮退する`）を持つ。
->
-> ```bash
-> git log --oneline -- <doc>        # 「概要 + item リンク集へ縮退する」の <ref> を探す
-> git show <ref>^:<doc>             # その親が縮退前の原文
-> ```
+> - item の `## 出典` の読み方は `docs/model.md` の「item の `## 出典` の読み方」の節に従う
 
 ---
 

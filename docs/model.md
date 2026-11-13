@@ -197,3 +197,16 @@ sara が型を持たない入れ子のキー（`generated` / `verified` / `sourc
 `refines` / `derives_from` / `satisfies` / `depends_on` / `justifies` / `supersedes` は組み込み由来、
 `references` / `threatens` / `mitigates` / `covers` / `follows` は独自定義。
 決定を変えるときは ADR を丸ごと書き直して `supersedes` で置き換える。
+
+## item の `## 出典` の読み方
+
+item の `## 出典` は、分割した時点（epic #203）で原文のどこにあったかを記録している。出典が名指しする
+`docs/spec.md`・`docs/design.md`・`docs/concept.md`・`docs/glossary.md` は、現在のリポジトリに無い。
+item から現行の仕様へ辿るには relation（`sara query`）を使う。
+
+原文を読むときは、出典が名指しする文書（以下 `<doc>`）の縮退コミットの親を見る。
+
+```bash
+git log --oneline -- <doc>        # 「概要 + item リンク集へ縮退する」の <ref> を探す
+git show <ref>^:<doc>             # その親が縮退前の原文
+```

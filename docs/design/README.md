@@ -17,8 +17,7 @@
 > - 本文書へ設計を書き足さない
 > - 「何を満たすべきか」は `requirement` の領分で本文書は扱わない（→ `docs/requirements/README.md`）
 > - item を横断して検索・追跡するには `sara query`（→ `CLAUDE.md` の「item を辿る（`sara query`）」節）を使う
-> - item の `## 出典` は本文書の現行章立てを指さない。原文の読み方を含め `docs/spec.md` の
->   同項が正（同項は 3 文書共通の手順として書いてある）
+> - item の `## 出典` の読み方は `docs/model.md` の「item の `## 出典` の読み方」の節に従う
 
 ---
 
