@@ -201,10 +201,11 @@ sara が型を持たない入れ子のキー（`generated` / `verified` / `sourc
 ## item の `## 出典` の読み方
 
 item の `## 出典` は、item へ分割した時点で原文のどこにあったかを記録している。出典が名指しする
-`docs/spec.md`・`docs/design.md`・`docs/concept.md`・`docs/glossary.md` は、現在のリポジトリに無い。
-item から現行の仕様へ辿るには relation（`sara query`）を使う。
+`docs/spec.md`・`docs/design.md`・`docs/concept.md`・`docs/glossary.md`・`docs/publication-roadmap.md` は、
+現在のリポジトリに無い。item から現行の仕様へ辿るには relation（`sara query`）を使う。
 
-原文を読むときは、出典が名指しする文書を縮退させたコミットの親を見る。
+原文を読むときは、出典が名指しする文書を縮退させたコミットの親を見る。`docs/publication-roadmap.md` は
+縮退させずに削除したので、表には削除したコミットを載せている。原文はそのコミットの親にある。
 
 | 出典が名指しする文書 | 縮退させたコミット |
 |---|---|
@@ -212,6 +213,7 @@ item から現行の仕様へ辿るには relation（`sara query`）を使う。
 | `docs/design.md` | `705766d1` |
 | `docs/concept.md` | `686f9604` |
 | `docs/glossary.md` | `341d4ed3` |
+| `docs/publication-roadmap.md` | `5aa5b6a0` |
 
 ```bash
 git show cf76bf89^:docs/spec.md   # 縮退させたコミットの親が、縮退前の原文
