@@ -139,7 +139,7 @@ The term
 definition.
 EOF
 
-# section の並びがファイル名の並びと逆になる語。節は表の順、節の中はファイル名順に並ぶ。
+# section の並びがファイル名の並びと逆になる語。節は表の順、節の中はファイル名順に並ぶ。z core は name_ja を持つ。
 cat > "$fixture/docs/ubiquitous-language/a-mode.md" <<'EOF'
 ---
 id: "UBQ-66666666-6666-4666-8666-666666666666"
@@ -157,6 +157,7 @@ cat > "$fixture/docs/ubiquitous-language/z-core.md" <<'EOF'
 id: "UBQ-77777777-7777-4777-8777-777777777777"
 type: ubiquitous_term
 name: "z core"
+name_ja: "中核[語]"
 section: core
 status: stable
 ---
@@ -268,7 +269,7 @@ want_terms=$(cat <<'EOF'
 ## Core placement abstraction
 
 * [term](./term.md) - The term definition.
-* [z core](./z-core.md) - A core term.
+* [z core（中核\[語\]）](./z-core.md) - A core term.
 
 ## Placement modes
 
@@ -297,7 +298,14 @@ else
   sed 's/^/    /' "$fixture/docs/requirements/index.md"
 fi
 
-# --- (6) 表に無い section の値で exit 2 ----------------------------------------
+# --- (6) 用語のリンク文字列に name_ja を添える --------------------------------
+
+expect_line "name_ja を持つ語はリンク文字列を「name（name_ja）」にし、角括弧をエスケープする" docs/ubiquitous-language/index.md \
+  '* [z core（中核\[語\]）](./z-core.md) - A core term.'
+expect_line "name_ja を持たない語はリンク文字列を name だけにする" docs/ubiquitous-language/index.md \
+  '* [term](./term.md) - The term definition.'
+
+# --- (7) 表に無い section の値で exit 2 ----------------------------------------
 
 # model.yaml の写しの requirement の enum に値を 1 つ足し、sara check は通るが生成器の表に無い値を作る。
 unknown="$work/unknown"
@@ -312,11 +320,11 @@ if [ "$rc" -eq 2 ] && grep -qF zz-unlisted-section "$work/unknown.err" &&
   cmp -s "$unknown/docs/requirements/index.md" "$work/unknown-before.md"; then
   pass "表に無い section の値は標準エラーにその値を出し、index.md を書かずに exit 2 で止まる"
 else
-  fault "(6) 表に無い section の値で exit 2 にならない（exit $rc）"
+  fault "(7) 表に無い section の値で exit 2 にならない（exit $rc）"
   sed 's/^/    /' "$work/unknown.err"
 fi
 
-# --- (7) --check は食い違うパスを出して exit 1 を返し、index.md を書き換えない --
+# --- (8) --check は食い違うパスを出して exit 1 を返し、index.md を書き換えない --
 
 # --check を走らせ、exit 1 で出力が期待するパスだけであり、案内が期待する方だけであることを確かめる。
 expect_stale() {
@@ -339,7 +347,7 @@ expect_stale "--check は内容の食い違う index.md のパスを出し、再
 if cmp -s "$fixture/docs/adr/index.md" "$work/edited.md"; then
   pass "--check は既存の index.md を書き換えない"
 else
-  fault "(7) --check が既存の index.md を書き換えた"
+  fault "(8) --check が既存の index.md を書き換えた"
 fi
 
 # 書き出しで内容の食い違いを解消してから、生成対象に無い index.md だけを残す。

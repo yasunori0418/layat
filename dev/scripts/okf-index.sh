@@ -98,7 +98,7 @@ if ! sara check --format json > "$work/graph.json" 2> "$work/graph.err"; then
   exit 2
 fi
 
-# item: <型>\t<docs/ からのディレクトリ>\t<ファイル名>\t<name>\t<description>\t<status>\t<リポジトリ相対パス>\t<section>
+# item: <型>\t<docs/ からのディレクトリ>\t<ファイル名>\t<name>\t<description>\t<status>\t<リポジトリ相対パス>\t<section>\t<name_ja>
 jq -r '.items[]
   | (.file | sub("^\\./"; "")) as $path
   | [ .type,
@@ -108,7 +108,8 @@ jq -r '.items[]
       ((.description // "") | gsub("\\s*\\n\\s*"; " ")),
       (.fields.status // ""),
       $path,
-      (.fields.section // "") ]
+      (.fields.section // ""),
+      (.fields.name_ja // "") ]
   | @tsv' "$work/graph.json" > "$work/items.tsv"
 
 # 節: <型>\t<section の値>\t<見出し>
@@ -152,13 +153,15 @@ cut -f7 "$work/items.tsv" | xargs -r awk '
 ' > "$work/paras.tsv"
 
 # エントリ: <型>\t<docs/ からのディレクトリ>\t<ファイル名>\t<index.md の 1 行>\t<section>
-# リンク文字列に化けないよう name の角括弧だけをエスケープし、説明はそのまま載せる。
+# リンク文字列は name とし、name_ja を持つ用語は「name（name_ja）」にする。
+# リンク文字列に化けないよう角括弧だけをエスケープし、説明はそのまま載せる。
 awk -F '\t' '
   function esc(s) { gsub(/\[/, "\\[", s); gsub(/\]/, "\\]", s); return s }
   NR == FNR { para[$1] = $2; next }
   {
     desc = ($5 != "") ? $5 : para[$7]
-    line = "* [" esc($4) "](./" $3 ")"
+    label = ($1 == "ubiquitous_term" && $9 != "") ? $4 "（" $9 "）" : $4
+    line = "* [" esc(label) "](./" $3 ")"
     if (desc != "") line = line " - " desc
     if (($1 == "adr" || $1 == "sara_adr") && $6 != "") line = line " (" $6 ")"
     print $1 "\t" $2 "\t" $3 "\t" line "\t" $8
