@@ -2,6 +2,7 @@
 id: "REQ-67095391-eab2-45d2-b75b-b428d481bcc2"
 type: requirement
 name: "flake は pure eval で flake.lock が固定し legacy は impure を許容しユーザー責任とする"
+section: cli-reproducibility
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

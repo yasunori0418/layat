@@ -2,6 +2,7 @@
 id: "REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6"
 type: requirement
 name: "reset は profile を触らない FS-only teardown で配置物を無い状態へ戻す"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"

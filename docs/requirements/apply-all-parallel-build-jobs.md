@@ -2,6 +2,7 @@
 id: "REQ-91f0a9a7-c2b2-4cda-8cce-cbf5d8c5d04d"
 type: requirement
 name: "apply --all は build を --jobs の worker pool で先行並列実行し build 失敗 config を部分失敗として集約する"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"

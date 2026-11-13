@@ -2,6 +2,7 @@
 id: "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"
 type: requirement
 name: "engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う"
+section: generations
 status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"

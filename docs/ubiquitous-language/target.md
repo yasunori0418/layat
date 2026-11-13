@@ -2,6 +2,7 @@
 id: "UBQ-575f2527-64a9-4f8b-ae68-1131b053cf66"
 type: ubiquitous_term
 name: "target"
+section: input-output
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

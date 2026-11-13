@@ -2,6 +2,7 @@
 id: "REQ-6911eab6-12b4-457c-9db4-d7430a9e9b3f"
 type: requirement
 name: "target / subpath のパス安全性を評価時に確認する"
+section: lib-input-validation
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

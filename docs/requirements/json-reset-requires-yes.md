@@ -2,6 +2,7 @@
 id: "REQ-2a613337-7646-4ced-8807-e43bca18acf3"
 type: requirement
 name: "reset --json は --yes を必須とし無ければ fail fast する"
+section: cli-json
 status: stable
 derives_from:
   - "UC-403fbe32-b146-401b-8b53-fe67c1e169c5"

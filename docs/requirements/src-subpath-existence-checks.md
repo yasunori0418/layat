@@ -2,6 +2,7 @@
 id: "REQ-9dc7dac7-4e9e-494a-a17b-73853c119653"
 type: requirement
 name: "配置元の実在は判定できる層で確認し、いずれの層でも停止する"
+section: errors
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

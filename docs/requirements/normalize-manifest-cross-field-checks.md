@@ -2,6 +2,7 @@
 id: "REQ-16faf428-77f3-492f-b858-222c5274cbf7"
 type: requirement
 name: "意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する"
+section: lib-input-validation
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

@@ -2,6 +2,7 @@
 id: "REQ-b74a118a-1272-44eb-944c-7725163211c6"
 type: requirement
 name: "engine は第三者依存ゼロの stdlib-only とし内部層に閉じる"
+section: dependencies
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

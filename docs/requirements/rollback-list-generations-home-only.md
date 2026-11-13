@@ -2,6 +2,7 @@
 id: "REQ-05abce3e-9797-432b-b93f-37c55d09afde"
 type: requirement
 name: "rollback と list-generations は home / system mode 限定にする"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"

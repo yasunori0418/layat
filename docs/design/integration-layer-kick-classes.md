@@ -2,6 +2,7 @@
 id: "DSG-98d7fa5d-c590-441a-b682-0ab7afa14233"
 type: design
 name: "engine の起動を entrypoint 駆動とビルド済み manifest の 2 クラスに束ね、統合層の差を link-farm の取得方法だけに閉じる"
+section: module-integration
 status: stable
 satisfies:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"

@@ -2,6 +2,7 @@
 id: "REQ-1dcc9a33-b0f2-43e0-8310-fc4b19e68fe7"
 type: requirement
 name: "marker は判別タグで識別し manifest.json には漏らさない"
+section: lib-input-validation
 status: stable
 derives_from:
   - "UC-01b896b4-04b9-40d0-bf9e-966eaf64c3d4"

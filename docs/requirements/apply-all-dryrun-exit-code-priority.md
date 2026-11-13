@@ -2,6 +2,7 @@
 id: "REQ-b7bb09d6-74c4-44d6-905f-cb5e8383ea32"
 type: requirement
 name: "apply --all --dryrun の終了コードは error を conflict より優先する"
+section: cli-output
 status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"

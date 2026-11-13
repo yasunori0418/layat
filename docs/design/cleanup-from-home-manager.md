@@ -2,6 +2,7 @@
 id: "DSG-0b94308c-6b15-46d1-854c-5945ae587b0d"
 type: design
 name: "配置と cleanup のアルゴリズムは home-manager の linkGeneration / cleanup を範として Go で再実装する"
+section: core-logic
 status: stable
 satisfies:
   - "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"

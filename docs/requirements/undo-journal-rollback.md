@@ -2,6 +2,7 @@
 id: "REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940"
 type: requirement
 name: "途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す"
+section: placement-rollback
 status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"

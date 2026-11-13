@@ -2,6 +2,7 @@
 id: "REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4"
 type: requirement
 name: "mkManifest は配置データを生成する純粋関数である"
+section: lib-mkmanifest
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

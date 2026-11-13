@@ -2,6 +2,7 @@
 id: "REQ-62eda895-efd4-4eaf-a58b-600e8637da75"
 type: requirement
 name: "symlink farm の GC アンカー名は target のハッシュとする"
+section: manifest-schema
 status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"

@@ -2,6 +2,7 @@
 id: "REQ-d1b5b3f5-10a0-400d-9f03-ba00c63d1c34"
 type: requirement
 name: "mkManifest 自身が evalModules で入力を確認する単一の箇所になる"
+section: lib-input-validation
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

@@ -2,6 +2,7 @@
 id: "REQ-fea038de-55eb-45ac-87fc-ec3a7287592a"
 type: requirement
 name: "stdout は機械可読出力を専有しレポートと warning は stderr へ出す"
+section: cli-output
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

@@ -2,6 +2,7 @@
 id: "REQ-9fca28c9-d3b1-4ad7-8f24-13b2ec7aeab2"
 type: requirement
 name: "巻き戻し自体の失敗は best-effort で続行し、全件を stderr へ報告して停止する"
+section: placement-rollback
 status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"

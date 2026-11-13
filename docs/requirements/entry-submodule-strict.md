@@ -2,6 +2,7 @@
 id: "REQ-3e446ad9-a6f4-4229-b5c5-184754b0ef51"
 type: requirement
 name: "entry submodule は strict とし未知キーと旧名を評価時エラーにする"
+section: entries-schema
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

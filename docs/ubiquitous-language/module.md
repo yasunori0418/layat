@@ -2,6 +2,7 @@
 id: "UBQ-57c32ea5-8b3d-4b5d-b1f8-daee58ecbe40"
 type: ubiquitous_term
 name: "module"
+section: core
 status: stable
 name_ja: "モジュール"
 generated:

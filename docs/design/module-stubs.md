@@ -2,6 +2,7 @@
 id: "DSG-0e186e89-c8c6-4bca-9daa-03855e8d5cda"
 type: design
 name: "NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする"
+section: flake-outputs
 status: stable
 satisfies:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"

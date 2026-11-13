@@ -2,6 +2,7 @@
 id: "REQ-6be1cbf1-6c6e-498b-8acb-7f4b80037169"
 type: requirement
 name: "layat init は nix flake init -t への透明なラッパーとしファイルを生成しない"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"

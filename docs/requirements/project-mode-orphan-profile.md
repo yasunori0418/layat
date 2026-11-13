@@ -2,6 +2,7 @@
 id: "REQ-d41b1d0a-c6d5-41cc-93f9-e5cc7f152da4"
 type: requirement
 name: "孤児 profile は backref で逆引き可能なまま放置許容とし、`layat prune` が root 不在の系列を削除する"
+section: generations
 status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"

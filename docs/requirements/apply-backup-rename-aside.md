@@ -2,6 +2,7 @@
 id: "REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b"
 type: requirement
 name: "apply --backup は配置を塞ぐ記録外実体を rename 退避してから配置する"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

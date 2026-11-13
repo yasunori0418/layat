@@ -2,6 +2,7 @@
 id: "DSG-92f54490-872a-42ac-bbd7-d06e9ee381c6"
 type: design
 name: "legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する"
+section: flake-outputs
 status: stable
 satisfies:
   - "REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da"

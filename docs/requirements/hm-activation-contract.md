@@ -2,6 +2,7 @@
 id: "REQ-8085f194-c903-4ecb-abd8-c719fe7b3292"
 type: requirement
 name: "home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める"
+section: modules
 status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"

@@ -2,6 +2,7 @@
 id: "REQ-0d1f557b-7ae7-41ea-b17b-cdb5c80935d4"
 type: requirement
 name: "system mode は root を / に解決し、変更系操作の前に euid 0 を確認し、profile と last-applied 記録を system 基底に置く"
+section: root-resolution
 status: stable
 specification: |
   When the root kind is `system`, the engine SHALL resolve the placement root to `/`, a

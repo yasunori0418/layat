@@ -2,6 +2,7 @@
 id: "UBQ-12218337-953b-40c8-b9ec-6d8ee8ec0d4e"
 type: ubiquitous_term
 name: "subpath"
+section: input-output
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

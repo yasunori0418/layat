@@ -2,6 +2,7 @@
 id: "DSG-f1d4c295-54ae-4def-951c-901b42dea008"
 type: design
 name: "buildEnv の合成環境は entry の src に置く配置 idiom で扱い、環境変数の配線は利用者側の idiom で行う"
+section: flake-outputs
 status: stable
 satisfies:
   - "REQ-99ca5381-6c53-426c-b145-7b4297c53868"

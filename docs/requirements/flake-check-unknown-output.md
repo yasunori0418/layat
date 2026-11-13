@@ -2,6 +2,7 @@
 id: "REQ-d0aef5af-e922-400b-b250-ca38719c480b"
 type: requirement
 name: "layat カスタム output は nix flake check の unknown 警告を許容し主検証は nix build で行う"
+section: cli-reproducibility
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

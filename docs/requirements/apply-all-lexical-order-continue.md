@@ -2,6 +2,7 @@
 id: "REQ-4cbd9a0d-9f94-4747-8881-56020dc6d5af"
 type: requirement
 name: "apply --all は選択された config を並列に適用し、集約表示と results[] を辞書順にし、部分失敗でも続行して最後に集約する"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"

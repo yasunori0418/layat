@@ -2,6 +2,7 @@
 id: "REQ-c6891aeb-13c0-4ae7-9ad1-5c343735266a"
 type: requirement
 name: "HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる"
+section: modules
 status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"

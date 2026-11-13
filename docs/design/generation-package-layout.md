@@ -2,6 +2,7 @@
 id: "DSG-f8d9bba5-cfd5-4a19-b1fd-fd8ecc8a1814"
 type: design
 name: "internal/generation は契約・Generation 型・FS ベースの Fake を親パッケージに、nix-env 実装を nixprofile サブパッケージに置き、engine は Backend 1 フィールドで受ける"
+section: layers
 status: stable
 satisfies:
   - "REQ-833205ca-adfc-4c86-bf66-ae4d8fe4885b"

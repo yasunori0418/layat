@@ -2,6 +2,7 @@
 id: "UBQ-fbb72ad3-f0d8-4403-8775-705fb0275ade"
 type: ubiquitous_term
 name: "prebuilt"
+section: core
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

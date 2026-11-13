@@ -2,6 +2,7 @@
 id: "REQ-97c1e088-a17e-46d9-a9a1-83d1757d0f7d"
 type: requirement
 name: "mkManifest の引数は必須の pkgs / entries / root と任意の identity とする"
+section: lib-mkmanifest
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

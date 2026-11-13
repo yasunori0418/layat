@@ -2,6 +2,7 @@
 id: "REQ-60e6b49c-9ba1-4552-a0ec-d340421ec281"
 type: requirement
 name: "mkManifest は manifest.json と symlink farm を含む store オブジェクトを返す"
+section: lib-mkmanifest
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

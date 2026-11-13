@@ -2,6 +2,7 @@
 id: "UBQ-f7799808-267e-40c4-aaa7-d85e568f11c4"
 type: ubiquitous_term
 name: "`standalone`"
+section: core
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

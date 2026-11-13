@@ -2,6 +2,7 @@
 id: "DSG-17db0831-d7da-446d-ba3e-404df64c582d"
 type: design
 name: "層を CLI / engine / lib / common.nix / 統合層の 5 段に積み、依存を呼ぶ側から呼ばれる側への一方向に限る"
+section: layers
 status: stable
 satisfies:
   - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"

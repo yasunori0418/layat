@@ -2,6 +2,7 @@
 id: "UBQ-e6466d28-6ab6-43be-a370-cca82eb1cfdb"
 type: ubiquitous_term
 name: "root"
+section: input-output
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

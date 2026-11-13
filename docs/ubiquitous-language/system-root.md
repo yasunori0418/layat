@@ -2,6 +2,7 @@
 id: "UBQ-9425b2c7-3f62-4994-9269-cd79dd1261f7"
 type: ubiquitous_term
 name: "systemRoot"
+section: modes
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

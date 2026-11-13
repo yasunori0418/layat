@@ -2,6 +2,7 @@
 id: "DSG-aeb5e219-4784-4950-845c-35f9bab9179c"
 type: design
 name: "modules は common.nix に共通オプションを集約し、統合層ごとに 1 ファイルへ分ける"
+section: project-layout
 status: stable
 satisfies:
   - "REQ-fc1c7ce6-dc9d-4dd3-98f5-7877d9f99d10"

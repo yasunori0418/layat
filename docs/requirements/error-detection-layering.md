@@ -2,6 +2,7 @@
 id: "REQ-c5dfcae6-6094-4850-99e5-bf14530bc60a"
 type: requirement
 name: "設定の誤りは評価時に、実体の不整合は engine 実行時に検出する層分けを守る"
+section: errors
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

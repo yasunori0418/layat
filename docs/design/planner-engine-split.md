@@ -2,6 +2,7 @@
 id: "DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68"
 type: design
 name: "配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する"
+section: core-logic
 status: stable
 satisfies:
   - "REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303"

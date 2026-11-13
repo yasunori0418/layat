@@ -2,6 +2,7 @@
 id: "REQ-774cef80-2872-4ea1-937b-a0fbabc305a9"
 type: requirement
 name: "要求された操作が成立しないときは CLI がエラーで停止し、暗黙のフォールバックを採らない"
+section: errors
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

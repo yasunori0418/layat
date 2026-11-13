@@ -2,6 +2,7 @@
 id: "REQ-61c05e09-0bde-4f74-9a96-03185f9df606"
 type: requirement
 name: "--root は全モード共通で解決 root を明示上書きする"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

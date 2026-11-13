@@ -2,6 +2,7 @@
 id: "REQ-fc64de4c-c82b-419c-8706-07d8d97daa37"
 type: requirement
 name: "空の entries は正当な全クリアとして扱い、エラーにも警告にもしない"
+section: errors
 status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"

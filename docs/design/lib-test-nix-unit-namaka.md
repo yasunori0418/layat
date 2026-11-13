@@ -2,6 +2,7 @@
 id: "DSG-fb49e36c-eb20-4efa-8cac-88ef0873db8e"
 type: design
 name: "lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する"
+section: test-strategy
 status: stable
 satisfies:
   - "REQ-2b0c2bb8-964f-4e36-a121-c6ea0d4be1c4"

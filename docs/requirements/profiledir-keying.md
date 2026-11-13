@@ -2,6 +2,7 @@
 id: "REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81"
 type: requirement
 name: "profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする"
+section: root-resolution
 status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"

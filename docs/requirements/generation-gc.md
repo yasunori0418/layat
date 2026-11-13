@@ -2,6 +2,7 @@
 id: "REQ-706de717-4e47-471a-a1c0-448635be159c"
 type: requirement
 name: "世代操作は世代バックエンドの契約越しに行い、GC root の間引きと store 解放は nix コマンドへ分けて委譲する"
+section: generations
 status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"

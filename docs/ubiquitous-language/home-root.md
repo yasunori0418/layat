@@ -2,6 +2,7 @@
 id: "UBQ-55db6ca4-63de-437d-a667-a0e71676e9f1"
 type: ubiquitous_term
 name: "homeRoot"
+section: modes
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

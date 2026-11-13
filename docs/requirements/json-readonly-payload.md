@@ -2,6 +2,7 @@
 id: "REQ-fa181aa6-29a2-48c3-ae07-cc1b9a3b0303"
 type: requirement
 name: "読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す"
+section: cli-json
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

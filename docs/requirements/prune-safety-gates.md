@@ -2,6 +2,7 @@
 id: "REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed"
 type: requirement
 name: "prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"

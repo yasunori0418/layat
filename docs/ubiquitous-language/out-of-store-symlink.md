@@ -2,6 +2,7 @@
 id: "UBQ-2340b0fd-6444-4946-94a6-43f874e37615"
 type: ubiquitous_term
 name: "out-of-store symlink"
+section: kinds
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

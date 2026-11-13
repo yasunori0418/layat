@@ -2,6 +2,7 @@
 id: "REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564"
 type: requirement
 name: "engine が叩く外部コマンドは git のみに限る"
+section: architecture
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

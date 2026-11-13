@@ -2,6 +2,7 @@
 id: "REQ-7a71a049-5876-4cfc-a65e-44e9a0349856"
 type: requirement
 name: "--dryrun は root を解決するが flock も pending gcroot も取らない"
+section: cli-flow
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

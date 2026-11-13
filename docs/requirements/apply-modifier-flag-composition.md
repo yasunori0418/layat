@@ -2,6 +2,7 @@
 id: "REQ-687e225f-5046-46db-88fb-f9e527a1e97a"
 type: requirement
 name: "apply 修飾フラグは --all と合成できる"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"

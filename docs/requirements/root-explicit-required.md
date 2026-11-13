@@ -2,6 +2,7 @@
 id: "REQ-4ec3accc-8bb6-461f-9024-dcf0027849e4"
 type: requirement
 name: "root は明示必須で暗黙デフォルトを持たない"
+section: lib-mkmanifest
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

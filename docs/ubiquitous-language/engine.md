@@ -2,6 +2,7 @@
 id: "UBQ-4ddb0597-ec0e-47af-8988-6636b2e5aa29"
 type: ubiquitous_term
 name: "engine"
+section: core
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

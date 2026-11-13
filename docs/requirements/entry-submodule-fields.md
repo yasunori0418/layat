@@ -2,6 +2,7 @@
 id: "REQ-a33a11e3-830d-4142-88ed-4c1fc35e7f74"
 type: requirement
 name: "entry submodule のフィールドは src / subpath / target / method の 4 つとする"
+section: entries-schema
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

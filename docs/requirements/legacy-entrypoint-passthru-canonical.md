@@ -2,6 +2,7 @@
 id: "REQ-c890ce4a-6528-4ab3-ac86-23d7aebff7da"
 type: requirement
 name: "legacy entrypoint は mkShell passthru 形を canonical とし CLI の attr path を分岐させない"
+section: cli-entrypoint
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

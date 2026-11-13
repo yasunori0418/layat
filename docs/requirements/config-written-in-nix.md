@@ -2,6 +2,7 @@
 id: "REQ-1767b250-b475-4276-a551-20dc79e75a30"
 type: requirement
 name: "config は Nix で書き nix build で評価する"
+section: architecture
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

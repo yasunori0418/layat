@@ -2,6 +2,7 @@
 id: "REQ-60c6b7ea-e936-4ce8-bd75-ad35e9c693b9"
 type: requirement
 name: "実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる"
+section: cli-flow
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

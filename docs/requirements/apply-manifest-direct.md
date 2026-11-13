@@ -2,6 +2,7 @@
 id: "REQ-dec58330-6dad-47f7-8f56-2402764a89c7"
 type: requirement
 name: "apply --manifest はビルド済み link-farm を engine へ直接適用し、--all と合成するときは name=link-farm を繰り返す"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"

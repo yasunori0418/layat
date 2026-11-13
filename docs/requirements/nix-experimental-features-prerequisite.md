@@ -2,6 +2,7 @@
 id: "REQ-f9920c87-8551-4aa3-bf03-26fdf4191ed6"
 type: requirement
 name: "nix experimental-features は nix 生成器の前提条件とし、自動付与せず案内エラーで停止する"
+section: cli
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

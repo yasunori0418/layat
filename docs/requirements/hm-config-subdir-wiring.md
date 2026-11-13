@@ -2,6 +2,7 @@
 id: "REQ-068f2fb3-5459-4325-9359-c931b5049e0d"
 type: requirement
 name: "HM モジュールは `configs.<name>.subdir` が非 null の config を homeRoot の subdir 適用形で組み、全 target を `$HOME/<subdir>/` 配下に置く"
+section: modules
 status: stable
 derives_from:
   - "UC-d39c1994-f9a5-4860-80ba-f6e584adaf14"

@@ -2,6 +2,7 @@
 id: "REQ-a0bdf6db-6c0c-476c-916a-61ee4e4510d9"
 type: requirement
 name: "devShell は shellHook から engine を起動する配線で、シェル入室のたびに project mode で配置する"
+section: modules
 status: stable
 derives_from:
   - "UC-19a90989-0ae3-438f-8a75-4e1e2637f81c"

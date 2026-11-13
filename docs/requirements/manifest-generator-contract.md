@@ -2,6 +2,7 @@
 id: "REQ-194e4209-d804-4a4b-a2b8-3d39c6c33729"
 type: requirement
 name: "CLI は manifest 生成器の契約（Discover / Roots / Build / DryBuild）越しに manifest を得る"
+section: cli
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

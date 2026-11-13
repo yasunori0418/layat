@@ -2,6 +2,7 @@
 id: "UBQ-836edea0-547e-4b96-a1b3-783c6ca86bde"
 type: ubiquitous_term
 name: "store manifest"
+section: state
 status: stable
 name_ja: "store マニフェスト"
 generated:

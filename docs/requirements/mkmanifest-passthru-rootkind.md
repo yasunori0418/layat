@@ -2,6 +2,7 @@
 id: "REQ-2f9205ee-cec5-4072-ac3e-890caae79904"
 type: requirement
 name: "mkManifest の返り値は passthru で `rootKind` を露出する"
+section: lib-mkmanifest
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

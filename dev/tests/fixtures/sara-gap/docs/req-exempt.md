@@ -2,6 +2,7 @@
 id: "REQ-cccc0003-0000-4000-8000-00000000000b"
 type: requirement
 name: "risk の対象外とした要求"
+section: architecture
 status: stable
 derives_from:
   - "UC-0ca11001-0000-4000-8000-000000000002"

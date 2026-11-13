@@ -2,6 +2,7 @@
 id: "REQ-38506419-c23d-4fce-b167-30715ce6a69d"
 type: requirement
 name: "apply --all は build 前に選択 config 間の target 衝突を検出して停止する"
+section: cli-subcommands
 status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"

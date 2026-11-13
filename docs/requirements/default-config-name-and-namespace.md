@@ -2,6 +2,7 @@
 id: "REQ-205d744d-5a53-4511-bc09-892ba01d4e6f"
 type: requirement
 name: "config 名 default を慣例の解決先とし専用 layat 名前空間で packages を汚さない"
+section: cli-entrypoint
 status: stable
 derives_from:
   - "UC-1c280dce-7c72-44c0-95ea-d06344f62a47"

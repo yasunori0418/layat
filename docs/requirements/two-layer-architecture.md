@@ -2,6 +2,7 @@
 id: "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
 type: requirement
 name: "layat は CLI とエンジンの 2 層で構成する"
+section: architecture
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

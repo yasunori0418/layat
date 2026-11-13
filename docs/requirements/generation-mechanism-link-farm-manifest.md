@@ -2,6 +2,7 @@
 id: "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"
 type: requirement
 name: "世代は link farm derivation を layat 自前 profile へコミットして積み、前世代 manifest から古くなった配置を除去する"
+section: generations
 status: stable
 derives_from:
   - "UC-0b6f60cb-3e98-4ee7-8929-4d94a29f0af6"

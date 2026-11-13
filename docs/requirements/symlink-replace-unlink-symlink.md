@@ -2,6 +2,7 @@
 id: "REQ-61856da1-8883-401e-ad57-9f326b96d400"
 type: requirement
 name: "既存 symlink の張替えは unlink + symlink の 2 操作で行い冪等な再実行で収束させる"
+section: placement-symlink
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

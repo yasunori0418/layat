@@ -130,6 +130,7 @@ cat > "$fixture/docs/ubiquitous-language/term.md" <<'EOF'
 id: "UBQ-44444444-4444-4444-8444-444444444444"
 type: ubiquitous_term
 name: "term"
+section: core
 status: stable
 ---
 # UBQ-44444444-4444-4444-8444-444444444444: term

@@ -2,6 +2,7 @@
 id: "REQ-8ef34101-8150-4124-92d5-94fabe6b5d90"
 type: requirement
 name: "成功時はデフォルト沈黙とし warning と error は常時 stderr へ出す"
+section: cli-output
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

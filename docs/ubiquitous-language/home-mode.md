@@ -2,6 +2,7 @@
 id: "UBQ-229fb5db-7865-4679-917c-2c067ea571c9"
 type: ubiquitous_term
 name: "home mode"
+section: modes
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

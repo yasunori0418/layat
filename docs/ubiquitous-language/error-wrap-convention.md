@@ -2,6 +2,7 @@
 id: "UBQ-f5a31977-edde-4c0f-881f-28f709b0ef0b"
 type: ubiquitous_term
 name: "error-wrap convention"
+section: errors
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

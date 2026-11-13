@@ -2,6 +2,7 @@
 id: "REQ-08c8f639-790c-4970-a954-c9567538cf9b"
 type: requirement
 name: "root マーカーの subdir 適用形は全 target への前置と等価な評価時の糖衣で、root を動かさない"
+section: lib-mkmanifest
 status: stable
 specification: |
   Each root marker (`layat.lib.projectRoot` / `homeRoot` / `systemRoot`) SHALL remain

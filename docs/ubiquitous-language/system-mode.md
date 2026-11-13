@@ -2,6 +2,7 @@
 id: "UBQ-4cf59313-b234-4534-95c6-d8dd3dbd99a2"
 type: ubiquitous_term
 name: "system mode"
+section: modes
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

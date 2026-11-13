@@ -2,6 +2,7 @@
 id: "UBQ-d0d09a24-f641-447d-b490-d33ca57fe862"
 type: ubiquitous_term
 name: "projectRoot"
+section: modes
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

@@ -2,6 +2,7 @@
 id: "UBQ-285b8069-6e9d-4845-a9b5-634e91338bfe"
 type: ubiquitous_term
 name: "layat CLI"
+section: core
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"

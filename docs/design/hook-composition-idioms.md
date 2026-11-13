@@ -2,6 +2,7 @@
 id: "DSG-f286746c-56ca-4f0c-bb95-7c74d0cea7c0"
 type: design
 name: "hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす"
+section: flake-outputs
 status: stable
 satisfies:
   - "REQ-c1b3ca5f-d2f7-443c-bc4b-b18413ca97b9"

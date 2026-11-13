@@ -2,6 +2,7 @@
 id: "REQ-37b56673-6e40-4a1b-a2a7-5d3c084e3e66"
 type: requirement
 name: "root は 3 マーカーと絶対パス文字列の union を取る"
+section: lib-mkmanifest
 status: stable
 derives_from:
   - "UC-f2436d68-91ff-4c48-b1df-47acefe4f464"

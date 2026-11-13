@@ -2,6 +2,7 @@
 id: "DSG-096dc893-21f4-45e3-9347-986e9275b4d1"
 type: design
 name: "prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする"
+section: core-logic
 status: stable
 satisfies:
   - "REQ-c44433a1-7ee7-459a-9aae-7cc42166876f"
