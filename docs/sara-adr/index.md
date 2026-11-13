@@ -29,6 +29,7 @@
 * [index.md の節は item の section から生成する](./index-sections-from-item-section.md) - requirement・design・ubiquitous_term の index.md は、item が持つ必須の enum フィールド section ごとに節を分けて生成し、見出しと並び順は生成スクリプトの表に置く (stable)
 * [infrastructure 型を改名しない](./infrastructure-name-kept.md) - infrastructure を技術基盤として定義し直した（[infrastructure を技術基盤として再定義し root から外す](infrastructure-redefined-non-root.md)）とき、型名が内容に合っているかが問題になった。違和感の主な原因は、品質系の文書と基盤系の文書の同居だった。 (stable)
 * [infrastructure を技術基盤として再定義し root から外す](./infrastructure-redefined-non-root.md) - infrastructure は root の型として定義されていた。satisfy できる相手が design しか無く、CI やトレーサビリティ検証のような開発の基盤は design の木に属さないため、root にせざるを得なかった。その結果、`docs/infrastructure/` の item は全件が構造上の接続漏れだった。 (stable)
+* [item の一覧は生成した index.md だけが持つ](./item-lists-held-by-generated-index.md) - 型ごとの item の一覧は okf-index.sh が生成する index.md だけが持ち、手書きの文書は一覧を持たず、item を足したときは index.md を再生成するだけにする (stable)
 * [model.yaml で組み込みモデルを全面置換し、汎用の型名を使う](./model-yaml-full-replacement.md) - sara は組み込みのモデル（型と relation）を持ち、カスタムスキーマで置き換えられる。置き換えは全面で、部分的なマージはできない。組み込みには `hardware_requirement` や `system_architecture` のように、layat に対応する実体の無い型が含まれる。 (stable)
 * [OKF v0.2 と互換の frontmatter キーを item に足す](./okf-compatible-frontmatter.md) - OKF v0.2 と互換の frontmatter キーを sara の item に足す方針と、バンドル単位の適合を追わない範囲を決める (stable)
 * [OKF の index.md を sara check の出力から生成してコミットする](./okf-index-generation.md) - OKF の index.md を sara check --format json から生成し、コミットして契約テストで差分ゼロを守る (stable)
