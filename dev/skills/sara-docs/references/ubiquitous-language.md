@@ -55,8 +55,11 @@ sara check --format json | jq -r '
 
 ```bash
 sara-new ubiquitous_term <slug> docs/ubiquitous-language -- \
-  --name '<英語の正名>' --description '<1 文の要約>' [--name-ja '<日本語の正名>'] [--avoid '<綴り>' ...]
+  --name '<英語の正名>' --description '<1 文の要約>' --section '<節の値>' \
+  [--name-ja '<日本語の正名>'] [--avoid '<綴り>' ...]
 ```
 
-`--avoid` は綴り 1 つごとにフラグを繰り返す。起こしたら本文の 4 節を書き、`docs/glossary.md` の
+`--section` は語を載せる index.md の節の値で、省かずに渡す。取りうる値は `docs/model.yaml` の
+`ubiquitous_term` の enum にある。`--avoid` は綴り 1 つごとにフラグを繰り返す。起こしたら本文の
+4 節を書き、`docs/glossary.md` の
 該当する節に 1 行を足して、`sara check` が通ることを確かめる。
