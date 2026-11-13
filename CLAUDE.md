@@ -4,18 +4,24 @@
 
 ## ドキュメント
 
-`docs/` は **README → 概要文書 → item の 3 層構造**。規範的な内容は item（1 ファイル 1 主張の
-Markdown + YAML frontmatter）が持ち、概要文書は通読の入口として全体像と item への索引を担う。
+`docs/` の規範的な内容は item（1 ファイル 1 主張の Markdown + YAML frontmatter）が持つ。
+item のほかに、手で書く README.md と、生成する index.md の 2 種類の文書がある。
 
-### 概要文書（通読の入口）
+### README.md（手書きの概要）
 
-- `docs/concept.md` — コンセプト（solution / use_case への索引）+ 設計の哲学・既存ツールとの比較・north-star・設計の変遷
-- `docs/design.md` — 設計（design item への索引）
-- `docs/spec.md` — 仕様（requirement item への索引）
+- `docs/README.md`: コンセプト。設計の哲学・既存ツールとの比較・north-star・設計の変遷を書く
+- `docs/requirements/README.md`: 仕様の全体像
+- `docs/design/README.md`: 設計の全体像
 
-**これらは概要に縮退済み**。各文書の冒頭に書き方の規約（セクションあたりの散文の行数上限・
+README.md は item の一覧を持たない。各文書の冒頭に書き方の規約（セクションあたりの散文の行数上限・
 詳細は item へリンクし本文に書き下さない）があり、それに従う。仕様・設計の内容を足すときは
-item を新設し、概要文書にはリンクを 1 行足すに留める。
+item を新設する。
+
+### index.md（生成した一覧）
+
+item の一覧は `docs/index.md` と型ごとのディレクトリの index.md が持つ。`requirement`・`design`・
+`ubiquitous_term` の index.md は、frontmatter の `section` ごとに節を分ける。item を足したら
+`dev/scripts/okf-index.sh` で index.md を再生成する（→「OKF 互換の frontmatter」節）。
 
 ### item 群（規範的な内容の所在）
 
@@ -74,8 +80,8 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは [
 持たないテスト資産の規範は `dev/tests/test-doc-exclusions.tsv`**（除外理由付き。ここに無い
 資産が CASE 無しで現れると契約テストが落ちる）。
 
-既存のテスト実装から item を起こすときの粒度（CASE・TC・RISK の 3 段）と、risk / TC / CASE を
-概要文書へ索引しない規則は [テスト系 item は、テスト資産・検証テーマ・脅威の 3 段の粒度で起こす](docs/quality/test-items-three-tier-granularity.md)。
+既存のテスト実装から item を起こすときの粒度（CASE・TC・RISK の 3 段）は
+[テスト系 item は、テスト資産・検証テーマ・脅威の 3 段の粒度で起こす](docs/quality/test-items-three-tier-granularity.md)。
 
 ### ID 規約（フル UUIDv4）
 
@@ -91,10 +97,12 @@ ID とファイル名の形式・フル ID を書く場所・散文と `specific
 - 起票は ADR を含め devShell 同梱の `sara-new` コマンドで行う。採番（`sara init` が引く
   UUIDv4）とファイル名規約の適用を一手で済ませ、`id:` と `file:` の 2 行を返す。連番を手で
   振らない（並列レーンでの採番衝突を構造的に避けるため）
+- `requirement`・`design`・`ubiquitous_term` の起票では、index.md の節の値を `--section` で渡す。
+  取りうる値は `docs/model.yaml` の各型の enum にある
 
   ```bash
   sara-new <型> <slug> <配置ディレクトリ> -- --description <要約> [<sara init のオプション>...]
-  sara-new requirement lock-ordering docs/requirements -- --description '<1 文の要約>'
+  sara-new requirement lock-ordering docs/requirements -- --description '<1 文の要約>' --section '<節の値>'
   ```
 
 ADR の粒度・本文の構成・`justifies` の選定基準は [ADR は 1 本に 1 つの決定を 4 節で書き、justifies は規範の形成に寄与した item へ張る](docs/quality/adr-one-decision-four-sections-justifies-by-contribution.md)、
@@ -174,7 +182,7 @@ Issue は GitHub Issues で管理し、`gh` コマンドで操作する。epic�
 
 ### Ubiquitous language
 
-用語は `docs/glossary.md` の索引から `docs/ubiquitous-language/` の item を辿る。執筆では item の
+用語は `docs/ubiquitous-language/index.md` の一覧から item を辿る。執筆では item の
 `avoid` にある綴りを使わず、必要な語の item が無ければ起こす。手順は dev/skills/sara-docs の
 `references/ubiquitous-language.md`。
 `avoid` の綴りは契約テスト `dev/tests/term-avoid.sh`（textlint + prh）が検出する。対象は docs・README・CLAUDE.md で、ADR・SDR・用語 item は除く。
