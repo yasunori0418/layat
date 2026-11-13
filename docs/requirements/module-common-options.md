@@ -45,7 +45,7 @@ specification_ja: |
   （[root は明示必須で暗黙デフォルトを持たない](root-explicit-required.md)）との差分である。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T22:03:12+09:00"
+  at: "2026-11-14T01:44:52+09:00"
 ---
 # 全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する
 
@@ -88,8 +88,7 @@ layat.backup.suffix :: str     # デフォルト: "layat-backup"
 > あり、本 item の規範に含めた。[rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)・[root は 3 つの marker で表す](../adr/three-root-markers.md) 由来の未追従を [root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md) / [意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](normalize-manifest-cross-field-checks.md) で
 > 扱ったのと同じ扱いである。`configs` の `<name>` 次元が profile の粒度にとって何を意味するか
 > （役割分離が可能になること・`<name>` 次元の導入が非破壊であること）は [HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md)、
-> profile dir をどうキーするかは [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md) の担当。`docs/spec.md` の追従は本 item の
-> 担当範囲外。
+> profile dir をどうキーするかは [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md) の担当。
 >
 > **`layat.configs` のデフォルトを `{}` とする根拠**: 旧決定（現在は [HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md)）は型
 > （`attrsOf (submodule { entries = entriesType; })`）のみを定めデフォルトに触れていなかったが、

@@ -35,7 +35,7 @@ specification_ja: |
   [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md) の担当で、いずれも本 item では規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:31:01+09:00"
+  at: "2026-11-14T01:44:52+09:00"
 ---
 # HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる
 
@@ -58,7 +58,6 @@ generated:
 > `configs.default.entries` への糖衣にする）で反転している。`docs/spec.md` 側がこの改訂に
 > 追従できていないため、分割にあたって原文の MVP 限定を規範へ持ち込まない判断をした
 > （[root は 3 マーカーと絶対パス文字列の union を取る](root-marker-kinds.md) / [意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](normalize-manifest-cross-field-checks.md) で [rootKind に system を足しても schemaVersion を上げない](../adr/system-rootkind-without-version-bump.md)・[root は 3 つの marker で表す](../adr/three-root-markers.md) 由来の未追従を扱ったのと同じ扱い）。
-> `docs/spec.md` の追従は本 item の担当範囲外。
 >
 > **原文の残る規範の所在**: `layat.configs` / `layat.entries` のオプション定義そのものは
 > [全モジュールは共通オプションの同一集合を公開し、entries は configs 経由・root はモジュールが pin する](module-common-options.md)（[HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が定義先を `modules/common.nix` としているため全モジュール共通の

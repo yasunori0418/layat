@@ -42,7 +42,7 @@ specification_ja: |
   [HM の activation は全 config の link-farm を apply --all 1 回の起動に渡し、報告は辞書順・配置の並列度は --jobs に従う](hm-activation-per-config-kick.md) の担当で、これも本 item では規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:31:01+09:00"
+  at: "2026-11-14T01:44:52+09:00"
 ---
 # home-manager モジュールの engine kick は activation から全 config のビルド済み link-farm を 1 回の起動で渡し、失敗で switch を止める
 
@@ -93,7 +93,6 @@ generated:
 > 原文が世代の箇条書きに併記する「MVP は固定名 `default` の単一 profile
 > （`<state>/nix/profiles/layat/default`）」は、**[HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ](../adr/hm-configs-independent-profiles.md) が `layat.configs.<name>` の実装を
 > 決定済み**で反転しているため写しから落とした（[HM モジュール経由でも名前つき config ごとに役割分離した独立 profile を取れる](hm-named-configs-profiles.md) / [profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする](profiledir-keying.md) と同じ扱い）。
-> `docs/spec.md` の追従は本 item の担当範囲外。
 >
 > **2026-10-15 追記（[モジュールの activation は apply --all --manifest を 1 回だけ起動する](../adr/module-activation-single-apply-all.md)）**: 上の写しの `layat apply --manifest <link-farm>` は、全 config の
 > link-farm を渡す `layat apply --all --manifest <name>=<link-farm> …` の 1 回起動と読み替える。

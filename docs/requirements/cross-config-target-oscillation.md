@@ -40,7 +40,7 @@ specification_ja: |
   config の同一 target 重複を解消して直す。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:31:01+09:00"
+  at: "2026-11-14T01:44:52+09:00"
 ---
 # 同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める
 
@@ -66,7 +66,6 @@ generated:
 > 原文の無条件な言い切りはこれを否定してしまう（原文が旧決定に未追従・[target 衝突の検出処理を同一 manifest 内と cross-config で分ける](target-collision-eval-detection.md) と
 > 同じ扱い）。本 item は静的検出が可能な場合を妨げないことまでを規範とし、その場合に実際に
 > eval 停止する規範そのものは持たない（**その規範は [単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する](hm-configs-target-collision-assertion.md) が持つ**）。
-> `docs/spec.md` の追従は本 item の担当範囲外。
 >
 > **2026-10-15 追記（[モジュールは configs 間の target 衝突を評価時に確認しない](../adr/modules-no-eval-conflict-assertion.md)）**: 上の「eval 時 assertion で停止」は、activation の `apply --all`
 > 前段の確認で停止する形へ改められた（規範は frontmatter・[単一 HM config 内の configs 間 target 衝突は activation の apply --all 前段の確認で停止する](hm-configs-target-collision-assertion.md)）。
