@@ -25,7 +25,7 @@ body:
     id: repro
     attributes:
       label: 再現手順
-      description: entries の定義・実行コマンド（layat / --rollback など）を含めて、最小再現を書く。
+      description: entries の定義・実行コマンド（layat / layat rollback など）を含めて、最小再現を書く。
       value: |
         1.
         2.
@@ -40,3 +40,10 @@ body:
       render: shell
     validations:
       required: true
+  - type: textarea
+    id: trace
+    attributes:
+      label: 関連する item（任意）
+      description: 欠陥を露見させたテストケース（docs/test/）や、反している要件・設計（docs/requirements/・docs/design/）が分かる場合はパスを書く。分からなければ空欄でよい。メンテナが triage で補う。
+    validations:
+      required: false
