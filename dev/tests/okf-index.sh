@@ -40,7 +40,7 @@ fi
 
 # 実物の docs/model.yaml を重ね、上流を持たない item とテスト条件 1 本だけのグラフを作る。
 fixture="$work/fixture"
-mkdir -p "$fixture/docs/adr" "$fixture/docs/sara-adr" "$fixture/docs/ubiquitous-language" "$fixture/docs/test/copy"
+mkdir -p "$fixture/docs/adr" "$fixture/docs/sara-adr" "$fixture/docs/ubiquitous-language" "$fixture/docs/requirements" "$fixture/docs/test/copy"
 cp "$repo_root/docs/model.yaml" "$fixture/docs/model.yaml"
 cat > "$fixture/sara.toml" <<'EOF'
 model_schema = "docs/model.yaml"
@@ -139,6 +139,50 @@ The term
 definition.
 EOF
 
+# section の並びがファイル名の並びと逆になる語。節は表の順、節の中はファイル名順に並ぶ。
+cat > "$fixture/docs/ubiquitous-language/a-mode.md" <<'EOF'
+---
+id: "UBQ-66666666-6666-4666-8666-666666666666"
+type: ubiquitous_term
+name: "a mode"
+section: modes
+status: stable
+---
+# UBQ-66666666-6666-4666-8666-666666666666: a mode
+
+A mode.
+EOF
+cat > "$fixture/docs/ubiquitous-language/z-core.md" <<'EOF'
+---
+id: "UBQ-77777777-7777-4777-8777-777777777777"
+type: ubiquitous_term
+name: "z core"
+section: core
+status: stable
+---
+# UBQ-77777777-7777-4777-8777-777777777777: z core
+
+A core term.
+EOF
+
+# ubiquitous_term と同じ値 errors を持つ requirement。見出しは型ごとの表から引く。
+cat > "$fixture/docs/requirements/error.md" <<'EOF'
+---
+id: "REQ-88888888-8888-4888-8888-888888888888"
+type: requirement
+name: "エラーの要件"
+section: errors
+status: stable
+specification: |
+  The fixture SHALL keep this requirement.
+specification_ja: |
+  fixture はこの要求を保たなければならない。
+---
+# REQ-88888888-8888-4888-8888-888888888888: エラーの要件
+
+エラーの説明。
+EOF
+
 # docs/test/ の区分に置くテスト条件。
 cat > "$fixture/docs/test/copy/condition.md" <<'EOF'
 ---
@@ -216,7 +260,63 @@ else
   fault "(4) エントリがファイル名順に並ばない（実際: $order）"
 fi
 
-# --- (5) --check は食い違うパスを出して exit 1 を返し、index.md を書き換えない --
+# --- (5) requirement・design・ubiquitous_term は section の節に分ける ----------
+
+want_terms=$(cat <<'EOF'
+# 用語（`ubiquitous_term`）
+
+## Core placement abstraction
+
+* [term](./term.md) - The term definition.
+* [z core](./z-core.md) - A core term.
+
+## Placement modes
+
+* [a mode](./a-mode.md) - A mode.
+EOF
+)
+if [ "$(cat "$fixture/docs/ubiquitous-language/index.md")" = "$want_terms" ]; then
+  pass "節は表の順に並び、節の中はファイル名順に並び、item の無い節は出さない"
+else
+  fault "(5) docs/ubiquitous-language/index.md の節分けが食い違う"
+  sed 's/^/    /' "$fixture/docs/ubiquitous-language/index.md"
+fi
+
+want_reqs=$(cat <<'EOF'
+# 要件（`requirement`）
+
+## エラー仕様
+
+* [エラーの要件](./error.md) - エラーの説明。
+EOF
+)
+if [ "$(cat "$fixture/docs/requirements/index.md")" = "$want_reqs" ]; then
+  pass "見出しは型ごとの表から引く（ubiquitous_term と同じ値 errors でも requirement の見出しになる）"
+else
+  fault "(5) docs/requirements/index.md の節分けが食い違う"
+  sed 's/^/    /' "$fixture/docs/requirements/index.md"
+fi
+
+# --- (6) 表に無い section の値で exit 2 ----------------------------------------
+
+# model.yaml の写しの requirement の enum に値を 1 つ足し、sara check は通るが生成器の表に無い値を作る。
+unknown="$work/unknown"
+cp -r "$fixture" "$unknown"
+sed -i 's/^            - dependencies$/&\n            - zz-unlisted-section/' "$unknown/docs/model.yaml"
+sed 's/^section: errors$/section: zz-unlisted-section/; s/8888-888888888888/8888-888888888889/' \
+  "$fixture/docs/requirements/error.md" > "$unknown/docs/requirements/unlisted.md"
+cp "$unknown/docs/requirements/index.md" "$work/unknown-before.md"
+(cd "$unknown" && bash "$generator") > "$work/unknown.out" 2> "$work/unknown.err"
+rc=$?
+if [ "$rc" -eq 2 ] && grep -qF zz-unlisted-section "$work/unknown.err" &&
+  cmp -s "$unknown/docs/requirements/index.md" "$work/unknown-before.md"; then
+  pass "表に無い section の値は標準エラーにその値を出し、index.md を書かずに exit 2 で止まる"
+else
+  fault "(6) 表に無い section の値で exit 2 にならない（exit $rc）"
+  sed 's/^/    /' "$work/unknown.err"
+fi
+
+# --- (7) --check は食い違うパスを出して exit 1 を返し、index.md を書き換えない --
 
 # --check を走らせ、exit 1 で出力が期待するパスだけであり、案内が期待する方だけであることを確かめる。
 expect_stale() {
@@ -239,7 +339,7 @@ expect_stale "--check は内容の食い違う index.md のパスを出し、再
 if cmp -s "$fixture/docs/adr/index.md" "$work/edited.md"; then
   pass "--check は既存の index.md を書き換えない"
 else
-  fault "(5) --check が既存の index.md を書き換えた"
+  fault "(7) --check が既存の index.md を書き換えた"
 fi
 
 # 書き出しで内容の食い違いを解消してから、生成対象に無い index.md だけを残す。

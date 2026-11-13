@@ -4,7 +4,7 @@
 #   okf-index.sh           # index.md を書き出す
 #   okf-index.sh --check   # 既存の index.md と比べ、食い違うパスを出して exit 1
 #
-# exit code は 0 = 生成・一致 / 1 = 食い違いあり / 2 = 引数の誤り・sara check の失敗。
+# exit code は 0 = 生成・一致 / 1 = 食い違いあり / 2 = 引数の誤り・sara check の失敗・表に無い section の値。
 
 set -euo pipefail
 
@@ -51,6 +51,44 @@ TYPE_DIRS=(
   "sara-adr|sara_adr|SDR（\`sara_adr\`）|ドキュメントグラフの運用についての判断の記録"
   "ubiquitous-language|ubiquitous_term|用語（\`ubiquitous_term\`）|layat の用語の定義と避ける綴り"
 )
+# index.md を section の節に分ける型の節: <型>|<section の値>|<## の見出し>。節はこの順に並べる。
+SECTIONS=(
+  "requirement|architecture|アーキテクチャ概要"
+  "requirement|lib-api|lib API"
+  "requirement|lib-mkmanifest|lib API / \`lib.mkManifest\`"
+  "requirement|lib-markers|lib API / マーカー構築子"
+  "requirement|lib-mkapplycommand|lib API / \`lib.mkApplyCommand\`"
+  "requirement|lib-input-validation|lib API / 入力の確認"
+  "requirement|cli|CLI 仕様"
+  "requirement|cli-entrypoint|CLI 仕様 / entrypoint の発見・アドレッシング"
+  "requirement|cli-subcommands|CLI 仕様 / サブコマンド体系"
+  "requirement|cli-output|CLI 仕様 / 出力ストリームと終了コード"
+  "requirement|cli-json|CLI 仕様 / outturn 準拠の \`--json\`"
+  "requirement|cli-flow|CLI 仕様 / 実行フロー"
+  "requirement|cli-reproducibility|CLI 仕様 / 再現性スタンス"
+  "requirement|entries-schema|entries スキーマ仕様"
+  "requirement|manifest-schema|manifest.json スキーマ"
+  "requirement|placement-symlink|配置動作仕様 / symlink モード"
+  "requirement|placement-rollback|配置動作仕様 / 途中失敗時の巻き戻し"
+  "requirement|placement-copy|配置動作仕様 / copy モード・out-of-store・recopy / reset"
+  "requirement|generations|世代管理仕様"
+  "requirement|root-resolution|root の解決"
+  "requirement|modules|モジュールオプション仕様・モジュール別動作仕様"
+  "requirement|errors|エラー仕様"
+  "requirement|dependencies|依存関係"
+  "design|project-layout|プロジェクト構成"
+  "design|layers|レイヤー構成"
+  "design|flake-outputs|flake.nix outputs 設計"
+  "design|core-logic|コアロジック設計（lib データ生成 + Go エンジン）"
+  "design|module-integration|モジュール統合設計"
+  "design|test-strategy|テスト戦略"
+  "ubiquitous_term|core|Core placement abstraction"
+  "ubiquitous_term|input-output|Placement input and output"
+  "ubiquitous_term|modes|Placement modes"
+  "ubiquitous_term|kinds|Placement kinds"
+  "ubiquitous_term|state|State management"
+  "ubiquitous_term|errors|Error handling"
+)
 TEST_TITLE="テスト条件とテストケース"
 TEST_DESC="機能の区分ごとのテスト条件（\`test_condition\`）とテストケース（\`test_case\`）"
 
@@ -60,7 +98,7 @@ if ! sara check --format json > "$work/graph.json" 2> "$work/graph.err"; then
   exit 2
 fi
 
-# item: <型>\t<docs/ からのディレクトリ>\t<ファイル名>\t<name>\t<description>\t<status>\t<リポジトリ相対パス>
+# item: <型>\t<docs/ からのディレクトリ>\t<ファイル名>\t<name>\t<description>\t<status>\t<リポジトリ相対パス>\t<section>
 jq -r '.items[]
   | (.file | sub("^\\./"; "")) as $path
   | [ .type,
@@ -69,8 +107,23 @@ jq -r '.items[]
       .name,
       ((.description // "") | gsub("\\s*\\n\\s*"; " ")),
       (.fields.status // ""),
-      $path ]
+      $path,
+      (.fields.section // "") ]
   | @tsv' "$work/graph.json" > "$work/items.tsv"
+
+# 節: <型>\t<section の値>\t<見出し>
+printf '%s\n' "${SECTIONS[@]}" | tr '|' '\t' > "$work/sections.tsv"
+
+# 節に分ける型の item で、section の値が表に無いものがあれば何も書かずに止める。
+unknown=$(awk -F '\t' '
+  NR == FNR { known[$1 "\t" $2] = 1; sectioned[$1] = 1; next }
+  ($1 in sectioned) && !(($1 "\t" $8) in known) { print $7 ": section \"" $8 "\"" }
+' "$work/sections.tsv" "$work/items.tsv")
+if [ -n "$unknown" ]; then
+  echo "okf-index.sh: section の値が表（SECTIONS）に無い item がある:" >&2
+  printf '%s\n' "$unknown" >&2
+  exit 2
+fi
 
 # 本文の段落: <リポジトリ相対パス>\t<H1 の次に来る最初の段落>
 # 段落は見出し・箇条書き・表・引用・HTML・コードフェンスの中身・字下げ行を除いた最初の散文の塊。
@@ -98,7 +151,7 @@ cut -f7 "$work/items.tsv" | xargs -r awk '
   END { flush() }
 ' > "$work/paras.tsv"
 
-# エントリ: <型>\t<docs/ からのディレクトリ>\t<ファイル名>\t<index.md の 1 行>
+# エントリ: <型>\t<docs/ からのディレクトリ>\t<ファイル名>\t<index.md の 1 行>\t<section>
 # リンク文字列に化けないよう name の角括弧だけをエスケープし、説明はそのまま載せる。
 awk -F '\t' '
   function esc(s) { gsub(/\[/, "\\[", s); gsub(/\]/, "\\]", s); return s }
@@ -108,7 +161,7 @@ awk -F '\t' '
     line = "* [" esc($4) "](./" $3 ")"
     if (desc != "") line = line " - " desc
     if (($1 == "adr" || $1 == "sara_adr") && $6 != "") line = line " (" $6 ")"
-    print $1 "\t" $2 "\t" $3 "\t" line
+    print $1 "\t" $2 "\t" $3 "\t" line "\t" $8
   }
 ' "$work/paras.tsv" "$work/items.tsv" | LC_ALL=C sort -t $'\t' -k3,3 > "$work/entries.tsv"
 
@@ -117,6 +170,20 @@ gen="$work/gen"
 # 指定のディレクトリ・型のエントリをファイル名順に出す。
 entries_of() {
   awk -F '\t' -v dir="$1" -v type="$2" '$2 == dir && $1 == type { print $4 }' "$work/entries.tsv"
+}
+
+# 指定のディレクトリ・型のエントリを、表の節ごとに ## の見出しの下へ並べる。エントリの無い節は出さない。
+sectioned_entries_of() {
+  local dir=$1 type=$2 body="" t value heading entries
+  while IFS=$'\t' read -r t value heading; do
+    [ "$t" = "$type" ] || continue
+    entries=$(awk -F '\t' -v dir="$dir" -v type="$type" -v value="$value" \
+      '$2 == dir && $1 == type && $5 == value { print $4 }' "$work/entries.tsv")
+    [ -n "$entries" ] || continue
+    [ -n "$body" ] && body+=$'\n\n'
+    body+="## $heading"$'\n\n'"$entries"
+  done < "$work/sections.tsv"
+  printf '%s' "$body"
 }
 
 # 見出しとエントリから index.md を 1 本書く。エントリが無ければ見出しだけにする。
@@ -134,7 +201,11 @@ write_index() {
 top=""
 for row in "${TYPE_DIRS[@]}"; do
   IFS='|' read -r dir type title desc <<< "$row"
-  write_index "docs/$dir/index.md" "$title" "$(entries_of "$dir" "$type")"
+  if cut -f1 "$work/sections.tsv" | grep -qxF "$type"; then
+    write_index "docs/$dir/index.md" "$title" "$(sectioned_entries_of "$dir" "$type")"
+  else
+    write_index "docs/$dir/index.md" "$title" "$(entries_of "$dir" "$type")"
+  fi
   top+="* [$title](./$dir/index.md) - $desc"$'\n'
 done
 top+="* [$TEST_TITLE](./test/index.md) - $TEST_DESC"
