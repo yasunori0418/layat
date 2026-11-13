@@ -48,5 +48,6 @@ required check にも含めていないため、完成の定義にも入れな�
 
 - [ ] DOD-03: 設計判断を伴う変更であれば `docs/adr/` に ADR を追加し、既存 ADR と矛盾していない
       （どの ADR が当該変更の判断を記録したものかは、ID やファイル名から機械が特定できない）
-- [ ] DOD-04: `docs/design/README.md` / `docs/requirements/README.md` / `docs/README.md` が実装の変更に追従している
+- [ ] DOD-04: 実装の変更に対応する item（REQ / DSG / RISK / TC / CASE）が更新または起票されている。
+      文書の構成が変わる変更では README.md も追従している
       （追従の要否と十分性が意味判断になる）
