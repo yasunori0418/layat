@@ -15,7 +15,7 @@ references:
   - "SDR-52dccd7e-666c-46f8-8a8d-1a50dd0f721b"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-13T14:07:01+09:00"
+  at: "2026-11-13T14:22:22+09:00"
 ---
 # 用語の index.md はリンク文字列に name_ja を添える
 
@@ -42,8 +42,8 @@ generated:
 
 ## 根拠
 
-一覧の 1 行に両方の正名が並べば、どちらの綴りからでも語を見つけられる。手書きの一覧が担っていた
-役割を、生成した index.md が引き受けられる。`name_ja` は `sara check --format json` の出力に
+一覧の 1 行に両方の正名が並べば、どちらの綴りからでも語を見つけられる。この決定で、手書きの一覧が
+担っていた役割を、生成した index.md が引き受けられる。`name_ja` は `sara check --format json` の出力に
 含まれるので、frontmatter を読み直さずに取れる。
 
 ## 棄却した代替案
