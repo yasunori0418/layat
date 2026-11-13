@@ -317,6 +317,7 @@ cp "$unknown/docs/requirements/index.md" "$work/unknown-before.md"
 (cd "$unknown" && bash "$generator") > "$work/unknown.out" 2> "$work/unknown.err"
 rc=$?
 if [ "$rc" -eq 2 ] && grep -qF zz-unlisted-section "$work/unknown.err" &&
+  grep -qF '表（SECTIONS）に無い' "$work/unknown.err" && ! grep -qF 'sara check が失敗した' "$work/unknown.err" &&
   cmp -s "$unknown/docs/requirements/index.md" "$work/unknown-before.md"; then
   pass "表に無い section の値は標準エラーにその値を出し、index.md を書かずに exit 2 で止まる"
 else
