@@ -2,7 +2,7 @@
 id: "SDR-d3f88093-dc98-4703-af45-df5b27527ffa"
 type: sara_adr
 name: "用語を ubiquitous_term の item で管理する"
-status: stable
+status: deprecated
 sources:
   - id: "issue-647"
     resource: "https://github.com/yasunori0418/layat/issues/647"
@@ -19,7 +19,11 @@ generated:
 ---
 # 用語を ubiquitous_term の item で管理する
 
-- ステータス: stable
+> **廃止（2026-11-13）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 全体 → [用語は ubiquitous_term の item で管理し、一覧は生成した index.md が持つ](ubiquitous-terms-listed-by-generated-index.md)
+
+- ステータス: deprecated
 - 日付: 2026-11-07
 - 関連: GitHub Issue #647, `docs/glossary.md`, `docs/glossary.ja.md`, `CONTEXT.md`
 - 起点: epic #647 の grilling（2026-11-06〜07）で確定。[root は solution と ADR 系の型だけにする](roots-solution-and-adr-types-only.md) を書き直した
