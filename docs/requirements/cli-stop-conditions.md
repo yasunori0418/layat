@@ -2,6 +2,7 @@
 id: "REQ-774cef80-2872-4ea1-937b-a0fbabc305a9"
 type: requirement
 name: "要求された操作が成立しないときは CLI がエラーで停止し、暗黙のフォールバックを採らない"
+description: "entrypoint が見つからない・指定の config が無い・rollback の前世代が無いときは、CLI は暗黙のフォールバックを採らずにエラーで停止しなければならない"
 section: errors
 status: stable
 derives_from:

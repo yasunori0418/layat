@@ -2,6 +2,7 @@
 id: "REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0"
 type: requirement
 name: "project mode は世代を非公開にし、project / system mode は derivation 同一なら世代を積まず lstat ドリフト修復だけ行う"
+description: "project mode は世代を公開せず、project / system mode は link farm が current 世代と記録に一致すれば世代を積まずに lstat によるドリフト修復だけを行わなければならない"
 section: generations
 status: stable
 derives_from:

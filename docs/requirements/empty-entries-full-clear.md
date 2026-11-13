@@ -2,6 +2,7 @@
 id: "REQ-fc64de4c-c82b-419c-8706-07d8d97daa37"
 type: requirement
 name: "空の entries は正当な全クリアとして扱い、エラーにも警告にもしない"
+description: "空の entries は正当な全クリアとして扱い、エラーにも警告にもせず、前世代の layat symlink を除去して空の新世代を積まなければならない"
 section: errors
 status: stable
 derives_from:

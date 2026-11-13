@@ -2,6 +2,7 @@
 id: "REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81"
 type: requirement
 name: "profileDir は home と system のみ name 直キーとし、fixed root と --root 上書きは roothash でキーする"
+description: "profileDir は --root の無い home と system だけを name で直にキーし、fixed root と --root の上書きは roothash でキーし、そのキーを全コマンドで一貫させなければならない"
 section: root-resolution
 status: stable
 derives_from:

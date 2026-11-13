@@ -2,6 +2,7 @@
 id: "REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e"
 type: requirement
 name: "project mode の root は git toplevel から解決し、config 相対も CWD 相対も採らない"
+description: "project mode の root は指定が無ければ git rev-parse --show-toplevel から解決し、config ファイル相対も CWD 相対も採ってはならない"
 section: root-resolution
 status: stable
 derives_from:

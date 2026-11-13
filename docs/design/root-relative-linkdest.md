@@ -2,6 +2,7 @@
 id: "DSG-fd39b9ee-a5d2-46c2-bdcd-fc399a1e0296"
 type: design
 name: "rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは配置前の確認だけにする"
+description: "rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算する純関数とし、root は配置前に配置元の実在を確かめるときだけ使う"
 section: core-logic
 status: stable
 satisfies:

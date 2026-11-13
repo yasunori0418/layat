@@ -2,6 +2,7 @@
 id: "REQ-b74a118a-1272-44eb-944c-7725163211c6"
 type: requirement
 name: "engine は第三者依存ゼロの stdlib-only とし内部層に閉じる"
+description: "engine は第三者依存を持たない stdlib-only の内部層とし、ファイルロック・再帰コピー・manifest 契約・エラーラップを標準ライブラリで実現しなければならない"
 section: dependencies
 status: stable
 derives_from:

@@ -2,6 +2,7 @@
 id: "REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9"
 type: requirement
 name: "copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする"
+description: "copy entry は target が不在のときだけマテリアライズし、在れば触らず、構造不一致はエラーで停止し、世代管理の対象外として rollback でも内容を戻してはならない"
 section: placement-copy
 status: stable
 derives_from:
