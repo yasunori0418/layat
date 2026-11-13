@@ -99,7 +99,7 @@ layat 自身の flake outputs は packages / templates / 各モジュール / fl
 
 ## 使用パターン
 
-→ `docs/README.md`「想定する使われ方」（`use_case` 7 件）。個々の設定の書き方はテンプレート
+→ `docs/README.md`「想定する使われ方」（`use_case` 8 件）。個々の設定の書き方はテンプレート
 （`layat init`）と `templates/` の実物を参照する。
 
 ---
@@ -117,8 +117,8 @@ CI での実行基盤・キャッシュ・リリースは `infrastructure` item 
 
 本節はリンク集ではなく、決定がどこにあるかの案内。主要な設計判断の決定と根拠は **ADR が持つ**
 （`docs/adr/`）。`docs/model.yaml` は ADR の `justifies` の接続先として `requirement` / `design` /
-`infrastructure` / `quality` / `test_plan` の 5 型を許す（現時点で実際に張られているのは `quality` を
-除く 4 型）。ある item を裏づける決定は本文書の一覧ではなく `sara query <フル ID> -u` で辿る。
+`infrastructure` / `quality` / `test_plan` の 5 型を許し、
+そのすべてに実際に張られている。ある item を裏づける決定は本文書の一覧ではなく `sara query <フル ID> -u` で辿る。
 全 ADR をここへ並べても改訂のたびに古くなるだけなので置かない。
 
 ---
