@@ -11,6 +11,8 @@ sources:
 origin: "epic #719 の grilling（2026-11-13）で確定"
 justifies:
   - "QA-67715bb3-1162-4ccf-8441-2f44257a57da"
+supersedes:
+  - "SDR-536848bb-8901-4e73-8c66-861de3f91bcd"
 generated:
   by: "claude-code/claude-opus-5-5"
   at: "2026-11-13T14:35:27+09:00"

@@ -2,7 +2,7 @@
 id: "SDR-536848bb-8901-4e73-8c66-861de3f91bcd"
 type: sara_adr
 name: "概要文書は item へのリンク集に縮退させる"
-status: stable
+status: deprecated
 sources:
   - id: "issue-203"
     resource: "https://github.com/yasunori0418/layat/issues/203"
@@ -18,7 +18,12 @@ generated:
 ---
 # 概要文書は item へのリンク集に縮退させる
 
-- ステータス: stable
+> **廃止（2026-11-13）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 3 文書をリンク集に縮退させる → [item の一覧は生成した index.md だけが持つ](item-lists-held-by-generated-index.md)
+> - 3 文書を通読の起点として残す → [手書きの概要は各ディレクトリの README.md に置く](overview-prose-in-directory-readme.md)
+
+- ステータス: deprecated
 - 日付: 2026-11-01
 - 関連: [ドキュメントは sara のナレッジグラフとして item に分割する](docs-as-sara-knowledge-graph.md), GitHub Issue #203, `docs/concept.md`, `docs/design.md`, `docs/spec.md`
 - 起点: epic #203 の grilling セッション（2026-07-31・2026-08-01）で確定。ADR-0048 §1 を書き直した

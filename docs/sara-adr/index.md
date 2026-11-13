@@ -34,7 +34,7 @@
 * [OKF v0.2 と互換の frontmatter キーを item に足す](./okf-compatible-frontmatter.md) - OKF v0.2 と互換の frontmatter キーを sara の item に足す方針と、バンドル単位の適合を追わない範囲を決める (stable)
 * [OKF の index.md を sara check の出力から生成してコミットする](./okf-index-generation.md) - OKF の index.md を sara check --format json から生成し、コミットして契約テストで差分ゼロを守る (stable)
 * [sara の運用規範は quality の item が持ち、規約文書は図と索引に縮退させる](./operational-norms-held-by-quality-items.md) - sara の運用規範を規約文書の散文から 1 主張 1 本の quality item へ移し、規約文書は図と item への索引だけにする。 (stable)
-* [概要文書は item へのリンク集に縮退させる](./overview-docs-as-link-index.md) - [ドキュメントは sara のナレッジグラフとして item に分割する](docs-as-sara-knowledge-graph.md) と決めたので、`docs/spec.md`・`docs/design.md`・`docs/concept.md` の規範的な内容は item へ移る。元の 3 文書をどう扱うかを決める必要があった。 (stable)
+* [概要文書は item へのリンク集に縮退させる](./overview-docs-as-link-index.md) - [ドキュメントは sara のナレッジグラフとして item に分割する](docs-as-sara-knowledge-graph.md) と決めたので、`docs/spec.md`・`docs/design.md`・`docs/concept.md` の規範的な内容は item へ移る。元の 3 文書をどう扱うかを決める必要があった。 (deprecated)
 * [手書きの概要は各ディレクトリの README.md に置く](./overview-prose-in-directory-readme.md) - item から導けない全体像の散文は、その主題の item を置くディレクトリの README.md に置き、README.md は frontmatter と item の一覧を持たず、同じディレクトリの index.md を 1 本だけ指す (stable)
 * [item の出典は分割した時点のパスのまま残す](./provenance-keeps-split-time-paths.md) - item の `## 出典` にある分割した時点の文書のパスは書き換えず、出典の読み方は `docs/model.md` の 1 か所に置く (stable)
 * [テスト計画の型を品質方針の型から分けて設ける](./quality-and-test-plan-types.md) - テスト計画や品質方針にあたる文書は、受け皿の型が無いため `requirement` として置かれていた。`requirement` の親は use_case だが、これらの文書は「ユーザーがどう使うか」から導かれないので親を持てず、接続漏れのまま残っていた。 (stable)
