@@ -35,6 +35,7 @@
 * [OKF の index.md を sara check の出力から生成してコミットする](./okf-index-generation.md) - OKF の index.md を sara check --format json から生成し、コミットして契約テストで差分ゼロを守る (stable)
 * [sara の運用規範は quality の item が持ち、規約文書は図と索引に縮退させる](./operational-norms-held-by-quality-items.md) - sara の運用規範を規約文書の散文から 1 主張 1 本の quality item へ移し、規約文書は図と item への索引だけにする。 (stable)
 * [概要文書は item へのリンク集に縮退させる](./overview-docs-as-link-index.md) - [ドキュメントは sara のナレッジグラフとして item に分割する](docs-as-sara-knowledge-graph.md) と決めたので、`docs/spec.md`・`docs/design.md`・`docs/concept.md` の規範的な内容は item へ移る。元の 3 文書をどう扱うかを決める必要があった。 (stable)
+* [手書きの概要は各ディレクトリの README.md に置く](./overview-prose-in-directory-readme.md) - item から導けない全体像の散文は、その主題の item を置くディレクトリの README.md に置き、README.md は frontmatter と item の一覧を持たず、同じディレクトリの index.md を 1 本だけ指す (stable)
 * [テスト計画の型を品質方針の型から分けて設ける](./quality-and-test-plan-types.md) - テスト計画や品質方針にあたる文書は、受け皿の型が無いため `requirement` として置かれていた。`requirement` の親は use_case だが、これらの文書は「ユーザーがどう使うか」から導かれないので親を持てず、接続漏れのまま残っていた。 (stable)
 * [棄却した提案の要件と設計は提案の形の題で deprecated にして残す](./rejected-proposals-deprecated.md) - 棄却した提案を記録する要件と設計は、提案の形の題と本文に棄却の記述を添え、status を deprecated にして残す。 (stable)
 * [requirement に risk_exempt を設け、理由を書いた requirement を未カバーから外す](./requirement-risk-exempt.md) - requirement に任意フィールド risk_exempt を設け、requirement 水準の risk を持たない理由を 1 文で書いた requirement を未カバーの一覧から外して免除として列挙する。 (stable)
