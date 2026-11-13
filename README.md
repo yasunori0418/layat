@@ -27,7 +27,7 @@ engine), and keeps placement behavior in a **single core** that you drive explic
 - **No home-manager dependency.** `lib/` depends only on nixpkgs; module integrations only
   *kick* the engine.
 - **A self-recorded manifest, not readlink pattern-matching.** Stale removal uses the
-  previous generation's manifest. See [`docs/concept.md`](docs/concept.md#home-manager-homefile-との配置意味論の差).
+  previous generation's manifest. See [`docs/README.md`](docs/README.md#home-manager-homefile-との配置意味論の差).
 
 ---
 
@@ -759,23 +759,12 @@ expose it as a pure function you control."**
 
 ## Documentation
 
-`docs/` is a three-layer structure: **README → overview document → item**. Items hold the
-normative content (one claim per Markdown file, with YAML frontmatter); the overview documents
-(maintained in Japanese) give the big picture and an index into the items.
+Items hold the normative content of `docs/` (one claim per Markdown file, with YAML frontmatter).
+Two kinds of documents sit around them (maintained in Japanese):
 
-- `docs/concept.md` — concept (index into solution / use_case items and ADRs), philosophy, north-star, comparison
-- `docs/design.md` — design (index into design items)
-- `docs/spec.md` — specification (index into requirement items)
-- `docs/glossary.md` — index of the ubiquitous language (the term items live in `docs/ubiquitous-language/`)
-
-| Directory | Type | Prefix |
-|---|---|---|
-| `docs/solution/` | solution | `SOL` |
-| `docs/use-cases/` | use_case | `UC` |
-| `docs/requirements/` | requirement | `REQ` |
-| `docs/design/` | design | `DSG` |
-| `docs/infrastructure/` | infrastructure | `INF` |
-| `docs/adr/` | adr (kept out of the tree) | `ADR` |
+- `docs/README.md` — the concept: philosophy, comparison with existing tools, north-star, and the history of the design
+- `README.md` in a type directory (`docs/requirements/`, `docs/design/`) — a handwritten overview of that directory; it holds no list of items
+- `index.md` — the generated list of items. [`docs/index.md`](docs/index.md) lists the types and links to the `index.md` of each type directory
 
 Items form a graph (`docs/model.yaml` defines the types and relations), traversed with `sara`
 from the devShell:
