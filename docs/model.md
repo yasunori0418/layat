@@ -200,13 +200,19 @@ sara が型を持たない入れ子のキー（`generated` / `verified` / `sourc
 
 ## item の `## 出典` の読み方
 
-item の `## 出典` は、分割した時点（epic #203）で原文のどこにあったかを記録している。出典が名指しする
+item の `## 出典` は、item へ分割した時点で原文のどこにあったかを記録している。出典が名指しする
 `docs/spec.md`・`docs/design.md`・`docs/concept.md`・`docs/glossary.md` は、現在のリポジトリに無い。
 item から現行の仕様へ辿るには relation（`sara query`）を使う。
 
-原文を読むときは、出典が名指しする文書（以下 `<doc>`）の縮退コミットの親を見る。
+原文を読むときは、出典が名指しする文書を縮退させたコミットの親を見る。
+
+| 出典が名指しする文書 | 縮退させたコミット |
+|---|---|
+| `docs/spec.md` | `cf76bf89` |
+| `docs/design.md` | `705766d1` |
+| `docs/concept.md` | `686f9604` |
+| `docs/glossary.md` | `341d4ed3` |
 
 ```bash
-git log --oneline -- <doc>        # 「概要 + item リンク集へ縮退する」の <ref> を探す
-git show <ref>^:<doc>             # その親が縮退前の原文
+git show cf76bf89^:docs/spec.md   # 縮退させたコミットの親が、縮退前の原文
 ```
