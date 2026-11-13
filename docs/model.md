@@ -26,7 +26,7 @@
 | `risk` | 満たされない懸念。`requirement` か `design` を脅かす |
 | `test_condition` | リスクを潰すためのテスト条件 |
 | `test_case` | 具体的なテストケース（テスト資産 1 つに 1 件）|
-| `ubiquitous_term` | ユビキタス言語の 1 語。relation を持たない根で、どの item ともつながない。索引は `docs/glossary.md` |
+| `ubiquitous_term` | ユビキタス言語の 1 語。relation を持たない根で、どの item ともつながない。索引は `docs/ubiquitous-language/index.md` |
 
 `test_plan` から `test_case` へは `is_followed_by`（`test_case` が張る `follows` の逆向き）で届く。
 `risk` の親に `test_plan` は無いままで、テスト計画がどのリスクを扱うかは、`test_case` から

@@ -285,7 +285,7 @@ item_types:
     allowed_targets: *adr_targets
 
   # ユビキタス言語の 1 語。docs/ubiquitous-language/。組み込みの name が英語の正名。
-  # どの item ともつながない根で、索引は docs/glossary.md。
+  # どの item ともつながない根で、索引は docs/ubiquitous-language/index.md。
   - id: ubiquitous_term
     display_name: Ubiquitous Term
     prefix: UBQ

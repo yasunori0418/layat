@@ -21,7 +21,6 @@ checks.layat	buildGoModule のビルド + go test 実行。個々の *_test.go �
 checks.treefmt	フォーマッタ検査（treefmt-nix が自動生成）。quality の担当
 checks.namaka	namaka アグリゲータ。leaf の tests/namaka/<name>/ を CASE が持つ
 checks.nix-unit	nix-unit アグリゲータ。leaf の tests/nix-unit/*.nix を CASE が持ち、固有ロジック（重複検査）は tests/nix-unit/aggregator-merge.nix の CASE が検証する
-dev:checks.glossary-index	用語索引 ⇔ 用語 item の 1:1 の契約テスト。確かめる対象は layat の振る舞いではなく docs の索引規約なので TC / CASE へ展開しない
 dev:checks.link-text	リンク文字列の裸のタグと name の繰り返し、許可外の場所のフル ID と 8 文字省略形の検出の契約テスト。確かめる対象は layat の振る舞いではなく docs の表記規約なので TC / CASE へ展開しない
 dev:checks.okf-frontmatter	OKF 互換の入れ子キーの形の契約テスト。確かめる対象は layat の振る舞いではなく docs の frontmatter 規約なので TC / CASE へ展開しない
 dev:checks.okf-index	OKF の index.md と生成結果の差分ゼロの契約テスト。確かめる対象は layat の振る舞いではなく docs の索引の生成規約なので TC / CASE へ展開しない

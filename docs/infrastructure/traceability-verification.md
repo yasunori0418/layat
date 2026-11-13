@@ -14,7 +14,7 @@ satisfies:
   - "QA-aa70fff6-3e0a-4163-bf4c-97f1730f7496"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-12T00:46:40+09:00"
+  at: "2026-11-13T14:33:07+09:00"
 ---
 # トレーサビリティ検証基盤（sara によるドキュメントグラフの機械検証）
 
@@ -28,9 +28,8 @@ generated:
 |---|---|
 | `docs/model.yaml` | カスタムスキーマ。13 型と relation を定義し、sara の組み込みモデルを全面置換する |
 | `sara.toml` | リポジトリ設定 |
-| `sara` ジョブ | `test.yml` 内の 1 ジョブ。`sara check` で broken reference / duplicate ID / cycles を検出し、同じジョブで契約テスト（この表の `dev/tests/` の 11 件）を実行し、`sara-fresh` で実物のグラフの一覧を出す |
+| `sara` ジョブ | `test.yml` 内の 1 ジョブ。`sara check` で broken reference / duplicate ID / cycles を検出し、同じジョブで契約テスト（この表の `dev/tests/` の 10 件）を実行し、`sara-fresh` で実物のグラフの一覧を出す |
 | `dev/tests/test-doc-map.sh` | テスト資産 ⇔ CASE の 1:1 対応を検証する（→ Issue #304）。区分と除外の正本は `dev/tests/` のデータファイルが持つ |
-| `dev/tests/glossary-index.sh` | 用語索引（`docs/glossary.md`）と用語 item（ubiquitous_term）が 1:1 に対応するかを検証する |
 | `dev/tests/risk-matrix.sh` | risk の `level` が `likelihood` × `impact` のマトリクス導出と一致するかを検証する（→ Issue #303）。マトリクスの正本は `dev/tests/risk-matrix.tsv` |
 | `dev/tests/sara-gap.sh` | `sara-gap` が出す未カバーの 7 節と到達率の契約、および exit code を検証する。判定は fixture 基準で、実グラフのどの item がギャップかは見ない（件数が動き続けるため契約にできない）|
 | `sara-fresh` | `dev/scripts/sara-fresh.sh` を包む devShell のコマンド。上流の `generated.at` が自身の基準時刻より新しい item、`--base <ref>` との差分で本文が変わったのに `generated.at` が変わっていない item、`generated.at` 以降の `human:` の `verified` を持たない high の risk を列挙する。結果は報告に留める |
