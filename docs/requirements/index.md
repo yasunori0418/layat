@@ -163,14 +163,14 @@
 * [copy は元の mode を保存しつつ owner-write を付与する](./copy-mode-owner-write.md) - **mode は保存しつつ owner-write を付与する**（例: `0444 → 0644` / `0555 → 0755`）。store パスは read-only（0444 / 0555）のため、そのまま保存すると編集できない。copy は「store から切り離してユーザーが所有・編集する」用途なので、perm の相対構造（実行ビット・group/other）は保ちつつ所有者が編集できる状態にする。
 * [copy は target 不在のときだけマテリアライズする place-once で世代管理の対象外とする](./copy-place-once.md) - copy entry は target が不在のときだけマテリアライズし、在れば触らず、構造不一致はエラーで停止し、世代管理の対象外として rollback でも内容を戻してはならない
 * [copy は src ツリー内の symlink を deref せず symlink のまま複製する](./copy-preserves-inner-symlinks.md) - **src ツリー内の symlink は symlink のまま複製する**（deref しない。循環・サイズ膨張回避）。相対 symlink はそのまま保つ。
-* [out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする](./out-of-store-link-mapping-only.md) - out-of-store entry の symlink は marker の絶対パスか root 相対パスを指し、世代はどのパスを指すかだけを版管理し、指す先の内容を版管理してはならない
+* [out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする](./out-of-store-link-mapping-only.md) - out-of-store entry の symlink は marker の絶対パスか、root 相対の marker では target の親からの相対パスを指し、世代はどのパスを指すかだけを版管理し、指す先の内容を版管理してはならない
 * [recopy の上書きは削除ではなく同一親内への rename 退避で行う](./recopy-rename-aside.md) - 上書きは削除ではなく **rename 退避**で行う（rename はメタデータ操作のみで ENOSPC 下でも退避物が壊れない）。同一 apply run 内で後続の段が失敗した場合、退避物から元の内容が復元される。
 * [reset の確認プロンプトは stdin が TTY のときだけ出し、非 TTY で同意が無ければ即エラー停止する](./reset-confirm-non-tty.md) - 確認プロンプトは **stdin が TTY のときのみ**出す。**非 TTY（CI / direnv / パイプ）かつ`-y/--yes` 未指定なら、プロンプトを出さず即エラー停止（exit 1）**する（ハングと空入力誤削除を防ぐ）。
 
 ## 世代管理仕様
 
 * [apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する](./apply-origin-mismatch-warning.md) - 想定する食い違いは、home-manager モジュール（`apply --all --manifest`・prebuilt 生成器）とCLI 単体（entrypoint 経由・nix 生成器）が同じ config 名を使い、profileDir とlast-applied 記録を共有する場合。互いの entry を古くなった配置として除去し合うこと自体は止めず、それが起きていることを warning で知らせる。
-* [同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める](./cross-config-target-oscillation.md) - 複数 config が同じ target を狙う振動はユーザーの責任とし、layat は実行時に止める機構を持たず、foreign symlink の warning を常時出して可視化するに留めなければならない
+* [同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める](./cross-config-target-oscillation.md) - 複数 config が同じ target を狙う振動はユーザーの責任とし、layat は engine 実行時に止める機構を持たず、foreign symlink の warning を常時出して可視化するに留めなければならない
 * [target 除去後は空の親ディレクトリチェーンを root 境界まで保守的に剪定する](./empty-parent-dir-pruning.md) - target を除去した後、その親ディレクトリチェーンを root 方向へ保守的に剪定する（HM の `rmdir -p --ignore-fail-on-non-empty` 対称）。layat は配置時に親 dir を `mkdir -p` 相当で自動作成するが manifest には記録しないため、剪定しないと entry 階層を変更するたびに空 dir が積もり、後続配置を塞ぐ conflict の温床になる。
 * [engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](./generation-backend-contract.md) - engine が叩く外部コマンドが `git` のみになることは [engine が叩く外部コマンドは git のみに限る](engine-external-command-constraint.md)、世代操作と GC の委譲先は [世代操作は世代バックエンドの契約越しに行い、GC root の間引きと store 解放は nix コマンドへ分けて委譲する](generation-gc.md)、パッケージ構成は[internal/generation は契約・Generation 型・FS ベースの Fake を親パッケージに、nix-env 実装を nixprofile サブパッケージに置き、engine は Backend 1 フィールドで受ける](../design/generation-package-layout.md) の担当。
 * [世代操作は世代バックエンドの契約越しに行い、GC root の間引きと store 解放は nix コマンドへ分けて委譲する](./generation-gc.md) - profile の各世代は GC root。`nix-env --profile <profileDir>/profile --delete-generations <gens>`で旧世代を間引き、`nix-collect-garbage` で無参照になった store パスを解放する。

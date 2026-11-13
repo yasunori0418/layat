@@ -2,7 +2,7 @@
 id: "REQ-a8a923ad-07fb-4582-b90a-07a6e0c41baa"
 type: requirement
 name: "out-of-store symlink は marker の絶対パスまたは root 相対パスを指し、版管理はリンク先マッピングのみとする"
-description: "out-of-store entry の symlink は marker の絶対パスか root 相対パスを指し、世代はどのパスを指すかだけを版管理し、指す先の内容を版管理してはならない"
+description: "out-of-store entry の symlink は marker の絶対パスか、root 相対の marker では target の親からの相対パスを指し、世代はどのパスを指すかだけを版管理し、指す先の内容を版管理してはならない"
 section: placement-copy
 status: stable
 derives_from:

@@ -2,7 +2,7 @@
 id: "REQ-fc1118b1-b0e8-4ddf-80f6-c70956651693"
 type: requirement
 name: "同一 target を複数 config で狙うことによる振動はユーザー責任とし warning で可視化するに留める"
-description: "複数 config が同じ target を狙う振動はユーザーの責任とし、layat は実行時に止める機構を持たず、foreign symlink の warning を常時出して可視化するに留めなければならない"
+description: "複数 config が同じ target を狙う振動はユーザーの責任とし、layat は engine 実行時に止める機構を持たず、foreign symlink の warning を常時出して可視化するに留めなければならない"
 section: generations
 status: stable
 derives_from:
