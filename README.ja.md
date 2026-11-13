@@ -609,8 +609,9 @@ target を `home.file` から layat へ移す手順:
 `docs/` の規範的な内容は item(1 ファイル 1 主張の Markdown + YAML frontmatter)が持つ。
 item のほかに、次の 2 種類の文書がある。
 
-- `docs/README.md`: コンセプト。設計の哲学、既存ツールとの比較、north-star、設計の変遷を書く
-- 型のディレクトリの `README.md`(`docs/requirements/`・`docs/design/`): そのディレクトリの概要を手で書いた文書。item の一覧は持たない
+- `README.md`: 手で書いた概要。item の一覧は持たない
+  - `docs/README.md`: コンセプト。設計の哲学、既存ツールとの比較、north-star、設計の変遷を書く
+  - 型のディレクトリの `README.md`(`docs/requirements/`・`docs/design/`): そのディレクトリの概要
 - `index.md`: 生成した item の一覧。[`docs/index.md`](docs/index.md) が型を並べ、型のディレクトリごとの `index.md` へリンクする
 
 item はグラフを成す(型と関係の定義は `docs/model.yaml`)。辿るには devShell の `sara` を使う。

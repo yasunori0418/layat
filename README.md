@@ -760,10 +760,11 @@ expose it as a pure function you control."**
 ## Documentation
 
 Items hold the normative content of `docs/` (one claim per Markdown file, with YAML frontmatter).
-Two kinds of documents sit around them (maintained in Japanese):
+Two kinds of documents sit around them:
 
-- `docs/README.md` — the concept: philosophy, comparison with existing tools, north-star, and the history of the design
-- `README.md` in a type directory (`docs/requirements/`, `docs/design/`) — a handwritten overview of that directory; it holds no list of items
+- `README.md` — a handwritten overview (maintained in Japanese); it holds no list of items
+  - `docs/README.md` — the concept: philosophy, comparison with existing tools, north-star, and the history of the design
+  - `README.md` in a type directory (`docs/requirements/`, `docs/design/`) — an overview of that directory
 - `index.md` — the generated list of items. [`docs/index.md`](docs/index.md) lists the types and links to the `index.md` of each type directory
 
 Items form a graph (`docs/model.yaml` defines the types and relations), traversed with `sara`
