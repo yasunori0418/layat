@@ -177,7 +177,7 @@ func Apply(opts Options) (*Result, error) {
 	if opts.Build == nil {
 		m, err := manifest.Load(opts.LinkFarm)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read the link-farm's manifest (%s): %w", opts.LinkFarm, err)
+			return nil, err
 		}
 		a.manifest = m
 		a.opts.Origin.Identity = m.Identity
@@ -247,7 +247,7 @@ func Apply(opts Options) (*Result, error) {
 		}
 		m, err := manifest.Load(linkFarm)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read the built link-farm's manifest (%s): %w", linkFarm, err)
+			return nil, err
 		}
 		a.opts.LinkFarm = linkFarm
 		a.manifest = m
@@ -476,7 +476,7 @@ func (a *applier) dryRun() (*Result, error) {
 		}
 		m, err := manifest.Load(linkFarm)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read the built link-farm's manifest (%s): %w", linkFarm, err)
+			return nil, err
 		}
 		a.opts.LinkFarm = linkFarm
 		a.manifest = m
