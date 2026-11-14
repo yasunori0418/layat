@@ -13,7 +13,7 @@ threatens:
   - "DSG-9f5f949f-8b0e-4679-8f70-e0901a3d63b8"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-14T23:40:59+09:00"
+  at: "2026-11-14T23:43:17+09:00"
 ---
 # エラーの扱いが規約から外れ、stderr の行に layat: が二重に付くか、存在しない対象の判定を取りこぼす
 
@@ -23,7 +23,7 @@ stderr へ書く行の先頭の `layat:` は、cmd の出力の関数だけが�
 （→ [stderr へ書く行は cmd の 1 箇所で `layat:` を付け、単発の失敗・`--all` の失敗行・status の行・警告が同じ整形を通る](../design/stderr-lines-prefixed-in-one-place.md)）。
 エラーや警告の文字列を作る側が `layat:` を書き足すと、その文字列が出力の関数を通ったときに
 接頭辞が二重になる。wrap された連鎖の途中に `layat:` が残る形も同じで、`--all` の失敗行や
-status の行では `layat: apply <name> failed: layat: …` のように文の途中へ現れる。`--json` の
+status の行では、見出しの `layat: apply <name> failed:` に続くエラーの頭へもう一度 `layat:` が現れる。`--json` の
 `errors[].message` にも、付けないはずの `layat:` がそのまま載る。エラーを作る箇所は
 `internal/` と `cmd/layat/` の全体に散らばっており、新しい失敗を足すときに既存の書き方を
 写すと、`layat:` も一緒に写りやすい。
