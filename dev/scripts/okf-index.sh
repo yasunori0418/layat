@@ -154,7 +154,8 @@ cut -f7 "$work/items.tsv" | xargs -r awk '
   END { flush() }
 ' > "$work/paras.tsv"
 
-# エントリ: <型>\t<docs/ からのディレクトリ>\t<ファイル名>\t<index.md の 1 行>\t<section>\t<status>
+# エントリ: <型>\t<docs/ からのディレクトリ>\t<ファイル名>\t<index.md の 1 行>\t<section>
+# status が deprecated の item は entries.tsv ではなく deprecated.tsv に同じ形で書く。
 # リンク文字列は name とし、name_ja を持つ用語は「name（name_ja）」にする。
 # リンク文字列に化けないよう角括弧だけをエスケープし、説明はそのまま載せる。
 awk -F '\t' '
@@ -166,15 +167,19 @@ awk -F '\t' '
     line = "* [" esc(label) "](./" $3 ")"
     if (desc != "") line = line " - " desc
     if (($1 == "adr" || $1 == "sara_adr") && $6 != "") line = line " (" $6 ")"
-    print $1 "\t" $2 "\t" $3 "\t" line "\t" $8 "\t" $6
+    print $6 "\t" $1 "\t" $2 "\t" $3 "\t" line "\t" $8
   }
-' "$work/paras.tsv" "$work/items.tsv" | LC_ALL=C sort -t $'\t' -k3,3 > "$work/entries.tsv"
+' "$work/paras.tsv" "$work/items.tsv" | LC_ALL=C sort -t $'\t' -k4,4 |
+  awk -F '\t' -v entries="$work/entries.tsv" -v deprecated="$work/deprecated.tsv" '
+    { out = ($1 == "deprecated") ? deprecated : entries; sub(/^[^\t]*\t/, ""); print > out }
+  '
+touch "$work/entries.tsv" "$work/deprecated.tsv"
 
 gen="$work/gen"
 
-# 指定のディレクトリ・型の、deprecated でないエントリをファイル名順に出す。
+# 指定のディレクトリ・型のエントリをファイル名順に出す。
 entries_of() {
-  awk -F '\t' -v dir="$1" -v type="$2" '$2 == dir && $1 == type && $6 != "deprecated" { print $4 }' "$work/entries.tsv"
+  awk -F '\t' -v dir="$1" -v type="$2" '$2 == dir && $1 == type { print $4 }' "$work/entries.tsv"
 }
 
 # 本文の後ろに、指定のディレクトリ・型の deprecated のエントリをファイル名順に並べた末尾の節を足す。
@@ -184,20 +189,20 @@ with_deprecated() {
   shift 2
   entries=$(awk -F '\t' -v dir="$dir" -v types="$*" '
     BEGIN { n = split(types, t, " "); for (i = 1; i <= n; i++) want[t[i]] = 1 }
-    $2 == dir && ($1 in want) && $6 == "deprecated" { print $4 }
-  ' "$work/entries.tsv")
+    $2 == dir && ($1 in want) { print $4 }
+  ' "$work/deprecated.tsv")
   [ -n "$entries" ] || { printf '%s' "$body"; return; }
   [ -n "$body" ] && body+=$'\n\n'
   printf '%s' "$body$DEPRECATED_HEADING"$'\n\n'"$entries"
 }
 
-# 指定のディレクトリ・型の、deprecated でないエントリを、表の節ごとに ## の見出しの下へ並べる。エントリの無い節は出さない。
+# 指定のディレクトリ・型のエントリを、表の節ごとに ## の見出しの下へ並べる。エントリの無い節は出さない。
 sectioned_entries_of() {
   local dir=$1 type=$2 body="" t value heading entries
   while IFS=$'\t' read -r t value heading; do
     [ "$t" = "$type" ] || continue
     entries=$(awk -F '\t' -v dir="$dir" -v type="$type" -v value="$value" \
-      '$2 == dir && $1 == type && $5 == value && $6 != "deprecated" { print $4 }' "$work/entries.tsv")
+      '$2 == dir && $1 == type && $5 == value { print $4 }' "$work/entries.tsv")
     [ -n "$entries" ] || continue
     [ -n "$body" ] && body+=$'\n\n'
     body+="## $heading"$'\n\n'"$entries"
