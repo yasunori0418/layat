@@ -78,7 +78,6 @@
 * [template は動く example を 1 config だけ置きバリエーションはコメントで示す](./init-template-contents.md) - 各 template は**動く example を 1 config だけ**置き、バリエーション（`subpath` / `method = "copy"` / `mkOutOfStoreSymlink` / 複数 entry / 動的生成）は**コメントで示す**。starter を小さく保ち、ユーザーが不要分を削除する手間を最小化する。
 * [layat init は nix flake init -t への透明なラッパーとしファイルを生成しない](./init-template-wrapper.md) - `nix flake init -t github:yasunori0418/layat#<template>` への**透明なラッパー**。ファイルを作るのは nix の templates 機構であり layat 自身は generate しない（「設定を生成しない」thesis を維持）。`nix flake init` の「既存ファイルを上書きしない」保守性を継承する。
 * [内部実行する nix コマンドを開示し世代の切替と GC は標準の nix コマンドへ委譲する](./nix-command-transparency-and-delegation.md) - `--debug` を冗長度（`-v`）と直交させる分離そのものは [冗長度は -v、デバッグは --debug に分離し --json と直交させる](verbose-and-debug-separation.md) の担当。
-* [一部の entry だけを適用する --only を提供する](./no-only-flag.md) - この提案は棄却した。`--only` は提供しない。部分適用は profile 世代の atomic 性と衝突する。決定と理由は [一部の entry だけを適用する --only を提供する](../adr/partial-apply-only-flag.md) に置く。
 * [prune は dryrun・root 一覧付き確認・try-lock skip・--json の --yes 必須で削除を守る](./prune-safety-gates.md) - **`--dryrun`** — 削除予定系列（`<roothash>` / root パス / 配下 `<name>` 一覧）を stdout へ出力して終了する。副作用ゼロが preview である担保で、lock も取らない。
 * [prune は backref の root が実在しない roothash 系列だけを系列ごと削除する](./prune-target-selection.md) - **走査対象** — 2 つの基底の直下で backref `.root` を持つディレクトリ、つまり project mode / fixed root / `--root` 上書きで生じた `<roothash>` 系列だけ。基底は世代バックエンドが与え（[engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)）、既定の nixprofile ではユーザー state 基底が`<state>/nix/profiles/layat/`、system 基底が `/nix/var/nix/profiles/layat/`。基底が 2 つあるのは、system mode の profile 状態がユーザー state 基底とは別の場所に住むため（→ [profile の基底ディレクトリをモードで切り替える](../adr/profile-base-directory-per-mode.md)）。
 * [reset --dryrun は副作用ゼロで削除対象を表示して終了する](./reset-dryrun-no-side-effect.md) - `reset <name> --dryrun` は**副作用ゼロ**で削除対象（symlink / copy target）を表示してexit する（FS 削除・confirm・flock いずれも行わない・`apply --dryrun` と対称）。終了コードは削除対象の有無に依らず 0。
@@ -220,3 +219,7 @@
 * [CLI が持ち込む依存は許可した第三者ライブラリと pin した Go に限り、いずれも固定する](./cli-dependency-policy.md) - CLI の第三者依存は cobra・go-toml・outturn の 3 つに限って vendorHash で固定し、Go ツールチェーンは nixpkgs の go に pin しなければならない
 * [engine は第三者依存ゼロの stdlib-only とし内部層に閉じる](./engine-stdlib-only.md) - engine は第三者依存を持たない stdlib-only の内部層とし、ファイルロック・再帰コピー・manifest 契約・エラーラップを標準ライブラリで実現しなければならない
 * [modules/common.nix は nixpkgs.lib のみに依存する](./modules-common-nixpkgs-lib-only.md) - modules/common.nix は nixpkgs.lib だけに依存し、home-manager・NixOS・nix-darwin の module system への依存を持ち込んではならない
+
+## 有効でない item（`deprecated`）
+
+* [一部の entry だけを適用する --only を提供する](./no-only-flag.md) - この提案は棄却した。`--only` は提供しない。部分適用は profile 世代の atomic 性と衝突する。決定と理由は [一部の entry だけを適用する --only を提供する](../adr/partial-apply-only-flag.md) に置く。
