@@ -545,6 +545,44 @@ func TestMutationPayloadPartialFailure(t *testing.T) {
 	}
 }
 
+// TestMutationPayloadUnwindIncomplete pins a partially failed unwind: each unrestored target gets
+// its own W_LAYAT_UNWIND_INCOMPLETE subject warning with detail={target}, and W_LAYAT_UNWOUND is
+// not emitted.
+func TestMutationPayloadUnwindIncomplete(t *testing.T) {
+	res := &engine.Result{
+		Profile: "/p",
+		Entries: []manifest.Entry{
+			{SrcKind: "store", Src: "/nix/store/a", Target: "a", Method: "symlink"},
+			{SrcKind: "store", Src: "/nix/store/b", Target: "b", Method: "symlink"},
+			{SrcKind: "store", Src: "/nix/store/c", Target: "c", Method: "symlink"},
+		},
+		Placed:       []string{"a", "b"},
+		FailedTarget: "c",
+		Unwound:      true,
+		Unrestored:   []string{"b", "a"},
+		GenBefore:    ip(3),
+		GenAfter:     ip(3),
+	}
+	cmdErr := &os.PathError{Op: "symlink", Path: "/root/c", Err: fs.ErrPermission}
+	p, err := mutationPayload[*applyResultInfo](res, cmdErr)
+	if err != nil {
+		t.Fatalf("mutationPayload: %v", err)
+	}
+	var incomplete []string
+	for _, w := range p.warnings {
+		switch w.Code {
+		case "W_LAYAT_UNWOUND":
+			t.Errorf("subject warnings = %+v, want no W_LAYAT_UNWOUND when a target was not restored", p.warnings)
+		case "W_LAYAT_UNWIND_INCOMPLETE":
+			target, _ := w.Detail["target"].(string)
+			incomplete = append(incomplete, target)
+		}
+	}
+	if len(incomplete) != 2 || incomplete[0] != "b" || incomplete[1] != "a" {
+		t.Errorf("W_LAYAT_UNWIND_INCOMPLETE targets = %v, want [b a]", incomplete)
+	}
+}
+
 // TestMutationPayloadSubjectBorneFailure: a commit / build failure has no failed item, keeps the
 // changes, and puts the error in subjectResult.errors[].
 func TestMutationPayloadSubjectBorneFailure(t *testing.T) {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"path/filepath"
 )
 
 // Undo journal: apply's FS-mutating stages push one undoOp per successful FS write onto
@@ -96,8 +97,10 @@ func (a *applier) discardJournal() {
 
 // unwind reverses applier.journal in LIFO order after origErr aborted an Apply/Rollback call,
 // attempting every inverse operation best-effort and reporting origErr plus each unrestorable
-// item to opts.Reportf. The journal is cleared regardless of outcome.
-func (a *applier) unwind(origErr error) {
+// item to opts.Reportf. It returns the targets it could not restore, once each, relative to
+// a.root (absolute when a.root is empty or the target is not relative to it). The journal is
+// cleared regardless of outcome.
+func (a *applier) unwind(origErr error) []string {
 	journal := a.journal
 	a.journal = nil
 	reportf := a.opts.Reportf
@@ -106,24 +109,34 @@ func (a *applier) unwind(origErr error) {
 	}
 	if len(journal) == 0 {
 		reportf("apply failed; no filesystem changes had been made yet: %v", origErr)
-		return
+		return nil
 	}
 
-	var failed []string
+	var failed, unrestored []string
+	seen := map[string]bool{}
 	for i := len(journal) - 1; i >= 0; i-- {
 		if err := undoOne(journal[i]); err != nil {
 			failed = append(failed, err.Error())
+			target := journal[i].path
+			if rel, err := filepath.Rel(a.root, target); a.root != "" && err == nil {
+				target = rel
+			}
+			if !seen[target] {
+				seen[target] = true
+				unrestored = append(unrestored, target)
+			}
 		}
 	}
 
 	reportf("apply failed; rolled back this run's filesystem changes: %v", origErr)
 	if len(failed) == 0 {
-		return
+		return nil
 	}
 	reportf("%d item(s) could not be restored during rollback:", len(failed))
 	for _, f := range failed {
 		reportf("  → %s", f)
 	}
+	return unrestored
 }
 
 // undoOne performs the single inverse FS operation described by op.

@@ -128,7 +128,11 @@ type Result struct {
 	Unreached []string
 	// Unwound reports that the undo journal rolled this run's FS writes back after a failure:
 	// the op lists above then describe performed-then-reverted actions, not surviving state.
+	// False when the journal was empty at the failure.
 	Unwound bool
+	// Unrestored lists, once each, the targets whose writes the unwind could not revert,
+	// root-relative (absolute when not relative to the root). Empty when everything was restored.
+	Unrestored []string
 	// GenBefore / GenAfter are the profile generation numbers observed at run start / end,
 	// nil when unobservable (no profile yet, or a link that is not a generation link).
 	GenBefore *int
@@ -373,8 +377,8 @@ func (a *applier) plannerOptions() planner.Options {
 // so far in this Apply/Rollback call. On success the journal is kept; the caller discards it.
 func (a *applier) runJournaled(stage func() error) error {
 	if err := stage(); err != nil {
-		a.unwind(err)
-		a.result.Unwound = true
+		a.result.Unwound = len(a.journal) > 0
+		a.result.Unrestored = a.unwind(err)
 		return err
 	}
 	return nil

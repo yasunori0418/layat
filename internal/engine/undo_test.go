@@ -187,8 +187,12 @@ func TestUnwindBestEffortContinuesPastFailureAndReportsAll(t *testing.T) {
 	a.journalRelinkedSymlink(unrestorable, realTempDir(t))
 
 	origErr := errors.New("simulated mid-apply failure")
-	a.unwind(origErr)
+	unrestored := a.unwind(origErr)
 
+	// The applier has no root, so the unrestored target stays absolute.
+	if len(unrestored) != 1 || unrestored[0] != unrestorable {
+		t.Errorf("unrestored = %v, want [%s]", unrestored, unrestorable)
+	}
 	got, err := os.Readlink(restorable)
 	if err != nil || got != restorableDest {
 		t.Errorf("restorable entry must still be undone despite the other failing: readlink=%q, err=%v", got, err)
@@ -211,6 +215,26 @@ func TestUnwindBestEffortContinuesPastFailureAndReportsAll(t *testing.T) {
 	}
 	if len(a.journal) != 0 {
 		t.Errorf("journal must be cleared even after a partial unwind failure, got %d entries", len(a.journal))
+	}
+}
+
+// TestUnwindReturnsUnrestoredRelativeToRoot verifies unwind returns each target it could not
+// restore once, relative to the applier's root.
+func TestUnwindReturnsUnrestoredRelativeToRoot(t *testing.T) {
+	root := realTempDir(t)
+	unrestorable := filepath.Join(root, "sub", "leaf") // parent "sub" does not exist → symlink fails
+
+	var warns []string
+	a := &applier{opts: Options{Warnf: collectFormatted(&warns)}, result: &Result{}}
+	a.root = root
+	// Two journal entries on the same target (a backup aside, then the re-link) both fail.
+	a.journalBackedUp(unrestorable, unrestorable+".bak")
+	a.journalRelinkedSymlink(unrestorable, realTempDir(t))
+
+	unrestored := a.unwind(errors.New("simulated failure"))
+
+	if len(unrestored) != 1 || unrestored[0] != filepath.Join("sub", "leaf") {
+		t.Errorf("unrestored = %v, want [sub/leaf]", unrestored)
 	}
 }
 
