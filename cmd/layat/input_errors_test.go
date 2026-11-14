@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 
@@ -82,5 +83,68 @@ func TestInputErrorsClassifiedEInput(t *testing.T) {
 				t.Errorf("err = %q, want a single line", err)
 			}
 		})
+	}
+}
+
+// emitApplyEnvelope runs apply with args and decodes the envelope main would emit for its error.
+func emitApplyEnvelope(t *testing.T, args ...string) map[string]any {
+	t.Helper()
+	out := captureStdout(t, func() {
+		err := executeApply(t, args...)
+		if err == nil {
+			t.Error("apply err = nil, want an input error")
+		}
+		if emitErr := outturnReport.emit(err); emitErr != nil {
+			t.Errorf("emit: %v", emitErr)
+		}
+	})
+	var doc map[string]any
+	if err := json.Unmarshal([]byte(out), &doc); err != nil {
+		t.Fatalf("envelope is not JSON: %v\n%s", err, out)
+	}
+	return doc
+}
+
+// errorCodes returns the code of each element of an envelope's errors[] array.
+func errorCodes(v any) []string {
+	list, _ := v.([]any)
+	codes := make([]string, 0, len(list))
+	for _, e := range list {
+		m, _ := e.(map[string]any)
+		code, _ := m["code"].(string)
+		codes = append(codes, code)
+	}
+	return codes
+}
+
+// TestNamedApplyInputErrorIsSubjectBorne: an input error of apply <name> is found after the subject
+// is fixed, so it goes to results[0].errors[] and the top-level errors[] stays empty.
+func TestNamedApplyInputErrorIsSubjectBorne(t *testing.T) {
+	doc := emitApplyEnvelope(t, "foo", "--jobs", "2")
+	if top := errorCodes(doc["errors"]); len(top) != 0 {
+		t.Errorf("top-level errors = %v, want none", top)
+	}
+	results, _ := doc["results"].([]any)
+	if len(results) != 1 {
+		t.Fatalf("results = %v, want exactly one subject", doc["results"])
+	}
+	sr, _ := results[0].(map[string]any)
+	if name, _ := sr["subject"].(map[string]any)["name"].(string); name != "foo" {
+		t.Errorf("results[0].subject = %v, want foo", sr["subject"])
+	}
+	if codes := errorCodes(sr["errors"]); len(codes) != 1 || codes[0] != "E_INPUT" {
+		t.Errorf("results[0].errors codes = %v, want [E_INPUT]", codes)
+	}
+}
+
+// TestApplyAllWithNameInputErrorIsTopLevel: apply --all <name> is rejected before any subject
+// exists, so its error goes to the top-level errors[].
+func TestApplyAllWithNameInputErrorIsTopLevel(t *testing.T) {
+	doc := emitApplyEnvelope(t, "--all", "foo")
+	if results, _ := doc["results"].([]any); len(results) != 0 {
+		t.Errorf("results = %v, want none", results)
+	}
+	if codes := errorCodes(doc["errors"]); len(codes) != 1 || codes[0] != "E_INPUT" {
+		t.Errorf("top-level errors codes = %v, want [E_INPUT]", codes)
 	}
 }

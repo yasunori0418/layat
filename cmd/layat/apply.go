@@ -19,8 +19,9 @@ import (
 )
 
 var (
-	flagApplyAll  bool // --all: apply all of layat.* in parallel, reported in lexical order (narrowable by root filter)
-	flagApplyJobs int  // --jobs: apply --all's build and placement concurrency (0 = the logical CPU count)
+	flagApplyAll       bool // --all: apply all of layat.* in parallel, reported in lexical order (narrowable by root filter)
+	flagApplyJobs      int  // --jobs: apply --all's build and placement concurrency (0 = the logical CPU count)
+	flagApplyJobsGiven bool // --jobs was given, even as 0; runApply rejects it without --all
 )
 
 // applyResultInfo / applyEnvInfo are apply's outturn info slots, reserved for future run facts.
@@ -54,18 +55,12 @@ func newApplyCmd() *cobra.Command {
 			// beginApplyRun publishes the run to outturnReport, so main emits the envelope after Execute.
 			run := beginApplyRun(cmd.Name())
 			flagBackupEnabled = cmd.Flags().Changed("backup")
+			flagApplyJobsGiven = cmd.Flags().Changed("jobs")
 			if flagApplyAll {
 				if len(args) > 0 {
 					return &inputError{err: errors.New("apply cannot combine <name> with --all")}
 				}
 				return runApplyAll(run)
-			}
-			if err := ensureNoRootFilter("apply --all"); err != nil {
-				return err
-			}
-			// Check Changed, not the value: an explicit --jobs 0 equals the default.
-			if cmd.Flags().Changed("jobs") {
-				return &inputError{err: errors.New("--jobs is a modifier for apply --all")}
 			}
 			name := "default"
 			if len(args) == 1 {
@@ -144,6 +139,12 @@ func runApplyManifest(subject *applySubject, name string) error {
 func runApply(run *applyRun, name string) error {
 	// The config name is the run's single outturn subject.
 	subject := run.beginSubject(name)
+	if err := ensureNoRootFilter("apply --all"); err != nil {
+		return err
+	}
+	if flagApplyJobsGiven {
+		return &inputError{err: errors.New("--jobs is a modifier for apply --all")}
+	}
 	if len(flagManifest) > 0 {
 		// --manifest fixes the source to a link-farm, so it conflicts with -f.
 		if flagFile != "" {
