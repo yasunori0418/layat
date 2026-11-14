@@ -24,7 +24,7 @@ generated:
 - 11 種類の入力の誤りを、apply・gitignore・list-generations・init のコマンドを実際に実行して
   起こす。`--yes` の無い拒否は、reset と prune が共有する `confirmPolicy` で起こす。どの経路でも
   `classifyError` の code が `E_INPUT` で、エラーの文に改行が無いこと
-- `apply foo --jobs 2` のエンベロープで、`results[0]` の subject が `foo`、
+- `apply foo --jobs 2` と、root の flag を付けた `apply foo` のエンベロープで、`results[0]` の subject が `foo`、
   `results[0].errors[0].code` が `E_INPUT` で、トップレベルの `errors[]` が空であること
 - `apply --all foo` のエンベロープで、`results[]` が空で、トップレベルの `errors[]` の code が
   `E_INPUT` であること

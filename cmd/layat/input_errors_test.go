@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	"bytes"
 	"strings"
 	"testing"
 
@@ -98,11 +98,7 @@ func emitApplyEnvelope(t *testing.T, args ...string) map[string]any {
 			t.Errorf("emit: %v", emitErr)
 		}
 	})
-	var doc map[string]any
-	if err := json.Unmarshal([]byte(out), &doc); err != nil {
-		t.Fatalf("envelope is not JSON: %v\n%s", err, out)
-	}
-	return doc
+	return decodeEnvelope(t, bytes.NewBufferString(out))
 }
 
 // errorCodes returns the code of each element of an envelope's errors[] array.
@@ -120,7 +116,18 @@ func errorCodes(v any) []string {
 // TestNamedApplyInputErrorIsSubjectBorne: an input error of apply <name> is found after the subject
 // is fixed, so it goes to results[0].errors[] and the top-level errors[] stays empty.
 func TestNamedApplyInputErrorIsSubjectBorne(t *testing.T) {
-	doc := emitApplyEnvelope(t, "foo", "--jobs", "2")
+	t.Run("--jobs without --all", func(t *testing.T) {
+		assertSubjectBorneInputError(t, emitApplyEnvelope(t, "foo", "--jobs", "2"))
+	})
+	t.Run("root filter without --all", func(t *testing.T) {
+		withRootFilters(t, true, false)
+		assertSubjectBorneInputError(t, emitApplyEnvelope(t, "foo"))
+	})
+}
+
+// assertSubjectBorneInputError checks that doc carries one E_INPUT on subject foo and none at the top.
+func assertSubjectBorneInputError(t *testing.T, doc map[string]any) {
+	t.Helper()
 	if top := errorCodes(doc["errors"]); len(top) != 0 {
 		t.Errorf("top-level errors = %v, want none", top)
 	}
