@@ -120,7 +120,7 @@ func (a *applier) pruneEmptyAncestors(removedAbs string) error {
 func pathHasSymlinkComponent(root, dir string) (bool, error) {
 	rel, err := filepath.Rel(root, dir)
 	if err != nil {
-		return false, fmt.Errorf("cannot resolve %q relative to root (%s): %w", dir, root, err)
+		return false, fmt.Errorf("cannot resolve the directory relative to root (%s in %s): %w", dir, root, err)
 	}
 	cur := root
 	for _, comp := range strings.Split(rel, string(filepath.Separator)) {

@@ -112,7 +112,7 @@ func (a *applier) unwind(origErr error) {
 	var failed []string
 	for i := len(journal) - 1; i >= 0; i-- {
 		if err := undoOne(journal[i]); err != nil {
-			failed = append(failed, fmt.Sprintf("%s: %v", journal[i].path, err))
+			failed = append(failed, err.Error())
 		}
 	}
 

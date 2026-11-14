@@ -281,7 +281,7 @@ func recordAfterReset(rec paths.Record, root string, b baseline, selected []mani
 	}
 	raw, err := json.Marshal(m)
 	if err != nil {
-		return fmt.Errorf("cannot encode the manifest for the last-applied record: %w", err)
+		return fmt.Errorf("cannot encode the manifest for the last-applied record (%s): %w", rec.File, err)
 	}
 	return writeRecord(rec, root, b.linkFarm(), recordedOrigin(b.record), raw, time.Now())
 }
@@ -327,7 +327,7 @@ func selectResetEntries(entries []manifest.Entry, targets []string) ([]manifest.
 		out = append(out, e)
 	}
 	if len(unknown) > 0 {
-		return nil, fmt.Errorf("reset target not found in the previous generation's manifest (not a target layat placed): %v", unknown)
+		return nil, fmt.Errorf("reset target not found in the previous generation's manifest (not a target layat placed): %q", unknown)
 	}
 	return out, nil
 }
