@@ -2,6 +2,7 @@
 id: "ADR-04c3bc0a-140b-4bc3-a47c-cacddeba5a71"
 type: adr
 name: "--dryrun --backup は退避で解ける箇所を conflict にしない"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-169"

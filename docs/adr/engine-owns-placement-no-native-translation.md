@@ -2,6 +2,7 @@
 id: "ADR-3d450af1-1c79-48ce-8ee9-b989dcb41ad7"
 type: adr
 name: "配置は全層で engine が行い、ネイティブ機構へ翻訳しない"
+section: concept
 status: stable
 origin: "ADR-0003 §a（決定節の第 1 項）と「layat は OS のファイル管理機構とは別の機構である」節を書き直した"
 justifies:

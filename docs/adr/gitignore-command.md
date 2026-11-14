@@ -2,6 +2,7 @@
 id: "ADR-777fc3c8-4ca8-49da-aaf3-146b7d991ebe"
 type: adr
 name: "配置 target を gitignore コマンドで stdout へ列挙する"
+section: cli-commands
 status: stable
 origin: "ADR-0005 の決定「.gitignore 生成は専用コマンドで stdout 出力のみ」・ADR-0013 §6・ADR-0023 §5 の (5a) を書き直した"
 justifies:

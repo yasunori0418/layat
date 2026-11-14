@@ -2,6 +2,7 @@
 id: "ADR-2d4fdda4-b2e1-4161-8b71-3cff5b265f2f"
 type: adr
 name: "配置前除去は drift を見つけたら error で止める"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-170"

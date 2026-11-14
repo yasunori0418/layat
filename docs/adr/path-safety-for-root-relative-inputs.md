@@ -2,6 +2,7 @@
 id: "ADR-d89c2ede-1aba-46fa-9f14-8dcf8a266e0e"
 type: adr
 name: "root 相対で指定するパスすべてにパス安全性の確認を課す"
+section: lib-entries
 status: stable
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）と Issue #362 の grilling（2026-10-12）。ADR-0040 §2b と ADR-0059 §6a を書き直した"
 justifies:

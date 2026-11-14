@@ -2,6 +2,7 @@
 id: "ADR-6f0383d9-0176-47c4-a9da-1a41e1fd3747"
 type: adr
 name: "Go の静的解析を CGO_ENABLED=0 で行う"
+section: dev-build
 status: stable
 origin: "参照: PR #40、https://github.com/yasunori0418/cryoflow の CI 構成。ADR-0027 §3 を書き直した"
 justifies:

@@ -2,6 +2,7 @@
 id: "ADR-b7f9b972-69b7-4bbe-affc-97978e1a55f7"
 type: adr
 name: "root 相対マーカーのリンクを target 起点の相対パスで張る"
+section: root-modes
 status: stable
 sources:
   - id: "issue-362"

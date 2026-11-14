@@ -3,6 +3,7 @@ id: "ADR-a41e979b-701d-45b5-b371-8dbbcab82833"
 type: adr
 name: "CI の外部 action は actions.lock で固定し、uses には semver タグを書く"
 description: "CI が参照する外部 action は gh actions-lock が生成する actions.lock で推移的な依存までコミット SHA に固定し、uses には完全な semver タグを書き、lockfile の整合を verify-lockfile.yml で検証する。"
+section: ci-release-docs
 status: stable
 origin: "[CI の nix インストーラは cryoflow 踏襲](ci-nix-installer-cryoflow.md) の「外部 action はコミット SHA で固定する」を書き直した"
 justifies:

@@ -2,6 +2,7 @@
 id: "ADR-9fde06e2-fe42-4274-8af3-da2298cdaeae"
 type: adr
 name: "既存 flake への組込手順を docs に置く"
+section: ci-release-docs
 status: stable
 origin: "垂直トレーサー弾の着手前の横断検査（実装前残セマンティクスの第 6 巡）。ADR-0024 §6 を書き直した"
 justifies:

@@ -2,6 +2,7 @@
 id: "ADR-ab47f502-0fc8-4714-9af4-61e0a64732f8"
 type: adr
 name: "出所の食い違いは警告して apply を続ける"
+section: record-state
 status: stable
 sources:
   - id: "issue-580"

@@ -2,6 +2,7 @@
 id: "ADR-95b45d12-d4a7-4374-8624-f5ceed7044ee"
 type: adr
 name: "prune は配置物に触れない"
+section: generations
 status: stable
 sources:
   - id: "issue-580"

@@ -2,6 +2,7 @@
 id: "ADR-451679d5-473b-4faf-bf2d-a6f6d3e1e131"
 type: adr
 name: "src の型で素の文字列を拒否する"
+section: lib-entries
 status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の srcType の項を書き直した"
 justifies:

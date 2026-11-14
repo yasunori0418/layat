@@ -2,6 +2,7 @@
 id: "ADR-a0bac33b-d195-4dfd-9e74-61673c655873"
 type: adr
 name: "flock は syscall.Flock で実装する"
+section: atomicity
 status: stable
 origin: "engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §6 を書き直した"
 justifies:

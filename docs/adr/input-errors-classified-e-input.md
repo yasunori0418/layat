@@ -2,6 +2,7 @@
 id: "ADR-c4a3d9be-19ea-461d-ab0f-2037adc494e1"
 type: adr
 name: "入力の不正を E_INPUT に分類する"
+section: cli-output
 status: stable
 sources:
   - id: "issue-395"

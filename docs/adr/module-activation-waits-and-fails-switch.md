@@ -2,6 +2,7 @@
 id: "ADR-2aaf72ab-1dfc-4cde-852d-4b1f9916780b"
 type: adr
 name: "モジュールの activation は lock を待ち、失敗したら switch を止める"
+section: modules
 status: stable
 sources:
   - id: "issue-585"

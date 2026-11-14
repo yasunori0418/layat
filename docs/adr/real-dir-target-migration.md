@@ -2,6 +2,7 @@
 id: "ADR-77312c71-fa32-481b-ad80-c91e5b282edc"
 type: adr
 name: "実ディレクトリの target は全 leaf を除去できるときだけ移行する"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-175"

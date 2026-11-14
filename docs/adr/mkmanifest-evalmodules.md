@@ -2,6 +2,7 @@
 id: "ADR-2e454c1f-6cad-41d8-8311-2c8e5b8efdf6"
 type: adr
 name: "mkManifest の入力を evalModules で確認する"
+section: lib-entries
 status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §1（検査機構）を書き直した"
 justifies:

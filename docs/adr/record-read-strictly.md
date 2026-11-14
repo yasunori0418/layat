@@ -2,6 +2,7 @@
 id: "ADR-8e253f2e-c255-482a-a0f8-0837e122e80f"
 type: adr
 name: "記録の読みは不正な記録を error にする"
+section: record-state
 status: stable
 sources:
   - id: "issue-580"

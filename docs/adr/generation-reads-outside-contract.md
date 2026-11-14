@@ -2,6 +2,7 @@
 id: "ADR-8b8c9109-a479-4571-8b10-5a6079127441"
 type: adr
 name: "前世代の読み取りは契約に載せず engine が直接読む"
+section: generations
 status: stable
 sources:
   - id: "issue-406"

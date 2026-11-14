@@ -2,6 +2,7 @@
 id: "ADR-facd3173-a5ce-4d81-90a9-370fb26428ff"
 type: adr
 name: "apply は世代の commit の前に記録を書く"
+section: record-state
 status: stable
 sources:
   - id: "issue-580"

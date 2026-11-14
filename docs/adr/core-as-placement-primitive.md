@@ -2,6 +2,7 @@
 id: "ADR-10dcf5a9-f298-4123-9a50-24f43e25d30c"
 type: adr
 name: "コアを store パスを root 相対の target へ置くプリミティブにする"
+section: concept
 status: stable
 origin: "ADR-0004 §a を書き直した"
 justifies:

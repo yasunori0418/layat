@@ -2,6 +2,7 @@
 id: "ADR-75d1dcc2-e270-4193-a72c-863a57967baf"
 type: adr
 name: "project template の .gitignore 手順をコード近くのコメントで示す"
+section: ci-release-docs
 status: stable
 origin: "ADR-0018 §2 を書き直した"
 justifies:

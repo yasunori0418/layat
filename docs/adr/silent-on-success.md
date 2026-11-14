@@ -2,6 +2,7 @@
 id: "ADR-36bfbfbd-f1dd-4581-a75a-943d80f6ccf5"
 type: adr
 name: "指定が無いときは成功時に何も出力しない"
+section: cli-output
 status: stable
 origin: "ADR-0031 §1・§4 を書き直した"
 justifies:

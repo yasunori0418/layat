@@ -2,6 +2,7 @@
 id: "ADR-ad1dd4ef-0b71-42cf-bc30-03eb11e5485c"
 type: adr
 name: "status は記録の確認を apply より緩めない"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-580"

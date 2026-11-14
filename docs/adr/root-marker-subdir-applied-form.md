@@ -2,6 +2,7 @@
 id: "ADR-5b347bfa-39d6-47f0-be59-1cf31dc25509"
 type: adr
 name: "root マーカーに subdir の適用形を持たせる"
+section: root-modes
 status: stable
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。ADR-0040 §1a を書き直した"
 justifies:

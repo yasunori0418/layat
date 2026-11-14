@@ -2,6 +2,7 @@
 id: "ADR-2fcf26b4-bce6-4ed6-a374-3afe560ead21"
 type: adr
 name: "VERSION の変更をきっかけに release を自動で作る"
+section: ci-release-docs
 status: stable
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。参照実装: https://github.com/yasunori0418/cryoflow のリリース自動化（bump workflow と release workflow）。ADR-0042 §3 を書き直した"
 justifies:

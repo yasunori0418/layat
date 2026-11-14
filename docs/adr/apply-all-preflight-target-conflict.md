@@ -2,6 +2,7 @@
 id: "ADR-75df92ae-0694-452b-8fb4-350994e31b25"
 type: adr
 name: "apply --all は選択した config 間の target 重複を build 前に止める"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-584"

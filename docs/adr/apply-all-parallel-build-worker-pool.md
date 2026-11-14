@@ -2,6 +2,7 @@
 id: "ADR-c109ac0c-d5df-4a15-acf0-d6d85ce5402e"
 type: adr
 name: "apply --all の build を worker pool で並列に実行する"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-584"

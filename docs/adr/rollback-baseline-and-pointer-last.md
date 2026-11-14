@@ -2,6 +2,7 @@
 id: "ADR-d97154cd-a2e5-4853-a682-800ff9435c89"
 type: adr
 name: "rollback は FS を収束させてからポインタを動かす"
+section: generations
 status: stable
 origin: "ドキュメント計画段階の最終レビュー（grill）で surfaced した「実装前に決めておくべき」残細目の束。ADR-0015 §5 を書き直した"
 justifies:

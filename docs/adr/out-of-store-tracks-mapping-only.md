@@ -2,6 +2,7 @@
 id: "ADR-6d2327f7-f513-42c3-89f8-808467db1914"
 type: adr
 name: "out-of-store はマッピングだけを追跡する"
+section: placement
 status: stable
 origin: "ADR-0002 の決定「out-of-store は世代追跡する」を書き直した"
 justifies:

@@ -2,6 +2,7 @@
 id: "ADR-553eea60-6ab4-4da7-93a9-3acf44b2fae3"
 type: adr
 name: "engine は cmd/ と internal/ に置きライブラリ化しない"
+section: concept
 status: stable
 sources:
   - id: "issue-3"

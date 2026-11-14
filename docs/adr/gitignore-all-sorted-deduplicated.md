@@ -2,6 +2,7 @@
 id: "ADR-d504b89e-9a2b-440f-83c1-be372b12241b"
 type: adr
 name: "gitignore --all は project mode の全 config の target を重複なく整列して出す"
+section: cli-commands
 status: stable
 origin: "ADR-0018 §4a を書き直した"
 justifies:

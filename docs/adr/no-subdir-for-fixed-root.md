@@ -2,6 +2,7 @@
 id: "ADR-433b9539-21d9-46c5-91a1-fc2b04d5eb47"
 type: adr
 name: "fixed root には subdir を提供しない"
+section: root-modes
 status: stable
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。ADR-0040 §1b を書き直した"
 justifies:

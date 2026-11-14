@@ -2,6 +2,7 @@
 id: "ADR-560852e1-3d07-46b9-ae1a-d15f82d28a5e"
 type: adr
 name: "project mode を第一の使い方とする"
+section: concept
 status: stable
 sources:
   - id: "issue-2"

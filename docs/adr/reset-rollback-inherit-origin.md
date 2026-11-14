@@ -2,6 +2,7 @@
 id: "ADR-17f29974-4fdb-4596-8afa-368a8f3971eb"
 type: adr
 name: "記録を書き直す操作は記録済みの出所を引き継ぐ"
+section: record-state
 status: stable
 sources:
   - id: "issue-580"

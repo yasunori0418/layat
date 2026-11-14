@@ -2,6 +2,7 @@
 id: "ADR-5ee0230d-765f-450a-b9f7-929c13d6b694"
 type: adr
 name: "engine の実行イベントにユーザー定義スクリプトの hook を掛ける"
+section: concept
 status: deprecated
 sources:
   - id: "issue-584"

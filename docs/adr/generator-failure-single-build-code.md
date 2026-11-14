@@ -2,6 +2,7 @@
 id: "ADR-494b6477-9d5b-4e29-879d-f7d16be5d466"
 type: adr
 name: "生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-395"

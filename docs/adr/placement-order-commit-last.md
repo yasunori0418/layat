@@ -2,6 +2,7 @@
 id: "ADR-74423bb8-1453-4689-a25e-30bf46536afc"
 type: adr
 name: "新規配置と張替えを先に、世代のコミットを最後に行う"
+section: atomicity
 status: stable
 origin: "ADR-0006 §決定（部分失敗 = コミット最後）を書き直した"
 justifies:

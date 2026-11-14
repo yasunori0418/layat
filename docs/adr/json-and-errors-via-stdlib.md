@@ -2,6 +2,7 @@
 id: "ADR-fdb8003f-db36-424b-8484-6f2fd57a3027"
 type: adr
 name: "engine は JSON とエラーを標準ライブラリで扱う"
+section: dev-build
 status: stable
 sources:
   - id: "issue-552"

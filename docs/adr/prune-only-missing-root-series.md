@@ -2,6 +2,7 @@
 id: "ADR-b4be88b8-1c19-426d-885d-f5d80b95252f"
 type: adr
 name: "prune は root が実在しない roothash 系列だけを削除する"
+section: generations
 status: stable
 sources:
   - id: "issue-580"

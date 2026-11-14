@@ -2,6 +2,7 @@
 id: "ADR-3dc21349-5504-48a4-ab88-812b92c3bdf9"
 type: adr
 name: "-v で配置レポートを opt-in で出す"
+section: cli-output
 status: stable
 origin: "ADR-0031 §2・ADR-0033 §2d を書き直した"
 justifies:

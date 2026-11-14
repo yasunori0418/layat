@@ -2,6 +2,7 @@
 id: "ADR-efa7685c-6fa4-45df-b7a3-8f3f58e4118c"
 type: adr
 name: "Build の事後条件を世代バックエンドがコミットできる link-farm のパスに置く"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-406"

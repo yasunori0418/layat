@@ -2,6 +2,7 @@
 id: "ADR-9506276e-2108-4962-9f90-efe82fec7f66"
 type: adr
 name: "layat.recopy で activation の起動に --recopy を付ける"
+section: modules
 status: stable
 sources:
   - id: "issue-585"

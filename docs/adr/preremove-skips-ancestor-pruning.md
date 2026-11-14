@@ -2,6 +2,7 @@
 id: "ADR-4dba7720-c179-4835-8644-d90b8022e474"
 type: adr
 name: "配置前除去は空の祖先ディレクトリを剪定しない"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-175"

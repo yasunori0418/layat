@@ -2,6 +2,7 @@
 id: "ADR-a91585ad-971a-4558-9f25-b7fcd6e57671"
 type: adr
 name: "古くなった配置の除去は、比較の基準を記録から優先して読む"
+section: record-state
 status: stable
 sources:
   - id: "issue-580"

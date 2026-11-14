@@ -2,6 +2,7 @@
 id: "ADR-a6a1ef1b-676c-484a-9c8a-3e6d49c1b444"
 type: adr
 name: "世代スキップには profile に加え記録の一致も要する"
+section: generations
 status: stable
 sources:
   - id: "issue-580"

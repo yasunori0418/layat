@@ -2,6 +2,7 @@
 id: "ADR-c494e86e-ceb9-4380-b983-4e09553b01d6"
 type: adr
 name: "entries を target をキーにした attrset にする"
+section: lib-entries
 status: stable
 origin: "参照: home-manager modules/lib/file-type.nix（home.file の識別子モデル）。ADR-0014 §1・§2a・§5 を書き直した"
 justifies:

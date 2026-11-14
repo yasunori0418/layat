@@ -2,6 +2,7 @@
 id: "ADR-5908eb28-40a5-49d5-a09e-15b35082b970"
 type: adr
 name: "設定ファイルは -f のディレクトリか cwd だけで探す"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-395"

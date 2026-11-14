@@ -2,6 +2,7 @@
 id: "ADR-0dd4036d-594b-4f36-a509-e5498b231cf7"
 type: adr
 name: "bump-version.yml でバージョンを上げるコミットを push する"
+section: ci-release-docs
 status: stable
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。参照実装: https://github.com/yasunori0418/cryoflow のリリース自動化（bump workflow と release workflow）。ADR-0042 §2 を書き直した"
 justifies:

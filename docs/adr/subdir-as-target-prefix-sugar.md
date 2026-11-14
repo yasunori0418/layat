@@ -2,6 +2,7 @@
 id: "ADR-6669c002-1b90-47a2-8a84-a0f7bddfd965"
 type: adr
 name: "subdir は全 target へ前置する評価時の糖衣にし、root を動かさない"
+section: root-modes
 status: stable
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。ADR-0040 §2a を書き直した"
 justifies:

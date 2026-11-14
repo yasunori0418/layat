@@ -2,6 +2,7 @@
 id: "ADR-cfd13fb6-d11e-4f3b-b0c6-40ee21b6b212"
 type: adr
 name: "list-generations --all は home mode と system mode の全 config を対象にする"
+section: generations
 status: stable
 origin: "ADR-0018 §4b を書き直した"
 justifies:

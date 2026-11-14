@@ -2,6 +2,7 @@
 id: "ADR-62540f8f-a8ba-4441-97b0-36b50d7862d8"
 type: adr
 name: "世代操作はパスと整数だけを受け渡す 5 操作の契約越しに行う"
+section: generations
 status: stable
 sources:
   - id: "issue-406"

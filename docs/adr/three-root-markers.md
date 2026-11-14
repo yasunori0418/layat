@@ -2,6 +2,7 @@
 id: "ADR-400cadd4-0151-470b-92ae-9b11aa8e9bed"
 type: adr
 name: "root は 3 つの marker で表す"
+section: root-modes
 status: stable
 sources:
   - id: "issue-2"

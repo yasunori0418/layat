@@ -2,6 +2,7 @@
 id: "ADR-c5ebc6d9-d218-45f7-bce1-4dd481766843"
 type: adr
 name: "legacy entrypoint の eval と build は新 CLI の -f 形で行う"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-112"

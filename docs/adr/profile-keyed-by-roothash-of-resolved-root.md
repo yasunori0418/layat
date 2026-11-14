@@ -2,6 +2,7 @@
 id: "ADR-ad1c2507-1f42-4cd3-ab56-9183892f8988"
 type: adr
 name: "profile は解決済み root の roothash でキーする"
+section: generations
 status: stable
 origin: "実装前の残セマンティクス確定（2026-06-11〜06-14）。ADR-0005 §「profile は解決済み root でキーする」・ADR-0013 §7・ADR-0023 §3・ADR-0024 §1 を書き直した"
 justifies:

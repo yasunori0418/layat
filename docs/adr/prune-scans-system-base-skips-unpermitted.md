@@ -2,6 +2,7 @@
 id: "ADR-7a3dc78d-8946-46ae-94ec-b752f2ca7c2e"
 type: adr
 name: "prune は system 基底も走査し、権限の無い系列を見送る"
+section: generations
 status: stable
 origin: "次期マイルストーン計画の grilling（2026-07-04）。ADR-0034 §1b と ADR-0036 §3c を書き直した"
 justifies:

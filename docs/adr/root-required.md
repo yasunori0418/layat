@@ -2,6 +2,7 @@
 id: "ADR-c7ffc21a-4be1-4468-b63c-2f47eedd9ab3"
 type: adr
 name: "root の必須性を別の確認を書かずに標準のエラーで担保する"
+section: root-modes
 status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §3（クロスエントリ制約と必須性）の root 必須の項を書き直した"
 justifies:

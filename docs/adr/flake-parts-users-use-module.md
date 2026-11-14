@@ -2,6 +2,7 @@
 id: "ADR-d2da8a69-f92b-4bb3-9ed9-9a1f7e8297ff"
 type: adr
 name: "flake-parts の利用者には module 経由を正準にする"
+section: modules
 status: stable
 sources:
   - id: "issue-26"

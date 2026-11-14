@@ -2,6 +2,7 @@
 id: "ADR-86a77232-dc99-4c04-bd6d-2127410e8828"
 type: adr
 name: "mkActivationScript で config ごとのラッパー derivation を提供する"
+section: lib-entries
 status: deprecated
 sources:
   - id: "issue-3"

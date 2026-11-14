@@ -2,6 +2,7 @@
 id: "ADR-2f472fc4-23ed-4169-aa49-8bded9e336d9"
 type: adr
 name: "eval を先に行い、flock を取ってから build する"
+section: atomicity
 status: stable
 origin: "実装前の残セマンティクス確定（2026-06-11〜06-14）。ADR-0006 §「実行フロー」・ADR-0023 §1・ADR-0024 §3 を書き直した"
 justifies:

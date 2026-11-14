@@ -2,6 +2,7 @@
 id: "ADR-feb60906-1517-46b8-8fa5-e007df4d3e11"
 type: adr
 name: "--json は常に results[] エンベロープを出す"
+section: cli-output
 status: stable
 sources:
   - id: "issue-552"

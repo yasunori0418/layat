@@ -2,6 +2,7 @@
 id: "ADR-acc31876-df36-485e-b356-92ae60e26db7"
 type: adr
 name: "reset は非対話の実行で --yes を必須にする"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-550"

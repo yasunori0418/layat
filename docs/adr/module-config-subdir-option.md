@@ -2,6 +2,7 @@
 id: "ADR-5dad12a8-ada3-4a04-a3cf-1795a5b44c98"
 type: adr
 name: "`configs.<name>.subdir` で config ごとに target の基点を寄せる"
+section: modules
 status: stable
 sources:
   - id: "issue-585"

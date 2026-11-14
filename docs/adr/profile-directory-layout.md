@@ -2,6 +2,7 @@
 id: "ADR-419914ba-9896-4dd1-853b-fb514fcb9f38"
 type: adr
 name: "profile は専用ディレクトリレイアウトに置く"
+section: generations
 status: stable
 origin: "実装前の残セマンティクス確定の第 7 巡（2026-06-14）。ADR-0025 §4 を書き直した"
 justifies:

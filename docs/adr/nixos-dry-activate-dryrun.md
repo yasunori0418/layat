@@ -2,6 +2,7 @@
 id: "ADR-1743c957-a732-4a44-a89a-4c03ab277f0c"
 type: adr
 name: "NixOS の dry-activate では --dryrun を付けて起動する"
+section: modules
 status: stable
 sources:
   - id: "issue-519"

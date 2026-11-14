@@ -2,6 +2,7 @@
 id: "ADR-56325270-20bb-4959-8498-e3223c35e24b"
 type: adr
 name: "途中失敗した apply をインメモリ undo ジャーナルで巻き戻す"
+section: atomicity
 status: stable
 sources:
   - id: "issue-168"

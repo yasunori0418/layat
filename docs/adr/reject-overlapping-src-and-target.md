@@ -2,6 +2,7 @@
 id: "ADR-796508e6-2845-467d-83f8-386930a48bfb"
 type: adr
 name: "src が target に重なる root 相対 entry を評価時に拒否する"
+section: lib-entries
 status: stable
 sources:
   - id: "issue-362"

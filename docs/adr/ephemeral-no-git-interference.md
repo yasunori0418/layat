@@ -2,6 +2,7 @@
 id: "ADR-4dca6ef4-2791-48d5-aa82-7037630968a6"
 type: adr
 name: "ephemeral 配置は git に干渉しない"
+section: placement
 status: stable
 origin: "ADR-0005 の決定「ephemeral 配置原則 — 配置物はコミット対象外」を書き直した"
 justifies:

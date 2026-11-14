@@ -2,6 +2,7 @@
 id: "ADR-f29d1256-5e14-4b83-ac77-4717b2210193"
 type: adr
 name: "undo の発火を FS 反映の段に限り、世代コミットの後は対象にしない"
+section: atomicity
 status: stable
 sources:
   - id: "issue-168"

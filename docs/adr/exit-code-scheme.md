@@ -2,6 +2,7 @@
 id: "ADR-f607b605-c69e-4c7e-ac89-75b7bce5bee1"
 type: adr
 name: "終了コードは 0 / 1 / 2 の 3 値にする"
+section: cli-output
 status: stable
 sources:
   - id: "issue-550"

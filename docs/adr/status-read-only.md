@@ -2,6 +2,7 @@
 id: "ADR-54f09f52-1c2c-4b84-8f18-717fd93e4342"
 type: adr
 name: "status を読み取り専用にする"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-580"

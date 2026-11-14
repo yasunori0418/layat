@@ -2,6 +2,7 @@
 id: "ADR-68f453b3-e6c7-4e0d-9978-32b5a00f627e"
 type: adr
 name: "NixOS モジュールは system.activationScripts.layat から起動する"
+section: modules
 status: stable
 sources:
   - id: "issue-519"

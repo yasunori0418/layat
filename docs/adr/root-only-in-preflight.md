@@ -2,6 +2,7 @@
 id: "ADR-5d85f49f-c136-425f-bea4-ad8ab8dd8632"
 type: adr
 name: "root 相対 entry で engine が root を使うのは配置前の実在確認だけにする"
+section: root-modes
 status: stable
 sources:
   - id: "issue-362"

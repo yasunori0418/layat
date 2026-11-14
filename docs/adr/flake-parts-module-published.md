@@ -2,6 +2,7 @@
 id: "ADR-e6820da0-fce3-4aef-8b79-d53abbca6051"
 type: adr
 name: "layat output の flake-parts module を flakeModules.default で公開する"
+section: modules
 status: stable
 sources:
   - id: "issue-26"

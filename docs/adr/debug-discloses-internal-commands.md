@@ -2,6 +2,7 @@
 id: "ADR-a19bf484-368d-4d01-b539-52de32510fa5"
 type: adr
 name: "内部コマンドの開示を --debug に分ける"
+section: cli-output
 status: stable
 origin: "ADR-0031 §3 を書き直した"
 justifies:

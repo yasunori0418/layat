@@ -2,6 +2,7 @@
 id: "ADR-767c33e5-73eb-4ef0-aba7-c87673fa5c2e"
 type: adr
 name: "同一 profileDir への同時実行は後勝ちにする"
+section: atomicity
 status: stable
 sources:
   - id: "issue-550"

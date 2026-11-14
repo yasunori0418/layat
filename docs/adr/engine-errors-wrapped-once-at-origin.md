@@ -2,6 +2,7 @@
 id: "ADR-5228fec0-09ad-494f-8c8d-d887fc009999"
 type: adr
 name: "engine のエラーは発生源で 1 回だけ wrap し、伝搬では再 wrap しない"
+section: dev-build
 status: stable
 sources:
   - id: "issue-90"

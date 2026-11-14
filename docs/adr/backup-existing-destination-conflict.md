@@ -2,6 +2,7 @@
 id: "ADR-37191429-2099-4217-a552-47b16a7e504c"
 type: adr
 name: "退避先が既にあれば conflict で止める"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-169"

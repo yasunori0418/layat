@@ -2,6 +2,7 @@
 id: "ADR-90964d0f-3c2e-4201-a04b-5821f2f4c799"
 type: adr
 name: "devShell の shellHook で配線する"
+section: modules
 status: stable
 origin: "ADR-0005 の決定「devShell shellHook を正式な配線レイヤーに加える」を書き直した"
 justifies:

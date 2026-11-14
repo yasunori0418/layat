@@ -2,6 +2,7 @@
 id: "ADR-3447db4a-cdec-4573-bbad-05bbffc34a65"
 type: adr
 name: "layat.entries を configs.default.entries への rename 糖衣として残す"
+section: modules
 status: stable
 sources:
   - id: "issue-585"

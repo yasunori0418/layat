@@ -2,6 +2,7 @@
 id: "ADR-7c8a0152-e034-4f16-9cf8-d5435be187e2"
 type: adr
 name: "gitignore は行指向の出力を既定のまま JSON を opt-in にする"
+section: cli-commands
 status: stable
 origin: "ADR-0033 §1b を書き直した"
 justifies:

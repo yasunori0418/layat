@@ -2,6 +2,7 @@
 id: "ADR-63ec1446-d328-42d2-b8d2-e8a11d752ed7"
 type: adr
 name: "prune は新設時から --json に対応する"
+section: cli-output
 status: stable
 sources:
   - id: "issue-580"

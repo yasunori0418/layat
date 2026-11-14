@@ -2,6 +2,7 @@
 id: "ADR-ef5eac75-c65f-45b3-a8b4-748e0e767989"
 type: adr
 name: "flake-parts module は transposition だけを行う"
+section: modules
 status: stable
 sources:
   - id: "issue-26"

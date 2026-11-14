@@ -2,6 +2,7 @@
 id: "ADR-c2f0cdc9-284e-4425-8f60-15f3aa423ed4"
 type: adr
 name: "release に成果物を添付しない"
+section: ci-release-docs
 status: stable
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。参照実装: https://github.com/yasunori0418/cryoflow のリリース自動化（bump workflow と release workflow）。ADR-0042 §4 を書き直した"
 justifies:

@@ -2,6 +2,7 @@
 id: "ADR-b1e1dd5e-61a4-4d04-8389-137ef2347c56"
 type: adr
 name: "apply --all は失敗しても残りを続け、最後に集約して非 0 で終える"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-550"

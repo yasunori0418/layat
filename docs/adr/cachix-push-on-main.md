@@ -2,6 +2,7 @@
 id: "ADR-6c477b0f-cd25-417d-91a0-172dd0ed084f"
 type: adr
 name: "キャッシュへの投入を main への push で起動する"
+section: ci-release-docs
 status: stable
 origin: "参照: https://github.com/yasunori0418/nur-packages の `.github/workflows/cachix-push.yml`。ADR-0028 §1 を書き直した"
 justifies:

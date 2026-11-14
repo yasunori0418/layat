@@ -2,6 +2,7 @@
 id: "ADR-1908099c-87f7-4df1-bda5-7731df7d9ed7"
 type: adr
 name: "engine が直接叩く外部コマンドを git に限る"
+section: concept
 status: stable
 sources:
   - id: "issue-406"

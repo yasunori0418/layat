@@ -2,6 +2,7 @@
 id: "ADR-f3d06307-ae5b-4f17-94ad-db92e80e3415"
 type: adr
 name: "rollback はポインタ移動の前に戻り先の manifest で記録を書き直す"
+section: record-state
 status: stable
 sources:
   - id: "issue-580"

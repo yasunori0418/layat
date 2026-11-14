@@ -2,6 +2,7 @@
 id: "ADR-3eb35e63-5465-44cd-8299-c2ac3e6034de"
 type: adr
 name: "テスト系の CI を pull_request と workflow_dispatch で起動する"
+section: ci-release-docs
 status: stable
 origin: "参照: PR #40、https://github.com/yasunori0418/cryoflow の CI 構成。ADR-0027 §2a（トリガは pull_request と workflow_dispatch）を書き直した"
 justifies:

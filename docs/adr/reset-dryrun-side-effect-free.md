@@ -2,6 +2,7 @@
 id: "ADR-a86a8492-57fb-49d0-ba77-200f6dc49c3a"
 type: adr
 name: "reset --dryrun は副作用なしで撤去対象を示す"
+section: placement
 status: stable
 sources:
   - id: "issue-584"

@@ -2,6 +2,7 @@
 id: "ADR-a00bb2de-a8c5-4816-892b-4fa1f5299935"
 type: adr
 name: "巻き戻しの失敗は best-effort で続行する"
+section: atomicity
 status: stable
 sources:
   - id: "issue-168"

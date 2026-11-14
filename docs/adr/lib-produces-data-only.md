@@ -2,6 +2,7 @@
 id: "ADR-521765d7-7e31-42f4-b548-979185a7586a"
 type: adr
 name: "lib は純データ生成に徹する"
+section: concept
 status: stable
 origin: "初期設計の生成 bash を実装前に正す見直し。ADR-0006「決定」節の第 2 項・ADR-0002「決定」節の「純粋性と副作用の両立」を書き直した"
 justifies:

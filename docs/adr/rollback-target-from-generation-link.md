@@ -2,6 +2,7 @@
 id: "ADR-be5865a8-000a-491f-8438-6308076ea727"
 type: adr
 name: "rollback の戻り先は世代リンクから読む"
+section: generations
 status: stable
 sources:
   - id: "issue-580"

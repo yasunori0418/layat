@@ -2,6 +2,7 @@
 id: "ADR-ac648001-7e22-4fe2-a457-596064e32717"
 type: adr
 name: "ロックのキーを解決後の profileDir にする"
+section: atomicity
 status: stable
 origin: "engine の実行時セマンティクスの確定（2026-06-13）。ADR-0013 §2 を書き直した"
 justifies:

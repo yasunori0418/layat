@@ -2,6 +2,7 @@
 id: "ADR-7abe9cc7-30cd-49c9-b10e-bb5e1790ff0d"
 type: adr
 name: "status は 2 つの記録基底を走査して表示する"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-580"

@@ -2,6 +2,7 @@
 id: "ADR-eb1aa25f-a0ca-4efe-bcd9-4cbe11368764"
 type: adr
 name: "世代バックエンドの注入を必須にし nix-env への暗黙のフォールバックを持たない"
+section: generations
 status: stable
 sources:
   - id: "issue-406"

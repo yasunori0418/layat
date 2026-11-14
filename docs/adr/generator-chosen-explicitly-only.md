@@ -2,6 +2,7 @@
 id: "ADR-36cb1e78-90c0-47d2-bbb1-4bfec5db2964"
 type: adr
 name: "生成器は明示の指定だけで選ぶ"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-395"

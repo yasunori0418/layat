@@ -2,6 +2,7 @@
 id: "ADR-8035e7c6-7dc5-4aa8-9a37-403998fa7f9b"
 type: adr
 name: "main への直接 push を ruleset で禁じる"
+section: ci-release-docs
 status: stable
 origin: "ADR-0030 §1b（pull_request ルールで main への直接 push を禁じる）を書き直した"
 justifies:

@@ -2,6 +2,7 @@
 id: "ADR-5af374dd-61a7-4a13-b2e6-fb5136673dd3"
 type: adr
 name: "モジュールに layat.backup を起動配線のオプションとして持つ"
+section: modules
 status: stable
 sources:
   - id: "issue-169"

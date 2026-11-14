@@ -2,6 +2,7 @@
 id: "ADR-4f08aa18-6a38-49fd-a784-450677d80e1a"
 type: adr
 name: "配置前除去の除去も undo の対象にする"
+section: atomicity
 status: stable
 sources:
   - id: "issue-168"

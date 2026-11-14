@@ -2,6 +2,7 @@
 id: "ADR-aec6bd1d-f776-4d7c-9337-1ed78fee6180"
 type: adr
 name: "CLI の依存に go-toml/v2 を許可する"
+section: dev-build
 status: stable
 sources:
   - id: "issue-395"

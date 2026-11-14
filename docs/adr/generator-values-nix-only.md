@@ -2,6 +2,7 @@
 id: "ADR-9acd3e01-58f1-48ca-b84f-f33a5bc1aaa5"
 type: adr
 name: "生成器の選択値を nix だけにする"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-395"

@@ -2,6 +2,7 @@
 id: "ADR-d9cad6f6-d694-4c1d-afee-b57b129955dc"
 type: adr
 name: "marker を判別タグで derivation と見分ける"
+section: lib-entries
 status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の marker の項を書き直した"
 justifies:

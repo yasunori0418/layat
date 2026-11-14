@@ -2,6 +2,7 @@
 id: "ADR-02170bb7-d3b6-49ae-8426-de2113951637"
 type: adr
 name: "Roots の先読みを全ての生成器の前提条件にする"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-395"

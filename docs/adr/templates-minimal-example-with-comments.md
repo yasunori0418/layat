@@ -2,6 +2,7 @@
 id: "ADR-7b9ecd2c-6b77-43c4-8fb4-3ad034e618e1"
 type: adr
 name: "template に置く動く example を 1 config に絞る"
+section: ci-release-docs
 status: stable
 origin: "ADR-0018 §1 を書き直した"
 justifies:

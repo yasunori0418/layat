@@ -2,6 +2,7 @@
 id: "ADR-5d28818e-f7e1-45e8-a7fd-bbb6157b8586"
 type: adr
 name: "--json は items を全件、changes を差分で持ち可逆性を reversible で表す"
+section: cli-output
 status: stable
 sources:
   - id: "issue-552"

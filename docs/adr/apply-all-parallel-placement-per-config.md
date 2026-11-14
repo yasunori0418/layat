@@ -2,6 +2,7 @@
 id: "ADR-e7a57f51-41da-460c-8f51-c84e94643f3d"
 type: adr
 name: "apply --all の配置を config 単位で並列に行う"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-584"

@@ -2,6 +2,7 @@
 id: "ADR-997c2459-f2ab-4025-ac92-e9ce836fc9ed"
 type: adr
 name: "rollback に config の名指しを必須にする"
+section: cli-commands
 status: stable
 origin: "ADR-0018 §4c を書き直した"
 justifies:

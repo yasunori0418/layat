@@ -2,6 +2,7 @@
 id: "ADR-a0d0cf15-8234-42be-b83e-9b8271850475"
 type: adr
 name: "activation の起動文字列を modules/kick.nix で組み立てる"
+section: modules
 status: stable
 sources:
   - id: "issue-519"

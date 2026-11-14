@@ -2,6 +2,7 @@
 id: "ADR-7b9e4a7b-56d3-4356-9f67-bedbde8f0a52"
 type: adr
 name: "モジュールの起動修飾オプションを config ごとに持たない"
+section: modules
 status: stable
 sources:
   - id: "issue-585"

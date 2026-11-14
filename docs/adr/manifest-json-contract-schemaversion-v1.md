@@ -2,6 +2,7 @@
 id: "ADR-b06dd8ab-317e-41ee-9c80-dd70dcd7f2fd"
 type: adr
 name: "manifest.json を schemaVersion 1 の唯一の契約として固定する"
+section: manifest-generator
 status: stable
 origin: "実装前のレビューで詰めた manifest 契約の細目。ADR-0006 の決定節（Nix↔Go の契約の項）・ADR-0013 §1・ADR-0015 §7 を書き直した"
 justifies:

@@ -2,6 +2,7 @@
 id: "ADR-11918a81-f98d-466d-8310-d990c59f59e1"
 type: adr
 name: "status は entry ごとに配置先を出力する"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-580"

@@ -2,6 +2,7 @@
 id: "ADR-9bdf2604-c7b3-468a-b1e4-2478ef37477c"
 type: adr
 name: "rootKind に system を足しても schemaVersion を上げない"
+section: manifest-generator
 status: stable
 origin: "次期マイルストーン計画の grilling（2026-07-04）。ADR-0036 §1a を書き直した"
 justifies:

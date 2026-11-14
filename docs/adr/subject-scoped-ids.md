@@ -2,6 +2,7 @@
 id: "ADR-79af04fe-7ba0-4953-bb0d-75bda1707cd7"
 type: adr
 name: "--json の item id は subject スコープで導く"
+section: cli-output
 status: stable
 sources:
   - id: "issue-552"

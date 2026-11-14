@@ -2,6 +2,7 @@
 id: "ADR-baf6346d-783b-4607-ab1c-c2c93c09e064"
 type: adr
 name: "--all は config ごとの SubjectResult を積む"
+section: cli-output
 status: stable
 sources:
   - id: "issue-552"

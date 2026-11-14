@@ -2,6 +2,7 @@
 id: "ADR-0db061d1-fa30-436d-91d7-c0cec8804c52"
 type: adr
 name: "last-applied 記録に出所を持たせる"
+section: record-state
 status: stable
 sources:
   - id: "issue-580"

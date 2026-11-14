@@ -2,6 +2,7 @@
 id: "ADR-f40c3d37-638d-420a-a0fe-3908cbf0aec0"
 type: adr
 name: "home mode の CLI と lib の版ずれを manifest の確認に任せて許容する"
+section: manifest-generator
 status: stable
 origin: "実装前のレビュー第 2 巡で詰めた残りの細目。ADR-0016 §4 を書き直した"
 justifies:

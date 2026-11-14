@@ -2,6 +2,7 @@
 id: "ADR-abfe1b12-1a7d-42e1-8520-c1e9fcf5846c"
 type: adr
 name: "system mode の last-applied 記録を /var/lib/layat に置く"
+section: record-state
 status: stable
 sources:
   - id: "issue-140"

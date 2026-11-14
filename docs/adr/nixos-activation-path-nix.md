@@ -2,6 +2,7 @@
 id: "ADR-0da9d817-c870-4f48-8a6d-8fb9b55e2a70"
 type: adr
 name: "NixOS の activation の PATH に nix を前置する"
+section: modules
 status: stable
 sources:
   - id: "issue-519"

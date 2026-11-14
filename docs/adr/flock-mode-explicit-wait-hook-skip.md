@@ -2,6 +2,7 @@
 id: "ADR-45380022-d959-4b22-aa05-5993ac1f3c87"
 type: adr
 name: "flock は明示実行で待ち、hook 実行でスキップする"
+section: atomicity
 status: stable
 origin: "engine の設計と実行時セマンティクスの確定（2026-06-11〜06-13）。ADR-0006 §「決定」の並行実行・ADR-0013 §2 を書き直した"
 justifies:

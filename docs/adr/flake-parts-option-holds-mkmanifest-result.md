@@ -2,6 +2,7 @@
 id: "ADR-b157254e-e942-42bf-ae40-60a3a41a4452"
 type: adr
 name: "flake-parts module の option に mkManifest の結果を入れる"
+section: modules
 status: stable
 sources:
   - id: "issue-26"

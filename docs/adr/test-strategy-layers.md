@@ -2,6 +2,7 @@
 id: "ADR-dfdcc588-2e23-4d3b-ae17-b508a8d85ff0"
 type: adr
 name: "テストを sandbox 可否で flake check と E2E に分ける"
+section: dev-build
 status: stable
 origin: "ADR-0006 §テスト戦略・ADR-0012 §3 を書き直した"
 justifies:

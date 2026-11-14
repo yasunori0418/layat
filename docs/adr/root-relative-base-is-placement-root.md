@@ -2,6 +2,7 @@
 id: "ADR-29c0838b-3e25-4b09-a479-9ebbbc4466c7"
 type: adr
 name: "root 相対マーカーの基準点を manifest の配置 root にする"
+section: root-modes
 status: stable
 sources:
   - id: "issue-362"

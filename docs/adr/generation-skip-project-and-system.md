@@ -2,6 +2,7 @@
 id: "ADR-5265f879-e623-44f9-9c58-8c14598e8b10"
 type: adr
 name: "世代スキップを project mode と system mode で行う"
+section: generations
 status: stable
 sources:
   - id: "issue-519"

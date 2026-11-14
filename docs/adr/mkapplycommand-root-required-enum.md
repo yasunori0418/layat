@@ -2,6 +2,7 @@
 id: "ADR-ca24e802-cc57-40c5-ad03-a1c5f0b6e498"
 type: adr
 name: "mkApplyCommand の root を既定値のない必須の enum にする"
+section: lib-entries
 status: stable
 sources:
   - id: "issue-530"

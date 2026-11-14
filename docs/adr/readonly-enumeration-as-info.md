@@ -2,6 +2,7 @@
 id: "ADR-c6bc7060-7af4-4889-9ce6-5800601c9dcc"
 type: adr
 name: "読み取り専用の列挙は info で返す"
+section: cli-output
 status: stable
 sources:
   - id: "issue-552"

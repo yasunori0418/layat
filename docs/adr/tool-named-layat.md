@@ -2,6 +2,7 @@
 id: "ADR-6cd587e8-7aa2-4624-be78-7f6501bf0d6f"
 type: adr
 name: "ツール名を layat にする"
+section: concept
 status: stable
 sources:
   - id: "issue-385"

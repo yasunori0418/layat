@@ -2,6 +2,7 @@
 id: "ADR-db293e0c-4789-45b7-93a9-adedc021344f"
 type: adr
 name: "lib.mkApplyCommand で事前展開した apply コマンドを組む"
+section: lib-entries
 status: stable
 sources:
   - id: "issue-530"

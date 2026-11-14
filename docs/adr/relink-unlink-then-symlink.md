@@ -2,6 +2,7 @@
 id: "ADR-3aebefee-405d-4342-b754-eef8eac29b1b"
 type: adr
 name: "symlink を unlink と symlink の 2 操作で張り替える"
+section: placement
 status: stable
 origin: "ADR-0017 §4 を書き直した"
 justifies:

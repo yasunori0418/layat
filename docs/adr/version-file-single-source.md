@@ -2,6 +2,7 @@
 id: "ADR-9ab223eb-99dc-4aa2-a671-c07f75f7ff3c"
 type: adr
 name: "VERSION ファイルをバージョンの一次情報にする"
+section: ci-release-docs
 status: stable
 origin: "次期マイルストーン追加計画の grilling（2026-07-04）。参照実装: https://github.com/yasunori0418/cryoflow のリリース自動化（bump workflow と release workflow）。ADR-0042 §1 を書き直した"
 justifies:

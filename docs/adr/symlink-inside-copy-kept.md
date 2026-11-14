@@ -2,6 +2,7 @@
 id: "ADR-6d7e2201-3101-4d67-9112-a7e85d8c2ea0"
 type: adr
 name: "copy 内の symlink は symlink のまま複製する"
+section: placement
 status: stable
 origin: "ADR-0016 §3 を書き直した"
 justifies:

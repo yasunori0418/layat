@@ -2,6 +2,7 @@
 id: "ADR-ffbb755c-f548-4ee4-8cea-f6a9b6d98adb"
 type: adr
 name: "モジュールの kick も mkApplyCommand で組む"
+section: modules
 status: stable
 sources:
   - id: "issue-530"

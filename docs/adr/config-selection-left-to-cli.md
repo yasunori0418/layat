@@ -2,6 +2,7 @@
 id: "ADR-7f064851-02e3-40bf-aca3-9de2b0b4f6a7"
 type: adr
 name: "config の選別を CLI だけに任せる"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-530"

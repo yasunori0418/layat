@@ -2,6 +2,7 @@
 id: "ADR-1cbacca1-1930-46ca-bf82-30310f82216e"
 type: adr
 name: "世代の一覧を nix-env を経由せず世代リンクの走査で得る"
+section: generations
 status: stable
 sources:
   - id: "issue-129"

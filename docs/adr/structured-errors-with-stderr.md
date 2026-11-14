@@ -2,6 +2,7 @@
 id: "ADR-9e328362-2e90-441a-8eca-40081ce71b1b"
 type: adr
 name: "エラーはエンベロープに構造化し stderr のテキストと併存させる"
+section: cli-output
 status: stable
 sources:
   - id: "issue-552"

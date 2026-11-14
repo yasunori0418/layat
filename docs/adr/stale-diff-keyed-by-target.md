@@ -2,6 +2,7 @@
 id: "ADR-95b04ff7-8f9d-4ed1-a6e3-c22e4901c895"
 type: adr
 name: "古くなった配置の除去で使う比較のキーを解決後の target にする"
+section: removal-migration
 status: stable
 origin: "ADR-0014 §3a を書き直した"
 justifies:

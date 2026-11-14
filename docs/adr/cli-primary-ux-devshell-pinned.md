@@ -2,6 +2,7 @@
 id: "ADR-88231ffc-4836-4252-be34-894944fd28c3"
 type: adr
 name: "CLI が一次 UX で devShell に pin 版を同梱する"
+section: concept
 status: stable
 sources:
   - id: "issue-3"

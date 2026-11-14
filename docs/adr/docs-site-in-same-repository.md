@@ -2,6 +2,7 @@
 id: "ADR-993423c8-6374-4b72-aa2d-5d5fdbe7a3e4"
 type: adr
 name: "ドキュメントサイトのソースを同じリポジトリの site/ に置く"
+section: ci-release-docs
 status: stable
 sources:
   - id: "issue-57"

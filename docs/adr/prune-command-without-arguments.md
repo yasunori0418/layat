@@ -2,6 +2,7 @@
 id: "ADR-e630482a-bc11-4ba6-a9cc-1ef46f54104d"
 type: adr
 name: "prune は引数を取らない"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-580"

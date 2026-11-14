@@ -2,6 +2,7 @@
 id: "ADR-97edd9af-befb-4a9f-a8ef-de038c76336a"
 type: adr
 name: "layat は buildGoModule と vendorHash でビルドする"
+section: dev-build
 status: stable
 sources:
   - id: "issue-552"

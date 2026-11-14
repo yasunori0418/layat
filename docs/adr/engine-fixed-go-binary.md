@@ -2,6 +2,7 @@
 id: "ADR-2119433e-de69-4447-85a5-575d58246007"
 type: adr
 name: "engine を単一の固定 Go バイナリにする"
+section: concept
 status: stable
 origin: "初期設計の生成 bash を実装前に正す見直し。ADR-0006「決定」節の第 1 項を書き直した"
 justifies:

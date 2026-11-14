@@ -2,6 +2,7 @@
 id: "ADR-fc28d09c-9d52-4539-8838-e9ae5a414594"
 type: adr
 name: "method の symlink から copy への変更を自動で移行する"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-175"

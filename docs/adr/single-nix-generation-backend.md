@@ -2,6 +2,7 @@
 id: "ADR-9755ba76-4c02-4b4e-a8c0-031a24a3a5b9"
 type: adr
 name: "世代バックエンドを nix 実装 1 つに留める"
+section: generations
 status: stable
 sources:
   - id: "issue-406"
