@@ -10,7 +10,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-10-02T12:16:38+09:00"
+  at: "2026-11-15T00:19:28+09:00"
 ---
 # generator_error_test.go — 生成器の失敗の人間向け / --json / --debug の 3 形
 
@@ -23,6 +23,8 @@ generated:
 - **人間向け** — 要約 1 行の後に `Guidance` が続き、生の診断（`Stderr`）を含まないこと。
   `Guidance` が空なら要約だけになること
 - **`--debug`** — 要約行の末尾に `(generator: nix)` が付き、その後に `Guidance` が続くこと
+- **見出し付きの失敗行** — `--all` の失敗行の形で、見出しに続く要約（`--debug` では
+  `(generator: nix)` 付き）の後に `Guidance` が続くこと
 - **`--json`** — `errors[].message` が要約・改行・`Stderr` の連結で、`--debug` の有無で
   変わらないこと。`Stderr` が空なら要約だけになること
 

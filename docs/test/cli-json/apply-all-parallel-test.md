@@ -10,7 +10,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-09-26T02:11:41+09:00"
+  at: "2026-11-15T00:19:28+09:00"
 ---
 # apply_all_parallel_test.go — 完了順逆転時の辞書順集約・部分失敗と skip・カウントの並行安全性
 
@@ -24,8 +24,11 @@ generated:
   注入して完了順を逆転させ（逆転が実際に起きたことも確かめる）、`-v` レポートの
   `layat: apply <name> done` と `results[]` が辞書順であること
 - **部分失敗と skip** — 失敗・try-lock skip・成功を逆順に完了させ、stderr の failed /
-  skipped / done 行が辞書順に並び、件数が (1, 1, 1)、失敗 config だけが error で、skip の
+  skip の通知（`layat: skipped apply <name> because another apply is in progress (…)`）/ done 行が辞書順に並び、件数が (1, 1, 1)、失敗 config だけが error で、skip の
   subject は success、成功 config の subject が items ごと残ること
+- **engine の警告と失敗の詳細** — 注入した apply から警告の関数と失敗の詳細の関数を呼び、
+  完了順を逆転させても、`[<name>] layat: warning: <文>` と `[<name>] layat: <文>` の行が
+  config ごとにまとまり辞書順で出ること。失敗の詳細の行が `warning:` を持たないこと
 - **`--dryrun` の計画** — 同じ逆転の下で stdout の計画行（place / conflict）が辞書順で、
   conflict を含むと終了コード 2、`results[]` が辞書順であること
 - **`--dryrun` の失敗行** — 失敗する config を逆順に完了させ、stderr の
