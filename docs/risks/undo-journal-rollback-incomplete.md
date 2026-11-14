@@ -2,6 +2,7 @@
 id: "RISK-68e810c5-4e68-4b25-9bc0-6b2613022b49"
 type: risk
 name: "途中失敗した run の巻き戻しが不完全で、FS に部分適用の痕跡が残る"
+section: atomicity
 status: stable
 threatens:
   - "REQ-5e75aabc-0e8f-4a6c-92bd-a712dc68a940"

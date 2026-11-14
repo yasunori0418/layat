@@ -2,6 +2,7 @@
 id: "RISK-c3e92bb8-5806-48b0-8910-ee4fe236a325"
 type: risk
 name: "starter テンプレが展開直後に評価を通らず最初の体験で行き止まる"
+section: integration
 status: stable
 threatens:
   - "REQ-196ddabf-6569-4303-942e-050872972501"

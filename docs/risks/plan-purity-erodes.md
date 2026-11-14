@@ -2,6 +2,7 @@
 id: "RISK-f8e14849-3bff-4755-b75f-c80b85990ce1"
 type: risk
 name: "plan と engine が乖離し、table-driven テストが実挙動を保証しなくなる"
+section: engine-core
 status: stable
 threatens:
   - "DSG-8b96869c-842e-4f78-8ff7-df1f1d6c1a68"

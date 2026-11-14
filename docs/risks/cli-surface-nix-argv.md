@@ -2,6 +2,7 @@
 id: "RISK-c9197b73-483b-4d42-8541-49bee039f5ee"
 type: risk
 name: "フラグ解釈と nix 呼び出しの引数組み立てが仕様とずれ意図しない対象へ作用する"
+section: cli-json
 status: stable
 threatens:
   - "REQ-1cc080f6-ae91-4c1f-973e-b7054cfc0198"

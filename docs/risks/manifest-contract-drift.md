@@ -2,6 +2,7 @@
 id: "RISK-5df2d02b-e5d4-40eb-86ad-e8bc96e4c34d"
 type: risk
 name: "manifest.json の形が engine の読む契約から気付かれずにずれる"
+section: manifest-eval
 status: stable
 likelihood: medium
 impact: medium

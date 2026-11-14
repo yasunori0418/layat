@@ -2,6 +2,7 @@
 id: "RISK-3de9753f-3fd3-4364-b1ab-64c68c15ec77"
 type: risk
 name: "評価スイート自身の盲点でアサートが空虚に緑になる"
+section: manifest-eval
 status: stable
 likelihood: low
 impact: high

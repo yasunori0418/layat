@@ -2,6 +2,7 @@
 id: "RISK-e92487a5-fff9-40db-844d-6590f1f36dec"
 type: risk
 name: "status が系列を取りこぼし、mode / root を取り違え、不正な記録を記録なしと読む"
+section: generations
 status: stable
 threatens:
   - "REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173"

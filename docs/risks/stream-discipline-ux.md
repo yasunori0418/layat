@@ -2,6 +2,7 @@
 id: "RISK-687993a2-4863-483c-a957-8a5d6faa4b82"
 type: risk
 name: "stdout の所有権と確認プロンプトの規律が崩れパイプ利用と非対話実行が正しく動かなくなる"
+section: cli-json
 status: stable
 threatens:
   - "REQ-fea038de-55eb-45ac-87fc-ec3a7287592a"

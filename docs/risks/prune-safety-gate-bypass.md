@@ -2,6 +2,7 @@
 id: "RISK-0909e121-8ec4-40c8-ab1c-562e61f31067"
 type: risk
 name: "prune の dryrun・確認・lock の安全機構が働かず、同意なく削除が実行される"
+section: generations
 status: stable
 threatens:
   - "REQ-42fe312c-927c-4da3-9346-f7ca2f3a58ed"

@@ -2,6 +2,7 @@
 id: "RISK-e65844ea-a7b7-4bad-b15b-f60130b7e8fa"
 type: risk
 name: "subdir 適用形の前置が一部の target で抜ける、root 側へ混入する、または単体 marker の形が変わる"
+section: manifest-eval
 status: stable
 likelihood: low
 impact: medium

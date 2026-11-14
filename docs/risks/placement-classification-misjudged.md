@@ -2,6 +2,7 @@
 id: "RISK-e8449214-7794-4d0d-b584-a3a152e2c1f9"
 type: risk
 name: "配置分類を誤り、利用者の実体を本人に知らせずに破損させる"
+section: engine-core
 status: stable
 threatens:
   - "REQ-622787dc-4512-4ce9-9c7d-7b32bbb70557"

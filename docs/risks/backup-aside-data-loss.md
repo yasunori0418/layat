@@ -2,6 +2,7 @@
 id: "RISK-3719d298-8175-4501-95d5-75f3a29568fe"
 type: risk
 name: "--backup の rename 退避がユーザーの実データを上書き・喪失させる"
+section: atomicity
 status: stable
 threatens:
   - "REQ-5dd5a4e9-6162-4fa5-b295-66844f5a4f3b"

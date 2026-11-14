@@ -2,6 +2,7 @@
 id: "RISK-f67a0883-950a-4458-8b6d-1f95cb039cb1"
 type: risk
 name: "GC アンカーの対象と名前を取り違えて世代が回収不能になる"
+section: manifest-eval
 status: stable
 likelihood: medium
 impact: high

@@ -2,6 +2,7 @@
 id: "RISK-31b8346c-7f1d-406f-aa74-6e1024edee83"
 type: risk
 name: "生成器の実装が契約からずれ、実装ごとに manifest の取得や失敗の分類が食い違う"
+section: cli-json
 status: stable
 likelihood: medium
 impact: medium

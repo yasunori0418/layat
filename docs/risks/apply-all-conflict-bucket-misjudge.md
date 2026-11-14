@@ -2,6 +2,7 @@
 id: "RISK-8241dd1d-f856-4ed5-b572-05b88232a199"
 type: risk
 name: "前段の衝突の確認でバケット判定を誤り衝突をすり抜けさせるか誤って停止させる"
+section: cli-json
 status: stable
 threatens:
   - "REQ-38506419-c23d-4fce-b167-30715ce6a69d"

@@ -2,6 +2,7 @@
 id: "RISK-2b17fefb-6e92-4513-9e7c-de21897c9cfe"
 type: risk
 name: "flock による直列化が破れ、同一 config への同時実行が互いの配置を壊す"
+section: atomicity
 status: stable
 threatens:
   - "REQ-1c1526b1-59e3-4264-bb7c-65a10a4aa461"

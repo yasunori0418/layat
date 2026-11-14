@@ -2,6 +2,7 @@
 id: "RISK-fbf029f6-866c-4a08-a4eb-f09e3c7e907e"
 type: risk
 name: "rollback が FS を前世代へ収束させ損ね、世代表示と実配置が食い違う"
+section: generations
 status: stable
 threatens:
   - "REQ-0e341430-17f0-498b-9439-65491652163a"

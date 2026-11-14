@@ -2,6 +2,7 @@
 id: "RISK-01cf9f47-95bd-419a-863d-0d7c1f8188ba"
 type: risk
 name: "copy が place-once を破り、ユーザーのローカル編集を失わせる"
+section: copy
 status: stable
 threatens:
   - "REQ-d2277c7a-7992-49af-a9dc-4cc73843a6f9"

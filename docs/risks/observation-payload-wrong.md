@@ -2,6 +2,7 @@
 id: "RISK-cdcc6faf-9164-409b-b584-2921fa036d10"
 type: risk
 name: "run が返す世代観測と到達状態が実態とずれ、機械可読出力の消費側を誤らせる"
+section: generations
 status: stable
 threatens:
   - "REQ-1be4d678-959c-44d7-a346-44bfd95af56e"

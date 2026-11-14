@@ -2,6 +2,7 @@
 id: "RISK-ac5cd9b4-58f9-43d8-9fae-66f7b5940beb"
 type: risk
 name: "profile のキーイングか世代の読み取りが誤り、別 config の世代系列を取り違える"
+section: generations
 status: stable
 threatens:
   - "REQ-d5a2e289-40bc-45a9-9d44-21b8dc561b81"
