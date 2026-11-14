@@ -108,7 +108,8 @@ field() { printf '%s\n' "$stdout_capture" | sed -n "s/^$1:[[:space:]]*//p"; }
 
 # 起票の必須入力（--description と generated の actor）。§11 だけが外して異常系を確かめる。
 desc=(--description "起票テスト")
-# section を持つ型（requirement）の起票に渡す節の値。§12 だけが外して異常系を確かめる。
+# section を持つ型（requirement）の起票に渡す節の値。§12 は省略の拒否を確かめるために外す。
+# 偽の sara の節は仮ファイルに section を書かないので渡さない。
 sec=(--section cli)
 generated_by="claude-code/sara-new-test"
 export SARA_NEW_GENERATED_BY="$generated_by"
