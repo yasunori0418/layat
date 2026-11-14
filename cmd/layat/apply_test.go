@@ -1,8 +1,11 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"strings"
 	"testing"
 
@@ -10,6 +13,34 @@ import (
 	"github.com/yasunori0418/layat/internal/manifest"
 	"github.com/yasunori0418/layat/internal/planner"
 )
+
+// TestExitCodeFor: only layat's own exitError sets the exit code; a wrapped child process's
+// *exec.ExitError exits 1, not with the child's code.
+func TestExitCodeFor(t *testing.T) {
+	childErr := exec.Command("sh", "-c", "exit 3").Run()
+	var xe *exec.ExitError
+	if !errors.As(childErr, &xe) || xe.ExitCode() != 3 {
+		t.Fatalf("sh -c 'exit 3' = %v, want an *exec.ExitError with code 3", childErr)
+	}
+	cases := []struct {
+		name string
+		err  error
+		want int
+	}{
+		{"nil", nil, 0},
+		{"plain error", errors.New("boom"), 1},
+		{"wrapped child exit", fmt.Errorf("cannot run nix build: %w", childErr), 1},
+		{"exitError", &exitError{code: 2}, 2},
+		{"wrapped exitError", fmt.Errorf("apply: %w", &exitError{code: 2}), 2},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			if got := exitCodeFor(c.err); got != c.want {
+				t.Errorf("exitCodeFor(%v) = %d, want %d", c.err, got, c.want)
+			}
+		})
+	}
+}
 
 // TestApplyAllExitCode: priority error(1) > conflict(2) > 0, not the plain maximum.
 func TestApplyAllExitCode(t *testing.T) {
