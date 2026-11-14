@@ -17,7 +17,7 @@ references:
   - "ADR-6f0383d9-0176-47c4-a9da-1a41e1fd3747"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-14T23:19:56+09:00"
+  at: "2026-11-14T23:27:22+09:00"
 ---
 # golangci-lint でエラー処理の規約を検出する
 
@@ -29,7 +29,7 @@ generated:
 ## 背景
 
 golangci-lint の設定ファイルは無く、golangci-lint は既定の 5 つのリンタ（errcheck・govet・ineffassign・
-staticcheck・unused）だけで走っていた。エラーは `errors.Is`・`errors.As` で判別する
+staticcheck・unused）だけを実行していた。エラーは `errors.Is`・`errors.As` で判別する
 （[エラーは op と対象が分かるいちばん下の関数で 1 回だけ wrap し、伝搬では素通しする](../design/error-wrap-once-at-origin.md)）が、
 `os.IsNotExist` による判別や sentinel の `!=` による比較が残っていても、既定のリンタでは検出されない。
 `os.IsNotExist` は wrap されたエラーを辿らないので、wrap を足すと判別が気づかないうちに外れる。
@@ -42,8 +42,8 @@ staticcheck・unused）だけで走っていた。エラーは `errors.Is`・`er
 - forbidigo: `os.IsNotExist`・`os.IsExist`・`os.IsPermission` を禁じ、`errors.Is` と
   `fs.ErrNotExist`・`fs.ErrExist`・`fs.ErrPermission` の組で書かせる。テストのコードにも当てる
 - nilerr: エラーを受け取ったのに nil を返す箇所を検出する
-- errname: sentinel の変数名が `Err` で始まり、エラーの型名が `Error` で終わることを検査する
-- nolintlint: `//nolint` に理由とリンタ名を必須にし、効いていない `//nolint` を禁じる
+- errname: `Err` で始まらない sentinel の変数名と、`Error` で終わらないエラーの型名を検出する
+- nolintlint: `//nolint` に理由とリンタ名を必須にし、どの指摘も外していない `//nolint` を禁じる
 
 意図して規約から外れる箇所は `//nolint:<リンタ名> // <理由>` を書いて外す。flake の check は
 `--config` でこの設定ファイルを渡して実行する。
