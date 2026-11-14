@@ -155,7 +155,7 @@ cut -f7 "$work/items.tsv" | xargs -r awk '
 ' > "$work/paras.tsv"
 
 # エントリ: <型>\t<docs/ からのディレクトリ>\t<ファイル名>\t<index.md の 1 行>\t<section>
-# status が deprecated の item は entries.tsv ではなく deprecated.tsv に同じ形で書く。
+# status が deprecated の item は deprecated.tsv に、それ以外の item は entries.tsv に同じ形で書く。
 # リンク文字列は name とし、name_ja を持つ用語は「name（name_ja）」にする。
 # リンク文字列に化けないよう角括弧だけをエスケープし、説明はそのまま載せる。
 awk -F '\t' '
