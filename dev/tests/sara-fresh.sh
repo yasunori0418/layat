@@ -272,6 +272,7 @@ generated:
 YAML
   # justifies で指す要求（2026-04-01）より古いが、justifies は辿らない。
   item "$repo" sdr "$SDR" sara_adr "古い決定の記録" <<YAML
+section: graph-model
 status: stable
 justifies:
   - "$REQ_FRESH"
