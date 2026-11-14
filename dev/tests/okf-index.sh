@@ -585,10 +585,13 @@ cp -r "$fixture" "$unknown_risk"
 sed -i 's/^            - integration$/&\n            - zz-unlisted-category/' "$unknown_risk/docs/model.yaml"
 sed 's/^section: integration$/section: zz-unlisted-category/; s/8aaa-aaaaaaaaaaaa/8aaa-aaaaaaaaaaab/' \
   "$fixture/docs/risks/a-integration.md" > "$unknown_risk/docs/risks/unlisted.md"
+# 生成結果と違う内容に置き換えておき、書き換えられていないことを確かめる。
+printf '# 生成前\n' > "$unknown_risk/docs/risks/index.md"
 cp "$unknown_risk/docs/risks/index.md" "$work/unknown-risk-before.md"
 (cd "$unknown_risk" && bash "$generator") > "$work/unknown-risk.out" 2> "$work/unknown-risk.err"
 rc=$?
 if [ "$rc" -eq 2 ] && grep -qF zz-unlisted-category "$work/unknown-risk.err" &&
+  grep -qF '区分（dev/tests/test-categories.tsv）に無い' "$work/unknown-risk.err" &&
   ! grep -qF 'sara check が失敗した' "$work/unknown-risk.err" &&
   cmp -s "$unknown_risk/docs/risks/index.md" "$work/unknown-risk-before.md"; then
   pass "区分に無い section の値の risk は標準エラーにその値を出し、index.md を書かずに exit 2 で止まる"
