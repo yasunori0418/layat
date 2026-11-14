@@ -6,14 +6,14 @@ section: errors
 status: stable
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-07T22:24:21+09:00"
+  at: "2026-11-14T23:03:48+09:00"
 ---
 
 # error-wrap convention
 
 ## Definition
 
-The convention that an error in the engine is wrapped exactly once, at its origin, with the op and the target path attached, and is not re-wrapped as it propagates.
+The convention that an error in layat's Go code is wrapped exactly once, at the lowest function that knows both the op and the target, and is not re-wrapped as it propagates.
 
 ## Avoid
 
@@ -21,7 +21,7 @@ Piling up context every time an error crosses a boundary; swallowing a sentinel 
 
 ## 定義
 
-engine のエラーを発生源で 1 回だけ op と対象パスを付けて wrap し、伝搬の途中では再 wrap しない規約。
+layat の Go のコードのエラーを、op と対象の両方が分かるいちばん下の関数で 1 回だけ wrap し、伝搬の途中では再 wrap しない規約。
 
 ## 避ける表現
 
