@@ -648,7 +648,7 @@ func TestApplyNoWaitSkipsWhenLocked(t *testing.T) {
 	res, err := Apply(Options{
 		LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, NoWait: true, Backend: &generation.Fake{},
 	})
-	if err != ErrSkipped {
+	if !errors.Is(err, ErrSkipped) {
 		t.Fatalf("NoWait while locked: err = %v, want ErrSkipped", err)
 	}
 	if res == nil || !res.Skipped {
