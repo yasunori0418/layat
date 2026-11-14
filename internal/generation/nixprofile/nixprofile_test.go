@@ -99,14 +99,18 @@ func TestListMissingProfileDir(t *testing.T) {
 }
 
 // TestListReadDirError pins that a profileDir that cannot be read fails List instead of
-// reporting no generations.
+// reporting no generations, and names the op and the profileDir.
 func TestListReadDirError(t *testing.T) {
 	file := filepath.Join(t.TempDir(), "file")
 	if err := os.WriteFile(file, nil, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := New().List(filepath.Join(file, "profile")); err == nil {
+	_, err := New().List(filepath.Join(file, "profile"))
+	if err == nil {
 		t.Fatal("expected an error for an unreadable profileDir, got nil")
+	}
+	if want := "cannot list the generations: "; !strings.HasPrefix(err.Error(), want) || !strings.Contains(err.Error(), file) {
+		t.Errorf("error %q, want prefix %q and the profileDir %s", err, want, file)
 	}
 }
 
