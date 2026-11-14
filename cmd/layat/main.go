@@ -133,8 +133,18 @@ func newRootCmd() *cobra.Command {
 	return root
 }
 
-// exitCodeX is the interface of errors that carry an exit code (such as apply --all's aggregate).
-type exitCodeX interface{ ExitCode() int }
+// exitCodeFor returns the exit code for the command's error: 0 for nil, the code of layat's own
+// exitError, and 1 otherwise. A wrapped child process's exit code is not inherited.
+func exitCodeFor(err error) int {
+	if err == nil {
+		return 0
+	}
+	var ee *exitError
+	if errors.As(err, &ee) {
+		return ee.code
+	}
+	return 1
+}
 
 func main() {
 	err := newRootCmd().Execute()
@@ -158,7 +168,7 @@ func main() {
 			if ee.msg != "" {
 				printError(os.Stderr, ee)
 			}
-			os.Exit(ee.code)
+			os.Exit(exitCodeFor(err))
 		}
 
 		printError(os.Stderr, err)
@@ -166,11 +176,6 @@ func main() {
 		if errors.Is(err, manifest.ErrSchemaVersionUnsupported) {
 			printSchemaSkewHint(os.Stderr)
 		}
-		// An error carrying an exit code (such as apply --all's aggregate) exits with that code.
-		var ec exitCodeX
-		if errors.As(err, &ec) {
-			os.Exit(ec.ExitCode())
-		}
-		os.Exit(1)
+		os.Exit(exitCodeFor(err))
 	}
 }
