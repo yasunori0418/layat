@@ -277,6 +277,29 @@ func TestStaleRemoveUnlinkError(t *testing.T) {
 	}
 }
 
+// TestStaleRemoveReverifyIOErrorFails verifies that an I/O failure during the pre-unlink
+// re-verification (EACCES from a search-denied parent) stops removeStale with the cause in
+// the chain instead of being kept as drift with a warning. Skipped as root.
+func TestStaleRemoveReverifyIOErrorFails(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("requires non-root to trigger permission error")
+	}
+	var warns []string
+	a := staleErr_applier(&warns)
+	act := staleErr_action(realTempDir(t), "foo", filepath.Join(preflightErr_deniedDir(t), "foo"))
+
+	err := a.removeStale([]planner.RemoveAction{act})
+	if !errors.Is(err, fs.ErrPermission) {
+		t.Fatalf("err = %v, want a permission error in the chain", err)
+	}
+	if len(warns) != 0 {
+		t.Errorf("warnings = %v, want none (an I/O failure is not drift)", warns)
+	}
+	if len(a.result.Removed) != 0 {
+		t.Errorf("Removed = %v, want none", a.result.Removed)
+	}
+}
+
 // --- empty-ancestor pruning --------------------------------------------------
 
 // TestRemoveStalePrunesMultiLevelEmptyAncestors verifies that removing the last entry under
