@@ -69,7 +69,7 @@ func runInit(run *initRun, template string) error {
 
 	args := flakeInitArgs(template, ref)
 	if flagDebug {
-		fmt.Fprintf(os.Stderr, "layat: + nix %s\n", strings.Join(args, " "))
+		discloseNix(os.Stderr, args)
 	}
 
 	// Capture stderr: forward nix's created-file list on success, classify it on failure.

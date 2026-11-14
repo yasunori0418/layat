@@ -144,7 +144,7 @@ func runListAllGenerations(run *listGenerationsRun) error {
 	}
 	systemNames, err := profileNamesUnder(systemBase, manifest.RootKindSystem)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "layat: warning: skipping the system profile base (%s): %v\n", systemBase, err)
+		warnf(os.Stderr, "skipping the system profile base (%s): %v", systemBase, err)
 	}
 
 	printed := false

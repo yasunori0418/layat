@@ -119,7 +119,7 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 		return err
 	}
 	if res.Aborted {
-		fmt.Fprintln(os.Stderr, "layat: reset aborted")
+		noticef(os.Stderr, "reset aborted")
 		return nil
 	}
 	if flagVerbose {
@@ -143,13 +143,13 @@ func printResetPlan(res *engine.ResetResult) {
 		}
 	}
 	if len(res.RemovedSymlinks)+len(res.RemovedCopies)+len(res.KeptForeign) == 0 {
-		fmt.Fprintln(os.Stderr, "layat: reset --dryrun: nothing to remove")
+		noticef(os.Stderr, "reset --dryrun: nothing to remove")
 	}
 }
 
 // reportResetTargets prints the planned removals to stderr before the confirmation prompt.
 func reportResetTargets(res *engine.ResetResult, name string) {
-	fmt.Fprintf(os.Stderr, "layat: reset %s removal targets (root=%s):\n", name, res.Root)
+	noticef(os.Stderr, "reset %s removal targets (root=%s):", name, res.Root)
 	for _, t := range res.RemovedSymlinks {
 		fmt.Fprintf(os.Stderr, "  symlink %s\n", t)
 	}
@@ -166,7 +166,7 @@ func reportResetTargets(res *engine.ResetResult, name string) {
 
 // reportResetResult prints the actual removal result to stderr.
 func reportResetResult(res *engine.ResetResult, name string) {
-	fmt.Fprintf(os.Stderr, "layat: reset %s done (root=%s)\n", name, res.Root)
+	noticef(os.Stderr, "reset %s done (root=%s)", name, res.Root)
 	for _, t := range res.RemovedSymlinks {
 		fmt.Fprintf(os.Stderr, "  removed-symlink %s\n", t)
 	}

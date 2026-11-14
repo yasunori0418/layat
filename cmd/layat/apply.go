@@ -125,7 +125,7 @@ func runApplyManifest(subject *applySubject, name string) error {
 	if err != nil {
 		if errors.Is(err, engine.ErrSkipped) {
 			if flagVerbose {
-				fmt.Fprintln(os.Stderr, "layat: skipped because another apply is in progress (run layat apply manually)")
+				noticef(os.Stderr, "skipped because another apply is in progress (run layat apply manually)")
 			}
 			return nil
 		}
@@ -207,7 +207,7 @@ func runApply(run *applyRun, name string) error {
 		if errors.Is(err, engine.ErrSkipped) {
 			// A try-lock skip is a normal skip (exit 0).
 			if flagVerbose {
-				fmt.Fprintln(os.Stderr, "layat: skipped because another apply is in progress (run layat apply manually)")
+				noticef(os.Stderr, "skipped because another apply is in progress (run layat apply manually)")
 			}
 			return nil
 		}
@@ -322,7 +322,7 @@ func runApplyAll(run *applyRun) error {
 	}
 	if len(selected) == 0 {
 		if flagVerbose {
-			fmt.Fprintln(os.Stderr, "layat: apply --all: no matching configs")
+			noticef(os.Stderr, "apply --all: no matching configs")
 		}
 		return nil
 	}
@@ -360,7 +360,7 @@ func runApplyAll(run *applyRun) error {
 
 	// 4. Aggregate report and exit code.
 	if flagVerbose {
-		fmt.Fprintf(os.Stderr, "layat: apply --all done (applied %d / skipped %d / failed %d / selected %d)\n",
+		noticef(os.Stderr, "apply --all done (applied %d / skipped %d / failed %d / selected %d)",
 			applied, skipped, failures, len(selected))
 	}
 	// conflict(2) arises only on the --dryrun path.
@@ -580,12 +580,12 @@ func aggregateApply(run *applyRun, selected []string, jobs int, applyFn func(nam
 			subjectErr = nil
 			o.skipped = true
 			if flagVerbose {
-				fmt.Fprintf(&o.out.stderr, "layat: skipped apply %s (another apply is in progress)\n", name)
+				noticef(&o.out.stderr, "skipped apply %s (another apply is in progress)", name)
 			}
 		default:
 			o.err = err
 			// Report the failure to stderr and continue.
-			fmt.Fprintf(&o.out.stderr, "layat: apply %s failed: %v\n", name, err)
+			printFailure(&o.out.stderr, "apply "+name+" failed", err)
 		}
 		subject.finish(subjectErr)
 	})
@@ -623,7 +623,7 @@ func aggregateDryRun(run *applyRun, selected []string, jobs int, applyDry func(n
 		if err != nil {
 			o.err = err
 			// Report the failure to stderr and continue.
-			fmt.Fprintf(&o.out.stderr, "layat: apply %s --dryrun failed: %v\n", name, err)
+			printFailure(&o.out.stderr, "apply "+name+" --dryrun failed", err)
 			subject.finish(err)
 			return
 		}
@@ -705,7 +705,7 @@ func reportResult(res *engine.Result, name string) {
 
 // fprintResult is reportResult writing to w.
 func fprintResult(w io.Writer, res *engine.Result, name string) {
-	_, _ = fmt.Fprintf(w, "layat: apply %s done (root=%s)\n", name, res.Root)
+	noticef(w, "apply %s done (root=%s)", name, res.Root)
 	for _, t := range res.Placed {
 		_, _ = fmt.Fprintf(w, "  placed   %s\n", t)
 	}

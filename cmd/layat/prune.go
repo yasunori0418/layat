@@ -109,7 +109,7 @@ func runPrune(run *pruneRun, dryrun, interactive bool) error {
 	}
 	if res.Aborted {
 		// Unreachable under --json, which requires --yes and so cannot decline.
-		fmt.Fprintln(os.Stderr, "layat: prune aborted")
+		noticef(os.Stderr, "prune aborted")
 		return nil
 	}
 	if flagVerbose {
@@ -153,14 +153,14 @@ func printPrunePlan(res *engine.PruneResult) {
 		}
 	}
 	if len(res.Removed) == 0 {
-		fmt.Fprintln(os.Stderr, "layat: prune --dryrun: nothing to delete")
+		noticef(os.Stderr, "prune --dryrun: nothing to delete")
 	}
 }
 
 // reportPruneTargets lists the series about to be deleted, with every root path, on stderr before
 // the confirmation prompt. The root paths keep an unmounted root from passing for a deleted one.
 func reportPruneTargets(res *engine.PruneResult) {
-	fmt.Fprintf(os.Stderr, "layat: prune will delete %d orphan profile series:\n", len(res.Removed))
+	noticef(os.Stderr, "prune will delete %d orphan profile series:", len(res.Removed))
 	for _, s := range res.Removed {
 		fmt.Fprintf(os.Stderr, "  root %s\n", s.Root)
 		fmt.Fprintf(os.Stderr, "    series %s\n", s.Dir)
@@ -175,7 +175,7 @@ func reportPruneTargets(res *engine.PruneResult) {
 
 // reportPruneResult prints what was deleted to stderr. Skipped series are already engine warnings.
 func reportPruneResult(res *engine.PruneResult) {
-	fmt.Fprintf(os.Stderr, "layat: prune done (%d series deleted, %d skipped)\n", len(res.Removed), len(res.Skipped))
+	noticef(os.Stderr, "prune done (%d series deleted, %d skipped)", len(res.Removed), len(res.Skipped))
 	for _, s := range res.Removed {
 		fmt.Fprintf(os.Stderr, "  removed-series %s (root=%s)\n", s.Dir, s.Root)
 	}

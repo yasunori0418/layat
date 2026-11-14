@@ -9,7 +9,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
@@ -154,7 +153,7 @@ func main() {
 	// the exit code.
 	if flagJSON && outturnReport.began() {
 		if emitErr := outturnReport.emit(err); emitErr != nil {
-			fmt.Fprintf(os.Stderr, "layat: cannot write the --json envelope: %v\n", emitErr)
+			printFailure(os.Stderr, "cannot write the --json envelope", emitErr)
 			if err == nil {
 				// The command succeeded but the envelope was not written, so do not exit 0.
 				os.Exit(1)
@@ -172,18 +171,10 @@ func main() {
 			os.Exit(ee.code)
 		}
 
-		// A generator failure is formatted by printGeneratorError; anything else is printed as-is.
-		var ge *generator.Error
-		if errors.As(err, &ge) {
-			printGeneratorError(os.Stderr, ge)
-		} else {
-			fmt.Fprintln(os.Stderr, err)
-		}
+		printError(os.Stderr, err)
 		// On a manifest schemaVersion skew between the CLI and the flake pin, add the cause and the fix.
 		if errors.Is(err, manifest.ErrSchemaVersionUnsupported) {
-			fmt.Fprintln(os.Stderr, "\nlayat: the layat version pinned by the CLI (engine) and by the flake may be out of sync.\n"+
-				"  The flake's layat input is generating a manifest newer than the CLI.\n"+
-				"  Update the CLI, or lower the flake's layat input to match the CLI so both versions align.")
+			printSchemaSkewHint(os.Stderr)
 		}
 		// An error carrying an exit code (such as apply --all's aggregate) exits with that code.
 		var ec exitCodeX

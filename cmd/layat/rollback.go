@@ -86,7 +86,7 @@ func runRollback(run *rollbackRun, name string) error {
 
 // reportRollback prints the generation transition and placement diff to stderr.
 func reportRollback(res *engine.RollbackResult, name string) {
-	fmt.Fprintf(os.Stderr, "layat: rollback %s done (generation %d → %d, root=%s)\n", name, res.From, res.To, res.Root)
+	noticef(os.Stderr, "rollback %s done (generation %d → %d, root=%s)", name, res.From, res.To, res.Root)
 	for _, t := range res.Placed {
 		fmt.Fprintf(os.Stderr, "  placed   %s\n", t)
 	}
