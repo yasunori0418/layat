@@ -20,6 +20,7 @@ import (
 
 	"github.com/yasunori0418/layat/internal/engine"
 	"github.com/yasunori0418/layat/internal/generation"
+	"github.com/yasunori0418/layat/internal/generation/nixprofile"
 	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/lock"
 )
@@ -362,6 +363,21 @@ func TestClassifyErrorCodes(t *testing.T) {
 				t.Error("message must not be empty")
 			}
 		})
+	}
+}
+
+// TestClassifyErrorNixEnvStderr: a nix-env failure keeps E_LAYAT_FAILED and its message is the
+// summary followed by nix-env's stderr on the next line.
+func TestClassifyErrorNixEnvStderr(t *testing.T) {
+	err := fmt.Errorf("context: %w", &nixprofile.CommandError{
+		Op: "--set", Profile: "/p", Stderr: "error: boom", Err: errors.New("exit status 1"),
+	})
+	e := classifyError(err)
+	if e.Code != "E_LAYAT_FAILED" {
+		t.Errorf("Code = %s, want E_LAYAT_FAILED", e.Code)
+	}
+	if want := err.Error() + "\nerror: boom"; e.Message != want {
+		t.Errorf("Message = %q, want %q", e.Message, want)
 	}
 }
 
