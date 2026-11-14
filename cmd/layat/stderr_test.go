@@ -14,6 +14,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/yasunori0418/layat/internal/engine"
 	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/manifest"
 )
@@ -127,27 +128,24 @@ func assertFailureDetailsNotWarnings(t *testing.T, stderr string, wantMarkers ..
 // "layat: warning: <text>" line.
 func assertEngineWarning(t *testing.T, stderr string) {
 	t.Helper()
-	if !strings.HasPrefix(stderr, "layat: warning: no last-applied record") {
+	if !strings.HasPrefix(stderr, "layat: warning: ") && !strings.Contains(stderr, "\nlayat: warning: ") {
 		t.Errorf("stderr has no engine warning headed by \"layat: warning: \":\n%s", stderr)
 	}
 }
 
 // failureDetailsSetup isolates an apply / rollback of config c on a temp root with the Fake
-// backend and a stub nix reporting rootKind=home. It returns the root and the flake directory.
-func failureDetailsSetup(t *testing.T) (root, flakeDir string) {
+// backend and a stub nix reporting rootKind=home. It returns the root.
+func failureDetailsSetup(t *testing.T) string {
 	t.Helper()
-	if os.Geteuid() == 0 {
-		t.Skip("a read-only directory does not stop root")
-	}
 	withFlakeEntrypoint(t)
 	stubNixRootKind(t, manifest.RootKindHome)
 	installFakeBackend(t, "")
 	origManifest, origVerbose := flagManifest, flagVerbose
 	t.Cleanup(func() { flagManifest, flagVerbose = origManifest, origVerbose })
 	flagVerbose = false
-	root = t.TempDir()
+	root := t.TempDir()
 	flagRoot = root
-	return root, flagFile
+	return root
 }
 
 // applyManifest runs apply c --manifest over a link-farm of entries and returns stderr and the
@@ -155,7 +153,6 @@ func failureDetailsSetup(t *testing.T) (root, flakeDir string) {
 func applyManifest(t *testing.T, entries ...manifest.Entry) (string, error) {
 	t.Helper()
 	origFile := flagFile
-	t.Cleanup(func() { flagFile = origFile })
 	flagFile = ""
 	flagManifest = []string{writeTestLinkFarm(t, entries...)}
 	var err error
@@ -168,8 +165,12 @@ func applyManifest(t *testing.T, entries ...manifest.Entry) (string, error) {
 }
 
 // readOnlyDir creates dir with no write permission, restored at cleanup so TempDir can remove it.
+// It skips the test under root, whom a read-only directory does not stop.
 func readOnlyDir(t *testing.T, dir string) {
 	t.Helper()
+	if os.Geteuid() == 0 {
+		t.Skip("a read-only directory does not stop root")
+	}
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		t.Fatal(err)
 	}
@@ -192,7 +193,7 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 	}
 
 	t.Run("apply conflict", func(t *testing.T) {
-		root, _ := failureDetailsSetup(t)
+		root := failureDetailsSetup(t)
 		if err := os.WriteFile(filepath.Join(root, ".a"), []byte("foreign"), 0o644); err != nil {
 			t.Fatal(err)
 		}
@@ -205,7 +206,7 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 	})
 
 	t.Run("apply undo", func(t *testing.T) {
-		root, _ := failureDetailsSetup(t)
+		root := failureDetailsSetup(t)
 		readOnlyDir(t, filepath.Join(root, "ro"))
 		stderr, err := applyManifest(t, entry("ro/leaf"))
 		if err == nil {
@@ -216,7 +217,7 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 	})
 
 	// rollbackFrom applies [.a, ro/leaf] then [.b], so rolling back re-places .a and ro/leaf.
-	rollbackFrom := func(t *testing.T, root, flakeDir string, prepare func()) (string, error) {
+	rollbackFrom := func(t *testing.T, prepare func()) (string, error) {
 		t.Helper()
 		if stderr, err := applyManifest(t, entry(".a"), entry("ro/leaf")); err != nil {
 			t.Fatalf("first apply: %v\n%s", err, stderr)
@@ -225,7 +226,6 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 			t.Fatalf("second apply: %v\n%s", err, stderr)
 		}
 		prepare()
-		flagFile = flakeDir
 		var err error
 		_, stderr := captureOutErr(t, func() {
 			run, _ := newRollbackTestRun()
@@ -235,8 +235,8 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 	}
 
 	t.Run("rollback conflict", func(t *testing.T) {
-		root, flakeDir := failureDetailsSetup(t)
-		stderr, err := rollbackFrom(t, root, flakeDir, func() {
+		root := failureDetailsSetup(t)
+		stderr, err := rollbackFrom(t, func() {
 			if err := os.WriteFile(filepath.Join(root, ".a"), []byte("foreign"), 0o644); err != nil {
 				t.Fatal(err)
 			}
@@ -248,13 +248,106 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 	})
 
 	t.Run("rollback undo", func(t *testing.T) {
-		root, flakeDir := failureDetailsSetup(t)
-		stderr, err := rollbackFrom(t, root, flakeDir, func() { readOnlyDir(t, filepath.Join(root, "ro")) })
+		root := failureDetailsSetup(t)
+		stderr, err := rollbackFrom(t, func() { readOnlyDir(t, filepath.Join(root, "ro")) })
 		if err == nil {
 			t.Fatal("rollback succeeded, want an FS failure")
 		}
 		assertFailureDetailsNotWarnings(t, stderr, "apply failed; ")
 	})
+}
+
+// TestEngineWarningsReachStderrAsWarnings drives reset, status and prune through the CLI and checks
+// that a warning the engine emits through Warnf reaches stderr as a "layat: warning: <text>" line.
+func TestEngineWarningsReachStderrAsWarnings(t *testing.T) {
+	for name, dryrun := range map[string]bool{"reset --dryrun": true, "reset": false} {
+		t.Run(name, func(t *testing.T) {
+			failureDetailsSetup(t)
+			src := t.TempDir()
+			for i, target := range []string{".a", ".b"} {
+				entry := manifest.Entry{SrcKind: "store", Src: src, Subpath: ".", Target: target, Method: "symlink"}
+				if stderr, err := applyManifest(t, entry); err != nil {
+					t.Fatalf("apply %d: %v\n%s", i+1, err, stderr)
+				}
+			}
+			// Point the profile back at generation 1 so the record (generation 2) disagrees with it.
+			profile := findProfileLink(t, os.Getenv("XDG_STATE_HOME"))
+			if err := os.Remove(profile); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.Symlink("profile-1-link", profile); err != nil {
+				t.Fatal(err)
+			}
+			origYes := flagYes
+			t.Cleanup(func() { flagYes = origYes })
+			flagYes = true
+			var err error
+			_, stderr := captureOutErr(t, func() {
+				run, _ := newResetTestRun()
+				err = runReset(run, "c", nil, dryrun)
+			})
+			if err != nil {
+				t.Fatalf("runReset: %v\n%s", err, stderr)
+			}
+			assertEngineWarning(t, stderr)
+		})
+	}
+
+	t.Run("status", func(t *testing.T) {
+		orig := statusFn
+		t.Cleanup(func() { statusFn = orig })
+		statusFn = func(opts engine.StatusOptions) ([]engine.StatusSeries, error) {
+			if opts.Warnf == nil {
+				t.Fatal("the CLI passed no Warnf to the engine")
+			}
+			opts.Warnf("skipping the system record base (%s): %v", "/s", errors.New("boom"))
+			return nil, nil
+		}
+		_, stderr := captureOutErr(t, func() {
+			run, _ := newStatusTestRun()
+			if err := runStatus(run, nil); err != nil {
+				t.Errorf("runStatus: %v", err)
+			}
+		})
+		assertEngineWarning(t, stderr)
+	})
+
+	t.Run("prune", func(t *testing.T) {
+		withPruneTestState(t)
+		pruneFn = func(opts engine.PruneOptions) (*engine.PruneResult, error) {
+			if opts.Warnf == nil {
+				t.Fatal("the CLI passed no Warnf to the engine")
+			}
+			opts.Warnf("prune: skipped series %s (%s): %v", "/s/x", "locked", errors.New("busy"))
+			return &engine.PruneResult{}, nil
+		}
+		_, stderr := captureOutErr(t, func() {
+			run, _ := newPruneTestRun()
+			if err := runPrune(run, true, false); err != nil {
+				t.Errorf("runPrune: %v", err)
+			}
+		})
+		assertEngineWarning(t, stderr)
+	})
+}
+
+// findProfileLink returns the one profile link (a symlink named "profile") under base.
+func findProfileLink(t *testing.T, base string) string {
+	t.Helper()
+	var found []string
+	err := filepath.WalkDir(base, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.Name() == "profile" && d.Type()&fs.ModeSymlink != 0 {
+			found = append(found, path)
+		}
+		return nil
+	})
+	if err != nil || len(found) != 1 {
+		t.Fatalf("profile links under %s = %v (err %v), want one", base, found, err)
+	}
+	return found[0]
 }
 
 // TestPrefixLiteralsOnlyInStderrFile checks that no string literal in the non-test Go of internal/

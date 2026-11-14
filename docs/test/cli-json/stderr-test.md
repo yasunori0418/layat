@@ -11,7 +11,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-14T23:41:09+09:00"
+  at: "2026-11-15T00:00:01+09:00"
 ---
 # stderr_test.go — stderr の行の形・errors.Join の分け方・失敗の詳細の出口・layat: を含むリテラルの所在
 
@@ -33,5 +33,7 @@ generated:
 - **失敗の詳細の出口** — 偽の nix と Fake の世代 backend で apply と rollback を実際に駆動し、
   conflict の列挙と undo の報告が `layat: <文>` で出て `layat: warning:` で始まらないこと。
   apply では通常の engine の警告が `layat: warning: ` で始まること
+- **engine の警告の配線** — reset（`--dryrun` の有無の両方）・status・prune を CLI から駆動し、
+  engine が Warnf で出した警告が `layat: warning: ` で始まる行になること
 - **リテラルの所在** — `go/parser` で `internal/` と `cmd/layat/` の非テストの `.go` を読み、
   `layat: ` を含む文字列リテラルが `stderr.go` の外に無いこと
