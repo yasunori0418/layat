@@ -112,7 +112,8 @@ func initNixError(args []string, stderr string, runErr error) error {
 	if nixgen.IsExperimentalDisabled(stderr) {
 		return fmt.Errorf("nix's experimental-features are not enabled (nix flake init): %w\n%s\n\nOriginal nix error:\n%s", runErr, nixgen.ExperimentalGuidance, trimmed)
 	}
-	err := fmt.Errorf("cannot run nix flake init (%s): %w", args[len(args)-1], runErr)
+	installable := args[len(args)-1] // flakeInitArgs puts <ref>#<template> last
+	err := fmt.Errorf("cannot run nix flake init (%s): %w", installable, runErr)
 	if trimmed == "" {
 		return err
 	}
