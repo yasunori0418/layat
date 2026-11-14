@@ -395,6 +395,20 @@ item_types:
             - low
         required: true
         placeholder: medium
+      # index.md の節。値と並び順は dev/tests/test-categories.tsv の区分と同じにする。
+      - name: section
+        display_name: Section
+        field_type: !enum
+          values:
+            - manifest-eval
+            - engine-core
+            - copy
+            - migration-stale
+            - atomicity
+            - generations
+            - cli-json
+            - integration
+        required: true
       - *status_field
       - *stale_after_field
     allowed_targets:
