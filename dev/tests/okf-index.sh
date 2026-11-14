@@ -342,6 +342,18 @@ else
   fault "(7) deprecated の item が無いのに末尾の節の見出しが出た:$headed"
 fi
 
+# 写しの ADR を stable にし、deprecated の item が 1 件も無い入力を作る。
+none="$work/none"
+cp -r "$fixture" "$none"
+sed 's/^status: deprecated$/status: stable/' "$fixture/docs/adr/from-paragraph.md" > "$none/docs/adr/from-paragraph.md"
+if (cd "$none" && bash "$generator") > "$work/none.out" 2>&1 && [ ! -s "$work/none.out" ] &&
+  ! grep -rqxF --include=index.md '## 有効でない item（`deprecated`）' "$none/docs"; then
+  pass "deprecated の item が 1 件も無い入力からも出力なしで生成でき、どの index.md にも末尾の節の見出しを出さない"
+else
+  fault "(7) deprecated の item が 1 件も無い入力で生成が失敗したか、何かを出力したか、末尾の節の見出しが出た"
+  sed 's/^/    /' "$work/none.out"
+fi
+
 # 写しに、節に分ける型の deprecated と draft の要件、区分の deprecated のテスト条件とテストケースを足し、
 # SDR を deprecated にして、主題の並びが空の index.md を作る。
 deprecated="$work/deprecated"
