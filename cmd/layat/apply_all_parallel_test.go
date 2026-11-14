@@ -174,7 +174,7 @@ func TestApplyAllParallelPartialFailureAndSkip(t *testing.T) {
 	}
 	assertInOrder(t, stderr,
 		"layat: apply a failed: stub apply of a failed",
-		"layat: skipped apply b (another apply is in progress)",
+		"layat: skipped apply b because another apply is in progress (run layat apply b after it ends)",
 		"layat: apply c done")
 
 	if err := run.emit(&exitError{code: applyAllExitCode(failures > 0, false), msg: "apply --all: 1 config(s) failed"}); err != nil {

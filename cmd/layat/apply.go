@@ -127,7 +127,7 @@ func runApplyManifest(subject *applySubject, name string) error {
 	if err != nil {
 		if errors.Is(err, engine.ErrSkipped) {
 			if flagVerbose {
-				noticef(os.Stderr, "skipped because another apply is in progress (run layat apply manually)")
+				skipNotice(os.Stderr, name)
 			}
 			return nil
 		}
@@ -211,7 +211,7 @@ func runApply(run *applyRun, name string) error {
 		if errors.Is(err, engine.ErrSkipped) {
 			// A try-lock skip is a normal skip (exit 0).
 			if flagVerbose {
-				noticef(os.Stderr, "skipped because another apply is in progress (run layat apply manually)")
+				skipNotice(os.Stderr, name)
 			}
 			return nil
 		}
@@ -593,7 +593,7 @@ func aggregateApply(run *applyRun, selected []string, jobs int, applyFn configAp
 			subjectErr = nil
 			o.skipped = true
 			if flagVerbose {
-				noticef(&o.out.stderr, "skipped apply %s (another apply is in progress)", name)
+				skipNotice(&o.out.stderr, name)
 			}
 		default:
 			o.err = err

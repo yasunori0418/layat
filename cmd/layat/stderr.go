@@ -84,6 +84,11 @@ func engineReportf(format string, args ...any) {
 	noticef(os.Stderr, format, args...)
 }
 
+// skipNotice writes the notice that apply name was skipped because another apply holds the lock.
+func skipNotice(w io.Writer, name string) {
+	noticef(w, "skipped apply %s because another apply is in progress (run layat apply %s after it ends)", name, name)
+}
+
 // configWarnf returns apply --all's warning function for config name: warnf writing to w with the
 // line headed by "[<name>] ".
 func configWarnf(w io.Writer, name string) func(format string, args ...any) {
