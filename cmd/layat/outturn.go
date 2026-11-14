@@ -207,7 +207,8 @@ func (r *outturnRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 
 // classifyError maps a command failure onto an outturn error code: E_INPUT, E_LAYAT_COLLISION,
 // E_LOCK, E_LAYAT_BUILD, E_NOTFOUND, E_PERMISSION, E_IO, falling back to E_LAYAT_FAILED.
-// Specific sentinels win over the generic E_IO shape check.
+// Specific sentinels win over the generic E_IO shape check. A nix-env failure's stderr follows
+// the message on the next line.
 func classifyError(err error) outturn.Error {
 	code := "E_LAYAT_FAILED"
 	message := err.Error()
@@ -238,7 +239,7 @@ func classifyError(err error) outturn.Error {
 	}
 	// nix-env's stderr went to the terminal only; --json keeps it after the summary.
 	var ce *nixprofile.CommandError
-	if bf == nil && errors.As(err, &ce) && ce.Stderr != "" {
+	if errors.As(err, &ce) && ce.Stderr != "" {
 		message += "\n" + ce.Stderr
 	}
 	return outturn.Error{Code: code, Message: message}
