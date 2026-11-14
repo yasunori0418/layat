@@ -2,6 +2,7 @@ package generation
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
@@ -56,7 +57,7 @@ func generationLinks(profileLink string) ([]int, error) {
 		if errors.Is(err, os.ErrNotExist) {
 			return nil, nil
 		}
-		return nil, err
+		return nil, fmt.Errorf("cannot list the generations: %w", err)
 	}
 	var nums []int
 	for _, e := range entries {

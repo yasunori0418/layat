@@ -14,6 +14,7 @@ import (
 
 	"github.com/yasunori0418/outturn/go"
 
+	"github.com/yasunori0418/layat/internal/generation/nixprofile"
 	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/lock"
 )
@@ -206,12 +207,14 @@ func (r *outturnRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 
 // classifyError maps a command failure onto an outturn error code: E_INPUT, E_LAYAT_COLLISION,
 // E_LOCK, E_LAYAT_BUILD, E_NOTFOUND, E_PERMISSION, E_IO, falling back to E_LAYAT_FAILED.
-// Specific sentinels win over the generic E_IO shape check.
+// Specific sentinels win over the generic E_IO shape check. A nix-env failure's stderr follows
+// the message on the next line.
 func classifyError(err error) outturn.Error {
 	code := "E_LAYAT_FAILED"
 	message := err.Error()
 	var ee *exitError
 	var ie *inputError
+	var fe *lock.FlockError
 	bf := buildFailure(err)
 	switch {
 	case errors.As(err, &ie):
@@ -222,7 +225,7 @@ func classifyError(err error) outturn.Error {
 		if message == "" {
 			message = "conflict(s) detected in dryrun"
 		}
-	case errors.Is(err, lock.ErrLocked):
+	case errors.Is(err, lock.ErrLocked) || errors.As(err, &fe):
 		code = "E_LOCK"
 	case bf != nil:
 		code = "E_LAYAT_BUILD"
@@ -233,6 +236,11 @@ func classifyError(err error) outturn.Error {
 		code = "E_PERMISSION"
 	case isIOError(err):
 		code = "E_IO"
+	}
+	// nix-env's stderr went to the terminal only; --json keeps it after the summary.
+	var ce *nixprofile.CommandError
+	if errors.As(err, &ce) && ce.Stderr != "" {
+		message += "\n" + ce.Stderr
 	}
 	return outturn.Error{Code: code, Message: message}
 }

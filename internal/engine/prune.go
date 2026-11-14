@@ -131,9 +131,9 @@ func Prune(opts PruneOptions) (*PruneResult, error) {
 	for _, base := range []string{opts.Backend.UserBase(stateDir), systemDir} {
 		found, err := pruneJudgeBase(base, res, warnf)
 		if err != nil {
-			// paths.ListRootHashSeries already names the base in its own wrap,
-			// so this only tags the warning as prune's.
-			warnf("prune: %v", err)
+			// The cause names the op and the base; the warning only says what
+			// is skipped.
+			warnf("prune: skipping the profile base: %v", err)
 			continue
 		}
 		candidates = append(candidates, found...)
@@ -270,8 +270,8 @@ func pruneRemoveSeries(s PruneSeries) (PruneSkipReason, error) {
 	}
 	for _, n := range s.Names {
 		dir := filepath.Join(s.Dir, n)
-		// The same acquire-and-wrap point Apply / Rollback / Reset share, so
-		// the flock failure wording stays single-sourced in the engine.
+		// The same acquisition Apply / Rollback / Reset share; lock.Acquire
+		// words the flock failure.
 		l, lerr := acquireProfileLock(dir, false)
 		if lerr != nil {
 			// The profileDir is held by another process or its lock state is

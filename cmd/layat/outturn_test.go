@@ -20,6 +20,7 @@ import (
 
 	"github.com/yasunori0418/layat/internal/engine"
 	"github.com/yasunori0418/layat/internal/generation"
+	"github.com/yasunori0418/layat/internal/generation/nixprofile"
 	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/lock"
 )
@@ -345,6 +346,7 @@ func TestClassifyErrorCodes(t *testing.T) {
 		{"input marker survives a %w rewrap",
 			fmt.Errorf("context: %w", &inputError{err: errors.New("bad flags")}), "E_INPUT"},
 		{"lock sentinel", lock.ErrLocked, "E_LOCK"},
+		{"flock failure", &lock.FlockError{Dir: "/p", Err: syscall.ENOLCK}, "E_LOCK"},
 		{"not-found beats the IO shape", &fs.PathError{Op: "stat", Path: "/x", Err: fs.ErrNotExist}, "E_NOTFOUND"},
 		{"permission beats the IO shape", &fs.PathError{Op: "open", Path: "/x", Err: fs.ErrPermission}, "E_PERMISSION"},
 		{"residual IO PathError", &fs.PathError{Op: "rmdir", Path: "/x", Err: syscall.ENOTEMPTY}, "E_IO"},
@@ -361,6 +363,27 @@ func TestClassifyErrorCodes(t *testing.T) {
 				t.Error("message must not be empty")
 			}
 		})
+	}
+}
+
+// TestClassifyErrorNixEnvStderr: a nix-env failure keeps E_LAYAT_FAILED and its message is the
+// summary followed by nix-env's stderr on the next line.
+func TestClassifyErrorNixEnvStderr(t *testing.T) {
+	err := fmt.Errorf("context: %w", &nixprofile.CommandError{
+		Op: "--set", Profile: "/p", Stderr: "error: boom", Err: errors.New("exit status 1"),
+	})
+	e := classifyError(err)
+	if e.Code != "E_LAYAT_FAILED" {
+		t.Errorf("Code = %s, want E_LAYAT_FAILED", e.Code)
+	}
+	if want := err.Error() + "\nerror: boom"; e.Message != want {
+		t.Errorf("Message = %q, want %q", e.Message, want)
+	}
+
+	// Without stderr the message is the summary alone.
+	quiet := &nixprofile.CommandError{Op: "--set", Profile: "/p", Err: errors.New("exit status 1")}
+	if e := classifyError(quiet); e.Message != quiet.Error() {
+		t.Errorf("Message without stderr = %q, want %q", e.Message, quiet.Error())
 	}
 }
 
