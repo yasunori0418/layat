@@ -103,6 +103,7 @@ cat > "$fixture/docs/sara-adr/no-description.md" <<'EOF'
 id: "SDR-33333333-3333-4333-8333-333333333333"
 type: sara_adr
 name: "説明の無い決定"
+section: graph-model
 status: stable
 ---
 # SDR-33333333-3333-4333-8333-333333333333: 説明の無い決定
@@ -271,7 +272,7 @@ else
   fault "(4) エントリがファイル名順に並ばない（実際: $order）"
 fi
 
-# --- (5) requirement・design・ubiquitous_term・adr は section の節に分ける ------
+# --- (5) requirement・design・ubiquitous_term・adr・sara_adr は section の節に分ける
 
 want_terms=$(cat <<'EOF'
 # 用語（`ubiquitous_term`）
@@ -376,6 +377,41 @@ if [ "$(cat "$none/docs/adr/index.md")" = "$want_none_adrs" ]; then
 else
   fault "(5) docs/adr/index.md の節分けが食い違う"
   sed 's/^/    /' "$none/docs/adr/index.md"
+fi
+
+# 写しに SDR を足す。a-layout.md（doc-layout）はファイル名では no-description.md（graph-model）より前だが、節は表の順に並ぶ。
+cat > "$none/docs/sara-adr/a-layout.md" <<'SDR'
+---
+id: "SDR-33333333-3333-4333-8333-333333333334"
+type: sara_adr
+name: "配置の決定"
+description: "配置の要約"
+section: doc-layout
+status: stable
+---
+# SDR-33333333-3333-4333-8333-333333333334: 配置の決定
+SDR
+if ! (cd "$none" && bash "$generator") > "$work/none-sdr.out" 2>&1; then
+  fault "(5) SDR を足した入力から index.md を生成できなかった"
+  sed 's/^/    /' "$work/none-sdr.out"
+fi
+want_none_sdrs=$(cat <<'EOF'
+# SDR（`sara_adr`）
+
+## グラフのモデル
+
+* [説明の無い決定](./no-description.md) (stable)
+
+## 文書の配置と index.md の生成
+
+* [配置の決定](./a-layout.md) - 配置の要約 (stable)
+EOF
+)
+if [ "$(cat "$none/docs/sara-adr/index.md")" = "$want_none_sdrs" ]; then
+  pass "sara_adr の index.md は section の節に分け、節を表の順に並べる"
+else
+  fault "(5) docs/sara-adr/index.md の節分けが食い違う"
+  sed 's/^/    /' "$none/docs/sara-adr/index.md"
 fi
 
 # 写しに、節に分ける型の deprecated と draft の要件、区分の deprecated のテスト条件とテストケースを足し、
