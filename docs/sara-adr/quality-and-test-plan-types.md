@@ -2,6 +2,7 @@
 id: "SDR-34916a83-0cff-4524-a8ff-5a3195af52c3"
 type: sara_adr
 name: "テスト計画の型を品質方針の型から分けて設ける"
+section: graph-model
 status: stable
 sources:
   - id: "issue-583"

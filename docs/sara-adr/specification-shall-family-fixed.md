@@ -3,6 +3,7 @@ id: "SDR-5cddbc1a-b9bc-46ae-8272-c567153643f9"
 type: sara_adr
 name: "specification の必須の強度を SHALL 系の綴りに固定する"
 description: "specification の必須の強度は SHALL 系だけで書き、specification_ja は同じ強度の規範助動詞で終える。"
+section: authoring
 status: stable
 sources:
   - id: "issue-649"

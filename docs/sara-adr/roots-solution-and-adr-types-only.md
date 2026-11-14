@@ -2,6 +2,7 @@
 id: "SDR-a0095ee8-570c-4f77-a6c9-bbc162a5c4cb"
 type: sara_adr
 name: "root は solution と ADR 系の型だけにする"
+section: graph-model
 status: deprecated
 sources:
   - id: "issue-583"

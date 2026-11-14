@@ -3,6 +3,7 @@ id: "SDR-7631120c-0006-4394-a9cc-32d2f386a67d"
 type: sara_adr
 name: "テスト系 item を CASE・TC・RISK の 3 段で起こす"
 description: "CASE はテスト資産、TC は検証テーマ、RISK は TC を束ねる脅威の単位で起こす"
+section: risk-test-defect
 status: stable
 sources:
   - id: "issue-719"

@@ -3,6 +3,7 @@ id: "SDR-dfff5637-f0a4-4e5d-a57e-f4dd1e7dbb42"
 type: sara_adr
 name: "鮮度は上流の relation を辿って下流へ伝播させる"
 description: "下流の item の基準時刻より上流の generated.at が新しければ、上流の relation のうち justifies を除く 7 種を辿って下流を再検証待ちとして挙げる"
+section: verification
 status: stable
 sources:
   - id: "issue-676"

@@ -2,6 +2,7 @@
 id: "SDR-3ff9f355-a667-476e-b10d-087248cdbfcf"
 type: sara_adr
 name: "ADR の失効は supersedes と 廃止 で表す"
+section: authoring
 status: stable
 sources:
   - id: "issue-499"

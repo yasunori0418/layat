@@ -2,6 +2,7 @@
 id: "SDR-1d295034-9bab-4e30-9ead-173e5f56c396"
 type: sara_adr
 name: "ADR の justifies 対象を specification を持つ全型に広げる"
+section: graph-model
 status: stable
 sources:
   - id: "issue-583"

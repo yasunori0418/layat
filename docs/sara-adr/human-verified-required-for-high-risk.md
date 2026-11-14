@@ -3,6 +3,7 @@ id: "SDR-f27192ea-3ca8-4794-8a6a-805dd8ab323d"
 type: sara_adr
 name: "level が high の risk に人の verified を求める"
 description: "level が high の risk 自身に、generated.at 以降の human: の verified を求め、medium・low の risk と TC・CASE には求めない"
+section: verification
 status: stable
 sources:
   - id: "issue-676"

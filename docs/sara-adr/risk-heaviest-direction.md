@@ -2,6 +2,7 @@
 id: "SDR-1a02013e-c57b-4079-9c72-8e9fe99e499a"
 type: sara_adr
 name: "複数の失敗方向を持つ risk は最も重い方向で採点する"
+section: risk-test-defect
 status: stable
 sources:
   - id: "issue-583"

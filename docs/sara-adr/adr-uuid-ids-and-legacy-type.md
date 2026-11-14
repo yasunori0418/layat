@@ -2,6 +2,7 @@
 id: "SDR-e093c6b2-75fd-4c91-a8f0-5a89e005e4ed"
 type: sara_adr
 name: "ADR も UUID で採番し、連番の旧 ADR は legacy_adr 型に凍結する"
+section: ids-and-filenames
 status: deprecated
 sources:
   - id: "issue-499"

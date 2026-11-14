@@ -2,6 +2,7 @@
 id: "SDR-35636015-710a-4cf8-b6ba-48ca047efed0"
 type: sara_adr
 name: "design の satisfies 対象に test_plan を含める"
+section: graph-model
 status: stable
 sources:
   - id: "issue-583"

@@ -3,6 +3,7 @@ id: "SDR-958fd2ec-836d-41ae-b67f-4d316ddabf4b"
 type: sara_adr
 name: "item の一覧は生成した index.md だけが持つ"
 description: "型ごとの item の一覧は okf-index.sh が生成する index.md だけが持ち、手書きの文書は一覧を持たず、item を足したときは index.md を再生成するだけにする"
+section: doc-layout
 status: stable
 sources:
   - id: "issue-719"

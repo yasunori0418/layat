@@ -3,6 +3,7 @@ id: "SDR-bd136f38-c991-46f9-ada9-06499d259a8b"
 type: sara_adr
 name: "フル ID は frontmatter と H1 見出しだけに書き、item にはリンクで触れる"
 description: "フル ID の書き場所を frontmatter と H1 見出しに限り、`specification` などの文字列でも item へは Markdown リンクで触れ、ファイル名は `<slug>.md` にする。"
+section: ids-and-filenames
 status: deprecated
 sources:
   - id: "issue-674"

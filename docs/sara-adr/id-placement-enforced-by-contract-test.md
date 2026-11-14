@@ -3,6 +3,7 @@ id: "SDR-a28f6eb7-f0ab-4a3c-9a94-c8a0d0a6a66f"
 type: sara_adr
 name: "ID の書き場所と省略形の禁止は起票の機械化と契約テストで担保する"
 description: "フル ID の書き場所と 8 文字省略形の禁止を、起票ラッパーによる機械化と契約テスト link-text.sh の検出で担保する。"
+section: ids-and-filenames
 status: deprecated
 sources:
   - id: "issue-692"

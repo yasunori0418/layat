@@ -2,6 +2,7 @@
 id: "SDR-c15921a9-7aea-407c-a34b-7465783b1af1"
 type: sara_adr
 name: "sara 品質管理機構の決定は sara_adr 型に分ける"
+section: graph-model
 status: stable
 sources:
   - id: "issue-499"

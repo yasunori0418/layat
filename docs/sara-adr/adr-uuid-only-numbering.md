@@ -2,6 +2,7 @@
 id: "SDR-3e5b9994-a905-44d8-8256-2bd65b12b87e"
 type: sara_adr
 name: "ADR は UUID だけで採番する"
+section: ids-and-filenames
 status: stable
 sources:
   - id: "issue-558"

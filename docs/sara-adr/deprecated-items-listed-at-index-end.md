@@ -3,6 +3,7 @@ id: "SDR-3fe7901b-5cc0-4677-8761-fcdd4118450a"
 type: sara_adr
 name: "deprecated の item は index.md の末尾の節にまとめる"
 description: "index.md は status が deprecated の item を主題の並びと section の節から外し、末尾の「有効でない item」の節にファイル名順でまとめて出す"
+section: doc-layout
 status: stable
 sources:
   - id: "issue-743"

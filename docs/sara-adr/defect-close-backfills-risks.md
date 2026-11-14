@@ -2,6 +2,7 @@
 id: "SDR-9bec5976-67cd-407a-afa9-3d394a6204ca"
 type: sara_adr
 name: "欠陥 issue のクローズ時にテスト系 item の欠落を追補する"
+section: risk-test-defect
 status: stable
 sources:
   - id: "issue-583"

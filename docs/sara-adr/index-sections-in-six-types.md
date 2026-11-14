@@ -3,6 +3,7 @@ id: "SDR-4e92d0b5-7674-4956-854d-dd5da9cf42bb"
 type: sara_adr
 name: "index.md の節は 6 つの型で item の section から生成する"
 description: "requirement・design・ubiquitous_term・adr・sara_adr・risk の index.md は、item が持つ必須の enum フィールド section ごとに節を分けて生成し、値は item に手で書く"
+section: doc-layout
 status: stable
 sources:
   - id: "issue-743"

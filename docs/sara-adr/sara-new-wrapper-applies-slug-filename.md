@@ -3,6 +3,7 @@ id: "SDR-ba95c0c6-ea15-4e97-95a9-925ac04df58d"
 type: sara_adr
 name: "sara-id を廃止し sara init を包む起票ラッパーで slug のファイル名を適用する"
 description: "採番を `sara init` に任せ、薄い起票ラッパー `sara-new` が `<slug>.md` のファイル名規約の適用、`--description` の必須チェック、`generated` の付与を担う。"
+section: ids-and-filenames
 status: stable
 sources:
   - id: "issue-366"

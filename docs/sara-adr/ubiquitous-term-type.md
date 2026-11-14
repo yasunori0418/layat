@@ -2,6 +2,7 @@
 id: "SDR-d3f88093-dc98-4703-af45-df5b27527ffa"
 type: sara_adr
 name: "用語を ubiquitous_term の item で管理する"
+section: graph-model
 status: deprecated
 sources:
   - id: "issue-647"

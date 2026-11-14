@@ -3,6 +3,7 @@ id: "SDR-bab72f31-7cb1-47a3-bb2d-7876757d86fb"
 type: sara_adr
 name: "OKF v0.2 と互換の frontmatter キーを item に足す"
 description: "OKF v0.2 と互換の frontmatter キーを sara の item に足す方針と、バンドル単位の適合を追わない範囲を決める"
+section: frontmatter-fields
 status: stable
 sources:
   - id: "issue-662"

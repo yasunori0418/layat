@@ -3,6 +3,7 @@ id: "SDR-eff65cfa-2fd4-449a-94b2-d4b9948b76e1"
 type: sara_adr
 name: "保証する連鎖は requirement → risk → test_condition → test_case とし、design は任意の中継点にする"
 description: "要件からテストまでで保証する連鎖を requirement → risk → test_condition → test_case に定め、requirement に design を必須にせず、risk を持たない design を正常とする。"
+section: graph-model
 status: stable
 sources:
   - id: "issue-648"

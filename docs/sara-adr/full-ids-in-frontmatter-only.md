@@ -3,6 +3,7 @@ id: "SDR-12bab183-d9d7-4210-a45b-c4e6568f297b"
 type: sara_adr
 name: "フル ID は frontmatter だけに書き、item にはリンクで触れる"
 description: "フル ID の書き場所を frontmatter の id と relation リストに限り、H1 見出しは name だけにし、本文や specification などの文字列では item へ Markdown リンクで触れる。"
+section: ids-and-filenames
 status: stable
 sources:
   - id: "issue-674"

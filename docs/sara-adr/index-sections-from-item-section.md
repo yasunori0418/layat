@@ -3,6 +3,7 @@ id: "SDR-fcae2485-b7f5-4717-9c3a-4e585161efec"
 type: sara_adr
 name: "index.md の節は item の section から生成する"
 description: "requirement・design・ubiquitous_term の index.md は、item が持つ必須の enum フィールド section ごとに節を分けて生成し、見出しと並び順は生成スクリプトの表に置く"
+section: doc-layout
 status: deprecated
 sources:
   - id: "issue-719"

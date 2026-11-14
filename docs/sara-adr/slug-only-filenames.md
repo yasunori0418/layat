@@ -3,6 +3,7 @@ id: "SDR-6c6c0681-4d5e-429e-8ee9-acf8dd94ad54"
 type: sara_adr
 name: "item のファイル名は slug だけにする"
 description: "item のファイル名を `<slug>.md` にし、フル ID は frontmatter と H1 見出しだけに書き、散文は Markdown リンクで item を参照する。"
+section: ids-and-filenames
 status: deprecated
 sources:
   - id: "issue-674"

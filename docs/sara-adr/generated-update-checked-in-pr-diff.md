@@ -3,6 +3,7 @@ id: "SDR-5ef8ab39-cefe-4c6f-b743-730316d96568"
 type: sara_adr
 name: "generated の更新漏れは PR の差分で確かめる"
 description: "base との差分で本文が変わったのに generated.at が変わっていない item を挙げ、全履歴と時刻は比べない"
+section: verification
 status: stable
 sources:
   - id: "issue-676"

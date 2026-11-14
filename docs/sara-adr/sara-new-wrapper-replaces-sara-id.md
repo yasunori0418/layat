@@ -2,6 +2,7 @@
 id: "SDR-f5443db0-6407-41c0-9ab5-55f22dc4de5e"
 type: sara_adr
 name: "sara-id を廃止し sara init を包む起票ラッパーを使う"
+section: ids-and-filenames
 status: deprecated
 sources:
   - id: "issue-366"

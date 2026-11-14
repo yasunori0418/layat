@@ -3,6 +3,7 @@ id: "SDR-fb902413-ff78-45b2-9ddd-3fc25f493208"
 type: sara_adr
 name: "棄却した提案の要件と設計は提案の形の題で deprecated にして残す"
 description: "棄却した提案を記録する要件と設計は、提案の形の題と本文に棄却の記述を添え、status を deprecated にして残す。"
+section: authoring
 status: stable
 sources:
   - id: "pr-716-review"

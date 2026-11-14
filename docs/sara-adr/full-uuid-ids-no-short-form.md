@@ -2,6 +2,7 @@
 id: "SDR-722ce265-2aaf-4a90-915d-32d26b7a38bb"
 type: sara_adr
 name: "ID はフル UUID に統一し 8 文字省略形を使わない"
+section: ids-and-filenames
 status: deprecated
 sources:
   - id: "issue-366"

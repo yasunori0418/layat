@@ -2,6 +2,7 @@
 id: "SDR-6cc54665-c239-4235-92a8-f73e26c5a5ef"
 type: sara_adr
 name: "sara check を required status check にしない"
+section: verification
 status: stable
 sources:
   - id: "issue-583"

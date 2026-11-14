@@ -3,6 +3,7 @@ id: "SDR-7967c58b-2d03-40d6-89b4-680be30fa5d1"
 type: sara_adr
 name: "status を OKF の 3 値にし全ての型に持たせる"
 description: "status を draft / stable / deprecated の 3 値にし、ADR 以外の型にも必須で持たせる"
+section: frontmatter-fields
 status: stable
 sources:
   - id: "issue-662"

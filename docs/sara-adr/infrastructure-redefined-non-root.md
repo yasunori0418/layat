@@ -2,6 +2,7 @@
 id: "SDR-29ef8bb4-9349-47db-9e79-926bc71bbdd0"
 type: sara_adr
 name: "infrastructure を技術基盤として再定義し root から外す"
+section: graph-model
 status: stable
 sources:
   - id: "issue-583"

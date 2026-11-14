@@ -3,6 +3,7 @@ id: "SDR-00554aea-e9c1-445a-bdf2-d64f6508fb0b"
 type: sara_adr
 name: "用語は ubiquitous_term の item で管理し、一覧は生成した index.md が持つ"
 description: "用語は 1 語 1 ファイルの ubiquitous_term の item で管理し、語の一覧は `docs/ubiquitous-language/index.md` に生成して、`docs/glossary.md` と glossary-index の契約テストは廃止する"
+section: graph-model
 status: stable
 sources:
   - id: "issue-719"
