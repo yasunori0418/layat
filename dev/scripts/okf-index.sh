@@ -89,6 +89,8 @@ SECTIONS=(
   "ubiquitous_term|state|State management"
   "ubiquitous_term|errors|Error handling"
 )
+# deprecated の item をまとめる末尾の節の見出し。
+DEPRECATED_HEADING="## 有効でない item（\`deprecated\`）"
 TEST_TITLE="テスト条件とテストケース"
 TEST_DESC="機能の区分ごとのテスト条件（\`test_condition\`）とテストケース（\`test_case\`）"
 
@@ -152,7 +154,7 @@ cut -f7 "$work/items.tsv" | xargs -r awk '
   END { flush() }
 ' > "$work/paras.tsv"
 
-# エントリ: <型>\t<docs/ からのディレクトリ>\t<ファイル名>\t<index.md の 1 行>\t<section>
+# エントリ: <型>\t<docs/ からのディレクトリ>\t<ファイル名>\t<index.md の 1 行>\t<section>\t<status>
 # リンク文字列は name とし、name_ja を持つ用語は「name（name_ja）」にする。
 # リンク文字列に化けないよう角括弧だけをエスケープし、説明はそのまま載せる。
 awk -F '\t' '
@@ -164,24 +166,38 @@ awk -F '\t' '
     line = "* [" esc(label) "](./" $3 ")"
     if (desc != "") line = line " - " desc
     if (($1 == "adr" || $1 == "sara_adr") && $6 != "") line = line " (" $6 ")"
-    print $1 "\t" $2 "\t" $3 "\t" line "\t" $8
+    print $1 "\t" $2 "\t" $3 "\t" line "\t" $8 "\t" $6
   }
 ' "$work/paras.tsv" "$work/items.tsv" | LC_ALL=C sort -t $'\t' -k3,3 > "$work/entries.tsv"
 
 gen="$work/gen"
 
-# 指定のディレクトリ・型のエントリをファイル名順に出す。
+# 指定のディレクトリ・型の、deprecated でないエントリをファイル名順に出す。
 entries_of() {
-  awk -F '\t' -v dir="$1" -v type="$2" '$2 == dir && $1 == type { print $4 }' "$work/entries.tsv"
+  awk -F '\t' -v dir="$1" -v type="$2" '$2 == dir && $1 == type && $6 != "deprecated" { print $4 }' "$work/entries.tsv"
 }
 
-# 指定のディレクトリ・型のエントリを、表の節ごとに ## の見出しの下へ並べる。エントリの無い節は出さない。
+# 本文の後ろに、指定のディレクトリ・型の deprecated のエントリをファイル名順に並べた末尾の節を足す。
+# 型は 1 つ以上渡す。deprecated のエントリが無ければ本文をそのまま返す。
+with_deprecated() {
+  local body=$1 dir=$2 entries
+  shift 2
+  entries=$(awk -F '\t' -v dir="$dir" -v types="$*" '
+    BEGIN { n = split(types, t, " "); for (i = 1; i <= n; i++) want[t[i]] = 1 }
+    $2 == dir && ($1 in want) && $6 == "deprecated" { print $4 }
+  ' "$work/entries.tsv")
+  [ -n "$entries" ] || { printf '%s' "$body"; return; }
+  [ -n "$body" ] && body+=$'\n\n'
+  printf '%s' "$body$DEPRECATED_HEADING"$'\n\n'"$entries"
+}
+
+# 指定のディレクトリ・型の、deprecated でないエントリを、表の節ごとに ## の見出しの下へ並べる。エントリの無い節は出さない。
 sectioned_entries_of() {
   local dir=$1 type=$2 body="" t value heading entries
   while IFS=$'\t' read -r t value heading; do
     [ "$t" = "$type" ] || continue
     entries=$(awk -F '\t' -v dir="$dir" -v type="$type" -v value="$value" \
-      '$2 == dir && $1 == type && $5 == value { print $4 }' "$work/entries.tsv")
+      '$2 == dir && $1 == type && $5 == value && $6 != "deprecated" { print $4 }' "$work/entries.tsv")
     [ -n "$entries" ] || continue
     [ -n "$body" ] && body+=$'\n\n'
     body+="## $heading"$'\n\n'"$entries"
@@ -205,10 +221,11 @@ top=""
 for row in "${TYPE_DIRS[@]}"; do
   IFS='|' read -r dir type title desc <<< "$row"
   if cut -f1 "$work/sections.tsv" | grep -qxF "$type"; then
-    write_index "docs/$dir/index.md" "$title" "$(sectioned_entries_of "$dir" "$type")"
+    body=$(sectioned_entries_of "$dir" "$type")
   else
-    write_index "docs/$dir/index.md" "$title" "$(entries_of "$dir" "$type")"
+    body=$(entries_of "$dir" "$type")
   fi
+  write_index "docs/$dir/index.md" "$title" "$(with_deprecated "$body" "$dir" "$type")"
   top+="* [$title](./$dir/index.md) - $desc"$'\n'
 done
 top+="* [$TEST_TITLE](./test/index.md) - $TEST_DESC"
@@ -223,7 +240,7 @@ for cat in $categories; do
   [ -n "$tc" ] && body+=$'\n\n'"$tc"
   body+=$'\n\n'"## テストケース（\`test_case\`）"
   [ -n "$cs" ] && body+=$'\n\n'"$cs"
-  write_index "docs/test/$cat/index.md" "$cat" "$body"
+  write_index "docs/test/$cat/index.md" "$cat" "$(with_deprecated "$body" "test/$cat" test_condition test_case)"
   test_list+="* [$cat](./$cat/index.md)"$'\n'
 done
 write_index "docs/test/index.md" "$TEST_TITLE" "${test_list%$'\n'}"
