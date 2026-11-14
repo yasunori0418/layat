@@ -105,14 +105,16 @@ func flakeInitArgs(template, ref string) []string {
 }
 
 // initNixError classifies a failed `nix flake init`: guidance for disabled experimental features,
-// otherwise the raw nix stderr attached.
+// otherwise the summary naming the installable; nix's stderr follows on the next lines and its
+// exit stays the cause.
 func initNixError(args []string, stderr string, runErr error) error {
-	if nixgen.IsExperimentalDisabled(stderr) {
-		return fmt.Errorf("nix's experimental-features are not enabled.\n%s\n\nOriginal nix error:\n%s", nixgen.ExperimentalGuidance, strings.TrimSpace(stderr))
-	}
 	trimmed := strings.TrimSpace(stderr)
-	if trimmed == "" {
-		return fmt.Errorf("nix %s failed: %w", args[0], runErr)
+	if nixgen.IsExperimentalDisabled(stderr) {
+		return fmt.Errorf("nix's experimental-features are not enabled (nix flake init): %w\n%s\n\nOriginal nix error:\n%s", runErr, nixgen.ExperimentalGuidance, trimmed)
 	}
-	return fmt.Errorf("nix %s failed:\n%s", args[0], trimmed)
+	err := fmt.Errorf("cannot run nix flake init (%s): %w", args[len(args)-1], runErr)
+	if trimmed == "" {
+		return err
+	}
+	return fmt.Errorf("%w\n%s", err, trimmed)
 }
