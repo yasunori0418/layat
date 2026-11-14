@@ -9,6 +9,7 @@
 * [欠陥 issue のクローズ時にテスト系 item の欠落を追補する](./defect-close-backfills-risks.md) - [欠陥はグラフに置かず GitHub Issues で管理する](defects-in-github-issues.md)。グラフのrisk / test_condition は予防の体系だが、起きた欠陥から学ばなければ、ある時点の分析を写したまま古びていく。 (stable)
 * [欠陥を既存の RISK / TC に辿れたかで分類して数える](./defects-classified-by-risk-foresight.md) - 欠陥の Issue をクローズするときに、対応する risk か test_condition が起票の時点で既にあったかで欠陥を 2 つに分類し、固定した語彙で記録して数えられるようにする。 (stable)
 * [欠陥はグラフに置かず GitHub Issues で管理する](./defects-in-github-issues.md) - グラフには欠陥を表す defect 型があった。defect は自分から upstream relation を張れず、親側の test_case が下流向きの `reveals` で接続する唯一の型だった。そのため次の例外を抱えていた。 (stable)
+* [deprecated の item は index.md の末尾の節にまとめる](./deprecated-items-listed-at-index-end.md) - index.md は status が deprecated の item を主題の並びと section の節から外し、末尾の「有効でない item」の節にファイル名順でまとめて出す (stable)
 * [design の satisfies 対象に test_plan を含める](./design-satisfies-test-plan.md) - design の `satisfies` は `requirement` だけを対象にしていた。テスト計画にあたる `requirement` を test_plan へ移す（[テスト計画の型を品質方針の型から分けて設ける](quality-and-test-plan-types.md)）と、それらを `satisfies` で指していた design item の辺は張り先を失う。中には `satisfies` がその 1 本だけの design item もあり、移した途端に design 側が接続漏れになる。 (stable)
 * [ドキュメントは sara のナレッジグラフとして item に分割する](./docs-as-sara-knowledge-graph.md) - layat の仕様・設計・テストは、`docs/spec.md`・`docs/design.md`・`docs/concept.md` と ADR に散文で書かれていた。この形では、要求とリスクの紐付けが一貫しているかを機械的に確かめられない。 (stable)
 * [item にできない外部参照は text フィールドへ逃がす](./external-references-as-text-fields.md) - ADR は GitHub の Issue や、決定の起点になったセッションを参照する。これらは sara の item ではないので、relation では表せない。relation の参照先は実在する item でなければならず、実在しない ID は破損した参照として検出される。 (stable)
