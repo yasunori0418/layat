@@ -42,7 +42,11 @@ specification: |
   before the failure stays `"success"` and SHALL include all of its corresponding changes.
   Even for an execution unwound by the undo journal, `changes` SHALL be kept as the record
   of the differences produced up to the point of failure, and the subject warning
-  `W_LAYAT_UNWOUND` SHALL notify that the differences no longer remain on disk. A failure
+  `W_LAYAT_UNWOUND` SHALL notify that the differences no longer remain on disk. It SHALL be
+  emitted only when every journaled change was restored, and SHALL NOT be emitted when the
+  journal was empty. Each target the undo could not restore SHALL instead be reported by the
+  subject warning `W_LAYAT_UNWIND_INCOMPLETE` with `detail = {target}`, the target being
+  root-relative, or absolute when it cannot be made root-relative. A failure
   independent of an entry (commit / build / lock) SHALL NOT produce an item and SHALL go
   to `results[0].errors[]`.
 
@@ -63,8 +67,9 @@ specification: |
   `item.warnings` when the target is within the inventory, or in
   `subjectResult.warnings` when it is outside it. The codes SHALL be
   `W_LAYAT_FOREIGN_SYMLINK`, `W_LAYAT_COPY_FOREIGN`, `W_LAYAT_STALE_MISMATCH`,
-  `W_LAYAT_STALE_NON_SYMLINK`, `W_LAYAT_COPY_ORPHAN` and `W_LAYAT_UNWOUND`, with
-  `detail = {target}`. The subject warning `W_LAYAT_ORIGIN_MISMATCH` SHALL be placed in
+  `W_LAYAT_STALE_NON_SYMLINK` and `W_LAYAT_COPY_ORPHAN`, with `detail = {target}`. The
+  subject warning `W_LAYAT_UNWOUND` SHALL carry no `detail`, and the subject warning
+  `W_LAYAT_UNWIND_INCOMPLETE` SHALL carry `detail = {target}`. The subject warning `W_LAYAT_ORIGIN_MISMATCH` SHALL be placed in
   `subjectResult.warnings` with `detail = {recorded, current}`, each an origin object
   carrying `generator`, `entrypoint` and `identity` (each omitted when empty), when the last-applied record
   has an origin and it differs from the origin of the current apply (the comparison rule is
@@ -101,7 +106,10 @@ specification_ja: |
   完了した entry → `"success"`（対応する change を全て含まなければならない）。undo
   ジャーナルが巻き戻した実行でも changes は「失敗時点までに生じた差分」の記録として保た
   なければならず、subject 警告 `W_LAYAT_UNWOUND` で差分がディスク上に残っていないことを
-  通知しなければならない。commit / build / lock など entry 非依存の失敗は item を落として
+  通知しなければならない。`W_LAYAT_UNWOUND` は journal の全件を戻せたときだけ出さなければ
+  ならず、journal が空のときは出してはならない。undo が戻せなかった target はそれぞれ
+  subject 警告 `W_LAYAT_UNWIND_INCOMPLETE` で `detail = {target}` を付けて報告しなければならない。
+  target は root からの相対パスとし、相対にできないときは絶対パスとしなければならない。commit / build / lock など entry 非依存の失敗は item を落として
   はならず、`results[0].errors[]` へ載せなければならない。
 
   非 dryrun の conflict 停止は該当 entry を `item.status:"failed"` +
@@ -119,8 +127,10 @@ specification_ja: |
   planner の構造化 warning は `W_LAYAT_*` に写像しなければならず、対象 target が
   インベントリ内なら該当 `item.warnings`、外なら `subjectResult.warnings` へ
   振り分けなければならない。コードは `W_LAYAT_FOREIGN_SYMLINK` / `W_LAYAT_COPY_FOREIGN` /
-  `W_LAYAT_STALE_MISMATCH` / `W_LAYAT_STALE_NON_SYMLINK` / `W_LAYAT_COPY_ORPHAN` /
-  `W_LAYAT_UNWOUND` としなければならず、`detail = {target}` を付けなければならない。
+  `W_LAYAT_STALE_MISMATCH` / `W_LAYAT_STALE_NON_SYMLINK` / `W_LAYAT_COPY_ORPHAN` と
+  しなければならず、`detail = {target}` を付けなければならない。subject 警告
+  `W_LAYAT_UNWOUND` は `detail` を持ってはならず、subject 警告 `W_LAYAT_UNWIND_INCOMPLETE` は
+  `detail = {target}` を付けなければならない。
   last-applied 記録に出所があり、今回の apply の出所と食い違うときは、subject 警告
   `W_LAYAT_ORIGIN_MISMATCH` を `detail = {recorded, current}`（各 origin は `generator`・`entrypoint`・
   `identity` を持ち、空なら省く）で `subjectResult.warnings` に載せなければならない。比較の規則は [apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する](apply-origin-mismatch-warning.md) の担当。stderr の人間向けテキストは常時併存させなければならない。
@@ -129,7 +139,7 @@ specification_ja: |
   空親ディレクトリ剪定は entry の状態遷移ではないため changes / items に載せてはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T22:43:21+09:00"
+  at: "2026-11-15T01:22:54+09:00"
 ---
 # 変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く
 
@@ -159,7 +169,9 @@ generated:
   （コードは上記分類）。前段の失敗で未到達だった entry → `"skipped"`（この用途のみ）。
   失敗までに完了した entry → `"success"` + 対応する change を**全て**含む。undo ジャーナルが
   巻き戻した実行でも changes は「失敗時点までに生じた差分」の記録として保ち、subject 警告
-  **`W_LAYAT_UNWOUND`** で差分がディスク上に残っていないことを通知する。commit / build /
+  **`W_LAYAT_UNWOUND`** で差分がディスク上に残っていないことを通知する（journal の全件を
+  戻せたときだけ。journal が空なら出さない）。戻せなかった target はそれぞれ subject 警告
+  **`W_LAYAT_UNWIND_INCOMPLETE`**（`detail = {target}`）で報告する。commit / build /
   lock など entry 非依存の失敗は item を落とさず `results[0].errors[]` へ。
 - **conflict**: 非 dryrun の conflict 停止は該当 entry を `item.status:"failed"` +
   `error.code:"E_LAYAT_COLLISION"`（message = planner の理由）にし、残りの計画 entry は
@@ -179,7 +191,8 @@ generated:
   残した stale symlink）/ `W_LAYAT_STALE_NON_SYMLINK`（symlink でないため残した stale
   target）（後 2 者 = 保守的不変条件による keep・reset の kept-foreign も同じ。当該 item は
   success のまま = 方針による不作為）/ `W_LAYAT_COPY_ORPHAN`（copy の孤児・subject 級）/
-  `W_LAYAT_UNWOUND`（上記・subject 級）。`detail = {target}`。加えて
+  `W_LAYAT_UNWIND_INCOMPLETE`（上記・subject 級）。`detail = {target}`。加えて
+  `W_LAYAT_UNWOUND`（上記・subject 級。`detail` なし）と
   `W_LAYAT_ORIGIN_MISMATCH`（last-applied 記録と今回の出所の食い違い・subject 級。
   `detail = {recorded, current}`。各 origin は `identity` も持つ。規則は [apply は last-applied 記録に出所を持たせ、記録と今回の出所が食い違えば警告して続行する](apply-origin-mismatch-warning.md)）。stderr の人間向けテキストは
   常時併存。
@@ -206,4 +219,4 @@ generated:
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「#131 変更系ペイロード」とその配下の全項目。
 
-決定の実体は [--json は items を全件、changes を差分で持ち可逆性を reversible で表す](../adr/items-changes-reversible.md) / [エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md) / [CLI は outturn/go に依存する](../adr/outturn-go-dependency.md)・[エラーコードは共通コードを再利用し固有の意味だけを E_LAYAT_* にする](../adr/error-code-scheme.md)。`W_LAYAT_ORIGIN_MISMATCH` は [出所の食い違いは警告して apply を続ける](../adr/origin-mismatch-warns-and-continues.md)。
+決定の実体は [--json は items を全件、changes を差分で持ち可逆性を reversible で表す](../adr/items-changes-reversible.md) / [エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md) / [CLI は outturn/go に依存する](../adr/outturn-go-dependency.md)・[エラーコードは共通コードを再利用し固有の意味だけを E_LAYAT_* にする](../adr/error-code-scheme.md)。`W_LAYAT_ORIGIN_MISMATCH` は [出所の食い違いは警告して apply を続ける](../adr/origin-mismatch-warns-and-continues.md)。`W_LAYAT_UNWOUND` と `W_LAYAT_UNWIND_INCOMPLETE` は [undo で戻せなかった target は `W_LAYAT_UNWIND_INCOMPLETE` で target ごとに報告し、`W_LAYAT_UNWOUND` は全部戻せたときだけ出す](../adr/undo-partial-failure-reported-by-separate-code.md)。
