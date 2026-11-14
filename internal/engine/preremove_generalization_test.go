@@ -1,6 +1,8 @@
 package engine
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -416,7 +418,7 @@ func TestApplyDirMigrationInterruptedAfterPreRemoveReRunConverges(t *testing.T) 
 	if err := a.preRemove(plan.PreRemove); err != nil {
 		t.Fatalf("simulated partial preRemove: %v", err)
 	}
-	if _, err := os.Lstat(filepath.Join(root, ".claude", "hooks")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, ".claude", "hooks")); !errors.Is(err, fs.ErrNotExist) {
 		t.Fatalf("setup: .claude/hooks must be absent after the simulated crash, lstat err = %v", err)
 	}
 

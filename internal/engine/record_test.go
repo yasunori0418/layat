@@ -2,7 +2,9 @@ package engine
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -168,7 +170,7 @@ func TestRemoveRecord(t *testing.T) {
 	if err := removeRecord(rec.File); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := os.Lstat(rec.File); !os.IsNotExist(err) {
+	if _, err := os.Lstat(rec.File); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("record still exists: %v", err)
 	}
 	if err := removeRecord(rec.File); err != nil {
@@ -367,7 +369,7 @@ func TestApplyFSFailureWritesNoRecord(t *testing.T) {
 	if _, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake}); err == nil {
 		t.Fatal("Apply = nil error, want the placement failure")
 	}
-	if _, err := os.Lstat(projectRecord(state, root).File); !os.IsNotExist(err) {
+	if _, err := os.Lstat(projectRecord(state, root).File); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("record exists after a failed placement: %v", err)
 	}
 }
@@ -384,7 +386,7 @@ func TestApplyRecordWriteFailureUnwinds(t *testing.T) {
 	if !res.Unwound {
 		t.Error("Unwound = false, want the placement unwound")
 	}
-	if _, err := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, "a")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("placed symlink survived the failed record write: %v", err)
 	}
 	if len(fake.Commits) != 0 {
@@ -413,7 +415,7 @@ func TestGenerationSkipNeedsRecordAndProfile(t *testing.T) {
 	if res.GenerationSkipped {
 		t.Error("GenerationSkipped = true while the record (lf2) disagrees with the profile (lf1)")
 	}
-	if _, err := os.Lstat(filepath.Join(root, "c")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, "c")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("c placed by the uncommitted apply was not stale-removed: %v", err)
 	}
 	if len(fake.Commits) != 2 {
@@ -525,7 +527,7 @@ func TestResetUpdatesRecord(t *testing.T) {
 	if _, err := Reset(resetOpts(root, state, nil, false, nil)); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := os.Lstat(rec.File); !os.IsNotExist(err) {
+	if _, err := os.Lstat(rec.File); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("record survived a full reset: %v", err)
 	}
 }
@@ -618,7 +620,7 @@ func TestRecordWriteFailureFailsOperation(t *testing.T) {
 		if _, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: fake}); !isRecordErr(err) {
 			t.Fatalf("Apply = %v, want the record write failure", err)
 		}
-		if _, err := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(err) {
+		if _, err := os.Lstat(filepath.Join(root, "a")); !errors.Is(err, fs.ErrNotExist) {
 			t.Errorf("drift repair survived the failed record write: %v", err)
 		}
 	})
@@ -641,7 +643,7 @@ func TestRecordWriteFailureFailsOperation(t *testing.T) {
 		if _, err := os.Lstat(filepath.Join(root, "b")); err != nil {
 			t.Errorf("b was not restored by the unwind: %v", err)
 		}
-		if _, err := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(err) {
+		if _, err := os.Lstat(filepath.Join(root, "a")); !errors.Is(err, fs.ErrNotExist) {
 			t.Errorf("a survived the unwind: %v", err)
 		}
 	})
@@ -652,7 +654,7 @@ func TestRecordWriteFailureFailsOperation(t *testing.T) {
 		if _, err := Reset(resetOpts(root, state, []string{"a"}, false, nil)); !isRecordErr(err) {
 			t.Fatalf("Reset = %v, want the record write failure", err)
 		}
-		if _, err := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(err) {
+		if _, err := os.Lstat(filepath.Join(root, "a")); !errors.Is(err, fs.ErrNotExist) {
 			t.Errorf("a was not removed: %v", err)
 		}
 		if _, err := os.Lstat(filepath.Join(root, "b")); err != nil {
@@ -682,7 +684,7 @@ func TestRollbackReadsRecordFirst(t *testing.T) {
 	if _, err := Rollback(RollbackOptions{Name: "vim", RootKind: manifest.RootKindHome, RootOverride: root, StateDir: state, Backend: fake, Warnf: func(string, ...any) {}}); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := os.Lstat(filepath.Join(root, "c")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, "c")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("c from the uncommitted apply survived the rollback: %v", err)
 	}
 	if _, err := os.Lstat(filepath.Join(root, "a")); err != nil {
@@ -705,13 +707,13 @@ func TestResetRecordOnly(t *testing.T) {
 	if _, err := Reset(resetOpts(root, state, nil, false, nil)); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, "a")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("a survived the reset: %v", err)
 	}
 	if b, err := os.ReadFile(prof.Backref); err != nil || string(b) != root+"\n" {
 		t.Errorf("profile backref = %q, %v; want %q", b, err, root+"\n")
 	}
-	if _, err := os.Lstat(paths.ResolveRecord(state, "cfg", manifest.RootKindHome, root, true).File); !os.IsNotExist(err) {
+	if _, err := os.Lstat(paths.ResolveRecord(state, "cfg", manifest.RootKindHome, root, true).File); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("record survived a full reset: %v", err)
 	}
 }

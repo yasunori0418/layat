@@ -1,0 +1,29 @@
+version: "2"
+
+linters:
+  default: standard            # errcheck, govet, ineffassign, staticcheck, unused
+  enable:
+    - errorlint
+    - forbidigo
+    - nilerr
+    - errname
+    - nolintlint
+  settings:
+    forbidigo:
+      analyze-types: true
+      forbid:
+        - pattern: ^os\.Is(NotExist|Exist|Permission)$
+          msg: use errors.Is with fs.ErrNotExist / fs.ErrExist / fs.ErrPermission
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+      allow-unused: false
+  exclusions:
+    warn-unused: true
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+run:
+  relative-path-mode: gomod     # 設定を store へ単独でコピーしても path を go.mod 基準で解決する

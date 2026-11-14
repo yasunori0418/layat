@@ -196,7 +196,7 @@
               ''
                 ${goToolEnv}
                 export GOLANGCI_LINT_CACHE="$TMPDIR/golangci-cache"
-                golangci-lint run ./...
+                golangci-lint run --config ${./.golangci.yml} ./...
                 touch "$out"
               '';
           # go test（unit + tmpdir 統合テスト）も flake check で回す。

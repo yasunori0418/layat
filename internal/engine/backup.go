@@ -1,7 +1,9 @@
 package engine
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 
 	"github.com/yasunori0418/layat/internal/planner"
@@ -14,7 +16,7 @@ func (a *applier) backup(actions []planner.BackupAction) error {
 	for _, act := range actions {
 		if _, err := os.Lstat(act.BackupAbs); err == nil {
 			return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: backup destination already exists (%s); cannot safely back up %s; re-run apply to converge", act.BackupAbs, act.TargetAbs))
-		} else if !os.IsNotExist(err) {
+		} else if !errors.Is(err, fs.ErrNotExist) {
 			return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: cannot lstat backup destination (%s): %w", act.BackupAbs, err))
 		}
 		if err := os.Rename(act.TargetAbs, act.BackupAbs); err != nil {

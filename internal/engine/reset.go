@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"time"
@@ -114,10 +115,10 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	// With neither a profile (the previous generation link) nor a record, apply has never run = a
 	// no-op with zero teardown targets.
 	if _, err := os.Stat(prof.Profile); err != nil {
-		if !os.IsNotExist(err) {
+		if !errors.Is(err, fs.ErrNotExist) {
 			return nil, fmt.Errorf("layat: cannot check profile (%s): %w", prof.Profile, err)
 		}
-		if _, err := os.Lstat(rec.File); os.IsNotExist(err) {
+		if _, err := os.Lstat(rec.File); errors.Is(err, fs.ErrNotExist) {
 			return res, nil
 		}
 	}
@@ -184,7 +185,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 		if _, err := os.Lstat(targetAbs); err == nil {
 			copyTargets = append(copyTargets, targetAbs)
 			res.RemovedCopies = append(res.RemovedCopies, e.Target)
-		} else if !os.IsNotExist(err) {
+		} else if !errors.Is(err, fs.ErrNotExist) {
 			return nil, fmt.Errorf("layat: cannot lstat copy target (%s): %w", targetAbs, err)
 		}
 	}
@@ -271,7 +272,7 @@ func recordAfterReset(rec paths.Record, root string, b baseline, selected []mani
 	m.Entries = nil
 	for _, e := range b.manifest.Entries {
 		_, err := os.Lstat(filepath.Join(root, filepath.Clean(e.Target)))
-		if !isSelected[e.Target] || !os.IsNotExist(err) {
+		if !isSelected[e.Target] || !errors.Is(err, fs.ErrNotExist) {
 			m.Entries = append(m.Entries, e)
 		}
 	}

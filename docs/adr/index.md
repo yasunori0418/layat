@@ -279,6 +279,7 @@
 * [Go の静的解析を CGO_ENABLED=0 で行う](./go-checks-without-cgo.md) - engine の Go の静的解析（go-vet と golangci-lint）は、flake check の check derivation として nix のサンドボックスの中で実行する。サンドボックスに何を持ち込んで解析するかを決める必要がある。 (stable)
 * [Go toolchain は nixpkgs の go に pin する](./go-toolchain-pinned.md) - Go のビルドで使う toolchain は、nixpkgs が提供する go と、`go.mod` の `toolchain` ディレクティブのどちらでも指定できる。Nix のサンドボックスはネットワークを遮断するので、toolchain の自動ダウンロードは失敗する。 (stable)
 * [Go の整形は gofmt、静的解析は go vet と golangci-lint で行う](./gofmt-vet-golangci.md) - engine と CLI は Go で書く。Go のコードの整形と静的解析に何を使い、どこで実行するかを決める必要がある。 (stable)
+* [golangci-lint でエラー処理の規約を検出する](./golangci-lint-enforces-error-conventions.md) - golangci-lint の既定のリンタに errorlint・forbidigo・nilerr・errname・nolintlint を足してエラー処理の規約からの逸脱を検出し、nolint には理由とリンタ名を必須にする (stable)
 * [engine は JSON とエラーを標準ライブラリで扱う](./json-and-errors-via-stdlib.md) - engine は `manifest.json` を読み、配置の失敗を呼び出し元へ返す。engine は第三者依存を持たない方針で、JSON の扱いとエラー処理をどう実装するかを決める必要があった。 (stable)
 * [モジュールの検証を flake check と VM テストに置く](./module-checks-separate-from-e2e.md) - NixOS / nix-darwin モジュールの振る舞いには、モジュールを評価した結果（どのフックにどの起動文字列が入るか）と、実際に activate したときの配置の 2 つがある。後者を確かめるには NixOS の VM が要る。`tests/e2e/` のハーネスは NixOS ではない環境の単一ジョブで動き、VM を前提にしていない。 (stable)
 * [CLI は outturn/go に依存する](./outturn-go-dependency.md) - エンベロープの形と item id の導出（JCS と SHA-256）は、outturn の規格が定める。outturn は Go の参照実装`github.com/yasunori0418/outturn/go` を、id 導出の適合ベクタと合わせて提供している。engine は第三者依存を持たず、CLI 層は許可した最小限の第三者依存だけを持つ。 (stable)

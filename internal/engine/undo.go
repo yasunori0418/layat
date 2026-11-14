@@ -1,7 +1,9 @@
 package engine
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 )
 
@@ -85,7 +87,7 @@ func (a *applier) discardJournal() {
 		if op.kind != undoRestoreRename {
 			continue
 		}
-		if err := os.RemoveAll(op.tmpPath); err != nil && !os.IsNotExist(err) {
+		if err := os.RemoveAll(op.tmpPath); err != nil && !errors.Is(err, fs.ErrNotExist) {
 			a.opts.Warnf("layat: could not remove recopy aside file (%s): %v", op.tmpPath, err)
 		}
 	}
@@ -124,12 +126,12 @@ func (a *applier) unwind(origErr error) {
 func undoOne(op undoOp) error {
 	switch op.kind {
 	case undoUnlinkNew:
-		if err := os.Remove(op.path); err != nil && !os.IsNotExist(err) {
+		if err := os.Remove(op.path); err != nil && !errors.Is(err, fs.ErrNotExist) {
 			return err
 		}
 		return nil
 	case undoRelinkOld:
-		if err := os.Remove(op.path); err != nil && !os.IsNotExist(err) {
+		if err := os.Remove(op.path); err != nil && !errors.Is(err, fs.ErrNotExist) {
 			return err
 		}
 		return os.Symlink(op.prevDest, op.path)

@@ -346,7 +346,7 @@ func (a *applier) cleanupPending() {
 	if a.opts.Build == nil {
 		return
 	}
-	if err := os.Remove(a.profile.Pending); err != nil && !os.IsNotExist(err) {
+	if err := os.Remove(a.profile.Pending); err != nil && !errors.Is(err, fs.ErrNotExist) {
 		a.opts.Warnf("layat: could not remove the .pending out-link (%s): %v", a.profile.Pending, err)
 	}
 }

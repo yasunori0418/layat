@@ -2,6 +2,7 @@ package engine
 
 import (
 	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -20,7 +21,7 @@ func TestUndoOneUnlinksNewSymlink(t *testing.T) {
 	if err := undoOne(undoOp{kind: undoUnlinkNew, path: target}); err != nil {
 		t.Fatalf("undoOne: %v", err)
 	}
-	if _, err := os.Lstat(target); !os.IsNotExist(err) {
+	if _, err := os.Lstat(target); !errors.Is(err, fs.ErrNotExist) {
 		t.Fatalf("target must be gone after undo, lstat err = %v", err)
 	}
 }
@@ -85,7 +86,7 @@ func TestUndoOneRemovesCopy(t *testing.T) {
 	if err := undoOne(undoOp{kind: undoRemoveCopy, path: target}); err != nil {
 		t.Fatalf("undoOne: %v", err)
 	}
-	if _, err := os.Lstat(target); !os.IsNotExist(err) {
+	if _, err := os.Lstat(target); !errors.Is(err, fs.ErrNotExist) {
 		t.Fatalf("copy target must be gone after undo, lstat err = %v", err)
 	}
 }
@@ -109,7 +110,7 @@ func TestUndoOneRestoresRename(t *testing.T) {
 	if err != nil || string(data) != "original" {
 		t.Fatalf("target content = %q, err %v; want %q", data, err, "original")
 	}
-	if _, err := os.Lstat(aside); !os.IsNotExist(err) {
+	if _, err := os.Lstat(aside); !errors.Is(err, fs.ErrNotExist) {
 		t.Fatalf("aside file must be consumed by the rename, lstat err = %v", err)
 	}
 }
@@ -249,7 +250,7 @@ func TestDiscardJournalRemovesRecopyAsideFiles(t *testing.T) {
 
 	a.discardJournal()
 
-	if _, err := os.Lstat(aside); !os.IsNotExist(err) {
+	if _, err := os.Lstat(aside); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("aside file must be removed by discardJournal, lstat err = %v", err)
 	}
 	if len(a.journal) != 0 {
