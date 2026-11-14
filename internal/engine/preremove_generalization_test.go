@@ -464,3 +464,29 @@ func TestPreRemoveRmdirNonEmptyKeepsCause(t *testing.T) {
 		t.Errorf("wrapped error should be ENOTEMPTY: %v", err)
 	}
 }
+
+// TestPreRemoveUnlinkReverifyIOErrorFails verifies that an I/O failure during the re-verification
+// of a recorded symlink (EACCES from a search-denied parent) fails the entry with the cause in the
+// chain instead of being reported as drift. Skipped as root.
+func TestPreRemoveUnlinkReverifyIOErrorFails(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("requires non-root to trigger permission error")
+	}
+	var warns []string
+	a := staleErr_applier(&warns)
+	act := staleErr_action(realTempDir(t), "ancestor", filepath.Join(preflightErr_deniedDir(t), "ancestor"))
+
+	err := a.preRemove([]planner.RemoveAction{act})
+	if !errors.Is(err, fs.ErrPermission) {
+		t.Fatalf("err = %v, want a permission error in the chain", err)
+	}
+	if strings.Contains(err.Error(), "changed after planning") {
+		t.Errorf("an I/O failure must not be reported as drift: %v", err)
+	}
+	if len(warns) != 0 {
+		t.Errorf("warnings = %v, want none", warns)
+	}
+	if a.result.FailedTarget != "ancestor" {
+		t.Errorf("FailedTarget = %q, want %q", a.result.FailedTarget, "ancestor")
+	}
+}

@@ -298,6 +298,9 @@ func TestStaleRemoveReverifyIOErrorFails(t *testing.T) {
 	if len(a.result.Removed) != 0 {
 		t.Errorf("Removed = %v, want none", a.result.Removed)
 	}
+	if a.result.FailedTarget != "foo" {
+		t.Errorf("FailedTarget = %q, want %q", a.result.FailedTarget, "foo")
+	}
 }
 
 // --- empty-ancestor pruning --------------------------------------------------
