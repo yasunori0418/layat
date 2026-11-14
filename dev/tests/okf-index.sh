@@ -610,6 +610,51 @@ else
   fault "(10) docs/model.yaml の risk の section の enum が test-categories.tsv と食い違う（実際: $got_enum）"
 fi
 
+# --- (11) 節に分けない型でも deprecated の item は末尾の節にまとめる ----------
+
+# 写しに、節に分けない quality を 2 件足す。deprecated の a-old.md はファイル名では z-current.md より前に来る。
+unsectioned="$work/unsectioned"
+cp -r "$fixture" "$unsectioned"
+mkdir -p "$unsectioned/docs/quality"
+for q in "a-old|cccccccc-cccc-4ccc-8ccc-cccccccccccc|古い品質|deprecated" \
+  "z-current|cccccccc-cccc-4ccc-8ccc-cccccccccccd|今の品質|stable"; do
+  IFS='|' read -r file uuid name status <<< "$q"
+  cat > "$unsectioned/docs/quality/$file.md" <<EOF
+---
+id: "QA-$uuid"
+type: quality
+name: "$name"
+description: "${name}の要約"
+status: $status
+specification: |
+  The fixture SHALL keep this quality.
+specification_ja: |
+  fixture はこの品質を保たなければならない。
+---
+# $name
+EOF
+done
+if ! (cd "$unsectioned" && bash "$generator") > "$work/unsectioned.out" 2>&1; then
+  fault "(11) quality を足した入力から index.md を生成できなかった"
+  sed 's/^/    /' "$work/unsectioned.out"
+fi
+want_quality=$(cat <<'EOF'
+# 品質（`quality`）
+
+* [今の品質](./z-current.md) - 今の品質の要約
+
+## 有効でない item（`deprecated`）
+
+* [古い品質](./a-old.md) - 古い品質の要約
+EOF
+)
+if [ "$(cat "$unsectioned/docs/quality/index.md")" = "$want_quality" ]; then
+  pass "節に分けない型では、deprecated の item を主題の並びから外し、末尾の節にだけ出す"
+else
+  fault "(11) docs/quality/index.md の deprecated の item の置き場所が食い違う"
+  sed 's/^/    /' "$unsectioned/docs/quality/index.md"
+fi
+
 # --- (9) --check は食い違うパスを出して exit 1 を返し、index.md を書き換えない --
 
 # --check を走らせ、exit 1 で出力が期待するパスだけであり、案内が期待する方だけであることを確かめる。
