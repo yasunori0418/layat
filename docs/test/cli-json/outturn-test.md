@@ -15,7 +15,7 @@ follows:
   - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-15T00:21:56+09:00"
+  at: "2026-11-15T00:45:16+09:00"
 ---
 # outturn_test.go — エンベロープ基礎形・id 導出・エラー分類・stdout 所有権
 
@@ -41,7 +41,9 @@ generated:
   `E_INPUT` になり not-found の原因に優先すること（未知の `--generator` / `LAYAT_GENERATOR` の値、
   `--manifest` と `-f` の併用、`--all` と `<link-farm>` 形の `--manifest` の併用・→ [入力の不正を E_INPUT に分類する](../../adr/input-errors-classified-e-input.md)）。ファイルシステム由来の sentinel が汎用の
   形状判定に優先すること、排他制御由来の分類（他の実行が保持していた場合と、ロックの取得
-  そのものが失敗した場合の両方が `E_LOCK`）、いずれにも当たらない失敗の汎用分類
+  そのものが失敗した場合の両方が `E_LOCK`）、いずれにも当たらない失敗の汎用分類。
+  束ねた失敗は先頭の原因で分類されること（先頭が権限の拒否で 2 番目が not-found なら
+  `E_PERMISSION`、先頭が排他制御なら `E_LOCK`）
 - **nix-env の診断** — nix-env の失敗は、再ラップされていてもメッセージが要約と nix-env の
   stderr を改行でつないだものになり、分類は `E_LAYAT_FAILED` のままであること
 - **`--json` 下の stdout 所有権** — 行指向の出力（計画・世代一覧・パス列挙）が全て止まり、
