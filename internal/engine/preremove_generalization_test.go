@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"testing"
 
 	"github.com/yasunori0418/layat/internal/generation"
@@ -440,5 +441,26 @@ func TestApplyDirMigrationInterruptedAfterPreRemoveReRunConverges(t *testing.T) 
 	// confirming the crash window truly left nothing further for PreRemove to do.
 	if len(res.Removed) != 0 || len(res.Pruned) != 0 {
 		t.Errorf("re-run Removed/Pruned = %v/%v, want both empty (no PreRemove needed against an already-absent target)", res.Removed, res.Pruned)
+	}
+}
+
+// TestPreRemoveRmdirNonEmptyKeepsCause verifies that the non-empty Rmdir abort keeps the
+// rmdir(2) cause in the chain while still telling the user to re-run apply.
+func TestPreRemoveRmdirNonEmptyKeepsCause(t *testing.T) {
+	sub := filepath.Join(realTempDir(t), "sub")
+	if err := os.Mkdir(sub, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(sub, "surprise"), []byte("x"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	var warns []string
+	err := staleErr_applier(&warns).preRemove([]planner.RemoveAction{{Kind: planner.RemoveRmdir, TargetAbs: sub}})
+	if err == nil || !strings.Contains(err.Error(), "re-run apply to converge") {
+		t.Fatalf("err = %v, want the safe-migration abort message", err)
+	}
+	if !errors.Is(err, syscall.ENOTEMPTY) {
+		t.Errorf("wrapped error should be ENOTEMPTY: %v", err)
 	}
 }
