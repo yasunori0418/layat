@@ -554,7 +554,7 @@ target を `home.file` から layat へ移す手順:
 | 症状 | 原因 | 対処 |
 |---|---|---|
 | `apply` / `reset` / `rollback` が終わらない | 別の layat(別シェルの shellHook、activation、並行する apply)が同じ config の lock を保持している | 待つ。その実行が終われば先へ進む。shellHook では `--no-wait` を使う |
-| `--no-wait -v` で `layat: skipped because another apply is in progress (…)`、`--all` では `layat: skipped apply <name> (another apply is in progress)` | 同じ lock が保持されていたので、スキップして exit 0 で終わった | 他の実行が終わってから `layat apply <name>` を実行する |
+| `--no-wait -v` か `--all -v` で `layat: skipped apply <name> because another apply is in progress (…)` | 同じ lock が保持されていたので、スキップして exit 0 で終わった | 他の実行が終わってから `layat apply <name>` を実行する |
 | `layat: warning: keeping stale symlink because it mismatches the record: <target>` | entry は消えたが、link が layat の記録どおりを指していない | layat はその link を消さない。要らなければ手で消す |
 | `layat: warning: the last-applied record (…) disagrees with the profile (…); using the record as the baseline` | layat を使わずに profile の現行世代が切り替わった(profile への `nix-env --switch-generation` など) | 古いリンクの除去は記録を基準にする。`layat status` と `layat list-generations <name>` で確かめる |
 | `layat: warning: no last-applied record; starting from an empty baseline` | その config の初回 apply か、state を消した | この実行では古いリンクとして何も消さない。初回 apply なら想定どおり |

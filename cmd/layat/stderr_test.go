@@ -16,6 +16,7 @@ import (
 
 	"github.com/yasunori0418/layat/internal/engine"
 	"github.com/yasunori0418/layat/internal/generator"
+	"github.com/yasunori0418/layat/internal/gitutil"
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
@@ -32,6 +33,8 @@ func TestStderrLineForms(t *testing.T) {
 			"layat: warning: skipping the system profile base (/s): boom\n"},
 		{"failure", func(b *bytes.Buffer) { printFailure(b, "apply a failed", errors.New("boom")) },
 			"layat: apply a failed: boom\n"},
+		{"skip notice", func(b *bytes.Buffer) { skipNotice(b, "a") },
+			"layat: skipped apply a because another apply is in progress (run layat apply a after it ends)\n"},
 		{"nix disclosure", func(b *bytes.Buffer) { discloseNix(b, []string{"build", "--no-link", ".#layat"}) },
 			"layat: + nix build --no-link .#layat\n"},
 	}
@@ -59,6 +62,43 @@ func TestPrintSchemaSkewHint(t *testing.T) {
 	}
 }
 
+// TestPrintFailureHints: each hint is written once however many errors call for it — the skew hint
+// for manifest.ErrSchemaVersionUnsupported, the --root hint for gitutil.ErrNotInRepo — and an
+// unrelated error gets none.
+func TestPrintFailureHints(t *testing.T) {
+	var skew, notInRepo bytes.Buffer
+	printSchemaSkewHint(&skew)
+	printNotInRepoHint(&notInRepo)
+	inRepo := fmt.Errorf("apply a: %w", gitutil.ErrNotInRepo)
+	skewed := fmt.Errorf("cannot read the manifest: %w", manifest.ErrSchemaVersionUnsupported)
+	cases := []struct {
+		name                string
+		errs                []error
+		wantSkew, wantNotIn int
+	}{
+		{"none", []error{errors.New("boom"), nil}, 0, 0},
+		{"not in repo once", []error{inRepo, fmt.Errorf("apply b: %w", gitutil.ErrNotInRepo)}, 0, 1},
+		{"skew once", []error{skewed, skewed}, 1, 0},
+		{"both", []error{inRepo, skewed}, 1, 1},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			printFailureHints(&buf, c.errs...)
+			out := buf.String()
+			if got := strings.Count(out, skew.String()); got != c.wantSkew {
+				t.Errorf("skew hints = %d, want %d:\n%s", got, c.wantSkew, out)
+			}
+			if got := strings.Count(out, notInRepo.String()); got != c.wantNotIn {
+				t.Errorf("not-in-repo hints = %d, want %d:\n%s", got, c.wantNotIn, out)
+			}
+			if c.wantSkew == 0 && c.wantNotIn == 0 && out != "" {
+				t.Errorf("output = %q, want none", out)
+			}
+		})
+	}
+}
+
 // TestPrintErrorPrefix pins the command failure's form: "layat: " heads each element of an
 // errors.Join, a newline inside a message gets none, and a generator failure is its summary and
 // guidance.
@@ -75,7 +115,7 @@ func TestPrintErrorPrefix(t *testing.T) {
 		{"joined", errors.Join(errors.New("cannot remove a"), errors.New("cannot write the record")),
 			"layat: cannot remove a\nlayat: cannot write the record\n"},
 		{"several %w", fmt.Errorf("x: %w, %w", errors.New("a"), errors.New("b")), "layat: x: a, b\n"},
-		{"exit code", &exitCodeError{code: 1, msg: "apply --all: 1 config(s) failed"}, "layat: apply --all: 1 config(s) failed\n"},
+		{"exit code", &exitError{code: 1, msg: "apply --all: 1 config(s) failed"}, "layat: apply --all: 1 config(s) failed\n"},
 		{"generator", fmt.Errorf("ctx: %w", generator.NewError(generator.NameNix, generator.StageBuild, generator.KindFailed,
 			"nix build failed: exit status 1", "see above", "error: boom", nil)), "layat: nix build failed: exit status 1\nsee above\n"},
 	}

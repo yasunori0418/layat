@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
@@ -67,7 +68,7 @@ func TestPrebuildAllBoundsConcurrency(t *testing.T) {
 // stagedApply composes both stages like runApplyAll and records the configs stage 2 was called for.
 func stagedApply(run *applyRun, selected []string, jobs int, build func(string) (string, error)) (applied, skipped, failures int, stage2 []string) {
 	built := prebuildAll(selected, jobs, build)
-	applied, skipped, failures = aggregateApply(run, selected, 1, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
+	applied, skipped, failures = aggregateApply(run, selected, 1, skipFailedPrebuilds(built, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		stage2 = append(stage2, name)
 		if name == "skip" {
 			return nil, engine.ErrSkipped
@@ -105,7 +106,7 @@ func TestStageOneFailureSkipsStageTwo(t *testing.T) {
 	if !strings.Contains(stderr, "layat: apply b failed: stub build of b failed") {
 		t.Errorf("stderr = %q, want the stage-1 failure of b reported", stderr)
 	}
-	if err := run.emit(&exitCodeError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
+	if err := run.emit(&exitError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	checkConformance(t, buf)
@@ -133,7 +134,7 @@ func TestStageOneFailureSkipsDryRunStageTwo(t *testing.T) {
 	var code int
 	captureStdout(t, func() {
 		captureStderr(t, func() {
-			code = aggregateDryRun(run, []string{"a", "b"}, 1, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
+			code = aggregateDryRun(run, []string{"a", "b"}, 1, skipFailedPrebuilds(built, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 				stage2 = append(stage2, name)
 				return placedResult(name), nil
 			}))
@@ -167,7 +168,7 @@ func TestJobsAggregateIsOrderIndependent(t *testing.T) {
 		captureStderr(t, func() {
 			o.applied, o.skipped, o.failures, o.stage2 = stagedApply(run, selected, jobs, build)
 		})
-		if err := run.emit(&exitCodeError{code: 1, msg: "apply --all: 2 config(s) failed"}); err != nil {
+		if err := run.emit(&exitError{code: 1, msg: "apply --all: 2 config(s) failed"}); err != nil {
 			t.Fatalf("emit: %v", err)
 		}
 		o.envelope = buf.String()
@@ -186,6 +187,56 @@ func TestJobsAggregateIsOrderIndependent(t *testing.T) {
 	}
 	if parallel.envelope != serial.envelope {
 		t.Errorf("--jobs 8 envelope differs from --jobs 1:\n%s\nvs\n%s", parallel.envelope, serial.envelope)
+	}
+}
+
+// TestApplyAllFailureLineRendersGeneratorError: an apply --all failure line renders a generator
+// failure like a single apply does: the summary on the first line (with the generator's name under
+// --debug), then the guidance. The schemaVersion skew hint follows every line, once.
+func TestApplyAllFailureLineRendersGeneratorError(t *testing.T) {
+	genErr := generator.NewError(generator.NameNix, generator.StageBuild, generator.KindPrerequisiteMissing,
+		"nix build failed: exit status 1", "enable experimental-features", "error: disabled", nil)
+	fail := func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
+		if name == "a" {
+			return nil, fmt.Errorf("ctx: %w", genErr)
+		}
+		return nil, fmt.Errorf("cannot read the manifest: %w", manifest.ErrSchemaVersionUnsupported)
+	}
+	for _, debug := range []bool{false, true} {
+		for _, dryrun := range []bool{false, true} {
+			t.Run(fmt.Sprintf("debug=%v/dryrun=%v", debug, dryrun), func(t *testing.T) {
+				withDebug(t, debug)
+				run, _ := newApplyTestRun()
+				stderr := captureStderr(t, func() {
+					if dryrun {
+						aggregateDryRun(run, []string{"a", "b", "c"}, 4, fail)
+					} else {
+						aggregateApply(run, []string{"a", "b", "c"}, 4, fail)
+					}
+				})
+				subject := "a"
+				if dryrun {
+					subject += " --dryrun"
+				}
+				summary := "layat: apply " + subject + " failed: " + genErr.Message
+				if debug {
+					summary += " (generator: nix)"
+				}
+				lines := strings.Split(stderr, "\n")
+				n := slices.Index(lines, summary)
+				if n < 0 || n+1 >= len(lines) || lines[n+1] != genErr.Guidance {
+					t.Errorf("stderr has no %q followed by the guidance:\n%s", summary, stderr)
+				}
+				var hint strings.Builder
+				printSchemaSkewHint(&hint)
+				if c := strings.Count(stderr, hint.String()); c != 1 {
+					t.Errorf("skew hint count = %d, want 1:\n%s", c, stderr)
+				}
+				if !strings.HasSuffix(stderr, hint.String()) {
+					t.Errorf("stderr does not end with the skew hint:\n%s", stderr)
+				}
+			})
+		}
 	}
 }
 
@@ -298,7 +349,7 @@ func TestRunApplyAllStageOneWiring(t *testing.T) {
 				if dryrun {
 					subject += " --dryrun"
 				}
-				report := "layat: apply " + subject + " failed: nix build failed: exit status 1"
+				report := "layat: apply " + subject + " failed: nix build failed: exit status 1 (generator: nix)"
 				if !slices.Contains(lines, report) {
 					t.Errorf("stderr has no one-line failure report %q:\n%s", report, stderr)
 				}

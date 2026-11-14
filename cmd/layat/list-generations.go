@@ -136,7 +136,7 @@ func runListAllGenerations(run *listGenerationsRun) error {
 	userBase := backend.UserBase(stateDir)
 	homeNames, err := profileNamesUnder(userBase, manifest.RootKindHome)
 	if err != nil {
-		return fmt.Errorf("cannot read the profile base (%s): %w", userBase, err)
+		return err
 	}
 	systemBase := systemDirOverride()
 	if systemBase == "" {
@@ -144,7 +144,7 @@ func runListAllGenerations(run *listGenerationsRun) error {
 	}
 	systemNames, err := profileNamesUnder(systemBase, manifest.RootKindSystem)
 	if err != nil {
-		warnf(os.Stderr, "skipping the system profile base (%s): %v", systemBase, err)
+		warnf(os.Stderr, "skipping the system profile base: %v", err)
 	}
 
 	printed := false
@@ -186,14 +186,15 @@ func runListAllGenerations(run *listGenerationsRun) error {
 }
 
 // profileNamesUnder returns, sorted, the names under base holding a profile directly (roothash-family
-// directories hold none and are skipped). A base that does not exist yet lists nothing.
+// directories hold none and are skipped). A base that does not exist yet lists nothing; a profile
+// that cannot be checked is warned about and skipped.
 func profileNamesUnder(base, mode string) ([]string, error) {
 	dents, err := os.ReadDir(base)
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
 			return nil, nil
 		}
-		return nil, err
+		return nil, fmt.Errorf("cannot list the profile base: %w", err)
 	}
 	var names []string
 	for _, d := range dents {
@@ -202,6 +203,9 @@ func profileNamesUnder(base, mode string) ([]string, error) {
 		}
 		prof := paths.Resolve(base, d.Name(), mode, "", false)
 		if _, err := os.Lstat(prof.Profile); err != nil {
+			if !errors.Is(err, fs.ErrNotExist) {
+				warnf(os.Stderr, "skipping the profile %s: %v", d.Name(), err)
+			}
 			continue
 		}
 		names = append(names, d.Name())

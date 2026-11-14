@@ -7,11 +7,15 @@ import (
 	"github.com/yasunori0418/layat/internal/generator"
 )
 
-// printGeneratorError writes a generator failure for humans to w: the summary line and the
-// guidance, without the raw diagnostics already written. --debug appends the generator's name.
-// It renders the generator.Error itself, not any wrapping context.
-func printGeneratorError(w io.Writer, e *generator.Error) {
+// printGeneratorError writes a generator failure for humans to w: the summary line, headed by
+// "<head>: " when head is not empty, and the guidance, without the raw diagnostics already written.
+// --debug appends the generator's name. It renders the generator.Error itself, not any wrapping
+// context.
+func printGeneratorError(w io.Writer, head string, e *generator.Error) {
 	summary := e.Message
+	if head != "" {
+		summary = head + ": " + summary
+	}
 	if flagDebug {
 		summary += " (generator: " + e.Generator + ")"
 	}

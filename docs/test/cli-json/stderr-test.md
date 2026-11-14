@@ -11,7 +11,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-15T00:00:01+09:00"
+  at: "2026-11-15T00:19:28+09:00"
 ---
 # stderr_test.go — stderr の行の形・errors.Join の分け方・失敗の詳細の出口・layat: を含むリテラルの所在
 
@@ -22,8 +22,11 @@ generated:
 ## 検証内容
 
 - **行の形** — 通知が `layat: <文>`、警告が `layat: warning: <文>`、失敗の行が
-  `layat: <見出し>: <エラー>`、`--debug` の開示が `layat: + nix <引数>` になること。
-  schemaVersion の食い違いの案内が空行に続けて出ること
+  `layat: <見出し>: <エラー>`、skip の通知が `layat: skipped apply <name> because another apply is in progress (…)`、
+  `--debug` の開示が `layat: + nix <引数>` になること。schemaVersion の食い違いの案内が空行に続けて出ること
+- **失敗の後の案内** — schemaVersion の食い違いと、`gitutil.ErrNotInRepo`（リポジトリの外）を
+  `errors.Is` で判定し、どちらの案内も該当するエラーが何個あっても 1 回だけ出ること。該当しない
+  エラーでは何も出ないこと。sentinel の文言には依らないこと
 - **単発の失敗** — `printError` が、1 つのエラーを `layat: ` で始まる 1 行で書き、要素の中の改行には
   接頭辞を付けないこと。`errors.Join` で束ねたエラーは要素ごとに `layat: ` で始まる行へ分け、
   複数の `%w` を持つ `fmt.Errorf` は 1 つの文として書くこと。generator の失敗は要約の行にだけ
