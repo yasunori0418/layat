@@ -112,9 +112,9 @@ else
 fi
 GOT_WARN="$(layat_warnings "$MOVED_ERR" | sort)"
 WANT_WARN="$(printf '%s\n' \
-	"layat: no last-applied record; starting from an empty baseline" \
-	"layat: overwriting an unrecorded symlink (foreign; last-wins): .claude/skills/demo" \
-	"layat: overwriting an unrecorded symlink (foreign; last-wins): .out/sub" | sort)"
+	"layat: warning: no last-applied record; starting from an empty baseline" \
+	"layat: warning: overwriting an unrecorded symlink (foreign; last-wins): .claude/skills/demo" \
+	"layat: warning: overwriting an unrecorded symlink (foreign; last-wins): .out/sub" | sort)"
 if [ "$GOT_WARN" = "$WANT_WARN" ]; then
 	e2e_pass "warning は foreign の last-wins 置換 2 件と記録なし 1 件だけ"
 else
