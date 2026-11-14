@@ -50,7 +50,7 @@ func pruneFixture() *engine.PruneResult {
 					Dir:      "/state/nix/profiles/layat/cccc",
 				},
 				Reason: engine.PruneSkipLocked,
-				Detail: "layat: profile directory is locked by another process",
+				Detail: "profile directory is locked by another process",
 			},
 		},
 	}
@@ -324,7 +324,7 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 		// A run that failed partway still reports the series already deleted.
 		withPruneTestState(t)
 		flagYes = true
-		failure := errors.New("layat: cannot remove series done")
+		failure := errors.New("cannot remove series done")
 		pruneFn = func(engine.PruneOptions) (*engine.PruneResult, error) { return result, failure }
 
 		run, buf := newPruneTestRun()
@@ -534,7 +534,7 @@ func TestPruneJSONEmptyResultKeepsArrays(t *testing.T) {
 // scan, so the envelope's info stays absent.
 func TestPruneJSONEnvelopeInfoAbsentBeforeScan(t *testing.T) {
 	r, buf := newPruneTestRun()
-	if err := r.emit(errors.New("layat: refusing destructive prune without --yes in a non-interactive context")); err != nil {
+	if err := r.emit(errors.New("refusing destructive prune without --yes in a non-interactive context")); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	assertNoInfoKeys(t, decodeEnvelope(t, buf))

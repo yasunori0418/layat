@@ -88,7 +88,7 @@ func (a *applier) discardJournal() {
 			continue
 		}
 		if err := os.RemoveAll(op.tmpPath); err != nil && !errors.Is(err, fs.ErrNotExist) {
-			a.opts.Warnf("layat: could not remove recopy aside file (%s): %v", op.tmpPath, err)
+			a.opts.Warnf("could not remove recopy aside file (%s): %v", op.tmpPath, err)
 		}
 	}
 	a.journal = nil
@@ -105,7 +105,7 @@ func (a *applier) unwind(origErr error) {
 		reportf = a.opts.Warnf
 	}
 	if len(journal) == 0 {
-		reportf("layat: apply failed; no filesystem changes had been made yet: %v", origErr)
+		reportf("apply failed; no filesystem changes had been made yet: %v", origErr)
 		return
 	}
 
@@ -116,13 +116,13 @@ func (a *applier) unwind(origErr error) {
 		}
 	}
 
-	reportf("layat: apply failed; rolled back this run's filesystem changes: %v", origErr)
+	reportf("apply failed; rolled back this run's filesystem changes: %v", origErr)
 	if len(failed) == 0 {
 		return
 	}
-	reportf("layat: %d item(s) could not be restored during rollback:", len(failed))
+	reportf("%d item(s) could not be restored during rollback:", len(failed))
 	for _, f := range failed {
-		reportf("layat:   → %s", f)
+		reportf("  → %s", f)
 	}
 }
 
@@ -155,6 +155,6 @@ func undoOne(op undoOp) error {
 		}
 		return os.Mkdir(op.path, mode)
 	default:
-		return fmt.Errorf("layat: internal error: unknown undo kind %d", op.kind)
+		return fmt.Errorf("internal error: unknown undo kind %d", op.kind)
 	}
 }

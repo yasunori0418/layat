@@ -4,7 +4,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -166,7 +165,7 @@ func main() {
 		var ee *exitError
 		if errors.As(err, &ee) {
 			if ee.msg != "" {
-				fmt.Fprintln(os.Stderr, ee.msg)
+				printError(os.Stderr, ee)
 			}
 			os.Exit(ee.code)
 		}

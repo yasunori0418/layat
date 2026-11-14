@@ -76,6 +76,7 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 			Backend:        newGenerationBackend(),
 			SystemDir:      systemDirOverride(),
 			SystemStateDir: systemStateDirOverride(),
+			Warnf:          engineWarnf,
 		})
 		if err != nil {
 			return err
@@ -110,6 +111,7 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 		Backend:        newGenerationBackend(),
 		SystemDir:      systemDirOverride(),
 		SystemStateDir: systemStateDirOverride(),
+		Warnf:          engineWarnf,
 	})
 	if res != nil {
 		// A partial result on failure still carries the changes made before the failure.
@@ -197,7 +199,7 @@ func confirmPolicy(yes, interactive bool, operation string) (needPrompt bool, er
 		return false, nil
 	}
 	if !interactive {
-		return false, fmt.Errorf("layat: refusing destructive %s without --yes in a non-interactive context", operation)
+		return false, fmt.Errorf("refusing destructive %s without --yes in a non-interactive context", operation)
 	}
 	return true, nil
 }

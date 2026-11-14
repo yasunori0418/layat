@@ -85,11 +85,11 @@ func readRecord(file string) (*lastApplied, *manifest.Manifest, error) {
 		return nil, nil, nil
 	}
 	if err != nil {
-		return nil, nil, fmt.Errorf("layat: cannot read the last-applied record (%s): %w", file, err)
+		return nil, nil, fmt.Errorf("cannot read the last-applied record (%s): %w", file, err)
 	}
 	rec, m, err := parseRecord(data)
 	if err != nil {
-		return nil, nil, fmt.Errorf("layat: invalid last-applied record (%s): %w", file, err)
+		return nil, nil, fmt.Errorf("invalid last-applied record (%s): %w", file, err)
 	}
 	return rec, m, nil
 }
@@ -162,19 +162,19 @@ func writeRecord(rec paths.Record, root, linkFarm string, origin Origin, manifes
 	}
 	data, err := json.Marshal(record)
 	if err != nil {
-		return fmt.Errorf("layat: cannot encode the last-applied record: %w", err)
+		return fmt.Errorf("cannot encode the last-applied record: %w", err)
 	}
 	if err := os.MkdirAll(rec.Dir, 0o755); err != nil {
-		return fmt.Errorf("layat: cannot create the last-applied record directory (%s): %w", rec.Dir, err)
+		return fmt.Errorf("cannot create the last-applied record directory (%s): %w", rec.Dir, err)
 	}
 	if rec.Backref != "" {
 		if err := os.WriteFile(rec.Backref, []byte(root+"\n"), 0o644); err != nil {
-			return fmt.Errorf("layat: cannot write backref (%s): %w", rec.Backref, err)
+			return fmt.Errorf("cannot write backref (%s): %w", rec.Backref, err)
 		}
 	}
 	tmp, err := os.CreateTemp(rec.Dir, ".last-applied-*.tmp")
 	if err != nil {
-		return fmt.Errorf("layat: cannot write the last-applied record (%s): %w", rec.File, err)
+		return fmt.Errorf("cannot write the last-applied record (%s): %w", rec.File, err)
 	}
 	_, werr := tmp.Write(data)
 	if cerr := tmp.Close(); werr == nil {
@@ -189,7 +189,7 @@ func writeRecord(rec paths.Record, root, linkFarm string, origin Origin, manifes
 	}
 	if werr != nil {
 		_ = os.Remove(tmp.Name())
-		return fmt.Errorf("layat: cannot write the last-applied record (%s): %w", rec.File, werr)
+		return fmt.Errorf("cannot write the last-applied record (%s): %w", rec.File, werr)
 	}
 	return nil
 }
@@ -197,7 +197,7 @@ func writeRecord(rec paths.Record, root, linkFarm string, origin Origin, manifes
 // removeRecord deletes the record; an absent record is not an error.
 func removeRecord(file string) error {
 	if err := os.Remove(file); err != nil && !errors.Is(err, fs.ErrNotExist) {
-		return fmt.Errorf("layat: cannot remove the last-applied record (%s): %w", file, err)
+		return fmt.Errorf("cannot remove the last-applied record (%s): %w", file, err)
 	}
 	return nil
 }
@@ -252,7 +252,7 @@ func loadBaseline(recordFile, profileLink string, warnf func(string, ...any)) (b
 	if rec != nil {
 		b.manifest = m
 		if b.profileLinkFarm != "" && b.profileLinkFarm != rec.LinkFarm {
-			warnf("layat: the last-applied record (%s) disagrees with the profile (%s); using the record as the baseline", rec.LinkFarm, b.profileLinkFarm)
+			warnf("the last-applied record (%s) disagrees with the profile (%s); using the record as the baseline", rec.LinkFarm, b.profileLinkFarm)
 		}
 		return b, nil
 	}
@@ -263,6 +263,6 @@ func loadBaseline(recordFile, profileLink string, warnf func(string, ...any)) (b
 		b.manifest, b.profileErr = manifest.Load(profileLink)
 		return b, nil
 	}
-	warnf("layat: no last-applied record; starting from an empty baseline")
+	warnf("no last-applied record; starting from an empty baseline")
 	return b, nil
 }

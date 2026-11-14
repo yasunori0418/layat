@@ -55,7 +55,7 @@ func newInitCmd() *cobra.Command {
 // without entrypoint discovery.
 func runInit(run *initRun, template string) error {
 	if !isValidTemplate(template) {
-		return fmt.Errorf("layat: unknown template: %q (valid values: %s)", template, strings.Join(initTemplates, " / "))
+		return fmt.Errorf("unknown template: %q (valid values: %s)", template, strings.Join(initTemplates, " / "))
 	}
 
 	ref := defaultTemplateRef
@@ -110,9 +110,9 @@ func initNixError(args []string, stderr string, runErr error) error {
 	}
 	trimmed := strings.TrimSpace(stderr)
 	if trimmed == "" {
-		return fmt.Errorf("layat: nix %s failed: %w", args[0], runErr)
+		return fmt.Errorf("nix %s failed: %w", args[0], runErr)
 	}
-	return fmt.Errorf("layat: nix %s failed:\n%s", args[0], trimmed)
+	return fmt.Errorf("nix %s failed:\n%s", args[0], trimmed)
 }
 
 // initExperimentalDisabled detects the nix-command / flakes not-enabled error.
@@ -125,7 +125,7 @@ func initExperimentalDisabled(stderr string) bool {
 // initExperimentalGuidance builds an error explaining how to enable experimental features, with
 // the raw nix error attached. The CLI never adds --extra-experimental-features itself.
 func initExperimentalGuidance(stderr string) error {
-	return fmt.Errorf(`layat: nix's experimental-features are not enabled.
+	return fmt.Errorf(`nix's experimental-features are not enabled.
 This command internally uses `+"`nix eval`"+` / `+"`nix build`"+` (the new CLI) and flakes,
 so experimental-features = nix-command flakes is required.
 

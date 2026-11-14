@@ -44,12 +44,12 @@ func newListGenerationsCmd() *cobra.Command {
 			run := beginListGenerationsRun(cmd.Name())
 			if all {
 				if len(args) > 0 {
-					return fmt.Errorf("layat: list-generations cannot combine <name> with --all")
+					return fmt.Errorf("list-generations cannot combine <name> with --all")
 				}
 				return runListAllGenerations(run)
 			}
 			if len(args) != 1 {
-				return fmt.Errorf("layat: list-generations requires <name> or --all")
+				return fmt.Errorf("list-generations requires <name> or --all")
 			}
 			return runListGenerations(run, args[0])
 		},
@@ -76,7 +76,7 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 	}
 	rootKind, fixedRoot := root.RootKind, root.Root
 	if rootKind != manifest.RootKindHome && rootKind != manifest.RootKindSystem {
-		return fmt.Errorf("layat: list-generations is home / system mode only (layat.%s has rootKind=%q)", name, rootKind)
+		return fmt.Errorf("list-generations is home / system mode only (layat.%s has rootKind=%q)", name, rootKind)
 	}
 
 	backend := newGenerationBackend()
@@ -136,7 +136,7 @@ func runListAllGenerations(run *listGenerationsRun) error {
 	userBase := backend.UserBase(stateDir)
 	homeNames, err := profileNamesUnder(userBase, manifest.RootKindHome)
 	if err != nil {
-		return fmt.Errorf("layat: cannot read the profile base (%s): %w", userBase, err)
+		return fmt.Errorf("cannot read the profile base (%s): %w", userBase, err)
 	}
 	systemBase := systemDirOverride()
 	if systemBase == "" {

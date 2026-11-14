@@ -77,7 +77,7 @@ func TestGitignoreJSONInfoPaths(t *testing.T) {
 func TestGitignoreJSONInfoAbsentWithoutEnumeration(t *testing.T) {
 	r, buf := newGitignoreTestRun()
 	r.beginSubject("docs")
-	if err := r.emit(errors.New("layat: gitignore is project mode only")); err != nil {
+	if err := r.emit(errors.New("gitignore is project mode only")); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	assertNoInfoKeys(t, decodeEnvelope(t, buf))

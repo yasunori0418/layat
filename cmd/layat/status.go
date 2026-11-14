@@ -58,7 +58,7 @@ func newStatusCmd() *cobra.Command {
 // runStatus lists the records engine.Status finds, filtered by args[0] when given. A record that
 // cannot be read becomes its subject's error and the listing goes on; the command then exits 1.
 func runStatus(run *statusRun, args []string) error {
-	series, err := statusFn(engine.StatusOptions{SystemStateDir: systemStateDirOverride()})
+	series, err := statusFn(engine.StatusOptions{SystemStateDir: systemStateDirOverride(), Warnf: engineWarnf})
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func runStatus(run *statusRun, args []string) error {
 		return nil
 	}
 	if failures > 0 {
-		return &exitCodeError{code: 1, msg: fmt.Sprintf("layat: status: %d config(s) could not be read", failures)}
+		return &exitCodeError{code: 1, msg: fmt.Sprintf("status: %d config(s) could not be read", failures)}
 	}
 	return nil
 }

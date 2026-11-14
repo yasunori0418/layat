@@ -128,13 +128,15 @@ func prunePrompt(preview *engine.PruneResult) (bool, error) {
 var pruneFn = engine.Prune
 
 // pruneOptions builds the engine options for one prune run. The bases come from the injected
-// backend (StateDir and Warnf keep the engine's defaults); SystemDir comes from systemDirOverride.
+// backend (StateDir keeps the engine's default); SystemDir comes from systemDirOverride. Warnings go
+// to engineWarnf.
 func pruneOptions(dryrun bool, confirm func(*engine.PruneResult) (bool, error)) engine.PruneOptions {
 	return engine.PruneOptions{
 		Backend:   newGenerationBackend(),
 		DryRun:    dryrun,
 		Confirm:   confirm,
 		SystemDir: systemDirOverride(),
+		Warnf:     engineWarnf,
 	}
 }
 

@@ -940,7 +940,7 @@ func TestApplyReportsOriginMismatch(t *testing.T) {
 			}
 			var got []string
 			for _, w := range warns {
-				if strings.HasPrefix(w, "layat: this apply's origin") {
+				if strings.HasPrefix(w, "this apply's origin") {
 					got = append(got, w)
 				}
 			}
@@ -960,7 +960,7 @@ func TestApplyReportsOriginMismatch(t *testing.T) {
 				}
 				return s
 			}
-			want := fmt.Sprintf(`layat: this apply's origin (%s) differs from the last-applied record's (%s); the later apply wins`,
+			want := fmt.Sprintf(`this apply's origin (%s) differs from the last-applied record's (%s); the later apply wins`,
 				describe(cur), describe(recorded))
 			if len(got) != 1 || got[0] != want {
 				t.Errorf("origin warnings = %q, want [%q]", got, want)

@@ -13,7 +13,7 @@ import (
 
 // ErrSchemaVersionUnsupported indicates that a manifest newer than SchemaVersion was read.
 // The CLI detects it via errors.Is to add schemaVersion skew guidance.
-var ErrSchemaVersionUnsupported = errors.New("layat: schemaVersion is newer than the engine supports")
+var ErrSchemaVersionUnsupported = errors.New("schemaVersion is newer than the engine supports")
 
 // SchemaVersion is the latest manifest.json version the engine can interpret.
 const SchemaVersion = 1
@@ -72,18 +72,18 @@ func Load(linkFarm string) (*Manifest, error) {
 func LoadFile(path string) (*Manifest, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("layat: cannot read manifest.json: %w", err)
+		return nil, fmt.Errorf("cannot read manifest.json: %w", err)
 	}
 
 	var m Manifest
 	dec := json.NewDecoder(bytes.NewReader(data))
 	dec.DisallowUnknownFields()
 	if err := dec.Decode(&m); err != nil {
-		return nil, fmt.Errorf("layat: cannot parse manifest.json (%s): %w", path, err)
+		return nil, fmt.Errorf("cannot parse manifest.json (%s): %w", path, err)
 	}
 
 	if err := m.validate(); err != nil {
-		return nil, fmt.Errorf("layat: invalid manifest.json (%s): %w", path, err)
+		return nil, fmt.Errorf("invalid manifest.json (%s): %w", path, err)
 	}
 	return &m, nil
 }

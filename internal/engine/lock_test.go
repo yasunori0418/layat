@@ -65,18 +65,18 @@ func TestLockApplyNoWaitSkipsWhenHeld(t *testing.T) {
 // TestLockErrSkippedIsTransparentThroughWrapping pins the contract that ErrSkipped stays
 // reachable via errors.Is after fmt.Errorf("%w") wrapping (single and nested).
 func TestLockErrSkippedIsTransparentThroughWrapping(t *testing.T) {
-	single := fmt.Errorf("layat: apply skipped: %w", ErrSkipped)
+	single := fmt.Errorf("apply skipped: %w", ErrSkipped)
 	if !errors.Is(single, ErrSkipped) {
 		t.Errorf("single wrap: errors.Is(%v, ErrSkipped) = false, want true", single)
 	}
 
-	nested := fmt.Errorf("layat: outer: %w", fmt.Errorf("layat: inner: %w", ErrSkipped))
+	nested := fmt.Errorf("outer: %w", fmt.Errorf("inner: %w", ErrSkipped))
 	if !errors.Is(nested, ErrSkipped) {
 		t.Errorf("nested wrap: errors.Is(%v, ErrSkipped) = false, want true", nested)
 	}
 
 	// A wrapped *unrelated* error must not masquerade as ErrSkipped.
-	other := fmt.Errorf("layat: unrelated: %w", errors.New("boom"))
+	other := fmt.Errorf("unrelated: %w", errors.New("boom"))
 	if errors.Is(other, ErrSkipped) {
 		t.Errorf("unrelated wrap: errors.Is(%v, ErrSkipped) = true, want false", other)
 	}

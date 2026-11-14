@@ -11,7 +11,7 @@ import (
 // guidance, without the raw diagnostics already written. --debug appends the generator's name.
 // It renders the generator.Error itself, not any wrapping context.
 func printGeneratorError(w io.Writer, e *generator.Error) {
-	summary := e.Message
+	summary := msgPrefix + e.Message
 	if flagDebug {
 		summary += " (generator: " + e.Generator + ")"
 	}

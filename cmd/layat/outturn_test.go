@@ -115,9 +115,9 @@ func TestOutturnEnvelopeConformance(t *testing.T) {
 	}{
 		{name: "success with subject", subject: "default", wantStatus: "success", wantResults: 1},
 		{name: "success without subject", wantStatus: "success", wantResults: 0},
-		{name: "pre-subject failure", cmdErr: errors.New("layat: no entrypoint found"),
+		{name: "pre-subject failure", cmdErr: errors.New("no entrypoint found"),
 			wantStatus: "error", wantResults: 0, wantTopErrs: true, wantCode: "E_LAYAT_FAILED"},
-		{name: "subject-borne failure", subject: "web", cmdErr: errors.New("layat: build failed"),
+		{name: "subject-borne failure", subject: "web", cmdErr: errors.New("build failed"),
 			wantStatus: "error", wantResults: 1, wantCode: "E_LAYAT_FAILED"},
 		{name: "lock failure", subject: "web", cmdErr: lock.ErrLocked,
 			wantStatus: "error", wantResults: 1, wantCode: "E_LOCK"},
@@ -307,7 +307,7 @@ func TestEntryItemIDMatchesVectors(t *testing.T) {
 func TestClassifyErrorCodes(t *testing.T) {
 	notExist := &fs.PathError{Op: "stat", Path: "/x", Err: fs.ErrNotExist}
 	genErr := func(name string, stage generator.Stage, cause error) error {
-		return generator.NewError(name, stage, generator.KindFailed, "layat: generator failed", "", "", cause)
+		return generator.NewError(name, stage, generator.KindFailed, "generator failed", "", "", cause)
 	}
 	// The input rejections come from their real sources: the resolver and apply's --manifest checks.
 	resolveErr := func(flag, env string) error {
@@ -336,20 +336,20 @@ func TestClassifyErrorCodes(t *testing.T) {
 		{"discover failure keeps its not-found cause", genErr(generator.NameNix, generator.StageDiscover, notExist), "E_NOTFOUND"},
 		{"discover failure without a cause falls back", genErr(generator.NameNix, generator.StageDiscover, nil), "E_LAYAT_FAILED"},
 		{"prebuilt failure keeps its not-found cause", genErr(generator.NamePrebuilt, generator.StageRoots, notExist), "E_NOTFOUND"},
-		{"input rejection", &inputError{err: errors.New("layat: --manifest cannot be combined with -f")}, "E_INPUT"},
+		{"input rejection", &inputError{err: errors.New("--manifest cannot be combined with -f")}, "E_INPUT"},
 		{"input marker beats its not-found cause", &inputError{err: notExist}, "E_INPUT"},
 		{"unknown --generator value", resolveErr("bogus", ""), "E_INPUT"},
 		{"unknown LAYAT_GENERATOR value", resolveErr("", "bogus"), "E_INPUT"},
 		{"--manifest with -f", manifestWithFile, "E_INPUT"},
 		{"bare --manifest with --all", manifestWithAll, "E_INPUT"},
 		{"input marker survives a %w rewrap",
-			fmt.Errorf("context: %w", &inputError{err: errors.New("layat: bad flags")}), "E_INPUT"},
+			fmt.Errorf("context: %w", &inputError{err: errors.New("bad flags")}), "E_INPUT"},
 		{"lock sentinel", lock.ErrLocked, "E_LOCK"},
 		{"not-found beats the IO shape", &fs.PathError{Op: "stat", Path: "/x", Err: fs.ErrNotExist}, "E_NOTFOUND"},
 		{"permission beats the IO shape", &fs.PathError{Op: "open", Path: "/x", Err: fs.ErrPermission}, "E_PERMISSION"},
 		{"residual IO PathError", &fs.PathError{Op: "rmdir", Path: "/x", Err: syscall.ENOTEMPTY}, "E_IO"},
 		{"residual IO LinkError", &os.LinkError{Op: "symlink", Old: "/a", New: "/b", Err: syscall.EEXIST}, "E_IO"},
-		{"unclassified fallback", errors.New("layat: generation commit failed"), "E_LAYAT_FAILED"},
+		{"unclassified fallback", errors.New("generation commit failed"), "E_LAYAT_FAILED"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {

@@ -18,7 +18,7 @@ import (
 // (List + Switch) lives here, the commit in Apply.
 
 // errNoBackend is returned by every entry point that resolves a profileDir without a backend.
-var errNoBackend = errors.New("layat: internal error: no generation backend configured")
+var errNoBackend = errors.New("internal error: no generation backend configured")
 
 // ProfileOptions is the input for fixing the profileDir (shared by Rollback / list-generations).
 type ProfileOptions struct {
@@ -158,7 +158,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 
 	// If profileDir is absent, apply has never run → no generation to roll back to.
 	if _, err := os.Stat(prof.Dir); err != nil {
-		return nil, fmt.Errorf("layat: no profile (apply has never run): %s", prof.Dir)
+		return nil, fmt.Errorf("no profile (apply has never run): %s", prof.Dir)
 	}
 
 	// 2. serialize with concurrent apply / rollback via a blocking flock.
@@ -180,10 +180,10 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		}
 	}
 	if curIdx < 0 {
-		return nil, fmt.Errorf("layat: cannot identify the current generation (profile: %s)", prof.Profile)
+		return nil, fmt.Errorf("cannot identify the current generation (profile: %s)", prof.Profile)
 	}
 	if curIdx == 0 {
-		return nil, fmt.Errorf("layat: no previous generation (this is the oldest generation, cannot rollback)")
+		return nil, fmt.Errorf("no previous generation (this is the oldest generation, cannot rollback)")
 	}
 	cur := gens[curIdx]
 	prev := gens[curIdx-1]
@@ -195,12 +195,12 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		return nil, err
 	}
 	if b.profileUnreadable() {
-		return nil, fmt.Errorf("layat: cannot read the current generation's manifest: %w", b.profileErr)
+		return nil, fmt.Errorf("cannot read the current generation's manifest: %w", b.profileErr)
 	}
 	baseline := b.manifest
 	target, err := manifest.Load(paths.GenerationLink(prof.Profile, prev.Number))
 	if err != nil {
-		return nil, fmt.Errorf("layat: cannot read the previous generation's manifest (generation %d): %w", prev.Number, err)
+		return nil, fmt.Errorf("cannot read the previous generation's manifest (generation %d): %w", prev.Number, err)
 	}
 
 	// 5. compute the plan for N∖N-1 stale removal · N-1 entry re-placement with the planner (reusing the apply engine with (baseline, target) substituted).
@@ -256,7 +256,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	if err := opts.Backend.Switch(prof.Profile, prev.Number); err != nil {
 		// Every planned FS action already succeeded, so the failure is not entry-scoped
 		// (FailedTarget / Unreached stay empty) — but the partial result is still returned.
-		return fail(fmt.Errorf("layat: failed to move the profile pointer (switch to generation %d): %w", prev.Number, err))
+		return fail(fmt.Errorf("failed to move the profile pointer (switch to generation %d): %w", prev.Number, err))
 	}
 	a.discardJournal()
 	a.result.GenAfter = intPtr(prev.Number)

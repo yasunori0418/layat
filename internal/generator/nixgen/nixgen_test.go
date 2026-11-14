@@ -248,7 +248,7 @@ func TestDiscoverFailureIsDiscoverStage(t *testing.T) {
 	if !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("errors.Is(err, fs.ErrNotExist) = false: %v", err)
 	}
-	if want := "layat: -f path not found (" + missing + "): "; !strings.HasPrefix(err.Error(), want) {
+	if want := "-f path not found (" + missing + "): "; !strings.HasPrefix(err.Error(), want) {
 		t.Errorf("Error() = %q, want prefix %q", err.Error(), want)
 	}
 }
@@ -291,7 +291,7 @@ func TestRootsCommandFailure(t *testing.T) {
 	if ge.Stage != generator.StageRoots || ge.Kind != generator.KindFailed {
 		t.Errorf("Stage/Kind = %q/%q, want roots/Failed", ge.Stage, ge.Kind)
 	}
-	if want := "layat: nix eval failed: exit status 1"; ge.Message != want {
+	if want := "nix eval failed: exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if ge.Stderr != "error: boom" {
@@ -309,7 +309,7 @@ func TestRootsMissingConfigMessage(t *testing.T) {
 	if !errors.As(err, &ge) {
 		t.Fatalf("Roots error = %v, want a *generator.Error", err)
 	}
-	if want := "layat: " + g.ep.label(g.system, "web") + " not found in the entrypoint (nix eval failed)"; ge.Message != want {
+	if want := "" + g.ep.label(g.system, "web") + " not found in the entrypoint (nix eval failed)"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if want := "check the config name"; ge.Guidance != want {
@@ -329,7 +329,7 @@ func TestAllRootsMissingNamespaceMessage(t *testing.T) {
 		t.Fatalf("AllRoots error = %v, want a Stage roots *generator.Error", err)
 	}
 	label := g.ep.namespaceLabel(g.system)
-	if want := "layat: " + label + " not found in the entrypoint (nix eval failed)"; ge.Message != want {
+	if want := "" + label + " not found in the entrypoint (nix eval failed)"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if want := "no configs found; define configs under " + label; ge.Guidance != want {
@@ -348,7 +348,7 @@ func TestDryBuildCommandFailure(t *testing.T) {
 	if !errors.As(err, &ge) || ge.Stage != generator.StageBuild {
 		t.Fatalf("DryBuild error = %v, want a Stage build *generator.Error", err)
 	}
-	if want := "layat: nix build failed: exit status 1"; ge.Message != want {
+	if want := "nix build failed: exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if ge.Stderr != "error: boom" {
@@ -368,7 +368,7 @@ func TestBuildCommandFailureStreamsStderr(t *testing.T) {
 	if !errors.As(err, &ge) || ge.Stage != generator.StageBuild {
 		t.Fatalf("Build error = %v, want a Stage build *generator.Error", err)
 	}
-	if want := "layat: nix build failed: exit status 1"; ge.Message != want {
+	if want := "nix build failed: exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if buf.String() != "error: boom" {
@@ -433,7 +433,7 @@ func TestPrerequisiteMissingGuidance(t *testing.T) {
 	if ge.Kind != generator.KindPrerequisiteMissing {
 		t.Errorf("Kind = %q, want PrerequisiteMissing", ge.Kind)
 	}
-	if want := "layat: nix's experimental-features are not enabled (nix eval failed)"; ge.Message != want {
+	if want := "nix's experimental-features are not enabled (nix eval failed)"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	for _, want := range []string{"nix.conf", "NIX_CONFIG"} {

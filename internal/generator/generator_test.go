@@ -31,9 +31,9 @@ var (
 // reachable through Unwrap.
 func TestErrorKeepsCauseAndMessage(t *testing.T) {
 	cause := &fs.PathError{Op: "stat", Path: "/nope", Err: fs.ErrNotExist}
-	e := NewError("nix", StageDiscover, KindFailed, "layat: -f path not found (/nope)", "", "", cause)
+	e := NewError("nix", StageDiscover, KindFailed, "-f path not found (/nope)", "", "", cause)
 
-	if e.Error() != "layat: -f path not found (/nope)" {
+	if e.Error() != "-f path not found (/nope)" {
 		t.Errorf("Error() = %q, want the Message", e.Error())
 	}
 	if !errors.Is(e, fs.ErrNotExist) {
@@ -50,7 +50,7 @@ func TestErrorKeepsCauseAndMessage(t *testing.T) {
 
 // TestErrorSurvivesWrapping pins that the marker survives a %w chain (the CLI classifies by errors.As).
 func TestErrorSurvivesWrapping(t *testing.T) {
-	e := NewError("nix", StageBuild, KindFailed, "layat: nix build failed", "", "", nil)
+	e := NewError("nix", StageBuild, KindFailed, "nix build failed", "", "", nil)
 	wrapped := errors.Join(errors.New("context"), e)
 	var got *Error
 	if !errors.As(wrapped, &got) || got != e {
