@@ -68,7 +68,7 @@ func TestPrebuildAllBoundsConcurrency(t *testing.T) {
 // stagedApply composes both stages like runApplyAll and records the configs stage 2 was called for.
 func stagedApply(run *applyRun, selected []string, jobs int, build func(string) (string, error)) (applied, skipped, failures int, stage2 []string) {
 	built := prebuildAll(selected, jobs, build)
-	applied, skipped, failures = aggregateApply(run, selected, 1, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
+	applied, skipped, failures = aggregateApply(run, selected, 1, skipFailedPrebuilds(built, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		stage2 = append(stage2, name)
 		if name == "skip" {
 			return nil, engine.ErrSkipped
@@ -134,7 +134,7 @@ func TestStageOneFailureSkipsDryRunStageTwo(t *testing.T) {
 	var code int
 	captureStdout(t, func() {
 		captureStderr(t, func() {
-			code = aggregateDryRun(run, []string{"a", "b"}, 1, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
+			code = aggregateDryRun(run, []string{"a", "b"}, 1, skipFailedPrebuilds(built, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 				stage2 = append(stage2, name)
 				return placedResult(name), nil
 			}))
@@ -196,7 +196,7 @@ func TestJobsAggregateIsOrderIndependent(t *testing.T) {
 func TestApplyAllFailureLineRendersGeneratorError(t *testing.T) {
 	genErr := generator.NewError(generator.NameNix, generator.StageBuild, generator.KindPrerequisiteMissing,
 		"nix build failed: exit status 1", "enable experimental-features", "error: disabled", nil)
-	fail := func(name string) (*engine.Result, error) {
+	fail := func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		if name == "a" {
 			return nil, fmt.Errorf("ctx: %w", genErr)
 		}
