@@ -246,7 +246,7 @@ func (g *Generator) evalRoot(name string) (rootKind, fixedRoot string, err error
 	args = append(args, "--raw")
 	out, err := g.runNixCapture(args...)
 	if err != nil {
-		return "", "", wrapEvalErr(err, g.ep.label(g.system, name))
+		return "", "", wrapEvalErr(err, g.ep.label(g.system, name), ".rootKind")
 	}
 	rootKind = strings.TrimSpace(out)
 	if rootKind == "fixed" {
@@ -254,7 +254,7 @@ func (g *Generator) evalRoot(name string) (rootKind, fixedRoot string, err error
 		rootArgs = append(rootArgs, "--raw")
 		out, err := g.runNixCapture(rootArgs...)
 		if err != nil {
-			return "", "", wrapEvalErr(err, g.ep.label(g.system, name))
+			return "", "", wrapEvalErr(err, g.ep.label(g.system, name), ".root")
 		}
 		fixedRoot = strings.TrimSpace(out)
 	}
@@ -369,8 +369,7 @@ func (l *lineWriter) flush() {
 }
 
 // nixFailure classifies a failed nix command by its stderr: experimental-features disabled is
-// PrerequisiteMissing, a missing attribute while reading the roots is NotFound, anything else
-// Failed. The raw stderr is kept in Stderr.
+// PrerequisiteMissing, anything else Failed. The raw stderr is kept in Stderr.
 func nixFailure(args []string, stderr string, runErr error) error {
 	cause := fmt.Errorf("nix %s failed: %w", args[0], runErr)
 	kind, message, guidance := generator.KindFailed, cause.Error(), ""
@@ -379,8 +378,6 @@ func nixFailure(args []string, stderr string, runErr error) error {
 		kind = generator.KindPrerequisiteMissing
 		message = fmt.Sprintf("nix's experimental-features are not enabled (nix %s failed)", args[0])
 		guidance = experimentalGuidance
-	case stageOf(args) == generator.StageRoots && isMissingAttribute(stderr):
-		kind = generator.KindNotFound
 	}
 	return generator.NewError(generator.NameNix, stageOf(args), kind, message, guidance, strings.TrimSpace(stderr), cause)
 }
@@ -392,10 +389,22 @@ func isExperimentalDisabled(stderr string) bool {
 		(strings.Contains(stderr, "flakes") && strings.Contains(stderr, "disabled"))
 }
 
-// isMissingAttribute detects nix reporting that the addressed attribute does not exist.
-func isMissingAttribute(stderr string) bool {
-	return strings.Contains(stderr, "does not provide attribute") ||
-		(strings.Contains(stderr, "attribute") && strings.Contains(stderr, "missing"))
+// isMissingAttribute detects nix reporting that attrPath, the queried attr path, does not exist:
+// an error line quoting it among a flake's candidates or as a legacy selection path.
+func isMissingAttribute(stderr, attrPath string) bool {
+	quoted := "'" + attrPath + "'"
+	for _, line := range strings.Split(stderr, "\n") {
+		if !strings.HasPrefix(line, "error:") {
+			continue
+		}
+		if _, candidates, ok := strings.Cut(line, "does not provide attribute "); ok && strings.Contains(candidates, quoted) {
+			return true
+		}
+		if strings.Contains(line, "in selection path "+quoted+" not found") {
+			return true
+		}
+	}
+	return false
 }
 
 // experimentalGuidance guides the prerequisites and how to enable them.
@@ -410,24 +419,25 @@ How to enable (either one):
 
 layat does not add --extra-experimental-features automatically (it will not override your environment settings).`
 
-// wrapEvalErr makes the "layat.<name> does not exist" case of an eval failure clearer; any other
-// failure is passed through as-is.
-func wrapEvalErr(err error, label string) error {
-	return notFound(err, label, "check the config name")
+// wrapEvalErr makes the "layat.<name> does not exist" case of an eval of label+suffix clearer;
+// any other failure is passed through as-is.
+func wrapEvalErr(err error, label, suffix string) error {
+	return notFound(err, label, label+suffix, "check the config name")
 }
 
 // wrapEvalAllErr makes the "layat.<system> does not exist" case of a batch eval failure clearer.
 func wrapEvalAllErr(err error, label string) error {
-	return notFound(err, label, "no configs found; define configs under "+label)
+	return notFound(err, label, label, "no configs found; define configs under "+label)
 }
 
-// notFound rewrites a NotFound generator.Error's summary to name the missing label and gives it
-// guidance; the stage, the captured stderr, and the cause are kept.
-func notFound(err error, label, guidance string) error {
+// notFound turns a Failed generator.Error whose stderr reports attrPath missing into Kind NotFound
+// with a summary naming label and the guidance; the stage, the captured stderr, and the cause are
+// kept.
+func notFound(err error, label, attrPath, guidance string) error {
 	var ge *generator.Error
-	if !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
+	if !errors.As(err, &ge) || ge.Kind != generator.KindFailed || !isMissingAttribute(ge.Stderr, attrPath) {
 		return err
 	}
 	message := fmt.Sprintf("%s not found in the entrypoint (nix eval failed)", label)
-	return generator.NewError(ge.Generator, ge.Stage, ge.Kind, message, guidance, ge.Stderr, ge.Unwrap())
+	return generator.NewError(ge.Generator, ge.Stage, generator.KindNotFound, message, guidance, ge.Stderr, ge.Unwrap())
 }

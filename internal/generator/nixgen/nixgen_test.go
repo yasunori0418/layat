@@ -207,7 +207,14 @@ func stubNix(t *testing.T, stderr string) {
 // stubNixExit puts a fake nix first on PATH that prints stdout / stderr and exits with code.
 func stubNixExit(t *testing.T, stdout, stderr string, code int) {
 	t.Helper()
-	stubNixScript(t, "printf '%s' '"+stdout+"'\nprintf '%s' '"+stderr+"' >&2\nexit "+strconv.Itoa(code))
+	dir := t.TempDir()
+	out, errOut := filepath.Join(dir, "stdout"), filepath.Join(dir, "stderr")
+	for p, s := range map[string]string{out: stdout, errOut: stderr} {
+		if err := os.WriteFile(p, []byte(s), 0o644); err != nil {
+			t.Fatalf("write nix stub output: %v", err)
+		}
+	}
+	stubNixScript(t, "cat '"+out+"'\ncat '"+errOut+"' >&2\nexit "+strconv.Itoa(code))
 }
 
 // stubNixScript puts a fake nix first on PATH whose body is the given sh script.
@@ -301,8 +308,8 @@ func TestRootsCommandFailure(t *testing.T) {
 
 // TestRootsMissingConfigMessage pins the "config not found" summary and its guidance.
 func TestRootsMissingConfigMessage(t *testing.T) {
-	stubNix(t, "error: flake does not provide attribute layat")
-	g, _ := discovered(t, io.Discard, nil)
+	g, dir := discovered(t, io.Discard, nil)
+	stubNix(t, flakeMissing(dir, g.system, "layat."+g.system+".web.rootKind"))
 
 	_, err := g.Roots("web")
 	var ge *generator.Error
@@ -320,8 +327,8 @@ func TestRootsMissingConfigMessage(t *testing.T) {
 // TestAllRootsMissingNamespaceMessage pins a failed batch eval as Stage roots carrying the
 // namespace "not found" summary and the "no configs found" guidance.
 func TestAllRootsMissingNamespaceMessage(t *testing.T) {
-	stubNix(t, "error: flake does not provide attribute layat")
-	g, _ := discovered(t, io.Discard, nil)
+	g, dir := discovered(t, io.Discard, nil)
+	stubNix(t, flakeMissing(dir, g.system, "layat."+g.system))
 
 	_, err := g.AllRoots()
 	var ge *generator.Error
@@ -446,35 +453,77 @@ func TestPrerequisiteMissingGuidance(t *testing.T) {
 	}
 }
 
-// TestNotFoundKind pins a missing attribute as Kind NotFound on both the single and the batch
-// eval (in both of nix's wordings) but not on build, and any other failure as Kind Failed.
+// flakeMissing is nix's wording for a flake lacking attrPath: the candidate paths, the queried one last.
+func flakeMissing(dir, system, attrPath string) string {
+	return "error: flake 'path:" + dir + "' does not provide attribute 'packages." + system + "." + attrPath +
+		"', 'legacyPackages." + system + "." + attrPath + "' or '" + attrPath + "'"
+}
+
+// TestIsMissingAttribute pins the missing-config detection: an error line quoting the queried attr
+// path in nix's flake or legacy wording, and not an evaluation error inside an existing config.
+func TestIsMissingAttribute(t *testing.T) {
+	const q = "layat.x86_64-linux.web.rootKind"
+	cases := []struct {
+		name, stderr, attrPath string
+		want                   bool
+	}{
+		{"flake", flakeMissing("/p", "x86_64-linux", q), q, true},
+		{"flake namespace", flakeMissing("/p", "x86_64-linux", "layat.x86_64-linux"), "layat.x86_64-linux", true},
+		{"legacy", "error: attribute 'web' in selection path 'layat.web.rootKind' not found", "layat.web.rootKind", true},
+		{"legacy namespace", "error: attribute 'layat' in selection path 'layat' not found\n       Did you mean layatx?", "layat", true},
+		{"other config", flakeMissing("/p", "x86_64-linux", "layat.x86_64-linux.web2.rootKind"), q, false},
+		{"attribute missing inside the config", "error: attribute 'foo' missing\n       at /p/flake.nix:1:70:", q, false},
+		{"queried path outside an error line", "warning: does not provide attribute '" + q + "'", q, false},
+		{"path containing the namespace", "error: path '/home/u/layat/shell.nix' does not exist", "layat", false},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			if got := isMissingAttribute(c.stderr, c.attrPath); got != c.want {
+				t.Errorf("isMissingAttribute(%q, %q) = %v, want %v", c.stderr, c.attrPath, got, c.want)
+			}
+		})
+	}
+}
+
+// TestNotFoundKind pins a missing config as Kind NotFound on both the single and the batch eval
+// but not on build, and any other failure, including an evaluation error inside the config, as
+// Kind Failed.
 func TestNotFoundKind(t *testing.T) {
-	stubNix(t, "error: flake does not provide attribute layat")
-	g, _ := discovered(t, io.Discard, nil)
+	g, dir := discovered(t, io.Discard, nil)
 
 	var ge *generator.Error
+	stubNix(t, flakeMissing(dir, g.system, "layat."+g.system+".web.rootKind"))
 	if _, err := g.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
 		t.Errorf("Roots error = %v, want Kind NotFound", err)
 	}
+	stubNix(t, flakeMissing(dir, g.system, "layat."+g.system))
 	if _, err := g.AllRoots(); !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
 		t.Errorf("AllRoots error = %v, want Kind NotFound", err)
 	}
 
-	stubNix(t, "error: attribute web missing")
-	if _, err := g.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
-		t.Errorf("Roots error = %v, want Kind NotFound for nix's attribute-missing wording", err)
+	legacyDir := t.TempDir()
+	writeFile(t, legacyDir, "shell.nix")
+	legacy := New(io.Discard, nil)
+	if err := legacy.Discover(legacyDir); err != nil {
+		t.Fatal(err)
+	}
+	stubNix(t, "error: attribute 'web' in selection path 'layat.web.rootKind' not found")
+	if _, err := legacy.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
+		t.Errorf("legacy Roots error = %v, want Kind NotFound", err)
 	}
 
 	// Build runs after Roots found the config, so a missing attribute there is an evaluation
 	// error inside the config, not a missing config name.
-	stubNix(t, "error: flake does not provide attribute layat")
+	stubNix(t, flakeMissing(dir, g.system, "layat."+g.system+".web"))
 	if _, err := g.DryBuild("web"); !errors.As(err, &ge) || ge.Kind != generator.KindFailed {
 		t.Errorf("DryBuild error = %v, want Kind Failed", err)
 	}
 
-	stubNix(t, "error: boom")
-	if _, err := g.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindFailed {
-		t.Errorf("Roots error = %v, want Kind Failed", err)
+	for _, stderr := range []string{"error: boom", "error: attribute 'foo' missing"} {
+		stubNix(t, stderr)
+		if _, err := g.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindFailed {
+			t.Errorf("Roots error for %q = %v, want Kind Failed", stderr, err)
+		}
 	}
 }
 
