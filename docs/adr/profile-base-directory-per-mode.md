@@ -2,6 +2,7 @@
 id: "ADR-11507e12-5b0f-4f8f-bae9-fb7fd41a9203"
 type: adr
 name: "profile の基底ディレクトリをモードで切り替える"
+section: generations
 status: stable
 origin: "実装前の残セマンティクス確定の第 4 巡（2026-06-14）と次期マイルストーン計画の grilling（2026-07-04）。ADR-0022 §3a と ADR-0036 §3a を書き直した"
 justifies:

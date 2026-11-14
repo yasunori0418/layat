@@ -3,6 +3,7 @@ id: "SDR-432a0189-5838-4b6f-93da-fd0f6067ddda"
 type: sara_adr
 name: "自動検証の形骸化は守備対象の impact を継承し、継承元をリンクで名指しする"
 description: "自動検証の形骸化を表す risk の `impact` は守備対象の regression から継承し、継承元はその regression を持つ risk への Markdown リンクで名指しする。"
+section: risk-test-defect
 status: stable
 sources:
   - id: "issue-583"

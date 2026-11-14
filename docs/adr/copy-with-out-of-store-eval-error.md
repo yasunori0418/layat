@@ -2,6 +2,7 @@
 id: "ADR-5e46ebd6-e44b-48dc-a93f-a8a3a3903967"
 type: adr
 name: "copy と out-of-store の併用を eval 時に拒否する"
+section: lib-entries
 status: stable
 origin: "ADR-0013 §4 を書き直した"
 justifies:

@@ -2,6 +2,7 @@
 id: "RISK-6e20efa1-7947-4dc9-aefd-8d4d9a97d110"
 type: risk
 name: "home-manager モジュールで名前つき config ごとの独立性が失われる"
+section: integration
 status: stable
 threatens:
   - "REQ-c847d1af-a437-46bb-bd64-42083810d034"

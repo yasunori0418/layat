@@ -2,6 +2,7 @@
 id: "ADR-ffe1afcb-0b51-4b87-b698-0a6dea307bdd"
 type: adr
 name: "profileDir の内部レイアウトを世代バックエンド契約の固定部分にする"
+section: generations
 status: stable
 sources:
   - id: "issue-406"

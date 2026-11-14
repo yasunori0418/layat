@@ -2,6 +2,7 @@
 id: "ADR-5be36ff2-ed08-4e8e-8476-62ff2b08a9dd"
 type: adr
 name: "内部コマンドの開示を CLI と生成器で分担する"
+section: cli-output
 status: stable
 sources:
   - id: "issue-395"

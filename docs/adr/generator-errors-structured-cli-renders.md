@@ -2,6 +2,7 @@
 id: "ADR-964e99a8-4aaa-46f6-b4ee-26270fc04649"
 type: adr
 name: "生成器の失敗は構造化した値で CLI へ返す"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-396"

@@ -2,6 +2,7 @@
 id: "RISK-24e0805d-53cd-40dd-9e7a-b5c4bbf2a298"
 type: risk
 name: "root 解決を誤り、意図しないディレクトリツリーへ配置する"
+section: engine-core
 status: stable
 threatens:
   - "REQ-9cb26ffd-071e-4c68-a6fc-faac6373b75e"

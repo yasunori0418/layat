@@ -2,6 +2,7 @@
 id: "ADR-ad5bd91d-e061-4a1e-9eef-651f4c9ce880"
 type: adr
 name: "モジュールは root と起動の時機だけを供給して engine を起動する"
+section: modules
 status: stable
 sources:
   - id: "issue-585"

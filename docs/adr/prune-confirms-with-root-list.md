@@ -2,6 +2,7 @@
 id: "ADR-fadf64ef-2308-40e5-8060-34d63e6ddb66"
 type: adr
 name: "prune は削除前に root パスの一覧を示して確認を取る"
+section: generations
 status: stable
 sources:
   - id: "issue-580"

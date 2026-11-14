@@ -2,6 +2,7 @@
 id: "ADR-28605860-770e-41df-95dd-7dc05b20497a"
 type: adr
 name: "apply --all は config ごとの情報を 1 回の eval でまとめて取る"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-550"

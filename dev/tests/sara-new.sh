@@ -108,6 +108,9 @@ field() { printf '%s\n' "$stdout_capture" | sed -n "s/^$1:[[:space:]]*//p"; }
 
 # 起票の必須入力（--description と generated の actor）。§11 だけが外して異常系を確かめる。
 desc=(--description "起票テスト")
+# section を持つ型（requirement）の起票に渡す節の値。§12 は省略の拒否を確かめるために外す。
+# 偽の sara の節は仮ファイルに section を書かないので渡さない。
+sec=(--section cli)
 generated_by="claude-code/sara-new-test"
 export SARA_NEW_GENERATED_BY="$generated_by"
 
@@ -115,7 +118,7 @@ export SARA_NEW_GENERATED_BY="$generated_by"
 
 repo="$work/basic"
 make_repo "$repo"
-run_sara_new "$repo" sara-new requirement lock-ordering docs/requirements -- "${desc[@]}"
+run_sara_new "$repo" sara-new requirement lock-ordering docs/requirements -- "${sec[@]}" "${desc[@]}"
 
 created="$(field file)"
 created_id="$(field id)"
@@ -195,7 +198,7 @@ fi
 
 repo3="$work/passthru"
 make_repo "$repo3"
-run_sara_new "$repo3" sara-new requirement passthru docs/requirements -- --name "透過テスト" "${desc[@]}"
+run_sara_new "$repo3" sara-new requirement passthru docs/requirements -- "${sec[@]}" --name "透過テスト" "${desc[@]}"
 passthru_file="$(field file)"
 if [[ "$status_capture" -eq 0 ]] && grep -q 'name: "透過テスト"' "$repo3/$passthru_file" 2>/dev/null; then
   pass "-- 以降のオプションを sara init へ透過する"
@@ -235,7 +238,7 @@ fi
 repo5="$work/slug"
 make_repo "$repo5"
 for bad in "" "has space" "../escape" "a/b" "UPPER" "under_score" "dot.ted" "index"; do
-  run_sara_new "$repo5" sara-new requirement "$bad" docs/requirements -- "${desc[@]}"
+  run_sara_new "$repo5" sara-new requirement "$bad" docs/requirements -- "${sec[@]}" "${desc[@]}"
   bad_status="$status_capture"
   bad_files="$(find "$repo5/docs" -name '*.md' -type f | wc -l)"
   if [[ "$bad_status" -eq 2 && "$bad_files" -eq 0 ]]; then
@@ -246,7 +249,7 @@ for bad in "" "has space" "../escape" "a/b" "UPPER" "under_score" "dot.ted" "ind
 done
 
 # 有効側（英小数字とハイフン）は通し、その slug がファイル名へ入ることまで見る。
-run_sara_new "$repo5" sara-new requirement a1-b2 docs/requirements -- "${desc[@]}"
+run_sara_new "$repo5" sara-new requirement a1-b2 docs/requirements -- "${sec[@]}" "${desc[@]}"
 valid_slug_file="$(field file)"
 if [[ "$status_capture" -eq 0 && "$valid_slug_file" == docs/requirements/a1-b2.md ]]; then
   pass "英小文字・数字・ハイフンの slug を受理し、ファイル名へ入れる（境界の有効側）"
@@ -255,7 +258,7 @@ else
 fi
 
 # 予約は index の完全一致だけで、index で始まる slug は通す。
-run_sara_new "$repo5" sara-new requirement index-1 docs/requirements -- "${desc[@]}"
+run_sara_new "$repo5" sara-new requirement index-1 docs/requirements -- "${sec[@]}" "${desc[@]}"
 index_prefix_file="$(field file)"
 if [[ "$status_capture" -eq 0 && "$index_prefix_file" == docs/requirements/index-1.md ]]; then
   pass "index で始まる slug は受理する（予約の境界の有効側）"
@@ -271,7 +274,9 @@ repo6="$work/adr"
 make_repo "$repo6"
 for spec in "adr ADR docs/adr adr-decision" "sara_adr SDR docs/sara-adr underscore-decision" "sara-adr SDR docs/sara-adr hyphen-decision"; do
   read -r adr_type adr_prefix adr_dir adr_slug <<<"$spec"
-  run_sara_new "$repo6" sara-new "$adr_type" "$adr_slug" "$adr_dir" -- --status 採用 "${desc[@]}"
+  adr_sec=(--section graph-model)
+  [[ "$adr_type" == adr ]] && adr_sec=(--section concept)
+  run_sara_new "$repo6" sara-new "$adr_type" "$adr_slug" "$adr_dir" -- --status 採用 "${desc[@]}" "${adr_sec[@]}"
   adr_id="$(field id)"
   adr_file="$(field file)"
   if [[ "$status_capture" -eq 0 && "$adr_id" =~ ^${adr_prefix}-${uuid_re}$ \
@@ -432,13 +437,13 @@ done
 
 repo9="$work/clobber"
 make_repo "$repo9"
-run_sara_new "$repo9" sara-new requirement dup docs/requirements -- "${desc[@]}"
+run_sara_new "$repo9" sara-new requirement dup docs/requirements -- "${sec[@]}" "${desc[@]}"
 first_file="$(field file)"
 if [[ -z "$first_file" ]]; then
   fault "§9 の前提（1 件目の起票）が失敗した（$stdout_capture）"
 else
   first_content="$(cat "$repo9/$first_file")"
-  run_sara_new "$repo9" sara-new requirement dup docs/requirements -- "${desc[@]}"
+  run_sara_new "$repo9" sara-new requirement dup docs/requirements -- "${sec[@]}" "${desc[@]}"
   clobber_status="$status_capture"
   clobber_files="$(find "$repo9/docs/requirements" -name '*.md' -type f | wc -l)"
   clobber_tmp="$(find "$repo9/docs" -name '.sara-new-*' | wc -l)"
@@ -531,19 +536,19 @@ expect_rejected() {
 run_sara_new "$repo11" sara-new requirement no-desc docs/no-desc
 expect_rejected "-- が無く --description も無ければ exit 2 で拒否する" docs/no-desc description
 
-run_sara_new "$repo11" sara-new requirement no-desc docs/no-desc-2 -- --name "要約なし"
+run_sara_new "$repo11" sara-new requirement no-desc docs/no-desc-2 -- "${sec[@]}" --name "要約なし"
 expect_rejected "-- 以降に --description が無ければ exit 2 で拒否する" docs/no-desc-2 description
 
 run_sara_new "$repo11" env -u SARA_NEW_GENERATED_BY \
-  sara-new requirement no-actor docs/no-actor -- "${desc[@]}"
+  sara-new requirement no-actor docs/no-actor -- "${sec[@]}" "${desc[@]}"
 expect_rejected "SARA_NEW_GENERATED_BY が無ければ exit 2 で拒否する" docs/no-actor SARA_NEW_GENERATED_BY
 
 run_sara_new "$repo11" env SARA_NEW_GENERATED_BY= \
-  sara-new requirement empty-actor docs/empty-actor -- "${desc[@]}"
+  sara-new requirement empty-actor docs/empty-actor -- "${sec[@]}" "${desc[@]}"
 expect_rejected "SARA_NEW_GENERATED_BY が空なら exit 2 で拒否する" docs/empty-actor SARA_NEW_GENERATED_BY
 
 run_sara_new "$repo11" env 'SARA_NEW_GENERATED_BY=claude-code/"quoted"' \
-  sara-new requirement quoted-actor docs/quoted-actor -- "${desc[@]}"
+  sara-new requirement quoted-actor docs/quoted-actor -- "${sec[@]}" "${desc[@]}"
 expect_rejected "SARA_NEW_GENERATED_BY が二重引用符を含めば exit 2 で拒否する" docs/quoted-actor SARA_NEW_GENERATED_BY
 
 # --description の別表記（sara init が受ける -d / --description=…）も指定として通る。
@@ -555,7 +560,7 @@ for spelling in "-d|起票テスト" "--description=起票テスト"; do
     spelled=("$spelling")
   fi
   spelled_n=$((spelled_n + 1))
-  run_sara_new "$repo11" sara-new requirement "spelled-$spelled_n" docs/requirements -- "${spelled[@]}"
+  run_sara_new "$repo11" sara-new requirement "spelled-$spelled_n" docs/requirements -- "${sec[@]}" "${spelled[@]}"
   spelled_file="$(field file)"
   if [[ "$status_capture" -eq 0 ]] && grep -q '^description: "起票テスト"$' "$repo11/$spelled_file" 2>/dev/null; then
     pass "--description の別表記 ${spelled[0]} を受け、description が入る"
@@ -584,6 +589,54 @@ if (cd "$repo" && sara --no-color --no-emoji check >/dev/null 2>&1); then
   pass "generated を付けた item を sara check が受け付ける"
 else
   fault "generated を付けた item を sara check が受け付ける（$(cd "$repo" && sara --no-color --no-emoji check 2>&1 | tail -n 5)）"
+fi
+
+# --- 12. section を持つ型の --section ------------------------------------------
+#
+# sara init は --section が無くても enum の先頭の値を入れるため、sara-new が省略を拒否する。
+
+repo12="$work/section"
+make_repo "$repo12"
+
+run_sara_new "$repo12" sara-new requirement no-section docs/requirements -- "${desc[@]}"
+nosec_files="$(find "$repo12/docs" -name '*.md' -type f | wc -l)"
+nosec_tmp="$(find "$repo12/docs" -name '.sara-new-*' | wc -l)"
+if [[ "$status_capture" -eq 2 && "$stderr_capture" == *"--section"* && "$stderr_capture" == *"docs/model.yaml"* ]]; then
+  pass "section を持つ型を --section なしで起票すると exit 2 で拒否し、理由を出す"
+else
+  fault "section を持つ型を --section なしで起票すると exit 2 で拒否し、理由を出す（exit=$status_capture stderr: $stderr_capture）"
+fi
+if [[ "$nosec_files" -eq 0 && "$nosec_tmp" -eq 0 ]]; then
+  pass "--section の省略を拒否したとき、ファイルも一時ディレクトリも残さない"
+else
+  fault "--section の省略を拒否したとき、ファイルも一時ディレクトリも残さない（md $nosec_files 件 / tmp $nosec_tmp 件）"
+fi
+
+# --section <値> と --section=<値> のどちらの綴りでも起票でき、その値が入る。
+sec_n=0
+for spelling in "--section|cli" "--section=cli"; do
+  if [[ "$spelling" == *"|"* ]]; then
+    sec_spelled=("${spelling%%|*}" "${spelling#*|}")
+  else
+    sec_spelled=("$spelling")
+  fi
+  sec_n=$((sec_n + 1))
+  run_sara_new "$repo12" sara-new requirement "with-section-$sec_n" docs/requirements -- "${sec_spelled[@]}" "${desc[@]}"
+  sec_file="$(field file)"
+  if [[ "$status_capture" -eq 0 ]] && grep -q '^section: cli$' "$repo12/$sec_file" 2>/dev/null; then
+    pass "--section の綴り '$spelling' で起票でき、section が入る"
+  else
+    fault "--section の綴り '$spelling' で起票でき、section が入る（exit=$status_capture file=$sec_file stderr: $stderr_capture）"
+  fi
+done
+
+# section を持たない型は --section なしで起票できる。
+run_sara_new "$repo12" sara-new test_case no-section-case docs/test/section -- "${desc[@]}"
+nosec_case_file="$(field file)"
+if [[ "$status_capture" -eq 0 && -f "$repo12/$nosec_case_file" ]]; then
+  pass "section を持たない型（test_case）は --section なしで起票できる"
+else
+  fault "section を持たない型（test_case）は --section なしで起票できる（exit=$status_capture file=$nosec_case_file stderr: $stderr_capture）"
 fi
 
 exit "$fail"

@@ -2,6 +2,7 @@
 id: "ADR-33d8c466-6b38-46b6-8696-ad7521c72786"
 type: adr
 name: "--backup を = 区切りで suffix を取る省略可能な値のフラグにする"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-169"

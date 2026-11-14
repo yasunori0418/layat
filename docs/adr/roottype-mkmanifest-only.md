@@ -2,6 +2,7 @@
 id: "ADR-59f63d1f-25df-4290-913f-02804c5eeade"
 type: adr
 name: "root の型を mkManifest だけに持たせる"
+section: root-modes
 status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の rootType の項を書き直した"
 justifies:

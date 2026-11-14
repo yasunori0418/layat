@@ -2,6 +2,7 @@
 id: "ADR-fb5e9bee-8132-431b-9948-6ad9995c9a9a"
 type: adr
 name: "キャッシュは 3 system の matrix ビルドで投入する"
+section: ci-release-docs
 status: stable
 origin: "参照: https://github.com/yasunori0418/cryoflow の CI 構成（同一メンテナの実績構成）。ADR-0012 §4 を書き直した"
 justifies:

@@ -2,6 +2,7 @@
 id: "ADR-fd3353cf-00af-4343-bd3f-3369c21d7194"
 type: adr
 name: "reset は撤去できなかった entry を残して記録を書き直す"
+section: record-state
 status: stable
 sources:
   - id: "issue-580"

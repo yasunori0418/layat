@@ -2,6 +2,7 @@
 id: "ADR-64cff3f4-5997-49f4-b23a-e6ebeced7df9"
 type: adr
 name: "エラーコードは共通コードを再利用し固有の意味だけを E_LAYAT_* にする"
+section: cli-output
 status: stable
 sources:
   - id: "issue-552"

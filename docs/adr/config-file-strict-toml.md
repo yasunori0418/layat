@@ -2,6 +2,7 @@
 id: "ADR-e88f074e-95f4-4e04-97fc-eae2d0c695a3"
 type: adr
 name: "設定ファイルを strict な TOML で書く"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-395"

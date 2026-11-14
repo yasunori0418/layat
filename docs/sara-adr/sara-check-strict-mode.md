@@ -2,6 +2,7 @@
 id: "SDR-bf25a81b-d588-4c7e-9365-fe514ee4d626"
 type: sara_adr
 name: "sara check を strict モードで回す"
+section: verification
 status: stable
 sources:
   - id: "issue-583"

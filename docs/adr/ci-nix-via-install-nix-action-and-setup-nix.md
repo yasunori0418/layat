@@ -3,6 +3,7 @@ id: "ADR-d1180af4-49b6-4d46-9575-7a9790339d17"
 type: adr
 name: "CI の nix は install-nix-action で入れ、setup-nix composite action にまとめる"
 description: "CI の nix を cryoflow にそろえて cachix/install-nix-action で入れ、cachix/cachix-action の設定とあわせて composite action .github/actions/setup-nix にまとめ、nix を使う全 workflow から再利用する。"
+section: ci-release-docs
 status: stable
 origin: "[CI の nix インストーラは cryoflow 踏襲](ci-nix-installer-cryoflow.md) を書き直した（外部 action の固定は別 ADR へ分けた）"
 justifies:

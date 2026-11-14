@@ -2,6 +2,7 @@
 id: "ADR-4c8d459a-c371-4f0d-b009-16e2ca096e49"
 type: adr
 name: "世代バックエンドのテストダブルを FS ベースの Fake に統一する"
+section: dev-build
 status: stable
 sources:
   - id: "issue-406"

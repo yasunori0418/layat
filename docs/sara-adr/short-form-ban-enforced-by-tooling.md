@@ -2,6 +2,7 @@
 id: "SDR-4656dd7b-0ea4-48fb-a6c4-a8c96ad50103"
 type: sara_adr
 name: "省略形の禁止は起票の機械化と全面移行で担保する"
+section: ids-and-filenames
 status: deprecated
 sources:
   - id: "issue-366"

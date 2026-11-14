@@ -2,6 +2,7 @@
 id: "SDR-536848bb-8901-4e73-8c66-861de3f91bcd"
 type: sara_adr
 name: "概要文書は item へのリンク集に縮退させる"
+section: doc-layout
 status: deprecated
 sources:
   - id: "issue-203"

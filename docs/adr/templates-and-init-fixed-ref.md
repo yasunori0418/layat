@@ -2,6 +2,7 @@
 id: "ADR-d15a216f-b5d6-4df9-9825-b23a341bec1d"
 type: adr
 name: "templates と layat init は固定 ref で導入する"
+section: ci-release-docs
 status: stable
 sources:
   - id: "issue-3"

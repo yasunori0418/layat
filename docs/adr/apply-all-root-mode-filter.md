@@ -2,6 +2,7 @@
 id: "ADR-04cc2a03-78dd-4bf3-9cc7-3b8ed7faf429"
 type: adr
 name: "apply --all に root モードのフィルタを持たせる"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-550"

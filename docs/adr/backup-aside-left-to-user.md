@@ -2,6 +2,7 @@
 id: "ADR-18267548-27d0-430b-8149-b6124d02ce56"
 type: adr
 name: "退避物を成功後も残して利用者の所有物にする"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-169"

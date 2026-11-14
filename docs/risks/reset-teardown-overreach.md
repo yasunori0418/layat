@@ -2,6 +2,7 @@
 id: "RISK-bb54245e-b284-4b4d-9896-8fec2b4e521c"
 type: risk
 name: "reset の teardown が管理外の実体まで消し、preview と同意の条件も機能しない"
+section: generations
 status: stable
 threatens:
   - "REQ-31f2882e-d2e3-4e3b-b783-feb627d73ac6"

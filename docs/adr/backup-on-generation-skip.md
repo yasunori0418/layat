@@ -2,6 +2,7 @@
 id: "ADR-97248450-c19e-4857-94fb-2a10c2b1d80f"
 type: adr
 name: "世代スキップのときも退避を行う"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-169"

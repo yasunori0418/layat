@@ -2,6 +2,7 @@
 id: "ADR-eee039fc-40af-42ac-bc65-979d6eaa0d06"
 type: adr
 name: "nix-darwin モジュールは postActivation に起動を追記する"
+section: modules
 status: stable
 sources:
   - id: "issue-519"

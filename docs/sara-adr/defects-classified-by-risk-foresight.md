@@ -3,6 +3,7 @@ id: "SDR-b0cf66eb-8df5-4fb0-b1ae-a3e7f4255189"
 type: sara_adr
 name: "欠陥を既存の RISK / TC に辿れたかで分類して数える"
 description: "欠陥の Issue をクローズするときに、対応する risk か test_condition が起票の時点で既にあったかで欠陥を 2 つに分類し、固定した語彙で記録して数えられるようにする。"
+section: risk-test-defect
 status: stable
 sources:
   - id: "issue-651"

@@ -2,6 +2,7 @@
 id: "ADR-87a2cf34-9592-4c81-8980-246bca579ca0"
 type: adr
 name: "manifest の取得をプロセス内の Go インターフェイスの生成器越しにする"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-395"

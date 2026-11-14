@@ -2,6 +2,7 @@
 id: "ADR-02ed93fa-c59f-4790-805d-759501017d2b"
 type: adr
 name: "method の copy から symlink への変更は移行しない"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-175"

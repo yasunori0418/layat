@@ -40,7 +40,7 @@ fi
 
 # 実物の docs/model.yaml を重ね、上流を持たない item とテスト条件 1 本だけのグラフを作る。
 fixture="$work/fixture"
-mkdir -p "$fixture/docs/adr" "$fixture/docs/sara-adr" "$fixture/docs/ubiquitous-language" "$fixture/docs/requirements" "$fixture/docs/test/copy"
+mkdir -p "$fixture/docs/adr" "$fixture/docs/sara-adr" "$fixture/docs/ubiquitous-language" "$fixture/docs/requirements" "$fixture/docs/risks" "$fixture/docs/test/copy"
 cp "$repo_root/docs/model.yaml" "$fixture/docs/model.yaml"
 cat > "$fixture/sara.toml" <<'EOF'
 model_schema = "docs/model.yaml"
@@ -59,6 +59,7 @@ id: "ADR-11111111-1111-4111-8111-111111111111"
 type: adr
 name: "フィールドを持つ決定"
 description: "フィールドの要約"
+section: concept
 status: stable
 ---
 # ADR-11111111-1111-4111-8111-111111111111: フィールドを持つ決定
@@ -72,6 +73,7 @@ cat > "$fixture/docs/adr/from-paragraph.md" <<'EOF'
 id: "ADR-22222222-2222-4222-8222-222222222222"
 type: adr
 name: "results[] を返す"
+section: cli-output
 status: deprecated
 ---
 # ADR-22222222-2222-4222-8222-222222222222: results[] を返す
@@ -101,6 +103,7 @@ cat > "$fixture/docs/sara-adr/no-description.md" <<'EOF'
 id: "SDR-33333333-3333-4333-8333-333333333333"
 type: sara_adr
 name: "説明の無い決定"
+section: graph-model
 status: stable
 ---
 # SDR-33333333-3333-4333-8333-333333333333: 説明の無い決定
@@ -197,6 +200,36 @@ status: stable
 条件の説明。
 EOF
 
+# 区分の並びがファイル名の並びと逆になる risk。節は test-categories.tsv の順に並ぶ。
+cat > "$fixture/docs/risks/a-integration.md" <<'EOF'
+---
+id: "RISK-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+type: risk
+name: "統合の脅威"
+description: "統合の要約"
+likelihood: low
+impact: low
+level: low
+section: integration
+status: stable
+---
+# 統合の脅威
+EOF
+cat > "$fixture/docs/risks/z-eval.md" <<'EOF'
+---
+id: "RISK-bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"
+type: risk
+name: "評価の脅威"
+description: "評価の要約"
+likelihood: low
+impact: low
+level: low
+section: manifest-eval
+status: stable
+---
+# 評価の脅威
+EOF
+
 if ! (cd "$fixture" && bash "$generator") > "$work/gen.out" 2>&1; then
   fault "入力: 小さな入力から index.md を生成できなかった"
   sed 's/^/    /' "$work/gen.out"
@@ -254,14 +287,22 @@ fi
 
 # --- (4) 並びはファイル名順 ----------------------------------------------------
 
-order=$(grep -oE '\(\./[^)]*\)' "$fixture/docs/adr/index.md" | tr -d '()' | tr '\n' ' ')
-if [ "$order" = "./from-paragraph.md ./with-field.md " ]; then
+# deprecated の from-paragraph.md は末尾の節へ移るので、写しに主題の並びへ残る ADR を 1 件足して並びを見る。
+ordered="$work/ordered"
+cp -r "$fixture" "$ordered"
+sed 's/8111-111111111111"$/8111-111111111112"/' "$fixture/docs/adr/with-field.md" > "$ordered/docs/adr/another.md"
+if ! (cd "$ordered" && bash "$generator") > "$work/ordered.out" 2>&1; then
+  fault "(4) ADR を足した入力から index.md を生成できなかった"
+  sed 's/^/    /' "$work/ordered.out"
+fi
+order=$(sed '/^## 有効でない item/q' "$ordered/docs/adr/index.md" | grep -oE '\(\./[^)]*\)' | tr -d '()' | tr '\n' ' ')
+if [ "$order" = "./another.md ./with-field.md " ]; then
   pass "エントリはファイル名順に並ぶ"
 else
   fault "(4) エントリがファイル名順に並ばない（実際: $order）"
 fi
 
-# --- (5) requirement・design・ubiquitous_term は section の節に分ける ----------
+# --- (5) requirement・design・ubiquitous_term・adr・sara_adr は section の節に分ける
 
 want_terms=$(cat <<'EOF'
 # 用語（`ubiquitous_term`）
@@ -305,7 +346,199 @@ expect_line "name_ja を持つ語はリンク文字列を「name（name_ja）」
 expect_line "name_ja を持たない語はリンク文字列を name だけにする" docs/ubiquitous-language/index.md \
   '* [term](./term.md) - The term definition.'
 
-# --- (7) 表に無い section の値で exit 2 ----------------------------------------
+# --- (7) deprecated の item は末尾の節にまとめる ------------------------------
+
+want_adrs=$(cat <<'EOF'
+# ADR（`adr`）
+
+## コンセプトと全体構成
+
+* [フィールドを持つ決定](./with-field.md) - フィールドの要約 (stable)
+
+## 有効でない item（`deprecated`）
+
+* [results\[\] を返す](./from-paragraph.md) - 最初の段落は`results[]`の後に English words を挟む。 (deprecated)
+EOF
+)
+if [ "$(cat "$fixture/docs/adr/index.md")" = "$want_adrs" ]; then
+  pass "adr でも、deprecated の item を section の節から外して末尾の節にだけ出す"
+else
+  fault "(7) docs/adr/index.md の deprecated の item の置き場所が食い違う"
+  sed 's/^/    /' "$fixture/docs/adr/index.md"
+fi
+
+headed=""
+for f in docs/requirements/index.md docs/sara-adr/index.md docs/ubiquitous-language/index.md docs/test/copy/index.md; do
+  grep -qxF '## 有効でない item（`deprecated`）' "$fixture/$f" && headed+=" $f"
+done
+if [ -z "$headed" ]; then
+  pass "deprecated の item が無い index.md には末尾の節の見出しを出さない"
+else
+  fault "(7) deprecated の item が無いのに末尾の節の見出しが出た:$headed"
+fi
+
+# 写しの ADR を stable にし、deprecated の item が 1 件も無い入力を作る。
+none="$work/none"
+cp -r "$fixture" "$none"
+sed 's/^status: deprecated$/status: stable/' "$fixture/docs/adr/from-paragraph.md" > "$none/docs/adr/from-paragraph.md"
+if (cd "$none" && bash "$generator") > "$work/none.out" 2>&1 && [ ! -s "$work/none.out" ] &&
+  ! grep -rqxF --include=index.md '## 有効でない item（`deprecated`）' "$none/docs"; then
+  pass "deprecated の item が 1 件も無い入力からも出力なしで生成でき、どの index.md にも末尾の節の見出しを出さない"
+else
+  fault "(7) deprecated の item が 1 件も無い入力で生成が失敗したか、何かを出力したか、末尾の節の見出しが出た"
+  sed 's/^/    /' "$work/none.out"
+fi
+
+# from-paragraph.md（cli-output）はファイル名では with-field.md（concept）より前だが、節は表の順に並ぶ。
+want_none_adrs=$(cat <<'EOF'
+# ADR（`adr`）
+
+## コンセプトと全体構成
+
+* [フィールドを持つ決定](./with-field.md) - フィールドの要約 (stable)
+
+## 出力・エラー・`--json`
+
+* [results\[\] を返す](./from-paragraph.md) - 最初の段落は`results[]`の後に English words を挟む。 (stable)
+EOF
+)
+if [ "$(cat "$none/docs/adr/index.md")" = "$want_none_adrs" ]; then
+  pass "adr の index.md は section の節に分け、節を表の順に並べる"
+else
+  fault "(5) docs/adr/index.md の節分けが食い違う"
+  sed 's/^/    /' "$none/docs/adr/index.md"
+fi
+
+# 写しに SDR を足す。a-layout.md（doc-layout）はファイル名では no-description.md（graph-model）より前だが、節は表の順に並ぶ。
+cat > "$none/docs/sara-adr/a-layout.md" <<'SDR'
+---
+id: "SDR-33333333-3333-4333-8333-333333333334"
+type: sara_adr
+name: "配置の決定"
+description: "配置の要約"
+section: doc-layout
+status: stable
+---
+# SDR-33333333-3333-4333-8333-333333333334: 配置の決定
+SDR
+if ! (cd "$none" && bash "$generator") > "$work/none-sdr.out" 2>&1; then
+  fault "(5) SDR を足した入力から index.md を生成できなかった"
+  sed 's/^/    /' "$work/none-sdr.out"
+fi
+want_none_sdrs=$(cat <<'EOF'
+# SDR（`sara_adr`）
+
+## グラフのモデル
+
+* [説明の無い決定](./no-description.md) (stable)
+
+## 文書の配置と index.md の生成
+
+* [配置の決定](./a-layout.md) - 配置の要約 (stable)
+EOF
+)
+if [ "$(cat "$none/docs/sara-adr/index.md")" = "$want_none_sdrs" ]; then
+  pass "sara_adr の index.md は section の節に分け、節を表の順に並べる"
+else
+  fault "(5) docs/sara-adr/index.md の節分けが食い違う"
+  sed 's/^/    /' "$none/docs/sara-adr/index.md"
+fi
+
+# 写しに、節に分ける型の deprecated と draft の要件、区分の deprecated のテスト条件とテストケースを足し、
+# SDR を deprecated にして、主題の並びが空の index.md を作る。
+deprecated="$work/deprecated"
+cp -r "$fixture" "$deprecated"
+sed 's/8888-888888888888/8888-888888888890/; s/^status: stable$/status: deprecated/; s/エラーの要件/古い要件/; s/エラーの説明。/古い説明。/' \
+  "$fixture/docs/requirements/error.md" > "$deprecated/docs/requirements/a-old.md"
+sed 's/8888-888888888888/8888-888888888891/; s/^status: stable$/status: draft/; s/エラーの要件/下書きの要件/; s/エラーの説明。/下書きの説明。/' \
+  "$fixture/docs/requirements/error.md" > "$deprecated/docs/requirements/z-draft.md"
+sed 's/8555-555555555555/8555-555555555556/; s/^status: stable$/status: deprecated/; s/条件/古い条件/g' \
+  "$fixture/docs/test/copy/condition.md" > "$deprecated/docs/test/copy/old-condition.md"
+sed 's/^status: stable$/status: deprecated/' "$fixture/docs/sara-adr/no-description.md" > "$deprecated/docs/sara-adr/no-description.md"
+cat > "$deprecated/docs/test/copy/a-case.md" <<'EOF'
+---
+id: "CASE-99999999-9999-4999-8999-999999999999"
+type: test_case
+name: "古いケース"
+resource: "internal/engine/copy_test.go"
+status: deprecated
+---
+# CASE-99999999-9999-4999-8999-999999999999: 古いケース
+
+ケースの説明。
+EOF
+if ! (cd "$deprecated" && bash "$generator") > "$work/deprecated.out" 2>&1; then
+  fault "(7) deprecated の item を足した入力から index.md を生成できなかった"
+  sed 's/^/    /' "$work/deprecated.out"
+fi
+
+want_dep_reqs=$(cat <<'EOF'
+# 要件（`requirement`）
+
+## エラー仕様
+
+* [エラーの要件](./error.md) - エラーの説明。
+* [下書きの要件](./z-draft.md) - 下書きの説明。
+
+## 有効でない item（`deprecated`）
+
+* [古い要件](./a-old.md) - 古い説明。
+EOF
+)
+if [ "$(cat "$deprecated/docs/requirements/index.md")" = "$want_dep_reqs" ]; then
+  pass "節に分ける型では、deprecated の item を section の節から外し、小見出しを付けずに末尾の節にだけ出す"
+else
+  fault "(7) docs/requirements/index.md の deprecated の item の置き場所が食い違う"
+  sed 's/^/    /' "$deprecated/docs/requirements/index.md"
+fi
+
+main_part=$(sed '/^## 有効でない item/q' "$deprecated/docs/requirements/index.md")
+if grep -qxF '* [下書きの要件](./z-draft.md) - 下書きの説明。' <<< "$main_part" &&
+  [ "$(grep -cF '(./z-draft.md)' "$deprecated/docs/requirements/index.md")" -eq 1 ]; then
+  pass "draft の item は主題の並びに残す"
+else
+  fault "(7) draft の item が主題の並びに無い"
+  sed 's/^/    /' "$deprecated/docs/requirements/index.md"
+fi
+
+want_dep_sdrs=$(cat <<'EOF'
+# SDR（`sara_adr`）
+
+## 有効でない item（`deprecated`）
+
+* [説明の無い決定](./no-description.md) (deprecated)
+EOF
+)
+if [ "$(cat "$deprecated/docs/sara-adr/index.md")" = "$want_dep_sdrs" ]; then
+  pass "主題の並びが空で deprecated の item だけがある index.md は、題の直後に末尾の節を置く"
+else
+  fault "(7) docs/sara-adr/index.md の末尾の節の置き方が食い違う"
+  sed 's/^/    /' "$deprecated/docs/sara-adr/index.md"
+fi
+
+want_dep_copy=$(cat <<'EOF'
+# copy
+
+## テスト条件（`test_condition`）
+
+* [条件](./condition.md) - 条件の説明。
+
+## テストケース（`test_case`）
+
+## 有効でない item（`deprecated`）
+
+* [古いケース](./a-case.md) - ケースの説明。
+* [古い条件](./old-condition.md) - 古い条件の説明。
+EOF
+)
+if [ "$(cat "$deprecated/docs/test/copy/index.md")" = "$want_dep_copy" ]; then
+  pass "区分の index.md は、deprecated のテスト条件とテストケースを 2 つの節の後ろの 1 つの節にファイル名順でまとめる"
+else
+  fault "(7) docs/test/copy/index.md の deprecated の item の置き場所が食い違う"
+  sed 's/^/    /' "$deprecated/docs/test/copy/index.md"
+fi
+
+# --- (8) 表に無い section の値で exit 2 ----------------------------------------
 
 # model.yaml の写しの requirement の enum に値を 1 つ足し、sara check は通るが生成器の表に無い値を作る。
 unknown="$work/unknown"
@@ -321,11 +554,111 @@ if [ "$rc" -eq 2 ] && grep -qF zz-unlisted-section "$work/unknown.err" &&
   cmp -s "$unknown/docs/requirements/index.md" "$work/unknown-before.md"; then
   pass "表に無い section の値は標準エラーにその値を出し、index.md を書かずに exit 2 で止まる"
 else
-  fault "(7) 表に無い section の値で exit 2 にならない（exit $rc）"
+  fault "(8) 表に無い section の値で exit 2 にならない（exit $rc）"
   sed 's/^/    /' "$work/unknown.err"
 fi
 
-# --- (8) --check は食い違うパスを出して exit 1 を返し、index.md を書き換えない --
+# --- (10) risk は test-categories.tsv の区分の節に分ける ----------------------
+
+want_risks=$(cat <<'EOF'
+# リスク（`risk`）
+
+## manifest-eval
+
+* [評価の脅威](./z-eval.md) - 評価の要約
+
+## integration
+
+* [統合の脅威](./a-integration.md) - 統合の要約
+EOF
+)
+if [ "$(cat "$fixture/docs/risks/index.md")" = "$want_risks" ]; then
+  pass "risk の index.md は区分の名前を見出しにし、節を test-categories.tsv の順に並べる"
+else
+  fault "(10) docs/risks/index.md の節分けが食い違う"
+  sed 's/^/    /' "$fixture/docs/risks/index.md"
+fi
+
+# model.yaml の写しの risk の enum に値を 1 つ足し、sara check は通るが区分に無い値を作る。
+unknown_risk="$work/unknown-risk"
+cp -r "$fixture" "$unknown_risk"
+sed -i 's/^            - integration$/&\n            - zz-unlisted-category/' "$unknown_risk/docs/model.yaml"
+sed 's/^section: integration$/section: zz-unlisted-category/; s/8aaa-aaaaaaaaaaaa/8aaa-aaaaaaaaaaab/' \
+  "$fixture/docs/risks/a-integration.md" > "$unknown_risk/docs/risks/unlisted.md"
+# 生成結果と違う内容に置き換えておき、書き換えられていないことを確かめる。
+printf '# 生成前\n' > "$unknown_risk/docs/risks/index.md"
+cp "$unknown_risk/docs/risks/index.md" "$work/unknown-risk-before.md"
+(cd "$unknown_risk" && bash "$generator") > "$work/unknown-risk.out" 2> "$work/unknown-risk.err"
+rc=$?
+if [ "$rc" -eq 2 ] && grep -qF zz-unlisted-category "$work/unknown-risk.err" &&
+  grep -qF '区分（dev/tests/test-categories.tsv）に無い' "$work/unknown-risk.err" &&
+  ! grep -qF 'sara check が失敗した' "$work/unknown-risk.err" &&
+  cmp -s "$unknown_risk/docs/risks/index.md" "$work/unknown-risk-before.md"; then
+  pass "区分に無い section の値の risk は標準エラーにその値を出し、index.md を書かずに exit 2 で止まる"
+else
+  fault "(10) 区分に無い section の値の risk で exit 2 にならない（exit $rc）"
+  sed 's/^/    /' "$work/unknown-risk.err"
+fi
+
+# 実物の model.yaml から、risk の section の enum の値を記載順に取り出す。
+want_enum=$(read_tsv "$script_dir/test-categories.tsv" | cut -f1 | tr '\n' ' ')
+got_enum=$(awk '
+  /^  - id: / { in_risk = ($0 == "  - id: risk") }
+  in_risk && /^      - name: / { in_section = ($0 == "      - name: section") }
+  in_risk && in_section && /^            - / { sub(/^            - /, ""); print }
+' "$repo_root/docs/model.yaml" | tr '\n' ' ')
+if [ -n "$got_enum" ] && [ "$got_enum" = "$want_enum" ]; then
+  pass "docs/model.yaml の risk の section の enum は、値も順も test-categories.tsv の区分と一致する"
+else
+  fault "(10) docs/model.yaml の risk の section の enum が test-categories.tsv と食い違う（実際: $got_enum）"
+fi
+
+# --- (11) 節に分けない型でも deprecated の item は末尾の節にまとめる ----------
+
+# 写しに、節に分けない quality を 2 件足す。deprecated の a-old.md はファイル名では z-current.md より前に来る。
+unsectioned="$work/unsectioned"
+cp -r "$fixture" "$unsectioned"
+mkdir -p "$unsectioned/docs/quality"
+for q in "a-old|cccccccc-cccc-4ccc-8ccc-cccccccccccc|古い品質|deprecated" \
+  "z-current|cccccccc-cccc-4ccc-8ccc-cccccccccccd|今の品質|stable"; do
+  IFS='|' read -r file uuid name status <<< "$q"
+  cat > "$unsectioned/docs/quality/$file.md" <<EOF
+---
+id: "QA-$uuid"
+type: quality
+name: "$name"
+description: "${name}の要約"
+status: $status
+specification: |
+  The fixture SHALL keep this quality.
+specification_ja: |
+  fixture はこの品質を保たなければならない。
+---
+# $name
+EOF
+done
+if ! (cd "$unsectioned" && bash "$generator") > "$work/unsectioned.out" 2>&1; then
+  fault "(11) quality を足した入力から index.md を生成できなかった"
+  sed 's/^/    /' "$work/unsectioned.out"
+fi
+want_quality=$(cat <<'EOF'
+# 品質（`quality`）
+
+* [今の品質](./z-current.md) - 今の品質の要約
+
+## 有効でない item（`deprecated`）
+
+* [古い品質](./a-old.md) - 古い品質の要約
+EOF
+)
+if [ "$(cat "$unsectioned/docs/quality/index.md")" = "$want_quality" ]; then
+  pass "節に分けない型では、deprecated の item を主題の並びから外し、末尾の節にだけ出す"
+else
+  fault "(11) docs/quality/index.md の deprecated の item の置き場所が食い違う"
+  sed 's/^/    /' "$unsectioned/docs/quality/index.md"
+fi
+
+# --- (9) --check は食い違うパスを出して exit 1 を返し、index.md を書き換えない --
 
 # --check を走らせ、exit 1 で出力が期待するパスだけであり、案内が期待する方だけであることを確かめる。
 expect_stale() {
@@ -348,7 +681,7 @@ expect_stale "--check は内容の食い違う index.md のパスを出し、再
 if cmp -s "$fixture/docs/adr/index.md" "$work/edited.md"; then
   pass "--check は既存の index.md を書き換えない"
 else
-  fault "(8) --check が既存の index.md を書き換えた"
+  fault "(9) --check が既存の index.md を書き換えた"
 fi
 
 # 書き出しで内容の食い違いを解消してから、生成対象に無い index.md だけを残す。

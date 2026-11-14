@@ -3,6 +3,7 @@ id: "SDR-52dccd7e-666c-46f8-8a8d-1a50dd0f721b"
 type: sara_adr
 name: "OKF の index.md を sara check の出力から生成してコミットする"
 description: "OKF の index.md を sara check --format json から生成し、コミットして契約テストで差分ゼロを守る"
+section: doc-layout
 status: stable
 sources:
   - id: "issue-662"

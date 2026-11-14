@@ -2,6 +2,7 @@
 id: "ADR-cb010758-7887-470a-ba61-19b2e99f0053"
 type: adr
 name: "変更検出で nix を回さない PR の必須の確認を skip で通す"
+section: ci-release-docs
 status: stable
 origin: "ADR-0030 §2 と ADR-0027 §2b（docs だけの変更で nix を回さない）を書き直した"
 justifies:

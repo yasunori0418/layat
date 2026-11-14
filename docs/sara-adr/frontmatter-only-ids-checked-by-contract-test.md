@@ -3,6 +3,7 @@ id: "SDR-4b2212ca-92b5-419a-a0c4-6dd5a9413406"
 type: sara_adr
 name: "frontmatter の外のフル ID と省略形は起票の機械化と契約テストで防ぐ"
 description: "フル ID の書き場所と 8 文字省略形の禁止を、起票ラッパーによる機械化と契約テスト link-text.sh の検出で担保する。"
+section: ids-and-filenames
 status: stable
 sources:
   - id: "issue-692"

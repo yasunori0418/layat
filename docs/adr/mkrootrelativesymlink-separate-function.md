@@ -2,6 +2,7 @@
 id: "ADR-8e3cad97-e0c8-460b-89da-62e031f93ebb"
 type: adr
 name: "root 相対マーカーを別関数 mkRootRelativeSymlink で作る"
+section: root-modes
 status: stable
 sources:
   - id: "issue-362"

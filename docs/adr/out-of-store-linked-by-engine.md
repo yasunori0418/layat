@@ -2,6 +2,7 @@
 id: "ADR-70debe94-c7ce-492b-b938-4c62f7a781e7"
 type: adr
 name: "out-of-store のリンクは lib の関数が包むだけにして engine が張る"
+section: placement
 status: stable
 origin: "ADR-0001 §d と ADR-0003 §d を書き直した"
 justifies:

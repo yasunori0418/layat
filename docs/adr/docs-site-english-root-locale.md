@@ -2,6 +2,7 @@
 id: "ADR-1e010fa2-a3d9-42b5-9641-d68d9db9f405"
 type: adr
 name: "ドキュメントサイトは英語をルートのロケールにする"
+section: ci-release-docs
 status: stable
 sources:
   - id: "issue-57"

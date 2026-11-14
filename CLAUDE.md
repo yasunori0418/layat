@@ -20,7 +20,8 @@ item を新設する。
 ### index.md（生成した一覧）
 
 item の一覧は `docs/index.md` と型ごとのディレクトリの index.md が持つ。`requirement`・`design`・
-`ubiquitous_term` の index.md は、frontmatter の `section` ごとに節を分ける。item を足したら
+`ubiquitous_term`・`adr`・`sara_adr`・`risk` の index.md は、frontmatter の `section` ごとに節を分ける。
+`deprecated` の item はどの型でも主題の節に載せず、index.md の末尾の節にまとめて載せる。item を足したら
 `dev/scripts/okf-index.sh` で index.md を再生成する（→「OKF 互換の frontmatter」節）。
 
 ### item 群（規範的な内容の所在）
@@ -56,8 +57,8 @@ risk を `requirement` と `design` のどちらに張るかの使い分けは [
 
 **区分の一覧と並び順の規範は `dev/tests/test-categories.tsv`**（機械可読・契約テストと対応表
 生成が共用する SSOT → Issue #304）。下の表はそれに test_plan 列を添えた読み物で、区分を
-増減するときはデータファイル・`docs/test/` のディレクトリ・この表の 3 つを揃える
-（前 2 つのずれは `dev/tests/test-doc-map.sh` が検出する）。
+増減するときはデータファイル・`docs/test/` のディレクトリ・この表・`docs/model.yaml` の `risk` の
+`section` の enum の 4 つを揃える（データファイルとディレクトリのずれは `dev/tests/test-doc-map.sh` が検出する）。
 
 個々のテスト資産がどの区分に属するかは**どの表でも持たない**。CASE ファイルの置き場所
 （`docs/test/<区分>/`）から導く。パス prefix では決まらない（`internal/engine/*_test.go` は
@@ -97,8 +98,8 @@ ID とファイル名の形式・フル ID を書く場所・散文と `specific
 - 起票は ADR を含め devShell 同梱の `sara-new` コマンドで行う。採番（`sara init` が引く
   UUIDv4）とファイル名規約の適用を一手で済ませ、`id:` と `file:` の 2 行を返す。連番を手で
   振らない（並列レーンでの採番衝突を構造的に避けるため）
-- `requirement`・`design`・`ubiquitous_term` の起票では、index.md の節の値を `--section` で渡す。
-  取りうる値は `docs/model.yaml` の各型の enum にある
+- `requirement`・`design`・`ubiquitous_term`・`adr`・`sara_adr`・`risk` の起票では、index.md の節の値を
+  `--section` で渡す。省くと `sara-new` は起票しない。取りうる値は `docs/model.yaml` の各型の enum にある
 
   ```bash
   sara-new <型> <slug> <配置ディレクトリ> -- --description <要約> [<sara init のオプション>...]

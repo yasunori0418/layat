@@ -2,6 +2,7 @@
 id: "ADR-92258e55-0204-4ee3-ae0e-d76a8e7343ec"
 type: adr
 name: "入力の確認を normalizeManifest に切り出す"
+section: lib-entries
 status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §4（2 段分割）を書き直した"
 justifies:

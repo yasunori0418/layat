@@ -2,6 +2,7 @@
 id: "ADR-653e6a28-76dd-44b3-99e2-3be189a3c1c4"
 type: adr
 name: "template に .envrc を同梱しない"
+section: ci-release-docs
 status: stable
 origin: "ADR-0018 §3c を書き直した"
 justifies:

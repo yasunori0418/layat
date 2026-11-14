@@ -2,6 +2,7 @@
 id: "RISK-bd1e4ada-4a0d-4672-96cf-028f488c0540"
 type: risk
 name: "失敗の帰属層と終了コードがずれ部分失敗の成否判定を誤らせる"
+section: cli-json
 status: stable
 threatens:
   - "REQ-9341fa5d-836e-4023-af53-cc7d273438d1"

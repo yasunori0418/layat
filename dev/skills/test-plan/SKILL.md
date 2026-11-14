@@ -102,7 +102,7 @@ design 行き）。
 ### 手順 4: ドラフト提示 → 承認 → 採番 → 書き込み → 検証
 
 1. test_plan / risk 全 item のドラフトを**本文で提示して承認を得る**（原則 2）。
-2. 承認後、`sara-new test_plan <slug> docs/test-plan -- --description '<1 文の要約>'` / `sara-new risk <slug> docs/risks -- --description '<1 文の要約>'`
+2. 承認後、`sara-new test_plan <slug> docs/test-plan -- --description '<1 文の要約>'` / `sara-new risk <slug> docs/risks -- --description '<1 文の要約>' --section '<テストの区分>'`
    で型別ディレクトリへ生成し（採番・ファイル名規約の適用と `sara init` の呼び出しまでを
    一手で行う。`--specification` / `--threatens` 等は `--` 以降で渡す）、本文を書き足す
    （手順は sara-docs の references/sara-cli.md）。

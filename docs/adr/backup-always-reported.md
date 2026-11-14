@@ -2,6 +2,7 @@
 id: "ADR-c0a91b81-f54f-4790-9295-f90656f53de8"
 type: adr
 name: "退避の発生は常に stderr へ出す"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-169"

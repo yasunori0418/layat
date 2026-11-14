@@ -2,6 +2,7 @@
 id: "ADR-f27830a5-4d13-4f61-be9e-3f04240ff322"
 type: adr
 name: "copy は再帰コピーで mode を保存し owner-write にする"
+section: placement
 status: stable
 origin: "ADR-0011 §7（再帰コピー）と ADR-0016 §1 を書き直した"
 justifies:

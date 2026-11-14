@@ -2,6 +2,7 @@
 id: "RISK-3e8dd093-f21f-49c6-8d8c-7d62a6fad1e5"
 type: risk
 name: "レイアウト移行が部分適用で止まり、再実行しても収束しない"
+section: migration-stale
 status: stable
 threatens:
   - "REQ-c9ab91c1-f778-4f87-a2ea-c66d6b3c2575"

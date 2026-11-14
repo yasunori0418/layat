@@ -2,6 +2,7 @@
 id: "ADR-83a1275b-85bb-4918-8d21-8db9ab18a58c"
 type: adr
 name: "manifest.json へ marker を `clean` enum で写す"
+section: manifest-generator
 status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §5（manifest.json ワイヤ形式）を書き直した"
 justifies:

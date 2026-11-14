@@ -2,6 +2,7 @@
 id: "SDR-f3f9491f-d6f4-4742-82da-4933ad3d8db1"
 type: sara_adr
 name: "risk の親に test_plan を含めない"
+section: risk-test-defect
 status: stable
 sources:
   - id: "issue-583"

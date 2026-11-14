@@ -18,7 +18,7 @@ specification_ja: |
   しなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-10T23:58:39+09:00"
+  at: "2026-11-14T16:30:06+09:00"
 ---
 # フル ID は frontmatter だけに書き、散文では item にリンクで触れる
 
@@ -47,7 +47,7 @@ relation に当たり、`sara query` へ渡しても同じものに当たる。�
 
   ```bash
   sara-new <型> <slug> <配置ディレクトリ> -- --description <要約> [<sara init のオプション>...]
-  sara-new requirement lock-ordering docs/requirements -- --description '<1 文の要約>'
+  sara-new requirement lock-ordering docs/requirements -- --description '<1 文の要約>' --section '<節の値>'
   ```
 
 - ADR も UUID で採番する（`ADR-<フル UUIDv4>`。sara 品質管理機構の決定は

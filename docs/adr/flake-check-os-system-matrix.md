@@ -2,6 +2,7 @@
 id: "ADR-f2e72cfa-f46e-46b7-9d50-a98d60d8980f"
 type: adr
 name: "flake check を 3 環境の os×system matrix で回す"
+section: ci-release-docs
 status: stable
 origin: "参照: PR #40、https://github.com/yasunori0418/cryoflow の CI 構成。ADR-0027 §1 を書き直した"
 justifies:

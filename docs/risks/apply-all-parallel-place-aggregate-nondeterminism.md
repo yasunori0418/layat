@@ -2,6 +2,7 @@
 id: "RISK-b7159827-3d29-405f-87ef-cdce7bb9a72f"
 type: risk
 name: "配置並列で集約順・カウント・エンベロープが完了順に依存して非決定化するかレースする"
+section: cli-json
 status: stable
 likelihood: medium
 impact: high

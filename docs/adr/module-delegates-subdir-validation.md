@@ -2,6 +2,7 @@
 id: "ADR-2230e78f-770a-447e-9c5d-6eba1e9a7359"
 type: adr
 name: "モジュールは subdir の確認を lib に委ねる"
+section: modules
 status: stable
 sources:
   - id: "issue-585"

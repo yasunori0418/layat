@@ -2,6 +2,7 @@
 id: "SDR-fa7eff8e-788f-48e7-951d-4cfbf95d5a1f"
 type: sara_adr
 name: "adr の status_note を持たない"
+section: frontmatter-fields
 status: stable
 sources:
   - id: "issue-499"

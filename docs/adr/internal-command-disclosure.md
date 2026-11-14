@@ -2,6 +2,7 @@
 id: "ADR-5caf1c14-a054-4c8d-95a2-c7f89e0c5246"
 type: adr
 name: "内部コマンドの開示で透明性を保つ"
+section: cli-output
 status: stable
 sources:
   - id: "issue-3"

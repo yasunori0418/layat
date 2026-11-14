@@ -2,6 +2,7 @@
 id: "RISK-33e30498-6fa1-450b-a251-5624cbe837b9"
 type: risk
 name: "dryrun が副作用を残す、または本番 apply と異なる結果を報告する"
+section: engine-core
 status: stable
 threatens:
   - "REQ-02a33511-0941-4813-b289-a05eb8e9aa57"

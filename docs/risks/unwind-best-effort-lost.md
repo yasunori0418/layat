@@ -2,6 +2,7 @@
 id: "RISK-a1622cdd-c7e2-4178-a50d-85bc2a35b29f"
 type: risk
 name: "巻き戻し中の 1 件の失敗が残りの巻き戻しを道連れにし、復旧できない項目も報告されない"
+section: atomicity
 status: stable
 threatens:
   - "REQ-9fca28c9-d3b1-4ad7-8f24-13b2ec7aeab2"

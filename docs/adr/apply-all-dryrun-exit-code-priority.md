@@ -2,6 +2,7 @@
 id: "ADR-3c3aa4a5-083a-43c1-a99f-92b9e97a68b9"
 type: adr
 name: "apply --all --dryrun の終了コードは error を conflict より優先する"
+section: cli-output
 status: stable
 sources:
   - id: "issue-550"

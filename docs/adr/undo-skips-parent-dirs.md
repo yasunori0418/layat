@@ -2,6 +2,7 @@
 id: "ADR-c45921e1-e543-47ef-8d34-b52f2810eee3"
 type: adr
 name: "配置の前に作った中間ディレクトリを undo の対象にしない"
+section: atomicity
 status: stable
 sources:
   - id: "issue-168"

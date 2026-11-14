@@ -2,6 +2,7 @@
 id: "RISK-67e96e59-005f-439d-a230-834b0228801c"
 type: risk
 name: "世代スキップと lstat ドリフト修復が誤発火し、世代が無限に増えるかユーザーの編集を失わせる"
+section: generations
 status: stable
 threatens:
   - "REQ-46fccb80-4bae-4d37-bc19-dded88e9a9c0"

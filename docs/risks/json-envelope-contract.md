@@ -2,6 +2,7 @@
 id: "RISK-4936a47d-796b-4f1f-8ae4-eb87f6c64e71"
 type: risk
 name: "--json のエンベロープが outturn 規約から外れ機械可読出力の消費側が処理に失敗する"
+section: cli-json
 status: stable
 threatens:
   - "REQ-a5053191-1c6a-449b-9c5e-5ff49dc5aead"

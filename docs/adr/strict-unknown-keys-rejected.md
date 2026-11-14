@@ -2,6 +2,7 @@
 id: "ADR-12ad7852-e689-44d7-b9fe-0667effb3d13"
 type: adr
 name: "entry の未知のキーを評価時に拒否する"
+section: lib-entries
 status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §2（型定義）の strict の項を書き直した"
 justifies:

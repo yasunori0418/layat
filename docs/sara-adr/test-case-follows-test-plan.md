@@ -3,6 +3,7 @@ id: "SDR-3f524795-70f3-4bca-ba25-ae1e40e94dd4"
 type: sara_adr
 name: "test_case から test_plan へ follows を張る"
 description: "test_plan とテストをつなぐ辺を test_case から test_plan への新設 relation follows とし、test_case の親に test_plan を足す。"
+section: graph-model
 status: stable
 sources:
   - id: "issue-648"

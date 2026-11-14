@@ -2,6 +2,7 @@
 id: "RISK-238bc9da-353b-4699-94f2-ea871e305f45"
 type: risk
 name: "root 相対 src が誤った基準点に解決される、または target と重なって symlink ループになる"
+section: integration
 status: stable
 likelihood: medium
 impact: medium

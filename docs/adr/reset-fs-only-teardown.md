@@ -2,6 +2,7 @@
 id: "ADR-ddeafc2b-f5a9-4332-a0b9-b18bea6ce6f7"
 type: adr
 name: "reset で profile を触らずに配置物を撤去する"
+section: placement
 status: stable
 sources:
   - id: "issue-584"

@@ -2,6 +2,7 @@
 id: "ADR-c973a6e3-b6d9-45d3-b237-83fb1b361b22"
 type: adr
 name: "複数の manifest を inputsFrom で合成するヘルパを持たない"
+section: lib-entries
 status: stable
 sources:
   - id: "issue-112"

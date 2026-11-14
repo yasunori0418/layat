@@ -2,6 +2,7 @@
 id: "ADR-9f2cc068-8edb-4e3d-958b-0dff8f6ed90c"
 type: adr
 name: "古くなった配置の除去は記録どおりの symlink だけに限る"
+section: removal-migration
 status: stable
 origin: "ADR-0002 §決定（削除の安全不変条件）を書き直した"
 justifies:

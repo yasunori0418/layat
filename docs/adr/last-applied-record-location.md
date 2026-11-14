@@ -2,6 +2,7 @@
 id: "ADR-df8ab6ff-7636-42ff-8b47-6ee1209dfd15"
 type: adr
 name: "last-applied 記録を profileDir と同じ鍵で state 基底に置く"
+section: record-state
 status: stable
 sources:
   - id: "issue-580"

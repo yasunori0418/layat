@@ -2,6 +2,7 @@
 id: "ADR-3b8175b9-5ebf-4123-8855-f698dc843d6b"
 type: adr
 name: "配置前除去を planner が計算するデータとして表す"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-170"

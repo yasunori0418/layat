@@ -2,6 +2,7 @@
 id: "ADR-24488788-a5e6-47a5-9074-97192880642a"
 type: adr
 name: "apply --manifest でビルド済み link-farm を engine へ直接渡す"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-585"

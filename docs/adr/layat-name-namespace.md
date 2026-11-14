@@ -2,6 +2,7 @@
 id: "ADR-e683ac05-c0e0-41c1-8b6a-38b605972fe1"
 type: adr
 name: "named manifest を専用の `layat.<name>` 名前空間に公開する"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-4"

@@ -2,6 +2,7 @@
 id: "ADR-8517e311-c461-41aa-80ac-48760a7762b2"
 type: adr
 name: "prune はロックを取れない系列を待たずに飛ばす"
+section: generations
 status: stable
 sources:
   - id: "issue-580"

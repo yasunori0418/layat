@@ -4,7 +4,7 @@
 #   okf-index.sh           # index.md を書き出す
 #   okf-index.sh --check   # 既存の index.md と比べ、食い違うパスを出して exit 1
 #
-# exit code は 0 = 生成・一致 / 1 = 食い違いあり / 2 = 引数の誤り・sara check の失敗・表に無い section の値。
+# exit code は 0 = 生成・一致 / 1 = 食い違いあり / 2 = 引数の誤り・sara check の失敗・表や区分に無い section の値。
 
 set -euo pipefail
 
@@ -52,6 +52,7 @@ TYPE_DIRS=(
   "ubiquitous-language|ubiquitous_term|用語（\`ubiquitous_term\`）|layat の用語の定義と避ける綴り"
 )
 # index.md を section の節に分ける型の節: <型>|<section の値>|<## の見出し>。節はこの順に並べる。
+# risk の節はここに書かず、dev/tests/test-categories.tsv から足す。
 SECTIONS=(
   "requirement|architecture|アーキテクチャ概要"
   "requirement|lib-api|lib API"
@@ -88,7 +89,30 @@ SECTIONS=(
   "ubiquitous_term|kinds|Placement kinds"
   "ubiquitous_term|state|State management"
   "ubiquitous_term|errors|Error handling"
+  "adr|concept|コンセプトと全体構成"
+  "adr|lib-entries|lib API と entries の宣言"
+  "adr|root-modes|root と配置モード"
+  "adr|manifest-generator|manifest.json の契約と生成器"
+  "adr|cli-commands|CLI のコマンド体系と設定"
+  "adr|cli-output|出力・エラー・\`--json\`"
+  "adr|placement|配置動作"
+  "adr|removal-migration|古くなった配置の除去・移行・退避"
+  "adr|atomicity|巻き戻しとロック"
+  "adr|generations|世代と profile"
+  "adr|record-state|last-applied 記録と state"
+  "adr|modules|モジュール統合"
+  "adr|dev-build|ビルド・依存・開発規約"
+  "adr|ci-release-docs|CI・リリース・テンプレート・ドキュメント"
+  "sara_adr|graph-model|グラフのモデル"
+  "sara_adr|ids-and-filenames|ID・ファイル名・起票"
+  "sara_adr|frontmatter-fields|frontmatter のキー"
+  "sara_adr|verification|機械検証と鮮度"
+  "sara_adr|authoring|ADR と規範文の書き方"
+  "sara_adr|doc-layout|文書の配置と index.md の生成"
+  "sara_adr|risk-test-defect|risk・テスト系 item・欠陥"
 )
+# deprecated の item をまとめる末尾の節の見出し。
+DEPRECATED_HEADING="## 有効でない item（\`deprecated\`）"
 TEST_TITLE="テスト条件とテストケース"
 TEST_DESC="機能の区分ごとのテスト条件（\`test_condition\`）とテストケース（\`test_case\`）"
 
@@ -126,6 +150,21 @@ if [ -n "$unknown" ]; then
   exit 2
 fi
 
+# risk の節は test-categories.tsv の区分をこの順に並べ、見出しは区分の名前をそのまま使う。
+categories=$(read_tsv "$categories_tsv" | cut -f1)
+unknown_risks=$(awk -F '\t' '
+  NR == FNR { known[$1] = 1; next }
+  $1 == "risk" && !($8 in known) { print $7 ": section \"" $8 "\"" }
+' <(printf '%s\n' "$categories") "$work/items.tsv")
+if [ -n "$unknown_risks" ]; then
+  echo "okf-index.sh: section の値が区分（dev/tests/test-categories.tsv）に無い risk がある:" >&2
+  printf '%s\n' "$unknown_risks" >&2
+  exit 2
+fi
+for cat in $categories; do
+  printf 'risk\t%s\t%s\n' "$cat" "$cat" >> "$work/sections.tsv"
+done
+
 # 本文の段落: <リポジトリ相対パス>\t<H1 の次に来る最初の段落>
 # 段落は見出し・箇条書き・表・引用・HTML・コードフェンスの中身・字下げ行を除いた最初の散文の塊。
 # 行は、改行の両側が ASCII のときだけ空白でつなぎ、日本語の文字が接するときは空白なしでつなぐ。
@@ -153,6 +192,7 @@ cut -f7 "$work/items.tsv" | xargs -r awk '
 ' > "$work/paras.tsv"
 
 # エントリ: <型>\t<docs/ からのディレクトリ>\t<ファイル名>\t<index.md の 1 行>\t<section>
+# status が deprecated の item は deprecated.tsv に、それ以外の item は entries.tsv に同じ形で書く。
 # リンク文字列は name とし、name_ja を持つ用語は「name（name_ja）」にする。
 # リンク文字列に化けないよう角括弧だけをエスケープし、説明はそのまま載せる。
 awk -F '\t' '
@@ -164,15 +204,33 @@ awk -F '\t' '
     line = "* [" esc(label) "](./" $3 ")"
     if (desc != "") line = line " - " desc
     if (($1 == "adr" || $1 == "sara_adr") && $6 != "") line = line " (" $6 ")"
-    print $1 "\t" $2 "\t" $3 "\t" line "\t" $8
+    print $6 "\t" $1 "\t" $2 "\t" $3 "\t" line "\t" $8
   }
-' "$work/paras.tsv" "$work/items.tsv" | LC_ALL=C sort -t $'\t' -k3,3 > "$work/entries.tsv"
+' "$work/paras.tsv" "$work/items.tsv" | LC_ALL=C sort -t $'\t' -k4,4 |
+  awk -F '\t' -v entries="$work/entries.tsv" -v deprecated="$work/deprecated.tsv" '
+    { out = ($1 == "deprecated") ? deprecated : entries; sub(/^[^\t]*\t/, ""); print > out }
+  '
+touch "$work/entries.tsv" "$work/deprecated.tsv"
 
 gen="$work/gen"
 
 # 指定のディレクトリ・型のエントリをファイル名順に出す。
 entries_of() {
   awk -F '\t' -v dir="$1" -v type="$2" '$2 == dir && $1 == type { print $4 }' "$work/entries.tsv"
+}
+
+# 本文の後ろに、指定のディレクトリ・型の deprecated のエントリをファイル名順に並べた末尾の節を足す。
+# 型は 1 つ以上渡す。deprecated のエントリが無ければ本文をそのまま返す。
+with_deprecated() {
+  local body=$1 dir=$2 entries
+  shift 2
+  entries=$(awk -F '\t' -v dir="$dir" -v types="$*" '
+    BEGIN { n = split(types, t, " "); for (i = 1; i <= n; i++) want[t[i]] = 1 }
+    $2 == dir && ($1 in want) { print $4 }
+  ' "$work/deprecated.tsv")
+  [ -n "$entries" ] || { printf '%s' "$body"; return; }
+  [ -n "$body" ] && body+=$'\n\n'
+  printf '%s' "$body$DEPRECATED_HEADING"$'\n\n'"$entries"
 }
 
 # 指定のディレクトリ・型のエントリを、表の節ごとに ## の見出しの下へ並べる。エントリの無い節は出さない。
@@ -205,16 +263,16 @@ top=""
 for row in "${TYPE_DIRS[@]}"; do
   IFS='|' read -r dir type title desc <<< "$row"
   if cut -f1 "$work/sections.tsv" | grep -qxF "$type"; then
-    write_index "docs/$dir/index.md" "$title" "$(sectioned_entries_of "$dir" "$type")"
+    body=$(sectioned_entries_of "$dir" "$type")
   else
-    write_index "docs/$dir/index.md" "$title" "$(entries_of "$dir" "$type")"
+    body=$(entries_of "$dir" "$type")
   fi
+  write_index "docs/$dir/index.md" "$title" "$(with_deprecated "$body" "$dir" "$type")"
   top+="* [$title](./$dir/index.md) - $desc"$'\n'
 done
 top+="* [$TEST_TITLE](./test/index.md) - $TEST_DESC"
 
 # docs/test/ の区分と並び順は dev/tests/test-categories.tsv に従う。
-categories=$(read_tsv "$categories_tsv" | cut -f1)
 test_list=""
 for cat in $categories; do
   tc=$(entries_of "test/$cat" test_condition)
@@ -223,7 +281,7 @@ for cat in $categories; do
   [ -n "$tc" ] && body+=$'\n\n'"$tc"
   body+=$'\n\n'"## テストケース（\`test_case\`）"
   [ -n "$cs" ] && body+=$'\n\n'"$cs"
-  write_index "docs/test/$cat/index.md" "$cat" "$body"
+  write_index "docs/test/$cat/index.md" "$cat" "$(with_deprecated "$body" "test/$cat" test_condition test_case)"
   test_list+="* [$cat](./$cat/index.md)"$'\n'
 done
 write_index "docs/test/index.md" "$TEST_TITLE" "${test_list%$'\n'}"

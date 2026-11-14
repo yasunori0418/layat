@@ -2,6 +2,7 @@
 id: "ADR-30f105c7-85a8-4fab-9dea-3277d932b524"
 type: adr
 name: "symlink farm を GC アンカー専用にする"
+section: generations
 status: stable
 origin: "実装前のレビューと横断検証で詰めた GC アンカーの細目。ADR-0006 の決定節（GC アンカーの項）・ADR-0013 §1・ADR-0016 §5・ADR-0019 §2 を書き直した"
 justifies:

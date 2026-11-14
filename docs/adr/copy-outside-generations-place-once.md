@@ -2,6 +2,7 @@
 id: "ADR-c4ad9987-850e-4834-bbea-d8de3b073548"
 type: adr
 name: "copy は世代の外に place-once で置く"
+section: placement
 status: stable
 origin: "ADR-0002 の決定「copy は世代から除外する」と「copy の扱い」節を書き直した"
 justifies:

@@ -17,15 +17,16 @@ usage: sara-new <type> <slug> <dir> -- --description <要約> [<sara init option
   dir    配置ディレクトリ（カレントからの相対。無ければ作る）
   --     以降を sara init へそのまま渡す（--name / --specification …）。
          --description（-d）は必須
+         section を持つ型（requirement / design / ubiquitous_term …）では --section も必須
 
 環境変数:
   SARA_NEW_GENERATED_BY  generated.by に書く actor（必須。例: human:<GitHub ID> /
                          claude-code/<モデル ID>）
 
 例:
-  sara-new requirement lock-ordering docs/requirements -- --description "lock の取得順を固定する"
+  sara-new requirement lock-ordering docs/requirements -- --description "lock の取得順を固定する" --section placement-rollback
   sara-new test-case engine-lock docs/test/atomicity -- --name "engine の lock" --description "…"
-  sara-new adr lock-ordering docs/adr -- --status stable --description "…"
+  sara-new adr lock-ordering docs/adr -- --status stable --description "…" --section atomicity
 
 出力（機械可読の 2 行）:
   id:   採番された正式 ID
@@ -132,6 +133,21 @@ if [ -z "$id" ]; then
   echo "sara-new: sara init の出力から ID を読めなかった（sara の出力形式が変わった可能性）" >&2
   printf '%s\n' "$init_out" >&2
   exit 1
+fi
+
+# sara init は --section が無くても enum の先頭の値を入れるため、section を持つ型では省略を拒否する。
+# 型が section を持つかは、仮ファイルの frontmatter に section: の行があるかで判断する。
+if awk 'NR == 1 && $0 == "---" { open = 1; next } open && $0 == "---" { exit } open && /^section:/ { found = 1; exit } END { exit found ? 0 : 1 }' "$tmp_file"; then
+  has_section=0
+  for arg in "$@"; do
+    case "$arg" in
+      --section | --section=*) has_section=1 ;;
+    esac
+  done
+  if [ "$has_section" -eq 0 ]; then
+    echo "sara-new: 型 $type は -- 以降に --section <節の値> が要る（取りうる値は docs/model.yaml にある $type の section の enum）" >&2
+    exit 2
+  fi
 fi
 
 # frontmatter の閉じ（2 本目の `---`）の直前へ generated を足す。閉じが無ければ rename せず落とす。

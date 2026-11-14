@@ -2,6 +2,7 @@
 id: "ADR-bc334f0c-ac3b-44cf-8d0d-31034ef420ac"
 type: adr
 name: "mkApplyCommand は実行時フラグを引数に取らない"
+section: lib-entries
 status: stable
 sources:
   - id: "issue-530"

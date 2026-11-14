@@ -2,6 +2,7 @@
 id: "RISK-87484de7-e767-493c-a3a4-c699591832c9"
 type: risk
 name: "並列 build の失敗が集約から抜けるか並列度が制御されず nix daemon を圧迫する"
+section: cli-json
 status: stable
 likelihood: medium
 impact: high

@@ -2,6 +2,7 @@
 id: "ADR-10c6dc33-d188-406b-beb4-d10ccbe3c645"
 type: adr
 name: "記録を書き直す操作ごとに linkFarm の値を定める"
+section: record-state
 status: stable
 sources:
   - id: "issue-580"

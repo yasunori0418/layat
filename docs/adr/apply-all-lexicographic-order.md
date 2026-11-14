@@ -2,6 +2,7 @@
 id: "ADR-af37a636-a798-4c03-8fa4-e73ed6375a92"
 type: adr
 name: "apply --all の集約は config 名の辞書順に並べる"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-550"

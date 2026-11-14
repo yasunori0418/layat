@@ -2,6 +2,7 @@
 id: "ADR-f66cddc5-6b4f-40e4-a85a-ce1a85cd9a0c"
 type: adr
 name: "モジュールの使い方での二重の確認を許容する"
+section: modules
 status: stable
 origin: "manifest の型検査を NixOS モジュールシステムで行えるかという確認。ADR-0010 §3（クロスエントリ制約と必須性）の二重検査の項を書き直した"
 justifies:

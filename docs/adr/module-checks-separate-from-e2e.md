@@ -2,6 +2,7 @@
 id: "ADR-d01223d3-47a2-4bdd-ac5d-26370d553f7c"
 type: adr
 name: "モジュールの検証を flake check と VM テストに置く"
+section: dev-build
 status: stable
 sources:
   - id: "issue-519"

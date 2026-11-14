@@ -2,6 +2,7 @@
 id: "ADR-fe035038-4415-4a1e-aa5c-509fdfce9955"
 type: adr
 name: "1 config = 1 profile を全モードで自前に持つ"
+section: generations
 status: stable
 origin: "ADR-0002 §決定（全モードで自前 profile を持つ・粒度 = 1 profile）を書き直した"
 justifies:

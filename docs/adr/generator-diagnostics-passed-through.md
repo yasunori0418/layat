@@ -2,6 +2,7 @@
 id: "ADR-6687c0dc-957d-4913-99c6-168b0fe552ad"
 type: adr
 name: "生成器の診断を成功時も stderr へ素通しする"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-396"

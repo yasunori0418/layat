@@ -2,6 +2,7 @@
 id: "ADR-13c8b82f-f1a0-475e-a478-06467f5ec838"
 type: adr
 name: "layat をフレームワークではなく純粋関数群として提供する"
+section: concept
 status: stable
 origin: "ADR-0004 §d を書き直した"
 justifies:

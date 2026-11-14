@@ -2,6 +2,7 @@
 id: "ADR-5fc58c8f-dc0e-4c1d-8c1e-17d7ac7f0385"
 type: adr
 name: "空の entries を正当な全クリアとして許可する"
+section: lib-entries
 status: stable
 origin: "ADR-0018 の後に行った docs の横断検証で残っていた細目。ADR-0019 §4 を書き直した"
 justifies:

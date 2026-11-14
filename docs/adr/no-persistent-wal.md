@@ -2,6 +2,7 @@
 id: "ADR-509e15a2-9097-404d-bc3c-171fe63dd3c8"
 type: adr
 name: "クラッシュ耐性のための永続 WAL を持たない"
+section: atomicity
 status: stable
 sources:
   - id: "issue-168"

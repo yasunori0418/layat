@@ -2,6 +2,7 @@
 id: "ADR-01abcd5a-464f-4c44-8afd-30950631487c"
 type: adr
 name: "HM モジュールは `layat.configs.<name>` ごとに独立した profile を持つ"
+section: modules
 status: stable
 sources:
   - id: "issue-585"

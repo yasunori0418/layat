@@ -3,6 +3,7 @@ id: "SDR-376f1a7d-ecfd-4d44-b4ca-e2f23aa4e1ec"
 type: sara_adr
 name: "用語の index.md はリンク文字列に name_ja を添える"
 description: "用語の index.md は、name_ja を持つ語のリンク文字列を name（name_ja）にし、英語と日本語のどちらの正名からも語を引けるようにする"
+section: doc-layout
 status: stable
 sources:
   - id: "issue-719"

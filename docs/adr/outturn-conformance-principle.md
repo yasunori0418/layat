@@ -2,6 +2,7 @@
 id: "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
 type: adr
 name: "--json は outturn 規約に常時準拠する"
+section: cli-output
 status: stable
 sources:
   - id: "issue-552"

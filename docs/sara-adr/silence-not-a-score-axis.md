@@ -2,6 +2,7 @@
 id: "SDR-7178b787-cf37-4753-9cea-12a0d65df410"
 type: sara_adr
 name: "沈黙性を risk のスコア軸にせず本文に書く"
+section: risk-test-defect
 status: stable
 sources:
   - id: "issue-583"

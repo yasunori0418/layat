@@ -3,6 +3,7 @@ id: "SDR-bb13e2a5-b2ce-4af9-9148-37f4e92ef050"
 type: sara_adr
 name: "requirement に risk_exempt を設け、理由を書いた requirement を未カバーから外す"
 description: "requirement に任意フィールド risk_exempt を設け、requirement 水準の risk を持たない理由を 1 文で書いた requirement を未カバーの一覧から外して免除として列挙する。"
+section: risk-test-defect
 status: stable
 sources:
   - id: "issue-648"

@@ -2,6 +2,7 @@
 id: "SDR-933a9191-f60e-45bc-bebc-bc09af8154cc"
 type: sara_adr
 name: "infrastructure 型を改名しない"
+section: graph-model
 status: stable
 sources:
   - id: "issue-583"

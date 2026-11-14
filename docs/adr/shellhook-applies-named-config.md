@@ -2,6 +2,7 @@
 id: "ADR-fcd03235-afe0-41ba-8ea9-c14bed3988da"
 type: adr
 name: "devShell の shellHook は config を名指しして apply する"
+section: modules
 status: stable
 origin: "ADR-0018 §3a を書き直した"
 justifies:

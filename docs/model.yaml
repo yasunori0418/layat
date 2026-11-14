@@ -246,12 +246,33 @@ item_types:
     prefix: ADR
     id_format: '{prefix}-{uuid4}'
     parent_types: []
-    fields: &adr_fields
+    fields:
+      # index.md の節。見出しと並び順は dev/scripts/okf-index.sh の表が持つ。
+      - name: section
+        display_name: Section
+        field_type: !enum
+          values:
+            - concept
+            - lib-entries
+            - root-modes
+            - manifest-generator
+            - cli-commands
+            - cli-output
+            - placement
+            - removal-migration
+            - atomicity
+            - generations
+            - record-state
+            - modules
+            - dev-build
+            - ci-release-docs
+        required: true
       # deprecated は supersedes で後継に置き換えられた ADR と、提案を棄却した ADR に付ける。
       - *status_field
       # 起点となったセッション等の散文。Issue は OKF の sources に書き、sara でなく
       # dev/tests/okf-frontmatter.sh が形を確かめる。
-      - name: origin
+      - &origin_field
+        name: origin
         display_name: Origin
         field_type: text
         required: false
@@ -281,7 +302,23 @@ item_types:
     prefix: SDR
     id_format: '{prefix}-{uuid4}'
     parent_types: []
-    fields: *adr_fields
+    fields:
+      # index.md の節。見出しと並び順は dev/scripts/okf-index.sh の表が持つ。
+      - name: section
+        display_name: Section
+        field_type: !enum
+          values:
+            - graph-model
+            - ids-and-filenames
+            - frontmatter-fields
+            - verification
+            - authoring
+            - doc-layout
+            - risk-test-defect
+        required: true
+      - *status_field
+      - *origin_field
+      - *stale_after_field
     allowed_targets: *adr_targets
 
   # ユビキタス言語の 1 語。docs/ubiquitous-language/。組み込みの name が英語の正名。
@@ -358,6 +395,20 @@ item_types:
             - low
         required: true
         placeholder: medium
+      # index.md の節。値と並び順は dev/tests/test-categories.tsv の区分と同じにする。
+      - name: section
+        display_name: Section
+        field_type: !enum
+          values:
+            - manifest-eval
+            - engine-core
+            - copy
+            - migration-stale
+            - atomicity
+            - generations
+            - cli-json
+            - integration
+        required: true
       - *status_field
       - *stale_after_field
     allowed_targets:

@@ -2,6 +2,7 @@
 id: "ADR-bd8a4c8a-5e7e-485a-bccf-20dab63125f2"
 type: adr
 name: "CLI は outturn/go に依存する"
+section: dev-build
 status: stable
 sources:
   - id: "issue-552"

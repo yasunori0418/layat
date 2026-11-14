@@ -2,6 +2,7 @@
 id: "ADR-cd139de9-06a4-49a2-8bea-4801c8acc518"
 type: adr
 name: "nix 固有の失敗判定と案内文を nix 生成器の中に閉じる"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-396"

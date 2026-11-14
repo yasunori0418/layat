@@ -2,6 +2,7 @@
 id: "ADR-bff01b65-ddb8-46ce-8ffe-ed33ad354511"
 type: adr
 name: "main へのマージにテストの成功を必須にする"
+section: ci-release-docs
 status: stable
 origin: "ADR-0030 §1a（main の ruleset で required status check を課す）を書き直した"
 justifies:

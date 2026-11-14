@@ -2,6 +2,7 @@
 id: "SDR-1afa3a31-224d-492d-96d9-d3f6c9cb20cd"
 type: sara_adr
 name: "ADR は単独で覆せる 1 つの決定だけを書く"
+section: authoring
 status: stable
 sources:
   - id: "issue-499"

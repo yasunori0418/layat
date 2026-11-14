@@ -2,6 +2,7 @@
 id: "ADR-8357b519-cb23-4984-ba56-254046779f47"
 type: adr
 name: "配置前除去による移行を warning にせず -v のときだけ報告する"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-170"

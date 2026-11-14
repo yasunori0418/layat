@@ -2,6 +2,7 @@
 id: "ADR-27f99ee6-5fb4-4dbe-b0fd-8267eecaa3a1"
 type: adr
 name: "--root は全モードで root を上書きする"
+section: root-modes
 status: stable
 origin: "ADR-0017 §2 を書き直した"
 justifies:

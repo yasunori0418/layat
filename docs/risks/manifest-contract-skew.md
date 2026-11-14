@@ -2,6 +2,7 @@
 id: "RISK-7808768d-bd87-429a-af42-52e8559d940c"
 type: risk
 name: "Nix と engine の唯一の契約である manifest の生成側と消費側がずれる"
+section: integration
 status: stable
 threatens:
   - "REQ-79ce0a09-f9bd-4e61-ba7f-45fb5643137b"

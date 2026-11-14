@@ -2,6 +2,7 @@
 id: "ADR-eeeb9dc8-9089-43ec-946a-c3ed76e98137"
 type: adr
 name: "layat.lib.mkEnv で buildEnv 合成環境を提供する"
+section: lib-entries
 status: deprecated
 sources:
   - id: "issue-162"

@@ -2,6 +2,7 @@
 id: "ADR-f82e33bd-0534-4266-89bf-f1d9a2dbe258"
 type: adr
 name: "ドキュメントサイトを GitHub Actions から Cloudflare Pages へ配備する"
+section: ci-release-docs
 status: stable
 sources:
   - id: "issue-57"

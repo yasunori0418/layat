@@ -2,6 +2,7 @@
 id: "ADR-0d8f691f-304a-4b36-8393-d6aeddc4b32a"
 type: adr
 name: "モジュールの entries に lib と同じ型を使う"
+section: modules
 status: stable
 origin: "ADR-0014 §4 を書き直した"
 justifies:

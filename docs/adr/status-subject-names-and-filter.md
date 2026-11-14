@@ -2,6 +2,7 @@
 id: "ADR-c2131901-290d-4311-8f84-64edb33e8897"
 type: adr
 name: "status は config 名の完全一致で絞り込む"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-580"

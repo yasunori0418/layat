@@ -2,6 +2,7 @@
 id: "ADR-7f4fd2f6-672d-4d8c-a881-31024ad1d7c3"
 type: adr
 name: "config 間の target 衝突は CLI が判定し engine に持ち込まない"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-584"

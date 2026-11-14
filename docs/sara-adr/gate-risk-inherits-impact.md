@@ -2,6 +2,7 @@
 id: "SDR-c2989d44-2ba4-4a42-9f4f-35871405be65"
 type: sara_adr
 name: "自動検証の形骸化は守備対象の impact を継承する"
+section: risk-test-defect
 status: deprecated
 sources:
   - id: "issue-583"

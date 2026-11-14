@@ -2,6 +2,7 @@
 id: "SDR-2457aa00-fab7-4c99-af53-2e6643c21c79"
 type: sara_adr
 name: "model.yaml で組み込みモデルを全面置換し、汎用の型名を使う"
+section: graph-model
 status: stable
 sources:
   - id: "issue-203"

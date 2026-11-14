@@ -2,6 +2,7 @@
 id: "RISK-88088f4c-348f-4fa5-a2c1-dc42bb328b5d"
 type: risk
 name: "生成器の選択で優先順位を取り違える、または --manifest の使い方が環境変数・設定ファイルに汚染される"
+section: cli-json
 status: stable
 likelihood: medium
 impact: high

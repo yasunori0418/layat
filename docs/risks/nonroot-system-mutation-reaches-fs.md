@@ -2,6 +2,7 @@
 id: "RISK-1a8f91c8-dfaa-4598-805a-a3b71cb967f0"
 type: risk
 name: "非 root の system mode の変更系操作が権限の確認を経ずに FS へ触れる"
+section: engine-core
 status: stable
 likelihood: medium
 impact: medium

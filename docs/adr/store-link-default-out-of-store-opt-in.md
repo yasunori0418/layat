@@ -2,6 +2,7 @@
 id: "ADR-73c24620-d2c0-4249-97fa-1b6296f1e79c"
 type: adr
 name: "store link を既定にし、out-of-store は明示関数でのみ選ばせる"
+section: lib-entries
 status: stable
 origin: "ADR-0001 §a と §b を書き直した"
 justifies:

@@ -2,6 +2,7 @@
 id: "SDR-49733f2e-ed79-480d-bfb9-6361a7f95aed"
 type: sara_adr
 name: "欠陥はグラフに置かず GitHub Issues で管理する"
+section: risk-test-defect
 status: stable
 sources:
   - id: "issue-583"

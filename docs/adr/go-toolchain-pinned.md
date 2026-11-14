@@ -2,6 +2,7 @@
 id: "ADR-2be5080a-1cba-4fea-bed8-66e0d0d7b8d0"
 type: adr
 name: "Go toolchain は nixpkgs の go に pin する"
+section: dev-build
 status: stable
 sources:
   - id: "issue-552"

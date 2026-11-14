@@ -3,7 +3,8 @@ id: "SDR-fcae2485-b7f5-4717-9c3a-4e585161efec"
 type: sara_adr
 name: "index.md の節は item の section から生成する"
 description: "requirement・design・ubiquitous_term の index.md は、item が持つ必須の enum フィールド section ごとに節を分けて生成し、見出しと並び順は生成スクリプトの表に置く"
-status: stable
+section: doc-layout
+status: deprecated
 sources:
   - id: "issue-719"
     resource: "https://github.com/yasunori0418/layat/issues/719"
@@ -19,7 +20,11 @@ generated:
 ---
 # index.md の節は item の section から生成する
 
-- ステータス: stable
+> **廃止（2026-11-14）**: 本 SDR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - 節に分ける型を 6 型に広げ、`sara-new` が `--section` の省略を拒否する → [index.md の節は 6 つの型で item の section から生成する](index-sections-in-six-types.md)
+
+- ステータス: deprecated
 - 日付: 2026-11-13
 - 関連: GitHub Issue #719, `docs/model.yaml`, `dev/scripts/okf-index.sh`
 - 起点: epic #719 の grilling（2026-11-13）で確定

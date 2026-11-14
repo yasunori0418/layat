@@ -2,6 +2,7 @@
 id: "RISK-f87d4909-6dea-4ead-8e72-994c498a14df"
 type: risk
 name: "status が flock を取り、ディレクトリを作り、記録を書き換えて読み取り専用でなくなる"
+section: generations
 status: stable
 threatens:
   - "REQ-e8d911ff-8ee2-4d68-87d0-26f6d6817173"

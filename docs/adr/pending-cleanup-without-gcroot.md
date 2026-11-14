@@ -2,6 +2,7 @@
 id: "ADR-9723dbb3-6659-4a69-ac4f-411c98bfa818"
 type: adr
 name: ".pending の後片付けを gcroot を知らない engine の FS 操作として行う"
+section: generations
 status: stable
 sources:
   - id: "issue-406"

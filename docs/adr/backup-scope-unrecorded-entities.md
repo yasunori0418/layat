@@ -2,6 +2,7 @@
 id: "ADR-c42a51ff-fc51-4d19-b8c6-2b79704dd30f"
 type: adr
 name: "--backup は配置を塞ぐ記録外の実体だけを退避する"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-169"

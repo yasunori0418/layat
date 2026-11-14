@@ -2,6 +2,7 @@
 id: "ADR-963df3dd-ac51-41fc-94e2-a89c0675dc23"
 type: adr
 name: "版 1 しか読めない engine との非互換を受け入れる"
+section: record-state
 status: stable
 sources:
   - id: "issue-580"

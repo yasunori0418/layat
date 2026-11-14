@@ -3,6 +3,7 @@ id: "SDR-10e78124-1b8a-4a06-bbc6-1d42e58eea27"
 type: sara_adr
 name: "item の出典は分割した時点のパスのまま残す"
 description: "item の `## 出典` にある分割した時点の文書のパスは書き換えず、出典の読み方は `docs/model.md` の 1 か所に置く"
+section: authoring
 status: stable
 sources:
   - id: "issue-719"

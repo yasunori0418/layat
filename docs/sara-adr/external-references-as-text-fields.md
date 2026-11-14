@@ -2,6 +2,7 @@
 id: "SDR-9f2ef734-a9a7-4b93-92a7-e8ed1c7cf8fe"
 type: sara_adr
 name: "item にできない外部参照は text フィールドへ逃がす"
+section: frontmatter-fields
 status: stable
 sources:
   - id: "issue-203"

@@ -2,6 +2,7 @@
 id: "ADR-2f5b8825-f13b-4f73-bdf1-fe14e0098d57"
 type: adr
 name: "リポジトリ全体は subpath の省略で表す"
+section: lib-entries
 status: stable
 origin: "「リポジトリ全体を示す文字列として \".\" 以外の表現は無いか」という問いの設計検討。ADR-0008 §3 と §4 を書き直した"
 justifies:

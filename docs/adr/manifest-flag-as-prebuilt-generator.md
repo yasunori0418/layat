@@ -2,6 +2,7 @@
 id: "ADR-1ddf424a-db2c-4bcb-8823-bf7e4326b980"
 type: adr
 name: "--manifest を prebuilt 生成器に写す"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-395"

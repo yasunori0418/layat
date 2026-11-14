@@ -2,6 +2,7 @@
 id: "ADR-25d54346-f13a-4c12-9895-ab93dc6c183b"
 type: adr
 name: "system mode の変更系操作の前に engine が euid 0 を確認する"
+section: root-modes
 status: stable
 origin: "次期マイルストーン計画の grilling（2026-07-04）。ADR-0036 §2 を書き直した"
 justifies:

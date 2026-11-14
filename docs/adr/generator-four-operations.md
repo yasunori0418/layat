@@ -2,6 +2,7 @@
 id: "ADR-bac005fb-fe4d-4a3b-b9e1-517a62fe46c2"
 type: adr
 name: "生成器の契約を Discover / Roots / Build / DryBuild の 4 操作にする"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-395"

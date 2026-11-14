@@ -2,6 +2,7 @@
 id: "ADR-3878ea60-4f4f-48a3-a389-3b7fbb672897"
 type: adr
 name: "--generator を prune と init では無視する"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-395"

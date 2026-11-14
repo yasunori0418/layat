@@ -2,6 +2,7 @@
 id: "ADR-a51897c5-f709-4b7a-8db2-61e6ebb0040c"
 type: adr
 name: "独立した操作はサブコマンドにし、操作の修飾はフラグにする"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-550"

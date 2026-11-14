@@ -2,6 +2,7 @@
 id: "ADR-da7b74a6-bab4-43ea-8f1c-cf843b8b58cc"
 type: adr
 name: "リファレンスをビルド時に生成する"
+section: ci-release-docs
 status: stable
 sources:
   - id: "issue-57"

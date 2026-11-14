@@ -23,7 +23,7 @@ ADR の粒度・本文の構成・`justifies` の選定基準は [ADR は 1 本�
 
 ```bash
 nix develop '.?dir=dev#sara' -c sara-new adr <slug> docs/adr -- \
-  --name '<タイトル>' --description '<1 文の要約>' --status stable \
+  --name '<タイトル>' --description '<1 文の要約>' --section '<節の値>' --status stable \
   --origin '…' \
   --justifies '<ID>' [--supersedes '<ADR>'] [--references '<ADR>']
 ```
@@ -44,6 +44,7 @@ nix develop '.?dir=dev#sara' -c sara-new adr <slug> docs/adr -- \
 id: "ADR-<フル UUIDv4>"
 type: adr
 name: "<タイトル行と同じ文字列（先頭の `# ` は除く）>"
+section: <節の値>       # index.md で載せる節（取りうる値は docs/model.yaml の enum）
 status: stable          # draft / stable / deprecated
 sources:                # 「関連:」「起点 Issue:」「起点:」の GitHub Issue
   - id: "issue-123"
@@ -59,7 +60,7 @@ references:             # 「関連:」の ADR
 ---
 ```
 
-フィールドの順序は上記のとおり（`id` / `type` / `name` / `status` / `sources` / `origin` /
+フィールドの順序は上記のとおり（`id` / `type` / `name` / `section` / `status` / `sources` / `origin` /
 `justifies` / `supersedes` / `references`）。
 
 `supersedes` だけは本文のメタデータ行を持たず、frontmatter にだけ書く。読者への誘導は、置き換えられた

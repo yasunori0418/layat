@@ -2,6 +2,7 @@
 id: "ADR-52423842-bacf-4773-bbca-bcb34ae71013"
 type: adr
 name: "last-applied 記録は manifest を内容ごと持つ"
+section: record-state
 status: stable
 sources:
   - id: "issue-580"

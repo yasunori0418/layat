@@ -2,6 +2,7 @@
 id: "RISK-37519471-be48-4427-ac5b-4d285e7a0bb1"
 type: risk
 name: "事前展開した apply コマンドが意図と違う config の集合や root を配置する"
+section: integration
 status: stable
 likelihood: medium
 impact: high

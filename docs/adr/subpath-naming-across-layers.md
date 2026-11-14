@@ -2,6 +2,7 @@
 id: "ADR-3417c5b0-8c5f-4c2c-827a-6f56bce301ab"
 type: adr
 name: "配置元の中のパスを全層で subpath と呼ぶ"
+section: lib-entries
 status: stable
 origin: "「リポジトリ全体を示す文字列として \".\" 以外の表現は無いか」という問いの設計検討。ADR-0008 §1 と §5 を書き直した"
 justifies:

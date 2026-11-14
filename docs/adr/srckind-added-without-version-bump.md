@@ -2,6 +2,7 @@
 id: "ADR-b5431ecf-fe60-4b29-86af-9857478ce663"
 type: adr
 name: "srcKind の列挙値は schemaVersion を上げずに足す"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-362"

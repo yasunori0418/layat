@@ -2,6 +2,7 @@
 id: "ADR-65e41903-5eee-4a00-a154-be8c830cdca9"
 type: adr
 name: "退避先を target に suffix を付けた名前に固定する"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-169"

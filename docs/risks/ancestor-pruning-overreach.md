@@ -2,6 +2,7 @@
 id: "RISK-e659f9dd-fbc9-48aa-8ae5-ecc4faf2a85c"
 type: risk
 name: "空親ディレクトリの剪定が行き過ぎ、または残骸を残す"
+section: migration-stale
 status: stable
 threatens:
   - "REQ-8409db86-a1ba-4053-86dc-588985cc1ca7"

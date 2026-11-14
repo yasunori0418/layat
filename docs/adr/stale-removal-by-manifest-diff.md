@@ -2,6 +2,7 @@
 id: "ADR-ffa34ed1-71a6-4417-9f55-1102b307ce93"
 type: adr
 name: "古くなった配置の除去は manifest の差分で行う"
+section: removal-migration
 status: stable
 origin: "ADR-0002 §決定（stale 除去は世代由来の store マニフェストを diff して行う）を書き直した"
 justifies:

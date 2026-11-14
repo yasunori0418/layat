@@ -2,6 +2,7 @@
 id: "RISK-09df40d3-2752-433e-9ab0-2816fbd14969"
 type: risk
 name: "評価時に止めるべき入力が止まらずに engine 実行時まで到達する"
+section: manifest-eval
 status: stable
 likelihood: low
 impact: high

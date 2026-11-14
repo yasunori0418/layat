@@ -2,6 +2,7 @@
 id: "ADR-3f97fc1d-188d-4013-bff0-16b67250f68e"
 type: adr
 name: "退避を配置前除去の後の段として undo ジャーナルに載せる"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-169"

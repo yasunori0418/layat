@@ -2,6 +2,7 @@
 id: "RISK-d734e24e-9af9-49f1-a22d-ade92f6554eb"
 type: risk
 name: "home-manager モジュールが engine をキックする配線から外れ native 機構へ翻訳される"
+section: integration
 status: stable
 threatens:
   - "REQ-8085f194-c903-4ecb-abd8-c719fe7b3292"

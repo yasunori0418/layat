@@ -2,6 +2,7 @@
 id: "ADR-f90509f2-d75a-4162-baa5-a5cfdb8a7c30"
 type: adr
 name: "世代は link farm と nix profile に乗せる"
+section: generations
 status: stable
 origin: "ADR-0002 §決定（nix profile に乗せる）を書き直した"
 justifies:

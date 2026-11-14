@@ -3,6 +3,7 @@ id: "SDR-9a646576-31bd-4cea-996d-54993ff2b8fa"
 type: sara_adr
 name: "item に生成者・確認の記録・期限を持たせる"
 description: "生成者と時刻の generated を必須にし、確認の記録 verified と期限 stale_after を任意で持たせ、入れ子キーの形を契約テストで確かめる"
+section: frontmatter-fields
 status: stable
 sources:
   - id: "issue-662"

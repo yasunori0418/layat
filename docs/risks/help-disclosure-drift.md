@@ -2,6 +2,7 @@
 id: "RISK-81cadaa3-3ed2-4cb0-bc74-72ff3afa9cce"
 type: risk
 name: "--help の nix コマンド開示が実際に実行する nix 呼び出しからずれる"
+section: cli-json
 status: stable
 likelihood: medium
 impact: low

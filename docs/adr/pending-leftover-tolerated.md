@@ -2,6 +2,7 @@
 id: "ADR-58fdbad9-5ed7-469d-b6b2-6462b2173888"
 type: adr
 name: ".pending の残留を許容する"
+section: generations
 status: stable
 origin: "実装前レビューの第 2 巡（2026-06-14）。ADR-0016 §6 を書き直した"
 justifies:

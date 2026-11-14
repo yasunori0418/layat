@@ -2,6 +2,7 @@
 id: "ADR-e8bb6153-2528-419e-8be0-c862a3eb4e05"
 type: adr
 name: "layat.jobs で activation の並列度を指定する"
+section: modules
 status: stable
 sources:
   - id: "issue-585"

@@ -2,6 +2,7 @@
 id: "RISK-ffb5100d-c553-4dd8-937a-1263ad84a8c7"
 type: risk
 name: "コピー結果が src と構造・属性で食い違い、配置物が使えなくなる"
+section: copy
 status: stable
 threatens:
   - "REQ-84e3c717-adf5-4ff3-b0db-d039b82ef19c"

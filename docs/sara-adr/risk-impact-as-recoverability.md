@@ -2,6 +2,7 @@
 id: "SDR-0fd284d6-60dc-4c04-a413-3d7926ae10ac"
 type: sara_adr
 name: "risk の impact を検出後の回復可能性で採点する"
+section: risk-test-defect
 status: stable
 sources:
   - id: "issue-583"

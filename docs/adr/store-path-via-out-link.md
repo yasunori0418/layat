@@ -2,6 +2,7 @@
 id: "ADR-51863e94-6a9d-4029-95e7-a7ad2bfa93c1"
 type: adr
 name: "store path は out-link で受け取る"
+section: generations
 status: stable
 origin: "engine / CLI の技術スタックの確定（2026-06-13）。ADR-0011 §4 を書き直した"
 justifies:

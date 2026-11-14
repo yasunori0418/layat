@@ -2,6 +2,7 @@
 id: "ADR-40dd7945-5792-4b80-bdfa-43f95f482554"
 type: adr
 name: "flake check の警告は無害として許容する"
+section: cli-commands
 status: stable
 origin: "ドキュメント計画段階の最終レビュー（grill）。ADR-0015 §8 を書き直した"
 justifies:

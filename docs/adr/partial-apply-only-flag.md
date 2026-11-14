@@ -2,6 +2,7 @@
 id: "ADR-cbac86c1-d774-4cf3-abe6-ca8a7c2f1995"
 type: adr
 name: "一部の entry だけを適用する --only を提供する"
+section: cli-commands
 status: deprecated
 origin: "ADR-0002 §決定で棄却された提案（実装前の spec にあった --only）を書き直した"
 justifies:

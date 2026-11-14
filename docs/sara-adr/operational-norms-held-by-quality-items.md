@@ -3,6 +3,7 @@ id: "SDR-8777581f-a6d8-4564-8d01-48b4c4c47170"
 type: sara_adr
 name: "sara の運用規範は quality の item が持ち、規約文書は図と索引に縮退させる"
 description: "sara の運用規範を規約文書の散文から 1 主張 1 本の quality item へ移し、規約文書は図と item への索引だけにする。"
+section: doc-layout
 status: stable
 sources:
   - id: "issue-649"

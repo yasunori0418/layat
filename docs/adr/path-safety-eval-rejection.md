@@ -2,6 +2,7 @@
 id: "ADR-00cc3497-654f-420a-928f-99f201e7efb0"
 type: adr
 name: "絶対パスと .. エスケープは eval 時に拒否する"
+section: lib-entries
 status: stable
 origin: "ADR-0019 §1 を書き直した"
 justifies:

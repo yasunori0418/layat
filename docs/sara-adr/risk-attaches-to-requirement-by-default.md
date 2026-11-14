@@ -3,6 +3,7 @@ id: "SDR-4a25760b-c309-41ff-96ef-91c5b63602c6"
 type: sara_adr
 name: "risk の張り先は requirement を既定にし、threatens の 1 本ごとに判定する"
 description: "risk は既定で requirement に張り、設計を差し替えると消える懸念だけを design に張る。判定は threatens の 1 本ごとに行う。"
+section: risk-test-defect
 status: stable
 sources:
   - id: "issue-649"

@@ -21,7 +21,6 @@
 * [layat 自身の flake outputs は packages / templates / 各モジュール / flakeModules / lib の 5 系統で構成する](./flake-outputs-attrs.md) - 5 系統は、layat が提供するものの**使い方の違い**で分けている。要求は「何を提供するか」を定めるが、それを flake のどの attr 名で公開するかは設計側の判断になる。
 * [hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす](./hook-composition-idioms.md) - 「配置の前後で任意の処理を実行したい」（配置後のサービスリロード・通知・後処理）需要に対し、**engine はイベント hook 機構を提供しない**（→ [engine の実行イベントにユーザー定義スクリプトの hook を掛ける](../adr/engine-event-hooks.md)）。代わりに、需要を満たす手段を**配線層ごとの合成 idiom** としてここに示す。
 * [legacy entrypoint の分岐は attr path 組み立てに閉じ、nix 呼び出しヘルパを共通で再利用する](./legacy-nix-invocation-reuse.md) - flake entrypoint と legacy entrypoint（`shell.nix` / `default.nix`）は、CLI が叩くnix コマンドの形が異なる。
-* [動的 entry 生成のヘルパを lib に置く](./lib-no-dynamic-entries.md) - この設計は棄却した。「リポジトリ内のファイルを列挙して entries を組み立てる」需要に対し、**lib は関数を提供しない**。既に realise 済みの store パスまたは flake input を `builtins.readDir`する idiom をドキュメント側（[`README.md` の「Generating entries dynamically」](../../README.md#generating-entries-dynamically)）で示すに留める。
 * [NixOS / nix-darwin モジュールは modules/kick.nix を介した system mode の配線とする](./module-stubs.md) - `nixosModules.default`（`modules/nixos.nix`）と `darwinModules.default`（`modules/nix-darwin.nix`）は、`common.nix` の共通オプションを import し、`modules/kick.nix` が返す起動文字列を activation へ置くだけの配線である。
 
 ## コアロジック設計（lib データ生成 + Go エンジン）
@@ -45,3 +44,7 @@
 * [engine は nix を使わない tmpdir 統合テストで検証し、古くなった配置の除去の安全不変条件を table-driven に重点配分する](./engine-test-go-unit-tmpdir.md) - engine（`internal/`）は Go ユニットテスト + tmpdir 統合テストで検証する。統合テストは実 FS を使うが、source は偽物・nix は使わない。
 * [lib は nix-unit の評価テストと namaka のスナップショットの 2 手段で検証する](./lib-test-nix-unit-namaka.md) - 2 手段を併用するのは、lib が生成するものが構造化データ 1 個であることに由来する。
 * [NixOS モジュールの実 activate は runNixOSTest の checks.nixos-vm で検証し、E2E ハーネスとは別系統に置く](./nixos-vm-test-position.md) - NixOS モジュールを使う場面の実 activate は、**`runNixOSTest`（nixpkgs の VM テストフレームワーク）のflake check `checks.nixos-vm` で検証する**。`tests/e2e/` の bash ハーネス（[E2E は tests/e2e の bash ハーネスに置き、シナリオの詳細は同ディレクトリの README へ委譲する](e2e-harness-shape.md)）のスコープ外に置く。
+
+## 有効でない item（`deprecated`）
+
+* [動的 entry 生成のヘルパを lib に置く](./lib-no-dynamic-entries.md) - この設計は棄却した。「リポジトリ内のファイルを列挙して entries を組み立てる」需要に対し、**lib は関数を提供しない**。既に realise 済みの store パスまたは flake input を `builtins.readDir`する idiom をドキュメント側（[`README.md` の「Generating entries dynamically」](../../README.md#generating-entries-dynamically)）で示すに留める。

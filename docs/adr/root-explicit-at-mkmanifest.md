@@ -2,6 +2,7 @@
 id: "ADR-f85f1afd-9b87-4f7a-922e-97c62554f198"
 type: adr
 name: "root の明示を mkManifest 層で必須にする"
+section: root-modes
 status: stable
 sources:
   - id: "issue-2"

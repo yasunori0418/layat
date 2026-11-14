@@ -2,6 +2,7 @@
 id: "ADR-c2ea1648-5e7a-47a1-a2c6-30169f93e22c"
 type: adr
 name: "NixOS / nix-darwin モジュールは root を systemRoot に固定する"
+section: modules
 status: stable
 sources:
   - id: "issue-519"

@@ -2,6 +2,7 @@
 id: "ADR-1848079b-7011-4653-b7cd-c279205262c4"
 type: adr
 name: "manifest.json の entry は target を識別子にして name を持たない"
+section: manifest-generator
 status: stable
 origin: "ADR-0014 §3b を書き直した"
 justifies:

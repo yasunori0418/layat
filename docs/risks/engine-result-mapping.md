@@ -2,6 +2,7 @@
 id: "RISK-06d7375e-fecd-4a0a-9ceb-1f9e207c3308"
 type: risk
 name: "engine の実行結果から JSON ペイロードへの写像が実際に起きたことと食い違う"
+section: cli-json
 status: stable
 threatens:
   - "REQ-2ea19863-eaa2-466b-b1ed-3f56f6417c62"

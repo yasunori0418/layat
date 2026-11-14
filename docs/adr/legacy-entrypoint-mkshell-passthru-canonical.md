@@ -2,6 +2,7 @@
 id: "ADR-925b0011-e2a2-43ac-a5d3-5e4a10f52470"
 type: adr
 name: "legacy entrypoint は mkShell の passthru 形を正準にする"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-112"

@@ -2,6 +2,7 @@
 id: "ADR-6b7becf0-f029-41e3-895e-b672dce94d3d"
 type: adr
 name: "CLI は cobra で組む"
+section: dev-build
 status: stable
 sources:
   - id: "issue-552"

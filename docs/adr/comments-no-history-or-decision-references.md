@@ -3,6 +3,7 @@ id: "ADR-77525101-dfcc-4237-941c-919b78ca5eeb"
 type: adr
 name: "コメントに経緯と決定の記録への参照を書かない"
 description: "コメントは 3 行以内で現在の動作だけを書き、経緯と ADR・Issue・PR への参照を書かない。利用者向け文字列に ADR 番号を出さない。"
+section: dev-build
 status: stable
 sources:
   - id: "issue-649"

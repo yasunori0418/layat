@@ -3,6 +3,7 @@ id: "SDR-958fd2ec-836d-41ae-b67f-4d316ddabf4b"
 type: sara_adr
 name: "item の一覧は生成した index.md だけが持つ"
 description: "型ごとの item の一覧は okf-index.sh が生成する index.md だけが持ち、手書きの文書は一覧を持たず、item を足したときは index.md を再生成するだけにする"
+section: doc-layout
 status: stable
 sources:
   - id: "issue-719"
@@ -15,7 +16,7 @@ supersedes:
   - "SDR-536848bb-8901-4e73-8c66-861de3f91bcd"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-13T16:29:14+09:00"
+  at: "2026-11-14T16:43:01+09:00"
 ---
 # item の一覧は生成した index.md だけが持つ
 
@@ -41,7 +42,7 @@ index.md を生成するようになった。3 文書のリンク集は index.md
   ものに限る
 - item を足したときは index.md を再生成するだけにし、手書きの文書へリンクを足さない
 - 主題ごとの節立ては、item の `section` から index.md の節として生成する
-  （→ [index.md の節は item の section から生成する](index-sections-from-item-section.md)）
+  （→ [index.md の節は 6 つの型で item の section から生成する](index-sections-in-six-types.md)）
 
 ## 根拠
 

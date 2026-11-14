@@ -2,6 +2,7 @@
 id: "ADR-65b3439a-b90a-4056-b55a-522399bc71e6"
 type: adr
 name: "apply の config は名前省略で default を選び、--all で全件を選ぶ"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-2"

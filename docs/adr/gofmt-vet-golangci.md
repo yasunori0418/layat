@@ -2,6 +2,7 @@
 id: "ADR-ef9e4099-0cf4-409a-9e73-518866aea676"
 type: adr
 name: "Go の整形は gofmt、静的解析は go vet と golangci-lint で行う"
+section: dev-build
 status: stable
 origin: "ADR-0024 までの第6巡の後、/grill-me による横断検査で残った未決を確定した第7巡。ADR-0025 §6 を書き直した"
 justifies:

@@ -2,6 +2,7 @@
 id: "ADR-21570c09-066c-471b-b605-3364265c8736"
 type: adr
 name: "キャッシュへの投入を cachix-action の自動 push に任せる"
+section: ci-release-docs
 status: stable
 origin: "参照: https://github.com/yasunori0418/nur-packages の `.github/workflows/cachix-push.yml`。ADR-0028 §2b（投入は cachix-action の自動 push に任せる）を書き直した"
 justifies:

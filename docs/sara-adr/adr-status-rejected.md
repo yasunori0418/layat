@@ -2,6 +2,7 @@
 id: "SDR-d5304533-00ae-423b-a459-7c67c1cf093c"
 type: sara_adr
 name: "提案を棄却した決定は status 不採用 で記録する"
+section: frontmatter-fields
 status: deprecated
 sources:
   - id: "issue-499"

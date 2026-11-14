@@ -3,6 +3,7 @@ id: "SDR-2c5c87e3-f502-4b26-aca3-7617053281fb"
 type: sara_adr
 name: "手書きの概要は各ディレクトリの README.md に置く"
 description: "item から導けない全体像の散文は、その主題の item を置くディレクトリの README.md に置き、README.md は frontmatter と item の一覧を持たず、同じディレクトリの index.md を 1 本だけ指す"
+section: doc-layout
 status: stable
 sources:
   - id: "issue-719"

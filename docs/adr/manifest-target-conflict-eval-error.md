@@ -2,6 +2,7 @@
 id: "ADR-ee31b8d0-f7c5-442f-ae90-dcd1dd16b7a0"
 type: adr
 name: "manifest 内の target の衝突を評価時に検出する"
+section: lib-entries
 status: stable
 origin: "垂直トレーサー弾の着手前に行った実装前のレビュー第 6 巡。ADR-0024 §5 を書き直した"
 justifies:

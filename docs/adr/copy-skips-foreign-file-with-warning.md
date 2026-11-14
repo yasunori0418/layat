@@ -2,6 +2,7 @@
 id: "ADR-41d506b4-2c5c-4a17-9954-b0de37e97de5"
 type: adr
 name: "copy は foreign の実ファイルを上書きせず warning を出して見送る"
+section: placement
 status: stable
 sources:
   - id: "issue-584"

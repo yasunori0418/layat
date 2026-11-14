@@ -2,6 +2,7 @@
 id: "ADR-b08479ba-0eae-4668-a4a2-910cd40bd316"
 type: adr
 name: "apply の修飾フラグを --all と合成できるようにする"
+section: cli-commands
 status: stable
 sources:
   - id: "issue-584"

@@ -2,6 +2,7 @@
 id: "RISK-70fc1db8-56ec-457d-af12-553d80a04d7d"
 type: risk
 name: "NixOS / nix-darwin モジュールが system mode の engine 起動の配線から外れる"
+section: integration
 status: stable
 likelihood: medium
 impact: high

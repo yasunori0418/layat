@@ -2,6 +2,7 @@
 id: "RISK-cdca94ab-ed44-4d60-a04d-4dc75d61f731"
 type: risk
 name: "生成器の診断が握り潰され、前提条件の案内も出ない"
+section: cli-json
 status: stable
 likelihood: medium
 impact: medium

@@ -2,6 +2,7 @@
 id: "ADR-dfe6654c-8fcd-4cf6-a053-c21ad6dc373c"
 type: adr
 name: "祖先 symlink は自己記録の古くなったものだけを移行する"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-170"

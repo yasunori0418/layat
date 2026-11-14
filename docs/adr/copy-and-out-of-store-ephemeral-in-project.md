@@ -2,6 +2,7 @@
 id: "ADR-1ea2b93a-f83f-46c6-b925-cb0b38f4fd3c"
 type: adr
 name: "project mode では copy と out-of-store も ephemeral として扱う"
+section: placement
 status: stable
 origin: "ADR-0005 の決定「copy / out-of-store も同原則を継承」と ADR-0019 §3 を書き直した"
 justifies:

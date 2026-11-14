@@ -2,6 +2,7 @@
 id: "ADR-764ffff1-6b5a-4ed7-89d0-5700eb3ee883"
 type: adr
 name: "state の基底を設定で上書きさせない"
+section: record-state
 status: stable
 sources:
   - id: "issue-406"

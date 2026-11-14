@@ -2,6 +2,7 @@
 id: "ADR-14cf38ad-23d3-4d25-b14e-3e5da5ac7826"
 type: adr
 name: "manifest に identity を足しても schemaVersion を据え置く"
+section: manifest-generator
 status: stable
 sources:
   - id: "issue-580"

@@ -2,6 +2,7 @@
 id: "RISK-e3d42a21-1f43-4ac6-835e-a5caf8d86363"
 type: risk
 name: "古くなった配置を保守的に除去するときの不変条件が破れ、layat が作っていない実体を消す"
+section: migration-stale
 status: stable
 threatens:
   - "REQ-16aef46b-7bb8-4ca1-b962-e9f3ed1fd1d2"

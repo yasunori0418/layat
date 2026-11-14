@@ -3,6 +3,7 @@ id: "SDR-e9de8d3d-fcb8-456d-a3af-2338f8080f4f"
 type: sara_adr
 name: "test_case の target を resource に改名する"
 description: "test_case のテスト資産の正準表記を OKF の resource キーで持ち、値はリポジトリ根からのパスのままにする"
+section: frontmatter-fields
 status: stable
 sources:
   - id: "issue-662"

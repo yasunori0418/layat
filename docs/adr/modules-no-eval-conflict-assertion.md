@@ -2,6 +2,7 @@
 id: "ADR-1338a293-3f69-48f5-9164-efb4ec6994d6"
 type: adr
 name: "モジュールは configs 間の target 衝突を評価時に確認しない"
+section: modules
 status: stable
 sources:
   - id: "issue-585"

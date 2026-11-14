@@ -2,6 +2,7 @@
 id: "ADR-8b7cd75f-5521-4805-b7bc-105b5c56ee38"
 type: adr
 name: "移行する祖先の配下の entry は lstat を経ず不在として配置する"
+section: removal-migration
 status: stable
 sources:
   - id: "issue-170"

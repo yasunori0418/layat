@@ -2,6 +2,7 @@
 id: "ADR-f58e9981-bacc-4937-98b8-bddce0a057db"
 type: adr
 name: "モジュールの activation は apply --all --manifest を 1 回だけ起動する"
+section: modules
 status: stable
 sources:
   - id: "issue-585"

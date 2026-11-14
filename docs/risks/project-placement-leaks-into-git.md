@@ -2,6 +2,7 @@
 id: "RISK-5f3c98b8-bd78-4bee-95af-b35e6ade35f9"
 type: risk
 name: "project mode の配置物が ephemeral に保たれず、git の追跡対象に入る"
+section: cli-json
 status: stable
 likelihood: medium
 impact: medium

@@ -2,6 +2,7 @@
 id: "ADR-b3f3b68e-5096-46d1-bafd-53a9ab4711f4"
 type: adr
 name: "配置の振動はユーザー責任とし、文書で注意するに留める"
+section: placement
 status: stable
 sources:
   - id: "issue-550"
