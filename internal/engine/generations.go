@@ -111,6 +111,9 @@ type RollbackOptions struct {
 	Git GitFunc
 	// Warnf is the warning output sink (nil = stderr).
 	Warnf func(format string, args ...any)
+	// Reportf is the output sink for the details of a failure: the conflict listing and the undo
+	// report (nil = Warnf).
+	Reportf func(format string, args ...any)
 }
 
 // RollbackResult is the result report of Rollback: Result plus the generation transition From→To.
@@ -130,6 +133,10 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		warnf = func(format string, args ...any) {
 			fmt.Fprintf(os.Stderr, format+"\n", args...)
 		}
+	}
+	reportf := opts.Reportf
+	if reportf == nil {
+		reportf = warnf
 	}
 
 	// 1. fix profileDir (resolve root → layout · preamble shared with apply).
@@ -206,7 +213,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 
 	// 6. reflect the plan onto the FS in Apply's stages: PreRemove, symlinks, place-once copies
 	//    (recopy always off), then stale removal. There is no Backup stage.
-	a := &applier{opts: Options{Warnf: warnf, Origin: recordedOrigin(b.record)}, result: &Result{Root: root, ProfileDir: prof.Dir, Profile: prof.Profile}}
+	a := &applier{opts: Options{Warnf: warnf, Reportf: reportf, Origin: recordedOrigin(b.record)}, result: &Result{Root: root, ProfileDir: prof.Dir, Profile: prof.Profile}}
 	a.profile = prof
 	a.record = rec
 	a.root = root
@@ -225,7 +232,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		// Same partial-result contract as Apply's conflict stop: structured conflicts and
 		// everything unreached.
 		a.result.Conflicts = plan.Conflicts
-		return fail(reportConflicts(warnf, plan.Conflicts))
+		return fail(reportConflicts(reportf, plan.Conflicts))
 	}
 	a.emitWarnings(plan.Warnings, false)
 	if err := a.runJournaled(func() error { return a.preRemove(plan.PreRemove) }); err != nil {

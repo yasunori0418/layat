@@ -96,12 +96,16 @@ func (a *applier) discardJournal() {
 
 // unwind reverses applier.journal in LIFO order after origErr aborted an Apply/Rollback call,
 // attempting every inverse operation best-effort and reporting origErr plus each unrestorable
-// item to opts.Warnf. The journal is cleared regardless of outcome.
+// item to opts.Reportf. The journal is cleared regardless of outcome.
 func (a *applier) unwind(origErr error) {
 	journal := a.journal
 	a.journal = nil
+	reportf := a.opts.Reportf
+	if reportf == nil {
+		reportf = a.opts.Warnf
+	}
 	if len(journal) == 0 {
-		a.opts.Warnf("layat: apply failed; no filesystem changes had been made yet: %v", origErr)
+		reportf("layat: apply failed; no filesystem changes had been made yet: %v", origErr)
 		return
 	}
 
@@ -112,13 +116,13 @@ func (a *applier) unwind(origErr error) {
 		}
 	}
 
-	a.opts.Warnf("layat: apply failed; rolled back this run's filesystem changes: %v", origErr)
+	reportf("layat: apply failed; rolled back this run's filesystem changes: %v", origErr)
 	if len(failed) == 0 {
 		return
 	}
-	a.opts.Warnf("layat: %d item(s) could not be restored during rollback:", len(failed))
+	reportf("layat: %d item(s) could not be restored during rollback:", len(failed))
 	for _, f := range failed {
-		a.opts.Warnf("layat:   → %s", f)
+		reportf("layat:   → %s", f)
 	}
 }
 

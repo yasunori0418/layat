@@ -76,6 +76,9 @@ type Options struct {
 	Backend generation.Backend
 	// Warnf is the warning output sink (nil = stderr). Used to surface foreign symlinks etc.
 	Warnf func(format string, args ...any)
+	// Reportf is the output sink for the details of a failure: the conflict listing and the undo
+	// report (nil = Warnf).
+	Reportf func(format string, args ...any)
 	// Origin is where this run's link-farm came from, written to the last-applied record (zero = unknown).
 	// Its Identity is taken from the loaded manifest.
 	Origin Origin
@@ -162,6 +165,9 @@ func Apply(opts Options) (*Result, error) {
 		a.opts.Warnf = func(format string, args ...any) {
 			fmt.Fprintf(os.Stderr, format+"\n", args...)
 		}
+	}
+	if a.opts.Reportf == nil {
+		a.opts.Reportf = a.opts.Warnf
 	}
 
 	// root kind: on the Build path the manifest is not yet built, so use eval-pre-resolved opts.RootKind.
@@ -269,7 +275,7 @@ func Apply(opts Options) (*Result, error) {
 		// Return the partial Result (full inventory + structured conflicts + everything
 		// unreached via fail), not nil.
 		a.result.Conflicts = plan.Conflicts
-		return a.fail(plan, reportConflicts(a.opts.Warnf, plan.Conflicts))
+		return a.fail(plan, reportConflicts(a.opts.Reportf, plan.Conflicts))
 	}
 	a.emitWarnings(plan.Warnings, opts.Recopy)
 
@@ -629,12 +635,12 @@ func (a *applier) recordPlacement(linkFarm string) error {
 	return writeRecord(a.record, a.root, resolved, a.opts.Origin, raw, time.Now())
 }
 
-// reportConflicts lists every planner-detected conflict to stderr (warnf), each followed by a
-// one-line guidance for its kind, then returns a single count-bearing aggregate error.
-func reportConflicts(warnf func(format string, args ...any), conflicts []planner.Conflict) error {
+// reportConflicts lists every planner-detected conflict to reportf, each followed by a one-line
+// guidance for its kind, then returns a single count-bearing aggregate error.
+func reportConflicts(reportf func(format string, args ...any), conflicts []planner.Conflict) error {
 	for _, c := range conflicts {
-		warnf("layat: conflict: %s (target: %s)", c.Reason, c.Entry.Target)
-		warnf("layat:   → %s", conflictGuidance(c.Kind))
+		reportf("layat: conflict: %s (target: %s)", c.Reason, c.Entry.Target)
+		reportf("layat:   → %s", conflictGuidance(c.Kind))
 	}
 	return fmt.Errorf("layat: %d conflict(s) detected; stopped without placing (see above)", len(conflicts))
 }
