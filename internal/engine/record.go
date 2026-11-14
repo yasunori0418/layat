@@ -162,7 +162,7 @@ func writeRecord(rec paths.Record, root, linkFarm string, origin Origin, manifes
 	}
 	data, err := json.Marshal(record)
 	if err != nil {
-		return fmt.Errorf("cannot encode the last-applied record: %w", err)
+		return fmt.Errorf("cannot encode the last-applied record (%s): %w", rec.File, err)
 	}
 	if err := os.MkdirAll(rec.Dir, 0o755); err != nil {
 		return fmt.Errorf("cannot create the last-applied record directory (%s): %w", rec.Dir, err)
@@ -174,7 +174,7 @@ func writeRecord(rec paths.Record, root, linkFarm string, origin Origin, manifes
 	}
 	tmp, err := os.CreateTemp(rec.Dir, ".last-applied-*.tmp")
 	if err != nil {
-		return fmt.Errorf("cannot write the last-applied record (%s): %w", rec.File, err)
+		return fmt.Errorf("cannot create a temporary file for the last-applied record: %w", err)
 	}
 	_, werr := tmp.Write(data)
 	if cerr := tmp.Close(); werr == nil {

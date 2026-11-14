@@ -183,7 +183,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		return nil, fmt.Errorf("cannot identify the current generation (profile: %s)", prof.Profile)
 	}
 	if curIdx == 0 {
-		return nil, fmt.Errorf("no previous generation (this is the oldest generation, cannot rollback)")
+		return nil, fmt.Errorf("no previous generation (profile: %s)", prof.Profile)
 	}
 	cur := gens[curIdx]
 	prev := gens[curIdx-1]

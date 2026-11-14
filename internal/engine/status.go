@@ -83,7 +83,7 @@ func statusBase(base, mode string) ([]StatusSeries, error) {
 	if _, err := os.Stat(base); errors.Is(err, fs.ErrNotExist) {
 		return nil, nil
 	} else if err != nil {
-		return nil, fmt.Errorf("cannot read the record base (%s): %w", base, err)
+		return nil, fmt.Errorf("cannot stat the record base (%s): %w", base, err)
 	}
 	entries, err := os.ReadDir(base)
 	if err != nil {

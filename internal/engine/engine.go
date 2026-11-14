@@ -527,7 +527,11 @@ func (a *applier) dryRun() (*Result, error) {
 // Rollback / ProfileFor; on `--root` override it uses the override path regardless of kind.
 func resolveRoot(rootKind, fixedRoot, rootOverride, workDir string, git GitFunc) (string, error) {
 	if rootOverride != "" {
-		return filepath.Abs(rootOverride)
+		abs, err := filepath.Abs(rootOverride)
+		if err != nil {
+			return "", fmt.Errorf("cannot resolve the absolute path of the root (%s): %w", rootOverride, err)
+		}
+		return abs, nil
 	}
 	switch rootKind {
 	case manifest.RootKindProject:
@@ -553,7 +557,11 @@ func resolveRoot(rootKind, fixedRoot, rootOverride, workDir string, git GitFunc)
 		if fixedRoot == "" {
 			return "", fmt.Errorf("rootKind=fixed but no root path provided")
 		}
-		return filepath.Abs(fixedRoot)
+		abs, err := filepath.Abs(fixedRoot)
+		if err != nil {
+			return "", fmt.Errorf("cannot resolve the absolute path of the root (%s): %w", fixedRoot, err)
+		}
+		return abs, nil
 	case manifest.RootKindSystem:
 		return "/", nil
 	case "":
