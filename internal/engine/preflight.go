@@ -1,7 +1,9 @@
 package engine
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 
@@ -24,7 +26,7 @@ func (a *applier) checkOutOfStore() error {
 			continue
 		}
 		if _, err := os.Lstat(src); err != nil {
-			if os.IsNotExist(err) {
+			if errors.Is(err, fs.ErrNotExist) {
 				return fmt.Errorf("layat: %s does not exist (target: %s -> %s); will not create a dangling symlink", what, e.Target, src)
 			}
 			return fmt.Errorf("layat: cannot check %s (target: %s -> %s): %w", what, e.Target, src, err)

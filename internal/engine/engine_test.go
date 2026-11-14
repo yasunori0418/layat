@@ -153,7 +153,7 @@ func TestApplyRequiresBackend(t *testing.T) {
 			t.Errorf("dryrun=%v: err = %v, want the missing-backend error", dry, err)
 		}
 	}
-	if _, err := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, "a")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("nothing may be placed without a backend, lstat err = %v", err)
 	}
 }
@@ -558,7 +558,7 @@ func TestApplyStaleRemoval(t *testing.T) {
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
 	}
-	if _, err := os.Lstat(filepath.Join(root, ".config", "drop")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, ".config", "drop")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("drop should be removed, lstat err = %v", err)
 	}
 	if _, err := os.Lstat(filepath.Join(root, ".config", "keep")); err != nil {
@@ -655,7 +655,7 @@ func TestApplyNoWaitSkipsWhenLocked(t *testing.T) {
 		t.Errorf("expected res.Skipped = true, got %+v", res)
 	}
 	// Skipped, so nothing is placed.
-	if _, err := os.Lstat(filepath.Join(root, ".config", "foo")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, ".config", "foo")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("skip should not place: lstat err = %v", err)
 	}
 }
@@ -718,7 +718,7 @@ func TestApplyOutOfStoreStaleRemoval(t *testing.T) {
 	if err != nil {
 		t.Fatalf("second Apply: %v", err)
 	}
-	if _, err := os.Lstat(tgt); !os.IsNotExist(err) {
+	if _, err := os.Lstat(tgt); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("recorded out-of-store link should be removed: lstat err = %v", err)
 	}
 	if len(res.Removed) != 1 || res.Removed[0] != ".config/nvim" {
@@ -783,7 +783,7 @@ func TestApplyOutOfStoreMissingPathError(t *testing.T) {
 		t.Errorf("error should mention out-of-store: %v", err)
 	}
 	// The absence check is closed before placement, so the target is not created.
-	if _, err := os.Lstat(filepath.Join(root, ".config", "nvim")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, ".config", "nvim")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("should not place on missing path: lstat err = %v", err)
 	}
 }
@@ -836,7 +836,7 @@ func TestApplyRootRelativeLifecycle(t *testing.T) {
 	assertLink("re-apply")
 
 	res, _ := apply(projectManifest(y))
-	if _, err := os.Lstat(tgt); !os.IsNotExist(err) {
+	if _, err := os.Lstat(tgt); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("dropped root-relative link should be removed: lstat err = %v", err)
 	}
 	if len(res.Removed) != 1 || res.Removed[0] != ".claude/skills/x" {

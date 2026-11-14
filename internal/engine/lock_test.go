@@ -7,6 +7,7 @@ package engine
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"testing"
@@ -56,7 +57,7 @@ func TestLockApplyNoWaitSkipsWhenHeld(t *testing.T) {
 	if res == nil || !res.Skipped {
 		t.Errorf("expected res.Skipped = true, got %+v", res)
 	}
-	if _, err := os.Lstat(filepath.Join(root, ".config", "foo")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, ".config", "foo")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("skip should place nothing: lstat err = %v", err)
 	}
 }
@@ -186,7 +187,7 @@ func TestLockResetWaitsForHeldLock(t *testing.T) {
 		if out.err != nil {
 			t.Fatalf("Reset after release: %v", out.err)
 		}
-		if _, err := os.Lstat(linkAbs); !os.IsNotExist(err) {
+		if _, err := os.Lstat(linkAbs); !errors.Is(err, fs.ErrNotExist) {
 			t.Errorf(".link should be removed after Reset, lstat err = %v", err)
 		}
 		if got := out.res.RemovedSymlinks; len(got) != 1 || got[0] != ".link" {
@@ -282,7 +283,7 @@ func TestLockRollbackWaitsForHeldLock(t *testing.T) {
 		if len(fake.Switches) != 1 || fake.Switches[0] != 1 {
 			t.Errorf("switched generations = %v, want [1]", fake.Switches)
 		}
-		if _, err := os.Lstat(filepath.Join(root, "b")); !os.IsNotExist(err) {
+		if _, err := os.Lstat(filepath.Join(root, "b")); !errors.Is(err, fs.ErrNotExist) {
 			t.Errorf("b should be removed after rollback, lstat err = %v", err)
 		}
 		if dest, err := os.Readlink(filepath.Join(root, "a")); err != nil || dest != srcA {

@@ -1,6 +1,8 @@
 package engine
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -71,7 +73,7 @@ func TestApplyBackupCustomSuffix(t *testing.T) {
 	if _, err := os.Lstat(target + ".bak"); err != nil {
 		t.Errorf("backup with custom suffix must exist at foo.bak: %v", err)
 	}
-	if _, err := os.Lstat(target + ".layat-backup"); !os.IsNotExist(err) {
+	if _, err := os.Lstat(target + ".layat-backup"); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("default-suffix path must not exist when a custom suffix is given, lstat err = %v", err)
 	}
 }
@@ -130,7 +132,7 @@ func TestApplyBackupMidBatchFailureRestoresBackup(t *testing.T) {
 	if rerr != nil || string(data) != "pre-existing" {
 		t.Errorf("target must be restored to its pre-apply content: data=%q, err=%v", data, rerr)
 	}
-	if _, lerr := os.Lstat(target + ".layat-backup"); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(target + ".layat-backup"); !errors.Is(lerr, fs.ErrNotExist) {
 		t.Errorf("backup aside path must not be left behind after a rolled-back backup, lstat err = %v", lerr)
 	}
 }
@@ -203,7 +205,7 @@ func TestApplyDryRunBackupNoConflictNoSideEffects(t *testing.T) {
 	if rerr != nil || string(data) != "pre-existing" {
 		t.Errorf("target must be untouched by dryrun: data=%q, err=%v", data, rerr)
 	}
-	if _, lerr := os.Lstat(target + ".layat-backup"); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(target + ".layat-backup"); !errors.Is(lerr, fs.ErrNotExist) {
 		t.Errorf("no backup file must be created by dryrun, lstat err = %v", lerr)
 	}
 }
@@ -333,7 +335,7 @@ func TestApplyWithoutBackupStillConflicts(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected a conflict error without --backup, got nil")
 	}
-	if _, lerr := os.Lstat(target + ".layat-backup"); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(target + ".layat-backup"); !errors.Is(lerr, fs.ErrNotExist) {
 		t.Errorf("no backup file must be created without --backup, lstat err = %v", lerr)
 	}
 }

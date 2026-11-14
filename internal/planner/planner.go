@@ -4,7 +4,9 @@
 package planner
 
 import (
+	"errors"
 	"fmt"
+	iofs "io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -278,7 +280,7 @@ func Compute(prev, next *manifest.Manifest, root string, fs FS, opts Options) (P
 			if err := appendBackupOrConflict(&plan, e, targetAbs, "target already has an existing file/directory (will not overwrite)", ConflictForeignEntity, fs, opts); err != nil {
 				return Plan{}, err
 			}
-		case os.IsNotExist(err):
+		case errors.Is(err, iofs.ErrNotExist):
 			plan.Place = append(plan.Place, PlaceAction{Entry: e, TargetAbs: targetAbs, Dest: LinkDest(e), Kind: PlaceNew})
 		default:
 			return Plan{}, fmt.Errorf("layat: cannot lstat target (%s): %w", targetAbs, err)
@@ -305,7 +307,7 @@ func Compute(prev, next *manifest.Manifest, root string, fs FS, opts Options) (P
 			targetAbs := filepath.Join(root, filepath.Clean(pe.Target))
 			info, err := fs.Lstat(targetAbs)
 			switch {
-			case err != nil && os.IsNotExist(err):
+			case err != nil && errors.Is(err, iofs.ErrNotExist):
 				continue // already gone = no-op (no warning).
 			case err != nil:
 				return Plan{}, fmt.Errorf("layat: cannot lstat stale target (%s): %w", targetAbs, err)
@@ -400,7 +402,7 @@ func classifyCopy(plan *Plan, e manifest.Entry, targetAbs string, prevByTarget m
 		}
 		plan.Warnings = append(plan.Warnings, Warning{Kind: WarnCopyForeign, Target: e.Target})
 		return nil
-	case os.IsNotExist(err):
+	case errors.Is(err, iofs.ErrNotExist):
 		plan.Copies = append(plan.Copies, CopyAction{Entry: e, TargetAbs: targetAbs, Src: LinkDest(e)})
 		return nil
 	default:
@@ -430,7 +432,7 @@ func appendBackup(plan *Plan, e manifest.Entry, targetAbs string, fs FS, opts Op
 			Kind:      ConflictBackupTargetExists,
 		})
 		return nil
-	} else if !os.IsNotExist(err) {
+	} else if !errors.Is(err, iofs.ErrNotExist) {
 		return fmt.Errorf("layat: cannot lstat backup destination (%s): %w", backupAbs, err)
 	}
 	plan.Backup = append(plan.Backup, BackupAction{Entry: e, TargetAbs: targetAbs, BackupAbs: backupAbs})
@@ -561,7 +563,7 @@ func ancestorSymlink(root, target string, fs FS) (abs, rel string, err error) {
 		}
 		info, lerr := fs.Lstat(cur)
 		if lerr != nil {
-			if os.IsNotExist(lerr) {
+			if errors.Is(lerr, iofs.ErrNotExist) {
 				return "", "", nil
 			}
 			return "", "", fmt.Errorf("layat: cannot lstat ancestor (%s): %w", cur, lerr)

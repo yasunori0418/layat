@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	iofs "io/fs"
@@ -58,7 +59,7 @@ func (a *applier) recopyAll() error {
 			// Journaled before the fresh copy so a partial copyTree failure still renames the
 			// aside back on unwind.
 			a.journalRenamedAside(targetAbs, aside)
-		} else if !os.IsNotExist(err) {
+		} else if !errors.Is(err, iofs.ErrNotExist) {
 			return a.entryFailed(e.Target, fmt.Errorf("layat: cannot lstat recopy target (%s): %w", targetAbs, err))
 		} else {
 			// Same reasoning as placeCopies: journal before copyTree so a mid-copy failure still

@@ -3,6 +3,7 @@ package engine
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -51,7 +52,7 @@ func (a *applier) preRemove(actions []planner.RemoveAction) error {
 			case err == nil:
 				a.result.Pruned = append(a.result.Pruned, act.TargetAbs)
 				a.journalRemovedEmptyDir(act.TargetAbs, mode)
-			case os.IsNotExist(err):
+			case errors.Is(err, fs.ErrNotExist):
 				// already absent; the Rmdir's goal is met, nothing to report.
 			case errors.Is(err, syscall.ENOTEMPTY), errors.Is(err, syscall.EEXIST):
 				return fmt.Errorf("layat: directory gained content after planning; cannot migrate this placement target safely (%s); re-run apply to converge", act.TargetAbs)
@@ -97,7 +98,7 @@ func (a *applier) pruneEmptyAncestors(removedAbs string) error {
 			mode = info.Mode().Perm()
 		}
 		if err := os.Remove(dir); err != nil {
-			if os.IsNotExist(err) {
+			if errors.Is(err, fs.ErrNotExist) {
 				return nil
 			}
 			// non-empty dir → ENOTEMPTY on Linux, EEXIST on some BSD/Darwin rmdir(2) implementations;
@@ -129,7 +130,7 @@ func pathHasSymlinkComponent(root, dir string) (bool, error) {
 		cur = filepath.Join(cur, comp)
 		info, err := os.Lstat(cur)
 		if err != nil {
-			if os.IsNotExist(err) {
+			if errors.Is(err, fs.ErrNotExist) {
 				return false, nil
 			}
 			return false, fmt.Errorf("layat: cannot lstat ancestor directory (%s): %w", cur, err)

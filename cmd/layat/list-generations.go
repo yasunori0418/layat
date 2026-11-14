@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"sort"
 
@@ -188,7 +190,7 @@ func runListAllGenerations(run *listGenerationsRun) error {
 func profileNamesUnder(base, mode string) ([]string, error) {
 	dents, err := os.ReadDir(base)
 	if err != nil {
-		if os.IsNotExist(err) {
+		if errors.Is(err, fs.ErrNotExist) {
 			return nil, nil
 		}
 		return nil, err
