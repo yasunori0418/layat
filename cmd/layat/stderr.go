@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	"github.com/yasunori0418/layat/internal/generator"
+	"github.com/yasunori0418/layat/internal/gitutil"
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // msgPrefix heads every line layat itself writes to stderr. Error and warning strings do not
@@ -19,7 +21,7 @@ const msgPrefix = "layat: "
 func printError(w io.Writer, err error) {
 	var ge *generator.Error
 	if errors.As(err, &ge) {
-		printGeneratorError(w, ge)
+		printGeneratorError(w, "", ge)
 		return
 	}
 	for _, m := range messages(err) {
@@ -28,8 +30,14 @@ func printError(w io.Writer, err error) {
 }
 
 // printFailure writes a failure the command reports and goes on from: "layat: <head>: <message>"
-// for the first message of err, then "layat: <message>" for each other one.
+// for the first message of err, then "layat: <message>" for each other one. A generator failure is
+// written by printGeneratorError under the head.
 func printFailure(w io.Writer, head string, err error) {
+	var ge *generator.Error
+	if errors.As(err, &ge) {
+		printGeneratorError(w, head, ge)
+		return
+	}
 	msgs := messages(err)
 	_, _ = fmt.Fprintf(w, msgPrefix+"%s: %s\n", head, msgs[0])
 	for _, m := range msgs[1:] {
@@ -87,4 +95,26 @@ func printSchemaSkewHint(w io.Writer) {
 	_, _ = fmt.Fprintln(w, "\n"+msgPrefix+"the layat version pinned by the CLI (engine) and by the flake may be out of sync.\n"+
 		"  The flake's layat input is generating a manifest newer than the CLI.\n"+
 		"  Update the CLI, or lower the flake's layat input to match the CLI so both versions align.")
+}
+
+// printNotInRepoHint writes the fix for a project root resolved outside a git repository.
+func printNotInRepoHint(w io.Writer) {
+	_, _ = fmt.Fprintln(w, msgPrefix+"the project root is the git toplevel of the CWD; "+
+		"run inside a git repository, or pass --root <dir> to set the root explicitly")
+}
+
+// printFailureHints writes, after the failure lines, each hint that one of errs calls for, once:
+// the schemaVersion skew hint and the hint for running outside a git repository.
+func printFailureHints(w io.Writer, errs ...error) {
+	var skew, notInRepo bool
+	for _, err := range errs {
+		skew = skew || errors.Is(err, manifest.ErrSchemaVersionUnsupported)
+		notInRepo = notInRepo || errors.Is(err, gitutil.ErrNotInRepo)
+	}
+	if skew {
+		printSchemaSkewHint(w)
+	}
+	if notInRepo {
+		printNotInRepoHint(w)
+	}
 }

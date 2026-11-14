@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -29,7 +30,7 @@ func TestPrintGeneratorErrorHuman(t *testing.T) {
 	withDebug(t, false)
 	e := testGeneratorError()
 	var buf bytes.Buffer
-	printGeneratorError(&buf, e)
+	printGeneratorError(&buf, "", e)
 
 	if want := "layat: " + e.Message + "\n" + e.Guidance + "\n"; buf.String() != want {
 		t.Errorf("output = %q, want %q", buf.String(), want)
@@ -45,7 +46,7 @@ func TestPrintGeneratorErrorHumanNoGuidance(t *testing.T) {
 	e := generator.NewError(generator.NameNix, generator.StageBuild, generator.KindFailed,
 		"nix build failed: exit status 1", "", "error: boom", nil)
 	var buf bytes.Buffer
-	printGeneratorError(&buf, e)
+	printGeneratorError(&buf, "", e)
 
 	if want := "layat: " + e.Message + "\n"; buf.String() != want {
 		t.Errorf("output = %q, want %q", buf.String(), want)
@@ -58,10 +59,28 @@ func TestPrintGeneratorErrorDebug(t *testing.T) {
 	withDebug(t, true)
 	e := testGeneratorError()
 	var buf bytes.Buffer
-	printGeneratorError(&buf, e)
+	printGeneratorError(&buf, "", e)
 
 	if want := "layat: " + e.Message + " (generator: nix)\n" + e.Guidance + "\n"; buf.String() != want {
 		t.Errorf("output = %q, want %q", buf.String(), want)
+	}
+}
+
+// TestPrintGeneratorErrorHead pins a failure line with a head, as apply --all writes it: the head
+// before the summary on the first line (with the generator's name under --debug), then the guidance.
+func TestPrintGeneratorErrorHead(t *testing.T) {
+	e := testGeneratorError()
+	for _, debug := range []bool{false, true} {
+		withDebug(t, debug)
+		var buf bytes.Buffer
+		printFailure(&buf, "apply a failed", fmt.Errorf("ctx: %w", e))
+		summary := "layat: apply a failed: " + e.Message
+		if debug {
+			summary += " (generator: nix)"
+		}
+		if want := summary + "\n" + e.Guidance + "\n"; buf.String() != want {
+			t.Errorf("debug=%v: output = %q, want %q", debug, buf.String(), want)
+		}
 	}
 }
 
