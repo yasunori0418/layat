@@ -123,6 +123,7 @@
 * [内部コマンドの開示で透明性を保つ](./internal-command-disclosure.md) - CLI は entrypoint を見つけ、manifest 生成器（既定は nix）に内部でコマンドを実行させて manifest のstore path を得る。利用者からはこの内部の呼び出しが見えず、失敗したときの切り分けや、CLI を経ずに同じ操作を手で行う手段が分かりにくくなる。 (stable)
 * [--json は items を全件、changes を差分で持ち可逆性を reversible で表す](./items-changes-reversible.md) - outturn の `SubjectResult.result` は、処理単位の記録である `items` と、状態遷移の記録である `changes` を分けて持つ。layat の apply は変更の無い entry も多く扱い、copy の上書きや削除のように戻せない操作も含む。 (stable)
 * [--json を全サブコマンド共通の persistent フラグにする](./json-global-flag-for-all-subcommands.md) - CLI の機械可読な stdout は、`gitignore` の行と `apply --dryrun` のプランだけだった。`list-generations`の一覧や `apply` / `reset` / `rollback` の結果を機械で読む手段は無かった。`prune` の新設で削除する系列の一覧という構造化されたデータが増え、スクリプト・エディタ統合・CI など外部のツールが読むための出力も求められて、`--json` を足すことになった。どのサブコマンドで `--json` を受けるかを決める必要があった。 (stable)
+* [`layat:` はエラーの文字列に持たせず、stderr へ書く場所で付ける](./layat-prefix-added-where-stderr-is-written.md) - エラーと警告の文字列は layat: を持たず、cmd/layat が stderr へ書く 1 箇所で行の先頭に付け、--json の message には付けない (stable)
 * [--json は outturn 規約に常時準拠する](./outturn-conformance-principle.md) - outturn（specVersion 1）は、エコシステムの各ツールを stdout / stdin の JSON パイプで合成するための共通規格である。単一責務のツールを outturn のパイプで組み立てることが、[コアを store パスを root 相対の target へ置くプリミティブにする](core-as-placement-primitive.md) の north-star に向かう手段になる。各ツールの出力を固定順に合成し、失敗時は逆順に rollback するオーケストレーションツールが構想されており、layat はその最初の適合実装にあたる。 (stable)
 * [prune は新設時から --json に対応する](./prune-json-output.md) - layat は `--json` を全コマンドに一律で持たせている。prune を新設するとき、`--json`を最初から持たせるか、後から足すかを決める必要がある。 (stable)
 * [読み取り専用の列挙は info で返す](./readonly-enumeration-as-info.md) - `list-generations` の世代一覧と `gitignore` の対象パスは、副作用の無い列挙である。outturn の item は処理単位の実行結果の記録で、id を identity から導く。世代番号のような値には identity の key に置き場が無い。 (stable)
@@ -272,7 +273,8 @@
 * [CLI の依存に go-toml/v2 を許可する](./cli-depends-on-go-toml.md) - [設定ファイルを strict な TOML で書く](config-file-strict-toml.md)。Go の標準ライブラリにはTOML のパーサが無い。layat の Go の依存は層ごとの許可制で、engine は標準ライブラリだけに依存する。 (stable)
 * [CLI は cobra で組む](./cobra-cli-framework.md) - CLI は、サブコマンド・フラグ・help・シェル補完を持つ。engine は第三者依存を持たないが、CLI 層には人間向けの使い勝手のために最小限の第三者依存を許している。 (stable)
 * [コメントに経緯と決定の記録への参照を書かない](./comments-no-history-or-decision-references.md) - コメントは 3 行以内で現在の動作だけを書き、経緯と ADR・Issue・PR への参照を書かない。利用者向け文字列に ADR 番号を出さない。 (stable)
-* [engine のエラーは発生源で 1 回だけ wrap し、伝搬では再 wrap しない](./engine-errors-wrapped-once-at-origin.md) - engine はエラーを `fmt.Errorf` の `%w` で wrap し、`errors.Is` で判別する（→ [engine は JSON とエラーを標準ライブラリで扱う](json-and-errors-via-stdlib.md)）。ただ、どこで何を付けて wrap するかは決まっていなかった。利用者に見える失敗には、何をしようとしたか（op）と対象パスが要る。 (stable)
+* [エラーの文字列は `cannot <op>` を保ち、原因が対象を持たないときだけ対象を括弧で添える](./error-messages-formatted-by-failure-kind.md) - エラーの文字列は失敗の種類ごとの書式で書き、I/O と parse の失敗は cannot で始めて、対象の括弧は原因のエラーが対象を持たないときと原因に無い情報を足すときだけ書く (stable)
+* [エラーは op と対象が分かるいちばん下の関数で 1 回だけ wrap し、伝搬では再 wrap しない](./errors-wrapped-once-at-origin.md) - layat の Go のコード全体で、エラーは op と対象の両方が分かるいちばん下の関数で 1 回だけ包み、パッケージを跨ぐときは呼ばれる側の公開関数が包み、伝搬では再 wrap せず、sentinel は %w で透過させる (stable)
 * [世代バックエンドのテストダブルを FS ベースの Fake に統一する](./fs-based-generation-fake.md) - engine と cmd のテストは、nix-env の代わりにそれぞれ独自の差し替え関数を持っていた。代替がいくつもあると、どれが本番の挙動を写しているのかが分からない。世代操作が契約越しであることも、テストで確かめられない。 (stable)
 * [Go の静的解析を CGO_ENABLED=0 で行う](./go-checks-without-cgo.md) - engine の Go の静的解析（go-vet と golangci-lint）は、flake check の check derivation として nix のサンドボックスの中で実行する。サンドボックスに何を持ち込んで解析するかを決める必要がある。 (stable)
 * [Go toolchain は nixpkgs の go に pin する](./go-toolchain-pinned.md) - Go のビルドで使う toolchain は、nixpkgs が提供する go と、`go.mod` の `toolchain` ディレクティブのどちらでも指定できる。Nix のサンドボックスはネットワークを遮断するので、toolchain の自動ダウンロードは失敗する。 (stable)
@@ -312,6 +314,7 @@
 ## 有効でない item（`deprecated`）
 
 * [CI の nix インストーラは cryoflow 踏襲](./ci-nix-installer-cryoflow.md) - CI で nix を使うには、ランナーへ nix を入れる手段が要る。同じメンテナの cryoflow はすでにNix ベースの CI を運用しており、インストーラとキャッシュの設定を composite action にまとめている。 (deprecated)
+* [engine のエラーは発生源で 1 回だけ wrap し、伝搬では再 wrap しない](./engine-errors-wrapped-once-at-origin.md) - engine はエラーを `fmt.Errorf` の `%w` で wrap し、`errors.Is` で判別する（→ [engine は JSON とエラーを標準ライブラリで扱う](json-and-errors-via-stdlib.md)）。ただ、どこで何を付けて wrap するかは決まっていなかった。利用者に見える失敗には、何をしようとしたか（op）と対象パスが要る。 (deprecated)
 * [engine の実行イベントにユーザー定義スクリプトの hook を掛ける](./engine-event-hooks.md) - engine の実行イベント（配置の前後・古くなった配置の除去・世代のコミットなど）に、利用者が定義したスクリプトを掛ける hook 機構が提案された。home-manager の activation hook や git hooks と同じ型の、よくある発想である。提案には「layat のコンセプトから外れるなら取りやめる」という条件が付いていたので、コンセプトに合うかを正面から評価した。 (deprecated)
 * [mkActivationScript で config ごとのラッパー derivation を提供する](./mkactivationscript-wrapper.md) - ADR-0002 の初期設計では、`mkActivationScript` が config ごとに、配置ロジックを含む bash を生成する案だった。ADR-0006 は決定節でこれを、`layat apply --manifest <manifest>` を呼ぶだけの薄いラッパー derivation に再定義した。利用者はこのラッパーを `nix run .#<config>` で起動する想定だった。 (deprecated)
 * [layat.lib.mkEnv で buildEnv 合成環境を提供する](./mkenv-buildenv.md) - Issue #162 は、`pkgs.buildEnv` で合成したパッケージ環境（bin / share / man のツリー）を任意の target に置き、role ごとに `PATH` を管理する `layat.lib.mkEnv` を提案した。 (deprecated)
