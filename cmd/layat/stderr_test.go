@@ -4,8 +4,13 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"io/fs"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -250,4 +255,49 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 		}
 		assertFailureDetailsNotWarnings(t, stderr, "apply failed; ")
 	})
+}
+
+// TestPrefixLiteralsOnlyInStderrFile checks that no string literal in the non-test Go of internal/
+// and cmd/layat/ holds "layat: ", except in stderr.go: the prefix is added only where stderr is
+// written.
+func TestPrefixLiteralsOnlyInStderrFile(t *testing.T) {
+	fset := token.NewFileSet()
+	var found []string
+	for _, dir := range []string{"../../internal", "."} {
+		err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if d.IsDir() || !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") ||
+				(dir == "." && filepath.Base(path) == "stderr.go") {
+				return nil
+			}
+			f, err := parser.ParseFile(fset, path, nil, parser.SkipObjectResolution)
+			if err != nil {
+				return err
+			}
+			ast.Inspect(f, func(n ast.Node) bool {
+				lit, ok := n.(*ast.BasicLit)
+				if !ok || lit.Kind != token.STRING {
+					return true
+				}
+				s, err := strconv.Unquote(lit.Value)
+				if err != nil {
+					t.Errorf("%s: cannot unquote %s: %v", fset.Position(lit.Pos()), lit.Value, err)
+					return true
+				}
+				if strings.Contains(s, "layat: ") {
+					found = append(found, fmt.Sprintf("%s: %s", fset.Position(lit.Pos()), lit.Value))
+				}
+				return true
+			})
+			return nil
+		})
+		if err != nil {
+			t.Fatalf("walk %s: %v", dir, err)
+		}
+	}
+	for _, f := range found {
+		t.Errorf("string literal holds \"layat: \" outside stderr.go: %s", f)
+	}
 }
