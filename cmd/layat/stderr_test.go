@@ -133,9 +133,9 @@ func assertEngineWarning(t *testing.T, stderr string) {
 	}
 }
 
-// failureDetailsSetup isolates an apply / rollback of config c on a temp root with the Fake
-// backend and a stub nix reporting rootKind=home. It returns the root.
-func failureDetailsSetup(t *testing.T) string {
+// cliEngineSetup isolates an apply / rollback / reset of config c, driven through the CLI, on a
+// temp root with the Fake backend and a stub nix reporting rootKind=home. It returns the root.
+func cliEngineSetup(t *testing.T) string {
 	t.Helper()
 	withFlakeEntrypoint(t)
 	stubNixRootKind(t, manifest.RootKindHome)
@@ -193,7 +193,7 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 	}
 
 	t.Run("apply conflict", func(t *testing.T) {
-		root := failureDetailsSetup(t)
+		root := cliEngineSetup(t)
 		if err := os.WriteFile(filepath.Join(root, ".a"), []byte("foreign"), 0o644); err != nil {
 			t.Fatal(err)
 		}
@@ -206,7 +206,7 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 	})
 
 	t.Run("apply undo", func(t *testing.T) {
-		root := failureDetailsSetup(t)
+		root := cliEngineSetup(t)
 		readOnlyDir(t, filepath.Join(root, "ro"))
 		stderr, err := applyManifest(t, entry("ro/leaf"))
 		if err == nil {
@@ -235,7 +235,7 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 	}
 
 	t.Run("rollback conflict", func(t *testing.T) {
-		root := failureDetailsSetup(t)
+		root := cliEngineSetup(t)
 		stderr, err := rollbackFrom(t, func() {
 			if err := os.WriteFile(filepath.Join(root, ".a"), []byte("foreign"), 0o644); err != nil {
 				t.Fatal(err)
@@ -248,7 +248,7 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 	})
 
 	t.Run("rollback undo", func(t *testing.T) {
-		root := failureDetailsSetup(t)
+		root := cliEngineSetup(t)
 		stderr, err := rollbackFrom(t, func() { readOnlyDir(t, filepath.Join(root, "ro")) })
 		if err == nil {
 			t.Fatal("rollback succeeded, want an FS failure")
@@ -262,7 +262,7 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 func TestEngineWarningsReachStderrAsWarnings(t *testing.T) {
 	for name, dryrun := range map[string]bool{"reset --dryrun": true, "reset": false} {
 		t.Run(name, func(t *testing.T) {
-			failureDetailsSetup(t)
+			cliEngineSetup(t)
 			src := t.TempDir()
 			for i, target := range []string{".a", ".b"} {
 				entry := manifest.Entry{SrcKind: "store", Src: src, Subpath: ".", Target: target, Method: "symlink"}
