@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -52,8 +53,35 @@ func TestToplevelOutsideRepo(t *testing.T) {
 	t.Setenv("HOME", dir)
 	t.Setenv("GIT_CEILING_DIRECTORIES", filepath.Dir(dir))
 
-	if _, err := Toplevel(dir); err == nil {
-		t.Fatal("expected error outside repo, got nil")
+	_, err := Toplevel(dir)
+	if !errors.Is(err, ErrNotInRepo) {
+		t.Fatalf("outside repo: got %v, want ErrNotInRepo", err)
+	}
+	if want := "cannot resolve the git toplevel (" + dir + "): outside a git repository"; err.Error() != want {
+		t.Errorf("outside repo: message %q, want %q", err.Error(), want)
+	}
+}
+
+// TestToplevelMissingDir: a git failure other than being outside a repository is not
+// ErrNotInRepo and names the dir.
+func TestToplevelMissingDir(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("git not available")
+	}
+	dir := filepath.Join(t.TempDir(), "missing")
+
+	_, err := Toplevel(dir)
+	if err == nil {
+		t.Fatal("expected error for a missing dir, got nil")
+	}
+	if errors.Is(err, ErrNotInRepo) {
+		t.Errorf("missing dir: %v must not be ErrNotInRepo", err)
+	}
+	if want := "cannot run git rev-parse (" + dir + "): exit status "; !strings.HasPrefix(err.Error(), want) {
+		t.Errorf("missing dir: message %q, want prefix %q", err.Error(), want)
+	}
+	if strings.Contains(err.Error(), "\n") {
+		t.Errorf("missing dir: message %q spans lines", err.Error())
 	}
 }
 
