@@ -230,7 +230,8 @@ func (g *Generator) evalAllRoots() (map[string]manifest.Root, error) {
 		Targets  []string `json:"targets"`
 	}
 	if err := json.Unmarshal([]byte(out), &raw); err != nil {
-		return nil, fmt.Errorf("cannot parse the batch eval result for %s: %w", g.ep.namespaceLabel(g.system), err)
+		err = fmt.Errorf("cannot parse the batch eval result for %s: %w", g.ep.namespaceLabel(g.system), err)
+		return nil, generator.NewError(generator.NameNix, generator.StageRoots, generator.KindFailed, err.Error(), "", "", err)
 	}
 	roots := make(map[string]manifest.Root, len(raw))
 	for name, r := range raw {
@@ -271,7 +272,8 @@ func (g *Generator) Build(name, pending string) (string, error) {
 	}
 	store, err := os.Readlink(pending)
 	if err != nil {
-		return "", fmt.Errorf("cannot read the build output out-link (%s): %w", pending, err)
+		err = fmt.Errorf("cannot read the build output out-link (%s): %w", pending, err)
+		return "", generator.NewError(generator.NameNix, generator.StageBuild, generator.KindFailed, err.Error(), "", "", err)
 	}
 	return store, nil
 }
@@ -287,7 +289,8 @@ func (g *Generator) DryBuild(name string) (string, error) {
 	}
 	store := strings.TrimSpace(out)
 	if store == "" {
-		return "", fmt.Errorf("nix build --print-out-paths was empty (%s)", g.ep.label(g.system, name))
+		err := fmt.Errorf("nix build --print-out-paths was empty (%s)", g.ep.label(g.system, name))
+		return "", generator.NewError(generator.NameNix, generator.StageBuild, generator.KindFailed, err.Error(), "", "", err)
 	}
 	// --print-out-paths may return multiple lines (multi-output). The link-farm is a single output, so take the last line.
 	lines := strings.Split(store, "\n")

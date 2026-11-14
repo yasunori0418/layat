@@ -383,6 +383,38 @@ func TestBuildCommandFailureStreamsStderr(t *testing.T) {
 	}
 }
 
+// TestResultFailuresAreGeneratorErrors pins the failures after nix succeeds — an unparsable batch
+// eval, an unreadable out-link, an empty --print-out-paths — as Kind Failed generator.Errors of
+// the stage they happen in.
+func TestResultFailuresAreGeneratorErrors(t *testing.T) {
+	cases := []struct {
+		name, stdout string
+		run          func(g *Generator) error
+		want         generator.Stage
+	}{
+		{"batch eval", "{bad", func(g *Generator) error { _, err := g.AllRoots(); return err }, generator.StageRoots},
+		{"out-link", "", func(g *Generator) error {
+			_, err := g.Build("web", filepath.Join(t.TempDir(), ".pending"))
+			return err
+		}, generator.StageBuild},
+		{"print-out-paths", "", func(g *Generator) error { _, err := g.DryBuild("web"); return err }, generator.StageBuild},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			stubNixExit(t, c.stdout, "", 0)
+			g, _ := discovered(t, io.Discard, nil)
+			err := c.run(g)
+			var ge *generator.Error
+			if !errors.As(err, &ge) || ge.Stage != c.want || ge.Kind != generator.KindFailed {
+				t.Fatalf("error = %#v, want a Kind Failed *generator.Error of Stage %q", err, c.want)
+			}
+			if ge.Message == "" || errors.Unwrap(ge) == nil {
+				t.Errorf("Message / cause = %q / %v, want the failure's text and its cause", ge.Message, errors.Unwrap(ge))
+			}
+		})
+	}
+}
+
 // TestDebugDisclosesCommandsToWriter pins the --debug disclosure: the disclose function given to
 // New receives the nix arguments, and nothing is written to the writer by the generator itself.
 func TestDebugDisclosesCommandsToWriter(t *testing.T) {
