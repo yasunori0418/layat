@@ -11,7 +11,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-15T06:35:51+09:00"
+  at: "2026-11-15T06:48:09+09:00"
 ---
 # input_errors_test.go — 実行前に分かる入力の誤りの E_INPUT と 1 行の文と載る層
 
