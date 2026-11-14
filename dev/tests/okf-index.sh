@@ -40,7 +40,7 @@ fi
 
 # 実物の docs/model.yaml を重ね、上流を持たない item とテスト条件 1 本だけのグラフを作る。
 fixture="$work/fixture"
-mkdir -p "$fixture/docs/adr" "$fixture/docs/sara-adr" "$fixture/docs/ubiquitous-language" "$fixture/docs/requirements" "$fixture/docs/test/copy"
+mkdir -p "$fixture/docs/adr" "$fixture/docs/sara-adr" "$fixture/docs/ubiquitous-language" "$fixture/docs/requirements" "$fixture/docs/risks" "$fixture/docs/test/copy"
 cp "$repo_root/docs/model.yaml" "$fixture/docs/model.yaml"
 cat > "$fixture/sara.toml" <<'EOF'
 model_schema = "docs/model.yaml"
@@ -198,6 +198,36 @@ status: stable
 # TC-55555555-5555-4555-8555-555555555555: 条件
 
 条件の説明。
+EOF
+
+# 区分の並びがファイル名の並びと逆になる risk。節は test-categories.tsv の順に並ぶ。
+cat > "$fixture/docs/risks/a-integration.md" <<'EOF'
+---
+id: "RISK-aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+type: risk
+name: "統合の脅威"
+description: "統合の要約"
+likelihood: low
+impact: low
+level: low
+section: integration
+status: stable
+---
+# 統合の脅威
+EOF
+cat > "$fixture/docs/risks/z-eval.md" <<'EOF'
+---
+id: "RISK-bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"
+type: risk
+name: "評価の脅威"
+description: "評価の要約"
+likelihood: low
+impact: low
+level: low
+section: manifest-eval
+status: stable
+---
+# 評価の脅威
 EOF
 
 if ! (cd "$fixture" && bash "$generator") > "$work/gen.out" 2>&1; then
@@ -526,6 +556,58 @@ if [ "$rc" -eq 2 ] && grep -qF zz-unlisted-section "$work/unknown.err" &&
 else
   fault "(8) 表に無い section の値で exit 2 にならない（exit $rc）"
   sed 's/^/    /' "$work/unknown.err"
+fi
+
+# --- (10) risk は test-categories.tsv の区分の節に分ける ----------------------
+
+want_risks=$(cat <<'EOF'
+# リスク（`risk`）
+
+## manifest-eval
+
+* [評価の脅威](./z-eval.md) - 評価の要約
+
+## integration
+
+* [統合の脅威](./a-integration.md) - 統合の要約
+EOF
+)
+if [ "$(cat "$fixture/docs/risks/index.md")" = "$want_risks" ]; then
+  pass "risk の index.md は区分の名前を見出しにし、節を test-categories.tsv の順に並べる"
+else
+  fault "(10) docs/risks/index.md の節分けが食い違う"
+  sed 's/^/    /' "$fixture/docs/risks/index.md"
+fi
+
+# model.yaml の写しの risk の enum に値を 1 つ足し、sara check は通るが区分に無い値を作る。
+unknown_risk="$work/unknown-risk"
+cp -r "$fixture" "$unknown_risk"
+sed -i 's/^            - integration$/&\n            - zz-unlisted-category/' "$unknown_risk/docs/model.yaml"
+sed 's/^section: integration$/section: zz-unlisted-category/; s/8aaa-aaaaaaaaaaaa/8aaa-aaaaaaaaaaab/' \
+  "$fixture/docs/risks/a-integration.md" > "$unknown_risk/docs/risks/unlisted.md"
+cp "$unknown_risk/docs/risks/index.md" "$work/unknown-risk-before.md"
+(cd "$unknown_risk" && bash "$generator") > "$work/unknown-risk.out" 2> "$work/unknown-risk.err"
+rc=$?
+if [ "$rc" -eq 2 ] && grep -qF zz-unlisted-category "$work/unknown-risk.err" &&
+  ! grep -qF 'sara check が失敗した' "$work/unknown-risk.err" &&
+  cmp -s "$unknown_risk/docs/risks/index.md" "$work/unknown-risk-before.md"; then
+  pass "区分に無い section の値の risk は標準エラーにその値を出し、index.md を書かずに exit 2 で止まる"
+else
+  fault "(10) 区分に無い section の値の risk で exit 2 にならない（exit $rc）"
+  sed 's/^/    /' "$work/unknown-risk.err"
+fi
+
+# 実物の model.yaml から、risk の section の enum の値を記載順に取り出す。
+want_enum=$(read_tsv "$script_dir/test-categories.tsv" | cut -f1 | tr '\n' ' ')
+got_enum=$(awk '
+  /^  - id: / { in_risk = ($0 == "  - id: risk") }
+  in_risk && /^      - name: / { in_section = ($0 == "      - name: section") }
+  in_risk && in_section && /^            - / { sub(/^            - /, ""); print }
+' "$repo_root/docs/model.yaml" | tr '\n' ' ')
+if [ -n "$got_enum" ] && [ "$got_enum" = "$want_enum" ]; then
+  pass "docs/model.yaml の risk の section の enum は、値も順も test-categories.tsv の区分と一致する"
+else
+  fault "(10) docs/model.yaml の risk の section の enum が test-categories.tsv と食い違う（実際: $got_enum）"
 fi
 
 # --- (9) --check は食い違うパスを出して exit 1 を返し、index.md を書き換えない --
