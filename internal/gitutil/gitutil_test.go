@@ -80,6 +80,9 @@ func TestToplevelMissingDir(t *testing.T) {
 	if want := "cannot run git rev-parse (" + dir + "): exit status "; !strings.HasPrefix(err.Error(), want) {
 		t.Errorf("missing dir: message %q, want prefix %q", err.Error(), want)
 	}
+	if !strings.Contains(err.Error(), "cannot change to") {
+		t.Errorf("missing dir: message %q lacks the first line of git's stderr", err.Error())
+	}
 	if strings.Contains(err.Error(), "\n") {
 		t.Errorf("missing dir: message %q spans lines", err.Error())
 	}
