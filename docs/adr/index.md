@@ -79,6 +79,7 @@
 ## CLI のコマンド体系と設定
 
 * [apply --all は失敗しても残りを続け、最後に集約して非 0 で終える](./apply-all-continue-and-aggregate.md) - `apply --all` は複数の config を 1 回で適用する。そのうち 1 つが失敗したとき、残りを適用するか、全体を止めるか、全体を巻き戻すかを決める必要がある。 (stable)
+* [apply --all では engine の警告と失敗の詳細も config ごとの出力にまとめ、config 名を前置する](./apply-all-engine-warnings-in-config-output.md) - apply --all で engine が出す警告と失敗の詳細を config ごとの出力に入れ、行の先頭に config 名を付けて、辞書順の集約に含める (stable)
 * [apply --all の集約は config 名の辞書順に並べる](./apply-all-lexicographic-order.md) - `apply --all` の結果の表示と、失敗の集約には、決まった並び順が要る。entrypoint の `layat.*` はattrset で、Nix の attrset は定義順を保持しない。 (stable)
 * [apply --all の build を worker pool で並列に実行する](./apply-all-parallel-build-worker-pool.md) - `apply --all` は一括 eval の後、config ごとに `nix build` と配置を順に処理していた。所要時間の大半はconfig ごとの `nix build` で、config の数に比例して直列に伸びる。 (stable)
 * [apply --all の配置を config 単位で並列に行う](./apply-all-parallel-placement-per-config.md) - [apply --all の build を worker pool で並列に実行する](apply-all-parallel-build-worker-pool.md)。配置は config ごとに順に処理していたが、`method = "copy"` の大きなツリーでは配置の時間も無視できない。 (stable)
