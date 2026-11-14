@@ -71,7 +71,7 @@ func Status(opts StatusOptions) ([]StatusSeries, error) {
 	system := filepath.Join(systemStateDir, "layat")
 	sys, err := statusBase(system, manifest.RootKindSystem)
 	if err != nil {
-		warnf("skipping the system record base (%s): %v", system, err)
+		warnf("skipping the system record base: %v", err)
 		return out, nil
 	}
 	return append(out, sys...), nil

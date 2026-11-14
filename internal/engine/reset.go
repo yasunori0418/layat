@@ -248,7 +248,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 		}
 		removedCopies = append(removedCopies, plannedCopies[i])
 		if err := a.pruneEmptyAncestors(targetAbs); err != nil {
-			a.opts.Warnf("could not prune an empty ancestor directory: %v", err)
+			a.opts.Warnf("cannot prune empty ancestor directories: %v", err)
 		}
 	}
 	res.RemovedCopies = removedCopies

@@ -27,7 +27,7 @@ func (a *applier) removeStale(actions []planner.RemoveAction) error {
 		a.result.Removed = append(a.result.Removed, act.Entry.Target)
 		a.journalRelinkedSymlink(act.TargetAbs, planner.LinkDest(act.Entry))
 		if err := a.pruneEmptyAncestors(act.TargetAbs); err != nil {
-			a.opts.Warnf("could not prune an empty ancestor directory: %v", err)
+			a.opts.Warnf("cannot prune empty ancestor directories: %v", err)
 		}
 	}
 	return nil
