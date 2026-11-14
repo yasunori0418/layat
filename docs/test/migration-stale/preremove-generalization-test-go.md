@@ -13,7 +13,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:29:20+09:00"
+  at: "2026-11-15T01:05:36+09:00"
 ---
 # preremove_generalization_test.go
 
@@ -39,5 +39,6 @@ generated:
 - **method 変更**: symlink → copy は自動移行（記録済み symlink を配置前除去して place-once
   copy を配置）、copy → symlink は通常の上書き拒否 conflict のまま copy を保持、記録済み
   symlink が drift していた場合は移行せず foreign 扱いになること
-- **drift のエラー化**: 配置前除去の rmdir / unlink の処理それぞれで drift が直接エラーになること
+- **drift のエラー化**: 配置前除去の rmdir / unlink の処理それぞれで drift が直接エラーになること。
+  rmdir の drift で返るエラーは元の ENOTEMPTY を包み、`errors.Is` で辿れること
 - **中断後の収束**: 配置前除去まで進んで中断した状態から再実行して目標状態へ収束すること
