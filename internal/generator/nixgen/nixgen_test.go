@@ -255,8 +255,39 @@ func TestDiscoverFailureIsDiscoverStage(t *testing.T) {
 	if !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("errors.Is(err, fs.ErrNotExist) = false: %v", err)
 	}
-	if want := "-f path not found (" + missing + "): "; !strings.HasPrefix(err.Error(), want) {
+	if want := "cannot stat the -f path: stat " + missing + ": "; !strings.HasPrefix(err.Error(), want) {
 		t.Errorf("Error() = %q, want prefix %q", err.Error(), want)
+	}
+}
+
+// TestDiscoverUnreadableFileFlag pins that an -f path nix cannot stat for lack of permission is
+// reported as that, not as a missing path.
+func TestDiscoverUnreadableFileFlag(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("root bypasses directory permissions")
+	}
+	dir := t.TempDir()
+	if err := os.Chmod(dir, 0); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chmod(dir, 0o755) })
+	_, err := discoverEntrypoint(filepath.Join(dir, "flake.nix"))
+	if !errors.Is(err, fs.ErrPermission) || errors.Is(err, fs.ErrNotExist) || strings.Contains(err.Error(), "not found") {
+		t.Errorf("err = %v, want fs.ErrPermission, not a missing path", err)
+	}
+}
+
+// TestDiscoverNoEntrypointInCWD pins the CWD discovery failure: it names the CWD and is not a
+// missing-file error.
+func TestDiscoverNoEntrypointInCWD(t *testing.T) {
+	dir := t.TempDir()
+	t.Chdir(dir)
+	_, err := discoverEntrypoint("")
+	if want := "no flake.nix / shell.nix / default.nix in the CWD (" + dir + "); specify one with -f"; err == nil || err.Error() != want {
+		t.Errorf("err = %v, want %q", err, want)
+	}
+	if errors.Is(err, fs.ErrNotExist) {
+		t.Errorf("errors.Is(err, fs.ErrNotExist) = true, want false: %v", err)
 	}
 }
 
@@ -288,7 +319,7 @@ func TestEntrypointIsDiscoveredPath(t *testing.T) {
 // failed subcommand, with nix's stderr kept in Stderr instead.
 func TestRootsCommandFailure(t *testing.T) {
 	stubNix(t, "error: boom")
-	g, _ := discovered(t, io.Discard, nil)
+	g, dir := discovered(t, io.Discard, nil)
 
 	_, err := g.Roots("web")
 	var ge *generator.Error
@@ -298,7 +329,7 @@ func TestRootsCommandFailure(t *testing.T) {
 	if ge.Stage != generator.StageRoots || ge.Kind != generator.KindFailed {
 		t.Errorf("Stage/Kind = %q/%q, want roots/Failed", ge.Stage, ge.Kind)
 	}
-	if want := "nix eval failed: exit status 1"; ge.Message != want {
+	if want := "cannot run nix eval (" + dir + "#layat." + g.system + ".web.rootKind): exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if ge.Stderr != "error: boom" {
@@ -348,15 +379,25 @@ func TestAllRootsMissingNamespaceMessage(t *testing.T) {
 // one-line Message and the captured stderr.
 func TestDryBuildCommandFailure(t *testing.T) {
 	stubNix(t, "error: boom")
-	g, _ := discovered(t, io.Discard, nil)
+	g, dir := discovered(t, io.Discard, nil)
 
 	_, err := g.DryBuild("web")
 	var ge *generator.Error
 	if !errors.As(err, &ge) || ge.Stage != generator.StageBuild {
 		t.Fatalf("DryBuild error = %v, want a Stage build *generator.Error", err)
 	}
-	if want := "nix build failed: exit status 1"; ge.Message != want {
+	if want := "cannot run nix build (" + dir + "#layat." + g.system + ".web): exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
+	}
+	legacyDir := t.TempDir()
+	writeFile(t, legacyDir, "default.nix")
+	legacy := New(io.Discard, nil)
+	if err := legacy.Discover(legacyDir); err != nil {
+		t.Fatal(err)
+	}
+	_, err = legacy.DryBuild("web")
+	if want := "cannot run nix build (-f " + filepath.Join(legacyDir, "default.nix") + " layat.web): exit status 1"; err == nil || err.Error() != want {
+		t.Errorf("legacy DryBuild error = %v, want %q", err, want)
 	}
 	if ge.Stderr != "error: boom" {
 		t.Errorf("Stderr = %q, want the captured stderr", ge.Stderr)
@@ -368,14 +409,14 @@ func TestDryBuildCommandFailure(t *testing.T) {
 func TestBuildCommandFailureStreamsStderr(t *testing.T) {
 	stubNix(t, "error: boom")
 	var buf bytes.Buffer
-	g, _ := discovered(t, &buf, nil)
+	g, dir := discovered(t, &buf, nil)
 
 	_, err := g.Build("web", filepath.Join(t.TempDir(), ".pending"))
 	var ge *generator.Error
 	if !errors.As(err, &ge) || ge.Stage != generator.StageBuild {
 		t.Fatalf("Build error = %v, want a Stage build *generator.Error", err)
 	}
-	if want := "nix build failed: exit status 1"; ge.Message != want {
+	if want := "cannot run nix build (" + dir + "#layat." + g.system + ".web): exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if buf.String() != "error: boom" {

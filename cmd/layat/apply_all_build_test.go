@@ -195,7 +195,7 @@ func TestJobsAggregateIsOrderIndependent(t *testing.T) {
 // --debug), then the guidance. The schemaVersion skew hint follows every line, once.
 func TestApplyAllFailureLineRendersGeneratorError(t *testing.T) {
 	genErr := generator.NewError(generator.NameNix, generator.StageBuild, generator.KindPrerequisiteMissing,
-		"nix build failed: exit status 1", "enable experimental-features", "error: disabled", nil)
+		"cannot run nix build (/proj#layat.x86_64-linux.a): exit status 1", "enable experimental-features", "error: disabled", nil)
 	fail := func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		if name == "a" {
 			return nil, fmt.Errorf("ctx: %w", genErr)
@@ -326,8 +326,10 @@ func TestRunApplyAllStageOneWiring(t *testing.T) {
 			if !slices.ContainsFunc(lines, func(l string) bool { return strings.HasPrefix(l, "layat: + nix eval ") }) {
 				t.Errorf("stderr has no unprefixed batch eval disclosure:\n%s", stderr)
 			}
+			calls := nixCalls(t, log)
+			system := strings.TrimPrefix(strings.Fields(calls[0])[1], flagFile+"#layat.")
 			var builds int
-			for _, c := range nixCalls(t, log) {
+			for _, c := range calls {
 				if strings.HasPrefix(c, "build ") {
 					builds++
 					if !strings.Contains(c, "--no-link") {
@@ -349,7 +351,7 @@ func TestRunApplyAllStageOneWiring(t *testing.T) {
 				if dryrun {
 					subject += " --dryrun"
 				}
-				report := "layat: apply " + subject + " failed: nix build failed: exit status 1 (generator: nix)"
+				report := "layat: apply " + subject + " failed: cannot run nix build (" + flagFile + "#layat." + system + "." + name + "): exit status 1 (generator: nix)"
 				if !slices.Contains(lines, report) {
 					t.Errorf("stderr has no one-line failure report %q:\n%s", report, stderr)
 				}

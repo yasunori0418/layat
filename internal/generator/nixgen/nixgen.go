@@ -51,7 +51,7 @@ func discoverEntrypoint(fileFlag string) (*entrypoint, error) {
 		}
 		info, err := os.Stat(abs)
 		if err != nil {
-			return nil, fmt.Errorf("-f path not found (%s): %w", fileFlag, err)
+			return nil, fmt.Errorf("cannot stat the -f path: %w", err)
 		}
 		if info.IsDir() {
 			if fileExists(filepath.Join(abs, "flake.nix")) {
@@ -86,7 +86,7 @@ func discoverEntrypoint(fileFlag string) (*entrypoint, error) {
 			return &entrypoint{kind: entrypointLegacy, legacyPath: p}, nil
 		}
 	}
-	return nil, errors.New("no entrypoint found (no flake.nix / shell.nix / default.nix in the CWD; specify one with -f)")
+	return nil, fmt.Errorf("no flake.nix / shell.nix / default.nix in the CWD (%s); specify one with -f", cwd)
 }
 
 func fileExists(p string) bool {
@@ -217,9 +217,10 @@ func (g *Generator) AllRoots() (map[string]manifest.Root, error) {
 func (g *Generator) evalAllRoots() (map[string]manifest.Root, error) {
 	// Extract only rootKind + targets (+ root if fixed) from each config under layat.<system>.
 	apply := `cs: builtins.mapAttrs (_: c: { rootKind = c.rootKind; targets = c.targets; } // (if c ? root then { root = c.root; } else {})) cs`
-	args := append([]string{"eval"}, g.ep.namespaceArgs(g.system)...)
+	installable := g.ep.namespaceArgs(g.system)
+	args := append([]string{"eval"}, installable...)
 	args = append(args, "--apply", apply, "--json")
-	out, err := g.runNixCapture(args...)
+	out, err := g.runNixCapture(installable, args...)
 	if err != nil {
 		return nil, wrapEvalAllErr(err, g.ep.namespaceLabel(g.system))
 	}
@@ -243,17 +244,19 @@ func (g *Generator) evalAllRoots() (map[string]manifest.Root, error) {
 // evalRoot pre-resolves rootKind (+ the absolute path when fixed root) via a cheap nix eval, so
 // profileDir is known before the flock and the build.
 func (g *Generator) evalRoot(name string) (rootKind, fixedRoot string, err error) {
-	args := append([]string{"eval"}, g.ep.installableArgs(g.system, name, ".rootKind")...)
+	installable := g.ep.installableArgs(g.system, name, ".rootKind")
+	args := append([]string{"eval"}, installable...)
 	args = append(args, "--raw")
-	out, err := g.runNixCapture(args...)
+	out, err := g.runNixCapture(installable, args...)
 	if err != nil {
 		return "", "", wrapEvalErr(err, g.ep.label(g.system, name), ".rootKind")
 	}
 	rootKind = strings.TrimSpace(out)
 	if rootKind == "fixed" {
-		rootArgs := append([]string{"eval"}, g.ep.installableArgs(g.system, name, ".root")...)
+		rootInstallable := g.ep.installableArgs(g.system, name, ".root")
+		rootArgs := append([]string{"eval"}, rootInstallable...)
 		rootArgs = append(rootArgs, "--raw")
-		out, err := g.runNixCapture(rootArgs...)
+		out, err := g.runNixCapture(rootInstallable, rootArgs...)
 		if err != nil {
 			return "", "", wrapEvalErr(err, g.ep.label(g.system, name), ".root")
 		}
@@ -265,14 +268,15 @@ func (g *Generator) evalRoot(name string) (rootKind, fixedRoot string, err error
 // Build runs `nix build <installable> --out-link <pending>` (the engine calls it inside the lock;
 // → engine.BuildFunc), reads the out-link, and returns the store path.
 func (g *Generator) Build(name, pending string) (string, error) {
-	args := append([]string{"build"}, g.ep.installableArgs(g.system, name, "")...)
+	installable := g.ep.installableArgs(g.system, name, "")
+	args := append([]string{"build"}, installable...)
 	args = append(args, "--out-link", pending)
-	if err := g.runNixStream(args...); err != nil {
+	if err := g.runNixStream(installable, args...); err != nil {
 		return "", err
 	}
 	store, err := os.Readlink(pending)
 	if err != nil {
-		err = fmt.Errorf("cannot read the build output out-link (%s): %w", pending, err)
+		err = fmt.Errorf("cannot read the build output out-link: %w", err)
 		return "", generator.NewError(generator.NameNix, generator.StageBuild, generator.KindFailed, err.Error(), "", "", err)
 	}
 	return store, nil
@@ -281,9 +285,10 @@ func (g *Generator) Build(name, pending string) (string, error) {
 // DryBuild gets the link-farm's store path via `nix build --no-link --print-out-paths` without
 // laying down a gcroot (out-link).
 func (g *Generator) DryBuild(name string) (string, error) {
-	args := append([]string{"build"}, g.ep.installableArgs(g.system, name, "")...)
+	installable := g.ep.installableArgs(g.system, name, "")
+	args := append([]string{"build"}, installable...)
 	args = append(args, "--no-link", "--print-out-paths")
-	out, err := g.runNixCapture(args...)
+	out, err := g.runNixCapture(installable, args...)
 	if err != nil {
 		return "", err
 	}
@@ -307,23 +312,24 @@ func stageOf(args []string) generator.Stage {
 }
 
 // runNixCapture captures and returns nix's stdout (for machine-readable output such as eval).
-func (g *Generator) runNixCapture(args ...string) (string, error) {
+func (g *Generator) runNixCapture(installable []string, args ...string) (string, error) {
 	var stdout bytes.Buffer
-	if err := g.runNix(args, &stdout); err != nil {
+	if err := g.runNix(args, installable, &stdout); err != nil {
 		return "", err
 	}
 	return stdout.String(), nil
 }
 
 // runNixStream streams nix's output to the diagnostics writer (for build progress).
-func (g *Generator) runNixStream(args ...string) error {
-	return g.runNix(args, nil)
+func (g *Generator) runNixStream(installable []string, args ...string) error {
+	return g.runNix(args, installable, nil)
 }
 
 // runNix runs nix with its stderr teed to the diagnostics writer (in whole lines) and to a capture
 // for the failure's Stderr. A nil stdout shares the same tee, so the writer is never written from
-// two goroutines at once. A failure is a generator.Error classified by nixFailure.
-func (g *Generator) runNix(args []string, stdout io.Writer) error {
+// two goroutines at once. A failure is a generator.Error classified by nixFailure, naming the
+// installable args select.
+func (g *Generator) runNix(args, installable []string, stdout io.Writer) error {
 	if g.disclose != nil {
 		g.disclose(args)
 	}
@@ -339,7 +345,7 @@ func (g *Generator) runNix(args []string, stdout io.Writer) error {
 	err := cmd.Run()
 	lines.flush()
 	if err != nil {
-		return nixFailure(args, stderr.String(), err)
+		return nixFailure(args, installable, stderr.String(), err)
 	}
 	return nil
 }
@@ -373,8 +379,8 @@ func (l *lineWriter) flush() {
 
 // nixFailure classifies a failed nix command by its stderr: experimental-features disabled is
 // PrerequisiteMissing, anything else Failed. The raw stderr is kept in Stderr.
-func nixFailure(args []string, stderr string, runErr error) error {
-	cause := fmt.Errorf("nix %s failed: %w", args[0], runErr)
+func nixFailure(args, installable []string, stderr string, runErr error) error {
+	cause := fmt.Errorf("cannot run nix %s (%s): %w", args[0], strings.Join(installable, " "), runErr)
 	kind, message, guidance := generator.KindFailed, cause.Error(), ""
 	switch {
 	case IsExperimentalDisabled(stderr):

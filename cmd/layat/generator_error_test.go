@@ -12,7 +12,7 @@ import (
 // testGeneratorError is a nix generator failure carrying a guidance and captured raw diagnostics.
 func testGeneratorError() *generator.Error {
 	return generator.NewError(generator.NameNix, generator.StageRoots, generator.KindPrerequisiteMissing,
-		"nix eval failed: exit status 1", "enable experimental-features",
+		"cannot run nix eval (/proj#layat.x86_64-linux.web.rootKind): exit status 1", "enable experimental-features",
 		"error: experimental Nix feature 'nix-command' is disabled", nil)
 }
 
@@ -44,7 +44,7 @@ func TestPrintGeneratorErrorHuman(t *testing.T) {
 func TestPrintGeneratorErrorHumanNoGuidance(t *testing.T) {
 	withDebug(t, false)
 	e := generator.NewError(generator.NameNix, generator.StageBuild, generator.KindFailed,
-		"nix build failed: exit status 1", "", "error: boom", nil)
+		"cannot run nix build (/proj#layat.x86_64-linux.web): exit status 1", "", "error: boom", nil)
 	var buf bytes.Buffer
 	printGeneratorError(&buf, "", e)
 
@@ -97,7 +97,7 @@ func TestGeneratorErrorMessageJSON(t *testing.T) {
 	}
 
 	noStderr := generator.NewError(generator.NameNix, generator.StageBuild, generator.KindFailed,
-		"nix build failed: exit status 1", "", "", nil)
+		"cannot run nix build (/proj#layat.x86_64-linux.web): exit status 1", "", "", nil)
 	if got := generatorErrorMessage(noStderr); got != noStderr.Message {
 		t.Errorf("message without stderr = %q, want %q", got, noStderr.Message)
 	}
