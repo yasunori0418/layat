@@ -56,6 +56,7 @@
 * [OKF の index.md を sara check の出力から生成してコミットする](./okf-index-generation.md) - OKF の index.md を sara check --format json から生成し、コミットして契約テストで差分ゼロを守る (stable)
 * [sara の運用規範は quality の item が持ち、規約文書は図と索引に縮退させる](./operational-norms-held-by-quality-items.md) - sara の運用規範を規約文書の散文から 1 主張 1 本の quality item へ移し、規約文書は図と item への索引だけにする。 (stable)
 * [手書きの概要は各ディレクトリの README.md に置く](./overview-prose-in-directory-readme.md) - item から導けない全体像の散文は、その主題の item を置くディレクトリの README.md に置き、README.md は frontmatter と item の一覧を持たず、同じディレクトリの index.md を 1 本だけ指す (stable)
+* [risk の節はテストの区分と同じ語彙にする](./risk-sections-follow-test-categories.md) - risk の section の値・節の並び順・見出しは dev/tests/test-categories.tsv のテストの区分と同じにし、enum と区分の一致を契約テストが確かめる (stable)
 * [用語の index.md はリンク文字列に name_ja を添える](./term-index-shows-name-ja.md) - 用語の index.md は、name_ja を持つ語のリンク文字列を name（name_ja）にし、英語と日本語のどちらの正名からも語を引けるようにする (stable)
 
 ## risk・テスト系 item・欠陥
