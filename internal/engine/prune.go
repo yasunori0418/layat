@@ -242,7 +242,7 @@ func pruneJudgeBase(base string, res *PruneResult, warnf func(string, ...any)) (
 			candidates = append(candidates, s)
 		default:
 			pruneSkip(res, warnf, s, PruneSkipRootStatFailed,
-				fmt.Errorf("cannot stat root (%s): %w", s.Root, err))
+				fmt.Errorf("cannot stat root: %w", err))
 		}
 	}
 	return candidates, nil
@@ -302,20 +302,20 @@ func pruneRemoveSeries(s PruneSeries) (PruneSkipReason, error) {
 		target := filepath.Join(s.Dir, n)
 		if rerr := os.RemoveAll(target); rerr != nil {
 			return removalReason(rerr),
-				fmt.Errorf("cannot remove profile directory of series %s (%s): %w", s.RootHash, target, rerr)
+				fmt.Errorf("cannot remove profile directory of series: %w", rerr)
 		}
 		removedAny = true
 	}
 	backref := filepath.Join(s.Dir, ".root")
 	if rerr := os.Remove(backref); rerr != nil && !errors.Is(rerr, fs.ErrNotExist) {
 		return removalReason(rerr),
-			fmt.Errorf("cannot remove backref of series %s (%s): %w", s.RootHash, backref, rerr)
+			fmt.Errorf("cannot remove backref of series: %w", rerr)
 	}
 	// Past this point the backref is gone, so the series is definitely no
 	// longer untouched and the rmdir below can only fail as an error — hence
 	// the "" rather than another removalReason call.
 	if rerr := os.Remove(s.Dir); rerr != nil {
-		return "", fmt.Errorf("cannot remove series %s (%s): %w", s.RootHash, s.Dir, rerr)
+		return "", fmt.Errorf("cannot remove series: %w", rerr)
 	}
 	return "", nil
 }

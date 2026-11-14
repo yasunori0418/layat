@@ -54,13 +54,13 @@ func (a *applier) recopyAll() error {
 			existed = true
 			aside := asidePath(targetAbs)
 			if err := os.Rename(targetAbs, aside); err != nil {
-				return a.entryFailed(e.Target, fmt.Errorf("cannot move aside recopy target (%s): %w", targetAbs, err))
+				return a.entryFailed(e.Target, fmt.Errorf("cannot move aside recopy target: %w", err))
 			}
 			// Journaled before the fresh copy so a partial copyTree failure still renames the
 			// aside back on unwind.
 			a.journalRenamedAside(targetAbs, aside)
 		} else if !errors.Is(err, iofs.ErrNotExist) {
-			return a.entryFailed(e.Target, fmt.Errorf("cannot lstat recopy target (%s): %w", targetAbs, err))
+			return a.entryFailed(e.Target, fmt.Errorf("cannot lstat recopy target: %w", err))
 		} else {
 			// Same reasoning as placeCopies: journal before copyTree so a mid-copy failure still
 			// gets its partial tree cleaned up on unwind.

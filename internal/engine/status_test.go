@@ -213,7 +213,8 @@ func TestStatusSystemBaseUnreadableWarns(t *testing.T) {
 	var warnings []string
 	got := runStatus(t, state, sysState, &warnings)
 	assertStatusKeys(t, got, []statusKey{{Mode: "home", Name: "a", RecordFile: rec.File}})
-	if len(warnings) != 1 || !strings.Contains(warnings[0], "cannot list the record base ("+system+")") {
+	if len(warnings) != 1 || !strings.Contains(warnings[0], "cannot list the record base: ") ||
+		!strings.Contains(warnings[0], system) {
 		t.Fatalf("warnings = %q; want one line naming the record base %s", warnings, system)
 	}
 }
