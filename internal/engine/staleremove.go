@@ -55,7 +55,7 @@ func (a *applier) preRemove(actions []planner.RemoveAction) error {
 			case errors.Is(err, fs.ErrNotExist):
 				// already absent; the Rmdir's goal is met, nothing to report.
 			case errors.Is(err, syscall.ENOTEMPTY), errors.Is(err, syscall.EEXIST):
-				return fmt.Errorf("directory gained content after planning; cannot migrate this placement target safely (%s); re-run apply to converge", act.TargetAbs)
+				return fmt.Errorf("directory gained content after planning; cannot migrate this placement target safely; re-run apply to converge: %w", err)
 			default:
 				return fmt.Errorf("cannot remove empty directory for migration: %w", err)
 			}

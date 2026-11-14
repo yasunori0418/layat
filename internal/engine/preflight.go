@@ -27,7 +27,7 @@ func (a *applier) checkOutOfStore() error {
 		}
 		if _, err := os.Lstat(src); err != nil {
 			if errors.Is(err, fs.ErrNotExist) {
-				return fmt.Errorf("%s does not exist (target: %s -> %s); will not create a dangling symlink", what, e.Target, src)
+				return fmt.Errorf("%s does not exist (target: %s -> %s); will not create a dangling symlink: %w", what, e.Target, src, err)
 			}
 			return fmt.Errorf("cannot check %s (target: %s -> %s): %w", what, e.Target, src, err)
 		}

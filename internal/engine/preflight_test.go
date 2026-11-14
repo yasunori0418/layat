@@ -96,3 +96,16 @@ func TestPreflightRootRelativeNonENOENTError(t *testing.T) {
 		t.Errorf("wrapped error should be a permission error (EACCES): %v", err)
 	}
 }
+
+// TestPreflightMissingSourceKeepsNotExistCause verifies that a missing out-of-store link target
+// stops with the "does not exist" message and keeps the ENOENT cause in the chain.
+func TestPreflightMissingSourceKeepsNotExistCause(t *testing.T) {
+	m := projectManifest(outOfStoreEntry(realTempDir(t), "missing", ".config/nvim"))
+	err := (&applier{manifest: &m}).checkOutOfStore()
+	if err == nil || !strings.Contains(err.Error(), "does not exist") || !strings.Contains(err.Error(), "will not create a dangling symlink") {
+		t.Fatalf("err = %v, want the missing-source message", err)
+	}
+	if !errors.Is(err, fs.ErrNotExist) {
+		t.Errorf("wrapped error should be a not-exist error (ENOENT): %v", err)
+	}
+}
