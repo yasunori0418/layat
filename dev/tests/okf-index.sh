@@ -254,8 +254,13 @@ fi
 
 # --- (4) 並びはファイル名順 ----------------------------------------------------
 
-order=$(grep -oE '\(\./[^)]*\)' "$fixture/docs/adr/index.md" | tr -d '()' | tr '\n' ' ')
-if [ "$order" = "./from-paragraph.md ./with-field.md " ]; then
+# deprecated の from-paragraph.md は末尾の節へ移るので、写しに主題の並びへ残る ADR を 1 件足して並びを見る。
+ordered="$work/ordered"
+cp -r "$fixture" "$ordered"
+sed 's/8111-111111111111"$/8111-111111111112"/' "$fixture/docs/adr/with-field.md" > "$ordered/docs/adr/another.md"
+(cd "$ordered" && bash "$generator") > /dev/null 2>&1
+order=$(sed '/^## 有効でない item/q' "$ordered/docs/adr/index.md" | grep -oE '\(\./[^)]*\)' | tr -d '()' | tr '\n' ' ')
+if [ "$order" = "./another.md ./with-field.md " ]; then
   pass "エントリはファイル名順に並ぶ"
 else
   fault "(4) エントリがファイル名順に並ばない（実際: $order）"
@@ -305,7 +310,113 @@ expect_line "name_ja を持つ語はリンク文字列を「name（name_ja）」
 expect_line "name_ja を持たない語はリンク文字列を name だけにする" docs/ubiquitous-language/index.md \
   '* [term](./term.md) - The term definition.'
 
-# --- (7) 表に無い section の値で exit 2 ----------------------------------------
+# --- (7) deprecated の item は末尾の節にまとめる ------------------------------
+
+want_adrs=$(cat <<'EOF'
+# ADR（`adr`）
+
+* [フィールドを持つ決定](./with-field.md) - フィールドの要約 (stable)
+
+## 有効でない item（`deprecated`）
+
+* [results\[\] を返す](./from-paragraph.md) - 最初の段落は`results[]`の後に English words を挟む。 (deprecated)
+EOF
+)
+if [ "$(cat "$fixture/docs/adr/index.md")" = "$want_adrs" ]; then
+  pass "節に分けない型では、deprecated の item を主題の並びから外して末尾の節にだけ出す"
+else
+  fault "(7) docs/adr/index.md の deprecated の item の置き場所が食い違う"
+  sed 's/^/    /' "$fixture/docs/adr/index.md"
+fi
+
+headed=""
+for f in docs/requirements/index.md docs/sara-adr/index.md docs/ubiquitous-language/index.md docs/test/copy/index.md; do
+  grep -qxF '## 有効でない item（`deprecated`）' "$fixture/$f" && headed+=" $f"
+done
+if [ -z "$headed" ]; then
+  pass "deprecated の item が無い index.md には末尾の節の見出しを出さない"
+else
+  fault "(7) deprecated の item が無いのに末尾の節の見出しが出た:$headed"
+fi
+
+# 写しに、節に分ける型の deprecated と draft の要件、区分の deprecated のテスト条件とテストケースを足す。
+deprecated="$work/deprecated"
+cp -r "$fixture" "$deprecated"
+sed 's/8888-888888888888/8888-888888888890/; s/^status: stable$/status: deprecated/; s/エラーの要件/古い要件/; s/エラーの説明。/古い説明。/' \
+  "$fixture/docs/requirements/error.md" > "$deprecated/docs/requirements/a-old.md"
+sed 's/8888-888888888888/8888-888888888891/; s/^status: stable$/status: draft/; s/エラーの要件/下書きの要件/; s/エラーの説明。/下書きの説明。/' \
+  "$fixture/docs/requirements/error.md" > "$deprecated/docs/requirements/z-draft.md"
+sed 's/8555-555555555555/8555-555555555556/; s/^status: stable$/status: deprecated/; s/条件/古い条件/g' \
+  "$fixture/docs/test/copy/condition.md" > "$deprecated/docs/test/copy/old-condition.md"
+cat > "$deprecated/docs/test/copy/a-case.md" <<'EOF'
+---
+id: "CASE-99999999-9999-4999-8999-999999999999"
+type: test_case
+name: "古いケース"
+resource: "internal/engine/copy_test.go"
+status: deprecated
+---
+# CASE-99999999-9999-4999-8999-999999999999: 古いケース
+
+ケースの説明。
+EOF
+if ! (cd "$deprecated" && bash "$generator") > "$work/deprecated.out" 2>&1; then
+  fault "(7) deprecated の item を足した入力から index.md を生成できなかった"
+  sed 's/^/    /' "$work/deprecated.out"
+fi
+
+want_dep_reqs=$(cat <<'EOF'
+# 要件（`requirement`）
+
+## エラー仕様
+
+* [エラーの要件](./error.md) - エラーの説明。
+* [下書きの要件](./z-draft.md) - 下書きの説明。
+
+## 有効でない item（`deprecated`）
+
+* [古い要件](./a-old.md) - 古い説明。
+EOF
+)
+if [ "$(cat "$deprecated/docs/requirements/index.md")" = "$want_dep_reqs" ]; then
+  pass "節に分ける型では、deprecated の item を section の節から外し、小見出しを付けずに末尾の節にだけ出す"
+else
+  fault "(7) docs/requirements/index.md の deprecated の item の置き場所が食い違う"
+  sed 's/^/    /' "$deprecated/docs/requirements/index.md"
+fi
+
+main_part=$(sed '/^## 有効でない item/q' "$deprecated/docs/requirements/index.md")
+if grep -qxF '* [下書きの要件](./z-draft.md) - 下書きの説明。' <<< "$main_part" &&
+  [ "$(grep -cF '(./z-draft.md)' "$deprecated/docs/requirements/index.md")" -eq 1 ]; then
+  pass "draft の item は主題の並びに残す"
+else
+  fault "(7) draft の item が主題の並びに無い"
+  sed 's/^/    /' "$deprecated/docs/requirements/index.md"
+fi
+
+want_dep_copy=$(cat <<'EOF'
+# copy
+
+## テスト条件（`test_condition`）
+
+* [条件](./condition.md) - 条件の説明。
+
+## テストケース（`test_case`）
+
+## 有効でない item（`deprecated`）
+
+* [古いケース](./a-case.md) - ケースの説明。
+* [古い条件](./old-condition.md) - 古い条件の説明。
+EOF
+)
+if [ "$(cat "$deprecated/docs/test/copy/index.md")" = "$want_dep_copy" ]; then
+  pass "区分の index.md は、deprecated のテスト条件とテストケースを 2 つの節の後ろの 1 つの節にファイル名順でまとめる"
+else
+  fault "(7) docs/test/copy/index.md の deprecated の item の置き場所が食い違う"
+  sed 's/^/    /' "$deprecated/docs/test/copy/index.md"
+fi
+
+# --- (8) 表に無い section の値で exit 2 ----------------------------------------
 
 # model.yaml の写しの requirement の enum に値を 1 つ足し、sara check は通るが生成器の表に無い値を作る。
 unknown="$work/unknown"
@@ -321,11 +432,11 @@ if [ "$rc" -eq 2 ] && grep -qF zz-unlisted-section "$work/unknown.err" &&
   cmp -s "$unknown/docs/requirements/index.md" "$work/unknown-before.md"; then
   pass "表に無い section の値は標準エラーにその値を出し、index.md を書かずに exit 2 で止まる"
 else
-  fault "(7) 表に無い section の値で exit 2 にならない（exit $rc）"
+  fault "(8) 表に無い section の値で exit 2 にならない（exit $rc）"
   sed 's/^/    /' "$work/unknown.err"
 fi
 
-# --- (8) --check は食い違うパスを出して exit 1 を返し、index.md を書き換えない --
+# --- (9) --check は食い違うパスを出して exit 1 を返し、index.md を書き換えない --
 
 # --check を走らせ、exit 1 で出力が期待するパスだけであり、案内が期待する方だけであることを確かめる。
 expect_stale() {
@@ -348,7 +459,7 @@ expect_stale "--check は内容の食い違う index.md のパスを出し、再
 if cmp -s "$fixture/docs/adr/index.md" "$work/edited.md"; then
   pass "--check は既存の index.md を書き換えない"
 else
-  fault "(8) --check が既存の index.md を書き換えた"
+  fault "(9) --check が既存の index.md を書き換えた"
 fi
 
 # 書き出しで内容の食い違いを解消してから、生成対象に無い index.md だけを残す。
