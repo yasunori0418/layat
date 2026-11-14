@@ -33,6 +33,8 @@ func TestStderrLineForms(t *testing.T) {
 			"layat: warning: skipping the system profile base (/s): boom\n"},
 		{"failure", func(b *bytes.Buffer) { printFailure(b, "apply a failed", errors.New("boom")) },
 			"layat: apply a failed: boom\n"},
+		{"skip notice", func(b *bytes.Buffer) { skipNotice(b, "a") },
+			"layat: skipped apply a because another apply is in progress (run layat apply a after it ends)\n"},
 		{"nix disclosure", func(b *bytes.Buffer) { discloseNix(b, []string{"build", "--no-link", ".#layat"}) },
 			"layat: + nix build --no-link .#layat\n"},
 	}
