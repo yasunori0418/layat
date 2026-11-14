@@ -11,7 +11,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:27:49+09:00"
+  at: "2026-11-15T00:12:02+09:00"
 ---
 # drift_test.go — 世代スキップの発火条件と lstat ドリフト修復の対象範囲
 
@@ -33,6 +33,8 @@ generated:
 - link farm が変われば新世代を積む
 - system mode（root）で同一 link farm を再 apply → 世代を積まず、消された symlink だけを再張りする
 - home mode では同一 link farm でも新世代を積む（世代スキップは project / system 限定）
+- 新しい link farm を解決できなければ、世代スキップの判定はその link farm を括弧で添えたエラーを返し、原因の
+  エラーを `errors.Is` で判別できる
 
 **修復の対象範囲**（[lstat ドリフト修復が破損した entry だけを直し、ユーザーの編集には触れない](drift-repair-scope.md)）
 
