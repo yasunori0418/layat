@@ -10,7 +10,7 @@ satisfies:
   - "REQ-f4d7d4ab-fbdb-48c6-b29f-08dd88e72645"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:01:21+09:00"
+  at: "2026-11-15T06:37:00+09:00"
 ---
 # internal/generator は契約・prebuilt・Fake を親パッケージに、nix 実装を nixgen サブパッケージに置き、cmd 層は注入点だけを持つ
 
@@ -35,7 +35,9 @@ cmd/layat                       ← 生成器の選択と注入だけ（newGener
   `cmd/layat` のテストからも import して使うため（`_test.go` のシンボルは他パッケージから見えない）。
 - **cmd 層は `newGenerator()` の注入点だけを持つ**。選択の解決（[生成器は明示指定のみで選び、フラグ・環境変数・設定ファイル・既定の順に解決する](../requirements/generator-selection-precedence.md)）の結果で
   nixgen / prebuilt を組み立て、各サブコマンドへ渡す。サブコマンドは `Generator` インターフェイス
-  だけに依存し、nix を直接呼ばない。
+  だけに依存し、nix を直接呼ばない。init は生成器を使わずに `nix flake init` を直接実行するので、
+  `nixgen` が公開する `IsExperimentalDisabled` と `ExperimentalGuidance` を使って
+  experimental-features の判定と案内文を共有し、init の中に写しを持たない。
 - 2 層構成の境界（CLI と engine の間は `manifest.json`）は変えない。生成器は CLI 層の内側の
   構成で、engine から見た入力は従来どおり link-farm の store path と `manifest.json`。
 
