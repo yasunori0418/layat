@@ -212,29 +212,36 @@ func (r *outturnRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 func classifyError(err error) outturn.Error {
 	code := "E_LAYAT_FAILED"
 	message := err.Error()
+	// Failures bundled by errors.Join take the code of their first element.
+	cause := err
+	if joined, ok := err.(interface{ Unwrap() []error }); ok {
+		if errs := joined.Unwrap(); len(errs) > 0 {
+			cause = errs[0]
+		}
+	}
 	var ee *exitError
 	var ie *inputError
 	var fe *lock.FlockError
-	bf := buildFailure(err)
+	bf := buildFailure(cause)
 	switch {
-	case errors.As(err, &ie):
+	case errors.As(cause, &ie):
 		code = "E_INPUT"
-	case errors.As(err, &ee) && ee.code == 2:
+	case errors.As(cause, &ee) && ee.code == 2:
 		// exit 2 is apply --dryrun's conflict; its exitError carries no message, so supply one.
 		code = "E_LAYAT_COLLISION"
 		if message == "" {
 			message = "conflict(s) detected in dryrun"
 		}
-	case errors.Is(err, lock.ErrLocked) || errors.As(err, &fe):
+	case errors.Is(cause, lock.ErrLocked) || errors.As(cause, &fe):
 		code = "E_LOCK"
 	case bf != nil:
 		code = "E_LAYAT_BUILD"
 		message = generatorErrorMessage(bf)
-	case errors.Is(err, fs.ErrNotExist):
+	case errors.Is(cause, fs.ErrNotExist):
 		code = "E_NOTFOUND"
-	case errors.Is(err, fs.ErrPermission):
+	case errors.Is(cause, fs.ErrPermission):
 		code = "E_PERMISSION"
-	case isIOError(err):
+	case isIOError(cause):
 		code = "E_IO"
 	}
 	// nix-env's stderr went to the terminal only; --json keeps it after the summary.
