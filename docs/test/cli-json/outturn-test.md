@@ -15,7 +15,7 @@ follows:
   - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:24:34+09:00"
+  at: "2026-11-15T00:21:56+09:00"
 ---
 # outturn_test.go — エンベロープ基礎形・id 導出・エラー分類・stdout 所有権
 
@@ -40,7 +40,10 @@ generated:
   の原因は `E_NOTFOUND`、原因が無ければ汎用分類・→ [生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する](../../adr/generator-failure-single-build-code.md)）。入力不正のマーカーが
   `E_INPUT` になり not-found の原因に優先すること（未知の `--generator` / `LAYAT_GENERATOR` の値、
   `--manifest` と `-f` の併用、`--all` と `<link-farm>` 形の `--manifest` の併用・→ [入力の不正を E_INPUT に分類する](../../adr/input-errors-classified-e-input.md)）。ファイルシステム由来の sentinel が汎用の
-  形状判定に優先すること、排他制御由来の分類、いずれにも当たらない失敗の汎用分類
+  形状判定に優先すること、排他制御由来の分類（他の実行が保持していた場合と、ロックの取得
+  そのものが失敗した場合の両方が `E_LOCK`）、いずれにも当たらない失敗の汎用分類
+- **nix-env の診断** — nix-env の失敗は、再ラップされていてもメッセージが要約と nix-env の
+  stderr を改行でつないだものになり、分類は `E_LAYAT_FAILED` のままであること
 - **`--json` 下の stdout 所有権** — 行指向の出力（計画・世代一覧・パス列挙）が全て止まり、
   既定の契約では出ること。stderr の人間向け通知は両契約で維持されること
 - **run の開始と公開の網羅** — 各コマンドが run を開始して公開すること、登録済みの実行系
