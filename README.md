@@ -675,7 +675,7 @@ target, layat decides by its own record, not by where the existing link points:
 | any other symlink (foreign — e.g. one `home.file` placed) | replaced with a warning (last-wins) | same; a symlink is never renamed aside |
 | a regular file, or a real directory holding foreign entries (e.g. `recursive = true`) | conflict; nothing is placed and apply exits 1 | renamed to `<target>.layat-backup`, then placed |
 
-The foreign warning reads `layat: overwriting an unrecorded symlink (foreign; last-wins): <target>`.
+The foreign warning reads `layat: warning: overwriting an unrecorded symlink (foreign; last-wins): <target>`.
 Once replaced, the link is in layat's record and later applies are silent. A leftover
 `<target>.layat-backup` makes `--backup` stop with a conflict instead of overwriting it.
 A `method = "copy"` entry differs: it places once, so an unrecorded file, directory or symlink
@@ -704,10 +704,10 @@ To move a target from `home.file` to layat:
 |---|---|---|
 | `apply` / `reset` / `rollback` does not return | another layat run (a shellHook in another shell, an activation, a parallel apply) holds the lock of the same config | wait; it proceeds once that run ends. In a shellHook use `--no-wait` |
 | with `--no-wait -v`: `layat: skipped because another apply is in progress (…)`, or under `--all`, `layat: skipped apply <name> (another apply is in progress)` | the same lock was held, so the run skipped and exited 0 | run `layat apply <name>` after the other run ends |
-| `layat: keeping stale symlink because it mismatches the record: <target>` | the entry was dropped, but the link no longer points where layat recorded it | layat leaves it alone; delete it by hand if you do not need it |
-| `layat: the last-applied record (…) disagrees with the profile (…); using the record as the baseline` | the profile's current generation changed without layat (e.g. `nix-env --switch-generation` on it) | the record wins for stale removal; check `layat status` and `layat list-generations <name>` |
-| `layat: no last-applied record; starting from an empty baseline` | the config's first apply, or its state was deleted | nothing is removed as stale on this run; expected on a first apply |
-| `layat: this apply's origin (…) differs from the last-applied record's (…); the later apply wins` | one config is applied both from the home-manager module and from an entrypoint | apply it from only one of them, or give both the same `identity` (see [home-manager module](#home-manager-module)) |
+| `layat: warning: keeping stale symlink because it mismatches the record: <target>` | the entry was dropped, but the link no longer points where layat recorded it | layat leaves it alone; delete it by hand if you do not need it |
+| `layat: warning: the last-applied record (…) disagrees with the profile (…); using the record as the baseline` | the profile's current generation changed without layat (e.g. `nix-env --switch-generation` on it) | the record wins for stale removal; check `layat status` and `layat list-generations <name>` |
+| `layat: warning: no last-applied record; starting from an empty baseline` | the config's first apply, or its state was deleted | nothing is removed as stale on this run; expected on a first apply |
+| `layat: warning: this apply's origin (…) differs from the last-applied record's (…); the later apply wins` | one config is applied both from the home-manager module and from an entrypoint | apply it from only one of them, or give both the same `identity` (see [home-manager module](#home-manager-module)) |
 | an eval / build error you cannot place | the generator's internal nix command failed | rerun with `--debug`: each internal command is printed on stderr as `layat: + nix …`, and a generator error names its generator; run the command by hand |
 
 ---
