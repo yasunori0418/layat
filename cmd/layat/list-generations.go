@@ -136,7 +136,7 @@ func runListAllGenerations(run *listGenerationsRun) error {
 	userBase := backend.UserBase(stateDir)
 	homeNames, err := profileNamesUnder(userBase, manifest.RootKindHome)
 	if err != nil {
-		return fmt.Errorf("cannot read the profile base (%s): %w", userBase, err)
+		return err
 	}
 	systemBase := systemDirOverride()
 	if systemBase == "" {
@@ -144,7 +144,7 @@ func runListAllGenerations(run *listGenerationsRun) error {
 	}
 	systemNames, err := profileNamesUnder(systemBase, manifest.RootKindSystem)
 	if err != nil {
-		warnf(os.Stderr, "skipping the system profile base (%s): %v", systemBase, err)
+		warnf(os.Stderr, "skipping the system profile base: %v", err)
 	}
 
 	printed := false
@@ -194,7 +194,7 @@ func profileNamesUnder(base, mode string) ([]string, error) {
 		if errors.Is(err, fs.ErrNotExist) {
 			return nil, nil
 		}
-		return nil, err
+		return nil, fmt.Errorf("cannot list the profile base: %w", err)
 	}
 	var names []string
 	for _, d := range dents {
