@@ -212,6 +212,7 @@ func classifyError(err error) outturn.Error {
 	message := err.Error()
 	var ee *exitError
 	var ie *inputError
+	var fe *lock.FlockError
 	bf := buildFailure(err)
 	switch {
 	case errors.As(err, &ie):
@@ -222,7 +223,7 @@ func classifyError(err error) outturn.Error {
 		if message == "" {
 			message = "conflict(s) detected in dryrun"
 		}
-	case errors.Is(err, lock.ErrLocked):
+	case errors.Is(err, lock.ErrLocked) || errors.As(err, &fe):
 		code = "E_LOCK"
 	case bf != nil:
 		code = "E_LAYAT_BUILD"

@@ -345,6 +345,7 @@ func TestClassifyErrorCodes(t *testing.T) {
 		{"input marker survives a %w rewrap",
 			fmt.Errorf("context: %w", &inputError{err: errors.New("bad flags")}), "E_INPUT"},
 		{"lock sentinel", lock.ErrLocked, "E_LOCK"},
+		{"flock failure", &lock.FlockError{Dir: "/p", Err: syscall.ENOLCK}, "E_LOCK"},
 		{"not-found beats the IO shape", &fs.PathError{Op: "stat", Path: "/x", Err: fs.ErrNotExist}, "E_NOTFOUND"},
 		{"permission beats the IO shape", &fs.PathError{Op: "open", Path: "/x", Err: fs.ErrPermission}, "E_PERMISSION"},
 		{"residual IO PathError", &fs.PathError{Op: "rmdir", Path: "/x", Err: syscall.ENOTEMPTY}, "E_IO"},
