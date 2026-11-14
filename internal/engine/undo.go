@@ -96,10 +96,10 @@ func (a *applier) discardJournal() {
 }
 
 // unwind reverses applier.journal in LIFO order after origErr aborted an Apply/Rollback call,
-// attempting every inverse operation best-effort and reporting origErr plus each unrestorable
-// item to opts.Reportf. It returns the targets it could not restore, once each, relative to
-// a.root (absolute when a.root is empty or the target is not relative to it). The journal is
-// cleared regardless of outcome.
+// attempting every inverse operation best-effort. It reports the rollback and each unrestorable
+// item to opts.Reportf, and reports nothing when the journal is empty. It returns the targets it
+// could not restore, once each, relative to a.root (absolute when a.root is empty or the target
+// is not relative to it). The journal is cleared regardless of outcome.
 func (a *applier) unwind(origErr error) []string {
 	journal := a.journal
 	a.journal = nil
@@ -108,7 +108,6 @@ func (a *applier) unwind(origErr error) []string {
 		reportf = a.opts.Warnf
 	}
 	if len(journal) == 0 {
-		reportf("apply failed; no filesystem changes had been made yet: %v", origErr)
 		return nil
 	}
 
@@ -128,7 +127,7 @@ func (a *applier) unwind(origErr error) []string {
 		}
 	}
 
-	reportf("apply failed; rolled back this run's filesystem changes: %v", origErr)
+	reportf("rolled back this run's filesystem changes after the failure")
 	if len(failed) == 0 {
 		return nil
 	}

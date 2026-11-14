@@ -165,7 +165,7 @@ func TestApplyResultReachedStateOnFailure(t *testing.T) {
 }
 
 // TestApplyResultFailureWithEmptyJournalNotUnwound verifies a failure before any FS write leaves
-// Unwound false: the journal was empty, so nothing was rolled back.
+// Unwound false and reports no undo line: the journal was empty, so nothing was rolled back.
 func TestApplyResultFailureWithEmptyJournalNotUnwound(t *testing.T) {
 	if os.Getuid() == 0 {
 		t.Skip("running as root; read-only directory does not block")
@@ -178,9 +178,14 @@ func TestApplyResultFailureWithEmptyJournalNotUnwound(t *testing.T) {
 	}
 	lf := writeLinkFarm(t, fixedManifest(root, storeEntry(src, "conf", "blocked/child")))
 
-	res, err := Apply(Options{LinkFarm: lf, Name: "c", StateDir: state, Backend: &generation.Fake{}})
+	var reports, warns []string
+	res, err := Apply(Options{LinkFarm: lf, Name: "c", StateDir: state, Backend: &generation.Fake{},
+		Warnf: collectFormatted(&warns), Reportf: collectFormatted(&reports)})
 	if err == nil {
 		t.Fatal("Apply should fail on the blocked parent")
+	}
+	if len(reports) != 0 {
+		t.Errorf("reports = %q, want no undo report line", reports)
 	}
 	if res == nil {
 		t.Fatal("Apply should return the partial Result alongside the error")

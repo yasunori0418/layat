@@ -143,7 +143,7 @@ func TestPrintFailureJoined(t *testing.T) {
 }
 
 // failureDetailMarkers are the texts that open the engine's conflict listing and undo report lines.
-var failureDetailMarkers = []string{"conflict: ", "  → ", "apply failed; "}
+var failureDetailMarkers = []string{"conflict: ", "  → ", "rolled back this run's filesystem changes"}
 
 // assertFailureDetailsNotWarnings checks the engine output of an apply / rollback on stderr: the
 // conflict listing and the undo report are "layat: <text>" lines, never warnings.
@@ -248,11 +248,11 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 	t.Run("apply undo", func(t *testing.T) {
 		root := cliEngineSetup(t)
 		readOnlyDir(t, filepath.Join(root, "ro"))
-		stderr, err := applyManifest(t, entry("ro/leaf"))
+		stderr, err := applyManifest(t, entry(".a"), entry("ro/leaf"))
 		if err == nil {
 			t.Fatal("apply succeeded, want an FS failure")
 		}
-		assertFailureDetailsNotWarnings(t, stderr, "apply failed; ")
+		assertFailureDetailsNotWarnings(t, stderr, "rolled back this run's filesystem changes")
 		assertEngineWarning(t, stderr)
 	})
 
@@ -293,7 +293,7 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 		if err == nil {
 			t.Fatal("rollback succeeded, want an FS failure")
 		}
-		assertFailureDetailsNotWarnings(t, stderr, "apply failed; ")
+		assertFailureDetailsNotWarnings(t, stderr, "rolled back this run's filesystem changes")
 	})
 }
 
