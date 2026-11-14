@@ -186,7 +186,8 @@ func runListAllGenerations(run *listGenerationsRun) error {
 }
 
 // profileNamesUnder returns, sorted, the names under base holding a profile directly (roothash-family
-// directories hold none and are skipped). A base that does not exist yet lists nothing.
+// directories hold none and are skipped). A base that does not exist yet lists nothing; a profile
+// that cannot be checked is warned about and skipped.
 func profileNamesUnder(base, mode string) ([]string, error) {
 	dents, err := os.ReadDir(base)
 	if err != nil {
@@ -202,6 +203,9 @@ func profileNamesUnder(base, mode string) ([]string, error) {
 		}
 		prof := paths.Resolve(base, d.Name(), mode, "", false)
 		if _, err := os.Lstat(prof.Profile); err != nil {
+			if !errors.Is(err, fs.ErrNotExist) {
+				warnf(os.Stderr, "skipping the profile %s: %v", d.Name(), err)
+			}
 			continue
 		}
 		names = append(names, d.Name())
