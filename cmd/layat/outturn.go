@@ -14,6 +14,7 @@ import (
 
 	"github.com/yasunori0418/outturn/go"
 
+	"github.com/yasunori0418/layat/internal/generation/nixprofile"
 	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/lock"
 )
@@ -234,6 +235,11 @@ func classifyError(err error) outturn.Error {
 		code = "E_PERMISSION"
 	case isIOError(err):
 		code = "E_IO"
+	}
+	// nix-env's stderr went to the terminal only; --json keeps it after the summary.
+	var ce *nixprofile.CommandError
+	if bf == nil && errors.As(err, &ce) && ce.Stderr != "" {
+		message += "\n" + ce.Stderr
 	}
 	return outturn.Error{Code: code, Message: message}
 }

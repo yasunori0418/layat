@@ -1,9 +1,12 @@
 package nixprofile
 
 import (
+	"errors"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -116,5 +119,70 @@ func TestBases(t *testing.T) {
 	}
 	if got, want := b.SystemBase(), "/nix/var/nix/profiles/layat"; got != want {
 		t.Errorf("SystemBase = %q, want %q", got, want)
+	}
+}
+
+// fakeNixEnv puts a nix-env at the head of PATH that writes stderr and exits 1.
+func fakeNixEnv(t *testing.T, stderr string) {
+	t.Helper()
+	bin := t.TempDir()
+	script := "#!/bin/sh\nprintf '%s\\n' '" + stderr + "' >&2\nexit 1\n"
+	if err := os.WriteFile(filepath.Join(bin, "nix-env"), []byte(script), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("PATH", bin+string(os.PathListSeparator)+os.Getenv("PATH"))
+}
+
+// TestCommandErrorCapturesStderr pins that a failed nix-env comes back as a CommandError
+// naming the op and the profile, with nix-env's stderr in Stderr and not in Error().
+func TestCommandErrorCapturesStderr(t *testing.T) {
+	const diag = "error: fake nix-env failure"
+	fakeNixEnv(t, diag)
+	profile := filepath.Join(t.TempDir(), "profile")
+
+	cases := []struct {
+		name string
+		run  func() error
+		want string
+	}{
+		{"commit", func() error { return New().Commit(profile, "/farm") },
+			"cannot run nix-env --set (" + profile + "): exit status 1"},
+		{"switch", func() error { return New().Switch(profile, 3) },
+			"cannot run nix-env --switch-generation 3 (" + profile + "): exit status 1"},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			err := c.run()
+			var ce *CommandError
+			if !errors.As(err, &ce) {
+				t.Fatalf("got %v, want a CommandError", err)
+			}
+			if ce.Profile != profile {
+				t.Errorf("Profile = %q, want %q", ce.Profile, profile)
+			}
+			if !strings.Contains(ce.Stderr, diag) {
+				t.Errorf("Stderr = %q, want it to contain %q", ce.Stderr, diag)
+			}
+			if got := err.Error(); got != c.want {
+				t.Errorf("Error() = %q, want %q", got, c.want)
+			}
+			var ee *exec.ExitError
+			if !errors.As(err, &ee) {
+				t.Errorf("%v does not unwrap to *exec.ExitError", err)
+			}
+		})
+	}
+}
+
+// TestNixEnvNotOnPath pins that a missing nix-env is reported with the op and the profile.
+func TestNixEnvNotOnPath(t *testing.T) {
+	t.Setenv("PATH", t.TempDir())
+	profile := filepath.Join(t.TempDir(), "profile")
+	err := New().Commit(profile, "/farm")
+	if !errors.Is(err, exec.ErrNotFound) {
+		t.Fatalf("got %v, want exec.ErrNotFound", err)
+	}
+	if want := "cannot run nix-env --set (" + profile + "): "; !strings.HasPrefix(err.Error(), want) {
+		t.Errorf("Error() = %q, want prefix %q", err.Error(), want)
 	}
 }
