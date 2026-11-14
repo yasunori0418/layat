@@ -2,6 +2,10 @@ package lock
 
 import (
 	"errors"
+	"io/fs"
+	"path/filepath"
+	"strings"
+	"syscall"
 	"testing"
 	"time"
 )
@@ -16,8 +20,53 @@ func TestTryLockConflict(t *testing.T) {
 	defer func() { _ = l1.Release() }()
 
 	// A try-lock while held returns ErrLocked.
-	if _, err := Acquire(dir, false); !errors.Is(err, ErrLocked) {
+	_, err = Acquire(dir, false)
+	if !errors.Is(err, ErrLocked) {
 		t.Fatalf("try-lock while held: got %v, want ErrLocked", err)
+	}
+	var fe *FlockError
+	if !errors.As(err, &fe) || fe.Dir != dir {
+		t.Fatalf("try-lock while held: got %v, want a FlockError on %s", err, dir)
+	}
+}
+
+// TestFlockFailureIsFlockError: a failed blocking flock comes back as a FlockError that names the
+// profileDir and unwraps to the syscall error.
+func TestFlockFailureIsFlockError(t *testing.T) {
+	dir := t.TempDir()
+	orig := flock
+	t.Cleanup(func() { flock = orig })
+	flock = func(int, int) error { return syscall.ENOLCK }
+
+	_, err := Acquire(dir, true)
+	var fe *FlockError
+	if !errors.As(err, &fe) || fe.Dir != dir {
+		t.Fatalf("Acquire: got %v, want a FlockError on %s", err, dir)
+	}
+	if !errors.Is(err, syscall.ENOLCK) {
+		t.Errorf("Acquire: %v does not unwrap to ENOLCK", err)
+	}
+	if errors.Is(err, ErrLocked) {
+		t.Errorf("Acquire: %v must not be ErrLocked", err)
+	}
+	if want := "cannot acquire flock (" + dir + "): "; !strings.HasPrefix(err.Error(), want) {
+		t.Errorf("Acquire: message %q, want prefix %q", err.Error(), want)
+	}
+}
+
+// TestOpenFailureIsNotFlockError: a profileDir that cannot be opened keeps its fs cause and is
+// not a FlockError.
+func TestOpenFailureIsNotFlockError(t *testing.T) {
+	_, err := Acquire(filepath.Join(t.TempDir(), "missing"), true)
+	if err == nil {
+		t.Fatal("Acquire on a missing dir: got nil error")
+	}
+	var fe *FlockError
+	if errors.As(err, &fe) {
+		t.Errorf("Acquire on a missing dir: %v is a FlockError", err)
+	}
+	if !errors.Is(err, fs.ErrNotExist) {
+		t.Errorf("Acquire on a missing dir: %v does not unwrap to fs.ErrNotExist", err)
 	}
 }
 
