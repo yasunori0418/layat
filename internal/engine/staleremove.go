@@ -22,7 +22,7 @@ func (a *applier) removeStale(actions []planner.RemoveAction) error {
 			continue
 		}
 		if err := os.Remove(act.TargetAbs); err != nil {
-			return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot remove stale symlink (%s): %w", act.TargetAbs, err))
+			return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot remove stale symlink: %w", err))
 		}
 		a.result.Removed = append(a.result.Removed, act.Entry.Target)
 		a.journalRelinkedSymlink(act.TargetAbs, planner.LinkDest(act.Entry))
@@ -57,14 +57,14 @@ func (a *applier) preRemove(actions []planner.RemoveAction) error {
 			case errors.Is(err, syscall.ENOTEMPTY), errors.Is(err, syscall.EEXIST):
 				return fmt.Errorf("directory gained content after planning; cannot migrate this placement target safely (%s); re-run apply to converge", act.TargetAbs)
 			default:
-				return fmt.Errorf("cannot remove empty directory for migration (%s): %w", act.TargetAbs, err)
+				return fmt.Errorf("cannot remove empty directory for migration: %w", err)
 			}
 		default: // planner.RemoveUnlink
 			if !reverifyStale(act) {
 				return a.entryFailed(act.Entry.Target, fmt.Errorf("recorded symlink changed after planning; cannot migrate this placement target safely (%s); re-run apply to converge", act.Entry.Target))
 			}
 			if err := os.Remove(act.TargetAbs); err != nil {
-				return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot remove recorded symlink for migration (%s): %w", act.TargetAbs, err))
+				return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot remove recorded symlink for migration: %w", err))
 			}
 			a.result.Removed = append(a.result.Removed, act.Entry.Target)
 			a.journalRelinkedSymlink(act.TargetAbs, planner.LinkDest(act.Entry))
@@ -106,7 +106,7 @@ func (a *applier) pruneEmptyAncestors(removedAbs string) error {
 			if errors.Is(err, syscall.ENOTEMPTY) || errors.Is(err, syscall.EEXIST) {
 				return nil
 			}
-			return fmt.Errorf("cannot remove empty ancestor directory (%s): %w", dir, err)
+			return fmt.Errorf("cannot remove empty ancestor directory: %w", err)
 		}
 		a.result.Pruned = append(a.result.Pruned, dir)
 		a.journalRemovedEmptyDir(dir, mode)
@@ -133,7 +133,7 @@ func pathHasSymlinkComponent(root, dir string) (bool, error) {
 			if errors.Is(err, fs.ErrNotExist) {
 				return false, nil
 			}
-			return false, fmt.Errorf("cannot lstat ancestor directory (%s): %w", cur, err)
+			return false, fmt.Errorf("cannot lstat ancestor directory: %w", err)
 		}
 		if info.Mode()&os.ModeSymlink != 0 {
 			return true, nil

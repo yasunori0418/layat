@@ -588,15 +588,15 @@ func requireRoot(rootKind string, geteuid func() int) error {
 
 func (a *applier) ensureProfileDir() error {
 	if err := os.MkdirAll(a.profile.Dir, 0o755); err != nil {
-		return fmt.Errorf("cannot create profileDir (%s): %w", a.profile.Dir, err)
+		return fmt.Errorf("cannot create profileDir: %w", err)
 	}
 	// Place backref .root at the <roothash> level (reverse-lookup seam for orphan profiles).
 	if a.profile.Backref != "" {
 		if err := os.MkdirAll(a.profile.BackrefDir, 0o755); err != nil {
-			return fmt.Errorf("cannot create backref directory (%s): %w", a.profile.BackrefDir, err)
+			return fmt.Errorf("cannot create backref directory: %w", err)
 		}
 		if err := os.WriteFile(a.profile.Backref, []byte(a.root+"\n"), 0o644); err != nil {
-			return fmt.Errorf("cannot write backref (%s): %w", a.profile.Backref, err)
+			return fmt.Errorf("cannot write backref: %w", err)
 		}
 	}
 	return nil

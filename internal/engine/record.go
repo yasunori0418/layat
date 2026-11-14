@@ -85,7 +85,7 @@ func readRecord(file string) (*lastApplied, *manifest.Manifest, error) {
 		return nil, nil, nil
 	}
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot read the last-applied record (%s): %w", file, err)
+		return nil, nil, fmt.Errorf("cannot read the last-applied record: %w", err)
 	}
 	rec, m, err := parseRecord(data)
 	if err != nil {
@@ -165,11 +165,11 @@ func writeRecord(rec paths.Record, root, linkFarm string, origin Origin, manifes
 		return fmt.Errorf("cannot encode the last-applied record (%s): %w", rec.File, err)
 	}
 	if err := os.MkdirAll(rec.Dir, 0o755); err != nil {
-		return fmt.Errorf("cannot create the last-applied record directory (%s): %w", rec.Dir, err)
+		return fmt.Errorf("cannot create the last-applied record directory: %w", err)
 	}
 	if rec.Backref != "" {
 		if err := os.WriteFile(rec.Backref, []byte(root+"\n"), 0o644); err != nil {
-			return fmt.Errorf("cannot write backref (%s): %w", rec.Backref, err)
+			return fmt.Errorf("cannot write backref: %w", err)
 		}
 	}
 	tmp, err := os.CreateTemp(rec.Dir, ".last-applied-*.tmp")
@@ -189,7 +189,7 @@ func writeRecord(rec paths.Record, root, linkFarm string, origin Origin, manifes
 	}
 	if werr != nil {
 		_ = os.Remove(tmp.Name())
-		return fmt.Errorf("cannot write the last-applied record (%s): %w", rec.File, werr)
+		return fmt.Errorf("cannot write the last-applied record: %w", werr)
 	}
 	return nil
 }
@@ -197,7 +197,7 @@ func writeRecord(rec paths.Record, root, linkFarm string, origin Origin, manifes
 // removeRecord deletes the record; an absent record is not an error.
 func removeRecord(file string) error {
 	if err := os.Remove(file); err != nil && !errors.Is(err, fs.ErrNotExist) {
-		return fmt.Errorf("cannot remove the last-applied record (%s): %w", file, err)
+		return fmt.Errorf("cannot remove the last-applied record: %w", err)
 	}
 	return nil
 }

@@ -116,7 +116,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	// no-op with zero teardown targets.
 	if _, err := os.Stat(prof.Profile); err != nil {
 		if !errors.Is(err, fs.ErrNotExist) {
-			return nil, fmt.Errorf("cannot check profile (%s): %w", prof.Profile, err)
+			return nil, fmt.Errorf("cannot check profile: %w", err)
 		}
 		if _, err := os.Lstat(rec.File); errors.Is(err, fs.ErrNotExist) {
 			return res, nil
@@ -186,7 +186,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 			copyTargets = append(copyTargets, targetAbs)
 			res.RemovedCopies = append(res.RemovedCopies, e.Target)
 		} else if !errors.Is(err, fs.ErrNotExist) {
-			return nil, fmt.Errorf("cannot lstat copy target (%s): %w", targetAbs, err)
+			return nil, fmt.Errorf("cannot lstat copy target: %w", err)
 		}
 	}
 
@@ -243,7 +243,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 			res.Pruned = a.result.Pruned
 			res.FailedTarget = plannedCopies[i]
 			res.Unreached = plannedCopies[i+1:]
-			err = fmt.Errorf("cannot remove copy target (%s): %w", targetAbs, err)
+			err = fmt.Errorf("cannot remove copy target: %w", err)
 			return res, errors.Join(err, recordAfterReset(rec, root, b, entries))
 		}
 		removedCopies = append(removedCopies, plannedCopies[i])
