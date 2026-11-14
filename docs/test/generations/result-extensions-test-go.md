@@ -10,7 +10,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:27:49+09:00"
+  at: "2026-11-15T06:02:48+09:00"
 ---
 # result_extensions_test.go — 実行結果のインベントリ・世代観測・到達状態・構造化 warning
 
@@ -37,6 +37,8 @@ profile リンク）を symlink だけで作るため、世代番号を読み戻
 - **失敗時の到達状態** — 配置途中の失敗で、完了済み操作リストは完了の記録として残り、
   失敗 entry は `FailedTarget`（`Placed` には入らない）、以降の予定 target は
   `Unreached`。部分の結果がエラーと並んで返り、`Unwound` が journal 巻き戻しを表す
+- **journal が空の失敗** — FS 書き込み前の失敗では `Unwound` が false で `Unrestored` も空になり、
+  undo の報告の行は出ない
 - **`--recopy` の Unreached** — place-once の分類で `CopyAction` が生まれなかった copy
   entry も、`materializeCopies` 到達前に失敗した run では `Unreached` に載る
   （recopy の実行対象は plan ではなく manifest であるため）
