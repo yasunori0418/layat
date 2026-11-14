@@ -306,6 +306,7 @@ verified:
 
   # derives_from 以外の relation で新しい上流を指す下流。
   item "$repo" risk-old "$RISK_OLD" risk "要求より古い medium の risk" <<YAML
+section: engine-core
 status: stable
 threatens:
   - "$REQ_FRESH"
@@ -377,6 +378,7 @@ YAML
 risk() {
   local repo=$1 file=$2 id=$3 name=$4 level=$5 status=$6 verified=$7
   item "$repo" "$file" "$id" risk "$name" <<YAML
+section: engine-core
 status: $status
 threatens:
   - "$REQ_FRESH"
