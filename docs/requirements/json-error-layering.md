@@ -20,9 +20,9 @@ specification: |
   sentinel or a type: `E_LOCK` for flock, `E_LAYAT_BUILD` for a failure of a manifest
   generator other than prebuilt at the roots or build stage, `E_NOTFOUND`, `E_PERMISSION`,
   `E_IO` for other filesystem / external I/O failures, `E_LAYAT_COLLISION` for the
-  conflict of `apply --dryrun` (exit 2), and `E_INPUT` for invalid input (input that is
-  known to be wrong before the execution starts from only the command line, the
-  environment variables, the configuration file, and whether stdin is a TTY). Anything else SHALL fall back to the tool-generic `E_LAYAT_FAILED`.
+  conflict of `apply --dryrun` (exit 2), and `E_INPUT` for invalid input (input that can
+  be determined to be wrong before the execution starts, solely from the command line,
+  the environment variables, the configuration file, and whether stdin is a TTY). Anything else SHALL fall back to the tool-generic `E_LAYAT_FAILED`.
 specification_ja: |
   単一 config コマンドは RunE 冒頭・name 引数の時点で subject が確定するため、その実行の
   失敗（entrypoint 発見・eval / build・lock・engine 実行時）は全て `results[0].errors[]` に
