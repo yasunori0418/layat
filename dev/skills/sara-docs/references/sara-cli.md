@@ -25,11 +25,12 @@ sara-new risk lock-ordering docs/risks -- \
 - 返るのは機械可読の 2 行（`id:` = 採番された正式 ID、`file:` = 起票したファイルのパス）。
 - `--` 以降は `sara init` へそのまま渡る。型ごとのオプション（relation・固有フィールド）は
   `sara init <型> --help` で確認する。requirement / quality / test_plan の
-  `--specification` / `--specification-ja`、`requirement` / `design` / `ubiquitous_term` /
-  `adr` / `sara_adr` / `risk` の `--section`、test_case の `--resource` など、モデルの
-  必須フィールドはここで渡す。`section` を持つ型で `--section`（`--section=…` でもよい）を
-  省くと、`sara-new` は起票せず exit 2 で落ちる。値と index.md の見出しの対応は
-  `dev/scripts/okf-index.sh` の表で確かめる（`risk` は `dev/tests/test-categories.tsv`）。
+  `--specification` / `--specification-ja`、
+  `requirement` / `design` / `ubiquitous_term` / `adr` / `sara_adr` / `risk` の `--section`、
+  test_case の `--resource` など、モデルの必須フィールドはここで渡す。
+  `section` を持つ型で `--section`（`--section=…` でもよい）を省くと、`sara-new` は起票せず
+  exit 2 で落ちる。値と index.md の見出しの対応は `dev/scripts/okf-index.sh` の表で確かめる
+  （`risk` は `dev/tests/test-categories.tsv`）。
 - `--` 以降に `--description`（`-d` / `--description=…` でもよい）が無ければ、起票せず exit 2 で
   落ちる。環境変数 `SARA_NEW_GENERATED_BY` が空か未設定のときも exit 2 で落ちる。どちらも
   ファイルを作らない。
