@@ -102,6 +102,13 @@ SECTIONS=(
   "adr|modules|モジュール統合"
   "adr|dev-build|ビルド・依存・開発規約"
   "adr|ci-release-docs|CI・リリース・テンプレート・ドキュメント"
+  "sara_adr|graph-model|グラフのモデル"
+  "sara_adr|ids-and-filenames|ID・ファイル名・起票"
+  "sara_adr|frontmatter-fields|frontmatter のキー"
+  "sara_adr|verification|機械検証と鮮度"
+  "sara_adr|authoring|ADR と規範文の書き方"
+  "sara_adr|doc-layout|文書の配置と index.md の生成"
+  "sara_adr|risk-test-defect|risk・テスト系 item・欠陥"
 )
 # deprecated の item をまとめる末尾の節の見出し。
 DEPRECATED_HEADING="## 有効でない item（\`deprecated\`）"
