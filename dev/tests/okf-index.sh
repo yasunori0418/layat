@@ -59,6 +59,7 @@ id: "ADR-11111111-1111-4111-8111-111111111111"
 type: adr
 name: "フィールドを持つ決定"
 description: "フィールドの要約"
+section: concept
 status: stable
 ---
 # ADR-11111111-1111-4111-8111-111111111111: フィールドを持つ決定
@@ -72,6 +73,7 @@ cat > "$fixture/docs/adr/from-paragraph.md" <<'EOF'
 id: "ADR-22222222-2222-4222-8222-222222222222"
 type: adr
 name: "results[] を返す"
+section: cli-output
 status: deprecated
 ---
 # ADR-22222222-2222-4222-8222-222222222222: results[] を返す
@@ -269,7 +271,7 @@ else
   fault "(4) エントリがファイル名順に並ばない（実際: $order）"
 fi
 
-# --- (5) requirement・design・ubiquitous_term は section の節に分ける ----------
+# --- (5) requirement・design・ubiquitous_term・adr は section の節に分ける ------
 
 want_terms=$(cat <<'EOF'
 # 用語（`ubiquitous_term`）
@@ -318,6 +320,8 @@ expect_line "name_ja を持たない語はリンク文字列を name だけに�
 want_adrs=$(cat <<'EOF'
 # ADR（`adr`）
 
+## コンセプトと全体構成
+
 * [フィールドを持つ決定](./with-field.md) - フィールドの要約 (stable)
 
 ## 有効でない item（`deprecated`）
@@ -326,7 +330,7 @@ want_adrs=$(cat <<'EOF'
 EOF
 )
 if [ "$(cat "$fixture/docs/adr/index.md")" = "$want_adrs" ]; then
-  pass "節に分けない型では、deprecated の item を主題の並びから外して末尾の節にだけ出す"
+  pass "adr でも、deprecated の item を section の節から外して末尾の節にだけ出す"
 else
   fault "(7) docs/adr/index.md の deprecated の item の置き場所が食い違う"
   sed 's/^/    /' "$fixture/docs/adr/index.md"
@@ -352,6 +356,26 @@ if (cd "$none" && bash "$generator") > "$work/none.out" 2>&1 && [ ! -s "$work/no
 else
   fault "(7) deprecated の item が 1 件も無い入力で生成が失敗したか、何かを出力したか、末尾の節の見出しが出た"
   sed 's/^/    /' "$work/none.out"
+fi
+
+# from-paragraph.md（cli-output）はファイル名では with-field.md（concept）より前だが、節は表の順に並ぶ。
+want_none_adrs=$(cat <<'EOF'
+# ADR（`adr`）
+
+## コンセプトと全体構成
+
+* [フィールドを持つ決定](./with-field.md) - フィールドの要約 (stable)
+
+## 出力・エラー・`--json`
+
+* [results\[\] を返す](./from-paragraph.md) - 最初の段落は`results[]`の後に English words を挟む。 (stable)
+EOF
+)
+if [ "$(cat "$none/docs/adr/index.md")" = "$want_none_adrs" ]; then
+  pass "adr の index.md は section の節に分け、節を表の順に並べる"
+else
+  fault "(5) docs/adr/index.md の節分けが食い違う"
+  sed 's/^/    /' "$none/docs/adr/index.md"
 fi
 
 # 写しに、節に分ける型の deprecated と draft の要件、区分の deprecated のテスト条件とテストケースを足し、
