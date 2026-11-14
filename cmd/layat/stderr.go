@@ -65,9 +65,9 @@ func noticef(w io.Writer, format string, args ...any) {
 	_, _ = fmt.Fprintf(w, msgPrefix+format+"\n", args...)
 }
 
-// engineWarnf is the engine's Warnf: noticef writing to os.Stderr, looked up at call time.
+// engineWarnf is the engine's Warnf: warnf writing to os.Stderr, looked up at call time.
 func engineWarnf(format string, args ...any) {
-	noticef(os.Stderr, format, args...)
+	warnf(os.Stderr, format, args...)
 }
 
 // engineReportf is the engine's Reportf for the details of a failure: noticef writing to
