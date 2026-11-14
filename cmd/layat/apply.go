@@ -374,7 +374,7 @@ func runApplyAll(run *applyRun) error {
 	if code == 0 {
 		return nil
 	}
-	return &exitCodeError{code: code, msg: fmt.Sprintf("apply --all: %d config(s) failed", failures)}
+	return &exitError{code: code, msg: fmt.Sprintf("apply --all: %d config(s) failed", failures)}
 }
 
 // geteuid reports the caller's effective uid for apply --all's root-mix warning; tests replace it.

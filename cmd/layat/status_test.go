@@ -127,8 +127,8 @@ func TestStatusTextOutput(t *testing.T) {
 			t.Errorf("stdout = %q, want no line for the error subject %s", out, subject)
 		}
 	}
-	var ec exitCodeX
-	if !errors.As(err, &ec) || ec.ExitCode() != 1 {
+	var ee *exitError
+	if !errors.As(err, &ee) || ee.code != 1 {
 		t.Errorf("runStatus error = %v, want an exit code 1 error", err)
 	}
 }

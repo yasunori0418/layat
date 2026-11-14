@@ -84,7 +84,7 @@ func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 		t.Fatalf("counts = (%d, %d, %d), want (2, 0, 1)", applied, skipped, failures)
 	}
 	// main emits with the aggregate error the exit-code path builds from the same counts.
-	cmdErr := &exitCodeError{code: applyAllExitCode(failures > 0, false), msg: "apply --all: 1 config(s) failed"}
+	cmdErr := &exitError{code: applyAllExitCode(failures > 0, false), msg: "apply --all: 1 config(s) failed"}
 	if err := run.emit(cmdErr); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
@@ -97,7 +97,7 @@ func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 	if topErrs, ok := doc["errors"]; ok {
 		t.Errorf("top-level errors = %v, want absent — the failure belongs to subject b", topErrs)
 	}
-	if cmdErr.ExitCode() == 0 {
+	if cmdErr.code == 0 {
 		t.Error("exit code = 0, want non-zero alongside the error status")
 	}
 
@@ -147,7 +147,7 @@ func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 	if failures != 1 {
 		t.Fatalf("failures = %d, want 1", failures)
 	}
-	if err := run.emit(&exitCodeError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
+	if err := run.emit(&exitError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	checkConformance(t, buf)
@@ -461,7 +461,7 @@ func TestApplyAllSingleConfigFailureMatchesNamedApply(t *testing.T) {
 	all, allBuf := newApplyTestRun()
 	aggregateApply(all, []string{"default"}, 4, func(string) (*engine.Result, error) { return newRes(), failure })
 	// --all's aggregate error must not reach the already settled subject.
-	if err := all.emit(&exitCodeError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
+	if err := all.emit(&exitError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
 		t.Fatalf("emit all: %v", err)
 	}
 
