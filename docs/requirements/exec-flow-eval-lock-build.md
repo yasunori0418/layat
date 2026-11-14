@@ -96,7 +96,7 @@ specification_ja: |
   規定しない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T13:39:28+09:00"
+  at: "2026-11-15T06:09:16+09:00"
 ---
 # 実行フローの順序は eval 先行 → flock → build とし build をロック内に閉じる
 
@@ -122,7 +122,7 @@ layat apply <name> [-f <ep>] [--root <p>]
      a. flock を取得（キー = 確定 profileDir）。
         明示 apply / rollback は blocking（LOCK_EX・取得まで待ち「他の apply 完了待ち」を表示）。
         shellHook 経路（--no-wait）は try-lock（LOCK_NB）で保持中ならスキップし、stderr に1行通知する
-        （例: `layat: another apply in progress, skipped (run \`layat apply\` manually)`・シェル入室はブロックしない）。
+        （例: `layat: skipped apply <name> because another apply is in progress (run layat apply <name> after it ends)`・シェル入室はブロックしない）。
         同一 profileDir への同時実行はユーザー責任で衝突時は後勝ち
      b. ロック内で nix build <ep>#layat.<system>.<name> --out-link <profileDir>/.pending
         （legacy は nix build -f <ep> layat.<name> --out-link <profileDir>/.pending）

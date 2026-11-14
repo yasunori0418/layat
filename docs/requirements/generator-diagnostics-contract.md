@@ -19,9 +19,9 @@ specification: |
   inside that generator's implementation. The CLI SHALL decide the presentation: the
   human-readable form SHALL show the summary and the guidance without repeating the raw
   diagnostics, and the `--json` form SHALL include both the summary and the captured
-  diagnostics in `errors[].message`. Under `--debug`, the generator SHALL write each
-  internal command it runs to the writer, prefixed with the generator name, and the CLI
-  SHALL add the generator name to the human-readable summary of a failure; `--debug` SHALL
+  diagnostics in `errors[].message`. Under `--debug`, the generator SHALL pass each internal
+  command it runs to the function passed by the CLI, the CLI SHALL write it to stderr, and
+  the CLI SHALL add the generator name to the human-readable summary of a failure; `--debug` SHALL
   NOT change `errors[].message`. Failures of a generator other than prebuilt at the `roots`
   and `build` stages SHALL be classified as `E_LAYAT_BUILD` regardless of Kind. Failures at
   the `discover` stage and failures of the prebuilt generator SHALL be classified from
@@ -42,8 +42,8 @@ specification_ja: |
   実装の中に閉じなければならない。表示は CLI が決めなければならない: 人間向けは要約と
   案内を示し生の診断を再掲せず、`--json` は `errors[].message` に要約とキャプチャした
   診断の両方を含めなければならない。`--debug` のとき、生成器は実行する内部コマンドを
-  生成器名付きで writer へ書き、CLI は人間向けの失敗の要約に生成器名を添えなければ
-  ならない。`--debug` は `errors[].message` を変えてはならない。prebuilt 以外の生成器の
+  CLI が渡した関数へ渡し、CLI はそれを stderr へ書き、人間向けの失敗の要約に生成器名を
+  添えなければならない。`--debug` は `errors[].message` を変えてはならない。prebuilt 以外の生成器の
   Stage `roots` / `build` の失敗は Kind によらず `E_LAYAT_BUILD` に分類しなければならない。
   Stage `discover` の失敗と prebuilt 生成器の失敗は、生成器契約の前と同じく原因から
   分類しなければならない（原因が `fs.ErrNotExist` を包む = `E_NOTFOUND`、
@@ -53,7 +53,7 @@ specification_ja: |
   ならない（Message の内部コマンドの一部として現れる分は対象外）。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:04:55+09:00"
+  at: "2026-11-15T06:09:16+09:00"
 ---
 # 生成器は診断を CLI が渡す writer へ素通しし、失敗を構造化して返し、表示は CLI が決める
 
@@ -61,7 +61,7 @@ generated:
 
 | 担い手 | 責務 |
 |---|---|
-| 生成器 | 診断を渡された writer へ書く（成功時も素通し・stdout には書かない）。`--debug` のとき実行する内部コマンドを生成器名付きで writer へ逐次書く。失敗を `generator.Error` に分類する。固有の文字列判定と案内文を持つ |
+| 生成器 | 診断を渡された writer へ書く（成功時も素通し・stdout には書かない）。`--debug` のとき実行する内部コマンドを CLI が渡した関数へ逐次渡す（CLI がそれを stderr へ書く）。失敗を `generator.Error` に分類する。固有の文字列判定と案内文を持つ |
 | CLI | 表示を決める。人間向け = 要約 + 案内（`--debug` のとき生成器名を添える）、`--json` = `errors[].message` に要約 + キャプチャ（`--debug` に左右されず、生成器名を前置きしない） |
 
 `generator.Error` の `Kind`:
