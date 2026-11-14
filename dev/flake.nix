@@ -146,6 +146,8 @@
               textlint
               go
               gopls
+              # checks.golangci-lint と同じ版の lint を手元で走らせる。
+              golangci-lint
               # ローカルのカバレッジ計測。func サマリを出し、HTML 表示のコマンドを案内する。
               (writeShellScriptBin "layat-coverage" ''
                 set -euo pipefail
