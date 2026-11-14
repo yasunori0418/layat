@@ -2,6 +2,7 @@ package nixgen
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"io"
 	"io/fs"
@@ -260,8 +261,8 @@ func TestDiscoverFailureIsDiscoverStage(t *testing.T) {
 	}
 }
 
-// TestDiscoverUnreadableFileFlag pins that an -f path nix cannot stat for lack of permission is
-// reported as that, not as a missing path.
+// TestDiscoverUnreadableFileFlag pins that an -f path discovery cannot stat for lack of
+// permission is reported as that, not as a missing path.
 func TestDiscoverUnreadableFileFlag(t *testing.T) {
 	if os.Geteuid() == 0 {
 		t.Skip("root bypasses directory permissions")
@@ -335,6 +336,14 @@ func TestRootsCommandFailure(t *testing.T) {
 	if ge.Stderr != "error: boom" {
 		t.Errorf("Stderr = %q, want the captured stderr", ge.Stderr)
 	}
+
+	if _, err := g.AllRoots(); err == nil || err.Error() != "cannot run nix eval ("+dir+"#layat."+g.system+"): exit status 1" {
+		t.Errorf("AllRoots error = %v, want the namespace installable", err)
+	}
+	stubNixScript(t, "case \"$2\" in *.rootKind) printf fixed;; *) echo 'error: boom' >&2; exit 1;; esac")
+	if _, err := g.Roots("web"); err == nil || err.Error() != "cannot run nix eval ("+dir+"#layat."+g.system+".web.root): exit status 1" {
+		t.Errorf("fixed root eval error = %v, want the .root installable", err)
+	}
 }
 
 // TestRootsMissingConfigMessage pins the "config not found" summary and its guidance.
@@ -376,7 +385,7 @@ func TestAllRootsMissingNamespaceMessage(t *testing.T) {
 }
 
 // TestDryBuildCommandFailure pins a failed read-only nix build as Stage build carrying the
-// one-line Message and the captured stderr.
+// one-line Message and the captured stderr, and the legacy installable in the Message.
 func TestDryBuildCommandFailure(t *testing.T) {
 	stubNix(t, "error: boom")
 	g, dir := discovered(t, io.Discard, nil)
@@ -389,6 +398,9 @@ func TestDryBuildCommandFailure(t *testing.T) {
 	if want := "cannot run nix build (" + dir + "#layat." + g.system + ".web): exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
+	if ge.Stderr != "error: boom" {
+		t.Errorf("Stderr = %q, want the captured stderr", ge.Stderr)
+	}
 	legacyDir := t.TempDir()
 	writeFile(t, legacyDir, "default.nix")
 	legacy := New(io.Discard, nil)
@@ -398,9 +410,6 @@ func TestDryBuildCommandFailure(t *testing.T) {
 	_, err = legacy.DryBuild("web")
 	if want := "cannot run nix build (-f " + filepath.Join(legacyDir, "default.nix") + " layat.web): exit status 1"; err == nil || err.Error() != want {
 		t.Errorf("legacy DryBuild error = %v, want %q", err, want)
-	}
-	if ge.Stderr != "error: boom" {
-		t.Errorf("Stderr = %q, want the captured stderr", ge.Stderr)
 	}
 }
 
@@ -428,17 +437,21 @@ func TestBuildCommandFailureStreamsStderr(t *testing.T) {
 // eval, an unreadable out-link, an empty --print-out-paths — as Kind Failed generator.Errors of
 // the stage they happen in.
 func TestResultFailuresAreGeneratorErrors(t *testing.T) {
+	var syntaxErr *json.SyntaxError
 	cases := []struct {
 		name, stdout string
 		run          func(g *Generator) error
 		want         generator.Stage
+		cause        func(err error) bool
 	}{
-		{"batch eval", "{bad", func(g *Generator) error { _, err := g.AllRoots(); return err }, generator.StageRoots},
+		{"batch eval", "{bad", func(g *Generator) error { _, err := g.AllRoots(); return err }, generator.StageRoots,
+			func(err error) bool { return errors.As(err, &syntaxErr) }},
 		{"out-link", "", func(g *Generator) error {
 			_, err := g.Build("web", filepath.Join(t.TempDir(), ".pending"))
 			return err
-		}, generator.StageBuild},
-		{"print-out-paths", "", func(g *Generator) error { _, err := g.DryBuild("web"); return err }, generator.StageBuild},
+		}, generator.StageBuild, func(err error) bool { return errors.Is(err, fs.ErrNotExist) }},
+		{"print-out-paths", "", func(g *Generator) error { _, err := g.DryBuild("web"); return err }, generator.StageBuild,
+			func(err error) bool { return strings.HasPrefix(err.Error(), "nix build --print-out-paths was empty (") }},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -449,8 +462,8 @@ func TestResultFailuresAreGeneratorErrors(t *testing.T) {
 			if !errors.As(err, &ge) || ge.Stage != c.want || ge.Kind != generator.KindFailed {
 				t.Fatalf("error = %#v, want a Kind Failed *generator.Error of Stage %q", err, c.want)
 			}
-			if ge.Message == "" || errors.Unwrap(ge) == nil {
-				t.Errorf("Message / cause = %q / %v, want the failure's text and its cause", ge.Message, errors.Unwrap(ge))
+			if cause := errors.Unwrap(ge); cause == nil || ge.Message != cause.Error() || !c.cause(cause) {
+				t.Errorf("Message / cause = %q / %v, want the cause's text and the cause", ge.Message, cause)
 			}
 		})
 	}
