@@ -366,3 +366,36 @@ func TestApplyRecopyStopsOnLeftoverAside(t *testing.T) {
 		t.Errorf("target = %q, err %v; want it untouched", data, rerr)
 	}
 }
+
+// TestApplyRecopyStopsWhenAsideCannotBeChecked verifies --recopy stops on an Lstat failure of the
+// aside other than "not exist": a target name that fits NAME_MAX gets an aside name that does
+// not, so the Lstat fails with ENAMETOOLONG and the target keeps its content.
+func TestApplyRecopyStopsWhenAsideCannotBeChecked(t *testing.T) {
+	root := realTempDir(t)
+	state := realTempDir(t)
+	copySrc := makeSrc(t, "tool.conf")
+	name := strings.Repeat("n", 250)
+
+	lf := writeLinkFarm(t, homeManifest(copyEntry(copySrc, "tool.conf", name)))
+	if _, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}}); err != nil {
+		t.Fatalf("first Apply: %v", err)
+	}
+	target := filepath.Join(root, name)
+	if err := os.WriteFile(target, []byte("edited"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	res, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}, Recopy: true})
+	if err == nil {
+		t.Fatal("Apply --recopy should fail when the aside cannot be checked")
+	}
+	if !strings.Contains(err.Error(), "cannot lstat recopy aside: ") {
+		t.Errorf("err = %v, want the aside Lstat failure", err)
+	}
+	if res == nil || res.FailedTarget != name {
+		t.Errorf("FailedTarget = %v, want the long target", res)
+	}
+	if data, rerr := os.ReadFile(target); rerr != nil || string(data) != "edited" {
+		t.Errorf("target = %q, err %v; want it untouched", data, rerr)
+	}
+}

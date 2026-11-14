@@ -13,7 +13,7 @@ follows:
   - "TP-deb05610-44bc-4962-8939-952392e5fbd0"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-15T06:02:48+09:00"
+  at: "2026-11-15T06:12:27+09:00"
 ---
 # undo_journal_test.go — 実 FS 故障注入による end-to-end 巻き戻しと commit 失敗の非対称性
 
@@ -49,7 +49,8 @@ ENOTDIR で落ち、「バッチ途中の失敗」にならない）。root で�
 - commit 失敗後は `--recopy` の退避ファイルも残る（discardJournal は commit 成功後に
   しか実行されず、unwind も起きない）
 - 退避ファイルが残ったままの `--recopy` は、退避先が既にあるというエラーで止まる。失敗した
-  target として記録され、target と退避ファイルのどちらの中身も変わらない
+  target として記録され、target と退避ファイルのどちらの中身も変わらない。退避先を確かめられない
+  とき（退避先の名前が長すぎるとき）も同じく止まり、target の中身は変わらない
 
 **journal の記録順序**（[unwind が LIFO で巻き戻し、1 件の失敗でも継続して全件報告し、成功時は journal を破棄する](unwind-lifo-and-journal-lifecycle.md)）
 

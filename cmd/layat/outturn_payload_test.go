@@ -583,6 +583,30 @@ func TestMutationPayloadUnwindIncomplete(t *testing.T) {
 	}
 }
 
+// TestMutationPayloadFailureNotUnwound: a failure with nothing unwound (an empty journal) emits
+// neither W_LAYAT_UNWOUND nor W_LAYAT_UNWIND_INCOMPLETE.
+func TestMutationPayloadFailureNotUnwound(t *testing.T) {
+	res := &engine.Result{
+		Profile: "/p",
+		Entries: []manifest.Entry{
+			{SrcKind: "store", Src: "/nix/store/a", Target: "a", Method: "symlink"},
+		},
+		FailedTarget: "a",
+		GenBefore:    ip(3),
+		GenAfter:     ip(3),
+	}
+	cmdErr := &os.PathError{Op: "symlink", Path: "/root/a", Err: fs.ErrPermission}
+	p, err := mutationPayload[*applyResultInfo](res, cmdErr)
+	if err != nil {
+		t.Fatalf("mutationPayload: %v", err)
+	}
+	for _, w := range p.warnings {
+		if w.Code == "W_LAYAT_UNWOUND" || w.Code == "W_LAYAT_UNWIND_INCOMPLETE" {
+			t.Errorf("subject warnings = %+v, want no unwind warning when nothing was unwound", p.warnings)
+		}
+	}
+}
+
 // TestMutationPayloadSubjectBorneFailure: a commit / build failure has no failed item, keeps the
 // changes, and puts the error in subjectResult.errors[].
 func TestMutationPayloadSubjectBorneFailure(t *testing.T) {

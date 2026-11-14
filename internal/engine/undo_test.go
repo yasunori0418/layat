@@ -238,6 +238,29 @@ func TestUnwindReturnsUnrestoredRelativeToRoot(t *testing.T) {
 	}
 }
 
+// TestRunJournaledRecordsUnrestored verifies a failing stage leaves Unwound true and the targets
+// unwind could not restore in Result.Unrestored.
+func TestRunJournaledRecordsUnrestored(t *testing.T) {
+	root := realTempDir(t)
+	unrestorable := filepath.Join(root, "sub", "leaf") // parent "sub" does not exist → symlink fails
+
+	var warns []string
+	a := &applier{opts: Options{Warnf: collectFormatted(&warns)}, result: &Result{}}
+	a.root = root
+	a.journalRelinkedSymlink(unrestorable, realTempDir(t))
+
+	stageErr := errors.New("simulated stage failure")
+	if err := a.runJournaled(func() error { return stageErr }); !errors.Is(err, stageErr) {
+		t.Fatalf("runJournaled err = %v, want the stage error", err)
+	}
+	if !a.result.Unwound {
+		t.Error("Unwound = false, want true (the journal was not empty)")
+	}
+	if got := a.result.Unrestored; len(got) != 1 || got[0] != filepath.Join("sub", "leaf") {
+		t.Errorf("Unrestored = %v, want [sub/leaf]", got)
+	}
+}
+
 // TestUnwindNoJournalReportsNothing verifies unwind on an empty journal (a failure before any FS
 // write happened yet) reports no line and returns no unrestored target.
 func TestUnwindNoJournalReportsNothing(t *testing.T) {
