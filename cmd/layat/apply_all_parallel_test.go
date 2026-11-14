@@ -6,6 +6,8 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 	"sync"
@@ -111,39 +113,90 @@ func TestApplyAllParallelOutputIsLexicalDespiteCompletionOrder(t *testing.T) {
 	}
 }
 
-// TestApplyAllParallelEngineLinesPerConfig: under apply --all, what the engine writes through the
-// warning and failure-detail functions lands in each config's output, headed by the config name and
-// flushed in lexical order whatever the completion order. A failure detail is no warning.
+// TestApplyAllParallelEngineLinesPerConfig: under apply --all (and --dryrun), what the engine
+// writes through the warning and failure-detail functions lands in each config's output, headed by
+// the config name and flushed in lexical order whatever the completion order. A failure detail is
+// no warning.
 func TestApplyAllParallelEngineLinesPerConfig(t *testing.T) {
-	selected := []string{"a", "b", "c"}
-	run, _ := newApplyTestRun()
-	applyFn, completed := reverseCompletion(t, selected, func(name string, warnf, reportf func(string, ...any)) (*engine.Result, error) {
-		warnf("first note of %s", name)
-		reportf("detail of %s", name)
-		warnf("second note of %s", name)
-		if name == "b" {
-			return nil, errors.New("stub apply of b failed")
-		}
-		return placedResult(name), nil
-	})
-	stderr := captureStderr(t, func() {
-		aggregateApply(run, selected, len(selected), applyFn)
-	})
-	if got, want := completed(), []string{"c", "b", "a"}; !slices.Equal(got, want) {
-		t.Fatalf("completion order = %v, want %v (the reversal did not happen)", got, want)
+	for _, dryrun := range []bool{false, true} {
+		t.Run(fmt.Sprintf("dryrun=%v", dryrun), func(t *testing.T) {
+			selected := []string{"a", "b", "c"}
+			run, _ := newApplyTestRun()
+			applyFn, completed := reverseCompletion(t, selected, func(name string, warnf, reportf func(string, ...any)) (*engine.Result, error) {
+				warnf("first note of %s", name)
+				reportf("detail of %s", name)
+				warnf("second note of %s", name)
+				if name == "b" {
+					return nil, errors.New("stub apply of b failed")
+				}
+				return placedResult(name), nil
+			})
+			stderr := captureStderr(t, func() {
+				captureStdout(t, func() {
+					if dryrun {
+						aggregateDryRun(run, selected, len(selected), applyFn)
+					} else {
+						aggregateApply(run, selected, len(selected), applyFn)
+					}
+				})
+			})
+			if got, want := completed(), []string{"c", "b", "a"}; !slices.Equal(got, want) {
+				t.Fatalf("completion order = %v, want %v (the reversal did not happen)", got, want)
+			}
+			failed := "layat: apply b failed: stub apply of b failed"
+			if dryrun {
+				failed = "layat: apply b --dryrun failed: stub apply of b failed"
+			}
+			var want []string
+			for _, name := range selected {
+				want = append(want,
+					"["+name+"] layat: warning: first note of "+name,
+					"["+name+"] layat: detail of "+name,
+					"["+name+"] layat: warning: second note of "+name)
+				if name == "b" {
+					want = append(want, failed)
+				}
+			}
+			if got := strings.Split(strings.TrimSuffix(stderr, "\n"), "\n"); !slices.Equal(got, want) {
+				t.Errorf("stderr lines =\n%s\nwant\n%s", strings.Join(got, "\n"), strings.Join(want, "\n"))
+			}
+		})
 	}
-	var want []string
-	for _, name := range selected {
-		want = append(want,
-			"["+name+"] layat: warning: first note of "+name,
-			"["+name+"] layat: detail of "+name,
-			"["+name+"] layat: warning: second note of "+name)
-		if name == "b" {
-			want = append(want, "layat: apply b failed: stub apply of b failed")
-		}
-	}
-	if got := strings.Split(strings.TrimSuffix(stderr, "\n"), "\n"); !slices.Equal(got, want) {
-		t.Errorf("stderr lines =\n%s\nwant\n%s", strings.Join(got, "\n"), strings.Join(want, "\n"))
+}
+
+// TestApplyAllParallelEngineLinesWiring drives the real engine through apply --all over a
+// --manifest set: a foreign symlink under a makes the engine warn, and an occupied target under b
+// makes it list a conflict (under --dryrun the conflict goes to the plan). Each line carries its
+// config's name.
+func TestApplyAllParallelEngineLinesWiring(t *testing.T) {
+	for _, dryrun := range []bool{false, true} {
+		t.Run(fmt.Sprintf("dryrun=%v", dryrun), func(t *testing.T) {
+			withFlakeEntrypoint(t)
+			installFakeBackend(t, "")
+			root := t.TempDir()
+			flagFile, flagDryrun, flagRoot = "", dryrun, root
+			if err := os.Symlink("/nowhere", filepath.Join(root, "from-a")); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.WriteFile(filepath.Join(root, "from-b"), nil, 0o644); err != nil {
+				t.Fatal(err)
+			}
+			withManifestFlags(t, true,
+				"a="+writeTestLinkFarm(t, symlinkEntries(t, "from-a")...),
+				"b="+writeTestLinkFarm(t, symlinkEntries(t, "from-b")...))
+			stubNixForApply(t, `{}`)
+			run, _ := newApplyTestRun()
+			stderr := captureStderr(t, func() { captureStdout(t, func() { _ = runApplyAll(run) }) })
+			want := []string{"[a] layat: warning: "}
+			if !dryrun {
+				want = append(want, "[b] layat: conflict: ")
+			}
+			for _, prefix := range want {
+				if !slices.ContainsFunc(strings.Split(stderr, "\n"), func(l string) bool { return strings.HasPrefix(l, prefix) }) {
+					t.Errorf("stderr has no line starting with %q:\n%s", prefix, stderr)
+				}
+			}
+		})
 	}
 }
 

@@ -226,6 +226,10 @@ func TestListGenerationsAllScansSystemBase(t *testing.T) {
 		makeHomeProfiles(t, fake, "a", "b")
 		fake.System = t.TempDir()
 		makeProfilesUnder(t, fake.System, "a", "s")
+		// A directory without a profile (a roothash family) is skipped without a warning.
+		if err := os.Mkdir(filepath.Join(fake.System, "family"), 0o755); err != nil {
+			t.Fatal(err)
+		}
 		run, buf := newListGenerationsTestRun()
 		stderr := captureStderr(t, func() {
 			if err := runListAllGenerations(run); err != nil {

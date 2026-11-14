@@ -11,7 +11,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-15T00:19:28+09:00"
+  at: "2026-11-15T00:29:10+09:00"
 ---
 # list-generations_test.go — 世代一覧の info 表現と二重エンコードの禁止
 
@@ -38,7 +38,8 @@ generated:
   `LAYAT_SYSTEM_PROFILE_BASE` が system 基底を差し替えること、system 基底が無ければ warning を出さずに空として扱い、
   読めなければ warning を 1 行出してその基底を走査せず、user 基底の一覧は残ること。user 基底が
   読めなければ subject を 1 つも作らずに、その基底を 1 回だけ名指すエラーで止まること。
-  確かめられない profile は warning を 1 行出して飛ばし、ほかの config の一覧は残ること
+  profile を持たないディレクトリは warning を出さずに飛ばし、確かめられない profile は warning を
+  1 行出して飛ばし、ほかの config の一覧は残ること
   （root では Skip）
 
 `info` の境界の扱いはパス列挙の CASE と対称であり、読み取り系コマンド全体で同じ規約が成り立つ
