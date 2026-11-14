@@ -10,15 +10,14 @@ satisfies:
   - "REQ-b74a118a-1272-44eb-944c-7725163211c6"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-14T22:59:02+09:00"
+  at: "2026-11-14T23:10:53+09:00"
 ---
 # エラーは op と対象が分かるいちばん下の関数で 1 回だけ wrap し、伝搬では素通しする
 
 ## 設計
 
 適用範囲は layat の Go のコード全体で、`internal/` の全パッケージと `cmd/layat/` を含む。エラーは
-標準ライブラリの `fmt.Errorf` の `%w`・`errors.Is`・`errors.As` で組み立てて判別し、エラーを作る
-helper や独自の枠組みは足さない。engine はこれを標準ライブラリだけで行う
+標準ライブラリの `fmt.Errorf` の `%w` で包み、`errors.Is`・`errors.As` で判別する。engine はこれを標準ライブラリだけで行う
 （→ [engine は第三者依存ゼロの stdlib-only とし内部層に閉じる](../requirements/engine-stdlib-only.md)）。
 
 - **発生源で 1 回だけ wrap する**: 発生源は、op（何をしようとしたか）と対象の両方が分かる
