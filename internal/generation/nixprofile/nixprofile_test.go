@@ -178,15 +178,27 @@ func TestCommandErrorCapturesStderr(t *testing.T) {
 	}
 }
 
-// TestNixEnvNotOnPath pins that a missing nix-env is reported with the op and the profile.
+// TestNixEnvNotOnPath pins that a missing nix-env is reported with the op and the profile by
+// both Commit and Switch.
 func TestNixEnvNotOnPath(t *testing.T) {
 	t.Setenv("PATH", t.TempDir())
 	profile := filepath.Join(t.TempDir(), "profile")
-	err := New().Commit(profile, "/farm")
-	if !errors.Is(err, exec.ErrNotFound) {
-		t.Fatalf("got %v, want exec.ErrNotFound", err)
+	cases := []struct {
+		name string
+		err  error
+		want string
+	}{
+		{"commit", New().Commit(profile, "/farm"), "cannot run nix-env --set (" + profile + "): "},
+		{"switch", New().Switch(profile, 3), "cannot run nix-env --switch-generation 3 (" + profile + "): "},
 	}
-	if want := "cannot run nix-env --set (" + profile + "): "; !strings.HasPrefix(err.Error(), want) {
-		t.Errorf("Error() = %q, want prefix %q", err.Error(), want)
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			if !errors.Is(c.err, exec.ErrNotFound) {
+				t.Fatalf("got %v, want exec.ErrNotFound", c.err)
+			}
+			if !strings.HasPrefix(c.err.Error(), c.want) {
+				t.Errorf("Error() = %q, want prefix %q", c.err.Error(), c.want)
+			}
+		})
 	}
 }
