@@ -374,19 +374,23 @@ func nixFailure(args []string, stderr string, runErr error) error {
 	cause := fmt.Errorf("nix %s failed: %w", args[0], runErr)
 	kind, message, guidance := generator.KindFailed, cause.Error(), ""
 	switch {
-	case isExperimentalDisabled(stderr):
+	case IsExperimentalDisabled(stderr):
 		kind = generator.KindPrerequisiteMissing
 		message = fmt.Sprintf("nix's experimental-features are not enabled (nix %s failed)", args[0])
-		guidance = experimentalGuidance
+		guidance = ExperimentalGuidance
 	}
 	return generator.NewError(generator.NameNix, stageOf(args), kind, message, guidance, strings.TrimSpace(stderr), cause)
 }
 
-// isExperimentalDisabled detects the nix-command / flakes not-enabled error.
-func isExperimentalDisabled(stderr string) bool {
-	return strings.Contains(stderr, "experimental Nix feature") ||
-		strings.Contains(stderr, "experimental-features") ||
-		(strings.Contains(stderr, "flakes") && strings.Contains(stderr, "disabled"))
+// IsExperimentalDisabled reports whether nix's stderr has an error line saying an experimental
+// feature (nix-command / flakes) is disabled.
+func IsExperimentalDisabled(stderr string) bool {
+	for _, line := range strings.Split(stderr, "\n") {
+		if strings.HasPrefix(line, "error:") && strings.Contains(line, "experimental Nix feature '") && strings.Contains(line, "' is disabled") {
+			return true
+		}
+	}
+	return false
 }
 
 // isMissingAttribute detects nix reporting that attrPath, the queried attr path, does not exist:
@@ -407,8 +411,8 @@ func isMissingAttribute(stderr, attrPath string) bool {
 	return false
 }
 
-// experimentalGuidance guides the prerequisites and how to enable them.
-const experimentalGuidance = `This command internally uses ` + "`nix eval`" + ` / ` + "`nix build`" + ` (the new CLI) and flakes,
+// ExperimentalGuidance guides the prerequisites and how to enable them.
+const ExperimentalGuidance = `This command internally uses ` + "`nix eval`" + ` / ` + "`nix build`" + ` (the new CLI) and flakes,
 so experimental-features = nix-command flakes is required.
 
 How to enable (either one):

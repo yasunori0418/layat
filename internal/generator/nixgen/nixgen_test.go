@@ -401,24 +401,26 @@ func TestDebugDisclosesCommandsToWriter(t *testing.T) {
 	}
 }
 
-// TestIsExperimentalDisabled pins the three nix wordings of nix-command / flakes not being
-// enabled, and that an unrelated failure is not taken for one.
+// TestIsExperimentalDisabled pins nix's one wording of an experimental feature being disabled, on
+// an error line only, and that other failures are not taken for one.
 func TestIsExperimentalDisabled(t *testing.T) {
+	const disabled = "error: experimental Nix feature 'nix-command' is disabled; add '--extra-experimental-features nix-command' to enable it"
 	cases := []struct {
 		name   string
 		stderr string
 		want   bool
 	}{
-		{"experimental Nix feature", "error: experimental Nix feature 'nix-command' is disabled; add '--extra-experimental-features nix-command' to enable it", true},
-		{"experimental-features", "error: cannot use flakes: enable experimental-features first", true},
-		{"flakes + disabled", "error: flakes are disabled", true},
-		{"flakes alone", "error: flakes ok but evaluation failed", false},
+		{"experimental Nix feature", disabled, true},
+		{"after a warning line", "warning: Git tree is dirty\n" + disabled, true},
+		{"not on an error line", "warning: experimental Nix feature 'flakes' is disabled", false},
+		{"experimental-features", "error: cannot use flakes: enable experimental-features first", false},
+		{"flakes + disabled", "error: flakes are disabled", false},
 		{"unrelated", "error: attribute 'web' missing", false},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			if got := isExperimentalDisabled(c.stderr); got != c.want {
-				t.Errorf("isExperimentalDisabled(%q) = %v, want %v", c.stderr, got, c.want)
+			if got := IsExperimentalDisabled(c.stderr); got != c.want {
+				t.Errorf("IsExperimentalDisabled(%q) = %v, want %v", c.stderr, got, c.want)
 			}
 		})
 	}
@@ -428,7 +430,7 @@ func TestIsExperimentalDisabled(t *testing.T) {
 // PrerequisiteMissing whose Guidance names both ways to enable them, with nix's raw stderr kept
 // in Stderr.
 func TestPrerequisiteMissingGuidance(t *testing.T) {
-	const raw = "error: experimental Nix feature nix-command is disabled"
+	const raw = "error: experimental Nix feature 'nix-command' is disabled; add '--extra-experimental-features nix-command' to enable it"
 	stubNix(t, raw)
 	g, _ := discovered(t, io.Discard, nil)
 

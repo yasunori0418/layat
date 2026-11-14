@@ -13,7 +13,7 @@ import (
 func testGeneratorError() *generator.Error {
 	return generator.NewError(generator.NameNix, generator.StageRoots, generator.KindPrerequisiteMissing,
 		"nix eval failed: exit status 1", "enable experimental-features",
-		"error: experimental Nix feature nix-command is disabled", nil)
+		"error: experimental Nix feature 'nix-command' is disabled", nil)
 }
 
 // withDebug sets --debug for the test and restores it afterwards.

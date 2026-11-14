@@ -9,6 +9,8 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+
+	"github.com/yasunori0418/layat/internal/generator/nixgen"
 )
 
 // defaultTemplateRef is the fixed flake ref of init's templates. LAYAT_TEMPLATE_REF overrides it.
@@ -105,38 +107,12 @@ func flakeInitArgs(template, ref string) []string {
 // initNixError classifies a failed `nix flake init`: guidance for disabled experimental features,
 // otherwise the raw nix stderr attached.
 func initNixError(args []string, stderr string, runErr error) error {
-	if initExperimentalDisabled(stderr) {
-		return initExperimentalGuidance(stderr)
+	if nixgen.IsExperimentalDisabled(stderr) {
+		return fmt.Errorf("nix's experimental-features are not enabled.\n%s\n\nOriginal nix error:\n%s", nixgen.ExperimentalGuidance, strings.TrimSpace(stderr))
 	}
 	trimmed := strings.TrimSpace(stderr)
 	if trimmed == "" {
 		return fmt.Errorf("nix %s failed: %w", args[0], runErr)
 	}
 	return fmt.Errorf("nix %s failed:\n%s", args[0], trimmed)
-}
-
-// initExperimentalDisabled detects the nix-command / flakes not-enabled error.
-func initExperimentalDisabled(stderr string) bool {
-	return strings.Contains(stderr, "experimental Nix feature") ||
-		strings.Contains(stderr, "experimental-features") ||
-		(strings.Contains(stderr, "flakes") && strings.Contains(stderr, "disabled"))
-}
-
-// initExperimentalGuidance builds an error explaining how to enable experimental features, with
-// the raw nix error attached. The CLI never adds --extra-experimental-features itself.
-func initExperimentalGuidance(stderr string) error {
-	return fmt.Errorf(`nix's experimental-features are not enabled.
-This command internally uses `+"`nix eval`"+` / `+"`nix build`"+` (the new CLI) and flakes,
-so experimental-features = nix-command flakes is required.
-
-How to enable (either one):
-  - Append to ~/.config/nix/nix.conf or /etc/nix/nix.conf:
-      experimental-features = nix-command flakes
-  - Temporarily via an environment variable:
-      export NIX_CONFIG="experimental-features = nix-command flakes"
-
-layat does not add --extra-experimental-features automatically (it will not override your environment settings).
-
-Original nix error:
-%s`, strings.TrimSpace(stderr))
 }
