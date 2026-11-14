@@ -303,6 +303,19 @@ item_types:
     id_format: '{prefix}-{uuid4}'
     parent_types: []
     fields:
+      # index.md の節。見出しと並び順は dev/scripts/okf-index.sh の表が持つ。
+      - name: section
+        display_name: Section
+        field_type: !enum
+          values:
+            - graph-model
+            - ids-and-filenames
+            - frontmatter-fields
+            - verification
+            - authoring
+            - doc-layout
+            - risk-test-defect
+        required: true
       - *status_field
       - *origin_field
       - *stale_after_field
