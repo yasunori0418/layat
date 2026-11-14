@@ -10,7 +10,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-15T00:19:28+09:00"
+  at: "2026-11-15T00:29:10+09:00"
 ---
 # apply_all_build_test.go — 並列 build の並列度上限・失敗集約・--jobs の値域・--debug prefix・集約の同一性
 
@@ -47,4 +47,4 @@ generated:
   （`--dryrun` では `<name> --dryrun`）の 1 行で、nix の stderr を再掲しないこと
 - **生成器の失敗の行** — `generator.Error` を包んだ失敗と schemaVersion の食い違いを注入し、
   `--debug` と `--dryrun` の有無の各組で、失敗行の要約（`--debug` では生成器名付き）の次の行に
-  `Guidance` が出ること、schemaVersion の食い違いの案内が stderr の末尾に 1 回だけ出ること
+  `Guidance` が出ること、schemaVersion の食い違いの案内が全部の config の行の後に 1 回だけ出ること
