@@ -23,6 +23,8 @@ runs:
             - 'flake.lock'
             - 'dev/flake.lock'
             - 'VERSION'
+            # The golangci-lint config read by checks.golangci-lint.
+            - '.golangci.yml'
             # The e2e harness and scenarios (tests/e2e/) drive the e2e job.
             - 'tests/**'
             - '.github/workflows/**'
