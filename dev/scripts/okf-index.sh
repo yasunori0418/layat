@@ -4,7 +4,7 @@
 #   okf-index.sh           # index.md を書き出す
 #   okf-index.sh --check   # 既存の index.md と比べ、食い違うパスを出して exit 1
 #
-# exit code は 0 = 生成・一致 / 1 = 食い違いあり / 2 = 引数の誤り・sara check の失敗・表に無い section の値。
+# exit code は 0 = 生成・一致 / 1 = 食い違いあり / 2 = 引数の誤り・sara check の失敗・表や区分に無い section の値。
 
 set -euo pipefail
 
@@ -52,6 +52,7 @@ TYPE_DIRS=(
   "ubiquitous-language|ubiquitous_term|用語（\`ubiquitous_term\`）|layat の用語の定義と避ける綴り"
 )
 # index.md を section の節に分ける型の節: <型>|<section の値>|<## の見出し>。節はこの順に並べる。
+# risk の節はここに書かず、dev/tests/test-categories.tsv から足す。
 SECTIONS=(
   "requirement|architecture|アーキテクチャ概要"
   "requirement|lib-api|lib API"
@@ -148,6 +149,21 @@ if [ -n "$unknown" ]; then
   printf '%s\n' "$unknown" >&2
   exit 2
 fi
+
+# risk の節は test-categories.tsv の区分をこの順に並べ、見出しは区分の名前をそのまま使う。
+categories=$(read_tsv "$categories_tsv" | cut -f1)
+unknown_risks=$(awk -F '\t' '
+  NR == FNR { known[$1] = 1; next }
+  $1 == "risk" && !($8 in known) { print $7 ": section \"" $8 "\"" }
+' <(printf '%s\n' "$categories") "$work/items.tsv")
+if [ -n "$unknown_risks" ]; then
+  echo "okf-index.sh: section の値が区分（dev/tests/test-categories.tsv）に無い risk がある:" >&2
+  printf '%s\n' "$unknown_risks" >&2
+  exit 2
+fi
+for cat in $categories; do
+  printf 'risk\t%s\t%s\n' "$cat" "$cat" >> "$work/sections.tsv"
+done
 
 # 本文の段落: <リポジトリ相対パス>\t<H1 の次に来る最初の段落>
 # 段落は見出し・箇条書き・表・引用・HTML・コードフェンスの中身・字下げ行を除いた最初の散文の塊。
@@ -257,7 +273,6 @@ done
 top+="* [$TEST_TITLE](./test/index.md) - $TEST_DESC"
 
 # docs/test/ の区分と並び順は dev/tests/test-categories.tsv に従う。
-categories=$(read_tsv "$categories_tsv" | cut -f1)
 test_list=""
 for cat in $categories; do
   tc=$(entries_of "test/$cat" test_condition)
