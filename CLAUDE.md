@@ -21,7 +21,7 @@ item を新設する。
 
 item の一覧は `docs/index.md` と型ごとのディレクトリの index.md が持つ。`requirement`・`design`・
 `ubiquitous_term`・`adr`・`sara_adr`・`risk` の index.md は、frontmatter の `section` ごとに節を分ける。
-`deprecated` の item は、どの型でも主題の節に載せず、index.md の末尾の節にまとめて載せる。item を足したら
+`deprecated` の item はどの型でも主題の節に載せず、index.md の末尾の節にまとめて載せる。item を足したら
 `dev/scripts/okf-index.sh` で index.md を再生成する（→「OKF 互換の frontmatter」節）。
 
 ### item 群（規範的な内容の所在）

@@ -55,7 +55,7 @@ type になる。使えるプレースホルダは `{prefix}` / `{id}` / `{seq[:
 | 全て | `stale_after` | 期限の時刻。任意。値の形は sara でなく `dev/tests/okf-frontmatter.sh` が確かめる |
 | `requirement` / `quality` / `test_plan` | `specification` | 英語の規範文。RFC2119 キーワードを含める |
 | `requirement` / `quality` / `test_plan` | `specification_ja` | `specification` と対になる日本語の規範文。sara はこのフィールドを検査しない |
-| `requirement` / `design` / `ubiquitous_term` / `adr` / `sara_adr` / `risk` | `section` | 型ごとの index.md で item を載せる節。必須の enum で、取りうる値は `docs/model.yaml` が持つ。見出しの文言と節の並び順は `dev/scripts/okf-index.sh` の表が持ち、表に無い値があると生成が exit 2 で止まる。値を足すときは両方を直す。`risk` の値はテストの区分と同じで、見出しと並び順は `dev/tests/test-categories.tsv` が持つ |
+| `requirement` / `design` / `ubiquitous_term` / `adr` / `sara_adr` / `risk` | `section` | 型ごとの index.md で item を載せる節。必須の enum で、取りうる値は `docs/model.yaml` が持つ。見出しの文言と節の並び順は `dev/scripts/okf-index.sh` の表が持ち、表に無い値があると生成が exit 2 で止まる。値を足すときは両方を直す。ただし `risk` の値はテストの区分と同じで、見出しと並び順は `dev/tests/test-categories.tsv` が持つ |
 | `requirement` | `risk_exempt` | `requirement` 水準の `risk` を持たない理由を 1 文で書く。任意。`sara-gap` は値を持つ `requirement` を免除として扱う |
 | `infrastructure` | `dod` | `docs/dev/definition-of-done.md` の項目 ID（`DOD-01` …）のリスト。任意 |
 | `adr` / `sara_adr` | `origin` | 起点となったセッション等の散文。任意 |
