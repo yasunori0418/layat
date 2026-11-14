@@ -131,6 +131,26 @@ func TestCopySymlinkReadlinkError(t *testing.T) {
 	}
 }
 
+// TestCopySymlinkRemoveError: a dst that is a non-empty directory cannot be removed, and
+// copySymlink returns that remove failure instead of the symlink's EEXIST.
+func TestCopySymlinkRemoveError(t *testing.T) {
+	dir := realTempDir(t)
+	src := filepath.Join(dir, "link")
+	if err := os.Symlink("target", src); err != nil {
+		t.Fatal(err)
+	}
+	dst := filepath.Join(dir, "dst")
+	if err := os.MkdirAll(filepath.Join(dst, "child"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	err := copySymlink(src, dst)
+	var pe *fs.PathError
+	if !errors.As(err, &pe) || pe.Op != "remove" || pe.Path != dst {
+		t.Fatalf("copySymlink = %v; want the remove failure of %s", err, dst)
+	}
+}
+
 // TestCopyRecopyLstatError exercises recopyAll's non-ENOENT Lstat branch
 // (copy.go:59-60): the recopy target path runs through a regular file, so Lstat returns
 // ENOTDIR — distinct from "absent" (ENOENT), so recopyAll must surface it as an error.

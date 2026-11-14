@@ -33,7 +33,7 @@ func (a *applier) placeCopies(actions []planner.CopyAction) error {
 		// cleaned up on unwind.
 		a.journalPlacedCopy(act.TargetAbs)
 		if err := copyTree(act.Src, act.TargetAbs); err != nil {
-			return a.entryFailed(act.Entry.Target, fmt.Errorf("copy placement failed (%s -> %s): %w", act.Src, act.TargetAbs, err))
+			return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot copy (%s -> %s): %w", act.Src, act.TargetAbs, err))
 		}
 		a.result.Copied = append(a.result.Copied, act.Entry.Target)
 	}
@@ -71,7 +71,7 @@ func (a *applier) recopyAll() error {
 			return a.entryFailed(e.Target, err)
 		}
 		if err := copyTree(planner.LinkDest(e), targetAbs); err != nil {
-			return a.entryFailed(e.Target, fmt.Errorf("recopy failed (%s -> %s): %w", planner.LinkDest(e), targetAbs, err))
+			return a.entryFailed(e.Target, fmt.Errorf("cannot recopy (%s -> %s): %w", planner.LinkDest(e), targetAbs, err))
 		}
 		if existed {
 			a.result.Recopied = append(a.result.Recopied, e.Target)
@@ -95,7 +95,7 @@ func asidePath(targetAbs string) string {
 func copyTree(src, dst string) error {
 	info, err := os.Lstat(src)
 	if err != nil {
-		return fmt.Errorf("cannot lstat copy src (%s): %w", src, err)
+		return err
 	}
 	switch {
 	case info.Mode()&os.ModeSymlink != 0:
@@ -162,7 +162,9 @@ func copySymlink(src, dst string) error {
 	if err != nil {
 		return err
 	}
-	// Guard against leftovers on re-copy (recopy has already RemoveAll'd the parent, but remove defensively).
-	_ = os.Remove(dst)
+	// Clear a leftover at dst; an absent dst is the normal case.
+	if err := os.Remove(dst); err != nil && !errors.Is(err, iofs.ErrNotExist) {
+		return err
+	}
 	return os.Symlink(target, dst)
 }
