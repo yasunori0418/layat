@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"testing"
 	"time"
 
@@ -966,5 +967,22 @@ func TestApplyReportsOriginMismatch(t *testing.T) {
 				t.Errorf("origin warnings = %q, want [%q]", got, want)
 			}
 		})
+	}
+}
+
+// TestLoadBaselineProfileStatFailure verifies a profile link that cannot be stat'ed for a reason
+// other than absence is kept as the profile's error, naming the op and keeping the errno.
+func TestLoadBaselineProfileStatFailure(t *testing.T) {
+	state := realTempDir(t)
+	file := filepath.Join(state, "not-a-dir")
+	if err := os.WriteFile(file, nil, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	b, err := loadBaseline(testRecord(state, "c").File, filepath.Join(file, "profile"), func(string, ...any) {})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !b.profileUnreadable() || !strings.HasPrefix(b.profileErr.Error(), "cannot stat profile link: ") || !errors.Is(b.profileErr, syscall.ENOTDIR) {
+		t.Errorf("profileErr = %v; want it to start with %q and wrap ENOTDIR", b.profileErr, "cannot stat profile link: ")
 	}
 }

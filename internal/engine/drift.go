@@ -22,7 +22,7 @@ func generationUnchanged(b baseline, newLinkFarm string) (bool, error) {
 	}
 	next, err := filepath.EvalSymlinks(newLinkFarm)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("cannot resolve the new link-farm (%s): %w", newLinkFarm, err)
 	}
 	return next == b.profileLinkFarm && (b.record == nil || b.record.LinkFarm == next), nil
 }
