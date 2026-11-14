@@ -3,6 +3,7 @@ package engine
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -158,7 +159,10 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 
 	// If profileDir is absent, apply has never run → no generation to roll back to.
 	if _, err := os.Stat(prof.Dir); err != nil {
-		return nil, fmt.Errorf("no profile (apply has never run): %s", prof.Dir)
+		if errors.Is(err, fs.ErrNotExist) {
+			return nil, fmt.Errorf("no profile (apply has never run): %s", prof.Dir)
+		}
+		return nil, fmt.Errorf("cannot stat profileDir: %w", err)
 	}
 
 	// 2. serialize with concurrent apply / rollback via a blocking flock.
