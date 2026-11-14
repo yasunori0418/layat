@@ -821,6 +821,25 @@ func TestRollbackNoProfileErrors(t *testing.T) {
 	}
 }
 
+// TestRollbackProfileStatErrorIsNotNoProfile verifies that a profileDir stat failing for a
+// reason other than absence (EACCES from a search-denied state dir) keeps the cause in the
+// chain and is not reported as "no profile". Skipped as root since root bypasses the bit.
+func TestRollbackProfileStatErrorIsNotNoProfile(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("requires non-root to trigger permission error")
+	}
+	_, err := Rollback(RollbackOptions{
+		Name: "vim", RootKind: manifest.RootKindHome, RootOverride: realTempDir(t),
+		StateDir: preflightErr_deniedDir(t), Backend: &generation.Fake{},
+	})
+	if !errors.Is(err, fs.ErrPermission) {
+		t.Fatalf("err = %v, want a permission error in the chain", err)
+	}
+	if strings.Contains(err.Error(), "no profile") {
+		t.Errorf("a stat failure other than absence must not be reported as no profile: %v", err)
+	}
+}
+
 // TestRollbackRequiresBackend verifies Rollback refuses to run without a generation backend.
 func TestRollbackRequiresBackend(t *testing.T) {
 	_, err := Rollback(RollbackOptions{
