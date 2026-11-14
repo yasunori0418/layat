@@ -91,7 +91,7 @@ func LoadFile(path string) (*Manifest, error) {
 func (m *Manifest) validate() error {
 	// The engine rejects any schemaVersion newer than the version it supports.
 	if m.SchemaVersion > SchemaVersion {
-		return fmt.Errorf("schemaVersion %d is unsupported (this engine supports up to v%d): %w", m.SchemaVersion, SchemaVersion, ErrSchemaVersionUnsupported)
+		return fmt.Errorf("schemaVersion %d (this engine supports up to v%d): %w", m.SchemaVersion, SchemaVersion, ErrSchemaVersionUnsupported)
 	}
 	if m.SchemaVersion < 1 {
 		return fmt.Errorf("schemaVersion %d is invalid", m.SchemaVersion)
