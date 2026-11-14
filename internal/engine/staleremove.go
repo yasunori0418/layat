@@ -13,11 +13,16 @@ import (
 )
 
 // removeStale applies the planner's Remove actions, re-verifying the conservative invariant
-// against the real FS before each unlink; drifted targets are kept with a warning. After each
-// unlink it prunes ancestors left empty, warning (not failing) when a prune fails.
+// against the real FS before each unlink; drifted targets are kept with a warning, and an I/O
+// failure of the re-verification fails the entry. After each unlink it prunes ancestors left
+// empty, warning (not failing) when a prune fails.
 func (a *applier) removeStale(actions []planner.RemoveAction) error {
 	for _, act := range actions {
-		if !reverifyStale(act) {
+		ok, err := reverifyStale(act)
+		if err != nil {
+			return a.entryFailed(act.Entry.Target, err)
+		}
+		if !ok {
 			a.opts.Warnf("keeping stale symlink because it drifted after planning: %s", act.Entry.Target)
 			continue
 		}
@@ -60,7 +65,11 @@ func (a *applier) preRemove(actions []planner.RemoveAction) error {
 				return fmt.Errorf("cannot remove empty directory for migration: %w", err)
 			}
 		default: // planner.RemoveUnlink
-			if !reverifyStale(act) {
+			ok, err := reverifyStale(act)
+			if err != nil {
+				return a.entryFailed(act.Entry.Target, err)
+			}
+			if !ok {
 				return a.entryFailed(act.Entry.Target, fmt.Errorf("recorded symlink changed after planning; cannot migrate this placement target safely (%s); re-run apply to converge", act.Entry.Target))
 			}
 			if err := os.Remove(act.TargetAbs); err != nil {
@@ -154,15 +163,26 @@ func isWithinRoot(root, dir string) bool {
 }
 
 // reverifyStale re-checks the conservative invariant on the real FS right before
-// unlink: the target must still be a symlink pointing to the recorded dest.
-func reverifyStale(act planner.RemoveAction) bool {
+// unlink: the target must still be a symlink pointing to the recorded dest. A missing
+// target, a non-symlink, and a different dest are drift (false, nil); any other I/O
+// failure is returned as an error.
+func reverifyStale(act planner.RemoveAction) (bool, error) {
 	info, err := os.Lstat(act.TargetAbs)
-	if err != nil || info.Mode()&os.ModeSymlink == 0 {
-		return false
+	if errors.Is(err, fs.ErrNotExist) {
+		return false, nil
+	}
+	if err != nil {
+		return false, fmt.Errorf("cannot re-verify stale symlink: %w", err)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		return false, nil
 	}
 	onDisk, err := os.Readlink(act.TargetAbs)
-	if err != nil {
-		return false
+	if errors.Is(err, fs.ErrNotExist) || errors.Is(err, syscall.EINVAL) {
+		return false, nil
 	}
-	return onDisk == planner.LinkDest(act.Entry)
+	if err != nil {
+		return false, fmt.Errorf("cannot re-verify stale symlink: %w", err)
+	}
+	return onDisk == planner.LinkDest(act.Entry), nil
 }
