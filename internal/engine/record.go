@@ -257,7 +257,7 @@ func loadBaseline(recordFile, profileLink string, warnf func(string, ...any)) (b
 		return b, nil
 	}
 	if b.profileErr != nil {
-		return b, nil
+		return b, nil //nolint:nilerr // the error is kept in profileErr; only callers that need the profile fail on it
 	}
 	if hasProfile {
 		b.manifest, b.profileErr = manifest.Load(profileLink)
