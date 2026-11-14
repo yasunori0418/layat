@@ -180,7 +180,7 @@ func TestApplyAllFailureMatrix(t *testing.T) {
 				}
 				var cmdErr error
 				if code != 0 {
-					cmdErr = &exitCodeError{code: code, msg: fmt.Sprintf("apply --all: %d config(s) failed", failures)}
+					cmdErr = &exitError{code: code, msg: fmt.Sprintf("apply --all: %d config(s) failed", failures)}
 				}
 				assertMatrixEnvelope(t, run, buf, cmdErr, combo)
 			})

@@ -51,8 +51,8 @@ const (
 func systemDirOverride() string      { return os.Getenv(systemBaseEnv) }
 func systemStateDirOverride() string { return os.Getenv(systemStateEnv) }
 
-// exitError is an error carrying a specific exit code, such as apply --dryrun's conflict (2).
-// With an empty msg, main exits with the code alone.
+// exitError is an error carrying a specific exit code, such as apply --dryrun's conflict (2) or
+// apply --all's aggregate. With an empty msg, main exits with the code alone.
 type exitError struct {
 	code int
 	msg  string
@@ -135,15 +135,6 @@ func newRootCmd() *cobra.Command {
 
 // exitCodeX is the interface of errors that carry an exit code (such as apply --all's aggregate).
 type exitCodeX interface{ ExitCode() int }
-
-// exitCodeError is an error that explicitly carries an exit code.
-type exitCodeError struct {
-	code int
-	msg  string
-}
-
-func (e *exitCodeError) Error() string { return e.msg }
-func (e *exitCodeError) ExitCode() int { return e.code }
 
 func main() {
 	err := newRootCmd().Execute()

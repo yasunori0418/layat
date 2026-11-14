@@ -105,7 +105,7 @@ func TestStageOneFailureSkipsStageTwo(t *testing.T) {
 	if !strings.Contains(stderr, "layat: apply b failed: stub build of b failed") {
 		t.Errorf("stderr = %q, want the stage-1 failure of b reported", stderr)
 	}
-	if err := run.emit(&exitCodeError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
+	if err := run.emit(&exitError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	checkConformance(t, buf)
@@ -167,7 +167,7 @@ func TestJobsAggregateIsOrderIndependent(t *testing.T) {
 		captureStderr(t, func() {
 			o.applied, o.skipped, o.failures, o.stage2 = stagedApply(run, selected, jobs, build)
 		})
-		if err := run.emit(&exitCodeError{code: 1, msg: "apply --all: 2 config(s) failed"}); err != nil {
+		if err := run.emit(&exitError{code: 1, msg: "apply --all: 2 config(s) failed"}); err != nil {
 			t.Fatalf("emit: %v", err)
 		}
 		o.envelope = buf.String()

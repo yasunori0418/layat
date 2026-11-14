@@ -75,7 +75,7 @@ func TestPrintErrorPrefix(t *testing.T) {
 		{"joined", errors.Join(errors.New("cannot remove a"), errors.New("cannot write the record")),
 			"layat: cannot remove a\nlayat: cannot write the record\n"},
 		{"several %w", fmt.Errorf("x: %w, %w", errors.New("a"), errors.New("b")), "layat: x: a, b\n"},
-		{"exit code", &exitCodeError{code: 1, msg: "apply --all: 1 config(s) failed"}, "layat: apply --all: 1 config(s) failed\n"},
+		{"exit code", &exitError{code: 1, msg: "apply --all: 1 config(s) failed"}, "layat: apply --all: 1 config(s) failed\n"},
 		{"generator", fmt.Errorf("ctx: %w", generator.NewError(generator.NameNix, generator.StageBuild, generator.KindFailed,
 			"nix build failed: exit status 1", "see above", "error: boom", nil)), "layat: nix build failed: exit status 1\nsee above\n"},
 	}
