@@ -597,9 +597,11 @@ func aggregateApply(run *applyRun, selected []string, jobs int, applyFn func(nam
 		}
 		subject.finish(subjectErr)
 	})
+	errs := make([]error, len(outcomes))
 	for i := range outcomes {
 		o := &outcomes[i]
 		o.out.flush()
+		errs[i] = o.err
 		switch {
 		case o.skipped:
 			skipped++
@@ -609,6 +611,7 @@ func aggregateApply(run *applyRun, selected []string, jobs int, applyFn func(nam
 			applied++
 		}
 	}
+	printFailureHints(os.Stderr, errs...)
 	return applied, skipped, failures
 }
 
@@ -642,12 +645,15 @@ func aggregateDryRun(run *applyRun, selected []string, jobs int, applyDry func(n
 		subject.finish(nil)
 	})
 	var anyError, anyConflict bool
+	errs := make([]error, len(outcomes))
 	for i := range outcomes {
 		o := &outcomes[i]
 		o.out.flush()
+		errs[i] = o.err
 		anyError = anyError || o.err != nil
 		anyConflict = anyConflict || o.conflict
 	}
+	printFailureHints(os.Stderr, errs...)
 	return applyAllExitCode(anyError, anyConflict)
 }
 

@@ -16,6 +16,7 @@ import (
 
 	"github.com/yasunori0418/layat/internal/engine"
 	"github.com/yasunori0418/layat/internal/generator"
+	"github.com/yasunori0418/layat/internal/gitutil"
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
@@ -56,6 +57,43 @@ func TestPrintSchemaSkewHint(t *testing.T) {
 		"  Update the CLI, or lower the flake's layat input to match the CLI so both versions align.\n"
 	if buf.String() != want {
 		t.Errorf("output = %q, want %q", buf.String(), want)
+	}
+}
+
+// TestPrintFailureHints: each hint is written once however many errors call for it — the skew hint
+// for manifest.ErrSchemaVersionUnsupported, the --root hint for gitutil.ErrNotInRepo — and an
+// unrelated error gets none.
+func TestPrintFailureHints(t *testing.T) {
+	var skew, notInRepo bytes.Buffer
+	printSchemaSkewHint(&skew)
+	printNotInRepoHint(&notInRepo)
+	inRepo := fmt.Errorf("apply a: %w", gitutil.ErrNotInRepo)
+	skewed := fmt.Errorf("cannot read the manifest: %w", manifest.ErrSchemaVersionUnsupported)
+	cases := []struct {
+		name                string
+		errs                []error
+		wantSkew, wantNotIn int
+	}{
+		{"none", []error{errors.New("boom"), nil}, 0, 0},
+		{"not in repo once", []error{inRepo, fmt.Errorf("apply b: %w", gitutil.ErrNotInRepo)}, 0, 1},
+		{"skew once", []error{skewed, skewed}, 1, 0},
+		{"both", []error{inRepo, skewed}, 1, 1},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			var buf bytes.Buffer
+			printFailureHints(&buf, c.errs...)
+			out := buf.String()
+			if got := strings.Count(out, skew.String()); got != c.wantSkew {
+				t.Errorf("skew hints = %d, want %d:\n%s", got, c.wantSkew, out)
+			}
+			if got := strings.Count(out, notInRepo.String()); got != c.wantNotIn {
+				t.Errorf("not-in-repo hints = %d, want %d:\n%s", got, c.wantNotIn, out)
+			}
+			if c.wantSkew == 0 && c.wantNotIn == 0 && out != "" {
+				t.Errorf("output = %q, want none", out)
+			}
+		})
 	}
 }
 

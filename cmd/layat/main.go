@@ -7,8 +7,6 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-
-	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // version is the layat version shown by `layat --version` and used as the envelope's tool.version.
@@ -172,10 +170,7 @@ func main() {
 		}
 
 		printError(os.Stderr, err)
-		// On a manifest schemaVersion skew between the CLI and the flake pin, add the cause and the fix.
-		if errors.Is(err, manifest.ErrSchemaVersionUnsupported) {
-			printSchemaSkewHint(os.Stderr)
-		}
+		printFailureHints(os.Stderr, err)
 		os.Exit(exitCodeFor(err))
 	}
 }
