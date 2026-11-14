@@ -20,7 +20,7 @@ import (
 
 // reverseCompletion wraps fn so the configs complete in reverse lexical order (needs jobs >=
 // len(selected)). completed returns the observed completion order.
-func reverseCompletion(t *testing.T, selected []string, fn func(string) (*engine.Result, error)) (wrapped func(string) (*engine.Result, error), completed func() []string) {
+func reverseCompletion(t *testing.T, selected []string, fn configApplyFn) (wrapped configApplyFn, completed func() []string) {
 	t.Helper()
 	done := make(map[string]chan struct{}, len(selected))
 	next := make(map[string]string, len(selected))
@@ -32,7 +32,7 @@ func reverseCompletion(t *testing.T, selected []string, fn func(string) (*engine
 	}
 	var mu sync.Mutex
 	var order []string
-	wrapped = func(name string) (*engine.Result, error) {
+	wrapped = func(name string, warnf, reportf func(string, ...any)) (*engine.Result, error) {
 		if succ, ok := next[name]; ok {
 			select {
 			case <-done[succ]:
@@ -40,7 +40,7 @@ func reverseCompletion(t *testing.T, selected []string, fn func(string) (*engine
 				t.Errorf("%s waited on %s for 2s: the configs are not applied in parallel", name, succ)
 			}
 		}
-		res, err := fn(name)
+		res, err := fn(name, warnf, reportf)
 		mu.Lock()
 		order = append(order, name)
 		mu.Unlock()
@@ -87,7 +87,7 @@ func TestApplyAllParallelOutputIsLexicalDespiteCompletionOrder(t *testing.T) {
 	withVerbose(t)
 	selected := []string{"a", "b", "c"}
 	run, buf := newApplyTestRun()
-	applyFn, completed := reverseCompletion(t, selected, func(name string) (*engine.Result, error) {
+	applyFn, completed := reverseCompletion(t, selected, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		return placedResult(name), nil
 	})
 	var applied, skipped, failures int
@@ -111,13 +111,49 @@ func TestApplyAllParallelOutputIsLexicalDespiteCompletionOrder(t *testing.T) {
 	}
 }
 
+// TestApplyAllParallelEngineLinesPerConfig: under apply --all, what the engine writes through the
+// warning and failure-detail functions lands in each config's output, headed by the config name and
+// flushed in lexical order whatever the completion order. A failure detail is no warning.
+func TestApplyAllParallelEngineLinesPerConfig(t *testing.T) {
+	selected := []string{"a", "b", "c"}
+	run, _ := newApplyTestRun()
+	applyFn, completed := reverseCompletion(t, selected, func(name string, warnf, reportf func(string, ...any)) (*engine.Result, error) {
+		warnf("first note of %s", name)
+		reportf("detail of %s", name)
+		warnf("second note of %s", name)
+		if name == "b" {
+			return nil, errors.New("stub apply of b failed")
+		}
+		return placedResult(name), nil
+	})
+	stderr := captureStderr(t, func() {
+		aggregateApply(run, selected, len(selected), applyFn)
+	})
+	if got, want := completed(), []string{"c", "b", "a"}; !slices.Equal(got, want) {
+		t.Fatalf("completion order = %v, want %v (the reversal did not happen)", got, want)
+	}
+	var want []string
+	for _, name := range selected {
+		want = append(want,
+			"["+name+"] layat: warning: first note of "+name,
+			"["+name+"] layat: detail of "+name,
+			"["+name+"] layat: warning: second note of "+name)
+		if name == "b" {
+			want = append(want, "layat: apply b failed: stub apply of b failed")
+		}
+	}
+	if got := strings.Split(strings.TrimSuffix(stderr, "\n"), "\n"); !slices.Equal(got, want) {
+		t.Errorf("stderr lines =\n%s\nwant\n%s", strings.Join(got, "\n"), strings.Join(want, "\n"))
+	}
+}
+
 // TestApplyAllParallelPartialFailureAndSkip: a failure, a skip and a success completing in reverse
 // keep lexical stderr order, count (1, 1, 1), and settle each subject on its own outcome.
 func TestApplyAllParallelPartialFailureAndSkip(t *testing.T) {
 	withVerbose(t)
 	selected := []string{"a", "b", "c"}
 	run, buf := newApplyTestRun()
-	applyFn, completed := reverseCompletion(t, selected, func(name string) (*engine.Result, error) {
+	applyFn, completed := reverseCompletion(t, selected, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		switch name {
 		case "a":
 			return nil, errors.New("stub apply of a failed")
@@ -168,7 +204,7 @@ func TestApplyAllDryRunParallelPlanIsLexical(t *testing.T) {
 	selected := []string{"a", "b", "c"}
 	run, buf := newApplyTestRun()
 	run.dryRun = true
-	applyDry, completed := reverseCompletion(t, selected, func(name string) (*engine.Result, error) {
+	applyDry, completed := reverseCompletion(t, selected, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		res := placedResult(name)
 		if name == "b" {
 			res.Placed = nil
@@ -204,7 +240,7 @@ func TestApplyAllDryRunParallelFailureLinesAreLexical(t *testing.T) {
 	selected := []string{"a", "b", "c"}
 	run, _ := newApplyTestRun()
 	run.dryRun = true
-	applyDry, completed := reverseCompletion(t, selected, func(name string) (*engine.Result, error) {
+	applyDry, completed := reverseCompletion(t, selected, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		if name == "c" {
 			return placedResult(name), nil
 		}
@@ -237,7 +273,7 @@ func TestApplyAllParallelCountsAreExact(t *testing.T) {
 	run, buf := newApplyTestRun()
 	var applied, skipped, failures int
 	captureStderr(t, func() {
-		applied, skipped, failures = aggregateApply(run, selected, jobs, func(name string) (*engine.Result, error) {
+		applied, skipped, failures = aggregateApply(run, selected, jobs, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 			cur := inFlight.Add(1)
 			defer inFlight.Add(-1)
 			for {

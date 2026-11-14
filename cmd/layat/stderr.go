@@ -84,6 +84,22 @@ func engineReportf(format string, args ...any) {
 	noticef(os.Stderr, format, args...)
 }
 
+// configWarnf returns apply --all's warning function for config name: warnf writing to w with the
+// line headed by "[<name>] ".
+func configWarnf(w io.Writer, name string) func(format string, args ...any) {
+	return func(format string, args ...any) {
+		_, _ = fmt.Fprintf(w, "[%s] "+msgPrefix+"warning: %s\n", name, fmt.Sprintf(format, args...))
+	}
+}
+
+// configReportf returns apply --all's failure-detail function for config name: noticef writing to
+// w with the line headed by "[<name>] ".
+func configReportf(w io.Writer, name string) func(format string, args ...any) {
+	return func(format string, args ...any) {
+		_, _ = fmt.Fprintf(w, "[%s] "+msgPrefix+"%s\n", name, fmt.Sprintf(format, args...))
+	}
+}
+
 // discloseNix writes the --debug disclosure of a nix command, "layat: + nix <args>".
 func discloseNix(w io.Writer, args []string) {
 	_, _ = fmt.Fprintf(w, msgPrefix+"+ nix %s\n", strings.Join(args, " "))
