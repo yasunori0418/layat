@@ -12,7 +12,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-14T23:43:00+09:00"
+  at: "2026-11-15T06:08:07+09:00"
 ---
 # nixgen_test.go — entrypoint 探索順序と installable 引数の 2 形式
 
@@ -34,16 +34,22 @@ generated:
 - **発見した entrypoint の公開** — 発見前は空で、flake 形はディレクトリ、legacy 形はファイルの絶対パスを
   返すこと
 
-- **失敗の構造** — 発見の失敗が Stage discover で原因（`fs.ErrNotExist` 等）を保持し、文面は
-  従来どおりであること。nix eval と読み取り専用の build の失敗がそれぞれ Stage roots / build に
-  なり、失敗したサブコマンドまでの 1 行の Message と、キャプチャした stderr を持つこと。
-  ロック内の build の失敗も Stage build で、nix の出力が生成器の writer へ流れつつ stderr が
-  キャプチャされること
-- **失敗の分類と案内** — experimental-features 未有効の 3 つの文言が検出され（無関係な失敗は
-  検出されない）、`PrerequisiteMissing` の `Guidance` に nix.conf と `NIX_CONFIG` の両手段が
-  入ること。eval での属性の不在（nix の 2 通りの文言）は `NotFound` で、config 名・名前空間が
-  無い旨の Message と、単発は config 名の確認、一括は config の定義を促す `Guidance` を持つこと。
-  build での属性の不在とそれ以外は `Failed` になること。writer への書き込みは best-effort で、
+- **失敗の構造** — 発見の失敗が Stage discover で原因（`fs.ErrNotExist` 等）を保持すること。
+  `-f` のパスを権限で stat できない失敗が `fs.ErrPermission` を保ち、不在と報告されないこと。
+  CWD に entrypoint が無い失敗は CWD のパスを含み、`fs.ErrNotExist` を包まないこと。nix eval と
+  読み取り専用の build の失敗がそれぞれ Stage roots / build になり、失敗したサブコマンドと
+  installable の全体を括弧で示す 1 行の Message と、キャプチャした stderr を持つこと。ロック内の
+  build の失敗も Stage build で、nix の出力が生成器の writer へ流れつつ stderr がキャプチャされる
+  こと。nix が成功した後の失敗（一括 eval の結果を解析できない・out-link を読めない・
+  `--print-out-paths` が空）も `Failed` の `generator.Error` で、それぞれ Stage roots・build・build
+  になること
+- **失敗の分類と案内** — `error:` の行の、experimental feature が無効だという 1 種類の文言だけが
+  検出され（`error:` 以外の行と他の文言は検出されない）、`PrerequisiteMissing` の `Guidance` に
+  nix.conf と `NIX_CONFIG` の両手段が入ること。eval で問い合わせた attr path が `error:` の行の
+  引用符の中にあるとき（flake の候補の列挙と legacy の selection path の 2 通りの文言）だけ
+  `NotFound` で、config 名・名前空間が無い旨の Message と、単発は config 名の確認、一括は
+  config の定義を促す `Guidance` を持つこと。config の中の評価エラー
+  （`error: attribute 'foo' missing`）、build での属性の不在、それ以外は `Failed` になること。writer への書き込みは best-effort で、
   writer が失敗しても nix の成功は成功のまま、失敗時の `Stderr` には後続の出力まで全て残ること
 - **診断の素通し** — 成功時にも eval と build のどちらの処理でも nix の stderr が writer へ届くこと。
   nix が行を分けて書いても writer へは行単位で渡り、終端の無い最後の断片は終了時に 1 回で

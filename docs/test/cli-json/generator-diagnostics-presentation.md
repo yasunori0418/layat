@@ -7,7 +7,7 @@ mitigates:
   - "RISK-cdca94ab-ed44-4d60-a04d-4dc75d61f731"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-15T00:19:28+09:00"
+  at: "2026-11-15T06:08:07+09:00"
 ---
 # 生成器の診断が成功・失敗とも writer へ届き、失敗は分類と案内付きで出力面ごとに提示される
 
@@ -18,10 +18,11 @@ nix 生成器は PATH の先頭に置いた nix のスタブで駆動し、CLI �
 
 - **素通し** — eval と build のどちらの処理でも、nix の stderr が成功時も失敗時も生成器の writer へ
   届く。writer へは行単位で渡り、行の途中で切れた書き込みが来ても行が揃うまで渡さない
-- **分類と案内** — experimental-features 未有効の 3 つの文言が `PrerequisiteMissing` になり、
-  `Guidance` に nix.conf と `NIX_CONFIG` の両手段が入る。eval での属性の不在は `NotFound` で、単発は
-  config 名の確認を、一括は config の定義を案内する。それ以外は `Failed`。`Message` は失敗した
-  サブコマンドまでの 1 行で、生の診断は `Stderr` に残る
+- **分類と案内** — `error:` の行に experimental feature が無効だという文言があるときだけ
+  `PrerequisiteMissing` になり、`Guidance` に nix.conf と `NIX_CONFIG` の両手段が入る。eval で
+  問い合わせた attr path が `error:` の行の引用符の中にあるときだけ `NotFound` で、単発は config 名の
+  確認を、一括は config の定義を案内する。config の中の評価エラーを含め、それ以外は `Failed`。
+  `Message` は失敗したサブコマンドと installable を示す 1 行で、生の診断は `Stderr` に残る
 - **出力面ごとの提示** — 人間向けは要約 1 行と `Guidance` で生の診断を再掲しない。`--debug` では
   要約行に生成器名を後置する。`--json` の `errors[].message` は要約とキャプチャを含み、
   `--debug` に左右されず生成器名を前置きしない

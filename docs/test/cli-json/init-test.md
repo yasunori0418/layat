@@ -11,8 +11,8 @@ covers:
 follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
-  by: "claude-code/claude-opus-5"
-  at: "2026-09-20T08:21:50+09:00"
+  by: "claude-code/claude-opus-5-5"
+  at: "2026-11-15T06:08:07+09:00"
 ---
 # init_test.go — テンプレート名の受理集合と subject を持たない文書形
 
@@ -30,3 +30,6 @@ generated:
   参照先）がエンベロープ直下の `info` に載ること
 - **`info` の境界** — テンプレート名を拒否した実行は `info` を設定する前に失敗するため、
   `info` がキーごと不在であること（値の struct を出すと空文字を含む文書になる）
+- **展開の失敗** — nix の失敗の文が、展開する installable を括弧で示す要約で始まり、次の行から
+  nix の stderr が続くこと。experimental feature が無効なときは生成器と同じ案内文を出すこと。どちらも nix の
+  終了（`*exec.ExitError`）を原因の連鎖に残し、終了コードは nix のもの（3）を継がず 1 になること
