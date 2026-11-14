@@ -42,7 +42,8 @@ func (a *applier) placeCopies(actions []planner.CopyAction) error {
 
 // recopyAll is the copy overwrite path of apply --recopy. For every copy entry in the manifest,
 // an existing target is renamed aside within its parent directory and then re-copied
-// unconditionally, discarding local edits; the aside is restored if this Apply unwinds.
+// unconditionally, discarding local edits; the aside is restored if this Apply unwinds. An aside
+// already on disk stops the entry instead of being overwritten.
 func (a *applier) recopyAll() error {
 	for _, e := range a.manifest.Entries {
 		if e.Method != manifest.MethodCopy {
@@ -53,6 +54,11 @@ func (a *applier) recopyAll() error {
 		if _, err := os.Lstat(targetAbs); err == nil {
 			existed = true
 			aside := asidePath(targetAbs)
+			if _, err := os.Lstat(aside); err == nil {
+				return a.entryFailed(e.Target, fmt.Errorf("recopy aside already exists (%s); move or remove it before re-running --recopy", aside))
+			} else if !errors.Is(err, iofs.ErrNotExist) {
+				return a.entryFailed(e.Target, fmt.Errorf("cannot lstat recopy aside: %w", err))
+			}
 			if err := os.Rename(targetAbs, aside); err != nil {
 				return a.entryFailed(e.Target, fmt.Errorf("cannot move aside recopy target: %w", err))
 			}
