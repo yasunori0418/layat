@@ -12,7 +12,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:53:14+09:00"
+  at: "2026-11-15T01:05:36+09:00"
 ---
 # generations_test.go — rollback の再収束と失敗時の処理
 
@@ -53,6 +53,8 @@ generated:
   （→ issue #178）
 - 祖先の PreRemove が drift で失敗したときはポインタ移動へ進まず、配置を触らない
 - 前世代が無い（最古世代）・profile が無い（未 apply）はエラーで停止する
+- profileDir の stat が権限の拒否で失敗したときは、`fs.ErrPermission` を辿れるエラーで止まり、
+  profile が無いとは報告しない（root では skip）
 - `Backend` が nil のとき profileDir の解決前にエラーで停止する
 - 戻り先の target が複数 foreign 実体で塞がれているとき、全 conflict を stderr へ
   列挙してから件数付きの集約エラーを返す（→ issue #176）
