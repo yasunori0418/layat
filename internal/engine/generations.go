@@ -256,7 +256,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 	if err := opts.Backend.Switch(prof.Profile, prev.Number); err != nil {
 		// Every planned FS action already succeeded, so the failure is not entry-scoped
 		// (FailedTarget / Unreached stay empty) — but the partial result is still returned.
-		return fail(fmt.Errorf("failed to move the profile pointer (switch to generation %d): %w", prev.Number, err))
+		return fail(err)
 	}
 	a.discardJournal()
 	a.result.GenAfter = intPtr(prev.Number)

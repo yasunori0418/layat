@@ -146,14 +146,10 @@ type OriginMismatch struct {
 // ErrSkipped indicates a skip on the NoWait path because another apply is in progress.
 var ErrSkipped = lock.ErrLocked
 
-// acquireProfileLock takes the profileDir flock and wraps the error. Shared by Apply /
-// Rollback / Reset; NoWait handling and Release stay with each caller.
+// acquireProfileLock takes the profileDir flock; lock.Acquire names the profileDir in its error.
+// Shared by Apply / Rollback / Reset / Prune; NoWait handling and Release stay with each caller.
 func acquireProfileLock(dir string, wait bool) (*lock.Lock, error) {
-	l, err := lock.Acquire(dir, wait)
-	if err != nil {
-		return nil, fmt.Errorf("failed to acquire flock (%s): %w", dir, err)
-	}
-	return l, nil
+	return lock.Acquire(dir, wait)
 }
 
 // Apply places the manifest's entries and commits a generation on success, in the order
@@ -336,7 +332,7 @@ func Apply(opts Options) (*Result, error) {
 	// 9. generation commit. A commit failure is not unwound; re-apply converges.
 	if err := opts.Backend.Commit(a.profile.Profile, a.opts.LinkFarm); err != nil {
 		// Not entry-scoped, so no FailedTarget / Unreached, but the partial Result is still returned.
-		return a.result, fmt.Errorf("generation commit failed: %w", err)
+		return a.result, err
 	}
 	a.discardJournal()
 
