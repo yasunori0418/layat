@@ -150,7 +150,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 		return nil, err
 	}
 	if b.profileUnreadable() {
-		return nil, fmt.Errorf("cannot read the previous generation's manifest (%s): %w", prof.Profile, b.profileErr)
+		return nil, b.profileErr
 	}
 	if b.manifest == nil {
 		return res, nil

@@ -195,7 +195,7 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		return nil, err
 	}
 	if b.profileUnreadable() {
-		return nil, fmt.Errorf("cannot read the current generation's manifest: %w", b.profileErr)
+		return nil, b.profileErr
 	}
 	baseline := b.manifest
 	target, err := manifest.Load(paths.GenerationLink(prof.Profile, prev.Number))
