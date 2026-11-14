@@ -319,8 +319,8 @@ func TestListGenerationsAllScansSystemBase(t *testing.T) {
 		fake.System = t.TempDir()
 		makeProfilesUnder(t, fake.System, "s")
 		run, buf, err := listAll()
-		if err == nil || !strings.Contains(err.Error(), userBase) {
-			t.Fatalf("runListAllGenerations = %v, want an error naming %s", err, userBase)
+		if err == nil || !strings.HasPrefix(err.Error(), "cannot list the profile base: ") || strings.Count(err.Error(), userBase) != 1 {
+			t.Fatalf("runListAllGenerations = %v, want the listing failure naming %s once", err, userBase)
 		}
 		if err := run.emit(err); err != nil {
 			t.Fatalf("emit: %v", err)
@@ -346,8 +346,8 @@ func TestListGenerationsAllScansSystemBase(t *testing.T) {
 		if err != nil {
 			t.Fatalf("runListAllGenerations = %v, want nil (the system base is skipped)", err)
 		}
-		if lines := strings.Split(strings.TrimRight(stderr, "\n"), "\n"); len(lines) != 1 || !strings.Contains(stderr, notDir) {
-			t.Errorf("stderr = %q, want one warning line naming %s", stderr, notDir)
+		if lines := strings.Split(strings.TrimRight(stderr, "\n"), "\n"); len(lines) != 1 || strings.Count(stderr, notDir) != 1 {
+			t.Errorf("stderr = %q, want one warning line naming %s once", stderr, notDir)
 		}
 		if err := run.emit(nil); err != nil {
 			t.Fatalf("emit: %v", err)
