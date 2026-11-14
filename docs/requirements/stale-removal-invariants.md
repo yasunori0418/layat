@@ -16,6 +16,8 @@ specification: |
   recorded — the store path that the baseline records, or the recorded out-of-store path — SHALL
   be removed. Regular files and links not managed by layat SHALL NOT be touched. Where the
   record and the actual entity disagree, the engine SHALL NOT remove it and SHALL warn.
+  Where the target cannot be examined for a reason other than its absence, the engine SHALL
+  NOT treat it as a disagreement and SHALL stop with an error.
   On a first run, where neither a last-applied record nor a generation exists and the
   baseline is therefore empty, nothing SHALL be removed. When an entry
   disappears, a symlink — whether a store link or an out-of-store one — SHALL be removed
@@ -27,13 +29,14 @@ specification_ja: |
   （[apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)）。比較の基準のマニフェストが「layat が配置した」と記録し、かつ
   現状もその記録通りの先（比較の基準が記録する store パス / 記録された out-of-store パス）を指す symlink
   のみを削除しなければならない。通常ファイルや layat 非管理の link には触れてはならない。
-  記録と実体が不一致なら削除してはならず、警告しなければならない。初回（last-applied 記録も
+  記録と実体が不一致なら削除してはならず、警告しなければならない。不在以外の理由で対象を
+  調べられないときは、不一致と扱ってはならず、エラーで止めなければならない。初回（last-applied 記録も
   世代も無く比較の基準が空）では何も消してはならない。entry が消えたとき、symlink（store / out-of-store）は上記の不変条件を
   満たすもののみ除去しなければならず、copy は除去してはならない（ユーザー所有データの
   ため）。ただし copy が孤児になったことは警告で通知しなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T22:43:21+09:00"
+  at: "2026-11-15T01:04:34+09:00"
 ---
 # 古くなった配置の除去は前世代の記録通りを指す symlink のみに限り、copy は消さず孤児を警告する
 
