@@ -172,6 +172,7 @@
 * [実ディレクトリの target は全 leaf を除去できるときだけ移行する](./real-dir-target-migration.md) - 前世代が `foo/main.sh` をファイルごとに置き、新しい世代がその親の `foo` をディレクトリのsymlink にすると、`foo` は実ディレクトリとして残っているので conflict になる。2026-07-12 の実障害（`.claude/hooks/<name>/main.sh` を `.claude/hooks/<name>` のディレクトリ symlink にまとめた変更）がこの形だった。祖先の symlink の移行だけでは、target そのものが実ディレクトリの場合を救えない。[配置前除去を planner が計算するデータとして表す](preremove-as-planner-data.md)。この配置前除去の対象を広げるかを決める必要があった。 (stable)
 * [古くなった配置の除去で使う比較のキーを解決後の target にする](./stale-diff-keyed-by-target.md) - 古くなった配置の除去は、前世代の manifest と今回の manifest を entry ごとに比べ、今回に無いものを除く。比べるキーには、以前は手で付けた `name` を使っていた。entries を target をキーにしたattrset にすると、候補は属性キーと解決後の target になる。属性キーは `target` の明示で上書きでき、両者は一致しないことがある。 (stable)
 * [古くなった配置の除去は manifest の差分で行う](./stale-removal-by-manifest-diff.md) - config から entry が消えたら、前回置いた symlink を除去しなければならない。そのためには「前回何を置いたか」を何かに記録しておき、今回の内容と比べる必要がある。 (stable)
+* [除去の直前の再確認で起きた I/O の失敗は drift と区別して error にする](./stale-reverify-io-failure-is-error.md) - 除去の直前の再確認で、不在と symlink でなくなったこと以外の I/O の失敗は drift と扱わず、元エラーを残したエラーで止める (stable)
 * [method の symlink から copy への変更を自動で移行する](./symlink-to-copy-migration.md) - 同じ target で `method` を `symlink` から `copy` へ変えると、前世代が置いた symlink が target を占めている。copy 側の分類では構造の不一致か foreign になり、conflict か skip になる。移行には手で `rm` する必要があった。 (stable)
 
 ## 巻き戻しとロック
