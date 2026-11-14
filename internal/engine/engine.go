@@ -527,7 +527,11 @@ func (a *applier) dryRun() (*Result, error) {
 // Rollback / ProfileFor; on `--root` override it uses the override path regardless of kind.
 func resolveRoot(rootKind, fixedRoot, rootOverride, workDir string, git GitFunc) (string, error) {
 	if rootOverride != "" {
-		return filepath.Abs(rootOverride)
+		abs, err := filepath.Abs(rootOverride)
+		if err != nil {
+			return "", fmt.Errorf("cannot resolve the absolute path of the root (%s): %w", rootOverride, err)
+		}
+		return abs, nil
 	}
 	switch rootKind {
 	case manifest.RootKindProject:
@@ -553,7 +557,11 @@ func resolveRoot(rootKind, fixedRoot, rootOverride, workDir string, git GitFunc)
 		if fixedRoot == "" {
 			return "", fmt.Errorf("rootKind=fixed but no root path provided")
 		}
-		return filepath.Abs(fixedRoot)
+		abs, err := filepath.Abs(fixedRoot)
+		if err != nil {
+			return "", fmt.Errorf("cannot resolve the absolute path of the root (%s): %w", fixedRoot, err)
+		}
+		return abs, nil
 	case manifest.RootKindSystem:
 		return "/", nil
 	case "":
@@ -580,15 +588,15 @@ func requireRoot(rootKind string, geteuid func() int) error {
 
 func (a *applier) ensureProfileDir() error {
 	if err := os.MkdirAll(a.profile.Dir, 0o755); err != nil {
-		return fmt.Errorf("cannot create profileDir (%s): %w", a.profile.Dir, err)
+		return fmt.Errorf("cannot create profileDir: %w", err)
 	}
 	// Place backref .root at the <roothash> level (reverse-lookup seam for orphan profiles).
 	if a.profile.Backref != "" {
 		if err := os.MkdirAll(a.profile.BackrefDir, 0o755); err != nil {
-			return fmt.Errorf("cannot create backref directory (%s): %w", a.profile.BackrefDir, err)
+			return fmt.Errorf("cannot create backref directory: %w", err)
 		}
 		if err := os.WriteFile(a.profile.Backref, []byte(a.root+"\n"), 0o644); err != nil {
-			return fmt.Errorf("cannot write backref (%s): %w", a.profile.Backref, err)
+			return fmt.Errorf("cannot write backref: %w", err)
 		}
 	}
 	return nil

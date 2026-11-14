@@ -352,6 +352,10 @@ func TestClassifyErrorCodes(t *testing.T) {
 		{"residual IO PathError", &fs.PathError{Op: "rmdir", Path: "/x", Err: syscall.ENOTEMPTY}, "E_IO"},
 		{"residual IO LinkError", &os.LinkError{Op: "symlink", Old: "/a", New: "/b", Err: syscall.EEXIST}, "E_IO"},
 		{"unclassified fallback", errors.New("generation commit failed"), "E_LAYAT_FAILED"},
+		{"joined failures take the first element's code",
+			errors.Join(&fs.PathError{Op: "open", Path: "/x", Err: syscall.EACCES}, notExist), "E_PERMISSION"},
+		{"joined failures led by the lock", errors.Join(lock.ErrLocked, notExist), "E_LOCK"},
+		{"joined failures led by a not-found", errors.Join(notExist, lock.ErrLocked), "E_NOTFOUND"},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {

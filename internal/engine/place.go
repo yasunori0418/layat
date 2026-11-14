@@ -13,7 +13,7 @@ import (
 // pruneEmptyAncestors.
 func ensureParentDir(targetAbs string) error {
 	if err := os.MkdirAll(filepath.Dir(targetAbs), 0o755); err != nil {
-		return fmt.Errorf("cannot create parent directory (%s): %w", filepath.Dir(targetAbs), err)
+		return fmt.Errorf("cannot create parent directory: %w", err)
 	}
 	return nil
 }
@@ -32,15 +32,15 @@ func (a *applier) place(actions []planner.PlaceAction) error {
 			// The foreign-overwrite warning is already emitted via planner.Warnings by emitWarnings.
 			prevDest, err := os.Readlink(act.TargetAbs)
 			if err != nil {
-				return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot read existing symlink before re-link (%s): %w", act.TargetAbs, err))
+				return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot read existing symlink before re-link: %w", err))
 			}
 			if err := os.Remove(act.TargetAbs); err != nil {
-				return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot remove existing symlink (%s): %w", act.TargetAbs, err))
+				return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot remove existing symlink: %w", err))
 			}
 			// Journaled before the re-symlink so undo can restore prevDest even if it fails.
 			a.journalRelinkedSymlink(act.TargetAbs, prevDest)
 			if err := os.Symlink(act.Dest, act.TargetAbs); err != nil {
-				return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot create symlink (%s -> %s): %w", act.TargetAbs, act.Dest, err))
+				return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot create symlink: %w", err))
 			}
 			a.result.Replaced = append(a.result.Replaced, act.Entry.Target)
 			a.recordReplacedDest(act.Entry.Target, prevDest)
@@ -53,7 +53,7 @@ func (a *applier) place(actions []planner.PlaceAction) error {
 			return a.entryFailed(act.Entry.Target, fmt.Errorf("internal: unhandled place kind %d (target: %s)", act.Kind, act.Entry.Target))
 		}
 		if err := os.Symlink(act.Dest, act.TargetAbs); err != nil {
-			return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot create symlink (%s -> %s): %w", act.TargetAbs, act.Dest, err))
+			return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot create symlink: %w", err))
 		}
 		a.journalPlacedSymlink(act.TargetAbs)
 		a.result.Placed = append(a.result.Placed, act.Entry.Target)
