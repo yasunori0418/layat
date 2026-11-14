@@ -27,7 +27,8 @@ specification: |
   journal SHALL be rolled back by the same mechanism. The journal SHALL be discarded once
   the generation commit through the generation backend contract
   ([engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)) has succeeded, a failure of the commit itself
-  being outside the scope of rollback because an idempotent re-run converges. On the
+  being outside the scope of rollback because an idempotent re-run converges; a re-run with
+  `--recopy` stops instead until the aside left by the failed run is moved or removed. On the
   success of the run, the aside made by `--recopy` SHALL be deleted, whereas the aside
   made by `--backup` SHALL be left in place. Crashes such as
   SIGKILL or power loss SHALL be out of scope, the journal existing only in process memory
@@ -53,7 +54,7 @@ specification_ja: |
   と rollback で last-applied 記録（[apply は最後に配置した manifest を last-applied 記録に書き、古くなった配置の除去の比較の基準は記録を優先して読む](last-applied-record.md)）を書けなければ、
   run を失敗させ、同じ機構でジャーナルを巻き戻さなければならない。世代バックエンドの契約
   （[engine は世代操作を世代バックエンドの契約（Commit / List / Switch / UserBase / SystemBase）越しに行う](generation-backend-contract.md)）越しの世代コミットが成功した後はジャーナルを
-  破棄しなければならない（コミット自体の失敗は冪等再実行で収束するため巻き戻し対象外）。`--recopy` の退避物は成功時に削除しなければならず、`--backup` の退避物は成功時も
+  破棄しなければならない（コミット自体の失敗は冪等再実行で収束するため巻き戻し対象外。ただし `--recopy` の再実行は、失敗した run が残した退避物を移すか消すまで止まる）。`--recopy` の退避物は成功時に削除しなければならず、`--backup` の退避物は成功時も
   残置しなければならない。クラッシュ（SIGKILL・電源断）は対象外としなければならない
   （ジャーナルはプロセスメモリ上にのみ存在し永続 WAL を持たないため）。この場合は
   「世代未コミット + 冪等再実行で収束」が保証を担う。世代スキップの処理の drift 修復も同じ機構で
@@ -62,7 +63,7 @@ specification_ja: |
   `--backup` 相当のフラグが無いため Backup 段は常に空でなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:29:58+09:00"
+  at: "2026-11-15T01:26:11+09:00"
 ---
 # 途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す
 
@@ -85,7 +86,7 @@ undo ジャーナルへ逆操作を 1 件記録する:
 
 いずれかの段でエラーが発生したら、それまでに記録したジャーナルを逆順（LIFO）で巻き戻してから
 エラーを返す。nix-env --set（コミット）が成功した後はジャーナルを破棄する（--set 自体の失敗は
-巻き戻し対象外・冪等再実行で収束）。
+巻き戻し対象外・冪等再実行で収束。--recopy の再実行は残った退避物を片付けるまで止まる）。
 ```
 
 - **クラッシュ（SIGKILL・電源断）は対象外**。undo ジャーナルはプロセスメモリ上にのみ存在し、
