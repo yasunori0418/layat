@@ -150,9 +150,9 @@ func failureDetailsSetup(t *testing.T) (root, flakeDir string) {
 	return root, flagFile
 }
 
-// applyManifest runs apply c --manifest over a link-farm of entries and returns the error and
-// stderr.
-func applyManifest(t *testing.T, entries ...manifest.Entry) (error, string) {
+// applyManifest runs apply c --manifest over a link-farm of entries and returns stderr and the
+// error.
+func applyManifest(t *testing.T, entries ...manifest.Entry) (string, error) {
 	t.Helper()
 	origFile := flagFile
 	t.Cleanup(func() { flagFile = origFile })
@@ -164,7 +164,7 @@ func applyManifest(t *testing.T, entries ...manifest.Entry) (error, string) {
 		err = runApply(run, "c")
 	})
 	flagFile, flagManifest = origFile, nil
-	return err, stderr
+	return stderr, err
 }
 
 // readOnlyDir creates dir with no write permission, restored at cleanup so TempDir can remove it.
@@ -196,7 +196,7 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 		if err := os.WriteFile(filepath.Join(root, ".a"), []byte("foreign"), 0o644); err != nil {
 			t.Fatal(err)
 		}
-		err, stderr := applyManifest(t, entry(".a"))
+		stderr, err := applyManifest(t, entry(".a"))
 		if err == nil {
 			t.Fatal("apply succeeded, want a conflict stop")
 		}
@@ -207,7 +207,7 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 	t.Run("apply undo", func(t *testing.T) {
 		root, _ := failureDetailsSetup(t)
 		readOnlyDir(t, filepath.Join(root, "ro"))
-		err, stderr := applyManifest(t, entry("ro/leaf"))
+		stderr, err := applyManifest(t, entry("ro/leaf"))
 		if err == nil {
 			t.Fatal("apply succeeded, want an FS failure")
 		}
@@ -216,12 +216,12 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 	})
 
 	// rollbackFrom applies [.a, ro/leaf] then [.b], so rolling back re-places .a and ro/leaf.
-	rollbackFrom := func(t *testing.T, root, flakeDir string, prepare func()) (error, string) {
+	rollbackFrom := func(t *testing.T, root, flakeDir string, prepare func()) (string, error) {
 		t.Helper()
-		if err, stderr := applyManifest(t, entry(".a"), entry("ro/leaf")); err != nil {
+		if stderr, err := applyManifest(t, entry(".a"), entry("ro/leaf")); err != nil {
 			t.Fatalf("first apply: %v\n%s", err, stderr)
 		}
-		if err, stderr := applyManifest(t, entry(".b")); err != nil {
+		if stderr, err := applyManifest(t, entry(".b")); err != nil {
 			t.Fatalf("second apply: %v\n%s", err, stderr)
 		}
 		prepare()
@@ -231,12 +231,12 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 			run, _ := newRollbackTestRun()
 			err = runRollback(run, "c")
 		})
-		return err, stderr
+		return stderr, err
 	}
 
 	t.Run("rollback conflict", func(t *testing.T) {
 		root, flakeDir := failureDetailsSetup(t)
-		err, stderr := rollbackFrom(t, root, flakeDir, func() {
+		stderr, err := rollbackFrom(t, root, flakeDir, func() {
 			if err := os.WriteFile(filepath.Join(root, ".a"), []byte("foreign"), 0o644); err != nil {
 				t.Fatal(err)
 			}
@@ -249,7 +249,7 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 
 	t.Run("rollback undo", func(t *testing.T) {
 		root, flakeDir := failureDetailsSetup(t)
-		err, stderr := rollbackFrom(t, root, flakeDir, func() { readOnlyDir(t, filepath.Join(root, "ro")) })
+		stderr, err := rollbackFrom(t, root, flakeDir, func() { readOnlyDir(t, filepath.Join(root, "ro")) })
 		if err == nil {
 			t.Fatal("rollback succeeded, want an FS failure")
 		}
