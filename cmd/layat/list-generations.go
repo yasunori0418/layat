@@ -44,12 +44,12 @@ func newListGenerationsCmd() *cobra.Command {
 			run := beginListGenerationsRun(cmd.Name())
 			if all {
 				if len(args) > 0 {
-					return fmt.Errorf("list-generations cannot combine <name> with --all")
+					return &inputError{err: errors.New("list-generations cannot combine <name> with --all")}
 				}
 				return runListAllGenerations(run)
 			}
 			if len(args) != 1 {
-				return fmt.Errorf("list-generations requires <name> or --all")
+				return &inputError{err: errors.New("list-generations requires <name> or --all")}
 			}
 			return runListGenerations(run, args[0])
 		},

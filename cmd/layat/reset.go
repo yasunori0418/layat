@@ -199,7 +199,7 @@ func confirmPolicy(yes, interactive bool, operation string) (needPrompt bool, er
 		return false, nil
 	}
 	if !interactive {
-		return false, fmt.Errorf("refusing destructive %s without --yes in a non-interactive context", operation)
+		return false, &inputError{err: fmt.Errorf("refusing destructive %s without --yes in a non-interactive context", operation)}
 	}
 	return true, nil
 }

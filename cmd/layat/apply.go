@@ -56,7 +56,7 @@ func newApplyCmd() *cobra.Command {
 			flagBackupEnabled = cmd.Flags().Changed("backup")
 			if flagApplyAll {
 				if len(args) > 0 {
-					return fmt.Errorf("apply cannot combine <name> with --all")
+					return &inputError{err: errors.New("apply cannot combine <name> with --all")}
 				}
 				return runApplyAll(run)
 			}
@@ -65,7 +65,7 @@ func newApplyCmd() *cobra.Command {
 			}
 			// Check Changed, not the value: an explicit --jobs 0 equals the default.
 			if cmd.Flags().Changed("jobs") {
-				return fmt.Errorf("--jobs is a modifier for apply --all")
+				return &inputError{err: errors.New("--jobs is a modifier for apply --all")}
 			}
 			name := "default"
 			if len(args) == 1 {
@@ -689,7 +689,7 @@ func selectedRootFilter() (string, error) {
 		modes = append(modes, manifest.RootKindSystem)
 	}
 	if len(modes) > 1 {
-		return "", fmt.Errorf("--project-root / --home-root / --system-root may be specified only one at a time")
+		return "", &inputError{err: errors.New("--project-root / --home-root / --system-root may be specified only one at a time")}
 	}
 	if len(modes) == 0 {
 		return "", nil
@@ -701,7 +701,7 @@ func selectedRootFilter() (string, error) {
 func resolveApplyJobs(jobs int) (int, error) {
 	switch {
 	case jobs < 0:
-		return 0, fmt.Errorf("--jobs must be 0 (the logical CPU count) or a positive integer, got %d", jobs)
+		return 0, &inputError{err: fmt.Errorf("--jobs must be 0 (the logical CPU count) or a positive integer, got %d", jobs)}
 	case jobs == 0:
 		return runtime.NumCPU(), nil
 	default:
@@ -712,7 +712,7 @@ func resolveApplyJobs(jobs int) (int, error) {
 // ensureNoRootFilter errors when a root filter is used outside --all.
 func ensureNoRootFilter(modifier string) error {
 	if flagProjectRoot || flagHomeRoot || flagSystemRoot {
-		return fmt.Errorf("--project-root / --home-root / --system-root are modifiers for %s", modifier)
+		return &inputError{err: fmt.Errorf("--project-root / --home-root / --system-root are modifiers for %s", modifier)}
 	}
 	return nil
 }

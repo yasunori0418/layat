@@ -57,7 +57,7 @@ func newInitCmd() *cobra.Command {
 // without entrypoint discovery.
 func runInit(run *initRun, template string) error {
 	if !isValidTemplate(template) {
-		return fmt.Errorf("unknown template: %q (valid values: %s)", template, strings.Join(initTemplates, " / "))
+		return &inputError{err: fmt.Errorf("unknown template: %q (valid values: %s)", template, strings.Join(initTemplates, " / "))}
 	}
 
 	ref := defaultTemplateRef
