@@ -379,6 +379,12 @@ func TestClassifyErrorNixEnvStderr(t *testing.T) {
 	if want := err.Error() + "\nerror: boom"; e.Message != want {
 		t.Errorf("Message = %q, want %q", e.Message, want)
 	}
+
+	// Without stderr the message is the summary alone.
+	quiet := &nixprofile.CommandError{Op: "--set", Profile: "/p", Err: errors.New("exit status 1")}
+	if e := classifyError(quiet); e.Message != quiet.Error() {
+		t.Errorf("Message without stderr = %q, want %q", e.Message, quiet.Error())
+	}
 }
 
 // TestJSONSuppressesLineOrientedStdout: every line-oriented printer emits nothing under --json and
