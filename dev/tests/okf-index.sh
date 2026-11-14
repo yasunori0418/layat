@@ -258,7 +258,10 @@ fi
 ordered="$work/ordered"
 cp -r "$fixture" "$ordered"
 sed 's/8111-111111111111"$/8111-111111111112"/' "$fixture/docs/adr/with-field.md" > "$ordered/docs/adr/another.md"
-(cd "$ordered" && bash "$generator") > /dev/null 2>&1
+if ! (cd "$ordered" && bash "$generator") > "$work/ordered.out" 2>&1; then
+  fault "(4) ADR を足した入力から index.md を生成できなかった"
+  sed 's/^/    /' "$work/ordered.out"
+fi
 order=$(sed '/^## 有効でない item/q' "$ordered/docs/adr/index.md" | grep -oE '\(\./[^)]*\)' | tr -d '()' | tr '\n' ' ')
 if [ "$order" = "./another.md ./with-field.md " ]; then
   pass "エントリはファイル名順に並ぶ"
@@ -339,7 +342,8 @@ else
   fault "(7) deprecated の item が無いのに末尾の節の見出しが出た:$headed"
 fi
 
-# 写しに、節に分ける型の deprecated と draft の要件、区分の deprecated のテスト条件とテストケースを足す。
+# 写しに、節に分ける型の deprecated と draft の要件、区分の deprecated のテスト条件とテストケースを足し、
+# SDR を deprecated にして、主題の並びが空の index.md を作る。
 deprecated="$work/deprecated"
 cp -r "$fixture" "$deprecated"
 sed 's/8888-888888888888/8888-888888888890/; s/^status: stable$/status: deprecated/; s/エラーの要件/古い要件/; s/エラーの説明。/古い説明。/' \
@@ -348,6 +352,7 @@ sed 's/8888-888888888888/8888-888888888891/; s/^status: stable$/status: draft/; 
   "$fixture/docs/requirements/error.md" > "$deprecated/docs/requirements/z-draft.md"
 sed 's/8555-555555555555/8555-555555555556/; s/^status: stable$/status: deprecated/; s/条件/古い条件/g' \
   "$fixture/docs/test/copy/condition.md" > "$deprecated/docs/test/copy/old-condition.md"
+sed 's/^status: stable$/status: deprecated/' "$fixture/docs/sara-adr/no-description.md" > "$deprecated/docs/sara-adr/no-description.md"
 cat > "$deprecated/docs/test/copy/a-case.md" <<'EOF'
 ---
 id: "CASE-99999999-9999-4999-8999-999999999999"
@@ -392,6 +397,21 @@ if grep -qxF '* [下書きの要件](./z-draft.md) - 下書きの説明。' <<< 
 else
   fault "(7) draft の item が主題の並びに無い"
   sed 's/^/    /' "$deprecated/docs/requirements/index.md"
+fi
+
+want_dep_sdrs=$(cat <<'EOF'
+# SDR（`sara_adr`）
+
+## 有効でない item（`deprecated`）
+
+* [説明の無い決定](./no-description.md) (deprecated)
+EOF
+)
+if [ "$(cat "$deprecated/docs/sara-adr/index.md")" = "$want_dep_sdrs" ]; then
+  pass "主題の並びが空で deprecated の item だけがある index.md は、題の直後に末尾の節を置く"
+else
+  fault "(7) docs/sara-adr/index.md の末尾の節の置き方が食い違う"
+  sed 's/^/    /' "$deprecated/docs/sara-adr/index.md"
 fi
 
 want_dep_copy=$(cat <<'EOF'
