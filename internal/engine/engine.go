@@ -177,7 +177,7 @@ func Apply(opts Options) (*Result, error) {
 	if opts.Build == nil {
 		m, err := manifest.Load(opts.LinkFarm)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read the link-farm's manifest (%s): %w", opts.LinkFarm, err)
+			return nil, err
 		}
 		a.manifest = m
 		a.opts.Origin.Identity = m.Identity
@@ -247,7 +247,7 @@ func Apply(opts Options) (*Result, error) {
 		}
 		m, err := manifest.Load(linkFarm)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read the built link-farm's manifest (%s): %w", linkFarm, err)
+			return nil, err
 		}
 		a.opts.LinkFarm = linkFarm
 		a.manifest = m
@@ -291,8 +291,8 @@ func Apply(opts Options) (*Result, error) {
 	if (rootKind == manifest.RootKindProject || rootKind == manifest.RootKindSystem) && prev != nil {
 		same, err := generationUnchanged(base, a.opts.LinkFarm)
 		if err != nil {
-			// When the previous generation's link-farm cannot be resolved, fall back to the safe side: normal apply (commit a new generation).
-			a.opts.Warnf("could not resolve the previous generation's link-farm; recommitting without a generation skip: %v", err)
+			// When the comparison cannot be made, fall back to the safe side: normal apply (commit a new generation).
+			a.opts.Warnf("cannot compare with the previous generation; recommitting without a generation skip: %v", err)
 		} else if same {
 			// The repair is journaled like normal placement; with no commit on this path, the
 			// journal is discarded as soon as the repair succeeds.
@@ -476,7 +476,7 @@ func (a *applier) dryRun() (*Result, error) {
 		}
 		m, err := manifest.Load(linkFarm)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read the built link-farm's manifest (%s): %w", linkFarm, err)
+			return nil, err
 		}
 		a.opts.LinkFarm = linkFarm
 		a.manifest = m
@@ -604,7 +604,7 @@ func (a *applier) ensureProfileDir() error {
 func (a *applier) readBaseline() (baseline, error) {
 	b, err := loadBaseline(a.record.File, a.profile.Profile, a.opts.Warnf)
 	if err == nil && b.profileUnreadable() {
-		a.opts.Warnf("could not read the previous generation's manifest; skipping stale removal: %v", b.profileErr)
+		a.opts.Warnf("skipping stale removal: %v", b.profileErr)
 		b.manifest = nil
 	}
 	if recorded := recordedOrigin(b.record); recorded != (Origin{}) && a.opts.Origin != (Origin{}) && originsDiffer(recorded, a.opts.Origin) {

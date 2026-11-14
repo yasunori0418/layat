@@ -195,12 +195,12 @@ func Rollback(opts RollbackOptions) (*RollbackResult, error) {
 		return nil, err
 	}
 	if b.profileUnreadable() {
-		return nil, fmt.Errorf("cannot read the current generation's manifest: %w", b.profileErr)
+		return nil, b.profileErr
 	}
 	baseline := b.manifest
 	target, err := manifest.Load(paths.GenerationLink(prof.Profile, prev.Number))
 	if err != nil {
-		return nil, fmt.Errorf("cannot read the previous generation's manifest (generation %d): %w", prev.Number, err)
+		return nil, err
 	}
 
 	// 5. compute the plan for N∖N-1 stale removal · N-1 entry re-placement with the planner (reusing the apply engine with (baseline, target) substituted).

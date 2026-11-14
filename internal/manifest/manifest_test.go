@@ -60,6 +60,10 @@ func TestLoadRejectsNewerSchema(t *testing.T) {
 	if !errors.Is(err, ErrSchemaVersionUnsupported) {
 		t.Errorf("error should wrap ErrSchemaVersionUnsupported, got %v", err)
 	}
+	// The detail names the version and the supported bound, then leaves the rest to the sentinel.
+	if want := "schemaVersion 2 (this engine supports up to v1): " + ErrSchemaVersionUnsupported.Error(); !strings.HasSuffix(err.Error(), want) {
+		t.Errorf("error = %q, want it to end with %q", err, want)
+	}
 }
 
 // Both edges of the schemaVersion lower bound; the upper bound is TestLoadRejectsNewerSchema.

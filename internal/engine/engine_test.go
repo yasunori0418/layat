@@ -1647,3 +1647,38 @@ func TestApplyConflictMixedKindsPairGuidanceCorrectly(t *testing.T) {
 		t.Fatalf("expected both conflict target lines to be found, matched = %d, warns = %v", matched, warns)
 	}
 }
+
+// TestApplyPassesManifestLoadErrorThrough verifies an unreadable link-farm manifest fails apply
+// with manifest.Load's own error: the parse failure is stated once and leads the message, and
+// the newer-schemaVersion sentinel stays detectable via errors.Is.
+func TestApplyPassesManifestLoadErrorThrough(t *testing.T) {
+	cases := []struct {
+		name, content string
+		check         func(t *testing.T, err error)
+	}{
+		{"parse failure", "{", func(t *testing.T, err error) {
+			const phrase = "cannot parse manifest.json ("
+			if !strings.HasPrefix(err.Error(), phrase) || strings.Count(err.Error(), "cannot parse manifest.json") != 1 {
+				t.Errorf("err = %q; want it to start with %q and state the parse failure once", err, phrase)
+			}
+		}},
+		{"newer schemaVersion", `{"schemaVersion": 99, "root": {"rootKind": "project"}, "entries": []}`, func(t *testing.T, err error) {
+			if !errors.Is(err, manifest.ErrSchemaVersionUnsupported) {
+				t.Errorf("err = %v; want it to wrap manifest.ErrSchemaVersionUnsupported", err)
+			}
+		}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			lf := realTempDir(t)
+			if err := os.WriteFile(filepath.Join(lf, manifest.FileName), []byte(tc.content), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			_, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: realTempDir(t), StateDir: realTempDir(t), Backend: &generation.Fake{}})
+			if err == nil {
+				t.Fatal("Apply with an unreadable manifest = nil error")
+			}
+			tc.check(t, err)
+		})
+	}
+}

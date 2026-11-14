@@ -243,10 +243,10 @@ func loadBaseline(recordFile, profileLink string, warnf func(string, ...any)) (b
 	case err == nil:
 		hasProfile = true
 		if b.profileLinkFarm, err = filepath.EvalSymlinks(profileLink); err != nil {
-			b.profileErr = err
+			b.profileErr = fmt.Errorf("cannot resolve profile link (%s): %w", profileLink, err)
 		}
 	case !errors.Is(err, fs.ErrNotExist):
-		b.profileErr = err
+		b.profileErr = fmt.Errorf("cannot stat profile link: %w", err)
 	}
 
 	if rec != nil {
