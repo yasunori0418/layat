@@ -35,7 +35,11 @@ func newGeneratorTo(name string, w io.Writer) generator.Generator {
 		}
 		return &generator.Prebuilt{}
 	}
-	return nixgen.New(w, flagDebug)
+	var disclose func(args []string)
+	if flagDebug {
+		disclose = func(args []string) { discloseNix(w, args) }
+	}
+	return nixgen.New(w, disclose)
 }
 
 // selectGenerator chooses the generator's name. apply --manifest takes prebuilt without reading

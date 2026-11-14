@@ -149,21 +149,22 @@ func (e *entrypoint) namespaceLabel(system string) string {
 	return fmt.Sprintf("layat.%s", system)
 }
 
-// Generator is the nix implementation of generator.Generator. Diagnostics (the --debug
-// disclosure and nix build's progress) go to the writer given to New, never to stdout.
+// Generator is the nix implementation of generator.Generator. Diagnostics (nix build's progress)
+// go to the writer given to New, never to stdout; the --debug disclosure goes to the disclose
+// function given to New.
 type Generator struct {
-	stderr io.Writer
-	debug  bool
-	ep     *entrypoint
-	system string
+	stderr   io.Writer
+	disclose func(args []string)
+	ep       *entrypoint
+	system   string
 }
 
 var _ generator.Generator = (*Generator)(nil)
 
-// New returns a nix generator writing its diagnostics to stderr; debug discloses the nix
-// commands it runs.
-func New(stderr io.Writer, debug bool) *Generator {
-	return &Generator{stderr: stderr, debug: debug}
+// New returns a nix generator writing its diagnostics to stderr. A non-nil disclose receives the
+// arguments of each nix command before it runs.
+func New(stderr io.Writer, disclose func(args []string)) *Generator {
+	return &Generator{stderr: stderr, disclose: disclose}
 }
 
 // Discover discovers the entrypoint (→ discoverEntrypoint) and the current system.
@@ -320,8 +321,8 @@ func (g *Generator) runNixStream(args ...string) error {
 // for the failure's Stderr. A nil stdout shares the same tee, so the writer is never written from
 // two goroutines at once. A failure is a generator.Error classified by nixFailure.
 func (g *Generator) runNix(args []string, stdout io.Writer) error {
-	if g.debug {
-		_, _ = fmt.Fprintf(g.stderr, "layat: + nix %s\n", strings.Join(args, " "))
+	if g.disclose != nil {
+		g.disclose(args)
 	}
 	cmd := exec.Command("nix", args...)
 	var stderr bytes.Buffer
