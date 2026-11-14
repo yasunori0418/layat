@@ -1264,7 +1264,7 @@ func TestResolveRootFixedWithoutPath(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected an error for rootKind=fixed without a root path, got nil")
 	}
-	if want := "layat: rootKind=fixed but no root path provided"; err.Error() != want {
+	if want := "rootKind=fixed but no root path provided"; err.Error() != want {
 		t.Errorf("error = %q, want %q", err.Error(), want)
 	}
 }
@@ -1280,12 +1280,12 @@ func TestResolveRootInvalidKinds(t *testing.T) {
 		{
 			name:     "undetermined",
 			rootKind: "",
-			want:     "layat: rootKind is undetermined (eval prefetch or a manifest is required)",
+			want:     "rootKind is undetermined (eval prefetch or a manifest is required)",
 		},
 		{
 			name:     "unknown",
 			rootKind: "bogus",
-			want:     `layat: unknown rootKind: "bogus"`,
+			want:     `unknown rootKind: "bogus"`,
 		},
 	}
 	for _, tt := range tests {

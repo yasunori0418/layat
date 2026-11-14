@@ -10,7 +10,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:24:34+09:00"
+  at: "2026-11-14T23:43:00+09:00"
 ---
 # apply_all_build_test.go — 並列 build の並列度上限・失敗集約・--jobs の値域・--debug prefix・集約の同一性
 
@@ -43,5 +43,5 @@ generated:
   `[<name>] layat: + nix build ` で始まり一括 eval の開示行は prefix 無しであること、build が
   config ごとに 1 回の `--no-link` realize だけで失敗 config が stage 2 で再 build されないこと、
   nix の stderr が `[<name>] error: stub build failed` として config ごとに 1 回だけ流れ、
-  失敗 config の報告は `layat: apply <name> failed: layat: nix build failed: exit status 1`
+  失敗 config の報告は `layat: apply <name> failed: nix build failed: exit status 1`
   （`--dryrun` では `<name> --dryrun`）の 1 行で、nix の stderr を再掲しないこと

@@ -133,7 +133,7 @@ func Prune(opts PruneOptions) (*PruneResult, error) {
 		if err != nil {
 			// paths.ListRootHashSeries already names the base in its own wrap,
 			// so this only tags the warning as prune's.
-			warnf("layat: prune: %v", err)
+			warnf("prune: %v", err)
 			continue
 		}
 		candidates = append(candidates, found...)
@@ -242,7 +242,7 @@ func pruneJudgeBase(base string, res *PruneResult, warnf func(string, ...any)) (
 			candidates = append(candidates, s)
 		default:
 			pruneSkip(res, warnf, s, PruneSkipRootStatFailed,
-				fmt.Errorf("layat: cannot stat root (%s): %w", s.Root, err))
+				fmt.Errorf("cannot stat root (%s): %w", s.Root, err))
 		}
 	}
 	return candidates, nil
@@ -252,7 +252,7 @@ func pruneJudgeBase(base string, res *PruneResult, warnf func(string, ...any)) (
 // named by its directory, since the same <roothash> can stand under both bases.
 func pruneSkip(res *PruneResult, warnf func(string, ...any), s PruneSeries, reason PruneSkipReason, cause error) {
 	res.Skipped = append(res.Skipped, PruneSkipped{Series: s, Reason: reason, Detail: cause.Error()})
-	warnf("layat: prune: skipped series %s (%s): %v", s.Dir, reason, cause)
+	warnf("prune: skipped series %s (%s): %v", s.Dir, reason, cause)
 }
 
 // pruneRemoveSeries deletes one series, locks and all. On failure it returns the reason
@@ -302,20 +302,20 @@ func pruneRemoveSeries(s PruneSeries) (PruneSkipReason, error) {
 		target := filepath.Join(s.Dir, n)
 		if rerr := os.RemoveAll(target); rerr != nil {
 			return removalReason(rerr),
-				fmt.Errorf("layat: cannot remove profile directory of series %s (%s): %w", s.RootHash, target, rerr)
+				fmt.Errorf("cannot remove profile directory of series %s (%s): %w", s.RootHash, target, rerr)
 		}
 		removedAny = true
 	}
 	backref := filepath.Join(s.Dir, ".root")
 	if rerr := os.Remove(backref); rerr != nil && !errors.Is(rerr, fs.ErrNotExist) {
 		return removalReason(rerr),
-			fmt.Errorf("layat: cannot remove backref of series %s (%s): %w", s.RootHash, backref, rerr)
+			fmt.Errorf("cannot remove backref of series %s (%s): %w", s.RootHash, backref, rerr)
 	}
 	// Past this point the backref is gone, so the series is definitely no
 	// longer untouched and the rmdir below can only fail as an error — hence
 	// the "" rather than another removalReason call.
 	if rerr := os.Remove(s.Dir); rerr != nil {
-		return "", fmt.Errorf("layat: cannot remove series %s (%s): %w", s.RootHash, s.Dir, rerr)
+		return "", fmt.Errorf("cannot remove series %s (%s): %w", s.RootHash, s.Dir, rerr)
 	}
 	return "", nil
 }

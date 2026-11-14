@@ -41,12 +41,12 @@ func newGitignoreCmd() *cobra.Command {
 			run := beginGitignoreRun(cmd.Name())
 			if all {
 				if len(args) > 0 {
-					return fmt.Errorf("layat: gitignore cannot combine <name> with --all")
+					return fmt.Errorf("gitignore cannot combine <name> with --all")
 				}
 				return runGitignoreAll(run)
 			}
 			if len(args) != 1 {
-				return fmt.Errorf("layat: gitignore requires <name> or --all")
+				return fmt.Errorf("gitignore requires <name> or --all")
 			}
 			return runGitignore(run, args[0])
 		},
@@ -75,7 +75,7 @@ func runGitignore(run *gitignoreRun, name string) error {
 		return err
 	}
 	if rootKind := root.RootKind; rootKind != manifest.RootKindProject {
-		return fmt.Errorf("layat: gitignore is project mode only (layat.%s has rootKind=%q; the .gitignore anchor is meaningless for home / fixed)", name, rootKind)
+		return fmt.Errorf("gitignore is project mode only (layat.%s has rootKind=%q; the .gitignore anchor is meaningless for home / fixed)", name, rootKind)
 	}
 
 	targets, err := configTargets(gen, name)

@@ -15,7 +15,7 @@ func printGeneratorError(w io.Writer, e *generator.Error) {
 	if flagDebug {
 		summary += " (generator: " + e.Generator + ")"
 	}
-	_, _ = fmt.Fprintln(w, summary)
+	noticef(w, "%s", summary)
 	if e.Guidance != "" {
 		_, _ = fmt.Fprintln(w, e.Guidance)
 	}

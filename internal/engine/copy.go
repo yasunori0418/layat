@@ -33,7 +33,7 @@ func (a *applier) placeCopies(actions []planner.CopyAction) error {
 		// cleaned up on unwind.
 		a.journalPlacedCopy(act.TargetAbs)
 		if err := copyTree(act.Src, act.TargetAbs); err != nil {
-			return a.entryFailed(act.Entry.Target, fmt.Errorf("layat: copy placement failed (%s -> %s): %w", act.Src, act.TargetAbs, err))
+			return a.entryFailed(act.Entry.Target, fmt.Errorf("copy placement failed (%s -> %s): %w", act.Src, act.TargetAbs, err))
 		}
 		a.result.Copied = append(a.result.Copied, act.Entry.Target)
 	}
@@ -54,13 +54,13 @@ func (a *applier) recopyAll() error {
 			existed = true
 			aside := asidePath(targetAbs)
 			if err := os.Rename(targetAbs, aside); err != nil {
-				return a.entryFailed(e.Target, fmt.Errorf("layat: cannot move aside recopy target (%s): %w", targetAbs, err))
+				return a.entryFailed(e.Target, fmt.Errorf("cannot move aside recopy target (%s): %w", targetAbs, err))
 			}
 			// Journaled before the fresh copy so a partial copyTree failure still renames the
 			// aside back on unwind.
 			a.journalRenamedAside(targetAbs, aside)
 		} else if !errors.Is(err, iofs.ErrNotExist) {
-			return a.entryFailed(e.Target, fmt.Errorf("layat: cannot lstat recopy target (%s): %w", targetAbs, err))
+			return a.entryFailed(e.Target, fmt.Errorf("cannot lstat recopy target (%s): %w", targetAbs, err))
 		} else {
 			// Same reasoning as placeCopies: journal before copyTree so a mid-copy failure still
 			// gets its partial tree cleaned up on unwind.
@@ -71,7 +71,7 @@ func (a *applier) recopyAll() error {
 			return a.entryFailed(e.Target, err)
 		}
 		if err := copyTree(planner.LinkDest(e), targetAbs); err != nil {
-			return a.entryFailed(e.Target, fmt.Errorf("layat: recopy failed (%s -> %s): %w", planner.LinkDest(e), targetAbs, err))
+			return a.entryFailed(e.Target, fmt.Errorf("recopy failed (%s -> %s): %w", planner.LinkDest(e), targetAbs, err))
 		}
 		if existed {
 			a.result.Recopied = append(a.result.Recopied, e.Target)

@@ -43,7 +43,7 @@ func (p *Prebuilt) Discover(file string) error {
 func absLinkFarm(file string) (string, error) {
 	abs, err := filepath.Abs(file)
 	if err != nil {
-		msg := fmt.Sprintf("layat: cannot resolve the --manifest path (%s): %v", file, err)
+		msg := fmt.Sprintf("cannot resolve the --manifest path (%s): %v", file, err)
 		return "", NewError(NamePrebuilt, StageDiscover, KindFailed, msg, "", "", err)
 	}
 	return abs, nil
@@ -58,7 +58,7 @@ func (p *Prebuilt) farm(name string, stage Stage) (string, error) {
 	farm, ok := p.LinkFarms[name]
 	if !ok {
 		return "", NewError(NamePrebuilt, stage, KindNotFound,
-			fmt.Sprintf("layat: no --manifest link-farm is given for config %q", name), "", "", nil)
+			fmt.Sprintf("no --manifest link-farm is given for config %q", name), "", "", nil)
 	}
 	return farm, nil
 }
@@ -92,7 +92,7 @@ func rootOf(linkFarm string) (manifest.Root, error) {
 func (p *Prebuilt) AllRoots() (map[string]manifest.Root, error) {
 	if p.LinkFarms == nil {
 		return nil, NewError(NamePrebuilt, StageRoots, KindFailed,
-			"layat: a pre-built manifest (--manifest) holds a single config and cannot list all configs", "", "", nil)
+			"a pre-built manifest (--manifest) holds a single config and cannot list all configs", "", "", nil)
 	}
 	roots := make(map[string]manifest.Root, len(p.LinkFarms))
 	for name, farm := range p.LinkFarms {

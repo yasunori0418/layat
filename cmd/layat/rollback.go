@@ -58,7 +58,7 @@ func runRollback(run *rollbackRun, name string) error {
 	}
 	rootKind, fixedRoot := root.RootKind, root.Root
 	if rootKind != manifest.RootKindHome && rootKind != manifest.RootKindSystem {
-		return fmt.Errorf("layat: rollback is home / system mode only (layat.%s has rootKind=%q; project / fixed do not expose generations)", name, rootKind)
+		return fmt.Errorf("rollback is home / system mode only (layat.%s has rootKind=%q; project / fixed do not expose generations)", name, rootKind)
 	}
 
 	res, err := engine.Rollback(engine.RollbackOptions{
@@ -69,6 +69,8 @@ func runRollback(run *rollbackRun, name string) error {
 		Backend:        newGenerationBackend(),
 		SystemDir:      systemDirOverride(),
 		SystemStateDir: systemStateDirOverride(),
+		Warnf:          engineWarnf,
+		Reportf:        engineReportf,
 	})
 	if res != nil {
 		// The From→To transition rides generation.before/after, also for a partial result.
@@ -86,7 +88,7 @@ func runRollback(run *rollbackRun, name string) error {
 
 // reportRollback prints the generation transition and placement diff to stderr.
 func reportRollback(res *engine.RollbackResult, name string) {
-	fmt.Fprintf(os.Stderr, "layat: rollback %s done (generation %d → %d, root=%s)\n", name, res.From, res.To, res.Root)
+	noticef(os.Stderr, "rollback %s done (generation %d → %d, root=%s)", name, res.From, res.To, res.Root)
 	for _, t := range res.Placed {
 		fmt.Fprintf(os.Stderr, "  placed   %s\n", t)
 	}

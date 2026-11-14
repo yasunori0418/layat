@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 	"testing"
@@ -221,11 +222,11 @@ func stubNixScript(t *testing.T, body string) {
 }
 
 // discovered returns a Generator that has discovered a flake entrypoint in a temp dir.
-func discovered(t *testing.T, w io.Writer, debug bool) (*Generator, string) {
+func discovered(t *testing.T, w io.Writer, disclose func(args []string)) (*Generator, string) {
 	t.Helper()
 	dir := t.TempDir()
 	writeFile(t, dir, "flake.nix")
-	g := New(w, debug)
+	g := New(w, disclose)
 	if err := g.Discover(dir); err != nil {
 		t.Fatalf("Discover: %v", err)
 	}
@@ -236,7 +237,7 @@ func discovered(t *testing.T, w io.Writer, debug bool) (*Generator, string) {
 // Stage discover whose cause still reaches fs.ErrNotExist.
 func TestDiscoverFailureIsDiscoverStage(t *testing.T) {
 	missing := filepath.Join(t.TempDir(), "nope.nix")
-	err := New(io.Discard, false).Discover(missing)
+	err := New(io.Discard, nil).Discover(missing)
 	var ge *generator.Error
 	if !errors.As(err, &ge) {
 		t.Fatalf("Discover error = %v, want a *generator.Error", err)
@@ -247,7 +248,7 @@ func TestDiscoverFailureIsDiscoverStage(t *testing.T) {
 	if !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("errors.Is(err, fs.ErrNotExist) = false: %v", err)
 	}
-	if want := "layat: -f path not found (" + missing + "): "; !strings.HasPrefix(err.Error(), want) {
+	if want := "-f path not found (" + missing + "): "; !strings.HasPrefix(err.Error(), want) {
 		t.Errorf("Error() = %q, want prefix %q", err.Error(), want)
 	}
 }
@@ -255,7 +256,7 @@ func TestDiscoverFailureIsDiscoverStage(t *testing.T) {
 // TestEntrypointIsDiscoveredPath verifies Entrypoint is the discovered flake's directory or the
 // legacy file's absolute path, and "" before discovery.
 func TestEntrypointIsDiscoveredPath(t *testing.T) {
-	if got := New(io.Discard, false).Entrypoint(); got != "" {
+	if got := New(io.Discard, nil).Entrypoint(); got != "" {
 		t.Errorf("Entrypoint before Discover = %q, want empty", got)
 	}
 	for _, tc := range []struct{ desc, file, want string }{
@@ -265,7 +266,7 @@ func TestEntrypointIsDiscoveredPath(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			dir := t.TempDir()
 			writeFile(t, dir, tc.file)
-			g := New(io.Discard, false)
+			g := New(io.Discard, nil)
 			if err := g.Discover(dir); err != nil {
 				t.Fatal(err)
 			}
@@ -280,7 +281,7 @@ func TestEntrypointIsDiscoveredPath(t *testing.T) {
 // failed subcommand, with nix's stderr kept in Stderr instead.
 func TestRootsCommandFailure(t *testing.T) {
 	stubNix(t, "error: boom")
-	g, _ := discovered(t, io.Discard, false)
+	g, _ := discovered(t, io.Discard, nil)
 
 	_, err := g.Roots("web")
 	var ge *generator.Error
@@ -290,7 +291,7 @@ func TestRootsCommandFailure(t *testing.T) {
 	if ge.Stage != generator.StageRoots || ge.Kind != generator.KindFailed {
 		t.Errorf("Stage/Kind = %q/%q, want roots/Failed", ge.Stage, ge.Kind)
 	}
-	if want := "layat: nix eval failed: exit status 1"; ge.Message != want {
+	if want := "nix eval failed: exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if ge.Stderr != "error: boom" {
@@ -301,14 +302,14 @@ func TestRootsCommandFailure(t *testing.T) {
 // TestRootsMissingConfigMessage pins the "config not found" summary and its guidance.
 func TestRootsMissingConfigMessage(t *testing.T) {
 	stubNix(t, "error: flake does not provide attribute layat")
-	g, _ := discovered(t, io.Discard, false)
+	g, _ := discovered(t, io.Discard, nil)
 
 	_, err := g.Roots("web")
 	var ge *generator.Error
 	if !errors.As(err, &ge) {
 		t.Fatalf("Roots error = %v, want a *generator.Error", err)
 	}
-	if want := "layat: " + g.ep.label(g.system, "web") + " not found in the entrypoint (nix eval failed)"; ge.Message != want {
+	if want := "" + g.ep.label(g.system, "web") + " not found in the entrypoint (nix eval failed)"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if want := "check the config name"; ge.Guidance != want {
@@ -320,7 +321,7 @@ func TestRootsMissingConfigMessage(t *testing.T) {
 // namespace "not found" summary and the "no configs found" guidance.
 func TestAllRootsMissingNamespaceMessage(t *testing.T) {
 	stubNix(t, "error: flake does not provide attribute layat")
-	g, _ := discovered(t, io.Discard, false)
+	g, _ := discovered(t, io.Discard, nil)
 
 	_, err := g.AllRoots()
 	var ge *generator.Error
@@ -328,7 +329,7 @@ func TestAllRootsMissingNamespaceMessage(t *testing.T) {
 		t.Fatalf("AllRoots error = %v, want a Stage roots *generator.Error", err)
 	}
 	label := g.ep.namespaceLabel(g.system)
-	if want := "layat: " + label + " not found in the entrypoint (nix eval failed)"; ge.Message != want {
+	if want := "" + label + " not found in the entrypoint (nix eval failed)"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if want := "no configs found; define configs under " + label; ge.Guidance != want {
@@ -340,14 +341,14 @@ func TestAllRootsMissingNamespaceMessage(t *testing.T) {
 // one-line Message and the captured stderr.
 func TestDryBuildCommandFailure(t *testing.T) {
 	stubNix(t, "error: boom")
-	g, _ := discovered(t, io.Discard, false)
+	g, _ := discovered(t, io.Discard, nil)
 
 	_, err := g.DryBuild("web")
 	var ge *generator.Error
 	if !errors.As(err, &ge) || ge.Stage != generator.StageBuild {
 		t.Fatalf("DryBuild error = %v, want a Stage build *generator.Error", err)
 	}
-	if want := "layat: nix build failed: exit status 1"; ge.Message != want {
+	if want := "nix build failed: exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if ge.Stderr != "error: boom" {
@@ -360,14 +361,14 @@ func TestDryBuildCommandFailure(t *testing.T) {
 func TestBuildCommandFailureStreamsStderr(t *testing.T) {
 	stubNix(t, "error: boom")
 	var buf bytes.Buffer
-	g, _ := discovered(t, &buf, false)
+	g, _ := discovered(t, &buf, nil)
 
 	_, err := g.Build("web", filepath.Join(t.TempDir(), ".pending"))
 	var ge *generator.Error
 	if !errors.As(err, &ge) || ge.Stage != generator.StageBuild {
 		t.Fatalf("Build error = %v, want a Stage build *generator.Error", err)
 	}
-	if want := "layat: nix build failed: exit status 1"; ge.Message != want {
+	if want := "nix build failed: exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if buf.String() != "error: boom" {
@@ -375,16 +376,21 @@ func TestBuildCommandFailureStreamsStderr(t *testing.T) {
 	}
 }
 
-// TestDebugDisclosesCommandsToWriter pins the --debug disclosure line on the writer given to New.
+// TestDebugDisclosesCommandsToWriter pins the --debug disclosure: the disclose function given to
+// New receives the nix arguments, and nothing is written to the writer by the generator itself.
 func TestDebugDisclosesCommandsToWriter(t *testing.T) {
 	stubNix(t, "")
 	var buf bytes.Buffer
-	g, dir := discovered(t, &buf, true)
+	var disclosed [][]string
+	g, dir := discovered(t, &buf, func(args []string) { disclosed = append(disclosed, args) })
 
 	_, _ = g.Roots("web")
-	want := "layat: + nix eval " + dir + "#layat." + g.system + ".web.rootKind --raw\n"
-	if buf.String() != want {
-		t.Errorf("debug output = %q, want %q", buf.String(), want)
+	want := []string{"eval", dir + "#layat." + g.system + ".web.rootKind", "--raw"}
+	if len(disclosed) != 1 || !slices.Equal(disclosed[0], want) {
+		t.Errorf("disclosed = %q, want [%q]", disclosed, want)
+	}
+	if buf.String() != "" {
+		t.Errorf("writer output = %q, want empty", buf.String())
 	}
 }
 
@@ -417,7 +423,7 @@ func TestIsExperimentalDisabled(t *testing.T) {
 func TestPrerequisiteMissingGuidance(t *testing.T) {
 	const raw = "error: experimental Nix feature nix-command is disabled"
 	stubNix(t, raw)
-	g, _ := discovered(t, io.Discard, false)
+	g, _ := discovered(t, io.Discard, nil)
 
 	_, err := g.Roots("web")
 	var ge *generator.Error
@@ -427,7 +433,7 @@ func TestPrerequisiteMissingGuidance(t *testing.T) {
 	if ge.Kind != generator.KindPrerequisiteMissing {
 		t.Errorf("Kind = %q, want PrerequisiteMissing", ge.Kind)
 	}
-	if want := "layat: nix's experimental-features are not enabled (nix eval failed)"; ge.Message != want {
+	if want := "nix's experimental-features are not enabled (nix eval failed)"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	for _, want := range []string{"nix.conf", "NIX_CONFIG"} {
@@ -444,7 +450,7 @@ func TestPrerequisiteMissingGuidance(t *testing.T) {
 // eval (in both of nix's wordings) but not on build, and any other failure as Kind Failed.
 func TestNotFoundKind(t *testing.T) {
 	stubNix(t, "error: flake does not provide attribute layat")
-	g, _ := discovered(t, io.Discard, false)
+	g, _ := discovered(t, io.Discard, nil)
 
 	var ge *generator.Error
 	if _, err := g.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
@@ -481,7 +487,7 @@ func (failingWriter) Write([]byte) (int, error) { return 0, errors.New("write fa
 // success into a failure nor drops later chunks of nix's stderr from Stderr.
 func TestWriterFailureIsBestEffort(t *testing.T) {
 	stubNixScript(t, "printf 'managed'\nprintf 'warning: one\\n' >&2\nsleep 0.2\nprintf 'warning: two\\n' >&2\nexit 0")
-	g, _ := discovered(t, failingWriter{}, false)
+	g, _ := discovered(t, failingWriter{}, nil)
 	if root, err := g.Roots("web"); err != nil || root.RootKind != "managed" {
 		t.Fatalf("Roots = %v, %v; want success despite the failing writer", root, err)
 	}
@@ -503,7 +509,7 @@ func TestSuccessTeesStderrToWriter(t *testing.T) {
 	const warn = "warning: Git tree is dirty\n"
 	stubNixExit(t, "managed", warn, 0)
 	var buf bytes.Buffer
-	g, _ := discovered(t, &buf, false)
+	g, _ := discovered(t, &buf, nil)
 
 	root, err := g.Roots("web")
 	if err != nil || root.RootKind != "managed" {
@@ -528,7 +534,7 @@ func TestSuccessTeesStderrToWriter(t *testing.T) {
 func TestBuildFailureCapturesStderr(t *testing.T) {
 	stubNix(t, "error: boom")
 	var buf bytes.Buffer
-	g, _ := discovered(t, &buf, false)
+	g, _ := discovered(t, &buf, nil)
 
 	_, err := g.Build("web", filepath.Join(t.TempDir(), ".pending"))
 	var ge *generator.Error
@@ -557,7 +563,7 @@ func (l *writeLog) Write(b []byte) (int, error) {
 func TestTeeWritesWholeLines(t *testing.T) {
 	stubNixScript(t, "printf 'warning: par' >&2\nsleep 0.2\nprintf 'tial\\nnext\\ntail' >&2\nexit 1")
 	log := &writeLog{}
-	g, _ := discovered(t, log, false)
+	g, _ := discovered(t, log, nil)
 
 	_, _ = g.DryBuild("web")
 	if got, want := strings.Join(log.writes, ""), "warning: partial\nnext\ntail"; got != want {
