@@ -26,9 +26,9 @@ type FS interface {
 // osFS is the real-filesystem FS used at engine runtime.
 type osFS struct{}
 
-func (osFS) Lstat(path string) (os.FileInfo, error)     { return os.Lstat(path) }
-func (osFS) Readlink(path string) (string, error)       { return os.Readlink(path) }
-func (osFS) ReadDir(path string) ([]os.DirEntry, error) { return os.ReadDir(path) }
+func (osFS) Lstat(path string) (os.FileInfo, error)     { return os.Lstat(path) }    //nolint:wrapcheck // The planner wraps or inspects the error where it calls FS.
+func (osFS) Readlink(path string) (string, error)       { return os.Readlink(path) } //nolint:wrapcheck // The planner wraps or inspects the error where it calls FS.
+func (osFS) ReadDir(path string) ([]os.DirEntry, error) { return os.ReadDir(path) }  //nolint:wrapcheck // The planner wraps or inspects the error where it calls FS.
 
 // OSFS probes the real filesystem (engine runtime).
 var OSFS FS = osFS{}

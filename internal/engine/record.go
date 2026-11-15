@@ -142,6 +142,7 @@ func parseRecord(data []byte) (*lastApplied, *manifest.Manifest, error) {
 	return rec, &m, nil
 }
 
+//nolint:wrapcheck // readRecord wraps the error with the record file path.
 func strictDecode(data []byte, v any) error {
 	dec := json.NewDecoder(bytes.NewReader(data))
 	dec.DisallowUnknownFields()

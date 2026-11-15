@@ -222,6 +222,7 @@ type linePrefixWriter struct {
 	mid    bool // the last byte written was not a newline
 }
 
+//nolint:wrapcheck // The code writing through it handles the error, as with any io.Writer.
 func (p *linePrefixWriter) Write(b []byte) (int, error) {
 	out := make([]byte, 0, len(b)+len(p.prefix))
 	for _, c := range b {
