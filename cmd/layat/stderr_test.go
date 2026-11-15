@@ -297,6 +297,86 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 	})
 }
 
+// stubNixBuilds puts a fake nix first on PATH whose eval prints "home" and whose build succeeds
+// with linkFarm as the output: `--out-link <p>` links p to linkFarm, and without it linkFarm is
+// printed.
+func stubNixBuilds(t *testing.T, linkFarm string) {
+	t.Helper()
+	bin := t.TempDir()
+	script := "#!/bin/sh\n" +
+		"case \"$1\" in\n" +
+		"eval) printf home;;\n" +
+		"build) out=''\n" +
+		"  while [ $# -gt 0 ]; do\n" +
+		"    if [ \"$1\" = --out-link ]; then out=\"$2\"; fi\n" +
+		"    shift\n" +
+		"  done\n" +
+		"  if [ -n \"$out\" ]; then ln -sfn '" + linkFarm + "' \"$out\"; else echo '" + linkFarm + "'; fi;;\n" +
+		"*) echo 'error: stub nix: unexpected command' >&2; exit 1;;\n" +
+		"esac\n"
+	if err := os.WriteFile(filepath.Join(bin, "nix"), []byte(script), 0o755); err != nil {
+		t.Fatalf("write nix stub: %v", err)
+	}
+	t.Setenv("PATH", bin+string(os.PathListSeparator)+os.Getenv("PATH"))
+}
+
+// TestApplyWithoutManifestWiresWarnfAndReportf drives apply without --manifest through a stub nix
+// whose build succeeds, checking that the conflict listing and the undo report reach stderr
+// through Reportf and that engine warnings reach it through Warnf, with and without --dryrun.
+func TestApplyWithoutManifestWiresWarnfAndReportf(t *testing.T) {
+	src := t.TempDir()
+	if err := os.WriteFile(filepath.Join(src, "f"), []byte("x"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	entry := func(target string) manifest.Entry {
+		return manifest.Entry{SrcKind: "store", Src: src, Subpath: "f", Target: target, Method: "symlink"}
+	}
+	applyBuilt := func(t *testing.T, dryrun bool, entries ...manifest.Entry) (string, error) {
+		t.Helper()
+		stubNixBuilds(t, writeTestLinkFarm(t, entries...))
+		flagDryrun = dryrun
+		var err error
+		_, stderr := captureOutErr(t, func() {
+			run, _ := newApplyTestRun()
+			err = runApply(run, "c")
+		})
+		return stderr, err
+	}
+
+	t.Run("apply conflict", func(t *testing.T) {
+		root := cliEngineSetup(t)
+		if err := os.WriteFile(filepath.Join(root, ".a"), []byte("foreign"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		stderr, err := applyBuilt(t, false, entry(".a"))
+		if err == nil {
+			t.Fatal("apply succeeded, want a conflict stop")
+		}
+		assertFailureDetailsNotWarnings(t, stderr, "conflict: ", "  → ")
+		assertEngineWarning(t, stderr)
+	})
+
+	t.Run("apply undo", func(t *testing.T) {
+		root := cliEngineSetup(t)
+		readOnlyDir(t, filepath.Join(root, "ro"))
+		stderr, err := applyBuilt(t, false, entry(".a"), entry("ro/leaf"))
+		if err == nil {
+			t.Fatal("apply succeeded, want an FS failure")
+		}
+		assertFailureDetailsNotWarnings(t, stderr, "rolled back this run's filesystem changes")
+		assertEngineWarning(t, stderr)
+	})
+
+	t.Run("--dryrun", func(t *testing.T) {
+		root := cliEngineSetup(t)
+		if err := os.WriteFile(filepath.Join(root, ".a"), []byte("foreign"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		stderr, _ := applyBuilt(t, true, entry(".a"))
+		assertEngineWarning(t, stderr)
+	})
+}
+
 // TestEngineWarningsReachStderrAsWarnings drives reset, status and prune through the CLI and checks
 // that a warning the engine emits through Warnf reaches stderr as a "layat: warning: <text>" line.
 func TestEngineWarningsReachStderrAsWarnings(t *testing.T) {
