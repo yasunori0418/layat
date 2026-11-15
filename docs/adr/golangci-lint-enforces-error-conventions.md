@@ -17,7 +17,7 @@ references:
   - "ADR-6f0383d9-0176-47c4-a9da-1a41e1fd3747"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-14T23:27:22+09:00"
+  at: "2026-11-16T00:04:22+09:00"
 ---
 # golangci-lint でエラー処理の規約を検出する
 
