@@ -523,6 +523,18 @@ func TestPrefixLiteralsOnlyInStderrFile(t *testing.T) {
 // call in the non-test Go of internal/ and cmd/layat/: a string literal there must not start with
 // "failed to ", contain " failed: ", or end with " failed".
 func TestNoFailedToShapeInErrorFormats(t *testing.T) {
+	// isErrorFormatCall reports whether fun is fmt.Errorf or errors.New.
+	isErrorFormatCall := func(fun ast.Expr) bool {
+		sel, ok := fun.(*ast.SelectorExpr)
+		if !ok {
+			return false
+		}
+		pkg, ok := sel.X.(*ast.Ident)
+		if !ok {
+			return false
+		}
+		return (pkg.Name == "fmt" && sel.Sel.Name == "Errorf") || (pkg.Name == "errors" && sel.Sel.Name == "New")
+	}
 	fset := token.NewFileSet()
 	var found []string
 	for _, dir := range []string{"../../internal", "."} {
@@ -565,17 +577,4 @@ func TestNoFailedToShapeInErrorFormats(t *testing.T) {
 	for _, f := range found {
 		t.Errorf("error string has the \"failed to\" shape: %s", f)
 	}
-}
-
-// isErrorFormatCall reports whether fun is fmt.Errorf or errors.New.
-func isErrorFormatCall(fun ast.Expr) bool {
-	sel, ok := fun.(*ast.SelectorExpr)
-	if !ok {
-		return false
-	}
-	pkg, ok := sel.X.(*ast.Ident)
-	if !ok {
-		return false
-	}
-	return (pkg.Name == "fmt" && sel.Sel.Name == "Errorf") || (pkg.Name == "errors" && sel.Sel.Name == "New")
 }
