@@ -1,6 +1,8 @@
 package engine
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -96,7 +98,7 @@ func TestRollbackReconverges(t *testing.T) {
 	if dest, err := os.Readlink(filepath.Join(root, "b")); err != nil || dest != srcB {
 		t.Errorf("b: dest=%q err=%v, want %q", dest, err, srcB)
 	}
-	if _, err := os.Lstat(filepath.Join(root, "c")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, "c")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("c should be removed, lstat err = %v", err)
 	}
 	if len(res.Removed) != 1 || res.Removed[0] != "c" {
@@ -179,7 +181,7 @@ func TestRollbackSwitchGenerationFailureDoesNotUnwind(t *testing.T) {
 	if dest, rerr := os.Readlink(filepath.Join(root, "b")); rerr != nil || dest != srcB {
 		t.Errorf("b must survive a SwitchGeneration failure untouched: dest=%q, err=%v, want %q", dest, rerr, srcB)
 	}
-	if _, lerr := os.Lstat(filepath.Join(root, "c")); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(filepath.Join(root, "c")); !errors.Is(lerr, fs.ErrNotExist) {
 		t.Errorf("c's stale removal must survive a SwitchGeneration failure, lstat err = %v", lerr)
 	}
 	for _, w := range warns {
@@ -604,10 +606,10 @@ func TestRollbackCopyFailureUnwindsPlacedSymlink(t *testing.T) {
 	}
 
 	// The symlink placed before the failing copy is unwound; the copy target never landed.
-	if _, lerr := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(filepath.Join(root, "a")); !errors.Is(lerr, fs.ErrNotExist) {
 		t.Errorf("symlink a placed before the copy failure must be unwound, lstat err = %v", lerr)
 	}
-	if _, lerr := os.Lstat(filepath.Join(root, "ro", "leaf")); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(filepath.Join(root, "ro", "leaf")); !errors.Is(lerr, fs.ErrNotExist) {
 		t.Errorf("failed copy target ro/leaf must be absent, lstat err = %v", lerr)
 	}
 	if got, rerr := os.Readlink(filepath.Join(root, "keep")); rerr != nil || got != srcKeep {

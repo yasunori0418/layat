@@ -11,7 +11,7 @@ import (
 // testGeneratorError is a nix generator failure carrying a guidance and captured raw diagnostics.
 func testGeneratorError() *generator.Error {
 	return generator.NewError(generator.NameNix, generator.StageRoots, generator.KindPrerequisiteMissing,
-		"layat: nix eval failed: exit status 1", "enable experimental-features",
+		"nix eval failed: exit status 1", "enable experimental-features",
 		"error: experimental Nix feature nix-command is disabled", nil)
 }
 
@@ -23,15 +23,15 @@ func withDebug(t *testing.T, debug bool) {
 	flagDebug = debug
 }
 
-// TestPrintGeneratorErrorHuman pins the human form: the summary line and the guidance, without the
-// raw diagnostics.
+// TestPrintGeneratorErrorHuman pins the human form: the summary line headed by "layat: " and the
+// guidance, without the raw diagnostics.
 func TestPrintGeneratorErrorHuman(t *testing.T) {
 	withDebug(t, false)
 	e := testGeneratorError()
 	var buf bytes.Buffer
 	printGeneratorError(&buf, e)
 
-	if want := e.Message + "\n" + e.Guidance + "\n"; buf.String() != want {
+	if want := "layat: " + e.Message + "\n" + e.Guidance + "\n"; buf.String() != want {
 		t.Errorf("output = %q, want %q", buf.String(), want)
 	}
 	if strings.Contains(buf.String(), e.Stderr) {
@@ -43,11 +43,11 @@ func TestPrintGeneratorErrorHuman(t *testing.T) {
 func TestPrintGeneratorErrorHumanNoGuidance(t *testing.T) {
 	withDebug(t, false)
 	e := generator.NewError(generator.NameNix, generator.StageBuild, generator.KindFailed,
-		"layat: nix build failed: exit status 1", "", "error: boom", nil)
+		"nix build failed: exit status 1", "", "error: boom", nil)
 	var buf bytes.Buffer
 	printGeneratorError(&buf, e)
 
-	if want := e.Message + "\n"; buf.String() != want {
+	if want := "layat: " + e.Message + "\n"; buf.String() != want {
 		t.Errorf("output = %q, want %q", buf.String(), want)
 	}
 }
@@ -60,7 +60,7 @@ func TestPrintGeneratorErrorDebug(t *testing.T) {
 	var buf bytes.Buffer
 	printGeneratorError(&buf, e)
 
-	if want := e.Message + " (generator: nix)\n" + e.Guidance + "\n"; buf.String() != want {
+	if want := "layat: " + e.Message + " (generator: nix)\n" + e.Guidance + "\n"; buf.String() != want {
 		t.Errorf("output = %q, want %q", buf.String(), want)
 	}
 }
@@ -78,7 +78,7 @@ func TestGeneratorErrorMessageJSON(t *testing.T) {
 	}
 
 	noStderr := generator.NewError(generator.NameNix, generator.StageBuild, generator.KindFailed,
-		"layat: nix build failed: exit status 1", "", "", nil)
+		"nix build failed: exit status 1", "", "", nil)
 	if got := generatorErrorMessage(noStderr); got != noStderr.Message {
 		t.Errorf("message without stderr = %q, want %q", got, noStderr.Message)
 	}

@@ -58,7 +58,7 @@ func newStatusCmd() *cobra.Command {
 // runStatus lists the records engine.Status finds, filtered by args[0] when given. A record that
 // cannot be read becomes its subject's error and the listing goes on; the command then exits 1.
 func runStatus(run *statusRun, args []string) error {
-	series, err := statusFn(engine.StatusOptions{SystemStateDir: systemStateDirOverride()})
+	series, err := statusFn(engine.StatusOptions{SystemStateDir: systemStateDirOverride(), Warnf: engineWarnf})
 	if err != nil {
 		return err
 	}
@@ -75,7 +75,7 @@ func runStatus(run *statusRun, args []string) error {
 		if s.Err != nil {
 			subject.finish(s.Err)
 			failures++
-			fmt.Fprintf(os.Stderr, "layat: status %s: %v\n", name, s.Err)
+			printFailure(os.Stderr, "status "+name, s.Err)
 			continue
 		}
 		subject.setPayload(&outturnPayload[*statusInfo]{info: statusPayloadInfo(s)})
@@ -93,14 +93,14 @@ func runStatus(run *statusRun, args []string) error {
 
 	if listed == 0 {
 		if len(args) == 1 {
-			fmt.Fprintf(os.Stderr, "layat: status: no applied config named %s\n", args[0])
+			noticef(os.Stderr, "status: no applied config named %s", args[0])
 		} else {
-			fmt.Fprintln(os.Stderr, "layat: status: no applied config")
+			noticef(os.Stderr, "status: no applied config")
 		}
 		return nil
 	}
 	if failures > 0 {
-		return &exitCodeError{code: 1, msg: fmt.Sprintf("layat: status: %d config(s) could not be read", failures)}
+		return &exitCodeError{code: 1, msg: fmt.Sprintf("status: %d config(s) could not be read", failures)}
 	}
 	return nil
 }

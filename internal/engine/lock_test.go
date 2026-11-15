@@ -7,6 +7,7 @@ package engine
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"testing"
@@ -56,7 +57,7 @@ func TestLockApplyNoWaitSkipsWhenHeld(t *testing.T) {
 	if res == nil || !res.Skipped {
 		t.Errorf("expected res.Skipped = true, got %+v", res)
 	}
-	if _, err := os.Lstat(filepath.Join(root, ".config", "foo")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, ".config", "foo")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("skip should place nothing: lstat err = %v", err)
 	}
 }
@@ -64,18 +65,18 @@ func TestLockApplyNoWaitSkipsWhenHeld(t *testing.T) {
 // TestLockErrSkippedIsTransparentThroughWrapping pins the contract that ErrSkipped stays
 // reachable via errors.Is after fmt.Errorf("%w") wrapping (single and nested).
 func TestLockErrSkippedIsTransparentThroughWrapping(t *testing.T) {
-	single := fmt.Errorf("layat: apply skipped: %w", ErrSkipped)
+	single := fmt.Errorf("apply skipped: %w", ErrSkipped)
 	if !errors.Is(single, ErrSkipped) {
 		t.Errorf("single wrap: errors.Is(%v, ErrSkipped) = false, want true", single)
 	}
 
-	nested := fmt.Errorf("layat: outer: %w", fmt.Errorf("layat: inner: %w", ErrSkipped))
+	nested := fmt.Errorf("outer: %w", fmt.Errorf("inner: %w", ErrSkipped))
 	if !errors.Is(nested, ErrSkipped) {
 		t.Errorf("nested wrap: errors.Is(%v, ErrSkipped) = false, want true", nested)
 	}
 
 	// A wrapped *unrelated* error must not masquerade as ErrSkipped.
-	other := fmt.Errorf("layat: unrelated: %w", errors.New("boom"))
+	other := fmt.Errorf("unrelated: %w", errors.New("boom"))
 	if errors.Is(other, ErrSkipped) {
 		t.Errorf("unrelated wrap: errors.Is(%v, ErrSkipped) = true, want false", other)
 	}
@@ -186,7 +187,7 @@ func TestLockResetWaitsForHeldLock(t *testing.T) {
 		if out.err != nil {
 			t.Fatalf("Reset after release: %v", out.err)
 		}
-		if _, err := os.Lstat(linkAbs); !os.IsNotExist(err) {
+		if _, err := os.Lstat(linkAbs); !errors.Is(err, fs.ErrNotExist) {
 			t.Errorf(".link should be removed after Reset, lstat err = %v", err)
 		}
 		if got := out.res.RemovedSymlinks; len(got) != 1 || got[0] != ".link" {
@@ -282,7 +283,7 @@ func TestLockRollbackWaitsForHeldLock(t *testing.T) {
 		if len(fake.Switches) != 1 || fake.Switches[0] != 1 {
 			t.Errorf("switched generations = %v, want [1]", fake.Switches)
 		}
-		if _, err := os.Lstat(filepath.Join(root, "b")); !os.IsNotExist(err) {
+		if _, err := os.Lstat(filepath.Join(root, "b")); !errors.Is(err, fs.ErrNotExist) {
 			t.Errorf("b should be removed after rollback, lstat err = %v", err)
 		}
 		if dest, err := os.Readlink(filepath.Join(root, "a")); err != nil || dest != srcA {

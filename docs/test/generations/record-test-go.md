@@ -12,7 +12,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:53:33+09:00"
+  at: "2026-11-14T23:43:00+09:00"
 ---
 # `record_test.go` — last-applied 記録の読み書き・比較の基準の優先順位・各操作での更新
 
@@ -40,7 +40,7 @@ generated:
 - rollback と reset の書き直しは、記録済みの origin を引き継ぐ。記録が無く profile から書くときは `origin` を省く
 - apply・dryrun・generation skip は、記録と今回の origin が食い違えば `Result.OriginMismatch` に両者を入れ、
   warning を 1 行出す。`entrypoint` だけの食い違いも含む。同じ origin・版 1 の記録・どちらかの origin が無いときは出さない。
-  warning は `layat: ` 接頭辞を含む全文で比較する。後勝ちで記録の origin は今回の出所になり（今回の出所が無ければ省く）、
+  warning は `layat: ` 接頭辞の無い全文で比較する。後勝ちで記録の origin は今回の出所になり（今回の出所が無ければ省く）、
   dryrun では記録を変えない
 - 記録と今回の両方に manifest 由来の `identity` があれば `identity` だけで比べる。同じ `identity` なら generator が
   違っても（dryrun・generation skip でも）警告せず、`identity` だけが違えば警告する。片方に無ければ従来の比較に戻る。

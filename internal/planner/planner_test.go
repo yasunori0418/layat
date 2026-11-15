@@ -27,7 +27,7 @@ type fakeFS map[string]fakeEntry
 func (f fakeFS) Lstat(path string) (os.FileInfo, error) {
 	e, ok := f[path]
 	if !ok {
-		return nil, os.ErrNotExist // makes os.IsNotExist true
+		return nil, os.ErrNotExist // makes errors.Is(err, fs.ErrNotExist) true
 	}
 	return fakeInfo{name: filepath.Base(path), mode: e.mode}, nil
 }

@@ -46,4 +46,4 @@
 
 ## Error handling
 
-* [error-wrap convention](./error-wrap-convention.md) - The convention that an error in the engine is wrapped exactly once, at its origin, with the op and the target path attached, and is not re-wrapped as it propagates.
+* [error-wrap convention](./error-wrap-convention.md) - The convention that an error in layat's Go code is wrapped exactly once, at the lowest function that knows both the op and the target, and is not re-wrapped as it propagates.

@@ -26,12 +26,14 @@
 ## コアロジック設計（lib データ生成 + Go エンジン）
 
 * [配置と cleanup のアルゴリズムは home-manager の linkGeneration / cleanup を範として Go で再実装する](./cleanup-from-home-manager.md) - engine の配置・古くなった配置の除去のアルゴリズムは、home-manager の `linkGeneration` / `cleanup` を**参考にして Go で再実装する**。`home.file` そのものは再利用しない。
-* [engine のエラーは発生源で 1 回だけ op と対象パスを付けて wrap し、伝搬では素通しする](./engine-error-wrap-once-at-origin.md) - 適用範囲は `internal/engine/` のエラーとする。エラーの組み立ては標準ライブラリの `fmt.Errorf` と`errors.Is` だけで行う（→ [engine は第三者依存ゼロの stdlib-only とし内部層に閉じる](../requirements/engine-stdlib-only.md)）。
+* [エラーの文字列は失敗の種類ごとの書式で書き、括弧の対象は原因が対象を持たないときだけ添える](./error-message-format-by-failure-kind.md) - エラーの文字列は I/O と parse・子プロセス・検証・前提の不成立・入力の誤り・sentinel の種類ごとの書式で書き、対象を括弧で添えるのは原因のエラーが対象を持たないときと原因に無い情報を足すときだけにする
+* [エラーは op と対象が分かるいちばん下の関数で 1 回だけ wrap し、伝搬では素通しする](./error-wrap-once-at-origin.md) - layat の Go のコード（internal/ の全パッケージと cmd/layat/）では、エラーを op と対象の両方が分かるいちばん下の関数で 1 回だけ包み、呼び出し元は素通しし、sentinel は %w で透過させる
 * [配置プリミティブを store link・copy・out-of-store symlink の 3 種に定め、世代・reset・gitignore での扱いを種別ごとに固定する](./placement-primitives.md) - entry が置く物の種別（配置プリミティブ）は 3 つに限る。種別は entry の `method`（`symlink` / `copy`）と、`src` が out-of-store marker かどうかの 2 軸で決まる。2 × 2 のうち「`copy` × out-of-store marker」は意図が矛盾するので評価時に拒否する（→ [意図が矛盾する組み合わせをクロスフィールドの確認で評価時に拒否する](../requirements/normalize-manifest-cross-field-checks.md)）。残る 3 マスが次の 3 種になる。
 * [配置ロジックを plan を計算する planner と FS 意味論を実行する engine に分け、dryrun と apply が同一の plan を共有する](./planner-engine-split.md) - `internal/` の配置ロジックを 2 層に分ける。
 * [prune を paths の列挙・engine の判定と削除・CLI の同意解釈に分け、engine API を Reset と同型にする](./prune-orphan-series.md) - `layat prune` を 3 層に分ける。既存コマンドと同じ層境界（→ [Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする](go-package-split.md)）に乗せ、prune 専用の縦割りを作らない。
 * [rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算し、root が要るのは配置前の確認だけにする](./root-relative-linkdest.md) - rootRelative の LinkDest は target の親から src/subpath への相対パスを Entry だけから計算する純関数とし、root は配置前に配置元の実在を確かめるときだけ使う
 * [status を engine の記録基底走査と CLI の絞り込み・出力に分ける](./status-scans-record-bases.md) - `layat status` を 3 つに分担する。既存コマンドと同じ層境界（→ [Go 側は cmd/layat に CLI 面を、internal に配置ロジックを置く 2 パッケージ構成にする](go-package-split.md)）に乗せる。
+* [stderr へ書く行は cmd の 1 箇所で `layat:` を付け、単発の失敗・`--all` の失敗行・status の行・警告が同じ整形を通る](./stderr-lines-prefixed-in-one-place.md) - stderr へ書く失敗・警告・通知の行は cmd/layat の 1 箇所で先頭に layat: を付け、internal/ のエラーと警告の文字列は layat: を持たず、--json の message にも付けない
 
 ## モジュール統合設計
 

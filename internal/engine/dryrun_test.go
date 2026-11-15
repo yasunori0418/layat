@@ -1,6 +1,8 @@
 package engine
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"testing"
@@ -37,11 +39,11 @@ func TestApplyDryRunNoSideEffects(t *testing.T) {
 		t.Errorf("Placed = %v, want [.link]", got)
 	}
 	// symlink is not created.
-	if _, err := os.Lstat(filepath.Join(root, ".link")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, ".link")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf(".link should not be created in dryrun, lstat err = %v", err)
 	}
 	// profileDir is not created either (no mkdir / flock taken).
-	if _, err := os.Stat(res.ProfileDir); !os.IsNotExist(err) {
+	if _, err := os.Stat(res.ProfileDir); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("profileDir should not be created in dryrun, stat err = %v", err)
 	}
 }
@@ -119,7 +121,7 @@ func TestApplyDryRunAncestorMigration(t *testing.T) {
 	if got, err := os.Readlink(filepath.Join(root, ".claude", "skills")); err != nil || got != srcOld {
 		t.Errorf(".claude/skills should be untouched in dryrun = %q (err %v); want symlink to %q", got, err, srcOld)
 	}
-	if _, err := os.Lstat(filepath.Join(root, ".claude", "skills", "foo")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, ".claude", "skills", "foo")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("child should not be created in dryrun, lstat err = %v", err)
 	}
 }

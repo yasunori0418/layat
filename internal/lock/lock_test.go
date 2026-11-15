@@ -1,6 +1,7 @@
 package lock
 
 import (
+	"errors"
 	"testing"
 	"time"
 )
@@ -15,7 +16,7 @@ func TestTryLockConflict(t *testing.T) {
 	defer func() { _ = l1.Release() }()
 
 	// A try-lock while held returns ErrLocked.
-	if _, err := Acquire(dir, false); err != ErrLocked {
+	if _, err := Acquire(dir, false); !errors.Is(err, ErrLocked) {
 		t.Fatalf("try-lock while held: got %v, want ErrLocked", err)
 	}
 }

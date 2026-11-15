@@ -68,7 +68,7 @@ func TestListGenerationsJSONInfoGenerations(t *testing.T) {
 func TestListGenerationsJSONInfoAbsentWithoutListing(t *testing.T) {
 	r, buf := newListGenerationsTestRun()
 	r.beginSubject("home")
-	if err := r.emit(errors.New("layat: list-generations is home mode only")); err != nil {
+	if err := r.emit(errors.New("list-generations is home mode only")); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	assertNoInfoKeys(t, decodeEnvelope(t, buf))
@@ -144,7 +144,7 @@ func TestGenerationCommandsModeGate(t *testing.T) {
 					run, _ := newListGenerationsTestRun()
 					err = runListGenerations(run, "c")
 				}
-				want := "layat: " + command + " is home / system mode only (layat.c has rootKind=\"" + kind + "\""
+				want := "" + command + " is home / system mode only (layat.c has rootKind=\"" + kind + "\""
 				if err == nil || !strings.HasPrefix(err.Error(), want) {
 					t.Fatalf("err = %v, want it to start with %q", err, want)
 				}

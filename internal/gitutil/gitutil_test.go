@@ -1,6 +1,7 @@
 package gitutil
 
 import (
+	"errors"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -58,7 +59,7 @@ func TestToplevelOutsideRepo(t *testing.T) {
 
 func TestToplevelGitNotInPath(t *testing.T) {
 	t.Setenv("PATH", "")
-	if _, err := Toplevel(t.TempDir()); err != ErrGitNotFound {
+	if _, err := Toplevel(t.TempDir()); !errors.Is(err, ErrGitNotFound) {
 		t.Fatalf("git-not-in-PATH: got %v, want ErrGitNotFound", err)
 	}
 }

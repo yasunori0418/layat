@@ -71,7 +71,7 @@ func Status(opts StatusOptions) ([]StatusSeries, error) {
 	system := filepath.Join(systemStateDir, "layat")
 	sys, err := statusBase(system, manifest.RootKindSystem)
 	if err != nil {
-		warnf("layat: skipping the system record base (%s): %v", system, err)
+		warnf("skipping the system record base (%s): %v", system, err)
 		return out, nil
 	}
 	return append(out, sys...), nil
@@ -83,11 +83,11 @@ func statusBase(base, mode string) ([]StatusSeries, error) {
 	if _, err := os.Stat(base); errors.Is(err, fs.ErrNotExist) {
 		return nil, nil
 	} else if err != nil {
-		return nil, fmt.Errorf("layat: cannot read the record base (%s): %w", base, err)
+		return nil, fmt.Errorf("cannot read the record base (%s): %w", base, err)
 	}
 	entries, err := os.ReadDir(base)
 	if err != nil {
-		return nil, fmt.Errorf("layat: cannot list the record base (%s): %w", base, err)
+		return nil, fmt.Errorf("cannot list the record base (%s): %w", base, err)
 	}
 	series, err := paths.ListRootHashSeries(base)
 	if err != nil {
@@ -157,7 +157,7 @@ func statusRecord(dir, mode, rootHash, root string) (StatusSeries, bool) {
 	if _, err := os.Stat(file); errors.Is(err, fs.ErrNotExist) {
 		return s, false
 	} else if err != nil {
-		s.Err = fmt.Errorf("layat: cannot stat the last-applied record (%s): %w", file, err)
+		s.Err = fmt.Errorf("cannot stat the last-applied record (%s): %w", file, err)
 		return s, true
 	}
 	rec, m, err := readRecord(file)

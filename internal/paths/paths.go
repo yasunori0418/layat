@@ -32,7 +32,7 @@ func StateDir() (string, error) {
 	}
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return "", fmt.Errorf("layat: cannot resolve $HOME: %w", err)
+		return "", fmt.Errorf("cannot resolve $HOME: %w", err)
 	}
 	return filepath.Join(home, ".local", "state"), nil
 }
@@ -86,14 +86,14 @@ func ReadBackref(hashDir string) (string, error) {
 	backref := filepath.Join(hashDir, backrefName)
 	b, err := os.ReadFile(backref)
 	if err != nil {
-		return "", fmt.Errorf("layat: cannot read backref (%s): %w", backref, err)
+		return "", fmt.Errorf("cannot read backref (%s): %w", backref, err)
 	}
 	root := strings.TrimSpace(string(b))
 	if root == "" {
-		return "", fmt.Errorf("layat: backref is empty (%s)", backref)
+		return "", fmt.Errorf("backref is empty (%s)", backref)
 	}
 	if !filepath.IsAbs(root) {
-		return "", fmt.Errorf("layat: backref is not an absolute path (%s): %q", backref, root)
+		return "", fmt.Errorf("backref is not an absolute path (%s): %q", backref, root)
 	}
 	return root, nil
 }
@@ -104,7 +104,7 @@ func ReadBackref(hashDir string) (string, error) {
 func ListRootHashSeries(base string) ([]RootHashSeries, error) {
 	entries, err := os.ReadDir(base)
 	if err != nil {
-		return nil, fmt.Errorf("layat: cannot list profile base (%s): %w", base, err)
+		return nil, fmt.Errorf("cannot list profile base (%s): %w", base, err)
 	}
 
 	var series []RootHashSeries
@@ -121,14 +121,14 @@ func ListRootHashSeries(base string) ([]RootHashSeries, error) {
 			continue
 		case err != nil:
 			// Whether there is a backref cannot be decided; report it as a series with the reason.
-			s.BackrefErr = fmt.Errorf("layat: cannot stat backref (%s): %w", backref, err)
+			s.BackrefErr = fmt.Errorf("cannot stat backref (%s): %w", backref, err)
 		default:
 			s.Root, s.BackrefErr = ReadBackref(hashDir)
 		}
 
 		if names, err := os.ReadDir(hashDir); err != nil {
 			// The series is still reported; only its <name> profiles are unknown.
-			s.NamesErr = fmt.Errorf("layat: cannot list series (%s): %w", hashDir, err)
+			s.NamesErr = fmt.Errorf("cannot list series (%s): %w", hashDir, err)
 		} else {
 			for _, n := range names {
 				// The backref is not a <name> profile even where it is a directory.

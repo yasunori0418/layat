@@ -1,6 +1,8 @@
 package engine
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -82,7 +84,7 @@ func TestCopyFileOpenError(t *testing.T) {
 	if err := copyFile(missing, dst, 0o644); err == nil {
 		t.Fatal("expected open(src) error, got nil")
 	}
-	if _, err := os.Lstat(dst); !os.IsNotExist(err) {
+	if _, err := os.Lstat(dst); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("dst should not be created on open failure: lstat err = %v", err)
 	}
 }

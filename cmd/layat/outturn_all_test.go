@@ -84,7 +84,7 @@ func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 		t.Fatalf("counts = (%d, %d, %d), want (2, 0, 1)", applied, skipped, failures)
 	}
 	// main emits with the aggregate error the exit-code path builds from the same counts.
-	cmdErr := &exitCodeError{code: applyAllExitCode(failures > 0, false), msg: "layat: apply --all: 1 config(s) failed"}
+	cmdErr := &exitCodeError{code: applyAllExitCode(failures > 0, false), msg: "apply --all: 1 config(s) failed"}
 	if err := run.emit(cmdErr); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
@@ -131,7 +131,7 @@ func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 // the failure is item-borne, so the subject's errors[] stays empty while its status is error.
 func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 	run, buf := newApplyTestRun()
-	failure := errors.New("layat: symlink t/b: permission denied")
+	failure := errors.New("symlink t/b: permission denied")
 	_, _, failures := aggregateApply(run, []string{"a", "b", "c"}, 4, func(name string) (*engine.Result, error) {
 		if name == "b" {
 			// The engine's partial result: the entry it stopped on, plus a planned entry it never reached.
@@ -147,7 +147,7 @@ func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 	if failures != 1 {
 		t.Fatalf("failures = %d, want 1", failures)
 	}
-	if err := run.emit(&exitCodeError{code: 1, msg: "layat: apply --all: 1 config(s) failed"}); err != nil {
+	if err := run.emit(&exitCodeError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	checkConformance(t, buf)
@@ -361,7 +361,7 @@ func TestApplyAllDryRunConflictIsItemBorne(t *testing.T) {
 func TestApplyAllDryRunMixedErrorAndConflict(t *testing.T) {
 	run, buf := newApplyTestRun()
 	run.dryRun = true
-	buildFailure := errors.New("layat: nix build failed")
+	buildFailure := errors.New("nix build failed")
 	var code int
 	captureStdout(t, func() {
 		code = aggregateDryRun(run, []string{"broken", "clashing", "clean"}, 4, func(name string) (*engine.Result, error) {
@@ -444,7 +444,7 @@ func TestApplyAllSingleConfigMatchesNamedApply(t *testing.T) {
 // TestApplyAllSingleConfigFailureMatchesNamedApply: on failure too, the named apply (settled by
 // emit) and --all (settled by the aggregator) emit the same document.
 func TestApplyAllSingleConfigFailureMatchesNamedApply(t *testing.T) {
-	failure := errors.New("layat: generation commit failed")
+	failure := errors.New("generation commit failed")
 	// A commit failure has a result but no failed target, so it is subject-borne on both paths.
 	newRes := func() *engine.Result {
 		res := placedResult("default")
@@ -461,7 +461,7 @@ func TestApplyAllSingleConfigFailureMatchesNamedApply(t *testing.T) {
 	all, allBuf := newApplyTestRun()
 	aggregateApply(all, []string{"default"}, 4, func(string) (*engine.Result, error) { return newRes(), failure })
 	// --all's aggregate error must not reach the already settled subject.
-	if err := all.emit(&exitCodeError{code: 1, msg: "layat: apply --all: 1 config(s) failed"}); err != nil {
+	if err := all.emit(&exitCodeError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
 		t.Fatalf("emit all: %v", err)
 	}
 
@@ -623,7 +623,7 @@ func TestGitignoreAllWiring(t *testing.T) {
 
 	t.Run("a mid-enumeration failure lands on its own subject", func(t *testing.T) {
 		run, buf := newGitignoreTestRun()
-		failure := errors.New("layat: nix build failed")
+		failure := errors.New("nix build failed")
 		err := enumerateGitignoreAll(run, []string{"docs", "broken", "later"}, func(name string) ([]string, error) {
 			if name == "broken" {
 				return nil, failure

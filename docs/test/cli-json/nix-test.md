@@ -12,7 +12,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:24:34+09:00"
+  at: "2026-11-14T23:43:00+09:00"
 ---
 # nixgen_test.go — entrypoint 探索順序と installable 引数の 2 形式
 
@@ -48,7 +48,8 @@ generated:
 - **診断の素通し** — 成功時にも eval と build のどちらの処理でも nix の stderr が writer へ届くこと。
   nix が行を分けて書いても writer へは行単位で渡り、終端の無い最後の断片は終了時に 1 回で
   渡ること
-- **`--debug` の開示** — 実行する nix コマンドが生成器に渡した writer へ従来の形で書かれること
+- **`--debug` の開示** — 実行する nix コマンドの引数が生成器に渡した開示用の関数へ渡り、writer へは
+  何も書かれないこと
 
 探索と引数の組み立ては一時ディレクトリに空ファイルを置いた実 FS の fixture に対して評価し、
 nix のプロセスは起動しない。失敗の構造と `--debug` の開示は PATH の先頭に置いた nix のスタブで

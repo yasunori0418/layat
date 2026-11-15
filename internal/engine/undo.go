@@ -1,7 +1,9 @@
 package engine
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 )
 
@@ -85,8 +87,8 @@ func (a *applier) discardJournal() {
 		if op.kind != undoRestoreRename {
 			continue
 		}
-		if err := os.RemoveAll(op.tmpPath); err != nil && !os.IsNotExist(err) {
-			a.opts.Warnf("layat: could not remove recopy aside file (%s): %v", op.tmpPath, err)
+		if err := os.RemoveAll(op.tmpPath); err != nil && !errors.Is(err, fs.ErrNotExist) {
+			a.opts.Warnf("could not remove recopy aside file (%s): %v", op.tmpPath, err)
 		}
 	}
 	a.journal = nil
@@ -94,12 +96,16 @@ func (a *applier) discardJournal() {
 
 // unwind reverses applier.journal in LIFO order after origErr aborted an Apply/Rollback call,
 // attempting every inverse operation best-effort and reporting origErr plus each unrestorable
-// item to opts.Warnf. The journal is cleared regardless of outcome.
+// item to opts.Reportf. The journal is cleared regardless of outcome.
 func (a *applier) unwind(origErr error) {
 	journal := a.journal
 	a.journal = nil
+	reportf := a.opts.Reportf
+	if reportf == nil {
+		reportf = a.opts.Warnf
+	}
 	if len(journal) == 0 {
-		a.opts.Warnf("layat: apply failed; no filesystem changes had been made yet: %v", origErr)
+		reportf("apply failed; no filesystem changes had been made yet: %v", origErr)
 		return
 	}
 
@@ -110,13 +116,13 @@ func (a *applier) unwind(origErr error) {
 		}
 	}
 
-	a.opts.Warnf("layat: apply failed; rolled back this run's filesystem changes: %v", origErr)
+	reportf("apply failed; rolled back this run's filesystem changes: %v", origErr)
 	if len(failed) == 0 {
 		return
 	}
-	a.opts.Warnf("layat: %d item(s) could not be restored during rollback:", len(failed))
+	reportf("%d item(s) could not be restored during rollback:", len(failed))
 	for _, f := range failed {
-		a.opts.Warnf("layat:   → %s", f)
+		reportf("  → %s", f)
 	}
 }
 
@@ -124,12 +130,12 @@ func (a *applier) unwind(origErr error) {
 func undoOne(op undoOp) error {
 	switch op.kind {
 	case undoUnlinkNew:
-		if err := os.Remove(op.path); err != nil && !os.IsNotExist(err) {
+		if err := os.Remove(op.path); err != nil && !errors.Is(err, fs.ErrNotExist) {
 			return err
 		}
 		return nil
 	case undoRelinkOld:
-		if err := os.Remove(op.path); err != nil && !os.IsNotExist(err) {
+		if err := os.Remove(op.path); err != nil && !errors.Is(err, fs.ErrNotExist) {
 			return err
 		}
 		return os.Symlink(op.prevDest, op.path)
@@ -149,6 +155,6 @@ func undoOne(op undoOp) error {
 		}
 		return os.Mkdir(op.path, mode)
 	default:
-		return fmt.Errorf("layat: internal error: unknown undo kind %d", op.kind)
+		return fmt.Errorf("internal error: unknown undo kind %d", op.kind)
 	}
 }

@@ -1,6 +1,8 @@
 package engine
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -66,10 +68,10 @@ func TestResetRemovesSymlinkAndCopy(t *testing.T) {
 		t.Fatalf("Reset: %v", err)
 	}
 
-	if _, err := os.Lstat(linkAbs); !os.IsNotExist(err) {
+	if _, err := os.Lstat(linkAbs); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf(".link should be removed, lstat err = %v", err)
 	}
-	if _, err := os.Lstat(copyAbs); !os.IsNotExist(err) {
+	if _, err := os.Lstat(copyAbs); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf(".copied should be removed, lstat err = %v", err)
 	}
 	if got := res.RemovedSymlinks; len(got) != 1 || got[0] != ".link" {
@@ -159,7 +161,7 @@ func TestResetTargetFilter(t *testing.T) {
 		t.Fatalf("Reset: %v", err)
 	}
 
-	if _, err := os.Lstat(filepath.Join(root, ".a")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, ".a")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf(".a should be removed, lstat err = %v", err)
 	}
 	if _, err := os.Lstat(filepath.Join(root, ".b")); err != nil {
@@ -268,10 +270,10 @@ func TestResetSystemUsesSystemBases(t *testing.T) {
 	if len(res.RemovedSymlinks) != 1 {
 		t.Errorf("RemovedSymlinks = %v, want the one placed entry", res.RemovedSymlinks)
 	}
-	if _, err := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, "a")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("a remains after reset: %v", err)
 	}
-	if _, err := os.Lstat(filepath.Join(sysState, "layat", paths.RootHash(root), "sys", "last-applied.json")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(sysState, "layat", paths.RootHash(root), "sys", "last-applied.json")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("system record remains after a full reset: %v", err)
 	}
 	assertEmptyDirs(t, state, backendSys)

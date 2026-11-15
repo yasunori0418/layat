@@ -48,7 +48,7 @@ type outturnPayload[TInfo any] struct {
 func attachMutationPayload[TInfo any](s *outturnSubject[TInfo], res *engine.Result, cmdErr error) {
 	p, err := mutationPayload[TInfo](res, cmdErr)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "layat: could not build the --json payload: %v\n", err)
+		printFailure(os.Stderr, "could not build the --json payload", err)
 		return
 	}
 	s.setPayload(p)
@@ -58,7 +58,7 @@ func attachMutationPayload[TInfo any](s *outturnSubject[TInfo], res *engine.Resu
 func attachResetPayload[TInfo any](s *outturnSubject[TInfo], res *engine.ResetResult, cmdErr error) {
 	p, err := resetPayload[TInfo](res, cmdErr)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "layat: could not build the --json payload: %v\n", err)
+		printFailure(os.Stderr, "could not build the --json payload", err)
 		return
 	}
 	s.setPayload(p)

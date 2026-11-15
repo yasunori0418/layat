@@ -9,7 +9,7 @@ import (
 )
 
 // ErrLocked is returned by a non-blocking acquisition (try-lock) when another holder is active.
-var ErrLocked = errors.New("layat: profileDir is locked by another process")
+var ErrLocked = errors.New("profileDir is locked by another process")
 
 // Lock is an exclusive flock acquired on a profileDir.
 type Lock struct {

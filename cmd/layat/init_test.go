@@ -64,7 +64,7 @@ func TestIsValidTemplate(t *testing.T) {
 // setEnvelopeInfo, so the envelope's info stays absent.
 func TestInitJSONEnvelopeInfoAbsentOnRejectedTemplate(t *testing.T) {
 	r, buf := newInitTestRun()
-	if err := r.emit(errors.New(`layat: unknown template: "nosuch"`)); err != nil {
+	if err := r.emit(errors.New(`unknown template: "nosuch"`)); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	assertNoInfoKeys(t, decodeEnvelope(t, buf))

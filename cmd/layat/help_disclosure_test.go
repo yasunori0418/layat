@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -99,7 +101,7 @@ var flakeAttr = regexp.MustCompile(`^#layat\.([^.]+)(\.a)?(.*)$`)
 func recordedCalls(t *testing.T, log, ep, ref, template string) []string {
 	t.Helper()
 	b, err := os.ReadFile(log)
-	if os.IsNotExist(err) {
+	if errors.Is(err, fs.ErrNotExist) {
 		return nil
 	}
 	if err != nil {
@@ -253,8 +255,8 @@ func TestHelpDisclosesNoNixSubcommands(t *testing.T) {
 			if calls := recordedCalls(t, log, flagFile, "", ""); len(calls) != 0 {
 				t.Errorf("%s ran nix: %q", tc.name, calls)
 			}
-			if _, err := os.Lstat(series); os.IsNotExist(err) != tc.wantDeleted {
-				t.Errorf("%s: orphan series deleted = %v, want %v", tc.name, os.IsNotExist(err), tc.wantDeleted)
+			if _, err := os.Lstat(series); errors.Is(err, fs.ErrNotExist) != tc.wantDeleted {
+				t.Errorf("%s: orphan series deleted = %v, want %v", tc.name, errors.Is(err, fs.ErrNotExist), tc.wantDeleted)
 			}
 		})
 	}

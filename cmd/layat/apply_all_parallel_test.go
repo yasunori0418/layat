@@ -141,7 +141,7 @@ func TestApplyAllParallelPartialFailureAndSkip(t *testing.T) {
 		"layat: skipped apply b (another apply is in progress)",
 		"layat: apply c done")
 
-	if err := run.emit(&exitCodeError{code: applyAllExitCode(failures > 0, false), msg: "layat: apply --all: 1 config(s) failed"}); err != nil {
+	if err := run.emit(&exitCodeError{code: applyAllExitCode(failures > 0, false), msg: "apply --all: 1 config(s) failed"}); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	checkConformance(t, buf)
@@ -262,7 +262,7 @@ func TestApplyAllParallelCountsAreExact(t *testing.T) {
 	if got := peak.Load(); got > jobs {
 		t.Errorf("peak in-flight applies = %d, want at most %d (--jobs)", got, jobs)
 	}
-	if err := run.emit(&exitCodeError{code: 1, msg: "layat: apply --all: 20 config(s) failed"}); err != nil {
+	if err := run.emit(&exitCodeError{code: 1, msg: "apply --all: 20 config(s) failed"}); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	if _, order := subjectResults(t, buf); !slices.Equal(order, selected) {

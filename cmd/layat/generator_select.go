@@ -35,7 +35,11 @@ func newGeneratorTo(name string, w io.Writer) generator.Generator {
 		}
 		return &generator.Prebuilt{}
 	}
-	return nixgen.New(w, flagDebug)
+	var disclose func(args []string)
+	if flagDebug {
+		disclose = func(args []string) { discloseNix(w, args) }
+	}
+	return nixgen.New(w, disclose)
 }
 
 // selectGenerator chooses the generator's name. apply --manifest takes prebuilt without reading
@@ -44,7 +48,7 @@ func newGeneratorTo(name string, w io.Writer) generator.Generator {
 func selectGenerator() (string, error) {
 	if len(flagManifest) > 0 {
 		if flagGenerator != "" {
-			return "", &inputError{err: errors.New("layat: --manifest cannot be combined with --generator (--manifest fixes the source to a pre-built link-farm)")}
+			return "", &inputError{err: errors.New("--manifest cannot be combined with --generator (--manifest fixes the source to a pre-built link-farm)")}
 		}
 		if err := checkManifestForm(flagManifest, flagApplyAll); err != nil {
 			return "", err
@@ -64,10 +68,10 @@ func selectGenerator() (string, error) {
 func checkManifestForm(values []string, all bool) error {
 	if !all {
 		if len(values) > 1 {
-			return &inputError{err: errors.New("layat: --manifest can be given only once without --all (repeat --manifest <name>=<link-farm> with --all)")}
+			return &inputError{err: errors.New("--manifest can be given only once without --all (repeat --manifest <name>=<link-farm> with --all)")}
 		}
 		if strings.Contains(values[0], "=") {
-			return &inputError{err: fmt.Errorf("layat: --manifest %q: the <name>=<link-farm> form requires --all", values[0])}
+			return &inputError{err: fmt.Errorf("--manifest %q: the <name>=<link-farm> form requires --all", values[0])}
 		}
 		return nil
 	}
@@ -76,11 +80,11 @@ func checkManifestForm(values []string, all bool) error {
 		name, _, ok := strings.Cut(v, "=")
 		switch {
 		case !ok:
-			return &inputError{err: fmt.Errorf("layat: --manifest %q: with --all, give each config as <name>=<link-farm>", v)}
+			return &inputError{err: fmt.Errorf("--manifest %q: with --all, give each config as <name>=<link-farm>", v)}
 		case name == "":
-			return &inputError{err: fmt.Errorf("layat: --manifest %q: the config name before \"=\" is empty", v)}
+			return &inputError{err: fmt.Errorf("--manifest %q: the config name before \"=\" is empty", v)}
 		case seen[name]:
-			return &inputError{err: fmt.Errorf("layat: --manifest: config %q is given more than once", name)}
+			return &inputError{err: fmt.Errorf("--manifest: config %q is given more than once", name)}
 		}
 		seen[name] = true
 	}
@@ -182,7 +186,7 @@ func readGeneratorSetting(path string) (string, error) {
 		return "", nil
 	}
 	if err != nil {
-		return "", fmt.Errorf("layat: cannot read %s: %w", path, err)
+		return "", fmt.Errorf("cannot read %s: %w", path, err)
 	}
 	var s generatorSetting
 	err = toml.NewDecoder(bytes.NewReader(b)).DisallowUnknownFields().Decode(&s)
@@ -192,11 +196,11 @@ func readGeneratorSetting(path string) (string, error) {
 		for _, e := range sme.Errors {
 			keys = append(keys, fmt.Sprintf("%q", strings.Join(e.Key(), ".")))
 		}
-		return "", &inputError{err: fmt.Errorf("layat: %s: unknown key %s (only \"generator\" is allowed)",
+		return "", &inputError{err: fmt.Errorf("%s: unknown key %s (only \"generator\" is allowed)",
 			path, strings.Join(keys, ", "))}
 	}
 	if err != nil {
-		return "", &inputError{err: fmt.Errorf("layat: %s: %w", path, err)}
+		return "", &inputError{err: fmt.Errorf("%s: %w", path, err)}
 	}
 	return s.Generator, nil
 }
@@ -206,7 +210,7 @@ func checkGeneratorName(name, source string) (string, error) {
 	if slices.Contains(selectableGenerators, name) {
 		return name, nil
 	}
-	return "", &inputError{err: fmt.Errorf("layat: unknown generator %q in %s (available: %s)",
+	return "", &inputError{err: fmt.Errorf("unknown generator %q in %s (available: %s)",
 		name, source, strings.Join(selectableGenerators, ", "))}
 }
 

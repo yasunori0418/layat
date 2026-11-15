@@ -4,7 +4,9 @@
 package planner
 
 import (
+	"errors"
 	"fmt"
+	iofs "io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -255,7 +257,7 @@ func Compute(prev, next *manifest.Manifest, root string, fs FS, opts Options) (P
 			continue
 		}
 		if e.Method != manifest.MethodSymlink {
-			return Plan{}, fmt.Errorf("layat: unknown method: %q (target: %s)", e.Method, e.Target)
+			return Plan{}, fmt.Errorf("unknown method: %q (target: %s)", e.Method, e.Target)
 		}
 
 		info, err := fs.Lstat(targetAbs)
@@ -278,10 +280,10 @@ func Compute(prev, next *manifest.Manifest, root string, fs FS, opts Options) (P
 			if err := appendBackupOrConflict(&plan, e, targetAbs, "target already has an existing file/directory (will not overwrite)", ConflictForeignEntity, fs, opts); err != nil {
 				return Plan{}, err
 			}
-		case os.IsNotExist(err):
+		case errors.Is(err, iofs.ErrNotExist):
 			plan.Place = append(plan.Place, PlaceAction{Entry: e, TargetAbs: targetAbs, Dest: LinkDest(e), Kind: PlaceNew})
 		default:
-			return Plan{}, fmt.Errorf("layat: cannot lstat target (%s): %w", targetAbs, err)
+			return Plan{}, fmt.Errorf("cannot lstat target (%s): %w", targetAbs, err)
 		}
 	}
 
@@ -305,10 +307,10 @@ func Compute(prev, next *manifest.Manifest, root string, fs FS, opts Options) (P
 			targetAbs := filepath.Join(root, filepath.Clean(pe.Target))
 			info, err := fs.Lstat(targetAbs)
 			switch {
-			case err != nil && os.IsNotExist(err):
+			case err != nil && errors.Is(err, iofs.ErrNotExist):
 				continue // already gone = no-op (no warning).
 			case err != nil:
-				return Plan{}, fmt.Errorf("layat: cannot lstat stale target (%s): %w", targetAbs, err)
+				return Plan{}, fmt.Errorf("cannot lstat stale target (%s): %w", targetAbs, err)
 			case info.Mode()&os.ModeSymlink == 0:
 				// A regular file / directory is left untouched.
 				plan.Warnings = append(plan.Warnings, Warning{Kind: WarnStaleNonSymlink, Target: pe.Target})
@@ -400,11 +402,11 @@ func classifyCopy(plan *Plan, e manifest.Entry, targetAbs string, prevByTarget m
 		}
 		plan.Warnings = append(plan.Warnings, Warning{Kind: WarnCopyForeign, Target: e.Target})
 		return nil
-	case os.IsNotExist(err):
+	case errors.Is(err, iofs.ErrNotExist):
 		plan.Copies = append(plan.Copies, CopyAction{Entry: e, TargetAbs: targetAbs, Src: LinkDest(e)})
 		return nil
 	default:
-		return fmt.Errorf("layat: cannot lstat copy target (%s): %w", targetAbs, err)
+		return fmt.Errorf("cannot lstat copy target (%s): %w", targetAbs, err)
 	}
 }
 
@@ -430,8 +432,8 @@ func appendBackup(plan *Plan, e manifest.Entry, targetAbs string, fs FS, opts Op
 			Kind:      ConflictBackupTargetExists,
 		})
 		return nil
-	} else if !os.IsNotExist(err) {
-		return fmt.Errorf("layat: cannot lstat backup destination (%s): %w", backupAbs, err)
+	} else if !errors.Is(err, iofs.ErrNotExist) {
+		return fmt.Errorf("cannot lstat backup destination (%s): %w", backupAbs, err)
 	}
 	plan.Backup = append(plan.Backup, BackupAction{Entry: e, TargetAbs: targetAbs, BackupAbs: backupAbs})
 	return appendAbsentPlacement(plan, e, targetAbs)
@@ -446,7 +448,7 @@ func appendAbsentPlacement(plan *Plan, e manifest.Entry, targetAbs string) error
 	case manifest.MethodCopy:
 		plan.Copies = append(plan.Copies, CopyAction{Entry: e, TargetAbs: targetAbs, Src: LinkDest(e)})
 	default:
-		return fmt.Errorf("layat: unknown method: %q (target: %s)", e.Method, e.Target)
+		return fmt.Errorf("unknown method: %q (target: %s)", e.Method, e.Target)
 	}
 	return nil
 }
@@ -456,7 +458,7 @@ func appendAbsentPlacement(plan *Plan, e manifest.Entry, targetAbs string) error
 func copyStructureMismatch(e manifest.Entry, targetInfo os.FileInfo, fs FS) (bool, error) {
 	srcInfo, err := fs.Lstat(LinkDest(e))
 	if err != nil {
-		return false, fmt.Errorf("layat: cannot lstat copy src (%s): %w", LinkDest(e), err)
+		return false, fmt.Errorf("cannot lstat copy src (%s): %w", LinkDest(e), err)
 	}
 	return srcInfo.IsDir() != targetInfo.IsDir(), nil
 }
@@ -506,7 +508,7 @@ func markDirEntriesPreRemoved(dirRel string, prevByTarget map[string]manifest.En
 func classifyDirMigration(dirRel, dirAbs string, prevByTarget, nextByTarget map[string]manifest.Entry, fs FS) (actions []RemoveAction, reason string, err error) {
 	children, err := fs.ReadDir(dirAbs)
 	if err != nil {
-		return nil, "", fmt.Errorf("layat: cannot read directory (%s): %w", dirAbs, err)
+		return nil, "", fmt.Errorf("cannot read directory (%s): %w", dirAbs, err)
 	}
 	for _, de := range children {
 		childAbs := filepath.Join(dirAbs, de.Name())
@@ -514,7 +516,7 @@ func classifyDirMigration(dirRel, dirAbs string, prevByTarget, nextByTarget map[
 
 		info, lerr := fs.Lstat(childAbs)
 		if lerr != nil {
-			return nil, "", fmt.Errorf("layat: cannot lstat (%s): %w", childAbs, lerr)
+			return nil, "", fmt.Errorf("cannot lstat (%s): %w", childAbs, lerr)
 		}
 
 		switch {
@@ -561,10 +563,10 @@ func ancestorSymlink(root, target string, fs FS) (abs, rel string, err error) {
 		}
 		info, lerr := fs.Lstat(cur)
 		if lerr != nil {
-			if os.IsNotExist(lerr) {
+			if errors.Is(lerr, iofs.ErrNotExist) {
 				return "", "", nil
 			}
-			return "", "", fmt.Errorf("layat: cannot lstat ancestor (%s): %w", cur, lerr)
+			return "", "", fmt.Errorf("cannot lstat ancestor (%s): %w", cur, lerr)
 		}
 		if info.Mode()&os.ModeSymlink != 0 {
 			return cur, rel, nil

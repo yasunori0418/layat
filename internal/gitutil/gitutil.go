@@ -10,10 +10,10 @@ import (
 )
 
 // ErrNotInRepo is returned when dir is outside a git repository and the toplevel cannot be resolved.
-var ErrNotInRepo = errors.New("layat: outside a git repository (pass --root to set root explicitly)")
+var ErrNotInRepo = errors.New("outside a git repository (pass --root to set root explicitly)")
 
 // ErrGitNotFound is returned when git is not on PATH.
-var ErrGitNotFound = errors.New("layat: git is not on PATH")
+var ErrGitNotFound = errors.New("git is not on PATH")
 
 // Toplevel returns the absolute git toplevel of dir via `git rev-parse --show-toplevel`.
 // It fails if git is missing or dir is outside a repository.
@@ -32,7 +32,7 @@ func Toplevel(dir string) (string, error) {
 			// git started but exited non-zero; the representative case is being outside a repository.
 			return "", fmt.Errorf("%w: %s", ErrNotInRepo, strings.TrimSpace(stderr.String()))
 		}
-		return "", fmt.Errorf("layat: failed to run git rev-parse: %w", err)
+		return "", fmt.Errorf("failed to run git rev-parse: %w", err)
 	}
 
 	top := strings.TrimSpace(stdout.String())

@@ -47,11 +47,11 @@ func discoverEntrypoint(fileFlag string) (*entrypoint, error) {
 	if fileFlag != "" {
 		abs, err := filepath.Abs(fileFlag)
 		if err != nil {
-			return nil, fmt.Errorf("layat: cannot resolve the -f path (%s): %w", fileFlag, err)
+			return nil, fmt.Errorf("cannot resolve the -f path (%s): %w", fileFlag, err)
 		}
 		info, err := os.Stat(abs)
 		if err != nil {
-			return nil, fmt.Errorf("layat: -f path not found (%s): %w", fileFlag, err)
+			return nil, fmt.Errorf("-f path not found (%s): %w", fileFlag, err)
 		}
 		if info.IsDir() {
 			if fileExists(filepath.Join(abs, "flake.nix")) {
@@ -62,7 +62,7 @@ func discoverEntrypoint(fileFlag string) (*entrypoint, error) {
 					return &entrypoint{kind: entrypointLegacy, legacyPath: p}, nil
 				}
 			}
-			return nil, fmt.Errorf("layat: no flake.nix / shell.nix / default.nix in the -f directory (%s)", abs)
+			return nil, fmt.Errorf("no flake.nix / shell.nix / default.nix in the -f directory (%s)", abs)
 		}
 		switch filepath.Base(abs) {
 		case "flake.nix":
@@ -70,13 +70,13 @@ func discoverEntrypoint(fileFlag string) (*entrypoint, error) {
 		case "shell.nix", "default.nix":
 			return &entrypoint{kind: entrypointLegacy, legacyPath: abs}, nil
 		default:
-			return nil, fmt.Errorf("layat: -f must point to a flake.nix, shell.nix, or default.nix (%s)", abs)
+			return nil, fmt.Errorf("-f must point to a flake.nix, shell.nix, or default.nix (%s)", abs)
 		}
 	}
 
 	cwd, err := os.Getwd()
 	if err != nil {
-		return nil, fmt.Errorf("layat: cannot get the current working directory: %w", err)
+		return nil, fmt.Errorf("cannot get the current working directory: %w", err)
 	}
 	if fileExists(filepath.Join(cwd, "flake.nix")) {
 		return &entrypoint{kind: entrypointFlake, flakeRef: cwd}, nil
@@ -86,7 +86,7 @@ func discoverEntrypoint(fileFlag string) (*entrypoint, error) {
 			return &entrypoint{kind: entrypointLegacy, legacyPath: p}, nil
 		}
 	}
-	return nil, errors.New("layat: no entrypoint found (no flake.nix / shell.nix / default.nix in the CWD; specify one with -f)")
+	return nil, errors.New("no entrypoint found (no flake.nix / shell.nix / default.nix in the CWD; specify one with -f)")
 }
 
 func fileExists(p string) bool {
@@ -104,13 +104,13 @@ func currentSystem() (string, error) {
 	case "arm64":
 		arch = "aarch64"
 	default:
-		return "", fmt.Errorf("layat: unsupported GOARCH: %s", runtime.GOARCH)
+		return "", fmt.Errorf("unsupported GOARCH: %s", runtime.GOARCH)
 	}
 	switch runtime.GOOS {
 	case "linux", "darwin":
 		return arch + "-" + runtime.GOOS, nil
 	default:
-		return "", fmt.Errorf("layat: unsupported GOOS: %s", runtime.GOOS)
+		return "", fmt.Errorf("unsupported GOOS: %s", runtime.GOOS)
 	}
 }
 
@@ -149,21 +149,22 @@ func (e *entrypoint) namespaceLabel(system string) string {
 	return fmt.Sprintf("layat.%s", system)
 }
 
-// Generator is the nix implementation of generator.Generator. Diagnostics (the --debug
-// disclosure and nix build's progress) go to the writer given to New, never to stdout.
+// Generator is the nix implementation of generator.Generator. Diagnostics (nix build's progress)
+// go to the writer given to New, never to stdout; the --debug disclosure goes to the disclose
+// function given to New.
 type Generator struct {
-	stderr io.Writer
-	debug  bool
-	ep     *entrypoint
-	system string
+	stderr   io.Writer
+	disclose func(args []string)
+	ep       *entrypoint
+	system   string
 }
 
 var _ generator.Generator = (*Generator)(nil)
 
-// New returns a nix generator writing its diagnostics to stderr; debug discloses the nix
-// commands it runs.
-func New(stderr io.Writer, debug bool) *Generator {
-	return &Generator{stderr: stderr, debug: debug}
+// New returns a nix generator writing its diagnostics to stderr. A non-nil disclose receives the
+// arguments of each nix command before it runs.
+func New(stderr io.Writer, disclose func(args []string)) *Generator {
+	return &Generator{stderr: stderr, disclose: disclose}
 }
 
 // Discover discovers the entrypoint (→ discoverEntrypoint) and the current system.
@@ -229,7 +230,7 @@ func (g *Generator) evalAllRoots() (map[string]manifest.Root, error) {
 		Targets  []string `json:"targets"`
 	}
 	if err := json.Unmarshal([]byte(out), &raw); err != nil {
-		return nil, fmt.Errorf("layat: cannot parse the batch eval result for %s: %w", g.ep.namespaceLabel(g.system), err)
+		return nil, fmt.Errorf("cannot parse the batch eval result for %s: %w", g.ep.namespaceLabel(g.system), err)
 	}
 	roots := make(map[string]manifest.Root, len(raw))
 	for name, r := range raw {
@@ -270,7 +271,7 @@ func (g *Generator) Build(name, pending string) (string, error) {
 	}
 	store, err := os.Readlink(pending)
 	if err != nil {
-		return "", fmt.Errorf("layat: cannot read the build output out-link (%s): %w", pending, err)
+		return "", fmt.Errorf("cannot read the build output out-link (%s): %w", pending, err)
 	}
 	return store, nil
 }
@@ -286,7 +287,7 @@ func (g *Generator) DryBuild(name string) (string, error) {
 	}
 	store := strings.TrimSpace(out)
 	if store == "" {
-		return "", fmt.Errorf("layat: nix build --print-out-paths was empty (%s)", g.ep.label(g.system, name))
+		return "", fmt.Errorf("nix build --print-out-paths was empty (%s)", g.ep.label(g.system, name))
 	}
 	// --print-out-paths may return multiple lines (multi-output). The link-farm is a single output, so take the last line.
 	lines := strings.Split(store, "\n")
@@ -320,8 +321,8 @@ func (g *Generator) runNixStream(args ...string) error {
 // for the failure's Stderr. A nil stdout shares the same tee, so the writer is never written from
 // two goroutines at once. A failure is a generator.Error classified by nixFailure.
 func (g *Generator) runNix(args []string, stdout io.Writer) error {
-	if g.debug {
-		_, _ = fmt.Fprintf(g.stderr, "layat: + nix %s\n", strings.Join(args, " "))
+	if g.disclose != nil {
+		g.disclose(args)
 	}
 	cmd := exec.Command("nix", args...)
 	var stderr bytes.Buffer
@@ -371,12 +372,12 @@ func (l *lineWriter) flush() {
 // PrerequisiteMissing, a missing attribute while reading the roots is NotFound, anything else
 // Failed. The raw stderr is kept in Stderr.
 func nixFailure(args []string, stderr string, runErr error) error {
-	cause := fmt.Errorf("layat: nix %s failed: %w", args[0], runErr)
+	cause := fmt.Errorf("nix %s failed: %w", args[0], runErr)
 	kind, message, guidance := generator.KindFailed, cause.Error(), ""
 	switch {
 	case isExperimentalDisabled(stderr):
 		kind = generator.KindPrerequisiteMissing
-		message = fmt.Sprintf("layat: nix's experimental-features are not enabled (nix %s failed)", args[0])
+		message = fmt.Sprintf("nix's experimental-features are not enabled (nix %s failed)", args[0])
 		guidance = experimentalGuidance
 	case stageOf(args) == generator.StageRoots && isMissingAttribute(stderr):
 		kind = generator.KindNotFound
@@ -427,6 +428,6 @@ func notFound(err error, label, guidance string) error {
 	if !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
 		return err
 	}
-	message := fmt.Sprintf("layat: %s not found in the entrypoint (nix eval failed)", label)
+	message := fmt.Sprintf("%s not found in the entrypoint (nix eval failed)", label)
 	return generator.NewError(ge.Generator, ge.Stage, ge.Kind, message, guidance, ge.Stderr, ge.Unwrap())
 }

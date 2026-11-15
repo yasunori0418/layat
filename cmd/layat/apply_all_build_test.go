@@ -105,7 +105,7 @@ func TestStageOneFailureSkipsStageTwo(t *testing.T) {
 	if !strings.Contains(stderr, "layat: apply b failed: stub build of b failed") {
 		t.Errorf("stderr = %q, want the stage-1 failure of b reported", stderr)
 	}
-	if err := run.emit(&exitCodeError{code: 1, msg: "layat: apply --all: 1 config(s) failed"}); err != nil {
+	if err := run.emit(&exitCodeError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	checkConformance(t, buf)
@@ -167,7 +167,7 @@ func TestJobsAggregateIsOrderIndependent(t *testing.T) {
 		captureStderr(t, func() {
 			o.applied, o.skipped, o.failures, o.stage2 = stagedApply(run, selected, jobs, build)
 		})
-		if err := run.emit(&exitCodeError{code: 1, msg: "layat: apply --all: 2 config(s) failed"}); err != nil {
+		if err := run.emit(&exitCodeError{code: 1, msg: "apply --all: 2 config(s) failed"}); err != nil {
 			t.Fatalf("emit: %v", err)
 		}
 		o.envelope = buf.String()
@@ -298,7 +298,7 @@ func TestRunApplyAllStageOneWiring(t *testing.T) {
 				if dryrun {
 					subject += " --dryrun"
 				}
-				report := "layat: apply " + subject + " failed: layat: nix build failed: exit status 1"
+				report := "layat: apply " + subject + " failed: nix build failed: exit status 1"
 				if !slices.Contains(lines, report) {
 					t.Errorf("stderr has no one-line failure report %q:\n%s", report, stderr)
 				}

@@ -14,7 +14,7 @@ satisfies:
   - "QA-d028e302-8262-428c-9030-98d46b4b0cd3"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-13T00:10:58+09:00"
+  at: "2026-11-14T23:19:00+09:00"
 ---
 # CI パイプライン（flake check の os×system マトリクスと E2E ジョブ）
 
@@ -51,6 +51,7 @@ Job Summary への出力はそのついでの表示手段で、サイズ上限�
 
 Go の check（go-vet / golangci-lint）は `CGO_ENABLED=0` のピュア Go で実行する。layat は
 cgo 未使用のため、サンドボックスに C コンパイラを持ち込まずに静的解析を実行できる。
+golangci-lint は `flake.nix` の check が `--config` でリポジトリ直下の `.golangci.yml` を渡して実行する。
 
 nix を使う `flake-check` / `go-coverage` / `e2e` / `test-doc-matrix` では、セットアップを
 composite action `.github/actions/setup-nix`（`cachix/install-nix-action` +

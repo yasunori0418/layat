@@ -56,7 +56,7 @@ func newApplyCmd() *cobra.Command {
 			flagBackupEnabled = cmd.Flags().Changed("backup")
 			if flagApplyAll {
 				if len(args) > 0 {
-					return fmt.Errorf("layat: apply cannot combine <name> with --all")
+					return fmt.Errorf("apply cannot combine <name> with --all")
 				}
 				return runApplyAll(run)
 			}
@@ -65,7 +65,7 @@ func newApplyCmd() *cobra.Command {
 			}
 			// Check Changed, not the value: an explicit --jobs 0 equals the default.
 			if cmd.Flags().Changed("jobs") {
-				return fmt.Errorf("layat: --jobs is a modifier for apply --all")
+				return fmt.Errorf("--jobs is a modifier for apply --all")
 			}
 			name := "default"
 			if len(args) == 1 {
@@ -117,6 +117,8 @@ func runApplyManifest(subject *applySubject, name string) error {
 		Backend:        newGenerationBackend(),
 		SystemDir:      systemDirOverride(),
 		SystemStateDir: systemStateDirOverride(),
+		Warnf:          engineWarnf,
+		Reportf:        engineReportf,
 	})
 	if res != nil {
 		// A partial result on failure still carries the reached items and the changes made.
@@ -125,7 +127,7 @@ func runApplyManifest(subject *applySubject, name string) error {
 	if err != nil {
 		if errors.Is(err, engine.ErrSkipped) {
 			if flagVerbose {
-				fmt.Fprintln(os.Stderr, "layat: skipped because another apply is in progress (run layat apply manually)")
+				noticef(os.Stderr, "skipped because another apply is in progress (run layat apply manually)")
 			}
 			return nil
 		}
@@ -145,7 +147,7 @@ func runApply(run *applyRun, name string) error {
 	if len(flagManifest) > 0 {
 		// --manifest fixes the source to a link-farm, so it conflicts with -f.
 		if flagFile != "" {
-			return &inputError{err: errors.New("layat: --manifest cannot be combined with -f (--manifest fixes the source to a pre-built link-farm)")}
+			return &inputError{err: errors.New("--manifest cannot be combined with -f (--manifest fixes the source to a pre-built link-farm)")}
 		}
 		return runApplyManifest(subject, name)
 	}
@@ -182,6 +184,8 @@ func runApply(run *applyRun, name string) error {
 			Backend:        newGenerationBackend(),
 			SystemDir:      systemDirOverride(),
 			SystemStateDir: systemStateDirOverride(),
+			Warnf:          engineWarnf,
+			Reportf:        engineReportf,
 		})
 		if err != nil {
 			return err
@@ -207,7 +211,7 @@ func runApply(run *applyRun, name string) error {
 		if errors.Is(err, engine.ErrSkipped) {
 			// A try-lock skip is a normal skip (exit 0).
 			if flagVerbose {
-				fmt.Fprintln(os.Stderr, "layat: skipped because another apply is in progress (run layat apply manually)")
+				noticef(os.Stderr, "skipped because another apply is in progress (run layat apply manually)")
 			}
 			return nil
 		}
@@ -267,6 +271,8 @@ func applyOne(gen generator.Generator, genName, name, rootKind, fixedRoot string
 		Backend:        newGenerationBackend(),
 		SystemDir:      systemDirOverride(),
 		SystemStateDir: systemStateDirOverride(),
+		Warnf:          engineWarnf,
+		Reportf:        engineReportf,
 	})
 }
 
@@ -282,7 +288,7 @@ func dryBuildFunc(gen generator.Generator, name string) engine.BuildFunc {
 func runApplyAll(run *applyRun) error {
 	// --manifest fixes the source to pre-built link-farms, so it conflicts with -f.
 	if len(flagManifest) > 0 && flagFile != "" {
-		return &inputError{err: errors.New("layat: --manifest cannot be combined with -f (--manifest fixes the source to a pre-built link-farm)")}
+		return &inputError{err: errors.New("--manifest cannot be combined with -f (--manifest fixes the source to a pre-built link-farm)")}
 	}
 	filter, err := selectedRootFilter()
 	if err != nil {
@@ -322,14 +328,14 @@ func runApplyAll(run *applyRun) error {
 	}
 	if len(selected) == 0 {
 		if flagVerbose {
-			fmt.Fprintln(os.Stderr, "layat: apply --all: no matching configs")
+			noticef(os.Stderr, "apply --all: no matching configs")
 		}
 		return nil
 	}
 
 	// 2.2 Run as root with no filter, home / project configs end up root-owned: warn, then go on.
 	if w := rootMixWarning(roots, selected, filter); w != "" {
-		fmt.Fprintln(os.Stderr, w)
+		warnf(os.Stderr, "%s", w)
 	}
 
 	// 2.3 Stop before any build when two selected configs claim the same target in the same root.
@@ -360,7 +366,7 @@ func runApplyAll(run *applyRun) error {
 
 	// 4. Aggregate report and exit code.
 	if flagVerbose {
-		fmt.Fprintf(os.Stderr, "layat: apply --all done (applied %d / skipped %d / failed %d / selected %d)\n",
+		noticef(os.Stderr, "apply --all done (applied %d / skipped %d / failed %d / selected %d)",
 			applied, skipped, failures, len(selected))
 	}
 	// conflict(2) arises only on the --dryrun path.
@@ -368,7 +374,7 @@ func runApplyAll(run *applyRun) error {
 	if code == 0 {
 		return nil
 	}
-	return &exitCodeError{code: code, msg: fmt.Sprintf("layat: apply --all: %d config(s) failed", failures)}
+	return &exitCodeError{code: code, msg: fmt.Sprintf("apply --all: %d config(s) failed", failures)}
 }
 
 // geteuid reports the caller's effective uid for apply --all's root-mix warning; tests replace it.
@@ -390,7 +396,7 @@ func rootMixWarning(roots map[string]manifest.Root, selected []string, filter st
 	if len(mixed) == 0 {
 		return ""
 	}
-	return fmt.Sprintf("layat: warning: apply --all as root also applies %s: their placements become root-owned "+
+	return fmt.Sprintf("apply --all as root also applies %s: their placements become root-owned "+
 		"and their generations land in root's state; split the run with --system-root and --home-root / --project-root",
 		strings.Join(mixed, ", "))
 }
@@ -428,7 +434,7 @@ func detectCrossConfigConflicts(roots map[string]manifest.Root, selected []strin
 	if len(conflicts) == 0 {
 		return nil
 	}
-	return fmt.Errorf("layat: apply --all: selected configs place the same target in the same root (nothing was built or placed):\n%s",
+	return fmt.Errorf("apply --all: selected configs place the same target in the same root (nothing was built or placed):\n%s",
 		strings.Join(conflicts, "\n"))
 }
 
@@ -452,6 +458,8 @@ func runApplyAllDryRun(run *applyRun, gen generator.Generator, genName string, s
 			Backend:        newGenerationBackend(),
 			SystemDir:      systemDirOverride(),
 			SystemStateDir: systemStateDirOverride(),
+			Warnf:          engineWarnf,
+			Reportf:        engineReportf,
 		})
 	}))
 	if code == 0 {
@@ -580,12 +588,12 @@ func aggregateApply(run *applyRun, selected []string, jobs int, applyFn func(nam
 			subjectErr = nil
 			o.skipped = true
 			if flagVerbose {
-				fmt.Fprintf(&o.out.stderr, "layat: skipped apply %s (another apply is in progress)\n", name)
+				noticef(&o.out.stderr, "skipped apply %s (another apply is in progress)", name)
 			}
 		default:
 			o.err = err
 			// Report the failure to stderr and continue.
-			fmt.Fprintf(&o.out.stderr, "layat: apply %s failed: %v\n", name, err)
+			printFailure(&o.out.stderr, "apply "+name+" failed", err)
 		}
 		subject.finish(subjectErr)
 	})
@@ -623,7 +631,7 @@ func aggregateDryRun(run *applyRun, selected []string, jobs int, applyDry func(n
 		if err != nil {
 			o.err = err
 			// Report the failure to stderr and continue.
-			fmt.Fprintf(&o.out.stderr, "layat: apply %s --dryrun failed: %v\n", name, err)
+			printFailure(&o.out.stderr, "apply "+name+" --dryrun failed", err)
 			subject.finish(err)
 			return
 		}
@@ -670,7 +678,7 @@ func selectedRootFilter() (string, error) {
 		modes = append(modes, manifest.RootKindSystem)
 	}
 	if len(modes) > 1 {
-		return "", fmt.Errorf("layat: --project-root / --home-root / --system-root may be specified only one at a time")
+		return "", fmt.Errorf("--project-root / --home-root / --system-root may be specified only one at a time")
 	}
 	if len(modes) == 0 {
 		return "", nil
@@ -682,7 +690,7 @@ func selectedRootFilter() (string, error) {
 func resolveApplyJobs(jobs int) (int, error) {
 	switch {
 	case jobs < 0:
-		return 0, fmt.Errorf("layat: --jobs must be 0 (the logical CPU count) or a positive integer, got %d", jobs)
+		return 0, fmt.Errorf("--jobs must be 0 (the logical CPU count) or a positive integer, got %d", jobs)
 	case jobs == 0:
 		return runtime.NumCPU(), nil
 	default:
@@ -693,7 +701,7 @@ func resolveApplyJobs(jobs int) (int, error) {
 // ensureNoRootFilter errors when a root filter is used outside --all.
 func ensureNoRootFilter(modifier string) error {
 	if flagProjectRoot || flagHomeRoot || flagSystemRoot {
-		return fmt.Errorf("layat: --project-root / --home-root / --system-root are modifiers for %s", modifier)
+		return fmt.Errorf("--project-root / --home-root / --system-root are modifiers for %s", modifier)
 	}
 	return nil
 }
@@ -705,7 +713,7 @@ func reportResult(res *engine.Result, name string) {
 
 // fprintResult is reportResult writing to w.
 func fprintResult(w io.Writer, res *engine.Result, name string) {
-	_, _ = fmt.Fprintf(w, "layat: apply %s done (root=%s)\n", name, res.Root)
+	noticef(w, "apply %s done (root=%s)", name, res.Root)
 	for _, t := range res.Placed {
 		_, _ = fmt.Fprintf(w, "  placed   %s\n", t)
 	}

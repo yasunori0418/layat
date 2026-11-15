@@ -1,6 +1,8 @@
 package engine
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -102,7 +104,7 @@ func TestStaleRemoveDriftKeepsAndWarns(t *testing.T) {
 			if tc.wantExists && err != nil {
 				t.Errorf("drifted target should be left untouched: %v", err)
 			}
-			if !tc.wantExists && !os.IsNotExist(err) {
+			if !tc.wantExists && !errors.Is(err, fs.ErrNotExist) {
 				t.Errorf("missing target should stay absent: lstat err = %v", err)
 			}
 		})
@@ -139,7 +141,7 @@ func TestStaleRemoveContinuesAfterDrift(t *testing.T) {
 	if _, err := os.Lstat(driftedAbs); err != nil {
 		t.Errorf("drifted symlink should be kept: %v", err)
 	}
-	if _, err := os.Lstat(validAbs); !os.IsNotExist(err) {
+	if _, err := os.Lstat(validAbs); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("valid stale symlink should be removed: lstat err = %v", err)
 	}
 	if len(a.result.Removed) != 1 || a.result.Removed[0] != "valid" {
@@ -223,7 +225,7 @@ func TestPreRemoveDriftErrors(t *testing.T) {
 			if wantExists && lerr != nil {
 				t.Errorf("drifted target should be left untouched: %v", lerr)
 			}
-			if !wantExists && !os.IsNotExist(lerr) {
+			if !wantExists && !errors.Is(lerr, fs.ErrNotExist) {
 				t.Errorf("missing target should stay absent: lstat err = %v", lerr)
 			}
 			if wantReadlink != "" {
@@ -319,7 +321,7 @@ func TestRemoveStalePrunesMultiLevelEmptyAncestors(t *testing.T) {
 		}
 	}
 	for dir := range wantPruned {
-		if _, err := os.Lstat(dir); !os.IsNotExist(err) {
+		if _, err := os.Lstat(dir); !errors.Is(err, fs.ErrNotExist) {
 			t.Errorf("expected %s to be pruned away, lstat err = %v", dir, err)
 		}
 	}
@@ -513,7 +515,7 @@ func TestRemoveStalePruneFailureIsWarnedNotFatal(t *testing.T) {
 	if len(warns) != 1 {
 		t.Errorf("warnings = %d, want 1 (prune failure folded into a warning)", len(warns))
 	}
-	if _, err := os.Lstat(targetAbs); !os.IsNotExist(err) {
+	if _, err := os.Lstat(targetAbs); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("target should still be removed: lstat err = %v", err)
 	}
 	if _, err := os.Lstat(parent); err != nil {
@@ -681,7 +683,7 @@ func TestResetPrunesEmptyAncestors(t *testing.T) {
 		}
 	}
 	for dir := range wantPruned {
-		if _, err := os.Lstat(dir); !os.IsNotExist(err) {
+		if _, err := os.Lstat(dir); !errors.Is(err, fs.ErrNotExist) {
 			t.Errorf("expected %s to be pruned away, lstat err = %v", dir, err)
 		}
 	}
@@ -720,7 +722,7 @@ func TestResetPrunesEmptyAncestorsCopyOnly(t *testing.T) {
 		}
 	}
 	for dir := range wantPruned {
-		if _, err := os.Lstat(dir); !os.IsNotExist(err) {
+		if _, err := os.Lstat(dir); !errors.Is(err, fs.ErrNotExist) {
 			t.Errorf("expected %s to be pruned away, lstat err = %v", dir, err)
 		}
 	}

@@ -55,9 +55,9 @@ func statusFixture() []engine.StatusSeries {
 		},
 		{
 			Mode: "home", Name: "web", RootHash: "2222", RecordFile: "/s/layat/2222/web/last-applied.json",
-			Err: errors.New("layat: cannot read the backref (/s/layat/2222/.root)"),
+			Err: errors.New("cannot read the backref (/s/layat/2222/.root)"),
 		},
-		{Mode: "system", RootHash: "3333", Err: errors.New("layat: cannot list the series (/var/lib/layat/3333)")},
+		{Mode: "system", RootHash: "3333", Err: errors.New("cannot list the series (/var/lib/layat/3333)")},
 	}
 }
 
@@ -198,7 +198,7 @@ func TestStatusEngineError(t *testing.T) {
 	orig := statusFn
 	t.Cleanup(func() { statusFn = orig })
 	statusFn = func(engine.StatusOptions) ([]engine.StatusSeries, error) {
-		return nil, errors.New("layat: cannot read the record base (/s/layat): permission denied")
+		return nil, errors.New("cannot read the record base (/s/layat): permission denied")
 	}
 	run, buf := newStatusTestRun()
 	var err error

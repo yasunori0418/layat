@@ -5,6 +5,8 @@ package engine
 // observation (GenBefore / GenAfter, nil-able), and structured planner warnings (Warnings).
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -157,7 +159,7 @@ func TestApplyResultReachedStateOnFailure(t *testing.T) {
 		t.Error("Unwound = false, want true (journal rolled the run back)")
 	}
 	// The unwind reverted the completed placement, so the op list records performed-then-reverted work.
-	if _, err := os.Lstat(filepath.Join(root, "aa-ok")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, "aa-ok")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("aa-ok should have been unwound, lstat err = %v", err)
 	}
 }
@@ -376,7 +378,7 @@ func TestApplyConflictPartialResult(t *testing.T) {
 		t.Errorf("FailedTarget = %q, want empty (the conflict rides Conflicts, not FailedTarget)", res.FailedTarget)
 	}
 	// Nothing was placed: the conflict stops the run before any FS action.
-	if _, err := os.Lstat(filepath.Join(root, "free")); !os.IsNotExist(err) {
+	if _, err := os.Lstat(filepath.Join(root, "free")); !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("free must not be placed on a conflict stop, lstat err = %v", err)
 	}
 }

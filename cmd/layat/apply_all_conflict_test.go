@@ -6,6 +6,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"slices"
@@ -187,7 +188,7 @@ func nixCalls(t *testing.T, log string) []string {
 	t.Helper()
 	b, err := os.ReadFile(log)
 	if err != nil {
-		if os.IsNotExist(err) {
+		if errors.Is(err, fs.ErrNotExist) {
 			return nil
 		}
 		t.Fatalf("read nix log: %v", err)

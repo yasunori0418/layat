@@ -1,6 +1,8 @@
 package engine
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -50,11 +52,11 @@ func TestApplyPlaceMidBatchFailureRollsBackEarlierPlacements(t *testing.T) {
 	}
 
 	// "a" was placed before the failure; it must be rolled back.
-	if _, lerr := os.Lstat(filepath.Join(root, "a")); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(filepath.Join(root, "a")); !errors.Is(lerr, fs.ErrNotExist) {
 		t.Errorf("entry \"a\" must be rolled back after the mid-batch failure, lstat err = %v", lerr)
 	}
 	// "c" comes after the failing entry in the batch; it must never have been placed.
-	if _, lerr := os.Lstat(filepath.Join(root, "c")); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(filepath.Join(root, "c")); !errors.Is(lerr, fs.ErrNotExist) {
 		t.Errorf("entry \"c\" must never have been placed, lstat err = %v", lerr)
 	}
 	// The read-only blocker directory itself must survive untouched, and "leaf" must never appear.
@@ -62,12 +64,12 @@ func TestApplyPlaceMidBatchFailureRollsBackEarlierPlacements(t *testing.T) {
 	if serr != nil || !info.IsDir() {
 		t.Errorf("blocker at \"ro\" must survive as a directory: info=%v, err=%v", info, serr)
 	}
-	if _, lerr := os.Lstat(filepath.Join(root, "ro", "leaf")); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(filepath.Join(root, "ro", "leaf")); !errors.Is(lerr, fs.ErrNotExist) {
 		t.Errorf("\"ro/leaf\" must never have been created, lstat err = %v", lerr)
 	}
 
 	// No profile should have been committed (the generation commit is never reached).
-	if _, serr := os.Stat(filepath.Join(profileDirFor(t, state, root, "c"), "profile")); !os.IsNotExist(serr) {
+	if _, serr := os.Stat(filepath.Join(profileDirFor(t, state, root, "c"), "profile")); !errors.Is(serr, fs.ErrNotExist) {
 		t.Errorf("no generation must be committed after a rolled-back apply")
 	}
 }
@@ -129,7 +131,7 @@ func TestApplyCopyMidBatchFailureRollsBackEarlierCopy(t *testing.T) {
 		t.Fatal("expected an error from the permission-denied stale removal, got nil")
 	}
 
-	if _, lerr := os.Lstat(filepath.Join(root, "copied.conf")); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(filepath.Join(root, "copied.conf")); !errors.Is(lerr, fs.ErrNotExist) {
 		t.Errorf("copy placement must be rolled back after removeStale's failure, lstat err = %v", lerr)
 	}
 	got, rerr := os.Readlink(filepath.Join(root, "ro", "stale"))
@@ -216,7 +218,7 @@ func TestApplyRecopyMidBatchFailureRestoresAsideFile(t *testing.T) {
 	if rerr != nil || string(data) != "locally-edited" {
 		t.Errorf("recopy target must be restored to its pre-apply (locally-edited) content: data=%q, err=%v", data, rerr)
 	}
-	if _, lerr := os.Lstat(filepath.Join(root, "tool.conf.layat-recopy-aside")); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(filepath.Join(root, "tool.conf.layat-recopy-aside")); !errors.Is(lerr, fs.ErrNotExist) {
 		t.Errorf("aside file must not be left behind after a rolled-back recopy, lstat err = %v", lerr)
 	}
 }
@@ -246,7 +248,7 @@ func TestPreRemoveJournalRmdirThenUnlinkOrder(t *testing.T) {
 	if err := a.preRemove(actions); err != nil {
 		t.Fatalf("preRemove: %v", err)
 	}
-	if _, lerr := os.Lstat(dir); !os.IsNotExist(lerr) {
+	if _, lerr := os.Lstat(dir); !errors.Is(lerr, fs.ErrNotExist) {
 		t.Fatalf("setup: dir must be gone after preRemove, lstat err = %v", lerr)
 	}
 

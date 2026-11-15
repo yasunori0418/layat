@@ -150,6 +150,7 @@ nix run .#<script>       # activation スクリプト実行
 nix develop ./dev --command sara check   # ドキュメントグラフの検証
 nix develop '.?dir=dev#sara' -c dev/tests/term-avoid.sh   # avoid の綴りの検出（textlint + prh）
 nix develop '.?dir=dev#sara' -c sara-fresh [--json] [--base <ref>]   # 上流より古い item・ref からの generated の更新漏れ・人の確認が無い high の risk の列挙（報告のみ）
+nix develop ./dev --command golangci-lint run ./...   # Go の lint（checks.golangci-lint と同じ版・同じ .golangci.yml）
 
 # テストコード ⇔ CASE 対応（→ Issue #304）
 nix develop '.?dir=dev#sara' -c dev/tests/test-doc-map.sh   # 契約テスト（純静的・毎 PR で回る）
