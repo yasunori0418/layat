@@ -19,8 +19,9 @@ import (
 )
 
 var (
-	flagApplyAll  bool // --all: apply all of layat.* in parallel, reported in lexical order (narrowable by root filter)
-	flagApplyJobs int  // --jobs: apply --all's build and placement concurrency (0 = the logical CPU count)
+	flagApplyAll       bool // --all: apply all of layat.* in parallel, reported in lexical order (narrowable by root filter)
+	flagApplyJobs      int  // --jobs: apply --all's build and placement concurrency (0 = the logical CPU count)
+	flagApplyJobsGiven bool // --jobs was given, even as 0; runApply rejects it without --all
 )
 
 // applyResultInfo / applyEnvInfo are apply's outturn info slots, reserved for future run facts.
@@ -54,18 +55,12 @@ func newApplyCmd() *cobra.Command {
 			// beginApplyRun publishes the run to outturnReport, so main emits the envelope after Execute.
 			run := beginApplyRun(cmd.Name())
 			flagBackupEnabled = cmd.Flags().Changed("backup")
+			flagApplyJobsGiven = cmd.Flags().Changed("jobs")
 			if flagApplyAll {
 				if len(args) > 0 {
-					return fmt.Errorf("apply cannot combine <name> with --all")
+					return &inputError{err: errors.New("apply cannot combine <name> with --all")}
 				}
 				return runApplyAll(run)
-			}
-			if err := ensureNoRootFilter("apply --all"); err != nil {
-				return err
-			}
-			// Check Changed, not the value: an explicit --jobs 0 equals the default.
-			if cmd.Flags().Changed("jobs") {
-				return fmt.Errorf("--jobs is a modifier for apply --all")
 			}
 			name := "default"
 			if len(args) == 1 {
@@ -127,7 +122,7 @@ func runApplyManifest(subject *applySubject, name string) error {
 	if err != nil {
 		if errors.Is(err, engine.ErrSkipped) {
 			if flagVerbose {
-				noticef(os.Stderr, "skipped because another apply is in progress (run layat apply manually)")
+				skipNotice(os.Stderr, name)
 			}
 			return nil
 		}
@@ -144,6 +139,12 @@ func runApplyManifest(subject *applySubject, name string) error {
 func runApply(run *applyRun, name string) error {
 	// The config name is the run's single outturn subject.
 	subject := run.beginSubject(name)
+	if err := ensureNoRootFilter("apply --all"); err != nil {
+		return err
+	}
+	if flagApplyJobsGiven {
+		return &inputError{err: errors.New("--jobs is a modifier for apply --all")}
+	}
 	if len(flagManifest) > 0 {
 		// --manifest fixes the source to a link-farm, so it conflicts with -f.
 		if flagFile != "" {
@@ -202,7 +203,7 @@ func runApply(run *applyRun, name string) error {
 	}
 
 	// 2. Drive the engine (flock, in-lock build, placement, commit and .pending removal).
-	res, err := applyOne(gen, genName, name, rootKind, fixedRoot)
+	res, err := applyOne(gen, genName, name, rootKind, fixedRoot, engineWarnf, engineReportf)
 	if res != nil {
 		// A partial result on failure still carries the reached items and the changes made.
 		attachMutationPayload(subject, res, err)
@@ -211,7 +212,7 @@ func runApply(run *applyRun, name string) error {
 		if errors.Is(err, engine.ErrSkipped) {
 			// A try-lock skip is a normal skip (exit 0).
 			if flagVerbose {
-				noticef(os.Stderr, "skipped because another apply is in progress (run layat apply manually)")
+				skipNotice(os.Stderr, name)
 			}
 			return nil
 		}
@@ -255,8 +256,9 @@ func fprintApplyPlan(w io.Writer, res *engine.Result) {
 	}
 }
 
-// applyOne runs engine.Apply for one config; only build is done per config.
-func applyOne(gen generator.Generator, genName, name, rootKind, fixedRoot string) (*engine.Result, error) {
+// applyOne runs engine.Apply for one config, passing warnf and reportf to the engine as its warning
+// and failure-detail functions; only build is done per config.
+func applyOne(gen generator.Generator, genName, name, rootKind, fixedRoot string, warnf, reportf func(format string, args ...any)) (*engine.Result, error) {
 	return engine.Apply(engine.Options{
 		Name:           name,
 		RootKind:       rootKind,
@@ -271,8 +273,8 @@ func applyOne(gen generator.Generator, genName, name, rootKind, fixedRoot string
 		Backend:        newGenerationBackend(),
 		SystemDir:      systemDirOverride(),
 		SystemStateDir: systemStateDirOverride(),
-		Warnf:          engineWarnf,
-		Reportf:        engineReportf,
+		Warnf:          warnf,
+		Reportf:        reportf,
 	})
 }
 
@@ -359,9 +361,9 @@ func runApplyAll(run *applyRun) error {
 	}
 
 	// 3. Stage 2: apply the configs in parallel, each independently atomic.
-	applied, skipped, failures := aggregateApply(run, selected, jobs, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
+	applied, skipped, failures := aggregateApply(run, selected, jobs, skipFailedPrebuilds(built, func(name string, warnf, reportf func(string, ...any)) (*engine.Result, error) {
 		ri := roots[name]
-		return applyOne(gen, genName, name, ri.RootKind, ri.Root)
+		return applyOne(gen, genName, name, ri.RootKind, ri.Root, warnf, reportf)
 	}))
 
 	// 4. Aggregate report and exit code.
@@ -374,7 +376,7 @@ func runApplyAll(run *applyRun) error {
 	if code == 0 {
 		return nil
 	}
-	return &exitCodeError{code: code, msg: fmt.Sprintf("apply --all: %d config(s) failed", failures)}
+	return &exitError{code: code, msg: fmt.Sprintf("apply --all: %d config(s) failed", failures)}
 }
 
 // geteuid reports the caller's effective uid for apply --all's root-mix warning; tests replace it.
@@ -442,7 +444,7 @@ func detectCrossConfigConflicts(roots map[string]manifest.Root, selected []strin
 // exit code error(1) > conflict(2) > 0 in an empty-msg exitError. Configs whose prebuild failed
 // are not planned.
 func runApplyAllDryRun(run *applyRun, gen generator.Generator, genName string, selected []string, jobs int, roots map[string]manifest.Root, built map[string]prebuildResult) error {
-	code := aggregateDryRun(run, selected, jobs, skipFailedPrebuilds(built, func(name string) (*engine.Result, error) {
+	code := aggregateDryRun(run, selected, jobs, skipFailedPrebuilds(built, func(name string, warnf, reportf func(string, ...any)) (*engine.Result, error) {
 		ri := roots[name]
 		return engine.Apply(engine.Options{
 			Name:           name,
@@ -458,8 +460,8 @@ func runApplyAllDryRun(run *applyRun, gen generator.Generator, genName string, s
 			Backend:        newGenerationBackend(),
 			SystemDir:      systemDirOverride(),
 			SystemStateDir: systemStateDirOverride(),
-			Warnf:          engineWarnf,
-			Reportf:        engineReportf,
+			Warnf:          warnf,
+			Reportf:        reportf,
 		})
 	}))
 	if code == 0 {
@@ -503,19 +505,23 @@ func prebuildAll(selected []string, jobs int, build func(name string) (string, e
 	return built
 }
 
+// configApplyFn applies one config under apply --all, passing warnf and reportf to the engine as
+// its warning and failure-detail functions.
+type configApplyFn func(name string, warnf, reportf func(format string, args ...any)) (*engine.Result, error)
+
 // skipFailedPrebuilds wraps stage 2's per-config function so a config whose stage-1 build failed
 // returns that error without being applied.
-func skipFailedPrebuilds(built map[string]prebuildResult, fn func(name string) (*engine.Result, error)) func(name string) (*engine.Result, error) {
-	return func(name string) (*engine.Result, error) {
+func skipFailedPrebuilds(built map[string]prebuildResult, fn configApplyFn) configApplyFn {
+	return func(name string, warnf, reportf func(string, ...any)) (*engine.Result, error) {
 		if err := built[name].err; err != nil {
 			return nil, err
 		}
-		return fn(name)
+		return fn(name, warnf, reportf)
 	}
 }
 
-// configOutput buffers one config's CLI output under apply --all, flushed in lexical order.
-// Output written by the engine and nix themselves is not buffered.
+// configOutput buffers one config's CLI output and the engine's warnings and failure details under
+// apply --all, flushed in lexical order. Output written by nix itself is not buffered.
 type configOutput struct {
 	stdout, stderr bytes.Buffer
 }
@@ -567,12 +573,12 @@ type applyOutcome struct {
 // aggregateApply runs each selected config via applyFn on a pool of jobs workers and returns the
 // applied / skipped / failure counts. Each config settles its own subject; output is flushed in
 // lexical order, and failures are always reported to stderr.
-func aggregateApply(run *applyRun, selected []string, jobs int, applyFn func(name string) (*engine.Result, error)) (applied, skipped, failures int) {
+func aggregateApply(run *applyRun, selected []string, jobs int, applyFn configApplyFn) (applied, skipped, failures int) {
 	subjects := beginSubjects(run, selected)
 	outcomes := make([]applyOutcome, len(selected))
 	forEachConfig(selected, jobs, func(i int) {
 		name, subject, o := selected[i], subjects[i], &outcomes[i]
-		res, err := applyFn(name)
+		res, err := applyFn(name, configWarnf(&o.out.stderr, name), configReportf(&o.out.stderr, name))
 		if res != nil {
 			// A partial result on failure still carries the reached items and the changes made.
 			attachMutationPayload(subject, res, err)
@@ -588,7 +594,7 @@ func aggregateApply(run *applyRun, selected []string, jobs int, applyFn func(nam
 			subjectErr = nil
 			o.skipped = true
 			if flagVerbose {
-				noticef(&o.out.stderr, "skipped apply %s (another apply is in progress)", name)
+				skipNotice(&o.out.stderr, name)
 			}
 		default:
 			o.err = err
@@ -597,9 +603,11 @@ func aggregateApply(run *applyRun, selected []string, jobs int, applyFn func(nam
 		}
 		subject.finish(subjectErr)
 	})
+	errs := make([]error, len(outcomes))
 	for i := range outcomes {
 		o := &outcomes[i]
 		o.out.flush()
+		errs[i] = o.err
 		switch {
 		case o.skipped:
 			skipped++
@@ -609,6 +617,7 @@ func aggregateApply(run *applyRun, selected []string, jobs int, applyFn func(nam
 			applied++
 		}
 	}
+	printFailureHints(os.Stderr, errs...)
 	return applied, skipped, failures
 }
 
@@ -622,12 +631,12 @@ type dryRunOutcome struct {
 // aggregateDryRun plans each selected config read-only via applyDry on a pool of jobs workers and
 // returns the exit code. Each config settles its own subject; a conflict is a failed item carrying
 // E_LAYAT_COLLISION.
-func aggregateDryRun(run *applyRun, selected []string, jobs int, applyDry func(name string) (*engine.Result, error)) int {
+func aggregateDryRun(run *applyRun, selected []string, jobs int, applyDry configApplyFn) int {
 	subjects := beginSubjects(run, selected)
 	outcomes := make([]dryRunOutcome, len(selected))
 	forEachConfig(selected, jobs, func(i int) {
 		name, subject, o := selected[i], subjects[i], &outcomes[i]
-		res, err := applyDry(name)
+		res, err := applyDry(name, configWarnf(&o.out.stderr, name), configReportf(&o.out.stderr, name))
 		if err != nil {
 			o.err = err
 			// Report the failure to stderr and continue.
@@ -642,12 +651,15 @@ func aggregateDryRun(run *applyRun, selected []string, jobs int, applyDry func(n
 		subject.finish(nil)
 	})
 	var anyError, anyConflict bool
+	errs := make([]error, len(outcomes))
 	for i := range outcomes {
 		o := &outcomes[i]
 		o.out.flush()
+		errs[i] = o.err
 		anyError = anyError || o.err != nil
 		anyConflict = anyConflict || o.conflict
 	}
+	printFailureHints(os.Stderr, errs...)
 	return applyAllExitCode(anyError, anyConflict)
 }
 
@@ -678,7 +690,7 @@ func selectedRootFilter() (string, error) {
 		modes = append(modes, manifest.RootKindSystem)
 	}
 	if len(modes) > 1 {
-		return "", fmt.Errorf("--project-root / --home-root / --system-root may be specified only one at a time")
+		return "", &inputError{err: errors.New("--project-root / --home-root / --system-root may be specified only one at a time")}
 	}
 	if len(modes) == 0 {
 		return "", nil
@@ -690,7 +702,7 @@ func selectedRootFilter() (string, error) {
 func resolveApplyJobs(jobs int) (int, error) {
 	switch {
 	case jobs < 0:
-		return 0, fmt.Errorf("--jobs must be 0 (the logical CPU count) or a positive integer, got %d", jobs)
+		return 0, &inputError{err: fmt.Errorf("--jobs must be 0 (the logical CPU count) or a positive integer, got %d", jobs)}
 	case jobs == 0:
 		return runtime.NumCPU(), nil
 	default:
@@ -701,7 +713,7 @@ func resolveApplyJobs(jobs int) (int, error) {
 // ensureNoRootFilter errors when a root filter is used outside --all.
 func ensureNoRootFilter(modifier string) error {
 	if flagProjectRoot || flagHomeRoot || flagSystemRoot {
-		return fmt.Errorf("--project-root / --home-root / --system-root are modifiers for %s", modifier)
+		return &inputError{err: fmt.Errorf("--project-root / --home-root / --system-root are modifiers for %s", modifier)}
 	}
 	return nil
 }

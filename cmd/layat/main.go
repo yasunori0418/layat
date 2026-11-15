@@ -7,8 +7,6 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-
-	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // version is the layat version shown by `layat --version` and used as the envelope's tool.version.
@@ -51,8 +49,8 @@ const (
 func systemDirOverride() string      { return os.Getenv(systemBaseEnv) }
 func systemStateDirOverride() string { return os.Getenv(systemStateEnv) }
 
-// exitError is an error carrying a specific exit code, such as apply --dryrun's conflict (2).
-// With an empty msg, main exits with the code alone.
+// exitError is an error carrying a specific exit code, such as apply --dryrun's conflict (2) or
+// apply --all's aggregate. With an empty msg, main exits with the code alone.
 type exitError struct {
 	code int
 	msg  string
@@ -133,17 +131,18 @@ func newRootCmd() *cobra.Command {
 	return root
 }
 
-// exitCodeX is the interface of errors that carry an exit code (such as apply --all's aggregate).
-type exitCodeX interface{ ExitCode() int }
-
-// exitCodeError is an error that explicitly carries an exit code.
-type exitCodeError struct {
-	code int
-	msg  string
+// exitCodeFor returns the exit code for the command's error: 0 for nil, the code of layat's own
+// exitError, and 1 otherwise. A wrapped child process's exit code is not inherited.
+func exitCodeFor(err error) int {
+	if err == nil {
+		return 0
+	}
+	var ee *exitError
+	if errors.As(err, &ee) {
+		return ee.code
+	}
+	return 1
 }
-
-func (e *exitCodeError) Error() string { return e.msg }
-func (e *exitCodeError) ExitCode() int { return e.code }
 
 func main() {
 	err := newRootCmd().Execute()
@@ -167,19 +166,11 @@ func main() {
 			if ee.msg != "" {
 				printError(os.Stderr, ee)
 			}
-			os.Exit(ee.code)
+			os.Exit(exitCodeFor(err))
 		}
 
 		printError(os.Stderr, err)
-		// On a manifest schemaVersion skew between the CLI and the flake pin, add the cause and the fix.
-		if errors.Is(err, manifest.ErrSchemaVersionUnsupported) {
-			printSchemaSkewHint(os.Stderr)
-		}
-		// An error carrying an exit code (such as apply --all's aggregate) exits with that code.
-		var ec exitCodeX
-		if errors.As(err, &ec) {
-			os.Exit(ec.ExitCode())
-		}
-		os.Exit(1)
+		printFailureHints(os.Stderr, err)
+		os.Exit(exitCodeFor(err))
 	}
 }

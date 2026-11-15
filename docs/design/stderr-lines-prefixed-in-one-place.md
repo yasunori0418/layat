@@ -11,7 +11,7 @@ satisfies:
   - "REQ-9341fa5d-836e-4023-af53-cc7d273438d1"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-14T22:59:25+09:00"
+  at: "2026-11-15T00:19:28+09:00"
 ---
 
 # stderr へ書く行は cmd の 1 箇所で `layat:` を付け、単発の失敗・`--all` の失敗行・status の行・警告が同じ整形を通る
@@ -40,6 +40,11 @@ stderr へ書く行の先頭の `layat:` は、`cmd/layat/` の 1 箇所に置�
 - **engine の警告と失敗の詳細**: cmd は engine へ警告を出す関数を常に渡し、警告は
   `layat: warning: <文>` で出す。engine は失敗の詳細（conflict の列挙と undo の報告）を警告とは
   別の出口へ流し、cmd はそれを `layat: <文>` で出す
+- **`--all` での config 名の前置**: `apply --all` では、engine の警告と失敗の詳細を config ごとの
+  出力に入れ、行の先頭に config 名を付けて `[<name>] layat: warning: <文>` と `[<name>] layat: <文>` で
+  出す。config の失敗行は単発の失敗と同じ整形を通り、schemaVersion の食い違いとリポジトリの外の
+  案内は全部の行の後に 1 回だけ出す
+  （→ [apply --all では engine の警告と失敗の詳細も config ごとの出力にまとめ、config 名を前置する](../adr/apply-all-engine-warnings-in-config-output.md)）
 - **nixgen の開示の行**: nixgen が `--debug` で出す開示の行も、cmd が渡した関数が書く。nixgen は
   `layat:` を書かない
 

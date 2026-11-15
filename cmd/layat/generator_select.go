@@ -186,7 +186,7 @@ func readGeneratorSetting(path string) (string, error) {
 		return "", nil
 	}
 	if err != nil {
-		return "", fmt.Errorf("cannot read %s: %w", path, err)
+		return "", fmt.Errorf("cannot read the settings file: %w", err)
 	}
 	var s generatorSetting
 	err = toml.NewDecoder(bytes.NewReader(b)).DisallowUnknownFields().Decode(&s)
@@ -196,11 +196,11 @@ func readGeneratorSetting(path string) (string, error) {
 		for _, e := range sme.Errors {
 			keys = append(keys, fmt.Sprintf("%q", strings.Join(e.Key(), ".")))
 		}
-		return "", &inputError{err: fmt.Errorf("%s: unknown key %s (only \"generator\" is allowed)",
+		return "", &inputError{err: fmt.Errorf("invalid settings file (%s): unknown key %s (only \"generator\" is allowed)",
 			path, strings.Join(keys, ", "))}
 	}
 	if err != nil {
-		return "", &inputError{err: fmt.Errorf("%s: %w", path, err)}
+		return "", &inputError{err: fmt.Errorf("cannot parse the settings file (%s): %w", path, err)}
 	}
 	return s.Generator, nil
 }

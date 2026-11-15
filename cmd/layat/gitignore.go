@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -41,12 +42,12 @@ func newGitignoreCmd() *cobra.Command {
 			run := beginGitignoreRun(cmd.Name())
 			if all {
 				if len(args) > 0 {
-					return fmt.Errorf("gitignore cannot combine <name> with --all")
+					return &inputError{err: errors.New("gitignore cannot combine <name> with --all")}
 				}
 				return runGitignoreAll(run)
 			}
 			if len(args) != 1 {
-				return fmt.Errorf("gitignore requires <name> or --all")
+				return &inputError{err: errors.New("gitignore requires <name> or --all")}
 			}
 			return runGitignore(run, args[0])
 		},

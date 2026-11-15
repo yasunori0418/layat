@@ -62,8 +62,8 @@ func combinations(outcomes ...string) [][]string {
 
 // matrixStageTwo is stage 2's injected (read-only when dry) apply. It fails the test if it is ever
 // reached for a config whose stage-1 build failed.
-func matrixStageTwo(t *testing.T) func(string) (*engine.Result, error) {
-	return func(name string) (*engine.Result, error) {
+func matrixStageTwo(t *testing.T) func(string, func(string, ...any), func(string, ...any)) (*engine.Result, error) {
+	return func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		switch name {
 		case outcomeBuild:
 			t.Errorf("stage 2 ran for %s, whose stage-1 build failed", name)
@@ -180,7 +180,7 @@ func TestApplyAllFailureMatrix(t *testing.T) {
 				}
 				var cmdErr error
 				if code != 0 {
-					cmdErr = &exitCodeError{code: code, msg: fmt.Sprintf("apply --all: %d config(s) failed", failures)}
+					cmdErr = &exitError{code: code, msg: fmt.Sprintf("apply --all: %d config(s) failed", failures)}
 				}
 				assertMatrixEnvelope(t, run, buf, cmdErr, combo)
 			})

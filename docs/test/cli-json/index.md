@@ -5,6 +5,7 @@
 * [前段の衝突の確認がバケット規則と選択集合に従って衝突を判定する](./apply-all-conflict-bucket-rules.md) - `apply --all` の前段の確認が、同じ root に解決する config 同士だけを比べ、衝突したら何も build せずに止まることを確かめる。
 * [並列 build の失敗が config ごとに集約され並列度が --jobs を超えない](./apply-all-parallel-build-failure-and-bound.md) - `apply --all` の stage 1（先行並列 build）が、並列度を `--jobs` で抑えたまま、失敗を取りこぼさずに stage 2 の集約へ渡すことを確かめる。
 * [配置並列の集約が完了順に依らず辞書順で、カウントが並行安全である](./apply-all-parallel-place-lexical-aggregate.md) - `apply --all` の stage 2（配置の並列実行）が、config の完了順に依らず決定的に集約することを確かめる。
+* [実行前に誤りと分かる入力が E_INPUT で 1 行になり、name を指定した実行では subject の層に載る](./command-line-input-errors-e-input.md) - 実行を始める前に誤りと分かる入力が --json で E_INPUT に分類されて 1 行の文になり、name を指定した apply では results[0].errors[] に、subject が決まる前の誤りではトップレベルの errors[] に載ることを確かめる
 * [破壊的操作の確認が対話性と同意フラグの組み合わせで決まり非対話で止まらない](./confirm-policy-interactivity.md) - 確認プロンプトを出すか、出さずに進むか、出さずに拒否するかが、対話性・同意フラグ・機械可読出力の指定の組み合わせで決まることを確かめる。
 * [engine 結果から item と change への写像がインベントリ全数と実差分に一致する](./engine-result-inventory-mapping.md) - engine の実行結果を JSON ペイロードへ写す規則が、実際に起きたことと一致することを確かめる。形ではなく内容を見る条件であり、適合チェッカの外側にある。
 * [エンベロープが全形状で outturn 適合を保ち subject 件数で形が揺れない](./envelope-shape-conformance.md) - emit した文書を outturn の適合チェッカ（正とする定義として embed した schema と、schema 外の lint）へ通し、出現しうる全形状で適合することを確かめる。形状とは、subject の有無、成功と失敗、主体確立前の失敗と主体起因の失敗、conflict、および `--all` の subject 0 件 / 1 件 / 複数件である。
@@ -38,6 +39,7 @@
 * [gitignore_test.go — パス正規化と列挙結果の info 表現](./gitignore-test.md) - `cmd/layat/gitignore_test.go`
 * [help_disclosure_test.go — --help の開示ブロックと nix 呼び出しの突合・nix を実行しないサブコマンド](./help-disclosure-test.md) - `cmd/layat/help_disclosure_test.go`
 * [init_test.go — テンプレート名の受理集合と subject を持たない文書形](./init-test.md) - `cmd/layat/init_test.go`
+* [input_errors_test.go — 実行前に分かる入力の誤りの E_INPUT と 1 行の文と載る層](./input-errors-test.md) - cmd/layat/input_errors_test.go が、実行を始める前に分かる 11 種類の入力の誤りが E_INPUT で 1 行になることと、name を指定した apply とそうでない apply でエラーの載る層を確かめる
 * [list-generations_test.go — 世代一覧の info 表現と二重エンコードの禁止](./list-generations-test.md) - `cmd/layat/list-generations_test.go`
 * [nixgen_test.go — entrypoint 探索順序と installable 引数の 2 形式](./nix-test.md) - `internal/generator/nixgen/nixgen_test.go`（nix 生成器。旧 `cmd/layat/nix_test.go` から移設）
 * [outturn_all_test.go — --all の subject 件数不変性と部分失敗の非汚染](./outturn-all-test.md) - `cmd/layat/outturn_all_test.go`

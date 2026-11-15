@@ -199,7 +199,7 @@ func confirmPolicy(yes, interactive bool, operation string) (needPrompt bool, er
 		return false, nil
 	}
 	if !interactive {
-		return false, fmt.Errorf("refusing destructive %s without --yes in a non-interactive context", operation)
+		return false, &inputError{err: fmt.Errorf("refusing destructive %s without --yes in a non-interactive context", operation)}
 	}
 	return true, nil
 }
@@ -218,7 +218,7 @@ func promptYesNo(msg string) (bool, error) {
 	fmt.Fprintf(os.Stderr, "%s [y/N]: ", msg)
 	line, err := bufio.NewReader(os.Stdin).ReadString('\n')
 	if err != nil && err != io.EOF {
-		return false, err
+		return false, fmt.Errorf("cannot read the confirmation answer: %w", err)
 	}
 	switch strings.ToLower(strings.TrimSpace(line)) {
 	case "y", "yes":

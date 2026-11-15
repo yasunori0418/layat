@@ -20,8 +20,9 @@ specification: |
   sentinel or a type: `E_LOCK` for flock, `E_LAYAT_BUILD` for a failure of a manifest
   generator other than prebuilt at the roots or build stage, `E_NOTFOUND`, `E_PERMISSION`,
   `E_IO` for other filesystem / external I/O failures, `E_LAYAT_COLLISION` for the
-  conflict of `apply --dryrun` (exit 2), and `E_INPUT` for invalid input (an unknown
-  generator name, an invalid configuration file, or an invalid flag combination). Anything else SHALL fall back to the tool-generic `E_LAYAT_FAILED`.
+  conflict of `apply --dryrun` (exit 2), and `E_INPUT` for invalid input (input that can
+  be determined to be wrong before the execution starts, solely from the command line,
+  the environment variables, the configuration file, and whether stdin is a TTY). Anything else SHALL fall back to the tool-generic `E_LAYAT_FAILED`.
 specification_ja: |
   単一 config コマンドは RunE 冒頭・name 引数の時点で subject が確定するため、その実行の
   失敗（entrypoint 発見・eval / build・lock・engine 実行時）は全て `results[0].errors[]` に
@@ -34,10 +35,10 @@ specification_ja: |
   `E_LAYAT_BUILD`（prebuilt 以外の manifest 生成器の roots / build 段の失敗）/
   `E_NOTFOUND` / `E_PERMISSION` / `E_IO`（それ以外の FS / 外部 I/O 失敗）/
   `E_LAYAT_COLLISION`（`apply --dryrun` の conflict = exit 2）/ `E_INPUT`（入力不正 =
-  未知の生成器名・設定ファイルの不正・フラグの組み合わせ不正）。それ以外はツール総称 fallback `E_LAYAT_FAILED` としなければならない。
+  実行を始める前にコマンドライン・環境変数・設定ファイル・stdin が TTY かどうかだけで誤りと分かる入力）。それ以外はツール総称 fallback `E_LAYAT_FAILED` としなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:05:37+09:00"
+  at: "2026-11-15T06:32:04+09:00"
 ---
 # エンベロープのエラーは主体の有無で層を分けコードを分類する
 
@@ -77,4 +78,5 @@ generated:
 出力」のサブ項目「エラーの層と stderr 併存」「エラーコード」。
 
 決定の実体は [エラーはエンベロープに構造化し stderr のテキストと併存させる](../adr/structured-errors-with-stderr.md)。`E_LAYAT_BUILD` の読み替えは [生成器の失敗を --json のコード E_LAYAT_BUILD 1 本に分類する](../adr/generator-failure-single-build-code.md)、
-`E_INPUT` の初実装は [入力の不正を E_INPUT に分類する](../adr/input-errors-classified-e-input.md)。
+`E_INPUT` の初実装は [入力の不正を E_INPUT に分類する](../adr/input-errors-classified-e-input.md)、
+対象を実行前に誤りと分かる入力へ広げた決定は [実行を始める前にコマンドライン・環境変数・設定ファイル・stdin が TTY かどうかだけで誤りと分かる入力を E_INPUT に分類する](../adr/input-errors-known-before-run-classified-e-input.md)。

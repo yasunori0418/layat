@@ -2,10 +2,13 @@ package main
 
 import (
 	"errors"
+	"os/exec"
 	"reflect"
 	"testing"
 
 	"github.com/yasunori0418/outturn/go/conformance"
+
+	"github.com/yasunori0418/layat/internal/generator/nixgen"
 )
 
 // TestFlakeInitArgs: the argv is `nix flake init -t <ref>#<template>`.
@@ -97,5 +100,35 @@ func TestInitJSONEnvelopeInfo(t *testing.T) {
 	}
 	if doc["status"] != "success" || doc["dryRun"] != false {
 		t.Errorf("status/dryRun = %v/%v, want success/false", doc["status"], doc["dryRun"])
+	}
+}
+
+// TestInitNixError pins a failed nix flake init: the summary naming the installable with nix's
+// stderr on the following lines, or the experimental-features guidance, all keeping nix's exit as
+// the cause without taking over its exit code.
+func TestInitNixError(t *testing.T) {
+	runErr := exec.Command("sh", "-c", "exit 3").Run()
+	args := flakeInitArgs("project", "path:/tmpl")
+	const disabled = "error: experimental Nix feature 'flakes' is disabled"
+	cases := []struct{ name, stderr, want string }{
+		{"failure", "error: boom\n", "cannot run nix flake init (path:/tmpl#project): exit status 3\nerror: boom"},
+		{"no stderr", "", "cannot run nix flake init (path:/tmpl#project): exit status 3"},
+		{"experimental", disabled + "\n", "nix's experimental-features are not enabled (nix flake init): exit status 3\n" +
+			nixgen.ExperimentalGuidance + "\n\nOriginal nix error:\n" + disabled},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			err := initNixError(args, c.stderr, runErr)
+			if err.Error() != c.want {
+				t.Errorf("error = %q, want %q", err, c.want)
+			}
+			var ee *exec.ExitError
+			if !errors.As(err, &ee) {
+				t.Errorf("errors.As(*exec.ExitError) = false: %v", err)
+			}
+			if got := exitCodeFor(err); got != 1 {
+				t.Errorf("exitCodeFor = %d, want 1", got)
+			}
+		})
 	}
 }

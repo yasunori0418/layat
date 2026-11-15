@@ -23,7 +23,7 @@ specification_ja: |
   スキップして stderr に 1 行通知しなければならず、シェル入室をブロックしてはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:39:20+09:00"
+  at: "2026-11-15T06:09:16+09:00"
 ---
 # flock の取得は既定 blocking とし --no-wait のときだけ try-lock でスキップする
 
@@ -34,7 +34,7 @@ generated:
 ```
 
 shellHook の場面（`--no-wait`）では、try-lock（`LOCK_NB`）で保持中ならスキップし、stderr に
-1 行通知する（例: `layat: another apply in progress, skipped (run \`layat apply\` manually)`・
+1 行通知する（例: `layat: skipped apply <name> because another apply is in progress (run layat apply <name> after it ends)`・
 シェル入室はブロックしない）。明示 apply / rollback は blocking（`LOCK_EX`・取得まで待ち
 「他の apply 完了待ち」を表示）。
 

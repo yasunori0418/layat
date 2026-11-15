@@ -7,7 +7,7 @@ mitigates:
   - "RISK-31b8346c-7f1d-406f-aa74-6e1024edee83"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-10-02T12:16:38+09:00"
+  at: "2026-11-15T06:08:07+09:00"
 ---
 # 生成器の各実装が実 nix 無しで同じ契約（操作・失敗の構造）を満たす
 
@@ -20,7 +20,9 @@ generated:
   辿れる（`errors.Is` / `errors.As` が原因まで届く）。`%w` で包み直されてもマーカーとして
   取り出せる
 - **nix 生成器の失敗** — 発見の失敗は Stage discover で原因を保持し、eval の失敗は Stage roots、
-  build の失敗は Stage build になる。発見の失敗の文面は生成器化の前と同じ
+  build の失敗は Stage build になる。nix が成功した後の失敗も同じ段の `generator.Error` になる
+  （一括 eval の結果を解析できない失敗は roots、out-link を読めない失敗と `--print-out-paths` が
+  空の失敗は build）
 - **prebuilt の操作** — Discover は与えられたパスを絶対パスにし、Build / DryBuild はその
   パスを返す。Roots は manifest.json の root を返し、Targets を entries から導く。読めない
   manifest.json は prebuilt・Stage roots の失敗になり、原因の `fs.ErrNotExist` を保持する。

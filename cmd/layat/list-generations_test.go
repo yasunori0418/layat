@@ -226,6 +226,10 @@ func TestListGenerationsAllScansSystemBase(t *testing.T) {
 		makeHomeProfiles(t, fake, "a", "b")
 		fake.System = t.TempDir()
 		makeProfilesUnder(t, fake.System, "a", "s")
+		// A directory without a profile (a roothash family) is skipped without a warning.
+		if err := os.Mkdir(filepath.Join(fake.System, "family"), 0o755); err != nil {
+			t.Fatal(err)
+		}
 		run, buf := newListGenerationsTestRun()
 		stderr := captureStderr(t, func() {
 			if err := runListAllGenerations(run); err != nil {
@@ -319,8 +323,8 @@ func TestListGenerationsAllScansSystemBase(t *testing.T) {
 		fake.System = t.TempDir()
 		makeProfilesUnder(t, fake.System, "s")
 		run, buf, err := listAll()
-		if err == nil || !strings.Contains(err.Error(), userBase) {
-			t.Fatalf("runListAllGenerations = %v, want an error naming %s", err, userBase)
+		if err == nil || !strings.HasPrefix(err.Error(), "cannot list the profile base: ") || strings.Count(err.Error(), userBase) != 1 {
+			t.Fatalf("runListAllGenerations = %v, want the listing failure naming %s once", err, userBase)
 		}
 		if err := run.emit(err); err != nil {
 			t.Fatalf("emit: %v", err)
@@ -346,14 +350,47 @@ func TestListGenerationsAllScansSystemBase(t *testing.T) {
 		if err != nil {
 			t.Fatalf("runListAllGenerations = %v, want nil (the system base is skipped)", err)
 		}
-		if lines := strings.Split(strings.TrimRight(stderr, "\n"), "\n"); len(lines) != 1 || !strings.Contains(stderr, notDir) {
-			t.Errorf("stderr = %q, want one warning line naming %s", stderr, notDir)
+		if lines := strings.Split(strings.TrimRight(stderr, "\n"), "\n"); len(lines) != 1 || strings.Count(stderr, notDir) != 1 {
+			t.Errorf("stderr = %q, want one warning line naming %s once", stderr, notDir)
 		}
 		if err := run.emit(nil); err != nil {
 			t.Fatalf("emit: %v", err)
 		}
 		if _, order := subjectResults(t, buf); !slices.Equal(order, []string{"home:a"}) {
 			t.Errorf("subjects = %v, want [home:a] (the user base still listed)", order)
+		}
+	})
+
+	t.Run("a profile that cannot be checked warns and is skipped", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("root reads the directory regardless of its mode")
+		}
+		flagJSON = true
+		fake := installFakeBackend(t, "")
+		makeHomeProfiles(t, fake)
+		fake.System = t.TempDir()
+		makeProfilesUnder(t, fake.System, "a", "b")
+		locked := filepath.Join(fake.System, "a")
+		if err := os.Chmod(locked, 0); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = os.Chmod(locked, 0o755) })
+		var run *listGenerationsRun
+		var buf *bytes.Buffer
+		var err error
+		stderr := captureStderr(t, func() { run, buf, err = listAll() })
+		if err != nil {
+			t.Fatalf("runListAllGenerations = %v, want nil (the profile is skipped)", err)
+		}
+		lines := strings.Split(strings.TrimRight(stderr, "\n"), "\n")
+		if len(lines) != 1 || !strings.HasPrefix(lines[0], "layat: warning: ") || !strings.Contains(stderr, locked) {
+			t.Errorf("stderr = %q, want one warning line naming %s", stderr, locked)
+		}
+		if err := run.emit(nil); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		if _, order := subjectResults(t, buf); !slices.Equal(order, []string{"system:b"}) {
+			t.Errorf("subjects = %v, want [system:b] (the unreadable profile skipped)", order)
 		}
 	})
 }

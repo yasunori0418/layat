@@ -74,7 +74,7 @@ func placedResult(name string) *engine.Result {
 // top-level errors[] stays absent.
 func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 	run, buf := newApplyTestRun()
-	applied, skipped, failures := aggregateApply(run, []string{"a", "b", "c"}, 4, func(name string) (*engine.Result, error) {
+	applied, skipped, failures := aggregateApply(run, []string{"a", "b", "c"}, 4, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		if name == "b" {
 			return nil, io.ErrUnexpectedEOF
 		}
@@ -84,7 +84,7 @@ func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 		t.Fatalf("counts = (%d, %d, %d), want (2, 0, 1)", applied, skipped, failures)
 	}
 	// main emits with the aggregate error the exit-code path builds from the same counts.
-	cmdErr := &exitCodeError{code: applyAllExitCode(failures > 0, false), msg: "apply --all: 1 config(s) failed"}
+	cmdErr := &exitError{code: applyAllExitCode(failures > 0, false), msg: "apply --all: 1 config(s) failed"}
 	if err := run.emit(cmdErr); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
@@ -97,7 +97,7 @@ func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 	if topErrs, ok := doc["errors"]; ok {
 		t.Errorf("top-level errors = %v, want absent — the failure belongs to subject b", topErrs)
 	}
-	if cmdErr.ExitCode() == 0 {
+	if cmdErr.code == 0 {
 		t.Error("exit code = 0, want non-zero alongside the error status")
 	}
 
@@ -132,7 +132,7 @@ func TestApplyAllPartialFailureKeepsEverySubject(t *testing.T) {
 func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 	run, buf := newApplyTestRun()
 	failure := errors.New("symlink t/b: permission denied")
-	_, _, failures := aggregateApply(run, []string{"a", "b", "c"}, 4, func(name string) (*engine.Result, error) {
+	_, _, failures := aggregateApply(run, []string{"a", "b", "c"}, 4, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		if name == "b" {
 			// The engine's partial result: the entry it stopped on, plus a planned entry it never reached.
 			res := placedResult(name)
@@ -147,7 +147,7 @@ func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 	if failures != 1 {
 		t.Fatalf("failures = %d, want 1", failures)
 	}
-	if err := run.emit(&exitCodeError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
+	if err := run.emit(&exitError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	checkConformance(t, buf)
@@ -197,7 +197,7 @@ func TestApplyAllPartialFailureItemBorne(t *testing.T) {
 func TestApplyAllSharedTargetKeepsItemIDsResultScoped(t *testing.T) {
 	run, buf := newApplyTestRun()
 	shared := manifest.Entry{Target: ".config/shared"}
-	aggregateApply(run, []string{"a", "b"}, 4, func(name string) (*engine.Result, error) {
+	aggregateApply(run, []string{"a", "b"}, 4, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		res := placedResult(name)
 		res.Entries = []manifest.Entry{shared}
 		res.Placed = []string{shared.Target}
@@ -236,7 +236,7 @@ func TestApplyAllSharedTargetKeepsItemIDsResultScoped(t *testing.T) {
 // stays success.
 func TestApplyAllSkipIsNotAFailure(t *testing.T) {
 	run, buf := newApplyTestRun()
-	applied, skipped, failures := aggregateApply(run, []string{"a", "b"}, 4, func(name string) (*engine.Result, error) {
+	applied, skipped, failures := aggregateApply(run, []string{"a", "b"}, 4, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		if name == "b" {
 			// The engine returns a result with no entries alongside ErrSkipped, so a payload is attached too.
 			return &engine.Result{Profile: placedResult(name).Profile, Skipped: true}, engine.ErrSkipped
@@ -264,7 +264,7 @@ func TestApplyAllSkipIsNotAFailure(t *testing.T) {
 // status success.
 func TestApplyAllEmptySelectionEmitsEmptyResults(t *testing.T) {
 	run, buf := newApplyTestRun()
-	if applied, skipped, failures := aggregateApply(run, nil, 4, func(string) (*engine.Result, error) {
+	if applied, skipped, failures := aggregateApply(run, nil, 4, func(string, func(string, ...any), func(string, ...any)) (*engine.Result, error) {
 		t.Fatal("apply must not run for an empty selection")
 		return nil, nil
 	}); applied+skipped+failures != 0 {
@@ -296,7 +296,7 @@ func TestApplyAllDryRunConflictIsItemBorne(t *testing.T) {
 	run.dryRun = true
 	var code int
 	captureStdout(t, func() {
-		code = aggregateDryRun(run, []string{"a", "b"}, 4, func(name string) (*engine.Result, error) {
+		code = aggregateDryRun(run, []string{"a", "b"}, 4, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 			if name == "b" {
 				conflicted := placedResult(name)
 				conflicted.Placed = nil
@@ -364,7 +364,7 @@ func TestApplyAllDryRunMixedErrorAndConflict(t *testing.T) {
 	buildFailure := errors.New("nix build failed")
 	var code int
 	captureStdout(t, func() {
-		code = aggregateDryRun(run, []string{"broken", "clashing", "clean"}, 4, func(name string) (*engine.Result, error) {
+		code = aggregateDryRun(run, []string{"broken", "clashing", "clean"}, 4, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 			switch name {
 			case "broken":
 				return nil, buildFailure
@@ -430,7 +430,7 @@ func TestApplyAllSingleConfigMatchesNamedApply(t *testing.T) {
 
 	// The --all path at N=1: the same subject, settled by the aggregator itself.
 	all, allBuf := newApplyTestRun()
-	aggregateApply(all, []string{"default"}, 4, func(string) (*engine.Result, error) { return res, nil })
+	aggregateApply(all, []string{"default"}, 4, func(string, func(string, ...any), func(string, ...any)) (*engine.Result, error) { return res, nil })
 	if err := all.emit(nil); err != nil {
 		t.Fatalf("emit all: %v", err)
 	}
@@ -459,9 +459,11 @@ func TestApplyAllSingleConfigFailureMatchesNamedApply(t *testing.T) {
 	}
 
 	all, allBuf := newApplyTestRun()
-	aggregateApply(all, []string{"default"}, 4, func(string) (*engine.Result, error) { return newRes(), failure })
+	aggregateApply(all, []string{"default"}, 4, func(string, func(string, ...any), func(string, ...any)) (*engine.Result, error) {
+		return newRes(), failure
+	})
 	// --all's aggregate error must not reach the already settled subject.
-	if err := all.emit(&exitCodeError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
+	if err := all.emit(&exitError{code: 1, msg: "apply --all: 1 config(s) failed"}); err != nil {
 		t.Fatalf("emit all: %v", err)
 	}
 

@@ -1,8 +1,11 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"strings"
 	"testing"
 
@@ -10,6 +13,34 @@ import (
 	"github.com/yasunori0418/layat/internal/manifest"
 	"github.com/yasunori0418/layat/internal/planner"
 )
+
+// TestExitCodeFor: only layat's own exitError sets the exit code; a wrapped child process's
+// *exec.ExitError exits 1, not with the child's code.
+func TestExitCodeFor(t *testing.T) {
+	childErr := exec.Command("sh", "-c", "exit 3").Run()
+	var xe *exec.ExitError
+	if !errors.As(childErr, &xe) || xe.ExitCode() != 3 {
+		t.Fatalf("sh -c 'exit 3' = %v, want an *exec.ExitError with code 3", childErr)
+	}
+	cases := []struct {
+		name string
+		err  error
+		want int
+	}{
+		{"nil", nil, 0},
+		{"plain error", errors.New("boom"), 1},
+		{"wrapped child exit", fmt.Errorf("cannot run nix build: %w", childErr), 1},
+		{"exitError", &exitError{code: 2}, 2},
+		{"wrapped exitError", fmt.Errorf("apply: %w", &exitError{code: 2}), 2},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			if got := exitCodeFor(c.err); got != c.want {
+				t.Errorf("exitCodeFor(%v) = %d, want %d", c.err, got, c.want)
+			}
+		})
+	}
+}
 
 // TestApplyAllExitCode: priority error(1) > conflict(2) > 0, not the plain maximum.
 func TestApplyAllExitCode(t *testing.T) {
@@ -75,45 +106,45 @@ func captureStderr(t *testing.T, f func()) string {
 // TestAggregateDryRun: the exit code is error(1) > conflict(2) > 0 and the plan goes to stdout,
 // with the apply injected.
 func TestAggregateDryRun(t *testing.T) {
-	clean := func(name string) (*engine.Result, error) {
+	clean := func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		return &engine.Result{Placed: []string{"/p/" + name}}, nil
 	}
-	conflict := func(name string) (*engine.Result, error) {
+	conflict := func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		return &engine.Result{Conflicts: []planner.Conflict{
 			{Entry: manifest.Entry{Target: "/c/" + name}, Reason: "occupied"},
 		}}, nil
 	}
-	fail := func(name string) (*engine.Result, error) {
+	fail := func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		return nil, io.EOF
 	}
 
 	cases := []struct {
 		name     string
-		apply    func(string) (*engine.Result, error)
+		apply    configApplyFn
 		selected []string
 		wantCode int
 	}{
 		{"all clean → 0", clean, []string{"a", "b"}, 0},
-		{"conflict → 2", func(n string) (*engine.Result, error) {
+		{"conflict → 2", func(n string, _, _ func(string, ...any)) (*engine.Result, error) {
 			if n == "b" {
-				return conflict(n)
+				return conflict(n, nil, nil)
 			}
-			return clean(n)
+			return clean(n, nil, nil)
 		}, []string{"a", "b"}, 2},
-		{"error → 1", func(n string) (*engine.Result, error) {
+		{"error → 1", func(n string, _, _ func(string, ...any)) (*engine.Result, error) {
 			if n == "b" {
-				return fail(n)
+				return fail(n, nil, nil)
 			}
-			return clean(n)
+			return clean(n, nil, nil)
 		}, []string{"a", "b"}, 1},
-		{"error wins over conflict → 1", func(n string) (*engine.Result, error) {
+		{"error wins over conflict → 1", func(n string, _, _ func(string, ...any)) (*engine.Result, error) {
 			switch n {
 			case "a":
-				return conflict(n)
+				return conflict(n, nil, nil)
 			case "b":
-				return fail(n)
+				return fail(n, nil, nil)
 			}
-			return clean(n)
+			return clean(n, nil, nil)
 		}, []string{"a", "b", "c"}, 1},
 	}
 	for _, c := range cases {
@@ -135,45 +166,45 @@ func TestAggregateDryRun(t *testing.T) {
 // TestAggregateApply: the applied / skipped / failure counts and continue-on-partial-failure, with
 // the apply injected.
 func TestAggregateApply(t *testing.T) {
-	clean := func(name string) (*engine.Result, error) {
+	clean := func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
 		return &engine.Result{Placed: []string{"/p/" + name}}, nil
 	}
-	skipped := func(string) (*engine.Result, error) {
+	skipped := func(string, func(string, ...any), func(string, ...any)) (*engine.Result, error) {
 		return nil, engine.ErrSkipped
 	}
-	failed := func(string) (*engine.Result, error) {
+	failed := func(string, func(string, ...any), func(string, ...any)) (*engine.Result, error) {
 		return nil, io.EOF
 	}
 
 	cases := []struct {
 		name         string
-		apply        func(string) (*engine.Result, error)
+		apply        configApplyFn
 		selected     []string
 		wantApplied  int
 		wantSkipped  int
 		wantFailures int
 	}{
 		{"all succeed → 0 failures", clean, []string{"a", "b"}, 2, 0, 0},
-		{"ErrSkipped counts as skip, not failure", func(n string) (*engine.Result, error) {
+		{"ErrSkipped counts as skip, not failure", func(n string, _, _ func(string, ...any)) (*engine.Result, error) {
 			if n == "b" {
-				return skipped(n)
+				return skipped(n, nil, nil)
 			}
-			return clean(n)
+			return clean(n, nil, nil)
 		}, []string{"a", "b"}, 1, 1, 0},
-		{"error counts as failure and continues", func(n string) (*engine.Result, error) {
+		{"error counts as failure and continues", func(n string, _, _ func(string, ...any)) (*engine.Result, error) {
 			if n == "b" {
-				return failed(n)
+				return failed(n, nil, nil)
 			}
-			return clean(n)
+			return clean(n, nil, nil)
 		}, []string{"a", "b", "c"}, 2, 0, 1},
-		{"mixed skip and failure both continue", func(n string) (*engine.Result, error) {
+		{"mixed skip and failure both continue", func(n string, _, _ func(string, ...any)) (*engine.Result, error) {
 			switch n {
 			case "a":
-				return skipped(n)
+				return skipped(n, nil, nil)
 			case "b":
-				return failed(n)
+				return failed(n, nil, nil)
 			}
-			return clean(n)
+			return clean(n, nil, nil)
 		}, []string{"a", "b", "c"}, 1, 1, 1},
 	}
 	for _, c := range cases {

@@ -2,6 +2,7 @@ package nixgen
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"io"
 	"io/fs"
@@ -207,7 +208,14 @@ func stubNix(t *testing.T, stderr string) {
 // stubNixExit puts a fake nix first on PATH that prints stdout / stderr and exits with code.
 func stubNixExit(t *testing.T, stdout, stderr string, code int) {
 	t.Helper()
-	stubNixScript(t, "printf '%s' '"+stdout+"'\nprintf '%s' '"+stderr+"' >&2\nexit "+strconv.Itoa(code))
+	dir := t.TempDir()
+	out, errOut := filepath.Join(dir, "stdout"), filepath.Join(dir, "stderr")
+	for p, s := range map[string]string{out: stdout, errOut: stderr} {
+		if err := os.WriteFile(p, []byte(s), 0o644); err != nil {
+			t.Fatalf("write nix stub output: %v", err)
+		}
+	}
+	stubNixScript(t, "cat '"+out+"'\ncat '"+errOut+"' >&2\nexit "+strconv.Itoa(code))
 }
 
 // stubNixScript puts a fake nix first on PATH whose body is the given sh script.
@@ -248,8 +256,39 @@ func TestDiscoverFailureIsDiscoverStage(t *testing.T) {
 	if !errors.Is(err, fs.ErrNotExist) {
 		t.Errorf("errors.Is(err, fs.ErrNotExist) = false: %v", err)
 	}
-	if want := "-f path not found (" + missing + "): "; !strings.HasPrefix(err.Error(), want) {
+	if want := "cannot stat the -f path: stat " + missing + ": "; !strings.HasPrefix(err.Error(), want) {
 		t.Errorf("Error() = %q, want prefix %q", err.Error(), want)
+	}
+}
+
+// TestDiscoverUnreadableFileFlag pins that an -f path discovery cannot stat for lack of
+// permission is reported as that, not as a missing path.
+func TestDiscoverUnreadableFileFlag(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("root bypasses directory permissions")
+	}
+	dir := t.TempDir()
+	if err := os.Chmod(dir, 0); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chmod(dir, 0o755) })
+	_, err := discoverEntrypoint(filepath.Join(dir, "flake.nix"))
+	if !errors.Is(err, fs.ErrPermission) || errors.Is(err, fs.ErrNotExist) || strings.Contains(err.Error(), "not found") {
+		t.Errorf("err = %v, want fs.ErrPermission, not a missing path", err)
+	}
+}
+
+// TestDiscoverNoEntrypointInCWD pins the CWD discovery failure: it names the CWD and is not a
+// missing-file error.
+func TestDiscoverNoEntrypointInCWD(t *testing.T) {
+	dir := t.TempDir()
+	t.Chdir(dir)
+	_, err := discoverEntrypoint("")
+	if want := "no flake.nix / shell.nix / default.nix in the CWD (" + dir + "); specify one with -f"; err == nil || err.Error() != want {
+		t.Errorf("err = %v, want %q", err, want)
+	}
+	if errors.Is(err, fs.ErrNotExist) {
+		t.Errorf("errors.Is(err, fs.ErrNotExist) = true, want false: %v", err)
 	}
 }
 
@@ -281,7 +320,7 @@ func TestEntrypointIsDiscoveredPath(t *testing.T) {
 // failed subcommand, with nix's stderr kept in Stderr instead.
 func TestRootsCommandFailure(t *testing.T) {
 	stubNix(t, "error: boom")
-	g, _ := discovered(t, io.Discard, nil)
+	g, dir := discovered(t, io.Discard, nil)
 
 	_, err := g.Roots("web")
 	var ge *generator.Error
@@ -291,18 +330,26 @@ func TestRootsCommandFailure(t *testing.T) {
 	if ge.Stage != generator.StageRoots || ge.Kind != generator.KindFailed {
 		t.Errorf("Stage/Kind = %q/%q, want roots/Failed", ge.Stage, ge.Kind)
 	}
-	if want := "nix eval failed: exit status 1"; ge.Message != want {
+	if want := "cannot run nix eval (" + dir + "#layat." + g.system + ".web.rootKind): exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if ge.Stderr != "error: boom" {
 		t.Errorf("Stderr = %q, want the captured stderr", ge.Stderr)
 	}
+
+	if _, err := g.AllRoots(); err == nil || err.Error() != "cannot run nix eval ("+dir+"#layat."+g.system+"): exit status 1" {
+		t.Errorf("AllRoots error = %v, want the namespace installable", err)
+	}
+	stubNixScript(t, "case \"$2\" in *.rootKind) printf fixed;; *) echo 'error: boom' >&2; exit 1;; esac")
+	if _, err := g.Roots("web"); err == nil || err.Error() != "cannot run nix eval ("+dir+"#layat."+g.system+".web.root): exit status 1" {
+		t.Errorf("fixed root eval error = %v, want the .root installable", err)
+	}
 }
 
 // TestRootsMissingConfigMessage pins the "config not found" summary and its guidance.
 func TestRootsMissingConfigMessage(t *testing.T) {
-	stubNix(t, "error: flake does not provide attribute layat")
-	g, _ := discovered(t, io.Discard, nil)
+	g, dir := discovered(t, io.Discard, nil)
+	stubNix(t, flakeMissing(dir, g.system, "layat."+g.system+".web.rootKind"))
 
 	_, err := g.Roots("web")
 	var ge *generator.Error
@@ -320,8 +367,8 @@ func TestRootsMissingConfigMessage(t *testing.T) {
 // TestAllRootsMissingNamespaceMessage pins a failed batch eval as Stage roots carrying the
 // namespace "not found" summary and the "no configs found" guidance.
 func TestAllRootsMissingNamespaceMessage(t *testing.T) {
-	stubNix(t, "error: flake does not provide attribute layat")
-	g, _ := discovered(t, io.Discard, nil)
+	g, dir := discovered(t, io.Discard, nil)
+	stubNix(t, flakeMissing(dir, g.system, "layat."+g.system))
 
 	_, err := g.AllRoots()
 	var ge *generator.Error
@@ -338,21 +385,31 @@ func TestAllRootsMissingNamespaceMessage(t *testing.T) {
 }
 
 // TestDryBuildCommandFailure pins a failed read-only nix build as Stage build carrying the
-// one-line Message and the captured stderr.
+// one-line Message and the captured stderr, and the legacy installable in the Message.
 func TestDryBuildCommandFailure(t *testing.T) {
 	stubNix(t, "error: boom")
-	g, _ := discovered(t, io.Discard, nil)
+	g, dir := discovered(t, io.Discard, nil)
 
 	_, err := g.DryBuild("web")
 	var ge *generator.Error
 	if !errors.As(err, &ge) || ge.Stage != generator.StageBuild {
 		t.Fatalf("DryBuild error = %v, want a Stage build *generator.Error", err)
 	}
-	if want := "nix build failed: exit status 1"; ge.Message != want {
+	if want := "cannot run nix build (" + dir + "#layat." + g.system + ".web): exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if ge.Stderr != "error: boom" {
 		t.Errorf("Stderr = %q, want the captured stderr", ge.Stderr)
+	}
+	legacyDir := t.TempDir()
+	writeFile(t, legacyDir, "default.nix")
+	legacy := New(io.Discard, nil)
+	if err := legacy.Discover(legacyDir); err != nil {
+		t.Fatal(err)
+	}
+	_, err = legacy.DryBuild("web")
+	if want := "cannot run nix build (-f " + filepath.Join(legacyDir, "default.nix") + " layat.web): exit status 1"; err == nil || err.Error() != want {
+		t.Errorf("legacy DryBuild error = %v, want %q", err, want)
 	}
 }
 
@@ -361,18 +418,54 @@ func TestDryBuildCommandFailure(t *testing.T) {
 func TestBuildCommandFailureStreamsStderr(t *testing.T) {
 	stubNix(t, "error: boom")
 	var buf bytes.Buffer
-	g, _ := discovered(t, &buf, nil)
+	g, dir := discovered(t, &buf, nil)
 
 	_, err := g.Build("web", filepath.Join(t.TempDir(), ".pending"))
 	var ge *generator.Error
 	if !errors.As(err, &ge) || ge.Stage != generator.StageBuild {
 		t.Fatalf("Build error = %v, want a Stage build *generator.Error", err)
 	}
-	if want := "nix build failed: exit status 1"; ge.Message != want {
+	if want := "cannot run nix build (" + dir + "#layat." + g.system + ".web): exit status 1"; ge.Message != want {
 		t.Errorf("Message = %q, want %q", ge.Message, want)
 	}
 	if buf.String() != "error: boom" {
 		t.Errorf("writer = %q, want nix's stderr streamed through", buf.String())
+	}
+}
+
+// TestResultFailuresAreGeneratorErrors pins the failures after nix succeeds — an unparsable batch
+// eval, an unreadable out-link, an empty --print-out-paths — as Kind Failed generator.Errors of
+// the stage they happen in.
+func TestResultFailuresAreGeneratorErrors(t *testing.T) {
+	var syntaxErr *json.SyntaxError
+	cases := []struct {
+		name, stdout string
+		run          func(g *Generator) error
+		want         generator.Stage
+		cause        func(err error) bool
+	}{
+		{"batch eval", "{bad", func(g *Generator) error { _, err := g.AllRoots(); return err }, generator.StageRoots,
+			func(err error) bool { return errors.As(err, &syntaxErr) }},
+		{"out-link", "", func(g *Generator) error {
+			_, err := g.Build("web", filepath.Join(t.TempDir(), ".pending"))
+			return err
+		}, generator.StageBuild, func(err error) bool { return errors.Is(err, fs.ErrNotExist) }},
+		{"print-out-paths", "", func(g *Generator) error { _, err := g.DryBuild("web"); return err }, generator.StageBuild,
+			func(err error) bool { return strings.HasPrefix(err.Error(), "nix build --print-out-paths was empty (") }},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			stubNixExit(t, c.stdout, "", 0)
+			g, _ := discovered(t, io.Discard, nil)
+			err := c.run(g)
+			var ge *generator.Error
+			if !errors.As(err, &ge) || ge.Stage != c.want || ge.Kind != generator.KindFailed {
+				t.Fatalf("error = %#v, want a Kind Failed *generator.Error of Stage %q", err, c.want)
+			}
+			if cause := errors.Unwrap(ge); cause == nil || ge.Message != cause.Error() || !c.cause(cause) {
+				t.Errorf("Message / cause = %q / %v, want the cause's text and the cause", ge.Message, cause)
+			}
+		})
 	}
 }
 
@@ -394,24 +487,26 @@ func TestDebugDisclosesCommandsToWriter(t *testing.T) {
 	}
 }
 
-// TestIsExperimentalDisabled pins the three nix wordings of nix-command / flakes not being
-// enabled, and that an unrelated failure is not taken for one.
+// TestIsExperimentalDisabled pins nix's one wording of an experimental feature being disabled, on
+// an error line only, and that other failures are not taken for one.
 func TestIsExperimentalDisabled(t *testing.T) {
+	const disabled = "error: experimental Nix feature 'nix-command' is disabled; add '--extra-experimental-features nix-command' to enable it"
 	cases := []struct {
 		name   string
 		stderr string
 		want   bool
 	}{
-		{"experimental Nix feature", "error: experimental Nix feature 'nix-command' is disabled; add '--extra-experimental-features nix-command' to enable it", true},
-		{"experimental-features", "error: cannot use flakes: enable experimental-features first", true},
-		{"flakes + disabled", "error: flakes are disabled", true},
-		{"flakes alone", "error: flakes ok but evaluation failed", false},
+		{"experimental Nix feature", disabled, true},
+		{"after a warning line", "warning: Git tree is dirty\n" + disabled, true},
+		{"not on an error line", "warning: experimental Nix feature 'flakes' is disabled", false},
+		{"experimental-features", "error: cannot use flakes: enable experimental-features first", false},
+		{"flakes + disabled", "error: flakes are disabled", false},
 		{"unrelated", "error: attribute 'web' missing", false},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			if got := isExperimentalDisabled(c.stderr); got != c.want {
-				t.Errorf("isExperimentalDisabled(%q) = %v, want %v", c.stderr, got, c.want)
+			if got := IsExperimentalDisabled(c.stderr); got != c.want {
+				t.Errorf("IsExperimentalDisabled(%q) = %v, want %v", c.stderr, got, c.want)
 			}
 		})
 	}
@@ -421,7 +516,7 @@ func TestIsExperimentalDisabled(t *testing.T) {
 // PrerequisiteMissing whose Guidance names both ways to enable them, with nix's raw stderr kept
 // in Stderr.
 func TestPrerequisiteMissingGuidance(t *testing.T) {
-	const raw = "error: experimental Nix feature nix-command is disabled"
+	const raw = "error: experimental Nix feature 'nix-command' is disabled; add '--extra-experimental-features nix-command' to enable it"
 	stubNix(t, raw)
 	g, _ := discovered(t, io.Discard, nil)
 
@@ -446,35 +541,77 @@ func TestPrerequisiteMissingGuidance(t *testing.T) {
 	}
 }
 
-// TestNotFoundKind pins a missing attribute as Kind NotFound on both the single and the batch
-// eval (in both of nix's wordings) but not on build, and any other failure as Kind Failed.
+// flakeMissing is nix's wording for a flake lacking attrPath: the candidate paths, the queried one last.
+func flakeMissing(dir, system, attrPath string) string {
+	return "error: flake 'path:" + dir + "' does not provide attribute 'packages." + system + "." + attrPath +
+		"', 'legacyPackages." + system + "." + attrPath + "' or '" + attrPath + "'"
+}
+
+// TestIsMissingAttribute pins the missing-config detection: an error line quoting the queried attr
+// path in nix's flake or legacy wording, and not an evaluation error inside an existing config.
+func TestIsMissingAttribute(t *testing.T) {
+	const q = "layat.x86_64-linux.web.rootKind"
+	cases := []struct {
+		name, stderr, attrPath string
+		want                   bool
+	}{
+		{"flake", flakeMissing("/p", "x86_64-linux", q), q, true},
+		{"flake namespace", flakeMissing("/p", "x86_64-linux", "layat.x86_64-linux"), "layat.x86_64-linux", true},
+		{"legacy", "error: attribute 'web' in selection path 'layat.web.rootKind' not found", "layat.web.rootKind", true},
+		{"legacy namespace", "error: attribute 'layat' in selection path 'layat' not found\n       Did you mean layatx?", "layat", true},
+		{"other config", flakeMissing("/p", "x86_64-linux", "layat.x86_64-linux.web2.rootKind"), q, false},
+		{"attribute missing inside the config", "error: attribute 'foo' missing\n       at /p/flake.nix:1:70:", q, false},
+		{"queried path outside an error line", "warning: does not provide attribute '" + q + "'", q, false},
+		{"path containing the namespace", "error: path '/home/u/layat/shell.nix' does not exist", "layat", false},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			if got := isMissingAttribute(c.stderr, c.attrPath); got != c.want {
+				t.Errorf("isMissingAttribute(%q, %q) = %v, want %v", c.stderr, c.attrPath, got, c.want)
+			}
+		})
+	}
+}
+
+// TestNotFoundKind pins a missing config as Kind NotFound on both the single and the batch eval
+// but not on build, and any other failure, including an evaluation error inside the config, as
+// Kind Failed.
 func TestNotFoundKind(t *testing.T) {
-	stubNix(t, "error: flake does not provide attribute layat")
-	g, _ := discovered(t, io.Discard, nil)
+	g, dir := discovered(t, io.Discard, nil)
 
 	var ge *generator.Error
+	stubNix(t, flakeMissing(dir, g.system, "layat."+g.system+".web.rootKind"))
 	if _, err := g.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
 		t.Errorf("Roots error = %v, want Kind NotFound", err)
 	}
+	stubNix(t, flakeMissing(dir, g.system, "layat."+g.system))
 	if _, err := g.AllRoots(); !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
 		t.Errorf("AllRoots error = %v, want Kind NotFound", err)
 	}
 
-	stubNix(t, "error: attribute web missing")
-	if _, err := g.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
-		t.Errorf("Roots error = %v, want Kind NotFound for nix's attribute-missing wording", err)
+	legacyDir := t.TempDir()
+	writeFile(t, legacyDir, "shell.nix")
+	legacy := New(io.Discard, nil)
+	if err := legacy.Discover(legacyDir); err != nil {
+		t.Fatal(err)
+	}
+	stubNix(t, "error: attribute 'web' in selection path 'layat.web.rootKind' not found")
+	if _, err := legacy.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindNotFound {
+		t.Errorf("legacy Roots error = %v, want Kind NotFound", err)
 	}
 
 	// Build runs after Roots found the config, so a missing attribute there is an evaluation
 	// error inside the config, not a missing config name.
-	stubNix(t, "error: flake does not provide attribute layat")
+	stubNix(t, flakeMissing(dir, g.system, "layat."+g.system+".web"))
 	if _, err := g.DryBuild("web"); !errors.As(err, &ge) || ge.Kind != generator.KindFailed {
 		t.Errorf("DryBuild error = %v, want Kind Failed", err)
 	}
 
-	stubNix(t, "error: boom")
-	if _, err := g.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindFailed {
-		t.Errorf("Roots error = %v, want Kind Failed", err)
+	for _, stderr := range []string{"error: boom", "error: attribute 'foo' missing"} {
+		stubNix(t, stderr)
+		if _, err := g.Roots("web"); !errors.As(err, &ge) || ge.Kind != generator.KindFailed {
+			t.Errorf("Roots error for %q = %v, want Kind Failed", stderr, err)
+		}
 	}
 }
 

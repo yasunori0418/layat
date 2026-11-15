@@ -100,7 +100,7 @@ func runStatus(run *statusRun, args []string) error {
 		return nil
 	}
 	if failures > 0 {
-		return &exitCodeError{code: 1, msg: fmt.Sprintf("status: %d config(s) could not be read", failures)}
+		return &exitError{code: 1, msg: fmt.Sprintf("status: %d config(s) could not be read", failures)}
 	}
 	return nil
 }
