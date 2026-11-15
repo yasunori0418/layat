@@ -15,7 +15,7 @@ follows:
   - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-15T23:58:43+09:00"
+  at: "2026-11-16T00:16:41+09:00"
 ---
 # outturn_test.go — エンベロープ基礎形・id 導出・エラー分類・stdout 所有権
 
@@ -43,7 +43,8 @@ generated:
   形状判定に優先すること、排他制御由来の分類（他の実行が保持していた場合と、ロックの取得
   そのものが失敗した場合の両方が `E_LOCK`）、いずれにも当たらない失敗の汎用分類。
   束ねた失敗は先頭の原因で分類されること（先頭が権限の拒否で 2 番目が not-found なら
-  `E_PERMISSION`、先頭が排他制御なら `E_LOCK`）
+  `E_PERMISSION`、先頭が排他制御なら `E_LOCK`、not-found が先頭で後ろが排他制御なら `E_NOTFOUND`）。
+  束ねた失敗の message は、束ねたエラーの文のままであること
 - **nix-env の診断** — nix-env の失敗は、再ラップされていてもメッセージが要約と nix-env の
   stderr を改行でつないだものになり、分類は `E_LAYAT_FAILED` のままであること
 - **`--json` 下の stdout 所有権** — 行指向の出力（計画・世代一覧・パス列挙）が全て止まり、
