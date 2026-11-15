@@ -1,6 +1,8 @@
 package engine
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -337,5 +339,16 @@ func TestApplyNewDerivationCommitsNewGeneration(t *testing.T) {
 	}
 	if dest, _ := os.Readlink(filepath.Join(root, ".config", "foo")); dest != src2 {
 		t.Errorf("dest = %q, want %q", dest, src2)
+	}
+}
+
+// TestGenerationUnchangedUnresolvableNewLinkFarm verifies a new link-farm that cannot be resolved
+// is an error naming it, with the cause kept.
+func TestGenerationUnchangedUnresolvableNewLinkFarm(t *testing.T) {
+	missing := filepath.Join(realTempDir(t), "missing")
+	_, err := generationUnchanged(baseline{profileLinkFarm: realTempDir(t)}, missing)
+	want := "cannot resolve the new link-farm (" + missing + "): "
+	if err == nil || !strings.HasPrefix(err.Error(), want) || !errors.Is(err, fs.ErrNotExist) {
+		t.Errorf("err = %v; want it to start with %q and wrap fs.ErrNotExist", err, want)
 	}
 }

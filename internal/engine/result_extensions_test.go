@@ -164,6 +164,40 @@ func TestApplyResultReachedStateOnFailure(t *testing.T) {
 	}
 }
 
+// TestApplyResultFailureWithEmptyJournalNotUnwound verifies a failure before any FS write leaves
+// Unwound false and reports no undo line: the journal was empty, so nothing was rolled back.
+func TestApplyResultFailureWithEmptyJournalNotUnwound(t *testing.T) {
+	if os.Getuid() == 0 {
+		t.Skip("running as root; read-only directory does not block")
+	}
+	root := realTempDir(t)
+	state := realTempDir(t)
+	src := makeSrc(t, "conf/rc")
+	if err := os.Mkdir(filepath.Join(root, "blocked"), 0o555); err != nil {
+		t.Fatal(err)
+	}
+	lf := writeLinkFarm(t, fixedManifest(root, storeEntry(src, "conf", "blocked/child")))
+
+	var reports, warns []string
+	res, err := Apply(Options{LinkFarm: lf, Name: "c", StateDir: state, Backend: &generation.Fake{},
+		Warnf: collectFormatted(&warns), Reportf: collectFormatted(&reports)})
+	if err == nil {
+		t.Fatal("Apply should fail on the blocked parent")
+	}
+	if len(reports) != 0 {
+		t.Errorf("reports = %q, want no undo report line", reports)
+	}
+	if res == nil {
+		t.Fatal("Apply should return the partial Result alongside the error")
+	}
+	if res.Unwound {
+		t.Error("Unwound = true, want false (the journal was empty)")
+	}
+	if len(res.Unrestored) != 0 {
+		t.Errorf("Unrestored = %v, want empty", res.Unrestored)
+	}
+}
+
 // TestApplyResultCommitFailurePartialResult verifies the commit-failure branch: the partial Result
 // carries the inventory with empty reached-state fields, nothing is unwound, and the unmoved
 // profile pointer is observed as GenAfter == GenBefore.

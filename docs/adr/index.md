@@ -132,6 +132,7 @@
 * [指定が無いときは成功時に何も出力しない](./silent-on-success.md) - 以前の CLI は、`apply` / `reset` / `rollback` が成功すると配置レポート（サマリと target ごとの行）を指定が無いときも stderr に出し、`--quiet` で抑えていた。成功はいちばん多い結果で、shellHook から呼ぶとシェルに入るたびにレポートが流れる。静かにしたい呼び出し側（shellHook・スクリプト・CI）は一律に `--quiet` を付けることになり、常に出したうえで呼び出し側ごとに抑えるという、本来とは逆の形になっていた。 (stable)
 * [エラーはエンベロープに構造化し stderr のテキストと併存させる](./structured-errors-with-stderr.md) - layat はエラーを stderr の人間向けテキストで出す。outturn はエラーを `errors[]` と `item.error` として規格の一部に持つ。stdout を JSON で専有しつつ、人が読む診断も残す必要がある。 (stable)
 * [--json の item id は subject スコープで導く](./subject-scoped-ids.md) - outturn は item の `id` を、identity（`{kind, key}`）を JCS で正規化して SHA-256 した値で導く。layat の entry は config ごとに独立していて、別の config に同じ target があることもある。key に何を含めるかで、id がどの範囲で一意になるかが決まる。 (stable)
+* [undo で戻せなかった target は `W_LAYAT_UNWIND_INCOMPLETE` で target ごとに報告し、`W_LAYAT_UNWOUND` は全部戻せたときだけ出す](./undo-partial-failure-reported-by-separate-code.md) - undo の巻き戻しで戻せなかった target は W_LAYAT_UNWIND_INCOMPLETE で target ごとに --json へ報告し、W_LAYAT_UNWOUND は journal の全件を戻せたときだけ出す (stable)
 * [-v で配置レポートを opt-in で出す](./verbose-opts-into-placement-report.md) - 成功時は、指定が無いときは何も出さない。それでも対話で使うときは、何が配置・除去・skip されたかを見たい場面がある。以前の `--verbose` は内部コマンドの開示を担っていて、配置の結果を詳しく見たいという用途と噛み合っていなかった。機械向けの `--json` を足すにあたり、人向けのレポートとの関係も決める必要があった。 (stable)
 
 ## 配置動作
@@ -171,8 +172,10 @@
 * [配置前除去は drift を見つけたら error で止める](./preremove-drift-errors.md) - 配置前除去（[配置前除去を planner が計算するデータとして表す](preremove-as-planner-data.md)）は、plan を計算した時点の FS をもとに除去するものを決める。実行するまでに、対象の symlink が別の dest に張り替えられたり、空だったディレクトリに中身が入ったりすることがある（drift）。最終段の古くなった配置の除去は、記録どおりのsymlink だけを消し（[古くなった配置の除去は記録どおりの symlink だけに限る](conservative-removal-invariant.md)）、drift したものは warning を出して残す。配置前除去でも同じ扱いでよいかを決める必要があった。 (stable)
 * [配置前除去は空の祖先ディレクトリを剪定しない](./preremove-skips-ancestor-pruning.md) - layat は target を除去した後、空になった親ディレクトリを root の手前まで剪定する。配置前除去（[配置前除去を planner が計算するデータとして表す](preremove-as-planner-data.md)）も target を除去するので、この剪定を呼ぶかを決める必要があった。 (stable)
 * [実ディレクトリの target は全 leaf を除去できるときだけ移行する](./real-dir-target-migration.md) - 前世代が `foo/main.sh` をファイルごとに置き、新しい世代がその親の `foo` をディレクトリのsymlink にすると、`foo` は実ディレクトリとして残っているので conflict になる。2026-07-12 の実障害（`.claude/hooks/<name>/main.sh` を `.claude/hooks/<name>` のディレクトリ symlink にまとめた変更）がこの形だった。祖先の symlink の移行だけでは、target そのものが実ディレクトリの場合を救えない。[配置前除去を planner が計算するデータとして表す](preremove-as-planner-data.md)。この配置前除去の対象を広げるかを決める必要があった。 (stable)
+* [recopy の退避先が既にあれば上書きせず error で止める](./recopy-stops-on-leftover-aside.md) - apply --recopy は既存の copy target を退避する前に退避先を確かめ、前の run が残した退避物があれば上書きせず entry の失敗で止める (stable)
 * [古くなった配置の除去で使う比較のキーを解決後の target にする](./stale-diff-keyed-by-target.md) - 古くなった配置の除去は、前世代の manifest と今回の manifest を entry ごとに比べ、今回に無いものを除く。比べるキーには、以前は手で付けた `name` を使っていた。entries を target をキーにしたattrset にすると、候補は属性キーと解決後の target になる。属性キーは `target` の明示で上書きでき、両者は一致しないことがある。 (stable)
 * [古くなった配置の除去は manifest の差分で行う](./stale-removal-by-manifest-diff.md) - config から entry が消えたら、前回置いた symlink を除去しなければならない。そのためには「前回何を置いたか」を何かに記録しておき、今回の内容と比べる必要がある。 (stable)
+* [除去の直前の再確認で起きた I/O の失敗は drift と区別して error にする](./stale-reverify-io-failure-is-error.md) - 除去の直前の再確認で、不在と symlink でなくなったこと以外の I/O の失敗は drift と扱わず、元エラーを残したエラーで止める (stable)
 * [method の symlink から copy への変更を自動で移行する](./symlink-to-copy-migration.md) - 同じ target で `method` を `symlink` から `copy` へ変えると、前世代が置いた symlink が target を占めている。copy 側の分類では構造の不一致か foreign になり、conflict か skip になる。移行には手で `rm` する必要があった。 (stable)
 
 ## 巻き戻しとロック

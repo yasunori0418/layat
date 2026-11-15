@@ -12,7 +12,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:29:20+09:00"
+  at: "2026-11-15T01:16:41+09:00"
 ---
 # staleremove_test.go
 
@@ -32,6 +32,9 @@ generated:
 - **drift 後の継続**: drift で保持したアクションが後続アクションの除去を止めないこと
 - **unlink 失敗**: 不変条件は保たれているが `os.Remove` が失敗する場面（親 dir の書き込み権限
   剥奪で誘発・root では skip）で、警告ではなくエラーになり除去記録も残らないこと
+- **再検証の I/O 失敗**: 検索権限を落とした親 dir で再検証の `lstat` が EACCES になる場面
+  （root では skip）で、`removeStale` が警告せず `fs.ErrPermission` を辿れるエラーで止まり、
+  除去記録が残らず、失敗した target が結果に載ること
 - **空親剪定**: 多階層の空チェーンをまとめて剪定、非空祖先は保持、root 境界で停止、symlink
   祖先で停止、foreign 実ファイルを含む祖先は保持、剪定失敗は警告に留めて致命化しない
 - **剪定の適用範囲**: 自己記録祖先の移行が外側の祖先まで剪定しないこと、`preRemove` は

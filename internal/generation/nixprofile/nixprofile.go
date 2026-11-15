@@ -4,11 +4,14 @@
 package nixprofile
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/yasunori0418/layat/internal/generation"
 )
@@ -24,16 +27,37 @@ func New() generation.Backend {
 	return backend{}
 }
 
+// CommandError is a nix-env run that failed. Op is the nix-env operation with its argument
+// (`--set`, `--switch-generation N`), Profile the profile link, and Stderr what nix-env wrote to
+// stderr, which Error() leaves out because it already went to the terminal.
+type CommandError struct {
+	Op      string
+	Profile string
+	Stderr  string
+	Err     error
+}
+
+func (e *CommandError) Error() string {
+	return fmt.Sprintf("cannot run nix-env %s (%s): %v", e.Op, e.Profile, e.Err)
+}
+
+func (e *CommandError) Unwrap() error { return e.Err }
+
 // Commit atomically swaps the profile to linkFarm via `nix-env --profile <profileLink> --set
-// <linkFarm>`. nix output goes to stderr because stdout is reserved for machine-readable output.
+// <linkFarm>`. nix output goes to stderr because stdout is reserved for machine-readable output;
+// stderr is also kept for the CommandError.
 func (backend) Commit(profileLink, linkFarm string) error {
 	if _, err := exec.LookPath("nix-env"); err != nil {
-		return fmt.Errorf("nix-env is not on PATH: %w", err)
+		return fmt.Errorf("cannot run nix-env --set (%s): %w", profileLink, err)
 	}
+	var stderr bytes.Buffer
 	cmd := exec.Command("nix-env", "--profile", profileLink, "--set", linkFarm)
 	cmd.Stdout = os.Stderr
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+	cmd.Stderr = io.MultiWriter(os.Stderr, &stderr)
+	if err := cmd.Run(); err != nil {
+		return &CommandError{Op: "--set", Profile: profileLink, Stderr: strings.TrimSpace(stderr.String()), Err: err}
+	}
+	return nil
 }
 
 // List scans the profile's generation links without running nix-env, which takes a lock in
@@ -43,15 +67,21 @@ func (backend) List(profileLink string) ([]generation.Generation, error) {
 }
 
 // Switch moves the profile pointer via `nix-env --profile <profileLink> --switch-generation
-// <gen>`. nix output is routed to stderr (stdout is reserved for machine-readable output).
+// <gen>`. nix output is routed to stderr (stdout is reserved for machine-readable output) and
+// also kept for the CommandError.
 func (backend) Switch(profileLink string, gen int) error {
 	if _, err := exec.LookPath("nix-env"); err != nil {
-		return fmt.Errorf("nix-env is not on PATH: %w", err)
+		return fmt.Errorf("cannot run nix-env --switch-generation %d (%s): %w", gen, profileLink, err)
 	}
+	var stderr bytes.Buffer
 	cmd := exec.Command("nix-env", "--profile", profileLink, "--switch-generation", strconv.Itoa(gen))
 	cmd.Stdout = os.Stderr
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
+	cmd.Stderr = io.MultiWriter(os.Stderr, &stderr)
+	if err := cmd.Run(); err != nil {
+		op := fmt.Sprintf("--switch-generation %d", gen)
+		return &CommandError{Op: op, Profile: profileLink, Stderr: strings.TrimSpace(stderr.String()), Err: err}
+	}
+	return nil
 }
 
 // UserBase returns <state>/nix/profiles/layat. The home (no --root) profileDir is <name>

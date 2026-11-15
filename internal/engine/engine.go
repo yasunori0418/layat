@@ -128,7 +128,11 @@ type Result struct {
 	Unreached []string
 	// Unwound reports that the undo journal rolled this run's FS writes back after a failure:
 	// the op lists above then describe performed-then-reverted actions, not surviving state.
+	// False when the journal was empty at the failure.
 	Unwound bool
+	// Unrestored lists, once each, the targets whose writes the unwind could not revert,
+	// root-relative (absolute when not relative to the root). Empty when everything was restored.
+	Unrestored []string
 	// GenBefore / GenAfter are the profile generation numbers observed at run start / end,
 	// nil when unobservable (no profile yet, or a link that is not a generation link).
 	GenBefore *int
@@ -146,14 +150,10 @@ type OriginMismatch struct {
 // ErrSkipped indicates a skip on the NoWait path because another apply is in progress.
 var ErrSkipped = lock.ErrLocked
 
-// acquireProfileLock takes the profileDir flock and wraps the error. Shared by Apply /
-// Rollback / Reset; NoWait handling and Release stay with each caller.
+// acquireProfileLock takes the profileDir flock; lock.Acquire names the profileDir in its error.
+// Shared by Apply / Rollback / Reset / Prune; NoWait handling and Release stay with each caller.
 func acquireProfileLock(dir string, wait bool) (*lock.Lock, error) {
-	l, err := lock.Acquire(dir, wait)
-	if err != nil {
-		return nil, fmt.Errorf("failed to acquire flock (%s): %w", dir, err)
-	}
-	return l, nil
+	return lock.Acquire(dir, wait)
 }
 
 // Apply places the manifest's entries and commits a generation on success, in the order
@@ -177,7 +177,7 @@ func Apply(opts Options) (*Result, error) {
 	if opts.Build == nil {
 		m, err := manifest.Load(opts.LinkFarm)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read the link-farm's manifest (%s): %w", opts.LinkFarm, err)
+			return nil, err
 		}
 		a.manifest = m
 		a.opts.Origin.Identity = m.Identity
@@ -247,7 +247,7 @@ func Apply(opts Options) (*Result, error) {
 		}
 		m, err := manifest.Load(linkFarm)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read the built link-farm's manifest (%s): %w", linkFarm, err)
+			return nil, err
 		}
 		a.opts.LinkFarm = linkFarm
 		a.manifest = m
@@ -291,8 +291,8 @@ func Apply(opts Options) (*Result, error) {
 	if (rootKind == manifest.RootKindProject || rootKind == manifest.RootKindSystem) && prev != nil {
 		same, err := generationUnchanged(base, a.opts.LinkFarm)
 		if err != nil {
-			// When the previous generation's link-farm cannot be resolved, fall back to the safe side: normal apply (commit a new generation).
-			a.opts.Warnf("could not resolve the previous generation's link-farm; recommitting without a generation skip: %v", err)
+			// When the comparison cannot be made, fall back to the safe side: normal apply (commit a new generation).
+			a.opts.Warnf("cannot compare with the previous generation; recommitting without a generation skip: %v", err)
 		} else if same {
 			// The repair is journaled like normal placement; with no commit on this path, the
 			// journal is discarded as soon as the repair succeeds.
@@ -336,7 +336,7 @@ func Apply(opts Options) (*Result, error) {
 	// 9. generation commit. A commit failure is not unwound; re-apply converges.
 	if err := opts.Backend.Commit(a.profile.Profile, a.opts.LinkFarm); err != nil {
 		// Not entry-scoped, so no FailedTarget / Unreached, but the partial Result is still returned.
-		return a.result, fmt.Errorf("generation commit failed: %w", err)
+		return a.result, err
 	}
 	a.discardJournal()
 
@@ -377,8 +377,8 @@ func (a *applier) plannerOptions() planner.Options {
 // so far in this Apply/Rollback call. On success the journal is kept; the caller discards it.
 func (a *applier) runJournaled(stage func() error) error {
 	if err := stage(); err != nil {
-		a.unwind(err)
-		a.result.Unwound = true
+		a.result.Unwound = len(a.journal) > 0
+		a.result.Unrestored = a.unwind(err)
 		return err
 	}
 	return nil
@@ -476,7 +476,7 @@ func (a *applier) dryRun() (*Result, error) {
 		}
 		m, err := manifest.Load(linkFarm)
 		if err != nil {
-			return nil, fmt.Errorf("cannot read the built link-farm's manifest (%s): %w", linkFarm, err)
+			return nil, err
 		}
 		a.opts.LinkFarm = linkFarm
 		a.manifest = m
@@ -531,7 +531,11 @@ func (a *applier) dryRun() (*Result, error) {
 // Rollback / ProfileFor; on `--root` override it uses the override path regardless of kind.
 func resolveRoot(rootKind, fixedRoot, rootOverride, workDir string, git GitFunc) (string, error) {
 	if rootOverride != "" {
-		return filepath.Abs(rootOverride)
+		abs, err := filepath.Abs(rootOverride)
+		if err != nil {
+			return "", fmt.Errorf("cannot resolve the absolute path of the root (%s): %w", rootOverride, err)
+		}
+		return abs, nil
 	}
 	switch rootKind {
 	case manifest.RootKindProject:
@@ -557,7 +561,11 @@ func resolveRoot(rootKind, fixedRoot, rootOverride, workDir string, git GitFunc)
 		if fixedRoot == "" {
 			return "", fmt.Errorf("rootKind=fixed but no root path provided")
 		}
-		return filepath.Abs(fixedRoot)
+		abs, err := filepath.Abs(fixedRoot)
+		if err != nil {
+			return "", fmt.Errorf("cannot resolve the absolute path of the root (%s): %w", fixedRoot, err)
+		}
+		return abs, nil
 	case manifest.RootKindSystem:
 		return "/", nil
 	case "":
@@ -584,15 +592,15 @@ func requireRoot(rootKind string, geteuid func() int) error {
 
 func (a *applier) ensureProfileDir() error {
 	if err := os.MkdirAll(a.profile.Dir, 0o755); err != nil {
-		return fmt.Errorf("cannot create profileDir (%s): %w", a.profile.Dir, err)
+		return fmt.Errorf("cannot create profileDir: %w", err)
 	}
 	// Place backref .root at the <roothash> level (reverse-lookup seam for orphan profiles).
 	if a.profile.Backref != "" {
 		if err := os.MkdirAll(a.profile.BackrefDir, 0o755); err != nil {
-			return fmt.Errorf("cannot create backref directory (%s): %w", a.profile.BackrefDir, err)
+			return fmt.Errorf("cannot create backref directory: %w", err)
 		}
 		if err := os.WriteFile(a.profile.Backref, []byte(a.root+"\n"), 0o644); err != nil {
-			return fmt.Errorf("cannot write backref (%s): %w", a.profile.Backref, err)
+			return fmt.Errorf("cannot write backref: %w", err)
 		}
 	}
 	return nil
@@ -604,7 +612,7 @@ func (a *applier) ensureProfileDir() error {
 func (a *applier) readBaseline() (baseline, error) {
 	b, err := loadBaseline(a.record.File, a.profile.Profile, a.opts.Warnf)
 	if err == nil && b.profileUnreadable() {
-		a.opts.Warnf("could not read the previous generation's manifest; skipping stale removal: %v", b.profileErr)
+		a.opts.Warnf("skipping stale removal: %v", b.profileErr)
 		b.manifest = nil
 	}
 	if recorded := recordedOrigin(b.record); recorded != (Origin{}) && a.opts.Origin != (Origin{}) && originsDiffer(recorded, a.opts.Origin) {

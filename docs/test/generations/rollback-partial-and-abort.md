@@ -7,7 +7,7 @@ mitigates:
   - "RISK-fbf029f6-866c-4a08-a4eb-f09e3c7e907e"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:27:49+09:00"
+  at: "2026-11-15T01:05:36+09:00"
 ---
 # rollback は途中失敗を巻き戻し、ポインタ移動の失敗は巻き戻さず、前提不成立では停止する
 
@@ -32,6 +32,9 @@ PreRemove / place / materializeCopies / removeStale の全 FS 書き込みが成
 - profile がそもそも無い（一度も apply していない）
 - 祖先の PreRemove が drift で失敗した（この場合はポインタ移動へ進まず、現状の配置を
   触らずに残す）
+
+profile が無いと報告するのは、profile が実際に無いときだけである。profile の有無を調べられない
+失敗（権限の拒否など）は、元の失敗を原因として辿れるエラーで止まる。
 
 **conflict の全件報告** — 戻り先の target が複数 foreign な実体で塞がれているとき、
 apply と同じく全 conflict を stderr へ列挙してから、件数を持つ 1 本の集約エラーを返す

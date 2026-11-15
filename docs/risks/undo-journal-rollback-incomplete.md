@@ -12,7 +12,7 @@ impact: high
 level: high
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-05T00:25:33+09:00"
+  at: "2026-11-15T06:02:48+09:00"
 ---
 # 途中失敗した run の巻き戻しが不完全で、FS に部分適用の痕跡が残る
 
@@ -34,6 +34,9 @@ prevDest を復元しない・PreRemove が消した実ディレクトリを作�
 逆に、巻き戻すべきでない段で巻き戻すのも同じ深刻度の欠陥である。commit（`nix-env
 --set`）の失敗時点では FS の全書き込みが成功しており整合しているため、ここで unwind
 すると整合状態を壊す（→ [undo の発火を FS 反映の段に限り、世代コミットの後は対象にしない](../adr/undo-scope-ends-at-commit.md)）。この非対称性が崩れる方向の欠陥も本リスクに含む。
+
+commit の失敗と強制終了では、`--recopy` の退避ファイルが FS に残る。次の `--recopy` がこれを
+確かめずに退避先として上書きすると、退避ファイルにある、前の run を始める前の内容が失われる。この取りこぼしも本リスクに含む。
 
 `design` ではなく `requirement` へ張るのは、undo ジャーナルという機構そのものが
 [途中失敗した apply / rollback はインメモリ undo ジャーナルで全 FS 変更を巻き戻す](../requirements/undo-journal-rollback.md) の `specification` に「インメモリ undo ジャーナルへ逆操作を 1 件記録する」と

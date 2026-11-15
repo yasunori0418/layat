@@ -13,21 +13,26 @@ import (
 )
 
 // removeStale applies the planner's Remove actions, re-verifying the conservative invariant
-// against the real FS before each unlink; drifted targets are kept with a warning. After each
-// unlink it prunes ancestors left empty, warning (not failing) when a prune fails.
+// against the real FS before each unlink; drifted targets are kept with a warning, and an I/O
+// failure of the re-verification fails the entry. After each unlink it prunes ancestors left
+// empty, warning (not failing) when a prune fails.
 func (a *applier) removeStale(actions []planner.RemoveAction) error {
 	for _, act := range actions {
-		if !reverifyStale(act) {
+		ok, err := reverifyStale(act)
+		if err != nil {
+			return a.entryFailed(act.Entry.Target, err)
+		}
+		if !ok {
 			a.opts.Warnf("keeping stale symlink because it drifted after planning: %s", act.Entry.Target)
 			continue
 		}
 		if err := os.Remove(act.TargetAbs); err != nil {
-			return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot remove stale symlink (%s): %w", act.TargetAbs, err))
+			return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot remove stale symlink: %w", err))
 		}
 		a.result.Removed = append(a.result.Removed, act.Entry.Target)
 		a.journalRelinkedSymlink(act.TargetAbs, planner.LinkDest(act.Entry))
 		if err := a.pruneEmptyAncestors(act.TargetAbs); err != nil {
-			a.opts.Warnf("could not prune an empty ancestor directory: %v", err)
+			a.opts.Warnf("cannot prune empty ancestor directories: %v", err)
 		}
 	}
 	return nil
@@ -55,16 +60,20 @@ func (a *applier) preRemove(actions []planner.RemoveAction) error {
 			case errors.Is(err, fs.ErrNotExist):
 				// already absent; the Rmdir's goal is met, nothing to report.
 			case errors.Is(err, syscall.ENOTEMPTY), errors.Is(err, syscall.EEXIST):
-				return fmt.Errorf("directory gained content after planning; cannot migrate this placement target safely (%s); re-run apply to converge", act.TargetAbs)
+				return fmt.Errorf("directory gained content after planning; cannot migrate this placement target safely; re-run apply to converge: %w", err)
 			default:
-				return fmt.Errorf("cannot remove empty directory for migration (%s): %w", act.TargetAbs, err)
+				return fmt.Errorf("cannot remove empty directory for migration: %w", err)
 			}
 		default: // planner.RemoveUnlink
-			if !reverifyStale(act) {
+			ok, err := reverifyStale(act)
+			if err != nil {
+				return a.entryFailed(act.Entry.Target, err)
+			}
+			if !ok {
 				return a.entryFailed(act.Entry.Target, fmt.Errorf("recorded symlink changed after planning; cannot migrate this placement target safely (%s); re-run apply to converge", act.Entry.Target))
 			}
 			if err := os.Remove(act.TargetAbs); err != nil {
-				return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot remove recorded symlink for migration (%s): %w", act.TargetAbs, err))
+				return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot remove recorded symlink for migration: %w", err))
 			}
 			a.result.Removed = append(a.result.Removed, act.Entry.Target)
 			a.journalRelinkedSymlink(act.TargetAbs, planner.LinkDest(act.Entry))
@@ -106,7 +115,7 @@ func (a *applier) pruneEmptyAncestors(removedAbs string) error {
 			if errors.Is(err, syscall.ENOTEMPTY) || errors.Is(err, syscall.EEXIST) {
 				return nil
 			}
-			return fmt.Errorf("cannot remove empty ancestor directory (%s): %w", dir, err)
+			return fmt.Errorf("cannot remove empty ancestor directory: %w", err)
 		}
 		a.result.Pruned = append(a.result.Pruned, dir)
 		a.journalRemovedEmptyDir(dir, mode)
@@ -120,7 +129,7 @@ func (a *applier) pruneEmptyAncestors(removedAbs string) error {
 func pathHasSymlinkComponent(root, dir string) (bool, error) {
 	rel, err := filepath.Rel(root, dir)
 	if err != nil {
-		return false, fmt.Errorf("cannot resolve %q relative to root (%s): %w", dir, root, err)
+		return false, fmt.Errorf("cannot resolve the directory relative to root (%s in %s): %w", dir, root, err)
 	}
 	cur := root
 	for _, comp := range strings.Split(rel, string(filepath.Separator)) {
@@ -133,7 +142,7 @@ func pathHasSymlinkComponent(root, dir string) (bool, error) {
 			if errors.Is(err, fs.ErrNotExist) {
 				return false, nil
 			}
-			return false, fmt.Errorf("cannot lstat ancestor directory (%s): %w", cur, err)
+			return false, fmt.Errorf("cannot lstat ancestor directory: %w", err)
 		}
 		if info.Mode()&os.ModeSymlink != 0 {
 			return true, nil
@@ -154,15 +163,26 @@ func isWithinRoot(root, dir string) bool {
 }
 
 // reverifyStale re-checks the conservative invariant on the real FS right before
-// unlink: the target must still be a symlink pointing to the recorded dest.
-func reverifyStale(act planner.RemoveAction) bool {
+// unlink: the target must still be a symlink pointing to the recorded dest. A missing
+// target, a non-symlink, and a different dest are drift (false, nil); any other I/O
+// failure is returned as an error.
+func reverifyStale(act planner.RemoveAction) (bool, error) {
 	info, err := os.Lstat(act.TargetAbs)
-	if err != nil || info.Mode()&os.ModeSymlink == 0 {
-		return false
+	if errors.Is(err, fs.ErrNotExist) {
+		return false, nil
+	}
+	if err != nil {
+		return false, fmt.Errorf("cannot re-verify stale symlink: %w", err)
+	}
+	if info.Mode()&os.ModeSymlink == 0 {
+		return false, nil
 	}
 	onDisk, err := os.Readlink(act.TargetAbs)
-	if err != nil {
-		return false
+	if errors.Is(err, fs.ErrNotExist) || errors.Is(err, syscall.EINVAL) {
+		return false, nil
 	}
-	return onDisk == planner.LinkDest(act.Entry)
+	if err != nil {
+		return false, fmt.Errorf("cannot re-verify stale symlink: %w", err)
+	}
+	return onDisk == planner.LinkDest(act.Entry), nil
 }

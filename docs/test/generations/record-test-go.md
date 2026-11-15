@@ -12,7 +12,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-14T23:43:00+09:00"
+  at: "2026-11-15T00:12:02+09:00"
 ---
 # `record_test.go` — last-applied 記録の読み書き・比較の基準の優先順位・各操作での更新
 
@@ -52,6 +52,8 @@ generated:
   両方食い違い → 記録 + warning
 - 破損した記録は profile があっても error
 - 記録が無く profile の manifest が読めなければ、比較の基準は空で読めなかったことを報告する
+- profile link が不在以外の理由で stat できなければ、その失敗が profile を読めなかった理由として残る。
+  理由の文は `cannot stat profile link` で始まり、元の errno を `errors.Is` で判別できる
 
 **各操作での更新**
 

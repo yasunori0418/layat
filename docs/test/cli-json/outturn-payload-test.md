@@ -15,7 +15,7 @@ follows:
   - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:24:34+09:00"
+  at: "2026-11-15T06:12:27+09:00"
 ---
 # outturn_payload_test.go — engine 結果からペイロードへの写像
 
@@ -60,6 +60,9 @@ generated:
 - **出所の食い違い** — engine が報告した出所の食い違いが subject 警告 `W_LAYAT_ORIGIN_MISMATCH` に
   なり、message が stderr と同文で、`detail` が記録側と今回の origin を `recorded` / `current` に持ち、
   適合を保つこと。非空の `identity` は message と `detail` の各 origin に載ること
+- **巻き戻しの警告** — 一部の target を戻せなかった run では、戻せなかった target ごとに subject 警告
+  `W_LAYAT_UNWIND_INCOMPLETE` が `detail.target` 付きで出て、`W_LAYAT_UNWOUND` は出ないこと。何も巻き戻して
+  いない失敗では、どちらの警告も出ないこと
 - **`info` の非出力** — 変更系がエンベロープにも結果にも `info` キーを出さないこと
 - **世代一覧のモード** — `list-generations` の `info` が `generations` と並んで
   `mode`（`home` / `system`）を持ち、どちらでも適合を保つこと

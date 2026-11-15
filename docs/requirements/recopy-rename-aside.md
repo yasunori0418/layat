@@ -13,17 +13,23 @@ specification: |
   aside SHALL not be corrupted even under ENOSPC. When the target is absent, an ordinary
   place-once copy SHALL be performed instead. Where a later stage of the same apply run
   fails, the original content SHALL be restored from the object set aside; where the run
-  finally succeeds, that object SHALL be deleted.
+  finally succeeds, that object SHALL be deleted. Before renaming the target aside, it SHALL
+  check the aside path with `lstat`; when the aside path already exists, it SHALL neither
+  overwrite nor delete it, and SHALL stop with a failure of that entry whose message names the
+  aside path and asks for it to be moved or removed before re-running `--recopy`.
 specification_ja: |
   `apply --recopy` が既存の copy target を上書きするとき、削除ではなく同一親ディレクトリ内の
   一時名への rename 退避で行い、そのうえで `<src>/<subpath>` を再コピーしなければならない。
   rename はメタデータ操作のみであり、ENOSPC 下でも退避物が破損しないためである。target が不在の
   ときは通常の place-once コピーを行わなければならない。同一 apply run 内で後続の段が失敗した
   場合は退避物から元の内容を復元しなければならず、run が最終的に成功した場合は退避物を削除
+  しなければならない。target を退避する前に退避先を `lstat` で確かめなければならず、退避先が
+  既にあるときは上書きも削除もしてはならず、その entry の失敗として止めなければならない。
+  エラーの文は退避先のパスを示し、退避物を移すか消してから `--recopy` を再実行するよう案内
   しなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:05:37+09:00"
+  at: "2026-11-15T01:26:11+09:00"
 ---
 # recopy の上書きは削除ではなく同一親内への rename 退避で行う
 
@@ -31,7 +37,8 @@ generated:
 
 ```
 config 内の各 copy entry について:
-  target が存在 → 同一親ディレクトリ内の一時名へ rename 退避してから <src>/<subpath> を再コピー。
+  target が存在 → 退避先が既にあれば上書きせず、その entry の失敗で止める。
+                  無ければ同一親ディレクトリ内の一時名へ rename 退避してから <src>/<subpath> を再コピー。
                   この apply run が最終的に成功すれば退避物を削除、途中失敗して巻き戻すときは rename back
   target が不在 → 通常の place-once コピー
 ```
@@ -51,4 +58,4 @@ config 内の各 copy entry について:
 recopy コードブロックと、同節箇条書き第 3 項。
 
 決定の実体は [途中失敗した apply をインメモリ undo ジャーナルで巻き戻す](../adr/in-memory-undo-journal.md)（rename
-退避による上書きと復元）で、`--recopy` の追加自体は [apply --recopy で全 copy target を src から無条件に上書きする](../adr/apply-recopy-overwrites-copies.md) が決めている。
+退避による上書きと復元）と [recopy の退避先が既にあれば上書きせず error で止める](../adr/recopy-stops-on-leftover-aside.md)（退避先が既にあるときの停止）で、`--recopy` の追加自体は [apply --recopy で全 copy target を src から無条件に上書きする](../adr/apply-recopy-overwrites-copies.md) が決めている。

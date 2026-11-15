@@ -14,6 +14,7 @@ import (
 
 	"github.com/yasunori0418/outturn/go"
 
+	"github.com/yasunori0418/layat/internal/generation/nixprofile"
 	"github.com/yasunori0418/layat/internal/generator"
 	"github.com/yasunori0418/layat/internal/lock"
 )
@@ -206,33 +207,47 @@ func (r *outturnRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 
 // classifyError maps a command failure onto an outturn error code: E_INPUT, E_LAYAT_COLLISION,
 // E_LOCK, E_LAYAT_BUILD, E_NOTFOUND, E_PERMISSION, E_IO, falling back to E_LAYAT_FAILED.
-// Specific sentinels win over the generic E_IO shape check.
+// Specific sentinels win over the generic E_IO shape check. A nix-env failure's stderr follows
+// the message on the next line.
 func classifyError(err error) outturn.Error {
 	code := "E_LAYAT_FAILED"
 	message := err.Error()
+	// Failures bundled by errors.Join take the code of their first element.
+	cause := err
+	if joined, ok := err.(interface{ Unwrap() []error }); ok {
+		if errs := joined.Unwrap(); len(errs) > 0 {
+			cause = errs[0]
+		}
+	}
 	var ee *exitError
 	var ie *inputError
-	bf := buildFailure(err)
+	var fe *lock.FlockError
+	bf := buildFailure(cause)
 	switch {
-	case errors.As(err, &ie):
+	case errors.As(cause, &ie):
 		code = "E_INPUT"
-	case errors.As(err, &ee) && ee.code == 2:
+	case errors.As(cause, &ee) && ee.code == 2:
 		// exit 2 is apply --dryrun's conflict; its exitError carries no message, so supply one.
 		code = "E_LAYAT_COLLISION"
 		if message == "" {
 			message = "conflict(s) detected in dryrun"
 		}
-	case errors.Is(err, lock.ErrLocked):
+	case errors.Is(cause, lock.ErrLocked) || errors.As(cause, &fe):
 		code = "E_LOCK"
 	case bf != nil:
 		code = "E_LAYAT_BUILD"
 		message = generatorErrorMessage(bf)
-	case errors.Is(err, fs.ErrNotExist):
+	case errors.Is(cause, fs.ErrNotExist):
 		code = "E_NOTFOUND"
-	case errors.Is(err, fs.ErrPermission):
+	case errors.Is(cause, fs.ErrPermission):
 		code = "E_PERMISSION"
-	case isIOError(err):
+	case isIOError(cause):
 		code = "E_IO"
+	}
+	// nix-env's stderr went to the terminal only; --json keeps it after the summary.
+	var ce *nixprofile.CommandError
+	if errors.As(err, &ce) && ce.Stderr != "" {
+		message += "\n" + ce.Stderr
 	}
 	return outturn.Error{Code: code, Message: message}
 }

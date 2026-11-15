@@ -9,7 +9,7 @@ satisfies:
   - "REQ-6c4e174a-4d16-477a-96ff-17cb4eb5b564"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T08:22:37+09:00"
+  at: "2026-11-15T06:02:48+09:00"
 ---
 # hook 機構を engine に持たず、配線層ごとの合成 idiom で hook 需要を満たす
 
@@ -110,7 +110,8 @@ fi
 ```
 
 - **`status` を先に見る**。途中失敗した run は undo ジャーナルで巻き戻されるが、`changes` は
-  失敗時点までに生じた差分の記録として残る（subject に `W_LAYAT_UNWOUND` が付く）。
+  失敗時点までに生じた差分の記録として残る（全部戻せた run の subject には `W_LAYAT_UNWOUND` が付き、
+  戻せなかった target があれば、代わりに target ごとの `W_LAYAT_UNWIND_INCOMPLETE` が付く）。
   `changes` だけで分岐すると、**ディスク上に何も残っていない run でも後処理が実行される**
 - **`results[]` は全 subject を畳んでから判定する**。`.results[].result.changes | length > 0` は
   subject ごとに真偽値を 1 個ずつ出すため、`jq -e` の終了コードが最後の 1 個で決まる

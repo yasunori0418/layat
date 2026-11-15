@@ -33,7 +33,7 @@ func (a *applier) placeCopies(actions []planner.CopyAction) error {
 		// cleaned up on unwind.
 		a.journalPlacedCopy(act.TargetAbs)
 		if err := copyTree(act.Src, act.TargetAbs); err != nil {
-			return a.entryFailed(act.Entry.Target, fmt.Errorf("copy placement failed (%s -> %s): %w", act.Src, act.TargetAbs, err))
+			return a.entryFailed(act.Entry.Target, fmt.Errorf("cannot copy (%s -> %s): %w", act.Src, act.TargetAbs, err))
 		}
 		a.result.Copied = append(a.result.Copied, act.Entry.Target)
 	}
@@ -42,7 +42,8 @@ func (a *applier) placeCopies(actions []planner.CopyAction) error {
 
 // recopyAll is the copy overwrite path of apply --recopy. For every copy entry in the manifest,
 // an existing target is renamed aside within its parent directory and then re-copied
-// unconditionally, discarding local edits; the aside is restored if this Apply unwinds.
+// unconditionally, discarding local edits; the aside is restored if this Apply unwinds. An aside
+// already on disk stops the entry instead of being overwritten.
 func (a *applier) recopyAll() error {
 	for _, e := range a.manifest.Entries {
 		if e.Method != manifest.MethodCopy {
@@ -53,14 +54,19 @@ func (a *applier) recopyAll() error {
 		if _, err := os.Lstat(targetAbs); err == nil {
 			existed = true
 			aside := asidePath(targetAbs)
+			if _, err := os.Lstat(aside); err == nil {
+				return a.entryFailed(e.Target, fmt.Errorf("recopy aside already exists (%s); move or remove it before re-running --recopy", aside))
+			} else if !errors.Is(err, iofs.ErrNotExist) {
+				return a.entryFailed(e.Target, fmt.Errorf("cannot lstat recopy aside: %w", err))
+			}
 			if err := os.Rename(targetAbs, aside); err != nil {
-				return a.entryFailed(e.Target, fmt.Errorf("cannot move aside recopy target (%s): %w", targetAbs, err))
+				return a.entryFailed(e.Target, fmt.Errorf("cannot move aside recopy target: %w", err))
 			}
 			// Journaled before the fresh copy so a partial copyTree failure still renames the
 			// aside back on unwind.
 			a.journalRenamedAside(targetAbs, aside)
 		} else if !errors.Is(err, iofs.ErrNotExist) {
-			return a.entryFailed(e.Target, fmt.Errorf("cannot lstat recopy target (%s): %w", targetAbs, err))
+			return a.entryFailed(e.Target, fmt.Errorf("cannot lstat recopy target: %w", err))
 		} else {
 			// Same reasoning as placeCopies: journal before copyTree so a mid-copy failure still
 			// gets its partial tree cleaned up on unwind.
@@ -71,7 +77,7 @@ func (a *applier) recopyAll() error {
 			return a.entryFailed(e.Target, err)
 		}
 		if err := copyTree(planner.LinkDest(e), targetAbs); err != nil {
-			return a.entryFailed(e.Target, fmt.Errorf("recopy failed (%s -> %s): %w", planner.LinkDest(e), targetAbs, err))
+			return a.entryFailed(e.Target, fmt.Errorf("cannot recopy (%s -> %s): %w", planner.LinkDest(e), targetAbs, err))
 		}
 		if existed {
 			a.result.Recopied = append(a.result.Recopied, e.Target)
@@ -95,7 +101,7 @@ func asidePath(targetAbs string) string {
 func copyTree(src, dst string) error {
 	info, err := os.Lstat(src)
 	if err != nil {
-		return fmt.Errorf("cannot lstat copy src (%s): %w", src, err)
+		return err
 	}
 	switch {
 	case info.Mode()&os.ModeSymlink != 0:
@@ -162,7 +168,9 @@ func copySymlink(src, dst string) error {
 	if err != nil {
 		return err
 	}
-	// Guard against leftovers on re-copy (recopy has already RemoveAll'd the parent, but remove defensively).
-	_ = os.Remove(dst)
+	// Clear a leftover at dst; an absent dst is the normal case.
+	if err := os.Remove(dst); err != nil && !errors.Is(err, iofs.ErrNotExist) {
+		return err
+	}
 	return os.Symlink(target, dst)
 }

@@ -131,9 +131,9 @@ func Prune(opts PruneOptions) (*PruneResult, error) {
 	for _, base := range []string{opts.Backend.UserBase(stateDir), systemDir} {
 		found, err := pruneJudgeBase(base, res, warnf)
 		if err != nil {
-			// paths.ListRootHashSeries already names the base in its own wrap,
-			// so this only tags the warning as prune's.
-			warnf("prune: %v", err)
+			// The cause names the op and the base; the warning only says what
+			// is skipped.
+			warnf("prune: skipping the profile base: %v", err)
 			continue
 		}
 		candidates = append(candidates, found...)
@@ -242,7 +242,7 @@ func pruneJudgeBase(base string, res *PruneResult, warnf func(string, ...any)) (
 			candidates = append(candidates, s)
 		default:
 			pruneSkip(res, warnf, s, PruneSkipRootStatFailed,
-				fmt.Errorf("cannot stat root (%s): %w", s.Root, err))
+				fmt.Errorf("cannot stat root: %w", err))
 		}
 	}
 	return candidates, nil
@@ -270,8 +270,8 @@ func pruneRemoveSeries(s PruneSeries) (PruneSkipReason, error) {
 	}
 	for _, n := range s.Names {
 		dir := filepath.Join(s.Dir, n)
-		// The same acquire-and-wrap point Apply / Rollback / Reset share, so
-		// the flock failure wording stays single-sourced in the engine.
+		// The same acquisition Apply / Rollback / Reset share; lock.Acquire
+		// words the flock failure.
 		l, lerr := acquireProfileLock(dir, false)
 		if lerr != nil {
 			// The profileDir is held by another process or its lock state is
@@ -302,20 +302,20 @@ func pruneRemoveSeries(s PruneSeries) (PruneSkipReason, error) {
 		target := filepath.Join(s.Dir, n)
 		if rerr := os.RemoveAll(target); rerr != nil {
 			return removalReason(rerr),
-				fmt.Errorf("cannot remove profile directory of series %s (%s): %w", s.RootHash, target, rerr)
+				fmt.Errorf("cannot remove profile directory of series: %w", rerr)
 		}
 		removedAny = true
 	}
 	backref := filepath.Join(s.Dir, ".root")
 	if rerr := os.Remove(backref); rerr != nil && !errors.Is(rerr, fs.ErrNotExist) {
 		return removalReason(rerr),
-			fmt.Errorf("cannot remove backref of series %s (%s): %w", s.RootHash, backref, rerr)
+			fmt.Errorf("cannot remove backref of series: %w", rerr)
 	}
 	// Past this point the backref is gone, so the series is definitely no
 	// longer untouched and the rmdir below can only fail as an error — hence
 	// the "" rather than another removalReason call.
 	if rerr := os.Remove(s.Dir); rerr != nil {
-		return "", fmt.Errorf("cannot remove series %s (%s): %w", s.RootHash, s.Dir, rerr)
+		return "", fmt.Errorf("cannot remove series: %w", rerr)
 	}
 	return "", nil
 }

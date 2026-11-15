@@ -12,7 +12,7 @@ follows:
   - "TP-deb05610-44bc-4962-8939-952392e5fbd0"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:01:21+09:00"
+  at: "2026-11-15T06:12:27+09:00"
 ---
 # undo_test.go — 逆操作単体と unwind の順序・best-effort・journal 破棄
 
@@ -41,7 +41,11 @@ tmpdir 上の実 FS に対し、`Apply` を通さず undo ジャーナルの内�
 
 - LIFO 順序 — 「子 symlink を unlink → 親を rmdir」の前方バッチを LIFO で巻き戻すと、
   親の mkdir が子の再作成より先になる
-- best-effort 継続 — 1 件が巻き戻せなくても残りを巻き戻し、元エラーと復旧不能項目の
-  双方を Warnf へ報告する
-- 空 journal — FS 書き込み前の失敗では元エラーのみを報告し、「N item(s)」の行を出さない
+- best-effort 継続 — 1 件が巻き戻せなくても残りを巻き戻し、復旧不能項目を Warnf へ報告する。
+  報告に元エラーは含めない。root を持たない applier では、復旧できなかった target を絶対パスで返す
+- 復旧できなかった target — root からの相対パスで返す。同じ target の項目が 2 件失敗しても 1 回だけ返す。
+  段が失敗した `runJournaled` は、`Unwound` を true にし、その target を `Unrestored` に入れる
+- 報告の出力先 — Reportf と Warnf の両方を渡すと、巻き戻しの行・「N item(s)」の行・各項目の行が
+  すべて Reportf へ流れ、Warnf へは流れない
+- 空 journal — FS 書き込み前の失敗では何も報告せず、復旧できなかった target も返さない
 - `discardJournal` — commit 成功後に `--recopy` の退避ファイルを掃除する

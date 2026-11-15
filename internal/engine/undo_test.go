@@ -172,8 +172,8 @@ func TestUnwindReversesJournalInLIFOOrder(t *testing.T) {
 }
 
 // TestUnwindBestEffortContinuesPastFailureAndReportsAll verifies unwind's best-effort contract:
-// when one journal entry cannot be undone, the rest is still unwound, and both the original error
-// and the unrestorable item are reported to Warnf.
+// when one journal entry cannot be undone, the rest is still unwound, and the unrestorable item is
+// reported to Warnf without the original error.
 func TestUnwindBestEffortContinuesPastFailureAndReportsAll(t *testing.T) {
 	dir := realTempDir(t)
 	restorable := filepath.Join(dir, "restorable")
@@ -187,8 +187,12 @@ func TestUnwindBestEffortContinuesPastFailureAndReportsAll(t *testing.T) {
 	a.journalRelinkedSymlink(unrestorable, realTempDir(t))
 
 	origErr := errors.New("simulated mid-apply failure")
-	a.unwind(origErr)
+	unrestored := a.unwind(origErr)
 
+	// The applier has no root, so the unrestored target stays absolute.
+	if len(unrestored) != 1 || unrestored[0] != unrestorable {
+		t.Errorf("unrestored = %v, want [%s]", unrestored, unrestorable)
+	}
 	got, err := os.Readlink(restorable)
 	if err != nil || got != restorableDest {
 		t.Errorf("restorable entry must still be undone despite the other failing: readlink=%q, err=%v", got, err)
@@ -203,8 +207,8 @@ func TestUnwindBestEffortContinuesPastFailureAndReportsAll(t *testing.T) {
 			sawUnrestorablePath = true
 		}
 	}
-	if !sawOrigErr {
-		t.Errorf("warnings = %v, want the original error reported", warns)
+	if sawOrigErr {
+		t.Errorf("warnings = %v, want the original error left out of the undo report", warns)
 	}
 	if !sawUnrestorablePath {
 		t.Errorf("warnings = %v, want the unrestorable path named", warns)
@@ -214,19 +218,85 @@ func TestUnwindBestEffortContinuesPastFailureAndReportsAll(t *testing.T) {
 	}
 }
 
-// TestUnwindNoJournalReportsOrigErrOnly verifies unwind on an empty journal (a failure before any
-// FS write happened yet) just reports the original error without a spurious "N item(s)" line.
-func TestUnwindNoJournalReportsOrigErrOnly(t *testing.T) {
+// TestUnwindReturnsUnrestoredRelativeToRoot verifies unwind returns each target it could not
+// restore once, relative to the applier's root.
+func TestUnwindReturnsUnrestoredRelativeToRoot(t *testing.T) {
+	root := realTempDir(t)
+	unrestorable := filepath.Join(root, "sub", "leaf") // parent "sub" does not exist → symlink fails
+
 	var warns []string
 	a := &applier{opts: Options{Warnf: collectFormatted(&warns)}, result: &Result{}}
-	origErr := errors.New("failed before any FS write")
-	a.unwind(origErr)
+	a.root = root
+	// Two journal entries on the same target (a backup aside, then the re-link) both fail.
+	a.journalBackedUp(unrestorable, unrestorable+".bak")
+	a.journalRelinkedSymlink(unrestorable, realTempDir(t))
 
-	if len(warns) != 1 {
-		t.Fatalf("warns = %v, want exactly one line", warns)
+	unrestored := a.unwind(errors.New("simulated failure"))
+
+	if len(unrestored) != 1 || unrestored[0] != filepath.Join("sub", "leaf") {
+		t.Errorf("unrestored = %v, want [sub/leaf]", unrestored)
 	}
-	if !strings.Contains(warns[0], origErr.Error()) {
-		t.Errorf("warns[0] = %q, want it to mention the original error", warns[0])
+}
+
+// TestRunJournaledRecordsUnrestored verifies a failing stage leaves Unwound true and the targets
+// unwind could not restore in Result.Unrestored.
+func TestRunJournaledRecordsUnrestored(t *testing.T) {
+	root := realTempDir(t)
+	unrestorable := filepath.Join(root, "sub", "leaf") // parent "sub" does not exist → symlink fails
+
+	var warns []string
+	a := &applier{opts: Options{Warnf: collectFormatted(&warns)}, result: &Result{}}
+	a.root = root
+	a.journalRelinkedSymlink(unrestorable, realTempDir(t))
+
+	stageErr := errors.New("simulated stage failure")
+	if err := a.runJournaled(func() error { return stageErr }); !errors.Is(err, stageErr) {
+		t.Fatalf("runJournaled err = %v, want the stage error", err)
+	}
+	if !a.result.Unwound {
+		t.Error("Unwound = false, want true (the journal was not empty)")
+	}
+	if got := a.result.Unrestored; len(got) != 1 || got[0] != filepath.Join("sub", "leaf") {
+		t.Errorf("Unrestored = %v, want [sub/leaf]", got)
+	}
+}
+
+// TestUnwindNoJournalReportsNothing verifies unwind on an empty journal (a failure before any FS
+// write happened yet) reports no line and returns no unrestored target.
+func TestUnwindNoJournalReportsNothing(t *testing.T) {
+	var warns []string
+	a := &applier{opts: Options{Warnf: collectFormatted(&warns)}, result: &Result{}}
+	unrestored := a.unwind(errors.New("failed before any FS write"))
+
+	if len(warns) != 0 {
+		t.Errorf("warns = %v, want no line", warns)
+	}
+	if len(unrestored) != 0 {
+		t.Errorf("unrestored = %v, want empty", unrestored)
+	}
+}
+
+// TestUnwindReportsUnrestorableItemsToReportf verifies that, with both sinks set, the rollback
+// line, the "N item(s)" line and each item line go to Reportf and none of them to Warnf.
+func TestUnwindReportsUnrestorableItemsToReportf(t *testing.T) {
+	dir := realTempDir(t)
+	unrestorable := filepath.Join(dir, "sub", "unrestorable") // parent "sub" does not exist → symlink fails
+
+	var reports, warns []string
+	a := &applier{opts: Options{Warnf: collectFormatted(&warns), Reportf: collectFormatted(&reports)}, result: &Result{}}
+	a.journalRelinkedSymlink(unrestorable, realTempDir(t))
+
+	a.unwind(errors.New("simulated failure"))
+
+	if len(warns) != 0 {
+		t.Errorf("warns = %v, want no line (the undo report goes to Reportf)", warns)
+	}
+	want := []string{"rolled back this run's filesystem changes after the failure", "1 item(s) could not be restored during rollback:"}
+	if len(reports) != 3 || reports[0] != want[0] || reports[1] != want[1] {
+		t.Fatalf("reports = %q, want %q followed by one item line", reports, want)
+	}
+	if !strings.HasPrefix(reports[2], "  → ") || !strings.Contains(reports[2], unrestorable) {
+		t.Errorf("reports[2] = %q, want an item line naming %s", reports[2], unrestorable)
 	}
 }
 

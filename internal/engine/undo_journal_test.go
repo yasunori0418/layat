@@ -328,3 +328,74 @@ func TestApplyCommitFailureLeavesRecopyAsideFile(t *testing.T) {
 		t.Errorf("the aside file must survive (neither cleaned up nor renamed back) after a commit failure, lstat err = %v", lerr)
 	}
 }
+
+// TestApplyRecopyStopsOnLeftoverAside verifies that --recopy does not overwrite an aside file a
+// previous run left behind: the entry fails, and both the aside and the target keep their content.
+func TestApplyRecopyStopsOnLeftoverAside(t *testing.T) {
+	root := realTempDir(t)
+	state := realTempDir(t)
+	copySrc := makeSrc(t, "tool.conf")
+
+	lf := writeLinkFarm(t, homeManifest(copyEntry(copySrc, "tool.conf", "tool.conf")))
+	if _, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}}); err != nil {
+		t.Fatalf("first Apply: %v", err)
+	}
+	target := filepath.Join(root, "tool.conf")
+	aside := target + ".layat-recopy-aside"
+	if err := os.WriteFile(target, []byte("edited"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(aside, []byte("left by an earlier run"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	res, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}, Recopy: true})
+	if err == nil {
+		t.Fatal("Apply --recopy should fail while the aside file exists")
+	}
+	if !strings.Contains(err.Error(), "recopy aside already exists ("+aside+")") {
+		t.Errorf("err = %v, want it to name the existing aside", err)
+	}
+	if res == nil || res.FailedTarget != "tool.conf" {
+		t.Errorf("FailedTarget = %v, want tool.conf", res)
+	}
+	if data, rerr := os.ReadFile(aside); rerr != nil || string(data) != "left by an earlier run" {
+		t.Errorf("aside = %q, err %v; want it untouched", data, rerr)
+	}
+	if data, rerr := os.ReadFile(target); rerr != nil || string(data) != "edited" {
+		t.Errorf("target = %q, err %v; want it untouched", data, rerr)
+	}
+}
+
+// TestApplyRecopyStopsWhenAsideCannotBeChecked verifies --recopy stops on an Lstat failure of the
+// aside other than "not exist": a target name that fits NAME_MAX gets an aside name that does
+// not, so the Lstat fails with ENAMETOOLONG and the target keeps its content.
+func TestApplyRecopyStopsWhenAsideCannotBeChecked(t *testing.T) {
+	root := realTempDir(t)
+	state := realTempDir(t)
+	copySrc := makeSrc(t, "tool.conf")
+	name := strings.Repeat("n", 250)
+
+	lf := writeLinkFarm(t, homeManifest(copyEntry(copySrc, "tool.conf", name)))
+	if _, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}}); err != nil {
+		t.Fatalf("first Apply: %v", err)
+	}
+	target := filepath.Join(root, name)
+	if err := os.WriteFile(target, []byte("edited"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	res, err := Apply(Options{LinkFarm: lf, Name: "c", RootOverride: root, StateDir: state, Backend: &generation.Fake{}, Recopy: true})
+	if err == nil {
+		t.Fatal("Apply --recopy should fail when the aside cannot be checked")
+	}
+	if !strings.Contains(err.Error(), "cannot lstat recopy aside: ") {
+		t.Errorf("err = %v, want the aside Lstat failure", err)
+	}
+	if res == nil || res.FailedTarget != name {
+		t.Errorf("FailedTarget = %v, want the long target", res)
+	}
+	if data, rerr := os.ReadFile(target); rerr != nil || string(data) != "edited" {
+		t.Errorf("target = %q, err %v; want it untouched", data, rerr)
+	}
+}
