@@ -4,7 +4,7 @@ type: adr
 name: "golangci-lint でエラー処理の規約を検出する"
 description: "golangci-lint の既定のリンタに errorlint・forbidigo・nilerr・errname・nolintlint を足してエラー処理の規約からの逸脱を検出し、nolint には理由とリンタ名を必須にする"
 section: dev-build
-status: stable
+status: deprecated
 sources:
   - id: "issue-677"
     resource: "https://github.com/yasunori0418/layat/issues/677"
@@ -21,7 +21,11 @@ generated:
 ---
 # golangci-lint でエラー処理の規約を検出する
 
-- ステータス: stable
+> **廃止（2026-11-15）**: 本 ADR の決定は次の後継へ移った。以下の本文は当時の記録として読む。
+>
+> - リンタの構成・nolint の規則・check への設定の渡し方（wrapcheck を加えた） → [golangci-lint に wrapcheck を加え、包まずに返すヘルパーは理由つきの nolint で外す](golangci-lint-adds-wrapcheck-with-reasoned-nolint.md)
+
+- ステータス: deprecated
 - 日付: 2026-11-14
 - 関連: GitHub Issue #677, [Go の整形は gofmt、静的解析は go vet と golangci-lint で行う](gofmt-vet-golangci.md), [Go の静的解析を CGO_ENABLED=0 で行う](go-checks-without-cgo.md)
 - 起点: Issue #677 の grilling（2026-11-14）
