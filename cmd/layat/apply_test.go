@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -307,4 +309,80 @@ func TestRunApplyAllSystemRootSelectsSystem(t *testing.T) {
 	if len(built) != 1 || built[0] != "s" {
 		t.Errorf("built configs = %v, want [s] (--system-root selects systemRoot configs only)", built)
 	}
+}
+
+// TestApplyManifestDryRunIsReadOnly drives apply c --manifest <link-farm> --dryrun through the
+// real engine on the Fake backend: it prints the plan and writes nothing under the root or the
+// state directory, and a conflict exits 2 leaving the existing file as it was.
+func TestApplyManifestDryRunIsReadOnly(t *testing.T) {
+	src := t.TempDir()
+	if err := os.WriteFile(filepath.Join(src, "f"), []byte("x"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	entry := func(target string) manifest.Entry {
+		return manifest.Entry{SrcKind: "store", Src: src, Subpath: "f", Target: target, Method: "symlink"}
+	}
+	dryrun := func(t *testing.T, entries ...manifest.Entry) (string, error) {
+		t.Helper()
+		origFile, origManifest, origDryrun := flagFile, flagManifest, flagDryrun
+		t.Cleanup(func() { flagFile, flagManifest, flagDryrun = origFile, origManifest, origDryrun })
+		flagFile, flagManifest, flagDryrun = "", []string{writeTestLinkFarm(t, entries...)}, true
+		var err error
+		stdout, _ := captureOutErr(t, func() {
+			run, _ := newApplyTestRun()
+			err = runApply(run, "c")
+		})
+		return stdout, err
+	}
+	assertNoState := func(t *testing.T) {
+		t.Helper()
+		state := os.Getenv("XDG_STATE_HOME")
+		err := filepath.WalkDir(state, func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if d.Name() == "profile" || d.Name() == "last-applied.json" {
+				t.Errorf("dryrun wrote %s", path)
+			}
+			return nil
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	t.Run("no conflict", func(t *testing.T) {
+		root := cliEngineSetup(t)
+		stdout, err := dryrun(t, entry(".a"))
+		if err != nil {
+			t.Fatalf("dryrun = %v, want nil", err)
+		}
+		if !strings.Contains(stdout, "place\t") {
+			t.Errorf("stdout has no place line:\n%s", stdout)
+		}
+		if _, err := os.Lstat(filepath.Join(root, ".a")); !errors.Is(err, fs.ErrNotExist) {
+			t.Errorf("dryrun placed %s (lstat: %v)", filepath.Join(root, ".a"), err)
+		}
+		assertNoState(t)
+	})
+
+	t.Run("conflict", func(t *testing.T) {
+		root := cliEngineSetup(t)
+		foreign := filepath.Join(root, ".a")
+		if err := os.WriteFile(foreign, []byte("foreign"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		stdout, err := dryrun(t, entry(".a"))
+		var xe *exitError
+		if !errors.As(err, &xe) || xe.code != 2 {
+			t.Fatalf("dryrun = %v, want an exitError with code 2", err)
+		}
+		if !strings.Contains(stdout, "conflict\t") {
+			t.Errorf("stdout has no conflict line:\n%s", stdout)
+		}
+		if got, err := os.ReadFile(foreign); err != nil || string(got) != "foreign" {
+			t.Errorf("%s = %q (err %v), want it unchanged", foreign, got, err)
+		}
+		assertNoState(t)
+	})
 }
