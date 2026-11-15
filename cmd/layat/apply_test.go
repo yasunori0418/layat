@@ -322,17 +322,21 @@ func TestApplyManifestDryRunIsReadOnly(t *testing.T) {
 	entry := func(target string) manifest.Entry {
 		return manifest.Entry{SrcKind: "store", Src: src, Subpath: "f", Target: target, Method: "symlink"}
 	}
-	dryrun := func(t *testing.T, entries ...manifest.Entry) (string, error) {
+	// dryrun returns stdout, the --json items of subject c and runApply's error.
+	dryrun := func(t *testing.T, entries ...manifest.Entry) (string, []any, error) {
 		t.Helper()
 		origFile, origManifest, origDryrun := flagFile, flagManifest, flagDryrun
 		t.Cleanup(func() { flagFile, flagManifest, flagDryrun = origFile, origManifest, origDryrun })
 		flagFile, flagManifest, flagDryrun = "", []string{writeTestLinkFarm(t, entries...)}, true
+		run, buf := newApplyTestRun()
 		var err error
-		stdout, _ := captureOutErr(t, func() {
-			run, _ := newApplyTestRun()
-			err = runApply(run, "c")
-		})
-		return stdout, err
+		stdout, _ := captureOutErr(t, func() { err = runApply(run, "c") })
+		if emitErr := run.emit(err); emitErr != nil {
+			t.Fatalf("emit: %v", emitErr)
+		}
+		byName, _ := subjectResults(t, buf)
+		items, _ := byName["c"]["result"].(map[string]any)["items"].([]any)
+		return stdout, items, err
 	}
 	assertNoState := func(t *testing.T) {
 		t.Helper()
@@ -353,9 +357,12 @@ func TestApplyManifestDryRunIsReadOnly(t *testing.T) {
 
 	t.Run("no conflict", func(t *testing.T) {
 		root := cliEngineSetup(t)
-		stdout, err := dryrun(t, entry(".a"))
+		stdout, items, err := dryrun(t, entry(".a"))
 		if err != nil {
 			t.Fatalf("dryrun = %v, want nil", err)
+		}
+		if len(items) != 1 {
+			t.Errorf("--json items = %v, want the one planned entry", items)
 		}
 		if !strings.Contains(stdout, "place\t") {
 			t.Errorf("stdout has no place line:\n%s", stdout)
@@ -372,13 +379,16 @@ func TestApplyManifestDryRunIsReadOnly(t *testing.T) {
 		if err := os.WriteFile(foreign, []byte("foreign"), 0o644); err != nil {
 			t.Fatal(err)
 		}
-		stdout, err := dryrun(t, entry(".a"))
+		stdout, items, err := dryrun(t, entry(".a"))
 		var xe *exitError
 		if !errors.As(err, &xe) || xe.code != 2 {
 			t.Fatalf("dryrun = %v, want an exitError with code 2", err)
 		}
 		if !strings.Contains(stdout, "conflict\t") {
 			t.Errorf("stdout has no conflict line:\n%s", stdout)
+		}
+		if len(items) != 1 {
+			t.Errorf("--json items = %v, want the one conflicted entry", items)
 		}
 		if got, err := os.ReadFile(foreign); err != nil || string(got) != "foreign" {
 			t.Errorf("%s = %q (err %v), want it unchanged", foreign, got, err)
