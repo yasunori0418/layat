@@ -7,7 +7,7 @@ mitigates:
   - "RISK-33e30498-6fa1-450b-a251-5624cbe837b9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:25:54+09:00"
+  at: "2026-11-15T23:56:47+09:00"
 ---
 # dryrun の無副作用と本番との conflict 件数の一致
 
@@ -21,4 +21,5 @@ generated:
 一致までは見ていない（[dryrun が副作用を残す、または本番 apply と異なる結果を報告する](../../risks/dryrun-diverges-from-apply.md) が恐れる乖離に対しては部分的な被覆にとどまる）。
 
 conflict 検出時の終了コード（CI の条件として機能すること）は CLI 面の契約であり、
-`cli-json` 対象の担当。ここでは engine が返す conflict の報告までを見る。
+`cli-json` 対象の担当。ただし、`--manifest` 付きの `apply <name> --dryrun` でも cmd が
+engine へ dryrun を渡し、書き込みが起きないことは、この条件に含める。
