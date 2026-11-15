@@ -199,10 +199,12 @@ func (r *outturnRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 
 	data, err := json.Marshal(env)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot encode the --json envelope: %w", err)
 	}
-	_, err = fmt.Fprintf(r.out, "%s\n", data)
-	return err
+	if _, err := fmt.Fprintf(r.out, "%s\n", data); err != nil {
+		return fmt.Errorf("cannot write the --json envelope: %w", err)
+	}
+	return nil
 }
 
 // classifyError maps a command failure onto an outturn error code: E_INPUT, E_LAYAT_COLLISION,

@@ -228,8 +228,36 @@ func TestOutturnEmitWriteFailure(t *testing.T) {
 	r := &applyRun{now: fixedClock(time.Date(2026, 7, 19, 12, 0, 0, 0, time.UTC)), out: failingWriter{}}
 	r.begin("apply")
 	r.beginSubject("default")
-	if err := r.emit(nil); err == nil {
+	err := r.emit(nil)
+	if err == nil {
 		t.Fatal("emit must propagate the writer failure")
+	}
+	if want := "cannot write the --json envelope: "; !strings.HasPrefix(err.Error(), want) {
+		t.Errorf("emit error = %q, want prefix %q", err, want)
+	}
+}
+
+// unencodableInfo is an envelope info whose JSON encoding always fails.
+type unencodableInfo struct{}
+
+func (unencodableInfo) MarshalJSON() ([]byte, error) { return nil, errors.New("unencodable") }
+
+// TestOutturnEmitEncodeFailure: an envelope that cannot be encoded is an error from emit, and
+// nothing reaches the output.
+func TestOutturnEmitEncodeFailure(t *testing.T) {
+	var buf bytes.Buffer
+	r := &outturnRun[*applyResultInfo, unencodableInfo]{now: fixedClock(time.Date(2026, 7, 19, 12, 0, 0, 0, time.UTC)), out: &buf}
+	r.begin("apply")
+	r.beginSubject("default")
+	err := r.emit(nil)
+	if err == nil {
+		t.Fatal("emit must propagate the encode failure")
+	}
+	if want := "cannot encode the --json envelope: "; !strings.HasPrefix(err.Error(), want) {
+		t.Errorf("emit error = %q, want prefix %q", err, want)
+	}
+	if buf.Len() != 0 {
+		t.Errorf("emit wrote %q, want no output", buf.String())
 	}
 }
 
