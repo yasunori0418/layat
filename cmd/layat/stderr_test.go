@@ -434,3 +434,64 @@ func TestPrefixLiteralsOnlyInStderrFile(t *testing.T) {
 		t.Errorf("string literal holds \"layat: \" outside stderr.go: %s", f)
 	}
 }
+
+// TestNoFailedToShapeInErrorFormats checks the first argument of every fmt.Errorf and errors.New
+// call in the non-test Go of internal/ and cmd/layat/: a string literal there must not start with
+// "failed to ", contain " failed: ", or end with " failed".
+func TestNoFailedToShapeInErrorFormats(t *testing.T) {
+	fset := token.NewFileSet()
+	var found []string
+	for _, dir := range []string{"../../internal", "."} {
+		err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if d.IsDir() || !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
+				return nil
+			}
+			f, err := parser.ParseFile(fset, path, nil, parser.SkipObjectResolution)
+			if err != nil {
+				return err
+			}
+			ast.Inspect(f, func(n ast.Node) bool {
+				call, ok := n.(*ast.CallExpr)
+				if !ok || len(call.Args) == 0 || !isErrorFormatCall(call.Fun) {
+					return true
+				}
+				lit, ok := call.Args[0].(*ast.BasicLit)
+				if !ok || lit.Kind != token.STRING {
+					return true
+				}
+				s, err := strconv.Unquote(lit.Value)
+				if err != nil {
+					t.Errorf("%s: cannot unquote %s: %v", fset.Position(lit.Pos()), lit.Value, err)
+					return true
+				}
+				if strings.HasPrefix(s, "failed to ") || strings.Contains(s, " failed: ") || strings.HasSuffix(s, " failed") {
+					found = append(found, fmt.Sprintf("%s: %s", fset.Position(lit.Pos()), lit.Value))
+				}
+				return true
+			})
+			return nil
+		})
+		if err != nil {
+			t.Fatalf("walk %s: %v", dir, err)
+		}
+	}
+	for _, f := range found {
+		t.Errorf("error string has the \"failed to\" shape: %s", f)
+	}
+}
+
+// isErrorFormatCall reports whether fun is fmt.Errorf or errors.New.
+func isErrorFormatCall(fun ast.Expr) bool {
+	sel, ok := fun.(*ast.SelectorExpr)
+	if !ok {
+		return false
+	}
+	pkg, ok := sel.X.(*ast.Ident)
+	if !ok {
+		return false
+	}
+	return (pkg.Name == "fmt" && sel.Sel.Name == "Errorf") || (pkg.Name == "errors" && sel.Sel.Name == "New")
+}
