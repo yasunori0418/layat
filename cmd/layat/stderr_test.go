@@ -334,6 +334,8 @@ func TestApplyWithoutManifestWiresWarnfAndReportf(t *testing.T) {
 	applyBuilt := func(t *testing.T, dryrun bool, entries ...manifest.Entry) (string, error) {
 		t.Helper()
 		stubNixBuilds(t, writeTestLinkFarm(t, entries...))
+		origDryrun := flagDryrun
+		t.Cleanup(func() { flagDryrun = origDryrun })
 		flagDryrun = dryrun
 		var err error
 		_, stderr := captureOutErr(t, func() {
