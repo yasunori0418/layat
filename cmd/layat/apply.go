@@ -100,6 +100,34 @@ func runApplyManifest(subject *applySubject, name string) error {
 		return err
 	}
 
+	// --dryrun previews without side effects (no flock), as on the build path.
+	if flagDryrun {
+		res, err := engine.Apply(engine.Options{
+			Name:           name,
+			LinkFarm:       linkFarm,
+			RootOverride:   flagRoot,
+			Recopy:         flagRecopy,
+			Backup:         flagBackupEnabled,
+			BackupSuffix:   flagBackup,
+			DryRun:         true,
+			Origin:         engine.Origin{Generator: generator.NamePrebuilt, Entrypoint: gen.Entrypoint()},
+			Backend:        newGenerationBackend(),
+			SystemDir:      systemDirOverride(),
+			SystemStateDir: systemStateDirOverride(),
+			Warnf:          engineWarnf,
+			Reportf:        engineReportf,
+		})
+		if err != nil {
+			return err
+		}
+		attachMutationPayload(subject, res, nil)
+		printApplyPlan(res)
+		if len(res.Conflicts) > 0 {
+			return &exitError{code: 2}
+		}
+		return nil
+	}
+
 	res, err := engine.Apply(engine.Options{
 		Name:           name,
 		LinkFarm:       linkFarm,
