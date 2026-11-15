@@ -391,8 +391,8 @@ func findProfileLink(t *testing.T, base string) string {
 }
 
 // TestPrefixLiteralsOnlyInStderrFile checks that no string literal in the non-test Go of internal/
-// and cmd/layat/ holds "layat: ", except in stderr.go: the prefix is added only where stderr is
-// written.
+// and cmd/layat/ holds "layat: ", and that no non-test Go of cmd/layat/ refers to msgPrefix, except
+// in stderr.go: the prefix is added only where stderr is written.
 func TestPrefixLiteralsOnlyInStderrFile(t *testing.T) {
 	fset := token.NewFileSet()
 	var found []string
@@ -410,6 +410,10 @@ func TestPrefixLiteralsOnlyInStderrFile(t *testing.T) {
 				return err
 			}
 			ast.Inspect(f, func(n ast.Node) bool {
+				if id, ok := n.(*ast.Ident); ok && dir == "." && id.Name == "msgPrefix" {
+					found = append(found, fmt.Sprintf("%s: %s", fset.Position(id.Pos()), id.Name))
+					return true
+				}
 				lit, ok := n.(*ast.BasicLit)
 				if !ok || lit.Kind != token.STRING {
 					return true
@@ -431,7 +435,7 @@ func TestPrefixLiteralsOnlyInStderrFile(t *testing.T) {
 		}
 	}
 	for _, f := range found {
-		t.Errorf("string literal holds \"layat: \" outside stderr.go: %s", f)
+		t.Errorf("\"layat: \" literal or msgPrefix reference outside stderr.go: %s", f)
 	}
 }
 
