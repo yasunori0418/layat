@@ -394,6 +394,9 @@ func TestClassifyErrorCodes(t *testing.T) {
 			if e.Message == "" {
 				t.Error("message must not be empty")
 			}
+			if _, joined := c.err.(interface{ Unwrap() []error }); joined && e.Message != c.err.Error() {
+				t.Errorf("Message = %q, want the joined error's text %q", e.Message, c.err.Error())
+			}
 		})
 	}
 }
