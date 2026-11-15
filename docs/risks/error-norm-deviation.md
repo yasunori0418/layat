@@ -13,7 +13,7 @@ threatens:
   - "DSG-9f5f949f-8b0e-4679-8f70-e0901a3d63b8"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-14T23:43:17+09:00"
+  at: "2026-11-15T23:58:43+09:00"
 ---
 # エラーの扱いが規約から外れ、stderr の行に layat: が二重に付くか、存在しない対象の判定を取りこぼす
 
@@ -33,7 +33,7 @@ status の行では、見出しの `layat: apply <name> failed:` に続くエラ
 wrap されたエラーに `os.IsNotExist` などの `os.Is*` を当てると、連鎖をたどらないので、存在しない
 対象を存在しないと判定できない。存在しないときに続行するはずの処理が、失敗として止まる。
 この向きは lint が検出する
-（→ [golangci-lint でエラー処理の規約を検出する](../adr/golangci-lint-enforces-error-conventions.md)）。
+（→ [golangci-lint に wrapcheck を加え、包まずに返すヘルパーは理由つきの nolint で外す](../adr/golangci-lint-adds-wrapcheck-with-reasoned-nolint.md)）。
 
 ## 影響
 
