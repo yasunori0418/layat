@@ -361,7 +361,7 @@ func TestApplyAllDryRunConflictIsItemBorne(t *testing.T) {
 func TestApplyAllDryRunMixedErrorAndConflict(t *testing.T) {
 	run, buf := newApplyTestRun()
 	run.dryRun = true
-	buildFailure := errors.New("nix build failed")
+	buildFailure := errors.New("cannot run nix build (/src/proj#layat.x86_64-linux.broken): exit status 1")
 	var code int
 	captureStdout(t, func() {
 		code = aggregateDryRun(run, []string{"broken", "clashing", "clean"}, 4, func(name string, _, _ func(string, ...any)) (*engine.Result, error) {
@@ -444,7 +444,7 @@ func TestApplyAllSingleConfigMatchesNamedApply(t *testing.T) {
 // TestApplyAllSingleConfigFailureMatchesNamedApply: on failure too, the named apply (settled by
 // emit) and --all (settled by the aggregator) emit the same document.
 func TestApplyAllSingleConfigFailureMatchesNamedApply(t *testing.T) {
-	failure := errors.New("generation commit failed")
+	failure := errors.New("cannot run nix-env --set (/state/nix/profiles/layat/default/profile): exit status 1")
 	// A commit failure has a result but no failed target, so it is subject-borne on both paths.
 	newRes := func() *engine.Result {
 		res := placedResult("default")
@@ -625,7 +625,7 @@ func TestGitignoreAllWiring(t *testing.T) {
 
 	t.Run("a mid-enumeration failure lands on its own subject", func(t *testing.T) {
 		run, buf := newGitignoreTestRun()
-		failure := errors.New("nix build failed")
+		failure := errors.New("cannot run nix build (/src/proj#layat.x86_64-linux.broken): exit status 1")
 		err := enumerateGitignoreAll(run, []string{"docs", "broken", "later"}, func(name string) ([]string, error) {
 			if name == "broken" {
 				return nil, failure

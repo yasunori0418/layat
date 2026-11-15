@@ -29,8 +29,8 @@ func TestStderrLineForms(t *testing.T) {
 	}{
 		{"notice", func(b *bytes.Buffer) { noticef(b, "reset %s done (root=%s)", "a", "/r") },
 			"layat: reset a done (root=/r)\n"},
-		{"warning", func(b *bytes.Buffer) { warnf(b, "skipping the system profile base (%s): %v", "/s", errors.New("boom")) },
-			"layat: warning: skipping the system profile base (/s): boom\n"},
+		{"warning", func(b *bytes.Buffer) { warnf(b, "skipping the system profile base: %v", errors.New("boom")) },
+			"layat: warning: skipping the system profile base: boom\n"},
 		{"failure", func(b *bytes.Buffer) { printFailure(b, "apply a failed", errors.New("boom")) },
 			"layat: apply a failed: boom\n"},
 		{"skip notice", func(b *bytes.Buffer) { skipNotice(b, "a") },
@@ -117,7 +117,7 @@ func TestPrintErrorPrefix(t *testing.T) {
 		{"several %w", fmt.Errorf("x: %w, %w", errors.New("a"), errors.New("b")), "layat: x: a, b\n"},
 		{"exit code", &exitError{code: 1, msg: "apply --all: 1 config(s) failed"}, "layat: apply --all: 1 config(s) failed\n"},
 		{"generator", fmt.Errorf("ctx: %w", generator.NewError(generator.NameNix, generator.StageBuild, generator.KindFailed,
-			"nix build failed: exit status 1", "see above", "error: boom", nil)), "layat: nix build failed: exit status 1\nsee above\n"},
+			"cannot run nix build (/src/proj#layat.x86_64-linux.default): exit status 1", "see above", "error: boom", nil)), "layat: cannot run nix build (/src/proj#layat.x86_64-linux.default): exit status 1\nsee above\n"},
 	}
 	withDebug(t, false)
 	for _, c := range cases {
@@ -420,7 +420,7 @@ func TestEngineWarningsReachStderrAsWarnings(t *testing.T) {
 			if opts.Warnf == nil {
 				t.Fatal("the CLI passed no Warnf to the engine")
 			}
-			opts.Warnf("skipping the system record base (%s): %v", "/s", errors.New("boom"))
+			opts.Warnf("skipping the system record base: %v", errors.New("boom"))
 			return nil, nil
 		}
 		_, stderr := captureOutErr(t, func() {
