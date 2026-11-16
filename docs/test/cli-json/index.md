@@ -9,6 +9,7 @@
 * [破壊的操作の確認が対話性と同意フラグの組み合わせで決まり非対話で止まらない](./confirm-policy-interactivity.md) - 確認プロンプトを出すか、出さずに進むか、出さずに拒否するかが、対話性・同意フラグ・機械可読出力の指定の組み合わせで決まることを確かめる。
 * [engine 結果から item と change への写像がインベントリ全数と実差分に一致する](./engine-result-inventory-mapping.md) - engine の実行結果を JSON ペイロードへ写す規則が、実際に起きたことと一致することを確かめる。形ではなく内容を見る条件であり、適合チェッカの外側にある。
 * [エンベロープが全形状で outturn 適合を保ち subject 件数で形が揺れない](./envelope-shape-conformance.md) - emit した文書を outturn の適合チェッカ（正とする定義として embed した schema と、schema 外の lint）へ通し、出現しうる全形状で適合することを確かめる。形状とは、subject の有無、成功と失敗、主体確立前の失敗と主体起因の失敗、conflict、および `--all` の subject 0 件 / 1 件 / 複数件である。
+* [fmt.Errorf と errors.New の書式に failed to の形が無い](./error-format-no-failed-to-shape.md) - internal/ と cmd/layat/ の非テストの Go で、fmt.Errorf と errors.New の第 1 引数の文字列リテラルに failed to の形が無いことを確かめる
 * [失敗が item と subject とトップレベルの正しい層に 1 度だけ載り原因で分類される](./error-layer-placement.md) - 失敗の帰属層が原因の性質で決まり、かつ 1 つの失敗が 1 つの層にしか載らないことを確かめる。
 * [layat: を含む文字列リテラルが stderr へ書く出力のファイルの外に無い](./error-prefix-only-at-output-boundary.md) - internal/ と cmd/layat/ の非テストの Go で、layat: を含む文字列リテラルが stderr へ書く出力のファイルだけにあることを確かめる
 * [終了コードの集約が優先順位に従い skip を失敗として数えない](./exit-code-aggregation.md) - 複数の対象を適用したときの終了コードが、個々の結果からの決めごとに従って決まることを確かめる。
@@ -48,5 +49,5 @@
 * [prune_test.go — prune の確認ポリシー・root パス一覧の提示・ストリーム排他と --json の形状](./prune-cli-test-go.md) - `cmd/layat/prune_test.go`
 * [reset_test.go — 確認ポリシーと出力ストリームの排他](./reset-test.md) - `cmd/layat/reset_test.go`
 * [status_test.go — status の subject 名・フィルタ・一致 0 件・ストリームの排他・--json の形・error 時の続行](./status-cli-test-go.md) - `cmd/layat/status_test.go`
-* [stderr_test.go — stderr の行の形・errors.Join の分け方・失敗の詳細の出口・layat: を含むリテラルの所在](./stderr-test.md) - cmd/layat/stderr_test.go が、stderr へ書く行の形と、layat: を含む文字列リテラルが出力のファイルの外に無いことを確かめる
+* [stderr_test.go — stderr の行の形・失敗の詳細と警告の配線・layat: を含むリテラルと msgPrefix の所在・failed to の形の検出](./stderr-test.md) - cmd/layat/stderr_test.go が、stderr へ書く行の形と失敗の詳細・警告の配線、layat: を含む文字列リテラルと msgPrefix の参照が出力のファイルの外に無いこと、エラーの書式に failed to の形が無いことを確かめる
 * [version_test.go — バージョンの供給元一致・--version の出力書式](./version-test.md) - `cmd/layat/version_test.go`

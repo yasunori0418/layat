@@ -222,6 +222,7 @@ type linePrefixWriter struct {
 	mid    bool // the last byte written was not a newline
 }
 
+//nolint:wrapcheck // nixgen writes through it best-effort and drops the error.
 func (p *linePrefixWriter) Write(b []byte) (int, error) {
 	out := make([]byte, 0, len(b)+len(p.prefix))
 	for _, c := range b {

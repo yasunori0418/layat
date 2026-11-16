@@ -151,7 +151,7 @@ func main() {
 	// the exit code.
 	if flagJSON && outturnReport.began() {
 		if emitErr := outturnReport.emit(err); emitErr != nil {
-			printFailure(os.Stderr, "cannot write the --json envelope", emitErr)
+			printError(os.Stderr, emitErr)
 			if err == nil {
 				// The command succeeded but the envelope was not written, so do not exit 0.
 				os.Exit(1)

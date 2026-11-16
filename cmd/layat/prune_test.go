@@ -50,7 +50,7 @@ func pruneFixture() *engine.PruneResult {
 					Dir:      "/state/nix/profiles/layat/cccc",
 				},
 				Reason: engine.PruneSkipLocked,
-				Detail: "profile directory is locked by another process",
+				Detail: "cannot acquire flock (/state/nix/profiles/layat/cccc/default): locked by another process",
 			},
 		},
 	}
@@ -324,7 +324,7 @@ func TestPruneRunDrivesTheEngine(t *testing.T) {
 		// A run that failed partway still reports the series already deleted.
 		withPruneTestState(t)
 		flagYes = true
-		failure := errors.New("cannot remove series done")
+		failure := errors.New("cannot remove series: remove /state/nix/profiles/layat/aaaa: directory not empty")
 		pruneFn = func(engine.PruneOptions) (*engine.PruneResult, error) { return result, failure }
 
 		run, buf := newPruneTestRun()

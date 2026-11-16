@@ -139,6 +139,8 @@ func (a *applier) unwind(origErr error) []string {
 }
 
 // undoOne performs the single inverse FS operation described by op.
+//
+//nolint:wrapcheck // unwind reports the error as an item that could not be restored.
 func undoOne(op undoOp) error {
 	switch op.kind {
 	case undoUnlinkNew:

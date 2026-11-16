@@ -116,9 +116,9 @@ func TestOutturnEnvelopeConformance(t *testing.T) {
 	}{
 		{name: "success with subject", subject: "default", wantStatus: "success", wantResults: 1},
 		{name: "success without subject", wantStatus: "success", wantResults: 0},
-		{name: "pre-subject failure", cmdErr: errors.New("no entrypoint found"),
+		{name: "pre-subject failure", cmdErr: errors.New("no flake.nix / shell.nix / default.nix in the CWD (/src/proj); specify one with -f"),
 			wantStatus: "error", wantResults: 0, wantTopErrs: true, wantCode: "E_LAYAT_FAILED"},
-		{name: "subject-borne failure", subject: "web", cmdErr: errors.New("build failed"),
+		{name: "subject-borne failure", subject: "web", cmdErr: errors.New("cannot run nix build (/src/proj#layat.x86_64-linux.web): exit status 1"),
 			wantStatus: "error", wantResults: 1, wantCode: "E_LAYAT_FAILED"},
 		{name: "lock failure", subject: "web", cmdErr: lock.ErrLocked,
 			wantStatus: "error", wantResults: 1, wantCode: "E_LOCK"},
@@ -228,8 +228,36 @@ func TestOutturnEmitWriteFailure(t *testing.T) {
 	r := &applyRun{now: fixedClock(time.Date(2026, 7, 19, 12, 0, 0, 0, time.UTC)), out: failingWriter{}}
 	r.begin("apply")
 	r.beginSubject("default")
-	if err := r.emit(nil); err == nil {
+	err := r.emit(nil)
+	if err == nil {
 		t.Fatal("emit must propagate the writer failure")
+	}
+	if want := "cannot write the --json envelope: "; !strings.HasPrefix(err.Error(), want) {
+		t.Errorf("emit error = %q, want prefix %q", err, want)
+	}
+}
+
+// unencodableInfo is an envelope info whose JSON encoding always fails.
+type unencodableInfo struct{}
+
+func (unencodableInfo) MarshalJSON() ([]byte, error) { return nil, errors.New("unencodable") }
+
+// TestOutturnEmitEncodeFailure: an envelope that cannot be encoded is an error from emit, and
+// nothing reaches the output.
+func TestOutturnEmitEncodeFailure(t *testing.T) {
+	var buf bytes.Buffer
+	r := &outturnRun[*applyResultInfo, unencodableInfo]{now: fixedClock(time.Date(2026, 7, 19, 12, 0, 0, 0, time.UTC)), out: &buf}
+	r.begin("apply")
+	r.beginSubject("default")
+	err := r.emit(nil)
+	if err == nil {
+		t.Fatal("emit must propagate the encode failure")
+	}
+	if want := "cannot encode the --json envelope: "; !strings.HasPrefix(err.Error(), want) {
+		t.Errorf("emit error = %q, want prefix %q", err, want)
+	}
+	if buf.Len() != 0 {
+		t.Errorf("emit wrote %q, want no output", buf.String())
 	}
 }
 
@@ -351,7 +379,7 @@ func TestClassifyErrorCodes(t *testing.T) {
 		{"permission beats the IO shape", &fs.PathError{Op: "open", Path: "/x", Err: fs.ErrPermission}, "E_PERMISSION"},
 		{"residual IO PathError", &fs.PathError{Op: "rmdir", Path: "/x", Err: syscall.ENOTEMPTY}, "E_IO"},
 		{"residual IO LinkError", &os.LinkError{Op: "symlink", Old: "/a", New: "/b", Err: syscall.EEXIST}, "E_IO"},
-		{"unclassified fallback", errors.New("generation commit failed"), "E_LAYAT_FAILED"},
+		{"unclassified fallback", errors.New("cannot run nix-env --set (/state/nix/profiles/layat/default/profile): exit status 1"), "E_LAYAT_FAILED"},
 		{"joined failures take the first element's code",
 			errors.Join(&fs.PathError{Op: "open", Path: "/x", Err: syscall.EACCES}, notExist), "E_PERMISSION"},
 		{"joined failures led by the lock", errors.Join(lock.ErrLocked, notExist), "E_LOCK"},
@@ -365,6 +393,9 @@ func TestClassifyErrorCodes(t *testing.T) {
 			}
 			if e.Message == "" {
 				t.Error("message must not be empty")
+			}
+			if _, joined := c.err.(interface{ Unwrap() []error }); joined && e.Message != c.err.Error() {
+				t.Errorf("Message = %q, want the joined error's text %q", e.Message, c.err.Error())
 			}
 		})
 	}

@@ -68,7 +68,7 @@ func TestListGenerationsJSONInfoGenerations(t *testing.T) {
 func TestListGenerationsJSONInfoAbsentWithoutListing(t *testing.T) {
 	r, buf := newListGenerationsTestRun()
 	r.beginSubject("home")
-	if err := r.emit(errors.New("list-generations is home mode only")); err != nil {
+	if err := r.emit(errors.New("list-generations is home / system mode only (layat.home has rootKind=\"project\")")); err != nil {
 		t.Fatalf("emit: %v", err)
 	}
 	assertNoInfoKeys(t, decodeEnvelope(t, buf))

@@ -1,19 +1,20 @@
 ---
 id: "CASE-9ab9c055-4929-4ca8-aef3-11dd816ddd15"
 type: test_case
-name: "stderr_test.go — stderr の行の形・errors.Join の分け方・失敗の詳細の出口・layat: を含むリテラルの所在"
-description: "cmd/layat/stderr_test.go が、stderr へ書く行の形と、layat: を含む文字列リテラルが出力のファイルの外に無いことを確かめる"
+name: "stderr_test.go — stderr の行の形・失敗の詳細と警告の配線・layat: を含むリテラルと msgPrefix の所在・failed to の形の検出"
+description: "cmd/layat/stderr_test.go が、stderr へ書く行の形と失敗の詳細・警告の配線、layat: を含む文字列リテラルと msgPrefix の参照が出力のファイルの外に無いこと、エラーの書式に failed to の形が無いことを確かめる"
 resource: "cmd/layat/stderr_test.go"
 status: stable
 covers:
   - "TC-cccd086a-5fb7-48d7-96ca-f4126e268396"
+  - "TC-a273033c-3693-44c0-93dd-c6bb646a5bfd"
 follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-15T00:19:28+09:00"
+  at: "2026-11-16T00:16:41+09:00"
 ---
-# stderr_test.go — stderr の行の形・errors.Join の分け方・失敗の詳細の出口・layat: を含むリテラルの所在
+# stderr_test.go — stderr の行の形・失敗の詳細と警告の配線・layat: を含むリテラルと msgPrefix の所在・failed to の形の検出
 
 ## 対象
 
@@ -36,7 +37,15 @@ generated:
 - **失敗の詳細の出口** — 偽の nix と Fake の世代 backend で apply と rollback を実際に駆動し、
   conflict の列挙と undo の報告が `layat: <文>` で出て `layat: warning:` で始まらないこと。
   apply では通常の engine の警告が `layat: warning: ` で始まること
+- **`--manifest` なしの apply の配線** — build が成功する偽の nix で `--manifest` なしの apply を
+  駆動し、conflict で止まる apply と FS の失敗で巻き戻る apply で、conflict の列挙と undo の報告が
+  `layat: <文>` で出て `layat: warning:` で始まらず、engine の警告が `layat: warning: ` で始まること。
+  `--dryrun` でも engine の警告が `layat: warning: ` で始まること
 - **engine の警告の配線** — reset（`--dryrun` の有無の両方）・status・prune を CLI から駆動し、
   engine が Warnf で出した警告が `layat: warning: ` で始まる行になること
 - **リテラルの所在** — `go/parser` で `internal/` と `cmd/layat/` の非テストの `.go` を読み、
-  `layat: ` を含む文字列リテラルが `stderr.go` の外に無いこと
+  `layat: ` を含む文字列リテラルが `stderr.go` の外に無いこと。`cmd/layat/` の非テストの `.go` で、
+  識別子 `msgPrefix` の参照が `stderr.go` の外に無いこと
+- **failed to の形の検出** — `go/parser` で `internal/` と `cmd/layat/` の非テストの `.go` を読み、
+  `fmt.Errorf` と `errors.New` の第 1 引数の文字列リテラルが `failed to ` で始まらず、` failed: ` を
+  含まず、` failed` で終わらないこと

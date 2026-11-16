@@ -98,6 +98,8 @@ func asidePath(targetAbs string) string {
 // copyTree natively copies src (file / directory / symlink) to dst, preserving mode while
 // adding owner-write (0o200). Symlinks inside the src tree are duplicated as symlinks
 // without deref.
+//
+//nolint:wrapcheck // placeCopies and recopyAll wrap the error with the source and target paths.
 func copyTree(src, dst string) error {
 	info, err := os.Lstat(src)
 	if err != nil {
@@ -139,6 +141,8 @@ func copyTree(src, dst string) error {
 }
 
 // copyFile copies a single file's contents, preserving mode and adding owner-write.
+//
+//nolint:wrapcheck // copyTree returns the error to its caller, which wraps it.
 func copyFile(src, dst string, mode os.FileMode) error {
 	in, err := os.Open(src)
 	if err != nil {
@@ -163,6 +167,8 @@ func copyFile(src, dst string, mode os.FileMode) error {
 }
 
 // copySymlink duplicates a symlink without deref, pointing at the same link target.
+//
+//nolint:wrapcheck // copyTree returns the error to its caller, which wraps it.
 func copySymlink(src, dst string) error {
 	target, err := os.Readlink(src)
 	if err != nil {

@@ -1,8 +1,8 @@
 ---
 id: "RISK-5a82656f-d1fa-4f71-8037-1daf307bfc95"
 type: risk
-name: "エラーの扱いが規約から外れ、stderr の行に layat: が二重に付くか、存在しない対象の判定を取りこぼす"
-description: "エラーの文字列に layat: が混ざると stderr の行で接頭辞が二重になり、os.Is* で判定すると wrap されたエラーで存在しない対象を見逃す"
+name: "エラーの扱いが規約から外れ、stderr の行に layat: が二重に付くか、存在しない対象の判定を取りこぼすか、エラーの文字列が書式から外れる"
+description: "エラーの文字列に layat: が混ざると stderr の行で接頭辞が二重になり、os.Is* で判定すると wrap されたエラーで存在しない対象を見逃し、failed to の形で書くとエラーの文字列が失敗の種類ごとの書式から外れる"
 likelihood: medium
 impact: medium
 level: medium
@@ -11,11 +11,12 @@ status: stable
 threatens:
   - "DSG-dae4180f-ffe0-4cbd-8bee-0bda331c8043"
   - "DSG-9f5f949f-8b0e-4679-8f70-e0901a3d63b8"
+  - "DSG-a45f92c5-89de-487f-8c93-60d3b509bad0"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-14T23:43:17+09:00"
+  at: "2026-11-16T00:16:41+09:00"
 ---
-# エラーの扱いが規約から外れ、stderr の行に layat: が二重に付くか、存在しない対象の判定を取りこぼす
+# エラーの扱いが規約から外れ、stderr の行に layat: が二重に付くか、存在しない対象の判定を取りこぼすか、エラーの文字列が書式から外れる
 
 ## リスク
 
@@ -33,17 +34,24 @@ status の行では、見出しの `layat: apply <name> failed:` に続くエラ
 wrap されたエラーに `os.IsNotExist` などの `os.Is*` を当てると、連鎖をたどらないので、存在しない
 対象を存在しないと判定できない。存在しないときに続行するはずの処理が、失敗として止まる。
 この向きは lint が検出する
-（→ [golangci-lint でエラー処理の規約を検出する](../adr/golangci-lint-enforces-error-conventions.md)）。
+（→ [golangci-lint に wrapcheck を加え、包まずに返すヘルパーは理由つきの nolint で外す](../adr/golangci-lint-adds-wrapcheck-with-reasoned-nolint.md)）。
+
+3 つ目の向きは書式の逸脱である。エラーの文字列は失敗の種類ごとの書式で書き、失敗は `cannot <op>` で書く
+（→ [エラーの文字列は失敗の種類ごとの書式で書き、括弧の対象は原因が対象を持たないときだけ添える](../design/error-message-format-by-failure-kind.md)）。
+`failed to <op>` や `<op> failed: <原因>` の形で書くと、同じ種類の失敗が箇所ごとに違う形の文で出る。
+この形はほかの言語やライブラリで広く使われているので、新しい失敗を加えるときに書き慣れた形として
+入り込みやすい。
 
 ## 影響
 
-二重の接頭辞は出力の形が崩れるだけで、配置の結果は変わらない。`--json` の message を照合する
+二重の接頭辞と書式の逸脱は出力の形が崩れるだけで、配置の結果は変わらない。`--json` の message を照合する
 側は、接頭辞を含めた文字列で比べていれば食い違う。判定の取りこぼしは、存在しない対象を前にした
 apply や reset を失敗として止めうる。どちらも利用者の環境を壊さず、修正後の layat で再実行すれば
-回復するので impact を medium とする。どちらの向きも、出力を読むまで気付かれにくい。
+回復するので impact を medium とする。どの向きも、出力を読むまで気付かれにくい。
 
 likelihood を medium とするのは、エラーを作る箇所が多く、新しい失敗を足すたびに入り込む
 余地がある一方で、`layat:` を含む文字列リテラルは
 [layat: を含む文字列リテラルが stderr へ書く出力のファイルの外に無い](../test/cli-json/error-prefix-only-at-output-boundary.md) を確かめるテストが、
-`os.Is*` は lint が、どちらも機械的に止めるため。文字列リテラルを組み立てて `layat:` を作る
-書き方は、この検出の外に残る。
+`failed to` の形は [fmt.Errorf と errors.New の書式に failed to の形が無い](../test/cli-json/error-format-no-failed-to-shape.md) を確かめるテストが、
+`os.Is*` は lint が、それぞれ機械的に止めるため。`"lay" + "at: "` のようにリテラルを割って
+`layat:` を作る書き方は、この検出の外に残る。

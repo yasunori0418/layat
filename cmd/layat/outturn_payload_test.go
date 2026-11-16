@@ -132,7 +132,7 @@ func TestMutationSeatInfoKeysStayAbsent(t *testing.T) {
 	t.Run("apply without payload", func(t *testing.T) {
 		r, buf := newApplyTestRun()
 		r.beginSubject("default")
-		if err := r.emit(errors.New("no entrypoint found")); err != nil {
+		if err := r.emit(errors.New("no flake.nix / shell.nix / default.nix in the CWD (/src/proj); specify one with -f")); err != nil {
 			t.Fatalf("emit: %v", err)
 		}
 		assertNoInfoKeys(t, decodeEnvelope(t, buf))
@@ -360,7 +360,7 @@ func TestMutationPayloadRollbackGeneration(t *testing.T) {
 
 	// A failed rollback pins the pointer at the unmoved current generation.
 	rr.GenBefore, rr.GenAfter = ip(5), ip(5)
-	p, err = mutationPayload[*rollbackResultInfo](&rr.Result, errors.New("failed to move the profile pointer"))
+	p, err = mutationPayload[*rollbackResultInfo](&rr.Result, errors.New("cannot run nix-env --switch-generation 4 (/state/nix/profiles/layat/default/profile): exit status 1"))
 	if err != nil {
 		t.Fatalf("mutationPayload: %v", err)
 	}
@@ -618,7 +618,7 @@ func TestMutationPayloadSubjectBorneFailure(t *testing.T) {
 		Placed:   []string{"a"},
 		GenAfter: ip(2), GenBefore: ip(2),
 	}
-	cmdErr := errors.New("generation commit failed: exit status 1")
+	cmdErr := errors.New("cannot run nix-env --set (/state/nix/profiles/layat/default/profile): exit status 1")
 	p, err := mutationPayload[*applyResultInfo](res, cmdErr)
 	if err != nil {
 		t.Fatalf("mutationPayload: %v", err)

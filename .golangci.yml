@@ -8,6 +8,7 @@ linters:
     - nilerr
     - errname
     - nolintlint
+    - wrapcheck
   settings:
     forbidigo:
       analyze-types: true
@@ -18,8 +19,18 @@ linters:
       require-explanation: true
       require-specific: true
       allow-unused: false
+    wrapcheck:
+      ignore-package-globs:
+        - github.com/yasunori0418/layat/*
   exclusions:
     warn-unused: true
+    rules:
+      - path: _test\.go
+        linters:
+          - wrapcheck
+      - path: internal/generation/fake\.go
+        linters:
+          - wrapcheck
 
 issues:
   max-issues-per-linter: 0

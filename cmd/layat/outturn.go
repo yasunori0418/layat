@@ -37,7 +37,11 @@ type (
 // entryItemID derives the outturn item id for a placement entry: kind="entry", key={target}
 // (root-relative target only; the config name stays out of the key).
 func entryItemID(target string) (string, error) {
-	return outturn.DeriveID(outturn.Identity{Kind: "entry", Key: map[string]any{"target": target}})
+	id, err := outturn.DeriveID(outturn.Identity{Kind: "entry", Key: map[string]any{"target": target}})
+	if err != nil {
+		return "", fmt.Errorf("cannot derive the item id (%s): %w", target, err)
+	}
+	return id, nil
 }
 
 // outturnTimestamp renders t as RFC 3339 with an explicit offset for startedAt / finishedAt.
@@ -199,10 +203,12 @@ func (r *outturnRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 
 	data, err := json.Marshal(env)
 	if err != nil {
-		return err
+		return fmt.Errorf("cannot encode the --json envelope: %w", err)
 	}
-	_, err = fmt.Fprintf(r.out, "%s\n", data)
-	return err
+	if _, err := fmt.Fprintf(r.out, "%s\n", data); err != nil {
+		return fmt.Errorf("cannot write the --json envelope: %w", err)
+	}
+	return nil
 }
 
 // classifyError maps a command failure onto an outturn error code: E_INPUT, E_LAYAT_COLLISION,

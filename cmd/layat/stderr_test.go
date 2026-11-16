@@ -29,8 +29,8 @@ func TestStderrLineForms(t *testing.T) {
 	}{
 		{"notice", func(b *bytes.Buffer) { noticef(b, "reset %s done (root=%s)", "a", "/r") },
 			"layat: reset a done (root=/r)\n"},
-		{"warning", func(b *bytes.Buffer) { warnf(b, "skipping the system profile base (%s): %v", "/s", errors.New("boom")) },
-			"layat: warning: skipping the system profile base (/s): boom\n"},
+		{"warning", func(b *bytes.Buffer) { warnf(b, "skipping the system profile base: %v", errors.New("boom")) },
+			"layat: warning: skipping the system profile base: boom\n"},
 		{"failure", func(b *bytes.Buffer) { printFailure(b, "apply a failed", errors.New("boom")) },
 			"layat: apply a failed: boom\n"},
 		{"skip notice", func(b *bytes.Buffer) { skipNotice(b, "a") },
@@ -117,7 +117,7 @@ func TestPrintErrorPrefix(t *testing.T) {
 		{"several %w", fmt.Errorf("x: %w, %w", errors.New("a"), errors.New("b")), "layat: x: a, b\n"},
 		{"exit code", &exitError{code: 1, msg: "apply --all: 1 config(s) failed"}, "layat: apply --all: 1 config(s) failed\n"},
 		{"generator", fmt.Errorf("ctx: %w", generator.NewError(generator.NameNix, generator.StageBuild, generator.KindFailed,
-			"nix build failed: exit status 1", "see above", "error: boom", nil)), "layat: nix build failed: exit status 1\nsee above\n"},
+			"cannot run nix build (/src/proj#layat.x86_64-linux.default): exit status 1", "see above", "error: boom", nil)), "layat: cannot run nix build (/src/proj#layat.x86_64-linux.default): exit status 1\nsee above\n"},
 	}
 	withDebug(t, false)
 	for _, c := range cases {
@@ -297,6 +297,88 @@ func TestFailureDetailsAreNotWarnings(t *testing.T) {
 	})
 }
 
+// stubNixBuilds puts a fake nix first on PATH whose eval prints "home" and whose build succeeds
+// with linkFarm as the output: `--out-link <p>` links p to linkFarm, and without it linkFarm is
+// printed.
+func stubNixBuilds(t *testing.T, linkFarm string) {
+	t.Helper()
+	bin := t.TempDir()
+	script := "#!/bin/sh\n" +
+		"case \"$1\" in\n" +
+		"eval) printf home;;\n" +
+		"build) out=''\n" +
+		"  while [ $# -gt 0 ]; do\n" +
+		"    if [ \"$1\" = --out-link ]; then out=\"$2\"; fi\n" +
+		"    shift\n" +
+		"  done\n" +
+		"  if [ -n \"$out\" ]; then ln -sfn '" + linkFarm + "' \"$out\"; else echo '" + linkFarm + "'; fi;;\n" +
+		"*) echo 'error: stub nix: unexpected command' >&2; exit 1;;\n" +
+		"esac\n"
+	if err := os.WriteFile(filepath.Join(bin, "nix"), []byte(script), 0o755); err != nil {
+		t.Fatalf("write nix stub: %v", err)
+	}
+	t.Setenv("PATH", bin+string(os.PathListSeparator)+os.Getenv("PATH"))
+}
+
+// TestApplyWithoutManifestWiresWarnfAndReportf drives apply without --manifest through a stub nix
+// whose build succeeds, checking that the conflict listing and the undo report reach stderr
+// through Reportf and that engine warnings reach it through Warnf, with and without --dryrun.
+func TestApplyWithoutManifestWiresWarnfAndReportf(t *testing.T) {
+	src := t.TempDir()
+	if err := os.WriteFile(filepath.Join(src, "f"), []byte("x"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	entry := func(target string) manifest.Entry {
+		return manifest.Entry{SrcKind: "store", Src: src, Subpath: "f", Target: target, Method: "symlink"}
+	}
+	applyBuilt := func(t *testing.T, dryrun bool, entries ...manifest.Entry) (string, error) {
+		t.Helper()
+		stubNixBuilds(t, writeTestLinkFarm(t, entries...))
+		origDryrun := flagDryrun
+		t.Cleanup(func() { flagDryrun = origDryrun })
+		flagDryrun = dryrun
+		var err error
+		_, stderr := captureOutErr(t, func() {
+			run, _ := newApplyTestRun()
+			err = runApply(run, "c")
+		})
+		return stderr, err
+	}
+
+	t.Run("apply conflict", func(t *testing.T) {
+		root := cliEngineSetup(t)
+		if err := os.WriteFile(filepath.Join(root, ".a"), []byte("foreign"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		stderr, err := applyBuilt(t, false, entry(".a"))
+		if err == nil {
+			t.Fatal("apply succeeded, want a conflict stop")
+		}
+		assertFailureDetailsNotWarnings(t, stderr, "conflict: ", "  → ")
+		assertEngineWarning(t, stderr)
+	})
+
+	t.Run("apply undo", func(t *testing.T) {
+		root := cliEngineSetup(t)
+		readOnlyDir(t, filepath.Join(root, "ro"))
+		stderr, err := applyBuilt(t, false, entry(".a"), entry("ro/leaf"))
+		if err == nil {
+			t.Fatal("apply succeeded, want an FS failure")
+		}
+		assertFailureDetailsNotWarnings(t, stderr, "rolled back this run's filesystem changes")
+		assertEngineWarning(t, stderr)
+	})
+
+	t.Run("--dryrun", func(t *testing.T) {
+		root := cliEngineSetup(t)
+		if err := os.WriteFile(filepath.Join(root, ".a"), []byte("foreign"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		stderr, _ := applyBuilt(t, true, entry(".a"))
+		assertEngineWarning(t, stderr)
+	})
+}
+
 // TestEngineWarningsReachStderrAsWarnings drives reset, status and prune through the CLI and checks
 // that a warning the engine emits through Warnf reaches stderr as a "layat: warning: <text>" line.
 func TestEngineWarningsReachStderrAsWarnings(t *testing.T) {
@@ -340,7 +422,7 @@ func TestEngineWarningsReachStderrAsWarnings(t *testing.T) {
 			if opts.Warnf == nil {
 				t.Fatal("the CLI passed no Warnf to the engine")
 			}
-			opts.Warnf("skipping the system record base (%s): %v", "/s", errors.New("boom"))
+			opts.Warnf("skipping the system record base: %v", errors.New("boom"))
 			return nil, nil
 		}
 		_, stderr := captureOutErr(t, func() {
@@ -391,8 +473,8 @@ func findProfileLink(t *testing.T, base string) string {
 }
 
 // TestPrefixLiteralsOnlyInStderrFile checks that no string literal in the non-test Go of internal/
-// and cmd/layat/ holds "layat: ", except in stderr.go: the prefix is added only where stderr is
-// written.
+// and cmd/layat/ holds "layat: ", and that no non-test Go of cmd/layat/ refers to msgPrefix, except
+// in stderr.go: the prefix is added only where stderr is written.
 func TestPrefixLiteralsOnlyInStderrFile(t *testing.T) {
 	fset := token.NewFileSet()
 	var found []string
@@ -410,6 +492,10 @@ func TestPrefixLiteralsOnlyInStderrFile(t *testing.T) {
 				return err
 			}
 			ast.Inspect(f, func(n ast.Node) bool {
+				if id, ok := n.(*ast.Ident); ok && dir == "." && id.Name == "msgPrefix" {
+					found = append(found, fmt.Sprintf("%s: %s", fset.Position(id.Pos()), id.Name))
+					return true
+				}
 				lit, ok := n.(*ast.BasicLit)
 				if !ok || lit.Kind != token.STRING {
 					return true
@@ -431,6 +517,66 @@ func TestPrefixLiteralsOnlyInStderrFile(t *testing.T) {
 		}
 	}
 	for _, f := range found {
-		t.Errorf("string literal holds \"layat: \" outside stderr.go: %s", f)
+		t.Errorf("\"layat: \" literal or msgPrefix reference outside stderr.go: %s", f)
+	}
+}
+
+// TestNoFailedToShapeInErrorFormats checks the first argument of every fmt.Errorf and errors.New
+// call in the non-test Go of internal/ and cmd/layat/: a string literal there must not start with
+// "failed to ", contain " failed: ", or end with " failed".
+func TestNoFailedToShapeInErrorFormats(t *testing.T) {
+	// isErrorFormatCall reports whether fun is fmt.Errorf or errors.New.
+	isErrorFormatCall := func(fun ast.Expr) bool {
+		sel, ok := fun.(*ast.SelectorExpr)
+		if !ok {
+			return false
+		}
+		pkg, ok := sel.X.(*ast.Ident)
+		if !ok {
+			return false
+		}
+		return (pkg.Name == "fmt" && sel.Sel.Name == "Errorf") || (pkg.Name == "errors" && sel.Sel.Name == "New")
+	}
+	fset := token.NewFileSet()
+	var found []string
+	for _, dir := range []string{"../../internal", "."} {
+		err := filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if d.IsDir() || !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
+				return nil
+			}
+			f, err := parser.ParseFile(fset, path, nil, parser.SkipObjectResolution)
+			if err != nil {
+				return err
+			}
+			ast.Inspect(f, func(n ast.Node) bool {
+				call, ok := n.(*ast.CallExpr)
+				if !ok || len(call.Args) == 0 || !isErrorFormatCall(call.Fun) {
+					return true
+				}
+				lit, ok := call.Args[0].(*ast.BasicLit)
+				if !ok || lit.Kind != token.STRING {
+					return true
+				}
+				s, err := strconv.Unquote(lit.Value)
+				if err != nil {
+					t.Errorf("%s: cannot unquote %s: %v", fset.Position(lit.Pos()), lit.Value, err)
+					return true
+				}
+				if strings.HasPrefix(s, "failed to ") || strings.Contains(s, " failed: ") || strings.HasSuffix(s, " failed") {
+					found = append(found, fmt.Sprintf("%s: %s", fset.Position(lit.Pos()), lit.Value))
+				}
+				return true
+			})
+			return nil
+		})
+		if err != nil {
+			t.Fatalf("walk %s: %v", dir, err)
+		}
+	}
+	for _, f := range found {
+		t.Errorf("error string has the \"failed to\" shape: %s", f)
 	}
 }
