@@ -8,11 +8,12 @@ covers:
   - "TC-ddee6cc4-bc10-4107-bc7e-288a5fb62f1f"
   - "TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12"
   - "TC-b4a365cd-0b1c-40ff-92c6-91f6cffe8e98"
+  - "TC-a5eb7de3-a1a7-41ae-8fb9-c2aa374ac894"
 follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-15T00:19:28+09:00"
+  at: "2026-11-16T00:03:52+09:00"
 ---
 # apply_test.go — 終了コード集約・root フィルタ・退避行の出力
 
@@ -34,5 +35,11 @@ generated:
 - **退避の出力表現** — 計画に退避の行が出ること、詳細レポートに退避の行が出ること、退避だけが
   起きた実行を no-op と誤って報告しないこと、完全に空の結果は no-op のままであること
 - **ストリームの役割分離** — 計画は stdout、配置レポートは stderr へ出ること
+- **`--manifest` 付きの dryrun（conflict なし）** — `apply c --manifest <link-farm> --dryrun` が
+  エラーを返さず、stdout に `place` の行を出し、`--json` の items に配置する項目を載せること。root の
+  下に配置先を作らず、`XDG_STATE_HOME` の下に profile のリンクも `last-applied.json` も作らないこと
+- **`--manifest` 付きの dryrun（conflict あり）** — 終了コード 2 の型を返し、stdout に `conflict` の
+  行を出し、`--json` の items に conflict の項目を載せること。root の下の既存のファイルを変えないこと
 
+`--manifest` 付きの dryrun のテストは実際の engine を Fake の世代 backend で動かす。ほかのテストは
 適用の実装を関数注入で差し替え、nix を起動せずに集約と出力だけを検証する。
