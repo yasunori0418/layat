@@ -292,6 +292,8 @@ ENV_ORIGIN="$E2E_WORK/origin-mismatch.json"
 run_json 0 "$ENV_ORIGIN" apply home --manifest "$(jq -r .linkFarm "$RECORD")"
 assert_json "$ENV_ORIGIN" "subject 警告に W_LAYAT_ORIGIN_MISMATCH を含む" \
 	'[.results[0].warnings[]?.code] | index("W_LAYAT_ORIGIN_MISMATCH") != null'
+assert_json "$ENV_ORIGIN" "--manifest の実行は info に entrypoint も generator も記録しない" \
+	'(.info // {}) | (has("entrypoint") or has("generator")) | not'
 assert_symlink "$HOME/.cfg/b" "$ORIGIN_PLACED_BEFORE"
 assert_json "$RECORD" "後勝ちで記録の origin.generator が prebuilt になる" \
 	'.origin.generator == "prebuilt"'
