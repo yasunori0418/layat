@@ -13,7 +13,7 @@ import (
 	"github.com/yasunori0418/layat/internal/generator/nixgen"
 )
 
-// defaultTemplateRef is the fixed flake ref of init's templates. LAYAT_TEMPLATE_REF overrides it.
+// defaultTemplateRef is the fixed flake ref of init's templates; LAYAT_TEMPLATE_REF overrides it for tests.
 const defaultTemplateRef = "github:yasunori0418/layat"
 
 // initTemplates is the template names that init accepts (matching the output names in flake.templates).
@@ -43,7 +43,7 @@ func newInitCmd() *cobra.Command {
 			"template:\n" +
 			"  standalone  homeRoot example (places under $HOME)\n" +
 			"  project     projectRoot example + devShell + shellHook + .gitignore\n\n" +
-			"The template reference is a fixed ref (" + defaultTemplateRef + "). Override it with LAYAT_TEMPLATE_REF.\n" +
+			"The template reference is a fixed ref (" + defaultTemplateRef + ").\n" +
 			"Existing files are not overwritten (inherits nix flake init's behavior).",
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
