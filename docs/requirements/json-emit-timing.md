@@ -17,7 +17,8 @@ specification: |
   because whether `--json` was given cannot be determined at that point, and the exit code
   plus stderr SHALL be the signal instead. An execution with `--json` whose working
   directory cannot be obtained SHALL likewise emit no envelope, the subcommand not being
-  run, and SHALL exit with code 1 after writing the error to stderr. A failure to write the envelope itself (EPIPE
+  run, and SHALL exit with code 1 after writing the error to stderr; `help` and
+  `completion` are excluded, as they do not observe the working directory. A failure to write the envelope itself (EPIPE
   and the like) SHALL cause a non-zero exit even when the command itself succeeded, so
   that a missing document is not read as success.
 specification_ja: |
@@ -29,12 +30,13 @@ specification_ja: |
   なしとしなければならず（`--json` の指定有無をその時点で確定できないため）、終了コード +
   stderr をシグナルとしなければならない。`--json` で作業ディレクトリを取得できない実行も
   エンベロープなしとしなければならず、サブコマンドの処理を行わずに、stderr にエラーを書いて
-  終了コード 1 で終わらなければならない。エンベロープ書き込み自体の失敗（EPIPE 等）は
+  終了コード 1 で終わらなければならない。作業ディレクトリを観測しない `help` と `completion` は
+  これに当たらない。エンベロープ書き込み自体の失敗（EPIPE 等）は
   コマンド成功時でも
   非ゼロ終了にしなければならない（欠損文書を成功と読ませないため）。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:07:06+09:00"
+  at: "2026-11-18T23:52:39+09:00"
 ---
 # エンベロープはコマンド完了時に 1 回だけ出し成立条件を満たさない実行では出さない
 
@@ -48,6 +50,7 @@ generated:
 （`--json` の指定有無をその時点で確定できないため）で、終了コード + stderr がシグナル。
 `--json` で作業ディレクトリを取得できない実行もエンベロープなしで、サブコマンドの処理に入らず、
 stderr にエラーを書いて終了コード 1 で終わる（→ [--json のエンベロープは workingDirectory に実行時の作業ディレクトリの絶対パスを出す](json-working-directory.md)）。
+作業ディレクトリを観測しない `help` と `completion` はこれに当たらず、本文を出して成功する。
 エンベロープ書き込み自体の失敗（EPIPE 等）はコマンド成功時でも非ゼロ終了にする
 （欠損文書を成功と読ませない）。
 

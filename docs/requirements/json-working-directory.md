@@ -17,7 +17,11 @@ specification: |
   observe the working directory for `workingDirectory`. When the working directory cannot be obtained in an execution with `--json`,
   the CLI SHALL NOT run the subcommand, SHALL NOT emit an envelope, SHALL write
   `layat: cannot get the working directory: …` to stderr, and SHALL exit with code 1. The
-  CLI SHALL NOT substitute another value such as `$PWD` or an empty string.
+  CLI SHALL NOT substitute another value such as `$PWD` or an empty string. The
+  cobra-generated `help` and `completion`, including the shell subcommands of
+  `completion`, emit no envelope and SHALL NOT observe the working directory even with
+  `--json`; they SHALL print their own text and succeed even when the working directory
+  cannot be obtained.
 specification_ja: |
   `--json` 指定時、エンベロープのトップレベルは `workingDirectory` を持たなければならず、
   値は実行時の作業ディレクトリの絶対パスでなければならない。CLI は `workingDirectory` に出す
@@ -26,10 +30,13 @@ specification_ja: |
   付けない実行では、`workingDirectory` に出すための観測をしてはならない。`--json` を付けた実行で作業ディレクトリを
   取得できないとき、CLI はサブコマンドの処理を行ってはならず、エンベロープを出しては
   ならない。stderr に `layat: cannot get the working directory: …` を書き、終了コード 1 で
-  終わらなければならない。`$PWD` や空文字列などの代わりの値を出してはならない。
+  終わらなければならない。`$PWD` や空文字列などの代わりの値を出してはならない。cobra が自動生成する
+  `help` と `completion`（シェルごとのサブコマンドを含む）はエンベロープを出さないので、`--json` を
+  付けても作業ディレクトリを観測してはならず、作業ディレクトリを取得できない状態でも本文を出して
+  成功しなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:30:06+09:00"
+  at: "2026-11-18T23:52:39+09:00"
 ---
 # --json のエンベロープは workingDirectory に実行時の作業ディレクトリの絶対パスを出す
 
@@ -45,6 +52,10 @@ generated:
 エンベロープは出さず、stderr に `layat: cannot get the working directory: …` を書き、終了コード 1 で
 終わる。作業ディレクトリを使わないコマンド（status・prune など）も同じ扱いになる。`$PWD` や空文字列の
 ような代わりの値は出さない。
+
+cobra が自動生成する `help` と `completion`（シェルごとのサブコマンドを含む）は、エンベロープを出さないので
+`--json` を付けても作業ディレクトリを観測しない。作業ディレクトリを取得できない状態でも、今までどおり本文を
+出して成功する。
 
 outturn の schema が確かめるのは、`workingDirectory` が空でない文字列であることだけである。絶対パスで
 あることと、観測した値と同じであることは、layat のテストで確かめる。
