@@ -8,7 +8,7 @@ mitigates:
   - "RISK-7b73d79d-9ac0-4f2a-88e8-9e03a565d46f"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:33:16+09:00"
+  at: "2026-11-18T23:39:43+09:00"
 ---
 # outturn-validate が確かめない MUST を layat のテストで確かめる
 
@@ -16,7 +16,7 @@ generated:
 
 outturn の MUST のうち、適合の確認が確かめないものを、layat のテストで確かめる。
 
-- 値の一致: 一時ディレクトリを指す symlink のパスへ移ってから `--json` の実行を通しで行い、`workingDirectory` が絶対パスで、
+- 値の一致: 一時ディレクトリを指す symlink のパスへ移ってから `--json` を付けた実コマンドを最後まで実行し、`workingDirectory` が絶対パスで、
   テストが同じ時点で取得した作業ディレクトリと同じ文字列（symlink のパスのまま）であること
 - 取得できない実行: 作業ディレクトリを取得できない `--json` の実行が、サブコマンドの処理に入らず、
   stdout に 1 バイトも書かず、エラーの文が `cannot get the working directory: ` で始まり、終了コード 1 で
