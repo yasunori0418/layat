@@ -134,6 +134,7 @@
 * [--json の item id は subject スコープで導く](./subject-scoped-ids.md) - outturn は item の `id` を、identity（`{kind, key}`）を JCS で正規化して SHA-256 した値で導く。layat の entry は config ごとに独立していて、別の config に同じ target があることもある。key に何を含めるかで、id がどの範囲で一意になるかが決まる。 (stable)
 * [undo で戻せなかった target は `W_LAYAT_UNWIND_INCOMPLETE` で target ごとに報告し、`W_LAYAT_UNWOUND` は全部戻せたときだけ出す](./undo-partial-failure-reported-by-separate-code.md) - undo の巻き戻しで戻せなかった target は W_LAYAT_UNWIND_INCOMPLETE で target ごとに --json へ報告し、W_LAYAT_UNWOUND は journal の全件を戻せたときだけ出す (stable)
 * [-v で配置レポートを opt-in で出す](./verbose-opts-into-placement-report.md) - 成功時は、指定が無いときは何も出さない。それでも対話で使うときは、何が配置・除去・skip されたかを見たい場面がある。以前の `--verbose` は内部コマンドの開示を担っていて、配置の結果を詳しく見たいという用途と噛み合っていなかった。機械向けの `--json` を足すにあたり、人向けのレポートとの関係も決める必要があった。 (stable)
+* [workingDirectory はコマンドの処理の前に観測し、取得できない --json の実行はエンベロープを出さない](./working-directory-observed-before-run.md) - --json の実行では作業ディレクトリをフラグの解析の後・サブコマンドの処理の前に 1 度だけ観測して正規化せずに workingDirectory へ出し、取得できなければエンベロープを出さずに終了コード 1 で終わる (stable)
 
 ## 配置動作
 
