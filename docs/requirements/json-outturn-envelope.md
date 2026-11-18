@@ -42,7 +42,7 @@ specification_ja: |
   規約に準拠しなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:47:45+09:00"
+  at: "2026-11-18T23:55:09+09:00"
 ---
 # --json は outturn 規約準拠のエンベロープを出す第 2 契約とする
 

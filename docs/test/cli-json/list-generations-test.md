@@ -12,7 +12,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:58:00+09:00"
+  at: "2026-11-18T23:55:09+09:00"
 ---
 # list-generations_test.go — 世代一覧の info 表現と二重エンコードの禁止
 

@@ -13,7 +13,7 @@ impact: medium
 level: low
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:52:00+09:00"
+  at: "2026-11-18T23:55:09+09:00"
 ---
 # outturn-validate が確かめない MUST から外れても適合の確認では見つからない
 

@@ -8,7 +8,7 @@ mitigates:
   - "RISK-7b73d79d-9ac0-4f2a-88e8-9e03a565d46f"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:53:00+09:00"
+  at: "2026-11-18T23:55:09+09:00"
 ---
 # outturn-validate が確かめない MUST を layat のテストで確かめる
 

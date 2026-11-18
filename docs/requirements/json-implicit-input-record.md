@@ -43,7 +43,7 @@ specification_ja: |
   テンプレートの ref を記録してはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:46:43+09:00"
+  at: "2026-11-18T23:55:09+09:00"
 ---
 # --json のエンベロープは暗黙に解決した entrypoint・generator・root を info に記録する
 

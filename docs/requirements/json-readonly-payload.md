@@ -145,7 +145,7 @@ specification_ja: |
   してはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:49:00+09:00"
+  at: "2026-11-18T23:55:09+09:00"
 ---
 # 読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す
 

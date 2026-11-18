@@ -147,7 +147,7 @@ specification_ja: |
   出してはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:50:00+09:00"
+  at: "2026-11-18T23:55:09+09:00"
 ---
 # 変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く
 

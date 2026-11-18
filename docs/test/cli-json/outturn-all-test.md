@@ -15,7 +15,7 @@ follows:
   - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:58:00+09:00"
+  at: "2026-11-18T23:55:09+09:00"
 ---
 # outturn_all_test.go — --all の subject 件数不変性と部分失敗の非汚染
 
