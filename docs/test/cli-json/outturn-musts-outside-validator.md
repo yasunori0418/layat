@@ -8,7 +8,7 @@ mitigates:
   - "RISK-7b73d79d-9ac0-4f2a-88e8-9e03a565d46f"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:30:06+09:00"
+  at: "2026-11-18T23:33:16+09:00"
 ---
 # outturn-validate が確かめない MUST を layat のテストで確かめる
 
@@ -21,7 +21,7 @@ outturn の MUST のうち、適合の確認が確かめないものを、layat 
 - 取得できない実行: 作業ディレクトリを取得できない `--json` の実行が、サブコマンドの処理に入らず、
   stdout に 1 バイトも書かず、エラーの文が `cannot get the working directory: ` で始まり、終了コード 1 で
   終わること
-- 観測しない実行: `--json` を付けない実行が作業ディレクトリを観測しないこと
+- 観測しない実行: `--json` を付けない実行が、`workingDirectory` に出すための観測をしないこと
 - 実 nix での形: E2E の `--json` の出力の全てで、`workingDirectory` が文字列で `/` で始まること
 
 値の一致は Go テストだけで確かめ、E2E は絶対パスの形だけを確かめる。E2E の作業ディレクトリはシナリオごとに

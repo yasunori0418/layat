@@ -16,7 +16,7 @@ follows:
   - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:30:06+09:00"
+  at: "2026-11-18T23:33:16+09:00"
 ---
 # outturn_test.go — エンベロープ基礎形・id 導出・エラー分類・stdout 所有権
 
@@ -67,7 +67,7 @@ generated:
   `workingDirectory` が絶対パスで、テストが同じ時点で取得した作業ディレクトリと同じ文字列（symlink のパスのまま）であること。
   作業ディレクトリを取得できない `--json` の実行が run を開始せず、stdout に 1 バイトも書かず、
   エラーの文が `cannot get the working directory: ` で始まり、終了コードが 1 であること。`--json` を
-  付けない実行が作業ディレクトリを読まないこと
+  付けない実行が、`workingDirectory` に出すための作業ディレクトリの読み取りをしないこと
 
 表駆動の検証は固定クロック・固定の作業ディレクトリ・バッファを用い、時刻とホスト環境に依存しない
 （上の実コマンドの処理だけは実際の stdout と一時ディレクトリを使う）。他の CASE が使う run のコンストラクタと
