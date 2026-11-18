@@ -12,11 +12,16 @@ import (
 	"github.com/yasunori0418/layat/internal/engine"
 )
 
-// resetResultInfo / resetEnvInfo are reset's outturn info slots, reserved for future run facts and
-// held as nil pointers (see applyResultInfo).
+// resetResultInfo / resetEnvInfo are reset's result.info and envelope info, shaped and held as
+// apply's (see applyResultInfo).
 type (
-	resetResultInfo struct{}
-	resetEnvInfo    struct{}
+	resetResultInfo struct {
+		Root string `json:"root,omitempty"`
+	}
+	resetEnvInfo struct {
+		Entrypoint string `json:"entrypoint,omitempty"`
+		Generator  string `json:"generator,omitempty"`
+	}
 )
 
 // resetRun is reset's concrete run instantiation, threaded from RunE into runReset.
@@ -51,12 +56,23 @@ func newResetCmd() *cobra.Command {
 func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 	// The config name is the run's single outturn subject.
 	subject := run.beginSubject(name)
-	gen, err := newGenerator()
+	genName, err := selectGenerator()
 	if err != nil {
 		return err
 	}
+	// The top-level info records the generator and the entrypoint resolved without -f / --generator.
+	envInfo := &resetEnvInfo{}
+	if flagGenerator == "" {
+		envInfo.Generator = genName
+		run.setEnvelopeInfo(envInfo)
+	}
+	gen := newGeneratorTo(genName, os.Stderr)
 	if err := gen.Discover(flagFile); err != nil {
 		return err
+	}
+	if flagFile == "" {
+		envInfo.Entrypoint = gen.Entrypoint()
+		run.setEnvelopeInfo(envInfo)
 	}
 	root, err := gen.Roots(name)
 	if err != nil {
@@ -82,6 +98,7 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 			return err
 		}
 		attachResetPayload(subject, res, nil)
+		attachRootInfo(subject, res.RootKind, res.Root, func(root string) *resetResultInfo { return &resetResultInfo{Root: root} })
 		printResetPlan(res)
 		return nil
 	}
@@ -116,6 +133,7 @@ func runReset(run *resetRun, name string, targets []string, dryrun bool) error {
 	if res != nil {
 		// A partial result on failure still carries the changes made before the failure.
 		attachResetPayload(subject, res, err)
+		attachRootInfo(subject, res.RootKind, res.Root, func(root string) *resetResultInfo { return &resetResultInfo{Root: root} })
 	}
 	if err != nil {
 		return err

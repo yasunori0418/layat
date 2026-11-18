@@ -396,3 +396,143 @@ func TestApplyManifestDryRunIsReadOnly(t *testing.T) {
 		assertNoState(t)
 	})
 }
+
+// implicitInputProject moves into a fresh git repository holding flake.nix with -f, --generator,
+// --root and --manifest cleared, on the Fake backend. A fake nix first on PATH answers the
+// rootKind eval with kind, the batch eval with evalAll, and every build with a link-farm of
+// rootKind kind and no entries. It returns the repository's path.
+func implicitInputProject(t *testing.T, kind, evalAll string) string {
+	t.Helper()
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("git not available")
+	}
+	withFlakeEntrypoint(t)
+	installFakeBackend(t, "")
+	withManifestFlags(t, false)
+	flagFile, flagGenerator, flagRoot = "", "", ""
+	repo, err := filepath.EvalSymlinks(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if out, err := exec.Command("git", "init", repo).CombinedOutput(); err != nil {
+		t.Fatalf("git init: %v: %s", err, out)
+	}
+	if err := os.WriteFile(filepath.Join(repo, "flake.nix"), []byte("{}\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	t.Chdir(repo)
+
+	farm := writeRootKindLinkFarm(t, kind)
+	bin := t.TempDir()
+	data := filepath.Join(bin, "eval-all.json")
+	if err := os.WriteFile(data, []byte(evalAll), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	script := "#!/bin/sh\n" +
+		"case \"$1\" in\n" +
+		"eval) case \" $* \" in *' --apply '*) cat '" + data + "';; *) printf '" + kind + "';; esac;;\n" +
+		"build) case \" $* \" in\n" +
+		"  *' --out-link '*) prev=; for a; do [ \"$prev\" = --out-link ] && ln -s '" + farm + "' \"$a\"; prev=$a; done;;\n" +
+		"  *) echo '" + farm + "';;\n" +
+		"  esac;;\n" +
+		"*) exit 1;;\n" +
+		"esac\n"
+	if err := os.WriteFile(filepath.Join(bin, "nix"), []byte(script), 0o755); err != nil {
+		t.Fatalf("write nix stub: %v", err)
+	}
+	t.Setenv("PATH", bin+string(os.PathListSeparator)+os.Getenv("PATH"))
+	return repo
+}
+
+// envelopeInfo returns the envelope's top-level info and results[i].result.info, nil where absent.
+func envelopeInfo(t *testing.T, doc map[string]any, i int) (top, result map[string]any) {
+	t.Helper()
+	top, _ = doc["info"].(map[string]any)
+	results, _ := doc["results"].([]any)
+	if i >= len(results) {
+		t.Fatalf("results = %v, want an element at %d", results, i)
+	}
+	res, _ := results[i].(map[string]any)["result"].(map[string]any)
+	result, _ = res["info"].(map[string]any)
+	return top, result
+}
+
+// TestApplyImplicitInputRecord: apply records in info only the inputs it resolved itself. With
+// -f, --generator and --root all given there is no info at either level; with all three omitted
+// the top-level info holds the discovered entrypoint and the adopted generator and result.info
+// holds the git toplevel; --manifest records neither entrypoint nor generator but still the root.
+func TestApplyImplicitInputRecord(t *testing.T) {
+	apply := func(t *testing.T) map[string]any {
+		t.Helper()
+		run, buf := newApplyTestRun()
+		var err error
+		captureOutErr(t, func() { err = runApply(run, "c") })
+		if err != nil {
+			t.Fatalf("runApply: %v", err)
+		}
+		if err := run.emit(nil); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		return decodeEnvelope(t, buf)
+	}
+
+	t.Run("all given", func(t *testing.T) {
+		repo := implicitInputProject(t, manifest.RootKindProject, "")
+		flagFile, flagGenerator, flagRoot = repo, "nix", t.TempDir()
+		assertNoInfoKeys(t, apply(t))
+	})
+
+	t.Run("all omitted", func(t *testing.T) {
+		repo := implicitInputProject(t, manifest.RootKindProject, "")
+		top, result := envelopeInfo(t, apply(t), 0)
+		if top["entrypoint"] != repo || top["generator"] != "nix" || len(top) != 2 {
+			t.Errorf("info = %v, want {entrypoint: %s, generator: nix}", top, repo)
+		}
+		if result["root"] != repo || len(result) != 1 {
+			t.Errorf("result.info = %v, want {root: %s}", result, repo)
+		}
+	})
+
+	t.Run("dryrun with all omitted", func(t *testing.T) {
+		repo := implicitInputProject(t, manifest.RootKindProject, "")
+		flagDryrun = true
+		top, result := envelopeInfo(t, apply(t), 0)
+		if top["entrypoint"] != repo || top["generator"] != "nix" {
+			t.Errorf("info = %v, want the discovered entrypoint and nix", top)
+		}
+		if result["root"] != repo {
+			t.Errorf("result.info = %v, want {root: %s}", result, repo)
+		}
+	})
+
+	t.Run("--manifest", func(t *testing.T) {
+		repo := implicitInputProject(t, manifest.RootKindProject, "")
+		flagManifest = []string{writeRootKindLinkFarm(t, manifest.RootKindProject)}
+		doc := apply(t)
+		if v, ok := doc["info"]; ok {
+			t.Errorf("info = %v, want absent (--manifest discovers no entrypoint and selects no generator)", v)
+		}
+		if _, result := envelopeInfo(t, doc, 0); result["root"] != repo {
+			t.Errorf("result.info = %v, want {root: %s}", result, repo)
+		}
+	})
+
+	t.Run("--root given on a home config", func(t *testing.T) {
+		implicitInputProject(t, manifest.RootKindHome, "")
+		flagRoot = t.TempDir()
+		top, result := envelopeInfo(t, apply(t), 0)
+		if _, ok := top["entrypoint"]; !ok {
+			t.Errorf("info = %v, want entrypoint", top)
+		}
+		if result != nil {
+			t.Errorf("result.info = %v, want absent (--root is explicit)", result)
+		}
+	})
+
+	t.Run("home root", func(t *testing.T) {
+		implicitInputProject(t, manifest.RootKindHome, "")
+		if _, result := envelopeInfo(t, apply(t), 0); result["root"] != os.Getenv("HOME") {
+			t.Errorf("result.info = %v, want {root: $HOME}", result)
+		}
+	})
+}

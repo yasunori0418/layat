@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/yasunori0418/outturn/go/conformance"
+
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // TestGitignoreAnchor: a root-relative target becomes /-anchor form (leading /, no trailing /).
@@ -98,5 +100,37 @@ func TestGitignoreJSONEmptyPathsStaysArray(t *testing.T) {
 	}
 	if len(paths) != 0 {
 		t.Errorf("info.paths = %v, want []", paths)
+	}
+}
+
+// TestGitignoreImplicitInputRecord: gitignore records the discovered entrypoint and the adopted
+// generator in the top-level info, with or without --all, and never records a root.
+func TestGitignoreImplicitInputRecord(t *testing.T) {
+	for _, all := range []bool{false, true} {
+		t.Run(map[bool]string{false: "single", true: "--all"}[all], func(t *testing.T) {
+			repo := implicitInputProject(t, manifest.RootKindProject, `{"p":{"rootKind":"project","targets":[]}}`)
+			run, buf := newGitignoreTestRun()
+			var err error
+			captureOutErr(t, func() {
+				if all {
+					err = runGitignoreAll(run)
+				} else {
+					err = runGitignore(run, "p")
+				}
+			})
+			if err != nil {
+				t.Fatalf("gitignore: %v", err)
+			}
+			if err := run.emit(nil); err != nil {
+				t.Fatalf("emit: %v", err)
+			}
+			top, result := envelopeInfo(t, decodeEnvelope(t, buf), 0)
+			if top["entrypoint"] != repo || top["generator"] != "nix" || len(top) != 2 {
+				t.Errorf("info = %v, want {entrypoint: %s, generator: nix}", top, repo)
+			}
+			if _, ok := result["root"]; ok {
+				t.Errorf("result.info = %v, want no root", result)
+			}
+		})
 	}
 }

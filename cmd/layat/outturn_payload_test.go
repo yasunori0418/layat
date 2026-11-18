@@ -83,20 +83,20 @@ func emitPayloadDoc[TInfo, TEnvInfo any](t *testing.T, newRun func() (*outturnRu
 func assertNoInfoKeys(t *testing.T, doc map[string]any) {
 	t.Helper()
 	if v, ok := doc["info"]; ok {
-		t.Errorf("envelope info = %v, want the key absent (the seat type is a nil pointer)", v)
+		t.Errorf("envelope info = %v, want the key absent (no key to emit)", v)
 	}
 	results, _ := doc["results"].([]any)
 	for i, r := range results {
 		res, _ := r.(map[string]any)["result"].(map[string]any)
 		if v, ok := res["info"]; ok {
-			t.Errorf("results[%d].result.info = %v, want the key absent (the seat type is a nil pointer)", i, v)
+			t.Errorf("results[%d].result.info = %v, want the key absent (no key to emit)", i, v)
 		}
 	}
 }
 
-// TestMutationSeatInfoKeysStayAbsent: apply / reset / rollback emit no info key at either level,
-// with a payload and on the payload-less failure path.
-func TestMutationSeatInfoKeysStayAbsent(t *testing.T) {
+// TestMutationInfoAbsentWithoutKeys: an apply / reset / rollback run with no key to emit leaves
+// info out at both levels, with a payload and on the payload-less failure path.
+func TestMutationInfoAbsentWithoutKeys(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
 		Entries: []manifest.Entry{{SrcKind: "store", Src: "/nix/store/a", Target: "a", Method: "symlink"}},

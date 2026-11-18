@@ -67,10 +67,10 @@ func newRollbackTestRun() (*rollbackRun, *bytes.Buffer) {
 	return newTestRun[*rollbackResultInfo, *rollbackEnvInfo]("rollback")
 }
 func newListGenerationsTestRun() (*listGenerationsRun, *bytes.Buffer) {
-	return newTestRun[*generationsInfo, *struct{}]("list-generations")
+	return newTestRun[*generationsInfo, *listGenerationsEnvInfo]("list-generations")
 }
 func newGitignoreTestRun() (*gitignoreRun, *bytes.Buffer) {
-	return newTestRun[*gitignoreInfo, *struct{}]("gitignore")
+	return newTestRun[*gitignoreInfo, *gitignoreEnvInfo]("gitignore")
 }
 func newInitTestRun() (*initRun, *bytes.Buffer) {
 	return newTestRun[*struct{}, *initInfo]("init")
@@ -589,8 +589,11 @@ func TestJSONUtilityCommandsDoNotBegin(t *testing.T) {
 
 // TestJSONEndToEndSubjectBorneFailure runs apply in an entrypoint-less directory in-process: the
 // envelope is conformant, status error, with the error on results[0] and nothing else on stdout.
+// The generator was adopted before discovery failed, so the top-level info holds generator alone.
 func TestJSONEndToEndSubjectBorneFailure(t *testing.T) {
 	t.Chdir(t.TempDir())
+	t.Setenv(generatorEnv, "")
+	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
 	origReport := outturnReport
 	origJSON, origDryrun := flagJSON, flagDryrun
 	defer func() {
@@ -653,8 +656,13 @@ func TestJSONEndToEndSubjectBorneFailure(t *testing.T) {
 	if topErrs, ok := doc["errors"]; ok {
 		t.Errorf("top-level errors present = %v, want the failure attached to the subject", topErrs)
 	}
-	// No payload exists, so both info slots stay nil and are omitted.
-	assertNoInfoKeys(t, doc)
+	top, result := envelopeInfo(t, doc, 0)
+	if len(top) != 1 || top["generator"] != "nix" {
+		t.Errorf("info = %v, want {generator: nix} (discovery failed, so no entrypoint)", top)
+	}
+	if result != nil {
+		t.Errorf("result.info = %v, want absent (no root was resolved)", result)
+	}
 }
 
 // TestJSONWorkingDirectoryIsExecutionCWD runs apply --json in-process from a symlinked temporary

@@ -394,3 +394,42 @@ func TestListGenerationsAllScansSystemBase(t *testing.T) {
 		}
 	})
 }
+
+// TestListGenerationsImplicitInputRecord: list-generations <name> records the discovered
+// entrypoint and the adopted generator in the top-level info and, for a home config with --root
+// omitted, the resolved root beside info.mode; with -f and --generator given the top-level info
+// is absent.
+func TestListGenerationsImplicitInputRecord(t *testing.T) {
+	list := func(t *testing.T) map[string]any {
+		t.Helper()
+		makeHomeProfiles(t, newGenerationBackend(), "c")
+		run, buf := newListGenerationsTestRun()
+		var err error
+		captureOutErr(t, func() { err = runListGenerations(run, "c") })
+		if err != nil {
+			t.Fatalf("runListGenerations: %v", err)
+		}
+		if err := run.emit(nil); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		return decodeEnvelope(t, buf)
+	}
+	t.Run("all omitted", func(t *testing.T) {
+		repo := implicitInputProject(t, "home", "")
+		top, result := envelopeInfo(t, list(t), 0)
+		if top["entrypoint"] != repo || top["generator"] != "nix" || len(top) != 2 {
+			t.Errorf("info = %v, want {entrypoint: %s, generator: nix}", top, repo)
+		}
+		if result["root"] != os.Getenv("HOME") || result["mode"] != "home" {
+			t.Errorf("result.info = %v, want mode home and root $HOME", result)
+		}
+	})
+	t.Run("-f and --generator given", func(t *testing.T) {
+		repo := implicitInputProject(t, "home", "")
+		flagFile, flagGenerator = repo, "nix"
+		doc := list(t)
+		if v, ok := doc["info"]; ok {
+			t.Errorf("info = %v, want absent", v)
+		}
+	})
+}

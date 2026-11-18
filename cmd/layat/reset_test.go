@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/yasunori0418/layat/internal/engine"
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // TestConfirmPolicy: --yes / TTY state decide the confirmation, refusing a non-interactive
@@ -164,4 +165,38 @@ func captureOutErr(t *testing.T, f func()) (stdout, stderr string) {
 	_ = wErr.Close()
 	os.Stdout, os.Stderr = oldOut, oldErr
 	return <-outCh, <-errCh
+}
+
+// TestResetImplicitInputRecord: reset records the discovered entrypoint and the adopted generator
+// in the top-level info and the resolved project root in result.info, and records none of them
+// when -f, --generator and --root are given.
+func TestResetImplicitInputRecord(t *testing.T) {
+	reset := func(t *testing.T) map[string]any {
+		t.Helper()
+		run, buf := newResetTestRun()
+		var err error
+		captureOutErr(t, func() { err = runReset(run, "c", nil, true) })
+		if err != nil {
+			t.Fatalf("runReset: %v", err)
+		}
+		if err := run.emit(nil); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		return decodeEnvelope(t, buf)
+	}
+	t.Run("all omitted", func(t *testing.T) {
+		repo := implicitInputProject(t, manifest.RootKindProject, "")
+		top, result := envelopeInfo(t, reset(t), 0)
+		if top["entrypoint"] != repo || top["generator"] != "nix" || len(top) != 2 {
+			t.Errorf("info = %v, want {entrypoint: %s, generator: nix}", top, repo)
+		}
+		if result["root"] != repo || len(result) != 1 {
+			t.Errorf("result.info = %v, want {root: %s}", result, repo)
+		}
+	})
+	t.Run("all given", func(t *testing.T) {
+		repo := implicitInputProject(t, manifest.RootKindProject, "")
+		flagFile, flagGenerator, flagRoot = repo, "nix", t.TempDir()
+		assertNoInfoKeys(t, reset(t))
+	})
 }

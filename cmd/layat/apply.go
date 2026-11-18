@@ -24,11 +24,17 @@ var (
 	flagApplyJobsGiven bool // --jobs was given, even as 0; runApply rejects it without --all
 )
 
-// applyResultInfo / applyEnvInfo are apply's outturn info slots, reserved for future run facts.
-// They are held as nil pointers, so omitempty keeps them out of the document.
+// applyResultInfo / applyEnvInfo are apply's result.info and envelope info: the inputs the run
+// resolved implicitly. Each stays a nil pointer until it has a key, so a run with no key emits no
+// info.
 type (
-	applyResultInfo struct{}
-	applyEnvInfo    struct{}
+	applyResultInfo struct {
+		Root string `json:"root,omitempty"`
+	}
+	applyEnvInfo struct {
+		Entrypoint string `json:"entrypoint,omitempty"`
+		Generator  string `json:"generator,omitempty"`
+	}
 )
 
 // applyRun is apply's concrete run instantiation, threaded from RunE into the run functions.
@@ -121,6 +127,7 @@ func runApplyManifest(subject *applySubject, name string) error {
 			return err
 		}
 		attachMutationPayload(subject, res, nil)
+		attachRootInfo(subject, res.RootKind, res.Root, func(root string) *applyResultInfo { return &applyResultInfo{Root: root} })
 		printApplyPlan(res)
 		if len(res.Conflicts) > 0 {
 			return &exitError{code: 2}
@@ -146,6 +153,7 @@ func runApplyManifest(subject *applySubject, name string) error {
 	if res != nil {
 		// A partial result on failure still carries the reached items and the changes made.
 		attachMutationPayload(subject, res, err)
+		attachRootInfo(subject, res.RootKind, res.Root, func(root string) *applyResultInfo { return &applyResultInfo{Root: root} })
 	}
 	if err != nil {
 		if errors.Is(err, engine.ErrSkipped) {
@@ -185,9 +193,19 @@ func runApply(run *applyRun, name string) error {
 	if err != nil {
 		return err
 	}
+	// The top-level info records the generator and the entrypoint resolved without -f / --generator.
+	envInfo := &applyEnvInfo{}
+	if flagGenerator == "" {
+		envInfo.Generator = genName
+		run.setEnvelopeInfo(envInfo)
+	}
 	gen := newGeneratorTo(genName, os.Stderr)
 	if err := gen.Discover(flagFile); err != nil {
 		return err
+	}
+	if flagFile == "" {
+		envInfo.Entrypoint = gen.Entrypoint()
+		run.setEnvelopeInfo(envInfo)
 	}
 
 	// 1. Pre-resolve rootKind before build.
@@ -222,6 +240,7 @@ func runApply(run *applyRun, name string) error {
 		// The dryrun uses the real apply's payload builder. A conflict is item-borne, so cmdErr is nil
 		// and exit 2 is decided after the plan is printed.
 		attachMutationPayload(subject, res, nil)
+		attachRootInfo(subject, res.RootKind, res.Root, func(root string) *applyResultInfo { return &applyResultInfo{Root: root} })
 		printApplyPlan(res)
 		// Exit 2 if there are conflicts.
 		if len(res.Conflicts) > 0 {
@@ -235,6 +254,7 @@ func runApply(run *applyRun, name string) error {
 	if res != nil {
 		// A partial result on failure still carries the reached items and the changes made.
 		attachMutationPayload(subject, res, err)
+		attachRootInfo(subject, res.RootKind, res.Root, func(root string) *applyResultInfo { return &applyResultInfo{Root: root} })
 	}
 	if err != nil {
 		if errors.Is(err, engine.ErrSkipped) {
@@ -333,9 +353,20 @@ func runApplyAll(run *applyRun) error {
 	if err != nil {
 		return err
 	}
+	// The top-level info records, once, the generator and the entrypoint resolved without -f /
+	// --generator. --manifest neither selects a generator nor discovers an entrypoint.
+	envInfo := &applyEnvInfo{}
+	if len(flagManifest) == 0 && flagGenerator == "" {
+		envInfo.Generator = genName
+		run.setEnvelopeInfo(envInfo)
+	}
 	gen := newGeneratorTo(genName, os.Stderr)
 	if err := gen.Discover(flagFile); err != nil {
 		return err
+	}
+	if len(flagManifest) == 0 && flagFile == "" {
+		envInfo.Entrypoint = gen.Entrypoint()
+		run.setEnvelopeInfo(envInfo)
 	}
 
 	// 1. Get rootKind + targets of every config in a single batch eval.
@@ -610,6 +641,7 @@ func aggregateApply(run *applyRun, selected []string, jobs int, applyFn configAp
 		if res != nil {
 			// A partial result on failure still carries the reached items and the changes made.
 			attachMutationPayload(subject, res, err)
+			attachRootInfo(subject, res.RootKind, res.Root, func(root string) *applyResultInfo { return &applyResultInfo{Root: root} })
 		}
 		// A try-lock skip settles the subject as a success (exit 0).
 		subjectErr := err
@@ -673,6 +705,7 @@ func aggregateDryRun(run *applyRun, selected []string, jobs int, applyDry config
 			return
 		}
 		attachMutationPayload(subject, res, nil)
+		attachRootInfo(subject, res.RootKind, res.Root, func(root string) *applyResultInfo { return &applyResultInfo{Root: root} })
 		fprintApplyPlan(&o.out.stdout, res)
 		o.conflict = len(res.Conflicts) > 0
 		// A conflict is already item-borne, so the subject settles with no subject-level error.

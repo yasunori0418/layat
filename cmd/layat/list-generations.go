@@ -15,19 +15,28 @@ import (
 	"github.com/yasunori0418/layat/internal/paths"
 )
 
-// generationsInfo is list-generations' result.info: the profile's mode ("home" / "system") and the
-// generation inventory. It is a pointer so failures before the listing omit info.
+// generationsInfo is list-generations' result.info: the profile's mode ("home" / "system"), the
+// generation inventory, and the root when it was resolved implicitly. It is a pointer so failures
+// before the listing omit info.
 type generationsInfo struct {
 	Mode        string          `json:"mode"`
+	Root        string          `json:"root,omitempty"`
 	Generations []generationRow `json:"generations"`
 }
 
+// listGenerationsEnvInfo is list-generations' envelope info: the entrypoint and generator resolved
+// implicitly. It stays a nil pointer until it has a key.
+type listGenerationsEnvInfo struct {
+	Entrypoint string `json:"entrypoint,omitempty"`
+	Generator  string `json:"generator,omitempty"`
+}
+
 // listGenerationsRun is list-generations' concrete run instantiation, threaded from RunE.
-type listGenerationsRun = outturnRun[*generationsInfo, *struct{}]
+type listGenerationsRun = outturnRun[*generationsInfo, *listGenerationsEnvInfo]
 
 // beginListGenerationsRun starts list-generations' run.
 func beginListGenerationsRun(command string) *listGenerationsRun {
-	return beginOutturnRun[*generationsInfo, *struct{}](command)
+	return beginOutturnRun[*generationsInfo, *listGenerationsEnvInfo](command)
 }
 
 func newListGenerationsCmd() *cobra.Command {
@@ -62,12 +71,23 @@ func newListGenerationsCmd() *cobra.Command {
 func runListGenerations(run *listGenerationsRun, name string) error {
 	// The config name is the run's single outturn subject.
 	subject := run.beginSubject(name)
-	gen, err := newGenerator()
+	genName, err := selectGenerator()
 	if err != nil {
 		return err
 	}
+	// The top-level info records the generator and the entrypoint resolved without -f / --generator.
+	envInfo := &listGenerationsEnvInfo{}
+	if flagGenerator == "" {
+		envInfo.Generator = genName
+		run.setEnvelopeInfo(envInfo)
+	}
+	gen := newGeneratorTo(genName, os.Stderr)
 	if err := gen.Discover(flagFile); err != nil {
 		return err
+	}
+	if flagFile == "" {
+		envInfo.Entrypoint = gen.Entrypoint()
+		run.setEnvelopeInfo(envInfo)
 	}
 
 	root, err := gen.Roots(name)
@@ -80,7 +100,7 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 	}
 
 	backend := newGenerationBackend()
-	prof, _, err := engine.ProfileFor(engine.ProfileOptions{
+	prof, resolvedRoot, err := engine.ProfileFor(engine.ProfileOptions{
 		Name:         name,
 		RootKind:     rootKind,
 		FixedRoot:    fixedRoot,
@@ -96,7 +116,11 @@ func runListGenerations(run *listGenerationsRun, name string) error {
 		return err
 	}
 	// The listing rides result.info; items stays [] and the generation slot stays absent.
-	subject.setPayload(generationsPayload(rootKind, gens))
+	payload := generationsPayload(rootKind, gens)
+	if flagRoot == "" && rootKind == manifest.RootKindHome {
+		payload.info.Root = resolvedRoot
+	}
+	subject.setPayload(payload)
 	printGenerations(gens)
 	return nil
 }
