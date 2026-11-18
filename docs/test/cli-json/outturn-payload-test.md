@@ -15,7 +15,7 @@ follows:
   - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:55:09+09:00"
+  at: "2026-11-19T00:08:45+09:00"
 ---
 # outturn_payload_test.go — engine 結果からペイロードへの写像
 
@@ -65,6 +65,8 @@ generated:
   いない失敗では、どちらの警告も出ないこと
 - **`info` の非出力** — 出すキーが無い変更系の実行が、payload があってもなくても、エンベロープにも
   結果にも `info` キーを出さないこと
+- **root の記録の条件** — `result.info.root` を入れる処理が、`--root` を省いた project と home でだけ
+  root を入れ、system・fixed・`--root` を与えた実行・payload の無い主体では入れないこと
 - **世代一覧のモード** — `list-generations` の `info` が `generations` と並んで
   `mode`（`home` / `system`）を持ち、どちらでも適合を保つこと
 - **実 engine を通した処理** — 一時ディレクトリ上で実際にコミットまで実行し、同じ写像が

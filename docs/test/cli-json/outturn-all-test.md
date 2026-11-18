@@ -15,7 +15,7 @@ follows:
   - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:55:09+09:00"
+  at: "2026-11-19T00:08:45+09:00"
 ---
 # outturn_all_test.go — --all の subject 件数不変性と部分失敗の非汚染
 
@@ -43,7 +43,8 @@ generated:
   非対称で、config ごとに分離するのが機械可読側の契約）
 - **暗黙の入力の記録** — `-f`・`--generator`・`--root` を省いた `apply --all` が、`--dryrun` の有無に
   よらず、探索で見つけた entrypoint と採用した generator をトップの `info` に 1 度だけ、git の toplevel と
-  `$HOME` を project と home の主体の `result.info.root` に出すこと。`--manifest` の `--all` が
+  `$HOME` を project と home の主体の `result.info.root` に出すこと。3 つとも与えた `apply --all` が、
+  どちらの階層にも `info` を出さないこと。`--manifest` の `--all` が
   `entrypoint` と `generator` を出さずに `root` を出すこと
 
 集約の関数を直接駆動し、テスト側で配線を組み立て直さない。世代一覧は外部コマンドの stub を

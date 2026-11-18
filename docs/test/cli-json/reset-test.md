@@ -12,7 +12,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:55:09+09:00"
+  at: "2026-11-19T00:08:45+09:00"
 ---
 # reset_test.go — 確認ポリシーと出力ストリームの排他
 
@@ -33,6 +33,8 @@ generated:
   削除対象の提示は stderr へ出して stdout へは出さないこと
 - **暗黙の入力の記録** — `-f`・`--generator`・`--root` を省いた `reset --dryrun` が、探索で見つけた
   entrypoint と採用した generator をトップの `info` に、git の toplevel を `result.info.root` に出すこと。
-  3 つとも与えた実行では、どちらの階層にも `info` が無いこと
+  3 つとも与えた実行では、どちらの階層にも `info` が無いこと。`-f` だけを与えた実行の `info` が
+  `generator` だけであること。entrypoint の探索に失敗した実行でも、トップの `info` が `{generator: nix}` で、
+  `result.info` が無いこと
 
 標準入力をパイプで差し替えて対話性を作り、stdout と stderr を同時に捕捉して排他を確かめる。

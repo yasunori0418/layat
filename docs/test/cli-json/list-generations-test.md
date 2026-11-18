@@ -12,7 +12,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:55:09+09:00"
+  at: "2026-11-19T00:08:45+09:00"
 ---
 # list-generations_test.go — 世代一覧の info 表現と二重エンコードの禁止
 
@@ -44,7 +44,10 @@ generated:
   （root では Skip）
 - **暗黙の入力の記録** — `-f`・`--generator`・`--root` を省いた home の `list-generations <name>` が、
   探索で見つけた entrypoint と採用した generator をトップの `info` に出し、`result.info` に `mode` と並んで
-  `root`（`$HOME`）を出すこと。`-f` と `--generator` を与えた実行ではトップの `info` が無いこと
+  `root`（`$HOME`）を出すこと。`--root` を与えた home の実行と system の一覧では `root` が無いこと。
+  `-f` と `--generator` を与えた実行ではトップの `info` が無いこと。home の config を 2 回 apply して
+  `rollback` した実行が、探索で見つけた entrypoint と採用した generator をトップの `info` に、`$HOME` を
+  `result.info.root` に出すこと
 
 `info` の境界の扱いはパス列挙の CASE と対称であり、読み取り系コマンド全体で同じ規約が成り立つ
 ことをこの 2 ファイルで押さえている。

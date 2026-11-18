@@ -8,7 +8,7 @@ mitigates:
   - "RISK-7b73d79d-9ac0-4f2a-88e8-9e03a565d46f"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:55:09+09:00"
+  at: "2026-11-19T00:08:45+09:00"
 ---
 # outturn-validate が確かめない MUST を layat のテストで確かめる
 
@@ -28,7 +28,7 @@ outturn の MUST のうち、適合の確認が確かめないものを、layat 
 - 暗黙の入力の記録: `-f`・`--generator`・`--root` を省いた実行で、トップの `info` に探索で見つけた
   `entrypoint` と採用した `generator` が、`result.info` に解決した `root` があること。3 つとも与えた実行では、
   どちらの階層にも `info` が無いこと。`--manifest` の実行に `entrypoint` と `generator` が無いこと。
-  apply（`--all` と `--dryrun` を含む）・reset・list-generations の単発・gitignore のそれぞれで確かめ、
+  apply（`--all` と `--dryrun` を含む）・reset・rollback・list-generations の単発・gitignore のそれぞれで確かめ、
   `--all` では `entrypoint` と `generator` がトップに 1 度だけ、`root` が主体ごとにあること。探索に失敗した
   実行のトップの `info` が `generator` だけであること
 - 暗黙の入力の実 nix での形: E2E で、`-f` を省いた apply の `entrypoint` と `root` が `/` で始まる文字列で、
