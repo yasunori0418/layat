@@ -87,7 +87,7 @@ type Options struct {
 // Result is the result report of Apply (for dryrun / report display · test verification).
 type Result struct {
 	Root       string   // resolved absolute root path
-	RootKind   string   // the root kind the root was resolved with (Options.RootKind, else the manifest's)
+	RootKind   string   // Apply's root kind for Root (Options.RootKind, else the manifest's); Rollback leaves it ""
 	ProfileDir string   // the fixed profileDir
 	Profile    string   // the profile link (<profileDir>/profile) — the outturn generation.profile value
 	Placed     []string // newly placed symlink targets

@@ -91,6 +91,7 @@ func runRollback(run *rollbackRun, name string) error {
 	if res != nil {
 		// The From→To transition rides generation.before/after, also for a partial result.
 		attachMutationPayload(subject, &res.Result, err)
+		// engine.Rollback leaves Result.RootKind empty, so the eval-resolved rootKind decides.
 		attachRootInfo(subject, rootKind, res.Root, func(root string) *rollbackResultInfo { return &rollbackResultInfo{Root: root} })
 	}
 	if err != nil {
