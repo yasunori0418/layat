@@ -784,3 +784,42 @@ func TestJSONWorkingDirectoryNotObservedWithoutJSON(t *testing.T) {
 		t.Errorf("the working directory was read %d time(s), want none without --json", calls)
 	}
 }
+
+// TestJSONWorkingDirectoryNotObservedForHelpAndCompletion: cobra's help and completion emit no
+// envelope, so even with --json they never read the working directory and still print their text
+// when it cannot be obtained.
+func TestJSONWorkingDirectoryNotObservedForHelpAndCompletion(t *testing.T) {
+	for _, args := range [][]string{{"help", "--json"}, {"completion", "bash", "--json"}} {
+		t.Run(strings.Join(args, " "), func(t *testing.T) {
+			t.Chdir(t.TempDir())
+			origReport, origWorkDir, origGetwd := outturnReport, workingDirectory, getwd
+			origJSON, origDryrun := flagJSON, flagDryrun
+			defer func() {
+				outturnReport, workingDirectory, getwd = origReport, origWorkDir, origGetwd
+				flagJSON, flagDryrun = origJSON, origDryrun
+			}()
+			outturnReport = noopEmitter{}
+			calls := 0
+			getwd = func() (string, error) {
+				calls++
+				return "", syscall.ENOENT
+			}
+
+			var execErr error
+			out := captureStdout(t, func() {
+				root := newRootCmd()
+				root.SetArgs(args)
+				execErr = root.Execute()
+			})
+			if execErr != nil {
+				t.Errorf("Execute: %v, want success", execErr)
+			}
+			if calls != 0 {
+				t.Errorf("the working directory was read %d time(s), want none", calls)
+			}
+			if out == "" {
+				t.Error("stdout is empty, want the command's own text")
+			}
+		})
+	}
+}

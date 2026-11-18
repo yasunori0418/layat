@@ -111,9 +111,11 @@ func newRootCmd() *cobra.Command {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		// A --json run observes the working directory once, after flag parsing and before the
-		// subcommand. Failing here ends the run before RunE, so no envelope is emitted.
-		PersistentPreRunE: func(*cobra.Command, []string) error {
-			if !flagJSON {
+		// subcommand. Failing here ends the run before RunE, so no envelope is emitted. cobra's
+		// help and completion (and its shell subcommands) emit no envelope and skip it.
+		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
+			if !flagJSON || cmd.Name() == "help" || cmd.Name() == "completion" ||
+				(cmd.HasParent() && cmd.Parent().Name() == "completion") {
 				return nil
 			}
 			wd, err := getwd()
