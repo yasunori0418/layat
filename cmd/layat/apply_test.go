@@ -517,6 +517,24 @@ func TestApplyImplicitInputRecord(t *testing.T) {
 		}
 	})
 
+	t.Run("-f given", func(t *testing.T) {
+		repo := implicitInputProject(t, manifest.RootKindProject, "")
+		flagFile = repo
+		top, _ := envelopeInfo(t, apply(t), 0)
+		if len(top) != 1 || top["generator"] != "nix" {
+			t.Errorf("info = %v, want {generator: nix} (-f is explicit)", top)
+		}
+	})
+
+	t.Run("--generator given", func(t *testing.T) {
+		repo := implicitInputProject(t, manifest.RootKindProject, "")
+		flagGenerator = "nix"
+		top, _ := envelopeInfo(t, apply(t), 0)
+		if len(top) != 1 || top["entrypoint"] != repo {
+			t.Errorf("info = %v, want {entrypoint: %s} (--generator is explicit)", top, repo)
+		}
+	})
+
 	t.Run("--root given on a home config", func(t *testing.T) {
 		implicitInputProject(t, manifest.RootKindHome, "")
 		flagRoot = t.TempDir()

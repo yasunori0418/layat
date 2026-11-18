@@ -149,6 +149,41 @@ func subjectResultOf(t *testing.T, doc map[string]any) map[string]any {
 	return results[0].(map[string]any)
 }
 
+// TestAttachRootInfo: attachRootInfo records the root only for a project or home root with --root
+// omitted, and leaves a subject without a payload untouched.
+func TestAttachRootInfo(t *testing.T) {
+	origRoot := flagRoot
+	t.Cleanup(func() { flagRoot = origRoot })
+	info := func(root string) *applyResultInfo { return &applyResultInfo{Root: root} }
+	for _, tc := range []struct {
+		name, kind, flagRoot string
+		payload, want        bool
+	}{
+		{"project", manifest.RootKindProject, "", true, true},
+		{"home", manifest.RootKindHome, "", true, true},
+		{"system", manifest.RootKindSystem, "", true, false},
+		{"fixed", manifest.RootKindFixed, "", true, false},
+		{"--root given", manifest.RootKindHome, "/r", true, false},
+		{"no payload", manifest.RootKindHome, "", false, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			flagRoot = tc.flagRoot
+			s := &outturnSubject[*applyResultInfo]{}
+			if tc.payload {
+				s.setPayload(&outturnPayload[*applyResultInfo]{})
+			}
+			attachRootInfo(s, tc.kind, "/root", info)
+			got := s.payload != nil && s.payload.info != nil
+			if got != tc.want {
+				t.Fatalf("root recorded = %v, want %v", got, tc.want)
+			}
+			if got && s.payload.info.Root != "/root" {
+				t.Errorf("info.Root = %q, want /root", s.payload.info.Root)
+			}
+		})
+	}
+}
+
 // TestMutationPayloadFullInventory pins the success mapping: new and stale-removed entries as
 // items, diff-only changes, warnings on the warned item, and the generation (before omitted).
 func TestMutationPayloadFullInventory(t *testing.T) {

@@ -199,4 +199,31 @@ func TestResetImplicitInputRecord(t *testing.T) {
 		flagFile, flagGenerator, flagRoot = repo, "nix", t.TempDir()
 		assertNoInfoKeys(t, reset(t))
 	})
+	t.Run("-f given", func(t *testing.T) {
+		repo := implicitInputProject(t, manifest.RootKindProject, "")
+		flagFile = repo
+		if top, _ := envelopeInfo(t, reset(t), 0); len(top) != 1 || top["generator"] != "nix" {
+			t.Errorf("info = %v, want {generator: nix} (-f is explicit)", top)
+		}
+	})
+	t.Run("discovery fails", func(t *testing.T) {
+		implicitInputProject(t, manifest.RootKindProject, "")
+		t.Chdir(t.TempDir())
+		run, buf := newResetTestRun()
+		var err error
+		captureOutErr(t, func() { err = runReset(run, "c", nil, true) })
+		if err == nil {
+			t.Fatal("runReset in an entrypoint-less directory must fail")
+		}
+		if err := run.emit(err); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		top, result := envelopeInfo(t, decodeEnvelope(t, buf), 0)
+		if len(top) != 1 || top["generator"] != "nix" {
+			t.Errorf("info = %v, want {generator: nix} (the generator was adopted before discovery)", top)
+		}
+		if result != nil {
+			t.Errorf("result.info = %v, want absent", result)
+		}
+	})
 }

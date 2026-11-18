@@ -712,6 +712,11 @@ func TestApplyAllImplicitInputRecord(t *testing.T) {
 			}
 		})
 	}
+	t.Run("all given", func(t *testing.T) {
+		repo := implicitInputProject(t, manifest.RootKindProject, evalAll)
+		flagFile, flagGenerator, flagRoot = repo, "nix", t.TempDir()
+		assertNoInfoKeys(t, applyAll(t))
+	})
 	t.Run("--manifest", func(t *testing.T) {
 		repo := implicitInputProject(t, manifest.RootKindProject, evalAll)
 		withManifestFlags(t, true, "p="+writeRootKindLinkFarm(t, manifest.RootKindProject))
