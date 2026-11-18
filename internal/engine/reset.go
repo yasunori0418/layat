@@ -52,6 +52,7 @@ type ResetOptions struct {
 // ResetResult is the result of Reset (dryrun is a preview · at run time the actual deletion result).
 type ResetResult struct {
 	Root            string   // resolved absolute root
+	RootKind        string   // the root kind the root was resolved with
 	ProfileDir      string   // the fixed profileDir
 	RemovedSymlinks []string // removed (in dryrun, to-be-removed) symlink targets
 	RemovedCopies   []string // removed (in dryrun, to-be-removed) copy targets
@@ -110,7 +111,7 @@ func Reset(opts ResetOptions) (*ResetResult, error) {
 	if err != nil {
 		return nil, err
 	}
-	res := &ResetResult{Root: root, ProfileDir: prof.Dir, DryRun: opts.DryRun}
+	res := &ResetResult{Root: root, RootKind: opts.RootKind, ProfileDir: prof.Dir, DryRun: opts.DryRun}
 
 	// With neither a profile (the previous generation link) nor a record, apply has never run = a
 	// no-op with zero teardown targets.

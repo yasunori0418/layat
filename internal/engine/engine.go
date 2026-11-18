@@ -87,6 +87,7 @@ type Options struct {
 // Result is the result report of Apply (for dryrun / report display · test verification).
 type Result struct {
 	Root       string   // resolved absolute root path
+	RootKind   string   // the root kind the root was resolved with (Options.RootKind, else the manifest's)
 	ProfileDir string   // the fixed profileDir
 	Profile    string   // the profile link (<profileDir>/profile) — the outturn generation.profile value
 	Placed     []string // newly placed symlink targets
@@ -200,6 +201,7 @@ func Apply(opts Options) (*Result, error) {
 	}
 	a.root = root
 	a.result.Root = root
+	a.result.RootKind = rootKind
 	a.profile = prof
 	a.result.ProfileDir = a.profile.Dir
 	a.result.Profile = a.profile.Profile

@@ -158,6 +158,45 @@ func TestApplyRequiresBackend(t *testing.T) {
 	}
 }
 
+// TestResultRootKind verifies Apply and Reset report the root kind they resolved the root with:
+// Apply takes it from the manifest when Options.RootKind is empty, and from Options otherwise.
+func TestResultRootKind(t *testing.T) {
+	root := realTempDir(t)
+	state := realTempDir(t)
+	lf := writeLinkFarm(t, projectManifest(storeEntry(makeSrc(t, "x"), ".", "a")))
+	for _, tc := range []struct {
+		name, optKind, want string
+	}{
+		{"from the manifest", "", manifest.RootKindProject},
+		{"from Options", manifest.RootKindHome, manifest.RootKindHome},
+	} {
+		t.Run("apply "+tc.name, func(t *testing.T) {
+			res, err := Apply(Options{
+				LinkFarm: lf, Name: "c", RootKind: tc.optKind, RootOverride: root,
+				StateDir: state, DryRun: true, Backend: &generation.Fake{},
+			})
+			if err != nil {
+				t.Fatalf("Apply: %v", err)
+			}
+			if res.RootKind != tc.want {
+				t.Errorf("Result.RootKind = %q, want %q", res.RootKind, tc.want)
+			}
+		})
+	}
+	t.Run("reset", func(t *testing.T) {
+		res, err := Reset(ResetOptions{
+			Name: "c", RootKind: manifest.RootKindHome, RootOverride: root,
+			StateDir: state, DryRun: true, Backend: &generation.Fake{},
+		})
+		if err != nil {
+			t.Fatalf("Reset: %v", err)
+		}
+		if res.RootKind != manifest.RootKindHome {
+			t.Errorf("ResetResult.RootKind = %q, want %q", res.RootKind, manifest.RootKindHome)
+		}
+	})
+}
+
 // TestProfileForRequiresBackend verifies the shared profileDir resolution refuses a nil backend.
 func TestProfileForRequiresBackend(t *testing.T) {
 	_, _, err := ProfileFor(ProfileOptions{Name: "c", RootKind: manifest.RootKindHome, StateDir: realTempDir(t)})
