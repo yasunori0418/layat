@@ -20,7 +20,7 @@ references:
   - "ADR-6255a1ed-8df4-4230-b77d-cb9303a03e71"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:39:43+09:00"
+  at: "2026-11-18T23:52:39+09:00"
 ---
 # workingDirectory はコマンドの処理の前に観測し、取得できない --json の実行はエンベロープを出さない
 

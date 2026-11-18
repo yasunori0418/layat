@@ -36,7 +36,7 @@ specification_ja: |
   成功しなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:30:06+09:00"
+  at: "2026-11-18T23:52:39+09:00"
 ---
 # --json のエンベロープは workingDirectory に実行時の作業ディレクトリの絶対パスを出す
 
