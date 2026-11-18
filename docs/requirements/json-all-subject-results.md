@@ -13,7 +13,7 @@ specification: |
   identical to that of a single-config execution, and SHALL NOT carry any field that
   discriminates `--all`, a single execution being the N=1 special case rather than a
   different document. `specVersion` / `tool` / `command` / `dryRun` / `startedAt` /
-  `finishedAt` SHALL be placed once at the top level, so that an extracted `results[i]`
+  `finishedAt` / `workingDirectory` SHALL be placed once at the top level, so that an extracted `results[i]`
   SHALL NOT be a valid document on its own. The mapping rules for the contents of each
   `results[i]` SHALL be the same as for a single config, with no `--all`-specific mapping
   except that `list-generations --all` SHALL name each subject `<mode>:<name>`, since it
@@ -71,7 +71,7 @@ specification_ja: |
   `SubjectResult` を 1 つ `results[]` へ積まなければならない。形状は単一 config 実行と
   完全に同一とし、`--all` を判別するフィールドを持ってはならない（単一実行は N=1 の
   特殊形であって別文書ではない）。`specVersion` / `tool` / `command` / `dryRun` /
-  `startedAt` / `finishedAt` はトップに 1 度だけ置き、`results[i]` を切り出しても単独で
+  `startedAt` / `finishedAt` / `workingDirectory` はトップに 1 度だけ置き、`results[i]` を切り出しても単独で
   valid な文書にはならないようにしなければならない。各 `results[i]` の中身の写像規則は
   単一 config と同一でなければならず、`--all` 固有の写像を持ってはならない。ただし
   `list-generations --all` は同じ config 名を持ちうる 2 つの profile 基底を走査するため、
@@ -126,7 +126,7 @@ specification_ja: |
   （成功時は一致する）。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:32:25+09:00"
+  at: "2026-11-18T23:07:06+09:00"
 ---
 # --all は config ごとの SubjectResult を単一実行と同一形状で積む
 
@@ -136,7 +136,7 @@ generated:
 `gitignore --all`）: 選択した config ごとに `SubjectResult` を 1 つ `results[]` へ積む。
 **形状は単一 config 実行と完全に同一**で、`--all` を判別するフィールドは持たない
 （単一実行は N=1 の特殊形であって別文書ではない）。`specVersion` / `tool` / `command` /
-`dryRun` / `startedAt` / `finishedAt` はトップに 1 度だけ置き、`results[i]` を切り出しても
+`dryRun` / `startedAt` / `finishedAt` / `workingDirectory` はトップに 1 度だけ置き、`results[i]` を切り出しても
 単独で valid な文書にはならない。各 `results[i]` の中身（items / changes / generation /
 warnings / info）の写像規則は単一 config と同一で、`--all` 固有の写像は無い。例外は
 `list-generations --all` の subject 名で、2 つの profile 基底に同名 config がありうるため
