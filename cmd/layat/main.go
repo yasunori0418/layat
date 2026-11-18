@@ -4,6 +4,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -36,6 +37,13 @@ var (
 	flagBackup        string
 	flagBackupEnabled bool
 )
+
+// getwd reads the process working directory; tests substitute it.
+var getwd = os.Getwd
+
+// workingDirectory is the working directory a --json run observed before its subcommand ran,
+// written as is to the envelope's workingDirectory.
+var workingDirectory string
 
 // systemBaseEnv / systemStateEnv point the system profile base and the system record base <state>
 // elsewhere for one run, so tests can use throwaway directories. They are not a supported way to
@@ -102,6 +110,19 @@ func newRootCmd() *cobra.Command {
 		// main prints errors exactly once, so cobra's usage / error display is suppressed.
 		SilenceUsage:  true,
 		SilenceErrors: true,
+		// A --json run observes the working directory once, after flag parsing and before the
+		// subcommand. Failing here ends the run before RunE, so no envelope is emitted.
+		PersistentPreRunE: func(*cobra.Command, []string) error {
+			if !flagJSON {
+				return nil
+			}
+			wd, err := getwd()
+			if err != nil {
+				return fmt.Errorf("cannot get the working directory: %w", err)
+			}
+			workingDirectory = wd
+			return nil
+		},
 	}
 	// Each subcommand's RunE begins its own outturn run, so help / completion never emit an envelope.
 	pf := root.PersistentFlags()

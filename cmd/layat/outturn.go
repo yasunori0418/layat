@@ -55,6 +55,7 @@ type outturnRun[TInfo, TEnvInfo any] struct {
 	out     io.Writer        // envelope sink (os.Stdout; tests substitute a buffer)
 	command string           // executed subcommand name ("" until begin · → began)
 	dryRun  bool             // envelope dryRun field, captured from flagDryrun at begin (tests set it directly)
+	workDir string           // envelope workingDirectory, the value observed before the subcommand ran
 	started time.Time
 	// subjects are the registered subjects in registration order, one SubjectResult each.
 	subjects []*outturnSubject[TInfo]
@@ -120,7 +121,7 @@ var outturnReport emitter = noopEmitter{}
 // beginOutturnRun builds a run on the real clock and stdout, begins it, and publishes it to
 // outturnReport. Each command wraps it in a begin<Command>Run helper next to its run alias.
 func beginOutturnRun[TInfo, TEnvInfo any](command string) *outturnRun[TInfo, TEnvInfo] {
-	r := &outturnRun[TInfo, TEnvInfo]{now: time.Now, out: os.Stdout}
+	r := &outturnRun[TInfo, TEnvInfo]{now: time.Now, out: os.Stdout, workDir: workingDirectory}
 	r.begin(command)
 	outturnReport = r
 	return r
@@ -175,14 +176,15 @@ func (r *outturnRun[TInfo, TEnvInfo]) emit(cmdErr error) error {
 	finished := outturnTimestamp(r.now())
 
 	env := layatEnvelope[TInfo, TEnvInfo]{
-		SpecVersion: outturnSpecVersion,
-		Tool:        outturn.Tool{Name: "layat", Version: version},
-		Command:     r.command,
-		Status:      outturn.StatusSuccess,
-		DryRun:      r.dryRun,
-		StartedAt:   outturnTimestamp(r.started),
-		FinishedAt:  finished,
-		Info:        r.info,
+		SpecVersion:      outturnSpecVersion,
+		Tool:             outturn.Tool{Name: "layat", Version: version},
+		Command:          r.command,
+		Status:           outturn.StatusSuccess,
+		DryRun:           r.dryRun,
+		StartedAt:        outturnTimestamp(r.started),
+		FinishedAt:       finished,
+		WorkingDirectory: r.workDir,
+		Info:             r.info,
 	}
 	if cmdErr != nil {
 		env.Status = outturn.StatusError
