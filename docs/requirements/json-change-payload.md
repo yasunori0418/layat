@@ -79,6 +79,10 @@ specification: |
   The changes of `reset` SHALL be only what was actually removed. A rename aside by
   `--backup` and empty-parent-directory pruning are not state transitions of an entry and
   SHALL NOT appear in `changes` / `items`.
+
+  The top-level `info` of the changing commands SHALL be `{entrypoint?, generator?}` and
+  `result.info` SHALL be `{root?}`, each key carrying an implicitly resolved input. When
+  neither level has a key to emit, that `info` SHALL be absent.
 specification_ja: |
   変更系コマンド（`apply` / `reset` / `rollback`）の JSON ペイロードは、`-v` レポートと
   同一の engine 結果から DTO 経由で生成しなければならず、二重集計してはならない。
@@ -137,9 +141,13 @@ specification_ja: |
 
   `reset` の changes は実際に除去したもののみでなければならない。`--backup` の退避と
   空親ディレクトリ剪定は entry の状態遷移ではないため changes / items に載せてはならない。
+
+  変更系のトップの `info` は `{entrypoint?, generator?}`、`result.info` は `{root?}` で
+  なければならず、各キーは暗黙に解決した入力を運ぶ。出すキーが無い階層では、その `info` を
+  出してはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-15T01:22:54+09:00"
+  at: "2026-11-18T23:50:00+09:00"
 ---
 # 変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く
 
@@ -201,6 +209,9 @@ generated:
   中止した実行（`--json` では起き得ない）は差分ゼロ。
 - **`--backup` の退避（BackedUp）と空親ディレクトリ剪定（Pruned）は entry の状態遷移では
   ないため changes / items に載らない**（`-v` / stderr のみ）。
+- **info**: トップの `info` は `{entrypoint?, generator?}`、`result.info` は `{root?}` で、
+  どのキーも暗黙に解決した入力を運ぶ。出すキーが無い階層では `info` を出さない。キーを出す
+  条件は [--json のエンベロープは暗黙に解決した entrypoint・generator・root を info に記録する](json-implicit-input-record.md) の担当。
 
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する実装 issue の進捗
 > （#131 時点の非対象・`--all` は #164）は

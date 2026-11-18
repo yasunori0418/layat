@@ -45,6 +45,9 @@ specification: |
   `SubjectResult.generation` slot, so as not to encode the generation numbers twice. Even
   for an empty profile it SHALL state `"generations": []` explicitly. Beside it,
   `results[i].result.info.mode` SHALL state the profile's mode, `"home"` or `"system"`.
+  When `--root` is omitted and the mode is `"home"`, `results[i].result.info.root` SHALL
+  state the resolved root. `list-generations <name>` SHALL record the implicitly resolved
+  `entrypoint` and `generator` in the top-level `info`.
   Under `list-generations --all` every `results[i].subject.name` SHALL be
   `<mode>:<name>`, the mode being `home` for the user base and `system` for the system base.
 
@@ -65,7 +68,8 @@ specification: |
 
   `gitignore <name>` SHALL emit `results[i].result.info.paths` as anchored targets (with a
   leading `/`) and `items: []`. Even with zero entries it SHALL state `"paths": []`
-  explicitly.
+  explicitly. `gitignore` SHALL record the implicitly resolved `entrypoint` and `generator`
+  in the top-level `info`, and SHALL NOT emit `root`.
 
   `init <template>` has no subject and SHALL keep `results: []`, carrying `{template, ref}`
   in the top-level `info`. Because the info is fixed before the expansion is executed, it
@@ -107,7 +111,10 @@ specification_ja: |
   `SubjectResult.generation` スロットは出してはならない（世代番号の二重符号化回避）。
   空 profile でも `"generations": []` を明示しなければならない。
   あわせて `results[i].result.info.mode` に profile のモード（`"home"` か `"system"`）を
-  出さなければならない。`list-generations --all` では全ての `results[i].subject.name` を
+  出さなければならない。`--root` を省き、モードが `"home"` のとき、解決した root を
+  `results[i].result.info.root` に出さなければならない。`list-generations <name>` は、暗黙に
+  解決した `entrypoint` と `generator` をトップの `info` に記録しなければならない。
+  `list-generations --all` では全ての `results[i].subject.name` を
   `<mode>:<name>`（user 基底は `home`、system 基底は `system`）としなければならない。
 
   `status [name]` は列挙する config ごとに 1 つの subject を出し、
@@ -126,7 +133,8 @@ specification_ja: |
 
   `gitignore <name>` は `results[i].result.info.paths` に anchor 形 target（先頭 `/`）と
   `items: []` を出さなければならない。entry 0 件でも `"paths": []` を明示しなければ
-  ならない。
+  ならない。`gitignore` は、暗黙に解決した `entrypoint` と `generator` をトップの `info` に
+  記録しなければならず、`root` を出してはならない。
 
   `init <template>` は主体を持たないため `results: []` のままとし、トップレベル `info` に
   `{template, ref}` を載せなければならない。info は展開実行前に確定するため、失敗時も
@@ -137,7 +145,7 @@ specification_ja: |
   してはならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:31:01+09:00"
+  at: "2026-11-18T23:49:00+09:00"
 ---
 # 読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す
 
@@ -167,7 +175,9 @@ generated:
 - **`list-generations <name>`**: `results[i].result.info.generations = [{number, date,
   current}]`（`date` は nix-env 表示の生文字列）・`items: []`。`SubjectResult.generation`
   スロットは出さない（世代番号の二重符号化回避）。空 profile でも `"generations": []` を
-  明示する。`info.mode` に profile のモード（`"home"` / `"system"`）を添える。
+  明示する。`info.mode` に profile のモード（`"home"` / `"system"`）を添える。`--root` を省いた
+  home のモードでは、解決した root を `info.root` に添える。暗黙に解決した `entrypoint` と
+  `generator` はトップの `info` に記録する。
   `list-generations --all` は user 基底と system 基底を走査し、同名 config が両方にあっても
   subject 名が 1 エンベロープ内で重複しないよう、全 subject を `home:<name>` /
   `system:<name>` と名付ける（単発の `list-generations <name>` は素の `<name>`）。
@@ -183,12 +193,15 @@ generated:
   error を置き、他の subject は通常どおり出す（トップの `status` は `error`、exit 1）。
 - **`gitignore <name>`**: `results[i].result.info.paths` = anchor 形 target（先頭 `/`）・
   `items: []`。デフォルトの行指向 stdout は不変（`--json` は opt-in の第 2 契約）。
-  entry 0 件でも `"paths": []` を明示する。
+  entry 0 件でも `"paths": []` を明示する。暗黙に解決した `entrypoint` と `generator` は
+  トップの `info` に記録する。root を解決しないので `root` は出さない。
 - **`init <template>`**: 主体（config）を持たないため `results: []` のまま、トップレベル
   `info` に `{template, ref}`（展開テンプレート名と flake ref）を載せる。info は展開実行前に
   確定するため、失敗時もトップ `errors[]` と並んで「何を展開しようとしたか」が残る。
 - **読み取り系の `dryRun` は常に `false`**（list-generations / status / gitignore / init）。
   `dryRun` は `--dryrun` フラグの反映に限定し、副作用の無さを `dryRun` で表現しない。
+
+暗黙の入力を記録する条件と値の全体は [--json のエンベロープは暗黙に解決した entrypoint・generator・root を info に記録する](json-implicit-input-record.md) の担当。
 
 変更系ペイロード（item 形・warnings 一覧・部分失敗の写像）は [変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く](json-change-payload.md) の担当。
 
