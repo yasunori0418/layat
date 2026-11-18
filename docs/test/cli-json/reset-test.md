@@ -7,11 +7,12 @@ resource: "cmd/layat/reset_test.go"
 covers:
   - "TC-b0e0cdb8-0c56-4eb8-8d4e-86569af85dec"
   - "TC-b4a365cd-0b1c-40ff-92c6-91f6cffe8e98"
+  - "TC-7f30ff0f-a7bd-4a4b-ade9-7dc619207803"
 follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:24:34+09:00"
+  at: "2026-11-18T23:58:00+09:00"
 ---
 # reset_test.go — 確認ポリシーと出力ストリームの排他
 
@@ -30,5 +31,8 @@ generated:
   接続されている側は自動テストの実行環境では作れないため対象外と明記されている
 - **ストリームの排他** — 計画は stdout へ出して stderr へ漏らさないこと、結果レポートと
   削除対象の提示は stderr へ出して stdout へは出さないこと
+- **暗黙の入力の記録** — `-f`・`--generator`・`--root` を省いた `reset --dryrun` が、探索で見つけた
+  entrypoint と採用した generator をトップの `info` に、git の toplevel を `result.info.root` に出すこと。
+  3 つとも与えた実行では、どちらの階層にも `info` が無いこと
 
 標準入力をパイプで差し替えて対話性を作り、stdout と stderr を同時に捕捉して排他を確かめる。

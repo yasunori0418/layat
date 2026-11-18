@@ -10,12 +10,13 @@ covers:
   - "TC-cf8189c4-d680-4d7e-bcd3-810543762c50"
   - "TC-f304d682-bc5e-4369-a427-f766fdfdd961"
   - "TC-f0958a4c-b585-49c5-96a9-d7beff571e71"
+  - "TC-7f30ff0f-a7bd-4a4b-ade9-7dc619207803"
 follows:
   - "TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9"
   - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:27:49+09:00"
+  at: "2026-11-18T23:58:00+09:00"
 ---
 # e2e 02-home — 実 nix での home mode 世代コミットと rollback / reset の往復
 
@@ -75,7 +76,8 @@ fixture flake は `projectRoot` の第 2 config `proj` も宣言する。`list-g
 - **last-applied 記録の出所** — reset 後に nix 生成器で apply し直すと、記録は `recordVersion` 2 で
   `origin.generator` が `nix`、`origin.entrypoint` が絶対パスになる。続けて記録の `linkFarm` を
   `apply --manifest --json` で再適用すると exit 0 で subject 警告 `W_LAYAT_ORIGIN_MISMATCH` を出し、
-  配置は変わらず、記録の `origin.generator` は後勝ちで `prebuilt` になる
+  配置は変わらず、記録の `origin.generator` は後勝ちで `prebuilt` になる。この `--manifest` の出力の
+  `info` に `entrypoint` も `generator` も無い
   （→ [記録は版 2 で出所を持ち、読みは版 1 と 2 を受け付け、出所の食い違いを警告し、書き直しは出所を引き継ぐ](origin-mismatch-detection.md)）
 - **出所の同一性 `identity`** — `home` に `identity` を与えて apply すると記録の `origin.identity` がその値になり、
   その `linkFarm` を `--manifest` で再適用しても `W_LAYAT_ORIGIN_MISMATCH` を出さない。同じ entries で `identity` だけ違う

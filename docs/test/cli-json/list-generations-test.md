@@ -7,11 +7,12 @@ resource: "cmd/layat/list-generations_test.go"
 covers:
   - "TC-4e0a14d6-342c-448b-964b-b8e87520e89b"
   - "TC-cf8189c4-d680-4d7e-bcd3-810543762c50"
+  - "TC-7f30ff0f-a7bd-4a4b-ade9-7dc619207803"
 follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-15T00:29:10+09:00"
+  at: "2026-11-18T23:58:00+09:00"
 ---
 # list-generations_test.go — 世代一覧の info 表現と二重エンコードの禁止
 
@@ -41,6 +42,9 @@ generated:
   profile を持たないディレクトリは warning を出さずに飛ばし、確かめられない profile は warning を
   1 行出して飛ばし、ほかの config の一覧は残ること
   （root では Skip）
+- **暗黙の入力の記録** — `-f`・`--generator`・`--root` を省いた home の `list-generations <name>` が、
+  探索で見つけた entrypoint と採用した generator をトップの `info` に出し、`result.info` に `mode` と並んで
+  `root`（`$HOME`）を出すこと。`-f` と `--generator` を与えた実行ではトップの `info` が無いこと
 
 `info` の境界の扱いはパス列挙の CASE と対称であり、読み取り系コマンド全体で同じ規約が成り立つ
 ことをこの 2 ファイルで押さえている。

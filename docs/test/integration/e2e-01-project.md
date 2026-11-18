@@ -19,7 +19,7 @@ follows:
   - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-18T23:12:30+09:00"
+  at: "2026-11-18T23:58:00+09:00"
 ---
 # e2e 01-project — project mode の配置と --all の部分失敗を実 nix で通す
 
@@ -40,6 +40,8 @@ generated:
 - **item id の契約適合** — 出力の item id を outturn の配布する id ベクタと比べること
 - **作業ディレクトリの形** — ハーネスの `run_json` を通した全ての出力で、`workingDirectory` が
   文字列で `/` で始まること（outturn の適合の確認は絶対パスであることを確かめない）
+- **暗黙の入力の記録の形** — `-f` を省いた `apply docs --dryrun` の出力で、`info.entrypoint` と
+  `results[0].result.info.root` が `/` で始まる文字列で、`info.generator` が文字列であること
 - **conflict の扱い** — 配置先を実ファイルで塞いだ状態の計画が conflict の終了コードで
   止まること、実行時の conflict は一般エラーの終了コードになること
 - **エラー層の分離** — 対象に閉じた失敗が当該 item に載り、subject にもトップレベルにも

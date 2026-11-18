@@ -21,7 +21,7 @@ follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-15T00:12:02+09:00"
+  at: "2026-11-18T23:58:00+09:00"
 ---
 # engine_test.go
 
@@ -71,4 +71,6 @@ cwd を削除して `os.Getwd` を失敗させる固定 root の Abs 失敗の�
   ユーザー state に何も作らないこと
 - **manifest を読めないとき**: apply は manifest 層のエラーを包み直さずに返す。parse の失敗の文が
   先頭に 1 回だけ出ること、版が新しすぎるときに包まれた値を `errors.Is` で判別できることを確かめる
+- **root の種類の報告**: apply の結果の `RootKind` が、Options の値が空なら manifest の値に、そうでなければ
+  Options の値になること。reset の結果の `RootKind` が Options の値になること
 - **その他**: `--no-wait` で lock 取得済みのときの skip、pending 除去失敗の警告化
