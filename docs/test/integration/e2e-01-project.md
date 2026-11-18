@@ -13,12 +13,13 @@ covers:
   - "TC-4e0a14d6-342c-448b-964b-b8e87520e89b"
   - "TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12"
   - "TC-f304d682-bc5e-4369-a427-f766fdfdd961"
+  - "TC-7f30ff0f-a7bd-4a4b-ade9-7dc619207803"
 follows:
   - "TP-229b69c0-cf5e-4fb6-a353-27e5064d93e9"
   - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:27:22+09:00"
+  at: "2026-11-18T23:12:30+09:00"
 ---
 # e2e 01-project — project mode の配置と --all の部分失敗を実 nix で通す
 
@@ -37,6 +38,8 @@ generated:
   profile が未作成の計画では世代番号が前後ともにスロットごと現れないこと（実 nix を通す処理での
   唯一の検証）
 - **item id の契約適合** — 出力の item id を outturn の配布する id ベクタと比べること
+- **作業ディレクトリの形** — ハーネスの `run_json` を通した全ての出力で、`workingDirectory` が
+  文字列で `/` で始まること（outturn の適合の確認は絶対パスであることを確かめない）
 - **conflict の扱い** — 配置先を実ファイルで塞いだ状態の計画が conflict の終了コードで
   止まること、実行時の conflict は一般エラーの終了コードになること
 - **エラー層の分離** — 対象に閉じた失敗が当該 item に載り、subject にもトップレベルにも
