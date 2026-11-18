@@ -657,13 +657,26 @@ func TestJSONEndToEndSubjectBorneFailure(t *testing.T) {
 	assertNoInfoKeys(t, doc)
 }
 
-// TestJSONWorkingDirectoryIsExecutionCWD runs apply --json in a temporary directory in-process:
-// the envelope's workingDirectory is the absolute working directory of the execution.
+// TestJSONWorkingDirectoryIsExecutionCWD runs apply --json in-process from a symlinked temporary
+// directory: the envelope's workingDirectory is the absolute working directory of the execution,
+// with the symlink left unresolved.
 func TestJSONWorkingDirectoryIsExecutionCWD(t *testing.T) {
-	t.Chdir(t.TempDir())
+	base := t.TempDir()
+	real := filepath.Join(base, "real")
+	if err := os.Mkdir(real, 0o755); err != nil {
+		t.Fatalf("mkdir: %v", err)
+	}
+	link := filepath.Join(base, "link")
+	if err := os.Symlink(real, link); err != nil {
+		t.Fatalf("symlink: %v", err)
+	}
+	t.Chdir(link)
 	want, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("os.Getwd: %v", err)
+	}
+	if want != link {
+		t.Fatalf("os.Getwd = %q, want the symlinked path %q for this check", want, link)
 	}
 	origReport, origWorkDir := outturnReport, workingDirectory
 	origJSON, origDryrun := flagJSON, flagDryrun
