@@ -64,7 +64,7 @@ list-generations・gitignore である。
 
 - `generator` は generator を選んだ時点で決まるので、その後の探索や評価で失敗した実行にも出る。
   環境変数・設定ファイル・既定値のどれで決まったかは記録しない。
-- `entrypoint` の値は、`-f` に渡せば同じ entrypoint になる形である。探索に失敗した実行では出さない。
+- `entrypoint` の値は `-f` に渡せば同じ entrypoint になる形である。探索に失敗した実行では出さない。
 - `--manifest` の実行は entrypoint を探さず generator も選ばないので、`entrypoint` も `generator` も出さない。
   project の manifest で `--root` を省けば、`root` は出る。
 - `--all` では、`entrypoint` と `generator` をトップの `info` に 1 度だけ出し、`root` を主体ごとに出す。
