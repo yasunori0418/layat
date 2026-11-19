@@ -7,7 +7,7 @@ mitigates:
   - "RISK-4936a47d-796b-4f1f-8ae4-eb87f6c64e71"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:34:43+09:00"
+  at: "2026-11-18T23:12:30+09:00"
 ---
 # エンベロープが全形状で outturn 適合を保ち subject 件数で形が揺れない
 
@@ -27,6 +27,7 @@ entry 用 identity（kind と key の形）が同じ id を再現することを
 
 エンベロープを出す実行と出さない実行の区別も条件に含む。RunE を持つ全サブコマンドが run を
 開始して文書を公開する一方、help / completion のような成立条件を満たさない実行は文書を出さない。
+`--json` で作業ディレクトリを取得できない実行も、run を開始せず文書を出さない。
 
 > 適合検証だけでは文書の**内容**は守れない（schema は形しか縛らない）。内容の正しさは
 > [engine 結果から item と change への写像がインベントリ全数と実差分に一致する](engine-result-inventory-mapping.md) / [失敗が item と subject とトップレベルの正しい層に 1 度だけ載り原因で分類される](error-layer-placement.md) の担当。

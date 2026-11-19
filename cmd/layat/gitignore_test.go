@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/yasunori0418/outturn/go/conformance"
+
+	"github.com/yasunori0418/layat/internal/manifest"
 )
 
 // TestGitignoreAnchor: a root-relative target becomes /-anchor form (leading /, no trailing /).
@@ -98,5 +100,60 @@ func TestGitignoreJSONEmptyPathsStaysArray(t *testing.T) {
 	}
 	if len(paths) != 0 {
 		t.Errorf("info.paths = %v, want []", paths)
+	}
+}
+
+// TestGitignoreImplicitInputRecord: gitignore records the discovered entrypoint and the adopted
+// generator in the top-level info, with or without --all, and never records a root. Each given
+// flag drops its own key, and with both given the top-level info is absent.
+func TestGitignoreImplicitInputRecord(t *testing.T) {
+	gitignore := func(t *testing.T, all bool) map[string]any {
+		t.Helper()
+		run, buf := newGitignoreTestRun()
+		var err error
+		captureOutErr(t, func() {
+			if all {
+				err = runGitignoreAll(run)
+			} else {
+				err = runGitignore(run, "p")
+			}
+		})
+		if err != nil {
+			t.Fatalf("gitignore: %v", err)
+		}
+		if err := run.emit(nil); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		return decodeEnvelope(t, buf)
+	}
+	const evalAll = `{"p":{"rootKind":"project","targets":[]}}`
+	for _, all := range []bool{false, true} {
+		name := map[bool]string{false: "single", true: "--all"}[all]
+		t.Run(name+" with --generator given", func(t *testing.T) {
+			repo := implicitInputProject(t, manifest.RootKindProject, evalAll)
+			flagGenerator = "nix"
+			if top, _ := envelopeInfo(t, gitignore(t, all), 0); len(top) != 1 || top["entrypoint"] != repo {
+				t.Errorf("info = %v, want {entrypoint: %s}", top, repo)
+			}
+		})
+		t.Run(name+" with -f and --generator given", func(t *testing.T) {
+			repo := implicitInputProject(t, manifest.RootKindProject, evalAll)
+			flagFile, flagGenerator = repo, "nix"
+			if v, ok := gitignore(t, all)["info"]; ok {
+				t.Errorf("info = %v, want absent", v)
+			}
+		})
+	}
+	for _, all := range []bool{false, true} {
+		t.Run(map[bool]string{false: "single", true: "--all"}[all], func(t *testing.T) {
+			repo := implicitInputProject(t, manifest.RootKindProject, evalAll)
+			top, result := envelopeInfo(t, gitignore(t, all), 0)
+			if top["entrypoint"] != repo || top["generator"] != "nix" || len(top) != 2 {
+				t.Errorf("info = %v, want {entrypoint: %s, generator: nix}", top, repo)
+			}
+			if _, ok := result["root"]; ok {
+				t.Errorf("result.info = %v, want no root", result)
+			}
+		})
 	}
 }

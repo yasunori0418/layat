@@ -7,11 +7,12 @@ resource: "cmd/layat/gitignore_test.go"
 covers:
   - "TC-4e0a14d6-342c-448b-964b-b8e87520e89b"
   - "TC-1a46da17-1812-431b-966f-ec8dffd315ae"
+  - "TC-7f30ff0f-a7bd-4a4b-ade9-7dc619207803"
 follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:24:34+09:00"
+  at: "2026-11-19T00:08:45+09:00"
 ---
 # gitignore_test.go — パス正規化と列挙結果の info 表現
 
@@ -28,5 +29,9 @@ generated:
   ままであること、世代スロットを持たないこと、dryrun フラグが偽であること
 - **`info` の境界** — 列挙に到達せず失敗した実行では `info` がキーごと不在であること。
   0 件で列挙した実行では空配列がキーごと残ること
+- **暗黙の入力の記録** — `-f` と `--generator` を省いた `gitignore <name>` と `gitignore --all` が、
+  探索で見つけた entrypoint と採用した generator をトップの `info` に出し、`result.info` に `root` を
+  出さないこと。`--generator` を与えると `info` が `entrypoint` だけになり、`-f` と `--generator` を
+  与えるとトップの `info` が無いこと
 
 `info` の境界は適合チェッカでは検出されない層であり、このファイルが守っている。

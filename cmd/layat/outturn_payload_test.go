@@ -83,20 +83,20 @@ func emitPayloadDoc[TInfo, TEnvInfo any](t *testing.T, newRun func() (*outturnRu
 func assertNoInfoKeys(t *testing.T, doc map[string]any) {
 	t.Helper()
 	if v, ok := doc["info"]; ok {
-		t.Errorf("envelope info = %v, want the key absent (the seat type is a nil pointer)", v)
+		t.Errorf("envelope info = %v, want the key absent (no key to emit)", v)
 	}
 	results, _ := doc["results"].([]any)
 	for i, r := range results {
 		res, _ := r.(map[string]any)["result"].(map[string]any)
 		if v, ok := res["info"]; ok {
-			t.Errorf("results[%d].result.info = %v, want the key absent (the seat type is a nil pointer)", i, v)
+			t.Errorf("results[%d].result.info = %v, want the key absent (no key to emit)", i, v)
 		}
 	}
 }
 
-// TestMutationSeatInfoKeysStayAbsent: apply / reset / rollback emit no info key at either level,
-// with a payload and on the payload-less failure path.
-func TestMutationSeatInfoKeysStayAbsent(t *testing.T) {
+// TestMutationInfoAbsentWithoutKeys: an apply / reset / rollback run with no key to emit leaves
+// info out at both levels, with a payload and on the payload-less failure path.
+func TestMutationInfoAbsentWithoutKeys(t *testing.T) {
 	res := &engine.Result{
 		Profile: "/p",
 		Entries: []manifest.Entry{{SrcKind: "store", Src: "/nix/store/a", Target: "a", Method: "symlink"}},
@@ -147,6 +147,41 @@ func subjectResultOf(t *testing.T, doc map[string]any) map[string]any {
 		t.Fatalf("results length = %d, want 1", len(results))
 	}
 	return results[0].(map[string]any)
+}
+
+// TestAttachRootInfo: attachRootInfo records the root only for a project or home root with --root
+// omitted, and leaves a subject without a payload untouched.
+func TestAttachRootInfo(t *testing.T) {
+	origRoot := flagRoot
+	t.Cleanup(func() { flagRoot = origRoot })
+	info := func(root string) *applyResultInfo { return &applyResultInfo{Root: root} }
+	for _, tc := range []struct {
+		name, kind, flagRoot string
+		payload, want        bool
+	}{
+		{"project", manifest.RootKindProject, "", true, true},
+		{"home", manifest.RootKindHome, "", true, true},
+		{"system", manifest.RootKindSystem, "", true, false},
+		{"fixed", manifest.RootKindFixed, "", true, false},
+		{"--root given", manifest.RootKindHome, "/r", true, false},
+		{"no payload", manifest.RootKindHome, "", false, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			flagRoot = tc.flagRoot
+			s := &outturnSubject[*applyResultInfo]{}
+			if tc.payload {
+				s.setPayload(&outturnPayload[*applyResultInfo]{})
+			}
+			attachRootInfo(s, tc.kind, "/root", info)
+			got := s.payload != nil && s.payload.info != nil
+			if got != tc.want {
+				t.Fatalf("root recorded = %v, want %v", got, tc.want)
+			}
+			if got && s.payload.info.Root != "/root" {
+				t.Errorf("info.Root = %q, want /root", s.payload.info.Root)
+			}
+		})
+	}
 }
 
 // TestMutationPayloadFullInventory pins the success mapping: new and stale-removed entries as

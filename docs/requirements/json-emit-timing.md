@@ -15,7 +15,10 @@ specification: |
   `help` / `completion` SHALL NOT emit an envelope, since their own text occupies stdout.
   A failure of flag parsing or argument validation SHALL likewise emit no envelope,
   because whether `--json` was given cannot be determined at that point, and the exit code
-  plus stderr SHALL be the signal instead. A failure to write the envelope itself (EPIPE
+  plus stderr SHALL be the signal instead. An execution with `--json` whose working
+  directory cannot be obtained SHALL likewise emit no envelope, the subcommand not being
+  run, and SHALL exit with code 1 after writing the error to stderr; `help` and
+  `completion` are excluded, as they do not observe the working directory. A failure to write the envelope itself (EPIPE
   and the like) SHALL cause a non-zero exit even when the command itself succeeded, so
   that a missing document is not read as success.
 specification_ja: |
@@ -25,12 +28,15 @@ specification_ja: |
   `--version`・cobra 自動生成の `help` / `completion` はエンベロープを出してはならない
   （それぞれのテキストが stdout を使うため）。フラグ解析・引数検証の失敗もエンベロープ
   なしとしなければならず（`--json` の指定有無をその時点で確定できないため）、終了コード +
-  stderr をシグナルとしなければならない。エンベロープ書き込み自体の失敗（EPIPE 等）は
+  stderr をシグナルとしなければならない。`--json` で作業ディレクトリを取得できない実行も
+  エンベロープなしとしなければならず、サブコマンドの処理を行わずに、stderr にエラーを書いて
+  終了コード 1 で終わらなければならない。作業ディレクトリを観測しない `help` と `completion` は
+  これに当たらない。エンベロープ書き込み自体の失敗（EPIPE 等）は
   コマンド成功時でも
   非ゼロ終了にしなければならない（欠損文書を成功と読ませないため）。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:05:37+09:00"
+  at: "2026-11-18T23:52:39+09:00"
 ---
 # エンベロープはコマンド完了時に 1 回だけ出し成立条件を満たさない実行では出さない
 
@@ -42,6 +48,9 @@ generated:
 `--help` / `--version`・cobra 自動生成の `help` / `completion` はエンベロープを出さない
 （それぞれのテキストが stdout を使う）。フラグ解析・引数検証の失敗もエンベロープなし
 （`--json` の指定有無をその時点で確定できないため）で、終了コード + stderr がシグナル。
+`--json` で作業ディレクトリを取得できない実行もエンベロープなしで、サブコマンドの処理に入らず、
+stderr にエラーを書いて終了コード 1 で終わる（→ [--json のエンベロープは workingDirectory に実行時の作業ディレクトリの絶対パスを出す](json-working-directory.md)）。
+作業ディレクトリを観測しない `help` と `completion` はこれに当たらず、本文を出して成功する。
 エンベロープ書き込み自体の失敗（EPIPE 等）はコマンド成功時でも非ゼロ終了にする
 （欠損文書を成功と読ませない）。
 
@@ -50,4 +59,4 @@ generated:
 `docs/spec.md`「CLI 仕様」→「出力ストリームと終了コード」→「outturn 準拠の `--json`
 出力」のサブ項目「emit タイミングと成立条件」。
 
-決定の実体は [--json は常に results\[\] エンベロープを出す](../adr/results-envelope-always.md)。
+決定の実体は [--json は常に results\[\] エンベロープを出す](../adr/results-envelope-always.md)。作業ディレクトリを取得できない実行の扱いは [workingDirectory はコマンドの処理の前に観測し、取得できない --json の実行はエンベロープを出さない](../adr/working-directory-observed-before-run.md)。

@@ -10,11 +10,14 @@ derives_from:
 specification: |
   When `--json` is given, the CLI SHALL write exactly one outturn envelope to stdout. Its
   top level SHALL carry `specVersion` / `tool` / `command` / `status` / `dryRun` /
-  `startedAt` / `finishedAt` / `errors[]` / `results[]` in camelCase, with times in
+  `startedAt` / `finishedAt` / `workingDirectory` / `errors[]` / `results[]` in camelCase, with times in
   RFC 3339 using a `T` separator and a mandatory offset (`Z` for UTC). The top level SHALL
   always be `results[]` regardless of single or batch execution, its length being zero or
   more, and SHALL NOT carry a discriminator field for the execution form; `items` /
-  `changes` / `info` SHALL live under each `results[i].result`. The default line-oriented
+  `changes` / `info` SHALL live under each `results[i].result`. Facts of the whole run SHALL
+  be placed in the top-level `info`. The implicitly resolved inputs SHALL be recorded in
+  `info`: `entrypoint` and `generator` in the top-level `info`, and `root` in
+  `results[i].result.info`. The default line-oriented
   stdout SHALL be unchanged, `--json` being an opt-in second contract. Errors SHALL be
   structured into the envelope while the human-facing text on stderr SHALL always
   coexist. The exit code table SHALL be unchanged, and the outturn `status` SHALL follow it:
@@ -24,10 +27,13 @@ specification: |
 specification_ja: |
   `--json` 指定時、CLI は stdout に outturn エンベロープを 1 文書だけ出さなければならない。
   トップレベルは `specVersion` / `tool` / `command` / `status` / `dryRun` / `startedAt` /
-  `finishedAt` / `errors[]` / `results[]`（camelCase・時刻は RFC 3339・`T` 区切り・
+  `finishedAt` / `workingDirectory` / `errors[]` / `results[]`（camelCase・時刻は RFC 3339・`T` 区切り・
   オフセット必須・UTC は `Z`）を持たなければならない。single / batch を問わずトップレベルは
   常に `results[]`（要素数 0 以上）でなければならず、実行形態の判別子フィールドを持っては
   ならない。`items` / `changes` / `info` は各 `results[i].result` 配下に置かなければならない。
+  実行全体の事実はトップの `info` に置かなければならない。暗黙に解決した入力は `info` に
+  記録しなければならず、`entrypoint` と `generator` はトップの `info` に、`root` は
+  `results[i].result.info` に置かなければならない。
   デフォルトの行指向 stdout は不変でなければならず、`--json` は opt-in の第 2 契約とする。
   エラーはエンベロープに構造化しつつ、stderr の人間向けテキストを常時併存させなければ
   ならない。終了コード表は不変でなければならず、outturn `status` は exit 0 → `success` /
@@ -36,7 +42,7 @@ specification_ja: |
   規約に準拠しなければならない。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-03T23:23:46+09:00"
+  at: "2026-11-18T23:55:09+09:00"
 ---
 # --json は outturn 規約準拠のエンベロープを出す第 2 契約とする
 
@@ -47,9 +53,11 @@ generated:
 `--json` 時のみ outturn エンベロープに切り替わる。
 
 トップレベルは `specVersion` / `tool` / `command` / `status` / `dryRun` / `startedAt` /
-`finishedAt` / `errors[]` / **`results[]`**（camelCase・時刻 RFC 3339）。**single / batch を
+`finishedAt` / `workingDirectory` / `errors[]` / **`results[]`**（camelCase・時刻 RFC 3339）。**single / batch を
 問わずトップレベルは常に `results[]`**（要素数は 0 以上・実行形態の判別子フィールドは
 持たない）で、`items` / `changes` / `info` は各 `results[i].result` 配下に入る。
+実行全体の事実はトップの `info` に置く。暗黙に解決した入力も `info` に記録し、`entrypoint` と
+`generator` はトップの `info` に、`root` は `results[i].result.info` に置く。
 
 エラーは outturn エンベロープに構造化（前段の全体エラーはトップ `errors[]`・主体起因は
 `results[i].errors[]`・item 起因は `item.error`）しつつ **stderr の人間向けテキストも
@@ -70,6 +78,8 @@ read-only 列挙（`list-generations` の世代・`gitignore` のパス）は
 > **上は原文の写しで、規範は frontmatter が正**。原文が併記する次の点は本 item の
 > 規範ではない。
 >
+> - `workingDirectory` の値と観測の時点 → [--json のエンベロープは workingDirectory に実行時の作業ディレクトリの絶対パスを出す](json-working-directory.md)
+> - 暗黙の入力を記録する条件と値 → [--json のエンベロープは暗黙に解決した entrypoint・generator・root を info に記録する](json-implicit-input-record.md)
 > - エラー層の振り分け規則の詳細 → [エンベロープのエラーは主体の有無で層を分けコードを分類する](json-error-layering.md)
 > - `--all` の `SubjectResult` の積み方・集約 `status`・順序 → [--all は config ごとの SubjectResult を単一実行と同一形状で積む](json-all-subject-results.md)
 > - 変更系 / 読み取り系のペイロードの中身 → [変更系の JSON ペイロードは engine 結果からフルインベントリと実差分を導く](json-change-payload.md) / [読み取り系の JSON ペイロードは dryRun パリティと info インベントリで表す](json-readonly-payload.md)

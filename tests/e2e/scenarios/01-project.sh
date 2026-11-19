@@ -48,6 +48,10 @@ assert_json "$ENV_DRYRUN" "changes は add のみ・reversible=true" \
 	'[.results[0].result.changes[] | select(.kind == "add" and .reversible)] | length == 1'
 assert_json "$ENV_DRYRUN" "profile 未作成の plan は generation 番号を両省略" \
 	'.results[0].generation | (has("before") or has("after")) | not'
+assert_json "$ENV_DRYRUN" "-f・--generator を省いた実行は info に entrypoint（絶対パス）と generator を記録する" \
+	'(.info.entrypoint | type == "string" and startswith("/")) and (.info.generator | type == "string")'
+assert_json "$ENV_DRYRUN" "--root を省いた project の実行は result.info.root（絶対パス）を記録する" \
+	'.results[0].result.info.root | type == "string" and startswith("/")'
 
 e2e_step "item.id が outturn id-vectors と一致（.zshrc）"
 ENV_IDVEC="$E2E_WORK/idvec.json"

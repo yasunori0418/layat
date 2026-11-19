@@ -14,6 +14,7 @@ import (
 	"github.com/yasunori0418/outturn/go/conformance"
 
 	"github.com/yasunori0418/layat/internal/generation"
+	"github.com/yasunori0418/layat/internal/manifest"
 	"github.com/yasunori0418/layat/internal/paths"
 )
 
@@ -169,8 +170,12 @@ func TestGenerationCommandsModeGate(t *testing.T) {
 		if got := infoArray(t, byName["c"], "generations"); len(got) != 1 {
 			t.Errorf("generations = %v, want the system profile's listing", got)
 		}
-		if mode := byName["c"]["result"].(map[string]any)["info"].(map[string]any)["mode"]; mode != "system" {
-			t.Errorf("info.mode = %v, want system", mode)
+		info := byName["c"]["result"].(map[string]any)["info"].(map[string]any)
+		if info["mode"] != "system" {
+			t.Errorf("info.mode = %v, want system", info["mode"])
+		}
+		if _, ok := info["root"]; ok {
+			t.Errorf("info = %v, want no root (a system root is not resolved from the environment)", info)
 		}
 	})
 
@@ -393,4 +398,94 @@ func TestListGenerationsAllScansSystemBase(t *testing.T) {
 			t.Errorf("subjects = %v, want [system:b] (the unreadable profile skipped)", order)
 		}
 	})
+}
+
+// TestListGenerationsImplicitInputRecord: list-generations <name> records the discovered
+// entrypoint and the adopted generator in the top-level info and, for a home config with --root
+// omitted, the resolved root beside info.mode; with -f and --generator given the top-level info
+// is absent.
+func TestListGenerationsImplicitInputRecord(t *testing.T) {
+	list := func(t *testing.T) map[string]any {
+		t.Helper()
+		makeHomeProfiles(t, newGenerationBackend(), "c")
+		run, buf := newListGenerationsTestRun()
+		var err error
+		captureOutErr(t, func() { err = runListGenerations(run, "c") })
+		if err != nil {
+			t.Fatalf("runListGenerations: %v", err)
+		}
+		if err := run.emit(nil); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		return decodeEnvelope(t, buf)
+	}
+	t.Run("all omitted", func(t *testing.T) {
+		repo := implicitInputProject(t, manifest.RootKindHome, "")
+		top, result := envelopeInfo(t, list(t), 0)
+		if top["entrypoint"] != repo || top["generator"] != "nix" || len(top) != 2 {
+			t.Errorf("info = %v, want {entrypoint: %s, generator: nix}", top, repo)
+		}
+		if result["root"] != os.Getenv("HOME") || result["mode"] != "home" {
+			t.Errorf("result.info = %v, want mode home and root $HOME", result)
+		}
+	})
+	t.Run("--root given", func(t *testing.T) {
+		implicitInputProject(t, manifest.RootKindHome, "")
+		flagRoot = t.TempDir()
+		state := t.TempDir()
+		t.Setenv("XDG_STATE_HOME", state)
+		prof := paths.Resolve(newGenerationBackend().UserBase(state), "c", manifest.RootKindHome, flagRoot, true)
+		makeProfilesUnder(t, filepath.Dir(prof.Dir), filepath.Base(prof.Dir))
+		run, buf := newListGenerationsTestRun()
+		var err error
+		captureOutErr(t, func() { err = runListGenerations(run, "c") })
+		if err != nil {
+			t.Fatalf("runListGenerations: %v", err)
+		}
+		if err := run.emit(nil); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		if _, result := envelopeInfo(t, decodeEnvelope(t, buf), 0); result["mode"] != "home" || result["root"] != nil {
+			t.Errorf("result.info = %v, want mode home and no root (--root is explicit)", result)
+		}
+	})
+	t.Run("-f and --generator given", func(t *testing.T) {
+		repo := implicitInputProject(t, manifest.RootKindHome, "")
+		flagFile, flagGenerator = repo, "nix"
+		doc := list(t)
+		if v, ok := doc["info"]; ok {
+			t.Errorf("info = %v, want absent", v)
+		}
+	})
+}
+
+// TestRollbackImplicitInputRecord: rollback of a home config with -f, --generator and --root
+// omitted records the discovered entrypoint and the adopted generator in the top-level info and
+// $HOME in result.info.
+func TestRollbackImplicitInputRecord(t *testing.T) {
+	repo := implicitInputProject(t, manifest.RootKindHome, "")
+	for range 2 {
+		run, _ := newApplyTestRun()
+		var err error
+		captureOutErr(t, func() { err = runApply(run, "c") })
+		if err != nil {
+			t.Fatalf("runApply: %v", err)
+		}
+	}
+	run, buf := newRollbackTestRun()
+	var err error
+	captureOutErr(t, func() { err = runRollback(run, "c") })
+	if err != nil {
+		t.Fatalf("runRollback: %v", err)
+	}
+	if err := run.emit(nil); err != nil {
+		t.Fatalf("emit: %v", err)
+	}
+	top, result := envelopeInfo(t, decodeEnvelope(t, buf), 0)
+	if top["entrypoint"] != repo || top["generator"] != "nix" || len(top) != 2 {
+		t.Errorf("info = %v, want {entrypoint: %s, generator: nix}", top, repo)
+	}
+	if result["root"] != os.Getenv("HOME") || len(result) != 1 {
+		t.Errorf("result.info = %v, want {root: $HOME}", result)
+	}
 }

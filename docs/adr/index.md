@@ -119,6 +119,7 @@
 * [内部コマンドの開示を --debug に分ける](./debug-discloses-internal-commands.md) - 以前の `--verbose` は、CLI が内部で実行する nix コマンドを逐次開示するフラグだった。一方で`--verbose` に求められていたのは配置の結果を詳しく見ることで、結果の詳しさとトラブルシュートのための開示という別の目的が 1 つのフラグに載っていた。 (stable)
 * [エラーコードは共通コードを再利用し固有の意味だけを E_LAYAT_* にする](./error-code-scheme.md) - outturn §6 はエラーコードを二層で命名する。複数のツールで共有する共通コードと、`E_<TOOL>_<NAME>` の形のツール別コードである。layat は、失敗の種類ごとにどちらを使うかを決める必要がある。 (stable)
 * [終了コードは 0 / 1 / 2 の 3 値にする](./exit-code-scheme.md) - layat は CI の事前の確認と devShell の shellHook の両方から呼ばれる。CI は `--dryrun` で「apply できるか」を判定したい。shellHook は、別の apply の実行中に待たずスキップした場合を失敗として扱いたくない。呼び出し側がこれらを終了コードだけで区別できる必要がある。 (stable)
+* [暗黙の入力は配置を決める値だけを、暗黙に解決したときだけ info に記録する](./implicit-inputs-recorded-in-info.md) - --json の実行で暗黙に解決した entrypoint・generator・root だけを info にキーとして記録し、明示引数で与えた値と、状態の置き場・実行環境の値は記録しない (stable)
 * [実行を始める前にコマンドライン・環境変数・設定ファイル・stdin が TTY かどうかだけで誤りと分かる入力を E_INPUT に分類する](./input-errors-known-before-run-classified-e-input.md) - 実行を始める前にコマンドライン・環境変数・設定ファイル・stdin が TTY かどうかだけで誤りと分かる入力を、人間向けには exit 1 と 1 行で報告し、--json では E_INPUT に分類する (stable)
 * [内部コマンドの開示を CLI と生成器で分担する](./internal-command-disclosure-split.md) - layat は内部で実行するコマンドを利用者に開示して透明性を保つ（→ [内部コマンドの開示で透明性を保つ](internal-command-disclosure.md)）。開示の場面は、`--help` の説明文、`--debug` での実行中の逐次表示、失敗時の表示の 3 つある。manifest の取得が生成器越しになると、実際に何を実行するかを知っているのは生成器だけになる。 (stable)
 * [内部コマンドの開示で透明性を保つ](./internal-command-disclosure.md) - CLI は entrypoint を見つけ、manifest 生成器（既定は nix）に内部でコマンドを実行させて manifest のstore path を得る。利用者からはこの内部の呼び出しが見えず、失敗したときの切り分けや、CLI を経ずに同じ操作を手で行う手段が分かりにくくなる。 (stable)
@@ -134,6 +135,7 @@
 * [--json の item id は subject スコープで導く](./subject-scoped-ids.md) - outturn は item の `id` を、identity（`{kind, key}`）を JCS で正規化して SHA-256 した値で導く。layat の entry は config ごとに独立していて、別の config に同じ target があることもある。key に何を含めるかで、id がどの範囲で一意になるかが決まる。 (stable)
 * [undo で戻せなかった target は `W_LAYAT_UNWIND_INCOMPLETE` で target ごとに報告し、`W_LAYAT_UNWOUND` は全部戻せたときだけ出す](./undo-partial-failure-reported-by-separate-code.md) - undo の巻き戻しで戻せなかった target は W_LAYAT_UNWIND_INCOMPLETE で target ごとに --json へ報告し、W_LAYAT_UNWOUND は journal の全件を戻せたときだけ出す (stable)
 * [-v で配置レポートを opt-in で出す](./verbose-opts-into-placement-report.md) - 成功時は、指定が無いときは何も出さない。それでも対話で使うときは、何が配置・除去・skip されたかを見たい場面がある。以前の `--verbose` は内部コマンドの開示を担っていて、配置の結果を詳しく見たいという用途と噛み合っていなかった。機械向けの `--json` を足すにあたり、人向けのレポートとの関係も決める必要があった。 (stable)
+* [workingDirectory はコマンドの処理の前に観測し、取得できない --json の実行はエンベロープを出さない](./working-directory-observed-before-run.md) - --json の実行では作業ディレクトリをフラグの解析の後・サブコマンドの処理の前に 1 度だけ観測して正規化せずに workingDirectory へ出し、取得できなければエンベロープを出さずに終了コード 1 で終わる (stable)
 
 ## 配置動作
 

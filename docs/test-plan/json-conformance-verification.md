@@ -20,8 +20,8 @@ specification: |
   the run that produced it — that the exit code accompanying the document is the expected
   one, that the planned changes carry the kind and reversibility the run implies, that the
   inventory of items and their statuses match, that a failing item carries the error code
-  for its cause, and that the generation numbers are present or omitted according to
-  whether a profile exists. Those assertions SHALL be made on extracted fields rather than
+  for its cause, that the generation numbers are present or omitted according to
+  whether a profile exists, and that `workingDirectory` is a string starting with `/`. Those assertions SHALL be made on extracted fields rather than
   by matching the document as text, so that they do not break on formatting or on fields
   they do not concern.
 specification_ja: |
@@ -35,13 +35,14 @@ specification_ja: |
   何を述べているかは縛らないため、E2E は加えて、payload の意味をそれを生んだ実行に照らして
   構造的にアサートしなければならない。すなわち、文書に伴う終了コードが期待どおりであること、
   計画された change がその実行の含意する kind と可逆性を持つこと、item のインベントリと
-  status が一致すること、失敗した item がその原因に対応するエラーコードを持つこと、そして
-  世代番号が profile の有無に応じて存在または省略されること。これらのアサートは文書をテキストで
+  status が一致すること、失敗した item がその原因に対応するエラーコードを持つこと、
+  世代番号が profile の有無に応じて存在または省略されること、そして `workingDirectory` が
+  `/` で始まる文字列であること。これらのアサートは文書をテキストで
   比較するのではなく抽出したフィールドに対して行わなければならない（書式や当該アサートの
   関知しないフィールドで失敗しないようにするため）。
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-09T22:03:12+09:00"
+  at: "2026-11-18T23:12:30+09:00"
 ---
 # エンベロープの outturn 適合を Go テストと E2E の両方で検証する
 
@@ -69,6 +70,7 @@ change が空、conflict なのに status=success 等）は検出されずに通
 | item インベントリ | items の本数と各 `status` が実行と一致する |
 | エラーコード | 失敗した item が原因に対応する code を持つ |
 | 世代番号 | profile の有無に応じて `generation.before` / `after` が存在または省略される |
+| 作業ディレクトリ | `run_json` を通した全ての出力で `workingDirectory` が `/` で始まる文字列である（outturn-validate は絶対パスであることを確かめない）|
 
 これらは文書のテキストの比較ではなく抽出したフィールドに対して行う（書式や当該アサートの
 関知しないフィールドの変化で失敗しないようにするため）。

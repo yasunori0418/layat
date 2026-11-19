@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
 	"sort"
 	"strings"
 
@@ -18,12 +19,19 @@ type gitignoreInfo struct {
 	Paths []string `json:"paths"`
 }
 
+// gitignoreEnvInfo is gitignore's envelope info: the entrypoint and generator resolved implicitly.
+// It stays a nil pointer until it has a key.
+type gitignoreEnvInfo struct {
+	Entrypoint string `json:"entrypoint,omitempty"`
+	Generator  string `json:"generator,omitempty"`
+}
+
 // gitignoreRun is gitignore's concrete run instantiation, threaded from RunE.
-type gitignoreRun = outturnRun[*gitignoreInfo, *struct{}]
+type gitignoreRun = outturnRun[*gitignoreInfo, *gitignoreEnvInfo]
 
 // beginGitignoreRun starts gitignore's run.
 func beginGitignoreRun(command string) *gitignoreRun {
-	return beginOutturnRun[*gitignoreInfo, *struct{}](command)
+	return beginOutturnRun[*gitignoreInfo, *gitignoreEnvInfo](command)
 }
 
 func newGitignoreCmd() *cobra.Command {
@@ -62,12 +70,23 @@ func newGitignoreCmd() *cobra.Command {
 func runGitignore(run *gitignoreRun, name string) error {
 	// The config name is the run's single outturn subject.
 	subject := run.beginSubject(name)
-	gen, err := newGenerator()
+	genName, err := selectGenerator()
 	if err != nil {
 		return err
 	}
+	// The top-level info records the generator and the entrypoint resolved without -f / --generator.
+	envInfo := &gitignoreEnvInfo{}
+	if flagGenerator == "" {
+		envInfo.Generator = genName
+		run.setEnvelopeInfo(envInfo)
+	}
+	gen := newGeneratorTo(genName, os.Stderr)
 	if err := gen.Discover(flagFile); err != nil {
 		return err
+	}
+	if flagFile == "" {
+		envInfo.Entrypoint = gen.Entrypoint()
+		run.setEnvelopeInfo(envInfo)
 	}
 
 	// Confirm project mode via rootKind pre-resolution eval (rejecting cheaply before build).
@@ -107,12 +126,23 @@ func gitignoreAnchors(targets []string) []string {
 // runGitignoreAll lists the targets of all projectRoot configs. stdout gets the sorted,
 // de-duplicated union; --json gives each config its own undeduplicated paths.
 func runGitignoreAll(run *gitignoreRun) error {
-	gen, err := newGenerator()
+	genName, err := selectGenerator()
 	if err != nil {
 		return err
 	}
+	// The top-level info records the generator and the entrypoint resolved without -f / --generator.
+	envInfo := &gitignoreEnvInfo{}
+	if flagGenerator == "" {
+		envInfo.Generator = genName
+		run.setEnvelopeInfo(envInfo)
+	}
+	gen := newGeneratorTo(genName, os.Stderr)
 	if err := gen.Discover(flagFile); err != nil {
 		return err
+	}
+	if flagFile == "" {
+		envInfo.Entrypoint = gen.Entrypoint()
+		run.setEnvelopeInfo(envInfo)
 	}
 
 	roots, err := gen.AllRoots()

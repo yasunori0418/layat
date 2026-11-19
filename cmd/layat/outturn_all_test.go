@@ -674,3 +674,58 @@ func infoArray(t *testing.T, sr map[string]any, key string) []any {
 	}
 	return arr
 }
+
+// TestApplyAllImplicitInputRecord: apply --all records the discovered entrypoint and the adopted
+// generator once in the top-level info, and each project / home subject's root in its own
+// result.info, with or without --dryrun. Under --manifest neither entrypoint nor generator is
+// recorded.
+func TestApplyAllImplicitInputRecord(t *testing.T) {
+	const evalAll = `{"h":{"rootKind":"home","targets":[]},"p":{"rootKind":"project","targets":[]}}`
+	applyAll := func(t *testing.T) map[string]any {
+		t.Helper()
+		run, buf := newApplyTestRun()
+		var err error
+		captureOutErr(t, func() { err = runApplyAll(run) })
+		if err != nil {
+			t.Fatalf("runApplyAll: %v", err)
+		}
+		if err := run.emit(nil); err != nil {
+			t.Fatalf("emit: %v", err)
+		}
+		return decodeEnvelope(t, buf)
+	}
+	for _, dry := range []bool{false, true} {
+		t.Run(map[bool]string{false: "apply", true: "dryrun"}[dry], func(t *testing.T) {
+			repo := implicitInputProject(t, manifest.RootKindProject, evalAll)
+			flagDryrun = dry
+			doc := applyAll(t)
+			top, home := envelopeInfo(t, doc, 0)
+			_, project := envelopeInfo(t, doc, 1)
+			if top["entrypoint"] != repo || top["generator"] != "nix" || len(top) != 2 {
+				t.Errorf("info = %v, want {entrypoint: %s, generator: nix}", top, repo)
+			}
+			if home["root"] != os.Getenv("HOME") {
+				t.Errorf("results[h].result.info = %v, want {root: $HOME}", home)
+			}
+			if project["root"] != repo {
+				t.Errorf("results[p].result.info = %v, want {root: %s}", project, repo)
+			}
+		})
+	}
+	t.Run("all given", func(t *testing.T) {
+		repo := implicitInputProject(t, manifest.RootKindProject, evalAll)
+		flagFile, flagGenerator, flagRoot = repo, "nix", t.TempDir()
+		assertNoInfoKeys(t, applyAll(t))
+	})
+	t.Run("--manifest", func(t *testing.T) {
+		repo := implicitInputProject(t, manifest.RootKindProject, evalAll)
+		withManifestFlags(t, true, "p="+writeRootKindLinkFarm(t, manifest.RootKindProject))
+		doc := applyAll(t)
+		if v, ok := doc["info"]; ok {
+			t.Errorf("info = %v, want absent under --manifest", v)
+		}
+		if _, result := envelopeInfo(t, doc, 0); result["root"] != repo {
+			t.Errorf("result.info = %v, want {root: %s}", result, repo)
+		}
+	})
+}

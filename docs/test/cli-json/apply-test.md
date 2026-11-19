@@ -9,11 +9,12 @@ covers:
   - "TC-0c7281f8-cffc-4a53-8fe0-f52d9ea6bd12"
   - "TC-b4a365cd-0b1c-40ff-92c6-91f6cffe8e98"
   - "TC-a5eb7de3-a1a7-41ae-8fb9-c2aa374ac894"
+  - "TC-7f30ff0f-a7bd-4a4b-ade9-7dc619207803"
 follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-16T00:03:52+09:00"
+  at: "2026-11-19T00:08:45+09:00"
 ---
 # apply_test.go — 終了コード集約・root フィルタ・退避行の出力
 
@@ -40,6 +41,13 @@ generated:
   下に配置先を作らず、`XDG_STATE_HOME` の下に profile のリンクも `last-applied.json` も作らないこと
 - **`--manifest` 付きの dryrun（conflict あり）** — 終了コード 2 の型を返し、stdout に `conflict` の
   行を出し、`--json` の items に conflict の項目を載せること。root の下の既存のファイルを変えないこと
+- **暗黙の入力の記録** — `flake.nix` を置いた git リポジトリで偽の nix を使って apply を実行し、
+  `-f`・`--generator`・`--root` を全て与えた実行にトップの `info` も `result.info` も無いこと。3 つとも
+  省いた実行（`--dryrun` を含む）で、`info.entrypoint` が探索で見つけたパス、`info.generator` が `nix`、
+  `result.info.root` が git の toplevel であること。`-f` だけを与えると `info` が `generator` だけに、
+  `--generator` だけを与えると `entrypoint` だけになること。home の config では `root` が `$HOME` で、`--root` を
+  与えると `root` が無いこと。`--manifest` の実行に `entrypoint` と `generator` が無く、project の
+  manifest で `--root` を省くと `root` があること
 
 `--manifest` 付きの dryrun のテストは実際の engine を Fake の世代 backend で動かす。ほかのテストは
 適用の実装を関数注入で差し替え、nix を起動せずに集約と出力だけを検証する。

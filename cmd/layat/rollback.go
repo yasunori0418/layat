@@ -10,11 +10,16 @@ import (
 	"github.com/yasunori0418/layat/internal/manifest"
 )
 
-// rollbackResultInfo / rollbackEnvInfo are rollback's outturn info slots, reserved for future run
-// facts and held as nil pointers (see applyResultInfo).
+// rollbackResultInfo / rollbackEnvInfo are rollback's result.info and envelope info, shaped and
+// held as apply's (see applyResultInfo).
 type (
-	rollbackResultInfo struct{}
-	rollbackEnvInfo    struct{}
+	rollbackResultInfo struct {
+		Root string `json:"root,omitempty"`
+	}
+	rollbackEnvInfo struct {
+		Entrypoint string `json:"entrypoint,omitempty"`
+		Generator  string `json:"generator,omitempty"`
+	}
 )
 
 // rollbackRun is rollback's concrete run instantiation, threaded from RunE into runRollback.
@@ -44,12 +49,23 @@ func newRollbackCmd() *cobra.Command {
 func runRollback(run *rollbackRun, name string) error {
 	// The config name is the run's single outturn subject.
 	subject := run.beginSubject(name)
-	gen, err := newGenerator()
+	genName, err := selectGenerator()
 	if err != nil {
 		return err
 	}
+	// The top-level info records the generator and the entrypoint resolved without -f / --generator.
+	envInfo := &rollbackEnvInfo{}
+	if flagGenerator == "" {
+		envInfo.Generator = genName
+		run.setEnvelopeInfo(envInfo)
+	}
+	gen := newGeneratorTo(genName, os.Stderr)
 	if err := gen.Discover(flagFile); err != nil {
 		return err
+	}
+	if flagFile == "" {
+		envInfo.Entrypoint = gen.Entrypoint()
+		run.setEnvelopeInfo(envInfo)
 	}
 
 	root, err := gen.Roots(name)
@@ -75,6 +91,8 @@ func runRollback(run *rollbackRun, name string) error {
 	if res != nil {
 		// The From→To transition rides generation.before/after, also for a partial result.
 		attachMutationPayload(subject, &res.Result, err)
+		// engine.Rollback leaves Result.RootKind empty, so the eval-resolved rootKind decides.
+		attachRootInfo(subject, rootKind, res.Root, func(root string) *rollbackResultInfo { return &rollbackResultInfo{Root: root} })
 	}
 	if err != nil {
 		return err

@@ -20,6 +20,7 @@
 * [--help の開示ブロックがサブコマンドごとに実際の nix 呼び出しと一致する](./help-disclosure-matches-nixgen.md) - `layat --help` の開示ブロックが、各サブコマンドを実際に実行したときの nix 呼び出しと一致することを検証する。
 * [info スロットと世代スロットが値の無いときキーごと不在になり空配列は保つ](./info-seat-omission.md) - 省略されるべきフィールドが、ゼロ値として出力に現れないことを確かめる。この条件が独立して必要なのは、`{}` や `null` や `""` を含む文書も schema 上は合法であり、適合チェッカでは検出されないため。ここはテストでしか守れない層である。
 * [entrypoint の探索順序と nix へ渡す引数列が形ごとに正しく組み立てられる](./nix-argv-assembly.md) - nix を実際に起動せず、起動する直前の引数列までを確かめる。探索と組み立てを純粋な関数として切り出し、実 FS 上に空ファイルを置いた fixture に対して評価する。
+* [outturn-validate が確かめない MUST を layat のテストで確かめる](./outturn-musts-outside-validator.md) - outturn-validate が確かめない MUST（workingDirectory が実行時の作業ディレクトリと同じ絶対パスであること、取得できない実行がエンベロープを出さないこと、暗黙の入力の解決結果を info に記録すること）を Go テストと E2E で確かめる
 * [apply --all が `--manifest <name>=<link-farm>` の集合に乗り、集合の形の不正を E_INPUT で拒否する](./prebuilt-set-rides-apply-all.md)
 * [status の CLI がフィルタ・ストリームの排他・--json の形・error 時の続行の契約を守る](./status-cli-contracts.md) - `layat status [name]` の CLI 層が、engine の結果を契約どおりに絞り込み、名付け、出力することを検証する。
 * [stdout を機械可読出力が専有し人間向けの出力が stderr に留まる](./stream-ownership.md) - どの出力がどのストリームへ出るかを、既定の契約と `--json` の契約の双方で確かめる。

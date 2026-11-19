@@ -558,11 +558,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1793198603,
-        "narHash": "sha256-vTjgiXoHc82A4oa0GraGGcjZYwlkIn8GmH5fkDk67VQ=",
+        "lastModified": 1795005389,
+        "narHash": "sha256-QzrueNB+Hh2rb2pxc4eBcZNjMvpStDcKosiqf3d3hbI=",
         "owner": "yasunori0418",
         "repo": "outturn",
-        "rev": "200bfc69f9ccc09cc42f669bf462d656b9a0c4b7",
+        "rev": "628a4704dbbe4a81b89095c4bef3c9d483d1abf5",
         "type": "github"
       },
       "original": {

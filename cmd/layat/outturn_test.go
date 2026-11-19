@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"path/filepath"
 	"strings"
 	"syscall"
 	"testing"
@@ -36,13 +37,18 @@ func fixedClock(t0 time.Time) func() time.Time {
 	}
 }
 
-// newTestRun returns an outturnRun with a pinned clock and buffer sink, already begun for command.
+// testWorkDir is the fixed absolute working directory the test runs carry.
+const testWorkDir = "/src/proj"
+
+// newTestRun returns an outturnRun with a pinned clock, a fixed working directory and a buffer
+// sink, already begun for command.
 // Prefer the per-command wrappers below, which take the production run aliases' type pairs.
 func newTestRun[TInfo, TEnvInfo any](command string) (*outturnRun[TInfo, TEnvInfo], *bytes.Buffer) {
 	var buf bytes.Buffer
 	r := &outturnRun[TInfo, TEnvInfo]{
-		now: fixedClock(time.Date(2026, 7, 19, 12, 0, 0, 0, time.FixedZone("JST", 9*3600))),
-		out: &buf,
+		now:     fixedClock(time.Date(2026, 7, 19, 12, 0, 0, 0, time.FixedZone("JST", 9*3600))),
+		out:     &buf,
+		workDir: testWorkDir,
 	}
 	r.begin(command)
 	return r, &buf
@@ -61,10 +67,10 @@ func newRollbackTestRun() (*rollbackRun, *bytes.Buffer) {
 	return newTestRun[*rollbackResultInfo, *rollbackEnvInfo]("rollback")
 }
 func newListGenerationsTestRun() (*listGenerationsRun, *bytes.Buffer) {
-	return newTestRun[*generationsInfo, *struct{}]("list-generations")
+	return newTestRun[*generationsInfo, *listGenerationsEnvInfo]("list-generations")
 }
 func newGitignoreTestRun() (*gitignoreRun, *bytes.Buffer) {
-	return newTestRun[*gitignoreInfo, *struct{}]("gitignore")
+	return newTestRun[*gitignoreInfo, *gitignoreEnvInfo]("gitignore")
 }
 func newInitTestRun() (*initRun, *bytes.Buffer) {
 	return newTestRun[*struct{}, *initInfo]("init")
@@ -246,7 +252,7 @@ func (unencodableInfo) MarshalJSON() ([]byte, error) { return nil, errors.New("u
 // nothing reaches the output.
 func TestOutturnEmitEncodeFailure(t *testing.T) {
 	var buf bytes.Buffer
-	r := &outturnRun[*applyResultInfo, unencodableInfo]{now: fixedClock(time.Date(2026, 7, 19, 12, 0, 0, 0, time.UTC)), out: &buf}
+	r := &outturnRun[*applyResultInfo, unencodableInfo]{now: fixedClock(time.Date(2026, 7, 19, 12, 0, 0, 0, time.UTC)), out: &buf, workDir: testWorkDir}
 	r.begin("apply")
 	r.beginSubject("default")
 	err := r.emit(nil)
@@ -583,8 +589,11 @@ func TestJSONUtilityCommandsDoNotBegin(t *testing.T) {
 
 // TestJSONEndToEndSubjectBorneFailure runs apply in an entrypoint-less directory in-process: the
 // envelope is conformant, status error, with the error on results[0] and nothing else on stdout.
+// The generator was adopted before discovery failed, so the top-level info holds generator alone.
 func TestJSONEndToEndSubjectBorneFailure(t *testing.T) {
 	t.Chdir(t.TempDir())
+	t.Setenv(generatorEnv, "")
+	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
 	origReport := outturnReport
 	origJSON, origDryrun := flagJSON, flagDryrun
 	defer func() {
@@ -647,6 +656,178 @@ func TestJSONEndToEndSubjectBorneFailure(t *testing.T) {
 	if topErrs, ok := doc["errors"]; ok {
 		t.Errorf("top-level errors present = %v, want the failure attached to the subject", topErrs)
 	}
-	// No payload exists, so both info slots stay nil and are omitted.
-	assertNoInfoKeys(t, doc)
+	top, result := envelopeInfo(t, doc, 0)
+	if len(top) != 1 || top["generator"] != "nix" {
+		t.Errorf("info = %v, want {generator: nix} (discovery failed, so no entrypoint)", top)
+	}
+	if result != nil {
+		t.Errorf("result.info = %v, want absent (no root was resolved)", result)
+	}
+}
+
+// TestJSONWorkingDirectoryIsExecutionCWD runs apply --json in-process from a symlinked temporary
+// directory: the envelope's workingDirectory is the absolute working directory of the execution,
+// with the symlink left unresolved.
+func TestJSONWorkingDirectoryIsExecutionCWD(t *testing.T) {
+	base := t.TempDir()
+	real := filepath.Join(base, "real")
+	if err := os.Mkdir(real, 0o755); err != nil {
+		t.Fatalf("mkdir: %v", err)
+	}
+	link := filepath.Join(base, "link")
+	if err := os.Symlink(real, link); err != nil {
+		t.Fatalf("symlink: %v", err)
+	}
+	t.Chdir(link)
+	want, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("os.Getwd: %v", err)
+	}
+	if want != link {
+		t.Fatalf("os.Getwd = %q, want the symlinked path %q for this check", want, link)
+	}
+	origReport, origWorkDir := outturnReport, workingDirectory
+	origJSON, origDryrun := flagJSON, flagDryrun
+	defer func() {
+		outturnReport, workingDirectory = origReport, origWorkDir
+		flagJSON, flagDryrun = origJSON, origDryrun
+	}()
+	outturnReport = noopEmitter{}
+
+	out := captureStdout(t, func() {
+		root := newRootCmd()
+		root.SetArgs([]string{"apply", "--json"})
+		execErr := root.Execute()
+		if !outturnReport.began() {
+			t.Errorf("apply's RunE did not publish a begun outturn run (Execute: %v)", execErr)
+			return
+		}
+		if err := outturnReport.emit(execErr); err != nil {
+			t.Errorf("emit: %v", err)
+		}
+	})
+	if !strings.HasPrefix(out, "{") {
+		t.Fatalf("stdout must hold the envelope alone (the --json contract), got %q", out)
+	}
+	doc := decodeEnvelope(t, bytes.NewBufferString(out))
+	got, ok := doc["workingDirectory"].(string)
+	if !ok {
+		t.Fatalf("workingDirectory = %v, want a string", doc["workingDirectory"])
+	}
+	if !filepath.IsAbs(got) {
+		t.Errorf("workingDirectory = %q, want an absolute path", got)
+	}
+	if got != want {
+		t.Errorf("workingDirectory = %q, want the execution's working directory %q", got, want)
+	}
+}
+
+// TestJSONWorkingDirectoryFailureEmitsNoEnvelope: when the working directory cannot be obtained,
+// a --json run never reaches RunE, writes nothing to stdout, and fails with exit code 1.
+func TestJSONWorkingDirectoryFailureEmitsNoEnvelope(t *testing.T) {
+	t.Chdir(t.TempDir())
+	origReport, origWorkDir, origGetwd := outturnReport, workingDirectory, getwd
+	origJSON, origDryrun := flagJSON, flagDryrun
+	defer func() {
+		outturnReport, workingDirectory, getwd = origReport, origWorkDir, origGetwd
+		flagJSON, flagDryrun = origJSON, origDryrun
+	}()
+	outturnReport = noopEmitter{}
+	getwd = func() (string, error) { return "", syscall.ENOENT }
+
+	var execErr error
+	out := captureStdout(t, func() {
+		root := newRootCmd()
+		root.SetArgs([]string{"apply", "--json"})
+		execErr = root.Execute()
+		if outturnReport.began() {
+			if err := outturnReport.emit(execErr); err != nil {
+				t.Errorf("emit: %v", err)
+			}
+		}
+	})
+	if execErr == nil {
+		t.Fatal("a --json run without a working directory must fail")
+	}
+	if want := "cannot get the working directory: "; !strings.HasPrefix(execErr.Error(), want) {
+		t.Errorf("error = %q, want prefix %q", execErr, want)
+	}
+	if !errors.Is(execErr, syscall.ENOENT) {
+		t.Errorf("error = %v, want it to wrap the cause", execErr)
+	}
+	if got := exitCodeFor(execErr); got != 1 {
+		t.Errorf("exit code = %d, want 1", got)
+	}
+	if outturnReport.began() {
+		t.Error("the run began; a --json run without a working directory must not reach RunE")
+	}
+	if out != "" {
+		t.Errorf("stdout = %q, want no bytes (no envelope)", out)
+	}
+}
+
+// TestJSONWorkingDirectoryNotObservedWithoutJSON: a run without --json never reads the working
+// directory for the envelope.
+func TestJSONWorkingDirectoryNotObservedWithoutJSON(t *testing.T) {
+	t.Chdir(t.TempDir())
+	origReport, origWorkDir, origGetwd := outturnReport, workingDirectory, getwd
+	origJSON, origDryrun := flagJSON, flagDryrun
+	defer func() {
+		outturnReport, workingDirectory, getwd = origReport, origWorkDir, origGetwd
+		flagJSON, flagDryrun = origJSON, origDryrun
+	}()
+	outturnReport = noopEmitter{}
+	calls := 0
+	getwd = func() (string, error) {
+		calls++
+		return "", syscall.ENOENT
+	}
+
+	captureStdout(t, func() {
+		root := newRootCmd()
+		root.SetArgs([]string{"apply"})
+		_ = root.Execute()
+	})
+	if calls != 0 {
+		t.Errorf("the working directory was read %d time(s), want none without --json", calls)
+	}
+}
+
+// TestJSONWorkingDirectoryNotObservedForHelpAndCompletion: cobra's help and completion emit no
+// envelope, so even with --json they never read the working directory and still print their text
+// when it cannot be obtained.
+func TestJSONWorkingDirectoryNotObservedForHelpAndCompletion(t *testing.T) {
+	for _, args := range [][]string{{"help", "--json"}, {"completion", "bash", "--json"}} {
+		t.Run(strings.Join(args, " "), func(t *testing.T) {
+			t.Chdir(t.TempDir())
+			origReport, origWorkDir, origGetwd := outturnReport, workingDirectory, getwd
+			origJSON, origDryrun := flagJSON, flagDryrun
+			defer func() {
+				outturnReport, workingDirectory, getwd = origReport, origWorkDir, origGetwd
+				flagJSON, flagDryrun = origJSON, origDryrun
+			}()
+			outturnReport = noopEmitter{}
+			calls := 0
+			getwd = func() (string, error) {
+				calls++
+				return "", syscall.ENOENT
+			}
+
+			var execErr error
+			out := captureStdout(t, func() {
+				root := newRootCmd()
+				root.SetArgs(args)
+				execErr = root.Execute()
+			})
+			if execErr != nil {
+				t.Errorf("Execute: %v, want success", execErr)
+			}
+			if calls != 0 {
+				t.Errorf("the working directory was read %d time(s), want none", calls)
+			}
+			if out == "" {
+				t.Error("stdout is empty, want the command's own text")
+			}
+		})
+	}
 }

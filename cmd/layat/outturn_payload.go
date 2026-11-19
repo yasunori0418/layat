@@ -36,7 +36,7 @@ type outturnPayload[TInfo any] struct {
 	changes    []layatChange
 	generation *outturn.Generation
 	warnings   []outturn.Warning // subject-level (not item-borne) warnings
-	// info is the per-subject result.info; the mutation commands leave it nil.
+	// info is the per-subject result.info; the mutation commands set it only to record a root.
 	info TInfo
 	// itemBorne marks that a failed item already represents the command error, so emit keeps it out
 	// of errors[].
@@ -62,6 +62,18 @@ func attachResetPayload[TInfo any](s *outturnSubject[TInfo], res *engine.ResetRe
 		return
 	}
 	s.setPayload(p)
+}
+
+// attachRootInfo records an implicitly resolved root in s's result.info, built by info: only when
+// --root is omitted, the root kind is project or home, and s has a payload.
+func attachRootInfo[TInfo any](s *outturnSubject[TInfo], rootKind, root string, info func(root string) TInfo) {
+	if flagRoot != "" || s.payload == nil {
+		return
+	}
+	if rootKind != manifest.RootKindProject && rootKind != manifest.RootKindHome {
+		return
+	}
+	s.payload.info = info(root)
 }
 
 // itemStatuses partitions items by reached state: the failed entry, unreached entries (skipped),

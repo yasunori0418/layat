@@ -9,12 +9,13 @@ covers:
   - "TC-733ac4ed-dac3-4bb8-9bfd-fd1cbdc300c9"
   - "TC-ddee6cc4-bc10-4107-bc7e-288a5fb62f1f"
   - "TC-cf8189c4-d680-4d7e-bcd3-810543762c50"
+  - "TC-7f30ff0f-a7bd-4a4b-ade9-7dc619207803"
 follows:
   - "TP-e7c25263-6d2d-4a37-8275-26906889d912"
   - "TP-d3000054-42d9-4bac-912a-dd3abc38d3e9"
 generated:
   by: "claude-code/claude-opus-5-5"
-  at: "2026-11-04T09:34:43+09:00"
+  at: "2026-11-19T00:08:45+09:00"
 ---
 # outturn_all_test.go — --all の subject 件数不変性と部分失敗の非汚染
 
@@ -40,6 +41,11 @@ generated:
 - **config をまたいだ重複除去をしない** — 複数の config が同じ対象を持つとき、機械可読出力は
   それぞれの config の結果に残す（行指向のテキスト出力が重複除去と並び替えを行うのとは
   非対称で、config ごとに分離するのが機械可読側の契約）
+- **暗黙の入力の記録** — `-f`・`--generator`・`--root` を省いた `apply --all` が、`--dryrun` の有無に
+  よらず、探索で見つけた entrypoint と採用した generator をトップの `info` に 1 度だけ、git の toplevel と
+  `$HOME` を project と home の主体の `result.info.root` に出すこと。3 つとも与えた `apply --all` が、
+  どちらの階層にも `info` を出さないこと。`--manifest` の `--all` が
+  `entrypoint` と `generator` を出さずに `root` を出すこと
 
 集約の関数を直接駆動し、テスト側で配線を組み立て直さない。世代一覧は外部コマンドの stub を
 `PATH` の先頭へ置き、profile のレイアウトを一時ディレクトリ上に実際に作って再現する。

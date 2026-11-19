@@ -97,7 +97,8 @@ assert_writable() {
 
 # ---- outturn エンベロープ検証（--json） -------------------------
 
-# layat を --json 付きで実行してエンベロープを保存し、終了コードの一致と outturn-validate の適合を確認する。
+# layat を --json 付きで実行してエンベロープを保存し、終了コードの一致と outturn-validate の適合と、
+# workingDirectory が絶対パスであることを確認する。
 run_json() { # $1: 期待 exit code, $2: エンベロープ保存先, $3...: layat 引数
 	local want="$1" out="$2"
 	shift 2
@@ -114,6 +115,8 @@ run_json() { # $1: 期待 exit code, $2: エンベロープ保存先, $3...: lay
 	else
 		e2e_fail "outturn 適合違反: $(basename "$out"): $findings"
 	fi
+	assert_json "$out" "workingDirectory が絶対パス: $(basename "$out")" \
+		'.workingDirectory | type == "string" and startswith("/")'
 }
 
 # エンベロープへの jq アサート。式が true を返すことを確認する。
